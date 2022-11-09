@@ -12,12 +12,12 @@
 1. After cloning this repository.
 2. Setup the Backend server(on your terminal):
     - First create a virtual environment as below
-        `$ python3 -m venv venv`
+    `$ python3 -m venv venv`
     - Activate the virtual environment.
         - On Windows
-            `venv\Scripts\activate`
+        `venv\Scripts\activate`
         - On Linux
-            `$ source venv/bin/activate`
+        `$ source venv/bin/activate`
     - Install the required packages.
         `$ pip install -r requirements.txt`
     - Start the server.
