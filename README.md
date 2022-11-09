@@ -1,10 +1,12 @@
 # 100018-dowellWorkflowAi-testing
 
 ## for project team members
-    - Be working on a branch other than `main`, simply:
-        - `$ git checkout -B <name_of_your_feature>`
-    - if backend: you are advised to work isolated in the `backend` directory, which has all the files you need.
-    - if frontend: you are advised to work on the `frontend` directory.
+- Be working on a branch other than `main`, simply:
+    - `$ git checkout -B <my_branch>`
+- When you push, push to your branch
+    - `git push origin <my_branch>`
+- if backend: you are advised to work isolated in the `backend` directory, which has all the files you need.
+- if frontend: you are advised to work on the `frontend` directory.
 
 ## How to set up the project locally.
 1. After cloning this repository.
