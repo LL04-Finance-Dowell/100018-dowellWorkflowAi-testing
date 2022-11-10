@@ -445,25 +445,6 @@ def template_list(request):
 #             return redirect_to_login()
 
 
-# # Role-Email assignment is supposed to happen here as suggested, have to check how the data is going to be sent for processing.
-# class AssignEmail(View):
-#     def post(self, request, *args, **kwargs):
-#         body = None
-#         try:
-#             body = json.loads(request.body)
-#             print("----------check Before assign Body----------- \n", body)
-#         except:
-#             body = None
-
-#         update_wf(
-#             workflow_id=body["workflow_id"],
-#             int_wf_string=body["internal"],
-#             ext_wf_string=body["external"],
-#         )
-#         # print("----------imeupdate?------ \n", obj)
-#         workflow_objec = get_wf_object(body["workflow_id"])
-#         print("----------imeupdate workglow object?------ \n", workflow_objec)
-#         return JsonResponse({"status": 200, "message": "workflow updated."})
 
 
 # class UserAuthenticate(View):
