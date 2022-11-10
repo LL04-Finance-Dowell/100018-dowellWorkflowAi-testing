@@ -5,13 +5,11 @@ from django.views import View
 from django.shortcuts import render, redirect, reverse
 from django.http import HttpResponse, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
-from django.views.decorators.clickjacking import (
-    xframe_options_exempt,
-    xframe_options_deny,
-    xframe_options_sameorigin,
-)
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
 from django.utils.decorators import method_decorator
 from .dowellconnection import dowellconnection
+from rest_framework import status
 from .mongo_db_connection import (
     get_all_wf_list,
     save_wf,
@@ -31,7 +29,6 @@ from .mongo_db_connection import (
     get_wf_object,
     get_user_info_by_username,
 )
-from functools import wraps
 from .members import get_members
 from .forms import CreateTemplateForm, CreateDocumentForm
 
@@ -46,13 +43,13 @@ REGISTRATION_ARGS = [
     "ABCDE",
 ]
 
-
 def redirect_to_login():
     return redirect(
         "https://100014.pythonanywhere.com/?redirect_url=https://100084.pythonanywhere.com/"
     )
 
 
+# Going to Be onbsolete. frontend will handle this.
 @csrf_exempt
 def main(request):
     session_id = request.GET.get("session_id", None)
@@ -84,6 +81,7 @@ def main(request):
         return redirect_to_login()
 
 
+# Deprecated
 def logout(request):
     del request.session["user_name"]
     del request.session["company_id"]
@@ -91,6 +89,7 @@ def logout(request):
     return redirect("https://100014.pythonanywhere.com/sign-out")
 
 
+# Deprecated.
 def home(request, *args, **kwargs):
     if request.session.get("user_name"):
         return render(
@@ -100,6 +99,86 @@ def home(request, *args, **kwargs):
         return redirect_to_login()
 
 
+@api_view(["GET", "POST"])
+def email_workflow(request):
+    if request.method == "GET":
+        wf_list = get_wf_list(request.session["company_id"])
+        wfs_to_display = []
+        for wf in wf_list:
+            if wf.get("workflow_title") and (wf.get("workflow_title") != "execute_wf"):
+                wfs_to_display.append(wf)
+        return Response(wf_list, status=status.HTTP_200_OK)
+
+    if request.method == "POST":
+        body = None
+        try:
+            body = json.loads(request.body)
+        except:
+            body = None
+        if not body or not body["title"]:
+            return Response({
+                "message": "Title is Required", 
+            }, status=status.HTTP_400_BAD_REQUEST)
+
+        int_wf_string = []
+        ext_wf_string = []
+        if len(body["internal"]):
+            for step in body["internal"]:
+                int_wf_string.append([step["name"], step["roleID"]])
+        if len(body["external"]):
+            for step in body["external"]:
+                ext_wf_string.append([step["name"], step["roleID"]])
+        
+        obj = save_wf(
+            wf_name=body["title"],
+            int_wf_string=int_wf_string,
+            ext_wf_string=ext_wf_string,
+            user=request.session["user_name"], 
+            company_id=request.session["company_id"],
+        )
+        print("Workflow Created ---------\n", obj)
+        return JsonResponse({"status": 200, "message": "workflow added.", "obj": obj})
+
+# 
+@api_view(["GET", "POST"])
+def template_list(request):
+    pass
+
+# 
+@api_view(["GET", "POST"])
+def template_detail(request):
+    pass
+
+# 
+@api_view(["GET", "POST"])
+def template_editor(request):
+    pass
+
+@api_view(["GET", "POST"])
+def create_document(request):
+    pass
+
+@api_view(["GET", "POST"])
+def assign_emails(request):
+    pass
+
+@api_view(["GET", "POST"])
+def document_editor(request):
+    pass
+
+@api_view(["GET", "POST"])
+def document_list(request):
+    pass
+
+@api_view(["GET", "POST"])
+def document_detail(request):
+    pass
+
+@api_view(["GET", "POST"])
+def template_list(request):
+    pass
+
+# Deprecated.
 class EmailWorkflow(View):
     def get(self, request, *args, **kwargs):
         wf_list = get_wf_list(request.session["company_id"])

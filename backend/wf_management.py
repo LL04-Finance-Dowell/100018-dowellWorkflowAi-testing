@@ -1,7 +1,9 @@
 import json
 import re
 from django.views import View
-
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+from rest_framework import status
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.clickjacking import (
     xframe_options_exempt,
@@ -104,7 +106,6 @@ class GenFlowLink(View):
             else:
                 return JsonResponse({"status": 204, "message": "Link creation failed"})
         except:
-
             return JsonResponse({"status": 200, "message": "Nothing updated."})
 
 
@@ -141,6 +142,7 @@ def send_notificationVia_mail(user_name, document_id, document_name, *args, **kw
     return uuid_hash
 
 
+@api_view(['POST'])
 def documentWorkFlowAddView(request, *args, **kwargs):
     if request.method == "POST" and request.session["user_name"]:
         body = None
@@ -210,16 +212,13 @@ def documentWorkFlowAddView(request, *args, **kwargs):
                 mail_status = send_notificationVia_mail(
                     new_wf["int_wf_string"][0][2], body["file_id"], doc["document_name"]
                 )
-                print("doc db updated", mail_status)
+                print("Document Updated----------- \n", mail_status)
             else:
                 print("doc db updated error")
-        return JsonResponse(
-            {"status": 200, "url": reverse("documentation:documents-to-sign")}
-        )
-        #   except:           return JsonResponse({ 'status': 'ERROR' , 'message': 'Error placing document in workflow.'})
+        return Response({"message": "Workflow Started"}, status=status.HTTP_201_CREATED)
     else:
-        return JsonResponse(
-            {"status": "ERROR", "message": "A User must be related with company"}
+        return Response(
+            {"message": "Failed to process document"}, status=status.HTTP_400_BAD_REQUEST
         )
 
 
@@ -242,9 +241,6 @@ def check_if_two(status, wf):
 def execute_wf(request, document_id, document_name, status, wf):
     step_name = ""
     status += 1
-    print("-------length of wf--------", len(wf))
-    print("-------contenr of wf--------", wf)
-    print("-------status--------", status)
     cross_check = check_if_two(status, wf)
     if status >= len(wf) or cross_check:
         step_name = "complete"
@@ -255,8 +251,8 @@ def execute_wf(request, document_id, document_name, status, wf):
     else:
         step_name = wf[status - 1][
             0
-        ]  #   step_user = get_user(re.split('-', wf[status - 1])[1][:-1])
-        print("step name is---- \n", step_name)
+        ] 
+        print("Step name is---- \n", step_name)
         print("The Email now is------------- \n", wf[status - 1][2])
         mail_status = send_notificationVia_mail(
             wf[status - 1][2], document_id, document_name
@@ -281,16 +277,15 @@ def workflowVerification(request, doc):
     print("--------What is the Workflow------- \n", wf)
     int_wf_steps = wf[
         "int_wf_string"
-    ]  # int_wf_steps = re.findall("\w*\-\w*\*", wf['int_wf_string'])
+    ] 
     ext_wf_steps = wf[
         "ext_wf_string"
-    ]  # ext_wf_steps = re.findall("\w*\-\w*\*", wf['ext_wf_string'])
+    ] 
 
     if ((wf["int_wf_string"] != []) and (doc["int_wf_step"] != "complete")) and (
         doc["int_wf_position"] <= len(int_wf_steps)
     ):
-        print("Got in internal workflow for doc name \n", doc["document_name"])
-        #   if ((wf['int_wf_string'] != '') or (wf['int_wf_step'] != 'complete')) and (doc['int_wf_position'] <= len(int_wf_steps)):
+        print("Got in internal workflow for doc name----------------  \n", doc["document_name"])
         status, step_name = execute_wf(
             request,
             doc["_id"],
@@ -298,30 +293,6 @@ def workflowVerification(request, doc):
             doc["int_wf_position"],
             int_wf_steps,
         )
-        # if status and status != doc["int_wf_position"]:
-        #     res = json.loads(
-        #         update_document(
-        #             doc["_id"],
-        #             {
-        #                 "int_wf_position": status,
-        #                 "int_wf_step": step_name,
-        #             },
-        #         )
-        #     )
-        #     doc = get_document_object(doc["_id"])
-        #     if (doc["int_wf_step"] == "complete") and (wf["ext_wf_string"] != []):
-        #         print(" Do we reach here first for doc name ------------? \n", doc["document_name"])
-        #         res = json.loads(
-        #             update_document(
-        #                 doc["_id"],
-        #                 {
-        #                     "ex_wf_position": 1,
-        #                     "ex_wf_step": "1",
-        #                 },
-        #             )
-        #         )
-        #         doc = get_document_object(doc["_id"])
-        # if status and status != doc["int_wf_position"]:
         res = json.loads(
             update_document(
                 doc["_id"],
@@ -334,7 +305,7 @@ def workflowVerification(request, doc):
         doc = get_document_object(doc["_id"])
         if (doc["int_wf_step"] == "complete") and (wf["ext_wf_string"] != []):
             print(
-                " Do we reach here first for doc name ------------? \n",
+                "Do we reach here first for doc name ------------? \n",
                 doc["document_name"],
             )
             res = json.loads(
@@ -348,7 +319,6 @@ def workflowVerification(request, doc):
             )
             doc = get_document_object(doc["_id"])
             # End of test case scenario
-            # print("----------New Doc-------- \n", doc)
     if ((wf["ext_wf_string"] != []) and (doc["ext_wf_step"] != "complete")) and (
         doc["ext_wf_position"] <= len(ext_wf_steps)
         and (doc["int_wf_step"] == "complete")
@@ -361,8 +331,6 @@ def workflowVerification(request, doc):
             doc["ext_wf_position"],
             ext_wf_steps,
         )
-        # print("------External Status------- \n", status)
-        # print("-------External Step Name---------- \n", step_name)
         if status and status != doc["ext_wf_position"]:
             res = json.loads(
                 update_document(
@@ -388,8 +356,8 @@ def workflowVerification(request, doc):
         print("------Ext and Int WF complete--------- \n", mail_status)
 
     messages.error(request, "No WorkFlow Available")
-    # print("Update response------------ \n :", res)
     return doc, status, step_name
+
 
 
 class DocumentVerificationView(DocumentEditor):
