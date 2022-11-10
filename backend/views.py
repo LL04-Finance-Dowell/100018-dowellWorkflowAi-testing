@@ -274,51 +274,6 @@ def template_list(request):
     pass
 
 
-# Deprecated.
-# class EmailWorkflow(View):
-#     def get(self, request, *args, **kwargs):
-#         wf_list = get_wf_list(request.session["company_id"])
-#         wfs_to_display = []
-#         for wf in wf_list:
-#             wf["id"] = wf["_id"]
-#             if wf.get("workflow_title") and (wf.get("workflow_title") != "execute_wf"):
-#                 wfs_to_display.append(wf)
-#         return render(
-#             request,
-#             "manage_workflow.html",
-#             context={
-#                 "wf_list": wfs_to_display,
-#                 "workflow": ["internal", "external", "link"],
-#             },
-#         )
-
-#     def post(self, request, *args, **kwargs):
-#         body = None
-#         try:
-#             body = json.loads(request.body)
-#         except:
-#             body = None
-#         if not body or not body["title"]:
-#             context = {"object": "Error: Title required."}
-#             return JsonResponse(context)
-#         int_wf_string = []
-#         ext_wf_string = []
-#         if len(body["internal"]):
-#             for step in body["internal"]:
-#                 int_wf_string.append([step["name"], step["roleID"]])
-#         if len(body["external"]):
-#             for step in body["external"]:
-#                 ext_wf_string.append([step["name"], step["roleID"]])
-#         obj = save_wf(
-#             wf_name=body["title"],
-#             int_wf_string=int_wf_string,
-#             ext_wf_string=ext_wf_string,
-#             user=request.session["user_name"],
-#             company_id=request.session["company_id"],
-#         )
-#         print("Workflow Created ---------\n", obj)
-#         return JsonResponse({"status": 200, "message": "workflow added.", "obj": obj})
-
 
 # class Template(View):
 #     def get(self, request, *args, **kwargs):
