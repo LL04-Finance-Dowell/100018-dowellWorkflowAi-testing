@@ -15,9 +15,6 @@ from .mongo_db_connection import (
     get_user_list,
     get_template_list,
     get_document_list,
-    save_template,
-    get_template_object,
-    update_template,
     save_document,
     update_wf,
     get_uuid,
@@ -33,7 +30,40 @@ from .members import get_members
 
 @api_view(["GET", "POST"])
 def create_document(request):  # Document Creation.
-    pass
+    if request.method == "GET" and request.session["user_name"]:
+        template_list = [(0, "__Template Name__")]
+        for i in get_template_list(company_id=request.session["company_id"]):
+            template_list.append((i["_id"], i["template_name"]))
+        return Response({"template_list": template_list}, status=status.HTTP_200_OK)
+
+    if request.method == "POST" and request.session["user_name"]:
+        data = ""
+        company_id = request.session["company_id"]
+        created_by = request.session["user_name"]
+        form = request.POST #TODO: We will get the data from form 1 by 1 - Dont Worry.
+        if form.is_valid():
+            template_id = form.cleaned_data["copy_template"]
+            name = form.cleaned_data["name"]
+            res = json.loads(
+                save_document(name, template_id, data, created_by, company_id)
+            )
+            print("Looks Like Documented is created----------\n", res)
+            if res["isSuccess"]:
+                return Response(
+                    {
+                        "message": "Document Created Successfully",
+                        "document_id": res["inserted_id"],
+                    }, status=status.HTTP_201_CREATED
+                )
+            return Response(
+                {"message": "Unable to Create Document"},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
+        return Response({"status": 420, "message": "invalid form"})
+
+    return Response(
+        {"message": "You Need To Be LoggedIn"}, status=status.HTTP_400_BAD_REQUEST
+    )
 
 
 @api_view(["GET", "POST"])
@@ -42,8 +72,68 @@ def document_editor(request):  # Document Editor.
 
 
 @api_view(["GET", "POST"])
-def document_detail(request):  # Single document
-    pass
+def document_detail(request, *args, **kwargs):  # Single document
+    verify = False
+    template = False
+    doc_viewer = False
+
+    if request.method == "GET" and request.session["user_name"]:
+        document_obj = get_document_object(document_id=kwargs["document_id"])
+        user = get_user_info_by_username(request.session["user_name"])
+        workflow_id = document_obj["workflow_id"]
+        wf_single = get_wf_object(workflow_id)
+        member_list = get_members(str(request.session["session_id"]))
+        document_data = {
+            "id": document_obj["_id"],
+            "name": document_obj["document_name"],
+            "created_by": document_obj["created_by"],
+            "auth_role_list": get_auth_roles(document_obj),
+            "file": document_obj["content"],
+            "username": request.session["user_name"],
+            "verify": verify,
+            "template": template,
+            "doc_viewer": doc_viewer,
+            "company_id": document_obj["company_id"],
+            "user_email": user["Email"],
+            "wf_list": wf_single,
+            "member_list": member_list,
+            "workflow_id": workflow_id,  # eric to send this with the form
+        }
+        return Response(
+            {
+                "curr_user_role": user["Role"],
+                "document": document_data,
+                "member_list": member_list,
+                "workflow_id": workflow_id,
+            },
+            status=status.HTTP_200_OK,
+        )
+    else:
+        if verify:
+            return Response(
+                {"message": "You need to be logged In"},
+                status=status.HTTP_401_UNAUTHORIZED,
+            )
+
+    # Save Document.
+    if request.method == "POST" and request.session["user_name"]:
+        body_unicode = request.body.decode("utf-8")
+        body = json.loads(body_unicode)
+        res = update_document(body["file_id"], {"content": json.dumps(body["content"])})
+        res_obj = json.loads(res)
+        if res_obj["isSuccess"]:
+            return Response(
+                {"message": "Document Saved"}, status=status.HTTP_201_CREATED
+            )
+        else:
+            return Response(
+                {"message": "Document Could Not be Saved."},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
+    else:
+        return Response(
+            {"message": "You Need To Be Logged In"}, status=status.HTTP_400_BAD_REQUEST
+        )
 
 
 @api_view(["GET"])
@@ -240,3 +330,13 @@ def rejected_documents(request):  # List of rejected documents.
         },
         status=status.HTTP_200_OK,
     )
+
+
+# --------------------------- HELPERS ----------------------------------------
+def get_auth_roles(document_obj):
+    role_list = list()
+    content = document_obj["content"]
+    res_content_obj = json.loads(content)
+    for i in res_content_obj[0]:
+        role_list.append(i["auth_user"])
+    return role_list

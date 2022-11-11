@@ -372,57 +372,5 @@ def requested_documents(request):
     reject_list = []
     return render(request, "reject_list.html", context={"reject_list": reject_list})
 
-def redirect_to_login():
-    return redirect(
-        "https://100014.pythonanywhere.com/?redirect_url=https://100084.pythonanywhere.com/"
-    )
 
 
-# Going to Be onbsolete. frontend will handle this.
-@csrf_exempt
-def main(request):
-    session_id = request.GET.get("session_id", None)
-    if session_id:
-        field = {"SessionID": session_id}
-        response = dowellconnection(*SESSION_ARGS, "fetch", field, "nil")
-        res = json.loads(response)
-        if res["isSuccess"]:
-            request.session["session_id"] = res["data"][0]["SessionID"]
-            print("Res------------- \n", res["data"])
-        fields = {"Username": res["data"][0]["Username"]}
-        response = dowellconnection(*REGISTRATION_ARGS, "fetch", fields, "nil")
-        usrdic = json.loads(response)
-        if usrdic["isSuccess"]:
-            print("User Role :", usrdic["data"][0]["Role"])
-            request.session["Role"] = usrdic["data"][0]["Role"]
-            try:
-                request.session["company_id"] = usrdic["data"][0]["company_id"]
-            except:
-                request.session["company_id"] = None
-            request.session["user_name"] = usrdic["data"][0]["Username"]
-            print("LoggedIn as : ", usrdic["data"][0])
-            return redirect("documentation:home")  #   HttpResponse("hello")
-        else:
-            return (
-                redirect_to_login()
-            )  #   return redirect("https://100014.pythonanywhere.com/?code=100084")
-    else:
-        return redirect_to_login()
-
-
-Deprecated
-def logout(request):
-    del request.session["user_name"]
-    del request.session["company_id"]
-    del request.session["Role"]
-    return redirect("https://100014.pythonanywhere.com/sign-out")
-
-
-# Deprecated.
-def home(request, *args, **kwargs):
-    if request.session.get("user_name"):
-        return render(
-            request, "home.html", {"obj": request.session.items()}
-        )  # HttpResponse(context)
-    else:
-        return redirect_to_login()
