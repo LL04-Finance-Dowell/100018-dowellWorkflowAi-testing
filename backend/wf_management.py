@@ -1,16 +1,8 @@
 import json
-import re
-from django.views import View
+import uuid
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
-from django.views.decorators.csrf import csrf_exempt
-from django.views.decorators.clickjacking import (
-    xframe_options_exempt,
-    xframe_options_deny,
-    xframe_options_sameorigin,
-)
-from django.http import JsonResponse
 from django.contrib import messages
 from .mongo_db_connection import (
     save_wf,
@@ -21,21 +13,18 @@ from .mongo_db_connection import (
     save_uuid_hash,
     get_uuid_object,
     get_wf_list,
+    get_user_info_by_username,
 )
-from .views import DocumentEditor, get_auth_roles
-import uuid
-from django.shortcuts import render, redirect
 from .members import get_members
 from datetime import datetime
 from django.core.mail import send_mail
 from django.urls import reverse
 from django.contrib.sites.models import Site
 from .mail_format import formated_mail
-from .mongo_db_connection import get_user_info_by_username
 
 
 @api_view(["GET", "POST"])
-def email_workflow(request):  # create workflow, list workflows.
+def create_workflow(request):  # create workflow, list workflows.
     if request.method == "GET":
         wf_list = get_wf_list(request.session["company_id"])
         wfs_to_display = []
@@ -229,7 +218,7 @@ def signature(request, *args, **kwargs):  # Signature from email link.
                 {"message": "An Error Occured while loading Document!"},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
-    if request.method == "POST": # Finalize document for next workflow
+    if request.method == "POST":  # Finalize document for next workflow
         doc = get_document_object(request.POST["document_id"])
         doc, doc_status, step_name = workflow_verification(request, doc)
         if doc_status and step_name != "":
@@ -476,6 +465,15 @@ def reject_document(request, *args, **kwargs):  # Reject a reqeust to sign a doc
 
 
 # ----------------------------------------- HELPER FUNCTIONS ----------------------------------
+# get auth roles
+def get_auth_roles(document_obj):
+    role_list = list()
+    content = document_obj["content"]
+    res_content_obj = json.loads(content)
+    for i in res_content_obj[0]:
+        role_list.append(i["auth_user"])
+    return role_list
+
 
 # user in a given workflow.
 def get_user_in_workflow(user, wf):
@@ -653,7 +651,7 @@ def execute_workflow(request, document_id, document_name, status, wf):
     return status, step_name
 
 
-#------------------------------------- End: Helpers----------------------------------------------
+# ------------------------------------- End: Helpers----------------------------------------------
 
 # class DocumentCreatedListView(View):
 #     executed = False
@@ -828,5 +826,3 @@ def execute_workflow(request, document_id, document_name, status, wf):
 #     rejected = True
 #     title = "Rejected Documents"
 #     template_name = "reject_list.html"
-
-

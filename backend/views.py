@@ -43,6 +43,20 @@ REGISTRATION_ARGS = [
 ]
 
 
+@api_view(["GET", "POST"])
+def create_document(request):  # Document Creation.
+    pass
+
+
+@api_view(["GET", "POST"])
+def document_editor(request):  # Document Editor.
+    pass
+
+
+@api_view(["GET", "POST"])
+def document_detail(request):  # Single document
+    pass
+
 
 @api_view(["GET"])
 def documents_to_be_signed(
@@ -237,42 +251,21 @@ def rejected_documents(request):  # List of rejected documents.
         )
 
 
-@api_view(["GET", "POST"])
-def template_list(request):
+@api_view(["GET"])
+def template_list(request):  # List of Created Templates.
     pass
 
 
 #
 @api_view(["GET", "POST"])
-def template_detail(request):
+def template_detail(request):  # Single Template
     pass
 
 
 #
 @api_view(["GET", "POST"])
-def template_editor(request):
+def template_editor(request):  # Editor for a template.
     pass
-
-
-@api_view(["GET", "POST"])
-def create_document(request):
-    pass
-
-
-@api_view(["GET", "POST"])
-def document_editor(request):
-    pass
-
-
-@api_view(["GET", "POST"])
-def document_detail(request):
-    pass
-
-
-@api_view(["GET", "POST"])
-def template_list(request):
-    pass
-
 
 
 # class Template(View):
@@ -443,8 +436,6 @@ def template_list(request):
 #             return JsonResponse({"status": 420, "message": "invalid form"})
 #         else:
 #             return redirect_to_login()
-
-
 
 
 # class UserAuthenticate(View):
