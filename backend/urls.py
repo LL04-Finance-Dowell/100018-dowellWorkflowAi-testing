@@ -6,58 +6,68 @@ from .wf_management import (
     reject_document,
     signature,
     internal_signature,
-    create_workflow,
+    workflow,
     approved_workflows,
+    rejected_workflows
 )
-from .views import (
-    documents_to_be_signed,
-    document_detail,
-    rejected_documents,
-    my_documents,
-    draft_documents,
+from .template_management import (
     template_detail,
     template_list,
+    approved_templates,
+    not_approved_templates,
+)
+
+from .document_management import (
+    document_detail,
+    document_editor,
+    documents_to_be_signed,
+    draft_documents,
+    my_documents,
     create_document,
+    rejected_documents,
 )
 
 urlpatterns = [
-    path("assign-emails/", assign_emails, name="assign_emails"),
-    path("generate-linkflow/", generate_link, name="generate_linkflow"),
-    path("add-to-workflow/", process_document, name="add_to_workflow"),
-    path("workflows/", create_workflow, name="workflows"),
-    path("approved-workflows/", approved_workflows, name="approved_workflows"),
+    path("emails/", assign_emails, name="assign_emails"),
+    path("linkflow/", generate_link, name="generate_linkflow"),
+    path("workflows/", workflow, name="workflows"),
+    path("workflows/process/", process_document, name="add_to_workflow"),
+    path("workflows/approved/", approved_workflows, name="approved_workflows"),
+    path("workflows/rejected/", rejected_workflows, name="rejected_workflows"),
     path("templates/", template_list, name="templates"),
+    path("templates/approved/", approved_templates, name="approved_templates"),
+    path("templates/pending/", not_approved_templates, name="not_approved_templates"),
     path("template/<str:template_id>/", template_detail, name="template"),
     path("documents/", create_document, name="documents"),
-    path("document/<str:document_id>/", document_detail, name="document"),
-    path("reject-document/", reject_document, name="reject_document"),
+    path("documents/reject/", reject_document, name="reject_document"),
     path(
-        "documents-to-sign/",
+        "documents/to-sign/",
         documents_to_be_signed,
         name="documents_to_sign",
     ),
     path(
-        "rejected-documents/",
+        "documents/rejected/",
         rejected_documents,
         name="rejected_documents",
     ),
     path(
-        "my-documents/",
+        "documents/mine/",
         my_documents,
         name="my_documents",
     ),
     path(
-        "draft-documents/",
+        "documents/drafts/",
         draft_documents,
         name="requested-documents",
     ),
+    path("documents/<str:document_id>/", document_detail, name="document"),
     path(
-        "signature/<str:document_id>/<str:uuid_hash>/<str:user_name>",
+        "signatures/<str:document_id>/<str:uuid_hash>/<str:user_name>/",
         signature,
         name="verify-document",
     ),
     path(
-        "internal-signature/<str:document_id>",
+        "signatures/internal/<str:document_id>/",
         internal_signature,
         name="internal_signature",
     ),

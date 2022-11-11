@@ -427,15 +427,6 @@ def get_wf_object(workflow_id):
         return []
 
 
-def get_approved_workflows(company_id):
-    fields = {"approved": True}
-    response_obj = dowellconnection(*WF_CONNECTION_LIST, "find", fields, "nil")
-    res_obj = json.loads(response_obj)
-    if len(res_obj["data"]):
-        return res_obj["data"]
-    else:
-        return []
-
 
 def get_all_wf_list():
     fields = {}
