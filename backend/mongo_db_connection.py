@@ -228,8 +228,13 @@ def save_wf(wf_name, int_wf_string, ext_wf_string, user, company_id):
 
 def update_wf(workflow_id, int_wf_string, ext_wf_string):
     url = "http://100002.pythonanywhere.com/"
-    print("---------Update wf before update int_wf_string---------------- \n :", int_wf_string)
-    print("---------Uodate wf before  ext_wf_string---------------- \n :", ext_wf_string)
+    print(
+        "---------Update wf before update int_wf_string---------------- \n :",
+        int_wf_string,
+    )
+    print(
+        "---------Uodate wf before  ext_wf_string---------------- \n :", ext_wf_string
+    )
     payload = json.dumps(
         {
             **WF_CONNECTION_DICT,
@@ -252,6 +257,26 @@ def update_wf(workflow_id, int_wf_string, ext_wf_string):
     print("SAVE WORKFLOW UPDATE--------------- \n", response.text)
     return response.text
 
+def update_wf_approval(workflow_id, approval):
+    url = "http://100002.pythonanywhere.com/"
+    payload = json.dumps(
+        {
+            **WF_CONNECTION_DICT,
+            # "command": "insert",
+            "command": "update",
+            "field": {
+                "_id": workflow_id,
+            },
+            "update_field": {
+                "approved": approval,
+            },
+            "platform": "bangalore",
+        }
+    )
+    headers = {"Content-Type": "application/json"}
+    response = requests.request("POST", url, headers=headers, data=payload)
+    print("SAVE WORKFLOW APPROVAL--------------- \n", response.text)
+    return response.text
 
 def save_template(name, workflow_id, data, created_by, company_id):
     url = "http://100002.pythonanywhere.com/"
@@ -394,6 +419,16 @@ def get_document_list(company_id):
 
 def get_wf_object(workflow_id):
     fields = {"_id": str(workflow_id)}
+    response_obj = dowellconnection(*WF_CONNECTION_LIST, "find", fields, "nil")
+    res_obj = json.loads(response_obj)
+    if len(res_obj["data"]):
+        return res_obj["data"]
+    else:
+        return []
+
+
+def get_approved_workflows(company_id):
+    fields = {"approved": True}
     response_obj = dowellconnection(*WF_CONNECTION_LIST, "find", fields, "nil")
     res_obj = json.loads(response_obj)
     if len(res_obj["data"]):

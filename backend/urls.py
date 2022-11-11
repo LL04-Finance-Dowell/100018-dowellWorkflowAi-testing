@@ -7,6 +7,7 @@ from .wf_management import (
     signature,
     internal_signature,
     create_workflow,
+    approved_workflows,
 )
 from .views import (
     documents_to_be_signed,
@@ -24,6 +25,7 @@ urlpatterns = [
     path("generate-linkflow/", generate_link, name="generate_linkflow"),
     path("add-to-workflow/", process_document, name="add_to_workflow"),
     path("workflows/", create_workflow, name="workflows"),
+    path("approved-workflows/", approved_workflows, name="approved_workflows"),
     path("templates/", template_list, name="templates"),
     path("template/<str:template_id>/", template_detail, name="template"),
     path("documents/", create_document, name="documents"),

@@ -14,6 +14,8 @@ from .mongo_db_connection import (
     get_uuid_object,
     get_wf_list,
     get_user_info_by_username,
+    get_approved_workflows,
+    update_wf_approval,
 )
 from .members import get_members
 from datetime import datetime
@@ -26,12 +28,20 @@ from .mail_format import formated_mail
 @api_view(["GET", "POST"])
 def create_workflow(request):  # create workflow, list workflows.
     if request.method == "GET":
-        wf_list = get_wf_list(request.session["company_id"])
-        wfs_to_display = []
-        for wf in wf_list:
-            if wf.get("workflow_title") and (wf.get("workflow_title") != "execute_wf"):
-                wfs_to_display.append(wf)
-        return Response(wf_list, status=status.HTTP_200_OK)
+        workflow_list = get_wf_list(request.session["company_id"])
+        if workflow_list:
+            wfs_to_display = []
+            for wf in workflow_list:
+                if wf.get("workflow_title") and (
+                    wf.get("workflow_title") != "execute_wf"
+                ):
+                    wfs_to_display.append(wf)
+            return Response(workflow_list, status=status.HTTP_200_OK)
+        else:
+            return Response(
+                {"message": "An Error Occurred!"},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
 
     if request.method == "POST":
         body = None
@@ -66,6 +76,31 @@ def create_workflow(request):  # create workflow, list workflows.
             {"message": "workflow added.", "workflow": workflow},
             status=status.HTTP_201_CREATED,
         )
+
+
+@api_view(["GET", "POST"])
+def approved_workflows(request):  # List and Approval
+    if request.method == "GET":
+        wf_list = get_approved_workflows(request.session["company_id"])
+        wfs_to_display = []
+        for wf in wf_list:
+            if wf.get("workflow_title") and (wf.get("workflow_title") != "execute_wf"):
+                wfs_to_display.append(wf)
+        return Response(wf_list, status=status.HTTP_200_OK)
+
+    if request.method == "POST":
+        workflow_id = request.POST["workflow_id"]
+        approval = True
+        response = update_wf_approval(workflow_id, approval)
+        if response:
+            return Response(
+                {"message": "Workflow Approved."}, status=status.HTTP_200_OK
+            )
+        else:
+            return Response(
+                {"message": "Workflow Could not be Approved."},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
 
 
 @api_view(["GET", "POST"])
