@@ -1,24 +1,28 @@
-import logo from './logo.svg';
-import './App.css';
+import { useState } from 'react';
+import { Routes, Route } from 'react-router-dom';
+import { useUserContext } from './contexts/UserContext';
+import useDowellLogin from './hooks/useDowellLogin';
+import WorkflowApp from './pages/App/WorkflowApp';
+import LandingPage from './pages/Landing/Home';
 
 function App() {
+  const { currentUser, setCurrentUser } = useUserContext();
+  const [ loading, setLoading ] = useState(true);
+
+  useDowellLogin(setCurrentUser, setLoading);
+
+  if (loading) return <></>
+
+  if (!currentUser) return (
+    <Routes>
+      <Route path={"/"} element={<LandingPage />} />
+    </Routes>
+  )
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Routes>
+      <Route path={"/"} element={<WorkflowApp />} />
+    </Routes>
   );
 }
 
