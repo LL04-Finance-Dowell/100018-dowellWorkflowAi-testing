@@ -42,7 +42,7 @@ urlpatterns = [
     path("templates/approved/", approved_templates, name="approved_templates"),
     path("templates/pending/", not_approved_templates, name="not_approved_templates"),
     path("templates/mine/", template_list, name="my_templates"),
-    path("template/<str:template_id>/", template_editor, name="template"),
+    path("templates/<str:template_id>/", template_editor, name="template"),
     path("documents/", create_document, name="documents"),
     path("documents/reject/", reject_document, name="reject_document"),
     path(
