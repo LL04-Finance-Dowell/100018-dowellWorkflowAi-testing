@@ -225,48 +225,40 @@ def internal_signature(request, *args, **kwargs):  # internal signature
                     {"message": "You Must Be Logged In"},
                     status=status.HTTP_401_UNAUTHORIZED,
                 )
-    if request.method == "POST":
-        if request.session["user_name"]:
-            document_data = request.POST.get("documentData", False)
-            document_id = request.POST.get("document_id", False)
-            if document_id:
-                if document_data:
-                    doc = get_document_object(document_id)
-                    doc, doc_status, step_name = workflow_verification(request, doc)
-                    if doc_status and step_name != "":
-                        data = json.loads(request.POST["documentData"])
-                        doc = json.loads(
-                            update_document(
-                                request.POST["document_id"],
-                                {"content": json.dumps(data)},
-                            )
-                        )
-                        return Response(
-                            {"message": "Document Signing Success"},
-                            status=status.HTTP_200_OK,
-                        )
-                    else:
-                        return Response(
-                            {
-                                "message": "Failed to Sign Document.",
-                            },
-                            status=status.HTTP_400_BAD_REQUEST,
-                        )
-                else:
-                    return Response(
-                        {"message": "An Error Occurred!"},
-                        status=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                    )
-            else:
-                return Response(
-                    {"message": "An Error Occurred!"},
-                    status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+    if request.method == "POST" and request.session["user_name"]:
+        document_data = request.POST.get("documentData", False)
+        document_id = request.POST.get("document_id", False)
+        if not document_id and document_data:
+            return Response(
+                {"message": "An Error Occurred!"},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
+        doc = get_document_object(document_id)
+        doc, doc_status, step_name = workflow_verification(request, doc)
+        if doc_status and step_name != "":
+            data = json.loads(request.POST["documentData"])
+            doc = json.loads(
+                update_document(
+                    request.POST["document_id"],
+                    {"content": json.dumps(data)},
                 )
+            )
+            return Response(
+                {"message": "Document Signing Success"},
+                status=status.HTTP_200_OK,
+            )
         else:
             return Response(
-                {"message": "You Need to Be Logged In"},
-                status=status.HTTP_401_UNAUTHORIZED,
+                {
+                    "message": "Failed to Sign Document.",
+                },
+                status=status.HTTP_400_BAD_REQUEST,
             )
+    else:
+        return Response(
+            {"message": "You Need to Be Logged In"},
+            status=status.HTTP_401_UNAUTHORIZED,
+        )
 
 
 @api_view(["GET", "POST"])
@@ -355,15 +347,15 @@ def generate_link(request):  # generate link for the workflow to be shared.
         save_uuid_hash(uuid_hash, role, document_id)
         link = Site.objects.get_current().domain + route
 
-        if link:
-            return Response(
-                {"message": "Link Genereted Successfully", "link": link},
-                status=status.HTTP_201_CREATED,
-            )
-        else:
+        if not link:
             return Response(
                 {"message": "Link Generation Failed"}, status=status.HTTP_204_NO_CONTENT
             )
+        return Response(
+            {"message": "Link Genereted Successfully", "link": link},
+            status=status.HTTP_201_CREATED,
+        )
+
     except:
         return Response(
             {"message": "An Error Occurred."},
@@ -472,82 +464,88 @@ def reject_document(request, *args, **kwargs):  # Reject a reqeust to sign a doc
         body = json.loads(request.body)
         doc = get_document_object(body["file_id"])
         wf = get_wf_object(doc["workflow_id"])
-        if doc and wf:
-            int_wf_steps = wf["int_wf_string"]
-            ext_wf_steps = wf["ext_wf_string"]
-            user = get_user_info_by_username(request.session["user_name"])
-            if user:
-                if get_user_in_workflow(
-                    user, wf["int_wf_string"]
-                ) or get_user_in_workflow(user, wf["ext_wf_string"]):
-                    # Intenal Workflow.
-                    if wf["int_wf_string"] != [] and doc["int_wf_step"] != "complete":
-                        if doc["int_wf_position"] > 0:
-                            doc = json.loads(
-                                update_document(
-                                    doc["_id"],
-                                    {
-                                        "int_wf_position": doc["int_wf_position"] - 1,
-                                        "int_wf_step": int_wf_steps[
-                                            doc["int_wf_position"] - 1
-                                        ][0],
-                                        "reject_message": body["reason"],
-                                        "rejected_by": request.session["user_name"],
-                                    },
-                                )
-                            )
-                        else:
-                            doc = json.loads(
-                                update_document(
-                                    doc["_id"],
-                                    {
-                                        "int_wf_position": 0,
-                                        "int_wf_step": "",
-                                        "reject_message": body["reason"],
-                                        "rejected_by": request.session["user_name"],
-                                    },
-                                )
-                            )
-                    # External Workflow.
-                    if wf["ext_wf_string"] != "" and doc["ext_wf_step"] != "complete":
-                        if doc["ext_wf_position"] > 0:
-                            doc = json.loads(
-                                update_document(
-                                    doc["_id"],
-                                    {
-                                        "ext_wf_position": doc["ext_wf_position"] - 1,
-                                        "ext_wf_step": ext_wf_steps[
-                                            doc["ext_wf_position"] - 1
-                                        ][0],
-                                        "reject_message": body["reason"],
-                                        "rejected_by": request.session["user_name"],
-                                    },
-                                )
-                            )
-                    else:
-                        return Response(
-                            {"message": "Unable to Reject Document."},
-                            status=status.HTTP_300_MULTIPLE_CHOICES,
-                        )
-
-                    return Response(
-                        {"message": "Document Rejection Success"},
-                        status=status.HTTP_200_OK,
-                    )
-                else:
-                    return Response(
-                        {"message": "Workflow Authority is Missing for this user."},
-                        status=status.HTTP_403_FORBIDDEN,
-                    )
-            else:
-                return Response(
-                    {"message": "You Need To Be LoggedIn"},
-                    status=status.HTTP_401_UNAUTHORIZED,
-                )
-        else:
+        if not doc:
             return Response(
                 {"message": "An Error Occurred!"},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
+        if not wf:
+            return Response(
+                {"message": "An Error Occurred!"},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
+
+        # if doc and wf:
+        int_wf_steps = wf["int_wf_string"]
+        ext_wf_steps = wf["ext_wf_string"]
+        user = get_user_info_by_username(request.session["user_name"])
+        if not user:
+            return Response(
+                {"message": "You Need To Be LoggedIn"},
+                status=status.HTTP_401_UNAUTHORIZED,
+            )
+
+        if get_user_in_workflow(user, wf["int_wf_string"]) or get_user_in_workflow(
+            user, wf["ext_wf_string"]
+        ):
+            # Intenal Workflow.
+            if wf["int_wf_string"] != [] and doc["int_wf_step"] != "complete":
+                if doc["int_wf_position"] > 0:
+                    doc = json.loads(
+                        update_document(
+                            doc["_id"],
+                            {
+                                "int_wf_position": doc["int_wf_position"] - 1,
+                                "int_wf_step": int_wf_steps[doc["int_wf_position"] - 1][
+                                    0
+                                ],
+                                "reject_message": body["reason"],
+                                "rejected_by": request.session["user_name"],
+                            },
+                        )
+                    )
+                else:
+                    doc = json.loads(
+                        update_document(
+                            doc["_id"],
+                            {
+                                "int_wf_position": 0,
+                                "int_wf_step": "",
+                                "reject_message": body["reason"],
+                                "rejected_by": request.session["user_name"],
+                            },
+                        )
+                    )
+                    # External Workflow.
+            if wf["ext_wf_string"] != "" and doc["ext_wf_step"] != "complete":
+                if doc["ext_wf_position"] > 0:
+                    doc = json.loads(
+                        update_document(
+                            doc["_id"],
+                            {
+                                "ext_wf_position": doc["ext_wf_position"] - 1,
+                                "ext_wf_step": ext_wf_steps[doc["ext_wf_position"] - 1][
+                                    0
+                                ],
+                                "reject_message": body["reason"],
+                                "rejected_by": request.session["user_name"],
+                            },
+                        )
+                    )
+            else:
+                return Response(
+                    {"message": "Unable to Reject Document."},
+                    status=status.HTTP_300_MULTIPLE_CHOICES,
+                )
+
+            return Response(
+                {"message": "Document Rejection Success"},
+                status=status.HTTP_200_OK,
+            )
+        else:
+            return Response(
+                {"message": "Workflow Authority is Missing for this user."},
+                status=status.HTTP_403_FORBIDDEN,
             )
     else:
         return Response(
