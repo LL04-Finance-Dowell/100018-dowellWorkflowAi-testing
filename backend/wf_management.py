@@ -222,7 +222,7 @@ def internal_signature(request, *args, **kwargs):  # internal signature
         else:
             if verify:
                 return Response(
-                    {"message": "You must be logged in"},
+                    {"message": "You Must Be Logged In"},
                     status=status.HTTP_401_UNAUTHORIZED,
                 )
     if request.method == "POST":
