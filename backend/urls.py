@@ -16,6 +16,7 @@ from .template_management import (
     template_list,
     approved_templates,
     not_approved_templates,
+    create_template,
 )
 
 from .document_management import (
@@ -36,7 +37,7 @@ urlpatterns = [
     path("workflows/drafts/", draft_workflows, name="add_to_workflow"),
     path("workflows/approved/", approved_workflows, name="approved_workflows"),
     path("workflows/rejected/", rejected_workflows, name="rejected_workflows"),
-    path("templates/", template_list, name="templates"),
+    path("templates/", create_template, name="templates"),
     path("templates/approved/", approved_templates, name="approved_templates"),
     path("templates/pending/", not_approved_templates, name="not_approved_templates"),
     path("template/<str:template_id>/", template_detail, name="template"),

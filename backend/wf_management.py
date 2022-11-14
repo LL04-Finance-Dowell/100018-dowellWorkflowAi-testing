@@ -26,9 +26,10 @@ from .mail_format import formated_mail
 
 @api_view(["GET", "POST"])
 def workflow(request):  # create workflow, list workflows.
+    # company = request.session["company_id"]
+    company = "6365ee18ff915c925f3a6691"
     if request.method == "GET":
-        # workflow_list = get_wf_list(request.session["company_id"])
-        workflow_list = get_wf_list("6365ee18ff915c925f3a6691")
+        workflow_list = get_wf_list(company)
         if workflow_list:
             wfs_to_display = []
             for wf in workflow_list:
@@ -72,7 +73,7 @@ def workflow(request):  # create workflow, list workflows.
             int_wf_string=int_wf_string,
             ext_wf_string=ext_wf_string,
             user=request.session["user_name"],
-            company_id=request.session["company_id"],
+            company_id=company,
         )
         print("Workflow Created ---------\n", workflow)
         return Response(
