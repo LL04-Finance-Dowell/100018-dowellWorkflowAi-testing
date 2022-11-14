@@ -43,8 +43,11 @@ def workflow(request):  # create workflow, list workflows.
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
 
-    if request.method == "POST":
+    if (
+        request.method == "POST"
+    ):  # TODO: Check on the introduction of the draft True to workflow
         body = None
+        draft = True
         try:
             body = json.loads(request.body)
         except:
@@ -114,6 +117,7 @@ def approved_workflows(request):  # List and Approval
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
 
+
 @api_view(["GET"])
 def rejected_workflows(request):  # List and Approval
     if request.method == "GET":
@@ -134,6 +138,29 @@ def rejected_workflows(request):  # List and Approval
                 {"message": "An Error Occurred!"},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
+
+
+@api_view(["GET"])
+def draft_workflows(request):  # List of drafts workflows.
+    if request.method == "GET":
+        # workflow_list = get_wf_list(request.session["company_id"])
+        workflow_list = get_wf_list("6365ee18ff915c925f3a6691")
+        if workflow_list:
+            wfs_to_display = []
+            for wf in workflow_list:
+                if (
+                    wf.get("workflow_title")
+                    and (wf.get("workflow_title") != "execute_wf")
+                    and wf.get("draft") == True
+                ):
+                    wfs_to_display.append(wf)
+            return Response(wfs_to_display, status=status.HTTP_200_OK)
+        else:
+            return Response(
+                {"message": "An Error Occurred!"},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
+
 
 @api_view(["GET", "POST"])
 def assign_emails(request):
@@ -247,7 +274,7 @@ def signature(request, *args, **kwargs):  # Signature from email link.
     verify = True
     is_template = False
     doc_viewer = False
-    if request.method == "GET": 
+    if request.method == "GET":
         if kwargs.get("uuid_hash", None):
             uuid_obj = get_uuid_object(uuid_hash=kwargs["uuid_hash"])
             document_obj = get_document_object(document_id=kwargs["document_id"])
@@ -258,25 +285,25 @@ def signature(request, *args, **kwargs):  # Signature from email link.
                 )
             if not document_obj:
                 return Response(
-                        {"message": "An Error Occurred!"},
-                        status=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                )   
+                    {"message": "An Error Occurred!"},
+                    status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                )
             document_data = {
-                    "id": document_obj["_id"],
-                    "name": document_obj["document_name"],
-                    "created_by": document_obj["created_by"],
-                    "auth_role_list": get_auth_roles(document_obj),
-                    "file": document_obj["content"],
-                    "verify": verify,
-                        "username": kwargs.get("user_name"),
-                        "template": is_template,
-                        "doc_viewer": doc_viewer,
-                        "company_id": document_obj["company_id"],
-                        "user_email": uuid_obj["email"],
+                "id": document_obj["_id"],
+                "name": document_obj["document_name"],
+                "created_by": document_obj["created_by"],
+                "auth_role_list": get_auth_roles(document_obj),
+                "file": document_obj["content"],
+                "verify": verify,
+                "username": kwargs.get("user_name"),
+                "template": is_template,
+                "doc_viewer": doc_viewer,
+                "company_id": document_obj["company_id"],
+                "user_email": uuid_obj["email"],
             }
             return Response(
-                    {"message": "Ready for signature", "document": document_data},
-                    status=status.HTTP_200_OK,
+                {"message": "Ready for signature", "document": document_data},
+                status=status.HTTP_200_OK,
             )
         else:
             return Response(
@@ -284,7 +311,7 @@ def signature(request, *args, **kwargs):  # Signature from email link.
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
     # Finalize document for next workflow
-    if request.method == "POST":  
+    if request.method == "POST":
         doc = get_document_object(request.POST["document_id"])
         doc, doc_status, step_name = workflow_verification(request, doc)
         if doc_status and step_name != "":

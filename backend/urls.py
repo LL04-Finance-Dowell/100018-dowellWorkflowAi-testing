@@ -8,7 +8,8 @@ from .wf_management import (
     internal_signature,
     workflow,
     approved_workflows,
-    rejected_workflows
+    rejected_workflows,
+    draft_workflows,
 )
 from .template_management import (
     template_detail,
@@ -32,6 +33,7 @@ urlpatterns = [
     path("linkflow/", generate_link, name="generate_linkflow"),
     path("workflows/", workflow, name="workflows"),
     path("workflows/process/", process_document, name="add_to_workflow"),
+    path("workflows/drafts/", draft_workflows, name="add_to_workflow"),
     path("workflows/approved/", approved_workflows, name="approved_workflows"),
     path("workflows/rejected/", rejected_workflows, name="rejected_workflows"),
     path("templates/", template_list, name="templates"),
