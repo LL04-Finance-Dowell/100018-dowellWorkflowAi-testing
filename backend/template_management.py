@@ -1,28 +1,14 @@
 import json
-import requests
-from django import forms
-from django.views import View
-from django.shortcuts import render, redirect, reverse
-from django.views.decorators.csrf import csrf_exempt
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from .dowellconnection import dowellconnection
 from rest_framework import status
 from .mongo_db_connection import (
-    get_all_wf_list,
-    save_wf,
     get_wf_list,
-    get_user_list,
     get_template_list,
-    get_document_list,
     save_template,
     get_template_object,
     update_template,
-    save_document,
-    update_wf,
-    get_uuid,
-)
-from .mongo_db_connection import (
+    update_template_approval,
     get_wf_object,
     get_user_info_by_username,
 )
@@ -126,7 +112,7 @@ def approved_templates(request):
         template_id = request.POST["template_id"]
         approval = True
         response = json.loads(
-            update_wf_approval(template_id, approval)
+            update_template_approval(template_id, approval)
         )  # TODO: Check this response.
 
         if response["isSuccess"]:
