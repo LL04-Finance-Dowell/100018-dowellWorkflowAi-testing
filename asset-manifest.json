@@ -1,0 +1,15 @@
+{
+  "files": {
+    "main.css": "/100018-dowellWorkflowAi-testing/static/css/main.a0c4b003.css",
+    "main.js": "/100018-dowellWorkflowAi-testing/static/js/main.59488cb1.js",
+    "static/js/787.cda612ba.chunk.js": "/100018-dowellWorkflowAi-testing/static/js/787.cda612ba.chunk.js",
+    "index.html": "/100018-dowellWorkflowAi-testing/index.html",
+    "main.a0c4b003.css.map": "/100018-dowellWorkflowAi-testing/static/css/main.a0c4b003.css.map",
+    "main.59488cb1.js.map": "/100018-dowellWorkflowAi-testing/static/js/main.59488cb1.js.map",
+    "787.cda612ba.chunk.js.map": "/100018-dowellWorkflowAi-testing/static/js/787.cda612ba.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.a0c4b003.css",
+    "static/js/main.59488cb1.js"
+  ]
+}
