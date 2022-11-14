@@ -23,12 +23,9 @@ from .mongo_db_connection import (
     get_uuid,
 )
 from .mongo_db_connection import (
-    get_document_object,
-    update_document,
     get_wf_object,
     get_user_info_by_username,
 )
-from .members import get_members
 
 
 @api_view(["GET", "POST"])
@@ -58,7 +55,7 @@ def create_template(request):  # Template Creation.
                         old_template = get_template_object(
                             form.cleaned_data["copy_template"]
                         )
-                        data = old_template["content"]
+                        data = old_template["content"]  # TODO: Add an value for input
                     except:
                         pass
                 resObj = json.loads(
@@ -123,14 +120,52 @@ def create_template(request):  # Template Creation.
 
 
 @api_view(["GET"])
-def approved_templates(request):  # List of Created Templates.
+def approved_templates(request):
+    company = request.session["company_id"]
+    if request.method == "POST":  # Template Approval.
+        template_id = request.POST["template_id"]
+        approval = True
+        response = json.loads(
+            update_wf_approval(template_id, approval)
+        )  # TODO: Check this response.
 
-    pass
+        if response["isSuccess"]:
+            return Response(
+                {"message": "Template Approved."}, status=status.HTTP_200_OK
+            )
+        else:
+            return Response(
+                {"message": "Template Could not be Approved."},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
+
+    if request.method == "GET":  # List of Created Templates.
+        template_list = get_template_list(company_id=company)
+        if not template_list:
+            return Response(
+                {"message": "An Error Occurred."},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
+        templates = []
+        for tm in template_list:
+            if tm.get("approved") == True:
+                templates.append(tm)
+        return Response(templates, status=status.HTTP_200_OK)
 
 
 @api_view(["GET", "POST"])
 def not_approved_templates(request):  # List of Templates to be approved.
-    pass
+    template_list = get_template_list(company_id=request.session["company_id"])
+    if not template_list:
+        return Response(
+            {"message": "An Error Occurred."},
+            status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+        )
+    templates = []
+    for tm in template_list:
+        if tm.get("approved") == False:
+            templates.append(tm)
+    return Response(templates, status=status.HTTP_200_OK)
 
 
 @api_view(["GET"])
@@ -184,7 +219,7 @@ def template_editor(request, *args, **kwargs):  # Editor for a template.
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
 
-    if request.method == "GET" and user_name: # Data for the Template Editor.
+    if request.method == "GET" and user_name:  # Data for the Template Editor.
         template_obj = get_template_object(template_id=kwargs["template_id"])
         if not template_obj:
             return Response(

@@ -30,17 +30,20 @@ from .members import get_members
 
 @api_view(["GET", "POST"])
 def create_document(request):  # Document Creation.
-    if request.method == "GET" and request.session["user_name"]:
+    company = request.session["company_id"]
+    user_name = request.session["user_name"]
+
+    if request.method == "GET" and user_name:
         template_list = [(0, "__Template Name__")]
-        for i in get_template_list(company_id=request.session["company_id"]):
+        for i in get_template_list(company_id=company):
             template_list.append((i["_id"], i["template_name"]))
         return Response({"template_list": template_list}, status=status.HTTP_200_OK)
 
-    if request.method == "POST" and request.session["user_name"]:
+    if request.method == "POST" and user_name:
         data = ""
-        company_id = request.session["company_id"]
-        created_by = request.session["user_name"]
-        form = request.POST #TODO: We will get the data from form 1 by 1 - Dont Worry.
+        company_id = company
+        created_by = user_name
+        form = request.POST  # TODO: We will get the data from form 1 by 1 - Dont Worry.
         if form.is_valid():
             template_id = form.cleaned_data["copy_template"]
             name = form.cleaned_data["name"]
@@ -53,7 +56,8 @@ def create_document(request):  # Document Creation.
                     {
                         "message": "Document Created Successfully",
                         "document_id": res["inserted_id"],
-                    }, status=status.HTTP_201_CREATED
+                    },
+                    status=status.HTTP_201_CREATED,
                 )
             return Response(
                 {"message": "Unable to Create Document"},
@@ -76,20 +80,41 @@ def document_detail(request, *args, **kwargs):  # Single document
     verify = False
     template = False
     doc_viewer = False
+    user_name = request.session["user_name"]
 
-    if request.method == "GET" and request.session["user_name"]:
+    if request.method == "GET" and user_name:
         document_obj = get_document_object(document_id=kwargs["document_id"])
-        user = get_user_info_by_username(request.session["user_name"])
+        if not document_obj:
+            return Response(
+                {"message": "An Error Occurred!"},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
+        user = get_user_info_by_username(user_name)
+        if not user:
+            return Response(
+                {"message": "An Error Occurred!"},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
         workflow_id = document_obj["workflow_id"]
         wf_single = get_wf_object(workflow_id)
+        if not wf_single:
+            return Response(
+                {"message": "An Error Occurred!"},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
         member_list = get_members(str(request.session["session_id"]))
+        if not member_list:
+            return Response(
+                {"message": "An Error Occurred!"},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
         document_data = {
             "id": document_obj["_id"],
             "name": document_obj["document_name"],
             "created_by": document_obj["created_by"],
             "auth_role_list": get_auth_roles(document_obj),
             "file": document_obj["content"],
-            "username": request.session["user_name"],
+            "username": user_name,
             "verify": verify,
             "template": template,
             "doc_viewer": doc_viewer,
@@ -97,7 +122,7 @@ def document_detail(request, *args, **kwargs):  # Single document
             "user_email": user["Email"],
             "wf_list": wf_single,
             "member_list": member_list,
-            "workflow_id": workflow_id,  # eric to send this with the form
+            "workflow_id": workflow_id,
         }
         return Response(
             {
@@ -116,10 +141,20 @@ def document_detail(request, *args, **kwargs):  # Single document
             )
 
     # Save Document.
-    if request.method == "POST" and request.session["user_name"]:
+    if request.method == "POST" and user_name:
         body_unicode = request.body.decode("utf-8")
         body = json.loads(body_unicode)
+        if not body:
+            return Response(
+                {"message": "An Error Occurred!"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
         res = update_document(body["file_id"], {"content": json.dumps(body["content"])})
+        if not res:
+            return Response(
+                {"message": "An Error Occurred!"},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
         res_obj = json.loads(res)
         if res_obj["isSuccess"]:
             return Response(

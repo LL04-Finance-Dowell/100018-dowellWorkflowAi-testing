@@ -241,136 +241,22 @@ class UserAuthenticate(View):
         return redirect(self.redirect_url)
 
 
-def get_auth_roles(document_obj):
-    role_list = list()
-    content = document_obj["content"]
-    res_content_obj = json.loads(content)
-    for i in res_content_obj[0]:
-        role_list.append(i["auth_user"])
-    return role_list
-
-
-class DocumentEditor(View):
-    verify = False
-    template = False
-    doc_viewer = False
-
-    def get(self, request, *args, **kwargs):
-        if request.session["user_name"]:
-            document_obj = get_document_object(document_id=kwargs["document_id"])
-            user = get_user_info_by_username(request.session["user_name"])
-            # print("Document object in Editor", document_obj["int_wf_step"])
-            workflow_id = document_obj["workflow_id"]
-            wf_single = get_wf_object(workflow_id)
-            # print("User ---------llll", user)
-            member_list = get_members(str(request.session["session_id"]))
-            # print("Members are-----------", member_list)
-            ctx = {
-                "id": document_obj["_id"],
-                "name": document_obj["document_name"],
-                "created_by": document_obj["created_by"],
-                "auth_role_list": get_auth_roles(document_obj),
-                "file": document_obj["content"],
-                "username": request.session["user_name"],
-                "verify": self.verify,
-                "template": self.template,
-                "doc_viewer": self.doc_viewer,
-                "company_id": document_obj["company_id"],
-                "user_email": user["Email"],
-                "wf_list": wf_single,
-                "member_list": member_list,
-                "workflow_id": workflow_id,  # eric to send this with the form
-            }
-            # print("ctx---------------------")
-            # print(ctx)
-            return render(
-                request,
-                "editor.html",
-                context={
-                    "curr_user_role": user["Role"],
-                    "document": ctx,
-                    "member_list": member_list,
-                    "workflow_id": workflow_id,
-                },
-            )
-        else:
-            if self.verify:
-                return redirect(
-                    "documentation:user-authentication",
-                    document_id=kwargs["document_id"],
-                )
-            return redirect("https://100014.pythonanywhere.com/logout")
-
-    def post(self, request, *args, **kwargs):
-        if request.session["user_name"]:
-            body_unicode = request.body.decode("utf-8")
-            body = json.loads(body_unicode)
-            # print("Document Post:----------------\n", body["file_id"], str(body["content"]))
-            res = update_document(
-                body["file_id"], {"content": json.dumps(body["content"])}
-            )
-            res_obj = json.loads(res)
-            # print("This is a response from Report server ----------------\n", res)
-            if res_obj["isSuccess"]:
-                return JsonResponse(
-                    {"status": 200, "res": res}
-                )  #   "url": reverse('documentation:document-editor', kwargs={'document_id': body['file_id']})
-            else:
-                return JsonResponse(
-                    {"status": 400, "message": "Unable to save on database"}
-                )
-            """
-            Uncomment this when document update is corrected.
-            if resObj['isSuccess'] :
-                return JsonResponse({"status": 200, "url": reverse('documentation:document-editor', kwargs={'document_id':document_id'})  #redirect('documentation:document-editor', template_id=resObj['inserted_id'])
-
-            """
-        else:
-            return JsonResponse({"status": 420, "message": "invalid data"})
 
 
 def get_hash(document_id):
     res = get_uuid(document_id)
     if res != []:
         unique_hash = res["uuid_hash"]
-        return JsonResponse({"status": 200, "unique_hash": unique_hash})
+        return Response({"status": 200, "unique_hash": unique_hash})
     else:
-        return JsonResponse({"status": 204})
+        return Response({"status": 204})
 
 
-class ThankYou(View):
-    def get(self, request, *args, **kwargs):
-        return render(request, "thank_you.html")
 
 
-class DocumentViewer(DocumentEditor):
-    verify = False
-    template = False
-    doc_viewer = True
-
-    def post(self, request, *args, **kwargs):
-        pass
 
 
-def previous_template(request):
-    template_list = get_template_list(company_id=request.session["company_id"])
-    for item in template_list:
-        item["template_id"] = item["_id"]
-    return render(request, "prev_temp.html", context={"template_list": template_list})
 
-
-class Document(View):
-    pass
-
-
-def add_members(request):
-    reject_list = []
-    return render(request, "reject_list.html", context={"reject_list": reject_list})
-
-
-def requested_documents(request):
-    reject_list = []
-    return render(request, "reject_list.html", context={"reject_list": reject_list})
 
 
 
