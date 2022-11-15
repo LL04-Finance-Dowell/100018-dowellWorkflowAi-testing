@@ -29,7 +29,10 @@ from .document_management import (
     rejected_documents,
 )
 
+from .views import api
+
 urlpatterns = [
+    path("", api, name="api"),
     path("emails/", assign_emails, name="assign_emails"),
     path("linkflow/", generate_link, name="generate_linkflow"),
     path("workflows/", workflow, name="workflows"),
