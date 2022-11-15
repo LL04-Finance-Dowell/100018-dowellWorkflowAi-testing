@@ -23,11 +23,13 @@ export default function useDowellLogin ( updateState , updatePageWhenDone ) {
 
             updateState(res.data);
             localStorage.setItem("workFlowUser", JSON.stringify(res.data))
+            localStorage.setItem("session_id", session_id)
             updatePageWhenDone(false);
 
         }).catch(err => {
 
             localStorage.clear("workFlowUser")
+            localStorage.clear("session_id")
             updatePageWhenDone(false);
             return Promise.reject(err);
 
