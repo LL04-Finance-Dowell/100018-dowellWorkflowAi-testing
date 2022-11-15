@@ -228,8 +228,13 @@ def save_wf(wf_name, int_wf_string, ext_wf_string, user, company_id):
 
 def update_wf(workflow_id, int_wf_string, ext_wf_string):
     url = "http://100002.pythonanywhere.com/"
-    print("---------Update wf before update int_wf_string---------------- \n :", int_wf_string)
-    print("---------Uodate wf before  ext_wf_string---------------- \n :", ext_wf_string)
+    print(
+        "---------Update wf before update int_wf_string---------------- \n :",
+        int_wf_string,
+    )
+    print(
+        "---------Uodate wf before  ext_wf_string---------------- \n :", ext_wf_string
+    )
     payload = json.dumps(
         {
             **WF_CONNECTION_DICT,
@@ -250,6 +255,28 @@ def update_wf(workflow_id, int_wf_string, ext_wf_string):
     headers = {"Content-Type": "application/json"}
     response = requests.request("POST", url, headers=headers, data=payload)
     print("SAVE WORKFLOW UPDATE--------------- \n", response.text)
+    return response.text
+
+
+def update_wf_approval(workflow_id, approval):
+    url = "http://100002.pythonanywhere.com/"
+    payload = json.dumps(
+        {
+            **WF_CONNECTION_DICT,
+            # "command": "insert",
+            "command": "update",
+            "field": {
+                "_id": workflow_id,
+            },
+            "update_field": {
+                "approved": approval,
+            },
+            "platform": "bangalore",
+        }
+    )
+    headers = {"Content-Type": "application/json"}
+    response = requests.request("POST", url, headers=headers, data=payload)
+    print("SAVE WORKFLOW APPROVAL--------------- \n", response.text)
     return response.text
 
 
@@ -307,6 +334,28 @@ def update_template(template_id, data):
     headers = {"Content-Type": "application/json"}
     response = requests.request("POST", url, headers=headers, data=payload)
     print("TEMPLATE UPDATED----------- \n", response.text)
+    return response.text
+
+
+def update_template_approval(template_id, approval):
+    url = "http://100002.pythonanywhere.com/"
+    payload = json.dumps(
+        {
+            **TEMPLATE_CONNECTION_DICT,
+            # "command": "insert",
+            "command": "update",
+            "field": {
+                "_id": template_id,
+            },
+            "update_field": {
+                "approved": approval,
+            },
+            "platform": "bangalore",
+        }
+    )
+    headers = {"Content-Type": "application/json"}
+    response = requests.request("POST", url, headers=headers, data=payload)
+    print("SAVE TEMPLATE APPROVAL--------------- \n", response.text)
     return response.text
 
 
