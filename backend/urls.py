@@ -22,7 +22,6 @@ from .template_management import (
 
 from .document_management import (
     document_detail,
-    document_editor,
     documents_to_be_signed,
     draft_documents,
     my_documents,
