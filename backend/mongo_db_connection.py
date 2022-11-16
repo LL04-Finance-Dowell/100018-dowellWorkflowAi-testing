@@ -99,7 +99,7 @@ DOCUMENT_CONNECTION_DICT = {
     "function_ID": "ABCDE",
 }
 
-
+print(TEMPLATE_CONNECTION_LIST)
 def get_event_id():
     dd = datetime.now()
     time = dd.strftime("%d:%m:%Y,%H:%M:%S")

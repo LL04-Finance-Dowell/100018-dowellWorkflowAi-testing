@@ -29,6 +29,10 @@ from .document_management import (
     rejected_documents,
 )
 
+from .intelligent_search import(
+    search,
+)
+
 from .views import api
 
 urlpatterns = [
@@ -47,6 +51,7 @@ urlpatterns = [
     path("templates/<str:template_id>/", template_editor, name="template"),
     path("documents/", create_document, name="documents"),
     path("documents/reject/", reject_document, name="reject_document"),
+
     path(
         "documents/to-sign/",
         documents_to_be_signed,
@@ -78,4 +83,7 @@ urlpatterns = [
         internal_signature,
         name="internal_signature",
     ),
+    path("search/<str:str>", search, name="search_result"),
+
+    
 ]
