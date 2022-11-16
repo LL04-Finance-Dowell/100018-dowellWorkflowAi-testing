@@ -9,9 +9,8 @@ from django.db.models import  Q
 # searchable =  [get_template_object(id),]
 
 @api_view(["GET",'POST'])
-def search(request,str):
+def search(request,str,company='6365ee18ff915c925f3a6691'):
     # print(request.POST.cleaned_data.keys)
-    company = "6365ee18ff915c925f3a6691"
     get_search_result={'workflow':[],'document':[],'template':[]}
     if request.method == "GET":
         workflow_list = get_wf_list(company)
