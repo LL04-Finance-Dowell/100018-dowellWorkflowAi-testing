@@ -12,7 +12,6 @@ from .wf_management import (
     draft_workflows,
 )
 from .template_management import (
-    template_detail,
     template_list,
     template_editor,
     approved_templates,
