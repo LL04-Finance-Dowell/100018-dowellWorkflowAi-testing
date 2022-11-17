@@ -280,7 +280,7 @@ def update_wf_approval(workflow_id, approval):
     return response.text
 
 
-def save_template(name, workflow_id, data, created_by, company_id):
+def save_template(name, data, created_by, company_id):
     url = "http://100002.pythonanywhere.com/"
     event_id = get_event_id()
     payload = json.dumps(
@@ -291,7 +291,6 @@ def save_template(name, workflow_id, data, created_by, company_id):
                 "eventId": event_id,
                 "template_name": name,
                 "content": data,
-                "workflow_id": workflow_id,
                 "company_id": company_id,
                 "created_by": created_by,
             },

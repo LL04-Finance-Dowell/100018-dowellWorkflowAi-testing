@@ -62,7 +62,7 @@ def workflow(request):  # create workflow, list workflows.
             )
         int_wf_string = []
         ext_wf_string = []
-        if len(body["internal"]):
+        if len(body["internal"]): 
             for step in body["internal"]:
                 int_wf_string.append([step["name"], step["roleID"]])
         if len(body["external"]):
