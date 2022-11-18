@@ -15,8 +15,8 @@ from .mongo_db_connection import (
     get_wf_list,
     get_user_info_by_username,
     update_wf_approval,
+    get_members
 )
-from .members import get_members
 from datetime import datetime
 from django.core.mail import send_mail
 from django.urls import reverse

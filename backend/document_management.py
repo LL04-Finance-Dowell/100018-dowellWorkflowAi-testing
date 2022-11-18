@@ -10,8 +10,9 @@ from .mongo_db_connection import (
     update_document,
     get_wf_object,
     get_user_info_by_username,
+    get_members,
 )
-from .members import get_members
+
 
 
 @api_view(["GET", "POST"])

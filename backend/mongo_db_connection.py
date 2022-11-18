@@ -2,7 +2,7 @@ import requests
 import json
 from datetime import datetime
 from .dowellconnection import dowellconnection
-
+import requests
 
 QR_ID_CONNECTION_LIST = [
     "Documents",
@@ -99,7 +99,17 @@ DOCUMENT_CONNECTION_DICT = {
     "function_ID": "ABCDE",
 }
 
-print(TEMPLATE_CONNECTION_LIST)
+
+
+url = "https://100014.pythonanywhere.com/api/userinfo/"
+# print(TEMPLATE_CONNECTION_LIST)
+
+def get_members(session_id):
+    payload = {"session_id": session_id}
+    r = requests.post(url=url, data=payload)
+    return r.json()
+
+
 def get_event_id():
     dd = datetime.now()
     time = dd.strftime("%d:%m:%Y,%H:%M:%S")

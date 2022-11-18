@@ -17,7 +17,6 @@ from .mongo_db_connection import (
 @api_view(["GET", "POST"])
 def template_editor(request, *args, **kwargs):  # Editor for a template.
     user_name = request.session["user_name"]
-
     if request.method == "POST" and user_name:  # Save Template.
         body = json.loads(request.body)
         if not body:
