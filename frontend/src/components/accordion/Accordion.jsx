@@ -1,35 +1,35 @@
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
-import { useState, useRef } from "react";
+import Collapse from "react-bootstrap/Collapse";
+import "bootstrap/dist/css/bootstrap.css";
+import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
+import "../accordion/accordion.css";
+import { useState } from "react";
 const Accordion = (props) => {
-  const [setActive, setActiveState] = useState("");
-  const [setHeight, setHeightState] = useState("0px");
-  const content = useRef(null);
-  function toggleAccordion() {
-    setActiveState(setActive === "" ? "active" : "");
-    setHeightState(
-      setActive === "active" ? "0px" : `${content.current.scrollHeight}px`
-    );
-  }
+  const [open, setOpen] = useState(false);
   return (
     <div className="accordion-section">
-      <div className="accordion-main">
-        <span className={`accordion ${setActive}`} onClick={toggleAccordion}>
-          <div className="accordion-icon">
-            <ChevronRightIcon />
-          </div>
-          <span className="accordion-title">{props.title}</span>
-        </span>
-      </div>
       <div
-        ref={content}
-        style={{ maxHeight: `${setHeight}` }}
-        className="accordion-content"
+        className="accordion"
+        onClick={() => setOpen(!open)}
+        aria-controls="collapse"
+        aria-expanded={open}
       >
-        <div
-          className="accordion-text"
-          dangerouslySetInnerHTML={{ __html: props.content }}
-        />
+        <span className="accordion-icon">
+          {!open ? (
+            <ChevronRightIcon sx={{ color: "white" }} />
+          ) : (
+            <KeyboardArrowUpIcon sx={{ color: "white" }} />
+          )}
+        </span>
+        <span className="title">{props.title}</span>
       </div>
+
+      <Collapse in={open}>
+        <div className="accordion-content" id="collapse">
+          <span>{props.content}</span>
+          <span>{props.content2}</span>
+        </div>
+      </Collapse>
     </div>
   );
 };
