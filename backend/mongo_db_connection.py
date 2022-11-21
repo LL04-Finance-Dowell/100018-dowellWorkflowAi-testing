@@ -317,10 +317,13 @@ def save_template(name, data, created_by, company_id):
 def get_template_object(template_id):
     fields = {"_id": template_id}
     response_obj = dowellconnection(*TEMPLATE_CONNECTION_LIST, "find", fields, "nil")
-    # print("Template object----------------- \n", response_obj)
     res_obj = json.loads(response_obj)
-    if len(res_obj["data"]):
-        return res_obj["data"]
+    print(res_obj, "is Res obj")
+    if res_obj["data"] != None:
+        if len(res_obj["data"]):
+            return res_obj["data"]
+        else:
+            return []
     else:
         return []
 
