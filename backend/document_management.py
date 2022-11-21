@@ -14,7 +14,6 @@ from .mongo_db_connection import (
 )
 
 
-
 @api_view(["GET", "POST"])
 def create_document(request):  # Document Creation.
     company = request.session["company_id"]
@@ -55,11 +54,6 @@ def create_document(request):  # Document Creation.
     return Response(
         {"message": "You Need To Be LoggedIn"}, status=status.HTTP_400_BAD_REQUEST
     )
-
-
-@api_view(["GET", "POST"])
-def document_editor(request):  # Document Editor.
-    pass
 
 
 @api_view(["GET", "POST"])
