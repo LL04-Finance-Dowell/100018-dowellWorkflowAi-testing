@@ -1,0 +1,11 @@
+.main {
+  display: flex;
+}
+.top-main {
+  display: inline;
+  width: 60%;
+}
+.sm-flip {
+  display: flex;
+  padding-left: 85px;
+}
