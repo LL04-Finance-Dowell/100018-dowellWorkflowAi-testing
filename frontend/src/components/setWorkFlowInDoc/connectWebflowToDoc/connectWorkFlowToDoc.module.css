@@ -25,6 +25,7 @@
   align-items: center;
   display: flex;
   justify-content: center;
+  text-align: center;
   padding: 8px;
   line-height: 1;
 }
@@ -97,7 +98,7 @@
 .task__features {
   display: flex;
   flex-direction: column;
-  padding: 4px 12px 4px 20px;
+  padding: 4px 20px 4px 12px;
   border: solid 1px #818a91;
   appearance: none !important;
   background: none !important;
@@ -118,4 +119,10 @@
   font-size: 16px;
   line-height: 24px;
   color: #515151;
+}
+
+@media (max-width: 768px) {
+  .step__container {
+    width: 100%;
+  }
 }

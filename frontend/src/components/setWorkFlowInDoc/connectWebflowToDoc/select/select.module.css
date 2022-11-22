@@ -5,7 +5,6 @@ select {
   max-width: 100%;
   font-size: 12px;
   color: var(--e-global-color-text);
-  width: 153px;
   appearance: none;
   -webkit-appearance: none;
   -moz-appearance: none;
