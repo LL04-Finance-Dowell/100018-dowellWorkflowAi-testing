@@ -5,6 +5,7 @@ import useDowellLogin from "./hooks/useDowellLogin";
 import WorkflowApp from "./pages/App/WorkflowApp";
 import LandingPage from "./pages/Landing/Home";
 import "./App.css";
+import SetWorkflowInDoc from "./components/setWorkFlowInDoc/SetWorkflowInDoc";
 
 function App() {
   const { currentUser, setCurrentUser } = useUserContext();
@@ -12,7 +13,7 @@ function App() {
 
   useDowellLogin(setCurrentUser, setLoading);
 
-  if (loading) return <></>;
+  /*  if (loading) return <></>;
 
   if (!currentUser)
     return (
@@ -24,6 +25,12 @@ function App() {
   return (
     <Routes>
       <Route path={"/"} element={<WorkflowApp />} />
+    </Routes>
+  ); */
+
+  return (
+    <Routes>
+      <Route path={"/"} element={<SetWorkflowInDoc />} />
     </Routes>
   );
 }

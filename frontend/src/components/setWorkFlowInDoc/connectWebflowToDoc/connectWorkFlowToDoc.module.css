@@ -1,0 +1,118 @@
+.container {
+  display: flex;
+  flex-direction: column;
+}
+
+.step__title__box {
+  height: 63px;
+  padding: 10;
+}
+
+.step__container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 5px;
+  border: 1px solid var(--e-global-color-secondary);
+  width: min(14.65vw, 167px);
+  color: var(--e-global-color-secondary);
+}
+
+.header {
+  border: 1px var(--e-global-color-text) solid;
+  background-color: var(--e-global-color-9d2ac19);
+  color: var(--e-global-color-1342d1f);
+  align-items: center;
+  display: flex;
+  justify-content: center;
+  padding: 8px;
+  line-height: 1;
+}
+
+.step__header {
+  padding: 8px;
+  font-size: 14px;
+  font-weight: 600;
+
+  border: 1px var(--e-global-color-text) solid;
+  text-transform: capitalize;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+
+.skip {
+  display: flex;
+  font-size: 16px;
+  align-items: baseline;
+  gap: 5px;
+}
+
+.confirm__box {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--e-global-color-accent);
+  gap: 15px;
+}
+
+.paste__button {
+  padding: 10px 20px;
+  background-color: var(--e-global-color-accent);
+  color: var(--e-global-color-cd6593d);
+  font-size: 12px;
+  font-weight: 500;
+  text-transform: capitalize;
+  cursor: pointer;
+  text-align: center;
+  line-height: 12px;
+}
+
+.table__of__contents__header {
+  font-size: 14px;
+  padding: 20px;
+  border: 1px var(--e-global-color-0363588) solid;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-weight: 600;
+  line-height: 17px;
+  border-radius: 5px;
+}
+
+.task__features {
+  display: flex;
+  flex-direction: column;
+  padding: 4px 12px 4px 20px;
+  border: solid 1px #818a91;
+}
+
+.task__features__text {
+  font-size: 12px;
+  line-height: 15px;
+  padding-inline: 2px;
+}
+
+.assign__button {
+  padding: 10px 20px;
+  background-color: #c3d6be;
+  color: var(--e-global-color-cd6593d);
+  font-size: 12px;
+  font-weight: 500;
+  text-transform: capitalize;
+  cursor: pointer;
+  text-align: center;
+  line-height: 12px;
+  border: none;
+}
+
+.pasted__text {
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  color: #333;
+  line-height: 16px;
+  margin: 0;
+  padding: 0;
+  gap: 5px;
+}

@@ -1,0 +1,70 @@
+.time__container {
+  position: relative;
+  max-width: 100%;
+}
+
+.main__input {
+  padding: 0;
+  max-width: 100%;
+  padding: 4px 12px;
+  outline: none;
+  border: 1px solid #818a91;
+  color: var(--e-global-color-text);
+  font-size: 16px;
+  line-height: 24px;
+  color: #515151;
+}
+
+.time__box {
+  display: none;
+  align-items: center;
+  position: absolute;
+  height: 40px;
+  background-color: wheat;
+  bottom: -42px;
+  left: 0;
+}
+
+.time__box::before {
+  content: "";
+  position: absolute;
+  /*  width: 50px;
+    height: 50px;
+    background-color: red;
+    z-index: 5000; */
+  z-index: 50;
+  width: 0;
+  height: 0;
+  bottom: 40px;
+  left: 22px;
+  border-style: solid;
+  border-width: 0 5px 5px 5px;
+  border-color: transparent transparent wheat transparent;
+}
+
+.time__box > * {
+  font-weight: 700 !important;
+  font-size: 14px;
+  line-height: 24px;
+  color: #393939;
+}
+
+.time__box input {
+  text-align: center;
+  border: none;
+  height: 100%;
+  outline: none;
+  background-color: transparent;
+}
+
+.time__box input:hover {
+  background-color: var(--e-global-color-9d2ac19);
+}
+
+.time__input {
+  width: 123.6px;
+}
+
+.period__input {
+  width: 55.4px;
+}

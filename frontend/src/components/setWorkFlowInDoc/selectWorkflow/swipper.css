@@ -1,0 +1,30 @@
+.select-workflow {
+  width: 100%;
+  position: relative;
+  height: 100px !important;
+  margin-block: 10px;
+}
+
+.select-workflow .swiper-slide {
+  background-color: blue;
+  height: 70px !important;
+}
+
+.select-workflow .swiper-button-next,
+.select-workflow .swiper-button-prev {
+  color: rgba(238, 238, 238, 0.9);
+  font-weight: 900;
+  --swiper-navigation-size: 20px;
+  transform: translateY(-15px);
+}
+
+.select-workflow .swiper-pagination {
+  position: absolute;
+  bottom: 0;
+}
+
+.select-workflow .swiper-pagination-bullet {
+  width: 6px !important;
+  height: 6px !important;
+  line-height: 24px !important;
+}
