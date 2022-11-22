@@ -13,6 +13,7 @@ import NotificationsNoneIcon from "@mui/icons-material/NotificationsNone";
 import InsertDriveFileIcon from "@mui/icons-material/InsertDriveFile";
 
 import "../Landing/home.css";
+import HoverCard from "../../components/hover-card/HoverCard";
 const LandingPage = () => {
   const { currentUser } = useUserContext();
 
@@ -75,6 +76,9 @@ const LandingPage = () => {
               color={"#c3d6be"}
             />
           </div>
+          <HoverCard />
+          <HoverCard />
+          <HoverCard />
         </div>
         <FlipCard />
       </div>
