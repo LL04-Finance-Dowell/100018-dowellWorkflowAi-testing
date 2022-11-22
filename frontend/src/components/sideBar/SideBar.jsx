@@ -81,6 +81,7 @@ const SideBar = () => {
           <p>1-heloo</p>
           <p>2-hi</p>
           <p>3-halo</p>
+          <p>4-process</p>
         </div>
       </Collapse>
       <div className="search-input">
