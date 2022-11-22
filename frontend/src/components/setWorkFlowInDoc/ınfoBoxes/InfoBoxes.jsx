@@ -1,11 +1,33 @@
-import React, { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import styles from "./infoBoxes.module.css";
 import { v4 as uuidv4 } from "uuid";
 import { GrAdd } from "react-icons/gr";
 import { MdOutlineRemove } from "react-icons/md";
+import { motion, useScroll, useTransform } from "framer-motion";
+import useWindowSize from "../../../hooks/useWindowSize";
+import { sizeWidth } from "@mui/system";
 
-const InfoBoxes = ({ selectedWorkFlows, setSelectedWorkFlows }) => {
+const InfoBoxes = ({ setSelectedWorkFlows, infoBoxesRef }) => {
+  const ref = useRef(null);
   const [compInfoBoxes, setCompInfoBoxes] = useState(infoBoxes);
+  const [offset, setOffset] = useState(["start 30%", "end end"]);
+  const [yPosition, setYPosition] = useState(["-100%", "0%"]);
+  const size = useWindowSize();
+  const { scrollYProgress } = useScroll({
+    target: infoBoxesRef,
+    offset,
+  });
+  const y = useTransform(scrollYProgress, [0, 1], yPosition);
+
+  useEffect(() => {
+    if (size.width < 768) {
+      setYPosition(["140%", "-250%"]);
+      setOffset(["start end", "end end"]);
+    } else {
+      setYPosition(["0px", "-500px"]);
+      setOffset(["start 30%", "end end"]);
+    }
+  }, [size.width]);
 
   const handleClick = (id) => {
     const updatedInfoBoxes = compInfoBoxes.map((item) =>
@@ -24,7 +46,7 @@ const InfoBoxes = ({ selectedWorkFlows, setSelectedWorkFlows }) => {
   };
 
   return (
-    <div className={styles.container}>
+    <motion.div ref={ref} style={{ y }} className={styles.container}>
       {compInfoBoxes.map((infoBox) => (
         <div key={infoBox.id} className={styles.box}>
           <div
@@ -61,7 +83,7 @@ const InfoBoxes = ({ selectedWorkFlows, setSelectedWorkFlows }) => {
           </div>
         </div>
       ))}
-    </div>
+    </motion.div>
   );
 };
 
@@ -73,9 +95,9 @@ export const infoBoxes = [
     title: "workflow",
     contents: [
       { id: uuidv4(), content: "workflow 1" },
-      { id: uuidv4(), content: "workflow 1" },
-      { id: uuidv4(), content: "workflow 1" },
-      { id: uuidv4(), content: "workflow 1" },
+      { id: uuidv4(), content: "workflow 2" },
+      { id: uuidv4(), content: "workflow 3" },
+      { id: uuidv4(), content: "workflow 4" },
     ],
     isOpen: true,
   },

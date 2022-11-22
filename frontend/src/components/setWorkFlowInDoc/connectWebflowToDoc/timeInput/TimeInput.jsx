@@ -1,7 +1,14 @@
 import { useEffect, useState } from "react";
 import styles from "./timeInput.module.css";
+import { useForm } from "react-hook-form";
 
 const TimeInput = ({ placeHolder }) => {
+  const {
+    formState: { isDirty },
+    register,
+    setValue,
+  } = useForm();
+
   const [hours, setHours] = useState("12");
   const [minutes, setMinutes] = useState("00");
   const [period, setPeriod] = useState(true);
@@ -13,13 +20,15 @@ const TimeInput = ({ placeHolder }) => {
         period ? hours.padStart(2, "0") : Number(hours) + 12
       }:${minutes.padStart(2, "0")}`
     );
+    setValue("time", time);
   }, [period, minutes, hours]);
 
   return (
     <div className={styles.time__container}>
       <input
+        {...register("time")}
         className={styles.main__input}
-        value={time}
+        /* value={time} */
         type="text"
         placeholder={placeHolder}
         onChange={(e) => setTime(e.target.value)}

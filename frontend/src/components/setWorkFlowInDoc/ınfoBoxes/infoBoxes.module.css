@@ -1,5 +1,6 @@
 .container {
   display: flex;
+  margin-bottom: 20px;
 }
 
 .box {
@@ -49,7 +50,7 @@
 }
 
 @media (max-width: 767px) {
-  .container {
-    display: none;
+  .box {
+    width: 28.15vw;
   }
 }

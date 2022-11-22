@@ -3,6 +3,7 @@
   flex-direction: column;
   width: min(75vw, 855px);
   padding: 10px;
+  padding-top: 50px;
 }
 
 .title {
@@ -36,7 +37,6 @@
   }
   .left__container {
     width: 100%;
-    margin-bottom: 60px;
   }
   .right__container {
     width: 100%;

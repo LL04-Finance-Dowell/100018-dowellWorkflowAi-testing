@@ -8,10 +8,12 @@ import { Form } from "react-bootstrap";
 import { useEffect } from "react";
 import TimeInput from "./timeInput/TimeInput";
 import { useForm } from "react-hook-form";
+import AssignDocumentMap from "./assignForms/forms/assignDocumentMap/AssignDocumentMap";
+import AsignTask from "./assignForms/forms/assignTask/AssignTask";
+import AssignLocation from "./assignForms/forms/assignLocation/AssignLocation";
+import AssignTime from "./assignForms/forms/assignTime/AssignTimes";
 
 const ConnectWorkFlowToDoc = () => {
-  const { register, watch } = useForm();
-
   return (
     <div className={styles.container}>
       <div className={styles.step__title__box}>
@@ -26,15 +28,16 @@ const ConnectWorkFlowToDoc = () => {
           <input type="checkbox" />
           Skip this Step
         </div>
-        <div className={styles.confirm__box}>
+        {/* <div className={styles.confirm__box}>
           <Select register={register} name="document" options={documents} />
           <div className={styles.paste__button}>paste document map</div>
-        </div>
+        </div> */}
+        <AssignDocumentMap />
         <div className={styles.table__of__contents__header}>
           <span>Table of Contents</span>
           <BsChevronDown />
         </div>
-        <div className={styles.confirm__box}>
+        {/*   <div className={styles.confirm__box}>
           <Select register={register} name="role" options={roleArray} />
           <Select register={register} name="members" options={members} />
           <Select
@@ -42,13 +45,17 @@ const ConnectWorkFlowToDoc = () => {
             name="memberPortfolio"
             options={membersPortfolio}
           />
-          <div className={styles.task__features}>
+          <select
+            {...register("taskFeature")}
+            size={taskFeatures.length}
+            className={styles.task__features}
+          >
             {taskFeatures.map((item) => (
-              <span className={styles.task__features__text} key={item.id}>
+              <option className={styles.task__features__text} key={item.id}>
                 {item.feature}
-              </span>
+              </option>
             ))}
-          </div>
+          </select>
           <Select
             register={register}
             name="displayDoc"
@@ -59,98 +66,37 @@ const ConnectWorkFlowToDoc = () => {
             <DoneIcon />
             <span> Pasted</span>
           </div>
-        </div>
-        <div className={styles.confirm__box}>
+        </div> */}
+        <AsignTask />
+        {/*   <div className={styles.confirm__box}>
           <Select register={register} name="location" options={locations} />
           <button className={styles.assign__button}>Assign Location</button>
-        </div>
-        <div className={styles.confirm__box}>
+        </div> */}
+        <AssignLocation />
+        {/*   <div className={styles.confirm__box}>
           <Select register={register} name="limitTime" options={limitTimes} />
-          <TimeInput placeHolder={"Start date & time"} />
-          <TimeInput placeHolder={"End date & time"} />
+         
+          <input
+            {...register("startTime")}
+            className={styles.time__input}
+            type="time"
+          />
+          <input
+            {...register("endTime")}
+            className={styles.time__input}
+            type="time"
+          />
           <Select
             register={register}
             name="reminder"
             options={reminderFrequency}
           />
           <button className={styles.assign__button}>Assign Period</button>
-        </div>
+        </div> */}
+        <AssignTime />
       </div>
     </div>
   );
 };
 
 export default ConnectWorkFlowToDoc;
-
-export const documents = [
-  { id: uuidv4(), option: "All Document" },
-  { id: uuidv4(), option: "Balance Document" },
-  { id: uuidv4(), option: "Same as Previouse" },
-];
-
-export const roleArray = [
-  {
-    id: uuidv4(),
-    option: "Team Member",
-  },
-  { id: uuidv4(), option: "Guest (enter phone/email)" },
-  { id: uuidv4(), option: "Public (link)" },
-];
-
-export const members = [
-  {
-    id: uuidv4(),
-    option: "Member 1",
-  },
-  {
-    id: uuidv4(),
-    option: "Member 2",
-  },
-  {
-    id: uuidv4(),
-    option: "Member 3",
-  },
-];
-
-export const membersPortfolio = [
-  { id: uuidv4(), option: "Member Porfolio 1" },
-  { id: uuidv4(), option: "Member Porfolio 2" },
-  { id: uuidv4(), option: "Member Porfolio 3" },
-];
-
-export const taskFeatures = [
-  { id: uuidv4(), feature: "Add/Edit" },
-  { id: uuidv4(), feature: "View" },
-  { id: uuidv4(), feature: "Comment" },
-  { id: uuidv4(), feature: "Approve" },
-];
-
-export const displayDocument = [
-  { id: uuidv4(), option: "Display document before processing this step" },
-  { id: uuidv4(), option: "Display document after processing this step" },
-  { id: uuidv4(), option: "Display document only in this step" },
-  { id: uuidv4(), option: "Display document in all steps" },
-];
-
-export const locations = [
-  { id: uuidv4(), option: "Mumbai" },
-  { id: uuidv4(), option: "London" },
-  { id: uuidv4(), option: "Newyork" },
-];
-
-export const limitTimes = [
-  { id: uuidv4(), option: "No time limit" },
-  { id: uuidv4(), option: "Within 1 hour" },
-  { id: uuidv4(), option: "Within 8 hour" },
-  { id: uuidv4(), option: "Within 24 hour" },
-  { id: uuidv4(), option: "Within 3 days" },
-  { id: uuidv4(), option: "Within 7 days" },
-  { id: uuidv4(), option: "Custom time" },
-];
-
-export const reminderFrequency = [
-  { id: uuidv4(), option: "Send reminder every hour" },
-  { id: uuidv4(), option: "Send reminder every day" },
-  { id: uuidv4(), option: "I will decide later" },
-  { id: uuidv4(), option: "Skip this step to continue" },
-];
