@@ -3,9 +3,10 @@
 }
 .top-main {
   display: inline;
-  width: 60%;
+  width: 50%;
 }
 .sm-flip {
   display: flex;
-  padding-left: 85px;
+  padding-left: 25px;
+  width: 160%;
 }

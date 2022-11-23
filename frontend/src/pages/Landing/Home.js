@@ -48,7 +48,7 @@ const LandingPage = () => {
               content={"006"}
               button={"View"}
               size={"50px"}
-              padding={"25px"}
+              padding={"32px"}
               color={"#1abc9c"}
             />
             <SmallFlip
@@ -56,7 +56,7 @@ const LandingPage = () => {
               content={"New"}
               button={"Create Document"}
               size={"60px"}
-              padding={"20px"}
+              padding={"30px"}
               color={"gray"}
             />
             <SmallFlip
@@ -64,7 +64,7 @@ const LandingPage = () => {
               content={"Search"}
               button={"Search Document"}
               size={"60px"}
-              padding={"20px"}
+              padding={"30px"}
               color={"#61ce70"}
             />
             <SmallFlip
@@ -72,13 +72,102 @@ const LandingPage = () => {
               content={"Support"}
               button={"Dowell Knowledge Center"}
               size={"85px"}
-              padding={"8px"}
+              padding={"15px"}
               color={"#c3d6be"}
             />
           </div>
-          <HoverCard />
-          <HoverCard />
-          <HoverCard />
+          <div style={{ marginTop: "150px" }}>
+            <h5
+              id="ji"
+              style={{
+                border: "1px solid #74d481",
+                width: "107%",
+                height: "40px",
+                marginBottom: "0",
+                marginLeft: "39px",
+                color: "red",
+                paddingTop: "5px",
+                paddingLeft: "5px",
+              }}
+            >
+              Notifications - Documents
+            </h5>
+            <div
+              style={{
+                display: "grid",
+                width: "96%",
+
+                paddingLeft: "50px",
+                gridTemplateColumns: "auto auto auto",
+              }}
+            >
+              <HoverCard />
+              <HoverCard />
+              <HoverCard />
+              <HoverCard />
+              <HoverCard />
+            </div>
+          </div>
+
+          <div style={{ marginTop: "150px" }}>
+            <h5
+              id="ji"
+              style={{
+                border: "1px solid #74d481",
+                width: "107%",
+                height: "40px",
+                marginBottom: "0",
+                marginLeft: "39px",
+                color: "red",
+                paddingTop: "5px",
+                paddingLeft: "5px",
+              }}
+            >
+              Notifications - Templates
+            </h5>
+            <div
+              style={{
+                display: "grid",
+                width: "96%",
+
+                paddingLeft: "50px",
+                gridTemplateColumns: "auto auto auto",
+              }}
+            >
+              <HoverCard color="#c3d6be" />
+              <HoverCard color="#c3d6be" />
+              <HoverCard color="#c3d6be" />
+            </div>
+          </div>
+          <div style={{ marginTop: "150px" }}>
+            <h5
+              id="ji"
+              style={{
+                border: "1px solid #74d481",
+                width: "107%",
+                height: "40px",
+                marginBottom: "0",
+                marginLeft: "39px",
+                color: "red",
+                paddingTop: "5px",
+                paddingLeft: "5px",
+              }}
+            >
+              Notifications - Workflows
+            </h5>
+            <div
+              style={{
+                display: "grid",
+                width: "67%",
+
+                paddingLeft: "50px",
+                gridTemplateColumns: "auto auto auto",
+              }}
+            >
+              <HoverCard color="#e1e1e1" />
+              <HoverCard color="#e1e1e1" />
+            </div>
+          </div>
         </div>
         <FlipCard />
       </div>
