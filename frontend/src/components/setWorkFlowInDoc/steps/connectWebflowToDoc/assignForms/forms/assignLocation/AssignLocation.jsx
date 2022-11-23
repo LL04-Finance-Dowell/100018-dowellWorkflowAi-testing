@@ -1,10 +1,9 @@
-import Select from "../../../select/Select";
-import globalStyles from "../../../connectWorkFlowToDoc.module.css";
+import Select from "../../../../../select/Select";
 import { useForm } from "react-hook-form";
 import { v4 as uuidv4 } from "uuid";
-import FormLayout from "../../formLayout/FormLayout";
+import FormLayout from "../../../../../formLayout/FormLayout";
 import { useState } from "react";
-import AssignButton from "../../assignButton/AssignButton";
+import AssignButton from "../../../../../assignButton/AssignButton";
 
 const AssignLocation = () => {
   const {
@@ -22,10 +21,7 @@ const AssignLocation = () => {
 
   return (
     <FormLayout isSubmitted={isSubmitted} loading={loading}>
-      <form
-        onSubmit={handleSubmit(onSubmit)}
-        className={globalStyles.confirm__box}
-      >
+      <form onSubmit={handleSubmit(onSubmit)}>
         <Select register={register} name="location" options={locations} />
         <AssignButton buttonText="Assign Location" loading={loading} />
       </form>

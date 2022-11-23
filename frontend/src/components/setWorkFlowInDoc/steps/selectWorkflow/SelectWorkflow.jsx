@@ -6,9 +6,9 @@ import { Pagination } from "swiper";
 import "swiper/css";
 import "swiper/css/navigation";
 import "./swipper.css";
-import InfoBoxes from "../ınfoBoxes/InfoBoxes";
+import InfoBoxes from "./ınfoBoxes/InfoBoxes";
 import { useEffect } from "react";
-import useWindowSize from "../../../hooks/useWindowSize";
+import useWindowSize from "../../../../hooks/useWindowSize";
 
 const SelectWorkflow = ({ infoBoxesRef }) => {
   const size = useWindowSize();
@@ -73,9 +73,11 @@ const SelectWorkflow = ({ infoBoxesRef }) => {
               </SwiperSlide>
             ))}
           </Swiper>
-          <a className={styles.add__button}>
-            Add Selected Workflow to document
-          </a>
+          {selectedWorkFlows.length > 0 && (
+            <a className={styles.add__button}>
+              Add Selected Workflow to document
+            </a>
+          )}
         </div>
       )}
     </div>

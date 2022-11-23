@@ -4,8 +4,7 @@ import { v4 as uuidv4 } from "uuid";
 import { GrAdd } from "react-icons/gr";
 import { MdOutlineRemove } from "react-icons/md";
 import { motion, useScroll, useTransform } from "framer-motion";
-import useWindowSize from "../../../hooks/useWindowSize";
-import { sizeWidth } from "@mui/system";
+import useWindowSize from "../../../../../hooks/useWindowSize";
 
 const InfoBoxes = ({ setSelectedWorkFlows, infoBoxesRef }) => {
   const ref = useRef(null);

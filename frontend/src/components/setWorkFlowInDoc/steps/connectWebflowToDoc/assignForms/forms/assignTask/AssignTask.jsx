@@ -1,10 +1,10 @@
 import globalStyles from "../../../connectWorkFlowToDoc.module.css";
 import { useForm } from "react-hook-form";
-import Select from "../../../select/Select";
+import Select from "../../../../../select/Select";
 import { useState } from "react";
 import { v4 as uuidv4 } from "uuid";
-import FormLayout from "../../formLayout/FormLayout";
-import AssignButton from "../../assignButton/AssignButton";
+import FormLayout from "../../../../../formLayout/FormLayout";
+import AssignButton from "../../../../../assignButton/AssignButton";
 
 const AssignTask = () => {
   const {
@@ -25,10 +25,7 @@ const AssignTask = () => {
 
   return (
     <FormLayout isSubmitted={isSubmitSuccessful} loading={loading}>
-      <form
-        onSubmit={handleSubmit(onSubmit)}
-        className={globalStyles.confirm__box}
-      >
+      <form onSubmit={handleSubmit(onSubmit)}>
         <Select register={register} name="role" options={roleArray} />
         <Select register={register} name="members" options={members} />
         <Select

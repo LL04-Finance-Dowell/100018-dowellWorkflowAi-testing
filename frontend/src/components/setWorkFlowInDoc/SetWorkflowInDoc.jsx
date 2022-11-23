@@ -1,8 +1,9 @@
 import { useRef } from "react";
-import ConnectWorkFlowToDoc from "./connectWebflowToDoc/ConnectWorkFlowToDoc";
-import SelectDoc from "./selectDoc/SelectDoc";
-import SelectWorkflow from "./selectWorkflow/SelectWorkflow";
+import ConnectWorkFlowToDoc from "./steps/connectWebflowToDoc/ConnectWorkFlowToDoc";
+import SelectDoc from "./steps/selectDoc/SelectDoc";
+import SelectWorkflow from "./steps/selectWorkflow/SelectWorkflow";
 import styles from "./setWorkflowInDoc.module.css";
+import CheckErrors from "./steps/checkErrors/CheckErrors";
 
 const SetWorkflowInDoc = () => {
   const infoBoxesRef = useRef();
@@ -19,6 +20,7 @@ const SetWorkflowInDoc = () => {
         </div>
       </div>
       <ConnectWorkFlowToDoc />
+      <CheckErrors />
     </div>
   );
 };

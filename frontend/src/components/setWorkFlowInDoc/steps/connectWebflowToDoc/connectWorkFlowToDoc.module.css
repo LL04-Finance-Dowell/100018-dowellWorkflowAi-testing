@@ -50,12 +50,12 @@
   gap: 5px;
 }
 
-.confirm__box {
+/* .confirm__box {
   display: flex;
   flex-direction: column;
   gap: 15px;
   position: relative;
-}
+} */
 
 .assign__document__map button {
   background-color: var(--e-global-color-accent);

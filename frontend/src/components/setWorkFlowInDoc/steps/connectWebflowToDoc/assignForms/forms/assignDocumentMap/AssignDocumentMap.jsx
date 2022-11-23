@@ -1,10 +1,10 @@
 import globalStyles from "../../../connectWorkFlowToDoc.module.css";
-import Select from "../../../select/Select";
+import Select from "../../../../../select/Select";
 import { v4 as uuidv4 } from "uuid";
 import { useForm } from "react-hook-form";
-import AssignButton from "../../assignButton/AssignButton";
+import AssignButton from "../../../../../assignButton/AssignButton";
 import { useState } from "react";
-import FormLayout from "../../formLayout/FormLayout";
+import FormLayout from "../../../../../formLayout/FormLayout";
 
 const AssignDocumentMap = () => {
   const {
@@ -24,9 +24,7 @@ const AssignDocumentMap = () => {
     <FormLayout isSubmitted={isSubmitted} loading={loading}>
       <form
         onSubmit={handleSubmit(onSubmit)}
-        className={`${globalStyles.confirm__box} ${
-          globalStyles.assign__document__map
-        } ${loading && globalStyles.loading}`}
+        className={globalStyles.assign__document__map}
       >
         <Select register={register} name="document" options={documents} />
         <AssignButton buttonText="paste document map" loading={loading} />

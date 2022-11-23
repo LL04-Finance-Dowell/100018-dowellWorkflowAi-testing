@@ -5,6 +5,13 @@
   position: relative;
 }
 
+.container form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  position: relative;
+}
+
 .pasted__text {
   font-size: 16px;
   display: flex;

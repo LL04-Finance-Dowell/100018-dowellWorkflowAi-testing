@@ -1,10 +1,10 @@
-import Select from "../../../select/Select";
+import Select from "../../../../../select/Select";
 import globalStyles from "../../../connectWorkFlowToDoc.module.css";
 import { useForm } from "react-hook-form";
 import { v4 as uuidv4 } from "uuid";
-import FormLayout from "../../formLayout/FormLayout";
+import FormLayout from "../../../../../formLayout/FormLayout";
 import { useState } from "react";
-import AssignButton from "../../assignButton/AssignButton";
+import AssignButton from "../../../../../assignButton/AssignButton";
 
 const AssignTime = () => {
   const {
@@ -22,10 +22,7 @@ const AssignTime = () => {
 
   return (
     <FormLayout isSubmitted={isSubmitted} loading={loading}>
-      <form
-        onSubmit={handleSubmit(onSubmit)}
-        className={globalStyles.confirm__box}
-      >
+      <form onSubmit={handleSubmit(onSubmit)}>
         <Select register={register} name="limitTime" options={limitTimes} />
         <input
           {...register("startTime")}

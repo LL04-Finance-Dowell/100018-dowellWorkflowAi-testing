@@ -41,3 +41,17 @@ body {
   color: var(--e-global-color-2f1e1e4);
   text-align: center;
 }
+
+.bottom-line {
+  padding-block: 15px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.bottom-line span {
+  background-color: #515151;
+  height: 1px;
+  width: 80%;
+}
