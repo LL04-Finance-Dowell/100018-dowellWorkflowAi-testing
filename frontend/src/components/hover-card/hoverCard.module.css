@@ -2,12 +2,13 @@
   display: flex;
   width: 90%;
   justify-content: space-around;
-  gap: 15px;
+  /* gap: 15px; */
   display: grid;
-  column-gap: 15px;
+  /* column-gap: 15px; */
   grid-template-columns: auto auto auto;
-  margin-left: 100px;
-  margin-top: 150px;
+  /* margin-left: 100px; */
+  margin-bottom: 15px;
+  gap: 5px;
 }
 
 .card {
