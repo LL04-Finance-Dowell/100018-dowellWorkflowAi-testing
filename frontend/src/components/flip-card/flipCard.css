@@ -2,7 +2,7 @@
   background-color: transparent;
   width: 210px;
   height: 320px;
-  perspective: 1000px;
+  /* perspective: 1000px; */
   margin-top: 73px;
   padding-left: 15px;
 }
