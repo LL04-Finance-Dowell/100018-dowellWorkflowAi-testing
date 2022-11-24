@@ -21,6 +21,7 @@ const Accordion = (props) => {
             <KeyboardArrowUpIcon sx={{ color: "white" }} />
           )}
         </span>
+
         <span className="title">{props.title}</span>
       </div>
 
@@ -30,6 +31,19 @@ const Accordion = (props) => {
           <span>{props.content2}</span>
         </div>
       </Collapse>
+      {!open && (
+        <span
+          style={{
+            width: "80%",
+            paddingBottom: "1px",
+            borderBottom: "1px solid #ffff",
+            marginLeft: "43px",
+            color: "#54595f",
+          }}
+        >
+          ...............................................................
+        </span>
+      )}
     </div>
   );
 };

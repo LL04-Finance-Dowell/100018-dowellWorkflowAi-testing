@@ -45,24 +45,31 @@ const SideBar = () => {
         <span className={styles.notific}>Notifications</span>
       </div>
       <Accordion
-        title="Documents"
+        title="Documents (003)"
         content="1. To be Signed (002)"
         content2="2. Rejected by others (001)"
       />
       <Accordion
-        title="Templates"
+        title="Templates (003)"
         content="1. To be Approved (002)"
         content2="2. Rejected by others (001)"
       />
       <Accordion
-        title="Workflows"
+        title="Workflows (004)"
         content="1. To be Approved (002)"
         content2="2. Rejected by others (001)"
       />
 
       <Button
-        style={{ width: "80%", marginLeft: "30px", marginTop: "50px" }}
-        variant="success"
+        style={{
+          width: "80%",
+          marginLeft: "30px",
+          marginTop: "50px",
+          backgroundColor: "#61ce70",
+          border: "ridge 3px  white",
+          // borderRadius: "3px",
+        }}
+        // variant="success"
         onClick={() => setOpen(!open)}
         aria-controls="example-collapse-text"
         aria-expanded={open}
@@ -100,22 +107,22 @@ const SideBar = () => {
         <p>Search in file names of Docs, Templates & Workflows</p>
       </div>
       <Accordion
-        title="Documents"
+        title="Documents (007)"
         content="1. To be Approved (002)"
         content2="2. Rejected by others (001)"
       />
       <Accordion
-        title="Templates"
+        title="Templates (006)"
         content="1. To be Approved (002)"
         content2="2. Rejected by others (001)"
       />
       <Accordion
-        title="Workflows"
+        title="Workflows (004)"
         content="1. To be Approved (002)"
         content2="2. Rejected by others (001)"
       />
       <span
-        className="manageFiles"
+        className="manageFiles (003)"
         style={{
           display: "flex",
           color: "#61ce70",
@@ -128,17 +135,17 @@ const SideBar = () => {
         Manage Files
       </span>
       <Accordion
-        title="My Documents"
+        title="My Documents (002)"
         content="1. To be Approved (002)"
         content2="2. Rejected by others (001)"
       />
       <Accordion
-        title="Templates"
+        title="Templates (004)"
         content="1. To be Approved (002)"
         content2="2. Rejected by others (001)"
       />
       <Accordion
-        title="Workflows"
+        title="Workflows (007)"
         content="1. To be Approved (002)"
         content2="2. Rejected by others (001)"
       />

@@ -14,6 +14,7 @@ import InsertDriveFileIcon from "@mui/icons-material/InsertDriveFile";
 
 import "../Landing/home.css";
 import HoverCard from "../../components/hover-card/HoverCard";
+import Table from "../../components/table/Table";
 const LandingPage = () => {
   const { currentUser } = useUserContext();
 
@@ -168,6 +169,7 @@ const LandingPage = () => {
               <HoverCard color="#e1e1e1" />
             </div>
           </div>
+          <Table header="Incomplete Tasks" />
         </div>
         <FlipCard />
       </div>
