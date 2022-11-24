@@ -160,7 +160,7 @@ const LandingPage = () => {
               style={{
                 display: "grid",
                 width: "67%",
-
+                marginBottom: "200px",
                 paddingLeft: "50px",
                 gridTemplateColumns: "auto auto auto",
               }}
@@ -169,7 +169,44 @@ const LandingPage = () => {
               <HoverCard color="#e1e1e1" />
             </div>
           </div>
-          <Table header="Incomplete Tasks" />
+          <div style={{ display: "flex" }}>
+            <Table header="Incomplete Tasks" />
+            <Table header="Completed Tasks" hcolor="gray" />
+          </div>
+          <div className="sm-flip">
+            <SmallFlip
+              icon={<NotificationsNoneIcon fontSize="large" />}
+              content={"006"}
+              button={"View"}
+              size={"50px"}
+              padding={"32px"}
+              color={"#1abc9c"}
+            />
+            <SmallFlip
+              icon={<InsertDriveFileIcon fontSize="large" />}
+              content={"New"}
+              button={"Create Document"}
+              size={"60px"}
+              padding={"30px"}
+              color={"gray"}
+            />
+            <SmallFlip
+              icon={<SearchIcon fontSize="large" />}
+              content={"Search"}
+              button={"Search Document"}
+              size={"60px"}
+              padding={"30px"}
+              color={"#61ce70"}
+            />
+            <SmallFlip
+              icon={<ManageAccountsIcon fontSize="large" />}
+              content={"Support"}
+              button={"Dowell Knowledge Center"}
+              size={"85px"}
+              padding={"15px"}
+              color={"#c3d6be"}
+            />
+          </div>
         </div>
         <FlipCard />
       </div>
