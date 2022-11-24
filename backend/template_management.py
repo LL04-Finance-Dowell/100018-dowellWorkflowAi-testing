@@ -180,7 +180,7 @@ def template_detail(request):  # Single Template
 #
 @api_view(["GET", "POST"])
 def template_editor(request, *args, **kwargs):  # Editor for a template.
-    user_name = request.session["user_name"]
+    user_name = "Manish"
 
     if request.method == "POST" and user_name:  # Save Template.
         body = json.loads(request.body)

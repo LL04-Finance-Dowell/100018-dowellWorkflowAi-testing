@@ -99,7 +99,6 @@ DOCUMENT_CONNECTION_DICT = {
     "function_ID": "ABCDE",
 }
 
-print(TEMPLATE_CONNECTION_LIST)
 def get_event_id():
     dd = datetime.now()
     time = dd.strftime("%d:%m:%Y,%H:%M:%S")
@@ -155,6 +154,7 @@ def save_uuid_hash(uuid_hash, user_email, document_id):
             "platform": "bangalore",
         }
     )
+    
     headers = {"Content-Type": "application/json"}
     response = requests.request("POST", url, headers=headers, data=payload)
     print("SAVED UUID ENTRY", response.text)
@@ -310,9 +310,10 @@ def get_template_object(template_id):
     response_obj = dowellconnection(*TEMPLATE_CONNECTION_LIST, "find", fields, "nil")
     # print("Template object----------------- \n", response_obj)
     res_obj = json.loads(response_obj)
-    if len(res_obj["data"]):
-        return res_obj["data"]
-    else:
+    try:
+        if len(res_obj["data"]):
+            return res_obj["data"]
+    except:
         return []
 
 
@@ -425,9 +426,9 @@ def get_document_object(document_id):
     response_obj = dowellconnection(*DOCUMENT_CONNECTION_LIST, "find", fields, "nil")
     print("document object-------------- \n", response_obj)
     res_obj = json.loads(response_obj)
-    if len(res_obj["data"]):
+    try:
         return res_obj["data"]
-    else:
+    except:
         return []
 
 
