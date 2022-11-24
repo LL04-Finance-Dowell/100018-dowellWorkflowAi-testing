@@ -103,7 +103,7 @@ def create_template(request):
                 payload = {
                     "database": "Documentation",
                     "collection": "TemplateReports",
-                    "fields": "fields",
+                    "fields": template_name,
                     "document_id": resObj["inserted_id"],
                 }
                 editor_link = requests.post(
