@@ -64,9 +64,13 @@ const SideBar = () => {
         style={{
           width: "80%",
           marginLeft: "30px",
+          height: "65px",
           marginTop: "50px",
           backgroundColor: "#61ce70",
-          border: "ridge 3px  white",
+          borderCollapse: "separate",
+          borderSpacing: "3px",
+          border: "3px solid white",
+          borderRadius: "10px",
           // borderRadius: "3px",
         }}
         // variant="success"
@@ -74,15 +78,24 @@ const SideBar = () => {
         aria-controls="example-collapse-text"
         aria-expanded={open}
       >
-        <span style={{ justifyContent: "start", display: "flex", gap: "3px" }}>
+        <span
+          style={{
+            justifyContent: "start",
+            display: "flex",
+            gap: "3px",
+            fontSize: "25px",
+            fontWeight: "bold",
+          }}
+        >
           {!open ? (
-            <AddIcon />
+            <AddIcon style={{ marginTop: "5px" }} />
           ) : (
             <KeyboardArrowUpIcon sx={{ color: "white" }} />
           )}
           New
         </span>
       </Button>
+
       <Collapse style={{ width: "80%", marginLeft: "30px" }} in={open}>
         <div id="example-collapse-text">
           <p>1-heloo</p>
