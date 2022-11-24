@@ -13,10 +13,14 @@
   padding-top: 2px;
 }
 .title {
-  color: white;
+  color: #e1e1e1;
   font-size: 20px;
-  padding-bottom: 10px;
+  /* border-bottom: 0.1px solid #fff; */
+  text-decoration: underline;
+  font-family: "Roboto", Sans-serif;
+  font-weight: 600;
 }
+
 .rotate {
   transform: rotate(90deg);
 }

@@ -1,6 +1,7 @@
 .sideBar {
-  width: 20%;
+  width: 21%;
   background-color: #54595f;
+  margin-left: 90px;
 }
 .main {
   display: flex;
