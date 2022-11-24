@@ -102,7 +102,6 @@ DOCUMENT_CONNECTION_DICT = {
 
 
 url = "https://100014.pythonanywhere.com/api/userinfo/"
-# print(TEMPLATE_CONNECTION_LIST)
 
 def get_members(session_id):
     payload = {"session_id": session_id}

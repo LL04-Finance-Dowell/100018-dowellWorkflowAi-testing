@@ -1,4 +1,5 @@
 import json
+import requests
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
@@ -12,74 +13,60 @@ from .mongo_db_connection import (
     get_user_info_by_username,
 )
 
-#
-@api_view(["GET", "POST"])
-def template_editor(request, template_id):  # Editor for a template.
-    # user_name = request.session["user_name"]  # TODO: We need a way to get this.
-    user_name = "Maanish"
-    if request.method == "POST":  # Save Template.
-        body = json.loads(request.body)
-        if not body:
-            return Response(
-                {"message": "An Error Occurred."},
-                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            )
-        template_id = body["file_id"]
-        data = body["content"]
-        resObj = update_template(template_id, json.dumps(data))
-        print("Templated Saved----------------- \n")
-        try:
-            if resObj["isSuccess"]:
-                return Response(
-                    {"message": "Template saved!"}, status=status.HTTP_200_OK
-                )
-        except:
-            return Response(
-                {"message": "Template Save Failed"},
-                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            )
+TEMPLATE_CONNECTION_LIST = [
+    "Documents",
+    "bangalore",
+    "Documentation",
+    "TemplateReports",
+    "templatereports",
+    "22689044433",
+    "ABCDE",
+]
 
-    if request.method == "GET":  # Data for the Template Editor.
-        template_obj = get_template_object(template_id=template_id)
-        if not template_obj:
-            return Response(
-                {"message": "Failed to Get template."},
-                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            )
-        workflow_obj = get_wf_object(template_obj["workflow_id"])
-        if not workflow_obj:
-            return Response(
-                {"message": "An Error Occurred."},
-                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            )
-        user = get_user_info_by_username(user_name)  # TODO:  Info to probe
-        if not user:
-            return Response(
-                {"message": "An Error Occurred."},
-                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            )
-        template_data = {
-            "id": template_obj["_id"],
-            "name": template_obj["template_name"],
-            "created_by": template_obj["created_by"],
-            "file": template_obj["content"],
-            "verify": False,
-            "template": True,
-            "doc_viewer": False,
-            "company_id": template_obj["company_id"],
-            "user_email": user["Email"],
-        }
-        return Response({"template_data": template_data}, status=status.HTTP_200_OK)
-    return Response(
-        {"message": "You Not To Be Logged In"}, status=status.HTTP_401_UNAUTHORIZED
-    )
+
+#
+# @api_view(["GET", "POST"])
+# def template_editor(request, template_id):  # Editor for a template.
+#     user_name = "Maanish"
+#     if request.method == "GET":  # Data for the Template Editor.
+#         template_obj = get_template_object(template_id=template_id)
+#         if not template_obj:
+#             return Response(
+#                 {"message": "Failed to Get template."},
+#                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+#             )
+#         workflow_obj = get_wf_object(template_obj["workflow_id"])
+#         if not workflow_obj:
+#             return Response(
+#                 {"message": "An Error Occurred."},
+#                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+#             )
+#         user = get_user_info_by_username(user_name)  # TODO:  Info to probe
+#         if not user:
+#             return Response(
+#                 {"message": "An Error Occurred."},
+#                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+#             )
+#         template_data = {
+#             "id": template_obj["_id"],
+#             "name": template_obj["template_name"],
+#             "created_by": template_obj["created_by"],
+#             "file": template_obj["content"],
+#             "verify": False,
+#             "template": True,
+#             "doc_viewer": False,
+#             "company_id": template_obj["company_id"],
+#             "user_email": user["Email"],
+#         }
+#         return Response({"template_data": template_data}, status=status.HTTP_200_OK)
+#     return Response(
+#         {"message": "You Not To Be Logged In"}, status=status.HTTP_401_UNAUTHORIZED
+#     )
 
 
 @api_view(["POST"])
 def create_template(request):
-    # TODO: confirmation on the below variables
-    user_name = "Maanish"
-    company = "6365ee18ff915c925f3a6691"
+    editorApi = "https://100058.pythonanywhere.com/dowelleditor/editor/"
     if request.method == "POST":
         data = ""
         old_template = None
@@ -88,10 +75,10 @@ def create_template(request):
                 {"message": "Input is Required!"},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
+        created_by = request.data["created_by"]
+        company_id = request.data["company_id"]
         template_name = request.data["template_name"]
         copy_template = request.data["copy_template"]
-        company_id = company
-        created_by = user_name
         if not company_id and created_by:
             return Response(
                 {"message": "An Error Occurred!"},
@@ -112,13 +99,19 @@ def create_template(request):
                     company_id,
                 )
             )
-            print("Template Created---------\n", resObj)
             if resObj["isSuccess"]:
+                payload = {
+                    "database": "Documentation",
+                    "collection": "TemplateReports",
+                    "fields": "fields",
+                    "document_id": resObj["inserted_id"],
+                }
+                editor_link = requests.post(
+                    editorApi,
+                    data=payload,
+                )
                 return Response(
-                    {
-                        "message": "Template Created Successfully.",
-                        "template_id": resObj["inserted_id"],
-                    },
+                    editor_link.json(),
                     status=status.HTTP_201_CREATED,
                 )
             return Response(
