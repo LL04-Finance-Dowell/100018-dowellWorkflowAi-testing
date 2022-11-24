@@ -45,42 +45,63 @@ const SideBar = () => {
         <span className={styles.notific}>Notifications</span>
       </div>
       <Accordion
-        title="Documents"
+        title="Documents (003)"
         content="1. To be Signed (002)"
         content2="2. Rejected by others (001)"
       />
       <Accordion
-        title="Templates"
+        title="Templates (003)"
         content="1. To be Approved (002)"
         content2="2. Rejected by others (001)"
       />
       <Accordion
-        title="Workflows"
+        title="Workflows (004)"
         content="1. To be Approved (002)"
         content2="2. Rejected by others (001)"
       />
 
       <Button
-        style={{ width: "80%", marginLeft: "30px", marginTop: "50px" }}
-        variant="success"
+        style={{
+          width: "80%",
+          marginLeft: "30px",
+          height: "65px",
+          marginTop: "50px",
+          backgroundColor: "#61ce70",
+          borderCollapse: "separate",
+          borderSpacing: "3px",
+          border: "3px solid white",
+          borderRadius: "10px",
+          // borderRadius: "3px",
+        }}
+        // variant="success"
         onClick={() => setOpen(!open)}
         aria-controls="example-collapse-text"
         aria-expanded={open}
       >
-        <span style={{ justifyContent: "start", display: "flex", gap: "3px" }}>
+        <span
+          style={{
+            justifyContent: "start",
+            display: "flex",
+            gap: "3px",
+            fontSize: "25px",
+            fontWeight: "bold",
+          }}
+        >
           {!open ? (
-            <AddIcon />
+            <AddIcon style={{ marginTop: "5px" }} />
           ) : (
             <KeyboardArrowUpIcon sx={{ color: "white" }} />
           )}
           New
         </span>
       </Button>
+
       <Collapse style={{ width: "80%", marginLeft: "30px" }} in={open}>
         <div id="example-collapse-text">
           <p>1-heloo</p>
           <p>2-hi</p>
           <p>3-halo</p>
+          <p>4-process</p>
         </div>
       </Collapse>
       <div className="search-input">
@@ -99,22 +120,22 @@ const SideBar = () => {
         <p>Search in file names of Docs, Templates & Workflows</p>
       </div>
       <Accordion
-        title="Documents"
+        title="Documents (007)"
         content="1. To be Approved (002)"
         content2="2. Rejected by others (001)"
       />
       <Accordion
-        title="Templates"
+        title="Templates (006)"
         content="1. To be Approved (002)"
         content2="2. Rejected by others (001)"
       />
       <Accordion
-        title="Workflows"
+        title="Workflows (004)"
         content="1. To be Approved (002)"
         content2="2. Rejected by others (001)"
       />
       <span
-        className="manageFiles"
+        className="manageFiles (003)"
         style={{
           display: "flex",
           color: "#61ce70",
@@ -127,17 +148,17 @@ const SideBar = () => {
         Manage Files
       </span>
       <Accordion
-        title="My Documents"
+        title="My Documents (002)"
         content="1. To be Approved (002)"
         content2="2. Rejected by others (001)"
       />
       <Accordion
-        title="Templates"
+        title="Templates (004)"
         content="1. To be Approved (002)"
         content2="2. Rejected by others (001)"
       />
       <Accordion
-        title="Workflows"
+        title="Workflows (007)"
         content="1. To be Approved (002)"
         content2="2. Rejected by others (001)"
       />
