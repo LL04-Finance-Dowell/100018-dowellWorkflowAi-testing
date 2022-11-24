@@ -1,4 +1,6 @@
 import json
+import timeit
+import itertools
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
@@ -12,27 +14,23 @@ from .mongo_db_connection import (
     get_user_info_by_username,
 )
 from .members import get_members
-
+from .forms import CreateDocumentForm
 
 @api_view(["GET", "POST"])
-def create_document(request):  # Document Creation.
-    company = request.session["company_id"]
-    user_name = request.session["user_name"]
+def create_document(request,company='6365ee18ff915c925f3a6691',user_name="Manish"):  # Document Creation.
+    
+    if request.method == "GET":
+        document_list = [(0, "__Document Name__"),itertools.chain((i["_id"], i["document_name"]) for i in get_document_list(company_id=company))]
+        return Response({"template_list": document_list}, status=status.HTTP_200_OK)
 
-    if request.method == "GET" and user_name:
-        template_list = [(0, "__Template Name__")]
-        for i in get_template_list(company_id=company):
-            template_list.append((i["_id"], i["template_name"]))
-        return Response({"template_list": template_list}, status=status.HTTP_200_OK)
-
-    if request.method == "POST" and user_name:
+    if request.method == "POST":
         data = ""
         company_id = company
         created_by = user_name
-        form = request.POST  # TODO: We will get the data from form 1 by 1 - Dont Worry.
-        if form.is_valid():
-            template_id = form.cleaned_data["copy_template"]
-            name = form.cleaned_data["name"]
+        form = request.data  # TODO: We will get the data from form 1 by 1 - Dont Worry.
+        if form:
+            template_id = form["copy_template"]
+            name = form["name"]
             res = json.loads(
                 save_document(name, template_id, data, created_by, company_id)
             )
@@ -66,9 +64,8 @@ def document_detail(request, *args, **kwargs):  # Single document
     verify = False
     template = False
     doc_viewer = False
-    user_name = request.session["user_name"]
-
-    if request.method == "GET" and user_name:
+    user_name = "Manish"
+    if request.method == "GET":
         document_obj = get_document_object(document_id=kwargs["document_id"])
         if not document_obj:
             return Response(
@@ -88,12 +85,14 @@ def document_detail(request, *args, **kwargs):  # Single document
                 {"message": "An Error Occurred!"},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
-        member_list = get_members(str(request.session["session_id"]))
-        if not member_list:
-            return Response(
-                {"message": "An Error Occurred!"},
-                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            )
+        # member_list = get_members(user_name)
+        # member_list = get_members(str(request.session["session_id"]))
+
+        # if not member_list:
+        #     return Response(
+        #         {"message": "An Error Occurred!"},
+        #         status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+        #     )
         document_data = {
             "id": document_obj["_id"],
             "name": document_obj["document_name"],
@@ -107,14 +106,14 @@ def document_detail(request, *args, **kwargs):  # Single document
             "company_id": document_obj["company_id"],
             "user_email": user["Email"],
             "wf_list": wf_single,
-            "member_list": member_list,
+            "member_list": "member_list",
             "workflow_id": workflow_id,
         }
         return Response(
             {
                 "curr_user_role": user["Role"],
                 "document": document_data,
-                "member_list": member_list,
+                "member_list": "member_list",
                 "workflow_id": workflow_id,
             },
             status=status.HTTP_200_OK,
@@ -164,14 +163,13 @@ def documents_to_be_signed(
     rejected = False
     signing = True
     filtered_list = []
-    # user = request.session["user_name"]
-    user = "Maanish"
+    user = request.user
     if not user:
         return Response(
             {"message": "You Must Be LoggedIn"}, status=status.HTTP_401_UNAUTHORIZED
         )
     # documents = get_document_list(request.session["company_id"])
-    documents = get_document_list("6365ee18ff915c925f3a6691")
+    documents = get_document_list(company_id="6365ee18ff915c925f3a6691")
     if not documents:
         return Response(
             {"message": "An Error Occurred."},
@@ -214,10 +212,10 @@ def documents_to_be_signed(
 def my_documents(request, *args, **kwargs):  # List of my documents.
     executed = True
     title = "Created By Me"
-    # user = request.session["user_name"]
-    user = "Maanish"
+
+    user = "Manish"
     # documents = get_document_list(request.session["company_id"])
-    documents = get_document_list("6365ee18ff915c925f3a6691")
+    documents = get_document_list(company_id="6365ee18ff915c925f3a6691")
     if not documents:
         return Response(
             {"message": "An Error Occurred."},
@@ -225,6 +223,7 @@ def my_documents(request, *args, **kwargs):  # List of my documents.
         )
     filtered_list = []
     try:
+        
         for doc in documents:
             workflow = get_wf_object(doc["workflow_id"])
             if not workflow:
@@ -232,6 +231,9 @@ def my_documents(request, *args, **kwargs):  # List of my documents.
                     {"message": "An Error Occurred."},
                     status=status.HTTP_500_INTERNAL_SERVER_ERROR,
                 )
+            doc["document_id"] = doc["_id"]
+            # if doc["created_by"] == user:
+            #     filtered_list.append(doc)
             for obj in workflow["int_wf_string"]:
                 if str(obj[0]) == str(doc["int_wf_position"]) and str(obj[-1]) == user:
                     print("ur time for internal workflow")
@@ -261,8 +263,7 @@ def my_documents(request, *args, **kwargs):  # List of my documents.
 def draft_documents(request, *args, **kwargs):  # List of Draft Documents.
     executed = False
     title = "Draft Documents."
-    # user = request.session["user_name"]
-    user = "Maanish"
+    user = request.user
     # documents = get_document_list(request.session["company_id"])
     documents = get_document_list("6365ee18ff915c925f3a6691")
     if not documents:
@@ -290,11 +291,12 @@ def draft_documents(request, *args, **kwargs):  # List of Draft Documents.
                     print("ur time for external workflow")
                 doc["document_id"] = doc["_id"]
                 if doc["created_by"] == user:
-                    if executed:
-                        if doc["int_wf_position"] > 0 or doc["ext_wf_position"] > 0:
-                            filtered_list.append(doc)
-                        else:
-                            filtered_list.append(doc)
+                    filtered_list.append(doc)
+                    # if executed:
+                    #     if doc["int_wf_position"] > 0 or doc["ext_wf_position"] > 0:
+                    #         filtered_list.append(doc)
+                    #     else:
+                    #         filtered_list.append(doc)
     except:
         return Response(
             {"message": "An Error Occurred."},
@@ -306,13 +308,12 @@ def draft_documents(request, *args, **kwargs):  # List of Draft Documents.
 
 
 @api_view(["GET"])
-def rejected_documents(request):  # List of rejected documents.
+def rejected_documents(request,company_id="6365ee18ff915c925f3a6691"):  # List of rejected documents.
     rejected = True
     signing = True
     title = "Rejected Documents"
     filtered_list = []
-    # user = request.session["user_name"]
-    user = "Maanish"
+    user = request.user
     if not user:
         return Response(
             {"message": "You Must Be LoggedIn"}, status=status.HTTP_401_UNAUTHORIZED
