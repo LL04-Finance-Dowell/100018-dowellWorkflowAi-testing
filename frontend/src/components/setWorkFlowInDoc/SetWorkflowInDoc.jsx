@@ -4,6 +4,7 @@ import SelectDoc from "./steps/selectDoc/SelectDoc";
 import SelectWorkflow from "./steps/selectWorkflow/SelectWorkflow";
 import styles from "./setWorkflowInDoc.module.css";
 import CheckErrors from "./steps/checkErrors/CheckErrors";
+import ProcessDocument from "./steps/processDocument/ProcessDocument";
 
 const SetWorkflowInDoc = () => {
   const infoBoxesRef = useRef();
@@ -21,6 +22,7 @@ const SetWorkflowInDoc = () => {
       </div>
       <ConnectWorkFlowToDoc />
       <CheckErrors />
+      <ProcessDocument />
     </div>
   );
 };

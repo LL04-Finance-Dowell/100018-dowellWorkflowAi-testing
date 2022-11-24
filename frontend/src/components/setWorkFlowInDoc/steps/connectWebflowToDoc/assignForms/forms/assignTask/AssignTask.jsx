@@ -17,11 +17,9 @@ const AssignTask = () => {
 
   const onSubmit = (data) => {
     setLoading(true);
-    console.log("location", data);
+    console.log("task", data);
     setTimeout(() => setLoading(false), 2000);
   };
-
-  console.log("iss", isSubmitSuccessful);
 
   return (
     <FormLayout isSubmitted={isSubmitSuccessful} loading={loading}>

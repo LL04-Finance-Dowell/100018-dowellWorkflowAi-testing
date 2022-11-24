@@ -3,6 +3,7 @@ import styles from "./select.module.css";
 const Select = ({ options, register, name, ...rest }) => {
   return (
     <select
+      id={name}
       className={styles.form__select}
       required
       {...register(name)}

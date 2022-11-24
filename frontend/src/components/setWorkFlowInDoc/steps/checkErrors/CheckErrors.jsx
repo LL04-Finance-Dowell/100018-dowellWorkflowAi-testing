@@ -5,6 +5,7 @@ import { v4 as uuidv4 } from "uuid";
 import AssignButton from "../../assignButton/AssignButton";
 import { useForm } from "react-hook-form";
 import { useState } from "react";
+import InfoTable from "./infoTable/InfoTable";
 
 const CheckErrors = () => {
   const {
@@ -39,6 +40,12 @@ const CheckErrors = () => {
           </FormLayout>
         </div>
       </div>
+      <InfoTable />
+      <div className="bottom-line">
+        <span
+          style={{ backgroundColor: "var(--e-global-color-1342d1f)" }}
+        ></span>
+      </div>
     </div>
   );
 };
@@ -52,10 +59,3 @@ export const processOptions = [
   { id: uuidv4(), option: "Sort process Location wise" },
   { id: uuidv4(), option: "Sort process Time wise" },
 ];
-/* 
-export const infoTable = [
-  {id: uuidv4(), content: "date", addEdit: [
-    info
-  ]}
-]
- */

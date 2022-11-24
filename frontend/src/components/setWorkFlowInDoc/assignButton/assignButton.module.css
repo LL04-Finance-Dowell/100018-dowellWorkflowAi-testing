@@ -12,4 +12,6 @@
   line-height: 12px;
   border: none;
   align-items: baseline;
+  min-height: 33px;
+  justify-content: center;
 }

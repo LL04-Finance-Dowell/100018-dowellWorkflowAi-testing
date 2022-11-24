@@ -8,7 +8,7 @@
 .container form {
   display: flex;
   flex-direction: column;
-  gap: 15px;
+  gap: 10px;
   position: relative;
 }
 

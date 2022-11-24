@@ -2,11 +2,11 @@ import React from "react";
 import styles from "./formLayout.module.css";
 import DoneIcon from "@mui/icons-material/Done";
 
-const FormLayout = ({ isSubmitted, children, loading }) => {
+const FormLayout = ({ isSubmitted, children, loading, ...rest }) => {
   console.log("aaa", loading);
 
   return (
-    <div className={styles.container}>
+    <div {...rest} className={styles.container}>
       {children}
       {isSubmitted && (
         <div className={styles.pasted__text}>
