@@ -15,8 +15,8 @@ from .mongo_db_connection import (
     get_wf_list,
     get_user_info_by_username,
     update_wf_approval,
+    get_members
 )
-from .members import get_members
 from datetime import datetime
 from django.core.mail import send_mail
 from django.urls import reverse
@@ -62,7 +62,7 @@ def workflow(request):  # create workflow, list workflows.
             )
         int_wf_string = []
         ext_wf_string = []
-        if len(body["internal"]):
+        if len(body["internal"]): 
             for step in body["internal"]:
                 int_wf_string.append([step["name"], step["roleID"]])
         if len(body["external"]):
@@ -194,11 +194,12 @@ def internal_signature(request, *args, **kwargs):  # internal signature
     verify = True
     is_template = False
     doc_viewer = False
+    user_name = request.session["user_name"]
 
     if request.method == "GET":
-        if request.session["user_name"]:
+        if user_name:
             document_obj = get_document_object(document_id=kwargs["document_id"])
-            user = get_user_info_by_username(request.session["user_name"])
+            user = get_user_info_by_username(user_name)
             workflow_id = document_obj["workflow_id"]
             wf_single = get_wf_object(workflow_id)
             member_list = get_members(str(request.session["session_id"]))
@@ -208,7 +209,7 @@ def internal_signature(request, *args, **kwargs):  # internal signature
                 "created_by": document_obj["created_by"],
                 "auth_role_list": get_auth_roles(document_obj),
                 "file": document_obj["content"],
-                "username": request.session["user_name"],
+                "username": user_name,
                 "verify": verify,
                 "template": is_template,
                 "doc_viewer": doc_viewer,
@@ -232,7 +233,7 @@ def internal_signature(request, *args, **kwargs):  # internal signature
                     {"message": "You Must Be Logged In"},
                     status=status.HTTP_401_UNAUTHORIZED,
                 )
-    if request.method == "POST" and request.session["user_name"]:
+    if request.method == "POST" and user_name:
         document_data = request.POST.get("documentData", False)
         document_id = request.POST.get("document_id", False)
         if not document_id and document_data:

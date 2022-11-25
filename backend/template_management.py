@@ -1,9 +1,9 @@
 import json
+import requests
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
 from .mongo_db_connection import (
-    get_wf_list,
     get_template_list,
     save_template,
     get_template_object,
@@ -13,108 +13,127 @@ from .mongo_db_connection import (
     get_user_info_by_username,
 )
 
+TEMPLATE_CONNECTION_LIST = [
+    "Documents",
+    "bangalore",
+    "Documentation",
+    "TemplateReports",
+    "templatereports",
+    "22689044433",
+    "ABCDE",
+]
 
-@api_view(["GET", "POST"])
-def create_template(request):  # Template Creation.
-    # user_name = request.session["user_name"]
-    # company = request.session["company_id"]
-    user_name = "Maanish"
-    company = "6365ee18ff915c925f3a6691"
+
+#
+# @api_view(["GET", "POST"])
+# def template_editor(request, template_id):  # Editor for a template.
+#     user_name = "Maanish"
+#     if request.method == "GET":  # Data for the Template Editor.
+#         template_obj = get_template_object(template_id=template_id)
+#         if not template_obj:
+#             return Response(
+#                 {"message": "Failed to Get template."},
+#                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+#             )
+#         workflow_obj = get_wf_object(template_obj["workflow_id"])
+#         if not workflow_obj:
+#             return Response(
+#                 {"message": "An Error Occurred."},
+#                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+#             )
+#         user = get_user_info_by_username(user_name)  # TODO:  Info to probe
+#         if not user:
+#             return Response(
+#                 {"message": "An Error Occurred."},
+#                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+#             )
+#         template_data = {
+#             "id": template_obj["_id"],
+#             "name": template_obj["template_name"],
+#             "created_by": template_obj["created_by"],
+#             "file": template_obj["content"],
+#             "verify": False,
+#             "template": True,
+#             "doc_viewer": False,
+#             "company_id": template_obj["company_id"],
+#             "user_email": user["Email"],
+#         }
+#         return Response({"template_data": template_data}, status=status.HTTP_200_OK)
+#     return Response(
+#         {"message": "You Not To Be Logged In"}, status=status.HTTP_401_UNAUTHORIZED
+#     )
+
+
+@api_view(["POST"])
+def create_template(request):
+    editorApi = "https://100058.pythonanywhere.com/dowelleditor/editor/"
     if request.method == "POST":
         data = ""
         old_template = None
-        form = request.POST  # TODO: Shall handle form input one by one.
-        company_id = company
-        created_by = user_name
+        if not request.data:
+            return Response(
+                {"message": "Input is Required!"},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
+        created_by = request.data["created_by"]
+        company_id = request.data["company_id"]
+        template_name = request.data["template_name"]
+        copy_template = request.data["copy_template"]
         if not company_id and created_by:
             return Response(
                 {"message": "An Error Occurred!"},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
-        if form.is_valid():  # TODO: This form data needs more work to sanitize
-            if (
-                "name" in form.cleaned_data.keys()
-                and "workflow" in form.cleaned_data.keys()
-            ):
-                if form.cleaned_data["copy_template"]:
-                    try:
-                        old_template = get_template_object(
-                            form.cleaned_data["copy_template"]
-                        )
-                        data = old_template["content"]  # TODO: Add an value for input
-                    except:
-                        pass
-                resObj = json.loads(
-                    save_template(
-                        form.cleaned_data["name"],
-                        form.cleaned_data["workflow"],
-                        data,
-                        created_by,
-                        company_id,
-                    )
+        if template_name:
+            if copy_template:
+                try:
+                    old_template = get_template_object(copy_template)
+                    data = old_template["content"]
+                except:
+                    pass
+            resObj = json.loads(
+                save_template(
+                    template_name,
+                    data,
+                    created_by,
+                    company_id,
                 )
-                print("Template Created---------\n", resObj)
-                if resObj["isSuccess"]:
-                    return Response(
-                        {
-                            "message": "Template Created Successfully.",
-                            "template_id": resObj["inserted_id"],
-                        },
-                        status=status.HTTP_201_CREATED,
-                    )
-
+            )
+            if resObj["isSuccess"]:
+                payload = {
+                    "database": "Documentation",
+                    "collection": "TemplateReports",
+                    "fields": template_name,
+                    "document_id": resObj["inserted_id"],
+                }
+                editor_link = requests.post(
+                    editorApi,
+                    data=payload,
+                )
                 return Response(
-                    {"message": "Name and workflow required."},
-                    status=status.HTTP_300_MULTIPLE_CHOICES,
+                    editor_link.json(),
+                    status=status.HTTP_201_CREATED,
                 )
-        return Response(
-            {"message": "Template Creation Failed"}, status=status.HTTP_400_BAD_REQUEST
-        )
-
-    if request.method == "GET" and user_name:
-        template_list = []
-        template_list = [(0, "--Template Name (None)--")]
-        try:
-            for i in get_template_list(company):
-                template_list.append((i["_id"], i["template_name"]))
-        except:
             return Response(
-                {"message": "An Error Occurred!"},
-                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                {"message": "Name is required."},
+                status=status.HTTP_300_MULTIPLE_CHOICES,
             )
-        wf_list = []
-        wf_list = [(0, "--Workflow (None)--")]
-        try:
-            for i in get_wf_list(company):
-                if i["workflow_title"] != "execute_wf":
-                    wf_list.append((i["_id"], i["workflow_title"]))
-        except:
-            return Response(
-                {"message": "An Error Occurred!"},
-                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            )
-
-        return Response(
-            {"template_list": template_list, "workflow_list": wf_list},
-            status=status.HTTP_200_OK,
-        )
-    else:
-        return Response(
-            {"message": "You Need To Be LoggedIn"},
-            status=status.HTTP_401_UNAUTHORIZED,
-        )
+    return Response(
+        {"message": "Template Creation Failed"},
+        status=status.HTTP_405_METHOD_NOT_ALLOWED,
+    )
 
 
 @api_view(["GET"])
 def approved_templates(request):
-    company = request.session["company_id"]
+    # company = request.session["company_id"]  # TODO: In review
+    company = "6365ee18ff915c925f3a6691"
     if request.method == "POST":  # Template Approval.
         template_id = request.POST["template_id"]
         approval = True
         response = json.loads(
             update_template_approval(template_id, approval)
         )  # TODO: Check this response.
-
         if response["isSuccess"]:
             return Response(
                 {"message": "Template Approved."}, status=status.HTTP_200_OK
@@ -132,10 +151,7 @@ def approved_templates(request):
                 {"message": "An Error Occurred."},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
-        templates = []
-        for tm in template_list:
-            if tm.get("approved") == True:
-                templates.append(tm)
+        templates = [t for t in template_list if t.get("approved") == True]
         return Response(templates, status=status.HTTP_200_OK)
 
 
@@ -147,16 +163,15 @@ def not_approved_templates(request):  # List of Templates to be approved.
             {"message": "An Error Occurred."},
             status=status.HTTP_500_INTERNAL_SERVER_ERROR,
         )
-    templates = []
-    for tm in template_list:
-        if tm.get("approved") == False:
-            templates.append(tm)
+    templates = [t for t in template_list if t.get("approved") == False]
     return Response(templates, status=status.HTTP_200_OK)
 
 
 @api_view(["GET"])
 def template_list(request):  # List of Created Templates.
-    template_list = get_template_list(company_id=request.session["company_id"])
+    # company = request.session["company_id"]
+    company = "6365ee18ff915c925f3a6691"
+    template_list = get_template_list(company_id=company)
     if not template_list:
         return Response(
             {"message": "An Error Occurred."},
@@ -180,7 +195,7 @@ def template_detail(request):  # Single Template
 #
 @api_view(["GET", "POST"])
 def template_editor(request, *args, **kwargs):  # Editor for a template.
-    user_name = "Manish"
+    user_name = request.session["user_name"]
 
     if request.method == "POST" and user_name:  # Save Template.
         body = json.loads(request.body)

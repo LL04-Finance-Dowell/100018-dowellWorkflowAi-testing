@@ -1,40 +1,28 @@
-# 100018-dowellWorkflowAi-testing
+# WorfklowAI Service
 
-## for project team members
-- Be working on a branch other than `main`, simply:
-    - `$ git checkout -B <my_branch>`
-- When you push, push to your branch
-    - `git push origin <my_branch>`
-- if backend: you are advised to work isolated in the `backend` directory, which has all the files you need.
-- if frontend: you are advised to work on the `frontend` directory.
+api_url = [https://100094.pythonanywhere.com/v0.1/]
 
-## How to set up the project locally.
-1. After cloning this repository.
-2. Setup the Backend server(on your terminal):
-- First create a virtual environment as below
-    - `$ python3 -m venv venv`
-- Activate the virtual environment.
-    - On Windows
-        - `venv\Scripts\activate`
-    - On Linux
-        - `$ source venv/bin/activate`
-- Install the required packages.
-    - `$ pip install -r requirements.txt`
-- Start the server.
-    - `$ python3 -m manage.py runserver 8001`
+### Template Management
 
-3. For Frontend, Setup development server.
-- Install the app dependencies.
-    - `$ npm install`
-- Start the development server
-    - `$ npm start`
-- create an environment file
-    - `.env` 
-- Add the following contents to file.
-    - `SERVER_URL=http://127.0.0.1:8001/`
+_POST_ to `templates/`
+-Creates a new template
 
-4. Go to your working directory.
-    - Frontend Engineer(`frontend`)
-    - Backend Engineer(`backend`)
+Request Body
 
-5. Happy Hacking.
+```
+{
+   "template_name": "<name_of_template>",
+    "copy_template": "<empty_for_now>",
+    "company_id": "<company_id_of_authenticated_user>",
+    "created_by": "<user_name_of_authenticated_user>"
+}
+```
+
+Response
+
+```
+{
+"editor_link": "<link_to_the_editor>
+}
+
+```

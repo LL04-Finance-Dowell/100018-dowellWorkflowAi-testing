@@ -2,7 +2,7 @@ import requests
 import json
 from datetime import datetime
 from .dowellconnection import dowellconnection
-
+import requests
 
 QR_ID_CONNECTION_LIST = [
     "Documents",
@@ -98,6 +98,16 @@ DOCUMENT_CONNECTION_DICT = {
     "team_member_ID": "11689044433",
     "function_ID": "ABCDE",
 }
+
+
+
+url = "https://100014.pythonanywhere.com/api/userinfo/"
+
+def get_members(session_id):
+    payload = {"session_id": session_id}
+    r = requests.post(url=url, data=payload)
+    return r.json()
+
 
 def get_event_id():
     dd = datetime.now()
@@ -280,7 +290,7 @@ def update_wf_approval(workflow_id, approval):
     return response.text
 
 
-def save_template(name, workflow_id, data, created_by, company_id):
+def save_template(name, data, created_by, company_id):
     url = "http://100002.pythonanywhere.com/"
     event_id = get_event_id()
     payload = json.dumps(
@@ -291,7 +301,6 @@ def save_template(name, workflow_id, data, created_by, company_id):
                 "eventId": event_id,
                 "template_name": name,
                 "content": data,
-                "workflow_id": workflow_id,
                 "company_id": company_id,
                 "created_by": created_by,
             },
@@ -308,12 +317,10 @@ def save_template(name, workflow_id, data, created_by, company_id):
 def get_template_object(template_id):
     fields = {"_id": template_id}
     response_obj = dowellconnection(*TEMPLATE_CONNECTION_LIST, "find", fields, "nil")
-    # print("Template object----------------- \n", response_obj)
     res_obj = json.loads(response_obj)
-    try:
-        if len(res_obj["data"]):
-            return res_obj["data"]
-    except:
+    if len(res_obj["data"]):
+        return res_obj["data"]
+    else:
         return []
 
 
