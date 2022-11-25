@@ -39,3 +39,8 @@
 
   padding: 20px;
 }
+#example-collapse-text a {
+  display: block;
+  text-decoration: none;
+  color: #7A7A7A;
+}

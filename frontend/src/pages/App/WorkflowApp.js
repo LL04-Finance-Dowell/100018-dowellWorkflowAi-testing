@@ -13,11 +13,13 @@ const WorkflowApp = () => {
         <WorkflowLayout>
             <>
                 <h1>Hello {currentUser.username}</h1>
-                { 
-                    currentUser ? 
-                    <button><Link to={dowellLogoutUrl} onClick={(e) => handleAuthenticationBtnClick(e, dowellLogoutUrl, clearLocalStorageItems())}>Logout</Link></button> : 
-                    <button><Link to={dowellLoginUrl} onClick={(e) => handleAuthenticationBtnClick(e, dowellLoginUrl)}>Login</Link></button> 
-                }    
+                <div>
+                    { 
+                        currentUser ? 
+                        <button><Link to={dowellLogoutUrl} onClick={(e) => handleAuthenticationBtnClick(e, dowellLogoutUrl, clearLocalStorageItems())}>Logout</Link></button> : 
+                        <button><Link to={dowellLoginUrl} onClick={(e) => handleAuthenticationBtnClick(e, dowellLoginUrl)}>Login</Link></button> 
+                    }
+                </div>
             </>
         </WorkflowLayout>
     </>
