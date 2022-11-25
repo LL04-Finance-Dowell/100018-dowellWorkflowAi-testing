@@ -41,6 +41,11 @@ def create_document(request):  # Document Creation.
                 save_document(name, template_id, data, created_by, company_id)
             )
             print("Looks Like Documented is created----------\n", res)
+            if not company_id and created_by:
+                return Response(
+                    {"message": "An Error Occurred!"},
+                    status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                )
             if res["isSuccess"]:
 
                 payload = {
@@ -59,7 +64,7 @@ def create_document(request):  # Document Creation.
                 )
             return Response(
                 {"message": "Unable to Create Document"},
-                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                status=status.HTTP_405_METHOD_NOT_ALLOWED,
             )
         return Response({"status": 420, "message": "invalid form"})
 
