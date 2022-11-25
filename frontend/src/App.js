@@ -19,6 +19,7 @@ import WorkflowsPage from "./pages/Workflows/AllWorkflowsPage/WorkflowsPage";
 import CreateNewWorkflowPage from "./pages/Workflows/CreateNewWorkflowPage/CreateNewWorkflowPage";
 import ApproveWorkflowPage from "./pages/Workflows/ApproveWorkflowPage/ApproveWorkflowPage";
 import RejectedWorkflowsPage from "./pages/Workflows/RejectedWorkflowsPage/RejectedWorkflowsPage";
+import SetWorkflowInDoc from "./components/setWorkFlowInDoc/SetWorkflowInDoc";
 
 function App() {
   const { currentUser, setCurrentUser } = useUserContext();
@@ -62,6 +63,14 @@ function App() {
       <Route path={"*"} element={<>Page not found</>} />
     </Routes>
   );
+
+  // return (
+  //   <div style={{ paddingTop: "200px", paddingBottom: "150px" }}>
+  //   <Routes>
+  //     <Route path={"/"} element={<SetWorkflowInDoc />} />
+  //   </Routes>
+  // </div>  
+  // );
 }
 
 export default App;

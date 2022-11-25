@@ -1,0 +1,57 @@
+.container {
+  display: flex;
+  margin-bottom: 20px;
+  transition: 0.1s transform ease;
+}
+
+.box {
+  display: flex;
+  width: min(14vw, 160px);
+  flex-direction: column;
+  color: var(--e-global-color-text);
+  font-weight: 700;
+  border: 1px solid var(--e-global-color-text);
+  overflow: hidden;
+  align-self: flex-start;
+}
+
+.title__box {
+  width: 100%;
+  border-bottom: 1px solid var(--e-global-color-text);
+  padding: 15px 20px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 700;
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.title {
+  text-transform: capitalize;
+  color: var(--e-global-color-text) !important;
+}
+
+.content__box {
+  padding: 15px 20px;
+  margin-bottom: 0;
+  padding-right: 20px;
+  display: flex;
+  flex-direction: column;
+  padding-left: 60px !important;
+  transition: ease all 1s;
+}
+
+.content {
+  line-height: 18px;
+  text-align: start;
+  font-size: 12px;
+  white-space: break-spaces;
+  font-weight: 400;
+  font-family: "Roboto";
+}
+
+@media (max-width: 767px) {
+  .box {
+    width: 28.15vw;
+  }
+}
