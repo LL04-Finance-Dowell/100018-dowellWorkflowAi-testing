@@ -1,15 +1,15 @@
 {
   "files": {
-    "main.css": "/100018-dowellWorkflowAi-testing/static/css/main.748306b9.css",
-    "main.js": "/100018-dowellWorkflowAi-testing/static/js/main.13676046.js",
+    "main.css": "/100018-dowellWorkflowAi-testing/static/css/main.98d30bab.css",
+    "main.js": "/100018-dowellWorkflowAi-testing/static/js/main.a434ae14.js",
     "static/js/787.cda612ba.chunk.js": "/100018-dowellWorkflowAi-testing/static/js/787.cda612ba.chunk.js",
     "index.html": "/100018-dowellWorkflowAi-testing/index.html",
-    "main.748306b9.css.map": "/100018-dowellWorkflowAi-testing/static/css/main.748306b9.css.map",
-    "main.13676046.js.map": "/100018-dowellWorkflowAi-testing/static/js/main.13676046.js.map",
+    "main.98d30bab.css.map": "/100018-dowellWorkflowAi-testing/static/css/main.98d30bab.css.map",
+    "main.a434ae14.js.map": "/100018-dowellWorkflowAi-testing/static/js/main.a434ae14.js.map",
     "787.cda612ba.chunk.js.map": "/100018-dowellWorkflowAi-testing/static/js/787.cda612ba.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.748306b9.css",
-    "static/js/main.13676046.js"
+    "static/css/main.98d30bab.css",
+    "static/js/main.a434ae14.js"
   ]
 }
