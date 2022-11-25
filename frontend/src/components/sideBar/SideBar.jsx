@@ -11,8 +11,21 @@ import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 
 import Accordion from "../accordion/Accordion";
 import { useState } from "react";
-const SideBar = () => {
+import { Link, useNavigate } from "react-router-dom";
+import { dowellLoginUrl } from "../../services/axios";
+const SideBar = ({ user }) => {
   const [open, setOpen] = useState(false);
+  const navigate = useNavigate();
+  
+  const handleCreateWorkflowItemClick = (e) => {
+    e.preventDefault();
+
+    const linkPath = e.target.hash.replace("#", "") + e.target.search;
+    
+    if (user) return navigate(linkPath);
+    window.location = dowellLoginUrl + linkPath;
+  }
+
   return (
     <div className={styles.sideBar}>
       <div className={styles.main}>
@@ -35,7 +48,7 @@ const SideBar = () => {
           src="https://i0.wp.com/workflowai.online/wp-content/uploads/2022/02/download-e1658465151576.jpg?resize=100%2C100&ssl=1"
           alt=""
         />
-        <span className={styles.welcome}>Welcome, Tom</span>
+        <span className={styles.welcome}>Welcome, {user ? user.username : "Tom"}</span>
         <span className={styles.myOrganisation}>My Organisation</span>
         <img
           className={styles.orgImg}
@@ -118,10 +131,10 @@ const SideBar = () => {
         in={open}
       >
         <div id="example-collapse-text">
-          <p className={styles.colC}>Document</p>
-          <p className={styles.colC}>Template</p>
-          <p className={styles.colC}>Workflow</p>
-          <p className={styles.colC}>process</p>
+          <Link className={styles.colC} to={"/documents/new"} onClick={handleCreateWorkflowItemClick}>Document</Link>
+          <Link className={styles.colC} to={"/templates/new"} onClick={handleCreateWorkflowItemClick}>Template</Link>
+          <Link className={styles.colC} to={"/workflows/new"} onClick={handleCreateWorkflowItemClick}>Workflow</Link>
+          <Link className={styles.colC} to={"/processes/new"} onClick={handleCreateWorkflowItemClick}>Process</Link>
         </div>
       </Collapse>
       <div className="search-input">

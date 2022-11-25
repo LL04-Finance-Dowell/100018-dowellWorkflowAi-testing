@@ -32,24 +32,28 @@ function App() {
     return (
       <Routes>
         <Route path={"/"} element={<LandingPage />} />
+        <Route path={"*"} element={<>Page not found</>} />
       </Routes>
     );
 
   return (
     <Routes>
       <Route path={"/"} element={<WorkflowApp />} />
-      <Route path={"/documents"} element={<DocumentsPage />}>
+      <Route path={"documents"}>
+        <Route index element={<DocumentsPage />} />
         <Route path={"new"} element={<CreateNewDocumentPage />} />
         <Route path={"to-sign"} element={<SignDocumentsPage />} />
         <Route path={"rejected"} element={<RejectedDocumentsPage />} />
         <Route path={"to-process"} element={<ProcessDocumentsPage />} />
       </Route>
-      <Route path={"/templates"} element={<TemplatesPage />}>
+      <Route path={"templates"}>
+        <Route index element={<TemplatesPage />} />
         <Route path={"new"} element={<CreateNewTemplatePage />} />
         <Route path={"to-approve"} element={<ApproveTemplatesPage />} />
         <Route path={"rejected"} element={<RejectedTemplatesPage />} />
       </Route>
-      <Route path={"/workflows"} element={<WorkflowsPage />}>
+      <Route path={"workflows"}>
+        <Route index element={<WorkflowsPage />} />
         <Route path={"new"} element={<CreateNewWorkflowPage />} />
         <Route path={"to-approve"} element={<ApproveWorkflowPage />} />
         <Route path={"rejected"} element={<RejectedWorkflowsPage />} />
