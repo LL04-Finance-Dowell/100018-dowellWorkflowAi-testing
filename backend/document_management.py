@@ -14,7 +14,6 @@ from .mongo_db_connection import (
     get_user_info_by_username,
     get_members,
 )
-from .members import get_members
 
 
 @api_view(["GET", "POST"])
