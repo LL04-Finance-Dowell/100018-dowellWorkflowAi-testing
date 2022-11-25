@@ -18,7 +18,6 @@ from .forms import CreateDocumentForm
 
 @api_view(["GET", "POST"])
 def create_document(request,company='6365ee18ff915c925f3a6691',user_name="Manish"):  # Document Creation.
-    
     if request.method == "GET":
         document_list = [(0, "__Document Name__"),itertools.chain((i["_id"], i["document_name"]) for i in get_document_list(company_id=company))]
         return Response({"template_list": document_list}, status=status.HTTP_200_OK)
