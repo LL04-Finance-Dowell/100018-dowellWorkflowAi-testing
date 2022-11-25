@@ -1,5 +1,6 @@
 import styles from "../sideBar/sideBar.module.css";
 import MenuIcon from "@mui/icons-material/Menu";
+import SearchIcon from "@mui/icons-material/Search";
 import HouseIcon from "@mui/icons-material/House";
 import PersonIcon from "@mui/icons-material/Person";
 import PowerSettingsNewIcon from "@mui/icons-material/PowerSettingsNew";
@@ -73,48 +74,67 @@ const SideBar = ({ user }) => {
         content2="2. Rejected by others (001)"
       />
 
-      <Button
+      <div
         style={{
-          width: "80%",
-          marginLeft: "30px",
-          height: "65px",
+          width: "280px",
+          height: "72px",
+          marginLeft: "15px",
+          border: "1px solid white",
+          borderRadius: "5px",
+          padding: "2px",
           marginTop: "50px",
-          backgroundColor: "#61ce70",
-          borderCollapse: "separate",
-          borderSpacing: "3px",
-          border: "3px solid white",
-          borderRadius: "10px",
-          // borderRadius: "3px",
         }}
-        // variant="success"
-        onClick={() => setOpen(!open)}
-        aria-controls="example-collapse-text"
-        aria-expanded={open}
       >
-        <span
+        {" "}
+        <Button
           style={{
-            justifyContent: "start",
-            display: "flex",
-            gap: "3px",
-            fontSize: "25px",
-            fontWeight: "bold",
-          }}
-        >
-          {!open ? (
-            <AddIcon style={{ marginTop: "5px" }} />
-          ) : (
-            <KeyboardArrowUpIcon sx={{ color: "white" }} />
-          )}
-          New
-        </span>
-      </Button>
+            margin: "auto",
+            width: "100%",
+            height: "65px",
+            backgroundColor: "#61ce70",
+            borderCollapse: "separate",
+            borderSpacing: "3px",
+            border: "3px solid #54595f",
 
-      <Collapse style={{ width: "80%", marginLeft: "30px" }} in={open}>
+            // borderRadius: "3px",
+          }}
+          // variant="success"
+          onClick={() => setOpen(!open)}
+          aria-controls="example-collapse-text"
+          aria-expanded={open}
+        >
+          <span
+            style={{
+              justifyContent: "start",
+              display: "flex",
+              gap: "3px",
+              fontSize: "25px",
+              fontWeight: "bold",
+            }}
+          >
+            {!open ? (
+              <AddIcon style={{ marginTop: "5px" }} />
+            ) : (
+              <KeyboardArrowUpIcon sx={{ color: "white" }} />
+            )}
+            New
+          </span>
+        </Button>
+      </div>
+
+      <Collapse
+        style={{
+          width: "88.5%",
+          marginLeft: "16px",
+          backgroundColor: "#e1e1e1",
+        }}
+        in={open}
+      >
         <div id="example-collapse-text">
-          <Link to={"/documents/new"} onClick={handleCreateWorkflowItemClick}>Document</Link>
-          <Link to={"/templates/new"} onClick={handleCreateWorkflowItemClick}>Template</Link>
-          <Link to={"/workflows/new"} onClick={handleCreateWorkflowItemClick}>Workflow</Link>
-          <Link to={"/processes/new"} onClick={handleCreateWorkflowItemClick}>Process</Link>
+          <Link className={styles.colC} to={"/documents/new"} onClick={handleCreateWorkflowItemClick}>Document</Link>
+          <Link className={styles.colC} to={"/templates/new"} onClick={handleCreateWorkflowItemClick}>Template</Link>
+          <Link className={styles.colC} to={"/workflows/new"} onClick={handleCreateWorkflowItemClick}>Workflow</Link>
+          <Link className={styles.colC} to={"/processes/new"} onClick={handleCreateWorkflowItemClick}>Process</Link>
         </div>
       </Collapse>
       <div className="search-input">
@@ -130,8 +150,45 @@ const SideBar = ({ user }) => {
         >
           Search
         </span>
-        <p>Search in file names of Docs, Templates & Workflows</p>
+        <p
+          style={{
+            padding: "0 30px",
+            marginLeft: "30px",
+            color: "#dddfe1",
+            fontWeight: "600",
+          }}
+        >
+          Search in file names of Docs, Templates & Workflows
+        </p>
       </div>
+      <form>
+        <input
+          style={{
+            fontSize: "17px",
+            color: "#afafaf",
+            paddingLeft: "40px",
+            marginLeft: "40px",
+            height: "50px",
+            border: "gray",
+          }}
+          type="text"
+          value="type here to search"
+        />
+      </form>
+      <button
+        style={{
+          width: "75%",
+          marginLeft: "39px",
+          marginTop: "8px",
+          height: "50px",
+          backgroundColor: "#61ce70",
+          color: "white",
+          border: "1px solid gray",
+        }}
+      >
+        <SearchIcon style={{ color: "white" }} />
+        Search
+      </button>
       <Accordion
         title="Documents (007)"
         content="1. To be Approved (002)"
@@ -257,7 +314,7 @@ const SideBar = ({ user }) => {
           paddingTop: "20px",
           paddingBottom: "30px",
           justifyContent: "center",
-          gap: "30px",
+          gap: "20px",
         }}
       >
         {" "}
@@ -265,6 +322,7 @@ const SideBar = ({ user }) => {
         <PowerSettingsNewIcon fontSize="large" style={{ color: "white" }} />
         <PersonIcon fontSize="large" style={{ color: "white" }} />
         <HouseIcon fontSize="large" style={{ color: "white" }} />
+        <PowerSettingsNewIcon fontSize="large" style={{ color: "white" }} />
       </div>
     </div>
   );

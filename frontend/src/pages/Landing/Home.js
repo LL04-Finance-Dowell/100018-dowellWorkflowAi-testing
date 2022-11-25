@@ -1,4 +1,7 @@
 import { Link } from "react-router-dom";
+import LinkedInIcon from "@mui/icons-material/LinkedIn";
+import YouTubeIcon from "@mui/icons-material/YouTube";
+import FacebookIcon from "@mui/icons-material/Facebook";
 import Carousel from "../../components/carousel/Carousel";
 import FlipCard from "../../components/flip-card/FlipCard";
 import SideBar from "../../components/sideBar/SideBar";
@@ -43,7 +46,14 @@ const LandingPage = () => {
         <div className="top-main">
           <Carousel />
 
-          <div className="sm-flip">
+          <div
+            style={{
+              zIndex: "1",
+              position: "sticky",
+              top: "0px",
+            }}
+            className="sm-flip"
+          >
             <SmallFlip
               icon={<NotificationsNoneIcon fontSize="large" />}
               content={"006"}
@@ -110,7 +120,7 @@ const LandingPage = () => {
             </div>
           </div>
 
-          <div style={{ marginTop: "150px" }}>
+          <div>
             <h5
               id="ji"
               style={{
@@ -140,7 +150,7 @@ const LandingPage = () => {
               <HoverCard color="#c3d6be" />
             </div>
           </div>
-          <div style={{ marginTop: "150px" }}>
+          <div>
             <h5
               id="ji"
               style={{
@@ -160,7 +170,7 @@ const LandingPage = () => {
               style={{
                 display: "grid",
                 width: "67%",
-                marginBottom: "200px",
+
                 paddingLeft: "50px",
                 gridTemplateColumns: "auto auto auto",
               }}
@@ -171,7 +181,7 @@ const LandingPage = () => {
           </div>
           <div style={{ display: "flex" }}>
             <Table header="Incomplete Tasks" />
-            <Table header="Completed Tasks" hcolor="gray" />
+            <Table header="Complete Tasks" />
           </div>
           <div className="sm-flip">
             <SmallFlip
@@ -209,6 +219,17 @@ const LandingPage = () => {
           </div>
         </div>
         <FlipCard />
+      </div>
+      <div
+        style={{ display: "flex", justifyContent: "space-between" }}
+        className="footer"
+      >
+        <div>©All rights reserved by WorkFlowAI</div>
+        <div style={{ display: "flex", gap: "20px" }}>
+          <FacebookIcon fontSize="large" className="face" />
+          <YouTubeIcon fontSize="large" className="face" />
+          <LinkedInIcon fontSize="large" className="face" />
+        </div>
       </div>
     </>
   );
