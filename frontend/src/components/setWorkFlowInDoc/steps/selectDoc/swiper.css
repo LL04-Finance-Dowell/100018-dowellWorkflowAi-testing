@@ -4,6 +4,10 @@
   min-width: 0;
 }
 
+.select-doc .swiper-slide {
+  height: 280px !important;
+}
+
 .select-doc .swiper-button-next,
 .select-doc .swiper-button-prev {
   color: black;

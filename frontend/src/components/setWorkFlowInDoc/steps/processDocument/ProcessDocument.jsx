@@ -1,6 +1,6 @@
 import styles from "./processDocument.module.css";
 import { v4 as uuidv4 } from "uuid";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import FormLayout from "../../formLayout/FormLayout";
 import { useForm } from "react-hook-form";
 import Select from "../../select/Select";
@@ -8,17 +8,13 @@ import AssignButton from "../../assignButton/AssignButton";
 
 const ProcessDocument = () => {
   const [currentProcess, setCurrentProcess] = useState();
-  const refone = useRef(null);
-  const reftwo = useRef(null);
-  const [index, setIndex] = useState(0);
 
   useEffect(() => {
     setCurrentProcess(processDocument[0]);
   }, []);
 
-  const handleCurrentProcess = (item, cindex) => {
+  const handleCurrentProcess = (item) => {
     setCurrentProcess(item);
-    setIndex(cindex);
   };
 
   const {
@@ -64,46 +60,47 @@ const ProcessDocument = () => {
         </div>
         <div className={styles.right__container}>
           <div className={styles.right__box}>
-            <div className={styles.process__container}>
-              {processDocument.map((item, index) => (
-                <div
-                  ref={refone}
-                  style={{
-                    marginBottom: `${
-                      currentProcess && item.id === currentProcess.id
-                        ? "180px"
-                        : 0
-                    }`,
-                  }}
-                  onClick={() => handleCurrentProcess(item, index)}
-                  className={`${styles.process__box} ${
-                    currentProcess &&
-                    item.id === currentProcess.id &&
-                    styles.active__process
-                  }`}
-                >
-                  {item.process}
-                </div>
-              ))}
-            </div>
             <div
               style={{
-                bottom: `${
-                  (5 - index) * refone.current?.getBoundingClientRect().height
-                }px`,
+                position: "relative",
               }}
-              ref={reftwo}
-              className={styles.process__detail__container}
+              className={styles.process__container}
             >
-              <div className={styles.process__detail__box}>
-                <p>{currentProcess && currentProcess.processDetail}</p>
-                <p className={styles.start__processing__button}>
-                  Save & Start Processing
-                </p>
-              </div>
+              {processDocument.map((item) => (
+                <>
+                  <div
+                    onClick={() => handleCurrentProcess(item)}
+                    className={`${styles.process__box} ${
+                      item.id === currentProcess?.id && styles.active__process
+                    }`}
+                  >
+                    {item.process}
+                  </div>
+                  <div
+                    style={{
+                      display: `${
+                        item.id === currentProcess?.id ? "block" : "none"
+                      }`,
+                    }}
+                    className={styles.process__detail__container}
+                  >
+                    <div className={styles.process__detail__box}>
+                      <p>{currentProcess && currentProcess.processDetail}</p>
+                      <p className={styles.start__processing__button}>
+                        Save & Start Processing
+                      </p>
+                    </div>
+                  </div>
+                </>
+              ))}
             </div>
           </div>
         </div>
+      </div>
+      <div className="bottom-line">
+        <span
+          style={{ backgroundColor: "var(--e-global-color-1342d1f)" }}
+        ></span>
       </div>
     </div>
   );

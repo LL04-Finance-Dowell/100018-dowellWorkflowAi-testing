@@ -10,7 +10,7 @@ import InfoBoxes from "./ınfoBoxes/InfoBoxes";
 import { useEffect } from "react";
 import useWindowSize from "../../../../hooks/useWindowSize";
 
-const SelectWorkflow = ({ infoBoxesRef }) => {
+const SelectWorkflow = () => {
   const size = useWindowSize();
   const [selectedWorkFlows, setSelectedWorkFlows] = useState([]);
 
@@ -24,10 +24,7 @@ const SelectWorkflow = ({ infoBoxesRef }) => {
 
   return (
     <div className={styles.container}>
-      <InfoBoxes
-        infoBoxesRef={infoBoxesRef}
-        setSelectedWorkFlows={setSelectedWorkFlows}
-      />
+      <InfoBoxes setSelectedWorkFlows={setSelectedWorkFlows} />
       <h2 className={`${styles.title} h2-small step-title`}>
         2. Select a Workflow to add to the selected document
       </h2>

@@ -4,6 +4,7 @@
   width: min(75vw, 855px);
   padding: 10px;
   padding-top: 50px;
+  position: relative;
 }
 
 .title {
@@ -32,6 +33,10 @@
 }
 
 @media (max-width: 768px) {
+  .container {
+    width: 100%;
+    max-width: 100vw;
+  }
   .content__container {
     flex-direction: column;
   }

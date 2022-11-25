@@ -4,29 +4,17 @@ import { v4 as uuidv4 } from "uuid";
 import { GrAdd } from "react-icons/gr";
 import { MdOutlineRemove } from "react-icons/md";
 import { motion, useScroll, useTransform } from "framer-motion";
-import useWindowSize from "../../../../../hooks/useWindowSize";
 
-const InfoBoxes = ({ setSelectedWorkFlows, infoBoxesRef }) => {
+const InfoBoxes = ({ setSelectedWorkFlows }) => {
   const ref = useRef(null);
   const [compInfoBoxes, setCompInfoBoxes] = useState(infoBoxes);
-  const [offset, setOffset] = useState(["start 30%", "end end"]);
-  const [yPosition, setYPosition] = useState(["-100%", "0%"]);
-  const size = useWindowSize();
-  const { scrollYProgress } = useScroll({
-    target: infoBoxesRef,
-    offset,
-  });
-  const y = useTransform(scrollYProgress, [0, 1], yPosition);
 
-  useEffect(() => {
-    if (size.width < 768) {
-      setYPosition(["140%", "-250%"]);
-      setOffset(["start end", "end end"]);
-    } else {
-      setYPosition(["0px", "-500px"]);
-      setOffset(["start 30%", "end end"]);
-    }
-  }, [size.width]);
+  const { scrollYProgress } = useScroll({
+    target: ref,
+    offset: ["end end", "start start"],
+  });
+
+  const y = useTransform(scrollYProgress, [0, 1], ["200px", "-200px"]);
 
   const handleClick = (id) => {
     const updatedInfoBoxes = compInfoBoxes.map((item) =>
@@ -45,7 +33,7 @@ const InfoBoxes = ({ setSelectedWorkFlows, infoBoxesRef }) => {
   };
 
   return (
-    <motion.div ref={ref} style={{ y }} className={styles.container}>
+    <motion.div ref={ref} style={{ y: y }} className={styles.container}>
       {compInfoBoxes.map((infoBox) => (
         <div key={infoBox.id} className={styles.box}>
           <div
