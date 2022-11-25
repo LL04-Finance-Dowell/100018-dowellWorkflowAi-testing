@@ -12,9 +12,10 @@ from .mongo_db_connection import (
     update_document,
     get_wf_object,
     get_user_info_by_username,
+    get_members,
 )
 from .members import get_members
-from .forms import CreateDocumentForm
+
 
 @api_view(["GET", "POST"])
 def create_document(request,company='6365ee18ff915c925f3a6691',user_name="Manish"):  # Document Creation.
@@ -51,11 +52,6 @@ def create_document(request,company='6365ee18ff915c925f3a6691',user_name="Manish
     return Response(
         {"message": "You Need To Be LoggedIn"}, status=status.HTTP_400_BAD_REQUEST
     )
-
-
-@api_view(["GET", "POST"])
-def document_editor(request):  # Document Editor.
-    pass
 
 
 @api_view(["GET", "POST"])
