@@ -18,17 +18,19 @@ from .mongo_db_connection import (
 )
 
 
-@api_view(["POST"])
-def create_document(request,company='6365ee18ff915c925f3a6691',user_name="Manish"):  # Document Creation.
+@api_view(["GET","POST"])
+def create_document(request):  # Document Creation.
     editorApi = "https://100058.pythonanywhere.com/dowelleditor/editor/"
+    
     if request.method == "POST":
         data = ""
-        company_id = company
-        created_by = user_name
+        
         form = request.data  # TODO: We will get the data from form 1 by 1 - Dont Worry.
         if form:
             template_id = form["copy_template"]
             name = form["name"]
+            created_by = request.data["created_by"]
+            company_id = request.data["company_id"]
             if template_id:
                 try:
                     old_template = get_template_object(template_id)
@@ -72,6 +74,8 @@ def document_detail(request, *args, **kwargs):  # Single document
     template = False
     doc_viewer = False
     user_name = "Manish"
+    editorApi = "https://100058.pythonanywhere.com/dowelleditor/editor/"
+
     if request.method == "GET":
         document_obj = get_document_object(document_id=kwargs["document_id"])
         if not document_obj:
@@ -92,15 +96,9 @@ def document_detail(request, *args, **kwargs):  # Single document
                 {"message": "An Error Occurred!"},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
-        # member_list = get_members(user_name)
-        # member_list = get_members(str(request.session["session_id"]))
 
-        # if not member_list:
-        #     return Response(
-        #         {"message": "An Error Occurred!"},
-        #         status=status.HTTP_500_INTERNAL_SERVER_ERROR,
-        #     )
         document_data = {
+
             "id": document_obj["_id"],
             "name": document_obj["document_name"],
             "created_by": document_obj["created_by"],
@@ -125,6 +123,7 @@ def document_detail(request, *args, **kwargs):  # Single document
             },
             status=status.HTTP_200_OK,
         )
+        
     else:
         if verify:
             return Response(
@@ -132,31 +131,31 @@ def document_detail(request, *args, **kwargs):  # Single document
                 status=status.HTTP_401_UNAUTHORIZED,
             )
 
-    # Save Document.
-    if request.method == "POST" and user_name:
-        body_unicode = request.body.decode("utf-8")
-        body = json.loads(body_unicode)
-        if not body:
+    if request.method == "POST":
+        data=request.data
+        if not data:
             return Response(
                 {"message": "An Error Occurred!"},
                 status=status.HTTP_400_BAD_REQUEST,
-            )
-        res = update_document(body["file_id"], {"content": json.dumps(body["content"])})
-        if not res:
-            return Response(
-                {"message": "An Error Occurred!"},
-                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            )
-        res_obj = json.loads(res)
-        if res_obj["isSuccess"]:
-            return Response(
-                {"message": "Document Saved"}, status=status.HTTP_201_CREATED
-            )
+            ) 
         else:
+        
+            document_data={
+                "database": "Documentation",
+                "collection": "DocumentReports",
+                "fields": data["document_name"],
+                "document_id": data["document_id"],
+                }
+            
+            editor_link = requests.post(
+                        editorApi,
+                        data=document_data,
+                    )
             return Response(
-                {"message": "Document Could Not be Saved."},
-                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            )
+                editor_link.json(),
+                status=status.HTTP_200_OK,
+            ) 
+            
     else:
         return Response(
             {"message": "You Need To Be Logged In"}, status=status.HTTP_400_BAD_REQUEST
