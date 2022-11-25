@@ -1,11 +1,18 @@
-# 100018-dowellWorkflowAi-testing
+# WorfklowAI Service
 
-## for project team members
-- Be working on a branch other than `main`, simply:
-    - `$ git checkout -B <my_branch>`
-- When you push, push to your branch
-    - `git push origin <my_branch>`
-- if backend: you are advised to work isolated in the `backend` directory, which has all the files you need.
-- if frontend: you are advised to work on the `frontend` directory.
+### Template Management
 
-Happy Hacking.
+| HTTP METHOD |                        URL                         | REQUEST-BODY | PARAMETER | RESPONSE |
+| ----------- | :------------------------------------------------: | ------------ | --------- | -------- |
+| _POST_      | [https://100094.pythonanywhere.com/v0.1/templates] | none         |
+
+{
+"template_name": "<name_of_template>",
+"copy_template": "<empty_for_now>",
+"company_id": "<company_id_of_authenticated_user>",
+"created_by": "<user_name_of_authenticated_user>"
+} |  
+Response
+{
+"editor_link": "<link_to_the_editor>
+} |
