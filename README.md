@@ -210,5 +210,28 @@ Response-500
 ```
 
 ### Document Management
+_POST_ to `documents/`
+
+- Creates a new document
+
+Request Body
+
+```
+{
+   "name": "<name_of_document>",
+   "copy_template": "<drop_down_template_ids>",
+   "company_id": "<company_id_of_authenticated_user>",
+   "created_by": "<user_name_of_authenticated_user>"
+    
+}
+```
+
+Response-201
+
+```
+{
+    "editor_link": "<link_to_the_editor>
+}
+
 
 ### Worfklow Management
