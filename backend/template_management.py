@@ -156,3 +156,86 @@ def template_list(request):  # List of Created Templates.
         template_list,
         status=status.HTTP_200_OK,
     )
+
+
+#
+@api_view(["GET", "POST"])
+def template_detail(request):  # Single Template
+    pass
+
+
+#
+@api_view(["GET", "POST"])
+def template_editor(request, *args, **kwargs):  # Editor for a template.
+    user_name = request.session["user_name"]
+
+    if request.method == "POST" and user_name:  # Save Template.
+        body = json.loads(request.body)
+        if not body:
+            return Response(
+                {"message": "An Error Occurred."},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
+
+        template_id = body["file_id"]
+        data = body["content"]
+        resObj = update_template(template_id, json.dumps(data))
+        print("Templated Saved----------------- \n")
+        try:
+            if resObj["isSuccess"]:
+                return Response(
+                    {"message": "Template saved!"}, status=status.HTTP_200_OK
+                )
+        except:
+            return Response(
+                {"message": "Template Save Failed"},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
+
+    if request.method == "GET" and user_name:  # Data for the Template Editor.
+        template_obj = get_template_object(template_id=kwargs["template_id"])
+        if not template_obj:
+            return Response(
+                {"message": "An Error Occurred."},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
+
+        workflow_obj = get_wf_object(template_obj["workflow_id"])
+        if not workflow_obj:
+            return Response(
+                {"message": "An Error Occurred."},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
+
+        user = get_user_info_by_username(user_name)
+        if not user:
+            return Response(
+                {"message": "An Error Occurred."},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
+
+        role_list = []
+        for step in workflow_obj["int_wf_string"]:
+            if step[0] != "No Steps.":
+                role_list.append(step[1])
+        for step in workflow_obj["ext_wf_string"]:
+            if step[0] != "No Steps.":
+                role_list.append(step[1])
+
+        template_data = {
+            "id": template_obj["_id"],
+            "name": template_obj["template_name"],
+            "created_by": template_obj["created_by"],
+            "auth_role_list": [*role_list],
+            "file": template_obj["content"],
+            "verify": False,
+            "template": True,
+            "doc_viewer": False,
+            "company_id": template_obj["company_id"],
+            "user_email": user["Email"],
+        }
+        return Response({"template_data": template_data}, status=status.HTTP_200_OK)
+
+    return Response(
+        {"message": "You Not To Be Logged In"}, status=status.HTTP_401_UNAUTHORIZED
+    )

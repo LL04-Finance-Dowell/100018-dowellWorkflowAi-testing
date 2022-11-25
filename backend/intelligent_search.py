@@ -12,22 +12,27 @@ from django.db.models import  Q
 def search(request,str,company='6365ee18ff915c925f3a6691'):
     # print(request.POST.cleaned_data.keys)
     get_search_result={'workflow':[],'document':[],'template':[]}
+
     if request.method == "GET":
+        
         workflow_list = get_wf_list(company)
         documents = get_document_list(company)
         templats = get_template_list(company)
-        # print(type(templats))
-        for wf in workflow_list:
-            if wf.get("workflow_title") == str:
-                get_search_result["workflow"].append(wf)
-        for doc in documents:
-            if str ==doc.get('document_name'):
-                get_search_result["document"].append(doc)
-        for template in templats:
-            if str == template.get('template_name'):
-                get_search_result["template"].append(template)
-        # search_keyword
 
+        get_search_result["document"]=[doc for doc in documents if doc.get("document_name")==str ]
+        get_search_result["workflow"]=[wf for wf in workflow_list if wf.get("workflow_title")==str ]
+        get_search_result["template"]=[temp for temp in templats if temp.get("template_name")==str ]
+
+        # for wf in workflow_list:
+        #     if wf.get("workflow_title") == str:
+        #         get_search_result["workflow"].append(wf)
+        # for doc in documents:
+        #     if str ==doc.get('document_name'):
+        #         get_search_result["document"].append(doc)
+        # for template in templats:
+        #     if str == template.get('template_name'):
+        #         get_search_result["template"].append(template)
+        
     return Response(
         {
             "message": "Search Listing Success",

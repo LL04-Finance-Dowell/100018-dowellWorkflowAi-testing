@@ -172,15 +172,18 @@ def assign_emails(request):
     try:
         body = json.loads(request.body)
         print("----------check Before assign Body----------- \n", body)
-    except:
-        body = None
-    update_wf(
+
+        update_wf(
         workflow_id=body["workflow_id"],
         int_wf_string=body["internal"],
         ext_wf_string=body["external"],
-    )
-    updated_workflow = get_wf_object(body["workflow_id"])
-    print("Workflow Updated----------- \n", updated_workflow)
+        )
+        updated_workflow = get_wf_object(body["workflow_id"])
+        print("Workflow Updated----------- \n", updated_workflow)
+
+    except:
+        body = None
+    
     return Response(
         {"message": "Emails Assigned to workflow."}, status=status.HTTP_200_OK
     )
@@ -465,7 +468,7 @@ def finalize_document(request):  # Finalize document for next workflow
 
 @api_view(["POST"])
 def reject_document(request, *args, **kwargs):  # Reject a reqeust to sign a document.
-    if request.method == "POST" and request.session["user_name"]:
+    if request.method == "POST" and request.user:
         body = json.loads(request.body)
         doc = get_document_object(body["file_id"])
         wf = get_wf_object(doc["workflow_id"])
