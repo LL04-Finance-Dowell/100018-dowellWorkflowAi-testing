@@ -1,6 +1,7 @@
 import json
 import timeit
 import itertools
+import requests
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
@@ -9,6 +10,7 @@ from .mongo_db_connection import (
     get_document_list,
     save_document,
     get_document_object,
+    get_template_object,
     update_document,
     get_wf_object,
     get_user_info_by_username,
@@ -16,12 +18,9 @@ from .mongo_db_connection import (
 )
 
 
-@api_view(["GET", "POST"])
+@api_view(["POST"])
 def create_document(request,company='6365ee18ff915c925f3a6691',user_name="Manish"):  # Document Creation.
-    if request.method == "GET":
-        document_list = [(0, "__Document Name__"),itertools.chain((i["_id"], i["document_name"]) for i in get_document_list(company_id=company))]
-        return Response({"template_list": document_list}, status=status.HTTP_200_OK)
-
+    editorApi = "https://100058.pythonanywhere.com/dowelleditor/editor/"
     if request.method == "POST":
         data = ""
         company_id = company
@@ -30,16 +29,30 @@ def create_document(request,company='6365ee18ff915c925f3a6691',user_name="Manish
         if form:
             template_id = form["copy_template"]
             name = form["name"]
+            if template_id:
+                try:
+                    old_template = get_template_object(template_id)
+                    data = old_template["content"]
+                except:
+                    pass
             res = json.loads(
                 save_document(name, template_id, data, created_by, company_id)
             )
             print("Looks Like Documented is created----------\n", res)
             if res["isSuccess"]:
+
+                payload = {
+                    "database": "Documentation",
+                    "collection": "DocumentReports",
+                    "fields": name,
+                    "document_id": res["inserted_id"],
+                }
+                editor_link = requests.post(
+                    editorApi,
+                    data=payload,
+                )
                 return Response(
-                    {
-                        "message": "Document Created Successfully",
-                        "document_id": res["inserted_id"],
-                    },
+                    editor_link.json(),
                     status=status.HTTP_201_CREATED,
                 )
             return Response(
