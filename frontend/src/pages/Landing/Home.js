@@ -41,7 +41,7 @@ const LandingPage = () => {
         </div>
       </WorkflowLayout>
 
-      <div className="main">
+      {/* <div className="main">
         <SideBar />
         <div className="top-main">
           <Carousel />
@@ -230,7 +230,7 @@ const LandingPage = () => {
           <YouTubeIcon fontSize="large" className="face" />
           <LinkedInIcon fontSize="large" className="face" />
         </div>
-      </div>
+      </div> */}
     </>
   );
 };
