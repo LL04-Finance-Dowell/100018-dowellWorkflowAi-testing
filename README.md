@@ -12,8 +12,6 @@ Request Body
 
 ```
 {
-   "template_name": "<name_of_template>",
-    "copy_template": "<empty_for_now>",
     "company_id": "<company_id_of_authenticated_user>",
     "created_by": "<user_name_of_authenticated_user>"
 }
@@ -48,7 +46,7 @@ Response 500
 
 ```
 {
-    "message": "An Error Occurred"
+    "message": "Failed to process template creation."
 }
 ```
 
