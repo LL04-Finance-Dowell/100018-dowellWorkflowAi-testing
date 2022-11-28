@@ -33,14 +33,17 @@ def create_template(request):
         )
         if resObj["isSuccess"]:
             payload = {
-                "cluster": "Documents",
-                "database": "Documentation",
-                "collection": "TemplateReports",
-                "document": "templatereports",
-                "team_member_ID": "22689044433",
-                "function_ID": "ABCDE",
-                "fields": template_name,
-                "document_id": resObj["inserted_id"],
+                "product_name": "workflow_ai",
+                "details": {
+                    "cluster": "Documents",
+                    "database": "Documentation",
+                    "collection": "TemplateReports",
+                    "document": "templatereports",
+                    "team_member_ID": "22689044433",
+                    "function_ID": "ABCDE",
+                    "fields": template_name,
+                    "document_id": resObj["inserted_id"],
+                },
             }
             editor_link = requests.post(
                 editorApi,
