@@ -248,5 +248,83 @@ Response-500
 ```
 
 ### Document Management
+_POST_ to `documents/`
+
+- Creates a new Document by providing company_id and created_by parameters and their value from front end
+
+Request Body
+
+```
+{
+    "company_id": "<company_id_of_authenticated_user>",
+    "created_by": "<user_name_of_authenticated_user>"
+}
+```
+
+Response-201
+
+```
+{
+    "editor_link": "<link_to_the_editor>
+}
+
+```
+
+
+Response-405
+
+```
+{
+    "message": "Unable to Create Document"
+}
+```
+
+Response 500
+
+```
+{
+    "message": "Failed to process document creation"
+}
+```
+
+_POST_ `documents/detail/`
+
+- Getting a single Document by document_name and document_id
+
+Request Body
+
+```
+{
+    "document_name": "<id_of_the_document>",
+    "document_id": "<name_of_document_from_list>"
+}
+```
+
+Response-200
+
+```
+{
+    "editor_link": "<link_to_the_editor>"
+}
+
+```
+
+Response-400
+
+```
+{
+    "message": "This Document is Not Loaded."
+}
+
+```
+
+Response-500
+
+```
+{
+    "message": "Failed to Load Document"
+}
+
+```
 
 ### Worfklow Management
