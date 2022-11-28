@@ -18,7 +18,7 @@ from .mongo_db_connection import (
     get_user_info_by_username,
     get_members,
 )
-
+# print(get_document_list(company_id="6365ee18ff915c925f3a6691"))
 @api_view(["GET","POST"])
 def create_document(request):  # Document Creation.
     editorApi = "https://100058.pythonanywhere.com/dowelleditor/editor/"
@@ -32,18 +32,13 @@ def create_document(request):  # Document Creation.
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
         else:
-            template_id = form["copy_template"]
-            name = form["name"]
+            template_id = ""
+            document_name = ""
             created_by = request.data["created_by"]
             company_id = request.data["company_id"]
-            if template_id:
-                try:
-                    old_template = get_template_object(template_id)
-                    data = old_template["content"]
-                except:
-                    pass
+            
             res = json.loads(
-                save_document(name, template_id, data, created_by, company_id)
+                save_document(document_name, template_id, data, created_by, company_id)
             )
             if not company_id and created_by:
                 return Response(
@@ -61,9 +56,9 @@ def create_document(request):  # Document Creation.
                         "database": "Documentation",
                         "collection": "DocumentReports",
                         "document": "documentreports",
-                        "team_member_ID": "22689044433",
+                        "team_member_ID": "11689044433",
                         "function_ID": "ABCDE",
-                        "document_name":"",
+                        "document_name":document_name,
                         "content":""
                                 }
                     }
@@ -74,7 +69,7 @@ def create_document(request):  # Document Creation.
                     data=payload,
                 )
                 return Response(
-                   editor_link,
+                   editor_link.json(),
                 status=status.HTTP_201_CREATED,
                 )
             return Response(
@@ -87,99 +82,45 @@ def create_document(request):  # Document Creation.
     )
 
 
-@api_view(["GET", "POST"])
-def document_detail(request, *args, **kwargs):  # Single document
-    verify = False
-    template = False
-    doc_viewer = False
-    user_name = "Manish"
+@api_view(["POST"])
+def document_detail(request):  # Single document
     editorApi = "https://100058.pythonanywhere.com/dowelleditor/editor/"
 
-    if request.method == "GET":
-        document_obj = get_document_object(document_id=kwargs["document_id"])
-        if not document_obj:
-            return Response(
-                {"message": "An Error Occurred!"},
-                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            )
-        user = get_user_info_by_username(user_name)
-        if not user:
-            return Response(
-                {"message": "An Error Occurred!"},
-                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            )
-        workflow_id = document_obj["workflow_id"]
-        wf_single = get_wf_object(workflow_id)
-        if not wf_single:
-            return Response(
-                {"message": "An Error Occurred!"},
-                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            )
-
-        document_data = {
-
-            "id": document_obj["_id"],
-            "name": document_obj["document_name"],
-            "created_by": document_obj["created_by"],
-            "auth_role_list": get_auth_roles(document_obj),
-            "file": document_obj["content"],
-            "username": user_name,
-            "verify": verify,
-            "template": template,
-            "doc_viewer": doc_viewer,
-            "company_id": document_obj["company_id"],
-            "user_email": user["Email"],
-            "wf_list": wf_single,
-            "member_list": "member_list",
-            "workflow_id": workflow_id,
-        }
-        return Response(
-            {
-                "curr_user_role": user["Role"],
-                "document": document_data,
-                "member_list": "member_list",
-                "workflow_id": workflow_id,
-            },
-            status=status.HTTP_200_OK,
-        )
-        
-    else:
-        if verify:
-            return Response(
-                {"message": "You need to be logged In"},
-                status=status.HTTP_401_UNAUTHORIZED,
-            )
-
     if request.method == "POST":
-        data=request.data
-        if not data:
+        if not request.data:
             return Response(
-                {"message": "An Error Occurred!"},
-                status=status.HTTP_400_BAD_REQUEST,
-            ) 
-        else:
-        
-            document_data={
-                "database": "Documentation",
-                "collection": "DocumentReports",
-                "fields": data["document_name"],
-                "document_id": data["document_id"],
-                }
-            
-            editor_link = requests.post(
-                        editorApi,
-                        data=document_data,
-                    )
-            return Response(
-                editor_link.json(),
-                status=status.HTTP_200_OK,
-            ) 
-            
-    else:
+                {"message": "Failed to Load Document."},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
+        document_id = request.data["document_id"]
+        document_name = request.data["document_name"]
+       
+        payload={
+                    "product_name": "workflowai",
+                    "details": {
+                        "fields":"document_name",
+                        "cluster": "Documents",
+                        "database": "Documentation",
+                        "collection": "DocumentReports",
+                        "document": "documentreports",
+                        "team_member_ID": "11689044433",
+                        "function_ID": "ABCDE",
+                        "document_name":document_name,
+                        "document_id":document_id,
+                    }
+        }
+        editor_link = requests.post(
+                    editorApi,
+                    data=payload,
+                )
         return Response(
-            {"message": "You Need To Be Logged In"}, status=status.HTTP_400_BAD_REQUEST
+        editor_link.json(),
+        status=status.HTTP_200_OK,
         )
-
+        
+    return Response(
+        {"message": "This Document is Not Loaded."}, status=status.HTTP_400_BAD_REQUEST
+    )
 
 @api_view(["GET"])
 def documents_to_be_signed(

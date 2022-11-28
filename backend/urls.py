@@ -77,7 +77,7 @@ urlpatterns = [
         draft_documents,
         name="requested-documents",
     ),
-    path("documents/<str:document_id>/", document_detail, name="document"),
+    path("documents/detail/", document_detail, name="document"),
     path(
         "signatures/<str:document_id>/<str:uuid_hash>/<str:user_name>/",
         signature,
