@@ -2,6 +2,8 @@ import json
 import timeit
 import itertools
 import requests
+import jwt
+
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
@@ -17,16 +19,19 @@ from .mongo_db_connection import (
     get_members,
 )
 
-
 @api_view(["GET","POST"])
 def create_document(request):  # Document Creation.
     editorApi = "https://100058.pythonanywhere.com/dowelleditor/editor/"
     
     if request.method == "POST":
         data = ""
-        
         form = request.data  # TODO: We will get the data from form 1 by 1 - Dont Worry.
-        if form:
+        if not form:
+            return Response(
+                {"message": "Failed to process document creation."},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
+        else:
             template_id = form["copy_template"]
             name = form["name"]
             created_by = request.data["created_by"]
@@ -40,7 +45,6 @@ def create_document(request):  # Document Creation.
             res = json.loads(
                 save_document(name, template_id, data, created_by, company_id)
             )
-            print("Looks Like Documented is created----------\n", res)
             if not company_id and created_by:
                 return Response(
                     {"message": "An Error Occurred!"},
@@ -48,25 +52,35 @@ def create_document(request):  # Document Creation.
                 )
             if res["isSuccess"]:
 
-                payload = {
-                    "database": "Documentation",
-                    "collection": "DocumentReports",
-                    "fields": name,
-                    "document_id": res["inserted_id"],
-                }
+                payload={
+                    "product_name": "workflowai",
+                    "details":{
+                        "_id":res["inserted_id"],
+                        "field":"document_name",
+                        "cluster": "Documents",
+                        "database": "Documentation",
+                        "collection": "DocumentReports",
+                        "document": "documentreports",
+                        "team_member_ID": "22689044433",
+                        "function_ID": "ABCDE",
+                        "document_name":name,
+                        "content":""
+                                }
+                    }
+
+                
                 editor_link = requests.post(
                     editorApi,
                     data=payload,
                 )
                 return Response(
-                    editor_link.json(),
-                    status=status.HTTP_201_CREATED,
+                   editor_link,
+                status=status.HTTP_201_CREATED,
                 )
             return Response(
                 {"message": "Unable to Create Document"},
                 status=status.HTTP_405_METHOD_NOT_ALLOWED,
             )
-        return Response({"status": 420, "message": "invalid form"})
 
     return Response(
         {"message": "You Need To Be LoggedIn"}, status=status.HTTP_400_BAD_REQUEST
