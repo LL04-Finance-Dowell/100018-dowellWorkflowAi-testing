@@ -63,7 +63,7 @@ def create_document(request):  # Document Creation.
                         "document": "documentreports",
                         "team_member_ID": "22689044433",
                         "function_ID": "ABCDE",
-                        "document_name":name,
+                        "document_name":"",
                         "content":""
                                 }
                     }
