@@ -37,6 +37,8 @@ from .views import api
 
 urlpatterns = [
     path("", api, name="api"),
+    # Search----------------------------
+    path("search/<str:str>", search, name="search_result"),
     # Workflow--------------------------------------------------------
     path("emails/", assign_emails, name="assign_emails"),
     path("linkflow/", generate_link, name="generate_linkflow"),
@@ -86,5 +88,4 @@ urlpatterns = [
         internal_signature,
         name="internal_signature",
     ),
-    path("search/<str:str>", search, name="search_result"),
 ]
