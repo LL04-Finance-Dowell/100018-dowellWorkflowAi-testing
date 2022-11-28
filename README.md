@@ -50,6 +50,46 @@ Response 500
 }
 ```
 
+_POST_ `templates/detail/`
+
+- Getting a single template
+
+Request Body
+
+```
+{
+    "template_id": "<id_of_the_template>",
+    "template_name": "<name_of_template_from_list>"
+}
+```
+
+Response-200
+
+```
+{
+    "editor_link": "<link_to_the_editor>"
+}
+
+```
+
+Response-400
+
+```
+{
+    "message": "Failed to fecth template"
+}
+
+```
+
+Response-500
+
+```
+{
+    "message": "Failed to fecth template"
+}
+
+```
+
 _POST_ `templates/approved/`
 
 - List of Approved templates for a single user.

@@ -16,7 +16,8 @@ from .template_management import (
     approved,
     not_approved_templates,
     create_template,
-    approve
+    template_detail,
+    approve,
 )
 
 from .document_management import (
@@ -28,7 +29,7 @@ from .document_management import (
     rejected_documents,
 )
 
-from .intelligent_search import(
+from .intelligent_search import (
     search,
 )
 
@@ -36,6 +37,7 @@ from .views import api
 
 urlpatterns = [
     path("", api, name="api"),
+    # Workflow--------------------------------------------------------
     path("emails/", assign_emails, name="assign_emails"),
     path("linkflow/", generate_link, name="generate_linkflow"),
     path("workflows/", workflow, name="workflows"),
@@ -43,14 +45,16 @@ urlpatterns = [
     path("workflows/drafts/", draft_workflows, name="add_to_workflow"),
     path("workflows/approved/", approved_workflows, name="approved_workflows"),
     path("workflows/rejected/", rejected_workflows, name="rejected_workflows"),
+    # Templates-----------------------------------------------------
     path("templates/", create_template, name="templates"),
+    path("templates/detail/", template_detail, name="templates"),
     path("templates/approve/", approve, name="templates_approve"),
     path("templates/approved/", approved, name="approved_templates"),
     path("templates/pending/", not_approved_templates, name="not_approved_templates"),
     path("templates/mine/", template_list, name="my_templates"),
+    # Documents----------------------------------------------------
     path("documents/", create_document, name="documents"),
     path("documents/reject/", reject_document, name="reject_document"),
-
     path(
         "documents/to-sign/",
         documents_to_be_signed,
@@ -83,6 +87,4 @@ urlpatterns = [
         name="internal_signature",
     ),
     path("search/<str:str>", search, name="search_result"),
-
-    
 ]

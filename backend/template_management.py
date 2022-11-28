@@ -64,6 +64,43 @@ def create_template(request):
 
 
 @api_view(["POST"])
+def template_detail(request):
+    editorApi = "https://100058.pythonanywhere.com/dowelleditor/editor/"
+    if request.method == "POST":
+        if not request.data:
+            return Response(
+                {"message": "Failed to fetch template."},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
+        template_id = request.data["template_id"]
+        template_name = request.data["template_name"]
+        payload = {
+            "product_name": "workflow_ai",
+            "details": {
+                "cluster": "Documents",
+                "database": "Documentation",
+                "collection": "TemplateReports",
+                "document": "templatereports",
+                "team_member_ID": "22689044433",
+                "function_ID": "ABCDE",
+                "fields": template_name,
+                "document_id": template_id,
+            },
+        }
+        editor_link = requests.post(
+            editorApi,
+            data=payload,
+        )
+        return Response(
+            editor_link.json(),
+            status=status.HTTP_200_OK,
+        )
+    return Response(
+        {"message": "Failed to fetch template."}, status=status.HTTP_400_BAD_REQUEST
+    )
+
+
+@api_view(["POST"])
 def approve(request):
     if not request.data:
         return Response(
