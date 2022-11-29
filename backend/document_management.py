@@ -325,7 +325,7 @@ def draft_documents(request):  # List of `to be signed` documents.
             )
     return Response(
                     {"message": "No Document in Drafts"},
-                    status=status.HTTP_400_INTERNAL_SERVER_ERROR,
+                    status=status.HTTP_500_INTERNAL_SERVER_ERROR,
                 )
     
 
