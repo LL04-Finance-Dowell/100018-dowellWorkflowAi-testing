@@ -1,0 +1,31 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  padding: 10px;
+  z-index: 1000;
+  width: min(71.3vw, 835px) !important;
+}
+.header__box {
+  padding: 20px;
+  border: solid 1px #a4afb7;
+  background-color: var(--e-global-color-9d2ac19);
+  font-size: 18px !important;
+  line-height: 21.6px !important;
+  font-weight: 600;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.header__box i {
+  cursor: pointer;
+}
+
+.header {
+  font-size: 18px !important;
+  line-height: 21.6px !important;
+  font-weight: 600;
+  margin-bottom: 0;
+  color: var(--e-global-color-secondary);
+}

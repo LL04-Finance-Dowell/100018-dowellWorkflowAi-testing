@@ -1,0 +1,81 @@
+.create__Template__Container { 
+    width: 100%;
+    height: max-content;
+    margin-top: 60px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.create__Template__Container .create__Template__Form {
+    width: 50%;
+    padding: 2%;
+    border: 1px solid #dcdcdc;
+    position: relative;
+    padding-top: 1.6rem;
+}
+
+.create__Template__Container .create__Template__Form .title__Container {
+    position: absolute;
+    top: calc(-1.6rem + 2%);
+    background-color: #fff;
+    color: #000;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.create__Template__Container .create__Template__Form .title__Container .template__Title__Text {
+    font-size: 1.6rem;
+    white-space: nowrap;
+}
+
+.create__Template__Container .create__Template__Form p.error__Msg {
+    color: red;
+}
+
+.create__Template__Container .create__Template__Form input {
+    outline: none;
+    border: none;
+    display: block;
+    background: none;
+}
+
+.create__Template__Container .create__Template__Form label {
+    width: 100%;
+}
+
+.create__Template__Container .create__Template__Form input[type=text] {
+    border: 1px solid #dcdcdc;
+    border-radius: 2px;
+    width: 100%;
+    margin: 1% 0 6%;
+    padding: 1% 2%;
+    transition: 0.35s ease-in-out;
+}
+
+.create__Template__Container .create__Template__Form input[type=text]:focus-within {
+    border-color: #61ce70;
+}
+
+.create__Template__Container .create__Template__Form .spinner__Btn__Container,
+.create__Template__Container .create__Template__Form input[type=submit] {
+    border: 1px solid #61ce70;
+    padding: 1.5% 2%;
+    border-radius: 6px;
+}
+
+.create__Template__Container .create__Template__Form input[type=submit] {
+    color: #61ce70;
+    transition: 0.35s ease-in-out;
+}
+
+.create__Template__Container .create__Template__Form input[type=submit]:hover,
+.create__Template__Container .create__Template__Form input[type=submit]:focus {
+    background-color: #61ce70;
+    color: #fff;
+}
+
+.create__Template__Container .create__Template__Form .spinner__Btn__Container{
+    cursor: not-allowed;
+    width: 6rem;
+}

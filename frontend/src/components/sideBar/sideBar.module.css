@@ -1,0 +1,71 @@
+.sideBar {
+  width: 21%;
+  background-color: #54595f;
+  margin-left: 90px;
+}
+.main {
+  display: flex;
+  gap: 30px;
+  justify-content: center;
+  padding-top: 20px;
+}
+.dowellLogo {
+  width: 25px;
+  height: 25px;
+  border-radius: 5px;
+  margin-top: 5px;
+}
+.workflow {
+  color: #7a7a7a;
+  font-size: 18px;
+  margin-top: 8px;
+}
+.icons {
+  display: flex;
+  justify-content: center;
+  gap: 43px;
+  margin-top: 25px;
+}
+.welcoming {
+  justify-content: center;
+  display: grid;
+  margin-top: 80px;
+}
+.profilePicture {
+  padding-left: 53px;
+  margin-bottom: 15px;
+  display: flex;
+  justify-content: center;
+}
+.welcome {
+  color: #ffffff;
+  display: flex;
+  justify-content: center;
+  font-size: 22px;
+}
+.myOrganisation {
+  color: #61ce70;
+  display: flex;
+  justify-content: center;
+  padding-top: 35px;
+  padding-bottom: 20px;
+  font-size: 17px;
+}
+.orgImg {
+  margin-left: 25px;
+}
+.notific {
+  color: red;
+  border-bottom: 1px solid #ffffff;
+  margin-top: 60px;
+  display: flex;
+  justify-content: center;
+  font-size: 25px;
+  padding: 20px 35px;
+}
+.colC {
+  color: #9b807a;
+  font-family: "Roboto", "SansSerif";
+  font-weight: 700;
+  font-size: 18px;
+}

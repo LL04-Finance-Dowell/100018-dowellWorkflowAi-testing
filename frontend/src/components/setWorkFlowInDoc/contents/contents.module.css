@@ -1,0 +1,45 @@
+.content__container {
+  transition: 0.3s ease-in-out all;
+  overflow: hidden;
+  z-index: 10000;
+  overflow-x: auto;
+}
+
+.content__box {
+  border: solid 1px #a4afb7;
+  padding: 20px;
+  background: #fff;
+}
+
+.content__box ol {
+  padding: 0;
+}
+
+.content__box ol li {
+  text-align: start;
+  margin-bottom: 8px;
+  list-style: none;
+  padding: 0;
+  cursor: pointer;
+  width: fit-content;
+  display: flex;
+  align-items: center;
+}
+
+.content__box ol li::before {
+  content: "" attr(data-index) ". ";
+  margin-right: 8px;
+}
+
+.content__box ol li span {
+  text-align: start;
+  display: inline;
+  font-size: 16px;
+  line-height: 24px;
+  color: var(--e-global-color-text);
+}
+
+.content__box ol li span:hover {
+  color: var(--e-global-color-accent);
+  text-decoration: underline;
+}
