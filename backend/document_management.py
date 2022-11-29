@@ -179,7 +179,7 @@ def my_documents(request):  # List of my documents.
         documents = get_document_list(company_id)
         if not documents:
             return Response(
-                {"message": "There is no document with this ID."},
+                {"message": "There is no document created by This user."},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
         else:
