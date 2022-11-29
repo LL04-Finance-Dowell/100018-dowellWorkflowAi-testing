@@ -32,6 +32,11 @@
   width: 67.5%;
 }
 
+.is__fixed {
+  position: fixed;
+  top: 105px;
+}
+
 @media (max-width: 768px) {
   .container {
     width: 100%;

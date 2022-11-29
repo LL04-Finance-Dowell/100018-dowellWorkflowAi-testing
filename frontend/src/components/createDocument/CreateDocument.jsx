@@ -1,192 +1,96 @@
 import styles from "./createDocument.module.css";
-import globalStyles from "./globalStyles.css";
-import { BsHouseDoorFill } from "react-icons/bs";
-import { BsPersonFill } from "react-icons/bs";
-import { BsFillGearFill } from "react-icons/bs";
-import { BsPower } from "react-icons/bs";
-import { FaFolderOpen } from "react-icons/fa";
-import { HiTable } from "react-icons/hi";
-import { FiArrowRightCircle } from "react-icons/fi";
-import { FaAngleRight } from "react-icons/fa";
-import { GrMenu } from "react-icons/gr";
+
 import { v4 as uuidv4 } from "uuid";
-import { useEffect, useState } from "react";
-import CreateDocumentForm from "./createDocumentForm/CreateDocumentForm";
+import { useRef, useState } from "react";
+import { useForm } from "react-hook-form";
 
 const CreateDocument = () => {
-  const [toggleSidebar, setToggleSidebar] = useState(false);
-  const [currentParentMenu, setCurrentMenuParrent] = useState("");
-  const [currentChildMenu, setCurrentChildMenu] = useState("");
-  const [toggleMenuItem, setToggleMenuItem] = useState(false);
-  const [childHeight, setChildHeight] = useState(0);
+  const [toggleDropdown, setToggleDropdown] = useState(false);
+  const ref = useRef(null);
 
-  const handleToggleSidebar = () => {
-    setToggleSidebar((prev) => !prev);
+  const { register, handleSubmit, setValue, watch } = useForm();
+  const template = watch("template");
+
+  const onSubmit = (data) => {
+    console.log("data", data);
   };
 
-  const handleParentMenuClick = (item) => {
-    setCurrentMenuParrent(item);
-    setCurrentChildMenu("");
-    if (item.id === currentParentMenu.id && toggleMenuItem) {
-      setToggleMenuItem(false);
-    } else {
-      setToggleMenuItem(true);
-    }
+  const handleDropdown = () => {
+    setToggleDropdown((prev) => !prev);
+    ref.current?.blur();
   };
 
-  const handleChildMenuClick = (id) => setCurrentChildMenu(id);
-
-  useEffect(() => {
-    const currentHeight = document.querySelector(
-      ".current-children-menu-batu"
-    )?.offsetHeight;
-
-    if (currentHeight) setChildHeight(currentHeight);
-  }, [currentParentMenu]);
-
-  console.log("aaaa", toggleSidebar);
+  const handleOptionClick = (option) => {
+    setToggleDropdown(false);
+    setValue("template", option);
+    ref.current?.focus();
+  };
 
   return (
-    <div className={styles.container}>
-      <div
-        className={`${styles.nav__container} ${
-          toggleSidebar && styles.toggle__sidebar
-        }`}
-      >
-        <div
-          onClick={handleToggleSidebar}
-          className={styles.toggle__sidebar__icon}
-        >
-          <GrMenu cursor="pointer" />
+    <div className={`${styles.form__container} `}>
+      <div className={styles.form__box}>
+        <div className={styles.form__header}>
+          <p>Create Document</p>
         </div>
-        <div className={styles.sidebar__container}>
-          <div className={styles.sidebar__header__box}>
-            <img
-              src="https://100084.pythonanywhere.com/static/images/doc_logo1.png"
-              alt="logo"
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <div>
+            <label htmlFor="name">Name*</label>
+            <input
+              required
+              {...register("name")}
+              id="name"
+              className={styles.form__input}
             />
           </div>
-          <h1 className={styles.sidebar__header__content}>Dowell Workflow</h1>
-          <div className={styles.menu__container}>
-            <ul className={styles.menu__box}>
-              {menuItems.map((menuItem) => (
-                <li
-                  key={menuItem.id}
-                  className={`${
-                    menuItem.children.length > 0 &&
-                    styles.toggle__menu__item__icon__parent
-                  } ${styles.parent__li}`}
-                >
-                  <a
-                    onClick={() => handleParentMenuClick(menuItem)}
-                    className={`${
-                      menuItem.children.length > 0 &&
-                      toggleMenuItem &&
-                      menuItem.id === currentParentMenu.id &&
-                      styles.active__item
-                    } ${styles.parent__menu__item}`}
-                  >
-                    {menuItem.children.length > 0 && (
-                      <i className={styles.toggle__menu__item__icon}>
-                        <FaAngleRight size={15} cursor="pointer" />
-                      </i>
-                    )}
-                    <i>
-                      <menuItem.icon />
-                    </i>
-                    <span>{menuItem.parent}</span>
-                  </a>
+          <div>
+            <label htmlFor="template">Select Template*</label>
+            <input
+              tabIndex={-98}
+              required
+              style={{ display: "none" }}
+              {...register("template")}
+            />
+            <div id="template" className={styles.dropdown__container}>
+              <button
+                ref={ref}
+                type="button"
+                onClick={handleDropdown}
+                className={`${styles.dropdown__current__option} `}
+              >
+                {template ? template : "__Template Name__"}
+              </button>
+              <div
+                role="listbox"
+                style={{ display: toggleDropdown ? "block" : "none" }}
+                className={styles.dropdown__option__container}
+              >
+                {templates.map((item) => (
                   <div
-                    className={styles.toggle__menu__content__box}
-                    style={{
-                      maxHeight: `${
-                        toggleMenuItem && menuItem.id === currentParentMenu.id
-                          ? `${childHeight}px`
-                          : "0px"
-                      }`,
-                    }}
+                    tabIndex={-20}
+                    key={item.id}
+                    className={styles.dropdown__option__box}
                   >
-                    <ul
-                      className={`${
-                        toggleMenuItem &&
-                        menuItem.id === currentParentMenu.id &&
-                        "current-children-menu-batu"
-                      } ${styles.menu__content__box}`}
+                    <div
+                      onClick={() => handleOptionClick(item.option)}
+                      className={styles.dropdown__option__content}
                     >
-                      {menuItem.children.map((child) => (
-                        <li
-                          className={styles.child__li}
-                          onClick={() => handleChildMenuClick(child.id)}
-                          key={child.id}
-                        >
-                          <a
-                            className={`${
-                              child.id === currentChildMenu &&
-                              styles.active__item
-                            }`}
-                          >
-                            <i>
-                              <FiArrowRightCircle />
-                            </i>
-                            <span>{child.child}</span>
-                          </a>
-                        </li>
-                      ))}
-                    </ul>
+                      {item.option}
+                    </div>
                   </div>
-                </li>
-              ))}
-            </ul>
+                ))}
+              </div>
+              <div className={styles.hr} />
+            </div>
           </div>
-          <div className={styles.sidebar__footer}>
-            <a>
-              <BsHouseDoorFill />
-            </a>
-            <a>
-              <BsPersonFill />
-            </a>
-            <a>
-              <BsFillGearFill />
-            </a>
-            <a>
-              <BsPower />
-            </a>
-          </div>
-        </div>
+          <button className={styles.create__button} type="submit">
+            Go to Editor
+          </button>
+        </form>
       </div>
-      <CreateDocumentForm toggleSidebar={toggleSidebar} />
     </div>
   );
 };
 
 export default CreateDocument;
 
-export const menuItems = [
-  {
-    id: uuidv4(),
-    parent: "Manage Documents",
-    icon: FaFolderOpen,
-    children: [
-      { id: uuidv4(), child: "to be signed" },
-      { id: uuidv4(), child: "new documents" },
-      { id: uuidv4(), child: "drafts documents" },
-      { id: uuidv4(), child: "created by me" },
-      { id: uuidv4(), child: "rejected by others" },
-    ],
-  },
-  {
-    id: uuidv4(),
-    parent: "Manage Templates",
-    icon: HiTable,
-    children: [
-      { id: uuidv4(), child: "new template" },
-      { id: uuidv4(), child: "my templates" },
-    ],
-  },
-  {
-    id: uuidv4(),
-    parent: "Manage Workflows",
-    icon: BsHouseDoorFill,
-    children: [],
-  },
-];
+export const templates = [{ id: uuidv4(), option: "__template batu__" }];

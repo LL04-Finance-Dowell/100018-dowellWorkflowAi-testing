@@ -26,21 +26,8 @@ const ContentMapOfDoc = () => {
   }, [scroll]);
 
   return (
-    <div
-      ref={ref}
-      style={{
-        position: "relative",
-        width: "100%",
-        minHeight: "85px",
-      }}
-    >
-      <div
-        style={{
-          position: isFixed ? "fixed" : "relative",
-          top: isFixed && "105px",
-        }}
-        className={`${styles.container}`}
-      >
+    <div ref={ref} className={styles.container}>
+      <div className={`${styles.box} ${isFixed && styles.is__fixed}`}>
         <div className={styles.header__box}>
           <h4 className={styles.header}>Content Map of selected Doucument</h4>
           <i onClick={handleToggleContent}>

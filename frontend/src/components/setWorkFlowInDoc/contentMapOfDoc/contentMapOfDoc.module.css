@@ -1,4 +1,11 @@
 .container {
+  position: relative;
+  min-height: 85px;
+  width: fit-content;
+  width: min(71.3vw, 835px) !important;
+}
+
+.box {
   display: flex;
   flex-direction: column;
   width: 100%;
@@ -28,4 +35,13 @@
   font-weight: 600;
   margin-bottom: 0;
   color: var(--e-global-color-secondary);
+}
+
+@media (max-width: 768px) {
+  .container {
+    width: 100% !important;
+  }
+  .box {
+    width: 100% !important;
+  }
 }
