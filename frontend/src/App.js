@@ -38,10 +38,6 @@ function App() {
       </Routes>
     );
 
-  /*   <Routes>
-         <Route path={"/"} element={<CreateDocument />} />
-      </Routes> */
-
   return (
     <Routes>
       <Route path={"/"} element={<WorkflowApp />} />

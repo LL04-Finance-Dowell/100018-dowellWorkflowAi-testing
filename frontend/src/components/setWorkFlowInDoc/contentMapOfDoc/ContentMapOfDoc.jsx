@@ -6,6 +6,7 @@ import { v4 as uuidv4 } from "uuid";
 import Contents from "../contents/Contents";
 import { useEffect } from "react";
 import useScrollPosition from "../../../hooks/useScrollPosition";
+import { useCallback } from "react";
 
 const ContentMapOfDoc = () => {
   const [toggleContent, setToggleContent] = useState(false);
@@ -17,13 +18,17 @@ const ContentMapOfDoc = () => {
     setToggleContent((prev) => !prev);
   };
 
-  useEffect(() => {
+  const isFixedCallback = useCallback(() => {
     if (ref.current?.getBoundingClientRect().top > 0) {
       setIsFixed(false);
     } else {
       setIsFixed(true);
     }
   }, [scroll]);
+
+  useEffect(() => {
+    isFixedCallback();
+  }, [isFixedCallback]);
 
   return (
     <div ref={ref} className={styles.container}>

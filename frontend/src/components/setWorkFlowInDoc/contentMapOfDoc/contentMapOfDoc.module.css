@@ -37,6 +37,11 @@
   color: var(--e-global-color-secondary);
 }
 
+.is__fixed {
+  position: fixed;
+  top: 105px;
+}
+
 @media (max-width: 768px) {
   .container {
     width: 100% !important;
