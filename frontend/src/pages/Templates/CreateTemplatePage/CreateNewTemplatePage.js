@@ -6,6 +6,7 @@ import { workflowAxiosInstance } from "../../../services/axios";
 import { routes } from "../../../services/routes";
 import { useUserContext } from "../../../contexts/UserContext";
 import { LoadingSpinner } from "../../../components/LoadingSpinner/LoadingSpinner";
+import { toast } from "react-toastify";
 
 const CreateNewTemplatePage = () => {
     const { register, handleSubmit, formState: { errors } } = useForm();
@@ -34,6 +35,7 @@ const CreateNewTemplatePage = () => {
         } catch (err) {
             console.log(err);
             setCreateLoading(false);
+            toast.error("Something went wrong while trying to create your template.")
         }
     }
 
