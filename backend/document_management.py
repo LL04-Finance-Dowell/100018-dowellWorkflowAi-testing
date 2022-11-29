@@ -20,7 +20,7 @@ from .mongo_db_connection import (
     get_members,
 )
 
-print(get_document_list("6365ee18ff915c925f3a6691"))
+# print(get_document_list("6365ee18ff915c925f3a6691"))
 @api_view(["GET","POST"])
 def create_document(request):  # Document Creation.
     editorApi = "https://100058.pythonanywhere.com/dowelleditor/editor/"
