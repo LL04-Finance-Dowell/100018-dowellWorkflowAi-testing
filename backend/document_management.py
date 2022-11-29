@@ -229,43 +229,43 @@ def my_documents(request):  # List of my documents.
         )
 
 
-@api_view(["GET"])
-def draft_documents(request):  # List of Draft Documents.
-    executed = False
-    title = "Draft Documents."
-    filtered_list = []
+# @api_view(["GET"])
+# def draft_documents(request):  # List of Draft Documents.
+#     executed = False
+#     title = "Draft Documents."
+#     filtered_list = []
 
-    if request.method=="POST":
-        company_id=request.data['company_id']
-        user=request.data['created_by']
-        documents = get_document_list(company_id)
-        if not documents:
-            return Response(
-                {"message": "An Error Occurred."},
-                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            )
-        else:
-            for doc in documents:
-                workflow = get_wf_object(doc["workflow_id"])
-                if not workflow:
-                    return Response(
-                        {"message": "An Error Occurred."},
-                        status=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                    )
-                for obj in workflow["int_wf_string"]:
-                    if str(obj[0]) == str(doc["int_wf_position"]) and str(obj[-1]) == user:
-                        print("ur time for internal workflow")
-                    if (
-                        workflow["ext_wf_string"][0] == doc["ext_wf_position"]
-                        and workflow["ext_wf_string"][-1] == user
-                    ):
-                        print("ur time for external workflow")
-                    doc["document_id"] = doc["_id"]
-                    if doc["created_by"] == user:
-                        filtered_list.append(doc)
+#     if request.method=="POST":
+#         company_id=request.data['company_id']
+#         user=request.data['created_by']
+#         documents = get_document_list(company_id)
+#         if not documents:
+#             return Response(
+#                 {"message": "An Error Occurred."},
+#                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+#             )
+#         else:
+#             for doc in documents:
+#                 workflow = get_wf_object(doc["workflow_id"])
+#                 if not workflow:
+#                     return Response(
+#                         {"message": "An Error Occurred."},
+#                         status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+#                     )
+#                 for obj in workflow["int_wf_string"]:
+#                     if str(obj[0]) == str(doc["int_wf_position"]) and str(obj[-1]) == user:
+#                         print("ur time for internal workflow")
+#                     if (
+#                         workflow["ext_wf_string"][0] == doc["ext_wf_position"]
+#                         and workflow["ext_wf_string"][-1] == user
+#                     ):
+#                         print("ur time for external workflow")
+#                     doc["document_id"] = doc["_id"]
+#                     if doc["created_by"] == user:
+#                         filtered_list.append(doc)
                         
-    return Response(
-        {"documents": filtered_list, "title": title}, status=status.HTTP_200_OK)
+#     return Response(
+#         {"documents": filtered_list, "title": title}, status=status.HTTP_200_OK)
 
 
 # @api_view(["GET"])
@@ -340,6 +340,49 @@ def rejected_documents(request):  # List of `to be signed` documents.
                             }
                 }
             if len(doc["reject_message"])!=0 and len(doc["rejected_by"])!=0:
+                
+                filtered_list.append(requests.post(
+                editorApi,
+                data=payload,
+            ).json())
+                
+      
+        return Response({
+                "documents": filtered_list,
+            },
+            status=status.HTTP_200_OK,
+        )
+    return Response(
+                    {"message": "These document is not in Rejected Document list."},
+                    status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                )
+    
+@api_view(["GET","POST"])
+def draft_documents(request):  # List of `to be signed` documents.
+    editorApi = "https://100058.pythonanywhere.com/dowelleditor/editor/"
+    title = "Draft Documents."
+    filtered_list = []
+    if request.method=="POST":
+        company_id=request.data['company_id']
+        documents = get_document_list(company_id)
+   
+        for doc in documents:
+            payload={
+                "product_name": "workflowai",
+                "details":{
+                    "_id":doc["_id"],
+                    "field":"document_name",
+                    "cluster": "Documents",
+                    "database": "Documentation",
+                    "collection": "DocumentReports",
+                    "document": "documentreports",
+                    "team_member_ID": "11689044433",
+                    "function_ID": "ABCDE",
+                    "document_name":doc["document_name"],
+                    "content":""
+                            }
+                }
+            if doc["int_wf_step"] != "complete" and doc["ext_wf_step"] != "complete":
                 
                 filtered_list.append(requests.post(
                 editorApi,
