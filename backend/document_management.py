@@ -20,7 +20,7 @@ from .mongo_db_connection import (
     get_members,
 )
 
-# print(get_document_list("6365ee18ff915c925f3a6691"))
+# print(get_template_object("6365f9c2ff915c925f3a67f4"))
 @api_view(["GET","POST"])
 def create_document(request):  # Document Creation.
     editorApi = "https://100058.pythonanywhere.com/dowelleditor/editor/"
@@ -34,11 +34,12 @@ def create_document(request):  # Document Creation.
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
         else:
-            template_id = ""
+            template_id = request.data["template_id"]
             document_name = ""
             created_by = request.data["created_by"]
             company_id = request.data["company_id"]
-            
+            #data = get_content_from_template_collection_with_that_template_id
+            data = get_template_object(template_id)
             res = json.loads(
                 save_document(document_name, template_id, data, created_by, company_id)
             )
@@ -57,7 +58,7 @@ def create_document(request):  # Document Creation.
                         "team_member_ID": "11689044433",
                         "function_ID": "ABCDE",
                         "document_name":document_name,
-                        "content":""
+                        "content":data
                                 }
                     }
 
@@ -92,7 +93,7 @@ def document_detail(request):  # Single document
             )
         document_id = request.data["document_id"]
         document_name = request.data["document_name"]
-       
+
         payload={
                     "product_name": "workflowai",
                     "details": {
