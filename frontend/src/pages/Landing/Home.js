@@ -9,6 +9,7 @@ import InsertDriveFileIcon from "@mui/icons-material/InsertDriveFile";
 import "../Landing/home.css";
 import HoverCard from "../../components/hover-card/HoverCard";
 import Table from "../../components/table/Table";
+import Chat from "../../components/chat/Chat";
 const LandingPage = () => {
   const { currentUser } = useUserContext();
 

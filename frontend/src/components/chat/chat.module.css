@@ -1,0 +1,27 @@
+.chat {
+  border-radius: 39%;
+  position: absolute;
+  right: 0;
+  position: fixed;
+  bottom: 0;
+  width: 5%;
+  height: 50px;
+  background-color: orange;
+  color: #fffbff;
+  padding: 12px 10px 10px 18px;
+  font-weight: bold;
+  font-size: 17px;
+  cursor: pointer;
+}
+.alert {
+  background-color: aquamarine;
+  width: 19%;
+  color: rgb(49, 204, 70);
+  background-color: rgb(49, 204, 70);
+  position: absolute;
+  border-radius: 50%;
+  height: 22%;
+  margin-top: 27px;
+  margin-left: 35px;
+  border: 3px solid white;
+}

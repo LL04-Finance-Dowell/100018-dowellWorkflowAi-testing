@@ -16,7 +16,9 @@ const Accordion = (props) => {
         onClick={() => setOpen(!open)}
         aria-controls="collapse"
         aria-expanded={open}
-        style={{ marginTop: `${props.top}` }}
+        style={{
+          marginTop: `${props.top}`,
+        }}
       >
         <span className="accordion-icon">
           {!open ? (
@@ -37,6 +39,7 @@ const Accordion = (props) => {
             color: `${props.color}`,
             padding: `${props.paddingg}`,
             borderBottom: `1px solid ${props.color}`,
+            width: `${props.widthh}`,
           }}
           className="title"
         >
@@ -81,7 +84,7 @@ const Accordion = (props) => {
             paddingBottom: "1px",
             borderBottom: "1px solid #e1e1e1",
             marginLeft: "43px",
-            color: `red${props.dotColor}`,
+            color: `${props.dotColor}`,
           }}
           className="dot"
         >

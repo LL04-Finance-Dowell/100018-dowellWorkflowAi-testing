@@ -2,7 +2,7 @@ import styles from "../hover-card/hoverCard.module.css";
 import WifiChannelIcon from "@mui/icons-material/WifiChannel";
 const HoverCard = (props) => {
   return (
-    <div className={styles.wrapper}>
+    <div style={{ zIndex: "0" }} className={styles.wrapper}>
       <div className={styles.card}>
         <div
           style={{ backgroundColor: `${props.color}` }}
@@ -35,7 +35,16 @@ const HoverCard = (props) => {
           >
             Thum nail of file
           </p>
-          <button>Click Here</button>
+          <button
+            style={{
+              paddingLeft: "28px",
+              margin: "auto",
+              width: "50%",
+              border: "1px solid white",
+            }}
+          >
+            Click Here
+          </button>
         </div>
       </div>
     </div>
