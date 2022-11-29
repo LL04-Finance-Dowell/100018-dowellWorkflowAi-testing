@@ -65,10 +65,11 @@ const SideBar = () => {
       />
 
       <div
+        className={styles.newBtn}
         style={{
-          width: "280px",
+          width: "85%",
           height: "72px",
-          marginLeft: "15px",
+          marginLeft: "22px",
           border: "1px solid white",
           borderRadius: "5px",
           padding: "2px",
@@ -77,8 +78,8 @@ const SideBar = () => {
       >
         {" "}
         <Button
+          className={styles.btn}
           style={{
-            margin: "auto",
             width: "100%",
             height: "65px",
             backgroundColor: "#61ce70",
@@ -114,8 +115,8 @@ const SideBar = () => {
 
       <Collapse
         style={{
-          width: "88.5%",
-          marginLeft: "16px",
+          width: "83%",
+          marginLeft: "25px",
           backgroundColor: "#e1e1e1",
         }}
         in={open}
@@ -136,6 +137,7 @@ const SideBar = () => {
             justifyContent: "center",
             fontSize: "30px",
             paddingTop: "40px",
+            fontWeight: "bold",
           }}
         >
           Search
@@ -174,6 +176,7 @@ const SideBar = () => {
           backgroundColor: "#61ce70",
           color: "white",
           border: "1px solid gray",
+          fontWeight: "bold",
         }}
       >
         <SearchIcon style={{ color: "white" }} />
