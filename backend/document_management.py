@@ -20,7 +20,7 @@ from .mongo_db_connection import (
     get_members,
 )
 
-
+print(get_document_list("6365ee18ff915c925f3a6691"))
 @api_view(["GET","POST"])
 def create_document(request):  # Document Creation.
     editorApi = "https://100058.pythonanywhere.com/dowelleditor/editor/"
@@ -132,27 +132,9 @@ def documents_to_be_signed(request):  # List of `to be signed` documents.
    
         try:
             for doc in documents:
-                payload={
-                    "product_name": "workflowai",
-                    "details":{
-                        "_id":doc["_id"],
-                        "field":"document_name",
-                        "cluster": "Documents",
-                        "database": "Documentation",
-                        "collection": "DocumentReports",
-                        "document": "documentreports",
-                        "team_member_ID": "11689044433",
-                        "function_ID": "ABCDE",
-                        "document_name":doc["document_name"],
-                        "content":""
-                                }
-                    }
                 if len(doc["reject_message"])==0 and len(doc["rejected_by"])==0:
                    
-                    filtered_list.append(requests.post(
-                    editorApi,
-                    data=payload,
-                ).json())
+                    filtered_list.append(doc)
                 
                     
             # for doc in documents:
@@ -190,7 +172,6 @@ def documents_to_be_signed(request):  # List of `to be signed` documents.
 
 @api_view(["POST"])
 def my_documents(request):  # List of my documents.
-    editorApi = "https://100058.pythonanywhere.com/dowelleditor/editor/"
     filtered_list = []
     if request.method=="POST":
         created_by=request.data['created_by']
@@ -203,26 +184,9 @@ def my_documents(request):  # List of my documents.
             )
         else:
             for doc in documents:
-                    payload={
-                            "product_name": "workflowai",
-                            "details":{
-                                "_id":doc["_id"],
-                                "field":"document_name",
-                                "cluster": "Documents",
-                                "database": "Documentation",
-                                "collection": "DocumentReports",
-                                "document": "documentreports",
-                                "team_member_ID": "11689044433",
-                                "function_ID": "ABCDE",
-                                "document_name":doc["document_name"],
-                                "content":""
-                                        }
-                            }
+                    
                     if doc['created_by'] == created_by:
-                        filtered_list.append(requests.post(
-                            editorApi,
-                            data=payload,
-                        ).json())
+                        filtered_list.append(doc)
 
         return Response(
             {"documents": filtered_list, "title": "My Documents"}, status=status.HTTP_200_OK
@@ -316,35 +280,16 @@ def my_documents(request):  # List of my documents.
 
 @api_view(["GET","POST"])
 def rejected_documents(request):  # List of `to be signed` documents.
-    editorApi = "https://100058.pythonanywhere.com/dowelleditor/editor/"
     filtered_list = []
     if request.method=="POST":
         company_id=request.data['company_id']
-
         documents = get_document_list(company_id)
    
         for doc in documents:
-            payload={
-                "product_name": "workflowai",
-                "details":{
-                    "_id":doc["_id"],
-                    "field":"document_name",
-                    "cluster": "Documents",
-                    "database": "Documentation",
-                    "collection": "DocumentReports",
-                    "document": "documentreports",
-                    "team_member_ID": "11689044433",
-                    "function_ID": "ABCDE",
-                    "document_name":doc["document_name"],
-                    "content":""
-                            }
-                }
+           
             if len(doc["reject_message"])!=0 and len(doc["rejected_by"])!=0:
                 
-                filtered_list.append(requests.post(
-                editorApi,
-                data=payload,
-            ).json())
+                filtered_list.append(doc)
                 
       
         return Response({
@@ -359,45 +304,28 @@ def rejected_documents(request):  # List of `to be signed` documents.
     
 @api_view(["GET","POST"])
 def draft_documents(request):  # List of `to be signed` documents.
-    editorApi = "https://100058.pythonanywhere.com/dowelleditor/editor/"
     title = "Draft Documents."
     filtered_list = []
     if request.method=="POST":
         company_id=request.data['company_id']
         documents = get_document_list(company_id)
-   
-        for doc in documents:
-            payload={
-                "product_name": "workflowai",
-                "details":{
-                    "_id":doc["_id"],
-                    "field":"document_name",
-                    "cluster": "Documents",
-                    "database": "Documentation",
-                    "collection": "DocumentReports",
-                    "document": "documentreports",
-                    "team_member_ID": "11689044433",
-                    "function_ID": "ABCDE",
-                    "document_name":doc["document_name"],
-                    "content":""
-                            }
-                }
-            if doc["int_wf_step"] != "complete" and doc["ext_wf_step"] != "complete":
-                
-                filtered_list.append(requests.post(
-                editorApi,
-                data=payload,
-            ).json())
-                
-      
-        return Response({
-                "documents": filtered_list,
-            },
-            status=status.HTTP_200_OK,
-        )
+        try:
+            for doc in documents:
+                if doc["int_wf_step"] != "complete" and doc["ext_wf_step"] != "complete":   
+                    filtered_list.append(doc)
+            return Response({
+                    "documents": filtered_list,
+                },
+                status=status.HTTP_200_OK,
+            )
+        except:
+            return Response(
+                {"message": "An Error Occurred."},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
     return Response(
-                    {"message": "These document is not in Rejected Document list."},
-                    status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                    {"message": "No Document in Drafts"},
+                    status=status.HTTP_400_INTERNAL_SERVER_ERROR,
                 )
     
 
