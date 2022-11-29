@@ -3,16 +3,18 @@ import { useUserContext } from "../../contexts/UserContext";
 import "./style.css";
 
 const WorkflowLayout = ({ children }) => {
-    const { currentUser } = useUserContext();
+  const { currentUser } = useUserContext();
 
-    return <>
-        <>
-            <main className="workflow_Layout_Content">
-                <SideBar user={currentUser} />
-                { children }
-            </main>
-        </>
+  return (
+    <>
+      <>
+        <main className="workflow_Layout_Content">
+          <SideBar user={currentUser} />
+          {children}
+        </main>
+      </>
     </>
-}
+  );
+};
 
 export default WorkflowLayout;

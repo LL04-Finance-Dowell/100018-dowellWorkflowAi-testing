@@ -1,8 +1,7 @@
 .container {
   position: relative;
   min-height: 85px;
-  width: fit-content;
-  width: min(71.3vw, 835px) !important;
+  width: min(72.768vw, 835px) !important;
 }
 
 .box {
@@ -11,7 +10,8 @@
   width: 100%;
   padding: 10px;
   z-index: 1000;
-  width: min(71.3vw, 835px) !important;
+  width: min(72.768vw, 835px) !important;
+  white-space: nowrap;
 }
 .header__box {
   padding: 20px;
@@ -23,6 +23,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  white-space: nowrap;
 }
 
 .header__box i {
@@ -35,6 +36,7 @@
   font-weight: 600;
   margin-bottom: 0;
   color: var(--e-global-color-secondary);
+  white-space: nowrap;
 }
 
 .is__fixed {
@@ -48,5 +50,9 @@
   }
   .box {
     width: 100% !important;
+  }
+
+  .is__fixed {
+    max-width: calc(100% - 20px);
   }
 }

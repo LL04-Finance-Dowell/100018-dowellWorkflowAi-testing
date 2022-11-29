@@ -1,0 +1,17 @@
+.content__container {
+  display: flex;
+  flex-direction: column;
+}
+
+.content__box {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 0px;
+}
+
+.card {
+  border: 1px solid pink;
+  height: 280px;
+  background-color: blue;
+  width: auto;
+}

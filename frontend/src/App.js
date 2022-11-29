@@ -20,7 +20,6 @@ import CreateNewWorkflowPage from "./pages/Workflows/CreateNewWorkflowPage/Creat
 import ApproveWorkflowPage from "./pages/Workflows/ApproveWorkflowPage/ApproveWorkflowPage";
 import RejectedWorkflowsPage from "./pages/Workflows/RejectedWorkflowsPage/RejectedWorkflowsPage";
 import SetWorkflowInDoc from "./components/setWorkFlowInDoc/SetWorkflowInDoc";
-import CreateDocument from "./components/createDocument/CreateDocument";
 
 function App() {
   const { currentUser, setCurrentUser } = useUserContext();
