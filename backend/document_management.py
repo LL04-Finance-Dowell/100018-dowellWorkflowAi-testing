@@ -48,18 +48,19 @@ def create_document(request):  # Document Creation.
 
                 payload={
                     "product_name": "workflowai",
-                    "details":{
-                        "_id":res["inserted_id"],
-                        "field":"document_name",
-                        "cluster": "Documents",
-                        "database": "Documentation",
-                        "collection": "DocumentReports",
-                        "document": "documentreports",
-                        "team_member_ID": "11689044433",
-                        "function_ID": "ABCDE",
-                        "document_name":document_name,
-                        "content":data
-                                }
+                    
+                    # "details":{
+                    "id":res["inserted_id"],
+                    "fields":"document_name",
+                    "cluster": "Documents",
+                    "database": "Documentation",
+                    "collection": "DocumentReports",
+                    "document": "documentreports",
+                    "team_member_ID": "11689044433",
+                    "function_ID": "ABCDE",
+                    "document_name":document_name,
+                    "content":data
+                                # }
                     }
 
                 
@@ -96,17 +97,17 @@ def document_detail(request):  # Single document
 
         payload={
                     "product_name": "workflowai",
-                    "details": {
-                        "fields":"document_name",
-                        "cluster": "Documents",
-                        "database": "Documentation",
-                        "collection": "DocumentReports",
-                        "document": "documentreports",
-                        "team_member_ID": "11689044433",
-                        "function_ID": "ABCDE",
-                        "document_name":document_name,
-                        "document_id":document_id,
-                    }
+                    # "details": {
+                    "fields":"document_name",
+                    "cluster": "Documents",
+                    "database": "Documentation",
+                    "collection": "DocumentReports",
+                    "document": "documentreports",
+                    "team_member_ID": "11689044433",
+                    "function_ID": "ABCDE",
+                    "document_name":document_name,
+                    "document_id":document_id,
+                    # }
         }
         editor_link = requests.post(
                     editorApi,
