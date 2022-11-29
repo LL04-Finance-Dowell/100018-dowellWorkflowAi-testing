@@ -2,18 +2,15 @@
   display: flex;
   width: 90%;
   justify-content: space-around;
-  /* gap: 15px; */
   display: grid;
-  /* column-gap: 15px; */
   grid-template-columns: auto auto auto;
-  /* margin-left: 100px; */
   margin-bottom: 15px;
   gap: 5px;
 }
 
 .card {
-  width: 260px;
-  height: 330px;
+  width: 250px;
+  height: 310px;
   border-radius: 3px;
   /* padding: 1.5rem; */
   /* background: white; */
@@ -35,7 +32,7 @@
 .card:hover .info {
   opacity: 1;
   transform: translateY(0px);
-  height: 330px;
+  height: 310px;
 }
 .card:before {
   /* content: ""; */
