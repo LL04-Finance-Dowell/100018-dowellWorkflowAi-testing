@@ -248,6 +248,7 @@ Response-500
 ```
 
 ### Document Management
+
 _POST_ to `documents/`
 
 - Creates a new Document by providing company_id and created_by parameters and their value from front end
@@ -269,7 +270,6 @@ Response-201
 }
 
 ```
-
 
 Response-405
 
@@ -326,8 +326,10 @@ Response-500
 }
 
 ```
-_POST_  `documents/to-sign/`
-- Getting a Document company_id 
+
+_POST_ `documents/to-sign/`
+
+- Getting a Document company_id
 
 Request Body
 
@@ -336,19 +338,21 @@ Request Body
     "company_id": "<id_of_company>"
 }
 ```
+
 Response-200
 
 ```
 ["ist of documents to be signed with their detail"]
 
 ```
+
 Response-500
 {
-    "message": "These document is Rejected Document."
+"message": "These document is Rejected Document."
 }
 
+_POST_ `documents/mine/`
 
-_POST_  `documents/mine/`
 - Getting a Document company_id and created_by
 
 Request Body
@@ -359,18 +363,26 @@ Request Body
     "created_by": "<name_of_user>"
 }
 ```
+
 Response-200
 
 ```
-{"documents":["list of documents created by the user"]}
+{
+    "documents":["list of documents created by the user"]
+}
 
 ```
-Response-500
-{
- "message": "There is no document created by This user."
-},
 
-_POST_  `documents/rejected/`
+Response-500
+
+```
+{
+    "message": "There is no document created by This user."
+}
+```
+
+_POST_ `documents/rejected/`
+
 - Getting a Rejected Documents using company_id
 
 Request Body
@@ -380,19 +392,26 @@ Request Body
     "company_id": "<id_of_company>"
 }
 ```
+
 Response-200
 
 ```
-{"documents":["list of rejected documents"]}
+{
+    "documents":["list of rejected documents"]
+}
 
 ```
+
 Response-500
+
+```
 {
- "message": "These document is not in Rejected Document list."
-},
+    "message": "These document is not in Rejected Document list."
+}
+```
 
+_POST_ `documents/drafts/`
 
-_POST_  `documents/drafts/`
 - Getting a Drafted Documents using company_id
 
 Request Body
@@ -402,14 +421,22 @@ Request Body
     "company_id": "<id_of_company>"
 }
 ```
+
 Response-200
 
 ```
-{"documents":["list of drafted documents"]}
+{
+    "documents":["list of drafted documents"]
+}
 
 ```
+
 Response-500
+
+```
 {
- "message": "No Document in Drafts"
-},
+    "message": "No Document in Drafts"
+}
+```
+
 ### Worfklow Management
