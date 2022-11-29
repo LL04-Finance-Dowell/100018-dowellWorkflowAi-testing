@@ -52,7 +52,7 @@ const SideBar = ({ user }) => {
         <span className={styles.myOrganisation}>My Organisation</span>
         <img
           className={styles.orgImg}
-          style={{ width: "150px" }}
+          style={{}}
           src="https://i0.wp.com/workflowai.online/wp-content/uploads/2022/10/artistic-logo.png?w=916&ssl=1"
           alt=""
         />
@@ -62,16 +62,19 @@ const SideBar = ({ user }) => {
         title="Documents (003)"
         content="1. To be Signed (002)"
         content2="2. Rejected by others (001)"
+        dotColor="#54595f"
       />
       <Accordion
         title="Templates (003)"
         content="1. To be Approved (002)"
         content2="2. Rejected by others (001)"
+        dotColor="#54595f"
       />
       <Accordion
         title="Workflows (004)"
         content="1. To be Approved (002)"
         content2="2. Rejected by others (001)"
+        dotColor="#54595f"
       />
 
       <div
@@ -193,16 +196,19 @@ const SideBar = ({ user }) => {
         title="Documents (007)"
         content="1. To be Approved (002)"
         content2="2. Rejected by others (001)"
+        dotColor="#54595f"
       />
       <Accordion
         title="Templates (006)"
         content="1. To be Approved (002)"
         content2="2. Rejected by others (001)"
+        dotColor="#54595f"
       />
       <Accordion
         title="Workflows (004)"
         content="1. To be Approved (002)"
         content2="2. Rejected by others (001)"
+        dotColor="#54595f"
       />
       <span
         className="manageFiles (003)"
@@ -221,16 +227,19 @@ const SideBar = ({ user }) => {
         title="My Documents (002)"
         content="1. To be Approved (002)"
         content2="2. Rejected by others (001)"
+        dotColor="#54595f"
       />
       <Accordion
         title="Templates (004)"
         content="1. To be Approved (002)"
         content2="2. Rejected by others (001)"
+        dotColor="#54595f"
       />
       <Accordion
         title="Workflows (007)"
         content="1. To be Approved (002)"
         content2="2. Rejected by others (001)"
+        dotColor="#54595f"
       />
       <span
         className="reports"
@@ -249,16 +258,19 @@ const SideBar = ({ user }) => {
         title="Documents"
         content="1. To be Approved (002)"
         content2="2. Rejected by others (001)"
+        dotColor="#54595f"
       />
       <Accordion
         title="Templates"
         content="1. To be Approved (002)"
         content2="2. Rejected by others (001)"
+        dotColor="#54595f"
       />
       <Accordion
         title="Workflows"
         content="1. To be Approved (002)"
         content2="2. Rejected by others (001)"
+        dotColor="#54595f"
       />
       <span
         className="dowell"
@@ -276,26 +288,31 @@ const SideBar = ({ user }) => {
         title="Templates"
         content="1. To be Approved (002)"
         content2="2. Rejected by others (001)"
+        dotColor="#54595f"
       />
       <Accordion
         title="Learning Supports"
         content="1. To be Approved (002)"
         content2="2. Rejected by others (001)"
+        dotColor="#54595f"
       />
       <Accordion
         title="Case Studies"
         content="1. To be Approved (002)"
         content2="2. Rejected by others (001)"
+        dotColor="#54595f"
       />
       <Accordion
         title="New Trends"
         content="1. To be Approved (002)"
         content2="2. Rejected by others (001)"
+        dotColor="#54595f"
       />
       <Accordion
         title="Legal Compliances"
         content="1. To be Approved (002)"
         content2="2. Rejected by others (001)"
+        dotColor="#54595f"
       />
       <div
         style={{

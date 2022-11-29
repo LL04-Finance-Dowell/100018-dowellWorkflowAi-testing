@@ -1,16 +1,16 @@
 .main {
     display: flex;
-}
-.top-main {
+  }
+  .top-main {
     display: inline;
     width: 50%;
-}
-.sm-flip {
+  }
+  .sm-flip {
     display: flex;
     padding-left: 25px;
     width: 160%;
-}
-.footer {
+  }
+  .footer {
     width: 100%;
     background-color: #1b1b1b;
     height: 110px;
@@ -21,10 +21,15 @@
     font-weight: 300;
     line-height: 18px;
     gap: 30px;
-}
-.face:hover {
+  }
+  .face:hover {
     color: green;
-}
-.face {
+  }
+  .face {
     border-radius: 50%;
-}
+  }
+  @media (max-width: 800px) {
+    .top-main {
+    }
+  }
+  

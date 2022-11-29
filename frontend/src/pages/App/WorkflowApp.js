@@ -16,6 +16,7 @@ import { clearLocalStorageItems, handleAuthenticationBtnClick } from "../../serv
 import "./style.css";
 import Carousell from "../../components/carousel/Carousel";
 import Table from "../../components/table/Table";
+import Chat from "../../components/chat/Chat";
 
 const WorkflowApp = () => {
 
@@ -25,6 +26,8 @@ const WorkflowApp = () => {
         <WorkflowLayout>
             <>
             <div className="main">
+                {/* <SideBar /> */}
+
                 <div className="top-main">
                 <Carousell />
 
@@ -201,6 +204,7 @@ const WorkflowApp = () => {
                 </div>
                 </div>
                 <FlipCard />
+                <Chat />
             </div>
             <div
                 style={{ display: "flex", justifyContent: "space-between" }}

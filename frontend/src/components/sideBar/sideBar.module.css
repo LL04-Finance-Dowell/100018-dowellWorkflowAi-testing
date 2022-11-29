@@ -53,6 +53,7 @@
 }
 .orgImg {
   margin-left: 25px;
+  width: 150px;
 }
 .notific {
   color: red;
@@ -68,4 +69,27 @@
   font-family: "Roboto", "SansSerif";
   font-weight: 700;
   font-size: 18px;
+}
+@media (max-width: 1400px) {
+  .sideBar {
+    margin-left: 0px;
+  }
+}
+@media (max-width: 1200px) {
+  .sideBar {
+    width: 25%;
+  }
+  .main {
+    padding-left: 30px;
+    padding-right: 30px;
+    gap: 20px;
+  }
+  .icons {
+    gap: 25px;
+  }
+  .orgImg {
+    width: 100px;
+    height: 70px;
+    margin-left: 53px;
+  }
 }
