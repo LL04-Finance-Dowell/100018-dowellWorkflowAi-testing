@@ -1,0 +1,17 @@
+.assign__button {
+  position: relative;
+  display: flex;
+  padding: 10px 20px;
+  background-color: #c3d6be;
+  color: var(--e-global-color-cd6593d);
+  font-size: 12px;
+  font-weight: 500;
+  text-transform: capitalize;
+  cursor: pointer;
+  text-align: center;
+  line-height: 12px;
+  border: none;
+  align-items: baseline;
+  min-height: 33px;
+  justify-content: center;
+}

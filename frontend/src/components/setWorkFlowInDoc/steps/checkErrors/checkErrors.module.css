@@ -1,0 +1,35 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  margin-bottom: 20px;
+}
+
+.header {
+  height: 65px;
+  padding: 10px;
+}
+
+.sort__process__box {
+  width: 100%;
+  background-color: var(--e-global-color-9d2ac19);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: solid var(--e-global-color-secondary) 1px;
+}
+
+.sort__process__form {
+  padding: 10px;
+  width: min(32.5vw, 370px);
+}
+
+.sort__process__form button {
+  background-color: var(--e-global-color-accent);
+}
+
+@media (max-width: 768px) {
+  .sort__process__form {
+    width: 100%;
+  }
+}
