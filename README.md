@@ -258,6 +258,7 @@ Request Body
 ```
 {
     "company_id": "<company_id_of_authenticated_user>",
+    "template_id": "<template_id_existing>",
     "created_by": "<user_name_of_authenticated_user>"
 }
 ```
