@@ -8,7 +8,6 @@ import Button from "react-bootstrap/Button";
 import AddIcon from "@mui/icons-material/Add";
 import Collapse from "react-bootstrap/Collapse";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
-
 import Accordion from "../accordion/Accordion";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
@@ -16,15 +15,15 @@ import { dowellLoginUrl } from "../../services/axios";
 const SideBar = ({ user }) => {
   const [open, setOpen] = useState(false);
   const navigate = useNavigate();
-  
+
   const handleCreateWorkflowItemClick = (e) => {
     e.preventDefault();
 
     const linkPath = e.target.hash.replace("#", "") + e.target.search;
-    
+
     if (user) return navigate(linkPath);
     window.location = dowellLoginUrl + linkPath;
-  }
+  };
 
   return (
     <div className={styles.sideBar}>
@@ -48,7 +47,9 @@ const SideBar = ({ user }) => {
           src="https://i0.wp.com/workflowai.online/wp-content/uploads/2022/02/download-e1658465151576.jpg?resize=100%2C100&ssl=1"
           alt=""
         />
-        <span className={styles.welcome}>Welcome, {user ? user.username : "Tom"}</span>
+        <span className={styles.welcome}>
+          Welcome, {user ? user.username : "Tom"}
+        </span>
         <span className={styles.myOrganisation}>My Organisation</span>
         <img
           className={styles.orgImg}
@@ -135,10 +136,34 @@ const SideBar = ({ user }) => {
         in={open}
       >
         <div id="example-collapse-text">
-          <Link className={styles.colC} to={"/documents/new"} onClick={handleCreateWorkflowItemClick}>Document</Link>
-          <Link className={styles.colC} to={"/templates/new"} onClick={handleCreateWorkflowItemClick}>Template</Link>
-          <Link className={styles.colC} to={"/workflows/new"} onClick={handleCreateWorkflowItemClick}>Workflow</Link>
-          <Link className={styles.colC} to={"/processes/new"} onClick={handleCreateWorkflowItemClick}>Process</Link>
+          <Link
+            className={styles.colC}
+            to={"/documents/new"}
+            onClick={handleCreateWorkflowItemClick}
+          >
+            Document
+          </Link>
+          <Link
+            className={styles.colC}
+            to={"/templates/new"}
+            onClick={handleCreateWorkflowItemClick}
+          >
+            Template
+          </Link>
+          <Link
+            className={styles.colC}
+            to={"/workflows/new"}
+            onClick={handleCreateWorkflowItemClick}
+          >
+            Workflow
+          </Link>
+          <Link
+            className={styles.colC}
+            to={"/processes/new"}
+            onClick={handleCreateWorkflowItemClick}
+          >
+            Process
+          </Link>
         </div>
       </Collapse>
       <div className="search-input">
@@ -177,12 +202,12 @@ const SideBar = ({ user }) => {
             border: "gray",
           }}
           type="text"
-          value="type here to search"
+          placeholder="Type here to search"
         />
       </form>
       <button
         style={{
-          width: "75%",
+          width: "77%",
           marginLeft: "39px",
           marginTop: "8px",
           height: "50px",
@@ -228,20 +253,28 @@ const SideBar = ({ user }) => {
       </span>
       <Accordion
         title="My Documents (002)"
-        content="1. To be Approved (002)"
-        content2="2. Rejected by others (001)"
-        dotColor="#54595f"
+        content={
+          <Link to={"/Documents/Documents/Documents"}>"New Documents"</Link>
+        }
+        content2={<Link to={"/Documents/DraftsDoc/DraftsDoc"}>"Drafts"</Link>}
+        dotColor="rgb(84, 89, 95)"
       />
       <Accordion
         title="Templates (004)"
-        content="1. To be Approved (002)"
-        content2="2. Rejected by others (001)"
+        content={<Link to={"/Templates/TempDraft/TempDraft"}>"Draft"</Link>}
+        content2={
+          <Link to={"/Templates/NewTemplate/NewTemplate"}>
+            "2. New Template"
+          </Link>
+        }
         dotColor="#54595f"
       />
       <Accordion
         title="Workflows (007)"
-        content="1. To be Approved (002)"
-        content2="2. Rejected by others (001)"
+        content={
+          <Link to={"/WorkFlows/NewWorkFlow/NewWorkFlow"}>"New Workflow"</Link>
+        }
+        content2={<Link to={"/WorkFlows/DraftF/DraftF"}>"Draft"</Link>}
         dotColor="#54595f"
       />
       <span
