@@ -20,7 +20,12 @@ import CreateNewWorkflowPage from "./pages/Workflows/CreateNewWorkflowPage/Creat
 import ApproveWorkflowPage from "./pages/Workflows/ApproveWorkflowPage/ApproveWorkflowPage";
 import RejectedWorkflowsPage from "./pages/Workflows/RejectedWorkflowsPage/RejectedWorkflowsPage";
 import SetWorkflowInDoc from "./components/setWorkFlowInDoc/SetWorkflowInDoc";
-
+import Documents from "./pages/Documents/Documents/Documents";
+import TempDraft from "./pages/Templates/TempDraft/TempDraft";
+import DraftsDoc from "./pages/Documents/DraftsDoc/DraftsDoc";
+import NewTemplate from "./pages/Templates/NewTemplate/NewTemplate";
+import NewWorkFlow from "./pages/Workflows/NewWorkflow/NewWorkFlow";
+import DraftF from "./pages/Workflows/DraftF/DraftF";
 function App() {
   const { currentUser, setCurrentUser } = useUserContext();
   const [loading, setLoading] = useState(true);
@@ -60,6 +65,18 @@ function App() {
         <Route path={"rejected"} element={<RejectedWorkflowsPage />} />
       </Route>
       <Route path={"/notifications"} element={<NotificationsPage />} />
+      <Route path="/Documents/Documents/Documents" element={<Documents />} />
+      <Route path="/Documents/DraftsDoc/DraftsDoc" element={<DraftsDoc />} />
+      <Route path="/Templates/TempDraft/TempDraft" element={<TempDraft />} />
+      <Route
+        path="/Templates/NewTemplate/NewTemplate"
+        element={<NewTemplate />}
+      />
+      <Route
+        path="/WorkFlows/NewWorkFlow/NewWorkFlow"
+        element={<NewWorkFlow />}
+      />
+      <Route path="/WorkFlows/DraftF/DraftF" element={<DraftF />} />
       <Route path={"*"} element={<>Page not found</>} />
     </Routes>
   );
@@ -69,7 +86,7 @@ function App() {
   //   <Routes>
   //     <Route path={"/"} element={<SetWorkflowInDoc />} />
   //   </Routes>
-  // </div>  
+  // </div>
   // );
 }
 
