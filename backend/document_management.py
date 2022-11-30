@@ -19,11 +19,11 @@ from .mongo_db_connection import (
     get_user_info_by_username,
     get_members,
 )
-
-# print(get_template_object("6365f9c2ff915c925f3a67f4"))
+editorApi = "https://100058.pythonanywhere.com/api/generate-editor-link/"
+    
+# print(get_template_object("6365f9c2ff915c925f3a67f4")) 
 @api_view(["GET","POST"])
 def create_document(request):  # Document Creation.
-    editorApi = "https://100058.pythonanywhere.com/dowelleditor/editor/"
     
     if request.method == "POST":
         data = ""
@@ -47,31 +47,39 @@ def create_document(request):  # Document Creation.
             if res["isSuccess"]:
 
                 payload={
-                    "product_name": "workflowai",
-                    
-                    # "details":{
-                    "id":res["inserted_id"],
-                    "fields":"document_name",
-                    "cluster": "Documents",
-                    "database": "Documentation",
-                    "collection": "DocumentReports",
-                    "document": "documentreports",
-                    "team_member_ID": "11689044433",
-                    "function_ID": "ABCDE",
-                    "document_name":document_name,
-                    "content":data
-                                # }
-                    }
+                        "product_name": "workflowai",
+                        "details":{
+                            "_id":res["inserted_id"],
+                            "field":"document_name",
+                            "cluster": "Documents",
+                            "database": "Documentation",
+                            "collection": "DocumentReports",
+                            "document": "documentreports",
+                            "team_member_ID": "11689044433",
+                            "function_ID": "ABCDE",
+                            "command": "update",
+                            "content":data,
+                            "update_field": {
+                                            "document_name":document_name
+                                            }
+                        }
+                        }
 
                 
                 editor_link = requests.post(
                     editorApi,
                     data=payload,
                 )
-                return Response(
-                   editor_link.json(),
-                status=status.HTTP_201_CREATED,
-                )
+                try:
+                    return Response(
+                    editor_link.json(),
+                    status=status.HTTP_201_CREATED,
+                    )
+                except:
+                    return Response(
+                {"message": "Failed to call editorApi"},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
             return Response(
                 {"message": "Unable to Create Document"},
                 status=status.HTTP_405_METHOD_NOT_ALLOWED,
@@ -84,7 +92,6 @@ def create_document(request):  # Document Creation.
 
 @api_view(["POST"])
 def document_detail(request):  # Single document
-    editorApi = "https://100058.pythonanywhere.com/dowelleditor/editor/"
 
     if request.method == "POST":
         if not request.data:
@@ -94,10 +101,11 @@ def document_detail(request):  # Single document
             )
         document_id = request.data["document_id"]
         document_name = request.data["document_name"]
-
+        
         payload={
-                    "product_name": "workflowai",
-                    # "details": {
+                "product_name": "workflowai",
+                "details": {
+                    "_id":document_id,
                     "fields":"document_name",
                     "cluster": "Documents",
                     "database": "Documentation",
@@ -105,18 +113,28 @@ def document_detail(request):  # Single document
                     "document": "documentreports",
                     "team_member_ID": "11689044433",
                     "function_ID": "ABCDE",
-                    "document_name":document_name,
                     "document_id":document_id,
-                    # }
+                    "command": "update",
+                    "update_field": {
+                                    "document_name":document_name,
+                                    }
+                            
+        }
         }
         editor_link = requests.post(
                     editorApi,
                     data=payload,
                 )
-        return Response(
-        editor_link.json(),
-        status=status.HTTP_200_OK,
-        )
+        try:
+            return Response(
+            editor_link.json(),
+            status=status.HTTP_201_CREATED,
+            )
+        except:
+            return Response(
+        {"message": "Failed to call editorApi"},
+        status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+    )
         
     return Response(
         {"message": "This Document is Not Loaded."}, status=status.HTTP_400_BAD_REQUEST
@@ -124,7 +142,6 @@ def document_detail(request):  # Single document
 
 @api_view(["GET","POST"])
 def documents_to_be_signed(request):  # List of `to be signed` documents.
-    editorApi = "https://100058.pythonanywhere.com/dowelleditor/editor/"
     filtered_list = []
 
     if request.method=="POST":
