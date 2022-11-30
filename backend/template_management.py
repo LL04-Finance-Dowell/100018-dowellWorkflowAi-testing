@@ -22,7 +22,7 @@ def create_template(request):
         if not request.data:
             return Response(
                 {"message": "Failed to process template creation."},
-                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                status=status.HTTP_400_BAD_REQUEST,
             )
         created_by = request.data["created_by"]
         company_id = request.data["company_id"]
@@ -36,26 +36,31 @@ def create_template(request):
         )
         if resObj["isSuccess"]:
             payload = {
-                "product_name": "workflow_ai",
+                "product_name": "workflowai",
                 "details": {
+                    "_id": "638704a077be2e78175e70c4",
+                    "field": "template_name",
                     "cluster": "Documents",
                     "database": "Documentation",
-                    "collection": "TemplateReports",
-                    "document": "templatereports",
-                    "team_member_ID": "22689044433",
+                    "collection": "editor",
+                    "document": "editor",
+                    "team_member_ID": "100084006",
                     "function_ID": "ABCDE",
-                    "document_id": resObj["inserted_id"],
                     "command": "update",
-                    "update_field": {"template_name": template_name, "content": ""},
+                    "update_field": {"template_name": "", "content": ""},
                 },
             }
             editor_link = requests.post(
                 editorApi,
-                data=payload,
+                data=json.dumps(payload),
             )
-            print("Editor Link------------------- \n", editor_link.status_code)
+            if editor_link.status_code != 200:
+                return Response(
+                    {"message": "Failed to go to editor."},
+                    status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                )
             return Response(
-                editor_link.json(),
+                editor_link,
                 status=status.HTTP_201_CREATED,
             )
         return Response(
@@ -94,16 +99,22 @@ def template_detail(request):
                 "team_member_ID": "22689044433",
                 "function_ID": "ABCDE",
                 "document_id": template_id,
+                "fields": template_name,
                 "command": "update",
                 "update_field": {"template_name": template_name, "content": data},
             },
         }
         editor_link = requests.post(
             editorApi,
-            data=payload,
+            data=json.dumps(payload),
         )
+        if editor_link.status_code != 200:
+            return Response(
+                {"message": "Failed to go to editor."},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
         return Response(
-            editor_link.json(),
+            editor_link,
             status=status.HTTP_200_OK,
         )
     return Response(

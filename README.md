@@ -1,6 +1,15 @@
 # WorfklowAI Service
 
 api_url = `https://100094.pythonanywhere.com/v0.1/`
+For Test:
+
+```
+{
+"created_by": "Maanish",
+"company_id": 6365ee18ff915c925f3a6691"
+}
+
+```
 
 ### Template Management
 
@@ -31,6 +40,14 @@ Response-300
 ```
 {
     "message": "Template Name is Required"
+}
+```
+
+Response-400
+
+```
+{
+    "message": "Failed to process template creation."
 }
 ```
 
