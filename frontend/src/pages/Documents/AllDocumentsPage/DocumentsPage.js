@@ -31,8 +31,12 @@ const DocumentsPage = () => {
           </div>
         </div>
 
-        <SectionBox title="created by me" cardItems={createDocumentsByMe} />
-        <SectionBox title="drafts" cardItems={drafts} />
+        <div id="createdByMe">
+          <SectionBox title="created by me" cardItems={createDocumentsByMe} />
+        </div>
+        <div id="drafts">
+          <SectionBox title="drafts" cardItems={drafts} />
+        </div>
       </div>
     </WorkflowLayout>
   );

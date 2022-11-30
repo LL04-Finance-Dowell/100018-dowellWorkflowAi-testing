@@ -36,7 +36,7 @@ const CreateDocument = ({ handleToggleOverlay }) => {
         <p>Create Document</p>
       </div>
       <form onSubmit={handleSubmit(onSubmit)}>
-        <div>
+        {/*  <div>
           <label htmlFor="name">Name*</label>
           <input
             required
@@ -44,7 +44,7 @@ const CreateDocument = ({ handleToggleOverlay }) => {
             id="name"
             className={styles.form__input}
           />
-        </div>
+        </div> */}
         <div>
           <label htmlFor="template">Select Template*</label>
 
