@@ -7,12 +7,15 @@ from .mongo_db_connection import (
     get_template_list,
     save_template,
     update_template_approval,
+    get_template_object,
 )
+
+
+editorApi = "https://100058.pythonanywhere.com/api/generate-editor-link/"
 
 
 @api_view(["POST"])
 def create_template(request):
-    editorApi = "https://100058.pythonanywhere.com/dowelleditor/editor/"
     if request.method == "POST":
         data = ""
         template_name = ""
@@ -41,14 +44,16 @@ def create_template(request):
                     "document": "templatereports",
                     "team_member_ID": "22689044433",
                     "function_ID": "ABCDE",
-                    "fields": template_name,
                     "document_id": resObj["inserted_id"],
+                    "command": "update",
+                    "update_field": {"template_name": template_name, "content": ""},
                 },
             }
             editor_link = requests.post(
                 editorApi,
                 data=payload,
             )
+            print("Editor Link------------------- \n", editor_link.status_code)
             return Response(
                 editor_link.json(),
                 status=status.HTTP_201_CREATED,
@@ -65,7 +70,6 @@ def create_template(request):
 
 @api_view(["POST"])
 def template_detail(request):
-    editorApi = "https://100058.pythonanywhere.com/dowelleditor/editor/"
     if request.method == "POST":
         if not request.data:
             return Response(
@@ -74,6 +78,12 @@ def template_detail(request):
             )
         template_id = request.data["template_id"]
         template_name = request.data["template_name"]
+        data = get_template_object(template_id)
+        if not data:
+            return Response(
+                {"message": "Template Not Found."},
+                status=status.HTTP_404_NOT_FOUND,
+            )
         payload = {
             "product_name": "workflow_ai",
             "details": {
@@ -83,8 +93,9 @@ def template_detail(request):
                 "document": "templatereports",
                 "team_member_ID": "22689044433",
                 "function_ID": "ABCDE",
-                "fields": template_name,
                 "document_id": template_id,
+                "command": "update",
+                "update_field": {"template_name": template_name, "content": data},
             },
         }
         editor_link = requests.post(

@@ -72,6 +72,15 @@ Response-200
 
 ```
 
+Response-404
+
+```
+{
+    "message": "Template Not Found"
+}
+
+```
+
 Response-400
 
 ```
