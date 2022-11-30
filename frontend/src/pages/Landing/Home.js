@@ -1,5 +1,4 @@
 import { Link } from "react-router-dom";
-
 import Carousel from "../../components/carousel/Carousel";
 import FlipCard from "../../components/flip-card/FlipCard";
 import SideBar from "../../components/sideBar/SideBar";
