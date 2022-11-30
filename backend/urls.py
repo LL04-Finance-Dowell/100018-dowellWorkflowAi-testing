@@ -1,16 +1,17 @@
 from django.urls import path
-from .wf_management import (
-    assign_emails,
-    generate_link,
-    process_document,
-    reject_document,
-    signature,
-    internal_signature,
-    workflow,
-    approved_workflows,
-    rejected_workflows,
-    draft_workflows,
-)
+
+# from .wf_management import (
+#     assign_emails,
+#     generate_link,
+#     process_document,
+#     reject_document,
+#     signature,
+#     internal_signature,
+#     workflow,
+#     approved_workflows,
+#     rejected_workflows,
+#     draft_workflows,
+# )
 from .template_management import (
     template_list,
     approved,
@@ -27,6 +28,7 @@ from .document_management import (
     my_documents,
     create_document,
     rejected_documents,
+    reject_document,
 )
 
 from .intelligent_search import (
@@ -40,13 +42,13 @@ urlpatterns = [
     # Search----------------------------
     path("search/<str:str>", search, name="search_result"),
     # Workflow--------------------------------------------------------
-    path("emails/", assign_emails, name="assign_emails"),
-    path("linkflow/", generate_link, name="generate_linkflow"),
-    path("workflows/", workflow, name="workflows"),
-    path("workflows/process/", process_document, name="add_to_workflow"),
-    path("workflows/drafts/", draft_workflows, name="add_to_workflow"),
-    path("workflows/approved/", approved_workflows, name="approved_workflows"),
-    path("workflows/rejected/", rejected_workflows, name="rejected_workflows"),
+    # path("emails/", assign_emails, name="assign_emails"),
+    # path("linkflow/", generate_link, name="generate_linkflow"),
+    # path("workflows/", workflow, name="workflows"),
+    # path("workflows/process/", process_document, name="add_to_workflow"),
+    # path("workflows/drafts/", draft_workflows, name="add_to_workflow"),
+    # path("workflows/approved/", approved_workflows, name="approved_workflows"),
+    # path("workflows/rejected/", rejected_workflows, name="rejected_workflows"),
     # Templates-----------------------------------------------------
     path("templates/", create_template, name="templates"),
     path("templates/detail/", template_detail, name="templates"),
@@ -78,14 +80,4 @@ urlpatterns = [
         name="requested-documents",
     ),
     path("documents/detail/", document_detail, name="document"),
-    path(
-        "signatures/<str:document_id>/<str:uuid_hash>/<str:user_name>/",
-        signature,
-        name="verify-document",
-    ),
-    path(
-        "signatures/internal/<str:document_id>/",
-        internal_signature,
-        name="internal_signature",
-    ),
 ]
