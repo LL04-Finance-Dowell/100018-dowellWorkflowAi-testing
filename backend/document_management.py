@@ -46,7 +46,7 @@ def create_document(request):  # Document Creation.
             
             if res["isSuccess"]:
 
-                payload={
+                payload=json.dumps({
                         "product_name": "workflowai",
                         "details":{
                             "_id":res["inserted_id"],
@@ -63,13 +63,12 @@ def create_document(request):  # Document Creation.
                                             "document_name":document_name
                                             }
                         }
-                        }
-
-                
-                editor_link = requests.post(
-                    editorApi,
-                    data=payload,
-                )
+                        })
+                headers = {
+                            'Content-Type': 'application/json'
+                            }
+                        
+                editor_link = requests.request("POST", editorApi, headers=headers, data=payload)  
                 try:
                     return Response(
                     editor_link.json(),
@@ -102,7 +101,7 @@ def document_detail(request):  # Single document
         document_id = request.data["document_id"]
         document_name = request.data["document_name"]
         
-        payload={
+        payload=json.dumps({
                 "product_name": "workflowai",
                 "details": {
                     "_id":document_id,
@@ -120,11 +119,12 @@ def document_detail(request):  # Single document
                                     }
                             
         }
-        }
-        editor_link = requests.post(
-                    editorApi,
-                    data=payload,
-                )
+        })
+        headers = {
+                            'Content-Type': 'application/json'
+                            }
+                        
+        editor_link = requests.request("POST", editorApi, headers=headers, data=payload)  
         try:
             return Response(
             editor_link.json(),
