@@ -10,7 +10,6 @@ from .mongo_db_connection import (
     get_template_object,
 )
 
-
 editorApi = "https://100058.pythonanywhere.com/api/generate-editor-link/"
 
 
