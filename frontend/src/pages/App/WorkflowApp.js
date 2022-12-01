@@ -54,6 +54,7 @@ const WorkflowApp = () => {
                     size={"60px"}
                     padding={"30px"}
                     color={"gray"}
+                    btm={"5px"}
                     />
                     <SmallFlip
                     icon={<SearchIcon fontSize="large" />}
@@ -84,6 +85,7 @@ const WorkflowApp = () => {
                         color: "red",
                         paddingTop: "5px",
                         paddingLeft: "5px",
+                        fontWeight: "bold",
                     }}
                     >
                     Notifications - Documents
@@ -92,7 +94,7 @@ const WorkflowApp = () => {
                     style={{
                         display: "grid",
                         width: "96%",
-
+                        marginTop: "3px",
                         paddingLeft: "50px",
                         gridTemplateColumns: "auto auto auto",
                     }}
@@ -105,7 +107,7 @@ const WorkflowApp = () => {
                     </div>
                 </div>
 
-                <div>
+                <div style={{ marginTop: "100px" }}>
                     <h5
                     id="ji"
                     style={{
@@ -117,6 +119,7 @@ const WorkflowApp = () => {
                         color: "red",
                         paddingTop: "5px",
                         paddingLeft: "5px",
+                        fontWeight: "bold",
                     }}
                     >
                     Notifications - Templates
@@ -125,7 +128,7 @@ const WorkflowApp = () => {
                     style={{
                         display: "grid",
                         width: "96%",
-
+                        marginTop: "3px",
                         paddingLeft: "50px",
                         gridTemplateColumns: "auto auto auto",
                     }}
@@ -135,7 +138,7 @@ const WorkflowApp = () => {
                     <HoverCard color="#c3d6be" />
                     </div>
                 </div>
-                <div>
+                <div style={{ marginTop: "100px", marginBottom: "100px" }}>
                     <h5
                     id="ji"
                     style={{
@@ -147,6 +150,7 @@ const WorkflowApp = () => {
                         color: "red",
                         paddingTop: "5px",
                         paddingLeft: "5px",
+                        fontWeight: "bold",
                     }}
                     >
                     Notifications - Workflows
@@ -155,7 +159,7 @@ const WorkflowApp = () => {
                     style={{
                         display: "grid",
                         width: "67%",
-
+                        marginTop: "3px",
                         paddingLeft: "50px",
                         gridTemplateColumns: "auto auto auto",
                     }}
@@ -164,58 +168,12 @@ const WorkflowApp = () => {
                     <HoverCard color="#e1e1e1" />
                     </div>
                 </div>
-                <div style={{ display: "flex" }}>
+                <div style={{ width: "137%", display: "flex" }}>
                     <Table header="Incomplete Tasks" />
-                    <Table header="Complete Tasks" />
-                </div>
-                <div className="sm-flip">
-                    <SmallFlip
-                    icon={<NotificationsNoneIcon fontSize="large" />}
-                    content={"006"}
-                    button={"View"}
-                    size={"50px"}
-                    padding={"32px"}
-                    color={"#1abc9c"}
-                    />
-                    <SmallFlip
-                    icon={<InsertDriveFileIcon fontSize="large" />}
-                    content={"New"}
-                    button={"Create Document"}
-                    size={"60px"}
-                    padding={"30px"}
-                    color={"gray"}
-                    />
-                    <SmallFlip
-                    icon={<SearchIcon fontSize="large" />}
-                    content={"Search"}
-                    button={"Search Document"}
-                    size={"60px"}
-                    padding={"30px"}
-                    color={"#61ce70"}
-                    />
-                    <SmallFlip
-                    icon={<ManageAccountsIcon fontSize="large" />}
-                    content={"Support"}
-                    button={"Dowell Knowledge Center"}
-                    size={"85px"}
-                    padding={"15px"}
-                    color={"#c3d6be"}
-                    />
+                    <Table header="Complete Tasks" color="#7a7a7a" />
                 </div>
                 </div>
                 <FlipCard />
-                <Chat />
-            </div>
-            <div
-                style={{ display: "flex", justifyContent: "space-between" }}
-                className="footer"
-            >
-                <div>©All rights reserved by WorkFlowAI</div>
-                <div style={{ display: "flex", gap: "20px" }}>
-                <FacebookIcon fontSize="large" className="face" />
-                <YouTubeIcon fontSize="large" className="face" />
-                <LinkedInIcon fontSize="large" className="face" />
-                </div>
             </div>
                 {/* <h1>Hello {currentUser.username}</h1>
 

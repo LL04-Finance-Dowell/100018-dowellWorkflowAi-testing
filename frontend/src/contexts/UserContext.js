@@ -5,7 +5,9 @@ const UserContext = createContext({});
 export const useUserContext = () => useContext(UserContext);
 
 export const UserContextProvider = ({ children }) => {
-    const [ currentUser, setCurrentUser ] = useState(null);
+    const [ currentUser, setCurrentUser ] = useState({
+        username: "asda"
+    });
 
     return (
         <UserContext.Provider value={{ currentUser, setCurrentUser }}>
