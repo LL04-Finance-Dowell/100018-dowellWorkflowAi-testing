@@ -37,6 +37,7 @@ const SmallFlip = (props) => {
               height: `${props.size}`,
               border: "3px solid #FFFF",
               marginBottom: `${props.btm}`,
+              margin: " 0 25px",
             }}
           >
             {props.button}

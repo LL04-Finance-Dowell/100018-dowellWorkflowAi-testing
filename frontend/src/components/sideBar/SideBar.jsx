@@ -206,7 +206,7 @@ const SideBar = ({ user }) => {
       </form>
       <button
         style={{
-          width: "77%",
+          width: "78.5%",
           marginLeft: "39px",
           marginTop: "8px",
           height: "50px",
@@ -240,6 +240,7 @@ const SideBar = ({ user }) => {
       <span
         className="manageFiles (003)"
         style={{
+          fontWeight: "bold",
           display: "flex",
           color: "#61ce70",
           justifyContent: "start",
@@ -287,6 +288,7 @@ const SideBar = ({ user }) => {
           fontSize: "30px",
           paddingTop: "40px",
           paddingLeft: "20px",
+          fontWeight: "bold",
         }}
       >
         Reports
@@ -317,6 +319,7 @@ const SideBar = ({ user }) => {
           justifyContent: "center",
           fontSize: "15px",
           paddingTop: "40px",
+          fontWeight: "bold",
         }}
       >
         DoWell Knowledge Center
