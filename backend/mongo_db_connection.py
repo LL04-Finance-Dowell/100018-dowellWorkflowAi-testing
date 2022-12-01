@@ -236,6 +236,30 @@ def save_wf(wf_name, int_wf_string, ext_wf_string, user, company_id):
     return response.text
 
 
+def save_wf_new(workflows, user, company_id):
+    url = "http://100002.pythonanywhere.com/"
+    payload = json.dumps(
+        {
+            **WF_CONNECTION_DICT,
+            "command": "insert",
+            "field": {
+                "eventId": get_event_id(),
+                
+                "workflows":workflows,
+                "company_id": company_id,
+                "created_by": user,
+            },
+            "update_field": {"order_nos": 21},
+            "platform": "bangalore",
+        }
+    )
+    headers = {"Content-Type": "application/json"}
+    response = requests.request("POST", url, headers=headers, data=payload)
+    print("SAVE WORKFLOW ENTRY----------- \n", response.text)
+    return response.text
+
+
+
 def update_wf(workflow_id, int_wf_string, ext_wf_string):
     url = "http://100002.pythonanywhere.com/"
     print(

@@ -28,8 +28,10 @@ from .document_management import (
     my_documents,
     create_document,
     rejected_documents,
-    reject_document,
+    # reject_document,
 )
+
+from .wf_management import (create_workflow)
 
 from .intelligent_search import (
     search,
@@ -58,7 +60,7 @@ urlpatterns = [
     path("templates/mine/", template_list, name="my_templates"),
     # Documents----------------------------------------------------
     path("documents/", create_document, name="documents"),
-    path("documents/reject/", reject_document, name="reject_document"),
+    # path("documents/reject/", reject_document, name="reject_document"),
     path(
         "documents/to-sign/",
         documents_to_be_signed,
@@ -80,4 +82,6 @@ urlpatterns = [
         name="requested-documents",
     ),
     path("documents/detail/", document_detail, name="document"),
+
+    path("workflows/", create_workflow, name="workflows"),
 ]
