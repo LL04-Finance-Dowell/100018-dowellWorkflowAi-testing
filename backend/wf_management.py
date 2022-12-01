@@ -67,44 +67,43 @@ def create_workflow(request):  # Document Creation.
                         }
 
             
-            #data = get_content_from_template_collection_with_that_template_id
             res = json.loads(
                 save_wf_new(data, created_by, company_id)
             )
             
             if res["isSuccess"]:
 
-                payload=json.dumps({
-                        "product_name": "workflowai",
-                        "details":{
-                            "_id":res["inserted_id"],
-                            "field":"wf_name",
-                            "cluster": "Documents",
-                            "database": "Documentation",
-                            "collection": "WorkflowReports",
-                            "document": "workflowreports",
-                            "team_member_ID": "33689044433",
-                            "function_ID": "ABCDE",
-                            "command": "update",
-                            "content":data,
-                            "update_field": {
-                                            "workflow_title":wf_name
-                                            }
-                        }
-                        })
-                headers = {
-                            'Content-Type': 'application/json'
-                            }
+                # payload=json.dumps({
+                #         "product_name": "workflowai",
+                #         "details":{
+                #             "_id":res["inserted_id"],
+                #             "field":"wf_name",
+                #             "cluster": "Documents",
+                #             "database": "Documentation",
+                #             "collection": "WorkflowReports",
+                #             "document": "workflowreports",
+                #             "team_member_ID": "33689044433",
+                #             "function_ID": "ABCDE",
+                #             "command": "update",
+                #             "content":data,
+                #             "update_field": {
+                #                             "workflow_title":wf_name
+                #                             }
+                #         }
+                #         })
+                # headers = {
+                #             'Content-Type': 'application/json'
+                #             }
                         
-                editor_link = requests.request("POST", editorApi, headers=headers, data=payload)  
+                # editor_link = requests.request("POST", editorApi, headers=headers, data=payload)  
                 try:
                     return Response(
-                    editor_link.json(),
+                   data,
                     status=status.HTTP_201_CREATED,
                     )
                 except:
                     return Response(
-                {"message": "Failed to call editorApi"},
+                {"message": "Failed to call Save Workflow"},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
             return Response(
