@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import ManageFiles from "../../../components/manageFiles/ManageFiles";
 import SectionBox from "../../../components/manageFiles/sectionBox/SectionBox";
 import WorkflowLayout from "../../../layouts/WorkflowLayout/WorkflowLayout";
@@ -37,3 +38,14 @@ export const drafts = [
   { id: uuidv4() },
   { id: uuidv4() },
 ];
+=======
+import "./style.css";
+
+const WorkflowsPage = () => {
+    return <>
+        All workflows
+    </>
+}
+
+export default WorkflowsPage;
+>>>>>>> fbd08303aaf6338b0e0a195de7f1bcb92a8d359e

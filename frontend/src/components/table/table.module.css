@@ -1,7 +1,14 @@
 .table {
   width: 50%;
+<<<<<<< HEAD
   border: 1px solid black;
   margin-left: 33px;
+=======
+  height: 100%;
+  border: 1px solid black;
+  margin-left: 33px;
+  margin-top: 30px;
+>>>>>>> fbd08303aaf6338b0e0a195de7f1bcb92a8d359e
 }
 .header {
   display: flex;

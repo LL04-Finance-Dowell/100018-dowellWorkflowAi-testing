@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import { useState } from "react";
 import CreateDocument from "../../../components/manageFiles/files/documents/createDocument/CreateDocument";
 import styles from "./documentsPage.module.css";
@@ -38,3 +39,14 @@ export const drafts = [
   { id: uuidv4() },
   { id: uuidv4() },
 ];
+=======
+import "./style.css";
+
+const DocumentsPage = () => {
+    return <>
+        All documents page
+    </>
+}
+
+export default DocumentsPage;
+>>>>>>> fbd08303aaf6338b0e0a195de7f1bcb92a8d359e

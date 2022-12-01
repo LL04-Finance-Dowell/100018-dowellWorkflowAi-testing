@@ -20,7 +20,16 @@ import CreateNewWorkflowPage from "./pages/Workflows/CreateNewWorkflowPage/Creat
 import ApproveWorkflowPage from "./pages/Workflows/ApproveWorkflowPage/ApproveWorkflowPage";
 import RejectedWorkflowsPage from "./pages/Workflows/RejectedWorkflowsPage/RejectedWorkflowsPage";
 import SetWorkflowInDoc from "./components/setWorkFlowInDoc/SetWorkflowInDoc";
+<<<<<<< HEAD
 
+=======
+import Documents from "./pages/Documents/Documents/Documents";
+import TempDraft from "./pages/Templates/TempDraft/TempDraft";
+import DraftsDoc from "./pages/Documents/DraftsDoc/DraftsDoc";
+import NewTemplate from "./pages/Templates/NewTemplate/NewTemplate";
+import NewWorkFlow from "./pages/Workflows/NewWorkflow/NewWorkFlow";
+import DraftF from "./pages/Workflows/DraftF/DraftF";
+>>>>>>> fbd08303aaf6338b0e0a195de7f1bcb92a8d359e
 function App() {
   const { currentUser, setCurrentUser } = useUserContext();
   const [loading, setLoading] = useState(true);
@@ -55,15 +64,44 @@ function App() {
       </Route>
       <Route path={"workflows"}>
         <Route index element={<WorkflowsPage />} />
+<<<<<<< HEAD
         <Route path={"set-workflow"} element={<SetWorkflowInDoc />} />
+=======
+>>>>>>> fbd08303aaf6338b0e0a195de7f1bcb92a8d359e
         <Route path={"new"} element={<CreateNewWorkflowPage />} />
         <Route path={"to-approve"} element={<ApproveWorkflowPage />} />
         <Route path={"rejected"} element={<RejectedWorkflowsPage />} />
       </Route>
       <Route path={"/notifications"} element={<NotificationsPage />} />
+<<<<<<< HEAD
       <Route path={"*"} element={<>Page not found</>} />
     </Routes>
   );
+=======
+      <Route path="/Documents/Documents/Documents" element={<Documents />} />
+      <Route path="/Documents/DraftsDoc/DraftsDoc" element={<DraftsDoc />} />
+      <Route path="/Templates/TempDraft/TempDraft" element={<TempDraft />} />
+      <Route
+        path="/Templates/NewTemplate/NewTemplate"
+        element={<NewTemplate />}
+      />
+      <Route
+        path="/WorkFlows/NewWorkFlow/NewWorkFlow"
+        element={<NewWorkFlow />}
+      />
+      <Route path="/WorkFlows/DraftF/DraftF" element={<DraftF />} />
+      <Route path={"*"} element={<>Page not found</>} />
+    </Routes>
+  );
+
+  // return (
+  //   <div style={{ paddingTop: "200px", paddingBottom: "150px" }}>
+  //   <Routes>
+  //     <Route path={"/"} element={<SetWorkflowInDoc />} />
+  //   </Routes>
+  // </div>
+  // );
+>>>>>>> fbd08303aaf6338b0e0a195de7f1bcb92a8d359e
 }
 
 export default App;
