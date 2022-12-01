@@ -1,0 +1,44 @@
+.container {
+  background-color: rgba(0, 0, 0, 0.8);
+  position: fixed;
+  top: 0;
+  right: 0;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.box {
+  width: 500px;
+  background-color: white;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  color: #000;
+}
+
+.box i {
+  cursor: pointer;
+}
+
+.header__box {
+  display: flex;
+  justify-content: space-between;
+  padding: 16px;
+  border-bottom: 1px solid #dee2e6;
+}
+
+.header {
+  font-size: 20px;
+}
+
+@media (max-width: 575px) {
+  .box {
+    width: 90%;
+  }
+}

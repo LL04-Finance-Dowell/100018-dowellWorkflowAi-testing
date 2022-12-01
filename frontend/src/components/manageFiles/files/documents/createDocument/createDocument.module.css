@@ -1,11 +1,7 @@
 .form__box {
-  padding: 60px;
-  margin-block: 14px;
-  border: solid 1px;
+  margin-top: 15px;
   width: 100%;
-  border: solid 1px #ccc;
   background-color: white;
-  width: min(70vw, 700px);
   position: relative;
 }
 
@@ -15,10 +11,6 @@
   right: 1rem;
   cursor: pointer;
   color: #000;
-}
-
-.form__box form {
-  margin-bottom: 16px;
 }
 
 .form__header {
