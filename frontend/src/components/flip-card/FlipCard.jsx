@@ -6,7 +6,7 @@ const FlipCard = () => {
       <div className="flip-card-inner">
         <div className="flip-card-front">
           <span className="customer">
-            Customer Support
+            <span style={{ fontWeight: "bold" }}>Customer Support</span>
             <span className="main-card">
               <br /> Learnig Support, New Trends, Case Studies, Preference
               Templates.

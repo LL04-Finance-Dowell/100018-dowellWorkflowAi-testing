@@ -3,7 +3,7 @@
   width: 210px;
   height: 320px;
   /* perspective: 1000px; */
-  margin-top: 73px;
+  margin-top: 25px;
   padding-left: 15px;
 }
 
@@ -38,6 +38,7 @@
 .customer {
   color: gray;
   font-size: 20px;
+
   padding-top: 50px;
   padding-left: 20px;
   padding-right: 20px;
