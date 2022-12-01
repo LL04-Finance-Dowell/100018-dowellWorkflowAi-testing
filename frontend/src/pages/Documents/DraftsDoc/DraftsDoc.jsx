@@ -1,12 +1,12 @@
-import HoverCard from "../../../components/hover-card/HoverCard";
+// import HoverCard from "../../../components/hover-card/HoverCard";
 
-const DraftsDoc = () => {
-  return (
-    <div>
-      DraftsDoc
-      <HoverCard />
-    </div>
-  );
-};
+// const DraftsDoc = () => {
+//   return (
+//     <div>
+//       DraftsDoc
+//       <HoverCard />
+//     </div>
+//   );
+// };
 
-export default DraftsDoc;
+// export default DraftsDoc;
