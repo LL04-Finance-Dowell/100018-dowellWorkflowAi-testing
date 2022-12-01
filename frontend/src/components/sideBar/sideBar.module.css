@@ -42,10 +42,7 @@
   display: flex;
   justify-content: center;
   font-size: 22px;
-<<<<<<< HEAD
-=======
   font-weight: bold;
->>>>>>> fbd08303aaf6338b0e0a195de7f1bcb92a8d359e
 }
 .myOrganisation {
   color: #61ce70;
@@ -54,17 +51,11 @@
   padding-top: 35px;
   padding-bottom: 20px;
   font-size: 17px;
-<<<<<<< HEAD
-}
-.orgImg {
-  margin-left: 25px;
-=======
   font-weight: bold;
 }
 .orgImg {
   margin-left: 25px;
   width: 150px;
->>>>>>> fbd08303aaf6338b0e0a195de7f1bcb92a8d359e
 }
 .notific {
   color: red;
@@ -74,10 +65,7 @@
   justify-content: center;
   font-size: 25px;
   padding: 20px 35px;
-<<<<<<< HEAD
-=======
   font-weight: bold;
->>>>>>> fbd08303aaf6338b0e0a195de7f1bcb92a8d359e
 }
 .colC {
   color: #9b807a;
@@ -85,8 +73,6 @@
   font-weight: 700;
   font-size: 18px;
 }
-<<<<<<< HEAD
-=======
 @media (max-width: 1400px) {
   .sideBar {
     margin-left: 0px;
@@ -118,4 +104,3 @@
     width: 50%;
   }
 }
->>>>>>> fbd08303aaf6338b0e0a195de7f1bcb92a8d359e
