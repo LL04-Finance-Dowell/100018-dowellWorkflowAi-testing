@@ -10,12 +10,16 @@ const SmallFlip = (props) => {
         >
           <span className={styles.customer}>
             <div style={{ display: "grid" }}>
+<<<<<<< HEAD
+              <span style={{ color: "#ffff", fontSize: "large" }}>
+=======
               <span
                 style={{
                   color: "#ffff",
                   fontSize: "large",
                 }}
               >
+>>>>>>> fbd08303aaf6338b0e0a195de7f1bcb92a8d359e
                 {props.icon}
               </span>
               <span style={{ color: "#ffff", paddingBottom: "5px" }}>
@@ -33,10 +37,16 @@ const SmallFlip = (props) => {
           <Button
             variant="secondary"
             style={{
+<<<<<<< HEAD
+              width: "70%",
+              height: `${props.size}`,
+              border: "3px solid #FFFF",
+=======
               width: ` ${props.width}`,
               height: `${props.size}`,
               border: "3px solid #FFFF",
               marginBottom: `${props.btm}`,
+>>>>>>> fbd08303aaf6338b0e0a195de7f1bcb92a8d359e
             }}
           >
             {props.button}

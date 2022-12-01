@@ -21,3 +21,8 @@
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+<<<<<<< HEAD
+
+*.onetoc2
+=======
+>>>>>>> fbd08303aaf6338b0e0a195de7f1bcb92a8d359e

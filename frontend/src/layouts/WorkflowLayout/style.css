@@ -1,4 +1,9 @@
 .workflow_Layout_Content {
+<<<<<<< HEAD
+  display: flex;
+  width: 100%;
+=======
     display: flex;
     width: 100%;
+>>>>>>> fbd08303aaf6338b0e0a195de7f1bcb92a8d359e
 }

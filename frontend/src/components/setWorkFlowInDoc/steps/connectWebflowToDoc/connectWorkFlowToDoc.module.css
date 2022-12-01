@@ -86,13 +86,24 @@
 .table__of__contents__header {
   font-size: 14px;
   padding: 20px;
+<<<<<<< HEAD
+  border: solid 1px #a4afb7;
+=======
   border: 1px var(--e-global-color-0363588) solid;
+>>>>>>> fbd08303aaf6338b0e0a195de7f1bcb92a8d359e
   display: flex;
   align-items: center;
   justify-content: space-between;
   font-weight: 600;
   line-height: 17px;
+<<<<<<< HEAD
+}
+
+.table__of__contents__header i {
+  cursor: pointer;
+=======
   border-radius: 5px;
+>>>>>>> fbd08303aaf6338b0e0a195de7f1bcb92a8d359e
 }
 
 .task__features {

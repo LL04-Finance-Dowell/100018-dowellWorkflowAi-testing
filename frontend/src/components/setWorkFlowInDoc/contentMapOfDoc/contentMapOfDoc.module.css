@@ -1,21 +1,47 @@
 .container {
+<<<<<<< HEAD
+  position: relative;
+  min-height: 85px;
+  width: min(72.768vw, 835px) !important;
+}
+
+.box {
+=======
+>>>>>>> fbd08303aaf6338b0e0a195de7f1bcb92a8d359e
   display: flex;
   flex-direction: column;
   width: 100%;
   padding: 10px;
+<<<<<<< HEAD
+  z-index: 1000;
+  width: min(72.768vw, 835px) !important;
+  white-space: nowrap;
+=======
+>>>>>>> fbd08303aaf6338b0e0a195de7f1bcb92a8d359e
 }
 .header__box {
   padding: 20px;
   border: solid 1px #a4afb7;
   background-color: var(--e-global-color-9d2ac19);
+<<<<<<< HEAD
+=======
   color: #333333;
+>>>>>>> fbd08303aaf6338b0e0a195de7f1bcb92a8d359e
   font-size: 18px !important;
   line-height: 21.6px !important;
   font-weight: 600;
   display: flex;
   justify-content: space-between;
   align-items: center;
+<<<<<<< HEAD
+  white-space: nowrap;
+}
+
+.header__box i {
+  cursor: pointer;
+=======
   width: 100%;
+>>>>>>> fbd08303aaf6338b0e0a195de7f1bcb92a8d359e
 }
 
 .header {
@@ -23,10 +49,33 @@
   line-height: 21.6px !important;
   font-weight: 600;
   margin-bottom: 0;
+<<<<<<< HEAD
+  color: var(--e-global-color-secondary);
+  white-space: nowrap;
+}
+
+.is__fixed {
+  position: fixed;
+  top: 105px;
+}
+
+@media (max-width: 768px) {
+  .container {
+    width: 100% !important;
+  }
+  .box {
+    width: 100% !important;
+  }
+
+  .is__fixed {
+    max-width: calc(100% - 20px);
+  }
+=======
 }
 
 .sticky {
   position: sticky;
   top: 105px;
   z-index: 1000;
+>>>>>>> fbd08303aaf6338b0e0a195de7f1bcb92a8d359e
 }

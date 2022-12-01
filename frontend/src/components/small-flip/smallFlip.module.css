@@ -1,7 +1,12 @@
 .flipCard {
   background-color: transparent;
+<<<<<<< HEAD
+  width: 230px;
+  height: 120px;
+=======
   width: 220px;
   height: 110px;
+>>>>>>> fbd08303aaf6338b0e0a195de7f1bcb92a8d359e
   perspective: 1000px;
   margin-top: 73px;
   padding-left: 15px;
@@ -14,6 +19,10 @@
   text-align: center;
   transition: transform 0.6s;
   transform-style: preserve-3d;
+<<<<<<< HEAD
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+=======
+>>>>>>> fbd08303aaf6338b0e0a195de7f1bcb92a8d359e
 }
 
 .flipCard:hover .flipCardInner {
@@ -34,11 +43,18 @@
   color: black;
   display: grid;
   border-radius: 13px;
+<<<<<<< HEAD
+  padding-top: 10px;
+}
+.customer {
+  font-size: 35px;
+=======
   /* padding-top: 10px; */
 }
 .customer {
   font-size: 35px;
   font-weight: bold;
+>>>>>>> fbd08303aaf6338b0e0a195de7f1bcb92a8d359e
   padding-top: 5px;
   padding-left: 20px;
   padding-right: 20px;

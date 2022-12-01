@@ -1,0 +1,39 @@
+.container {
+  display: flex;
+  position: relative;
+  flex-direction: column;
+  width: min(72.5vw, 835px);
+  position: relative;
+  gap: 50px;
+  margin-left: 20px;
+}
+
+.add__Form__toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 150px;
+  height: 150px;
+  background-color: green;
+}
+
+.add__Form__toggle i {
+  cursor: pointer;
+}
+
+.header {
+  padding: 7px;
+  border: 1px solid var(--e-global-color-accent);
+  line-height: 19px;
+  font-size: 19px;
+  color: rgb(255, 0, 0);
+  font-weight: 600;
+  text-transform: capitalize;
+}
+
+@media (max-width: 768px) {
+  .container {
+    width: 100%;
+    margin-left: 0px;
+  }
+}

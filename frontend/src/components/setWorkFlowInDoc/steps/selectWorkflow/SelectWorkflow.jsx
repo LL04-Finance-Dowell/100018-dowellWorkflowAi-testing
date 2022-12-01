@@ -1,5 +1,11 @@
 import { useState } from "react";
 import styles from "./selectWorkflow.module.css";
+<<<<<<< HEAD
+import InfoBoxes from "./ınfoBoxes/InfoBoxes";
+import { useEffect } from "react";
+import useWindowSize from "../../../../hooks/useWindowSize";
+import WorkflowSwiper from "./workFlowSwiper/WorkflowSwiper";
+=======
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation } from "swiper";
 import { Pagination } from "swiper";
@@ -9,6 +15,7 @@ import "./swipper.css";
 import InfoBoxes from "./ınfoBoxes/InfoBoxes";
 import { useEffect } from "react";
 import useWindowSize from "../../../../hooks/useWindowSize";
+>>>>>>> fbd08303aaf6338b0e0a195de7f1bcb92a8d359e
 
 const SelectWorkflow = () => {
   const size = useWindowSize();
@@ -29,6 +36,19 @@ const SelectWorkflow = () => {
         2. Select a Workflow to add to the selected document
       </h2>
       {selectedWorkFlows.length > 0 && size.width > 1025 ? (
+<<<<<<< HEAD
+        <WorkflowSwiper
+          loop={largeLoop}
+          perSlide={3}
+          selectedWorkFlows={selectedWorkFlows}
+        />
+      ) : (
+        <WorkflowSwiper
+          loop={smallLoop}
+          perSlide={2}
+          selectedWorkFlows={selectedWorkFlows}
+        />
+=======
         <div className={styles.add__container}>
           <Swiper
             loop={largeLoop}
@@ -76,6 +96,7 @@ const SelectWorkflow = () => {
             </a>
           )}
         </div>
+>>>>>>> fbd08303aaf6338b0e0a195de7f1bcb92a8d359e
       )}
     </div>
   );

@@ -32,6 +32,14 @@
   width: 67.5%;
 }
 
+<<<<<<< HEAD
+.is__fixed {
+  position: fixed;
+  top: 105px;
+}
+
+=======
+>>>>>>> fbd08303aaf6338b0e0a195de7f1bcb92a8d359e
 @media (max-width: 768px) {
   .container {
     width: 100%;

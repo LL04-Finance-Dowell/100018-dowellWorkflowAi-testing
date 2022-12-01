@@ -16,7 +16,10 @@ import { clearLocalStorageItems, handleAuthenticationBtnClick } from "../../serv
 import "./style.css";
 import Carousell from "../../components/carousel/Carousel";
 import Table from "../../components/table/Table";
+<<<<<<< HEAD
+=======
 import Chat from "../../components/chat/Chat";
+>>>>>>> fbd08303aaf6338b0e0a195de7f1bcb92a8d359e
 
 const WorkflowApp = () => {
 
@@ -26,8 +29,11 @@ const WorkflowApp = () => {
         <WorkflowLayout>
             <>
             <div className="main">
+<<<<<<< HEAD
+=======
                 {/* <SideBar /> */}
 
+>>>>>>> fbd08303aaf6338b0e0a195de7f1bcb92a8d359e
                 <div className="top-main">
                 <Carousell />
 
@@ -54,7 +60,10 @@ const WorkflowApp = () => {
                     size={"60px"}
                     padding={"30px"}
                     color={"gray"}
+<<<<<<< HEAD
+=======
                     btm={"5px"}
+>>>>>>> fbd08303aaf6338b0e0a195de7f1bcb92a8d359e
                     />
                     <SmallFlip
                     icon={<SearchIcon fontSize="large" />}
@@ -85,7 +94,10 @@ const WorkflowApp = () => {
                         color: "red",
                         paddingTop: "5px",
                         paddingLeft: "5px",
+<<<<<<< HEAD
+=======
                         fontWeight: "bold",
+>>>>>>> fbd08303aaf6338b0e0a195de7f1bcb92a8d359e
                     }}
                     >
                     Notifications - Documents
@@ -94,7 +106,11 @@ const WorkflowApp = () => {
                     style={{
                         display: "grid",
                         width: "96%",
+<<<<<<< HEAD
+
+=======
                         marginTop: "3px",
+>>>>>>> fbd08303aaf6338b0e0a195de7f1bcb92a8d359e
                         paddingLeft: "50px",
                         gridTemplateColumns: "auto auto auto",
                     }}
@@ -107,7 +123,11 @@ const WorkflowApp = () => {
                     </div>
                 </div>
 
+<<<<<<< HEAD
+                <div>
+=======
                 <div style={{ marginTop: "100px" }}>
+>>>>>>> fbd08303aaf6338b0e0a195de7f1bcb92a8d359e
                     <h5
                     id="ji"
                     style={{
@@ -119,7 +139,10 @@ const WorkflowApp = () => {
                         color: "red",
                         paddingTop: "5px",
                         paddingLeft: "5px",
+<<<<<<< HEAD
+=======
                         fontWeight: "bold",
+>>>>>>> fbd08303aaf6338b0e0a195de7f1bcb92a8d359e
                     }}
                     >
                     Notifications - Templates
@@ -128,7 +151,11 @@ const WorkflowApp = () => {
                     style={{
                         display: "grid",
                         width: "96%",
+<<<<<<< HEAD
+
+=======
                         marginTop: "3px",
+>>>>>>> fbd08303aaf6338b0e0a195de7f1bcb92a8d359e
                         paddingLeft: "50px",
                         gridTemplateColumns: "auto auto auto",
                     }}
@@ -138,7 +165,11 @@ const WorkflowApp = () => {
                     <HoverCard color="#c3d6be" />
                     </div>
                 </div>
+<<<<<<< HEAD
+                <div>
+=======
                 <div style={{ marginTop: "100px", marginBottom: "100px" }}>
+>>>>>>> fbd08303aaf6338b0e0a195de7f1bcb92a8d359e
                     <h5
                     id="ji"
                     style={{
@@ -150,7 +181,10 @@ const WorkflowApp = () => {
                         color: "red",
                         paddingTop: "5px",
                         paddingLeft: "5px",
+<<<<<<< HEAD
+=======
                         fontWeight: "bold",
+>>>>>>> fbd08303aaf6338b0e0a195de7f1bcb92a8d359e
                     }}
                     >
                     Notifications - Workflows
@@ -159,7 +193,11 @@ const WorkflowApp = () => {
                     style={{
                         display: "grid",
                         width: "67%",
+<<<<<<< HEAD
+
+=======
                         marginTop: "3px",
+>>>>>>> fbd08303aaf6338b0e0a195de7f1bcb92a8d359e
                         paddingLeft: "50px",
                         gridTemplateColumns: "auto auto auto",
                     }}
@@ -168,13 +206,67 @@ const WorkflowApp = () => {
                     <HoverCard color="#e1e1e1" />
                     </div>
                 </div>
+<<<<<<< HEAD
+                <div style={{ display: "flex" }}>
+                    <Table header="Incomplete Tasks" />
+                    <Table header="Complete Tasks" />
+                </div>
+                <div className="sm-flip">
+                    <SmallFlip
+                    icon={<NotificationsNoneIcon fontSize="large" />}
+                    content={"006"}
+                    button={"View"}
+                    size={"50px"}
+                    padding={"32px"}
+                    color={"#1abc9c"}
+                    />
+                    <SmallFlip
+                    icon={<InsertDriveFileIcon fontSize="large" />}
+                    content={"New"}
+                    button={"Create Document"}
+                    size={"60px"}
+                    padding={"30px"}
+                    color={"gray"}
+                    />
+                    <SmallFlip
+                    icon={<SearchIcon fontSize="large" />}
+                    content={"Search"}
+                    button={"Search Document"}
+                    size={"60px"}
+                    padding={"30px"}
+                    color={"#61ce70"}
+                    />
+                    <SmallFlip
+                    icon={<ManageAccountsIcon fontSize="large" />}
+                    content={"Support"}
+                    button={"Dowell Knowledge Center"}
+                    size={"85px"}
+                    padding={"15px"}
+                    color={"#c3d6be"}
+                    />
+=======
                 <div style={{ width: "137%", display: "flex" }}>
                     <Table header="Incomplete Tasks" />
                     <Table header="Complete Tasks" color="#7a7a7a" />
+>>>>>>> fbd08303aaf6338b0e0a195de7f1bcb92a8d359e
                 </div>
                 </div>
                 <FlipCard />
             </div>
+<<<<<<< HEAD
+            <div
+                style={{ display: "flex", justifyContent: "space-between" }}
+                className="footer"
+            >
+                <div>©All rights reserved by WorkFlowAI</div>
+                <div style={{ display: "flex", gap: "20px" }}>
+                <FacebookIcon fontSize="large" className="face" />
+                <YouTubeIcon fontSize="large" className="face" />
+                <LinkedInIcon fontSize="large" className="face" />
+                </div>
+            </div>
+=======
+>>>>>>> fbd08303aaf6338b0e0a195de7f1bcb92a8d359e
                 {/* <h1>Hello {currentUser.username}</h1>
 
                 <div>

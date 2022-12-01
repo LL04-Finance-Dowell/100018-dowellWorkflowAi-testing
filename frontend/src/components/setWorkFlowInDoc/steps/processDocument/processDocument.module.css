@@ -86,7 +86,22 @@
   font-size: 16px;
   line-height: 16px;
   border: 2px solid transparent;
+<<<<<<< HEAD
+  position: relative;
+  /*  border-right-color: var(--e-global-color-accent); */
+}
+
+.process__box::after {
+  content: "";
+  position: absolute;
+  width: 2px;
+  height: calc(100% + 4px);
+  background-color: var(--e-global-color-accent);
+  top: 0;
+  right: -2px;
+=======
   border-right-color: var(--e-global-color-accent);
+>>>>>>> fbd08303aaf6338b0e0a195de7f1bcb92a8d359e
 }
 
 .process__detail__container {
@@ -180,6 +195,14 @@
     border-bottom: none !important;
     line-height: 24px;
   }
+<<<<<<< HEAD
+
+  .process__box::after {
+    display: none;
+  }
+
+=======
+>>>>>>> fbd08303aaf6338b0e0a195de7f1bcb92a8d359e
   .process__detail__container {
     position: relative;
     width: 100%;
@@ -192,9 +215,12 @@
     border-bottom: none !important;
   }
 }
+<<<<<<< HEAD
+=======
 
 @media (min-width: 769px) {
   .process__box {
     margin-bottom: 0px !important;
   }
 }
+>>>>>>> fbd08303aaf6338b0e0a195de7f1bcb92a8d359e

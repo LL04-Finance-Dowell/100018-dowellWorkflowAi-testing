@@ -8,6 +8,10 @@ import Button from "react-bootstrap/Button";
 import AddIcon from "@mui/icons-material/Add";
 import Collapse from "react-bootstrap/Collapse";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
+<<<<<<< HEAD
+
+=======
+>>>>>>> fbd08303aaf6338b0e0a195de7f1bcb92a8d359e
 import Accordion from "../accordion/Accordion";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
@@ -15,15 +19,26 @@ import { dowellLoginUrl } from "../../services/axios";
 const SideBar = ({ user }) => {
   const [open, setOpen] = useState(false);
   const navigate = useNavigate();
+<<<<<<< HEAD
+  
+=======
 
+>>>>>>> fbd08303aaf6338b0e0a195de7f1bcb92a8d359e
   const handleCreateWorkflowItemClick = (e) => {
     e.preventDefault();
 
     const linkPath = e.target.hash.replace("#", "") + e.target.search;
+<<<<<<< HEAD
+    
+    if (user) return navigate(linkPath);
+    window.location = dowellLoginUrl + linkPath;
+  }
+=======
 
     if (user) return navigate(linkPath);
     window.location = dowellLoginUrl + linkPath;
   };
+>>>>>>> fbd08303aaf6338b0e0a195de7f1bcb92a8d359e
 
   return (
     <div className={styles.sideBar}>
@@ -47,6 +62,13 @@ const SideBar = ({ user }) => {
           src="https://i0.wp.com/workflowai.online/wp-content/uploads/2022/02/download-e1658465151576.jpg?resize=100%2C100&ssl=1"
           alt=""
         />
+<<<<<<< HEAD
+        <span className={styles.welcome}>Welcome, {user ? user.username : "Tom"}</span>
+        <span className={styles.myOrganisation}>My Organisation</span>
+        <img
+          className={styles.orgImg}
+          style={{ width: "150px" }}
+=======
         <span className={styles.welcome}>
           Welcome, {user ? user.username : "Tom"}
         </span>
@@ -54,6 +76,7 @@ const SideBar = ({ user }) => {
         <img
           className={styles.orgImg}
           style={{}}
+>>>>>>> fbd08303aaf6338b0e0a195de7f1bcb92a8d359e
           src="https://i0.wp.com/workflowai.online/wp-content/uploads/2022/10/artistic-logo.png?w=916&ssl=1"
           alt=""
         />
@@ -63,18 +86,33 @@ const SideBar = ({ user }) => {
         title="Documents (003)"
         content="1. To be Signed (002)"
         content2="2. Rejected by others (001)"
+<<<<<<< HEAD
+=======
         dotColor="#54595f"
+>>>>>>> fbd08303aaf6338b0e0a195de7f1bcb92a8d359e
       />
       <Accordion
         title="Templates (003)"
         content="1. To be Approved (002)"
         content2="2. Rejected by others (001)"
+<<<<<<< HEAD
+=======
         dotColor="#54595f"
+>>>>>>> fbd08303aaf6338b0e0a195de7f1bcb92a8d359e
       />
       <Accordion
         title="Workflows (004)"
         content="1. To be Approved (002)"
         content2="2. Rejected by others (001)"
+<<<<<<< HEAD
+      />
+
+      <div
+        style={{
+          width: "280px",
+          height: "72px",
+          marginLeft: "15px",
+=======
         dotColor="#54595f"
       />
 
@@ -84,6 +122,7 @@ const SideBar = ({ user }) => {
           width: "85%",
           height: "72px",
           marginLeft: "22px",
+>>>>>>> fbd08303aaf6338b0e0a195de7f1bcb92a8d359e
           border: "1px solid white",
           borderRadius: "5px",
           padding: "2px",
@@ -92,8 +131,13 @@ const SideBar = ({ user }) => {
       >
         {" "}
         <Button
+<<<<<<< HEAD
+          style={{
+            margin: "auto",
+=======
           className={styles.btn}
           style={{
+>>>>>>> fbd08303aaf6338b0e0a195de7f1bcb92a8d359e
             width: "100%",
             height: "65px",
             backgroundColor: "#61ce70",
@@ -129,13 +173,24 @@ const SideBar = ({ user }) => {
 
       <Collapse
         style={{
+<<<<<<< HEAD
+          width: "88.5%",
+          marginLeft: "16px",
+=======
           width: "83%",
           marginLeft: "25px",
+>>>>>>> fbd08303aaf6338b0e0a195de7f1bcb92a8d359e
           backgroundColor: "#e1e1e1",
         }}
         in={open}
       >
         <div id="example-collapse-text">
+<<<<<<< HEAD
+          <Link className={styles.colC} to={"/documents/new"} onClick={handleCreateWorkflowItemClick}>Document</Link>
+          <Link className={styles.colC} to={"/templates/new"} onClick={handleCreateWorkflowItemClick}>Template</Link>
+          <Link className={styles.colC} to={"/workflows/new"} onClick={handleCreateWorkflowItemClick}>Workflow</Link>
+          <Link className={styles.colC} to={"/processes/new"} onClick={handleCreateWorkflowItemClick}>Process</Link>
+=======
           <Link
             className={styles.colC}
             to={"/documents/new"}
@@ -164,6 +219,7 @@ const SideBar = ({ user }) => {
           >
             Process
           </Link>
+>>>>>>> fbd08303aaf6338b0e0a195de7f1bcb92a8d359e
         </div>
       </Collapse>
       <div className="search-input">
@@ -175,7 +231,10 @@ const SideBar = ({ user }) => {
             justifyContent: "center",
             fontSize: "30px",
             paddingTop: "40px",
+<<<<<<< HEAD
+=======
             fontWeight: "bold",
+>>>>>>> fbd08303aaf6338b0e0a195de7f1bcb92a8d359e
           }}
         >
           Search
@@ -202,19 +261,30 @@ const SideBar = ({ user }) => {
             border: "gray",
           }}
           type="text"
+<<<<<<< HEAD
+          value="type here to search"
+=======
           placeholder="Type here to search"
+>>>>>>> fbd08303aaf6338b0e0a195de7f1bcb92a8d359e
         />
       </form>
       <button
         style={{
+<<<<<<< HEAD
+          width: "75%",
+=======
           width: "77%",
+>>>>>>> fbd08303aaf6338b0e0a195de7f1bcb92a8d359e
           marginLeft: "39px",
           marginTop: "8px",
           height: "50px",
           backgroundColor: "#61ce70",
           color: "white",
           border: "1px solid gray",
+<<<<<<< HEAD
+=======
           fontWeight: "bold",
+>>>>>>> fbd08303aaf6338b0e0a195de7f1bcb92a8d359e
         }}
       >
         <SearchIcon style={{ color: "white" }} />
@@ -224,19 +294,28 @@ const SideBar = ({ user }) => {
         title="Documents (007)"
         content="1. To be Approved (002)"
         content2="2. Rejected by others (001)"
+<<<<<<< HEAD
+=======
         dotColor="#54595f"
+>>>>>>> fbd08303aaf6338b0e0a195de7f1bcb92a8d359e
       />
       <Accordion
         title="Templates (006)"
         content="1. To be Approved (002)"
         content2="2. Rejected by others (001)"
+<<<<<<< HEAD
+=======
         dotColor="#54595f"
+>>>>>>> fbd08303aaf6338b0e0a195de7f1bcb92a8d359e
       />
       <Accordion
         title="Workflows (004)"
         content="1. To be Approved (002)"
         content2="2. Rejected by others (001)"
+<<<<<<< HEAD
+=======
         dotColor="#54595f"
+>>>>>>> fbd08303aaf6338b0e0a195de7f1bcb92a8d359e
       />
       <span
         className="manageFiles (003)"
@@ -253,6 +332,20 @@ const SideBar = ({ user }) => {
       </span>
       <Accordion
         title="My Documents (002)"
+<<<<<<< HEAD
+        content="1. To be Approved (002)"
+        content2="2. Rejected by others (001)"
+      />
+      <Accordion
+        title="Templates (004)"
+        content="1. To be Approved (002)"
+        content2="2. Rejected by others (001)"
+      />
+      <Accordion
+        title="Workflows (007)"
+        content="1. To be Approved (002)"
+        content2="2. Rejected by others (001)"
+=======
         content={
           <Link to={"/Documents/Documents/Documents"}>"New Documents"</Link>
         }
@@ -276,6 +369,7 @@ const SideBar = ({ user }) => {
         }
         content2={<Link to={"/WorkFlows/DraftF/DraftF"}>"Draft"</Link>}
         dotColor="#54595f"
+>>>>>>> fbd08303aaf6338b0e0a195de7f1bcb92a8d359e
       />
       <span
         className="reports"
@@ -294,19 +388,28 @@ const SideBar = ({ user }) => {
         title="Documents"
         content="1. To be Approved (002)"
         content2="2. Rejected by others (001)"
+<<<<<<< HEAD
+=======
         dotColor="#54595f"
+>>>>>>> fbd08303aaf6338b0e0a195de7f1bcb92a8d359e
       />
       <Accordion
         title="Templates"
         content="1. To be Approved (002)"
         content2="2. Rejected by others (001)"
+<<<<<<< HEAD
+=======
         dotColor="#54595f"
+>>>>>>> fbd08303aaf6338b0e0a195de7f1bcb92a8d359e
       />
       <Accordion
         title="Workflows"
         content="1. To be Approved (002)"
         content2="2. Rejected by others (001)"
+<<<<<<< HEAD
+=======
         dotColor="#54595f"
+>>>>>>> fbd08303aaf6338b0e0a195de7f1bcb92a8d359e
       />
       <span
         className="dowell"
@@ -324,31 +427,46 @@ const SideBar = ({ user }) => {
         title="Templates"
         content="1. To be Approved (002)"
         content2="2. Rejected by others (001)"
+<<<<<<< HEAD
+=======
         dotColor="#54595f"
+>>>>>>> fbd08303aaf6338b0e0a195de7f1bcb92a8d359e
       />
       <Accordion
         title="Learning Supports"
         content="1. To be Approved (002)"
         content2="2. Rejected by others (001)"
+<<<<<<< HEAD
+=======
         dotColor="#54595f"
+>>>>>>> fbd08303aaf6338b0e0a195de7f1bcb92a8d359e
       />
       <Accordion
         title="Case Studies"
         content="1. To be Approved (002)"
         content2="2. Rejected by others (001)"
+<<<<<<< HEAD
+=======
         dotColor="#54595f"
+>>>>>>> fbd08303aaf6338b0e0a195de7f1bcb92a8d359e
       />
       <Accordion
         title="New Trends"
         content="1. To be Approved (002)"
         content2="2. Rejected by others (001)"
+<<<<<<< HEAD
+=======
         dotColor="#54595f"
+>>>>>>> fbd08303aaf6338b0e0a195de7f1bcb92a8d359e
       />
       <Accordion
         title="Legal Compliances"
         content="1. To be Approved (002)"
         content2="2. Rejected by others (001)"
+<<<<<<< HEAD
+=======
         dotColor="#54595f"
+>>>>>>> fbd08303aaf6338b0e0a195de7f1bcb92a8d359e
       />
       <div
         style={{

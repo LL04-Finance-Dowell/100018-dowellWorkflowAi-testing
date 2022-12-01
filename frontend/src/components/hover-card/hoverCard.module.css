@@ -2,15 +2,28 @@
   display: flex;
   width: 90%;
   justify-content: space-around;
+<<<<<<< HEAD
+  /* gap: 15px; */
+  display: grid;
+  /* column-gap: 15px; */
+  grid-template-columns: auto auto auto;
+  /* margin-left: 100px; */
+=======
   display: grid;
   grid-template-columns: auto auto auto;
+>>>>>>> fbd08303aaf6338b0e0a195de7f1bcb92a8d359e
   margin-bottom: 15px;
   gap: 5px;
 }
 
 .card {
+<<<<<<< HEAD
+  width: 260px;
+  height: 330px;
+=======
   width: 250px;
   height: 310px;
+>>>>>>> fbd08303aaf6338b0e0a195de7f1bcb92a8d359e
   border-radius: 3px;
   /* padding: 1.5rem; */
   /* background: white; */
@@ -32,7 +45,11 @@
 .card:hover .info {
   opacity: 1;
   transform: translateY(0px);
+<<<<<<< HEAD
+  height: 330px;
+=======
   height: 310px;
+>>>>>>> fbd08303aaf6338b0e0a195de7f1bcb92a8d359e
 }
 .card:before {
   /* content: ""; */

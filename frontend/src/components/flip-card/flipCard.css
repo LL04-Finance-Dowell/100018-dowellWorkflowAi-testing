@@ -3,7 +3,11 @@
   width: 210px;
   height: 320px;
   /* perspective: 1000px; */
+<<<<<<< HEAD
+  margin-top: 73px;
+=======
   margin-top: 25px;
+>>>>>>> fbd08303aaf6338b0e0a195de7f1bcb92a8d359e
   padding-left: 15px;
 }
 
@@ -38,7 +42,10 @@
 .customer {
   color: gray;
   font-size: 20px;
+<<<<<<< HEAD
+=======
 
+>>>>>>> fbd08303aaf6338b0e0a195de7f1bcb92a8d359e
   padding-top: 50px;
   padding-left: 20px;
   padding-right: 20px;
