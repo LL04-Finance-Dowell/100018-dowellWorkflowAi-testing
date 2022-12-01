@@ -39,7 +39,7 @@ const LandingPage = () => {
         </div>
       </WorkflowLayout>
 
-      <div className="main">
+      {/* <div className="main">
         <SideBar />
 
         <div className="top-main">
@@ -189,7 +189,7 @@ const LandingPage = () => {
           </div>
         </div>
         <FlipCard />
-      </div>
+      </div> */}
     </>
   );
 };
