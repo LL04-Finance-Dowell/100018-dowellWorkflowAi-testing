@@ -235,7 +235,6 @@ def save_wf(wf_name, int_wf_string, ext_wf_string, user, company_id):
     print("SAVE WORKFLOW ENTRY----------- \n", response.text)
     return response.text
 
-
 def save_wf_new(workflows, user, company_id):
     url = "http://100002.pythonanywhere.com/"
     payload = json.dumps(
@@ -257,8 +256,6 @@ def save_wf_new(workflows, user, company_id):
     response = requests.request("POST", url, headers=headers, data=payload)
     print("SAVE WORKFLOW ENTRY----------- \n", response.text)
     return response.text
-
-
 
 def update_wf(workflow_id, int_wf_string, ext_wf_string):
     url = "http://100002.pythonanywhere.com/"

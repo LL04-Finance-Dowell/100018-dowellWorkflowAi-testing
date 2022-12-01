@@ -30,7 +30,6 @@ from .document_management import (
     rejected_documents,
     # reject_document,
 )
-
 from .wf_management import (create_workflow)
 
 from .intelligent_search import (
@@ -82,6 +81,6 @@ urlpatterns = [
         name="requested-documents",
     ),
     path("documents/detail/", document_detail, name="document"),
-
     path("workflows/", create_workflow, name="workflows"),
+
 ]
