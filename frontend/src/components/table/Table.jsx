@@ -6,7 +6,8 @@ const Table = (props) => {
       <span style={{ color: `${props.color}` }} className={style.header}>
         {props.header}
       </span>
-      <div style={{ backGroundColor: "#e1e1e1" }}>
+
+      <div style={{ margin: "0 10px 10px 10px", backGroundColor: "#e1e1e1" }}>
         {" "}
         <Accordion
           title="Documents (007)"
@@ -19,7 +20,7 @@ const Table = (props) => {
           width="100%"
           margin="0"
           widthh="100%"
-          paddingg="12px 0 20px 0"
+          paddingg="12px 0 10px 0"
           marg="12px"
           top="0"
           contPad="30px 0 0 20px"
@@ -37,7 +38,7 @@ const Table = (props) => {
           width="100%"
           margin="0"
           widthh="100%"
-          paddingg="12px 0 20px 0"
+          paddingg="5px 0 10px 0"
           marg="12px"
           top="0"
           contPad="30px 0 0 20px"
@@ -55,7 +56,7 @@ const Table = (props) => {
           width="100%"
           margin="0"
           widthh="100%"
-          paddingg="12px 0 20px 0"
+          paddingg="0 0 10px 0"
           marg="12px"
           top="0"
           contPad="30px 0 0 20px"
@@ -68,4 +69,3 @@ const Table = (props) => {
 };
 
 export default Table;
-<div className="table"></div>;

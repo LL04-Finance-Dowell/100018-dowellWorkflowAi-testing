@@ -12,7 +12,7 @@ import Accordion from "../accordion/Accordion";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { dowellLoginUrl } from "../../services/axios";
-import { HashLink } from "react-router-hash-link";
+/* import { HashLink } from "react-router-hash-link"; */
 const SideBar = ({ user }) => {
   const [open, setOpen] = useState(false);
   const navigate = useNavigate();
@@ -207,7 +207,7 @@ const SideBar = ({ user }) => {
       </form>
       <button
         style={{
-          width: "77%",
+          width: "78.5%",
           marginLeft: "39px",
           marginTop: "8px",
           height: "50px",
@@ -241,6 +241,7 @@ const SideBar = ({ user }) => {
       <span
         className="manageFiles (003)"
         style={{
+          fontWeight: "bold",
           display: "flex",
           color: "#61ce70",
           justifyContent: "start",
@@ -253,34 +254,34 @@ const SideBar = ({ user }) => {
       </span>
       <Accordion
         title="My Documents (002)"
-        content={
-          <HashLink to={"/documents/#newDocument"}>"New Documents"</HashLink>
-        }
-        content2={<HashLink to={"/documents/#drafts"}>"Drafts"</HashLink>}
-        content3={
-          <HashLink to={"/documents/#createdByMe"}>"Created by me"</HashLink>
-        }
+        content="New Documents"
+        content2="Draft"
         dotColor="rgb(84, 89, 95)"
       />
       <Accordion
         title="Templates (004)"
-        content={<Link to={"/Templates/TempDraft/TempDraft"}>"Draft"</Link>}
         content2={
-          <Link to={"/Templates/NewTemplate/NewTemplate"}>
-            "2. New Template"
+          <Link
+            style={{ textDecoration: "none", color: "#e1e1e1" }}
+            to={"/Templates/TempDraft/TempDraft"}
+          >
+            Draft
+          </Link>
+        }
+        content={
+          <Link
+            style={{ textDecoration: "none", color: "#e1e1e1" }}
+            to={"/Templates/NewTemplate/NewTemplate"}
+          >
+            New Template
           </Link>
         }
         dotColor="#54595f"
       />
       <Accordion
         title="Workflows (007)"
-        content={
-          <HashLink to={"/workflows/#newWorkflow"}>"New Workflow"</HashLink>
-        }
-        content2={<HashLink to={"/workflows/#drafts"}>"Draft"</HashLink>}
-        content3={
-          <HashLink to={"/WorkFlows/#createdByMe"}>"Created by me"</HashLink>
-        }
+        content="New Workflow"
+        content2="Draft"
         dotColor="#54595f"
         titleIsLink={true}
         titleLink={"/workflows/"}
@@ -294,6 +295,7 @@ const SideBar = ({ user }) => {
           fontSize: "30px",
           paddingTop: "40px",
           paddingLeft: "20px",
+          fontWeight: "bold",
         }}
       >
         Reports
@@ -324,6 +326,7 @@ const SideBar = ({ user }) => {
           justifyContent: "center",
           fontSize: "15px",
           paddingTop: "40px",
+          fontWeight: "bold",
         }}
       >
         DoWell Knowledge Center

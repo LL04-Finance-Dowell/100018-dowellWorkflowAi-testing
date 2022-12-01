@@ -14,8 +14,7 @@
 }
 .title {
   color: #e1e1e1;
-  font-size: 20px;
-  /* border-bottom: 0.1px solid #fff; */
+  font-size: 18px;
   text-decoration: underline;
   font-family: "Roboto", Sans-serif;
   font-weight: 600;
@@ -42,5 +41,5 @@
 #example-collapse-text a {
   display: block;
   text-decoration: none;
-  color: #7A7A7A;
+  color: #7a7a7a;
 }

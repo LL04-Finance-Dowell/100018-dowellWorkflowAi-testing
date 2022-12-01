@@ -1,3 +1,6 @@
+* {
+  font-family: "Roboto", Sans-serif;
+}
 .main {
   display: flex;
 }
@@ -27,8 +30,4 @@
 }
 .face {
   border-radius: 50%;
-}
-@media (max-width: 800px) {
-  .top-main {
-  }
 }
