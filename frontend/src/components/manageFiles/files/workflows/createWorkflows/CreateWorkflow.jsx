@@ -45,11 +45,10 @@ const CreateWorkflows = ({ handleToggleOverlay }) => {
           />
         </div>
         <div className={styles.form__box}>
-          <h5 className={styles.form__box__title}>Internal Workflows</h5>
+          {/*  <h5 className={styles.form__box__title}>Internal Workflows</h5> */}
           <table>
             <thead>
               <tr>
-                <th>step no.</th>
                 <th>step name</th>
                 <th>role</th>
                 <th></th>
@@ -57,9 +56,8 @@ const CreateWorkflows = ({ handleToggleOverlay }) => {
             </thead>
             <tbody>
               {isStep ? (
-                internalWorkflows.map((item, index) => (
+                internalWorkflows.map((item) => (
                   <tr key={item.id}>
-                    <th>{index + 1}</th>
                     <th>{item.stepName}</th>
                     <th>{item.role}</th>
                     <th onClick={() => handleRemoveInternalTemplate(item.id)}>

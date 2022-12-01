@@ -8,14 +8,20 @@ import CreateWorkflows from "../../../components/manageFiles/files/workflows/cre
 const WorkflowsPage = () => {
   return (
     <WorkflowLayout>
-      <ManageFiles title="new workflow" OverlayComp={CreateWorkflows}>
-        <div id="createdByMe">
-          <SectionBox title="created by me" cardItems={createTemplatesByMe} />
-        </div>
-        <div id="drafts">
-          <SectionBox title="drafts" cardItems={drafts} />
-        </div>
-      </ManageFiles>
+      <div id="newWorkflow">
+        <ManageFiles
+          id="newWorkflow"
+          title="new workflow"
+          OverlayComp={CreateWorkflows}
+        >
+          <div id="createdByMe">
+            <SectionBox title="created by me" cardItems={createTemplatesByMe} />
+          </div>
+          <div id="drafts">
+            <SectionBox title="drafts" cardItems={drafts} />
+          </div>
+        </ManageFiles>
+      </div>
     </WorkflowLayout>
   );
 };

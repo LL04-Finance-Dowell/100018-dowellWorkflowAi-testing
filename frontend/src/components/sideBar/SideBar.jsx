@@ -12,6 +12,7 @@ import Accordion from "../accordion/Accordion";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { dowellLoginUrl } from "../../services/axios";
+import { HashLink } from "react-router-hash-link";
 const SideBar = ({ user }) => {
   const [open, setOpen] = useState(false);
   const navigate = useNavigate();
@@ -253,9 +254,12 @@ const SideBar = ({ user }) => {
       <Accordion
         title="My Documents (002)"
         content={
-          <Link to={"/Documents/Documents/Documents"}>"New Documents"</Link>
+          <HashLink to={"/documents/#newDocument"}>"New Documents"</HashLink>
         }
-        content2={<Link to={"/Documents/DraftsDoc/DraftsDoc"}>"Drafts"</Link>}
+        content2={<HashLink to={"/documents/#drafts"}>"Drafts"</HashLink>}
+        content3={
+          <HashLink to={"/documents/#createdByMe"}>"Created by me"</HashLink>
+        }
         dotColor="rgb(84, 89, 95)"
       />
       <Accordion
@@ -271,9 +275,12 @@ const SideBar = ({ user }) => {
       <Accordion
         title="Workflows (007)"
         content={
-          <Link to={"/WorkFlows/NewWorkFlow/NewWorkFlow"}>"New Workflow"</Link>
+          <HashLink to={"/workflows/#newWorkflow"}>"New Workflow"</HashLink>
         }
-        content2={<Link to={"/WorkFlows/DraftF/DraftF"}>"Draft"</Link>}
+        content2={<HashLink to={"/workflows/#drafts"}>"Draft"</HashLink>}
+        content3={
+          <HashLink to={"/WorkFlows/#createdByMe"}>"Created by me"</HashLink>
+        }
         dotColor="#54595f"
         titleIsLink={true}
         titleLink={"/workflows/"}

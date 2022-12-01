@@ -86,13 +86,16 @@
 .table__of__contents__header {
   font-size: 14px;
   padding: 20px;
-  border: 1px var(--e-global-color-0363588) solid;
+  border: solid 1px #a4afb7;
   display: flex;
   align-items: center;
   justify-content: space-between;
   font-weight: 600;
   line-height: 17px;
-  border-radius: 5px;
+}
+
+.table__of__contents__header i {
+  cursor: pointer;
 }
 
 .task__features {

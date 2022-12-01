@@ -13,22 +13,27 @@ import WorkflowLayout from "../../layouts/WorkflowLayout/WorkflowLayout";
 const SetWorkflowInDoc = () => {
   return (
     <WorkflowLayout>
-    <div className={`${styles.container} set-workflow-in-document-container`}>
-      <h2 className={`${styles.title} h2-large`}>Set WorkFlows in Documents</h2>
-      <div className={styles.content__container}>
-        <div className={styles.left__container}>
-          <SelectDoc />
+      <div
+        style={{ position: "relative", display: "flex" }}
+        className={`${styles.container} set-workflow-in-document-container`}
+      >
+        <h2 className={`${styles.title} h2-large`}>
+          Set WorkFlows in Documents
+        </h2>
+        <div className={styles.content__container}>
+          <div className={styles.left__container}>
+            <SelectDoc />
+          </div>
+          <div className={styles.right__container}>
+            <SelectWorkflow />
+          </div>
         </div>
-        <div className={styles.right__container}>
-          <SelectWorkflow />
-        </div>
+        <ContentMapOfDoc />
+        <ConnectWorkFlowToDoc />
+        <CheckErrors />
+        <ProcessDocument />
+        <CustomerSupport />
       </div>
-      <ContentMapOfDoc />
-      <ConnectWorkFlowToDoc />
-      <CheckErrors />
-      <ProcessDocument />
-      {/* <CustomerSupport /> */}
-    </div>
     </WorkflowLayout>
   );
 };

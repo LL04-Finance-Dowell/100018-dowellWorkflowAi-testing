@@ -9,14 +9,16 @@ import ManageFiles from "../../../components/manageFiles/ManageFiles";
 const DocumentsPage = () => {
   return (
     <WorkflowLayout>
-      <ManageFiles title="Create a document" OverlayComp={CreateDocument}>
-        <div id="createdByMe">
-          <SectionBox title="created by me" cardItems={createDocumentsByMe} />
-        </div>
-        <div id="drafts">
-          <SectionBox title="drafts" cardItems={drafts} />
-        </div>
-      </ManageFiles>
+      <div id="newDocument">
+        <ManageFiles title="New document" OverlayComp={CreateDocument}>
+          <div id="createdByMe">
+            <SectionBox title="created by me" cardItems={createDocumentsByMe} />
+          </div>
+          <div id="drafts">
+            <SectionBox title="drafts" cardItems={drafts} />
+          </div>
+        </ManageFiles>
+      </div>
     </WorkflowLayout>
   );
 };

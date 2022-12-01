@@ -74,13 +74,17 @@
 }
 
 .knowledge__box {
+  background-image: url("https://workflowai.online/wp-content/uploads/2022/10/artistic-logo.png");
+  background-position: top center;
+  background-repeat: no-repeat;
+  background-size: 50% auto;
   display: flex;
   flex-direction: column;
   padding: 4px;
   text-align: center;
-  align-self: flex-end;
+  justify-content: flex-end;
   margin-top: auto;
-
+  height: 100%;
   margin-inline: auto;
 }
 
