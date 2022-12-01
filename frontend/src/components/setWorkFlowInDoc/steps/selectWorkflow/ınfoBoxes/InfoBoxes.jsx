@@ -33,11 +33,7 @@ const InfoBoxes = ({ setSelectedWorkFlows }) => {
   };
 
   return (
-<<<<<<< HEAD
-    <div ref={ref} style={{ y: y }} className={styles.container}>
-=======
     <motion.div ref={ref} style={{ y: y }} className={styles.container}>
->>>>>>> fbd08303aaf6338b0e0a195de7f1bcb92a8d359e
       {compInfoBoxes.map((infoBox) => (
         <div key={infoBox.id} className={styles.box}>
           <div
@@ -74,11 +70,7 @@ const InfoBoxes = ({ setSelectedWorkFlows }) => {
           </div>
         </div>
       ))}
-<<<<<<< HEAD
-    </div>
-=======
     </motion.div>
->>>>>>> fbd08303aaf6338b0e0a195de7f1bcb92a8d359e
   );
 };
 

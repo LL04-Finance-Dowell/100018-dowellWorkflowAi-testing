@@ -1,13 +1,10 @@
 import { Link } from "react-router-dom";
-<<<<<<< HEAD
-=======
 import Carousel from "../../components/carousel/Carousel";
 import FlipCard from "../../components/flip-card/FlipCard";
 import SideBar from "../../components/sideBar/SideBar";
 import SmallFlip from "../../components/small-flip/SmallFlip";
 import ManageAccountsIcon from "@mui/icons-material/ManageAccounts";
 import SearchIcon from "@mui/icons-material/Search";
->>>>>>> fbd08303aaf6338b0e0a195de7f1bcb92a8d359e
 import { useUserContext } from "../../contexts/UserContext";
 import WorkflowLayout from "../../layouts/WorkflowLayout/WorkflowLayout";
 import { dowellLoginUrl } from "../../services/axios";
@@ -18,10 +15,6 @@ import InsertDriveFileIcon from "@mui/icons-material/InsertDriveFile";
 import "../Landing/home.css";
 import HoverCard from "../../components/hover-card/HoverCard";
 import Table from "../../components/table/Table";
-<<<<<<< HEAD
-=======
-
->>>>>>> fbd08303aaf6338b0e0a195de7f1bcb92a8d359e
 const LandingPage = () => {
   const { currentUser } = useUserContext();
 
@@ -44,8 +37,6 @@ const LandingPage = () => {
           )}
         </div>
       </WorkflowLayout>
-<<<<<<< HEAD
-=======
 
       {/* <div className="main">
         <SideBar />
@@ -198,7 +189,6 @@ const LandingPage = () => {
         </div>
         <FlipCard />
       </div> */}
->>>>>>> fbd08303aaf6338b0e0a195de7f1bcb92a8d359e
     </>
   );
 };

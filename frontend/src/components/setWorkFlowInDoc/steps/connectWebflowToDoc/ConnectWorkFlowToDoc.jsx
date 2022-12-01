@@ -1,28 +1,11 @@
 import styles from "./connectWorkFlowToDoc.module.css";
 import { BsChevronDown } from "react-icons/bs";
-<<<<<<< HEAD
-import { BsChevronUp } from "react-icons/bs";
-=======
->>>>>>> fbd08303aaf6338b0e0a195de7f1bcb92a8d359e
 import AssignDocumentMap from "./assignForms/forms/assignDocumentMap/AssignDocumentMap";
 import AsignTask from "./assignForms/forms/assignTask/AssignTask";
 import AssignLocation from "./assignForms/forms/assignLocation/AssignLocation";
 import AssignTime from "./assignForms/forms/assignTime/AssignTimes";
-<<<<<<< HEAD
-import Contents from "../../contents/Contents";
-import { v4 as uuidv4 } from "uuid";
-import { useState } from "react";
 
 const ConnectWorkFlowToDoc = () => {
-  const [toggleContent, setToggleContent] = useState(false);
-
-  const handleToggleContent = () => {
-    setToggleContent((prev) => !prev);
-  };
-=======
-
-const ConnectWorkFlowToDoc = () => {
->>>>>>> fbd08303aaf6338b0e0a195de7f1bcb92a8d359e
   return (
     <div className={styles.container}>
       <div className={styles.step__title__box}>
@@ -39,20 +22,9 @@ const ConnectWorkFlowToDoc = () => {
         </div>
 
         <AssignDocumentMap />
-<<<<<<< HEAD
-        <div>
-          <div className={styles.table__of__contents__header}>
-            <span>Table of Contents</span>
-            <i onClick={handleToggleContent}>
-              {toggleContent ? <BsChevronUp /> : <BsChevronDown />}
-            </i>
-          </div>
-          <Contents contents={mapDocuments} toggleContent={toggleContent} />
-=======
         <div className={styles.table__of__contents__header}>
           <span>Table of Contents</span>
           <BsChevronDown />
->>>>>>> fbd08303aaf6338b0e0a195de7f1bcb92a8d359e
         </div>
         <AsignTask />
         <AssignLocation />
@@ -66,32 +38,3 @@ const ConnectWorkFlowToDoc = () => {
 };
 
 export default ConnectWorkFlowToDoc;
-<<<<<<< HEAD
-
-const mapDocuments = [
-  { id: uuidv4(), content: "Workflow" },
-  { id: uuidv4(), content: "Workflow A1" },
-  { id: uuidv4(), content: "Workflow A1" },
-  { id: uuidv4(), content: "Workflow A1" },
-  { id: uuidv4(), content: "Workflow A1" },
-  { id: uuidv4(), content: "Workflow A1" },
-  { id: uuidv4(), content: "Workflow A1" },
-  { id: uuidv4(), content: "Workflow A1" },
-  { id: uuidv4(), content: "Workflow A1" },
-  { id: uuidv4(), content: "Workflow A1" },
-  { id: uuidv4(), content: "Workflow A1" },
-  { id: uuidv4(), content: "Workflow A1" },
-  { id: uuidv4(), content: "Workflow A1" },
-  { id: uuidv4(), content: "Workflow A1" },
-  { id: uuidv4(), content: "Workflow A1" },
-  { id: uuidv4(), content: "Workflow A1" },
-  { id: uuidv4(), content: "Workflow A1" },
-  { id: uuidv4(), content: "Workflow A1" },
-  { id: uuidv4(), content: "Workflow A1" },
-  { id: uuidv4(), content: "Workflow A1" },
-  { id: uuidv4(), content: "Workflow A1" },
-  { id: uuidv4(), content: "Workflow A1" },
-  { id: uuidv4(), content: "Workflow A1" },
-];
-=======
->>>>>>> fbd08303aaf6338b0e0a195de7f1bcb92a8d359e

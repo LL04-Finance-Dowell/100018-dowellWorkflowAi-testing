@@ -3,11 +3,7 @@
 }
 .top-main {
   display: inline;
-<<<<<<< HEAD
-  width: 50%;
-=======
   width: 42%;
->>>>>>> fbd08303aaf6338b0e0a195de7f1bcb92a8d359e
 }
 .sm-flip {
   display: flex;
@@ -32,10 +28,7 @@
 .face {
   border-radius: 50%;
 }
-<<<<<<< HEAD
-=======
 @media (max-width: 800px) {
   .top-main {
   }
 }
->>>>>>> fbd08303aaf6338b0e0a195de7f1bcb92a8d359e
