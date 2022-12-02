@@ -9,7 +9,6 @@ from rest_framework.response import Response
 from rest_framework import status
 from .mongo_db_connection import (
     save_wf,
-    save_wf_new,
     get_wf_object,
     get_wf_list,
     get_user_info_by_username,
@@ -43,7 +42,6 @@ def create_workflow(request):  # Document Creation.
             limit   = request.data["limit"]
             start_time =  request.data['start_time']
             end_time =request.data['end_time']
-            # user=get_user_info_by_username(created_by)['']
             member_portfolio = request.data['member_portfolio']
             member_type = request.data['member_type']
             data={
@@ -68,43 +66,19 @@ def create_workflow(request):  # Document Creation.
 
             
             res = json.loads(
-                save_wf_new(data, created_by, company_id)
+                save_wf(data, created_by, company_id)
             )
             
             if res["isSuccess"]:
-
-                # payload=json.dumps({
-                #         "product_name": "workflowai",
-                #         "details":{
-                #             "_id":res["inserted_id"],
-                #             "field":"wf_name",
-                #             "cluster": "Documents",
-                #             "database": "Documentation",
-                #             "collection": "WorkflowReports",
-                #             "document": "workflowreports",
-                #             "team_member_ID": "33689044433",
-                #             "function_ID": "ABCDE",
-                #             "command": "update",
-                #             "content":data,
-                #             "update_field": {
-                #                             "workflow_title":wf_name
-                #                             }
-                #         }
-                #         })
-                # headers = {
-                #             'Content-Type': 'application/json'
-                #             }
-                        
-                # editor_link = requests.request("POST", editorApi, headers=headers, data=payload)  
                 try:
                     return Response(
-                   data,
-                    status=status.HTTP_201_CREATED,
-                    )
+                        get_wf_object(res["inserted_id"]),
+                        status=status.HTTP_201_CREATED,
+                        )
                 except:
                     return Response(
-                {"message": "Failed to call Save Workflow"},
-                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                        {"message": "Failed to call Save Workflow"},
+                        status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
             return Response(
                 {"message": "Unable to Create Workflow"},
