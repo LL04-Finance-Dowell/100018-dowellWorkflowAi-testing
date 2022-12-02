@@ -18,7 +18,7 @@ def create_workflow(request):  # Document Creation.
         if not form:
             return Response(
                 {"message": "Workflow Data required"},
-                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                status=status.HTTP_404_NOT_FOUND,
             )
         else:
             created_by =    form["created_by"]
@@ -53,12 +53,12 @@ def create_workflow(request):  # Document Creation.
             if res["isSuccess"]:
                 try:
                     return Response(
-                        get_wf_object(res["inserted_id"]),
+                        {"workflow":get_wf_object(res["inserted_id"])},
                         status=status.HTTP_201_CREATED,
                         )
                 except:
                     return Response(
-                        {"message": "Failed to call Save Workflow"},
+                        {"message": "Failed to Save Workflow"},
                         status=status.HTTP_500_INTERNAL_SERVER_ERROR,
                         )
             
