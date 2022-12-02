@@ -20,7 +20,7 @@ const SetWorkflowInDoc = () => {
         <h2 className={`${styles.title} h2-large`}>
           Set WorkFlows in Documents
         </h2>
-        <div className={styles.content__container}>
+        <div className={styles.select__container}>
           <div className={styles.left__container}>
             <SelectDoc />
           </div>
@@ -32,7 +32,7 @@ const SetWorkflowInDoc = () => {
         <ConnectWorkFlowToDoc />
         <CheckErrors />
         <ProcessDocument />
-        <CustomerSupport />
+        {/* <CustomerSupport /> */}
       </div>
     </WorkflowLayout>
   );
