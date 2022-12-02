@@ -4,8 +4,13 @@ import WorkflowLayout from "../../../layouts/WorkflowLayout/WorkflowLayout";
 import { v4 as uuidv4 } from "uuid";
 import "./style.css";
 import CreateWorkflows from "../../../components/manageFiles/files/workflows/createWorkflows/CreateWorkflow";
+import { useEffect } from "react";
 
 const WorkflowsPage = () => {
+  useEffect(() => {
+    window.scrollTo(0, 0)
+  }, [])
+
   return (
     <WorkflowLayout>
       <ManageFiles title="new workflow" OverlayComp={CreateWorkflows}>
