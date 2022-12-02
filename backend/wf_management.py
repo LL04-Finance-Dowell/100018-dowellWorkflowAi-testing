@@ -16,11 +16,7 @@ from .mongo_db_connection import (
     get_user,
 )
 
-
-editorApi = "https://100058.pythonanywhere.com/api/generate-editor-link/"
-    
-# print(get_template_object("6365f9c2ff915c925f3a67f4")) 
-@api_view(["GET","POST"])
+@api_view(["POST"])
 def create_workflow(request):  # Document Creation.
     
     if request.method == "POST":
@@ -85,6 +81,4 @@ def create_workflow(request):  # Document Creation.
                 status=status.HTTP_405_METHOD_NOT_ALLOWED,
             )
 
-    return Response(
-        {"message": "You Need To Be LoggedIn"}, status=status.HTTP_400_BAD_REQUEST
-    )
+    
