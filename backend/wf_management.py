@@ -50,12 +50,7 @@ def create_workflow(request):  # Document Creation.
                             "reminder": "",
                         }]
                         }
-
-            
-            res = json.loads(
-                save_wf(data, created_by, company_id)
-            )
-            
+            res = json.loads(save_wf(data, created_by, company_id))
             if res["isSuccess"]:
                 try:
                     return Response(
