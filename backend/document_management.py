@@ -135,7 +135,7 @@ def document_detail(request):  # Single document
         {"message": "Failed to call editorApi"},
         status=status.HTTP_500_INTERNAL_SERVER_ERROR,
     )
-        
+           
     return Response(
         {"message": "This Document is Not Loaded."}, status=status.HTTP_400_BAD_REQUEST
     )
