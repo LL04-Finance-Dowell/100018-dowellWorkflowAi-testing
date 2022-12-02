@@ -123,7 +123,7 @@ def document_detail(request):  # Single document
         headers = {
                             'Content-Type': 'application/json'
                             }
-                        
+                         
         editor_link = requests.request("POST", editorApi, headers=headers, data=payload)  
         try:
             return Response(
