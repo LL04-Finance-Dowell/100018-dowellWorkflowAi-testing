@@ -42,14 +42,14 @@ def create_workflow(request):  # Document Creation.
             skip    =        request.data['skip']   
             limit   = request.data["limit"]
             start_time =  request.data['start_time']
-            end_time =request.dat['end_time']
+            end_time =request.data['end_time']
             # user=get_user_info_by_username(created_by)['']
             member_portfolio = request.data['member_portfolio']
             member_type = request.data['member_type']
             data={
                 
                 "workflow_title": wf_name,
-                "workflows": [
+                "steps": [
                     {
                             "step_name"        : step_name,
                             "skip"            : skip, # True or False,
