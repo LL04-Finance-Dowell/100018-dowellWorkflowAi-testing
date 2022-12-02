@@ -14,7 +14,6 @@ from .mongo_db_connection import (
 @api_view(["POST"])
 def create_workflow(request):  # Document Creation.
     if request.method == "POST":
-        data = ""
         form = request.data  # TODO: We will get the data from form 1 by 1 - Dont Worry.
         if not form:
             return Response(
