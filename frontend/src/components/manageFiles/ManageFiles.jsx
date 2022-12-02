@@ -1,17 +1,25 @@
 import { useState } from "react";
 import styles from "./manageFiles.module.css";
 import { BsPlusSquareDotted } from "react-icons/bs";
+import { useAppContext } from "../../contexts/AppContext";
+import { useNavigate } from "react-router-dom";
 
 const ManageFiles = ({ title, children, OverlayComp }) => {
-  const [toggleOverlay, setToggleOverlay] = useState(false);
+  const navigate = useNavigate();
+  /*   const [toggleOverlay, setToggleOverlay] = useState(false); */
+  const { toggleNewFileForm, setToggleNewFileForm } = useAppContext();
 
   const handleToggleOverlay = () => {
-    setToggleOverlay((prev) => !prev);
+    if (OverlayComp) {
+      setToggleNewFileForm((prev) => !prev);
+    } else {
+      navigate("/");
+    }
   };
 
   return (
     <div className={styles.container}>
-      {toggleOverlay && (
+      {OverlayComp && toggleNewFileForm && (
         <OverlayComp handleToggleOverlay={handleToggleOverlay} />
       )}
       <div>

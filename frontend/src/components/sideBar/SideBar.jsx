@@ -13,16 +13,23 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { dowellLoginUrl } from "../../services/axios";
 import { HashLink } from "react-router-hash-link";
+import { useAppContext } from "../../contexts/AppContext";
+
 const SideBar = ({ user }) => {
   const [open, setOpen] = useState(false);
   const navigate = useNavigate();
-  const handleCreateWorkflowItemClick = (e) => {
+  const { setToggleNewFileForm } = useAppContext();
+  /*  const handleCreateWorkflowItemClick = (e) => {
     e.preventDefault();
 
     const linkPath = e.target.hash.replace("#", "") + e.target.search;
 
     if (user) return navigate(linkPath);
     window.location = dowellLoginUrl + linkPath;
+  }; */
+
+  const handleCreateWorkflowItemClick = () => {
+    setToggleNewFileForm(true);
   };
 
   return (
@@ -138,21 +145,21 @@ const SideBar = ({ user }) => {
         <div id="example-collapse-text">
           <Link
             className={styles.colC}
-            to={"/documents/new"}
+            to={"/documents/#newDocument"}
             onClick={handleCreateWorkflowItemClick}
           >
             Document
           </Link>
           <Link
             className={styles.colC}
-            to={"/templates/new"}
+            to={"/"}
             onClick={handleCreateWorkflowItemClick}
           >
             Template
           </Link>
           <Link
             className={styles.colC}
-            to={"/workflows/new"}
+            to={"/workflows/#newWorkflow"}
             onClick={handleCreateWorkflowItemClick}
           >
             Workflow
@@ -284,20 +291,28 @@ const SideBar = ({ user }) => {
       <Accordion
         title="Templates (004)"
         content={
-          <Link
+          <HashLink
             style={{ textDecoration: "none", color: "#e1e1e1" }}
-            to={"/Templates/NewTemplate/NewTemplate"}
+            to={"/templates/#newTemplate"}
           >
             New Template
-          </Link>
+          </HashLink>
         }
         content2={
-          <Link
+          <HashLink
             style={{ textDecoration: "none", color: "#e1e1e1" }}
-            to={"/Templates/TempDraft/TempDraft"}
+            to={"/templates/#drafts"}
           >
             Draft
-          </Link>
+          </HashLink>
+        }
+        content3={
+          <HashLink
+            style={{ textDecoration: "none", color: "#e1e1e1" }}
+            to={"/templates/#createdByMe"}
+          >
+            Created by me
+          </HashLink>
         }
         dotColor="#54595f"
       />
