@@ -8,13 +8,16 @@ import { UserContextProvider } from "./contexts/UserContext";
 import { ToastContainer } from "react-toastify";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "@fontsource/roboto"; // Defaults to weight 400.
+import { AppContextProvider } from "./contexts/AppContext";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>
     <HashRouter>
       <UserContextProvider>
-        <App />
+        <AppContextProvider>
+          <App />
+        </AppContextProvider>
         <ToastContainer />
       </UserContextProvider>
     </HashRouter>

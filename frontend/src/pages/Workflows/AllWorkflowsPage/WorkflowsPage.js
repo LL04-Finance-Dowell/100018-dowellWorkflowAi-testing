@@ -9,16 +9,12 @@ const WorkflowsPage = () => {
   return (
     <WorkflowLayout>
       <div id="newWorkflow">
-        <ManageFiles
-          id="newWorkflow"
-          title="new workflow"
-          OverlayComp={CreateWorkflows}
-        >
-          <div id="createdByMe">
-            <SectionBox title="created by me" cardItems={createTemplatesByMe} />
-          </div>
+        <ManageFiles title="new workflow" OverlayComp={CreateWorkflows}>
           <div id="drafts">
             <SectionBox title="drafts" cardItems={drafts} />
+          </div>
+          <div id="createdByMe">
+            <SectionBox title="created by me" cardItems={createWorkflowsByMe} />
           </div>
         </ManageFiles>
       </div>
@@ -28,7 +24,7 @@ const WorkflowsPage = () => {
 
 export default WorkflowsPage;
 
-export const createTemplatesByMe = [
+export const createWorkflowsByMe = [
   { id: uuidv4() },
   { id: uuidv4() },
   { id: uuidv4() },
