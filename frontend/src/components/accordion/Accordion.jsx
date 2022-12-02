@@ -35,32 +35,33 @@ const Accordion = (props) => {
           )}
         </span>
 
-        {
-          props.titleIsLink ? <Link to={props.titleLink}>
-        <span
-          style={{
-            color: `${props.color}`,
-            padding: `${props.paddingg}`,
-            borderBottom: `1px solid ${props.color}`,
-            width: `${props.widthh}`,
-          }}
-          className="title"
-        >
-          {props.title}
-        </span>
-        </Link> : 
-        <span
-          style={{
-            color: `${props.color}`,
-            padding: `${props.paddingg}`,
-            borderBottom: `1px solid ${props.color}`,
-            width: `${props.widthh}`,
-          }}
-          className="title"
-        >
-          {props.title}
-        </span>
-        }
+        {props.titleIsLink ? (
+          <Link to={props.titleLink}>
+            <span
+              style={{
+                color: `${props.color}`,
+                padding: `${props.paddingg}`,
+                borderBottom: `1px solid ${props.color}`,
+                width: `${props.widthh}`,
+              }}
+              className="title"
+            >
+              {props.title}
+            </span>
+          </Link>
+        ) : (
+          <span
+            style={{
+              color: `${props.color}`,
+              padding: `${props.paddingg}`,
+              borderBottom: `1px solid ${props.color}`,
+              width: `${props.widthh}`,
+            }}
+            className="title"
+          >
+            {props.title}
+          </span>
+        )}
       </div>
 
       <Collapse in={open}>
@@ -91,6 +92,15 @@ const Accordion = (props) => {
             }}
           >
             {props.content2}
+          </span>
+          <span
+            style={{
+              fontWeight: "bold",
+              color: `${props.contColor}`,
+              padding: `${props.contPadd}`,
+            }}
+          >
+            {props.content3}
           </span>
         </div>
       </Collapse>

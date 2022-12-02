@@ -1,11 +1,20 @@
 import styles from "./connectWorkFlowToDoc.module.css";
 import { BsChevronDown } from "react-icons/bs";
+import { BsChevronUp } from "react-icons/bs";
 import AssignDocumentMap from "./assignForms/forms/assignDocumentMap/AssignDocumentMap";
 import AsignTask from "./assignForms/forms/assignTask/AssignTask";
 import AssignLocation from "./assignForms/forms/assignLocation/AssignLocation";
 import AssignTime from "./assignForms/forms/assignTime/AssignTimes";
+import Contents from "../../contents/Contents";
+import { v4 as uuidv4 } from "uuid";
+import { useState } from "react";
 
 const ConnectWorkFlowToDoc = () => {
+  const [toggleContent, setToggleContent] = useState(false);
+
+  const handleToggleContent = () => {
+    setToggleContent((prev) => !prev);
+  };
   return (
     <div className={styles.container}>
       <div className={styles.step__title__box}>
@@ -22,9 +31,14 @@ const ConnectWorkFlowToDoc = () => {
         </div>
 
         <AssignDocumentMap />
-        <div className={styles.table__of__contents__header}>
-          <span>Table of Contents</span>
-          <BsChevronDown />
+        <div>
+          <div className={styles.table__of__contents__header}>
+            <span>Table of Contents</span>
+            <i onClick={handleToggleContent}>
+              {toggleContent ? <BsChevronUp /> : <BsChevronDown />}
+            </i>
+          </div>
+          <Contents contents={mapDocuments} toggleContent={toggleContent} />
         </div>
         <AsignTask />
         <AssignLocation />
@@ -38,3 +52,29 @@ const ConnectWorkFlowToDoc = () => {
 };
 
 export default ConnectWorkFlowToDoc;
+
+const mapDocuments = [
+  { id: uuidv4(), content: "Workflow" },
+  { id: uuidv4(), content: "Workflow A1" },
+  { id: uuidv4(), content: "Workflow A1" },
+  { id: uuidv4(), content: "Workflow A1" },
+  { id: uuidv4(), content: "Workflow A1" },
+  { id: uuidv4(), content: "Workflow A1" },
+  { id: uuidv4(), content: "Workflow A1" },
+  { id: uuidv4(), content: "Workflow A1" },
+  { id: uuidv4(), content: "Workflow A1" },
+  { id: uuidv4(), content: "Workflow A1" },
+  { id: uuidv4(), content: "Workflow A1" },
+  { id: uuidv4(), content: "Workflow A1" },
+  { id: uuidv4(), content: "Workflow A1" },
+  { id: uuidv4(), content: "Workflow A1" },
+  { id: uuidv4(), content: "Workflow A1" },
+  { id: uuidv4(), content: "Workflow A1" },
+  { id: uuidv4(), content: "Workflow A1" },
+  { id: uuidv4(), content: "Workflow A1" },
+  { id: uuidv4(), content: "Workflow A1" },
+  { id: uuidv4(), content: "Workflow A1" },
+  { id: uuidv4(), content: "Workflow A1" },
+  { id: uuidv4(), content: "Workflow A1" },
+  { id: uuidv4(), content: "Workflow A1" },
+];

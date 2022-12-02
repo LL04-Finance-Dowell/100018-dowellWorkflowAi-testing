@@ -86,7 +86,18 @@
   font-size: 16px;
   line-height: 16px;
   border: 2px solid transparent;
-  border-right-color: var(--e-global-color-accent);
+  position: relative;
+  /*  border-right-color: var(--e-global-color-accent); */
+}
+
+.process__box::after {
+  content: "";
+  position: absolute;
+  width: 2px;
+  height: calc(100% + 4px);
+  background-color: var(--e-global-color-accent);
+  top: 0;
+  right: -2px;
 }
 
 .process__detail__container {
@@ -180,6 +191,11 @@
     border-bottom: none !important;
     line-height: 24px;
   }
+
+  .process__box::after {
+    display: none;
+  }
+
   .process__detail__container {
     position: relative;
     width: 100%;
@@ -190,11 +206,5 @@
     padding: 10px;
     border: 2px solid var(--e-global-color-accent);
     border-bottom: none !important;
-  }
-}
-
-@media (min-width: 769px) {
-  .process__box {
-    margin-bottom: 0px !important;
   }
 }

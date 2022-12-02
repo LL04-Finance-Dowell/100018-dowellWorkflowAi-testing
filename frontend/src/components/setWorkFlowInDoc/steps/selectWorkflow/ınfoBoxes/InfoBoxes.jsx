@@ -33,7 +33,7 @@ const InfoBoxes = ({ setSelectedWorkFlows }) => {
   };
 
   return (
-    <motion.div ref={ref} style={{ y: y }} className={styles.container}>
+    <div ref={ref} style={{ y: y }} className={styles.container}>
       {compInfoBoxes.map((infoBox) => (
         <div key={infoBox.id} className={styles.box}>
           <div
@@ -70,7 +70,7 @@ const InfoBoxes = ({ setSelectedWorkFlows }) => {
           </div>
         </div>
       ))}
-    </motion.div>
+    </div>
   );
 };
 
