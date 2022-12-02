@@ -480,14 +480,14 @@ Request Body
     "wf_title":"<workflow_title>",
      'steps': [
         {'step_name': 'step_one', 
-        'rights': '', 
-        'display_before': '', 
-        'skip': '', 
-        'limit': '', 
-        'start_time': '', 
-        'end_time': '', 
-        'member_portfolio': '', 
-        'member_type': '', 
+        "rights":"<ADD/EDIT_or_VIEW_or_COMMENT_or_APPROVE>",
+        "display_before":"<true or false>",
+        "skip":"<True_or_False>",
+        "limit":"<No_limit>",
+        "start_time":"<START_DATE_AND_TIME>",
+        "end_time":"<END_DATE_AND_TIME>",
+        "member_portfolio":"<Portfolio_1>",
+        "member_type":"<TEAM_MEMBER_or_GUEST>" 
         'reminder': ''}]
 }
 ```
