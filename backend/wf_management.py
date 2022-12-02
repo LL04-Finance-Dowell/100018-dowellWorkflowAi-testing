@@ -43,7 +43,7 @@ def create_workflow(request):  # Document Creation.
                 member_portfolio = step['member_portfolio']
                 member_type = step['member_type']
                 reminder = step["reminder"]
-                data["steps"].append(
+                data["steps"].append( 
                     {
                             "step_name"        : step_name,
                             "skip"            : skip, # True or False,
