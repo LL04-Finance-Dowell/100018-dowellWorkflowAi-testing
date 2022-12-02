@@ -24,22 +24,22 @@ def create_workflow(request):  # Document Creation.
         form = request.data  # TODO: We will get the data from form 1 by 1 - Dont Worry.
         if not form:
             return Response(
-                {"message": "Failed to process Workflow creation."},
+                {"message": "Workflow Data required"},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
         else:
-            created_by =    request.data["created_by"]
-            company_id =    request.data["company_id"]
-            wf_name =       request.data["wf_name"]
-            step_name   =   request.data['step_name']
-            rights      =   request.data['rights']
-            display_before = request.data['display_before']
-            skip    =        request.data['skip']   
-            limit   = request.data["limit"]
-            start_time =  request.data['start_time']
-            end_time =request.data['end_time']
-            member_portfolio = request.data['member_portfolio']
-            member_type = request.data['member_type']
+            created_by =    form["created_by"]
+            company_id =    form["company_id"]
+            wf_name =       form["wf_name"]
+            step_name   =   form['step_name']
+            rights      =   form['rights']
+            display_before = form['display_before']
+            skip    =        form['skip']   
+            limit   = form["limit"]
+            start_time =  form['start_time']
+            end_time =form['end_time']
+            member_portfolio = form['member_portfolio']
+            member_type = form['member_type']
             data={
                 
                 "workflow_title": wf_name,
@@ -76,9 +76,6 @@ def create_workflow(request):  # Document Creation.
                         {"message": "Failed to call Save Workflow"},
                         status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
-            return Response(
-                {"message": "Unable to Create Workflow"},
-                status=status.HTTP_405_METHOD_NOT_ALLOWED,
-            )
+            
 
     
