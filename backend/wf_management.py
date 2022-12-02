@@ -1,9 +1,4 @@
 import json
-import timeit
-import itertools
-import requests
-import jwt
-
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
@@ -18,7 +13,6 @@ from .mongo_db_connection import (
 
 @api_view(["POST"])
 def create_workflow(request):  # Document Creation.
-    
     if request.method == "POST":
         data = ""
         form = request.data  # TODO: We will get the data from form 1 by 1 - Dont Worry.
@@ -41,10 +35,8 @@ def create_workflow(request):  # Document Creation.
             member_portfolio = form['member_portfolio']
             member_type = form['member_type']
             data={
-                
                 "workflow_title": wf_name,
-                "steps": [
-                    {
+                "steps": [{
                             "step_name"        : step_name,
                             "skip"            : skip, # True or False,
                             "member_type"    : member_type, #    values can be "TEAM_MEMBER" or "GUEST",
@@ -56,8 +48,7 @@ def create_workflow(request):  # Document Creation.
                             "start_time": start_time,
                             "end_time":    end_time,
                             "reminder": "",
-                }
-                    ]
+                        }]
                         }
 
             
