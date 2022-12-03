@@ -3,12 +3,19 @@ import Collapse from "../../../layouts/collapse/Collapse";
 import styles from "./new.module.css";
 import { v4 as uuidv4 } from "uuid";
 import { FaPlus } from "react-icons/fa";
+import { HashLink } from "react-router-hash-link";
+import { useAppContext } from "../../../contexts/AppContext";
 
 const New = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const { setToggleNewFileForm } = useAppContext();
 
   const handleOpen = () => {
     setIsOpen((prev) => !prev);
+  };
+
+  const handleNewItemClick = () => {
+    setToggleNewFileForm(true);
   };
 
   return (
@@ -23,7 +30,13 @@ const New = () => {
         <Collapse open={isOpen}>
           <div className={styles.new__content}>
             {items.map((item) => (
-              <p key={item.id}>{item.content}</p>
+              <HashLink
+                onClick={handleNewItemClick}
+                to={item.href}
+                key={item.id}
+              >
+                {item.content}
+              </HashLink>
             ))}
           </div>
         </Collapse>
@@ -35,8 +48,8 @@ const New = () => {
 export default New;
 
 const items = [
-  { id: uuidv4(), content: "document" },
-  { id: uuidv4(), content: "template" },
-  { id: uuidv4(), content: "workflow" },
-  { id: uuidv4(), content: "process" },
+  { id: uuidv4(), content: "document", href: "/documents/#newDocument" },
+  { id: uuidv4(), content: "template", href: "/" },
+  { id: uuidv4(), content: "workflow", href: "/workflows/#newWorkflow" },
+  { id: uuidv4(), content: "process", href: "/workflows/set-workflow" },
 ];
