@@ -1,0 +1,11 @@
+.container {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.content__box {
+  width: min(100%, 1140px);
+  display: flex;
+  justify-content: space-between;
+}

@@ -26,7 +26,9 @@ const WorkflowSwiper = ({ loop, perSlide, selectedWorkFlows }) => {
           </SwiperSlide>
         ))}
       </Swiper>
-      <a className={styles.add__button}>Add Selected Workflow to document</a>
+      {selectedWorkFlows.length > 0 && (
+        <a className={styles.add__button}>Add Selected Workflow to document</a>
+      )}
     </div>
   );
 };

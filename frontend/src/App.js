@@ -81,14 +81,6 @@ function App() {
       <Route path={"*"} element={<>Page not found</>} />
     </Routes>
   );
-
-  // return (
-  //   <div style={{ paddingTop: "200px", paddingBottom: "150px" }}>
-  //   <Routes>
-  //     <Route path={"/"} element={<SetWorkflowInDoc />} />
-  //   </Routes>
-  // </div>
-  // );
 }
 
 export default App;

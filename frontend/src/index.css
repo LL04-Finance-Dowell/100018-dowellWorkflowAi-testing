@@ -1,8 +1,23 @@
+:root {
+  --e-global-color-primary: #6ec1e4;
+  --e-global-color-secondary: #54595f;
+  --e-global-color-text: #7a7a7a;
+  --e-global-color-accent: #61ce70;
+  --e-global-color-cd6593d: #ffffff;
+  --e-global-color-9d2ac19: #e1e1e1;
+  --e-global-color-1342d1f: #ff0000;
+  --e-global-color-0363588: #c3d6be;
+  --e-global-color-2f1e1e4: #0048ff;
+  --e-global-color-62c33d9: #fff300;
+  --h2-weight: 600;
+}
+
 * {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
 }
+
 body {
   margin: 0;
   padding: 0;

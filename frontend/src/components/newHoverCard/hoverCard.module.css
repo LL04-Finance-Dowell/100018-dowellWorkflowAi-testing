@@ -1,0 +1,13 @@
+.container {
+  padding: 37px;
+  background-color: var(--e-global-color-primary);
+}
+
+.box {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.title {
+}

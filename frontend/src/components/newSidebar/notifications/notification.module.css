@@ -1,0 +1,20 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 10px;
+}
+
+.header {
+  font-size: 19px;
+  color: var(--e-global-color-1342d1f);
+  font-weight: 600;
+  margin-bottom: 20px;
+}
+.line {
+  width: 180px;
+  height: 1px;
+  background-color: var(--e-global-color-9d2ac19);
+  margin-bottom: 20px;
+}
