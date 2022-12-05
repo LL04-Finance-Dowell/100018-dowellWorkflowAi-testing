@@ -1,12 +1,10 @@
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
-from .mongo_db_connection import (
-    get_wf_object,
-    update_document,
-)
+from .mongo_db_connection import get_wf_object, update_wf_process, save_wf_process
+
 """
-----------------------------------------------------------------SET WORKFLOWS IN DOCUMENT--------------------------------------------------------
+---------------------------------------SET WORKFLOWS IN DOCUMENT------------------------------------------
 1.Select a document to add to a workflow.
     - user picks a document from the list 
 2.Select a workflow to add to the document.
@@ -16,12 +14,14 @@ from .mongo_db_connection import (
 
 
 @api_view(["POST"])
-def add_workflow_to_document(request):
+def add_document_to_workflow(request):
     if not request.data:
         return Response(
             {"message": "Unable to Create Workflow"},
             status=status.HTTP_400_BAD_REQUEST,
         )
+    created_by = request.data["created_by"]
+    company_id = request.data["company_id"]
     document_id = request.data["document_id"]
     workflows = request.data["workflows"]  # Will be a list of wfs ids
     if len(workflows) == 1:
@@ -32,8 +32,7 @@ def add_workflow_to_document(request):
                 {"message": "Unable to Create Workflow"},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
-
-        add_res = update_document(document_id=document_id, data=workflow)
+        add_res = save_wf_process(workflow, created_by, company_id, document_id)
         if add_res["isSuccess"]:
             return Response(
                 {"message": "Added Workflows to Document"}, status=status.HTTP_200_OK
@@ -46,8 +45,7 @@ def add_workflow_to_document(request):
                     {"message": "Unable to Create Workflow"},
                     status=status.HTTP_500_INTERNAL_SERVER_ERROR,
                 )
-
-            add_res = update_document(document_id=document_id, data=workflow)
+            add_res = save_wf_process(workflow, created_by, company_id, document_id)
             if add_res["isSuccess"]:
                 return Response(
                     {"message": "Added Workflows to Document"},
@@ -90,7 +88,7 @@ def add_workflow_to_document(request):
         "reminder": ["EVERY_HOUR", "EVERY_DAY"],
     },{
     }]}
-ACTION - Update Workflow in document.
+ACTION - Update Workflow Process. 
 """
 
 
@@ -101,7 +99,7 @@ def connect_wf_to_document(request):
             {"message": "Unable to Create Workflow"},
             status=status.HTTP_400_BAD_REQUEST,
         )
-    document_id = request.data["document_id"]
+    workflow_id = request.data["workflow_id"]
     skip = request.data["skip"]
     member_type = request.data["member_type"]
     member_portfolio = request.data["member_portfolio"]
@@ -127,8 +125,8 @@ def connect_wf_to_document(request):
         "end_time": end_time,
         "reminder": reminder,
     }
-
-    connect_res = update_document(document_id=document_id, data=payload)
+    connect_res = update_wf_process(workflow_id, payload)
+    # connect_res = update_document(document_id=document_id, data=payload)
     if connect_res["isSuccess"]:
         return Response({"message": "Workflow Connected"}, status=status.HTTP_200_OK)
 

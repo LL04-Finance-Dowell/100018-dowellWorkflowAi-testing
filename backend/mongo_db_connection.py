@@ -32,6 +32,16 @@ WF_CONNECTION_LIST = [
     "33689044433",
     "ABCDE",
 ]
+
+WF_PROCESS_CONNECTION = [
+    "Documents",
+    "bangalore",
+    "Documentation",
+    "WorflowProcess",
+    "WorkflowProcess",
+    "1000180001",
+    "ABCDE",
+]
 TEMPLATE_CONNECTION_LIST = [
     "Documents",
     "bangalore",
@@ -100,8 +110,8 @@ DOCUMENT_CONNECTION_DICT = {
 }
 
 
-
 url = "https://100014.pythonanywhere.com/api/userinfo/"
+
 
 def get_members(session_id):
     payload = {"session_id": session_id}
@@ -136,6 +146,53 @@ def get_event_id():
     return r.text
 
 
+#  -------------------------------Workflow Process------------------
+def save_wf_process(workflow, user, company_id, document_id):
+    url = "http://100002.pythonanywhere.com/"
+    payload = json.dumps(
+        {
+            **WF_PROCESS_CONNECTION,
+            "command": "insert",
+            "field": {
+                "eventId": get_event_id(),
+                "workflows": workflow,
+                "company_id": company_id,
+                "document_id": document_id,
+                "created_by": user,
+            },
+            "update_field": {"order_nos": 21},
+            "platform": "bangalore",
+        }
+    )
+    headers = {"Content-Type": "application/json"}
+    response = requests.request("POST", url, headers=headers, data=payload)
+    print("SAVE WORKFLOW ENTRY----------- \n", response.text)
+    return response.text
+
+
+def update_wf_process(workflow_id, workflow):
+    url = "http://100002.pythonanywhere.com/"
+    payload = json.dumps(
+        {
+            **WF_CONNECTION_DICT,
+            # "command": "insert",
+            "command": "update",
+            "field": {
+                "_id": workflow_id,
+            },
+            "update_field": {
+                "eventId": get_event_id(),
+                "workflow": workflow,
+            },
+            "platform": "bangalore",
+        }
+    )
+    headers = {"Content-Type": "application/json"}
+    response = requests.request("POST", url, headers=headers, data=payload)
+    print("SAVE WORKFLOW UPDATE--------------- \n", response.text)
+    return response.text
+
+
 def get_user_info_by_username(username):
     fields = {"Username": username}
     response = dowellconnection(*REGISTRATION_ARGS, "fetch", fields, "nil")
@@ -164,7 +221,7 @@ def save_uuid_hash(uuid_hash, user_email, document_id):
             "platform": "bangalore",
         }
     )
-    
+
     headers = {"Content-Type": "application/json"}
     response = requests.request("POST", url, headers=headers, data=payload)
     print("SAVED UUID ENTRY", response.text)
@@ -220,7 +277,7 @@ def save_wf(workflows, user, company_id):
             "command": "insert",
             "field": {
                 "eventId": get_event_id(),
-                "workflows":workflows,
+                "workflows": workflows,
                 "company_id": company_id,
                 "created_by": user,
             },
@@ -232,6 +289,7 @@ def save_wf(workflows, user, company_id):
     response = requests.request("POST", url, headers=headers, data=payload)
     print("SAVE WORKFLOW ENTRY----------- \n", response.text)
     return response.text
+
 
 def update_wf(workflow_id, int_wf_string, ext_wf_string):
     url = "http://100002.pythonanywhere.com/"
