@@ -279,7 +279,7 @@ def save_wf(workflows, user, company_id):
                 "eventId": get_event_id(),
                 "workflows": workflows,
                 "company_id": company_id,
-                "created_by": user,
+                "created_by": user, 
             },
             "update_field": {"order_nos": 21},
             "platform": "bangalore",

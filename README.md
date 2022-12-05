@@ -477,23 +477,25 @@ Request Body
 {
     "company_id": "<company_id_of_authenticated_user>",
     "created_by": "<user_name_of_authenticated_user>"    
-    "wf_name":"<workflow_title>",
-    "step_name":"<steps_of_the_current_workflow",
-    "rights":"<ADD/EDIT_or_VIEW_or_COMMENT_or_APPROVE>",
-    "display_before":"<true or false>",
-    "skip":"<True_or_False>",
-    "limit":"<No_limit>",
-    "start_time":"<START_DATE_AND_TIME>",
-    "end_time":"<END_DATE_AND_TIME>",
-    "member_portfolio":"<Portfolio_1>",
-    "member_type":"<TEAM_MEMBER_or_GUEST>"
+    "wf_title":"<workflow_title>",
+     'steps': [
+        {'step_name': 'step_one', 
+        "rights":"<ADD/EDIT_or_VIEW_or_COMMENT_or_APPROVE>",
+        "display_before":"<true or false>",
+        "skip":"<True_or_False>",
+        "limit":"<No_limit>",
+        "start_time":"<START_DATE_AND_TIME>",
+        "end_time":"<END_DATE_AND_TIME>",
+        "member_portfolio":"<Portfolio_1>",
+        "member_type":"<TEAM_MEMBER_or_GUEST>" 
+        'reminder': ''}]
 }
 ```
 
 Response-201
-
+ 
 ```
-{
+{ 
     "workflow": "<saved_workflow_data>
 }
 ```

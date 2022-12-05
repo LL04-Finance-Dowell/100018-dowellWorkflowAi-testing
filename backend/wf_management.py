@@ -15,7 +15,7 @@ from .mongo_db_connection import (
 @api_view(["POST"])
 def create_workflow(request):  # Document Creation.
     if request.method == "POST":
-        form = request.data  # TODO: We will get the data from form 1 by 1 - Dont Worry.
+        form = request.data
         if not form:
             return Response(
                 {"message": "Workflow Data required"},
@@ -24,19 +24,26 @@ def create_workflow(request):  # Document Creation.
         else:
             created_by =    form["created_by"]
             company_id =    form["company_id"]
-            wf_name =       form["wf_name"]
-            step_name   =   form['step_name']
-            rights      =   form['rights']
-            display_before = form['display_before']
-            skip    =        form['skip']   
-            limit   = form["limit"]
-            start_time =  form['start_time']
-            end_time =form['end_time']
-            member_portfolio = form['member_portfolio']
-            member_type = form['member_type']
+            wf_name =       form["wf_title"]
+            steps  =   form['steps']
+            
             data={
                 "workflow_title": wf_name,
-                "steps": [{
+                "steps": []
+                        }
+            for step in steps:
+                step_name= step['step_name']
+                rights      =   step['rights']
+                display_before = step['display_before']
+                skip    =        step['skip']   
+                limit   = step["limit"]
+                start_time =  step['start_time']
+                end_time =step['end_time']
+                member_portfolio = step['member_portfolio']
+                member_type = step['member_type']
+                reminder = step["reminder"]
+                data["steps"].append( 
+                    {
                             "step_name"        : step_name,
                             "skip"            : skip, # True or False,
                             "member_type"    : member_type, #    values can be "TEAM_MEMBER" or "GUEST",
@@ -47,9 +54,9 @@ def create_workflow(request):  # Document Creation.
                             "limit"    : limit,
                             "start_time": start_time,
                             "end_time":    end_time,
-                            "reminder": "",
-                        }]
+                            "reminder":reminder
                         }
+                ) 
             res = json.loads(save_wf(data, created_by, company_id))
             if res["isSuccess"]:
                 try:
