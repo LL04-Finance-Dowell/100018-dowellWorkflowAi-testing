@@ -3,15 +3,22 @@ import { useForm } from "react-hook-form";
 import { useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import Overlay from "../../../overlay/Overlay";
-
+import { useUserContext } from "../../../../../contexts/UserContext";
 import overlayStyles from "../../../overlay/overlay.module.css";
+import { useDispatch } from "react-redux";
+import { createWorkflow } from "../../../../../features/workflow/asyncTHunks";
 
 const CreateWorkflows = ({ handleToggleOverlay }) => {
-  const [internalWorkflows, setInternalWorkflows] = useState([]);
-  const [workflowTitle, setWorkflowTitle] = useState("");
-  const [isStep, setIsStep] = useState(true);
+  const dispatch = useDispatch();
 
-  const { register, handleSubmit } = useForm();
+  const [internalWorkflows, setInternalWorkflows] = useState([]);
+  const [workflowTitle, setWorkflowTitle] = useState(null);
+  const [isStep, setIsStep] = useState(true);
+  const { currentUser } = useUserContext();
+
+  console.log("currentUSer0", currentUser);
+
+  const { register, handleSubmit, reset } = useForm();
 
   const onSubmit = (data) => {
     console.log(data);
@@ -19,6 +26,8 @@ const CreateWorkflows = ({ handleToggleOverlay }) => {
     const internalTemplate = { id: uuidv4(), stepName, role };
 
     setInternalWorkflows((prev) => [...prev, internalTemplate]);
+
+    reset();
   };
 
   const handleRemoveInternalTemplate = (id) => {
@@ -34,8 +43,41 @@ const CreateWorkflows = ({ handleToggleOverlay }) => {
     setWorkflowTitle(e.target.value);
   };
 
+  const handleCreateWorkflow = () => {
+    if (!workflowTitle) {
+      console.log("add workflow title");
+      return;
+    }
+
+    if (internalWorkflows.length < 1) {
+      console.log("add steps");
+      return;
+    }
+
+    const data = {
+      created_by: currentUser.username,
+      wf_title: workflowTitle,
+      company_id: "6365ee18ff915c925f3a6691",
+      steps: internalWorkflows.map((item) => ({
+        step_name: item.stepName,
+        member_type: item.role,
+        rights: "",
+        display_before: "",
+        skip: "",
+        limit: "",
+        start_time: "",
+        end_time: "",
+        member_portfolio: "",
+        reminder: "",
+      })),
+    };
+
+    dispatch(createWorkflow(data));
+    console.log(data);
+  };
+
   return (
-    <Overlay title="Create Document" handleToggleOverlay={handleToggleOverlay}>
+    <Overlay title="Create Workflow" handleToggleOverlay={handleToggleOverlay}>
       <div className={styles.form__container}>
         <div className={overlayStyles.input__box}>
           <label>
@@ -111,7 +153,9 @@ const CreateWorkflows = ({ handleToggleOverlay }) => {
           >
             cancel
           </button>
-          <button className={styles.add__button}>add</button>
+          <button onClick={handleCreateWorkflow} className={styles.add__button}>
+            add
+          </button>
         </div>
       </div>
     </Overlay>

@@ -7,17 +7,34 @@ import Overlay from "../../../overlay/Overlay";
 import overlayStyles from "../../../overlay/overlay.module.css";
 import { BsArrowRightShort } from "react-icons/bs";
 import Collapse from "../../../../../layouts/collapse/Collapse";
+import { useDispatch, useSelector } from "react-redux";
+import { mineTemplates } from "../../../../../features/template/asyncThunks";
+import { useEffect } from "react";
+import { createDocument } from "../../../../../features/document/asyncThunks";
+import { LoadingSpinner } from "../../../../LoadingSpinner/LoadingSpinner";
 
 const CreateDocument = ({ handleToggleOverlay }) => {
+  const dispatch = useDispatch();
+  const { miningTemplates, status } = useSelector((state) => state.template);
+  const [currentOption, setCurrentOption] = useState(null);
+
   const [toggleDropdown, setToggleDropdown] = useState(false);
   const ref = useRef(null);
 
-  const { register, handleSubmit, setValue, watch } = useForm();
-
-  const { template } = watch();
+  const { register, handleSubmit, setValue } = useForm();
 
   const onSubmit = (data) => {
     console.log("data", data);
+
+    const { template } = data;
+
+    const createDocumentData = {
+      company_id: "6360b64d0a882cf6308f5758",
+      template_id: template,
+      created_by: "Manish",
+    };
+
+    dispatch(createDocument(createDocumentData));
   };
 
   const handleDropdown = () => {
@@ -25,9 +42,10 @@ const CreateDocument = ({ handleToggleOverlay }) => {
     ref.current?.blur();
   };
 
-  const handleOptionClick = (option) => {
+  const handleOptionClick = (item) => {
     setToggleDropdown(false);
-    setValue("template", option);
+    setCurrentOption(item.template_name);
+    setValue("template", item.eventId);
     ref.current?.focus();
   };
 
@@ -35,52 +53,72 @@ const CreateDocument = ({ handleToggleOverlay }) => {
     ref.current?.focus();
   };
 
+  useEffect(() => {
+    dispatch(
+      mineTemplates({
+        company_id: "6360b64d0a882cf6308f5758",
+      })
+    );
+  }, []);
+
   return (
     <Overlay title="Create Document" handleToggleOverlay={handleToggleOverlay}>
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <label onClick={handleClickLabel} htmlFor="template">
-          Select Template <span>*</span>
-        </label>
-        <div id="template" className={styles.dropdown__container}>
-          <div style={{ position: "relative" }}>
-            <input
-              tabIndex={-98}
-              required
-              className={styles.ghost__input}
-              {...register("template")}
-            />
-            <button
-              ref={ref}
-              type="button"
-              onClick={handleDropdown}
-              className={`${styles.dropdown__current__option} `}
-            >
-              {template ? template : "__Template Name__"}
-            </button>
-          </div>
-          <div className={styles.dropdown__option__container}>
-            <Collapse open={toggleDropdown}>
-              <div role="listbox" className={styles.dropdown__option__box}>
-                {templates.map((item) => (
-                  <div
-                    onClick={() => handleOptionClick(item.option)}
-                    className={styles.dropdown__option__content}
-                  >
-                    {item.option}
-                  </div>
-                ))}
-              </div>
-            </Collapse>
-          </div>
+      {status === "pending" ? (
+        <div>
+          <LoadingSpinner />
         </div>
+      ) : (
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <label onClick={handleClickLabel} htmlFor="template">
+            Select Template <span>*</span>
+          </label>
+          <div id="template" className={styles.dropdown__container}>
+            <div style={{ position: "relative" }}>
+              <select
+                required
+                className={styles.ghost__input}
+                tabIndex={-98}
+                {...register("template")}
+              >
+                {miningTemplates.map((item) => (
+                  <option key={item.eventId} value={item.eventId}>
+                    {item.template_name}
+                  </option>
+                ))}
+              </select>
+              <button
+                ref={ref}
+                type="button"
+                onClick={handleDropdown}
+                className={`${styles.dropdown__current__option} `}
+              >
+                {currentOption ? currentOption : "__Template Name__"}
+              </button>
+            </div>
+            <div className={styles.dropdown__option__container}>
+              <Collapse open={toggleDropdown}>
+                <div role="listbox" className={styles.dropdown__option__box}>
+                  {miningTemplates.map((item) => (
+                    <div
+                      onClick={() => handleOptionClick(item)}
+                      className={styles.dropdown__option__content}
+                    >
+                      {item.template_name}
+                    </div>
+                  ))}
+                </div>
+              </Collapse>
+            </div>
+          </div>
 
-        <button className={styles.create__button} type="submit">
-          <span>Go to Editor</span>
-          <i>
-            <BsArrowRightShort size={25} />
-          </i>
-        </button>
-      </form>
+          <button className={styles.create__button} type="submit">
+            <span>Go to Editor</span>
+            <i>
+              <BsArrowRightShort size={25} />
+            </i>
+          </button>
+        </form>
+      )}
     </Overlay>
   );
 };

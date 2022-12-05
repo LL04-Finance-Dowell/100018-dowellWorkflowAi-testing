@@ -1,6 +1,5 @@
 import React from "react";
 import styles from "./formLayout.module.css";
-import DoneIcon from "@mui/icons-material/Done";
 
 const FormLayout = ({ isSubmitted, children, loading, ...rest }) => {
   console.log("aaa", loading);
@@ -10,7 +9,7 @@ const FormLayout = ({ isSubmitted, children, loading, ...rest }) => {
       {children}
       {isSubmitted && (
         <div className={styles.pasted__text}>
-          <DoneIcon />
+          {/*  <DoneIcon /> */}
           <span> Pasted</span>
         </div>
       )}

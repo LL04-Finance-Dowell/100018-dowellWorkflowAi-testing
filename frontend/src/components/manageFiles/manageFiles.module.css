@@ -19,13 +19,33 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 150px;
-  height: 150px;
-  background-color: green;
+  flex-direction: column;
+  gap: 25px;
+  width: 180px;
+  height: 185px;
+  background-color: #f3fff1;
+  border: 2px dashed #adadad;
+  border-radius: 20px;
 }
 
 .add__Form__toggle i {
   cursor: pointer;
+  width: 57px;
+  height: 57px;
+  background: #1f7628;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.25);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.add__Form__toggle h2 {
+  font-size: 20px;
+  font-weight: 500;
+  color: #000;
+  line-height: 27px;
+  text-align: center;
 }
 
 .header {

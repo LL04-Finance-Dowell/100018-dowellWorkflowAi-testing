@@ -9,17 +9,21 @@ import { ToastContainer } from "react-toastify";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "@fontsource/roboto"; // Defaults to weight 400.
 import { AppContextProvider } from "./contexts/AppContext";
+import { Provider } from "react-redux";
+import { store } from "./app/store";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>
     <HashRouter>
-      <UserContextProvider>
-        <AppContextProvider>
-          <App />
-        </AppContextProvider>
-        <ToastContainer />
-      </UserContextProvider>
+      <Provider store={store}>
+        <UserContextProvider>
+          <AppContextProvider>
+            <App />
+          </AppContextProvider>
+          <ToastContainer />
+        </UserContextProvider>
+      </Provider>
     </HashRouter>
   </React.StrictMode>
 );

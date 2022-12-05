@@ -1,11 +1,5 @@
 import React from "react";
 import styles from "./sidebar.module.css";
-import MenuIcon from "@mui/icons-material/Menu";
-import SearchIcon from "@mui/icons-material/Search";
-import HouseIcon from "@mui/icons-material/House";
-import PersonIcon from "@mui/icons-material/Person";
-import AddIcon from "@mui/icons-material/Add";
-import PowerSettingsNewIcon from "@mui/icons-material/PowerSettingsNew";
 import { v4 as uuidv4 } from "uuid";
 import CollapseItem from "./collapseItem/CollapseItem";
 import Notifications from "./notifications/Notifications";

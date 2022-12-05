@@ -1,19 +1,20 @@
 import { useState } from "react";
 import styles from "./manageFiles.module.css";
-import { BsPlusSquareDotted } from "react-icons/bs";
+import { BsPlusLg } from "react-icons/bs";
 import { useAppContext } from "../../contexts/AppContext";
-import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { createTemplate } from "../../features/template/asyncThunks";
+import { dataMaanish } from "../newSidebar/new/New";
 
 const ManageFiles = ({ title, children, OverlayComp }) => {
-  const navigate = useNavigate();
-  /*   const [toggleOverlay, setToggleOverlay] = useState(false); */
+  const dispatch = useDispatch();
   const { toggleNewFileForm, setToggleNewFileForm } = useAppContext();
 
   const handleToggleOverlay = () => {
     if (OverlayComp) {
       setToggleNewFileForm((prev) => !prev);
     } else {
-      navigate("/");
+      dispatch(createTemplate(dataMaanish));
     }
   };
 
@@ -29,7 +30,10 @@ const ManageFiles = ({ title, children, OverlayComp }) => {
             onClick={handleToggleOverlay}
             className={styles.add__Form__toggle}
           >
-            <BsPlusSquareDotted color="black" cursor="pointer" size={70} />
+            <i>
+              <BsPlusLg color="white" cursor="pointer" size={25} />
+            </i>
+            <h2>Add Workflow</h2>
           </div>
         </div>
         {children}

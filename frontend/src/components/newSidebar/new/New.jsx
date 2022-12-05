@@ -5,8 +5,18 @@ import { v4 as uuidv4 } from "uuid";
 import { FaPlus } from "react-icons/fa";
 import { HashLink } from "react-router-hash-link";
 import { useAppContext } from "../../../contexts/AppContext";
+import { useDispatch, useSelector } from "react-redux";
+import { createTemplate } from "../../../features/template/asyncThunks";
+
+export const dataMaanish = {
+  created_by: "Maanish",
+  company_id: "6365ee18ff915c925f3a6691",
+};
 
 const New = () => {
+  const dispatch = useDispatch();
+  /*   const { status } = useSelector((state) => state.template); */
+
   const [isOpen, setIsOpen] = useState(false);
   const { setToggleNewFileForm } = useAppContext();
 
@@ -14,8 +24,16 @@ const New = () => {
     setIsOpen((prev) => !prev);
   };
 
-  const handleNewItemClick = () => {
-    setToggleNewFileForm(true);
+  /*  console.log(status); */
+
+  const handleNewItemClick = (e, content) => {
+    if (content === "template") {
+      e.preventDefault();
+
+      dispatch(createTemplate(dataMaanish));
+    } else {
+      setToggleNewFileForm(true);
+    }
   };
 
   return (
@@ -31,7 +49,7 @@ const New = () => {
           <div className={styles.new__content}>
             {items.map((item) => (
               <HashLink
-                onClick={handleNewItemClick}
+                onClick={(e) => handleNewItemClick(e, item.content)}
                 to={item.href}
                 key={item.id}
               >

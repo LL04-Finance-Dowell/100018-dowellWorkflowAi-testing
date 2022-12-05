@@ -7,10 +7,6 @@ import CreateWorkflows from "../../../components/manageFiles/files/workflows/cre
 import { useEffect } from "react";
 
 const WorkflowsPage = () => {
-  useEffect(() => {
-    window.scrollTo(0, 0);
-  }, []);
-
   return (
     <WorkflowLayout>
       <div id="newWorkflow">
