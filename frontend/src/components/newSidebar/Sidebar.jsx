@@ -114,7 +114,7 @@ export const manageFileItems = [
     id: uuidv4(),
     parent: "My Workflows (01)",
     children: [
-      { id: uuidv4(), child: "New Workflow", href: "/workflows/#newWorkflows" },
+      { id: uuidv4(), child: "New Workflow", href: "/workflows/#newWorkflow" },
       { id: uuidv4(), child: "Drafts", href: "/workflows/#drafts" },
       { id: uuidv4(), child: "Created by me", href: "/workflows/#createdByMe" },
       {
