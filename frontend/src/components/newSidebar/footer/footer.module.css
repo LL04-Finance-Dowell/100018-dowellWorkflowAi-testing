@@ -10,10 +10,14 @@
   justify-content: space-between;
   align-items: center;
   padding: 10px;
+  color: var(--e-global-color-text);
+}
+
+.mode__box h1 {
+  font-size: 19px;
 }
 
 .mode__box h2 {
-  color: var(--e-global-color-text);
   font-size: 14px;
   text-transform: capitalize;
 }
@@ -27,4 +31,11 @@
   padding: 3px;
   margin: 3px;
   color: var(--e-global-color-9d2ac19) !important;
+}
+
+@media (max-width: 768px) {
+  .mode__box {
+    flex-direction: column;
+    row-gap: 10px;
+  }
 }

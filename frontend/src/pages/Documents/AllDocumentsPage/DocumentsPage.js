@@ -12,10 +12,18 @@ const DocumentsPage = () => {
       <div id="newDocument">
         <ManageFiles title="New document" OverlayComp={CreateDocument}>
           <div id="drafts">
-            <SectionBox title="drafts" cardItems={drafts} />
+            <SectionBox
+              cardBgColor="#1ABC9C"
+              title="drafts"
+              cardItems={drafts}
+            />
           </div>
           <div id="createdByMe">
-            <SectionBox title="created by me" cardItems={createDocumentsByMe} />
+            <SectionBox
+              cardBgColor="#1ABC9C"
+              title="created by me"
+              cardItems={createDocumentsByMe}
+            />
           </div>
         </ManageFiles>
       </div>

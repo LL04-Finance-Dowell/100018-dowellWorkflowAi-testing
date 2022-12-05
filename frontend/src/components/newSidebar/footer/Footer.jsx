@@ -10,7 +10,7 @@ const Footer = () => {
   return (
     <div className={styles.container}>
       <div className={styles.mode__box}>
-        <h2>6</h2>
+        <h1>6</h1>
         <h2>Learning Mode</h2>
       </div>
       <div className={styles.icon__box}>

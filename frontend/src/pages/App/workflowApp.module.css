@@ -1,0 +1,26 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  padding: 10px;
+}
+
+.section__container {
+  width: var(--primary-section-width);
+  display: flex;
+  flex-direction: column;
+  gap: 100px;
+}
+
+.tasks__container {
+  display: flex;
+  width: 100%;
+  gap: 30px;
+  padding: 10px;
+}
+
+@media (max-width: 768px) {
+  .tasks__container {
+    flex-direction: column;
+  }
+}

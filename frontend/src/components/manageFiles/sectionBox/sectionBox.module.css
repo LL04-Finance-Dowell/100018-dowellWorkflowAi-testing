@@ -1,17 +1,20 @@
+.container {
+  padding: 10px;
+}
+
 .content__container {
   display: flex;
   flex-direction: column;
+  width: 100%;
 }
 
 .content__box {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  gap: 0px;
+  width: 100%;
 }
 
-.card {
-  border: 1px solid pink;
-  height: 280px;
-  background-color: blue;
-  width: auto;
+.grid__box {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 10px;
 }

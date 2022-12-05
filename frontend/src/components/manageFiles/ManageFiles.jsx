@@ -22,13 +22,18 @@ const ManageFiles = ({ title, children, OverlayComp }) => {
       {OverlayComp && toggleNewFileForm && (
         <OverlayComp handleToggleOverlay={handleToggleOverlay} />
       )}
-      <div>
-        <h2 className={styles.header}>{title}</h2>
-        <div onClick={handleToggleOverlay} className={styles.add__Form__toggle}>
-          <BsPlusSquareDotted color="black" cursor="pointer" size={70} />
+      <div className={styles.content__box}>
+        <div>
+          <h2 className={styles.header}>{title}</h2>
+          <div
+            onClick={handleToggleOverlay}
+            className={styles.add__Form__toggle}
+          >
+            <BsPlusSquareDotted color="black" cursor="pointer" size={70} />
+          </div>
         </div>
+        {children}
       </div>
-      {children}
     </div>
   );
 };

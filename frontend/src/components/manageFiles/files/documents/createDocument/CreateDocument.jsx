@@ -4,6 +4,9 @@ import { useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { AiOutlineClose } from "react-icons/ai";
 import Overlay from "../../../overlay/Overlay";
+import overlayStyles from "../../../overlay/overlay.module.css";
+import { BsArrowRightShort } from "react-icons/bs";
+import Collapse from "../../../../../layouts/collapse/Collapse";
 
 const CreateDocument = ({ handleToggleOverlay }) => {
   const [toggleDropdown, setToggleDropdown] = useState(false);
@@ -28,71 +31,18 @@ const CreateDocument = ({ handleToggleOverlay }) => {
     ref.current?.focus();
   };
 
+  const handleClickLabel = () => {
+    ref.current?.focus();
+  };
+
   return (
     <Overlay title="Create Document" handleToggleOverlay={handleToggleOverlay}>
-      <div className={styles.form__box}>
-        <form onSubmit={handleSubmit(onSubmit)}>
-          <div>
-            <label htmlFor="template">Select Template*</label>
-
-            <div id="template" className={styles.dropdown__container}>
-              <input
-                tabIndex={-98}
-                required
-                className={styles.ghost__input}
-                {...register("template")}
-              />
-              <button
-                ref={ref}
-                type="button"
-                onClick={handleDropdown}
-                className={`${styles.dropdown__current__option} `}
-              >
-                {template ? template : "__Template Name__"}
-              </button>
-              <div
-                role="listbox"
-                style={{ display: toggleDropdown ? "block" : "none" }}
-                className={styles.dropdown__option__container}
-              >
-                {templates.map((item) => (
-                  <div
-                    tabIndex={-20}
-                    key={item.id}
-                    className={styles.dropdown__option__box}
-                  >
-                    <div
-                      onClick={() => handleOptionClick(item.option)}
-                      className={styles.dropdown__option__content}
-                    >
-                      {item.option}
-                    </div>
-                  </div>
-                ))}
-              </div>
-              <div className={styles.hr} />
-            </div>
-          </div>
-          <button className={styles.create__button} type="submit">
-            Go to Editor
-          </button>
-        </form>
-      </div>
-    </Overlay>
-
-    /*  <div className={styles.form__box}>
-      <div className={styles.close__icon} onClick={handleToggleOverlay}>
-        <AiOutlineClose size={20} />
-      </div>
-      <div className={styles.form__header}>
-        <p>Create Document</p>
-      </div>
-      
       <form onSubmit={handleSubmit(onSubmit)}>
-        <div>
-          <label htmlFor="template">Select Template*</label>
-
-          <div id="template" className={styles.dropdown__container}>
+        <label onClick={handleClickLabel} htmlFor="template">
+          Select Template <span>*</span>
+        </label>
+        <div id="template" className={styles.dropdown__container}>
+          <div style={{ position: "relative" }}>
             <input
               tabIndex={-98}
               required
@@ -107,37 +57,39 @@ const CreateDocument = ({ handleToggleOverlay }) => {
             >
               {template ? template : "__Template Name__"}
             </button>
-            <div
-              role="listbox"
-              style={{ display: toggleDropdown ? "block" : "none" }}
-              className={styles.dropdown__option__container}
-            >
-              {templates.map((item) => (
-                <div
-                  tabIndex={-20}
-                  key={item.id}
-                  className={styles.dropdown__option__box}
-                >
+          </div>
+          <div className={styles.dropdown__option__container}>
+            <Collapse open={toggleDropdown}>
+              <div role="listbox" className={styles.dropdown__option__box}>
+                {templates.map((item) => (
                   <div
                     onClick={() => handleOptionClick(item.option)}
                     className={styles.dropdown__option__content}
                   >
                     {item.option}
                   </div>
-                </div>
-              ))}
-            </div>
-            <div className={styles.hr} />
+                ))}
+              </div>
+            </Collapse>
           </div>
         </div>
+
         <button className={styles.create__button} type="submit">
-          Go to Editor
+          <span>Go to Editor</span>
+          <i>
+            <BsArrowRightShort size={25} />
+          </i>
         </button>
       </form>
-    </div> */
+    </Overlay>
   );
 };
 
 export default CreateDocument;
 
-export const templates = [{ id: uuidv4(), option: "__template batu__" }];
+export const templates = [
+  { id: uuidv4(), option: "__template batu__" },
+  { id: uuidv4(), option: "__template batu__" },
+  { id: uuidv4(), option: "__template batu__" },
+  { id: uuidv4(), option: "__template batu__" },
+];

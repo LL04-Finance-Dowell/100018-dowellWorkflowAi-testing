@@ -8,18 +8,26 @@ import { useEffect } from "react";
 
 const WorkflowsPage = () => {
   useEffect(() => {
-    window.scrollTo(0, 0)
-  }, [])
+    window.scrollTo(0, 0);
+  }, []);
 
   return (
     <WorkflowLayout>
       <div id="newWorkflow">
         <ManageFiles title="new workflow" OverlayComp={CreateWorkflows}>
           <div id="drafts">
-            <SectionBox title="drafts" cardItems={drafts} />
+            <SectionBox
+              cardBgColor="#1ABC9C"
+              title="drafts"
+              cardItems={drafts}
+            />
           </div>
           <div id="createdByMe">
-            <SectionBox title="created by me" cardItems={createWorkflowsByMe} />
+            <SectionBox
+              cardBgColor="#1ABC9C"
+              title="created by me"
+              cardItems={createWorkflowsByMe}
+            />
           </div>
         </ManageFiles>
       </div>

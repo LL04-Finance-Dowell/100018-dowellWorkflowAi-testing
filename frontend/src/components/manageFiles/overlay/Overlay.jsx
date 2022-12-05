@@ -12,7 +12,7 @@ const Overlay = ({ children, title, handleToggleOverlay }) => {
             <AiOutlineClose size={20} />
           </i>
         </div>
-        {children}
+        <div className={styles.children__container}>{children}</div>
       </div>
     </div>
   );

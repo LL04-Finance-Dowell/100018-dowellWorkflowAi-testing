@@ -2,10 +2,17 @@
   display: flex;
   position: relative;
   flex-direction: column;
-  width: min(72.5vw, 835px);
+  width: 100%;
   position: relative;
   gap: 50px;
   margin-left: 20px;
+}
+
+.content__box {
+  width: var(--primary-section-width);
+  display: flex;
+  gap: 100px;
+  flex-direction: column;
 }
 
 .add__Form__toggle {

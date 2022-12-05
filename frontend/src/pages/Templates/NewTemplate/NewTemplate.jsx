@@ -1,12 +1,5 @@
-import HoverCard from "../../../components/hover-card/HoverCard";
-
 const NewTemplate = () => {
-  return (
-    <div>
-      New temps
-      <HoverCard />
-    </div>
-  );
+  return <div>New temps</div>;
 };
 
 export default NewTemplate;

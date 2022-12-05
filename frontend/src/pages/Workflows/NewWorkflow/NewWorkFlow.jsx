@@ -1,12 +1,5 @@
-import HoverCard from "../../../components/hover-card/HoverCard";
-
 const NewWorkFlow = () => {
-  return (
-    <div>
-      New WorkFlow
-      <HoverCard />
-    </div>
-  );
+  return <div>New WorkFlow</div>;
 };
 
 export default NewWorkFlow;

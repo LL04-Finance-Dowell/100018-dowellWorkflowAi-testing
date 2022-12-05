@@ -1,12 +1,5 @@
-import HoverCard from "../../../components/hover-card/HoverCard";
-
 const TempDraft = () => {
-  return (
-    <div>
-      Draft
-      <HoverCard />
-    </div>
-  );
+  return <div>Draft</div>;
 };
 
 export default TempDraft;

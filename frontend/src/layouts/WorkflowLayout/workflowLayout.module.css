@@ -1,5 +1,5 @@
 .container {
-  width: 100%;
+  max-width: 100vw;
   display: flex;
   justify-content: center;
 }
@@ -8,4 +8,28 @@
   width: min(100%, 1140px);
   display: flex;
   justify-content: space-between;
+}
+
+.sidebar__box {
+  width: 25%;
+  align-self: stretch;
+  background-color: var(--e-global-color-secondary);
+}
+
+.children__box {
+  width: 75%;
+}
+
+@media (max-width: 768px) {
+  .content__box {
+    flex-direction: column;
+  }
+
+  .sidebar__box {
+    width: 100%;
+  }
+
+  .children__box {
+    width: 100%;
+  }
 }

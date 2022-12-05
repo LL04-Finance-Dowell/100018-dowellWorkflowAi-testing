@@ -2,6 +2,7 @@ import { useRef, useState } from "react";
 import styles from "./collapseItem.module.css";
 import Collapse from "../../../layouts/collapse/Collapse";
 import { HashLink } from "react-router-hash-link";
+import { IoMdArrowDropright } from "react-icons/io";
 
 function ListItem({ item }) {
   let children = null;
@@ -55,31 +56,30 @@ const CollapseItem = ({ items, listType }) => {
             }`}
             onClick={() => handleParentClick(item.id)}
           >
+            <i>
+              <IoMdArrowDropright size={25} />
+            </i>
             {item.parent}
           </div>
-
-          <Collapse
-            className={styles.children__item__box}
-            /* in={item.isOpen} */
-            open={item.isOpen}
-          >
-            {listType && listType === "ol" ? (
-              <ol>
-                {item.children.map((item) => (
-                  /*  <li key={item.id}>
-                  <a>{item.child}</a>
-                </li> */
-                  <ListItem item={item} key={item.id} />
-                ))}
-              </ol>
-            ) : (
-              <ul>
-                {item.children.map((item) => (
-                  <ListItem item={item} key={item.id} />
-                ))}
-              </ul>
-            )}
-          </Collapse>
+          <div className={styles.children__item__container}>
+            <Collapse open={item.isOpen}>
+              <div className={styles.children__item__box}>
+                {listType && listType === "ol" ? (
+                  <ol>
+                    {item.children.map((item) => (
+                      <ListItem item={item} key={item.id} />
+                    ))}
+                  </ol>
+                ) : (
+                  <ul>
+                    {item.children.map((item) => (
+                      <ListItem item={item} key={item.id} />
+                    ))}
+                  </ul>
+                )}
+              </div>
+            </Collapse>
+          </div>
         </>
       ))}
     </div>

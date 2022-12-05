@@ -10,10 +10,18 @@ const TemplatesPage = () => {
       <div id="newTemplate">
         <ManageFiles title="New template">
           <div id="drafts">
-            <SectionBox title="drafts" cardItems={drafts} />
+            <SectionBox
+              cardBgColor="#1ABC9C"
+              title="drafts"
+              cardItems={drafts}
+            />
           </div>
           <div id="createdByMe">
-            <SectionBox title="created by me" cardItems={createTemplatesByMe} />
+            <SectionBox
+              cardBgColor="#1ABC9C"
+              title="created by me"
+              cardItems={createTemplatesByMe}
+            />
           </div>
         </ManageFiles>
       </div>

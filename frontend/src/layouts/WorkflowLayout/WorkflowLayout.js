@@ -7,16 +7,14 @@ const WorkflowLayout = ({ children }) => {
   const { currentUser } = useUserContext();
 
   return (
-    <>
-      <>
-        <main className={styles.container}>
-          <div className={styles.content__box}>
-            <SideBar user={currentUser} />
-            {children}
-          </div>
-        </main>
-      </>
-    </>
+    <div className={styles.container}>
+      <div className={styles.content__box}>
+        <div className={styles.sidebar__box}>
+          <SideBar user={currentUser} />
+        </div>
+        <div className={styles.children__box}>{children}</div>
+      </div>
+    </div>
   );
 };
 

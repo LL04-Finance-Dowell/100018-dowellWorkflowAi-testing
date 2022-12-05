@@ -7,7 +7,9 @@ const Notifications = () => {
     <div className={styles.container}>
       <h2 className={styles.header}>Notifications</h2>
       <di className={styles.line}></di>
-      <CollapseItem listType="ol" items={items} />
+      <div className={styles.collapse__box}>
+        <CollapseItem listType="ol" items={items} />
+      </div>
     </div>
   );
 };

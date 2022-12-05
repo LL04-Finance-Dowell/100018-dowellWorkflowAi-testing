@@ -1,206 +1,118 @@
-import { Link } from "react-router-dom";
-import FlipCard from "../../components/flip-card/FlipCard";
-import HoverCard from "../../components/hover-card/HoverCard";
-import SmallFlip from "../../components/small-flip/SmallFlip";
-import LinkedInIcon from "@mui/icons-material/LinkedIn";
-import YouTubeIcon from "@mui/icons-material/YouTube";
-import FacebookIcon from "@mui/icons-material/Facebook";
-import ManageAccountsIcon from "@mui/icons-material/ManageAccounts";
-import SearchIcon from "@mui/icons-material/Search";
-import NotificationsNoneIcon from "@mui/icons-material/NotificationsNone";
-import InsertDriveFileIcon from "@mui/icons-material/InsertDriveFile";
-import { useUserContext } from "../../contexts/UserContext";
+import styles from "./workflowApp.module.css";
+import CustomerSupport from "../../components/landingPage/customerSupport/CustomerSupport";
 import WorkflowLayout from "../../layouts/WorkflowLayout/WorkflowLayout";
-import { dowellLoginUrl, dowellLogoutUrl } from "../../services/axios";
-import {
-  clearLocalStorageItems,
-  handleAuthenticationBtnClick,
-} from "../../services/common";
-import "./style.css";
-import Carousell from "../../components/carousel/Carousel";
-import Table from "../../components/table/Table";
-import Chat from "../../components/chat/Chat";
+import { v4 as uuidv4 } from "uuid";
+import SectionBox from "../../components/manageFiles/sectionBox/SectionBox";
+import HandleTasks from "../../components/landingPage/handleTasks/HandleTasks";
+import FlipMenu from "../../components/flipMenu/FlipMenu";
 
 const WorkflowApp = () => {
-  const { currentUser } = useUserContext();
-
   return (
-    <>
-      <WorkflowLayout>
-        <>
-          <div className="main">
-            {/* <SideBar /> */}
-
-            <div className="top-main">
-              <Carousell />
-
-              <div
-                style={{
-                  zIndex: "1",
-                  position: "sticky",
-                  top: "0px",
-                }}
-                className="sm-flip"
-              >
-                <SmallFlip
-                  icon={<NotificationsNoneIcon fontSize="large" />}
-                  content={"006"}
-                  button={"View"}
-                  size={"50px"}
-                  padding={"32px"}
-                  color={"#1abc9c"}
-                />
-                <SmallFlip
-                  icon={<InsertDriveFileIcon fontSize="large" />}
-                  content={"New"}
-                  button={"Create Document"}
-                  size={"60px"}
-                  padding={"30px"}
-                  color={"gray"}
-                  btm={"5px"}
-                />
-                <SmallFlip
-                  icon={<SearchIcon fontSize="large" />}
-                  content={"Search"}
-                  button={"Search Document"}
-                  size={"60px"}
-                  padding={"30px"}
-                  color={"#61ce70"}
-                />
-                <SmallFlip
-                  icon={<ManageAccountsIcon fontSize="large" />}
-                  content={"Support"}
-                  button={"Dowell Knowledge Center"}
-                  size={"85px"}
-                  padding={"15px"}
-                  color={"#c3d6be"}
-                />
-              </div>
-              <div style={{ marginTop: "150px" }}>
-                <h5
-                  id="ji"
-                  style={{
-                    border: "1px solid #74d481",
-                    width: "107%",
-                    height: "40px",
-                    marginBottom: "0",
-                    marginLeft: "39px",
-                    color: "red",
-                    paddingTop: "5px",
-                    paddingLeft: "5px",
-                    fontWeight: "bold",
-                  }}
-                >
-                  Notifications - Documents
-                </h5>
-                <div
-                  style={{
-                    display: "grid",
-                    width: "96%",
-                    marginTop: "3px",
-                    paddingLeft: "50px",
-                    gridTemplateColumns: "auto auto auto",
-                  }}
-                >
-                  <HoverCard />
-                  <HoverCard />
-                  <HoverCard />
-                  <HoverCard />
-                  <HoverCard />
-                </div>
-              </div>
-
-              <div style={{ marginTop: "100px" }}>
-                <h5
-                  id="ji"
-                  style={{
-                    border: "1px solid #74d481",
-                    width: "107%",
-                    height: "40px",
-                    marginBottom: "0",
-                    marginLeft: "39px",
-                    color: "red",
-                    paddingTop: "5px",
-                    paddingLeft: "5px",
-                    fontWeight: "bold",
-                  }}
-                >
-                  Notifications - Templates
-                </h5>
-                <div
-                  style={{
-                    display: "grid",
-                    width: "96%",
-                    marginTop: "3px",
-                    paddingLeft: "50px",
-                    gridTemplateColumns: "auto auto auto",
-                  }}
-                >
-                  <HoverCard color="#c3d6be" />
-                  <HoverCard color="#c3d6be" />
-                  <HoverCard color="#c3d6be" />
-                </div>
-              </div>
-              <div style={{ marginTop: "100px", marginBottom: "100px" }}>
-                <h5
-                  id="ji"
-                  style={{
-                    border: "1px solid #74d481",
-                    width: "107%",
-                    height: "40px",
-                    marginBottom: "0",
-                    marginLeft: "39px",
-                    color: "red",
-                    paddingTop: "5px",
-                    paddingLeft: "5px",
-                    fontWeight: "bold",
-                  }}
-                >
-                  Notifications - Workflows
-                </h5>
-                <div
-                  style={{
-                    display: "grid",
-                    width: "67%",
-                    paddingLeft: "50px",
-                  }}
-                >
-                  <HoverCard color="#e1e1e1" />
-                  <HoverCard color="#e1e1e1" />
-                </div>
-              </div>
-              <div
-                style={{
-                  width: "177%",
-                  display: "flex",
-                }}
-              >
-                <Table
-                  header="Incomplete Tasks"
-                  style={{ margin: "0 10px 10px 10px" }}
-                />
-                <Table
-                  header="Complete Tasks"
-                  style={{ margin: "0 10px 10px 10px" }}
-                  color="#7a7a7a"
-                />
-              </div>
-            </div>
-            <FlipCard />
+    <WorkflowLayout>
+      <div className={styles.container}>
+        <CustomerSupport />
+        <FlipMenu />
+        <div className={styles.section__container}>
+          {notifications.map((item) => (
+            <SectionBox
+              key={item.id}
+              title={`notifications - ${item.title}`}
+              cardItems={item.items}
+              cardBgColor={item.cardBgColor}
+            />
+          ))}
+          <div className={styles.tasks__container}>
+            <HandleTasks feature="incomplate" tasks={incomplateTasks} />
+            <HandleTasks feature="complated" tasks={complatedTasks} />
           </div>
-          {/* <h1>Hello {currentUser.username}</h1>
-
-                <div>
-                    { 
-                        currentUser ? 
-                        <button><Link to={dowellLogoutUrl} onClick={(e) => handleAuthenticationBtnClick(e, dowellLogoutUrl, clearLocalStorageItems())}>Logout</Link></button> : 
-                        <button><Link to={dowellLoginUrl} onClick={(e) => handleAuthenticationBtnClick(e, dowellLoginUrl)}>Login</Link></button> 
-                    }
-                </div> */}
-        </>
-      </WorkflowLayout>
-    </>
+        </div>
+      </div>
+    </WorkflowLayout>
   );
 };
 
 export default WorkflowApp;
+
+export const notifications = [
+  {
+    id: uuidv4(),
+    title: "documents",
+    cardBgColor: "#1ABC9C",
+    items: [
+      { id: uuidv4() },
+      { id: uuidv4() },
+      { id: uuidv4() },
+      { id: uuidv4() },
+      { id: uuidv4() },
+    ],
+  },
+  {
+    id: uuidv4(),
+    title: "templates",
+    cardBgColor: null,
+    items: [{ id: uuidv4() }, { id: uuidv4() }, { id: uuidv4() }],
+  },
+  {
+    id: uuidv4(),
+    title: "workflows",
+    cardBgColor: null,
+    items: [{ id: uuidv4() }, { id: uuidv4() }],
+  },
+];
+
+export const incomplateTasks = [
+  {
+    id: uuidv4(),
+    parent: "documents",
+    children: [
+      { id: uuidv4(), child: "document name" },
+      { id: uuidv4(), child: "document name" },
+    ],
+  },
+  {
+    id: uuidv4(),
+    parent: "templates",
+    children: [
+      { id: uuidv4(), child: "templates name" },
+      { id: uuidv4(), child: "templates name" },
+    ],
+  },
+  {
+    id: uuidv4(),
+    parent: "workflows",
+    children: [
+      { id: uuidv4(), child: "workflows name" },
+      { id: uuidv4(), child: "workflows name" },
+    ],
+  },
+];
+
+export const complatedTasks = [
+  {
+    id: uuidv4(),
+    parent: "documents",
+    isOpen: false,
+    children: [
+      { id: uuidv4(), child: "document name" },
+      { id: uuidv4(), child: "document name" },
+    ],
+  },
+  {
+    id: uuidv4(),
+    parent: "templates",
+    isOpen: false,
+    children: [
+      { id: uuidv4(), child: "templates name" },
+      { id: uuidv4(), child: "templates name" },
+    ],
+  },
+  {
+    id: uuidv4(),
+    parent: "workflows",
+    isOpen: false,
+    children: [
+      { id: uuidv4(), child: "workflows name" },
+      { id: uuidv4(), child: "workflows name" },
+    ],
+  },
+];

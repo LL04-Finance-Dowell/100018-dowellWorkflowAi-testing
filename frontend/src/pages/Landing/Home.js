@@ -1,20 +1,10 @@
 import { Link } from "react-router-dom";
-import Carousel from "../../components/carousel/Carousel";
-import FlipCard from "../../components/flip-card/FlipCard";
-import SideBar from "../../components/sideBar/SideBar";
-import SmallFlip from "../../components/small-flip/SmallFlip";
-import ManageAccountsIcon from "@mui/icons-material/ManageAccounts";
-import SearchIcon from "@mui/icons-material/Search";
 import { useUserContext } from "../../contexts/UserContext";
 import WorkflowLayout from "../../layouts/WorkflowLayout/WorkflowLayout";
 import { dowellLoginUrl } from "../../services/axios";
 import { handleAuthenticationBtnClick } from "../../services/common";
-import NotificationsNoneIcon from "@mui/icons-material/NotificationsNone";
-import InsertDriveFileIcon from "@mui/icons-material/InsertDriveFile";
-
 import "../Landing/home.css";
-import HoverCard from "../../components/hover-card/HoverCard";
-import Table from "../../components/table/Table";
+
 const LandingPage = () => {
   const { currentUser } = useUserContext();
 
