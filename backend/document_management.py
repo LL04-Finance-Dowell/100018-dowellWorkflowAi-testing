@@ -16,12 +16,13 @@ from .mongo_db_connection import (
     update_document,
     get_wf_object,
     get_wf_list,
+    get_user_list,
     get_user_info_by_username,
     get_members,
 )
 editorApi = "https://100058.pythonanywhere.com/api/generate-editor-link/"
     
-# print(get_template_object("6365f9c2ff915c925f3a67f4")) 
+
 @api_view(["GET","POST"])
 def create_document(request):  # Document Creation.
     
@@ -37,7 +38,7 @@ def create_document(request):  # Document Creation.
             template_id = request.data["template_id"]
             document_name = ""
             created_by = request.data["created_by"]
-            company_id = request.data["company_id"]
+            company_id = get_user_info_by_username(created_by)['company_id']
             #data = get_content_from_template_collection_with_that_template_id
             data = get_template_object(template_id)
             res = json.loads(
@@ -145,7 +146,8 @@ def documents_to_be_signed(request):  # List of `to be signed` documents.
     filtered_list = []
 
     if request.method=="POST":
-        company_id=request.data['company_id']
+        created_by=request.data['created_by']
+        company_id=get_user_info_by_username(created_by)['company_id']
 
         documents = get_document_list(company_id)
    
@@ -194,7 +196,7 @@ def my_documents(request):  # List of my documents.
     filtered_list = []
     if request.method=="POST":
         created_by=request.data['created_by']
-        company_id=request.data['company_id']
+        company_id=get_user_info_by_username(created_by)['company_id']
         documents = get_document_list(company_id)
         if not documents:
             return Response(
@@ -301,7 +303,8 @@ def my_documents(request):  # List of my documents.
 def rejected_documents(request):  # List of `to be signed` documents.
     filtered_list = []
     if request.method=="POST":
-        company_id=request.data['company_id']
+        created_by=request.data['created_by']
+        company_id=get_user_info_by_username(created_by)['company_id']
         documents = get_document_list(company_id)
    
         for doc in documents:
@@ -326,7 +329,8 @@ def draft_documents(request):  # List of `to be signed` documents.
     title = "Draft Documents."
     filtered_list = []
     if request.method=="POST":
-        company_id=request.data['company_id']
+        created_by = request.data['created_by']
+        company_id= get_user_info_by_username(created_by)['company_id']
         documents = get_document_list(company_id)
         try:
             for doc in documents:
