@@ -8,6 +8,7 @@ from .mongo_db_connection import (
     save_template,
     update_template_approval,
     get_template_object,
+    get_user_info_by_username,
 )
 
 editorApi = "https://100058.pythonanywhere.com/api/generate-editor-link/"
@@ -22,7 +23,7 @@ def create_template(request):
             template_name,
             data,
             request.data["created_by"],
-            request.data["company_id"],
+            get_user_info_by_username(request.data["created_by"])["company_id"],
         )
     )
     if not res["isSuccess"]:

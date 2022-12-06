@@ -113,12 +113,6 @@ DOCUMENT_CONNECTION_DICT = {
 url = "https://100014.pythonanywhere.com/api/userinfo/"
 
 
-def get_members(session_id):
-    payload = {"session_id": session_id}
-    r = requests.post(url=url, data=payload)
-    return r.json()
-
-
 def get_event_id():
     dd = datetime.now()
     time = dd.strftime("%d:%m:%Y,%H:%M:%S")
@@ -144,6 +138,46 @@ def get_event_id():
     }
     r = requests.post(url, json=data)
     return r.text
+
+
+# --------- User Info-------------------------
+
+
+def get_user_list(company_id):
+    field = {"company_id": str(company_id)}
+    response_obj = dowellconnection(*USER_CONNECTION_LIST, "fetch", field, "nil")
+    res_obj = json.loads(response_obj)
+    if len(res_obj["data"]):
+        return res_obj["data"]
+    else:
+        return []
+
+
+def get_user(user_name):
+    field = {"user_name": str(user_name)}
+    response_obj = dowellconnection(*USER_CONNECTION_LIST, "find", field, "nil")
+    res_obj = json.loads(response_obj)
+    print(res_obj)
+    if len(res_obj["data"]):
+        return res_obj["data"]
+    else:
+        return []
+
+
+def get_members(session_id):
+    payload = {"session_id": session_id}
+    r = requests.post(url=url, data=payload)
+    return r.json()
+
+
+def get_user_info_by_username(username):
+    fields = {"Username": username}
+    response = dowellconnection(*REGISTRATION_ARGS, "fetch", fields, "nil")
+    usrdic = json.loads(response)
+    if len(usrdic["data"]) == 0:
+        return []
+    else:
+        return usrdic["data"][0]
 
 
 #  -------------------------------Workflow Process------------------
@@ -192,6 +226,7 @@ def update_wf_process(workflow_id, workflow):
     print("SAVE WORKFLOW UPDATE--------------- \n", response.text)
     return response.text
 
+
 def get_process_object(workflow_id):
     fields = {"_id": str(workflow_id)}
     response_obj = dowellconnection(*WF_PROCESS_CONNECTION, "find", fields, "nil")
@@ -200,16 +235,6 @@ def get_process_object(workflow_id):
         return res_obj["data"]
     else:
         return []
-
-
-def get_user_info_by_username(username):
-    fields = {"Username": username}
-    response = dowellconnection(*REGISTRATION_ARGS, "fetch", fields, "nil")
-    usrdic = json.loads(response)
-    if len(usrdic["data"]) == 0:
-        return []
-    else:
-        return usrdic["data"][0]
 
 
 def save_uuid_hash(uuid_hash, user_email, document_id):
@@ -277,6 +302,9 @@ def update_uuid_object(uuid_hash):
     return response.text
 
 
+# -------------------------------- Workflows-------------------
+
+
 def save_wf(workflows, user, company_id):
     url = "http://100002.pythonanywhere.com/"
     payload = json.dumps(
@@ -287,7 +315,7 @@ def save_wf(workflows, user, company_id):
                 "eventId": get_event_id(),
                 "workflows": workflows,
                 "company_id": company_id,
-                "created_by": user, 
+                "created_by": user,
             },
             "update_field": {"order_nos": 21},
             "platform": "bangalore",
@@ -353,6 +381,41 @@ def update_wf_approval(workflow_id, approval):
     return response.text
 
 
+def get_wf_object(workflow_id):
+    fields = {"_id": str(workflow_id)}
+    response_obj = dowellconnection(*WF_CONNECTION_LIST, "find", fields, "nil")
+    res_obj = json.loads(response_obj)
+    if len(res_obj["data"]):
+        return res_obj["data"]
+    else:
+        return []
+
+
+def get_all_wf_list():
+    fields = {}
+    response_obj = dowellconnection(*WF_CONNECTION_LIST, "fetch", fields, "nil")
+    res_obj = json.loads(response_obj)
+    wf_list = []
+    for wf in res_obj["data"]:
+        wf["id"] = wf["_id"]
+        wf_list.append(wf)
+    if len(res_obj["data"]):
+        return wf_list  #   res_obj["data"]
+    else:
+        return []
+
+
+def get_wf_list(company_id):
+    fields = {"company_id": str(company_id)}
+    response_obj = dowellconnection(*WF_CONNECTION_LIST, "fetch", fields, "nil")
+    res_obj = json.loads(response_obj)
+    if len(res_obj["data"]):
+        return res_obj["data"]
+    else:
+        return []
+
+
+# ------------------------------------------ Templates-----------------------------
 def save_template(name, data, created_by, company_id):
     url = "http://100002.pythonanywhere.com/"
     event_id = get_event_id()
@@ -430,6 +493,19 @@ def update_template_approval(template_id, approval):
     return response.text
 
 
+def get_template_list(company_id):
+    fields = {
+        "company_id": company_id,
+    }
+    response_obj = dowellconnection(*TEMPLATE_CONNECTION_LIST, "fetch", fields, "nil")
+    res_obj = json.loads(response_obj)
+    if len(res_obj["data"]):
+        return res_obj["data"]
+    else:
+        return []
+
+
+# -------------------------- Document----------------------------------------
 def save_document(name, template_id, data, created_by, company_id):
     url = "http://100002.pythonanywhere.com/"
     template_obj = get_template_object(template_id)
@@ -505,72 +581,6 @@ def get_document_object(document_id):
 def get_document_list(company_id):
     fields = {"company_id": str(company_id)}
     response_obj = dowellconnection(*DOCUMENT_CONNECTION_LIST, "fetch", fields, "nil")
-    res_obj = json.loads(response_obj)
-    if len(res_obj["data"]):
-        return res_obj["data"]
-    else:
-        return []
-
-
-def get_wf_object(workflow_id):
-    fields = {"_id": str(workflow_id)}
-    response_obj = dowellconnection(*WF_CONNECTION_LIST, "find", fields, "nil")
-    res_obj = json.loads(response_obj)
-    if len(res_obj["data"]):
-        return res_obj["data"]
-    else:
-        return []
-
-
-def get_all_wf_list():
-    fields = {}
-    response_obj = dowellconnection(*WF_CONNECTION_LIST, "fetch", fields, "nil")
-    res_obj = json.loads(response_obj)
-    wf_list = []
-    for wf in res_obj["data"]:
-        wf["id"] = wf["_id"]
-        wf_list.append(wf)
-    if len(res_obj["data"]):
-        return wf_list  #   res_obj["data"]
-    else:
-        return []
-
-
-def get_wf_list(company_id):
-    fields = {"company_id": str(company_id)}
-    response_obj = dowellconnection(*WF_CONNECTION_LIST, "fetch", fields, "nil")
-    res_obj = json.loads(response_obj)
-    if len(res_obj["data"]):
-        return res_obj["data"]
-    else:
-        return []
-
-
-def get_user_list(company_id):
-    field = {"company_id": str(company_id)}
-    response_obj = dowellconnection(*USER_CONNECTION_LIST, "fetch", field, "nil")
-    res_obj = json.loads(response_obj)
-    if len(res_obj["data"]):
-        return res_obj["data"]
-    else:
-        return []
-
-
-def get_user(user_name):
-    field = {"user_name": str(user_name)}
-    response_obj = dowellconnection(*USER_CONNECTION_LIST, "find", field, "nil")
-    res_obj = json.loads(response_obj)
-    if len(res_obj["data"]):
-        return res_obj["data"]
-    else:
-        return []
-
-
-def get_template_list(company_id):
-    fields = {
-        "company_id": company_id,
-    }
-    response_obj = dowellconnection(*TEMPLATE_CONNECTION_LIST, "fetch", fields, "nil")
     res_obj = json.loads(response_obj)
     if len(res_obj["data"]):
         return res_obj["data"]

@@ -118,6 +118,11 @@ def sort_steps(steps, criteria):
         return steps
 
 
+@api_view(["POST"])
+def sort_processing(request):
+    pass
+
+
 """
 5. Process Document.
 - Remove Workfow from document
