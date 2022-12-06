@@ -94,7 +94,7 @@ def process_workflow(request):  # Document Creation.
             # if save_wf["isSuccess"]:
             try:
                 return Response(
-                    {"Process":save_wf},
+                    {"Process":save_wf['inserted_id']},
                     status=status.HTTP_201_CREATED,
                     )
             except:
