@@ -28,7 +28,7 @@ from .views import api, user
 
 urlpatterns = [
     path("", api),
-    path("/user-info", user),
+    path("user-info/", user),
     # Search----------------------------
     path("search/<str:str>", search),
     # Templates-----------------------------------------------------
