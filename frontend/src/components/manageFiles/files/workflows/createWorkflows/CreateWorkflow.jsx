@@ -5,11 +5,17 @@ import { v4 as uuidv4 } from "uuid";
 import Overlay from "../../../overlay/Overlay";
 import { useUserContext } from "../../../../../contexts/UserContext";
 import overlayStyles from "../../../overlay/overlay.module.css";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { createWorkflow } from "../../../../../features/workflow/asyncTHunks";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { LoadingSpinner } from "../../../../LoadingSpinner/LoadingSpinner";
 
 const CreateWorkflows = ({ handleToggleOverlay }) => {
   const dispatch = useDispatch();
+  const { workflow, status } = useSelector((state) => state.workflow);
+
+  const notify = (title) => toast("created" + " " + title);
 
   const [internalWorkflows, setInternalWorkflows] = useState([]);
   const [workflowTitle, setWorkflowTitle] = useState(null);
@@ -72,7 +78,7 @@ const CreateWorkflows = ({ handleToggleOverlay }) => {
       })),
     };
 
-    dispatch(createWorkflow(data));
+    dispatch(createWorkflow({ data, notify }));
     console.log(data);
   };
 
@@ -153,8 +159,12 @@ const CreateWorkflows = ({ handleToggleOverlay }) => {
           >
             cancel
           </button>
-          <button onClick={handleCreateWorkflow} className={styles.add__button}>
-            add
+          <button
+            style={{ pointerEvent: status === "pending" && "none" }}
+            onClick={handleCreateWorkflow}
+            className={styles.add__button}
+          >
+            {status === "pending" ? <LoadingSpinner /> : "add"}
           </button>
         </div>
       </div>
