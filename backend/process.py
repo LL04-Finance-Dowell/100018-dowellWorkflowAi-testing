@@ -1,7 +1,12 @@
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
-from .mongo_db_connection import get_wf_object, update_wf_process, save_wf_process
+from .mongo_db_connection import (
+    get_wf_object,
+    update_wf_process,
+    save_wf_process,
+    get_document_object,
+)
 
 """
 ---------------------------------------SET WORKFLOWS IN DOCUMENT------------------------------------------
@@ -13,48 +18,33 @@ from .mongo_db_connection import get_wf_object, update_wf_process, save_wf_proce
 """
 
 
-@api_view(["POST"])
-def add_document_to_workflow(request):
-    if not request.data:
-        return Response(
-            {"message": "Unable to Create Workflow"},
-            status=status.HTTP_400_BAD_REQUEST,
-        )
-    created_by = request.data["created_by"]
-    company_id = request.data["company_id"]
-    document_id = request.data["document_id"]
-    workflows = request.data["workflows"]  # Will be a list of wfs ids
-    if len(workflows) == 1:
-        workflow_id = workflows[0]
-        workflow = get_wf_object(workflow_id)
-        if not workflow:
+def add_wf_instance(workflows, document_id):
+    try:
+        document = get_document_object(document_id)
+        if not document:
             return Response(
-                {"message": "Unable to Create Workflow"},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
-        add_res = save_wf_process(workflow, created_by, company_id, document_id)
-        if add_res["isSuccess"]:
-            return Response(
-                {"message": "Added Workflows to Document"}, status=status.HTTP_200_OK
-            )
-    else:
         for wf in workflows:
             workflow = get_wf_object(wf)
             if not workflow:
                 return Response(
-                    {"message": "Unable to Create Workflow"},
                     status=status.HTTP_500_INTERNAL_SERVER_ERROR,
                 )
-            add_res = save_wf_process(workflow, created_by, company_id, document_id)
-            if add_res["isSuccess"]:
-                return Response(
-                    {"message": "Added Workflows to Document"},
-                    status=status.HTTP_200_OK,
-                )
-    return Response(
-        {" message": "Failed to add workflows to document"},
-        status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            save_wf_process(workflow, document)
+            return Response(
+                status=status.HTTP_200_OK,
+            )
+    except:
+        return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+@api_view(["POST"])
+def workflow_process(request):
+    res = add_wf_instance(
+        workflows=request.data["workflows"], document_id=request.data["document_id"]
     )
+    return res
 
 
 """
@@ -94,52 +84,41 @@ ACTION - Update Workflow Process.
 
 @api_view(["POST"])
 def connect_wf_to_document(request):
-    if not request.data:
-        return Response(
-            {"message": "Unable to Create Workflow"},
-            status=status.HTTP_400_BAD_REQUEST,
-        )
-    workflow_id = request.data["workflow_id"]
-    skip = request.data["skip"]
-    member_type = request.data["member_type"]
-    member_portfolio = request.data["member_portfolio"]
-    rights = request.data["rights"]
-    display = request.data["display"]
-    location = request.data["location"]
-    limit = request.data["limit"]
-    period = request.data["period"]
-    start_time = request.data["start_time"]
-    end_time = request.data["end_time"]
-    reminder = request.data["reminder"]
-
-    payload = {
-        "skip": skip,
-        "member_type": member_type,
-        "member_portfolio": member_portfolio,
-        "rights": rights,
-        "display": display,
-        "location": location,
-        "limit": limit,
-        "period": period,
-        "start_time": start_time,
-        "end_time": end_time,
-        "reminder": reminder,
-    }
-    connect_res = update_wf_process(workflow_id, payload)
-    # connect_res = update_document(document_id=document_id, data=payload)
-    if connect_res["isSuccess"]:
-        return Response({"message": "Workflow Connected"}, status=status.HTTP_200_OK)
-
-    return Response(
-        {"message": "Failed To Connect Workflow"},
-        status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+    connect_res = update_wf_process(
+        workflow_id=request.data["workflow_id"], workflow=request.data["workflow"]
     )
+    if not connect_res:
+        return Response(
+            {"message": "Failed To Connect Workflow"},
+            status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+        )
+    return Response({"message": "Workflow Connected"}, status=status.HTTP_200_OK)
 
 
 """
 4. Check Workflows before processing.
 process: ["content_wise", "member_wise", "workflow_step_wise", "location_wise", "time_wise"] - 1st process will be set to option.
 ACTION - Sort Process
+
+"""
+
+
+def sort_steps(steps, criteria):
+    # Sort the steps according to the specified criteria
+    if criteria == "time":
+        return sorted(steps, key=lambda x: x["time"])
+
+    elif criteria == "location":
+        return sorted(steps, key=lambda x: x["location"])
+
+    elif criteria == "location":
+        return sorted(steps, key=lambda x: x["location"])
+    else:
+        # Return the steps in their original order if no criteria is specified or if the specified criteria is invalid
+        return steps
+
+
+"""
 5. Process Document.
 - Remove Workfow from document
 ACTION - Remove workflow
@@ -149,9 +128,30 @@ ACTION - Start Processing
 """
 
 
-@api_view(["POST"])
-def processing(request):
-    pass
+def process_document(workflow, document):
+    # Iterate over the workflow steps
+    for step in workflow["steps"]:
+        # Check if the current step should be skipped
+        if step["skip"]:
+            continue
+
+        # Check if the current step applies to the current user
+        if not check_user_permissions(step):
+            continue
+
+        # Check if the current step is within the allowed time period
+        if not check_time_period(step):
+            continue
+
+        # Check if the current step is within the allowed location
+        if not check_location(step):
+            continue
+
+        # Apply the current step to the document
+        document = apply_step(step, document)
+
+    # Return the final version of the document
+    return document
 
 
 """
@@ -159,16 +159,32 @@ Check if the workflow has moved through given steps.
 """
 
 
-@api_view(["POST"])
-def verify_workflow(request):
+def check_time_period(step):
+    pass
+
+
+def check_user_permissions(step):
+    pass
+
+
+def apply_step(step):
+    pass
+
+
+def check_location(step):
     pass
 
 
 """
 Remove Workflow Process from document
+I- workflows id
+O - response
 """
 
 
 @api_view(["POST"])
 def remove_workflow(request):  # Check if the workflow has moved through given steps.
     pass
+
+
+# -------------------------helpers-----------------
