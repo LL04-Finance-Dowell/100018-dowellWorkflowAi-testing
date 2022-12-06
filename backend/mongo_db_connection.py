@@ -90,7 +90,14 @@ WF_CONNECTION_DICT = {
     "team_member_ID": "33689044433",
     "function_ID": "ABCDE",
 }
-
+WF_PROCESS_CONNECTION_DICT = {
+    "cluster":  "Documents",
+    "database": "Documentation",
+    "collection": "WorflowProcess",
+    "document": "WorkflowProcess",
+    "team_member_ID": "1000180001",
+    "function_ID": "ABCDE",
+}
 TEMPLATE_CONNECTION_DICT = {
     "cluster": "Documents",
     "database": "Documentation",
@@ -151,7 +158,7 @@ def save_wf_process(workflow, user, company_id, document):
     url = "http://100002.pythonanywhere.com/"
     payload = json.dumps(
         {
-            **WF_PROCESS_CONNECTION,
+            **WF_PROCESS_CONNECTION_DICT,
             "command": "insert",
             "field": {
                 "eventId": get_event_id(),
@@ -174,7 +181,7 @@ def update_wf_process(workflow_id, workflow):
     url = "http://100002.pythonanywhere.com/"
     payload = json.dumps(
         {
-            **WF_PROCESS_CONNECTION,
+            **WF_PROCESS_CONNECTION_DICT,
             # "command": "insert",
             "command": "update",
             "field": {

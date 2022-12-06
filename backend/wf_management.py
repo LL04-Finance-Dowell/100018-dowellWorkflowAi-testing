@@ -91,11 +91,10 @@ def process_workflow(request):  # Document Creation.
             company_id = get_user_info_by_username(created_by)['company_id']
 
             save_wf = save_wf_process(workflow, created_by, company_id, document_id)
-            print(save_wf)
             # if save_wf["isSuccess"]:
             try:
                 return Response(
-                    {"Process":save_wf['inserted_id']},
+                    {"Process":save_wf},
                     status=status.HTTP_201_CREATED,
                     )
             except:
