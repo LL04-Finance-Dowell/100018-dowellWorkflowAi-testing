@@ -10,6 +10,8 @@ from .mongo_db_connection import (
     get_members,
     get_user,
     update_document,
+    get_document_object,
+    save_wf_process,
 )
 
 @api_view(["POST"])
@@ -23,7 +25,7 @@ def create_workflow(request):  # Document Creation.
             )
         else:
             created_by =    form["created_by"]
-            company_id =    form["company_id"]
+            company_id =    get_user_info_by_username(created_by)['company_id']
             wf_name =       form["wf_title"]
             steps  =   form['steps']
             
@@ -72,3 +74,32 @@ def create_workflow(request):  # Document Creation.
             
 
     
+@api_view(["POST"])
+def process_workflow(request):  # Document Creation.
+
+    if request.method=="POST":
+        form = request.data
+        if not form:
+            return Response(
+                {"message": "Workflow Data required"},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+        else:
+            document_id= form['document_id']
+            workflow=form['workflow_id']
+            created_by = form['created_by']
+            company_id = get_user_info_by_username(created_by)['company_id']
+
+            save_wf = save_wf_process(workflow, created_by, company_id, document_id)
+            print(save_wf)
+            # if save_wf["isSuccess"]:
+            try:
+                return Response(
+                    {"Process":save_wf['inserted_id']},
+                    status=status.HTTP_201_CREATED,
+                    )
+            except:
+                return Response(
+                    {"message": "Failed to Process Workflow"},
+                    status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                    )
