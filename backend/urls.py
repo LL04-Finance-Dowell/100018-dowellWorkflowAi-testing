@@ -1,17 +1,5 @@
 from django.urls import path
 
-# from .wf_management import (
-#     assign_emails,
-#     generate_link,
-#     process_document,
-#     reject_document,
-#     signature,
-#     internal_signature,
-#     workflow,
-#     approved_workflows,
-#     rejected_workflows,
-#     draft_workflows,
-# )
 from .template_management import (
     template_list,
     approved,
@@ -30,33 +18,26 @@ from .document_management import (
     rejected_documents,
     # reject_document,
 )
-from .wf_management import (create_workflow)
+from .wf_management import create_workflow
 
 from .intelligent_search import (
     search,
 )
 
-from .views import api
+from .views import api, user
 
 urlpatterns = [
-    path("", api, name="api"),
+    path("", api),
+    path("user-info/", user),
     # Search----------------------------
-    path("search/<str:str>", search, name="search_result"),
-    # Workflow--------------------------------------------------------
-    # path("emails/", assign_emails, name="assign_emails"),
-    # path("linkflow/", generate_link, name="generate_linkflow"),
-    # path("workflows/", workflow, name="workflows"),
-    # path("workflows/process/", process_document, name="add_to_workflow"),
-    # path("workflows/drafts/", draft_workflows, name="add_to_workflow"),
-    # path("workflows/approved/", approved_workflows, name="approved_workflows"),
-    # path("workflows/rejected/", rejected_workflows, name="rejected_workflows"),
+    path("search/<str:str>", search),
     # Templates-----------------------------------------------------
-    path("templates/", create_template, name="templates"),
-    path("templates/detail/", template_detail, name="templates"),
-    path("templates/approve/", approve, name="templates_approve"),
-    path("templates/approved/", approved, name="approved_templates"),
-    path("templates/pending/", not_approved_templates, name="not_approved_templates"),
-    path("templates/mine/", template_list, name="my_templates"),
+    path("templates/", create_template),
+    path("templates/detail/", template_detail),
+    path("templates/approve/", approve),
+    path("templates/approved/", approved),
+    path("templates/pending/", not_approved_templates),
+    path("templates/mine/", template_list),
     # Documents----------------------------------------------------
     path("documents/", create_document, name="documents"),
     # path("documents/reject/", reject_document, name="reject_document"),
@@ -82,5 +63,4 @@ urlpatterns = [
     ),
     path("documents/detail/", document_detail, name="document"),
     path("workflows/", create_workflow, name="workflows"),
-
 ]
