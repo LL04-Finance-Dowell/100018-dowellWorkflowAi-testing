@@ -147,7 +147,7 @@ def get_event_id():
 
 
 #  -------------------------------Workflow Process------------------
-def save_wf_process(workflow, user, company_id, document_id):
+def save_wf_process(workflow, user, company_id, document):
     url = "http://100002.pythonanywhere.com/"
     payload = json.dumps(
         {
@@ -155,9 +155,9 @@ def save_wf_process(workflow, user, company_id, document_id):
             "command": "insert",
             "field": {
                 "eventId": get_event_id(),
-                "workflows": workflow,
+                "workflow": workflow,
                 "company_id": company_id,
-                "document_id": document_id,
+                "document": document,
                 "created_by": user,
             },
             "update_field": {"order_nos": 21},
@@ -174,7 +174,7 @@ def update_wf_process(workflow_id, workflow):
     url = "http://100002.pythonanywhere.com/"
     payload = json.dumps(
         {
-            **WF_CONNECTION_DICT,
+            **WF_PROCESS_CONNECTION,
             # "command": "insert",
             "command": "update",
             "field": {
@@ -192,12 +192,20 @@ def update_wf_process(workflow_id, workflow):
     print("SAVE WORKFLOW UPDATE--------------- \n", response.text)
     return response.text
 
+def get_process_object(workflow_id):
+    fields = {"_id": str(workflow_id)}
+    response_obj = dowellconnection(*WF_PROCESS_CONNECTION, "find", fields, "nil")
+    res_obj = json.loads(response_obj)
+    if len(res_obj["data"]):
+        return res_obj["data"]
+    else:
+        return []
+
 
 def get_user_info_by_username(username):
     fields = {"Username": username}
     response = dowellconnection(*REGISTRATION_ARGS, "fetch", fields, "nil")
     usrdic = json.loads(response)
-    print("LoggedIn as ---->: ", usrdic["data"])
     if len(usrdic["data"]) == 0:
         return []
     else:
