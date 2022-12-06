@@ -15,94 +15,92 @@ editorApi = "https://100058.pythonanywhere.com/api/generate-editor-link/"
 
 @api_view(["POST"])
 def create_template(request):
-    if request.method == "POST":
-        data = ""
-        template_name = ""
-        res = json.loads(
-            save_template(
-                template_name,
-                data,
-                request.data["created_by"],
-                request.data["company_id"],
-            )
+    data = ""
+    template_name = ""
+    res = json.loads(
+        save_template(
+            template_name,
+            data,
+            request.data["created_by"],
+            request.data["company_id"],
         )
-        if not res["isSuccess"]:
-            return Response(
-                {"message": "Template creation failed."},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-        payload = {
-            "product_name": "workflowai",
-            "details": {
-                "_id": res["inserted_id"],
-                "field": "",
-                "cluster": "Documents",
-                "database": "Documentation",
-                "collection": "TemplateReports",
-                "document": "templatereports",
-                "team_member_ID": "22689044433",
-                "function_ID": "ABCDE",
-                "command": "update",
-                "update_field": {"template_name": "", "content": ""},
-            },
-        }
-        try:
-            editor_link = requests.post(
-                editorApi,
-                data=json.dumps(payload),
-            )
-            return Response(
-                editor_link,
-                status=status.HTTP_201_CREATED,
-            )
-        except:
-            return Response(
-                {"message": "Template Creation Failed"},
-                status=status.is_server_error,
-            )
+    )
+    if not res["isSuccess"]:
+        return Response(
+            {"message": "Template creation failed."},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+    payload = {
+        "product_name": "workflowai",
+        "details": {
+            "_id": res["inserted_id"],
+            "field": "",
+            "cluster": "Documents",
+            "database": "Documentation",
+            "collection": "TemplateReports",
+            "document": "templatereports",
+            "team_member_ID": "22689044433",
+            "function_ID": "ABCDE",
+            "command": "update",
+            "update_field": {"template_name": "", "content": ""},
+        },
+    }
+    try:
+        editor_link = requests.post(
+            editorApi,
+            data=json.dumps(payload),
+        )
+    except:
+        return Response(
+            {"message": "Template Creation Failed"},
+            status=status.is_server_error,
+        )
+    return Response(
+        editor_link,
+        status=status.HTTP_201_CREATED,
+    )
 
 
 @api_view(["POST"])
 def template_detail(request):
-    if request.method == "POST":
-        data = get_template_object(template_id=request.data["template_id"])
-        if not data:
-            return Response(
-                {"message": "Template Not Found."},
-                status=status.HTTP_404_NOT_FOUND,
-            )
-        payload = {
-            "product_name": "workflow_ai",
-            "details": {
-                "cluster": "Documents",
-                "database": "Documentation",
-                "collection": "TemplateReports",
-                "document": "templatereports",
-                "team_member_ID": "22689044433",
-                "function_ID": "ABCDE",
-                "document_id": request.data["template_id"],
-                "fields": request.data["template_name"],
-                "command": "update",
-                "update_field": {
-                    "template_name": request.data["template_name"],
-                    "content": data,
-                },
+    data = get_template_object(template_id=request.data["template_id"])
+    if not data:
+        return Response(
+            {"message": "Template Not Found."},
+            status=status.HTTP_404_NOT_FOUND,
+        )
+    payload = {
+        "product_name": "workflow_ai",
+        "details": {
+            "cluster": "Documents",
+            "database": "Documentation",
+            "collection": "TemplateReports",
+            "document": "templatereports",
+            "team_member_ID": "22689044433",
+            "function_ID": "ABCDE",
+            "document_id": request.data["template_id"],
+            "fields": request.data["template_name"],
+            "command": "update",
+            "update_field": {
+                "template_name": request.data["template_name"],
+                "content": data,
             },
-        }
-        try:
-            editor_link = requests.post(
-                editorApi,
-                data=json.dumps(payload),
-            )
-            return Response(
-                editor_link,
-                status=status.HTTP_200_OK,
-            )
-        except:
-            return Response(
-                {"message": "Failed to go to editor."},
-                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            )
+        },
+    }
+    try:
+        editor_link = requests.post(
+            editorApi,
+            data=json.dumps(payload),
+        )
+    except:
+        return Response(
+            {"message": "Failed to go to editor."},
+            status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+        )
+    return Response(
+        editor_link,
+        status=status.HTTP_200_OK,
+    )
 
 
 @api_view(["POST"])

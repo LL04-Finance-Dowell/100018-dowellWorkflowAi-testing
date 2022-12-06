@@ -7,9 +7,10 @@ from .mongo_db_connection import get_user_info_by_username
 @api_view(["POST"])
 def user(request):
     res = get_user_info_by_username(request.data["user_name"])
+    print(res)
     if not res:
         return Response(
-            {"message": "Failed to fecth user info"}, status=status.HTTP_400_BAD_REQUEST
+            {"message": "Failed to fetch user info"}, status=status.HTTP_400_BAD_REQUEST
         )
 
     return Response(
