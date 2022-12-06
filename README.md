@@ -277,13 +277,12 @@ Response-500
 
 _POST_ to `documents/`
 
-- Creates a new Document by providing company_id and created_by parameters and their value from front end
+- Creates a new Document by providing created_by parameter and its value from front end
 
 Request Body
 
 ```
 {
-    "company_id": "<company_id_of_authenticated_user>",
     "template_id": "<template_id_existing>",
     "created_by": "<user_name_of_authenticated_user>"
 }
@@ -362,7 +361,7 @@ Request Body
 
 ```
 {
-    "company_id": "<id_of_company>"
+    "created_by": "<user_name_of_authenticated_user>"
 }
 ```
 
@@ -386,7 +385,6 @@ Request Body
 
 ```
 {
-    "company_id": "<id_of_company>"
     "created_by": "<name_of_user>"
 }
 ```
@@ -416,7 +414,7 @@ Request Body
 
 ```
 {
-    "company_id": "<id_of_company>"
+    "created_by": "<user_name_of_authenticated_user>"
 }
 ```
 
@@ -445,7 +443,7 @@ Request Body
 
 ```
 {
-    "company_id": "<id_of_company>"
+    "created_by": "<user_name_of_authenticated_user>"
 }
 ```
 
@@ -475,7 +473,6 @@ Request Body
 
 ```
 {
-    "company_id": "<company_id_of_authenticated_user>",
     "created_by": "<user_name_of_authenticated_user>"    
     "wf_title":"<workflow_title>",
      'steps': [
