@@ -285,6 +285,8 @@ Request Body
 {
     "template_id": "<template_id_existing>",
     "created_by": "<user_name_of_authenticated_user>"
+    "company_id": "<company_id_of_authorized_user>",
+
 }
 ```
 
@@ -355,13 +357,14 @@ Response-500
 
 _POST_ `documents/to-sign/`
 
-- Getting a Document company_id
+- Getting a Document by company_id
 
 Request Body
 
 ```
 {
-    "created_by": "<user_name_of_authenticated_user>"
+    "company_id": "<company_id_of_authorized_user>",
+
 }
 ```
 
@@ -386,6 +389,8 @@ Request Body
 ```
 {
     "created_by": "<name_of_user>"
+    "company_id": "<company_id_of_authorized_user>",
+
 }
 ```
 
@@ -414,7 +419,8 @@ Request Body
 
 ```
 {
-    "created_by": "<user_name_of_authenticated_user>"
+        "company_id": "<company_id_of_authorized_user>",
+
 }
 ```
 
@@ -443,7 +449,8 @@ Request Body
 
 ```
 {
-    "created_by": "<user_name_of_authenticated_user>"
+    "company_id": "<company_id_of_authorized_user>",
+
 }
 ```
 
@@ -526,8 +533,8 @@ Request Body
 
 ```
 {
-    "workflow_title": "<id_of_the_workflow>",
-    "workflow_id": "<name_of_workflow_from_list>"
+    "workflow_title": "<title_of_specific_the_workflow>",
+    "workflow_id": "<id_specific_of_workflow>"
 }
 ```
 
