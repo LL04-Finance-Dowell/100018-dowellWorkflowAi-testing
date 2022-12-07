@@ -23,42 +23,44 @@ def create_template(request):
             template_name,
             data,
             request.data["created_by"],
-            get_user_info_by_username(request.data["created_by"])["company_id"],
+            request.data["company_id"],
+            # get_user_info_by_username(request.data["created_by"])["company_id"],
         )
     )
-    if not res["isSuccess"]:
+    print(res)
+    if res["isSuccess"]:
+        payload = {
+            "product_name": "workflowai",
+            "details": {
+                "_id": res["inserted_id"],
+                "field": "",
+                "cluster": "Documents",
+                "database": "Documentation",
+                "collection": "TemplateReports",
+                "document": "templatereports",
+                "team_member_ID": "22689044433",
+                "function_ID": "ABCDE",
+                "command": "update",
+                "update_field": {"template_name": "", "content": ""},
+            },
+        }
+        try:
+            editor_link = requests.post(
+                editorApi,
+                data=json.dumps(payload),
+            )
+        except:
+            return Response(
+                {"message": "Template Creation Failed"},
+                status=status.is_server_error,
+            )
         return Response(
-            {"message": "Template creation failed."},
-            status=status.HTTP_400_BAD_REQUEST,
-        )
-    payload = {
-        "product_name": "workflowai",
-        "details": {
-            "_id": res["inserted_id"],
-            "field": "",
-            "cluster": "Documents",
-            "database": "Documentation",
-            "collection": "TemplateReports",
-            "document": "templatereports",
-            "team_member_ID": "22689044433",
-            "function_ID": "ABCDE",
-            "command": "update",
-            "update_field": {"template_name": "", "content": ""},
-        },
-    }
-    try:
-        editor_link = requests.post(
-            editorApi,
-            data=json.dumps(payload),
-        )
-    except:
-        return Response(
-            {"message": "Template Creation Failed"},
-            status=status.is_server_error,
+            editor_link.json(),
+            status=status.HTTP_201_CREATED,
         )
     return Response(
-        editor_link,
-        status=status.HTTP_201_CREATED,
+        {"message": "Template creation failed."},
+        status=status.HTTP_500_INTERNAL_SERVER_ERROR,
     )
 
 
@@ -99,7 +101,7 @@ def template_detail(request):
             status=status.HTTP_500_INTERNAL_SERVER_ERROR,
         )
     return Response(
-        editor_link,
+        editor_link.json(),
         status=status.HTTP_200_OK,
     )
 
