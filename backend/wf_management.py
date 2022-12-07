@@ -73,35 +73,6 @@ def create_workflow(request):  # Document Creation.
                         {"message": "Failed to Save Workflow"},
                         status=status.HTTP_500_INTERNAL_SERVER_ERROR,
                         )
-            
-
-    
-@api_view(["POST"])
-def process_workflow(request):  # Document Creation.
-    if request.method=="POST":
-        form = request.data
-        if not form:
-            return Response(
-                {"message": "Workflow Data required"},
-                status=status.HTTP_404_NOT_FOUND,
-            )
-        else:
-            document_id= form['document_id']
-            workflow=form['workflow_id']
-            created_by = form['created_by']
-            company_id = get_user_info_by_username(created_by)['company_id']
-
-            save_wf = save_wf_process(workflow, created_by, company_id, document_id)
-            try:
-                return Response(
-                    {"Process":save_wf['inserted_id']},
-                    status=status.HTTP_201_CREATED,
-                    )
-            except:
-                return Response(
-                    {"message": "Failed to Process Workflow"},
-                    status=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                    )
 
 @api_view(["POST"])
 def workflow_detail(request):  # Single document
