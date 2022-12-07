@@ -2,6 +2,7 @@ import json
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
+import requests
 from .mongo_db_connection import (
     save_wf,
     get_wf_object,
@@ -13,7 +14,8 @@ from .mongo_db_connection import (
     get_document_object,
     save_wf_process,
 )
-
+editorApi = "https://100058.pythonanywhere.com/api/generate-editor-link/"
+# print(get_wf_list("6365ee18ff915c925f3a6691"))
 @api_view(["POST"])
 def create_workflow(request):  # Document Creation.
     if request.method == "POST":
@@ -76,7 +78,6 @@ def create_workflow(request):  # Document Creation.
     
 @api_view(["POST"])
 def process_workflow(request):  # Document Creation.
-
     if request.method=="POST":
         form = request.data
         if not form:
@@ -91,7 +92,6 @@ def process_workflow(request):  # Document Creation.
             company_id = get_user_info_by_username(created_by)['company_id']
 
             save_wf = save_wf_process(workflow, created_by, company_id, document_id)
-            # if save_wf["isSuccess"]:
             try:
                 return Response(
                     {"Process":save_wf['inserted_id']},
@@ -102,3 +102,74 @@ def process_workflow(request):  # Document Creation.
                     {"message": "Failed to Process Workflow"},
                     status=status.HTTP_500_INTERNAL_SERVER_ERROR,
                     )
+
+@api_view(["POST"])
+def workflow_detail(request):  # Single document
+
+    if request.method == "POST":
+        workflow_id = request.data["workflow_id"]
+        workflow_title = request.data["workflow_title"]
+        data = get_wf_object(workflow_id)
+        if not request.data:
+            return Response(
+                {"message": "Failed to Load Workflow."},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
+        
+        payload = {
+        "product_name": "workflow_ai",
+        "details": {
+            "cluster": "Documents",
+            "database": "Documentation",
+            "collection": "TemplateReports",
+            "document": "templatereports",
+            "team_member_ID": "22689044433",
+            "function_ID": "ABCDE",
+            "workflow_id": workflow_id,
+            "fields": workflow_title,
+            "command": "update",
+            "update_field": {
+                "workflow_name": workflow_title,
+                "content": data,
+                            },
+                        },
+                    }
+        headers = { 'Content-Type': 'application/json'}
+        editor_link = requests.post(editorApi, headers=headers, data=json.dumps(payload))
+        try:
+            return Response(
+            editor_link.json(),
+            status=status.HTTP_201_CREATED,
+            )
+        except:
+            return Response(
+        {"message": "Failed to call editorApi"},
+        status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+    )
+           
+    return Response(
+        {"message": "This Workflow is Not Loaded."}, status=status.HTTP_400_BAD_REQUEST
+    )
+
+@api_view(["POST"])
+def my_workflows(request):  # List of my documents.
+    filtered_list = []
+    if request.method=="POST":
+        created_by=request.data['created_by']
+        company_id=request.data['company_id']
+        workflows = get_wf_list(company_id)
+        if not workflows:
+            return Response(
+                {"message": "There is no Workflow created by This user."},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
+        else:
+            for wf in workflows:
+                    
+                    if wf['created_by'] == created_by:
+                        filtered_list.append(wf)
+
+        return Response(
+            {"Workflows": filtered_list, "title": "My Workflows"}, status=status.HTTP_200_OK
+        )
+
