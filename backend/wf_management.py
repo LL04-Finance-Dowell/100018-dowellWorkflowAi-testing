@@ -105,10 +105,8 @@ def process_workflow(request):  # Document Creation.
 
 @api_view(["POST"])
 def workflow_detail(request):  # Single document
-
     if request.method == "POST":
         workflow_id = request.data["workflow_id"]
-        workflow_title = request.data["workflow_title"]
         data = get_wf_object(workflow_id)
         if not request.data:
             return Response(
@@ -116,29 +114,10 @@ def workflow_detail(request):  # Single document
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
         
-        payload = {
-        "product_name": "workflow_ai",
-        "details": {
-            "cluster": "Documents",
-            "database": "Documentation",
-            "collection": "TemplateReports",
-            "document": "templatereports",
-            "team_member_ID": "22689044433",
-            "function_ID": "ABCDE",
-            "workflow_id": workflow_id,
-            "fields": workflow_title,
-            "command": "update",
-            "update_field": {
-                "workflow_name": workflow_title,
-                "content": data,
-                            },
-                        },
-                    }
-        headers = { 'Content-Type': 'application/json'}
-        editor_link = requests.post(editorApi, headers=headers, data=json.dumps(payload))
+       
         try:
             return Response(
-            editor_link.json(),
+            {"workflow":data},
             status=status.HTTP_201_CREATED,
             )
         except:

@@ -533,7 +533,6 @@ Request Body
 
 ```
 {
-    "workflow_title": "<title_of_specific_the_workflow>",
     "workflow_id": "<id_specific_of_workflow>"
 }
 ```
