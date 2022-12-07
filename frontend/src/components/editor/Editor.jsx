@@ -1,0 +1,58 @@
+import React from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { setEditorLink } from "../../features/app/appSlice";
+import { LoadingSpinner } from "../LoadingSpinner/LoadingSpinner";
+import { AiOutlineClose } from "react-icons/ai";
+import styles from "./editor.module.css";
+
+const Editor = () => {
+  const dispatch = useDispatch();
+  const { editorLink } = useSelector((state) => state.app);
+  const { editorStatus: docStatus } = useSelector((state) => state.document);
+  const { editorStatus: tempStatus } = useSelector((state) => state.template);
+
+  const handleFrameClose = () => {
+    dispatch(setEditorLink(null));
+  };
+
+  console.log("editorLinkkkkk insideeditor", editorLink);
+
+  return (
+    <>
+      {(editorLink || docStatus === "pending" || tempStatus === "pending") && (
+        <div className={styles.framer__container}>
+          {docStatus === "pending" || tempStatus === "pending" ? (
+            <div>
+              <LoadingSpinner />
+            </div>
+          ) : (
+            editorLink && (
+              <div className={styles.framer__box}>
+                <iframe src={editorLink}>inside editoerr</iframe>
+                <i onClick={handleFrameClose}>
+                  <AiOutlineClose size={30} />
+                </i>
+              </div>
+            )
+          )}
+        </div>
+      )}
+    </>
+  );
+};
+
+export default Editor;
+
+{
+  /* <div>
+<iframe
+  className={styles.framer__box}
+  src="https://ll04-finance-dowell.github.io/100058-dowelleditor/?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwcm9kdWN0X25hbWUiOiJ3b3JrZmxvd2FpIiwiZGV0YWlscyI6eyJfaWQiOiI2MzhjZDQyMzBjOWM1ZDYwZDA4Y2RmYTUiLCJhY3Rpb24iOiJkb2N1bWVudCIsImZpZWxkIjoiZG9jdW1lbnRfbmFtZSIsImNsdXN0ZXIiOiJEb2N1bWVudHMiLCJkYXRhYmFzZSI6IkRvY3VtZW50YXRpb24iLCJjb2xsZWN0aW9uIjoiZWRpdG9yIiwiZG9jdW1lbnQiOiJlZGl0b3IiLCJ0ZWFtX21lbWJlcl9JRCI6IjEwMDA4NDAwNiIsImZ1bmN0aW9uX0lEIjoiQUJDREUiLCJjb21tYW5kIjoidXBkYXRlIiwidXBkYXRlX2ZpZWxkIjp7ImRvY3VtZW50X25hbWUiOiIiLCJjb250ZW50IjoiIn19fQ.WgllCRep9Mo02-2t2zjtktyYNKciOHCeVyOf9tji-vk"
+>
+  inside editoerr
+</iframe>
+<i onClick={handleFrameClose}>
+  <AiOutlineClose size={30} />
+</i>
+</div> */
+}

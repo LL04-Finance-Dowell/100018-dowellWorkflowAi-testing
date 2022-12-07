@@ -4,9 +4,9 @@ import styles from "./new.module.css";
 import { v4 as uuidv4 } from "uuid";
 import { FaPlus } from "react-icons/fa";
 import { HashLink } from "react-router-hash-link";
-import { useAppContext } from "../../../contexts/AppContext";
 import { useDispatch, useSelector } from "react-redux";
 import { createTemplate } from "../../../features/template/asyncThunks";
+import { setToggleManageFileForm } from "../../../features/app/appSlice";
 
 export const dataMaanish = {
   created_by: "Maanish",
@@ -15,16 +15,12 @@ export const dataMaanish = {
 
 const New = () => {
   const dispatch = useDispatch();
-  /*   const { status } = useSelector((state) => state.template); */
 
   const [isOpen, setIsOpen] = useState(false);
-  const { setToggleNewFileForm } = useAppContext();
 
   const handleOpen = () => {
     setIsOpen((prev) => !prev);
   };
-
-  /*  console.log(status); */
 
   const handleNewItemClick = (e, content) => {
     if (content === "template") {
@@ -32,7 +28,7 @@ const New = () => {
 
       dispatch(createTemplate(dataMaanish));
     } else {
-      setToggleNewFileForm(true);
+      dispatch(setToggleManageFileForm(true));
     }
   };
 

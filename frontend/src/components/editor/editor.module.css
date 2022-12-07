@@ -1,0 +1,40 @@
+.loading {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /*  background-color: #c3d7be; */
+}
+
+.framer__container {
+  width: 100%;
+  max-width: 100vw;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: fixed;
+  top: 0;
+  left: 0;
+  background-color: rgba(0, 0, 0, 0.7);
+  z-index: 1000;
+}
+
+.framer__container i {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  color: #fff;
+  cursor: pointer;
+}
+
+.framer__box {
+  height: 80%;
+  width: 90%;
+}
+
+.framer__box iframe {
+  width: 100%;
+  height: 100%;
+}

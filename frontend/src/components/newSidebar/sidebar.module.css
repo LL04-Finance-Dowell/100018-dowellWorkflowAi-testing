@@ -50,6 +50,9 @@
   align-items: center;
   flex-direction: column;
   padding: 10px;
+  text-transform: capitalize;
+  word-break: break-all;
+  text-align: center;
 }
 
 .user__box img {

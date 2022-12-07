@@ -33,6 +33,7 @@
 .sub__title {
   font-size: 14px;
   line-height: 21px;
+  text-align: center;
 }
 
 .hover__box {
@@ -47,7 +48,7 @@
   transition: 1s ease all;
 }
 
-.hover__box button {
+.detail__button {
   padding: 12px 24px;
   border: 2px solid var(--e-global-color-cd6593d);
   color: var(--e-global-color-cd6593d);
@@ -61,4 +62,39 @@
 
 .container:hover .hover__box {
   transform: translateY(0);
+}
+
+.step__text {
+  /*   text-align: left;
+  margin-right: auto; */
+  font-size: 16px;
+  font-weight: 500;
+  color: #fff;
+}
+
+.button__group {
+  margin-top: auto;
+  display: flex;
+  /*   flex-direction: column; */
+  column-gap: 5px;
+  row-gap: 10px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.button__group button {
+  padding: 4px 8px !important;
+  align-self: center;
+  font-size: 14px;
+  border: none;
+  color: white;
+  text-transform: capitalize;
+}
+
+.update__button {
+  background-color: green !important;
+}
+
+.delete__button {
+  background-color: red !important;
 }

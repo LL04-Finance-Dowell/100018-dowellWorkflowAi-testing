@@ -18,6 +18,19 @@
 
 .children__box {
   width: 75%;
+  min-height: 100vh;
+  position: relative;
+}
+
+.spinner {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100vh;
 }
 
 @media (max-width: 768px) {

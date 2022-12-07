@@ -10,6 +10,7 @@ import { createWorkflow } from "../../../../../features/workflow/asyncTHunks";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { LoadingSpinner } from "../../../../LoadingSpinner/LoadingSpinner";
+import SubmitButton from "../../../../submitButton/SubmitButton";
 
 const CreateWorkflows = ({ handleToggleOverlay }) => {
   const dispatch = useDispatch();
@@ -18,7 +19,7 @@ const CreateWorkflows = ({ handleToggleOverlay }) => {
   const notify = (title) => toast("created" + " " + title);
 
   const [internalWorkflows, setInternalWorkflows] = useState([]);
-  const [workflowTitle, setWorkflowTitle] = useState(null);
+  const [workflowTitle, setWorkflowTitle] = useState("");
   const [isStep, setIsStep] = useState(true);
   const { currentUser } = useUserContext();
 
@@ -50,7 +51,7 @@ const CreateWorkflows = ({ handleToggleOverlay }) => {
   };
 
   const handleCreateWorkflow = () => {
-    if (!workflowTitle) {
+    if (workflowTitle.length < 1) {
       console.log("add workflow title");
       return;
     }
@@ -78,7 +79,13 @@ const CreateWorkflows = ({ handleToggleOverlay }) => {
       })),
     };
 
-    dispatch(createWorkflow({ data, notify }));
+    const handleAfterCreated = () => {
+      reset();
+      setWorkflowTitle("");
+      setInternalWorkflows([]);
+    };
+
+    dispatch(createWorkflow({ data, notify, handleAfterCreated }));
     console.log(data);
   };
 
@@ -114,22 +121,22 @@ const CreateWorkflows = ({ handleToggleOverlay }) => {
               </tr>
             ))}
             {/*  {isStep ? (
-              internalWorkflows.map((item) => (
-                <tr key={item.id}>
-                  <th>{item.stepName}</th>
-                  <th>{item.role}</th>
-                  <th onClick={() => handleRemoveInternalTemplate(item.id)}>
-                    <button className={styles.remove__step__button}>X</button>
-                  </th>
-                </tr>
-              ))
-            ) : (
-              <tr>
-                <td className={styles.no__step} colSpan={4}>
-                  No Step
-                </td>
-              </tr>
-            )} */}
+          internalWorkflows.map((item) => (
+            <tr key={item.id}>
+              <th>{item.stepName}</th>
+              <th>{item.role}</th>
+              <th onClick={() => handleRemoveInternalTemplate(item.id)}>
+                <button className={styles.remove__step__button}>X</button>
+              </th>
+            </tr>
+          ))
+        ) : (
+          <tr>
+            <td className={styles.no__step} colSpan={4}>
+              No Step
+            </td>
+          </tr>
+        )} */}
           </tbody>
         </table>
         <form onSubmit={handleSubmit(onSubmit)}>
@@ -137,6 +144,7 @@ const CreateWorkflows = ({ handleToggleOverlay }) => {
             <div className={overlayStyles.input__box}>
               <label htmlFor="stepName">Step Name</label>
               <input
+                required
                 placeholder="Step Name"
                 id="stepName"
                 {...register("stepName")}
@@ -144,7 +152,12 @@ const CreateWorkflows = ({ handleToggleOverlay }) => {
             </div>
             <div className={overlayStyles.input__box}>
               <label htmlFor="role">Role</label>
-              <input placeholder="Role" id="role" {...register("role")} />
+              <input
+                required
+                placeholder="Role"
+                id="role"
+                {...register("role")}
+              />
             </div>
             <button className={styles.add__table__button} type="submit">
               +
@@ -159,13 +172,14 @@ const CreateWorkflows = ({ handleToggleOverlay }) => {
           >
             cancel
           </button>
-          <button
-            style={{ pointerEvent: status === "pending" && "none" }}
+          <SubmitButton
             onClick={handleCreateWorkflow}
+            status={status}
+            type="button"
             className={styles.add__button}
           >
-            {status === "pending" ? <LoadingSpinner /> : "add"}
-          </button>
+            add
+          </SubmitButton>
         </div>
       </div>
     </Overlay>

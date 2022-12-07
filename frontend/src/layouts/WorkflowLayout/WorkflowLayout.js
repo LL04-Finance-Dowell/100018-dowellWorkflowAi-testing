@@ -1,7 +1,10 @@
+import { useDispatch, useSelector } from "react-redux";
+import { LoadingSpinner } from "../../components/LoadingSpinner/LoadingSpinner";
 import SideBar from "../../components/newSidebar/Sidebar";
 import { useUserContext } from "../../contexts/UserContext";
 import "./style.css";
 import styles from "./workflowLayout.module.css";
+import Editor from "../../components/editor/Editor";
 
 const WorkflowLayout = ({ children }) => {
   const { currentUser } = useUserContext();
@@ -14,6 +17,7 @@ const WorkflowLayout = ({ children }) => {
         </div>
         <div className={styles.children__box}>{children}</div>
       </div>
+      <Editor />
     </div>
   );
 };

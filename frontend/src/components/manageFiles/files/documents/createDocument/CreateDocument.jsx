@@ -2,9 +2,7 @@ import styles from "./createDocument.module.css";
 import { v4 as uuidv4 } from "uuid";
 import { useRef, useState } from "react";
 import { useForm } from "react-hook-form";
-import { AiOutlineClose } from "react-icons/ai";
 import Overlay from "../../../overlay/Overlay";
-import overlayStyles from "../../../overlay/overlay.module.css";
 import { BsArrowRightShort } from "react-icons/bs";
 import Collapse from "../../../../../layouts/collapse/Collapse";
 import { useDispatch, useSelector } from "react-redux";
@@ -12,10 +10,13 @@ import { mineTemplates } from "../../../../../features/template/asyncThunks";
 import { useEffect } from "react";
 import { createDocument } from "../../../../../features/document/asyncThunks";
 import { LoadingSpinner } from "../../../../LoadingSpinner/LoadingSpinner";
+import SubmitButton from "../../../../submitButton/SubmitButton";
+import { setToggleManageFileForm } from "../../../../../features/app/appSlice";
 
 const CreateDocument = ({ handleToggleOverlay }) => {
   const dispatch = useDispatch();
   const { miningTemplates, status } = useSelector((state) => state.template);
+  const { status: documentStatus } = useSelector((state) => state.document);
   const [currentOption, setCurrentOption] = useState(null);
 
   const [toggleDropdown, setToggleDropdown] = useState(false);
@@ -27,6 +28,8 @@ const CreateDocument = ({ handleToggleOverlay }) => {
     console.log("data", data);
 
     const { template } = data;
+
+    dispatch(setToggleManageFileForm(false));
 
     const createDocumentData = {
       company_id: "6360b64d0a882cf6308f5758",
@@ -45,7 +48,7 @@ const CreateDocument = ({ handleToggleOverlay }) => {
   const handleOptionClick = (item) => {
     setToggleDropdown(false);
     setCurrentOption(item.template_name);
-    setValue("template", item.eventId);
+    setValue("template", item._id);
     ref.current?.focus();
   };
 
@@ -60,6 +63,8 @@ const CreateDocument = ({ handleToggleOverlay }) => {
       })
     );
   }, []);
+
+  console.log("dox statussss", documentStatus);
 
   return (
     <Overlay title="Create Document" handleToggleOverlay={handleToggleOverlay}>
@@ -81,7 +86,7 @@ const CreateDocument = ({ handleToggleOverlay }) => {
                 {...register("template")}
               >
                 {miningTemplates.map((item) => (
-                  <option key={item.eventId} value={item.eventId}>
+                  <option key={item._id} value={item._id}>
                     {item.template_name}
                   </option>
                 ))}
@@ -110,8 +115,7 @@ const CreateDocument = ({ handleToggleOverlay }) => {
               </Collapse>
             </div>
           </div>
-
-          <button className={styles.create__button} type="submit">
+          <button type="submit" className={styles.create__button}>
             <span>Go to Editor</span>
             <i>
               <BsArrowRightShort size={25} />

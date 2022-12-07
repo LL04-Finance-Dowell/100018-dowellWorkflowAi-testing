@@ -10,8 +10,11 @@ import { FaPowerOff } from "react-icons/fa";
 import { FaUserAlt } from "react-icons/fa";
 import { ImHome3 } from "react-icons/im";
 import Footer from "./footer/Footer";
+import { useUserContext } from "../../contexts/UserContext";
 
 const Sidebar = () => {
+  const { currentUser } = useUserContext();
+
   return (
     <div className={styles.container}>
       <div className={styles.header__box}>
@@ -40,7 +43,9 @@ const Sidebar = () => {
           src="https://i0.wp.com/workflowai.online/wp-content/uploads/2022/02/download-e1658465151576.jpg?resize=100%2C100&ssl=1"
           alt="user"
         />
-        <h2 className={styles.user__box__text}>Welcome Tom</h2>
+        <h2 className={styles.user__box__text}>
+          Welcome {currentUser.first_name}
+        </h2>
       </div>
       <div className={styles.organization__box}>
         <h2 className={styles.organization__text}>My Organization</h2>

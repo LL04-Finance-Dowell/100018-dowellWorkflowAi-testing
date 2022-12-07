@@ -5,13 +5,15 @@ const workflowServices = new WorkflowServices();
 
 export const createWorkflow = createAsyncThunk(
   "workflow/create",
-  async ({ data, notify }) => {
+  async ({ data, notify, handleAfterCreated }) => {
     try {
       const res = await workflowServices.createWorkflow(data);
 
       console.log("resssssss1", res.data.workflow.workflows.workflow_title);
 
       notify(res.data.workflow.workflows.workflow_title);
+
+      handleAfterCreated();
 
       return res.data.workflow;
     } catch (error) {

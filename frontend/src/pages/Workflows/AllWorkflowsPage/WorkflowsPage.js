@@ -10,7 +10,7 @@ const WorkflowsPage = () => {
   return (
     <WorkflowLayout>
       <div id="newWorkflow">
-        <ManageFiles title="new workflow" OverlayComp={CreateWorkflows}>
+        <ManageFiles title="Workflow" OverlayComp={CreateWorkflows}>
           <div id="drafts">
             <SectionBox
               cardBgColor="#1ABC9C"
@@ -20,6 +20,7 @@ const WorkflowsPage = () => {
           </div>
           <div id="createdByMe">
             <SectionBox
+              feature="workflow"
               cardBgColor="#1ABC9C"
               title="created by me"
               cardItems={createWorkflowsByMe}

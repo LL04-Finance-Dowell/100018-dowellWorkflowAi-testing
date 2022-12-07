@@ -1,18 +1,18 @@
 import { useState } from "react";
 import styles from "./manageFiles.module.css";
 import { BsPlusLg } from "react-icons/bs";
-import { useAppContext } from "../../contexts/AppContext";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { createTemplate } from "../../features/template/asyncThunks";
 import { dataMaanish } from "../newSidebar/new/New";
+import { setToggleManageFileForm } from "../../features/app/appSlice";
 
 const ManageFiles = ({ title, children, OverlayComp }) => {
   const dispatch = useDispatch();
-  const { toggleNewFileForm, setToggleNewFileForm } = useAppContext();
+  const { toggleManageFileForm } = useSelector((state) => state.app);
 
   const handleToggleOverlay = () => {
     if (OverlayComp) {
-      setToggleNewFileForm((prev) => !prev);
+      dispatch(setToggleManageFileForm(!toggleManageFileForm));
     } else {
       dispatch(createTemplate(dataMaanish));
     }
@@ -20,12 +20,12 @@ const ManageFiles = ({ title, children, OverlayComp }) => {
 
   return (
     <div className={styles.container}>
-      {OverlayComp && toggleNewFileForm && (
+      {OverlayComp && toggleManageFileForm && (
         <OverlayComp handleToggleOverlay={handleToggleOverlay} />
       )}
       <div className={styles.content__box}>
         <div>
-          <h2 className={styles.header}>{title}</h2>
+          <h2 className={styles.header}>New {title}</h2>
           <div
             onClick={handleToggleOverlay}
             className={styles.add__Form__toggle}
@@ -33,7 +33,7 @@ const ManageFiles = ({ title, children, OverlayComp }) => {
             <i>
               <BsPlusLg color="white" cursor="pointer" size={25} />
             </i>
-            <h2>Add Workflow</h2>
+            <h2>Add {title}</h2>
           </div>
         </div>
         {children}
