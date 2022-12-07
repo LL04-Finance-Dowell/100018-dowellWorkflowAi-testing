@@ -516,3 +516,73 @@ Response-500
     "message": "Failed to Save Workflow"
              
 }
+```
+
+_POST_ `workflows/detail/`
+
+- Getting a single workflow by workflow_title and workflow_id
+
+Request Body
+
+```
+{
+    "workflow_title": "<id_of_the_workflow>",
+    "workflow_id": "<name_of_workflow_from_list>"
+}
+```
+
+Response-200
+
+```
+{
+    "editor_link": "<link_to_the_editor>"
+}
+
+```
+
+Response-400
+
+```
+{
+    "message": "This workflow is Not Loaded."
+}
+
+```
+
+Response-500
+
+```
+{
+    "message": "Failed to Load workflow"
+}
+
+```
+_POST_ `workflows/mine/`
+
+- Getting a Workflow company_id and created_by
+
+Request Body
+
+```
+{
+    "created_by": "<name_of_user>"
+    "company_id": "<company_id_of_authorized_user>",
+}
+```
+
+Response-200
+
+```
+{
+    "workflows":["list of workflows created by the user"]
+}
+
+```
+
+Response-500
+
+```
+{
+    "message": "There is no workflow created by This user."
+}
+```
