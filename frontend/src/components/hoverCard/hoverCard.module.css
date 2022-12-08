@@ -1,0 +1,38 @@
+.container {
+  height: 200px;
+  width: 145px;
+  overflow: hidden;
+  position: relative;
+  text-align: center;
+  /* transition: 1s ease all; */
+  border-radius: 5px;
+}
+
+.box {
+  width: 100%;
+  /* padding: 37px; */
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  color: var(--e-global-color-cd6593d);
+  padding: 10px;
+}
+
+.hover__box {
+  transform: translateY(100%);
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  z-index: 10;
+  background-color: #4054b2 !important;
+  transition: 1s ease all;
+}
+
+.container:hover .hover__box {
+  transform: translateY(0);
+}

@@ -5,6 +5,9 @@ import { v4 as uuidv4 } from "uuid";
 import SectionBox from "../../components/manageFiles/sectionBox/SectionBox";
 import HandleTasks from "../../components/landingPage/handleTasks/HandleTasks";
 import FlipMenu from "../../components/flipMenu/FlipMenu";
+import DocumnetCard from "../../components/hoverCard/documentCard/DocumentCard";
+import TemplateCard from "../../components/hoverCard/templateCard/TemplateCard";
+import WorkflowCard from "../../components/hoverCard/workflowCard/WorkflowCard";
 
 const WorkflowApp = () => {
   return (
@@ -16,6 +19,7 @@ const WorkflowApp = () => {
           {notifications.map((item) => (
             <SectionBox
               key={item.id}
+              Card={item.card}
               title={`notifications - ${item.title}`}
               cardItems={item.items}
               cardBgColor={item.cardBgColor}
@@ -38,6 +42,7 @@ export const notifications = [
     id: uuidv4(),
     title: "documents",
     cardBgColor: "#1ABC9C",
+    card: DocumnetCard,
     items: [
       { id: uuidv4() },
       { id: uuidv4() },
@@ -50,11 +55,13 @@ export const notifications = [
     id: uuidv4(),
     title: "templates",
     cardBgColor: null,
+    card: TemplateCard,
     items: [{ id: uuidv4() }, { id: uuidv4() }, { id: uuidv4() }],
   },
   {
     id: uuidv4(),
     title: "workflows",
+    card: WorkflowCard,
     cardBgColor: null,
     items: [{ id: uuidv4() }, { id: uuidv4() }],
   },

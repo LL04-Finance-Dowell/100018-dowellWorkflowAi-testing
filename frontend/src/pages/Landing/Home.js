@@ -1,3 +1,5 @@
+import { useEffect } from "react";
+import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { useUserContext } from "../../contexts/UserContext";
 import WorkflowLayout from "../../layouts/WorkflowLayout/WorkflowLayout";
@@ -7,26 +9,37 @@ import "../Landing/home.css";
 
 const LandingPage = () => {
   const { currentUser } = useUserContext();
+  const { userInfo } = useSelector((state) => state.app);
+
+  /* https://ll04-finance-dowell.github.io/100018-dowellWorkflowAi-testing */
+
+  console.log("userınfıo o oooasdosaod", userInfo);
+
+  useEffect(() => {
+    if (!currentUser) {
+      window.location.replace(
+        "https://100014.pythonanywhere.com/?redirect_url=http://localhost:3000/100018-dowellWorkflowAi-testing/%23"
+      );
+    }
+  }, [currentUser]);
 
   return (
     <>
-      <WorkflowLayout>
-        <div>
-          Landing
-          {!currentUser ? (
-            <button>
-              <Link
-                to={dowellLoginUrl}
-                onClick={(e) => handleAuthenticationBtnClick(e, dowellLoginUrl)}
-              >
-                Login
-              </Link>
-            </button>
-          ) : (
-            <></>
-          )}
-        </div>
-      </WorkflowLayout>
+      {/* <div>
+        Landing
+        {!currentUser ? (
+          <button>
+            <Link
+              to={dowellLoginUrl}
+              onClick={(e) => handleAuthenticationBtnClick(e, dowellLoginUrl)}
+            >
+              Login
+            </Link>
+          </button>
+        ) : (
+          <></>
+        )}
+      </div> */}
 
       {/* <div className="main">
         <SideBar />

@@ -10,9 +10,9 @@ export const createTemplate = createAsyncThunk(
     try {
       const res = await templateServices.createTemplate(data);
 
-      thunkAPI.dispatch(setEditorLink(res.data[0].slice(1)));
+      thunkAPI.dispatch(setEditorLink(res.data));
 
-      return res.data[0].slice(1);
+      return res.data;
     } catch (error) {
       console.log(error);
     }
@@ -25,9 +25,9 @@ export const detailTemplate = createAsyncThunk(
     try {
       const res = await templateServices.detailTemplate(data);
 
-      console.log("dataaaaaaaa", res.data[0]);
+      console.log("template data detail", res.data);
 
-      thunkAPI.dispatch(setEditorLink(res.data[0].slice(1)));
+      thunkAPI.dispatch(setEditorLink(res.data));
 
       return res.data;
     } catch (error) {
@@ -40,10 +40,26 @@ export const mineTemplates = createAsyncThunk("template/mine", async (data) => {
   try {
     const res = await templateServices.mineTemplates(data);
 
-    console.log("ress", res.data.slice(0, 3));
+    console.log("mine teplatessssssssss", res.data);
 
-    return res.data.slice(0, 3);
+    return res.data;
   } catch (error) {
     console.log(error);
   }
 });
+
+/* export const draftsTemplate = createAsyncThunk(
+  "template/drafts",
+  async (data) => {
+    try {
+      const res = await templateServices.draftsTemplate(data);
+
+      console.log("ressssssssssssssss", res.data.slice(0, 3));
+
+      return res.data.slice(0, 3);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+);
+ */

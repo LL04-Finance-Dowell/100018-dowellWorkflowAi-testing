@@ -60,7 +60,8 @@
   margin-top: 20px;
   box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.15);
   border-radius: 5px;
-  overflow: hidden;
+  max-height: 270px !important;
+  overflow-y: auto;
 }
 
 .dropdown__option__box {
@@ -93,7 +94,7 @@
   display: flex;
   gap: 6px;
   border: 1.5px #000 solid;
-  background-color: #002b98;
+  background-color: var(--popup-form-button);
   color: var(--e-global-color-cd6593d);
   font-size: 16px;
   line-height: 24px;

@@ -6,16 +6,21 @@ import { useState } from "react";
 import { useEffect } from "react";
 import { LoadingSpinner } from "../../LoadingSpinner/LoadingSpinner";
 
-const SectionBox = ({ cardItems, title, cardBgColor, feature }) => {
+const SectionBox = ({ cardItems, title, cardBgColor, feature, Card }) => {
   const [test, setTest] = useState("idle");
 
   const { mineStatus: tempMineStatus } = useSelector((state) => state.template);
-  const { mineStatus: docMineStatus } = useSelector((state) => state.document);
+  const { mineStatus: docMineStatus, draftStatu } = useSelector(
+    (state) => state.document
+  );
+  const { mineStatus: workflowStatus } = useSelector((state) => state.workflow);
 
   useEffect(() => {
     feature === "template" && setTest(tempMineStatus);
     feature === "document" && setTest(docMineStatus);
-  }, [tempMineStatus, docMineStatus]);
+    feature === "document-draft" && setTest(draftStatu);
+    feature === "workflow" && setTest(workflowStatus);
+  }, [tempMineStatus, docMineStatus, draftStatu]);
 
   return (
     <div className={styles.container}>
@@ -28,15 +33,9 @@ const SectionBox = ({ cardItems, title, cardBgColor, feature }) => {
             </div>
           ) : (
             <div className={styles.grid__box}>
-              {cardItems &&
-                cardItems.map((item) => (
-                  <HoverCard
-                    feature={feature}
-                    item={item}
-                    bgColor={cardBgColor}
-                    key={item.id}
-                  />
-                ))}
+              {Card &&
+                cardItems &&
+                cardItems.map((item) => <Card cardItem={item} />)}
             </div>
           )}
         </div>

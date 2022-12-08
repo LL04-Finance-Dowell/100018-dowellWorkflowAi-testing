@@ -54,3 +54,46 @@ export const HoverCard = styled.div`
   transition: 1s ease all;
 `;
  */
+
+{
+  /*  <i>
+    <FaSignature size={62} />
+  </i> */
+}
+{
+  /* <h2 className={styles.title}>To be signed</h2> */
+}
+/* 
+<div className={styles.container}>
+<Box bgColor={bgColor} className={`${styles.box}`}>
+
+  <span className={styles.title}>
+    {(feature && feature.includes("document") && item.document_name) ||
+      (feature === "template" && item.template_name) ||
+      (feature === "workflow" && item.workflow_name)}
+  </span>
+</Box>
+<div className={`${styles.box} ${styles.hover__box}`}>
+  {feature === "workflow" ? (
+    <>
+      <h2 className={styles.step__text}>step1 - admin</h2>
+      <div className={styles.button__group}>
+        <button className={styles.update__button}>update</button>
+        <button className={styles.delete__button}>delete</button>
+      </div>
+    </>
+  ) : (
+    <>
+      <h2 className={styles.title}>{item.document_name}</h2>
+      <span className={styles.sub__title}>Thumb nail of file</span>
+      <button
+        className={styles.detail__button}
+        onClick={handleDetail}
+        tabIndex={-30}
+      >
+        Click here
+      </button>
+    </>
+  )}
+</div>
+</div> */

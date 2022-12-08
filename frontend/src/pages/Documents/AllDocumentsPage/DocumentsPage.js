@@ -6,19 +6,24 @@ import { v4 as uuidv4 } from "uuid";
 import WorkflowLayout from "../../../layouts/WorkflowLayout/WorkflowLayout";
 import ManageFiles from "../../../components/manageFiles/ManageFiles";
 import { useDispatch, useSelector } from "react-redux";
-import { mineDocuments } from "../../../features/document/asyncThunks";
+import { mineDocuments, drafts } from "../../../features/document/asyncThunks";
+import DocumentCard from "../../../components/hoverCard/documentCard/DocumentCard";
 
 const DocumentsPage = () => {
-  const { mineDocuments: minedDocuments, status } = useSelector(
+  const { minedDocuments, drafts: draftItems } = useSelector(
     (state) => state.document
   );
   const dispatch = useDispatch();
+
+  console.log("draftitems", minedDocuments);
 
   useEffect(() => {
     const data = {
       created_by: "Manish",
       company_id: "6360b64d0a882cf6308f5758",
     };
+
+    dispatch(drafts(data));
     dispatch(mineDocuments(data));
   }, []);
 
@@ -28,9 +33,11 @@ const DocumentsPage = () => {
         <ManageFiles title="Document" OverlayComp={CreateDocument}>
           <div id="drafts">
             <SectionBox
+              feature="document-draft"
               cardBgColor="#1ABC9C"
               title="drafts"
-              cardItems={drafts}
+              Card={DocumentCard}
+              cardItems={draftItems}
             />
           </div>
           <div id="createdByMe">
@@ -38,6 +45,7 @@ const DocumentsPage = () => {
               feature="document"
               cardBgColor="#1ABC9C"
               title="created by me"
+              Card={DocumentCard}
               cardItems={minedDocuments}
             />
           </div>
@@ -57,10 +65,11 @@ export const createDocumentsByMe = [
   { id: uuidv4() },
 ];
 
-export const drafts = [
+/* export const drafts = [
   { id: uuidv4() },
   { id: uuidv4() },
   { id: uuidv4() },
   { id: uuidv4() },
   { id: uuidv4() },
 ];
+ */

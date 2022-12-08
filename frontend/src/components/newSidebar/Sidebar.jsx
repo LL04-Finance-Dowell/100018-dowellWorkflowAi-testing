@@ -11,9 +11,46 @@ import { FaUserAlt } from "react-icons/fa";
 import { ImHome3 } from "react-icons/im";
 import Footer from "./footer/Footer";
 import { useUserContext } from "../../contexts/UserContext";
+import { getUserInfo } from "../../features/app/asyncThunks";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate, useSearchParams } from "react-router-dom";
+import { useEffect } from "react";
+import axios from "axios";
+import { CgProfile } from "react-icons/cg";
+import { FaShieldAlt } from "react-icons/fa";
+import { AiTwotoneSetting } from "react-icons/ai";
 
 const Sidebar = () => {
+  const dispatch = useDispatch();
+  const { userInfo } = useSelector((state) => state.app);
+  /*  const {minedWorkflows} =useSelector(state => state.workflow)
+  const {minedTemplates} =useSelector(state => state.template)
+  const {minedDocuments} =useSelector(state => state.document) */
   const { currentUser } = useUserContext();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const navigate = useNavigate();
+
+  const session_id = localStorage.getItem("session_id");
+
+  const handleLogout = () => {
+    localStorage.clear();
+    navigate("/");
+    window.location.reload();
+  };
+
+  const handleClick = (feature) => {
+    feature === "logout" && handleLogout();
+    feature === "profile" &&
+      window.open(
+        `https://100093.pythonanywhere.com/?session_id=${localStorage.getItem(
+          "session_id"
+        )}`,
+        "_blank"
+      );
+    feature === "home" && navigate(`/`);
+    /*  feature === "shield" && ;
+    feature === "settings" && ; */
+  };
 
   return (
     <div className={styles.container}>
@@ -35,16 +72,25 @@ const Sidebar = () => {
       </div>
       <div className={styles.icon__box}>
         {iconBoxItems.map((item) => (
-          <i key={item.id}>{<item.icon size={25} />}</i>
+          <i onClick={() => handleClick(item.feature)} key={item.id}>
+            {<item.icon size={25} />}
+          </i>
         ))}
       </div>
       <div className={styles.user__box}>
-        <img
-          src="https://i0.wp.com/workflowai.online/wp-content/uploads/2022/02/download-e1658465151576.jpg?resize=100%2C100&ssl=1"
-          alt="user"
-        />
+        {currentUser?.profile_image ? (
+          <img src={currentUser?.profile_image} alt="user" />
+        ) : (
+          <i>
+            <CgProfile size={100} />
+          </i>
+        )}
+
         <h2 className={styles.user__box__text}>
-          Welcome {currentUser.first_name}
+          Welcome{" "}
+          {currentUser && currentUser.first_name
+            ? currentUser.first_name
+            : "Tom"}
         </h2>
       </div>
       <div className={styles.organization__box}>
@@ -76,7 +122,7 @@ const Sidebar = () => {
         </h2>
         <CollapseItem items={knowledge} />
       </div>
-      <Footer />
+      <Footer topSideIcons={iconBoxItems} handleIconClick={handleClick} />
     </div>
   );
 };
@@ -84,9 +130,15 @@ const Sidebar = () => {
 export default Sidebar;
 
 export const iconBoxItems = [
-  { id: uuidv4(), icon: FaPowerOff },
-  { id: uuidv4(), icon: FaUserAlt },
-  { id: uuidv4(), icon: ImHome3 },
+  { id: uuidv4(), icon: FaPowerOff, feature: "logout" },
+  { id: uuidv4(), icon: FaUserAlt, feature: "profile" },
+  { id: uuidv4(), icon: ImHome3, feature: "home" },
+];
+
+export const footerIcons = [
+  ...iconBoxItems,
+  { id: uuidv4(), icon: FaShieldAlt, feature: "shield" },
+  { id: uuidv4(), icon: AiTwotoneSetting, feature: "settings" },
 ];
 
 export const manageFileItems = [

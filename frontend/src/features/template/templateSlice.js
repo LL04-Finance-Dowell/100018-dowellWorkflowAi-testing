@@ -1,13 +1,20 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { createTemplate, mineTemplates, detailTemplate } from "./asyncThunks";
+import {
+  createTemplate,
+  mineTemplates,
+  detailTemplate,
+  draftsTemplate,
+} from "./asyncThunks";
 
 const initialState = {
   templateEditor: null,
   detailTemplate: null,
-  miningTemplates: [],
+  minedTemplates: [],
+  /* draftsTemlateItems: [], */
   status: "idle",
   editorStatus: "idle",
   mineStatus: "idle",
+  draftsTemplateStatu: "idle",
   errorMessage: null,
 };
 
@@ -45,12 +52,24 @@ export const templateSlice = createSlice({
     });
     builder.addCase(mineTemplates.fulfilled, (state, action) => {
       state.mineStatus = "succeeded";
-      state.miningTemplates = action.payload;
+      state.minedTemplates = action.payload;
     });
     builder.addCase(mineTemplates.rejected, (state, action) => {
       state.mineStatus = "failed";
       state.errorMessage = action.payload;
     });
+    /*   //draftsTemplate
+    builder.addCase(draftsTemplate.pending, (state) => {
+      state.draftsTemplateStatu = "pending";
+    });
+    builder.addCase(draftsTemplate.fulfilled, (state, action) => {
+      state.draftsTemplateStatu = "succeeded";
+      state.draftsTemlateItems = action.payload;
+    });
+    builder.addCase(draftsTemplate.rejected, (state, action) => {
+      state.draftsTemplateStatu = "failed";
+      state.errorMessage = action.payload;
+    }); */
   },
 });
 

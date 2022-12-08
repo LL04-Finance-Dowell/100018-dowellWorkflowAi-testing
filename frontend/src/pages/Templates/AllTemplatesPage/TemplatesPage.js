@@ -6,12 +6,15 @@ import { v4 as uuidv4 } from "uuid";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
 import { mineTemplates } from "../../../features/template/asyncThunks";
+import TemplateCard from "../../../components/hoverCard/templateCard/TemplateCard";
 
 const TemplatesPage = () => {
-  const { miningTemplates } = useSelector((state) => state.template);
+  const { minedTemplates, draftsTemlateItems } = useSelector(
+    (state) => state.template
+  );
   const dispatch = useDispatch();
 
-  console.log("mining templateeeeeeeeeeeeeeeeeee", miningTemplates);
+  console.log("mining templateeeeeeeeeeeeeeeeeee", minedTemplates);
 
   useEffect(() => {
     const data = {
@@ -27,8 +30,10 @@ const TemplatesPage = () => {
         <ManageFiles title="Template">
           <div id="drafts">
             <SectionBox
+              /*  feature="template" */
               cardBgColor="#1ABC9C"
               title="drafts"
+              Card={TemplateCard}
               cardItems={drafts}
             />
           </div>
@@ -37,7 +42,8 @@ const TemplatesPage = () => {
               feature="template"
               cardBgColor="#1ABC9C"
               title="created by me"
-              cardItems={miningTemplates}
+              Card={TemplateCard}
+              cardItems={minedTemplates}
             />
           </div>
         </ManageFiles>

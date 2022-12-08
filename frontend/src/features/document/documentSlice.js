@@ -12,13 +12,14 @@ const initialState = {
   createdDocument: null,
   detailDocument: null,
   signedDocument: null,
-  mineDocuments: null,
+  minedDocuments: [],
   rejectedDocuments: null,
   drafts: null,
   status: "idle",
   editorStatus: "idle",
   createDocumentStatus: "idle",
   mineStatus: "idle",
+  draftStatu: "idle",
   errorMessage: null,
 };
 
@@ -69,7 +70,7 @@ export const documentSlice = createSlice({
     });
     builder.addCase(mineDocuments.fulfilled, (state, action) => {
       state.mineStatus = "succeeded";
-      state.mineDocuments = action.payload;
+      state.minedDocuments = action.payload;
     });
     builder.addCase(mineDocuments.rejected, (state, action) => {
       state.mineStatus = "failed";
@@ -89,14 +90,14 @@ export const documentSlice = createSlice({
     });
     //drafts
     builder.addCase(drafts.pending, (state) => {
-      state.status = "pending";
+      state.draftStatu = "pending";
     });
     builder.addCase(drafts.fulfilled, (state, action) => {
-      state.status = "succeeded";
+      state.draftStatu = "succeeded";
       state.drafts = action.payload;
     });
     builder.addCase(drafts.rejected, (state, action) => {
-      state.status = "failed";
+      state.draftStatu = "failed";
       state.errorMessage = action.payload;
     });
   },

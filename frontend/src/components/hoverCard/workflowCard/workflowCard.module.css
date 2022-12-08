@@ -1,0 +1,32 @@
+.back__container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding-block: 10px;
+}
+
+.back__container p {
+  margin-bottom: 5px;
+  font-size: 14px;
+  color: #fff;
+  text-align: center;
+}
+
+.button__group {
+  margin-top: auto;
+  display: flex;
+  gap: 5px;
+}
+
+.button__group a {
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.delete {
+  color: red !important;
+}
+
+.update {
+  color: green !important;
+}

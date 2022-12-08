@@ -9,12 +9,14 @@
 }
 
 .content__box {
-  width: 100%;
+  display: flex;
+  flex-direction: column;
 }
 
 .grid__box {
-  width: 100%;
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  gap: 10px;
+  /* width: 100%; */
+  display: flex;
+  /*   grid-template-columns: 1fr 1fr 1fr; */
+  flex-wrap: wrap;
+  gap: 3px;
 }

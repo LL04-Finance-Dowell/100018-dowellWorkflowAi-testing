@@ -10,8 +10,6 @@ export const createDocument = createAsyncThunk(
     try {
       const res = await documentServices.createDocument(data);
 
-      console.log("documenttttttttt", res.data);
-
       thunkAPI.dispatch(setEditorLink(res.data));
 
       return res.data;
@@ -26,9 +24,6 @@ export const detailDocument = createAsyncThunk(
   async (data, thunkAPI) => {
     try {
       const res = await documentServices.detailDocument(data);
-      console.log("inseideeee");
-
-      console.log("detail document", res.data);
 
       thunkAPI.dispatch(setEditorLink(res.data));
 
@@ -59,7 +54,7 @@ export const mineDocuments = createAsyncThunk("document/mine", async (data) => {
 
     console.log("mine document", res.data);
 
-    return res.data.documents.slice(0, 5);
+    return res.data.documents;
   } catch (error) {
     console.log(error);
   }
@@ -88,7 +83,7 @@ export const drafts = createAsyncThunk("document/drafts", async (data) => {
 
     console.log("document", res.data);
 
-    return res.data;
+    return res.data.documents;
   } catch (error) {
     console.log(error);
   }

@@ -15,7 +15,7 @@ import { setToggleManageFileForm } from "../../../../../features/app/appSlice";
 
 const CreateDocument = ({ handleToggleOverlay }) => {
   const dispatch = useDispatch();
-  const { miningTemplates, status } = useSelector((state) => state.template);
+  const { minedTemplates, mineStatus } = useSelector((state) => state.template);
   const { status: documentStatus } = useSelector((state) => state.document);
   const [currentOption, setCurrentOption] = useState(null);
 
@@ -68,7 +68,7 @@ const CreateDocument = ({ handleToggleOverlay }) => {
 
   return (
     <Overlay title="Create Document" handleToggleOverlay={handleToggleOverlay}>
-      {status === "pending" ? (
+      {mineStatus === "pending" ? (
         <div>
           <LoadingSpinner />
         </div>
@@ -85,7 +85,7 @@ const CreateDocument = ({ handleToggleOverlay }) => {
                 tabIndex={-98}
                 {...register("template")}
               >
-                {miningTemplates.map((item) => (
+                {minedTemplates.map((item) => (
                   <option key={item._id} value={item._id}>
                     {item.template_name}
                   </option>
@@ -103,7 +103,7 @@ const CreateDocument = ({ handleToggleOverlay }) => {
             <div className={styles.dropdown__option__container}>
               <Collapse open={toggleDropdown}>
                 <div role="listbox" className={styles.dropdown__option__box}>
-                  {miningTemplates.map((item) => (
+                  {minedTemplates.map((item) => (
                     <div
                       onClick={() => handleOptionClick(item)}
                       className={styles.dropdown__option__content}

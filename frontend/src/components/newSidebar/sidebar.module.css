@@ -55,7 +55,8 @@
   text-align: center;
 }
 
-.user__box img {
+.user__box img,
+.user__box i {
   margin-top: 20px;
   width: 100px;
   height: 100px;
