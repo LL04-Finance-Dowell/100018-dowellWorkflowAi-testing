@@ -15,17 +15,17 @@ const LandingPage = () => {
 
   console.log("userınfıo o oooasdosaod", userInfo);
 
-  useEffect(() => {
+  /*   useEffect(() => {
     if (!currentUser) {
       window.location.replace(
         "https://100014.pythonanywhere.com/?redirect_url=http://localhost:3000/100018-dowellWorkflowAi-testing/%23"
       );
     }
-  }, [currentUser]);
+  }, [currentUser]); */
 
   return (
     <>
-      {/* <div>
+      <div>
         Landing
         {!currentUser ? (
           <button>
@@ -39,7 +39,7 @@ const LandingPage = () => {
         ) : (
           <></>
         )}
-      </div> */}
+      </div>
 
       {/* <div className="main">
         <SideBar />
