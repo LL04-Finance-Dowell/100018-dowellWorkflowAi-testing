@@ -17,9 +17,7 @@ const LandingPage = () => {
 
   useEffect(() => {
     if (!currentUser) {
-      window.location.replace(
-        "https://100014.pythonanywhere.com/?redirect_url=http://localhost:3000/100018-dowellWorkflowAi-testing/%23"
-      );
+      window.location.replace(dowellLoginUrl);
     }
   }, [currentUser]);
 

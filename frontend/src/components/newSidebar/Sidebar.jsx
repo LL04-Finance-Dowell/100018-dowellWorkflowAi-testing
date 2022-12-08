@@ -19,6 +19,7 @@ import axios from "axios";
 import { CgProfile } from "react-icons/cg";
 import { FaShieldAlt } from "react-icons/fa";
 import { AiTwotoneSetting } from "react-icons/ai";
+import { dowellLogoutUrl } from "../../services/axios";
 
 const Sidebar = () => {
   const dispatch = useDispatch();
@@ -34,8 +35,7 @@ const Sidebar = () => {
 
   const handleLogout = () => {
     localStorage.clear();
-    navigate("/");
-    window.location.reload();
+    window.location.replace(dowellLogoutUrl);
   };
 
   const handleClick = (feature) => {
