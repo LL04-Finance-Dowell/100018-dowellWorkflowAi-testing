@@ -27,7 +27,7 @@ def create_workflow(request):  # Document Creation.
             )
         else:
             created_by =    form["created_by"]
-            company_id =    get_user_info_by_username(created_by)['company_id']
+            company_id =    form['company_id']
             wf_name =       form["wf_title"]
             steps  =   form['steps']
             
@@ -93,7 +93,7 @@ def workflow_detail(request):  # Single document
             )
         except:
             return Response(
-        {"message": "Failed to call editorApi"},
+        {"message": "Failed to get response"},
         status=status.HTTP_500_INTERNAL_SERVER_ERROR,
     )
            
