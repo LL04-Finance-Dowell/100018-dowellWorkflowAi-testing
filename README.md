@@ -583,10 +583,6 @@ Request Body
 
 ```
 {
-    
-}
-
-{
     "workflow_id": "<id_specific_of_workflow>"    
     "workflow_title": "Workflow_title_new_or_existing", 
     "steps": [
