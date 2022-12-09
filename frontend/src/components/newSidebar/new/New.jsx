@@ -7,13 +7,10 @@ import { HashLink } from "react-router-hash-link";
 import { useDispatch, useSelector } from "react-redux";
 import { createTemplate } from "../../../features/template/asyncThunks";
 import { setToggleManageFileForm } from "../../../features/app/appSlice";
-
-export const dataMaanish = {
-  created_by: "Maanish",
-  company_id: "6365ee18ff915c925f3a6691",
-};
+import { localStorageGetItem } from "../../../utils/localStorageUtils";
 
 const New = () => {
+  const userDetail = localStorageGetItem("userDetail");
   const dispatch = useDispatch();
 
   const [isOpen, setIsOpen] = useState(false);
@@ -25,8 +22,12 @@ const New = () => {
   const handleNewItemClick = (e, content) => {
     if (content === "template") {
       e.preventDefault();
+      const data = {
+        created_by: userDetail?.userinfo.username,
+        company_id: userDetail?.userinfo.client_admin_id,
+      };
 
-      dispatch(createTemplate(dataMaanish));
+      dispatch(createTemplate(data));
     } else {
       dispatch(setToggleManageFileForm(true));
     }

@@ -1,6 +1,6 @@
 import styles from "./createWorkflow.module.css";
 import { useForm } from "react-hook-form";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import Overlay from "../../../overlay/Overlay";
 import { useUserContext } from "../../../../../contexts/UserContext";
@@ -11,16 +11,26 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { LoadingSpinner } from "../../../../LoadingSpinner/LoadingSpinner";
 import SubmitButton from "../../../../submitButton/SubmitButton";
+import { setToggleManageFileForm } from "../../../../../features/app/appSlice";
+import Spinner from "../../../../spinner/Spinner";
+import { localStorageGetItem } from "../../../../../utils/localStorageUtils";
 
 const CreateWorkflows = ({ handleToggleOverlay }) => {
+  const userDetail = localStorageGetItem("userDetail");
+
   const dispatch = useDispatch();
-  const { workflow, status } = useSelector((state) => state.workflow);
+  const { workflow, status, workflowDetailStatus } = useSelector(
+    (state) => state.workflow
+  );
+  const { currentWorkflow } = useSelector((state) => state.app);
+
+  console.log("currentWorkflow", currentWorkflow);
 
   const notify = (title) => toast("created" + " " + title);
 
   const [internalWorkflows, setInternalWorkflows] = useState([]);
   const [workflowTitle, setWorkflowTitle] = useState("");
-  const [isStep, setIsStep] = useState(true);
+
   const { currentUser } = useUserContext();
 
   console.log("currentUSer0", currentUser);
@@ -39,11 +49,6 @@ const CreateWorkflows = ({ handleToggleOverlay }) => {
 
   const handleRemoveInternalTemplate = (id) => {
     setInternalWorkflows((prev) => prev.filter((item) => item.id !== id));
-    if (internalWorkflows.length === 0) {
-      setIsStep(true);
-    } else {
-      setIsStep(false);
-    }
   };
 
   const handleWorkflowChange = (e) => {
@@ -62,9 +67,9 @@ const CreateWorkflows = ({ handleToggleOverlay }) => {
     }
 
     const data = {
-      created_by: currentUser.username,
+      created_by: userDetail?.userinfo.username,
       wf_title: workflowTitle,
-      company_id: "6365ee18ff915c925f3a6691",
+      company_id: userDetail?.userinfo.client_admin_id,
       steps: internalWorkflows.map((item) => ({
         step_name: item.stepName,
         member_type: item.role,
@@ -79,109 +84,115 @@ const CreateWorkflows = ({ handleToggleOverlay }) => {
       })),
     };
 
-    const handleAfterCreated = () => {
-      reset();
-      setWorkflowTitle("");
-      setInternalWorkflows([]);
-    };
+    if (currentWorkflow) {
+      console.log("update");
+    } else {
+      const handleAfterCreated = () => {
+        reset();
+        setWorkflowTitle("");
+        setInternalWorkflows([]);
+        dispatch(setToggleManageFileForm(false));
+      };
 
-    dispatch(createWorkflow({ data, notify, handleAfterCreated }));
-    console.log(data);
+      dispatch(createWorkflow({ data, notify, handleAfterCreated }));
+    }
   };
 
-  return (
-    <Overlay title="Create Workflow" handleToggleOverlay={handleToggleOverlay}>
-      <div className={styles.form__container}>
-        <div className={overlayStyles.input__box}>
-          <label>
-            Workflow Title <span>*</span>
-          </label>
-          <input value={workflowTitle} onChange={handleWorkflowChange} />
-        </div>
-        <table>
-          <thead>
-            <tr>
-              <th>step name</th>
-              <th>role</th>
-            </tr>
-          </thead>
-          <tbody>
-            {internalWorkflows.map((item) => (
-              <tr key={item.id}>
-                <th>{item.stepName}</th>
-                <th>
-                  <span>{item.role}</span>
-                  <span
-                    onClick={() => handleRemoveInternalTemplate(item.id)}
-                    className={styles.remove__item__button}
-                  >
-                    x
-                  </span>
-                </th>
-              </tr>
-            ))}
-            {/*  {isStep ? (
-          internalWorkflows.map((item) => (
-            <tr key={item.id}>
-              <th>{item.stepName}</th>
-              <th>{item.role}</th>
-              <th onClick={() => handleRemoveInternalTemplate(item.id)}>
-                <button className={styles.remove__step__button}>X</button>
-              </th>
-            </tr>
-          ))
-        ) : (
-          <tr>
-            <td className={styles.no__step} colSpan={4}>
-              No Step
-            </td>
-          </tr>
-        )} */}
-          </tbody>
-        </table>
-        <form onSubmit={handleSubmit(onSubmit)}>
-          <div className={styles.form__box} style={{ display: "flex" }}>
-            <div className={overlayStyles.input__box}>
-              <label htmlFor="stepName">Step Name</label>
-              <input
-                required
-                placeholder="Step Name"
-                id="stepName"
-                {...register("stepName")}
-              />
-            </div>
-            <div className={overlayStyles.input__box}>
-              <label htmlFor="role">Role</label>
-              <input
-                required
-                placeholder="Role"
-                id="role"
-                {...register("role")}
-              />
-            </div>
-            <button className={styles.add__table__button} type="submit">
-              +
-            </button>
-          </div>
-        </form>
+  useEffect(() => {
+    if (workflowDetailStatus === "error") {
+      dispatch(setToggleManageFileForm(false));
+    } else {
+      if (currentWorkflow) setWorkflowTitle(currentWorkflow.workflow_title);
+    }
+  }, [workflowDetailStatus]);
 
-        <div className={styles.button__group}>
-          <button
-            onClick={handleToggleOverlay}
-            className={styles.cancel__button}
-          >
-            cancel
-          </button>
-          <SubmitButton
-            onClick={handleCreateWorkflow}
-            status={status}
-            type="button"
-            className={styles.add__button}
-          >
-            add
-          </SubmitButton>
+  return (
+    <Overlay
+      title={`${
+        workflowDetailStatus === "pending" || currentWorkflow
+          ? "Update"
+          : "Create"
+      } Workflow`}
+      handleToggleOverlay={handleToggleOverlay}
+    >
+      {workflowDetailStatus === "pending" ? (
+        <Spinner />
+      ) : (
+        <div className={styles.form__container}>
+          <div className={overlayStyles.input__box}>
+            <label>
+              Workflow Title <span>*</span>
+            </label>
+            <input value={workflowTitle} onChange={handleWorkflowChange} />
+          </div>
+          <table>
+            <thead>
+              <tr>
+                <th>step name</th>
+                <th>role</th>
+              </tr>
+            </thead>
+            <tbody>
+              {internalWorkflows.map((item) => (
+                <tr key={item.id}>
+                  <th>{item.stepName}</th>
+                  <th>
+                    <span>{item.role}</span>
+                    <span
+                      onClick={() => handleRemoveInternalTemplate(item.id)}
+                      className={styles.remove__item__button}
+                    >
+                      x
+                    </span>
+                  </th>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          <form onSubmit={handleSubmit(onSubmit)}>
+            <div className={styles.form__box} style={{ display: "flex" }}>
+              <div className={overlayStyles.input__box}>
+                <label htmlFor="stepName">Step Name</label>
+                <input
+                  required
+                  placeholder="Step Name"
+                  id="stepName"
+                  {...register("stepName")}
+                />
+              </div>
+              <div className={overlayStyles.input__box}>
+                <label htmlFor="role">Role</label>
+                <input
+                  required
+                  placeholder="Role"
+                  id="role"
+                  {...register("role")}
+                />
+              </div>
+              <button className={styles.add__table__button} type="submit">
+                +
+              </button>
+            </div>
+          </form>
+
+          <div className={styles.button__group}>
+            <button
+              onClick={handleToggleOverlay}
+              className={styles.cancel__button}
+            >
+              cancel
+            </button>
+            <SubmitButton
+              onClick={handleCreateWorkflow}
+              status={status}
+              type="button"
+              className={styles.add__button}
+            >
+              {currentWorkflow ? "update" : "add"}
+            </SubmitButton>
+          </div>
         </div>
-      </div>
+      )}
     </Overlay>
   );
 };

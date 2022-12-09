@@ -3,6 +3,7 @@ import styles from "./collapseItem.module.css";
 import Collapse from "../../../layouts/collapse/Collapse";
 import { HashLink } from "react-router-hash-link";
 import { IoMdArrowDropright } from "react-icons/io";
+import { useEffect } from "react";
 
 function ListItem({ item }) {
   let children = null;
@@ -45,6 +46,12 @@ const CollapseItem = ({ items, listType }) => {
     );
   };
 
+  useEffect(() => {
+    setMenuItems(items);
+  }, [items]);
+
+  console.log("menu items", items);
+
   return (
     <div className={styles.container}>
       {menuItems.map((item) => (
@@ -59,7 +66,10 @@ const CollapseItem = ({ items, listType }) => {
             <i>
               <IoMdArrowDropright size={25} />
             </i>
-            {item.parent}
+            {item.parent}{" "}
+            {item.count && item.count > 0
+              ? `(${item.count.toString().padStart(3, "0")})`
+              : ""}
           </div>
           <div className={styles.children__item__container}>
             <Collapse open={item.isOpen}>

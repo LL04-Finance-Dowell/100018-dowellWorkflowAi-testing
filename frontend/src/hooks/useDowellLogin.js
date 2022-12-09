@@ -2,8 +2,11 @@ import { useEffect } from "react";
 import { authAxiosInstance } from "../services/axios";
 import { routes } from "../services/routes";
 import { useSearchParams } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { getUserInfo } from "../features/app/asyncThunks";
 
 export default function useDowellLogin(updateState, updatePageWhenDone) {
+  const dispatch = useDispatch();
   const [searchParams, setSearchParams] = useSearchParams();
 
   useEffect(() => {
@@ -17,6 +20,8 @@ export default function useDowellLogin(updateState, updatePageWhenDone) {
       updateState(JSON.parse(savedUser));
       return updatePageWhenDone(false);
     }
+
+    dispatch(getUserInfo({ session_id }));
 
     authAxiosInstance
       .post(routes.userProfile, { key: session_id })

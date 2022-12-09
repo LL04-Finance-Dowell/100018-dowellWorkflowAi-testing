@@ -12,13 +12,16 @@ import { createDocument } from "../../../../../features/document/asyncThunks";
 import { LoadingSpinner } from "../../../../LoadingSpinner/LoadingSpinner";
 import SubmitButton from "../../../../submitButton/SubmitButton";
 import { setToggleManageFileForm } from "../../../../../features/app/appSlice";
+import Spinner from "../../../../spinner/Spinner";
+import { localStorageGetItem } from "../../../../../utils/localStorageUtils";
 
 const CreateDocument = ({ handleToggleOverlay }) => {
+  const userDetail = localStorageGetItem("userDetail");
+
   const dispatch = useDispatch();
   const { minedTemplates, mineStatus } = useSelector((state) => state.template);
   const { status: documentStatus } = useSelector((state) => state.document);
   const [currentOption, setCurrentOption] = useState(null);
-
   const [toggleDropdown, setToggleDropdown] = useState(false);
   const ref = useRef(null);
 
@@ -32,9 +35,9 @@ const CreateDocument = ({ handleToggleOverlay }) => {
     dispatch(setToggleManageFileForm(false));
 
     const createDocumentData = {
-      company_id: "6360b64d0a882cf6308f5758",
+      company_id: userDetail?.userinfo.client_admin_id,
       template_id: template,
-      created_by: "Manish",
+      created_by: userDetail?.userinfo.username,
     };
 
     dispatch(createDocument(createDocumentData));
@@ -59,7 +62,7 @@ const CreateDocument = ({ handleToggleOverlay }) => {
   useEffect(() => {
     dispatch(
       mineTemplates({
-        company_id: "6360b64d0a882cf6308f5758",
+        company_id: userDetail?.userinfo.client_admin_id,
       })
     );
   }, []);
@@ -69,10 +72,8 @@ const CreateDocument = ({ handleToggleOverlay }) => {
   return (
     <Overlay title="Create Document" handleToggleOverlay={handleToggleOverlay}>
       {mineStatus === "pending" ? (
-        <div>
-          <LoadingSpinner />
-        </div>
-      ) : (
+        <Spinner />
+      ) : minedTemplates ? (
         <form onSubmit={handleSubmit(onSubmit)}>
           <label onClick={handleClickLabel} htmlFor="template">
             Select Template <span>*</span>
@@ -91,19 +92,11 @@ const CreateDocument = ({ handleToggleOverlay }) => {
                   </option>
                 ))}
               </select>
-              <button
-                ref={ref}
-                type="button"
-                onClick={handleDropdown}
-                className={`${styles.dropdown__current__option} `}
-              >
-                {currentOption ? currentOption : "__Template Name__"}
-              </button>
             </div>
             <div className={styles.dropdown__option__container}>
               <Collapse open={toggleDropdown}>
                 <div role="listbox" className={styles.dropdown__option__box}>
-                  {minedTemplates.map((item) => (
+                  {minedTemplates?.map((item) => (
                     <div
                       onClick={() => handleOptionClick(item)}
                       className={styles.dropdown__option__content}
@@ -122,6 +115,8 @@ const CreateDocument = ({ handleToggleOverlay }) => {
             </i>
           </button>
         </form>
+      ) : (
+        <h4>No Template</h4>
       )}
     </Overlay>
   );

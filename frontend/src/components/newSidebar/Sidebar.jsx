@@ -20,14 +20,14 @@ import { CgProfile } from "react-icons/cg";
 import { FaShieldAlt } from "react-icons/fa";
 import { AiTwotoneSetting } from "react-icons/ai";
 import { dowellLogoutUrl } from "../../services/axios";
+import ManageFile from "./manageFile/ManageFile";
+import { localStorageGetItem } from "../../utils/localStorageUtils";
 
 const Sidebar = () => {
   const dispatch = useDispatch();
-  const { userInfo } = useSelector((state) => state.app);
-  /*  const {minedWorkflows} =useSelector(state => state.workflow)
-  const {minedTemplates} =useSelector(state => state.template)
-  const {minedDocuments} =useSelector(state => state.document) */
-  const { currentUser } = useUserContext();
+  const currentUser = localStorageGetItem("workFlowUser");
+  const userDetail = localStorageGetItem("userDetail");
+
   const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
 
@@ -66,14 +66,14 @@ const Sidebar = () => {
         </div>
         <div className={styles.item__box}>
           <i>
-            <AiOutlineMenuFold size={25} />
+            <AiOutlineMenuFold cursor="pointer" size={25} />
           </i>
         </div>
       </div>
       <div className={styles.icon__box}>
         {iconBoxItems.map((item) => (
           <i onClick={() => handleClick(item.feature)} key={item.id}>
-            {<item.icon size={25} />}
+            {<item.icon cursor="pointer" size={25} />}
           </i>
         ))}
       </div>
@@ -87,10 +87,7 @@ const Sidebar = () => {
         )}
 
         <h2 className={styles.user__box__text}>
-          Welcome{" "}
-          {currentUser && currentUser.first_name
-            ? currentUser.first_name
-            : "Tom"}
+          Welcome {userDetail?.userinfo?.username}
         </h2>
       </div>
       <div className={styles.organization__box}>
@@ -104,10 +101,7 @@ const Sidebar = () => {
       <New />
       <Search />
       <div className={styles.gap}></div>
-      <div className={styles.feature__box}>
-        <h2 className={styles.feature__title}>Manage File</h2>
-        <CollapseItem items={manageFileItems} />
-      </div>
+      <ManageFile />
       <div className={styles.gap}></div>
       <div className={styles.feature__box}>
         <h2 className={styles.feature__title}>Reports</h2>

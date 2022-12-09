@@ -20,7 +20,7 @@ const SectionBox = ({ cardItems, title, cardBgColor, feature, Card }) => {
     feature === "document" && setTest(docMineStatus);
     feature === "document-draft" && setTest(draftStatu);
     feature === "workflow" && setTest(workflowStatus);
-  }, [tempMineStatus, docMineStatus, draftStatu]);
+  }, [tempMineStatus, docMineStatus, draftStatu, workflowStatus]);
 
   return (
     <div className={styles.container}>

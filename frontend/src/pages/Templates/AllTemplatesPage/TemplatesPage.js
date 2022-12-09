@@ -7,8 +7,10 @@ import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
 import { mineTemplates } from "../../../features/template/asyncThunks";
 import TemplateCard from "../../../components/hoverCard/templateCard/TemplateCard";
+import { localStorageGetItem } from "../../../utils/localStorageUtils";
 
 const TemplatesPage = () => {
+  const userDetail = localStorageGetItem("userDetail");
   const { minedTemplates, draftsTemlateItems } = useSelector(
     (state) => state.template
   );
@@ -18,7 +20,7 @@ const TemplatesPage = () => {
 
   useEffect(() => {
     const data = {
-      company_id: "6360b64d0a882cf6308f5758",
+      company_id: userDetail?.userinfo.client_admin_id,
     };
 
     dispatch(mineTemplates(data));
@@ -62,10 +64,4 @@ export const createTemplatesByMe = [
   { id: uuidv4() },
 ];
 
-export const drafts = [
-  { id: uuidv4() },
-  { id: uuidv4() },
-  { id: uuidv4() },
-  { id: uuidv4() },
-  { id: uuidv4() },
-];
+export const drafts = [{ id: uuidv4() }];

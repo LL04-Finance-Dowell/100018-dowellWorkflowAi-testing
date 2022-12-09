@@ -3,11 +3,11 @@ import { createWorkflow, detailWorkflow, mineWorkflow } from "./asyncTHunks";
 
 const initialState = {
   workflow: {},
-  editorLink: null,
+  workdlowDetail: null,
   minedWorkflows: [],
   status: "idle",
   mineStatus: "idle",
-  editorStatus: "idle",
+  workflowDetailStatus: "idle",
   errorMessage: null,
 };
 
@@ -42,14 +42,14 @@ export const workflowSlice = createSlice({
     });
     //detailWorkflow
     builder.addCase(detailWorkflow.pending, (state) => {
-      state.editorStatus = "pending";
+      state.workflowDetailStatus = "pending";
     });
     builder.addCase(detailWorkflow.fulfilled, (state, action) => {
-      state.editorStatus = "succeeded";
-      state.editorLink = action.payload;
+      state.workflowDetailStatus = "succeeded";
+      state.workdlowDetail = action.payload;
     });
     builder.addCase(detailWorkflow.rejected, (state, action) => {
-      state.editorStatus = "failed";
+      state.workflowDetailStatus = "failed";
       state.errorMessage = action.payload;
     });
   },

@@ -8,8 +8,10 @@ import ManageFiles from "../../../components/manageFiles/ManageFiles";
 import { useDispatch, useSelector } from "react-redux";
 import { mineDocuments, drafts } from "../../../features/document/asyncThunks";
 import DocumentCard from "../../../components/hoverCard/documentCard/DocumentCard";
+import { localStorageGetItem } from "../../../utils/localStorageUtils";
 
 const DocumentsPage = () => {
+  const userDetail = localStorageGetItem("userDetail");
   const { minedDocuments, drafts: draftItems } = useSelector(
     (state) => state.document
   );
@@ -19,8 +21,8 @@ const DocumentsPage = () => {
 
   useEffect(() => {
     const data = {
-      created_by: "Manish",
-      company_id: "6360b64d0a882cf6308f5758",
+      company_id: userDetail?.userinfo.client_admin_id,
+      created_by: userDetail?.userinfo.username,
     };
 
     dispatch(drafts(data));

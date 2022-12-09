@@ -6,51 +6,61 @@ import "./style.css";
 import styles from "./workflowLayout.module.css";
 import Editor from "../../components/editor/Editor";
 import { useSearchParams } from "react-router-dom";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { getUserInfo } from "../../features/app/asyncThunks";
 import { mineDocuments } from "../../features/document/asyncThunks";
 import { mineTemplates } from "../../features/template/asyncThunks";
 import { mineWorkflow } from "../../features/workflow/asyncTHunks";
+import { localStorageGetItem } from "../../utils/localStorageUtils";
+import Spinner from "../../components/spinner/Spinner";
 
 const WorkflowLayout = ({ children }) => {
   const dispatch = useDispatch();
-  const { currentUser } = useUserContext();
-  const { userStatus } = useSelector((state) => state.app);
-
-  let [searchParams, setSearchParams] = useSearchParams();
+  const [currentUser, setCurrentUser] = useState(null);
+  const [userDetail, setUserDetail] = useState(null);
 
   useEffect(() => {
-    /* const docData = {
-      created_by: "Manish",
-      company_id: "6360b64d0a882cf6308f5758",
-    };
-    const tempData = {
-      company_id: "6360b64d0a882cf6308f5758",
-    };
-    const workflowData = {
-      company_id: "6360b64d0a882cf6308f5758",
-      created_by: "Manish",
-    }; */
-    const data = {
-      session_id: localStorage.getItem("session_id"),
-    };
-
-    dispatch(getUserInfo(data));
-    /* dispatch(mineDocuments(docData));
-    dispatch(mineTemplates(tempData));
-    dispatch(mineWorkflow(workflowData)); */
+    const currentUser = localStorageGetItem("workFlowUser");
+    const userDetail = localStorageGetItem("userDetail");
+    setCurrentUser(currentUser);
+    setUserDetail(userDetail);
   }, []);
 
+  useEffect(() => {
+    /* const data = {
+      created_by: userDetail?.userinfo.username,
+      company_id: userDetail?.userinfo.client_admin_id,
+    };
+
+    const tempData = {
+      company_id: userDetail?.userinfo.client_admin_id,
+    };
+
+    dispatch(mineDocuments(data));
+    dispatch(mineTemplates(tempData));
+    dispatch(mineWorkflow(data)); */
+  }, [userDetail]);
+
+  console.log(currentUser, userDetail);
+
   return (
-    <div className={styles.container}>
-      <div className={styles.content__box}>
-        <div className={styles.sidebar__box}>
-          <SideBar user={currentUser} />
+    <>
+      {currentUser && userDetail ? (
+        <div className={styles.container}>
+          <div className={styles.content__box}>
+            <div className={styles.sidebar__box}>
+              <SideBar user={currentUser} />
+            </div>
+            <div className={styles.children__box}>{children}</div>
+          </div>
+          <Editor />
         </div>
-        <div className={styles.children__box}>{children}</div>
-      </div>
-      <Editor />
-    </div>
+      ) : (
+        <div className={styles.spinner}>
+          <Spinner />
+        </div>
+      )}
+    </>
   );
 };
 

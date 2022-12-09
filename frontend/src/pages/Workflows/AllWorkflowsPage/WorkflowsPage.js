@@ -8,17 +8,23 @@ import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { mineWorkflow } from "../../../features/workflow/asyncTHunks";
 import WorkflowCard from "../../../components/hoverCard/workflowCard/WorkflowCard";
+import { localStorageGetItem } from "../../../utils/localStorageUtils";
 
 const WorkflowsPage = () => {
+  const userDetail = localStorageGetItem("userDetail");
   const { minedWorkflows } = useSelector((state) => state.workflow);
 
   const dispatch = useDispatch();
 
+  console.log("userdetail", userDetail);
+
   useEffect(() => {
     const data = {
-      company_id: "6360b64d0a882cf6308f5758",
-      created_by: "Manish",
+      company_id: userDetail?.userinfo.client_admin_id,
+      created_by: userDetail?.userinfo.username,
     };
+
+    console.log("useEffectdata", data);
     dispatch(mineWorkflow(data));
   }, []);
 
@@ -61,10 +67,4 @@ export const createWorkflowsByMe = [
   { id: uuidv4() },
 ];
 
-export const drafts = [
-  { id: uuidv4() },
-  { id: uuidv4() },
-  { id: uuidv4() },
-  { id: uuidv4() },
-  { id: uuidv4() },
-];
+export const drafts = [{ id: uuidv4() }];

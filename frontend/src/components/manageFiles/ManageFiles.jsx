@@ -3,18 +3,28 @@ import styles from "./manageFiles.module.css";
 import { BsPlusLg } from "react-icons/bs";
 import { useDispatch, useSelector } from "react-redux";
 import { createTemplate } from "../../features/template/asyncThunks";
-import { dataMaanish } from "../newSidebar/new/New";
-import { setToggleManageFileForm } from "../../features/app/appSlice";
+import {
+  setCurrentWorkflow,
+  setToggleManageFileForm,
+} from "../../features/app/appSlice";
+import { localStorageGetItem } from "../../utils/localStorageUtils";
 
 const ManageFiles = ({ title, children, OverlayComp }) => {
+  const userDetail = localStorageGetItem("userDetail");
   const dispatch = useDispatch();
   const { toggleManageFileForm } = useSelector((state) => state.app);
 
   const handleToggleOverlay = () => {
     if (OverlayComp) {
       dispatch(setToggleManageFileForm(!toggleManageFileForm));
+      dispatch(setCurrentWorkflow(null));
     } else {
-      dispatch(createTemplate(dataMaanish));
+      const data = {
+        created_by: userDetail?.userinfo.username,
+        company_id: userDetail?.userinfo.client_admin_id,
+      };
+
+      dispatch(createTemplate(data));
     }
   };
 

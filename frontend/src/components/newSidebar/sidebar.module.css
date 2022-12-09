@@ -66,6 +66,7 @@
 
 .user__box__text {
   font-size: 19px;
+  line-height: 25px;
   font-weight: 600;
   align-items: flex-end;
 }

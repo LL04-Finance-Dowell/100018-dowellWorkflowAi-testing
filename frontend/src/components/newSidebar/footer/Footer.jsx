@@ -11,7 +11,7 @@ const Footer = ({ handleIconClick }) => {
       <div className={styles.icon__box}>
         {footerIcons.map((item) => (
           <i onClick={() => handleIconClick(item.feature)} key={item.id}>
-            <item.icon size={28} />
+            <item.icon cursor="pointer" size={28} />
           </i>
         ))}
       </div>

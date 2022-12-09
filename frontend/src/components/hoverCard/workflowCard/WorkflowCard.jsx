@@ -1,5 +1,9 @@
 import React from "react";
 import { useDispatch } from "react-redux";
+import {
+  setCurrentWorkflow,
+  setToggleManageFileForm,
+} from "../../../features/app/appSlice";
 import { detailWorkflow } from "../../../features/workflow/asyncTHunks";
 import HoverCard from "../HoverCard";
 import { Button } from "../styledComponents";
@@ -8,12 +12,10 @@ import styles from "./workflowCard.module.css";
 const WorkflowCard = ({ cardItem }) => {
   const dispatch = useDispatch();
 
-  const handleDetailWorkflow = (item) => {
-    const data = {
-      workflow_id: item._id,
-      workflow_title: item.workflow_title,
-    };
+  const handleUpdateWorkflow = (item) => {
+    dispatch(setToggleManageFileForm(true));
 
+    const data = { workflow_id: item._id };
     dispatch(detailWorkflow(data));
   };
 
@@ -35,7 +37,7 @@ const WorkflowCard = ({ cardItem }) => {
             <div className={styles.button__group}>
               <a className={styles.delete}>delete</a>
               <a
-                onClick={() => handleDetailWorkflow(cardItem)}
+                onClick={() => handleUpdateWorkflow(cardItem)}
                 className={styles.update}
               >
                 update

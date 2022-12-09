@@ -4,13 +4,13 @@ import { setEditorLink } from "../../features/app/appSlice";
 import { LoadingSpinner } from "../LoadingSpinner/LoadingSpinner";
 import { AiOutlineClose } from "react-icons/ai";
 import styles from "./editor.module.css";
+import Spinner from "../spinner/Spinner";
 
 const Editor = () => {
   const dispatch = useDispatch();
   const { editorLink } = useSelector((state) => state.app);
   const { editorStatus: docStatus } = useSelector((state) => state.document);
   const { editorStatus: tempStatus } = useSelector((state) => state.template);
-  const { editorStatus: workStatus } = useSelector((state) => state.workflow);
 
   const handleFrameClose = () => {
     dispatch(setEditorLink(null));
@@ -20,17 +20,10 @@ const Editor = () => {
 
   return (
     <>
-      {(editorLink ||
-        docStatus === "pending" ||
-        tempStatus === "pending" ||
-        workStatus === "pending") && (
+      {(editorLink || docStatus === "pending" || tempStatus === "pending") && (
         <div className={styles.framer__container}>
-          {docStatus === "pending" ||
-          tempStatus === "pending" ||
-          workStatus === "pending" ? (
-            <div>
-              <LoadingSpinner />
-            </div>
+          {docStatus === "pending" || tempStatus === "pending" ? (
+            <Spinner />
           ) : (
             editorLink && (
               <div className={styles.framer__box}>

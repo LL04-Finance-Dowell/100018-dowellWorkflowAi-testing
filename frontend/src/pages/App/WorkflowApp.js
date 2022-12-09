@@ -43,27 +43,21 @@ export const notifications = [
     title: "documents",
     cardBgColor: "#1ABC9C",
     card: DocumnetCard,
-    items: [
-      { id: uuidv4() },
-      { id: uuidv4() },
-      { id: uuidv4() },
-      { id: uuidv4() },
-      { id: uuidv4() },
-    ],
+    items: [{ id: uuidv4() }],
   },
   {
     id: uuidv4(),
     title: "templates",
     cardBgColor: null,
     card: TemplateCard,
-    items: [{ id: uuidv4() }, { id: uuidv4() }, { id: uuidv4() }],
+    items: [{ id: uuidv4() }],
   },
   {
     id: uuidv4(),
     title: "workflows",
     card: WorkflowCard,
     cardBgColor: null,
-    items: [{ id: uuidv4() }, { id: uuidv4() }],
+    items: [{ id: uuidv4() }],
   },
 ];
 

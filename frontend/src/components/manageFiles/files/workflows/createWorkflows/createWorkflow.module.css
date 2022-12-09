@@ -1,8 +1,9 @@
 .form__container {
   display: flex;
   flex-direction: column;
-
   width: 100%;
+  max-height: 60vh;
+  overflow: auto;
   gap: 30px;
 }
 
@@ -30,14 +31,14 @@
 .form__container table {
   width: 100%;
   margin-bottom: 16px;
-  border: solid 2.5px #9d0202;
+  border: solid 2.5px var(--e-global-color-secondary);
   overflow-y: auto;
   color: var(--e-global-color-cd6593d);
 }
 
 .form__container table thead tr th {
-  background-color: #9d0202;
-  border: 1.5px solid var(--e-global-color-cd6593d);
+  background-color: var(--e-global-color-secondary);
+  border: 2px solid var(--e-global-color-secondary);
   padding: 4.8px;
   text-transform: capitalize;
   text-align: center;
@@ -48,12 +49,13 @@
 
 .form__container table tbody tr th,
 .no__step {
-  border: 1.5px solid var(--e-global-color-cd6593d);
+  border: 2px solid var(--e-global-color-secondary);
   padding: 4.8px;
   text-align: center;
   font-size: 18px;
+  color: #000;
   font-weight: 400;
-  background-color: var(--popup-form-button);
+  background-color: var(--e-global-color-cd6593d);
   position: relative;
 }
 
@@ -83,7 +85,7 @@
   height: 20px;
   width: 20px;
   border-radius: 50%;
-  background-color: #9d0202;
+  background-color: var(--e-global-color-1342d1f);
   color: var(--e-global-color-cd6593d);
 }
 
