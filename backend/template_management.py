@@ -17,7 +17,7 @@ editorApi = "https://100058.pythonanywhere.com/api/generate-editor-link/"
 @api_view(["POST"])
 def create_template(request):
     data = ""
-    template_name = ""
+    template_name = "Untitled Template"
     res = json.loads(
         save_template(
             template_name,
