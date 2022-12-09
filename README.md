@@ -583,8 +583,23 @@ Request Body
 
 ```
 {
-    "workflow_id": "<id_specific_of_workflow>"
+    
 }
+
+{
+    "workflow_id": "<id_specific_of_workflow>"    
+    "workflow_title": "Workflow_title_new_or_existing", 
+    "steps": [
+        {
+            "step_name": "step_name_new_or_existing"
+        },
+        {
+            "step_name": "step_name_new_or_existing"
+        }
+
+        ]
+        }
+
 ```
 
 Response-201
