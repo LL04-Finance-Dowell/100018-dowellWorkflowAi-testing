@@ -120,7 +120,7 @@ def update_workflow(request):  # Document Creation.
             if res["isSuccess"]:
                 try:
                     return Response(
-                        {"workflow":get_wf_object(workflow_id)},
+                        {"workflow":workflows},
                         status=status.HTTP_201_CREATED,
                         )
                 except:
