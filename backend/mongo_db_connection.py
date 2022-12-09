@@ -327,28 +327,22 @@ def save_wf(workflows, user, company_id):
     return response.text
 
 
-def update_wf(workflow_id, int_wf_string, ext_wf_string):
+def update_wf(workflow_id, workflow_title,steps):
     url = "http://100002.pythonanywhere.com/"
-    print(
-        "---------Update wf before update int_wf_string---------------- \n :",
-        int_wf_string,
-    )
-    print(
-        "---------Uodate wf before  ext_wf_string---------------- \n :", ext_wf_string
-    )
+    
     payload = json.dumps(
         {
             **WF_CONNECTION_DICT,
-            # "command": "insert",
             "command": "update",
             "field": {
                 "_id": workflow_id,
             },
             "update_field": {
-                # "event_id": get_event_id(),
                 "eventId": get_event_id(),
-                "int_wf_string": int_wf_string,
-                "ext_wf_string": ext_wf_string,
+                "workflows":{
+                        "workflow_title": workflow_title,
+                        "steps": steps
+                            },
             },
             "platform": "bangalore",
         }
@@ -508,8 +502,7 @@ def get_template_list(company_id):
 # -------------------------- Document----------------------------------------
 def save_document(name, template_id, data, created_by, company_id):
     url = "http://100002.pythonanywhere.com/"
-    template_obj = get_template_object(template_id)
-    print("Request 1 on document save----------- \n", template_obj)
+    print("Request 1 on document save----------- \n", data)
     event_id = get_event_id()
     dd = datetime.now()
     time = dd.strftime("%d:%m:%Y,%H:%M:%S")
@@ -520,21 +513,15 @@ def save_document(name, template_id, data, created_by, company_id):
             "field": {
                 "eventId": event_id,
                 "document_name": name,
-                "content": template_obj["content"],
+                "content": data,
                 "template_id": template_id,
-                "workflow_id": template_obj["workflow_id"],
+                "workflow_id": data["workflow_id"],
                 "auth_user_list": [],
                 "company_id": company_id,
                 "created_by": created_by,
                 "created_on": time,
                 "reject_message": "",
                 "rejected_by": "",
-                "int_wf_position": 0,
-                "int_wf_step": "",
-                "ext_wf_position": 0,
-                "ext_wf_step": "",
-                "link_wf_step": "",
-                "link_wf_position": 0,
                 "update_time": time,
             },
             "update_field": {"order_nos": 21},

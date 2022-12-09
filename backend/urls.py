@@ -18,7 +18,7 @@ from .document_management import (
     rejected_documents,
     # reject_document,
 )
-from .wf_management import (create_workflow,workflow_detail,my_workflows)
+from .wf_management import (create_workflow,workflow_detail,my_workflows,update_workflow)
 
 from .intelligent_search import (
     search,
@@ -65,4 +65,5 @@ urlpatterns = [
     path("workflows/", create_workflow, name="workflows"),
     path("workflows/detail", workflow_detail, name="workflow_detail"),
     path("workflows/mine", my_workflows, name="my_workflows"),
+    path("workflows/update", update_workflow, name="update_workflow"),
 ]
