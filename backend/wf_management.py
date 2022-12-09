@@ -91,17 +91,16 @@ def update_workflow(request):  # Document Creation.
             old_data = get_wf_object(workflow_id)
             
             workflows={
+                'workflow_id':workflow_id,
                 "workflow_title": wf_title,
                 "steps": []
                      }
             
             
             for (step,old_step) in zip(steps,old_data['workflows']['steps']):
-                step_name= step['step_name']
-                
                 workflows["steps"].append( 
                     {
-                            "step_name"        : step_name,
+                            "step_name"        : step['step_name'],
                             "skip"            : old_step['skip'], # True or False,
                             "member_type"    : old_step['member_type'], #    values can be "TEAM_MEMBER" or "GUEST",
                             "member_portfolio": old_step['member_portfolio'],
