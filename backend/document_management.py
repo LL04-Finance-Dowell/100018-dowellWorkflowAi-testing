@@ -36,7 +36,7 @@ def create_document(request):  # Document Creation.
             )
         else:
             template_id = request.data["template_id"]
-            document_name = ""
+            document_name = "Untitled Document"
             created_by = request.data["created_by"]
             company_id=request.data['company_id']
             #data = get_content_from_template_collection_with_that_template_id
