@@ -24,7 +24,6 @@ def create_template(request):
             data,
             request.data["created_by"],
             request.data["company_id"],
-            # get_user_info_by_username(request.data["created_by"])["company_id"],
         )
     )
     print(res)

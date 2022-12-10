@@ -18,17 +18,19 @@ from .document_management import (
     rejected_documents,
     # reject_document,
 )
-from .wf_management import (create_workflow,workflow_detail,my_workflows)
+from .wf_management import create_workflow, workflow_detail, my_workflows
 
 from .intelligent_search import (
     search,
 )
 
-from .views import api, user
+from .process import create_process
+
+from .views import api
 
 urlpatterns = [
+    path("process/new/", create_process),
     path("", api),
-    path("user-info/", user),
     # Search----------------------------
     path("search/<str:str>", search),
     # Templates-----------------------------------------------------
@@ -63,6 +65,6 @@ urlpatterns = [
     ),
     path("documents/detail/", document_detail, name="document"),
     path("workflows/", create_workflow, name="workflows"),
-    path("workflows/detail", workflow_detail, name="workflow_detail"),
-    path("workflows/mine", my_workflows, name="my_workflows"),
+    path("workflows/detail/", workflow_detail, name="workflow_detail"),
+    path("workflows/mine/", my_workflows, name="my_workflows"),
 ]
