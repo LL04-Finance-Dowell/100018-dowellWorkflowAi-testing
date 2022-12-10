@@ -70,8 +70,9 @@ const CreateWorkflows = ({ handleToggleOverlay }) => {
   };
 
   const handleEditInternalTemplate = (currentİtem) => {
-    stepNameRef.current?.click();
     setCurrentTableCall(currentİtem);
+
+    stepNameRef.current?.click();
     setValue("step_name", currentİtem.step_name);
     setValue("member_type", currentİtem.member_type);
   };
@@ -144,7 +145,12 @@ const CreateWorkflows = ({ handleToggleOverlay }) => {
     } else {
       if (currentWorkflow && currentWorkflow.workflows) {
         setWorkflowTitle(currentWorkflow.workflows?.workflow_title);
-        setInternalWorkflows(currentWorkflow.workflows?.steps);
+        setInternalWorkflows(
+          currentWorkflow.workflows?.steps.map((item) => ({
+            ...item,
+            _id: uuidv4(),
+          }))
+        );
       }
     }
   }, [workflowDetailStatus]);
