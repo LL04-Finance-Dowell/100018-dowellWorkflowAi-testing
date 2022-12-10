@@ -30,7 +30,7 @@ export const workflowSlice = createSlice({
     builder.addCase(createWorkflow.fulfilled, (state, action) => {
       state.status = "succeeded";
       state.workflow = action.payload;
-      state.minedWorkflows = [...(state.minedWorkflows || {}), action.payload];
+      state.minedWorkflows.push(action.payload);
     });
     builder.addCase(createWorkflow.rejected, (state, action) => {
       state.status = "failed";

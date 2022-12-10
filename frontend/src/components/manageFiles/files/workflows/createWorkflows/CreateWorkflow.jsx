@@ -186,9 +186,9 @@ const CreateWorkflows = ({ handleToggleOverlay }) => {
             <tbody>
               {internalWorkflows.map((item) => (
                 <tr
-                  /*   className={
-                  item._id === currentTableCell?._id && styles.editing__ceil
-                } */
+                  className={
+                    item._id === currentTableCell?._id && styles.editing__ceil
+                  }
                   key={item._id}
                 >
                   <th>{item.step_name}</th>
@@ -265,7 +265,11 @@ const CreateWorkflows = ({ handleToggleOverlay }) => {
               )}
               {currentWorkflow ? (
                 currentTableCell && (
-                  <button className={styles.add__table__button} type="submit">
+                  <button
+                    style={{ marginRight: "auto", marginLeft: "25px" }}
+                    className={styles.add__table__button}
+                    type="submit"
+                  >
                     <TiTick />
                   </button>
                 )

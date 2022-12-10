@@ -9,23 +9,25 @@ import { localStorageGetItem } from "../../utils/localStorageUtils";
 import "../Landing/home.css";
 
 const LandingPage = () => {
-  const [currentUser, setCurrentUser] = useState(null);
-  const [userDetail, setUserDetail] = useState(null);
+  const currentUser = localStorageGetItem("workFlowUser");
+  const userDetail = localStorageGetItem("userDetail");
+  /* const [currentUser, setCurrentUser] = useState(null);
+  const [userDetail, setUserDetail] = useState(null); */
 
   /* https://ll04-finance-dowell.github.io/100018-dowellWorkflowAi-testing */
 
-  useEffect(() => {
+  /*  useEffect(() => {
     const currentUser = localStorageGetItem("workFlowUser");
     const userDetail = localStorageGetItem("userDetail");
     setCurrentUser(currentUser);
     setUserDetail(userDetail);
-  }, []);
+  }, [currentUser, userDetail]); */
 
   useEffect(() => {
-    if (!currentUser) {
+    if (!currentUser || !userDetail) {
       window.location.replace(dowellLoginUrl);
     }
-  }, [currentUser, userDetail]);
+  }, []);
 
   return (
     <>

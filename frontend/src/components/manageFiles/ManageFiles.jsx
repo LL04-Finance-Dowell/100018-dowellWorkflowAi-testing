@@ -23,7 +23,6 @@ const ManageFiles = ({ title, children, OverlayComp }) => {
         created_by: userDetail?.userinfo.username,
         company_id: userDetail?.userinfo.client_admin_id,
       };
-
       dispatch(createTemplate(data));
     }
   };

@@ -50,8 +50,6 @@
   align-items: center;
   flex-direction: column;
   padding: 10px;
-  text-transform: capitalize;
-  word-break: break-all;
   text-align: center;
 }
 
@@ -68,7 +66,8 @@
   font-size: 19px;
   line-height: 25px;
   font-weight: 600;
-  align-items: flex-end;
+  text-align: center;
+  word-break: break-all;
 }
 
 .organization__box {

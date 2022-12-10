@@ -16,7 +16,9 @@ import Spinner from "../../components/spinner/Spinner";
 
 const WorkflowLayout = ({ children }) => {
   const dispatch = useDispatch();
-  const [currentUser, setCurrentUser] = useState(null);
+  const currentUser = localStorageGetItem("workFlowUser");
+  const userDetail = localStorageGetItem("userDetail");
+  /*   const [currentUser, setCurrentUser] = useState(null);
   const [userDetail, setUserDetail] = useState(null);
 
   useEffect(() => {
@@ -26,7 +28,9 @@ const WorkflowLayout = ({ children }) => {
     setUserDetail(userDetail);
   }, []);
 
-  console.log(currentUser, userDetail);
+  console.log(currentUser, userDetail); */
+
+  console.log("aaaaaaaaaaa", currentUser, userDetail);
 
   return (
     <>

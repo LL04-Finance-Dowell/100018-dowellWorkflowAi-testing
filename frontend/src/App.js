@@ -47,29 +47,29 @@ function App() {
       <Route path={"/"} element={<WorkflowApp />} />
       <Route path={"documents"}>
         <Route index element={<DocumentsPage />} />
-        <Route path={"new"} element={<CreateNewDocumentPage />} />
+        {/*  <Route path={"new"} element={<CreateNewDocumentPage />} />
         <Route path={"to-sign"} element={<SignDocumentsPage />} />
         <Route path={"rejected"} element={<RejectedDocumentsPage />} />
-        <Route path={"to-process"} element={<ProcessDocumentsPage />} />
+        <Route path={"to-process"} element={<ProcessDocumentsPage />} /> */}
       </Route>
       <Route path={"templates"}>
         <Route index element={<TemplatesPage />} />
-        <Route path={"new"} element={<CreateNewTemplatePage />} />
+        {/* <Route path={"new"} element={<CreateNewTemplatePage />} />
         <Route path={"to-approve"} element={<ApproveTemplatesPage />} />
-        <Route path={"rejected"} element={<RejectedTemplatesPage />} />
+        <Route path={"rejected"} element={<RejectedTemplatesPage />} /> */}
       </Route>
       <Route path={"workflows"}>
         <Route index element={<WorkflowsPage />} />
         <Route path={"set-workflow"} element={<SetWorkflowInDoc />} />
-        <Route path={"new"} element={<CreateNewWorkflowPage />} />
+        {/*  <Route path={"new"} element={<CreateNewWorkflowPage />} />
         <Route path={"to-approve"} element={<ApproveWorkflowPage />} />
-        <Route path={"rejected"} element={<RejectedWorkflowsPage />} />
+        <Route path={"rejected"} element={<RejectedWorkflowsPage />} /> */}
       </Route>
       <Route path={"/notifications"} element={<NotificationsPage />} />
-      <Route path="/Documents/Documents/Documents" element={<Documents />} />
+      {/* <Route path="/Documents/Documents/Documents" element={<Documents />} />
       <Route path="/Documents/DraftsDoc/DraftsDoc" element={<DraftsDoc />} />
-      <Route path="/Templates/TempDraft/TempDraft" element={<TempDraft />} />
-      <Route
+      <Route path="/Templates/TempDraft/TempDraft" element={<TempDraft />} /> */}
+      {/* <Route
         path="/Templates/NewTemplate/NewTemplate"
         element={<NewTemplate />}
       />
@@ -77,7 +77,7 @@ function App() {
         path="/WorkFlows/NewWorkFlow/NewWorkFlow"
         element={<NewWorkFlow />}
       />
-      <Route path="/WorkFlows/DraftF/DraftF" element={<DraftF />} />
+      <Route path="/WorkFlows/DraftF/DraftF" element={<DraftF />} /> */}
       <Route path={"*"} element={<>Page not found</>} />
     </Routes>
   );
