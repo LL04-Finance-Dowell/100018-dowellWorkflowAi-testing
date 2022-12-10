@@ -480,7 +480,9 @@ Request Body
 
 ```
 {
-    "created_by": "<user_name_of_authenticated_user>"    
+    "created_by": "<user_name_of_authenticated_user>",
+    "company_id": "<company_id_of_authorized_user>",
+  
     "wf_title":"<workflow_title>",
      'steps': [
         {'step_name': 'step_one', 
@@ -504,27 +506,7 @@ Response-201
 }
 ```
 
-Response-400
-
-```
-{
-    
-    "message": "Workflow Data required"
-             
-}
-
-```
-
-Response-500
-
-```
-{
-    
-    "message": "Failed to Save Workflow"
-             
-}
-```
-
+a
 _POST_ `workflows/detail/`
 
 - Getting a single workflow by workflow_title and workflow_id
@@ -590,5 +572,57 @@ Response-500
 ```
 {
     "message": "There is no workflow created by This user."
+}
+```
+
+_POST_ `workflows/update/`
+
+- Getting and Updating Workflow workflow_id
+
+Request Body
+
+```
+{
+    "workflow_id": "<id_specific_of_workflow>"    
+    "workflow_title": "Workflow_title_new_or_existing", 
+    "steps": [
+        {
+            "step_name": "step_name_new_or_existing"
+        },
+        {
+            "step_name": "step_name_new_or_existing"
+        }
+
+        ]
+        }
+
+```
+
+Response-201
+
+```
+{
+    "workflow":{"updated workflow"}
+}
+
+
+Response-400
+
+```
+{
+    
+    "message": "Workflow Data required"
+             
+}
+
+```
+
+Response-500
+
+```
+{
+    
+    "message": "Failed to Update Workflow"
+             
 }
 ```
