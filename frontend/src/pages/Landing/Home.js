@@ -1,25 +1,31 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { useUserContext } from "../../contexts/UserContext";
 import WorkflowLayout from "../../layouts/WorkflowLayout/WorkflowLayout";
 import { dowellLoginUrl } from "../../services/axios";
 import { handleAuthenticationBtnClick } from "../../services/common";
+import { localStorageGetItem } from "../../utils/localStorageUtils";
 import "../Landing/home.css";
 
 const LandingPage = () => {
-  const { currentUser } = useUserContext();
-  const { userInfo } = useSelector((state) => state.app);
+  const [currentUser, setCurrentUser] = useState(null);
+  const [userDetail, setUserDetail] = useState(null);
 
   /* https://ll04-finance-dowell.github.io/100018-dowellWorkflowAi-testing */
 
-  console.log("userınfıo o oooasdosaod", userInfo);
+  useEffect(() => {
+    const currentUser = localStorageGetItem("workFlowUser");
+    const userDetail = localStorageGetItem("userDetail");
+    setCurrentUser(currentUser);
+    setUserDetail(userDetail);
+  }, []);
 
   useEffect(() => {
     if (!currentUser) {
       window.location.replace(dowellLoginUrl);
     }
-  }, [currentUser]);
+  }, [currentUser, userDetail]);
 
   return (
     <>
