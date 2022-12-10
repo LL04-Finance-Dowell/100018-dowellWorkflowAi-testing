@@ -1,27 +1,68 @@
 import React, { useState } from "react";
 import { useEffect } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import CollapseItem from "../collapseItem/CollapseItem";
 import { v4 as uuidv4 } from "uuid";
 
 import sidebarStyles from "../sidebar.module.css";
+import { mineDocuments } from "../../../features/document/asyncThunks";
+import { mineTemplates } from "../../../features/template/asyncThunks";
+import { mineWorkflow } from "../../../features/workflow/asyncTHunks";
+import { localStorageGetItem } from "../../../utils/localStorageUtils";
 
 const ManageFile = () => {
+  const dispatch = useDispatch();
+  const userDetail = localStorageGetItem("userDetail");
+
   const { minedWorkflows } = useSelector((state) => state.workflow);
   const { minedTemplates } = useSelector((state) => state.template);
   const { minedDocuments } = useSelector((state) => state.document);
 
   const [test, setTest] = useState(manageFileItems);
 
+  console.log("mined docccccccccccccccc", minedDocuments);
+
+  useEffect(() => {
+    const docData = {
+      created_by: userDetail?.userinfo.username,
+      company_id: userDetail?.userinfo.client_admin_id,
+    };
+
+    const tempData = {
+      company_id: userDetail?.userinfo.client_admin_id,
+    };
+
+    const workData = {
+      created_by: userDetail?.userinfo.username,
+      company_id: userDetail?.userinfo.client_admin_id,
+    };
+
+    dispatch(mineDocuments(docData));
+    dispatch(mineTemplates(tempData));
+    dispatch(mineWorkflow(workData));
+  }, []);
+
   useEffect(() => {
     setTest((prev) =>
       prev.map((item) =>
         item.parent.includes("My Documnets")
-          ? { ...item, count: minedDocuments?.length }
+          ? {
+              ...item,
+              count:
+                minedDocuments?.length > 0 ? minedDocuments?.length : "000",
+            }
           : item.parent.includes("My Templates")
-          ? { ...item, count: minedTemplates?.length }
+          ? {
+              ...item,
+              count:
+                minedTemplates?.length > 0 ? minedTemplates?.length : "000",
+            }
           : item.parent.includes("My Workflows")
-          ? { ...item, count: minedWorkflows?.length }
+          ? {
+              ...item,
+              count:
+                minedWorkflows?.length > 0 ? minedWorkflows?.length : "000",
+            }
           : item
       )
     );

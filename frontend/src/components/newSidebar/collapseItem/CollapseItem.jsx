@@ -67,8 +67,10 @@ const CollapseItem = ({ items, listType }) => {
               <IoMdArrowDropright size={25} />
             </i>
             {item.parent}{" "}
-            {item.count && item.count > 0
-              ? `(${item.count.toString().padStart(3, "0")})`
+            {item.count
+              ? item.count === "000"
+                ? `(${item.count})`
+                : `(${item.count?.toString().padStart(3, "0")})`
               : ""}
           </div>
           <div className={styles.children__item__container}>

@@ -35,6 +35,7 @@ export const documentSlice = createSlice({
     builder.addCase(createDocument.fulfilled, (state, action) => {
       state.editorStatus = "succeeded";
       state.createdDocument = action.payload;
+      state.minedDocuments = [...(state.minedDocuments || {}), action.payload];
     });
     builder.addCase(createDocument.rejected, (state, action) => {
       state.editorStatus = "failed";

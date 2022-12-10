@@ -25,7 +25,8 @@ const CreateDocument = ({ handleToggleOverlay }) => {
   const [toggleDropdown, setToggleDropdown] = useState(false);
   const ref = useRef(null);
 
-  const { register, handleSubmit, setValue } = useForm();
+  const { register, handleSubmit, setValue, watch } = useForm();
+  const { template } = watch();
 
   const onSubmit = (data) => {
     console.log("data", data);
@@ -39,6 +40,8 @@ const CreateDocument = ({ handleToggleOverlay }) => {
       template_id: template,
       created_by: userDetail?.userinfo.username,
     };
+
+    console.log("create document", createDocumentData);
 
     dispatch(createDocument(createDocumentData));
   };
@@ -67,7 +70,7 @@ const CreateDocument = ({ handleToggleOverlay }) => {
     );
   }, []);
 
-  console.log("dox statussss", documentStatus);
+  console.log("dox statussss", minedTemplates);
 
   return (
     <Overlay title="Create Document" handleToggleOverlay={handleToggleOverlay}>
@@ -75,10 +78,10 @@ const CreateDocument = ({ handleToggleOverlay }) => {
         <Spinner />
       ) : minedTemplates ? (
         <form onSubmit={handleSubmit(onSubmit)}>
-          <label onClick={handleClickLabel} htmlFor="template">
-            Select Template <span>*</span>
-          </label>
           <div id="template" className={styles.dropdown__container}>
+            <label onClick={handleClickLabel} htmlFor="template">
+              Select Template <span>*</span>
+            </label>
             <div style={{ position: "relative" }}>
               <select
                 required
@@ -93,10 +96,18 @@ const CreateDocument = ({ handleToggleOverlay }) => {
                 ))}
               </select>
             </div>
+            <button
+              ref={ref}
+              type="button"
+              onClick={handleDropdown}
+              className={`${styles.dropdown__current__option} `}
+            >
+              {currentOption ? currentOption : "__Template Name__"}
+            </button>
             <div className={styles.dropdown__option__container}>
               <Collapse open={toggleDropdown}>
                 <div role="listbox" className={styles.dropdown__option__box}>
-                  {minedTemplates?.map((item) => (
+                  {minedTemplates.map((item) => (
                     <div
                       onClick={() => handleOptionClick(item)}
                       className={styles.dropdown__option__content}

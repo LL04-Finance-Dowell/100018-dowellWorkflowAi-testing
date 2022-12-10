@@ -26,21 +26,6 @@ const WorkflowLayout = ({ children }) => {
     setUserDetail(userDetail);
   }, []);
 
-  useEffect(() => {
-    /* const data = {
-      created_by: userDetail?.userinfo.username,
-      company_id: userDetail?.userinfo.client_admin_id,
-    };
-
-    const tempData = {
-      company_id: userDetail?.userinfo.client_admin_id,
-    };
-
-    dispatch(mineDocuments(data));
-    dispatch(mineTemplates(tempData));
-    dispatch(mineWorkflow(data)); */
-  }, [userDetail]);
-
   console.log(currentUser, userDetail);
 
   return (

@@ -25,7 +25,7 @@ const DocumentCard = ({ cardItem }) => {
   const BackSide = () => {
     return (
       <div>
-        {cardItem.document_name ? (
+        {cardItem._id ? (
           <Button onClick={() => handleDetailDocumnet(cardItem)}>
             Click Here
           </Button>

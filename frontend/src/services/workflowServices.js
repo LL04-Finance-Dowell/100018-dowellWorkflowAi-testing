@@ -12,4 +12,7 @@ export class WorkflowServices {
   detailWorkflow = (data) => {
     return httpWorkflow.post("/detail", data);
   };
+  updateWorkflow = (data) => {
+    return httpWorkflow.post("/update", data);
+  };
 }

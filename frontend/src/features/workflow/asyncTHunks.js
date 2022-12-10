@@ -54,3 +54,20 @@ export const detailWorkflow = createAsyncThunk(
     }
   }
 );
+
+export const updateWorkflow = createAsyncThunk(
+  "workflow/update",
+  async ({ updateData, handleAfterCreated }, asyncTHunks) => {
+    try {
+      const res = await workflowServices.updateWorkflow(updateData);
+
+      console.log("updateWorkflow", res.data.workflow);
+
+      handleAfterCreated();
+
+      return res.data.workflow;
+    } catch (error) {
+      console.log(error);
+    }
+  }
+);

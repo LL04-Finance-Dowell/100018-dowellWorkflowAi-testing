@@ -29,6 +29,7 @@ export const templateSlice = createSlice({
     builder.addCase(createTemplate.fulfilled, (state, action) => {
       state.editorStatus = "succeeded";
       state.templateEditor = action.payload;
+      state.minedTemplates = [...(state.minedTemplates || {}), action.payload];
     });
     builder.addCase(createTemplate.rejected, (state, action) => {
       state.editorStatus = "failed";

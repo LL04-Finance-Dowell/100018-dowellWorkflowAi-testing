@@ -21,7 +21,11 @@ const WorkflowCard = ({ cardItem }) => {
 
   const FrontSide = () => {
     return (
-      <div>{cardItem.workflow_title ? cardItem.workflow_title : "no item"}</div>
+      <div>
+        {cardItem.workflows?.workflow_title
+          ? cardItem.workflows?.workflow_title
+          : "no item"}
+      </div>
     );
   };
 
@@ -31,7 +35,7 @@ const WorkflowCard = ({ cardItem }) => {
         {/*   <Button onClick={() => handleDetailWorkflow(cardItem)}>
           Click Here
         </Button> */}
-        {cardItem.workflow_title ? (
+        {cardItem.workflows?.workflow_title ? (
           <>
             <p>step-1 admin</p>
             <div className={styles.button__group}>

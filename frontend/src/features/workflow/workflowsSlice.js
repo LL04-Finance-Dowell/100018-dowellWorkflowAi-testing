@@ -1,13 +1,20 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { createWorkflow, detailWorkflow, mineWorkflow } from "./asyncTHunks";
+import {
+  createWorkflow,
+  detailWorkflow,
+  mineWorkflow,
+  updateWorkflow,
+} from "./asyncTHunks";
 
 const initialState = {
   workflow: {},
   workdlowDetail: null,
+  updatedWorkflow: null,
   minedWorkflows: [],
   status: "idle",
   mineStatus: "idle",
   workflowDetailStatus: "idle",
+  updateWorkflowStatus: "idle",
   errorMessage: null,
 };
 
@@ -23,6 +30,7 @@ export const workflowSlice = createSlice({
     builder.addCase(createWorkflow.fulfilled, (state, action) => {
       state.status = "succeeded";
       state.workflow = action.payload;
+      state.minedWorkflows = [...(state.minedWorkflows || {}), action.payload];
     });
     builder.addCase(createWorkflow.rejected, (state, action) => {
       state.status = "failed";
@@ -50,6 +58,30 @@ export const workflowSlice = createSlice({
     });
     builder.addCase(detailWorkflow.rejected, (state, action) => {
       state.workflowDetailStatus = "failed";
+      state.errorMessage = action.payload;
+    });
+    //updateWorkflow
+    builder.addCase(updateWorkflow.pending, (state) => {
+      state.updateWorkflowStatus = "pending";
+    });
+    builder.addCase(updateWorkflow.fulfilled, (state, action) => {
+      state.updateWorkflowStatus = "succeeded";
+      state.updatedWorkflow = action.payload;
+      state.minedWorkflows = state.minedWorkflows.map((item) =>
+        item._id === action.payload.workflow_id
+          ? {
+              ...item,
+              workflows: {
+                ...item.workflows,
+                workflow_title: action.payload.workflow_title,
+                steps: action.payload.steps,
+              },
+            }
+          : item
+      );
+    });
+    builder.addCase(updateWorkflow.rejected, (state, action) => {
+      state.updateWorkflowStatus = "failed";
       state.errorMessage = action.payload;
     });
   },

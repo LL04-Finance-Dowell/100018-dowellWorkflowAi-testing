@@ -4,9 +4,6 @@
   max-height: fit-content;
   margin: auto;
   border-radius: 50%;
-  -webkit-box-shadow: 0px 0px 75px -36px rgba(0, 0, 0, 0.75);
-  -moz-box-shadow: 0px 0px 75px -36px rgba(0, 0, 0, 0.75);
-  box-shadow: 0px 0px 75px -36px rgba(0, 0, 0, 0.75);
 }
 
 .container {
@@ -15,7 +12,6 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: azure;
   border-radius: 50%;
 }
 
