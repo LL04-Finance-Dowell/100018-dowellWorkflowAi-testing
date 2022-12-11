@@ -22,7 +22,6 @@ from .mongo_db_connection import (
 )
 editorApi = "https://100058.pythonanywhere.com/api/generate-editor-link/"
     
-# print(get_document_object("639533d99cdd9578812eb9b9"))
 @api_view(["GET","POST"])
 def create_document(request):  # Document Creation.
     
@@ -50,8 +49,9 @@ def create_document(request):  # Document Creation.
                 payload=json.dumps({
                         "product_name": "workflowai",
                         "details":{
-                            "_id":res["inserted_id"],
-                            "field":"",
+                             "_id":res["inserted_id"],
+                            "field":"document_name",
+                            "action":"document",
                             "cluster": "Documents",
                             "database": "Documentation",
                             "collection": "DocumentReports",
@@ -60,9 +60,9 @@ def create_document(request):  # Document Creation.
                             "function_ID": "ABCDE",
                             "command": "update",
                             "update_field": {
-                                            "document_name":document_name,
-                                            "content":data,
-                                            }
+                                "document_name":"",
+                                "content":"",
+                                }
                         }
                         })
                 headers = {
