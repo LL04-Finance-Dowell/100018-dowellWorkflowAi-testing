@@ -499,9 +499,8 @@ def get_template_list(company_id):
 
 
 # -------------------------- Document----------------------------------------
-def save_document(name, template_id, data, created_by, company_id):
+def save_document(name, data, created_by, company_id):
     url = "http://100002.pythonanywhere.com/"
-    print("Request 1 on document save----------- \n", data)
     event_id = get_event_id()
     dd = datetime.now()
     time = dd.strftime("%d:%m:%Y,%H:%M:%S")
@@ -513,8 +512,7 @@ def save_document(name, template_id, data, created_by, company_id):
                 "eventId": event_id,
                 "document_name": name,
                 "content": data,
-                "template_id": template_id,
-                "workflow_id": data["workflow_id"],
+                "workflow_id": "",
                 "auth_user_list": [],
                 "company_id": company_id,
                 "created_by": created_by,
@@ -556,7 +554,7 @@ def update_document(document_id, data):
 def get_document_object(document_id):
     fields = {"_id": document_id}
     response_obj = dowellconnection(*DOCUMENT_CONNECTION_LIST, "find", fields, "nil")
-    print("document object-------------- \n", response_obj)
+    # print("document object-------------- \n", response_obj)
     res_obj = json.loads(response_obj)
     try:
         return res_obj["data"]

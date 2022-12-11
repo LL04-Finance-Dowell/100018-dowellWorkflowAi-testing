@@ -22,7 +22,7 @@ from .mongo_db_connection import (
 )
 editorApi = "https://100058.pythonanywhere.com/api/generate-editor-link/"
     
-
+# print(get_document_object("639533d99cdd9578812eb9b9"))
 @api_view(["GET","POST"])
 def create_document(request):  # Document Creation.
     
@@ -40,9 +40,9 @@ def create_document(request):  # Document Creation.
             created_by = request.data["created_by"]
             company_id=request.data['company_id']
             #data = get_content_from_template_collection_with_that_template_id
-            data = get_template_object(template_id)
+            data = get_template_object(template_id)["content"]
             res = json.loads(
-                save_document(document_name, template_id, data, created_by, company_id)
+                save_document(document_name, data, created_by, company_id)
             )
             
             if res["isSuccess"]:
@@ -51,7 +51,7 @@ def create_document(request):  # Document Creation.
                         "product_name": "workflowai",
                         "details":{
                             "_id":res["inserted_id"],
-                            "field":"document_name",
+                            "field":"",
                             "cluster": "Documents",
                             "database": "Documentation",
                             "collection": "DocumentReports",
@@ -59,9 +59,9 @@ def create_document(request):  # Document Creation.
                             "team_member_ID": "11689044433",
                             "function_ID": "ABCDE",
                             "command": "update",
-                            "content":data,
                             "update_field": {
-                                            "document_name":document_name
+                                            "document_name":document_name,
+                                            "content":data,
                                             }
                         }
                         })
@@ -100,13 +100,11 @@ def document_detail(request):  # Single document
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
         document_id = request.data["document_id"]
-        document_name = request.data["document_name"]
-        
+        data=get_document_object(document_id)
+        document_name = data["document_name"]
         payload=json.dumps({
                 "product_name": "workflowai",
                 "details": {
-                    "_id":document_id,
-                    "fields":"document_name",
                     "cluster": "Documents",
                     "database": "Documentation",
                     "collection": "DocumentReports",
@@ -114,8 +112,10 @@ def document_detail(request):  # Single document
                     "team_member_ID": "11689044433",
                     "function_ID": "ABCDE",
                     "document_id":document_id,
+                    "fields":document_name,
                     "command": "update",
                     "update_field": {
+                                    "content": data,
                                     "document_name":document_name,
                                     }
                             
@@ -157,22 +157,6 @@ def documents_to_be_signed(request):  # List of `to be signed` documents.
                    
                     filtered_list.append(doc)
                 
-                    
-            # for doc in documents:
-            #     workflow = get_wf_object(doc["workflow_id"])
-            #     if not workflow:
-            #         rejected =True
-                    
-            #     else:
-            #         rejected=False
-            #         for obj in workflow["int_wf_string"]:
-            #             if str(obj[0]) == str(doc["int_wf_position"]) and str(obj[-1]):
-            #                 # Internal Workflow signatures
-            #                 filtered_list.append(doc)
-            #         for obj in workflow["ext_wf_string"]:
-            #             if str(obj[0]) == str(doc["ext_wf_position"]) and str(obj[-1]):
-            #                 # External Workflow signatures
-            #                 filtered_list.append(doc)
         except:
             return Response(
                 {"message": "An Error Occurred."},
@@ -212,92 +196,6 @@ def my_documents(request):  # List of my documents.
         return Response(
             {"documents": filtered_list, "title": "My Documents"}, status=status.HTTP_200_OK
         )
-
-
-# @api_view(["GET"])
-# def draft_documents(request):  # List of Draft Documents.
-#     executed = False
-#     title = "Draft Documents."
-#     filtered_list = []
-
-#     if request.method=="POST":
-#         company_id=request.data['company_id']
-#         user=request.data['created_by']
-#         documents = get_document_list(company_id)
-#         if not documents:
-#             return Response(
-#                 {"message": "An Error Occurred."},
-#                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
-#             )
-#         else:
-#             for doc in documents:
-#                 workflow = get_wf_object(doc["workflow_id"])
-#                 if not workflow:
-#                     return Response(
-#                         {"message": "An Error Occurred."},
-#                         status=status.HTTP_500_INTERNAL_SERVER_ERROR,
-#                     )
-#                 for obj in workflow["int_wf_string"]:
-#                     if str(obj[0]) == str(doc["int_wf_position"]) and str(obj[-1]) == user:
-#                         print("ur time for internal workflow")
-#                     if (
-#                         workflow["ext_wf_string"][0] == doc["ext_wf_position"]
-#                         and workflow["ext_wf_string"][-1] == user
-#                     ):
-#                         print("ur time for external workflow")
-#                     doc["document_id"] = doc["_id"]
-#                     if doc["created_by"] == user:
-#                         filtered_list.append(doc)
-                        
-#     return Response(
-#         {"documents": filtered_list, "title": title}, status=status.HTTP_200_OK)
-
-
-# @api_view(["GET"])
-# def rejected_documents(request,company_id="6365ee18ff915c925f3a6691"):  # List of rejected documents.
-#     rejected = True
-#     signing = True
-#     title = "Rejected Documents"
-#     filtered_list = []
-#     user = request.user
-#     if not user:
-#         return Response(
-#             {"message": "You Must Be LoggedIn"}, status=status.HTTP_401_UNAUTHORIZED
-#         )
-#     # documents = get_document_list(request.session["company_id"])
-#     documents = get_document_list("6365ee18ff915c925f3a6691")
-#     if not documents:
-#         return Response(
-#             {"message": "An Error Occurred."},
-#             status=status.HTTP_500_INTERNAL_SERVER_ERROR,
-#         )
-#     try:
-#         for doc in documents:
-#             workflow = get_wf_object(doc["workflow_id"])
-#             for obj in workflow["int_wf_string"]:
-#                 if str(obj[0]) == str(doc["int_wf_position"]) and str(obj[-1]) == user:
-#                     print("Part of Internal Workflow signatures------------ \n")
-#                     filtered_list.append(doc)
-#             for obj in workflow["ext_wf_string"]:
-#                 if str(obj[0]) == str(doc["ext_wf_position"]) and str(obj[-1]) == user:
-#                     print("Part of External Workflow signatures------------ \n")
-#                     filtered_list.append(doc)
-#     except:
-#         return Response(
-#             {"message": "An Error Occurred."},
-#             status=status.HTTP_500_INTERNAL_SERVER_ERROR,
-#         )
-#     return Response(
-#         {
-#             "documents": filtered_list,
-#             # "Role": request.session["Role"],
-#             "Role": "Admin",
-#             "signing": signing,
-#             "rejected": rejected,
-#             "title": title,
-#         },
-#         status=status.HTTP_200_OK,
-#     )
 
 @api_view(["GET","POST"])
 def rejected_documents(request):  # List of `to be signed` documents.
