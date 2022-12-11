@@ -155,7 +155,7 @@ def get_user_list(company_id):
 
 def get_user(user_name):
     field = {"user_name": str(user_name)}
-    response_obj = dowellconnection(*USER_CONNECTION_LIST, "find", field, "nil")
+    response_obj = dowellconnection(*REGISTRATION_ARGS, "find", field, "nil")
     res_obj = json.loads(response_obj)
     print(res_obj)
     if len(res_obj["data"]):
@@ -181,7 +181,7 @@ def get_user_info_by_username(username):
 
 
 #  -------------------------------Workflow Process------------------
-def save_wf_process(workflow, user, company_id, document):
+def save_wf_process(workflows, user, company_id):
     url = "http://100002.pythonanywhere.com/"
     payload = json.dumps(
         {
@@ -189,9 +189,8 @@ def save_wf_process(workflow, user, company_id, document):
             "command": "insert",
             "field": {
                 "eventId": get_event_id(),
-                "workflow": workflow,
+                "workflow": workflows,
                 "company_id": company_id,
-                "document": document,
                 "created_by": user,
             },
             "update_field": {"order_nos": 21},
@@ -204,7 +203,7 @@ def save_wf_process(workflow, user, company_id, document):
     return response.text
 
 
-def update_wf_process(workflow_id, workflow):
+def update_wf_process(workflow_process_id, workflows):
     url = "http://100002.pythonanywhere.com/"
     payload = json.dumps(
         {
@@ -212,7 +211,7 @@ def update_wf_process(workflow_id, workflow):
             # "command": "insert",
             "command": "update",
             "field": {
-                "_id": workflow_id,
+                "_id": workflow_process_id,
             },
             "update_field": {
                 "eventId": get_event_id(),
@@ -227,8 +226,8 @@ def update_wf_process(workflow_id, workflow):
     return response.text
 
 
-def get_process_object(workflow_id):
-    fields = {"_id": str(workflow_id)}
+def get_process_object(workflow_process_id):
+    fields = {"_id": str(workflow_process_id)}
     response_obj = dowellconnection(*WF_PROCESS_CONNECTION, "find", fields, "nil")
     res_obj = json.loads(response_obj)
     if len(res_obj["data"]):

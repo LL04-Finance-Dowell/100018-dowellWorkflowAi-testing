@@ -1,21 +1,6 @@
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
-from .mongo_db_connection import get_user_info_by_username
-
-
-@api_view(["POST"])
-def user(request):
-    res = get_user_info_by_username(request.data["user_name"])
-    print(res)
-    if not res:
-        return Response(
-            {"message": "Failed to fetch user info"}, status=status.HTTP_400_BAD_REQUEST
-        )
-
-    return Response(
-        {"message": "Here is your info", "user": res}, status=status.HTTP_200_OK
-    )
 
 
 @api_view(["GET"])
