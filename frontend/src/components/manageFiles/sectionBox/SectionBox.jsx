@@ -5,6 +5,7 @@ import { useSelector } from "react-redux";
 import { useState } from "react";
 import { useEffect } from "react";
 import { LoadingSpinner } from "../../LoadingSpinner/LoadingSpinner";
+import BookSpinner from "../../bookSpinner/BookSpinner";
 
 const SectionBox = ({ cardItems, title, cardBgColor, feature, Card }) => {
   const [test, setTest] = useState("idle");
@@ -29,7 +30,7 @@ const SectionBox = ({ cardItems, title, cardBgColor, feature, Card }) => {
           <h2 className={maneFilesStyles.header}>{title}</h2>
           {test === "pending" ? (
             <div>
-              <LoadingSpinner />
+              <BookSpinner />
             </div>
           ) : (
             <div className={styles.grid__box}>

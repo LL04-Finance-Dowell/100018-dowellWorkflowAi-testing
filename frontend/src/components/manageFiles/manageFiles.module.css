@@ -4,8 +4,13 @@
   flex-direction: column;
   width: 100%;
   position: relative;
-  gap: 50px;
+  /*  gap: 50px; */
   margin-left: 20px;
+}
+
+.page__header {
+  text-align: center;
+  margin-block: 20px;
 }
 
 .content__box {
@@ -30,8 +35,9 @@
 
 .add__Form__toggle i {
   cursor: pointer;
-  width: 57px;
-  height: 57px;
+  /*  width: 57px;
+  height: 57px; */
+  padding: 10px;
   background: var(--popup-form-button);
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.25);
   border-radius: 50%;
@@ -50,7 +56,7 @@
 
 .header {
   padding: 7px;
-  border: 1px solid var(--e-global-color-accent);
+  border-bottom: 2px solid var(--e-global-color-secondary);
   line-height: 19px;
   font-size: 19px;
   flex-basis: fit-content;

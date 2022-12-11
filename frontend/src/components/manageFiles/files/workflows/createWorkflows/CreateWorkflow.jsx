@@ -20,6 +20,7 @@ import { localStorageGetItem } from "../../../../../utils/localStorageUtils";
 import { TiTick } from "react-icons/ti";
 import { MdModeEditOutline } from "react-icons/md";
 import { RiDeleteBinLine } from "react-icons/ri";
+import StepTable from "./stepTable/StepTable";
 
 const CreateWorkflows = ({ handleToggleOverlay }) => {
   const notify = (title) => toast("created" + " " + title);
@@ -65,18 +66,18 @@ const CreateWorkflows = ({ handleToggleOverlay }) => {
     reset();
   };
 
-  const handleRemoveInternalTemplate = (id) => {
+  /* const handleRemoveInternalTemplate = (id) => {
     setInternalWorkflows((prev) => prev.filter((item) => item.id !== id));
-  };
+  }; */
 
-  const handleEditInternalTemplate = (currentİtem) => {
+  /*   const handleEditInternalTemplate = (currentİtem) => {
     setCurrentTableCall(currentİtem);
 
     stepNameRef.current?.click();
     setValue("step_name", currentİtem.step_name);
     setValue("member_type", currentİtem.member_type);
   };
-
+ */
   const handleWorkflowChange = (e) => {
     setWorkflowTitle(e.target.value);
   };
@@ -118,7 +119,7 @@ const CreateWorkflows = ({ handleToggleOverlay }) => {
       const data = {
         created_by: userDetail?.userinfo.username,
         wf_title: workflowTitle,
-        company_id: userDetail?.userinfo.client_admin_id,
+        company_id: userDetail?.portfolio_info.org_id,
         steps: internalWorkflows.map((item) => ({
           step_name: item.step_name,
           member_type: item.member_type,
@@ -176,7 +177,7 @@ const CreateWorkflows = ({ handleToggleOverlay }) => {
             </label>
             <input value={workflowTitle} onChange={handleWorkflowChange} />
           </div>
-          <table>
+          {/*   <table>
             <thead>
               <tr>
                 <th>step name</th>
@@ -220,7 +221,16 @@ const CreateWorkflows = ({ handleToggleOverlay }) => {
                 </tr>
               ))}
             </tbody>
-          </table>
+          </table> */}
+          <StepTable
+            currentTableCell={currentTableCell}
+            internalWorkflows={internalWorkflows}
+            setCurrentTableCall={setCurrentTableCall}
+            setInternalWorkflows={setInternalWorkflows}
+            setValue={setValue}
+            currentWorkflow={currentWorkflow}
+            stepNameRef={stepNameRef}
+          />
 
           <form onSubmit={handleSubmit(onSubmit)}>
             <div className={styles.form__box} style={{ display: "flex" }}>

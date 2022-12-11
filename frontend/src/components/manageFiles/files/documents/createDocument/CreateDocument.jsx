@@ -36,7 +36,7 @@ const CreateDocument = ({ handleToggleOverlay }) => {
     dispatch(setToggleManageFileForm(false));
 
     const createDocumentData = {
-      company_id: userDetail?.userinfo.client_admin_id,
+      company_id: userDetail?.portfolio_info.org_id,
       template_id: template,
       created_by: userDetail?.userinfo.username,
     };
@@ -65,7 +65,7 @@ const CreateDocument = ({ handleToggleOverlay }) => {
   useEffect(() => {
     dispatch(
       mineTemplates({
-        company_id: userDetail?.userinfo.client_admin_id,
+        company_id: userDetail?.portfolio_info.org_id,
       })
     );
   }, []);

@@ -25,16 +25,16 @@ const ManageFile = () => {
   useEffect(() => {
     const docData = {
       created_by: userDetail?.userinfo.username,
-      company_id: userDetail?.userinfo.client_admin_id,
+      company_id: userDetail?.portfolio_info.org_id,
     };
 
     const tempData = {
-      company_id: userDetail?.userinfo.client_admin_id,
+      company_id: userDetail?.portfolio_info.org_id,
     };
 
     const workData = {
       created_by: userDetail?.userinfo.username,
-      company_id: userDetail?.userinfo.client_admin_id,
+      company_id: userDetail?.portfolio_info.org_id,
     };
 
     dispatch(mineDocuments(docData));

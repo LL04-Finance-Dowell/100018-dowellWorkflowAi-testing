@@ -5,6 +5,7 @@ import {
   mineWorkflow,
   updateWorkflow,
 } from "./asyncTHunks";
+import { v4 as uuidv4 } from "uuid";
 
 const initialState = {
   workflow: {},
@@ -42,7 +43,25 @@ export const workflowSlice = createSlice({
     });
     builder.addCase(mineWorkflow.fulfilled, (state, action) => {
       state.mineStatus = "succeeded";
-      state.minedWorkflows = action.payload;
+      state.minedWorkflows = action.payload.Workflows
+        ? action.payload.Workflows.map((item) => ({
+            ...item,
+            workflows: {
+              ...item.workflows,
+              steps: item.workflows.steps.map((step) => ({
+                ...step,
+                _id: uuidv4(),
+              })),
+            },
+            /*   workflows: {
+              ...action.payload.Workflows.workflows,
+               steps: action.payload.Workflows.workflows.steps.map((item) => ({
+                ...item,
+                _id: uuidv4(),
+              })),
+            }, */
+          }))
+        : action.payload;
     });
     builder.addCase(mineWorkflow.rejected, (state, action) => {
       state.mineStatus = "failed";

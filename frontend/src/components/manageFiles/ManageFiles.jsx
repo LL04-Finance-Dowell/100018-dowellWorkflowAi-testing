@@ -21,7 +21,7 @@ const ManageFiles = ({ title, children, OverlayComp }) => {
     } else {
       const data = {
         created_by: userDetail?.userinfo.username,
-        company_id: userDetail?.userinfo.client_admin_id,
+        company_id: userDetail?.portfolio_info.org_id,
       };
       dispatch(createTemplate(data));
     }
@@ -32,6 +32,7 @@ const ManageFiles = ({ title, children, OverlayComp }) => {
       {OverlayComp && toggleManageFileForm && (
         <OverlayComp handleToggleOverlay={handleToggleOverlay} />
       )}
+      <h2 className={styles.page__header}>{title} Page</h2>
       <div className={styles.content__box}>
         <div>
           <h2 className={styles.header}>New {title}</h2>
@@ -40,7 +41,7 @@ const ManageFiles = ({ title, children, OverlayComp }) => {
             className={styles.add__Form__toggle}
           >
             <i>
-              <BsPlusLg color="white" cursor="pointer" size={25} />
+              <BsPlusLg color="white" cursor="pointer" size={20} />
             </i>
             <h2>Add {title}</h2>
           </div>

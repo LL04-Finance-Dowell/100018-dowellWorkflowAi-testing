@@ -8,6 +8,8 @@ import { detailWorkflow } from "../../../features/workflow/asyncTHunks";
 import HoverCard from "../HoverCard";
 import { Button } from "../styledComponents";
 import styles from "./workflowCard.module.css";
+import { RxUpdate } from "react-icons/rx";
+import { RiDeleteBin6Line } from "react-icons/ri";
 
 const WorkflowCard = ({ cardItem }) => {
   const dispatch = useDispatch();
@@ -37,14 +39,43 @@ const WorkflowCard = ({ cardItem }) => {
         </Button> */}
         {cardItem.workflows?.workflow_title ? (
           <>
-            <p>step-1 admin</p>
+            <>
+              <div className={styles.test}>
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Step Name</th>
+                      <th>Role</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {cardItem.workflows?.steps.map((item) => (
+                      <tr>
+                        <th>{item.step_name}</th>
+                        <th>{item.member_type}</th>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+              {/*  <div key={item._id}>
+                  <p>
+                    {item.step_name} {item.member_type}
+                  </p>
+                </div> */}
+            </>
+
             <div className={styles.button__group}>
-              <a className={styles.delete}>delete</a>
+              <a className={styles.delete}>
+                <RiDeleteBin6Line color="red" />
+              </a>
               <a
                 onClick={() => handleUpdateWorkflow(cardItem)}
                 className={styles.update}
               >
-                update
+                <i>
+                  <RxUpdate color="green" />
+                </i>
               </a>
             </div>
           </>

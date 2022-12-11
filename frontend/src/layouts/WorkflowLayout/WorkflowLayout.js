@@ -6,7 +6,7 @@ import "./style.css";
 import styles from "./workflowLayout.module.css";
 import Editor from "../../components/editor/Editor";
 import { useSearchParams } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { memo, useCallback, useEffect, useState } from "react";
 import { getUserInfo } from "../../features/app/asyncThunks";
 import { mineDocuments } from "../../features/document/asyncThunks";
 import { mineTemplates } from "../../features/template/asyncThunks";
@@ -32,25 +32,33 @@ const WorkflowLayout = ({ children }) => {
 
   console.log("aaaaaaaaaaa", currentUser, userDetail);
 
-  return (
-    <>
-      {currentUser && userDetail ? (
-        <div className={styles.container}>
-          <div className={styles.content__box}>
-            <div className={styles.sidebar__box}>
-              <SideBar user={currentUser} />
+  const www = useCallback(() => {
+    return (
+      <>
+        {currentUser && userDetail ? (
+          <div className={styles.container}>
+            <div className={styles.content__box}>
+              <div className={styles.sidebar__box}>
+                <SideBar user={currentUser} />
+              </div>
+              <div className={styles.children__box}>{children}</div>
             </div>
-            <div className={styles.children__box}>{children}</div>
+            <Editor />
           </div>
-          <Editor />
-        </div>
-      ) : (
-        <div className={styles.spinner}>
-          <Spinner />
-        </div>
-      )}
-    </>
-  );
+        ) : (
+          <div className={styles.spinner}>
+            <Spinner />
+          </div>
+        )}
+      </>
+    );
+  }, [currentUser, userDetail]);
+
+  /*   useEffect(() => {
+    www();
+  }, [www]); */
+
+  return <>{www()}</>;
 };
 
-export default WorkflowLayout;
+export default memo(WorkflowLayout);

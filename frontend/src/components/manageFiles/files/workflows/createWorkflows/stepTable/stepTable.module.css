@@ -1,16 +1,4 @@
-.form__container {
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  max-height: 60vh;
-  overflow: auto;
-  gap: 30px;
-}
-
-.form__box {
-  display: flex;
-  justify-content: space-between;
-  width: 100%;
+.container {
 }
 
 .add__table__button {
@@ -28,9 +16,7 @@
   align-self: flex-end;
 }
 
-/* 
-
-.form__container table {
+.container table {
   width: 100%;
   margin-bottom: 16px;
   border: solid 2.5px var(--e-global-color-secondary);
@@ -38,7 +24,7 @@
   color: var(--e-global-color-cd6593d);
 }
 
-.form__container table thead tr th {
+.container table thead tr th {
   background-color: var(--e-global-color-secondary);
   border: 2px solid var(--e-global-color-secondary);
   padding: 4.8px;
@@ -49,7 +35,7 @@
   width: 50%;
 }
 
-.form__container table tbody tr th,
+.container table tbody tr th,
 .no__step {
   border: 2px solid var(--e-global-color-secondary);
   padding: 4.8px;
@@ -72,41 +58,8 @@
 
 .table__features__box i {
   cursor: pointer;
-} */
-
-.button__group {
-  display: flex;
-  justify-content: flex-end;
-  gap: 12px;
 }
 
-.button__group button {
-  padding: 6px 24px;
-  text-transform: capitalize;
-  border-radius: 10px;
-  color: white;
-  border: none;
-}
-
-.add__button {
-  background-color: var(--popup-form-button);
-}
-
-.cancel__button {
-  background-color: #c6c6c6;
-}
-
-/* .editing__ceil th {
-  background-color: rgba(190, 190, 190, 0.2) !important;
-} */
-
-@media (max-width: 768px) {
-  .form__box {
-    flex-direction: column;
-    row-gap: 20px;
-  }
-
-  /*  .input__box {
-    width: 100%;
-  } */
+.editing__ceil th {
+  background-color: rgba(190, 190, 190, 0.1) !important;
 }

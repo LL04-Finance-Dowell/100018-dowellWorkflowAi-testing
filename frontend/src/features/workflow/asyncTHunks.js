@@ -32,7 +32,7 @@ export const mineWorkflow = createAsyncThunk("workflow/mine", async (data) => {
       res.data
     );
 
-    return res.data.Workflows;
+    return res.data;
   } catch (error) {
     console.log(error);
   }

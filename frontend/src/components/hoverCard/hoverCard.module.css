@@ -17,7 +17,7 @@
   align-items: center;
   justify-content: center;
   gap: 20px;
-  color: var(--e-global-color-cd6593d);
+  color: var(--e-global-color-secondary);
   padding: 10px;
 }
 
@@ -29,7 +29,7 @@
   top: 0;
   left: 0;
   z-index: 10;
-  background-color: #4054b2 !important;
+  background-color: #f3fff1 !important;
   transition: 1s ease all;
 }
 
