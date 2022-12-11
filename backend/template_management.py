@@ -85,7 +85,7 @@ def template_detail(request):
             "command": "update",
             "update_field": {
                 "template_name": request.data["template_name"],
-                "content": data,
+                "content": data["content"],
             },
         },
     }
