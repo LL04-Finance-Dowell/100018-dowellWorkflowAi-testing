@@ -23,11 +23,11 @@ const LandingPage = () => {
     setUserDetail(userDetail);
   }, [currentUser, userDetail]); */
 
-  useEffect(() => {
+  /* useEffect(() => {
     if (!currentUser || !userDetail) {
       window.location.replace(dowellLoginUrl);
     }
-  }, []);
+  }, []); */
 
   return (
     <>

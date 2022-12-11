@@ -18,6 +18,24 @@ export const getUserInfo = createAsyncThunk("app/getUser", async (data) => {
   }
 });
 
+export const getUserInfoOther = createAsyncThunk(
+  "app/getUserOther",
+  async (data) => {
+    try {
+      const res = await authServices.getUserDetailOther(data);
+
+      console.log("userInfoooooooooooooooooooooooooooo", res.data);
+      window.localStorage.setItem("userDetail", JSON.stringify(res.data));
+
+      /*  navigate("/", { replace: true }); */
+
+      return res.data;
+    } catch (error) {
+      console.log(error);
+    }
+  }
+);
+
 export const getCurrentUser = createAsyncThunk(
   "app/getCurrentUser",
   async (data) => {

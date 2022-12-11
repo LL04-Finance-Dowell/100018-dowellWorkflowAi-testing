@@ -7,10 +7,10 @@ import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
 import { mineTemplates } from "../../../features/template/asyncThunks";
 import TemplateCard from "../../../components/hoverCard/templateCard/TemplateCard";
-import { localStorageGetItem } from "../../../utils/localStorageUtils";
 
 const TemplatesPage = () => {
-  const userDetail = localStorageGetItem("userDetail");
+  const { userDetail } = useSelector((state) => state.auth);
+
   const { minedTemplates, draftsTemlateItems } = useSelector(
     (state) => state.template
   );

@@ -10,19 +10,22 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "@fontsource/roboto"; // Defaults to weight 400.
 import { AppContextProvider } from "./contexts/AppContext";
 import { Provider } from "react-redux";
-import { store } from "./app/store";
+import { persistor, store } from "./app/store";
+import { PersistGate } from "redux-persist/integration/react";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>
     <HashRouter>
       <Provider store={store}>
-        <UserContextProvider>
-          <AppContextProvider>
-            <App />
-          </AppContextProvider>
-          <ToastContainer />
-        </UserContextProvider>
+        <PersistGate loading={null} persistor={persistor}>
+          <UserContextProvider>
+            <AppContextProvider>
+              <App />
+            </AppContextProvider>
+            <ToastContainer />
+          </UserContextProvider>
+        </PersistGate>
       </Provider>
     </HashRouter>
   </React.StrictMode>

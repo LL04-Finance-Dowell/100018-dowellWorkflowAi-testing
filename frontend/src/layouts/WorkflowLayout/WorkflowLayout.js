@@ -6,7 +6,7 @@ import "./style.css";
 import styles from "./workflowLayout.module.css";
 import Editor from "../../components/editor/Editor";
 import { useSearchParams } from "react-router-dom";
-import { memo, useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { getUserInfo } from "../../features/app/asyncThunks";
 import { mineDocuments } from "../../features/document/asyncThunks";
 import { mineTemplates } from "../../features/template/asyncThunks";
@@ -16,13 +16,14 @@ import Spinner from "../../components/spinner/Spinner";
 
 const WorkflowLayout = ({ children }) => {
   const dispatch = useDispatch();
-  const currentUser = localStorageGetItem("workFlowUser");
-  const userDetail = localStorageGetItem("userDetail");
-  /*   const [currentUser, setCurrentUser] = useState(null);
-  const [userDetail, setUserDetail] = useState(null);
+  const { currentUser, userDetail } = useSelector((state) => state.auth);
+  /* const currentUser = localStorageGetItem("currentUser");
+  const userDetail = localStorageGetItem("userDetail"); */
+  /* const [currentUser, setCurrentUser] = useState(null);
+  const [userDetail, setUserDetail] = useState(null); */
 
-  useEffect(() => {
-    const currentUser = localStorageGetItem("workFlowUser");
+  /*  useEffect(() => {
+    const currentUser = localStorageGetItem("currentUser");
     const userDetail = localStorageGetItem("userDetail");
     setCurrentUser(currentUser);
     setUserDetail(userDetail);
@@ -30,35 +31,38 @@ const WorkflowLayout = ({ children }) => {
 
   console.log(currentUser, userDetail); */
 
-  console.log("aaaaaaaaaaa", currentUser, userDetail);
+  /*   console.log("aaaaaaaaaaa", currentUser, userDetail);
 
-  const www = useCallback(() => {
-    return (
-      <>
-        {currentUser && userDetail ? (
-          <div className={styles.container}>
-            <div className={styles.content__box}>
-              <div className={styles.sidebar__box}>
-                <SideBar user={currentUser} />
-              </div>
-              <div className={styles.children__box}>{children}</div>
-            </div>
-            <Editor />
-          </div>
-        ) : (
-          <div className={styles.spinner}>
-            <Spinner />
-          </div>
-        )}
-      </>
-    );
-  }, [currentUser, userDetail]);
+  const www = useCallback(())
+ */
+
+  console.log("aaaaaaaaaaaaaaaa", currentUser, userDetail);
 
   /*   useEffect(() => {
-    www();
-  }, [www]); */
+    if (!currentUser || !userDetail) {
+      window.location.reload();
+    }
+  }, []); */
 
-  return <>{www()}</>;
+  return (
+    <>
+      {currentUser && userDetail ? (
+        <div className={styles.container}>
+          <div className={styles.content__box}>
+            <div className={styles.sidebar__box}>
+              <SideBar user={currentUser} />
+            </div>
+            <div className={styles.children__box}>{children}</div>
+          </div>
+          <Editor />
+        </div>
+      ) : (
+        <div className={styles.spinner}>
+          <Spinner />
+        </div>
+      )}
+    </>
+  );
 };
 
-export default memo(WorkflowLayout);
+export default WorkflowLayout;

@@ -7,10 +7,9 @@ import {
   setCurrentWorkflow,
   setToggleManageFileForm,
 } from "../../features/app/appSlice";
-import { localStorageGetItem } from "../../utils/localStorageUtils";
 
 const ManageFiles = ({ title, children, OverlayComp }) => {
-  const userDetail = localStorageGetItem("userDetail");
+  const { userDetail } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
   const { toggleManageFileForm } = useSelector((state) => state.app);
 
@@ -41,7 +40,7 @@ const ManageFiles = ({ title, children, OverlayComp }) => {
             className={styles.add__Form__toggle}
           >
             <i>
-              <BsPlusLg color="white" cursor="pointer" size={20} />
+              <BsPlusLg cursor="pointer" size={25} />
             </i>
             <h2>Add {title}</h2>
           </div>

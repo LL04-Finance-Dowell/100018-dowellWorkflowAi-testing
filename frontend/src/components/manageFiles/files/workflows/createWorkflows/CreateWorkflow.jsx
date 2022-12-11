@@ -16,7 +16,6 @@ import { LoadingSpinner } from "../../../../LoadingSpinner/LoadingSpinner";
 import SubmitButton from "../../../../submitButton/SubmitButton";
 import { setToggleManageFileForm } from "../../../../../features/app/appSlice";
 import Spinner from "../../../../spinner/Spinner";
-import { localStorageGetItem } from "../../../../../utils/localStorageUtils";
 import { TiTick } from "react-icons/ti";
 import { MdModeEditOutline } from "react-icons/md";
 import { RiDeleteBinLine } from "react-icons/ri";
@@ -26,7 +25,7 @@ const CreateWorkflows = ({ handleToggleOverlay }) => {
   const notify = (title) => toast("created" + " " + title);
 
   const stepNameRef = useRef(null);
-  const userDetail = localStorageGetItem("userDetail");
+  const { userDetail } = useSelector((state) => state.auth);
 
   const dispatch = useDispatch();
   const { workflow, status, workflowDetailStatus, updateWorkflowStatus } =

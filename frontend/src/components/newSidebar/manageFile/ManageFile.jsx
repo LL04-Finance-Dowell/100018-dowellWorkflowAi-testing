@@ -3,16 +3,14 @@ import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import CollapseItem from "../collapseItem/CollapseItem";
 import { v4 as uuidv4 } from "uuid";
-
 import sidebarStyles from "../sidebar.module.css";
 import { mineDocuments } from "../../../features/document/asyncThunks";
 import { mineTemplates } from "../../../features/template/asyncThunks";
 import { mineWorkflow } from "../../../features/workflow/asyncTHunks";
-import { localStorageGetItem } from "../../../utils/localStorageUtils";
 
 const ManageFile = () => {
   const dispatch = useDispatch();
-  const userDetail = localStorageGetItem("userDetail");
+  const { userDetail } = useSelector((state) => state.auth);
 
   const { minedWorkflows } = useSelector((state) => state.workflow);
   const { minedTemplates } = useSelector((state) => state.template);

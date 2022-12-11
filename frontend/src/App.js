@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Routes, Route } from "react-router-dom";
 import { useUserContext } from "./contexts/UserContext";
 import useDowellLogin from "./hooks/useDowellLogin";
@@ -26,8 +26,9 @@ import DraftsDoc from "./pages/Documents/DraftsDoc/DraftsDoc";
 import NewTemplate from "./pages/Templates/NewTemplate/NewTemplate";
 import NewWorkFlow from "./pages/Workflows/NewWorkflow/NewWorkFlow";
 import DraftF from "./pages/Workflows/DraftF/DraftF";
+import { dowellLoginUrl } from "./httpCommon/httpCommon";
 function App() {
-  const { currentUser, setCurrentUser } = useUserContext();
+  /*  const { currentUser, setCurrentUser } = useUserContext();
   const [loading, setLoading] = useState(true);
 
   useDowellLogin(setCurrentUser, setLoading);
@@ -40,7 +41,15 @@ function App() {
         <Route path={"/"} element={<LandingPage />} />
         <Route path={"*"} element={<>Page not found</>} />
       </Routes>
-    );
+    ); */
+
+  /*   useEffect(() => {
+    if (!session) {
+      window.location.replace(dowellLoginUrl);
+    }
+  }, []); */
+
+  useDowellLogin();
 
   return (
     <Routes>

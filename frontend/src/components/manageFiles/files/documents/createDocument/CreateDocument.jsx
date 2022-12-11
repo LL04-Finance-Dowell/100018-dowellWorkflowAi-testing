@@ -13,10 +13,9 @@ import { LoadingSpinner } from "../../../../LoadingSpinner/LoadingSpinner";
 import SubmitButton from "../../../../submitButton/SubmitButton";
 import { setToggleManageFileForm } from "../../../../../features/app/appSlice";
 import Spinner from "../../../../spinner/Spinner";
-import { localStorageGetItem } from "../../../../../utils/localStorageUtils";
 
 const CreateDocument = ({ handleToggleOverlay }) => {
-  const userDetail = localStorageGetItem("userDetail");
+  const { userDetail } = useSelector((state) => state.auth);
 
   const dispatch = useDispatch();
   const { minedTemplates, mineStatus } = useSelector((state) => state.template);

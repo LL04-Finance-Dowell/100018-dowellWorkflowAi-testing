@@ -21,17 +21,14 @@ import { FaShieldAlt } from "react-icons/fa";
 import { AiTwotoneSetting } from "react-icons/ai";
 import { dowellLogoutUrl } from "../../services/axios";
 import ManageFile from "./manageFile/ManageFile";
-import { localStorageGetItem } from "../../utils/localStorageUtils";
 
 const Sidebar = () => {
   const dispatch = useDispatch();
-  const currentUser = localStorageGetItem("workFlowUser");
-  const userDetail = localStorageGetItem("userDetail");
+  const { userDetail, currentUser, session_id } = useSelector(
+    (state) => state.auth
+  );
 
-  const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
-
-  const session_id = localStorage.getItem("session_id");
 
   const handleLogout = () => {
     localStorage.clear();
@@ -42,9 +39,7 @@ const Sidebar = () => {
     feature === "logout" && handleLogout();
     feature === "profile" &&
       window.open(
-        `https://100093.pythonanywhere.com/?session_id=${localStorage.getItem(
-          "session_id"
-        )}`,
+        `https://100093.pythonanywhere.com/?session_id=${session_id}`,
         "_blank"
       );
     feature === "home" && navigate(`/`);

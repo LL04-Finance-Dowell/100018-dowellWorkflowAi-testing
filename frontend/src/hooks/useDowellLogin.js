@@ -2,31 +2,34 @@ import { useEffect } from "react";
 import { authAxiosInstance } from "../services/axios";
 import { routes } from "../services/routes";
 import { useSearchParams } from "react-router-dom";
-import { useDispatch } from "react-redux";
-import { getUserInfo } from "../features/app/asyncThunks";
+import { useDispatch, useSelector } from "react-redux";
+import { getCurrentUser, getUserInfo } from "../features/app/asyncThunks";
+import { dowellLoginUrl } from "../httpCommon/httpCommon";
+import { setSessionId } from "../features/auth/authSlice";
 
-export default function useDowellLogin(updateState, updatePageWhenDone) {
+export default function useDowellLogin(/* updateState, updatePageWhenDone */) {
   const dispatch = useDispatch();
   const [searchParams, setSearchParams] = useSearchParams();
+  const { session_id: localSession } = useSelector((state) => state.auth);
 
   useEffect(() => {
     const session_id = searchParams.get("session_id");
 
-    const savedUser = localStorage.getItem("workFlowUser");
-
-    if (!session_id && !savedUser) return updatePageWhenDone(false);
-
-    if (savedUser && !session_id) {
-      updateState(JSON.parse(savedUser));
-      return updatePageWhenDone(false);
+    if (session_id) {
+      dispatch(setSessionId(session_id));
+      dispatch(getUserInfo({ session_id }));
+      dispatch(getCurrentUser({ key: session_id }));
     }
 
-    dispatch(getUserInfo({ session_id }));
+    if (!localSession) {
+      window.location.replace(dowellLoginUrl);
+    }
 
-    authAxiosInstance
+    /* authAxiosInstance
       .post(routes.userProfile, { key: session_id })
       .then((res) => {
         updateState(res.data);
+        dispatch(getUserInfo({ session_id }));
         localStorage.setItem("workFlowUser", JSON.stringify(res.data));
         localStorage.setItem("session_id", session_id);
         updatePageWhenDone(false);
@@ -36,6 +39,6 @@ export default function useDowellLogin(updateState, updatePageWhenDone) {
         localStorage.clear("session_id");
         updatePageWhenDone(false);
         return Promise.reject(err);
-      });
+      }); */
   }, []);
 }

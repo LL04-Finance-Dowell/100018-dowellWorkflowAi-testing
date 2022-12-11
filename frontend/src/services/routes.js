@@ -1,6 +1,6 @@
 const routes = {
-    userProfile: "profile/",
-    createTemplate: "templates/",
-}
+  userProfile: "profile/",
+  createTemplate: "templates/",
+};
 
-export { routes }
+export { routes };

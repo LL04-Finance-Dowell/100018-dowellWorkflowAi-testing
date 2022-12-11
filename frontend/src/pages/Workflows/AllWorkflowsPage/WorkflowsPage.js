@@ -8,10 +8,9 @@ import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { mineWorkflow } from "../../../features/workflow/asyncTHunks";
 import WorkflowCard from "../../../components/hoverCard/workflowCard/WorkflowCard";
-import { localStorageGetItem } from "../../../utils/localStorageUtils";
 
 const WorkflowsPage = () => {
-  const userDetail = localStorageGetItem("userDetail");
+  const { userDetail } = useSelector((state) => state.auth);
   const { minedWorkflows } = useSelector((state) => state.workflow);
 
   const dispatch = useDispatch();

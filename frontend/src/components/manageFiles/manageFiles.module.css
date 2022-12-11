@@ -17,6 +17,7 @@
   width: var(--primary-section-width);
   display: flex;
   gap: 100px;
+
   flex-direction: column;
 }
 
@@ -26,24 +27,25 @@
   justify-content: center;
   flex-direction: column;
   gap: 25px;
-  width: 180px;
-  height: 185px;
+  height: 200px;
+  width: 145px;
   background-color: #f3fff1;
   border: 2px dashed #adadad;
   border-radius: 20px;
+  padding-inline: 5px;
 }
 
 .add__Form__toggle i {
   cursor: pointer;
-  /*  width: 57px;
-  height: 57px; */
-  padding: 10px;
+  width: 50px;
+  height: 50px;
   background: var(--popup-form-button);
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.25);
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
+  color: #fff;
 }
 
 .add__Form__toggle h2 {

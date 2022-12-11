@@ -7,10 +7,9 @@ import { HashLink } from "react-router-hash-link";
 import { useDispatch, useSelector } from "react-redux";
 import { createTemplate } from "../../../features/template/asyncThunks";
 import { setToggleManageFileForm } from "../../../features/app/appSlice";
-import { localStorageGetItem } from "../../../utils/localStorageUtils";
 
 const New = () => {
-  const userDetail = localStorageGetItem("userDetail");
+  const { userDetail } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
 
   const [isOpen, setIsOpen] = useState(false);
