@@ -81,12 +81,13 @@ def template_detail(request):
             "document": "templatereports",
             "team_member_ID": "22689044433",
             "function_ID": "ABCDE",
-            "document_id": request.data["template_id"],
-            "fields": request.data["template_name"],
+            "_id": request.data["template_id"],
+            "field": "template_name",
+            "action":"template",
             "command": "update",
             "update_field": {
-                "template_name": request.data["template_name"],
-                "content": data["content"],
+                "template_name": "",
+                "content": "",
             },
         },
     }
