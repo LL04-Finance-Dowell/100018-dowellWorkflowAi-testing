@@ -6,6 +6,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { getCurrentUser, getUserInfo } from "../features/app/asyncThunks";
 import { dowellLoginUrl } from "../httpCommon/httpCommon";
 import { setSessionId } from "../features/auth/authSlice";
+import { getUserInfoOther } from "../features/auth/asyncThunks";
 
 export default function useDowellLogin(/* updateState, updatePageWhenDone */) {
   const dispatch = useDispatch();
@@ -14,11 +15,17 @@ export default function useDowellLogin(/* updateState, updatePageWhenDone */) {
 
   useEffect(() => {
     const session_id = searchParams.get("session_id");
+    const id = searchParams.get("id");
 
     if (session_id) {
+      localStorage.setItem("session_id", session_id);
       dispatch(setSessionId(session_id));
-      dispatch(getUserInfo({ session_id }));
       dispatch(getCurrentUser({ key: session_id }));
+      if (id) {
+        dispatch(getUserInfoOther({ session_id }));
+      } else {
+        dispatch(getUserInfo({ session_id }));
+      }
     }
 
     if (!localSession) {

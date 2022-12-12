@@ -110,6 +110,7 @@ const CreateWorkflows = ({ handleToggleOverlay }) => {
         workflow_title: workflowTitle,
         steps: internalWorkflows.map((item) => ({
           step_name: item.step_name,
+          member_type: item.member_type,
         })),
       };
 
@@ -233,60 +234,32 @@ const CreateWorkflows = ({ handleToggleOverlay }) => {
 
           <form onSubmit={handleSubmit(onSubmit)}>
             <div className={styles.form__box} style={{ display: "flex" }}>
-              {!currentWorkflow ? (
-                <>
-                  <div className={overlayStyles.input__box}>
-                    <label ref={stepNameRef} htmlFor="step_name">
-                      Step Name
-                    </label>
-                    <input
-                      required
-                      placeholder="Step Name"
-                      id="step_name"
-                      {...register("step_name")}
-                    />
-                  </div>
-                  <div className={overlayStyles.input__box}>
-                    <label htmlFor="member_type">Role</label>
-                    <input
-                      readOnly={currentWorkflow ? true : false}
-                      required
-                      placeholder="Role"
-                      id="member_type"
-                      {...register("member_type")}
-                    />
-                  </div>
-                </>
-              ) : (
-                currentTableCell && (
-                  <div className={overlayStyles.input__box}>
-                    <label ref={stepNameRef} htmlFor="step_name">
-                      Step Name
-                    </label>
-                    <input
-                      required
-                      placeholder="Step Name"
-                      id="step_name"
-                      {...register("step_name")}
-                    />
-                  </div>
-                )
-              )}
-              {currentWorkflow ? (
-                currentTableCell && (
-                  <button
-                    style={{ marginRight: "auto", marginLeft: "25px" }}
-                    className={styles.add__table__button}
-                    type="submit"
-                  >
-                    <TiTick />
-                  </button>
-                )
-              ) : (
-                <button className={styles.add__table__button} type="submit">
-                  +
-                </button>
-              )}
+              <>
+                <div className={overlayStyles.input__box}>
+                  <label ref={stepNameRef} htmlFor="step_name">
+                    Step Name
+                  </label>
+                  <input
+                    required
+                    placeholder="Step Name"
+                    id="step_name"
+                    {...register("step_name")}
+                  />
+                </div>
+                <div className={overlayStyles.input__box}>
+                  <label htmlFor="member_type">Role</label>
+                  <input
+                    required
+                    placeholder="Role"
+                    id="member_type"
+                    {...register("member_type")}
+                  />
+                </div>
+              </>
+
+              <button className={styles.add__table__button} type="submit">
+                {currentTableCell ? <TiTick /> : "+"}
+              </button>
             </div>
           </form>
 

@@ -24,7 +24,10 @@ export const getUserInfoOther = createAsyncThunk(
     try {
       const res = await authServices.getUserDetailOther(data);
 
-      console.log("userInfoooooooooooooooooooooooooooo", res.data);
+      console.log(
+        "userInfoo otherrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr",
+        res.data
+      );
       window.localStorage.setItem("userDetail", JSON.stringify(res.data));
 
       /*  navigate("/", { replace: true }); */

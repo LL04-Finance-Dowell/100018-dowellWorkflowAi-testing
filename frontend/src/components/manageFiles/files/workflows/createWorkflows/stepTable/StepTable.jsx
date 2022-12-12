@@ -21,7 +21,7 @@ const StepTable = ({
   };
 
   const handleRemoveInternalTemplate = (id) => {
-    setInternalWorkflows((prev) => prev.filter((item) => item.id !== id));
+    setInternalWorkflows((prev) => prev.filter((item) => item._id !== id));
   };
 
   return (
@@ -45,26 +45,22 @@ const StepTable = ({
               <th>
                 <span>{item.member_type}</span>
                 <div className={styles.table__features__box}>
-                  {currentWorkflow && (
-                    <span
-                      onClick={() => handleEditInternalTemplate(item)}
-                      className={styles.edit__item__button}
-                    >
-                      <i>
-                        <MdModeEditOutline color="green" size={16} />
-                      </i>
-                    </span>
-                  )}
-                  {!currentWorkflow && (
-                    <span
-                      onClick={() => handleRemoveInternalTemplate(item.id)}
-                      className={styles.remove__item__button}
-                    >
-                      <i>
-                        <RiDeleteBinLine color="red" size={16} />
-                      </i>
-                    </span>
-                  )}
+                  <span
+                    onClick={() => handleEditInternalTemplate(item)}
+                    className={styles.edit__item__button}
+                  >
+                    <i>
+                      <MdModeEditOutline color="green" size={16} />
+                    </i>
+                  </span>
+                  <span
+                    onClick={() => handleRemoveInternalTemplate(item._id)}
+                    className={styles.remove__item__button}
+                  >
+                    <i>
+                      <RiDeleteBinLine color="red" size={16} />
+                    </i>
+                  </span>
                 </div>
               </th>
             </tr>

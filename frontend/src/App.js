@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, useNavigate, useSearchParams } from "react-router-dom";
 import { useUserContext } from "./contexts/UserContext";
 import useDowellLogin from "./hooks/useDowellLogin";
 import WorkflowApp from "./pages/App/WorkflowApp";
@@ -28,6 +28,7 @@ import NewWorkFlow from "./pages/Workflows/NewWorkflow/NewWorkFlow";
 import DraftF from "./pages/Workflows/DraftF/DraftF";
 import { dowellLoginUrl } from "./httpCommon/httpCommon";
 function App() {
+  const [searchParams, setSearchParams] = useSearchParams();
   /*  const { currentUser, setCurrentUser } = useUserContext();
   const [loading, setLoading] = useState(true);
 
@@ -48,6 +49,10 @@ function App() {
       window.location.replace(dowellLoginUrl);
     }
   }, []); */
+
+  console.log(
+    "workssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss",
+    searchParams.get("id"))
 
   useDowellLogin();
 
