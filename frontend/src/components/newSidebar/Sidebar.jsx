@@ -21,6 +21,7 @@ import { FaShieldAlt } from "react-icons/fa";
 import { AiTwotoneSetting } from "react-icons/ai";
 import { dowellLogoutUrl } from "../../services/axios";
 import ManageFile from "./manageFile/ManageFile";
+import UserDetail from "./userDetail/UserDetail";
 
 const Sidebar = () => {
   const dispatch = useDispatch();
@@ -71,6 +72,7 @@ const Sidebar = () => {
             {<item.icon cursor="pointer" size={25} />}
           </i>
         ))}
+        <UserDetail />
       </div>
       <div className={styles.user__box}>
         {currentUser?.profile_image ? (

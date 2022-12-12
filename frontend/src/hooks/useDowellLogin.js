@@ -50,5 +50,5 @@ export default function useDowellLogin(/* updateState, updatePageWhenDone */) {
         updatePageWhenDone(false);
         return Promise.reject(err);
       }); */
-  }, []);
+  }, [localSession]);
 }

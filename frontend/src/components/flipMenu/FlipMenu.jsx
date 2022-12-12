@@ -10,7 +10,7 @@ const FlipMenu = () => {
   return (
     <div className={styles.container}>
       {flipItems.map((item) => (
-        <div className={styles.flip__container}>
+        <div key={item.id} className={styles.flip__container}>
           <Flip
             Back={() => <FlipBack {...item} />}
             Front={() => <FlipFront {...item} />}

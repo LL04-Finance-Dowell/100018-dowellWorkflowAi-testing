@@ -67,7 +67,7 @@ const CreateDocument = ({ handleToggleOverlay }) => {
         company_id: userDetail?.portfolio_info.org_id,
       })
     );
-  }, [userDetail]);
+  }, []);
 
   console.log("dox statussss", minedTemplates);
 

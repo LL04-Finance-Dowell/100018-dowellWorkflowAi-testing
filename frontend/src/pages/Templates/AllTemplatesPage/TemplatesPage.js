@@ -24,7 +24,7 @@ const TemplatesPage = () => {
     };
 
     dispatch(mineTemplates(data));
-  }, [userDetail]);
+  }, []);
 
   return (
     <WorkflowLayout>

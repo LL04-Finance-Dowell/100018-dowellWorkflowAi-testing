@@ -1,0 +1,35 @@
+.container {
+  position: relative;
+  width: fit-content;
+  height: fit-content;
+  font-size: 14px;
+}
+
+.info__box {
+  position: absolute;
+  left: 100%;
+  top: 0;
+  background-color: white;
+  max-width: 500px;
+  flex-direction: column;
+  display: none;
+  z-index: 10000;
+  word-break: keep-all;
+  white-space: nowrap;
+  padding: 10px;
+  gap: 5px;
+  border-radius: 10px;
+  background-color: #f3fff1;
+  box-shadow: -1px 2px 39px -11px rgba(0, 0, 0, 0.1);
+  -webkit-box-shadow: -1px 2px 39px -11px rgba(0, 0, 0, 0.1);
+  -moz-box-shadow: -1px 2px 39px -11px rgba(0, 0, 0, 0.1);
+}
+
+.container:hover .info__box {
+  display: flex;
+}
+
+.title {
+  color: var(--e-global-color-secondary);
+  font-weight: 700;
+}

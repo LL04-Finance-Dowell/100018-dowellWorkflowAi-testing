@@ -20,7 +20,7 @@ const ManageFile = () => {
 
   console.log("mined docccccccccccccccc", minedDocuments);
 
-  useEffect(() => {
+  /* useEffect(() => {
     const docData = {
       created_by: userDetail?.userinfo.username,
       company_id: userDetail?.portfolio_info.org_id,
@@ -38,7 +38,7 @@ const ManageFile = () => {
     dispatch(mineDocuments(docData));
     dispatch(mineTemplates(tempData));
     dispatch(mineWorkflow(workData));
-  }, [userDetail]);
+  }, []); */
 
   useEffect(() => {
     setTest((prev) =>

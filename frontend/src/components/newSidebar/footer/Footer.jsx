@@ -1,12 +1,15 @@
 import styles from "./footer.module.css";
 import { footerIcons } from "../Sidebar";
+import { useSelector } from "react-redux";
 
 const Footer = ({ handleIconClick }) => {
+  const { userDetail } = useSelector((state) => state.auth);
+
   return (
     <div className={styles.container}>
       <div className={styles.mode__box}>
         <h1>6</h1>
-        <h2>Learning Mode</h2>
+        <h2>{userDetail?.portfolio_info.data_type}</h2>
       </div>
       <div className={styles.icon__box}>
         {footerIcons.map((item) => (
