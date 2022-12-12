@@ -3,6 +3,9 @@ import { v4 as uuidv4 } from "uuid";
 import { motion, useTransform, useScroll } from "framer-motion";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Pagination, Autoplay } from "swiper";
+import sliderOne from "../../../assets/sliderOne.webp";
+import sliderTwo from "../../../assets/sliderTwo.webp";
+import sliderTheree from "../../../assets/sliderTheree.webp";
 
 import "swiper/css";
 import "swiper/css/navigation";
@@ -32,7 +35,7 @@ const CustomerSupport = () => {
         >
           {swiperItems.map((item, index) => (
             <SwiperSlide key={item.id}>
-              <p className={styles.features__title}>Slide {index + 1}</p>
+              <img src={item.image} alt="slider image" />
             </SwiperSlide>
           ))}
         </Swiper>
@@ -79,7 +82,7 @@ const CustomerSupport = () => {
 export default CustomerSupport;
 
 export const swiperItems = [
-  { id: uuidv4(), image: "" },
-  { id: uuidv4(), image: "" },
-  { id: uuidv4(), image: "" },
+  { id: uuidv4(), image: sliderOne },
+  { id: uuidv4(), image: sliderTwo },
+  { id: uuidv4(), image: sliderTheree },
 ];

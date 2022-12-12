@@ -55,7 +55,7 @@ export const flipItems = [
     id: uuidv4(),
     icon: FaRegBell,
     frontBg: "#1ABC9C",
-    text: "006",
+    text: "000",
     buttonText: "View",
   },
   {

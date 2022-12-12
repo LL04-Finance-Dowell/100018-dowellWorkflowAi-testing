@@ -36,7 +36,10 @@ const WorkflowLayout = ({ children }) => {
   const www = useCallback(())
  */
 
-  console.log("aaaaaaaaaaaaaaaa", currentUser, userDetail);
+  /* console.log("aaaaaaaaaaaaaaaa", currentUser, userDetail);
+  useEffect(() => {
+    console.log("rrrrrrrrrrrrrrrrrrrrrrrrrrrrrr", window.location);
+  }, []); */
 
   /*   useEffect(() => {
     if (!currentUser || !userDetail) {
