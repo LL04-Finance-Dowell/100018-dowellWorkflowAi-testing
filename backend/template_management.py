@@ -32,7 +32,8 @@ def create_template(request):
             "product_name": "workflowai",
             "details": {
                 "_id": res["inserted_id"],
-                "field": "",
+                "field": "template_name",
+                "action":"template",
                 "cluster": "Documents",
                 "database": "Documentation",
                 "collection": "TemplateReports",
@@ -40,7 +41,7 @@ def create_template(request):
                 "team_member_ID": "22689044433",
                 "function_ID": "ABCDE",
                 "command": "update",
-                "update_field": {"template_name": template_name, "content": ""},
+                "update_field": {"template_name": "", "content": ""},
             },
         }
         try:
