@@ -113,7 +113,7 @@ def document_detail(request):  # Single document
                     "team_member_ID": "11689044433",
                     "function_ID": "ABCDE",
                     "_id":document_id,
-                    "fields":"document_name",
+                    "field":"document_name",
                     "action":"document",
                     "command": "update",
                     "update_field": {
