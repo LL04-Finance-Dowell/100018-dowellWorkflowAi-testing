@@ -90,6 +90,7 @@ def create_document(request):  # Document Creation.
     )
 
 
+
 @api_view(["POST"])
 def document_detail(request):  # Single document
 
@@ -111,12 +112,13 @@ def document_detail(request):  # Single document
                     "document": "documentreports",
                     "team_member_ID": "11689044433",
                     "function_ID": "ABCDE",
-                    "document_id":document_id,
-                    "fields":document_name,
+                    "_id":document_id,
+                    "fields":"document_name",
+                    "action":"document",
                     "command": "update",
                     "update_field": {
-                                    "content": data,
-                                    "document_name":document_name,
+                                    "content": "",
+                                    "document_name":"",
                                     }
                             
         }
@@ -140,7 +142,6 @@ def document_detail(request):  # Single document
     return Response(
         {"message": "This Document is Not Loaded."}, status=status.HTTP_400_BAD_REQUEST
     )
-
 @api_view(["GET","POST"])
 def documents_to_be_signed(request):  # List of `to be signed` documents.
     filtered_list = []
