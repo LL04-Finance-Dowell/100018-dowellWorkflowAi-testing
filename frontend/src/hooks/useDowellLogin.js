@@ -7,6 +7,7 @@ import { getCurrentUser, getUserInfo } from "../features/app/asyncThunks";
 import { dowellLoginUrl } from "../httpCommon/httpCommon";
 import { setSessionId } from "../features/auth/authSlice";
 import { getUserInfoOther } from "../features/auth/asyncThunks";
+import axios from "axios";
 
 export default function useDowellLogin(/* updateState, updatePageWhenDone */) {
   const dispatch = useDispatch();
@@ -16,6 +17,8 @@ export default function useDowellLogin(/* updateState, updatePageWhenDone */) {
   useEffect(() => {
     const session_id = searchParams.get("session_id");
     const id = searchParams.get("id");
+
+    console.log("wwwwwwwwwwwwwwwwwwwwwwwwww", session_id);
 
     if (session_id) {
       localStorage.setItem("session_id", session_id);

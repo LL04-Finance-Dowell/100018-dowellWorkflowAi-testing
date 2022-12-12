@@ -25,7 +25,7 @@ const WorkflowsPage = () => {
 
     console.log("useEffectdata", data);
     dispatch(mineWorkflow(data));
-  }, []);
+  }, [userDetail]);
 
   console.log("workflowwmining", minedWorkflows);
 

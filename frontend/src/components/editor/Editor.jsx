@@ -1,19 +1,30 @@
-import React from "react";
+import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { setEditorLink } from "../../features/app/appSlice";
 import { LoadingSpinner } from "../LoadingSpinner/LoadingSpinner";
 import { AiOutlineClose } from "react-icons/ai";
 import styles from "./editor.module.css";
 import Spinner from "../spinner/Spinner";
+import { TiTick } from "react-icons/ti";
+import { MdClose } from "react-icons/md";
 
 const Editor = () => {
   const dispatch = useDispatch();
   const { editorLink } = useSelector((state) => state.app);
   const { editorStatus: docStatus } = useSelector((state) => state.document);
   const { editorStatus: tempStatus } = useSelector((state) => state.template);
+  const [toggleDecision, setToggleDecision] = useState(false);
 
   const handleFrameClose = () => {
-    dispatch(setEditorLink(null));
+    setToggleDecision(true);
+  };
+
+  const handleDecision = (status) => {
+    if (status === "ok") {
+      dispatch(setEditorLink(null));
+      window.location.reload();
+    }
+    setToggleDecision(false);
   };
 
   console.log("editorLinkkkkk insideeditor", editorLink);
@@ -33,6 +44,27 @@ const Editor = () => {
                 </i>
               </div>
             )
+          )}
+          {toggleDecision && (
+            <div className={styles.decision__container}>
+              <div className={styles.decision__box}>
+                <h2>Have you saved your work?</h2>
+                <div className={styles.button__container}>
+                  <button
+                    className={styles.ok__button}
+                    onClick={() => handleDecision("ok")}
+                  >
+                    <TiTick size={25} />
+                  </button>
+                  <button
+                    className={styles.cancel__button}
+                    onClick={() => handleDecision("cancel")}
+                  >
+                    <MdClose size={25} />
+                  </button>
+                </div>
+              </div>
+            </div>
           )}
         </div>
       )}

@@ -38,12 +38,12 @@ const ManageFile = () => {
     dispatch(mineDocuments(docData));
     dispatch(mineTemplates(tempData));
     dispatch(mineWorkflow(workData));
-  }, []);
+  }, [userDetail]);
 
   useEffect(() => {
     setTest((prev) =>
       prev.map((item) =>
-        item.parent.includes("My Documnets")
+        item.parent.includes("My documents")
           ? {
               ...item,
               count:
@@ -79,7 +79,7 @@ export default ManageFile;
 export const manageFileItems = [
   {
     id: uuidv4(),
-    parent: "My Documnets",
+    parent: "My documents",
     children: [
       { id: uuidv4(), child: "New Document", href: "/documents/#newDocument" },
       { id: uuidv4(), child: "Drafts", href: "/documents/#drafts" },

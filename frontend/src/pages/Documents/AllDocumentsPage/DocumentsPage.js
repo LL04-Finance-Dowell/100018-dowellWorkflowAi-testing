@@ -26,7 +26,7 @@ const DocumentsPage = () => {
 
     dispatch(drafts(data));
     dispatch(mineDocuments(data));
-  }, []);
+  }, [userDetail]);
 
   return (
     <WorkflowLayout>

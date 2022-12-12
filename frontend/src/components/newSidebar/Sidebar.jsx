@@ -133,7 +133,7 @@ export const footerIcons = [
 export const manageFileItems = [
   {
     id: uuidv4(),
-    parent: "My Documnets (003)",
+    parent: "My documents (003)",
     children: [
       { id: uuidv4(), child: "New Document", href: "/documents/#newDocument" },
       { id: uuidv4(), child: "Drafts", href: "/documents/#drafts" },
@@ -169,7 +169,7 @@ export const manageFileItems = [
 export const reports = [
   {
     id: uuidv4(),
-    parent: "Documnets",
+    parent: "documents",
     children: [
       { id: uuidv4(), child: "Report 1" },
       { id: uuidv4(), child: "Report 2" },
