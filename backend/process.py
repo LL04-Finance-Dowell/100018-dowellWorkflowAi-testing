@@ -114,7 +114,7 @@ def update_document_with_process(document_id, workflow_process_id):
     document = get_document_object(document_id)
     if not document:
         return False
-    res = update_document(document_id, document[""], workflow_process_id)
+    res = update_document(document_id, document, workflow_process_id)
     if res["isSuccess"]:
         return True
     return False

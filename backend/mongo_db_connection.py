@@ -540,7 +540,7 @@ def update_document(document_id, data, workflow_process_id):
             "field": {
                 "_id": document_id,
             },
-            "update_field": {**data},
+            "update_field": {**data, "workflow_process":  workflow_process_id},
             "platform": "bangalore",
         }
     )

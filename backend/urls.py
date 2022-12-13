@@ -24,12 +24,12 @@ from .intelligent_search import (
     search,
 )
 
-from .process import create_process
+# from .process import create_process
 
 from .views import api
 
 urlpatterns = [
-    path("process/new/", create_process),
+    # path("process/new/", create_process),
     path("", api),
     # Search----------------------------
     path("search/<str:str>", search),
@@ -67,5 +67,5 @@ urlpatterns = [
     path("workflows/", create_workflow, name="workflows"),
     path("workflows/detail/", workflow_detail, name="workflow_detail"),
     path("workflows/mine/", my_workflows, name="my_workflows"),
-    path("workflows/update", update_workflow, name="update_workflow"),
+    path("workflows/update/", update_workflow, name="update_workflow"),
 ]
