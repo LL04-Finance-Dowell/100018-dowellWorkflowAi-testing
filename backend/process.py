@@ -19,61 +19,23 @@ from .mongo_db_connection import (
 - ACTION - Add Workflow to selected document.
 """
 
-
-def new_workflow_title():
-    pass
-
-
-def new_process(workflows_ids, created_by, company_id):
-    process_title = ""
-    process_steps = []
-    try:
-        for wf_id in workflows_ids:
-            workflow = get_wf_object(wf_id)
-            if not workflow:
-                return False
-            process_steps.extend(workflow["workflows"]["steps"])
-            process_title = (
-                process_title + workflow["workflows"]["workflow_title"] + " - "
-            )
-        print(process_steps)
-        save_wf_process(process_title, process_steps, created_by, company_id)
-        return True
-    except:
-        return False
-
-
-@api_view(["POST"])
-def create_process(request):
-    res = new_process(
-        workflows_ids=request.data["workflows"],
-        document_id=request.data["document_id"],
-        created_by=request.data["created_by"],
-        company_id=request.data["company_id"],
-    )
-    if res:
-        return Response(status=status.HTTP_201_CREATED)
-    return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+# @api_view(["POST"])
+# def create_process(request):
+#     res = new_process(
+#         workflows_ids=request.data["workflows"],
+#         document_id=request.data["document_id"],
+#         created_by=request.data["created_by"],
+#         company_id=request.data["company_id"],
+#     )
+#     if res:
+#         return Response(status=status.HTTP_201_CREATED)
+#     return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 """
 3.Connect selected workflow to selected document.
 ACTION - Update Workflow Process. 
 """
-
-
-@api_view(["POST"])
-def connect_wf_to_document(request):
-    connect_res = update_wf_process(
-        workflow_process_id=request.data["workflow_process_id"],
-        workflows=request.data["workflows"],
-    )
-    if not connect_res:
-        return Response(
-            {"message": "Failed To Connect Workflow"},
-            status=status.HTTP_500_INTERNAL_SERVER_ERROR,
-        )
-    return Response({"message": "Workflow Connected"}, status=status.HTTP_200_OK)
 
 
 """
@@ -127,10 +89,25 @@ def sort_processing(request):
 
 """
 5. Process Document.
-- document processing by choice
-Choice: [ MEMBER, WORKFLOW, WORKFLOW_STEPS, DOCUMENT_CONTENT, LOCATION, TIME_LIMIT ]
-ACTION - Start Processing
+
 """
+
+# Create Process.
+def new_process(workflows, created_by, company_id):
+    process_title = ""
+    process_steps = []
+    try:
+        for workflow in workflows:
+            process_steps.extend(workflow["workflows"]["steps"])
+            process_title = (
+                process_title + workflow["workflows"]["workflow_title"] + " - "
+            )
+        # print(process_steps)
+        res = save_wf_process(process_title, process_steps, created_by, company_id)
+        return res["inserted_id"]
+    except:
+        return False
+
 
 # update document with process id.
 def update_document_with_process(document_id, workflow_process_id):
@@ -145,13 +122,20 @@ def update_document_with_process(document_id, workflow_process_id):
 
 @api_view(["POST"])
 def save_workflows_to_document(request):
-    # update the doc.
-    res = update_document_with_process(
+    process_id = new_process(
+        workflows=request.data["workflows"],
         document_id=request.data["document_id"],
-        workflow_process_id=request.data["process_id"],
+        created_by=request.data["created_by"],
+        company_id=request.data["company_id"],
     )
-    if res:
-        return Response(status=status.HTTP_200_OK)
+    if process_id:
+        # update the doc.
+        doc = update_document_with_process(
+            document_id=request.data["document_id"],
+            workflow_process_id=process_id,
+        )
+        if doc:
+            return Response(status=status.HTTP_200_OK)
     return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
@@ -168,6 +152,7 @@ def save_and_start_processing(request):
     resp = start_processing(
         how_to=request.data["how_to"], process_id=request.data["process_id"]
     )
+    return resp
 
 
 """
@@ -211,9 +196,7 @@ def start_processing(how_to, process_id):
 
 # TODO:
 def process_by_member(process):
-    workflows = process["workflows"]
-    for workflow in workflows:
-        steps = workflow["steps"]
+    pass
 
 
 # TODO:
@@ -242,18 +225,10 @@ def process_by_document_content(process):
 
 
 """
-Remove Workflow Process from document
-I- workflows id
-O - response
-ACTION - Remove workflow
+
+Process Verification.
+
 """
-
-
-@api_view(["POST"])
-def remove_workflow(request):  # Check if the workflow has moved through given steps.
-
-    pass
-
 
 # -------------------------helpers-----------------
 def process_document(process_id):
