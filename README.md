@@ -299,21 +299,15 @@ Response-201
 
 ```
 
-Response-405
+Response-200
 
 ```
-{
+{   "document:[],
     "message": "Unable to Create Document"
 }
 ```
 
-Response 500
 
-```
-{
-    "message": "Failed to process document creation"
-}
-```
 
 _POST_ `documents/detail/`
 
@@ -337,20 +331,12 @@ Response-200
 
 ```
 
-Response-400
+Response-200
 
 ```
 {
+    "document":[],
     "message": "This Document is Not Loaded."
-}
-
-```
-
-Response-500
-
-```
-{
-    "message": "Failed to Load Document"
 }
 
 ```
@@ -371,12 +357,14 @@ Request Body
 Response-200
 
 ```
-["ist of documents to be signed with their detail"]
-
-```
-
-Response-500
 {
+"documents":["ist of documents to be signed with their detail"]
+}
+```
+if no list
+Response-200
+{
+"documents": []
 "message": "These document is Rejected Document."
 }
 
@@ -402,11 +390,12 @@ Response-200
 }
 
 ```
-
-Response-500
+if no List
+Response-200
 
 ```
 {
+    "documents": [],
     "message": "There is no document created by This user."
 }
 ```
@@ -432,11 +421,12 @@ Response-200
 }
 
 ```
-
-Response-500
+If No List
+Response-200
 
 ```
-{
+{   
+    "documents": [],
     "message": "These document is not in Rejected Document list."
 }
 ```
@@ -462,11 +452,12 @@ Response-200
 }
 
 ```
-
+If No List
 Response-500
 
 ```
 {
+    "documents": [],
     "message": "No Document in Drafts"
 }
 ```
@@ -504,9 +495,20 @@ Response-201
 { 
     "workflow": "<saved_workflow_data>
 }
+
+```
+If Not Created
+Response-200
+ 
+```
+{ 
+    "workflow": [],
+    "message": "Failed to Save Workflow"
+}
+
 ```
 
-a
+
 _POST_ `workflows/detail/`
 
 - Getting a single workflow by workflow_title and workflow_id
@@ -527,24 +529,17 @@ Response-200
 }
 
 ```
-
-Response-400
+If Not Availabel
+Response-200
 
 ```
 {
+    "workflow":[],
     "message": "This workflow is Not Loaded."
 }
 
 ```
 
-Response-500
-
-```
-{
-    "message": "Failed to Load workflow"
-}
-
-```
 _POST_ `workflows/mine/`
 
 - Getting a Workflow company_id and created_by
@@ -562,15 +557,16 @@ Response-200
 
 ```
 {
-    "workflows":["list of workflows created by the user"]
+    "workflow":["list of workflows created by the user"]
 }
 
 ```
-
-Response-500
+If Not Available
+Response-200
 
 ```
 {
+    "workflow":[],
     "message": "There is no workflow created by This user."
 }
 ```
@@ -588,9 +584,29 @@ Request Body
     "steps": [
         {
             "step_name": "step_name_new_or_existing"
+            "role": "role_new_or_existing"
+            "rights":"",
+            "display_before":"",
+            "skip":"",
+            "limit":"",
+            "start_time":"",
+            "end_time":"",
+            "member_portfolio":"",
+            "member_type":"",
+            "reminder":""
         },
         {
             "step_name": "step_name_new_or_existing"
+            "role": "role_new_or_existing"
+            "rights":"",
+            "display_before":"",
+            "skip":"",
+            "limit":"",
+            "start_time":"",
+            "end_time":"",
+            "member_portfolio":"",
+            "member_type":"",
+            "reminder":""
         }
 
         ]
@@ -605,24 +621,14 @@ Response-201
     "workflow":{"updated workflow"}
 }
 
-
-Response-400
-
-```
-{
-    
-    "message": "Workflow Data required"
-             
-}
-
-```
-
-Response-500
+If Not Sucessfully Updated
+Response-200
 
 ```
 {
-    
+    "workflow":[],
     "message": "Failed to Update Workflow"
              
 }
+
 ```
