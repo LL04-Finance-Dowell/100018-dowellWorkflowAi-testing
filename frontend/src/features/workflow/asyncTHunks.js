@@ -51,6 +51,7 @@ export const detailWorkflow = createAsyncThunk(
       return res.data.workflow;
     } catch (error) {
       console.log(error);
+      asyncTHunks.dispatch(setToggleManageFileForm(false));
     }
   }
 );

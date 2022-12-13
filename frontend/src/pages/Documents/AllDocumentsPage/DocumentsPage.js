@@ -11,12 +11,18 @@ import DocumentCard from "../../../components/hoverCard/documentCard/DocumentCar
 
 const DocumentsPage = () => {
   const { userDetail } = useSelector((state) => state.auth);
-  const { minedDocuments, drafts: draftItems } = useSelector(
-    (state) => state.document
-  );
+  const {
+    minedDocuments,
+    drafts: draftItems,
+    mineStatus,
+    draftStatu,
+  } = useSelector((state) => state.document);
   const dispatch = useDispatch();
 
-  console.log("draftitems", minedDocuments);
+  console.log(
+    "orgidddddddddddddddddddddddddddddd",
+    userDetail?.portfolio_info.org_id
+  );
 
   useEffect(() => {
     const data = {
@@ -30,24 +36,24 @@ const DocumentsPage = () => {
 
   return (
     <WorkflowLayout>
-      <div id="newDocument">
+      <div id="new-document">
         <ManageFiles title="Document" OverlayComp={CreateDocument}>
           <div id="drafts">
             <SectionBox
-              feature="document-draft"
               cardBgColor="#1ABC9C"
               title="drafts"
               Card={DocumentCard}
               cardItems={draftItems}
+              status={draftStatu}
             />
           </div>
-          <div id="createdByMe">
+          <div id="saved-documents">
             <SectionBox
-              feature="document"
               cardBgColor="#1ABC9C"
-              title="created by me"
+              title="saved documents"
               Card={DocumentCard}
               cardItems={minedDocuments}
+              status={mineStatus}
             />
           </div>
         </ManageFiles>

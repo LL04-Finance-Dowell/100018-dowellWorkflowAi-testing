@@ -8,7 +8,7 @@ export const getUserInfo = createAsyncThunk("app/getUser", async (data) => {
     const res = await authServices.getUserDetail(data);
 
     console.log("userInfoooooooooooooooooooooooooooo", res.data);
-    window.localStorage.setItem("userDetail", JSON.stringify(res.data));
+    window.sessionStorage.setItem("userDetail", JSON.stringify(res.data));
 
     /*  navigate("/", { replace: true }); */
 
@@ -28,7 +28,7 @@ export const getUserInfoOther = createAsyncThunk(
         "userInfoo otherrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr",
         res.data
       );
-      window.localStorage.setItem("userDetail", JSON.stringify(res.data));
+      window.sessionStorage.setItem("userDetail", JSON.stringify(res.data));
 
       /*  navigate("/", { replace: true }); */
 

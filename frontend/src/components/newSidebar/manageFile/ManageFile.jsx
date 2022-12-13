@@ -20,7 +20,7 @@ const ManageFile = () => {
 
   console.log("mined docccccccccccccccc", minedDocuments);
 
-  /* useEffect(() => {
+  useEffect(() => {
     const docData = {
       created_by: userDetail?.userinfo.username,
       company_id: userDetail?.portfolio_info.org_id,
@@ -38,24 +38,24 @@ const ManageFile = () => {
     dispatch(mineDocuments(docData));
     dispatch(mineTemplates(tempData));
     dispatch(mineWorkflow(workData));
-  }, []); */
+  }, []);
 
   useEffect(() => {
     setTest((prev) =>
       prev.map((item) =>
-        item.parent.includes("My documents")
+        item.parent.includes("Documents")
           ? {
               ...item,
               count:
                 minedDocuments?.length > 0 ? minedDocuments?.length : "000",
             }
-          : item.parent.includes("My Templates")
+          : item.parent.includes("Templates")
           ? {
               ...item,
               count:
                 minedTemplates?.length > 0 ? minedTemplates?.length : "000",
             }
-          : item.parent.includes("My Workflows")
+          : item.parent.includes("Workflows")
           ? {
               ...item,
               count:
@@ -79,30 +79,42 @@ export default ManageFile;
 export const manageFileItems = [
   {
     id: uuidv4(),
-    parent: "My documents",
+    parent: "Documents",
     children: [
-      { id: uuidv4(), child: "New Document", href: "/documents/#newDocument" },
+      { id: uuidv4(), child: "New Document", href: "/documents/#new-document" },
       { id: uuidv4(), child: "Drafts", href: "/documents/#drafts" },
-      { id: uuidv4(), child: "Created by me", href: "/documents/#createdByMe" },
+      {
+        id: uuidv4(),
+        child: "saved documents",
+        href: "/documents/#saved-documents",
+      },
       { id: uuidv4(), child: "Waiting to Process", href: "#" },
     ],
   },
   {
     id: uuidv4(),
-    parent: "My Templates",
+    parent: "Templates",
     children: [
-      { id: uuidv4(), child: "New Template", href: "/templates/#newTemplate" },
+      { id: uuidv4(), child: "New Template", href: "/templates/#new-template" },
       { id: uuidv4(), child: "Drafts", href: "/templates/#drafts" },
-      { id: uuidv4(), child: "Created by me", href: "/templates/#createdByMe" },
+      {
+        id: uuidv4(),
+        child: "saved templates",
+        href: "/templates/#saved-templates",
+      },
     ],
   },
   {
     id: uuidv4(),
-    parent: "My Workflows",
+    parent: "Workflows",
     children: [
-      { id: uuidv4(), child: "New Workflow", href: "/workflows/#newWorkflow" },
+      { id: uuidv4(), child: "New Workflow", href: "/workflows/#new-workflow" },
       { id: uuidv4(), child: "Drafts", href: "/workflows/#drafts" },
-      { id: uuidv4(), child: "Created by me", href: "/workflows/#createdByMe" },
+      {
+        id: uuidv4(),
+        child: "saved workflows",
+        href: "/workflows/#saved-workflows",
+      },
       {
         id: uuidv4(),
         child: "Waiting to Process",

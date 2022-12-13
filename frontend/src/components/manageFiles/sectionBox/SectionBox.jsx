@@ -7,8 +7,8 @@ import { useEffect } from "react";
 import { LoadingSpinner } from "../../LoadingSpinner/LoadingSpinner";
 import BookSpinner from "../../bookSpinner/BookSpinner";
 
-const SectionBox = ({ cardItems, title, cardBgColor, feature, Card }) => {
-  const [test, setTest] = useState("idle");
+const SectionBox = ({ cardItems, title, cardBgColor, Card, status }) => {
+  /* const [test, setTest] = useState("idle");
 
   const { mineStatus: tempMineStatus } = useSelector((state) => state.template);
   const { mineStatus: docMineStatus, draftStatu } = useSelector(
@@ -21,14 +21,14 @@ const SectionBox = ({ cardItems, title, cardBgColor, feature, Card }) => {
     feature === "document" && setTest(docMineStatus);
     feature === "document-draft" && setTest(draftStatu);
     feature === "workflow" && setTest(workflowStatus);
-  }, [tempMineStatus, docMineStatus, draftStatu, workflowStatus]);
+  }, [tempMineStatus, docMineStatus, draftStatu, workflowStatus]); */
 
   return (
     <div className={styles.container}>
       <div className={styles.content__container}>
         <div className={styles.content__box}>
           <h2 className={maneFilesStyles.header}>{title}</h2>
-          {test === "pending" ? (
+          {status === "pending" ? (
             <div>
               <BookSpinner />
             </div>

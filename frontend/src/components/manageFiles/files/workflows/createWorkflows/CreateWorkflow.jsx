@@ -46,18 +46,18 @@ const CreateWorkflows = ({ handleToggleOverlay }) => {
 
   const onSubmit = (data) => {
     console.log(data);
-    const { member_type, step_name } = data;
+    const { role, step_name } = data;
     if (currentTableCell) {
       setInternalWorkflows((prev) =>
         prev.map((item) =>
           item._id === currentTableCell._id
-            ? { ...item, step_name, member_type }
+            ? { ...item, step_name, role }
             : item
         )
       );
       setCurrentTableCall(null);
     } else {
-      const internalTemplate = { _id: uuidv4(), step_name, member_type };
+      const internalTemplate = { _id: uuidv4(), step_name, role };
 
       setInternalWorkflows((prev) => [...prev, internalTemplate]);
     }
@@ -74,7 +74,7 @@ const CreateWorkflows = ({ handleToggleOverlay }) => {
 
     stepNameRef.current?.click();
     setValue("step_name", currentİtem.step_name);
-    setValue("member_type", currentİtem.member_type);
+    setValue("role", currentİtem.role);
   };
  */
   const handleWorkflowChange = (e) => {
@@ -104,14 +104,25 @@ const CreateWorkflows = ({ handleToggleOverlay }) => {
       dispatch(setToggleManageFileForm(false));
     };
 
+    const steps = internalWorkflows.map((item) => ({
+      step_name: item.step_name,
+      role: item.role,
+      rights: "",
+      display_before: "",
+      skip: "",
+      limit: "",
+      start_time: "",
+      end_time: "",
+      member_portfolio: "",
+      member_type: "",
+      reminder: "",
+    }));
+
     if (currentWorkflow) {
       const updateData = {
+        wf_title: workflowTitle,
         workflow_id: currentWorkflow._id,
-        workflow_title: workflowTitle,
-        steps: internalWorkflows.map((item) => ({
-          step_name: item.step_name,
-          member_type: item.member_type,
-        })),
+        steps,
       };
 
       dispatch(updateWorkflow({ updateData, handleAfterCreated }));
@@ -120,18 +131,7 @@ const CreateWorkflows = ({ handleToggleOverlay }) => {
         created_by: userDetail?.userinfo.username,
         wf_title: workflowTitle,
         company_id: userDetail?.portfolio_info.org_id,
-        steps: internalWorkflows.map((item) => ({
-          step_name: item.step_name,
-          member_type: item.member_type,
-          rights: "",
-          display_before: "",
-          skip: "",
-          limit: "",
-          start_time: "",
-          end_time: "",
-          member_portfolio: "",
-          reminder: "",
-        })),
+        steps,
       };
 
       console.log("dataaaaaaaaaaaaaaaaaaa", data);
@@ -194,7 +194,7 @@ const CreateWorkflows = ({ handleToggleOverlay }) => {
                 >
                   <th>{item.step_name}</th>
                   <th>
-                    <span>{item.member_type}</span>
+                    <span>{item.role}</span>
                     <div className={styles.table__features__box}>
                       {currentWorkflow && (
                         <span
@@ -247,12 +247,12 @@ const CreateWorkflows = ({ handleToggleOverlay }) => {
                   />
                 </div>
                 <div className={overlayStyles.input__box}>
-                  <label htmlFor="member_type">Role</label>
+                  <label htmlFor="role">Role</label>
                   <input
                     required
                     placeholder="Role"
-                    id="member_type"
-                    {...register("member_type")}
+                    id="role"
+                    {...register("role")}
                   />
                 </div>
               </>

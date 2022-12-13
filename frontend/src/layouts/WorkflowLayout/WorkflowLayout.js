@@ -46,21 +46,19 @@ const WorkflowLayout = ({ children }) => {
 
   return (
     <>
-      {currentUser && userDetail ? (
-        <div className={styles.container}>
-          <div className={styles.content__box}>
-            <div className={styles.sidebar__box}>
-              <SideBar user={currentUser} />
+      <div className={styles.container}>
+        {userDetail && (
+          <>
+            <div className={styles.content__box}>
+              <div className={styles.sidebar__box}>
+                <SideBar />
+              </div>
+              <div className={styles.children__box}>{children}</div>
             </div>
-            <div className={styles.children__box}>{children}</div>
-          </div>
-          <Editor />
-        </div>
-      ) : (
-        <div className={styles.spinner}>
-          <Spinner />
-        </div>
-      )}
+            <Editor />
+          </>
+        )}
+      </div>
     </>
   );
 };

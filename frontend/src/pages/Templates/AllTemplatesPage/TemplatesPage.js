@@ -11,7 +11,7 @@ import TemplateCard from "../../../components/hoverCard/templateCard/TemplateCar
 const TemplatesPage = () => {
   const { userDetail } = useSelector((state) => state.auth);
 
-  const { minedTemplates, draftsTemlateItems } = useSelector(
+  const { minedTemplates, draftsTemlateItems, mineStatus } = useSelector(
     (state) => state.template
   );
   const dispatch = useDispatch();
@@ -28,24 +28,23 @@ const TemplatesPage = () => {
 
   return (
     <WorkflowLayout>
-      <div id="newTemplate">
+      <div id="new-template">
         <ManageFiles title="Template">
           <div id="drafts">
             <SectionBox
-              /*  feature="template" */
               cardBgColor="#1ABC9C"
               title="drafts"
               Card={TemplateCard}
               cardItems={drafts}
             />
           </div>
-          <div id="createdByMe">
+          <div id="saved-templates">
             <SectionBox
-              feature="template"
               cardBgColor="#1ABC9C"
-              title="created by me"
+              title="saved templates"
               Card={TemplateCard}
               cardItems={minedTemplates}
+              status={mineStatus}
             />
           </div>
         </ManageFiles>

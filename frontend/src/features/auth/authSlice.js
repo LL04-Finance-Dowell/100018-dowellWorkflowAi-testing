@@ -5,6 +5,7 @@ const initialState = {
   userDetail: null,
   currentUser: null,
   session_id: null,
+  id: null,
   detailStatus: "idle",
   currentStatus: "idle",
 };
@@ -15,6 +16,9 @@ export const appSlice = createSlice({
   reducers: {
     setSessionId: (state, action) => {
       state.session_id = action.payload;
+    },
+    setId: (state, action) => {
+      state.id = action.payload;
     },
   },
   extraReducers: (builder) => {
@@ -58,6 +62,6 @@ export const appSlice = createSlice({
 });
 
 // Action creators are generated for each case reducer function
-export const { setSessionId } = appSlice.actions;
+export const { setSessionId, setId } = appSlice.actions;
 
 export default appSlice.reducer;

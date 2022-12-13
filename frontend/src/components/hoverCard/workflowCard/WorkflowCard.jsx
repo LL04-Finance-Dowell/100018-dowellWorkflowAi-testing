@@ -52,7 +52,7 @@ const WorkflowCard = ({ cardItem }) => {
                     {cardItem.workflows?.steps.map((item) => (
                       <tr>
                         <th>{item.step_name}</th>
-                        <th>{item.member_type}</th>
+                        <th>{item.role}</th>
                       </tr>
                     ))}
                   </tbody>
@@ -60,7 +60,7 @@ const WorkflowCard = ({ cardItem }) => {
               </div>
               {/*  <div key={item._id}>
                   <p>
-                    {item.step_name} {item.member_type}
+                    {item.step_name} {item.role}
                   </p>
                 </div> */}
             </>

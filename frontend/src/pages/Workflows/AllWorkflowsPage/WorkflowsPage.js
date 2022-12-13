@@ -11,7 +11,7 @@ import WorkflowCard from "../../../components/hoverCard/workflowCard/WorkflowCar
 
 const WorkflowsPage = () => {
   const { userDetail } = useSelector((state) => state.auth);
-  const { minedWorkflows } = useSelector((state) => state.workflow);
+  const { minedWorkflows, mineStatus } = useSelector((state) => state.workflow);
 
   const dispatch = useDispatch();
 
@@ -31,7 +31,7 @@ const WorkflowsPage = () => {
 
   return (
     <WorkflowLayout>
-      <div id="newWorkflow">
+      <div id="new-workflow">
         <ManageFiles title="Workflow" OverlayComp={CreateWorkflows}>
           <div id="drafts">
             <SectionBox
@@ -41,12 +41,12 @@ const WorkflowsPage = () => {
               Card={WorkflowCard}
             />
           </div>
-          <div id="createdByMe">
+          <div id="saved-workflows">
             <SectionBox
               Card={WorkflowCard}
-              feature="workflow"
               cardBgColor="#1ABC9C"
-              title="created by me"
+              title="saved workflows"
+              status={mineStatus}
               cardItems={minedWorkflows}
             />
           </div>

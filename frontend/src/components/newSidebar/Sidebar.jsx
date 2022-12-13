@@ -32,7 +32,7 @@ const Sidebar = () => {
   const navigate = useNavigate();
 
   const handleLogout = () => {
-    localStorage.clear();
+    sessionStorage.clear();
     window.location.replace(dowellLogoutUrl);
   };
 
@@ -75,13 +75,9 @@ const Sidebar = () => {
         <UserDetail />
       </div>
       <div className={styles.user__box}>
-        {currentUser?.profile_image ? (
-          <img src={currentUser?.profile_image} alt="user" />
-        ) : (
-          <i>
-            <CgProfile size={100} />
-          </i>
-        )}
+        <i>
+          <CgProfile size={100} />
+        </i>
 
         <h2 className={styles.user__box__text}>
           Welcome {userDetail?.userinfo?.username}

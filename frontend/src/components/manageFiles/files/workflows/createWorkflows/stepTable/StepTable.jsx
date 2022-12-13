@@ -17,7 +17,7 @@ const StepTable = ({
 
     stepNameRef.current?.click();
     setValue("step_name", currentİtem.step_name);
-    setValue("member_type", currentİtem.member_type);
+    setValue("role", currentİtem.role);
   };
 
   const handleRemoveInternalTemplate = (id) => {
@@ -43,7 +43,7 @@ const StepTable = ({
             >
               <th>{item.step_name}</th>
               <th>
-                <span>{item.member_type}</span>
+                <span>{item.role}</span>
                 <div className={styles.table__features__box}>
                   <span
                     onClick={() => handleEditInternalTemplate(item)}

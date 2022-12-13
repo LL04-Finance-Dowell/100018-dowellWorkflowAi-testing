@@ -19,12 +19,14 @@ import appReducer from "../features/app/appSlice";
 import authReducer from "../features/auth/authSlice";
 import { combineReducers, configureStore } from "@reduxjs/toolkit";
 import storage from "redux-persist/lib/storage";
+import storageSession from "redux-persist/lib/storage/session";
+
 import { persistReducer, persistStore } from "redux-persist";
 import thunk from "redux-thunk";
 
 const persistConfig = {
   key: "root",
-  storage,
+  storage: storageSession,
   whitelist: ["auth"],
 };
 
