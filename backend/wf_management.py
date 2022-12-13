@@ -91,6 +91,7 @@ def update_workflow(request):  # Document Creation.
 
             workflow={
                 "workflow_title": wf_name,
+                "workflow_id": workflow_id,
                 "steps": []
                         }
             for step in steps:
