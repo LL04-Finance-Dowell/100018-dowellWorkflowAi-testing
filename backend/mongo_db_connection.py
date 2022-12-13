@@ -110,8 +110,6 @@ DOCUMENT_CONNECTION_DICT = {
 }
 
 
-url = "https://100014.pythonanywhere.com/api/userinfo/"
-
 
 def get_event_id():
     dd = datetime.now()
@@ -164,10 +162,10 @@ def get_user(user_name):
         return []
 
 
-def get_members(session_id):
-    payload = {"session_id": session_id}
-    r = requests.post(url=url, data=payload)
-    return r.json()
+# def get_members(session_id):
+#     payload = {"session_id": session_id}
+#     r = requests.post(url=url, data=payload)
+#     return r.json()
 
 
 def get_user_info_by_username(username):
@@ -181,7 +179,7 @@ def get_user_info_by_username(username):
 
 
 #  -------------------------------Workflow Process------------------
-def save_wf_process(workflows, user, company_id):
+def save_wf_process(process_title, process_steps,  user, company_id):
     url = "http://100002.pythonanywhere.com/"
     payload = json.dumps(
         {
@@ -189,7 +187,8 @@ def save_wf_process(workflows, user, company_id):
             "command": "insert",
             "field": {
                 "eventId": get_event_id(),
-                "workflow": workflows,
+                "process_title": process_title,
+                "workflow_steps": process_steps,
                 "company_id": company_id,
                 "created_by": user,
             },
@@ -532,7 +531,7 @@ def save_document(name, data, created_by, company_id):
     return response.text
 
 
-def update_document(document_id, data):
+def update_document(document_id, data, workflow_process_id):
     url = "http://100002.pythonanywhere.com/"
     payload = json.dumps(
         {

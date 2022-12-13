@@ -8,7 +8,6 @@ from .mongo_db_connection import (
     get_wf_object,
     get_wf_list,
     get_user_info_by_username,
-    get_members,
     get_user,
     update_document,
     get_document_object,

@@ -41,7 +41,7 @@ def create_template(request):
                 "team_member_ID": "22689044433",
                 "function_ID": "ABCDE",
                 "command": "update",
-                "update_field": {"template_name": template_name, "content": ""},
+                "update_field": {"template_name": "", "content": ""},
             },
         }
         try:
