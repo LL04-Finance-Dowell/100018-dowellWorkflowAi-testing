@@ -30,8 +30,8 @@ def create_document(request):  # Document Creation.
         form = request.data  # TODO: We will get the data from form 1 by 1 - Dont Worry.
         if not form:
             return Response(
-                {"message": "Failed to process document creation."},
-                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                {"documents":[],"message": "Failed to process document creation."},
+                status=status.HTTP_200_OK,
             )
         else:
             template_id = request.data["template_id"]
@@ -77,16 +77,16 @@ def create_document(request):  # Document Creation.
                     )
                 except:
                     return Response(
-                {"message": "Failed to call editorApi"},
-                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                {"document":[],"message": "Failed to call editorApi"},
+                status=status.HTTP_200_OK,
             )
             return Response(
-                {"message": "Unable to Create Document"},
-                status=status.HTTP_405_METHOD_NOT_ALLOWED,
+                {"document":[],"message": "Unable to Create Document"},
+                status=status.HTTP_200_OK,
             )
 
     return Response(
-        {"message": "You Need To Be LoggedIn"}, status=status.HTTP_400_BAD_REQUEST
+        {"document":[],"message": "You Need To Be LoggedIn"}, status=status.HTTP_200_OK
     )
 
 
@@ -97,8 +97,8 @@ def document_detail(request):  # Single document
     if request.method == "POST":
         if not request.data:
             return Response(
-                {"message": "Failed to Load Document."},
-                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                {"document":[],"message": "Failed to Load Document."},
+                status=status.HTTP_200_OK,
             )
         document_id = request.data["document_id"]
         data=get_document_object(document_id)
@@ -135,12 +135,12 @@ def document_detail(request):  # Single document
             )
         except:
             return Response(
-        {"message": "Failed to call editorApi"},
-        status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+        {"document":[],"message": "Failed to call editorApi"},
+        status=status.HTTP_200_OK,
     )
            
     return Response(
-        {"message": "This Document is Not Loaded."}, status=status.HTTP_400_BAD_REQUEST
+        {"document":[],"message": "This Document is Not Loaded."}, status=status.HTTP_200_OK
     )
 @api_view(["GET","POST"])
 def documents_to_be_signed(request):  # List of `to be signed` documents.
@@ -160,8 +160,8 @@ def documents_to_be_signed(request):  # List of `to be signed` documents.
                 
         except:
             return Response(
-                {"message": "An Error Occurred."},
-                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                {"documents":[],"message": "An Error Occurred."},
+                status=status.HTTP_200_OK,
             )
       
         return Response({
@@ -170,8 +170,8 @@ def documents_to_be_signed(request):  # List of `to be signed` documents.
             status=status.HTTP_200_OK,
         )
     return Response(
-                    {"message": "These document is Rejected Document."},
-                    status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                    {"documents": [],"message": "These document is Rejected Document."},
+                    status=status.HTTP_200_OK,
                 )
     
 
@@ -185,8 +185,8 @@ def my_documents(request):  # List of my documents.
         documents = get_document_list(company_id)
         if not documents:
             return Response(
-                {"message": "There is no document created by This user."},
-                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                {"documents": [],"message": "There is no document created by This user."},
+                status=status.HTTP_200_OK,
             )
         else:
             for doc in documents:
@@ -219,8 +219,8 @@ def rejected_documents(request):  # List of `to be signed` documents.
             status=status.HTTP_200_OK,
         )
     return Response(
-                    {"message": "These document is not in Rejected Document list."},
-                    status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                    {"documents": [],"message": "These document is not in Rejected Document list."},
+                    status=status.HTTP_200_OK,
                 )
     
 @api_view(["GET","POST"])
@@ -242,12 +242,12 @@ def draft_documents(request):  # List of `to be signed` documents.
             )
         except:
             return Response(
-                {"message": "An Error Occurred."},
-                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                {"documents": [],"message": "An Error Occurred."},
+                status=status.HTTP_200_OK,
             )
     return Response(
-                    {"message": "No Document in Drafts"},
-                    status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                    {"documents": [],"message": "No Document in Drafts"},
+                    status=status.HTTP_200_OK,
                 )
     
 
