@@ -408,7 +408,7 @@ def get_wf_list(company_id):
 
 
 # ------------------------------------------ Templates-----------------------------
-def save_template(name, data, created_by, company_id):
+def save_template(name, data, page, created_by, company_id):
     url = "http://100002.pythonanywhere.com/"
     event_id = get_event_id()
     payload = json.dumps(
@@ -419,6 +419,7 @@ def save_template(name, data, created_by, company_id):
                 "eventId": event_id,
                 "template_name": name,
                 "content": data,
+                "page": page,
                 "company_id": company_id,
                 "created_by": created_by,
             },
