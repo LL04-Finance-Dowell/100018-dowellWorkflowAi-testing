@@ -124,7 +124,8 @@ Request Body
 
 ```
 {
-    "company_id": "<auth_company_id>"
+    "company_id": "<auth_company_id>",
+    "created_by": "<auth_user_name>"
 }
 ```
 
@@ -203,7 +204,8 @@ Request Body
 
 ```
 {
-    "company_id": "<auth_company_id>"
+    "company_id": "<auth_company_id>",
+    "created_by": "<auth_user_name>"
 }
 ```
 
@@ -245,7 +247,8 @@ Request Body
 
 ```
 {
-    "company_id": "<auth_company_id>"
+    "company_id": "<auth_company_id>",
+    "created_by": "<auth_user_name>"
 }
 ```
 
