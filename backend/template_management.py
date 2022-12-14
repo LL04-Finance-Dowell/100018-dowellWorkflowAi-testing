@@ -127,7 +127,12 @@ def approved(request):
             {"message": "Could not fetch your approved templates at this time"},
             status=status.HTTP_500_INTERNAL_SERVER_ERROR,
         )
-    templates = [t for t in template_list if t.get("approved") == True]
+    templates = [
+        t
+        for t in template_list
+        if t.get("approved") == True
+        and t.get("created_by") == request.data["created_by"]
+    ]
     if not templates:
         return Response(
             {"message": "You have no approved templates"},
@@ -144,7 +149,12 @@ def not_approved_templates(request):  # List of Templates to be approved.
             {"message": "Could not fetch templates at this time."},
             status=status.HTTP_500_INTERNAL_SERVER_ERROR,
         )
-    templates = [t for t in template_list if t.get("approved") == False]
+    templates = [
+        t
+        for t in template_list
+        if t.get("approved") == False
+        and t.get("created_by") == request.data["created_by"]
+    ]
     if not templates:
         return Response(
             {"message": "You have no pending templates to approved"},
@@ -161,12 +171,16 @@ def template_list(request):  # List of Created Templates.
             {"message": "Could not fetch templates at this time."},
             status=status.HTTP_500_INTERNAL_SERVER_ERROR,
         )
-    if not template_list:
+    print(template_list)
+    templates = [
+        t for t in template_list if t.get("created_by") == request.data["created_by"]
+    ]
+    if not templates:
         return Response(
             {"message": "You have not created any templates"},
             status=status.HTTP_404_NOT_FOUND,
         )
     return Response(
-        template_list,
+        templates,
         status=status.HTTP_200_OK,
     )
