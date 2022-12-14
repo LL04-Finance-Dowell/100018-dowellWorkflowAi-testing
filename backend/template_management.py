@@ -17,11 +17,13 @@ editorApi = "https://100058.pythonanywhere.com/api/generate-editor-link/"
 @api_view(["POST"])
 def create_template(request):
     data = ""
+    page = ""
     template_name = "Untitled Template"
     res = json.loads(
         save_template(
             template_name,
             data,
+            page,
             request.data["created_by"],
             request.data["company_id"],
         )
@@ -33,7 +35,7 @@ def create_template(request):
             "details": {
                 "_id": res["inserted_id"],
                 "field": "template_name",
-                "action":"template",
+                "action": "template",
                 "cluster": "Documents",
                 "database": "Documentation",
                 "collection": "TemplateReports",
@@ -41,7 +43,7 @@ def create_template(request):
                 "team_member_ID": "22689044433",
                 "function_ID": "ABCDE",
                 "command": "update",
-                "update_field": {"template_name": "", "content": ""},
+                "update_field": {"template_name": "", "content": "", "page": ""},
             },
         }
         try:
@@ -83,12 +85,9 @@ def template_detail(request):
             "function_ID": "ABCDE",
             "_id": request.data["template_id"],
             "field": "template_name",
-            "action":"template",
+            "action": "template",
             "command": "update",
-            "update_field": {
-                "template_name": "",
-                "content": "",
-            },
+            "update_field": {"template_name": "", "content": "", "page": ""},
         },
     }
     try:
