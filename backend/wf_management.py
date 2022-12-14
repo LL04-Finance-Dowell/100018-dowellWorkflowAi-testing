@@ -83,17 +83,12 @@ def update_workflow(request):  # Document Creation.
                 status=status.HTTP_200_OK,
             )
         else:
-            # action = form["action"]
-            workflow_id =    form["workflow_id"]
-            # workflow = get_wf_object(workflow_id)['workflows']
-            steps  =   form['steps']
-            wf_name =       form["wf_title"]
-
             workflow={
-                "workflow_title": wf_name,
+                "workflow_title": form["wf_title"],
+                "workflow_id": form["workflow_id"],
                 "steps": []
                         }
-            for step in steps:
+            for step in form['steps']:
                 workflow["steps"].append( 
                     {
                             "step_name"        : step['step_name'],
@@ -110,9 +105,7 @@ def update_workflow(request):  # Document Creation.
                             "reminder":step["reminder"]
                         }
                 ) 
-            
-
-            res = json.loads(update_wf(workflow_id, workflow['workflow_title'], workflow['steps']))
+            res = json.loads(update_wf(form["workflow_id"], workflow['workflow_title'], workflow['steps']))
 
             if res["isSuccess"]:
                 try:
