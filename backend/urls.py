@@ -2,6 +2,7 @@ from django.urls import path
 
 from .template_management import (
     template_list,
+    org_templates,
     approved,
     not_approved_templates,
     create_template,
@@ -18,19 +19,26 @@ from .document_management import (
     rejected_documents,
     # reject_document,
 )
-from .wf_management import create_workflow, workflow_detail, my_workflows,update_workflow
+from .wf_management import (
+    create_workflow,
+    workflow_detail,
+    my_workflows,
+    update_workflow,
+)
 
 from .intelligent_search import (
     search,
 )
 
-# from .process import create_process
+from .process import save_and_start_processing, save_workflows_to_document
 
 from .views import api
 
 urlpatterns = [
-    # path("process/new/", create_process),
     path("", api),
+    # Workflow Processing-----------------------
+    path("process/new/", save_workflows_to_document),
+    path("process/start/", save_and_start_processing),
     # Search----------------------------
     path("search/<str:str>", search),
     # Templates-----------------------------------------------------
@@ -39,6 +47,7 @@ urlpatterns = [
     path("templates/approve/", approve),
     path("templates/approved/", approved),
     path("templates/pending/", not_approved_templates),
+    path("templates/saved/", org_templates),
     path("templates/mine/", template_list),
     # Documents----------------------------------------------------
     path("documents/", create_document, name="documents"),

@@ -184,3 +184,25 @@ def template_list(request):  # List of Created Templates.
         templates,
         status=status.HTTP_200_OK,
     )
+
+@api_view(["POST"])
+def org_templates(request):  # List of Created Templates.
+    template_list = get_template_list(company_id=request.data["company_id"])
+    if not template_list:
+        return Response(
+            {"message": "Could not fetch templates at this time."},
+            status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+        )
+    print(template_list)
+    templates = [
+        t for t in template_list if t.get("created_by") != request.data["created_by"]
+    ]
+    if not templates:
+        return Response(
+            {"message": "No created templates in org"},
+            status=status.HTTP_404_NOT_FOUND,
+        )
+    return Response(
+        templates,
+        status=status.HTTP_200_OK,
+    )
