@@ -1,14 +1,16 @@
+import json
+import requests
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
 from .mongo_db_connection import (
-    get_wf_object,
-    update_wf_process,
     save_wf_process,
     get_process_object,
     get_document_object,
     update_document,
 )
+
+editor_api = "https://100058.pythonanywhere.com/api/generate-editor-link/"
 
 """
 ---------------------------------------SET WORKFLOWS IN DOCUMENT------------------------------------------
@@ -17,77 +19,11 @@ from .mongo_db_connection import (
 2.Select a workflow to add to the document.
     - user picks a workflow from workflow list 
 - ACTION - Add Workflow to selected document.
-"""
-
-# @api_view(["POST"])
-# def create_process(request):
-#     res = new_process(
-#         workflows_ids=request.data["workflows"],
-#         document_id=request.data["document_id"],
-#         created_by=request.data["created_by"],
-#         company_id=request.data["company_id"],
-#     )
-#     if res:
-#         return Response(status=status.HTTP_201_CREATED)
-#     return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-
-"""
 3.Connect selected workflow to selected document.
 ACTION - Update Workflow Process. 
-"""
-
-
-"""
 4. Check Workflows before processing.
 process: ["content_wise", "member_wise", "workflow_step_wise", "location_wise", "time_wise"] - 1st process will be set to option.
 ACTION - Sort Process
-
-"""
-
-
-def sort_steps(steps, criteria):
-
-    # Sort the steps according to the specified criteria
-    if criteria == "content_wise":
-        return sorted(steps, key=lambda x: x["content"])
-
-    elif criteria == "member_wise":
-        return sorted(steps, key=lambda x: x["member"])
-
-    elif criteria == "location_wise":
-        return sorted(steps, key=lambda x: x["location"])
-
-    elif criteria == "time_wise":
-        return sorted(steps, key=lambda x: x["time"])
-
-    elif criteria == "workflow_step_wise":
-        return sorted(steps, key=lambda x: x["steps"])
-    else:
-        # Return the steps in their original order if no criteria is specified or if the specified criteria is invalid
-        return steps
-
-
-@api_view(["POST"])
-def sort_processing(request):
-    process_id = request.data["workflow_process_id"]
-    criteria = request.data["criteria"]
-
-    process = get_process_object(process_id)
-    workflows = process["workflows"]
-    steps = workflows["steps"]
-
-    new_steps = sort_steps(steps, criteria)
-
-    if not new_steps:
-        return Response(
-            {"message": "Failed to Sort Process."},
-            status=status.HTTP_500_INTERNAL_SERVER_ERROR,
-        )
-    return Response({"message": "Workflow Sorted"}, status=status.HTTP_200_OK)
-
-
-"""
 5. Process Document.
 
 """
@@ -102,7 +38,7 @@ def new_process(workflows, created_by, company_id):
             process_title = (
                 process_title + workflow["workflows"]["workflow_title"] + " - "
             )
-        # print(process_steps)
+        print(process_steps)
         res = save_wf_process(process_title, process_steps, created_by, company_id)
         return res["inserted_id"]
     except:
@@ -114,7 +50,7 @@ def update_document_with_process(document_id, workflow_process_id):
     document = get_document_object(document_id)
     if not document:
         return False
-    res = update_document(document_id, document, workflow_process_id)
+    res = update_document(document_id, document["content"], workflow_process_id)
     if res["isSuccess"]:
         return True
     return False
@@ -128,14 +64,15 @@ def save_workflows_to_document(request):
         created_by=request.data["created_by"],
         company_id=request.data["company_id"],
     )
-    if process_id:
-        # update the doc.
-        doc = update_document_with_process(
-            document_id=request.data["document_id"],
-            workflow_process_id=process_id,
-        )
-        if doc:
-            return Response(status=status.HTTP_200_OK)
+    print(process_id)
+    # if process_id:
+    #     # update the doc.
+    #     doc = update_document_with_process(
+    #         document_id=request.data["document_id"],
+    #         workflow_process_id=process_id,
+    #     )
+    #     if doc:
+    #         return Response(status=status.HTTP_200_OK)
     return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
@@ -163,7 +100,7 @@ Process by member -> Process by workflow -> Process by workflow step -> Process 
 
 
 #  Begin processing the Workflow.
-def start_processing(how_to, process_id):
+def start_processing(how_to, process_id, document_id):
     process = get_process_object(process_id)
     if not process:
         return Response(
@@ -172,56 +109,65 @@ def start_processing(how_to, process_id):
         )
 
     if how_to == "member":
-        return process_by_member(process)
-
-    if how_to == "workflow":
-        return process_by_workflow(process)
-
-    if how_to == "location":
-        return process_by_location(process)
-
-    if how_to == "time_limit":
-        return process_by_time_limit(process)
-
-    if how_to == "workflow_step":
-        return process_by_workflow_step(process)
-
-    if how_to == "document_content":
-        return process_by_document_content(process)
+        return process_by_member(process, document_id)
 
     return Response(
         {"message": "Failed to Start Processing"}, status=status.HTTP_400_BAD_REQUEST
     )
 
 
-# TODO:
-def process_by_member(process):
-    pass
+#  A single Link
+def generate_link(document_id, member_name):
+    document = get_document_object(document_id)
+    if not document:
+        return
+    payload = {
+        "product_name": "workflowai",
+        "details": {
+            "_id": document_id,
+            "field": "document_name",
+            "action": "document",
+            "cluster": "Documents",
+            "database": "Documentation",
+            "collection": "DocumentReports",
+            "document": "documentreports",
+            "team_member_ID": "11689044433",
+            "function_ID": "ABCDE",
+            "command": "update",
+            "member": member_name,
+            "update_field": {
+                "document_name": "",
+                "content": "",
+            },
+        },
+    }
+    try:
+        link = json(requests.post(editor_api, data=json.dumps(payload)))
+        return link
+    except:
+        return 
 
 
-# TODO:
-def process_by_workflow(process):
-    pass
+# Links generation
+def generate_links(process, document_id):
+    links = []
+    for step in process["process_steps"]:
+        if "member" in step:
+            member_name = step["member"]
+            link = generate_link(document_id, member_name)
+            links.extend({member_name: link})
+    return links
 
 
-# TODO:
-def process_by_location(process):
-    pass
-
-
-# TODO:
-def process_by_time_limit(process):
-    pass
-
-
-# TODO:
-def process_by_workflow_step(process):
-    pass
-
-
-# TODO:
-def process_by_document_content(process):
-    pass
+# processin by member choice.
+def process_by_member(process, document_id):
+    links = generate_links(process, document_id)
+    if links:
+        return Response(
+            links,
+            status=status.HTTP_200_OK,
+        )
+    return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 """
@@ -230,8 +176,8 @@ Process Verification.
 
 """
 
-# -------------------------helpers-----------------
-def process_document(process_id):
+
+def verify(process_id):
     #  get a workflow process.
     workflow = get_process_object(process_id)
     if not workflow:
