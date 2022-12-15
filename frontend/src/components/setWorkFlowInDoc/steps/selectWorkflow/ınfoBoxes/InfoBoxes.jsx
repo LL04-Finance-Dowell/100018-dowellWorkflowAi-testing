@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, memo, useMemo, useCallback } from "react";
 import styles from "./infoBoxes.module.css";
 import { v4 as uuidv4 } from "uuid";
 import { GrAdd } from "react-icons/gr";
@@ -13,9 +13,12 @@ import { LoadingSpinner } from "../../../../LoadingSpinner/LoadingSpinner";
 const InfoBoxes = () => {
   const ref = useRef(null);
   const dispatch = useDispatch();
-  const { wfToDocument, currentDocToWfs, selectedWorkflowsToDoc, mineStatus } =
-    useSelector((state) => state.app);
-  const { minedWorkflows } = useSelector((state) => state.workflow);
+  const { wfToDocument, currentDocToWfs, selectedWorkflowsToDoc } = useSelector(
+    (state) => state.app
+  );
+  const { minedWorkflows, mineStatus: wfMineStatus } = useSelector(
+    (state) => state.workflow
+  );
 
   const [compInfoBoxes, setCompInfoBoxes] = useState(infoBoxes);
 
@@ -23,15 +26,19 @@ const InfoBoxes = () => {
     dispatch(mineWorkflow);
   }, []);
 
-  console.log("mined", minedWorkflows);
-
-  useEffect(() => {
+  const memorizedInfoBox = useCallback(() => {
     setCompInfoBoxes((prev) =>
       prev.map((item) =>
-        item.title === "workflow" ? { ...item, contents: minedWorkflows } : item
+        item.title === "workflow"
+          ? { ...item, contents: minedWorkflows, status: wfMineStatus }
+          : item
       )
     );
-  }, [minedWorkflows]);
+  }, [wfMineStatus]);
+
+  useEffect(() => {
+    memorizedInfoBox();
+  }, [memorizedInfoBox]);
 
   const { scrollYProgress } = useScroll({
     target: ref,
@@ -72,10 +79,11 @@ const InfoBoxes = () => {
       {compInfoBoxes.map((infoBox) => (
         <div key={infoBox.id} className={styles.box}>
           <div
+            style={{ pointerEvents: infoBox?.status === "pending" && "none" }}
             onClick={() => handleTogleBox(infoBox.id)}
             className={styles.title__box}
           >
-            {mineStatus === "pending" ? (
+            {infoBox.status && infoBox.status === "pending" ? (
               <LoadingSpinner />
             ) : (
               <>
@@ -111,7 +119,7 @@ const InfoBoxes = () => {
   );
 };
 
-export default InfoBoxes;
+export default memo(InfoBoxes);
 
 export const infoBoxes = [
   {

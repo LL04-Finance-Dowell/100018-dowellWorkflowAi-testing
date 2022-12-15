@@ -23,6 +23,7 @@
   border: solid var(--e-global-color-text) 1px;
   flex-direction: column;
   gap: 20px;
+  align-self: flex-start;
 }
 
 .right__container {

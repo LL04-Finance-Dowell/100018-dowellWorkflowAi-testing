@@ -41,6 +41,14 @@
   transition: ease all 1s;
 }
 
+.content__box li {
+  cursor: pointer;
+}
+
+.content__box li:hover {
+  color: #000;
+}
+
 .content__box li:first-child {
   margin-top: 15px;
 }

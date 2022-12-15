@@ -63,73 +63,75 @@ const ConnectWorkFlowToDoc = () => {
 
   return (
     <>
-      {docCurrentWorkflow && (
-        <div className={styles.container}>
-          <div className={styles.step__title__box}>
-            <h2 className="h2-small step-title">
-              3. Connect Selected Workflows to the selected Document
-            </h2>
-          </div>
-          <div className={styles.workflows__container}>
-            {wfToDocument.workflows?.map((item) => (
-              <div
-                style={{
-                  backgroundColor:
-                    item._id === docCurrentWorkflow?._id &&
-                    "var(--e-global-color-accent)",
-                }}
-                onClick={() => handleCurrentWorkflow(item)}
-                key={item._id}
-                className={styles.workflow__box}
-              >
-                {item.workflows.workflow_title}
-              </div>
-            ))}
-          </div>
-          <div className={styles.step__container}>
-            {currentSteps &&
-              currentSteps?.map((item) => (
-                <div key={item._id} className={styles.step__box}>
-                  <div
-                    onClick={() => setContentToggle((prev) => !prev)}
-                    className={`${styles.header} h2-medium`}
-                  >
-                    {docCurrentWorkflow.workflows?.workflow_title}
-                  </div>
-                  <div className={styles.step__header}>{item.step_name}</div>
-                  <div className={styles.skip}>
-                    <input type="checkbox" />
-                    Skip this Step
-                  </div>
-
-                  <AssignDocumentMap />
-                  <div>
-                    <div className={styles.table__of__contents__header}>
-                      <span>Table of Contents</span>
-                      <i onClick={() => handleToggleContent(item._id)}>
-                        {item.toggleContent ? (
-                          <BsChevronUp />
-                        ) : (
-                          <BsChevronDown />
-                        )}
-                      </i>
-                    </div>
-                    <Contents
-                      contents={mapDocuments}
-                      toggleContent={item.toggleContent}
-                    />
-                  </div>
-                  <AsignTask />
-                  <AssignLocation />
-                  <AssignTime />
+      <div className={styles.container}>
+        <div className={styles.step__title__box}>
+          <h2 className="h2-small step-title">
+            3. Connect Selected Workflows to the selected Document
+          </h2>
+        </div>
+        {docCurrentWorkflow && (
+          <>
+            <div className={styles.workflows__container}>
+              {wfToDocument.workflows?.map((item) => (
+                <div
+                  style={{
+                    backgroundColor:
+                      item._id === docCurrentWorkflow?._id &&
+                      "var(--e-global-color-accent)",
+                  }}
+                  onClick={() => handleCurrentWorkflow(item)}
+                  key={item._id}
+                  className={styles.workflow__box}
+                >
+                  {item.workflows.workflow_title}
                 </div>
               ))}
-          </div>
-          <div className="bottom-line">
-            <span></span>
-          </div>
+            </div>
+            <div className={styles.step__container}>
+              {currentSteps &&
+                currentSteps?.map((item) => (
+                  <div key={item._id} className={styles.step__box}>
+                    <div
+                      onClick={() => setContentToggle((prev) => !prev)}
+                      className={`${styles.header} h2-medium`}
+                    >
+                      {docCurrentWorkflow.workflows?.workflow_title}
+                    </div>
+                    <div className={styles.step__header}>{item.step_name}</div>
+                    <div className={styles.skip}>
+                      <input type="checkbox" />
+                      Skip this Step
+                    </div>
+
+                    <AssignDocumentMap />
+                    <div>
+                      <div className={styles.table__of__contents__header}>
+                        <span>Table of Contents</span>
+                        <i onClick={() => handleToggleContent(item._id)}>
+                          {item.toggleContent ? (
+                            <BsChevronUp />
+                          ) : (
+                            <BsChevronDown />
+                          )}
+                        </i>
+                      </div>
+                      <Contents
+                        contents={mapDocuments}
+                        toggleContent={item.toggleContent}
+                      />
+                    </div>
+                    <AsignTask />
+                    <AssignLocation />
+                    <AssignTime />
+                  </div>
+                ))}
+            </div>
+          </>
+        )}
+        <div className="bottom-line">
+          <span></span>
         </div>
-      )}
+      </div>
     </>
   );
 };
