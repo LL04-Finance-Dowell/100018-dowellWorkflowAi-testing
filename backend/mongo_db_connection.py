@@ -520,6 +520,7 @@ def save_document(name, data, created_by, company_id,page):
                 "reject_message": "",
                 "rejected_by": "",
                 "update_time": time,
+                "page":page
             },
             "update_field": {"order_nos": 21},
             "platform": "bangalore",
