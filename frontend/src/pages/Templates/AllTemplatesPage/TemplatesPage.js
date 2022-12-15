@@ -5,25 +5,34 @@ import "./style.css";
 import { v4 as uuidv4 } from "uuid";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
-import { mineTemplates } from "../../../features/template/asyncThunks";
+import {
+  mineTemplates,
+  draftsTemplate,
+} from "../../../features/template/asyncThunks";
 import TemplateCard from "../../../components/hoverCard/templateCard/TemplateCard";
 
 const TemplatesPage = () => {
   const { userDetail } = useSelector((state) => state.auth);
 
-  const { minedTemplates, draftsTemlateItems, mineStatus } = useSelector(
-    (state) => state.template
-  );
+  const { minedTemplates, mineStatus, draftsTemplateStatu, draftedTemplates } =
+    useSelector((state) => state.template);
   const dispatch = useDispatch();
 
   console.log("mining templateeeeeeeeeeeeeeeeeee", minedTemplates);
 
   useEffect(() => {
-    const data = {
+    const mineData = {
+      company_id: userDetail?.portfolio_info.org_id,
+      created_by: userDetail?.portfolio_info.username,
+    };
+
+    const draftData = {
       company_id: userDetail?.portfolio_info.org_id,
     };
 
-    dispatch(mineTemplates(data));
+    dispatch(mineTemplates(mineData));
+    /*  dispatch(mineTemplates(draftData)); */
+    dispatch(draftsTemplate(draftData));
   }, []);
 
   return (
@@ -35,7 +44,8 @@ const TemplatesPage = () => {
               cardBgColor="#1ABC9C"
               title="drafts"
               Card={TemplateCard}
-              cardItems={drafts}
+              cardItems={draftedTemplates}
+              status={draftsTemplateStatu}
             />
           </div>
           <div id="saved-templates">
@@ -55,12 +65,6 @@ const TemplatesPage = () => {
 
 export default TemplatesPage;
 
-export const createTemplatesByMe = [
-  { id: uuidv4() },
-  { id: uuidv4() },
-  { id: uuidv4() },
-  { id: uuidv4() },
-  { id: uuidv4() },
-];
+export const createTemplatesByMe = [{ id: uuidv4() }];
 
 export const drafts = [{ id: uuidv4() }];

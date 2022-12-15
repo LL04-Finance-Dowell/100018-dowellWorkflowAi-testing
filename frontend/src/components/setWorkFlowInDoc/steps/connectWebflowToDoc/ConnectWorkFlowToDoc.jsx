@@ -7,47 +7,130 @@ import AssignLocation from "./assignForms/forms/assignLocation/AssignLocation";
 import AssignTime from "./assignForms/forms/assignTime/AssignTimes";
 import Contents from "../../contents/Contents";
 import { v4 as uuidv4 } from "uuid";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { setDocCurrentWorkflow } from "../../../../features/app/appSlice";
+import Collapse from "../../../../layouts/collapse/Collapse";
+import { FaArrowDown } from "react-icons/fa";
+import { FaArrowUp } from "react-icons/fa";
 
 const ConnectWorkFlowToDoc = () => {
+  const dispatch = useDispatch();
+
   const [toggleContent, setToggleContent] = useState(false);
+  const { wfToDocument, docCurrentWorkflow } = useSelector(
+    (state) => state.app
+  );
 
-  const handleToggleContent = () => {
-    setToggleContent((prev) => !prev);
+  const [currentSteps, setCurrentSteps] = useState([]);
+
+  /* useEffect(() => {
+    setCurrentSteps(docCurrentWorkflow?.workflows?.steps);
+  }, [docCurrentWorkflow]); */
+
+  const [contentToggle, setContentToggle] = useState(false);
+
+  console.log("sssssssssssssssssss", wfToDocument);
+
+  useEffect(() => {
+    setCurrentSteps(
+      docCurrentWorkflow ? docCurrentWorkflow?.workflows?.steps : []
+    );
+  }, [docCurrentWorkflow]);
+
+  const handleToggleContent = (id) => {
+    setCurrentSteps((prev) =>
+      prev.map((step) =>
+        step._id === id ? { ...step, toggleContent: !step.toggleContent } : step
+      )
+    );
+    /* const currentSteps = docCurrentWorkflow?.workflows?.steps.map((step) =>
+      step._id === id ? { ...step, toggleContent: !step.toggleContent } : step
+    ); */
+
+    /*  setCurrentSteps(currentSteps); */
   };
-  return (
-    <div className={styles.container}>
-      <div className={styles.step__title__box}>
-        <h2 className="h2-small step-title">
-          3. Connect Selected Workflows to the selected Document
-        </h2>
-      </div>
-      <div className={styles.step__container}>
-        <div className={`${styles.header} h2-medium`}>Workflow 1</div>
-        <div className={styles.step__header}>step 1 - name</div>
-        <div className={styles.skip}>
-          <input type="checkbox" />
-          Skip this Step
-        </div>
 
-        <AssignDocumentMap />
-        <div>
-          <div className={styles.table__of__contents__header}>
-            <span>Table of Contents</span>
-            <i onClick={handleToggleContent}>
-              {toggleContent ? <BsChevronUp /> : <BsChevronDown />}
-            </i>
+  const handleCurrentWorkflow = (item) => {
+    dispatch(setDocCurrentWorkflow(item));
+  };
+
+  const handleToggleCollapse = () => {
+    setContentToggle((prev) => !prev);
+  };
+
+  console.log("currrrr", currentSteps);
+
+  return (
+    <>
+      {docCurrentWorkflow && (
+        <div className={styles.container}>
+          <div className={styles.step__title__box}>
+            <h2 className="h2-small step-title">
+              3. Connect Selected Workflows to the selected Document
+            </h2>
           </div>
-          <Contents contents={mapDocuments} toggleContent={toggleContent} />
+          <div className={styles.workflows__container}>
+            {wfToDocument.workflows?.map((item) => (
+              <div
+                style={{
+                  backgroundColor:
+                    item._id === docCurrentWorkflow?._id &&
+                    "var(--e-global-color-accent)",
+                }}
+                onClick={() => handleCurrentWorkflow(item)}
+                key={item._id}
+                className={styles.workflow__box}
+              >
+                {item.workflows.workflow_title}
+              </div>
+            ))}
+          </div>
+          <div className={styles.step__container}>
+            {currentSteps &&
+              currentSteps?.map((item) => (
+                <div key={item._id} className={styles.step__box}>
+                  <div
+                    onClick={() => setContentToggle((prev) => !prev)}
+                    className={`${styles.header} h2-medium`}
+                  >
+                    {docCurrentWorkflow.workflows?.workflow_title}
+                  </div>
+                  <div className={styles.step__header}>{item.step_name}</div>
+                  <div className={styles.skip}>
+                    <input type="checkbox" />
+                    Skip this Step
+                  </div>
+
+                  <AssignDocumentMap />
+                  <div>
+                    <div className={styles.table__of__contents__header}>
+                      <span>Table of Contents</span>
+                      <i onClick={() => handleToggleContent(item._id)}>
+                        {item.toggleContent ? (
+                          <BsChevronUp />
+                        ) : (
+                          <BsChevronDown />
+                        )}
+                      </i>
+                    </div>
+                    <Contents
+                      contents={mapDocuments}
+                      toggleContent={item.toggleContent}
+                    />
+                  </div>
+                  <AsignTask />
+                  <AssignLocation />
+                  <AssignTime />
+                </div>
+              ))}
+          </div>
+          <div className="bottom-line">
+            <span></span>
+          </div>
         </div>
-        <AsignTask />
-        <AssignLocation />
-        <AssignTime />
-      </div>
-      <div className="bottom-line">
-        <span></span>
-      </div>
-    </div>
+      )}
+    </>
   );
 };
 

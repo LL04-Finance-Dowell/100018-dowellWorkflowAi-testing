@@ -16,7 +16,7 @@ const Search = () => {
     <div className={styles.container}>
       <h2 className={styles.title}>Search</h2>
       <p className={styles.info}>
-        Search in flie names of Docs, Templates & Workflows
+        Search in file names of Docs, Templates & Workflows
       </p>
       <form onSubmit={handleSubmit(onSubmit)} className={styles.search__box}>
         <input {...register("search")} placeholder="Type here to search" />

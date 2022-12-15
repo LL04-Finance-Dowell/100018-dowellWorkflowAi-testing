@@ -14,7 +14,7 @@ const initialState = {
   signedDocument: null,
   minedDocuments: [],
   rejectedDocuments: null,
-  drafts: null,
+  drafts: [],
   status: "idle",
   editorStatus: "idle",
   createDocumentStatus: "idle",

@@ -50,8 +50,6 @@ const CollapseItem = ({ items, listType }) => {
     setMenuItems(items);
   }, [items]);
 
-  console.log("menu items", items);
-
   return (
     <div className={styles.container}>
       {menuItems.map((item) => (

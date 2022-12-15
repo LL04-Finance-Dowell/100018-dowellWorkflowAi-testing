@@ -10,7 +10,7 @@ const initialState = {
   templateEditor: null,
   detailTemplate: null,
   minedTemplates: [],
-  /* draftsTemlateItems: [], */
+  draftedTemplates: [],
   status: "idle",
   editorStatus: "idle",
   mineStatus: "idle",
@@ -58,18 +58,18 @@ export const templateSlice = createSlice({
       state.mineStatus = "failed";
       state.errorMessage = action.payload;
     });
-    /*   //draftsTemplate
+    //draftsTemplate
     builder.addCase(draftsTemplate.pending, (state) => {
       state.draftsTemplateStatu = "pending";
     });
     builder.addCase(draftsTemplate.fulfilled, (state, action) => {
       state.draftsTemplateStatu = "succeeded";
-      state.draftsTemlateItems = action.payload;
+      state.draftedTemplates = action.payload;
     });
     builder.addCase(draftsTemplate.rejected, (state, action) => {
       state.draftsTemplateStatu = "failed";
       state.errorMessage = action.payload;
-    }); */
+    });
   },
 });
 

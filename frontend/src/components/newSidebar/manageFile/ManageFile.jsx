@@ -21,23 +21,14 @@ const ManageFile = () => {
   console.log("mined docccccccccccccccc", minedDocuments);
 
   useEffect(() => {
-    const docData = {
+    const data = {
       created_by: userDetail?.userinfo.username,
       company_id: userDetail?.portfolio_info.org_id,
     };
 
-    const tempData = {
-      company_id: userDetail?.portfolio_info.org_id,
-    };
-
-    const workData = {
-      created_by: userDetail?.userinfo.username,
-      company_id: userDetail?.portfolio_info.org_id,
-    };
-
-    dispatch(mineDocuments(docData));
-    dispatch(mineTemplates(tempData));
-    dispatch(mineWorkflow(workData));
+    dispatch(mineDocuments(data));
+    dispatch(mineTemplates(data));
+    dispatch(mineWorkflow(data));
   }, []);
 
   useEffect(() => {

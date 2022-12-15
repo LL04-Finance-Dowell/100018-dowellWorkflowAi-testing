@@ -5,8 +5,22 @@ import { Pagination } from "swiper";
 import "swiper/css";
 import "swiper/css/navigation";
 import swiper from "./swiper.css";
+import { useDispatch, useSelector } from "react-redux";
+import { setWfToDocument } from "../../../../../features/app/appSlice";
 
-const WorkflowSwiper = ({ loop, perSlide, selectedWorkFlows }) => {
+const WorkflowSwiper = ({ loop, perSlide }) => {
+  const dispatch = useDispatch();
+
+  const { selectedWorkflowsToDoc, currentDocToWfs } = useSelector(
+    (state) => state.app
+  );
+
+  const handleConnectWfToDoc = () => {
+    dispatch(setWfToDocument());
+  };
+
+  console.log("ssssssssss", selectedWorkflowsToDoc);
+
   return (
     <div className={styles.add__container}>
       <Swiper
@@ -20,14 +34,16 @@ const WorkflowSwiper = ({ loop, perSlide, selectedWorkFlows }) => {
         modules={[Pagination, Navigation]}
         className="select-workflow"
       >
-        {selectedWorkFlows.map((selectedWorkflow) => (
+        {selectedWorkflowsToDoc.map((selectedWorkflow) => (
           <SwiperSlide key={selectedWorkflow.id}>
-            {selectedWorkflow.content}
+            {selectedWorkflow.workflows?.workflow_title}
           </SwiperSlide>
         ))}
       </Swiper>
-      {selectedWorkFlows.length > 0 && (
-        <a className={styles.add__button}>Add Selected Workflow to document</a>
+      {selectedWorkflowsToDoc.length > 0 && (
+        <a onClick={handleConnectWfToDoc} className={styles.add__button}>
+          Add Selected Workflow to document
+        </a>
       )}
     </div>
   );

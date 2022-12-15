@@ -1,20 +1,23 @@
 .select-workflow {
   width: 100%;
   position: relative;
-  height: 100px !important;
+  /* min-height: 100px !important; */
 }
 
 .select-workflow .swiper-slide {
-  background-color: blue;
-  height: 70px !important;
+  background-color: #ecf0f1;
+  min-height: 70px !important;
+  border-radius: 10px;
+  font-size: 16px;
+  padding: 5px 15px;
 }
 
 .select-workflow .swiper-button-next,
 .select-workflow .swiper-button-prev {
-  color: rgba(238, 238, 238, 0.9);
+  color: black;
   font-weight: 900;
   --swiper-navigation-size: 20px;
-  transform: translateY(-15px);
+  /*  transform: translateY(-15px); */
 }
 
 .select-workflow .swiper-pagination {

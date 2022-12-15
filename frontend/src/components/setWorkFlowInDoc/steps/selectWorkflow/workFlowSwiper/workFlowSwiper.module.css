@@ -4,6 +4,7 @@
 }
 
 .add__button {
+  margin-top: 20px;
   background-color: var(--e-global-color-accent);
   color: var(--e-global-color-cd6593d) !important;
   font-weight: 500;

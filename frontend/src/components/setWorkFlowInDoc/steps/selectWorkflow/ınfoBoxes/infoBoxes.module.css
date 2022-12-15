@@ -32,13 +32,21 @@
 }
 
 .content__box {
-  padding: 15px 20px;
+  padding-inline: 20px;
   margin-bottom: 0;
   padding-right: 20px;
   display: flex;
   flex-direction: column;
   padding-left: 60px !important;
   transition: ease all 1s;
+}
+
+.content__box li:first-child {
+  margin-top: 15px;
+}
+
+.content__box li:last-child {
+  margin-bottom: 15px;
 }
 
 .content {

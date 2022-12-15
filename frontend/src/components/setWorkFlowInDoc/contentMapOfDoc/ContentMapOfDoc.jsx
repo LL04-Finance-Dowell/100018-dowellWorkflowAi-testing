@@ -18,7 +18,7 @@ const ContentMapOfDoc = () => {
     setToggleContent((prev) => !prev);
   };
 
-  const isFixedCallback = useCallback(() => {
+  /* const isFixedCallback = useCallback(() => {
     if (ref.current?.getBoundingClientRect().top > 0) {
       setIsFixed(false);
     } else {
@@ -28,7 +28,7 @@ const ContentMapOfDoc = () => {
 
   useEffect(() => {
     isFixedCallback();
-  }, [isFixedCallback]);
+  }, [isFixedCallback]); */
 
   return (
     <div ref={ref} className={styles.container}>

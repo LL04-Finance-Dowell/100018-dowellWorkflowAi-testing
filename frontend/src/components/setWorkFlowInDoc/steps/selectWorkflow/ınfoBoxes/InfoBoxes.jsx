@@ -4,10 +4,34 @@ import { v4 as uuidv4 } from "uuid";
 import { GrAdd } from "react-icons/gr";
 import { MdOutlineRemove } from "react-icons/md";
 import { motion, useScroll, useTransform } from "framer-motion";
+import { useSelector, useDispatch } from "react-redux";
+import { mineWorkflow } from "../../../../../features/workflow/asyncTHunks";
+import { setSelectedWorkflowsToDoc } from "../../../../../features/app/appSlice";
+import Collapse from "../../../../../layouts/collapse/Collapse";
+import { LoadingSpinner } from "../../../../LoadingSpinner/LoadingSpinner";
 
-const InfoBoxes = ({ setSelectedWorkFlows }) => {
+const InfoBoxes = () => {
   const ref = useRef(null);
+  const dispatch = useDispatch();
+  const { wfToDocument, currentDocToWfs, selectedWorkflowsToDoc, mineStatus } =
+    useSelector((state) => state.app);
+  const { minedWorkflows } = useSelector((state) => state.workflow);
+
   const [compInfoBoxes, setCompInfoBoxes] = useState(infoBoxes);
+
+  useEffect(() => {
+    dispatch(mineWorkflow);
+  }, []);
+
+  console.log("mined", minedWorkflows);
+
+  useEffect(() => {
+    setCompInfoBoxes((prev) =>
+      prev.map((item) =>
+        item.title === "workflow" ? { ...item, contents: minedWorkflows } : item
+      )
+    );
+  }, [minedWorkflows]);
 
   const { scrollYProgress } = useScroll({
     target: ref,
@@ -16,7 +40,7 @@ const InfoBoxes = ({ setSelectedWorkFlows }) => {
 
   const y = useTransform(scrollYProgress, [0, 1], ["200px", "-200px"]);
 
-  const handleClick = (id) => {
+  const handleTogleBox = (id) => {
     const updatedInfoBoxes = compInfoBoxes.map((item) =>
       item.id === id ? { ...item, isOpen: !item.isOpen } : item
     );
@@ -25,11 +49,22 @@ const InfoBoxes = ({ setSelectedWorkFlows }) => {
   };
 
   const addToSelectedWorkFlows = (selectedWorkFlow) => {
-    setSelectedWorkFlows((prev) =>
-      prev.find((item) => item.id === selectedWorkFlow.id)
+    /*    setSelectedWorkFlows((prev) =>
+      prev.find((item) => item._id === selectedWorkFlow._id)
         ? prev
         : [...prev, selectedWorkFlow]
     );
+    console.log("clicekeddddddddddddddddddddddddd", selectedWorkFlow); */
+    if (currentDocToWfs) {
+      const isInclude = selectedWorkflowsToDoc.find(
+        (item) => item._id === selectedWorkFlow._id
+      );
+      if (!isInclude) {
+        dispatch(setSelectedWorkflowsToDoc(selectedWorkFlow));
+      }
+    } else {
+      alert("u have to pick document first");
+    }
   };
 
   return (
@@ -37,37 +72,39 @@ const InfoBoxes = ({ setSelectedWorkFlows }) => {
       {compInfoBoxes.map((infoBox) => (
         <div key={infoBox.id} className={styles.box}>
           <div
-            onClick={() => handleClick(infoBox.id)}
+            onClick={() => handleTogleBox(infoBox.id)}
             className={styles.title__box}
           >
-            <div
-              style={{
-                marginRight: "8px",
-                fontSize: "14px",
-              }}
-            >
-              {infoBox.isOpen ? <MdOutlineRemove /> : <GrAdd />}
-            </div>
-            <a className={styles.title}>{infoBox.title}</a>
+            {mineStatus === "pending" ? (
+              <LoadingSpinner />
+            ) : (
+              <>
+                <div
+                  style={{
+                    marginRight: "8px",
+                    fontSize: "14px",
+                  }}
+                >
+                  {infoBox.isOpen ? <MdOutlineRemove /> : <GrAdd />}
+                </div>
+                <a className={styles.title}>{infoBox.title}</a>
+              </>
+            )}
           </div>
-          <div
-            style={{
-              maxHeight: infoBox.isOpen ? "500px" : "0px",
-              transition: "1s all ease",
-            }}
-          >
+
+          <Collapse open={!infoBox.isOpen}>
             <ol className={styles.content__box}>
               {infoBox.contents.map((item) => (
                 <li
                   onClick={() => addToSelectedWorkFlows(item)}
-                  key={item.id}
+                  key={item._id}
                   className={styles.content}
                 >
-                  {item.content}
+                  {item.workflows?.workflow_title}
                 </li>
               ))}
             </ol>
-          </div>
+          </Collapse>
         </div>
       ))}
     </div>
@@ -81,10 +118,10 @@ export const infoBoxes = [
     id: uuidv4(),
     title: "workflow",
     contents: [
-      { id: uuidv4(), content: "workflow 1" },
-      { id: uuidv4(), content: "workflow 2" },
-      { id: uuidv4(), content: "workflow 3" },
-      { id: uuidv4(), content: "workflow 4" },
+      { _id: uuidv4(), content: "workflow 1" },
+      { _id: uuidv4(), content: "workflow 2" },
+      { _id: uuidv4(), content: "workflow 3" },
+      { _id: uuidv4(), content: "workflow 4" },
     ],
     isOpen: true,
   },
@@ -92,10 +129,10 @@ export const infoBoxes = [
     id: uuidv4(),
     title: "team",
     contents: [
-      { id: uuidv4(), content: "member 1" },
-      { id: uuidv4(), content: "member 1" },
-      { id: uuidv4(), content: "member 1" },
-      { id: uuidv4(), content: "member 1" },
+      /*  { _id: uuidv4(), content: "member 1" },
+      { _id: uuidv4(), content: "member 1" },
+      { _id: uuidv4(), content: "member 1" },
+      { _id: uuidv4(), content: "member 1" }, */
     ],
     isOpen: true,
   },
@@ -103,10 +140,10 @@ export const infoBoxes = [
     id: uuidv4(),
     title: "guest",
     contents: [
-      { id: uuidv4(), content: "guest 1" },
-      { id: uuidv4(), content: "guest 1" },
-      { id: uuidv4(), content: "guest 1" },
-      { id: uuidv4(), content: "guest 1" },
+      /*   { _id: uuidv4(), content: "guest 1" },
+      { _id: uuidv4(), content: "guest 1" },
+      { _id: uuidv4(), content: "guest 1" },
+      { _id: uuidv4(), content: "guest 1" }, */
     ],
     isOpen: true,
   },

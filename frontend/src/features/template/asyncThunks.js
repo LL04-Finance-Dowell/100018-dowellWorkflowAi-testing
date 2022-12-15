@@ -48,18 +48,15 @@ export const mineTemplates = createAsyncThunk("template/mine", async (data) => {
   }
 });
 
-/* export const draftsTemplate = createAsyncThunk(
+export const draftsTemplate = createAsyncThunk(
   "template/drafts",
   async (data) => {
     try {
-      const res = await templateServices.draftsTemplate(data);
+      const res = await templateServices.mineTemplates(data);
 
-      console.log("ressssssssssssssss", res.data.slice(0, 3));
-
-      return res.data.slice(0, 3);
+      return res.data;
     } catch (error) {
       console.log(error);
     }
   }
 );
- */

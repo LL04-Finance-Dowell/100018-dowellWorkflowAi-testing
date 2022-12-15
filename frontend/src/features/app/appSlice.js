@@ -1,12 +1,17 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { getUserInfo } from "./asyncThunks";
+import { v4 as uuidv4 } from "uuid";
 
 const initialState = {
   toggleManageFileForm: false,
   currentWorkflow: null,
   editorLink: null,
-  userDetail: null,
-  userStatus: "idle",
+  docCurrentWorkflow: null,
+  selectedWorkflowsToDoc: [],
+  currentDocToWfs: null,
+  wfToDocument: {
+    document: null,
+    workflows: [],
+  },
 };
 
 export const appSlice = createSlice({
@@ -23,25 +28,54 @@ export const appSlice = createSlice({
     setEditorLink: (state, action) => {
       state.editorLink = action.payload;
     },
-  },
-  extraReducers: (builder) => {
-    //getUserInfo
-    builder.addCase(getUserInfo.pending, (state) => {
-      state.userStatus = "pending";
-    });
-    builder.addCase(getUserInfo.fulfilled, (state, action) => {
-      state.userStatus = "succeeded";
-      state.userDetail = action.payload;
-    });
-    builder.addCase(getUserInfo.rejected, (state, action) => {
-      state.userStatus = "failed";
-      state.errorMessage = action.payload;
-    });
+    setWfToDocument: (state, action) => {
+      state.wfToDocument = {
+        ...state.wfToDocument,
+        document: state.docCurrentWorkflow,
+        workflows: state.selectedWorkflowsToDoc,
+      };
+      state.docCurrentWorkflow = state.selectedWorkflowsToDoc[0];
+    },
+    setDocCurrentWorkflow: (state, action) => {
+      state.docCurrentWorkflow = {
+        ...action.payload,
+        workflows: {
+          ...action.payload.workflows,
+          steps: action.payload.workflows.steps.map((step) => ({
+            ...step,
+            toggleContent: false,
+            _id: uuidv4(),
+          })),
+        },
+      };
+    },
+    setCurrentDocToWfs: (state, action) => {
+      state.currentDocToWfs = action.payload;
+      state.docCurrentWorkflow = null;
+      state.selectedWorkflowsToDoc = [];
+      state.wfToDocument = {
+        document: null,
+        workflows: [],
+      };
+    },
+    setSelectedWorkflowsToDoc: (state, action) => {
+      state.selectedWorkflowsToDoc = [
+        ...state.selectedWorkflowsToDoc,
+        action.payload,
+      ];
+    },
   },
 });
 
 // Action creators are generated for each case reducer function
-export const { setToggleManageFileForm, setEditorLink, setCurrentWorkflow } =
-  appSlice.actions;
+export const {
+  setToggleManageFileForm,
+  setEditorLink,
+  setCurrentWorkflow,
+  setDocCurrentWorkflow,
+  setSelectedWorkflowsToDoc,
+  setCurrentDocToWfs,
+  setWfToDocument,
+} = appSlice.actions;
 
 export default appSlice.reducer;
