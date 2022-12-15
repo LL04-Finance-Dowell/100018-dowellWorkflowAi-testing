@@ -17,8 +17,12 @@ const SelectWorkflow = () => {
   const [smallLoop, setSmallLoop] = useState(false);
 
   useEffect(() => {
-    selectedWorkflowsToDoc.length > 3 && setLargeLoop(true);
-    selectedWorkflowsToDoc.length > 2 && setSmallLoop(true);
+    selectedWorkflowsToDoc.length > 3
+      ? setLargeLoop(true)
+      : setLargeLoop(false);
+    selectedWorkflowsToDoc.length > 2
+      ? setSmallLoop(true)
+      : setSmallLoop(false);
   }, [selectedWorkflowsToDoc, size.width]);
 
   return (
