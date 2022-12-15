@@ -38,7 +38,7 @@ def create_document(request):  # Document Creation.
             created_by = request.data["created_by"]
             company_id=request.data['company_id']
             #data = get_content_from_template_collection_with_that_template_id
-            page = ""
+            page = get_template_object(template_id)["page"]
             data = get_template_object(template_id)["content"]
             res = json.loads(
                 save_document(document_name, data, created_by, company_id,page)
@@ -62,7 +62,7 @@ def create_document(request):  # Document Creation.
                             "update_field": {
                                 "document_name":"",
                                 "content":"",
-                                "page":page,
+                                "page":"",
                                 }
                         }
                         })
@@ -121,7 +121,7 @@ def document_detail(request):  # Single document
                     "update_field": {
                                     "content": "",
                                     "document_name":"",
-                                    "page":page
+                                    "page":""
                                     }
                             
         }
