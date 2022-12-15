@@ -26,6 +26,7 @@ def create_document(request):  # Document Creation.
     
     if request.method == "POST":
         data = ""
+        pages = ""
         form = request.data  # TODO: We will get the data from form 1 by 1 - Dont Worry.
         if not form:
             return Response(
@@ -39,8 +40,12 @@ def create_document(request):  # Document Creation.
             company_id=request.data['company_id']
             #data = get_content_from_template_collection_with_that_template_id
             data = get_template_object(template_id)["content"]
+            try:
+                pages = get_template_object(template_id)["pages"]
+            except:
+                pages
             res = json.loads(
-                save_document(document_name, data, created_by, company_id)
+                save_document(document_name, data, created_by, company_id,pages)
             )
             
             if res["isSuccess"]:
@@ -61,6 +66,7 @@ def create_document(request):  # Document Creation.
                             "update_field": {
                                 "document_name":"",
                                 "content":"",
+                                "pages":pages,
                                 }
                         }
                         })
@@ -101,6 +107,11 @@ def document_detail(request):  # Single document
             )
         document_id = request.data["document_id"]
         data=get_document_object(document_id)
+        pages= ""
+        try:
+            pages = get_template_object(template_id)["pages"]
+        except:
+            pages
         document_name = data["document_name"]
         payload=json.dumps({
                 "product_name": "workflowai",
@@ -118,6 +129,7 @@ def document_detail(request):  # Single document
                     "update_field": {
                                     "content": "",
                                     "document_name":"",
+                                    "pages":pages,
                                     }
                             
         }
