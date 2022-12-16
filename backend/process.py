@@ -85,6 +85,21 @@ Start the workflow process.
 
 @api_view(["POST"])
 def save_and_start_processing(request):
+    process_id = new_process(
+        workflows=request.data["workflows"],
+        document_id=request.data["document_id"],
+        created_by=request.data["created_by"],
+        company_id=request.data["company_id"],
+    )
+    print(process_id)
+    if process_id:
+        # update the doc.
+        doc = update_document_with_process(
+            document_id=request.data["document_id"],
+            workflow_process_id=process_id,
+        )
+        if doc:
+            return Response(status=status.HTTP_200_OK)
     # fire up the processing action
     resp = start_processing(
         how_to=request.data["how_to"], process_id=request.data["process_id"]
@@ -118,34 +133,35 @@ def start_processing(how_to, process_id, document_id):
 
 #  A single Link
 def generate_link(document_id, member_name):
-    document = get_document_object(document_id)
-    if not document:
-        return
-    payload = {
-        "product_name": "workflowai",
-        "details": {
-            "_id": document_id,
-            "field": "document_name",
-            "action": "document",
-            "cluster": "Documents",
-            "database": "Documentation",
-            "collection": "DocumentReports",
-            "document": "documentreports",
-            "team_member_ID": "11689044433",
-            "function_ID": "ABCDE",
-            "command": "update",
-            "member": member_name,
-            "update_field": {
-                "document_name": "",
-                "content": "",
-            },
-        },
-    }
-    try:
-        link = json(requests.post(editor_api, data=json.dumps(payload)))
-        return link
-    except:
-        return 
+    pass
+    # document = get_document_object(document_id)
+    # if not document:
+    #     return
+    # payload = {
+    #     "product_name": "workflowai",
+    #     "details": {
+    #         "_id": document_id,
+    #         "field": "document_name",
+    #         "action": "document",
+    #         "cluster": "Documents",
+    #         "database": "Documentation",
+    #         "collection": "DocumentReports",
+    #         "document": "documentreports",
+    #         "team_member_ID": "11689044433",
+    #         "function_ID": "ABCDE",
+    #         "command": "update",
+    #         # "member": member_name,
+    #         "update_field": {
+    #             "document_name": "",
+    #             "content": "",
+    #         },
+    #     },
+    # }
+    # try:
+    #     link = json(requests.post(editor_api, data=json.dumps(payload)))
+    #     return link
+    # except:
+    #     return
 
 
 # Links generation
@@ -182,25 +198,25 @@ def verify(process_id):
     workflow = get_process_object(process_id)
     if not workflow:
         return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-    # Iterate over the workflow steps
+    # Iterate over the Process steps
     for step in workflow["steps"]:
         # Check if the current step should be skipped
         if step["skip"]:
             continue
-
-        # Check if the current step applies to the current user
-        if not check_user_permissions(step):
+        
+        # how should be steps.
+        if not check_display_right(step):
             continue
 
-        # Check if the current step is within the allowed time period
-        if not check_time_period(step):
+        # Check if the current step is within the allowed time period.
+        if not check_time_limit(step):
             continue
 
-        # Check if the current step is within the allowed location
+        # Check if the current step is within the allowed location.
         if not check_location(step):
             continue
 
-        # Apply the current step to the document
+        # Apply the current step to the document.
         document = apply_step(step, document)
 
     # Return the final version of the document
@@ -211,20 +227,47 @@ def verify(process_id):
 Check if the workflow has moved through given steps.
 """
 
-
-def check_time_period(step):
-
-    pass
-
-
-def check_user_permissions(step):
-
-    pass
-
-
-def apply_step(step):
-    pass
+# Check display in the step.
+def check_display_right(step):
+    if step["display"] == "before_processing_this_step":
+        return
+    if step["display"] == "after_processing_this_step":
+        return
+    if step["display"] == "in_all_steps":
+        return
+    if step["display"] == "only_this_step":
+        return
 
 
+# Verify time limit of the step.
+def check_time_limit(step):
+    if step["limit"] == "within 1 hour":
+        return
+    if step["limit"] == "within 8 hours":
+        return
+    if step["limit"] == "within 24 hours":
+        return
+    if step["limit"] == "within 3 days":
+        return
+    if step["limit"] == "within 7 days":
+        return
+    if step["limit"] == "custom_time":
+        return
+
+
+# check if the step can be skipped.
+def check_step_skipping(step):
+    if step["skip"] == True:
+        return
+    else:
+        return
+
+
+# check signing location.
 def check_location(step):
+    pass
+
+
+# apply step in document
+def apply_step(step, document):
     pass
