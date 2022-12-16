@@ -171,7 +171,6 @@ def template_list(request):  # List of Created Templates.
             {"message": "Could not fetch templates at this time."},
             status=status.HTTP_500_INTERNAL_SERVER_ERROR,
         )
-    print(template_list)
     templates = [
         t for t in template_list if t.get("created_by") == request.data["created_by"]
     ]
@@ -193,7 +192,6 @@ def org_templates(request):  # List of Created Templates.
             {"message": "Could not fetch templates at this time."},
             status=status.HTTP_500_INTERNAL_SERVER_ERROR,
         )
-    print(template_list)
     templates = [
         t for t in template_list if t.get("company_id") == request.data["company_id"]
     ]
