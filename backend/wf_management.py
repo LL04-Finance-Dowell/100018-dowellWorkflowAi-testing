@@ -49,6 +49,7 @@ def create_workflow(request):  # Document Creation.
                     {
                             "step_name"        : step['step_name'],
                             "role"        : step["role"],
+                            "table_of_content":"",
                             "skip"            : step['skip'], # True or False,
                             "member_type"    : step['member_type'], #    values can be "TEAM_MEMBER" or "GUEST",
                             "member_portfolio": step['member_portfolio'],
@@ -93,6 +94,7 @@ def update_workflow(request):  # Document Creation.
                     {
                             "step_name"        : step['step_name'],
                             "role"        : step["role"],
+                            "table_of_content":"",
                             "skip"            : step['skip'], # True or False,
                             "member_type"    : step['member_type'], #    values can be "TEAM_MEMBER" or "GUEST",
                             "member_portfolio": step['member_portfolio'],

@@ -17,6 +17,7 @@ from .document_management import (
     my_documents,
     create_document,
     rejected_documents,
+    get_document_content,
     # reject_document,
 )
 from .wf_management import (
@@ -73,6 +74,8 @@ urlpatterns = [
         name="requested-documents",
     ),
     path("documents/detail/", document_detail, name="document"),
+    path("documents/document_content/", get_document_content, name="document_content"),
+
     path("workflows/", create_workflow, name="workflows"),
     path("workflows/detail/", workflow_detail, name="workflow_detail"),
     path("workflows/mine/", my_workflows, name="my_workflows"),

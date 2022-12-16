@@ -3,6 +3,8 @@ import timeit
 import itertools
 import requests
 import jwt
+import ast
+
 
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
@@ -94,7 +96,9 @@ def get_document_content(request):
     content=[]
     if request.method == "POST":
         try:
-            content=get_document_object(request.data['document_id']['content']) 
+            content=ast.literal_eval(get_document_object(request.data['document_id'])['content'])
+            for cont in content:
+                content = [cont['id'],cont['data']]
         except:
             content
     return Response(
