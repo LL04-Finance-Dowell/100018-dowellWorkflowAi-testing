@@ -9,8 +9,13 @@ import { mineWorkflow } from "../../../../../features/workflow/asyncTHunks";
 import { setSelectedWorkflowsToDoc } from "../../../../../features/app/appSlice";
 import Collapse from "../../../../../layouts/collapse/Collapse";
 import { LoadingSpinner } from "../../../../LoadingSpinner/LoadingSpinner";
+import { useForm } from "react-hook-form";
 
 const InfoBoxes = () => {
+  const { register, watch } = useForm();
+
+  const { workflow } = watch();
+
   const ref = useRef(null);
   const dispatch = useDispatch();
   const { wfToDocument, currentDocToWfs, selectedWorkflowsToDoc } = useSelector(
@@ -35,7 +40,7 @@ const InfoBoxes = () => {
           : item
       )
     );
-  }, [wfMineStatus, searchValue]);
+  }, [wfMineStatus]);
 
   useEffect(() => {
     memorizedInfoBox();
@@ -104,9 +109,10 @@ const InfoBoxes = () => {
           <Collapse open={!infoBox.isOpen}>
             <div className={styles.content__container}>
               <input
-                value={searchValue}
-                onChange={(e) => handleSearch(e, infoBox.id)}
+                /*  value={searchValue} */
+                /*  onChange={(e) => handleSearch(e, infoBox.id)} */
                 placeholder="Search"
+                {...register(`${infoBox.title}`)}
               />
 
               <ol className={styles.content__box}>
@@ -114,7 +120,7 @@ const InfoBoxes = () => {
                   .filter((item) =>
                     item.workflows?.workflow_title
                       .toLowerCase()
-                      .includes(searchValue.toLowerCase())
+                      .includes(workflow.toLowerCase())
                   )
                   .map((item) => (
                     <li

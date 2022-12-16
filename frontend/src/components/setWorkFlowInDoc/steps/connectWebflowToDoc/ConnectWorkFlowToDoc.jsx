@@ -66,10 +66,9 @@ const ConnectWorkFlowToDoc = () => {
           </h2>
         </div>
 
-        {docCurrentWorkflow && (
-          <>
-            <Dropdown />
-            {/* <div className={styles.workflows__container}>
+        <>
+          <Dropdown />
+          {/* <div className={styles.workflows__container}>
               {wfToDocument.workflows?.map((item) => (
                 <div
                   style={{
@@ -85,6 +84,7 @@ const ConnectWorkFlowToDoc = () => {
                 </div>
               ))}
             </div> */}
+          {docCurrentWorkflow && (
             <div className={styles.step__container}>
               {currentSteps &&
                 currentSteps?.map((item) => (
@@ -124,8 +124,9 @@ const ConnectWorkFlowToDoc = () => {
                   </div>
                 ))}
             </div>
-          </>
-        )}
+          )}
+        </>
+
         <div className="bottom-line">
           <span></span>
         </div>

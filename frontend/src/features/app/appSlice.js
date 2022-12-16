@@ -12,6 +12,7 @@ const initialState = {
     document: null,
     workflows: [],
   },
+  dropdownToggle: false,
 };
 
 export const appSlice = createSlice({
@@ -31,10 +32,10 @@ export const appSlice = createSlice({
     setWfToDocument: (state, action) => {
       state.wfToDocument = {
         ...state.wfToDocument,
-        document: state.docCurrentWorkflow,
+        document: state.currentDocToWfs,
         workflows: state.selectedWorkflowsToDoc,
       };
-      state.docCurrentWorkflow = state.selectedWorkflowsToDoc[0];
+      state.docCurrentWorkflow = null;
     },
     setDocCurrentWorkflow: (state, action) => {
       state.docCurrentWorkflow = {
@@ -58,12 +59,16 @@ export const appSlice = createSlice({
         document: null,
         workflows: [],
       };
+      state.dropdownToggle = false;
     },
     setSelectedWorkflowsToDoc: (state, action) => {
       state.selectedWorkflowsToDoc = [
         ...state.selectedWorkflowsToDoc,
         action.payload,
       ];
+    },
+    setDropdowndToggle: (state, action) => {
+      state.dropdownToggle = action.payload;
     },
   },
 });
@@ -77,6 +82,7 @@ export const {
   setSelectedWorkflowsToDoc,
   setCurrentDocToWfs,
   setWfToDocument,
+  setDropdowndToggle,
 } = appSlice.actions;
 
 export default appSlice.reducer;

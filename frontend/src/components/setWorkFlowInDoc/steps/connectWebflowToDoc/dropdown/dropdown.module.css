@@ -25,6 +25,21 @@
 
 .current__item__box {
   border-radius: 10px;
+  display: flex;
+  gap: 20px;
+  border: none;
+  outline: none;
+  color: #fff;
+}
+
+.current__item__box:hover {
+  background-color: rgba(84, 89, 95, 0.9);
+  transition: 0.3s ease all;
+}
+
+.current__item__box:focus {
+  outline: 5px auto -webkit-focus-ring-color !important;
+  outline-offset: -2px !important;
 }
 
 .options__container {
