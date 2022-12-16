@@ -90,8 +90,19 @@ def create_document(request):  # Document Creation.
         {"document":[],"message": "You Need To Be LoggedIn"}, status=status.HTTP_200_OK
     )
 
-
-
+@api_view(["GET","POST"])
+def get_document_content(request):
+    content=[]
+    if request.method == "POST":
+        try:
+            content=get_document_object(request.data['document_id']['content']) 
+        except:
+            content
+    return Response(
+                {"content": content},
+                status=status.HTTP_200_OK,
+            )
+    
 @api_view(["POST"])
 def document_detail(request):  # Single document
 
