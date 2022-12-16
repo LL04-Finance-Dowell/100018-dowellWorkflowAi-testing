@@ -7,6 +7,7 @@ import "swiper/css/navigation";
 import swiper from "./swiper.css";
 import { useDispatch, useSelector } from "react-redux";
 import { setWfToDocument } from "../../../../../features/app/appSlice";
+import { contentDocument } from "../../../../../features/document/asyncThunks";
 
 const WorkflowSwiper = ({ loop, perSlide }) => {
   const dispatch = useDispatch();
@@ -17,9 +18,12 @@ const WorkflowSwiper = ({ loop, perSlide }) => {
 
   const handleConnectWfToDoc = () => {
     dispatch(setWfToDocument());
+    if (currentDocToWfs) {
+      const data = { document_id: currentDocToWfs._id };
+      console.log(data, "dataaaaaaaaaaaaaaaaaa");
+      dispatch(contentDocument(data));
+    }
   };
-
-  console.log("ssssssssss", selectedWorkflowsToDoc);
 
   return (
     <div className={styles.add__container}>

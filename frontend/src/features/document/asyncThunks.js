@@ -88,3 +88,18 @@ export const drafts = createAsyncThunk("document/drafts", async (data) => {
     console.log(error);
   }
 });
+
+export const contentDocument = createAsyncThunk(
+  "document/contentDocument",
+  async (data) => {
+    try {
+      const res = await documentServices.contentDocument(data);
+
+      console.log("contentdocument", res.data);
+
+      return res.data;
+    } catch (error) {
+      console.log(error);
+    }
+  }
+);

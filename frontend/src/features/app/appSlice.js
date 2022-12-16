@@ -23,7 +23,6 @@ export const appSlice = createSlice({
       state.toggleManageFileForm = action.payload;
     },
     setCurrentWorkflow: (state, action) => {
-      console.log("sssssss", action.payload);
       state.currentWorkflow = action.payload;
     },
     setEditorLink: (state, action) => {
@@ -70,6 +69,16 @@ export const appSlice = createSlice({
     setDropdowndToggle: (state, action) => {
       state.dropdownToggle = action.payload;
     },
+    resetSetWorkflows: (state, action) => {
+      state.currentDocToWfs = null;
+      state.docCurrentWorkflow = null;
+      state.selectedWorkflowsToDoc = [];
+      state.wfToDocument = {
+        document: null,
+        workflows: [],
+      };
+      state.dropdownToggle = false;
+    },
   },
 });
 
@@ -83,6 +92,7 @@ export const {
   setCurrentDocToWfs,
   setWfToDocument,
   setDropdowndToggle,
+  resetSetWorkflows,
 } = appSlice.actions;
 
 export default appSlice.reducer;

@@ -14,11 +14,14 @@ import Collapse from "../../../../layouts/collapse/Collapse";
 import { FaArrowDown } from "react-icons/fa";
 import { FaArrowUp } from "react-icons/fa";
 import Dropdown from "./dropdown/Dropdown";
+import { LoadingSpinner } from "../../../LoadingSpinner/LoadingSpinner";
 
 const ConnectWorkFlowToDoc = () => {
   const dispatch = useDispatch();
 
-  const [toggleContent, setToggleContent] = useState(false);
+  const { contentOfDocument, contentOfDocumentStatus } = useSelector(
+    (state) => state.document
+  );
   const { wfToDocument, docCurrentWorkflow } = useSelector(
     (state) => state.app
   );
@@ -47,15 +50,7 @@ const ConnectWorkFlowToDoc = () => {
     );
   };
 
-  const handleCurrentWorkflow = (item) => {
-    dispatch(setDocCurrentWorkflow(item));
-  };
-
-  const handleToggleCollapse = () => {
-    setContentToggle((prev) => !prev);
-  };
-
-  console.log("currrrr", currentSteps);
+  console.log("currrrr", contentOfDocument);
 
   return (
     <>
@@ -104,19 +99,27 @@ const ConnectWorkFlowToDoc = () => {
                     <AssignDocumentMap />
                     <div>
                       <div className={styles.table__of__contents__header}>
-                        <span>Table of Contents</span>
-                        <i onClick={() => handleToggleContent(item._id)}>
-                          {item.toggleContent ? (
-                            <BsChevronUp />
-                          ) : (
-                            <BsChevronDown />
-                          )}
-                        </i>
+                        {contentOfDocumentStatus === "pending" ? (
+                          <LoadingSpinner />
+                        ) : (
+                          <>
+                            <span>Table of Contents</span>
+                            <i onClick={() => handleToggleContent(item._id)}>
+                              {item.toggleContent ? (
+                                <BsChevronUp />
+                              ) : (
+                                <BsChevronDown />
+                              )}
+                            </i>
+                          </>
+                        )}
                       </div>
-                      <Contents
-                        contents={mapDocuments}
-                        toggleContent={item.toggleContent}
-                      />
+                      {contentOfDocument && (
+                        <Contents
+                          contents={contentOfDocument}
+                          toggleContent={item.toggleContent}
+                        />
+                      )}
                     </div>
                     <AsignTask />
                     <AssignLocation />

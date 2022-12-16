@@ -6,7 +6,9 @@ import {
   mineDocuments,
   rejectedDocuments,
   signDocument,
+  contentDocument,
 } from "./asyncThunks";
+import { v4 as uuidv4 } from "uuid";
 
 const initialState = {
   createdDocument: null,
@@ -14,12 +16,14 @@ const initialState = {
   signedDocument: null,
   minedDocuments: [],
   rejectedDocuments: null,
+  contentOfDocument: null,
   drafts: [],
   status: "idle",
   editorStatus: "idle",
   createDocumentStatus: "idle",
   mineStatus: "idle",
   draftStatu: "idle",
+  contentOfDocumentStatus: "idle",
   errorMessage: null,
 };
 
@@ -98,6 +102,20 @@ export const documentSlice = createSlice({
     });
     builder.addCase(drafts.rejected, (state, action) => {
       state.draftStatu = "failed";
+      state.errorMessage = action.payload;
+    });
+    //contentDocumetn
+    builder.addCase(contentDocument.pending, (state) => {
+      state.contentOfDocumentStatus = "pending";
+    });
+    builder.addCase(contentDocument.fulfilled, (state, action) => {
+      state.contentOfDocumentStatus = "succeeded";
+      state.contentOfDocument = action.payload.content
+        ? action.payload.content.map((item) => ({ ...item, _id: uuidv4() }))
+        : [];
+    });
+    builder.addCase(contentDocument.rejected, (state, action) => {
+      state.contentOfDocumentStatus = "failed";
       state.errorMessage = action.payload;
     });
   },

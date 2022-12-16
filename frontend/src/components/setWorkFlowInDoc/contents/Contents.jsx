@@ -15,13 +15,17 @@ const Contents = ({ contents, toggleContent }) => {
     >
       <div ref={contentRef} className={styles.content__box}>
         <ol>
-          {contents.map((item, index) => (
-            <li data-index={index + 1} key={item.id}>
-              <span>
-                <a>{item.content}</a>
-              </span>
-            </li>
-          ))}
+          {contents.length > 0 ? (
+            contents.map((item, index) => (
+              <li key={item._id} data-index={index + 1}>
+                <span>
+                  <a>{item.data}</a>
+                </span>
+              </li>
+            ))
+          ) : (
+            <div className={styles.no__data}>No Data</div>
+          )}
         </ol>
       </div>
     </div>

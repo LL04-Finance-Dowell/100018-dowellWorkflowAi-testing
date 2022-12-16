@@ -24,4 +24,7 @@ export class DocumentServices {
   drafts = (data) => {
     return httpDocument.post("/drafts/", data);
   };
+  contentDocument = (data) => {
+    return httpDocument.post("/document_content/", data);
+  };
 }

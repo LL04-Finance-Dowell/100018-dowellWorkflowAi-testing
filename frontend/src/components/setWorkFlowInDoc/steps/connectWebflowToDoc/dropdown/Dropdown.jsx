@@ -16,7 +16,7 @@ const Dropdown = () => {
   /*  const [toggle, setToggle] = useState(false); */
 
   const handleToggle = () => {
-    dispatch(setDropdowndToggle((prev) => !prev));
+    dispatch(setDropdowndToggle(!dropdownToggle));
   };
 
   const handleCurrentWorkflow = (item) => {

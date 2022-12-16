@@ -9,8 +9,17 @@ import CustomerSupport from "./customerSupport/CustomerSupport";
 import ContentMapOfDoc from "./contentMapOfDoc/ContentMapOfDoc";
 import globalStyles from "./globalStyles.css";
 import WorkflowLayout from "../../layouts/WorkflowLayout/WorkflowLayout";
+import { useEffect } from "react";
+import { useDispatch } from "react-redux";
+import { resetSetWorkflows } from "../../features/app/appSlice";
 
 const SetWorkflowInDoc = () => {
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(resetSetWorkflows());
+  }, []);
+
   return (
     <WorkflowLayout>
       <div

@@ -36,11 +36,19 @@ const InfoBoxes = () => {
     setCompInfoBoxes((prev) =>
       prev.map((item) =>
         item.title === "workflow"
-          ? { ...item, contents: minedWorkflows, status: wfMineStatus }
+          ? {
+              ...item,
+              contents: minedWorkflows?.filter((item) =>
+                item.workflows?.workflow_title
+                  .toLowerCase()
+                  .includes(workflow.toLowerCase())
+              ),
+              status: wfMineStatus,
+            }
           : item
       )
     );
-  }, [wfMineStatus]);
+  }, [wfMineStatus, workflow]);
 
   useEffect(() => {
     memorizedInfoBox();
@@ -116,21 +124,15 @@ const InfoBoxes = () => {
               />
 
               <ol className={styles.content__box}>
-                {infoBox.contents
-                  .filter((item) =>
-                    item.workflows?.workflow_title
-                      .toLowerCase()
-                      .includes(workflow.toLowerCase())
-                  )
-                  .map((item) => (
-                    <li
-                      onClick={() => addToSelectedWorkFlows(item)}
-                      key={item._id}
-                      className={styles.content}
-                    >
-                      {item.workflows?.workflow_title}
-                    </li>
-                  ))}
+                {infoBox.contents.map((item) => (
+                  <li
+                    onClick={() => addToSelectedWorkFlows(item)}
+                    key={item._id}
+                    className={styles.content}
+                  >
+                    {item.workflows?.workflow_title}
+                  </li>
+                ))}
               </ol>
             </div>
           </Collapse>
