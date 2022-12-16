@@ -465,6 +465,23 @@ Response-500
 }
 ```
 
+
+_POST_ `documents/document_content/`
+
+- Get Data and ID of each content in document
+
+Request Body
+
+```
+ {"document_id":"<Id of specific document>"}
+```
+Response-200
+
+```
+{"content":"<content_id_and_data>}
+```
+
+
 ### Worfklow Management
 _POST_ to `workflows/`
 
