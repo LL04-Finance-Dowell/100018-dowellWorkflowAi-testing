@@ -41,6 +41,7 @@ export const appSlice = createSlice({
         ...action.payload,
         workflows: {
           ...action.payload.workflows,
+
           steps: action.payload.workflows.steps.map((step) => ({
             ...step,
             toggleContent: false,

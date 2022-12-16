@@ -13,6 +13,7 @@ import { setDocCurrentWorkflow } from "../../../../features/app/appSlice";
 import Collapse from "../../../../layouts/collapse/Collapse";
 import { FaArrowDown } from "react-icons/fa";
 import { FaArrowUp } from "react-icons/fa";
+import Dropdown from "./dropdown/Dropdown";
 
 const ConnectWorkFlowToDoc = () => {
   const dispatch = useDispatch();
@@ -24,9 +25,9 @@ const ConnectWorkFlowToDoc = () => {
 
   const [currentSteps, setCurrentSteps] = useState([]);
 
-  /* useEffect(() => {
+  useEffect(() => {
     setCurrentSteps(docCurrentWorkflow?.workflows?.steps);
-  }, [docCurrentWorkflow]); */
+  }, [docCurrentWorkflow]);
 
   const [contentToggle, setContentToggle] = useState(false);
 
@@ -44,11 +45,6 @@ const ConnectWorkFlowToDoc = () => {
         step._id === id ? { ...step, toggleContent: !step.toggleContent } : step
       )
     );
-    /* const currentSteps = docCurrentWorkflow?.workflows?.steps.map((step) =>
-      step._id === id ? { ...step, toggleContent: !step.toggleContent } : step
-    ); */
-
-    /*  setCurrentSteps(currentSteps); */
   };
 
   const handleCurrentWorkflow = (item) => {
@@ -69,9 +65,11 @@ const ConnectWorkFlowToDoc = () => {
             3. Connect Selected Workflows to the selected Document
           </h2>
         </div>
+
         {docCurrentWorkflow && (
           <>
-            <div className={styles.workflows__container}>
+            <Dropdown />
+            {/* <div className={styles.workflows__container}>
               {wfToDocument.workflows?.map((item) => (
                 <div
                   style={{
@@ -86,7 +84,7 @@ const ConnectWorkFlowToDoc = () => {
                   {item.workflows.workflow_title}
                 </div>
               ))}
-            </div>
+            </div> */}
             <div className={styles.step__container}>
               {currentSteps &&
                 currentSteps?.map((item) => (

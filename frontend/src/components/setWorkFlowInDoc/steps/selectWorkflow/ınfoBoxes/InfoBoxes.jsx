@@ -21,6 +21,7 @@ const InfoBoxes = () => {
   );
 
   const [compInfoBoxes, setCompInfoBoxes] = useState(infoBoxes);
+  const [searchValue, setSearchValue] = useState("");
 
   useEffect(() => {
     dispatch(mineWorkflow);
@@ -34,7 +35,7 @@ const InfoBoxes = () => {
           : item
       )
     );
-  }, [wfMineStatus]);
+  }, [wfMineStatus, searchValue]);
 
   useEffect(() => {
     memorizedInfoBox();
@@ -56,12 +57,6 @@ const InfoBoxes = () => {
   };
 
   const addToSelectedWorkFlows = (selectedWorkFlow) => {
-    /*    setSelectedWorkFlows((prev) =>
-      prev.find((item) => item._id === selectedWorkFlow._id)
-        ? prev
-        : [...prev, selectedWorkFlow]
-    );
-    console.log("clicekeddddddddddddddddddddddddd", selectedWorkFlow); */
     if (currentDocToWfs) {
       const isInclude = selectedWorkflowsToDoc.find(
         (item) => item._id === selectedWorkFlow._id
@@ -74,9 +69,15 @@ const InfoBoxes = () => {
     }
   };
 
+  const handleSearch = (e, id) => {
+    setSearchValue(e.target.value);
+  };
+
+  console.log(compInfoBoxes, "infoooooooooooooooo");
+
   return (
     <div ref={ref} style={{ y: y }} className={styles.container}>
-      {compInfoBoxes.map((infoBox) => (
+      {compInfoBoxes?.map((infoBox) => (
         <div key={infoBox.id} className={styles.box}>
           <div
             style={{ pointerEvents: infoBox?.status === "pending" && "none" }}
@@ -101,17 +102,31 @@ const InfoBoxes = () => {
           </div>
 
           <Collapse open={!infoBox.isOpen}>
-            <ol className={styles.content__box}>
-              {infoBox.contents.map((item) => (
-                <li
-                  onClick={() => addToSelectedWorkFlows(item)}
-                  key={item._id}
-                  className={styles.content}
-                >
-                  {item.workflows?.workflow_title}
-                </li>
-              ))}
-            </ol>
+            <div className={styles.content__container}>
+              <input
+                value={searchValue}
+                onChange={(e) => handleSearch(e, infoBox.id)}
+                placeholder="Search"
+              />
+
+              <ol className={styles.content__box}>
+                {infoBox.contents
+                  .filter((item) =>
+                    item.workflows?.workflow_title
+                      .toLowerCase()
+                      .includes(searchValue.toLowerCase())
+                  )
+                  .map((item) => (
+                    <li
+                      onClick={() => addToSelectedWorkFlows(item)}
+                      key={item._id}
+                      className={styles.content}
+                    >
+                      {item.workflows?.workflow_title}
+                    </li>
+                  ))}
+              </ol>
+            </div>
           </Collapse>
         </div>
       ))}
@@ -125,12 +140,7 @@ export const infoBoxes = [
   {
     id: uuidv4(),
     title: "workflow",
-    contents: [
-      { _id: uuidv4(), content: "workflow 1" },
-      { _id: uuidv4(), content: "workflow 2" },
-      { _id: uuidv4(), content: "workflow 3" },
-      { _id: uuidv4(), content: "workflow 4" },
-    ],
+    contents: [],
     isOpen: true,
   },
   {

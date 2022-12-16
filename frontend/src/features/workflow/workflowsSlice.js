@@ -42,13 +42,13 @@ export const workflowSlice = createSlice({
       state.mineStatus = "pending";
     });
     builder.addCase(mineWorkflow.fulfilled, (state, action) => {
-      console.log("pppppppppppppppaaaaaaaaaaaaaa", action.payload);
       state.mineStatus = "succeeded";
       state.minedWorkflows = action.payload.workflow
         ? action.payload.workflow.map((item) => ({
             ...item,
             workflows: {
               ...item.workflows,
+              /* _id: uuidv4(), */
               steps: item.workflows.steps.map((step) => ({
                 ...step,
                 _id: uuidv4(),
