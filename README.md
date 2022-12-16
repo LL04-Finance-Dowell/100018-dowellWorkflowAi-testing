@@ -276,6 +276,42 @@ Response-500
 }
 ```
 
+_POST_ `templates/saved/`
+
+- List of my Organization templates.
+
+Request Body
+
+```
+{
+    "company_id": "<auth_company_id>",
+}
+```
+
+Response-200
+
+```
+
+    [<Array of templates>]
+
+```
+
+Response-404
+
+```
+{
+    "message": "No templates in organization"
+}
+```
+
+Response-500
+
+```
+{
+    "message": "Could not fetch templates at this time."
+}
+```
+
 ### Document Management
 
 _POST_ to `documents/`
@@ -309,8 +345,6 @@ Response-200
     "message": "Unable to Create Document"
 }
 ```
-
-
 
 _POST_ `documents/detail/`
 
@@ -364,6 +398,7 @@ Response-200
 "documents":["ist of documents to be signed with their detail"]
 }
 ```
+
 if no list
 Response-200
 {
@@ -393,6 +428,7 @@ Response-200
 }
 
 ```
+
 if no List
 Response-200
 
@@ -424,11 +460,12 @@ Response-200
 }
 
 ```
+
 If No List
 Response-200
 
 ```
-{   
+{
     "documents": [],
     "message": "These document is not in Rejected Document list."
 }
@@ -455,6 +492,7 @@ Response-200
 }
 
 ```
+
 If No List
 Response-500
 
@@ -465,7 +503,6 @@ Response-500
 }
 ```
 
-
 _POST_ `documents/document_content/`
 
 - Get Data and ID of each content in document
@@ -475,14 +512,15 @@ Request Body
 ```
  {"document_id":"<Id of specific document>"}
 ```
+
 Response-200
 
 ```
 {"content":"<content_id_and_data>}
 ```
 
-
 ### Worfklow Management
+
 _POST_ to `workflows/`
 
 - Creates a new workflow
@@ -493,10 +531,10 @@ Request Body
 {
     "created_by": "<user_name_of_authenticated_user>",
     "company_id": "<company_id_of_authorized_user>",
-  
+
     "wf_title":"<workflow_title>",
      'steps': [
-        {'step_name': 'step_one', 
+        {'step_name': 'step_one',
         "rights":"<ADD/EDIT_or_VIEW_or_COMMENT_or_APPROVE>",
         "display_before":"<true or false>",
         "skip":"<True_or_False>",
@@ -504,30 +542,30 @@ Request Body
         "start_time":"<START_DATE_AND_TIME>",
         "end_time":"<END_DATE_AND_TIME>",
         "member_portfolio":"<Portfolio_1>",
-        "member_type":"<TEAM_MEMBER_or_GUEST>" 
+        "member_type":"<TEAM_MEMBER_or_GUEST>"
         'reminder': ''}]
 }
 ```
 
 Response-201
- 
+
 ```
-{ 
+{
     "workflow": "<saved_workflow_data>
 }
 
 ```
+
 If Not Created
 Response-200
- 
+
 ```
-{ 
+{
     "workflow": [],
     "message": "Failed to Save Workflow"
 }
 
 ```
-
 
 _POST_ `workflows/detail/`
 
@@ -549,6 +587,7 @@ Response-200
 }
 
 ```
+
 If Not Availabel
 Response-200
 
@@ -581,6 +620,7 @@ Response-200
 }
 
 ```
+
 If Not Available
 Response-200
 
@@ -599,8 +639,8 @@ Request Body
 
 ```
 {
-    "workflow_id": "<id_specific_of_workflow>"    
-    "workflow_title": "Workflow_title_new_or_existing", 
+    "workflow_id": "<id_specific_of_workflow>"
+    "workflow_title": "Workflow_title_new_or_existing",
     "steps": [
         {
             "step_name": "step_name_new_or_existing"
@@ -645,10 +685,13 @@ If Not Sucessfully Updated
 Response-200
 
 ```
+
 {
-    "workflow":[],
-    "message": "Failed to Update Workflow"
-             
+"workflow":[],
+"message": "Failed to Update Workflow"
+
 }
+
+```
 
 ```

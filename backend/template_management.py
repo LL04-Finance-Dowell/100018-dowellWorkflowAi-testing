@@ -195,11 +195,11 @@ def org_templates(request):  # List of Created Templates.
         )
     print(template_list)
     templates = [
-        t for t in template_list if t.get("created_by") != request.data["created_by"]
+        t for t in template_list if t.get("company_id") == request.data["company_id"]
     ]
     if not templates:
         return Response(
-            {"message": "No created templates in org"},
+            {"message": "No created templates in organization"},
             status=status.HTTP_404_NOT_FOUND,
         )
     return Response(
