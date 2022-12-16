@@ -41,7 +41,7 @@ const InfoBoxes = () => {
               contents: minedWorkflows?.filter((item) =>
                 item.workflows?.workflow_title
                   .toLowerCase()
-                  .includes(workflow.toLowerCase())
+                  .includes(workflow?.toLowerCase())
               ),
               status: wfMineStatus,
             }
