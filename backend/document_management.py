@@ -20,7 +20,6 @@ from .mongo_db_connection import (
     get_user_info_by_username,
 )
 editorApi = "https://100058.pythonanywhere.com/api/generate-editor-link/"
-    
 @api_view(["GET","POST"])
 def create_document(request):  # Document Creation.
     
