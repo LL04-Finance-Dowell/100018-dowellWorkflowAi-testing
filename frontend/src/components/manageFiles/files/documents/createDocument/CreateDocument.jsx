@@ -6,7 +6,10 @@ import Overlay from "../../../overlay/Overlay";
 import { BsArrowRightShort } from "react-icons/bs";
 import Collapse from "../../../../../layouts/collapse/Collapse";
 import { useDispatch, useSelector } from "react-redux";
-import { mineTemplates } from "../../../../../features/template/asyncThunks";
+import {
+  draftsTemplate,
+  mineTemplates,
+} from "../../../../../features/template/asyncThunks";
 import { useEffect } from "react";
 import { createDocument } from "../../../../../features/document/asyncThunks";
 import { LoadingSpinner } from "../../../../LoadingSpinner/LoadingSpinner";
@@ -18,7 +21,9 @@ const CreateDocument = ({ handleToggleOverlay }) => {
   const { userDetail } = useSelector((state) => state.auth);
 
   const dispatch = useDispatch();
-  const { minedTemplates, mineStatus } = useSelector((state) => state.template);
+  const { draftedTemplates, draftsTemplateStatu } = useSelector(
+    (state) => state.template
+  );
   const { status: documentStatus } = useSelector((state) => state.document);
   const [currentOption, setCurrentOption] = useState(null);
   const [toggleDropdown, setToggleDropdown] = useState(false);
@@ -62,20 +67,20 @@ const CreateDocument = ({ handleToggleOverlay }) => {
   };
 
   useEffect(() => {
-    dispatch(
-      mineTemplates({
-        company_id: userDetail?.portfolio_info.org_id,
-      })
-    );
+    const data = {
+      company_id: userDetail?.portfolio_info.org_id,
+    };
+
+    dispatch(draftsTemplate(data));
   }, []);
 
-  console.log("dox statussss", minedTemplates);
+  console.log("dox statussss", draftedTemplates);
 
   return (
     <Overlay title="Create Document" handleToggleOverlay={handleToggleOverlay}>
-      {mineStatus === "pending" ? (
+      {draftsTemplateStatu === "pending" ? (
         <Spinner />
-      ) : minedTemplates ? (
+      ) : draftedTemplates ? (
         <form onSubmit={handleSubmit(onSubmit)}>
           <div id="template" className={styles.dropdown__container}>
             <label onClick={handleClickLabel} htmlFor="template">
@@ -88,7 +93,7 @@ const CreateDocument = ({ handleToggleOverlay }) => {
                 tabIndex={-98}
                 {...register("template")}
               >
-                {minedTemplates.map((item) => (
+                {draftedTemplates.map((item) => (
                   <option key={item._id} value={item._id}>
                     {item.template_name}
                   </option>
@@ -106,7 +111,7 @@ const CreateDocument = ({ handleToggleOverlay }) => {
             <div className={styles.dropdown__option__container}>
               <Collapse open={toggleDropdown}>
                 <div role="listbox" className={styles.dropdown__option__box}>
-                  {minedTemplates.map((item) => (
+                  {draftedTemplates.map((item) => (
                     <div
                       onClick={() => handleOptionClick(item)}
                       className={styles.dropdown__option__content}

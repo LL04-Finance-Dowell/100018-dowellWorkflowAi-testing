@@ -13,6 +13,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { mineDocuments } from "../../../../features/document/asyncThunks";
 import { setCurrentDocToWfs } from "../../../../features/app/appSlice";
 import { LoadingSpinner } from "../../../LoadingSpinner/LoadingSpinner";
+import { setContentOfDocument } from "../../../../features/document/documentSlice";
 
 const SelectDoc = () => {
   const dispatch = useDispatch();
@@ -31,7 +32,7 @@ const SelectDoc = () => {
 
   const handleAddDocument = (document) => {
     dispatch(setCurrentDocToWfs(document));
-    console.log("swwwww", wfToDocument);
+    dispatch(setContentOfDocument(null));
   };
 
   return (

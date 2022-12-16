@@ -7,16 +7,28 @@ import Contents from "../contents/Contents";
 import { useEffect } from "react";
 import useScrollPosition from "../../../hooks/useScrollPosition";
 import { useCallback } from "react";
+import { useSelector } from "react-redux";
+import { LoadingSpinner } from "../../LoadingSpinner/LoadingSpinner";
 
 const ContentMapOfDoc = () => {
+  const { contentOfDocumentStatus, contentOfDocument } = useSelector(
+    (state) => state.document
+  );
+  const { wfToDocument } = useSelector((state) => state.app);
+
   const [toggleContent, setToggleContent] = useState(false);
   const [isFixed, setIsFixed] = useState(false);
   const ref = useRef(null);
   const scroll = useScrollPosition();
 
   const handleToggleContent = () => {
-    setToggleContent((prev) => !prev);
+    if (contentOfDocument && wfToDocument.document)
+      setToggleContent((prev) => !prev);
   };
+
+  useEffect(() => {
+    setToggleContent(false);
+  }, [wfToDocument.document]);
 
   /* const isFixedCallback = useCallback(() => {
     if (ref.current?.getBoundingClientRect().top > 0) {
@@ -33,13 +45,23 @@ const ContentMapOfDoc = () => {
   return (
     <div ref={ref} className={styles.container}>
       <div className={`${styles.box} ${isFixed && styles.is__fixed}`}>
-        <div className={styles.header__box}>
+        <div
+          style={{
+            pointerEvents: contentOfDocumentStatus === "pending" && "none",
+          }}
+          className={styles.header__box}
+          onClick={handleToggleContent}
+        >
           <h4 className={styles.header}>Content Map of selected Doucument</h4>
-          <i onClick={handleToggleContent}>
-            {toggleContent ? <IoIosArrowUp /> : <IoIosArrowDown />}
-          </i>
+          <i>{toggleContent ? <IoIosArrowUp /> : <IoIosArrowDown />}</i>
         </div>
-        <Contents toggleContent={toggleContent} contents={mapDocuments} />
+        {contentOfDocument && wfToDocument.document && (
+          <Contents
+            feature="doc"
+            toggleContent={toggleContent}
+            contents={contentOfDocument}
+          />
+        )}
       </div>
     </div>
   );

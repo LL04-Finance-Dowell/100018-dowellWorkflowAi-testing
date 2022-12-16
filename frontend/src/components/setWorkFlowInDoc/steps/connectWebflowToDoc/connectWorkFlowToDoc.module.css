@@ -4,9 +4,17 @@
 }
 
 .step__title__box {
-  height: 65px;
-  padding: 10;
+  /* height: 65px; */
+  /* margin-top: 20px; */
+  /*   padding: 10; */
+  margin-block: 25px;
 }
+
+/* .spinner__box {
+  display: flex;
+  align-items: flex-start;
+  border: solid red 1px;
+} */
 
 .workflows__container {
   display: flex;

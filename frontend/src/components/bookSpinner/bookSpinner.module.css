@@ -22,7 +22,7 @@
 }
 .book {
   margin: auto;
-  margin-top: 20px;
+  /*   margin-top: 20px; */
   background-color: var(--e-global-color-secondary) !important;
   border-radius: 0.25em;
   box-shadow: 0 0.25em 0.5em hsla(0, 0%, 0%, 0.3),

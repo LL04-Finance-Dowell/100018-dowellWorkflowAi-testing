@@ -15,6 +15,7 @@ import { FaArrowDown } from "react-icons/fa";
 import { FaArrowUp } from "react-icons/fa";
 import Dropdown from "./dropdown/Dropdown";
 import { LoadingSpinner } from "../../../LoadingSpinner/LoadingSpinner";
+import BookSpinner from "../../../bookSpinner/BookSpinner";
 
 const ConnectWorkFlowToDoc = () => {
   const dispatch = useDispatch();
@@ -61,74 +62,76 @@ const ConnectWorkFlowToDoc = () => {
           </h2>
         </div>
 
-        <>
-          <Dropdown />
-          {/* <div className={styles.workflows__container}>
-              {wfToDocument.workflows?.map((item) => (
-                <div
-                  style={{
-                    backgroundColor:
-                      item._id === docCurrentWorkflow?._id &&
-                      "var(--e-global-color-accent)",
-                  }}
-                  onClick={() => handleCurrentWorkflow(item)}
-                  key={item._id}
-                  className={styles.workflow__box}
-                >
-                  {item.workflows.workflow_title}
-                </div>
-              ))}
-            </div> */}
-          {docCurrentWorkflow && (
-            <div className={styles.step__container}>
-              {currentSteps &&
-                currentSteps?.map((item) => (
-                  <div key={item._id} className={styles.step__box}>
-                    <div
-                      onClick={() => setContentToggle((prev) => !prev)}
-                      className={`${styles.header} h2-medium`}
-                    >
-                      {docCurrentWorkflow.workflows?.workflow_title}
-                    </div>
-                    <div className={styles.step__header}>{item.step_name}</div>
-                    <div className={styles.skip}>
-                      <input type="checkbox" />
-                      Skip this Step
-                    </div>
+        {contentOfDocumentStatus === "pending" ? (
+          <div style={{ marginBottom: "15px" }}>
+            <BookSpinner />
+          </div>
+        ) : (
+          <>
+            <Dropdown />
+            {/* <div className={styles.workflows__container}>
+            {wfToDocument.workflows?.map((item) => (
+              <div
+                style={{
+                  backgroundColor:
+                    item._id === docCurrentWorkflow?._id &&
+                    "var(--e-global-color-accent)",
+                }}
+                onClick={() => handleCurrentWorkflow(item)}
+                key={item._id}
+                className={styles.workflow__box}
+              >
+                {item.workflows.workflow_title}
+              </div>
+            ))}
+          </div> */}
+            {docCurrentWorkflow && (
+              <div className={styles.step__container}>
+                {currentSteps &&
+                  currentSteps?.map((item) => (
+                    <div key={item._id} className={styles.step__box}>
+                      <div
+                        onClick={() => setContentToggle((prev) => !prev)}
+                        className={`${styles.header} h2-medium`}
+                      >
+                        {docCurrentWorkflow.workflows?.workflow_title}
+                      </div>
+                      <div className={styles.step__header}>
+                        {item.step_name}
+                      </div>
+                      <div className={styles.skip}>
+                        <input type="checkbox" />
+                        Skip this Step
+                      </div>
 
-                    <AssignDocumentMap />
-                    <div>
-                      <div className={styles.table__of__contents__header}>
-                        {contentOfDocumentStatus === "pending" ? (
-                          <LoadingSpinner />
-                        ) : (
-                          <>
-                            <span>Table of Contents</span>
-                            <i onClick={() => handleToggleContent(item._id)}>
-                              {item.toggleContent ? (
-                                <BsChevronUp />
-                              ) : (
-                                <BsChevronDown />
-                              )}
-                            </i>
-                          </>
+                      <AssignDocumentMap />
+                      <div>
+                        <div className={styles.table__of__contents__header}>
+                          <span>Table of Contents</span>
+                          <i onClick={() => handleToggleContent(item._id)}>
+                            {item.toggleContent ? (
+                              <BsChevronUp />
+                            ) : (
+                              <BsChevronDown />
+                            )}
+                          </i>
+                        </div>
+                        {contentOfDocument && (
+                          <Contents
+                            contents={contentOfDocument}
+                            toggleContent={item.toggleContent}
+                          />
                         )}
                       </div>
-                      {contentOfDocument && (
-                        <Contents
-                          contents={contentOfDocument}
-                          toggleContent={item.toggleContent}
-                        />
-                      )}
+                      <AsignTask />
+                      <AssignLocation />
+                      <AssignTime />
                     </div>
-                    <AsignTask />
-                    <AssignLocation />
-                    <AssignTime />
-                  </div>
-                ))}
-            </div>
-          )}
-        </>
+                  ))}
+              </div>
+            )}
+          </>
+        )}
 
         <div className="bottom-line">
           <span></span>

@@ -1,7 +1,7 @@
 import { useRef } from "react";
 import styles from "./contents.module.css";
 
-const Contents = ({ contents, toggleContent }) => {
+const Contents = ({ contents, toggleContent, feature }) => {
   const contentRef = useRef(null);
 
   return (
@@ -17,10 +17,12 @@ const Contents = ({ contents, toggleContent }) => {
         <ol>
           {contents.length > 0 ? (
             contents.map((item, index) => (
-              <li key={item._id} data-index={index + 1}>
-                <span>
-                  <a>{item.data}</a>
-                </span>
+              <li key={item._id} data-index={item.id}>
+                {feature === "doc" && (
+                  <span>
+                    <a>{item.data}</a>
+                  </span>
+                )}
               </li>
             ))
           ) : (

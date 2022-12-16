@@ -21,18 +21,18 @@ const TemplatesPage = () => {
   console.log("mining templateeeeeeeeeeeeeeeeeee", minedTemplates);
 
   useEffect(() => {
+    const savedTemplates = {
+      company_id: userDetail?.portfolio_info.org_id,
+    };
+
     const mineData = {
       company_id: userDetail?.portfolio_info.org_id,
       created_by: userDetail?.portfolio_info.username,
     };
 
-    const draftData = {
-      company_id: userDetail?.portfolio_info.org_id,
-    };
-
     dispatch(mineTemplates(mineData));
     /*  dispatch(mineTemplates(draftData)); */
-    dispatch(draftsTemplate(draftData));
+    dispatch(draftsTemplate(savedTemplates));
   }, []);
 
   return (
@@ -44,8 +44,8 @@ const TemplatesPage = () => {
               cardBgColor="#1ABC9C"
               title="drafts"
               Card={TemplateCard}
-              cardItems={draftedTemplates}
-              status={draftsTemplateStatu}
+              cardItems={minedTemplates}
+              status={mineStatus}
             />
           </div>
           <div id="saved-templates">
@@ -53,8 +53,8 @@ const TemplatesPage = () => {
               cardBgColor="#1ABC9C"
               title="saved templates"
               Card={TemplateCard}
-              cardItems={minedTemplates}
-              status={mineStatus}
+              cardItems={draftedTemplates}
+              status={draftsTemplateStatu}
             />
           </div>
         </ManageFiles>

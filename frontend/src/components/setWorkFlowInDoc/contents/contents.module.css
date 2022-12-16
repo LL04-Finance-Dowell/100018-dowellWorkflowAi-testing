@@ -14,6 +14,7 @@
 .content__box ol {
   padding: 0;
   margin-bottom: 0;
+
   display: flex;
   flex-direction: column;
   position: relative;
@@ -32,8 +33,8 @@
 
 .content__box ol li {
   text-align: start;
-  /* margin-bottom: 8px; */
   list-style: none;
+  /* margin-bottom: 8px; */
   padding: 0;
   cursor: pointer;
   width: fit-content;
@@ -43,7 +44,7 @@
 }
 
 .content__box ol li::before {
-  content: "" attr(data-index) ". ";
+  content: "" attr(data-index);
   margin-right: 8px;
 }
 

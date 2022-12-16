@@ -52,7 +52,7 @@ export const draftsTemplate = createAsyncThunk(
   "template/drafts",
   async (data) => {
     try {
-      const res = await templateServices.mineTemplates(data);
+      const res = await templateServices.draftsTemplate(data);
 
       return res.data;
     } catch (error) {

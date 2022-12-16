@@ -30,7 +30,11 @@ const initialState = {
 export const documentSlice = createSlice({
   name: "document",
   initialState,
-  reducers: {},
+  reducers: {
+    setContentOfDocument: (state, action) => {
+      state.contentOfDocument = action.payload;
+    },
+  },
   extraReducers: (builder) => {
     //createDocument
     builder.addCase(createDocument.pending, (state) => {
@@ -122,6 +126,6 @@ export const documentSlice = createSlice({
 });
 
 // Action creators are generated for each case reducer function
-export const {} = documentSlice.actions;
+export const { setContentOfDocument } = documentSlice.actions;
 
 export default documentSlice.reducer;
