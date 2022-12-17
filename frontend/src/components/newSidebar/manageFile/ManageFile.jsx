@@ -16,7 +16,7 @@ const ManageFile = () => {
   const { userDetail } = useSelector((state) => state.auth);
 
   const { minedWorkflows } = useSelector((state) => state.workflow);
-  const { minedTemplates } = useSelector((state) => state.template);
+  const { savedTemplatesItems } = useSelector((state) => state.template);
   const { minedDocuments } = useSelector((state) => state.document);
 
   const [test, setTest] = useState(manageFileItems);
@@ -27,12 +27,12 @@ const ManageFile = () => {
       company_id: userDetail?.portfolio_info.org_id,
     };
 
-    const savedTemplatesData = {
+    const savedTemplatesItemsData = {
       company_id: userDetail?.portfolio_info.org_id,
     };
 
     dispatch(mineDocuments(data));
-    dispatch(savedTemplates(savedTemplatesData));
+    dispatch(savedTemplates(savedTemplatesItemsData));
     dispatch(mineWorkflow(data));
   }, []);
 
@@ -49,7 +49,9 @@ const ManageFile = () => {
           ? {
               ...item,
               count:
-                minedTemplates?.length > 0 ? minedTemplates?.length : "000",
+                savedTemplatesItems?.length > 0
+                  ? savedTemplatesItems?.length
+                  : "000",
             }
           : item.parent.includes("Workflows")
           ? {
@@ -60,7 +62,7 @@ const ManageFile = () => {
           : item
       )
     );
-  }, [minedDocuments, minedTemplates, minedWorkflows]);
+  }, [minedDocuments, savedTemplatesItems, minedWorkflows]);
 
   return (
     <div className={sidebarStyles.feature__box}>

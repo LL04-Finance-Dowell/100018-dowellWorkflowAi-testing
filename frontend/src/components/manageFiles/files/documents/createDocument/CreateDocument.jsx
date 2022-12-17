@@ -21,7 +21,7 @@ const CreateDocument = ({ handleToggleOverlay }) => {
   const { userDetail } = useSelector((state) => state.auth);
 
   const dispatch = useDispatch();
-  const { draftedTemplates, draftsTemplateStatu } = useSelector(
+  const { savedTemplatesItems, savedTemplatesItemsStatus } = useSelector(
     (state) => state.template
   );
   const { status: documentStatus } = useSelector((state) => state.document);
@@ -74,13 +74,13 @@ const CreateDocument = ({ handleToggleOverlay }) => {
     dispatch(savedTemplates(data));
   }, []);
 
-  console.log("dox statussss", draftedTemplates);
+  console.log("dox statussss", savedTemplatesItems);
 
   return (
     <Overlay title="Create Document" handleToggleOverlay={handleToggleOverlay}>
-      {draftsTemplateStatu === "pending" ? (
+      {savedTemplatesItemsStatus === "pending" ? (
         <Spinner />
-      ) : draftedTemplates ? (
+      ) : savedTemplatesItems ? (
         <form onSubmit={handleSubmit(onSubmit)}>
           <div id="template" className={styles.dropdown__container}>
             <label onClick={handleClickLabel} htmlFor="template">
@@ -93,7 +93,7 @@ const CreateDocument = ({ handleToggleOverlay }) => {
                 tabIndex={-98}
                 {...register("template")}
               >
-                {draftedTemplates.map((item) => (
+                {savedTemplatesItems.map((item) => (
                   <option key={item._id} value={item._id}>
                     {item.template_name}
                   </option>
@@ -111,7 +111,7 @@ const CreateDocument = ({ handleToggleOverlay }) => {
             <div className={styles.dropdown__option__container}>
               <Collapse open={toggleDropdown}>
                 <div role="listbox" className={styles.dropdown__option__box}>
-                  {draftedTemplates.map((item) => (
+                  {savedTemplatesItems.map((item) => (
                     <div
                       onClick={() => handleOptionClick(item)}
                       className={styles.dropdown__option__content}

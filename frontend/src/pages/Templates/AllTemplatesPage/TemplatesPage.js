@@ -14,8 +14,12 @@ import TemplateCard from "../../../components/hoverCard/templateCard/TemplateCar
 const TemplatesPage = () => {
   const { userDetail } = useSelector((state) => state.auth);
 
-  const { minedTemplates, mineStatus, draftsTemplateStatu, draftedTemplates } =
-    useSelector((state) => state.template);
+  const {
+    minedTemplates,
+    mineStatus,
+    savedTemplatesItemsStatus,
+    savedTemplatesItems,
+  } = useSelector((state) => state.template);
   const dispatch = useDispatch();
 
   console.log("mining templateeeeeeeeeeeeeeeeeee", minedTemplates);
@@ -53,8 +57,8 @@ const TemplatesPage = () => {
               cardBgColor="#1ABC9C"
               title="saved templates"
               Card={TemplateCard}
-              cardItems={draftedTemplates}
-              status={draftsTemplateStatu}
+              cardItems={savedTemplatesItems}
+              status={savedTemplatesItemsStatus}
             />
           </div>
         </ManageFiles>

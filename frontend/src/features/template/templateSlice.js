@@ -10,11 +10,11 @@ const initialState = {
   templateEditor: null,
   detailTemplate: null,
   minedTemplates: [],
-  draftedTemplates: [],
+  savedTemplatesItems: [],
   status: "idle",
   editorStatus: "idle",
   mineStatus: "idle",
-  draftsTemplateStatu: "idle",
+  savedTemplatesItemsStatus: "idle",
   errorMessage: null,
 };
 
@@ -60,14 +60,14 @@ export const templateSlice = createSlice({
     });
     //savedTemplates
     builder.addCase(savedTemplates.pending, (state) => {
-      state.draftsTemplateStatu = "pending";
+      state.savedTemplatesItemsStatus = "pending";
     });
     builder.addCase(savedTemplates.fulfilled, (state, action) => {
-      state.draftsTemplateStatu = "succeeded";
-      state.draftedTemplates = action.payload;
+      state.savedTemplatesItemsStatus = "succeeded";
+      state.savedTemplatesItems = action.payload;
     });
     builder.addCase(savedTemplates.rejected, (state, action) => {
-      state.draftsTemplateStatu = "failed";
+      state.savedTemplatesItemsStatus = "failed";
       state.errorMessage = action.payload;
     });
   },
