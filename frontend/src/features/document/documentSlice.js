@@ -114,7 +114,7 @@ export const documentSlice = createSlice({
     });
     builder.addCase(contentDocument.fulfilled, (state, action) => {
       state.contentOfDocumentStatus = "succeeded";
-      state.contentOfDocument = action.payload.content
+      state.contentOfDocument = action.payload?.content
         ? action.payload.content.map((item) => ({ ...item, _id: uuidv4() }))
         : [];
     });

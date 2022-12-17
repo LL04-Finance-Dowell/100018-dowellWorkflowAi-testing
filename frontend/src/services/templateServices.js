@@ -25,7 +25,7 @@ export class TemplateServices {
     return httpTemplate.post("/mine/", data);
   };
 
-  draftsTemplate = (data) => {
+  savedTemplates = (data) => {
     return httpTemplate.post("/saved/", data);
   };
 }

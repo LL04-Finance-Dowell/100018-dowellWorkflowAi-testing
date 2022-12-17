@@ -66,6 +66,7 @@
   font-weight: 600;
   flex-grow: 1;
   text-transform: capitalize;
+  margin-bottom: 20px;
 }
 
 @media (max-width: 768px) {

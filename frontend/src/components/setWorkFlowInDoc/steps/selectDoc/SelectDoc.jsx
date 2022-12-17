@@ -56,7 +56,7 @@ const SelectDoc = () => {
           modules={[Navigation, Pagination]}
           className="select-doc"
         >
-          {minedDocuments.map((item, index) => (
+          {[...minedDocuments]?.reverse().map((item, index) => (
             <SwiperSlide key={item.id}>
               <div className={styles.swiper__slide__box}>
                 <div className={`${styles.swiper__slide__features} animate`}>

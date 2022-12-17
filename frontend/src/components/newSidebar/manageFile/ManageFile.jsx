@@ -5,7 +5,10 @@ import CollapseItem from "../collapseItem/CollapseItem";
 import { v4 as uuidv4 } from "uuid";
 import sidebarStyles from "../sidebar.module.css";
 import { mineDocuments } from "../../../features/document/asyncThunks";
-import { mineTemplates } from "../../../features/template/asyncThunks";
+import {
+  mineTemplates,
+  savedTemplates,
+} from "../../../features/template/asyncThunks";
 import { mineWorkflow } from "../../../features/workflow/asyncTHunks";
 
 const ManageFile = () => {
@@ -18,16 +21,18 @@ const ManageFile = () => {
 
   const [test, setTest] = useState(manageFileItems);
 
-  console.log("mined docccccccccccccccc", minedDocuments);
-
   useEffect(() => {
     const data = {
       created_by: userDetail?.userinfo.username,
       company_id: userDetail?.portfolio_info.org_id,
     };
 
+    const savedTemplatesData = {
+      company_id: userDetail?.portfolio_info.org_id,
+    };
+
     dispatch(mineDocuments(data));
-    dispatch(mineTemplates(data));
+    dispatch(savedTemplates(savedTemplatesData));
     dispatch(mineWorkflow(data));
   }, []);
 

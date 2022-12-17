@@ -7,7 +7,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
 import {
   mineTemplates,
-  draftsTemplate,
+  savedTemplates,
 } from "../../../features/template/asyncThunks";
 import TemplateCard from "../../../components/hoverCard/templateCard/TemplateCard";
 
@@ -21,7 +21,7 @@ const TemplatesPage = () => {
   console.log("mining templateeeeeeeeeeeeeeeeeee", minedTemplates);
 
   useEffect(() => {
-    const savedTemplates = {
+    const savedTemplatesData = {
       company_id: userDetail?.portfolio_info.org_id,
     };
 
@@ -32,7 +32,7 @@ const TemplatesPage = () => {
 
     dispatch(mineTemplates(mineData));
     /*  dispatch(mineTemplates(draftData)); */
-    dispatch(draftsTemplate(savedTemplates));
+    dispatch(savedTemplates(savedTemplatesData));
   }, []);
 
   return (

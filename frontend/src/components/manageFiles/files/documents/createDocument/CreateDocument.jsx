@@ -7,7 +7,7 @@ import { BsArrowRightShort } from "react-icons/bs";
 import Collapse from "../../../../../layouts/collapse/Collapse";
 import { useDispatch, useSelector } from "react-redux";
 import {
-  draftsTemplate,
+  savedTemplates,
   mineTemplates,
 } from "../../../../../features/template/asyncThunks";
 import { useEffect } from "react";
@@ -71,7 +71,7 @@ const CreateDocument = ({ handleToggleOverlay }) => {
       company_id: userDetail?.portfolio_info.org_id,
     };
 
-    dispatch(draftsTemplate(data));
+    dispatch(savedTemplates(data));
   }, []);
 
   console.log("dox statussss", draftedTemplates);

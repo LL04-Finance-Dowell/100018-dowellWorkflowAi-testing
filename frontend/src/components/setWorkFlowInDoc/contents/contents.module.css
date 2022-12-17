@@ -3,6 +3,7 @@
   overflow: hidden;
   z-index: 10000;
   overflow-x: auto;
+  cursor: default;
 }
 
 .content__box {
@@ -11,11 +12,36 @@
   background: #fff;
 }
 
+.content__box table thead tr th {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--e-global-color-secondary);
+}
+
+.content__box table tbody tr:hover th {
+  color: var(--e-global-color-accent);
+}
+
+.table__id {
+  width: 10%;
+  text-align: start;
+  padding-left: 10px;
+}
+
+.table__content {
+  width: 90%;
+  text-align: start;
+}
+
+.current__table__item {
+  color: var(--e-global-color-accent);
+}
+
 .content__box ol {
   padding: 0;
   margin-bottom: 0;
-
   display: flex;
+  align-items: center;
   flex-direction: column;
   position: relative;
 }

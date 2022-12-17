@@ -3,7 +3,7 @@ import {
   createTemplate,
   mineTemplates,
   detailTemplate,
-  draftsTemplate,
+  savedTemplates,
 } from "./asyncThunks";
 
 const initialState = {
@@ -58,15 +58,15 @@ export const templateSlice = createSlice({
       state.mineStatus = "failed";
       state.errorMessage = action.payload;
     });
-    //draftsTemplate
-    builder.addCase(draftsTemplate.pending, (state) => {
+    //savedTemplates
+    builder.addCase(savedTemplates.pending, (state) => {
       state.draftsTemplateStatu = "pending";
     });
-    builder.addCase(draftsTemplate.fulfilled, (state, action) => {
+    builder.addCase(savedTemplates.fulfilled, (state, action) => {
       state.draftsTemplateStatu = "succeeded";
       state.draftedTemplates = action.payload;
     });
-    builder.addCase(draftsTemplate.rejected, (state, action) => {
+    builder.addCase(savedTemplates.rejected, (state, action) => {
       state.draftsTemplateStatu = "failed";
       state.errorMessage = action.payload;
     });

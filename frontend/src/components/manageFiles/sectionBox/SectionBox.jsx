@@ -29,7 +29,7 @@ const SectionBox = ({ cardItems, title, cardBgColor, Card, status }) => {
         <div className={styles.content__box}>
           <h2 className={maneFilesStyles.header}>{title}</h2>
           {status === "pending" ? (
-            <div>
+            <div style={{ marginTop: "15px" }}>
               <BookSpinner />
             </div>
           ) : (

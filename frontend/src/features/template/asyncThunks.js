@@ -48,11 +48,11 @@ export const mineTemplates = createAsyncThunk("template/mine", async (data) => {
   }
 });
 
-export const draftsTemplate = createAsyncThunk(
-  "template/drafts",
+export const savedTemplates = createAsyncThunk(
+  "template/saved",
   async (data) => {
     try {
-      const res = await templateServices.draftsTemplate(data);
+      const res = await templateServices.savedTemplates(data);
 
       return res.data;
     } catch (error) {

@@ -9,6 +9,8 @@ import useScrollPosition from "../../../hooks/useScrollPosition";
 import { useCallback } from "react";
 import { useSelector } from "react-redux";
 import { LoadingSpinner } from "../../LoadingSpinner/LoadingSpinner";
+import { ImPencil2 } from "react-icons/im";
+import { animate, motion } from "framer-motion";
 
 const ContentMapOfDoc = () => {
   const { contentOfDocumentStatus, contentOfDocument } = useSelector(
@@ -42,6 +44,15 @@ const ContentMapOfDoc = () => {
     isFixedCallback();
   }, [isFixedCallback]); */
 
+  const variants = {
+    initial: {
+      x: "-100%",
+    },
+    animate: {
+      x: "0%",
+    },
+  };
+
   return (
     <div ref={ref} className={styles.container}>
       <div className={`${styles.box} ${isFixed && styles.is__fixed}`}>
@@ -52,8 +63,30 @@ const ContentMapOfDoc = () => {
           className={styles.header__box}
           onClick={handleToggleContent}
         >
-          <h4 className={styles.header}>Content Map of selected Doucument</h4>
-          <i>{toggleContent ? <IoIosArrowUp /> : <IoIosArrowDown />}</i>
+          {contentOfDocument &&
+          wfToDocument.document &&
+          contentOfDocumentStatus !== "pending" ? (
+            <>
+              <h4 className={styles.header}>
+                Content Map of {wfToDocument?.document?.document_name}
+              </h4>
+              <i>{toggleContent ? <IoIosArrowUp /> : <IoIosArrowDown />}</i>
+            </>
+          ) : (
+            <div className={styles.line__box}>
+              <motion.div
+                variants={variants}
+                initial="initial"
+                animate={contentOfDocumentStatus === "pending" && "animate"}
+                transition={{ duration: 2, repeat: Infinity }}
+                className={styles.line}
+              >
+                <i>
+                  <ImPencil2 color="black" size={25} />
+                </i>
+              </motion.div>
+            </div>
+          )}
         </div>
         {contentOfDocument && wfToDocument.document && (
           <Contents

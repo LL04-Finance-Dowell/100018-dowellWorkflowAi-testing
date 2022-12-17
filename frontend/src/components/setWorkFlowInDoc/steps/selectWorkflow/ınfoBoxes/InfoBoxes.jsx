@@ -124,7 +124,7 @@ const InfoBoxes = () => {
               />
 
               <ol className={styles.content__box}>
-                {infoBox.contents.map((item) => (
+                {[...infoBox.contents].reverse().map((item) => (
                   <li
                     onClick={() => addToSelectedWorkFlows(item)}
                     key={item._id}
