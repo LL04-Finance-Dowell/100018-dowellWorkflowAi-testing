@@ -26,6 +26,7 @@ def create_template(request):
             page,
             request.data["created_by"],
             request.data["company_id"],
+            request.data["data_type"],
         )
     )
     print(res)
@@ -43,7 +44,7 @@ def create_template(request):
                 "team_member_ID": "22689044433",
                 "function_ID": "ABCDE",
                 "command": "update",
-                "update_field": {"template_name": "", "content": "", "page": ""},
+                "update_field": {"template_name": "", "content": "", "page": "","data_type":""},
             },
         }
         try:
