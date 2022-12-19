@@ -28,8 +28,9 @@ const CreateWorkflows = ({ handleToggleOverlay }) => {
   const { userDetail } = useSelector((state) => state.auth);
 
   const dispatch = useDispatch();
-  const { workflow, status, workflowDetailStatus, updateWorkflowStatus } =
-    useSelector((state) => state.workflow);
+  const { status, workflowDetailStatus, updateWorkflowStatus } = useSelector(
+    (state) => state.workflow
+  );
   const { currentWorkflow } = useSelector((state) => state.app);
 
   console.log("currentWorkflow", currentWorkflow);
@@ -39,8 +40,6 @@ const CreateWorkflows = ({ handleToggleOverlay }) => {
   const [currentTableCell, setCurrentTableCall] = useState(null);
 
   const { currentUser } = useUserContext();
-
-  console.log("currentUSer0", currentUser);
 
   const { register, handleSubmit, reset, setValue } = useForm();
 
@@ -65,18 +64,6 @@ const CreateWorkflows = ({ handleToggleOverlay }) => {
     reset();
   };
 
-  /* const handleRemoveInternalTemplate = (id) => {
-    setInternalWorkflows((prev) => prev.filter((item) => item.id !== id));
-  }; */
-
-  /*   const handleEditInternalTemplate = (currentİtem) => {
-    setCurrentTableCall(currentİtem);
-
-    stepNameRef.current?.click();
-    setValue("step_name", currentİtem.step_name);
-    setValue("role", currentİtem.role);
-  };
- */
   const handleWorkflowChange = (e) => {
     setWorkflowTitle(e.target.value);
   };
@@ -134,8 +121,6 @@ const CreateWorkflows = ({ handleToggleOverlay }) => {
         steps,
       };
 
-      console.log("dataaaaaaaaaaaaaaaaaaa", data);
-
       dispatch(createWorkflow({ data, notify, handleAfterCreated }));
     }
   };
@@ -177,51 +162,6 @@ const CreateWorkflows = ({ handleToggleOverlay }) => {
             </label>
             <input value={workflowTitle} onChange={handleWorkflowChange} />
           </div>
-          {/*   <table>
-            <thead>
-              <tr>
-                <th>step name</th>
-                <th>role</th>
-              </tr>
-            </thead>
-            <tbody>
-              {internalWorkflows.map((item) => (
-                <tr
-                  className={
-                    item._id === currentTableCell?._id && styles.editing__ceil
-                  }
-                  key={item._id}
-                >
-                  <th>{item.step_name}</th>
-                  <th>
-                    <span>{item.role}</span>
-                    <div className={styles.table__features__box}>
-                      {currentWorkflow && (
-                        <span
-                          onClick={() => handleEditInternalTemplate(item)}
-                          className={styles.edit__item__button}
-                        >
-                          <i>
-                            <MdModeEditOutline color="green" size={16} />
-                          </i>
-                        </span>
-                      )}
-                      {!currentWorkflow && (
-                        <span
-                          onClick={() => handleRemoveInternalTemplate(item.id)}
-                          className={styles.remove__item__button}
-                        >
-                          <i>
-                            <RiDeleteBinLine color="red" size={16} />
-                          </i>
-                        </span>
-                      )}
-                    </div>
-                  </th>
-                </tr>
-              ))}
-            </tbody>
-          </table> */}
           <StepTable
             currentTableCell={currentTableCell}
             internalWorkflows={internalWorkflows}
@@ -286,87 +226,3 @@ const CreateWorkflows = ({ handleToggleOverlay }) => {
 };
 
 export default CreateWorkflows;
-
-{
-  /* <Overlay title="Workflows Form" handleToggleOverlay={handleToggleOverlay}>
-<div className={styles.form__container}>
-  <div className={styles.workflow__title__box}>
-    <h5 className={styles.workflow__title}>Workflow Title *</h5>
-    <input
-      value={workflowTitle}
-      required
-      onChange={(e) => handleWorkflowChange(e)}
-    />
-  </div>
-  <div className={styles.form__box}>
-   
-    <table>
-      <thead>
-        <tr>
-          <th>step name</th>
-          <th>role</th>
-          <th></th>
-        </tr>
-      </thead>
-      <tbody>
-        {isStep ? (
-          internalWorkflows.map((item) => (
-            <tr key={item.id}>
-              <th>{item.stepName}</th>
-              <th>{item.role}</th>
-              <th onClick={() => handleRemoveInternalTemplate(item.id)}>
-                <button className={styles.remove__step__button}>X</button>
-              </th>
-            </tr>
-          ))
-        ) : (
-          <tr>
-            <td className={styles.no__step} colSpan={4}>
-              No Step
-            </td>
-          </tr>
-        )}
-      </tbody>
-    </table>
-    <form onSubmit={handleSubmit(onSubmit)}>
-      <div className={styles.input__box}>
-        <label htmlFor="stepName">Step name</label>
-        <input
-          required
-          id="stepName"
-          {...register("stepName")}
-          placeholder="Step Name"
-        />
-      </div>
-      <div className={styles.input__box}>
-        <label htmlFor="role">Role</label>
-        <input
-          required
-          id="role"
-          {...register("role")}
-          placeholder="Role"
-        />
-      </div>
-      <button
-        type="submit"
-        className={`${styles.step__add__button} ${styles.button}`}
-      >
-        Add
-      </button>
-    </form>
-    <div className={styles.footer__button__box}>
-      <button
-        onClick={handleToggleOverlay}
-        className={`${styles.cancel__button} ${styles.button}`}
-      >
-        cancel
-      </button>
-      <button className={`${styles.add__button} ${styles.button}`}>
-        add
-      </button>
-    </div>
-  </div>
-</div>
-</Overlay>
- */
-}

@@ -66,6 +66,11 @@ export const appSlice = createSlice({
         action.payload,
       ];
     },
+    removeFromSelectedWorkflowsToDoc: (state, action) => {
+      state.selectedWorkflowsToDoc = state.selectedWorkflowsToDoc.filter(
+        (item) => item._id !== action.payload
+      );
+    },
     setDropdowndToggle: (state, action) => {
       state.dropdownToggle = action.payload;
     },
@@ -93,6 +98,7 @@ export const {
   setWfToDocument,
   setDropdowndToggle,
   resetSetWorkflows,
+  removeFromSelectedWorkflowsToDoc,
 } = appSlice.actions;
 
 export default appSlice.reducer;

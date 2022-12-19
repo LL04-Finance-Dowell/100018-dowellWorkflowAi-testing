@@ -12,12 +12,14 @@ import WorkflowLayout from "../../layouts/WorkflowLayout/WorkflowLayout";
 import { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { resetSetWorkflows } from "../../features/app/appSlice";
+import { setContentOfDocument } from "../../features/document/documentSlice";
 
 const SetWorkflowInDoc = () => {
   const dispatch = useDispatch();
 
   useEffect(() => {
     dispatch(resetSetWorkflows());
+    dispatch(setContentOfDocument(null));
   }, []);
 
   return (

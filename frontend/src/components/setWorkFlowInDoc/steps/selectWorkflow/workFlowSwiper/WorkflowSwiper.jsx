@@ -6,8 +6,13 @@ import "swiper/css";
 import "swiper/css/navigation";
 import swiper from "./swiper.css";
 import { useDispatch, useSelector } from "react-redux";
-import { setWfToDocument } from "../../../../../features/app/appSlice";
+import {
+  removeFromSelectedWorkflowsToDoc,
+  setSelectedWorkflowsToDoc,
+  setWfToDocument,
+} from "../../../../../features/app/appSlice";
 import { contentDocument } from "../../../../../features/document/asyncThunks";
+import { IoIosRemoveCircleOutline } from "react-icons/io";
 
 const WorkflowSwiper = ({ loop, perSlide }) => {
   const dispatch = useDispatch();
@@ -15,6 +20,8 @@ const WorkflowSwiper = ({ loop, perSlide }) => {
   const { selectedWorkflowsToDoc, currentDocToWfs } = useSelector(
     (state) => state.app
   );
+
+  console.log("selescscsc", selectedWorkflowsToDoc);
 
   const handleConnectWfToDoc = () => {
     dispatch(setWfToDocument());
@@ -25,12 +32,17 @@ const WorkflowSwiper = ({ loop, perSlide }) => {
     }
   };
 
+  const handleRemoveWorflow = (id) => {
+    console.log("iddddddd", id);
+    dispatch(removeFromSelectedWorkflowsToDoc(id));
+  };
+
   return (
     <div className={styles.add__container}>
       <Swiper
         loop={loop}
         slidesPerView={perSlide}
-        spaceBetween={10}
+        spaceBetween={5}
         pagination={{
           clickable: { loop },
         }}
@@ -39,8 +51,11 @@ const WorkflowSwiper = ({ loop, perSlide }) => {
         className="select-workflow"
       >
         {selectedWorkflowsToDoc.map((selectedWorkflow) => (
-          <SwiperSlide key={selectedWorkflow.id}>
+          <SwiperSlide key={selectedWorkflow._id}>
             {selectedWorkflow.workflows?.workflow_title}
+            <i onClick={() => handleRemoveWorflow(selectedWorkflow._id)}>
+              <IoIosRemoveCircleOutline />
+            </i>
           </SwiperSlide>
         ))}
       </Swiper>

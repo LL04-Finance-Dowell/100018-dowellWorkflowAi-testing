@@ -19,7 +19,7 @@ const SelectDoc = () => {
   const dispatch = useDispatch();
   const { minedDocuments, mineStatus } = useSelector((state) => state.document);
   const { userDetail } = useSelector((state) => state.auth);
-  const { wfToDocument } = useSelector((state) => state.app);
+  const { currentDocToWfs } = useSelector((state) => state.app);
 
   useEffect(() => {
     const data = {
@@ -63,9 +63,13 @@ const SelectDoc = () => {
                   <p className={styles.features__title}>{item.document_name}</p>
                   <button
                     onClick={() => handleAddDocument(item)}
-                    className={styles.features__button}
+                    className={`${styles.features__button} ${
+                      item._id === currentDocToWfs?._id && styles.selected
+                    }`}
                   >
-                    click here
+                    {item._id === currentDocToWfs?._id
+                      ? "selected"
+                      : "click here"}
                   </button>
                 </div>
               </div>

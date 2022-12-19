@@ -63,9 +63,7 @@ const ContentMapOfDoc = () => {
           className={styles.header__box}
           onClick={handleToggleContent}
         >
-          {contentOfDocument &&
-          wfToDocument.document &&
-          contentOfDocumentStatus !== "pending" ? (
+          {contentOfDocument && contentOfDocumentStatus !== "pending" ? (
             <>
               <h4 className={styles.header}>
                 Content Map of {wfToDocument?.document?.document_name}
@@ -88,7 +86,7 @@ const ContentMapOfDoc = () => {
             </div>
           )}
         </div>
-        {contentOfDocument && wfToDocument.document && (
+        {contentOfDocument && (
           <Contents
             feature="doc"
             toggleContent={toggleContent}

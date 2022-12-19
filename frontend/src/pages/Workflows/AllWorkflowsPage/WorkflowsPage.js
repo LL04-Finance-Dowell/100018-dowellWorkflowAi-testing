@@ -27,8 +27,6 @@ const WorkflowsPage = () => {
     dispatch(mineWorkflow(data));
   }, []);
 
-  console.log("workflowwmining", minedWorkflows);
-
   return (
     <WorkflowLayout>
       <div id="new-workflow">

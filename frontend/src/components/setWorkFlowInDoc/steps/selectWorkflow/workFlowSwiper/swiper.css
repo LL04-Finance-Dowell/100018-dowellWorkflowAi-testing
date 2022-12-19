@@ -4,6 +4,14 @@
   /* min-height: 100px !important; */
 }
 
+.select-workflow i {
+  position: absolute;
+  top: 0;
+  right: 5px;
+  cursor: pointer;
+  color: red;
+}
+
 .select-workflow .swiper-slide {
   background-color: #ecf0f1;
   min-height: 70px !important;

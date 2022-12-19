@@ -1,9 +1,9 @@
-import { useState, useEffect, useRef, memo, useMemo, useCallback } from "react";
+import { useState, useEffect, useRef, memo, useCallback } from "react";
 import styles from "./infoBoxes.module.css";
 import { v4 as uuidv4 } from "uuid";
 import { GrAdd } from "react-icons/gr";
 import { MdOutlineRemove } from "react-icons/md";
-import { motion, useScroll, useTransform } from "framer-motion";
+import { useScroll, useTransform } from "framer-motion";
 import { useSelector, useDispatch } from "react-redux";
 import { mineWorkflow } from "../../../../../features/workflow/asyncTHunks";
 import { setSelectedWorkflowsToDoc } from "../../../../../features/app/appSlice";
@@ -18,7 +18,7 @@ const InfoBoxes = () => {
 
   const ref = useRef(null);
   const dispatch = useDispatch();
-  const { wfToDocument, currentDocToWfs, selectedWorkflowsToDoc } = useSelector(
+  const { currentDocToWfs, selectedWorkflowsToDoc } = useSelector(
     (state) => state.app
   );
   const { minedWorkflows, mineStatus: wfMineStatus } = useSelector(
@@ -26,7 +26,6 @@ const InfoBoxes = () => {
   );
 
   const [compInfoBoxes, setCompInfoBoxes] = useState(infoBoxes);
-  const [searchValue, setSearchValue] = useState("");
 
   useEffect(() => {
     dispatch(mineWorkflow);
@@ -81,12 +80,6 @@ const InfoBoxes = () => {
       alert("u have to pick document first");
     }
   };
-
-  const handleSearch = (e, id) => {
-    setSearchValue(e.target.value);
-  };
-
-  console.log(compInfoBoxes, "infoooooooooooooooo");
 
   return (
     <div ref={ref} style={{ y: y }} className={styles.container}>

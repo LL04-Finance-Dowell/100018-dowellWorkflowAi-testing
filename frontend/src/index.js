@@ -4,11 +4,9 @@ import "./index.css";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 import { HashRouter } from "react-router-dom";
-import { UserContextProvider } from "./contexts/UserContext";
 import { ToastContainer } from "react-toastify";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "@fontsource/roboto"; // Defaults to weight 400.
-import { AppContextProvider } from "./contexts/AppContext";
 import { Provider } from "react-redux";
 import { persistor, store } from "./app/store";
 import { PersistGate } from "redux-persist/integration/react";
@@ -19,12 +17,8 @@ root.render(
     <HashRouter>
       <Provider store={store}>
         <PersistGate loading={null} persistor={persistor}>
-          <UserContextProvider>
-            <AppContextProvider>
-              <App />
-            </AppContextProvider>
-            <ToastContainer />
-          </UserContextProvider>
+          <App />
+          <ToastContainer />
         </PersistGate>
       </Provider>
     </HashRouter>

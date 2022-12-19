@@ -27,8 +27,6 @@ const Editor = () => {
     setToggleDecision(false);
   };
 
-  console.log("editorLinkkkkk insideeditor", editorLink);
-
   return (
     <>
       {(editorLink || docStatus === "pending" || tempStatus === "pending") && (

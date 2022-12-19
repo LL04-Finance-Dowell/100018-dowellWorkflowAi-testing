@@ -6,14 +6,9 @@ import Overlay from "../../../overlay/Overlay";
 import { BsArrowRightShort } from "react-icons/bs";
 import Collapse from "../../../../../layouts/collapse/Collapse";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  savedTemplates,
-  mineTemplates,
-} from "../../../../../features/template/asyncThunks";
+import { savedTemplates } from "../../../../../features/template/asyncThunks";
 import { useEffect } from "react";
 import { createDocument } from "../../../../../features/document/asyncThunks";
-import { LoadingSpinner } from "../../../../LoadingSpinner/LoadingSpinner";
-import SubmitButton from "../../../../submitButton/SubmitButton";
 import { setToggleManageFileForm } from "../../../../../features/app/appSlice";
 import Spinner from "../../../../spinner/Spinner";
 
@@ -24,17 +19,13 @@ const CreateDocument = ({ handleToggleOverlay }) => {
   const { savedTemplatesItems, savedTemplatesItemsStatus } = useSelector(
     (state) => state.template
   );
-  const { status: documentStatus } = useSelector((state) => state.document);
   const [currentOption, setCurrentOption] = useState(null);
   const [toggleDropdown, setToggleDropdown] = useState(false);
   const ref = useRef(null);
 
   const { register, handleSubmit, setValue, watch } = useForm();
-  const { template } = watch();
 
   const onSubmit = (data) => {
-    console.log("data", data);
-
     const { template } = data;
 
     dispatch(setToggleManageFileForm(false));
@@ -44,8 +35,6 @@ const CreateDocument = ({ handleToggleOverlay }) => {
       template_id: template,
       created_by: userDetail?.userinfo.username,
     };
-
-    console.log("create document", createDocumentData);
 
     dispatch(createDocument(createDocumentData));
   };
@@ -73,8 +62,6 @@ const CreateDocument = ({ handleToggleOverlay }) => {
 
     dispatch(savedTemplates(data));
   }, []);
-
-  console.log("dox statussss", savedTemplatesItems);
 
   return (
     <Overlay title="Create Document" handleToggleOverlay={handleToggleOverlay}>

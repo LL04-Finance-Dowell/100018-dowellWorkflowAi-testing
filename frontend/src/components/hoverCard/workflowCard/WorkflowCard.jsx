@@ -34,9 +34,6 @@ const WorkflowCard = ({ cardItem }) => {
   const BackSide = () => {
     return (
       <div className={styles.back__container}>
-        {/*   <Button onClick={() => handleDetailWorkflow(cardItem)}>
-          Click Here
-        </Button> */}
         {cardItem.workflows?.workflow_title ? (
           <>
             <>
@@ -58,13 +55,7 @@ const WorkflowCard = ({ cardItem }) => {
                   </tbody>
                 </table>
               </div>
-              {/*  <div key={item._id}>
-                  <p>
-                    {item.step_name} {item.role}
-                  </p>
-                </div> */}
             </>
-
             <div className={styles.button__group}>
               <a className={styles.delete}>
                 <RiDeleteBin6Line color="red" />

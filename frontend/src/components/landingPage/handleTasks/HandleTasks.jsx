@@ -5,7 +5,6 @@ import { IoMdArrowDropright } from "react-icons/io";
 import { IoMdArrowDropup } from "react-icons/io";
 
 const HandleTasks = ({ feature, tasks }) => {
-  const [isOpen, setIsOpen] = useState(false);
   const [compTasks, setCompTask] = useState(tasks);
 
   const handleToggle = (id) => {

@@ -1,28 +1,8 @@
 import styles from "./sectionBox.module.css";
 import maneFilesStyles from "../manageFiles.module.css";
-import HoverCard from "../../newHoverCard/HoverCard";
-import { useSelector } from "react-redux";
-import { useState } from "react";
-import { useEffect } from "react";
-import { LoadingSpinner } from "../../LoadingSpinner/LoadingSpinner";
 import BookSpinner from "../../bookSpinner/BookSpinner";
 
-const SectionBox = ({ cardItems, title, cardBgColor, Card, status }) => {
-  /* const [test, setTest] = useState("idle");
-
-  const { mineStatus: tempMineStatus } = useSelector((state) => state.template);
-  const { mineStatus: docMineStatus, draftStatu } = useSelector(
-    (state) => state.document
-  );
-  const { mineStatus: workflowStatus } = useSelector((state) => state.workflow);
-
-  useEffect(() => {
-    feature === "template" && setTest(tempMineStatus);
-    feature === "document" && setTest(docMineStatus);
-    feature === "document-draft" && setTest(draftStatu);
-    feature === "workflow" && setTest(workflowStatus);
-  }, [tempMineStatus, docMineStatus, draftStatu, workflowStatus]); */
-
+const SectionBox = ({ cardItems, title, Card, status }) => {
   return (
     <div className={styles.container}>
       <div className={styles.content__container}>

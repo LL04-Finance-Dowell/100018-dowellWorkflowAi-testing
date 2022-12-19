@@ -1,7 +1,6 @@
 import styles from "./stepTable.module.css";
 import { MdModeEditOutline } from "react-icons/md";
 import { RiDeleteBinLine } from "react-icons/ri";
-import { useRef } from "react";
 
 const StepTable = ({
   currentTableCell,
@@ -9,7 +8,6 @@ const StepTable = ({
   internalWorkflows,
   setInternalWorkflows,
   setValue,
-  currentWorkflow,
   stepNameRef,
 }) => {
   const handleEditInternalTemplate = (currentİtem) => {

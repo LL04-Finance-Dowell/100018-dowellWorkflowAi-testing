@@ -35,7 +35,6 @@ const TemplatesPage = () => {
     };
 
     dispatch(mineTemplates(mineData));
-    /*  dispatch(mineTemplates(draftData)); */
     dispatch(savedTemplates(savedTemplatesData));
   }, []);
 

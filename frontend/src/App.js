@@ -28,32 +28,6 @@ import NewWorkFlow from "./pages/Workflows/NewWorkflow/NewWorkFlow";
 import DraftF from "./pages/Workflows/DraftF/DraftF";
 import { dowellLoginUrl } from "./httpCommon/httpCommon";
 function App() {
-  const [searchParams, setSearchParams] = useSearchParams();
-  /*  const { currentUser, setCurrentUser } = useUserContext();
-  const [loading, setLoading] = useState(true);
-
-  useDowellLogin(setCurrentUser, setLoading);
-
-  if (loading) return <></>;
-
-  if (!currentUser)
-    return (
-      <Routes>
-        <Route path={"/"} element={<LandingPage />} />
-        <Route path={"*"} element={<>Page not found</>} />
-      </Routes>
-    ); */
-
-  /*   useEffect(() => {
-    if (!session) {
-      window.location.replace(dowellLoginUrl);
-    }
-  }, []); */
-
-  console.log(
-    "workssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss",
-    searchParams.get("id"))
-
   useDowellLogin();
 
   return (

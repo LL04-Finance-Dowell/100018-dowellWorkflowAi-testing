@@ -19,11 +19,6 @@ const DocumentsPage = () => {
   } = useSelector((state) => state.document);
   const dispatch = useDispatch();
 
-  console.log(
-    "orgidddddddddddddddddddddddddddddd",
-    userDetail?.portfolio_info.org_id
-  );
-
   useEffect(() => {
     const data = {
       company_id: userDetail?.portfolio_info.org_id,
