@@ -38,11 +38,12 @@ def create_document(request):  # Document Creation.
             document_name = "Untitled Document"
             created_by = request.data["created_by"]
             company_id=request.data['company_id']
+            data_type = request.data['data_type']
             #data = get_content_from_template_collection_with_that_template_id
             page = get_template_object(template_id)["page"]
             data = get_template_object(template_id)["content"]
             res = json.loads(
-                save_document(document_name, data, created_by, company_id,page)
+                save_document(document_name, data, created_by, company_id,page,data_type)
             )
             
             if res["isSuccess"]:
@@ -64,6 +65,7 @@ def create_document(request):  # Document Creation.
                                 "document_name":"",
                                 "content":"",
                                 "page":"",
+                                "data_type":data_type
                                 }
                         }
                         })

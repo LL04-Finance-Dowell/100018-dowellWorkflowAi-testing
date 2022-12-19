@@ -35,34 +35,23 @@ def create_workflow(request):  # Document Creation.
                 status=status.HTTP_404_NOT_FOUND,
             )
         else:
-            created_by =    form["created_by"]
-            company_id =    form['company_id']
-            wf_name =       form["wf_title"]
-            steps  =   form['steps']
-            
             data={
-                "workflow_title": wf_name,
+                "workflow_title": form["wf_title"],
+                "created_by" :  form["created_by"],
+                "company_id" :   form['company_id'],
+                "data_type": form['data_type'],
                 "steps": []
                         }
-            for step in steps:
+            for step in form['steps']:
                 data["steps"].append( 
                     {
                             "step_name"        : step['step_name'],
                             "role"        : step["role"],
                             "table_of_content":"",
-                            "skip"            : step['skip'], # True or False,
-                            "member_type"    : step['member_type'], #    values can be "TEAM_MEMBER" or "GUEST",
-                            "member_portfolio": step['member_portfolio'],
-                            "rights"        : step['rights'], #    values can be ["ADD/EDIT", "VIEW", "COMMENT", "APPROVE"],
-                            "display_before": step['display_before'], # true or false,
-                            "location"    :     "",
-                            "limit"    : step["limit"],
-                            "start_time": step['start_time'],
-                            "end_time":    step['end_time'],
-                            "reminder":step["reminder"]
+                            
                         }
                 ) 
-            res = json.loads(save_wf(data, created_by, company_id))
+            res = json.loads(save_wf(data))
             if res["isSuccess"]:
                 try:
                     return Response(
@@ -84,9 +73,13 @@ def update_workflow(request):  # Document Creation.
                 status=status.HTTP_200_OK,
             )
         else:
+            
             workflow={
+                "created_by" :    form["created_by"],
+                "company_id" :   form['company_id'],
                 "workflow_title": form["wf_title"],
                 "workflow_id": form["workflow_id"],
+                "data_type": form['data_type'],
                 "steps": []
                         }
             for step in form['steps']:
@@ -94,22 +87,24 @@ def update_workflow(request):  # Document Creation.
                     {
                             "step_name"        : step['step_name'],
                             "role"        : step["role"],
-                            "table_of_content":"",
-                            "skip"            : step['skip'], # True or False,
-                            "member_type"    : step['member_type'], #    values can be "TEAM_MEMBER" or "GUEST",
-                            "member_portfolio": step['member_portfolio'],
-                            "rights"        : step['rights'], #    values can be ["ADD/EDIT", "VIEW", "COMMENT", "APPROVE"],
-                            "display_before": step['display_before'], # true or false,
-                            "location"    :     "",
-                            "limit"    : step["limit"],
-                            "start_time": step['start_time'],
-                            "end_time":    step['end_time'],
-                            "reminder":step["reminder"]
+                            "table_of_content":step["table_of_content"],
+                            # "skip"            : step['skip'], # True or False,
+                            # "member_type"    : step['member_type'], #    values can be "TEAM_MEMBER" or "GUEST",
+                            # "member_portfolio": step['member_portfolio'],
+                            # "rights"        : step['rights'], #    values can be ["ADD/EDIT", "VIEW", "COMMENT", "APPROVE"],
+                            # "display_before": step['display_before'], # true or false,
+                            # "location"    :     "",
+                            # "limit"    : step["limit"],
+                            # "start_time": step['start_time'],
+                            # "end_time":    step['end_time'],
+                            # "reminder":step["reminder"]
                         }
-                ) 
-            res = json.loads(update_wf(form["workflow_id"], workflow['workflow_title'], workflow['steps']))
+                )
+            
+            updt_wf = json.loads(update_wf(form["workflow_id"], workflow['workflow_title'], workflow['steps']))
+            nw_wf = json.loads(save_wf({key: val for key, val in workflow.items() if key != 'workflow_id'}))
 
-            if res["isSuccess"]:
+            if updt_wf["isSuccess"]:
                 try:
                     return Response(
                         {"workflow":workflow},

@@ -303,7 +303,7 @@ def update_uuid_object(uuid_hash):
 # -------------------------------- Workflows-------------------
 
 
-def save_wf(workflows, user, company_id):
+def save_wf(workflows):
     url = "http://100002.pythonanywhere.com/"
     payload = json.dumps(
         {
@@ -312,8 +312,7 @@ def save_wf(workflows, user, company_id):
             "field": {
                 "eventId": get_event_id(),
                 "workflows": workflows,
-                "company_id": company_id,
-                "created_by": user,
+                
             },
             "update_field": {"order_nos": 21},
             "platform": "bangalore",
@@ -339,6 +338,7 @@ def update_wf(workflow_id, workflow_title,steps):
                 "eventId": get_event_id(),
                 "workflows":{
                         "workflow_title": workflow_title,
+                        "data_type":"Archive Data",
                         "steps": steps
                             },
             },
@@ -499,7 +499,7 @@ def get_template_list(company_id):
 
 
 # -------------------------- Document----------------------------------------
-def save_document(name, data, created_by, company_id,page):
+def save_document(name, data, created_by, company_id,page,data_type):
     url = "http://100002.pythonanywhere.com/"
     event_id = get_event_id()
     dd = datetime.now()
@@ -520,7 +520,8 @@ def save_document(name, data, created_by, company_id,page):
                 "reject_message": "",
                 "rejected_by": "",
                 "update_time": time,
-                "page":page
+                "page":page,
+                "data_type":data_type
             },
             "update_field": {"order_nos": 21},
             "platform": "bangalore",

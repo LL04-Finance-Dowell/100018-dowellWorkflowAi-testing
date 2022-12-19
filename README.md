@@ -531,19 +531,12 @@ Request Body
 {
     "created_by": "<user_name_of_authenticated_user>",
     "company_id": "<company_id_of_authorized_user>",
-
+    "data_type":"<data_type>",
     "wf_title":"<workflow_title>",
      'steps': [
-        {'step_name': 'step_one',
-        "rights":"<ADD/EDIT_or_VIEW_or_COMMENT_or_APPROVE>",
-        "display_before":"<true or false>",
-        "skip":"<True_or_False>",
-        "limit":"<No_limit>",
-        "start_time":"<START_DATE_AND_TIME>",
-        "end_time":"<END_DATE_AND_TIME>",
-        "member_portfolio":"<Portfolio_1>",
-        "member_type":"<TEAM_MEMBER_or_GUEST>"
-        'reminder': ''}]
+        {'step_name': 'step_name',
+        'role':role_name",}
+        ]
 }
 ```
 
@@ -583,7 +576,7 @@ Response-200
 
 ```
 {
-    "editor_link": "<link_to_the_editor>"
+    "workflow": "<detailed_workflow_data>"
 }
 
 ```
@@ -639,34 +632,22 @@ Request Body
 
 ```
 {
-    "workflow_id": "<id_specific_of_workflow>"
+    
+    "created_by": "<user_name_of_authenticated_user>",
+    "company_id": "<company_id_of_authorized_user>",
+    "data_type":"<data_type>",
+    "workflow_id": "<id_specific_of_workflow>",
     "workflow_title": "Workflow_title_new_or_existing",
     "steps": [
         {
             "step_name": "step_name_new_or_existing"
             "role": "role_new_or_existing"
-            "rights":"",
-            "display_before":"",
-            "skip":"",
-            "limit":"",
-            "start_time":"",
-            "end_time":"",
-            "member_portfolio":"",
-            "member_type":"",
-            "reminder":""
+        }]
         },
         {
             "step_name": "step_name_new_or_existing"
             "role": "role_new_or_existing"
-            "rights":"",
-            "display_before":"",
-            "skip":"",
-            "limit":"",
-            "start_time":"",
-            "end_time":"",
-            "member_portfolio":"",
-            "member_type":"",
-            "reminder":""
+        }]
         }
 
         ]
