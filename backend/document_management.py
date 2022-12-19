@@ -65,7 +65,6 @@ def create_document(request):  # Document Creation.
                                 "document_name":"",
                                 "content":"",
                                 "page":"",
-                                "data_type":data_type
                                 }
                         }
                         })
