@@ -89,8 +89,10 @@ def update_workflow(request):  # Document Creation.
                        
                         }
                 )
-            
-            updt_wf = json.loads(update_wf(form["workflow_id"], workflow['workflow_title'],form["created_by"],form['company_id'], workflow['steps']))
+            old_workflow = get_wf_object(form["workflow_id"])['workflows']
+            old_workflow["data_type"]= "Archive Data"
+
+            updt_wf = json.loads(update_wf(form["workflow_id"], old_workflow))
             nw_wf = json.loads(save_wf({key: val for key, val in workflow.items() if key != 'workflow_id'}))
 
             if updt_wf["isSuccess"]:

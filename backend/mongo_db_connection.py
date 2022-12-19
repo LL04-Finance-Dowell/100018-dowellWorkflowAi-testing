@@ -324,7 +324,7 @@ def save_wf(workflows):
     return response.text
 
 
-def update_wf(workflow_id, workflow_title,created_by,company_id,steps):
+def update_wf(workflow_id, old_workflow):
     url = "http://100002.pythonanywhere.com/"
     
     payload = json.dumps(
@@ -336,13 +336,7 @@ def update_wf(workflow_id, workflow_title,created_by,company_id,steps):
             },
             "update_field": {
                 "eventId": get_event_id(),
-                "workflows":{
-                        "created_by": created_by,
-                        "company_id": company_id,
-                        "workflow_title": workflow_title,
-                        "data_type":"Archive Data",
-                        "steps": steps
-                            },
+                "workflows":old_workflow,
             },
             "platform": "bangalore",
         }
