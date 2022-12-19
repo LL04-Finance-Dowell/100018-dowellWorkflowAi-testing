@@ -47,7 +47,6 @@ def create_workflow(request):  # Document Creation.
                     {
                             "step_name"        : step['step_name'],
                             "role"        : step["role"],
-                            "table_of_content":"",
                             
                         }
                 ) 
@@ -87,27 +86,18 @@ def update_workflow(request):  # Document Creation.
                     {
                             "step_name"        : step['step_name'],
                             "role"        : step["role"],
-                            "table_of_content":step["table_of_content"],
-                            # "skip"            : step['skip'], # True or False,
-                            # "member_type"    : step['member_type'], #    values can be "TEAM_MEMBER" or "GUEST",
-                            # "member_portfolio": step['member_portfolio'],
-                            # "rights"        : step['rights'], #    values can be ["ADD/EDIT", "VIEW", "COMMENT", "APPROVE"],
-                            # "display_before": step['display_before'], # true or false,
-                            # "location"    :     "",
-                            # "limit"    : step["limit"],
-                            # "start_time": step['start_time'],
-                            # "end_time":    step['end_time'],
-                            # "reminder":step["reminder"]
+                       
                         }
                 )
             
-            updt_wf = json.loads(update_wf(form["workflow_id"], workflow['workflow_title'], workflow['steps']))
+            updt_wf = json.loads(update_wf(form["workflow_id"], workflow['workflow_title'],form["created_by"],form['company_id'], workflow['steps']))
             nw_wf = json.loads(save_wf({key: val for key, val in workflow.items() if key != 'workflow_id'}))
 
             if updt_wf["isSuccess"]:
                 try:
                     return Response(
-                        {"workflow":workflow},
+                        {"workflow":get_wf_object(form["workflow_id"])},
+                        
                         status=status.HTTP_201_CREATED,
                         )
                 except:
@@ -164,4 +154,6 @@ def my_workflows(request):  # List of my documents.
         return Response(
             {"workflow": filtered_list, "title": "My Workflows"}, status=status.HTTP_200_OK
         )
+
+
 
