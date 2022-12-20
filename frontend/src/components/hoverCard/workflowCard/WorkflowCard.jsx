@@ -47,7 +47,7 @@ const WorkflowCard = ({ cardItem }) => {
                   </thead>
                   <tbody>
                     {cardItem.workflows?.steps.map((item) => (
-                      <tr>
+                      <tr key={item._id}>
                         <th>{item.step_name}</th>
                         <th>{item.role}</th>
                       </tr>

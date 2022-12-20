@@ -19,10 +19,20 @@ const initialState = {
   errorMessage: null,
 };
 
+const userDetail = sessionStorage.getItem("userDetail")
+  ? JSON.parse(sessionStorage.getItem("userDetail"))
+  : null;
+
 export const workflowSlice = createSlice({
   name: "workflow",
   initialState,
-  reducers: {},
+  reducers: {
+    removeFromMinedWf: (state, action) => {
+      state.minedWorkflows = state.minedWorkflows.filter(
+        (item) => item._id !== action.payload
+      );
+    },
+  },
   extraReducers: (builder) => {
     //createWorkflow
     builder.addCase(createWorkflow.pending, (state) => {
@@ -43,19 +53,20 @@ export const workflowSlice = createSlice({
     });
     builder.addCase(mineWorkflow.fulfilled, (state, action) => {
       state.mineStatus = "succeeded";
-      state.minedWorkflows = action.payload.workflow
-        ? action.payload.workflow.map((item) => ({
-            ...item,
-            workflows: {
-              ...item.workflows,
-              /* _id: uuidv4(), */
-              steps: item.workflows.steps.map((step) => ({
-                ...step,
-                _id: uuidv4(),
-              })),
-            },
-          }))
-        : [];
+      state.minedWorkflows =
+        action.payload?.length > 0
+          ? action.payload.map((item) => ({
+              ...item,
+              workflows: {
+                ...item.workflows,
+                /* _id: uuidv4(), */
+                steps: item.workflows.steps.map((step) => ({
+                  ...step,
+                  _id: uuidv4(),
+                })),
+              },
+            }))
+          : [];
     });
     builder.addCase(mineWorkflow.rejected, (state, action) => {
       state.mineStatus = "failed";
@@ -80,18 +91,7 @@ export const workflowSlice = createSlice({
     builder.addCase(updateWorkflow.fulfilled, (state, action) => {
       state.updateWorkflowStatus = "succeeded";
       state.updatedWorkflow = action.payload;
-      state.minedWorkflows = state.minedWorkflows.map((item) =>
-        item._id === action.payload.workflow_id
-          ? {
-              ...item,
-              workflows: {
-                ...item.workflows,
-                workflow_title: action.payload.workflow_title,
-                steps: action.payload.steps,
-              },
-            }
-          : item
-      );
+      state.minedWorkflows = [...state.minedWorkflows, action.payload];
     });
     builder.addCase(updateWorkflow.rejected, (state, action) => {
       state.updateWorkflowStatus = "failed";
@@ -101,6 +101,6 @@ export const workflowSlice = createSlice({
 });
 
 // Action creators are generated for each case reducer function
-export const {} = workflowSlice.actions;
+export const { removeFromMinedWf } = workflowSlice.actions;
 
 export default workflowSlice.reducer;
