@@ -98,8 +98,7 @@ def update_workflow(request):  # Document Creation.
             if updt_wf["isSuccess"]:
                 try:
                     return Response(
-                        {"workflow":get_wf_object(form["workflow_id"])},
-                        
+                        {"workflow":get_wf_object(nw_wf["inserted_id"])},
                         status=status.HTTP_201_CREATED,
                         )
                 except:
