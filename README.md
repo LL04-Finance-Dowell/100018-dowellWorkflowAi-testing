@@ -22,7 +22,8 @@ Request Body
 ```
 {
     "company_id": "<company_id_of_authenticated_user>",
-    "created_by": "<user_name_of_authenticated_user>"
+    "created_by": "<user_name_of_authenticated_user>",
+    "data_type":"<real_archive_test_learning_data>"
 }
 ```
 
@@ -325,6 +326,7 @@ Request Body
     "template_id": "<template_id_existing>",
     "created_by": "<user_name_of_authenticated_user>"
     "company_id": "<company_id_of_authorized_user>",
+    "data_type":"<real_archive_test_learning_data>"
 
 }
 ```
@@ -531,7 +533,7 @@ Request Body
 {
     "created_by": "<user_name_of_authenticated_user>",
     "company_id": "<company_id_of_authorized_user>",
-    "data_type":"<data_type>",
+    "data_type":"<real_archive_test_learning_data>"
     "wf_title":"<workflow_title>",
      'steps': [
         {'step_name': 'step_name',
@@ -635,18 +637,18 @@ Request Body
     
     "created_by": "<user_name_of_authenticated_user>",
     "company_id": "<company_id_of_authorized_user>",
-    "data_type":"<data_type>",
+    "data_type":"<real_data/test_data/learning_data/archive_data>",
     "workflow_id": "<id_specific_of_workflow>",
-    "workflow_title": "Workflow_title_new_or_existing",
+    "wf_title": "Workflow_title_new_or_existing",
     "steps": [
         {
-            "step_name": "step_name_new_or_existing"
-            "role": "role_new_or_existing"
+            "step_name": "update_existing_step_name"
+            "role": "update_existing_role"
         }]
         },
         {
-            "step_name": "step_name_new_or_existing"
-            "role": "role_new_or_existing"
+            "step_name": "update_existing_step_name"
+            "role": "update_existing_role"
         }]
         }
 
@@ -659,7 +661,7 @@ Response-201
 
 ```
 {
-    "workflow":{"updated workflow"}
+    "workflow":{"old(archived) workflow data"},
 }
 
 If Not Sucessfully Updated
