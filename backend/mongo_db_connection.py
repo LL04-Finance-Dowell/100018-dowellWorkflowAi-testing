@@ -303,7 +303,7 @@ def update_uuid_object(uuid_hash):
 # -------------------------------- Workflows-------------------
 
 
-def save_wf(workflows):
+def save_wf(workflows,company_id,created_by):
     url = "http://100002.pythonanywhere.com/"
     payload = json.dumps(
         {
@@ -312,6 +312,8 @@ def save_wf(workflows):
             "field": {
                 "eventId": get_event_id(),
                 "workflows": workflows,
+                "created_by" :    created_by,
+                "company_id" :   company_id,
                 
             },
             "update_field": {"order_nos": 21},
@@ -336,7 +338,10 @@ def update_wf(workflow_id, old_workflow):
             },
             "update_field": {
                 "eventId": get_event_id(),
-                "workflows":old_workflow,
+                "workflows": old_workflow['workflows'],
+                "created_by" :    old_workflow['created_by'],
+                "company_id" :   old_workflow['company_id'],
+                
             },
             "platform": "bangalore",
         }
@@ -391,7 +396,6 @@ def get_all_wf_list():
         return wf_list  #   res_obj["data"]
     else:
         return []
-
 
 def get_wf_list(company_id):
     fields = {"company_id": str(company_id)}

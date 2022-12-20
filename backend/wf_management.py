@@ -37,8 +37,6 @@ def create_workflow(request):  # Document Creation.
         else:
             data={
                 "workflow_title": form["wf_title"],
-                "created_by" :  form["created_by"],
-                "company_id" :   form['company_id'],
                 "data_type": form['data_type'],
                 "steps": []
                         }
@@ -50,7 +48,7 @@ def create_workflow(request):  # Document Creation.
                             
                         }
                 ) 
-            res = json.loads(save_wf(data))
+            res = json.loads(save_wf(data,form['company_id'],form['created_by']))
             if res["isSuccess"]:
                 try:
                     return Response(
@@ -74,8 +72,7 @@ def update_workflow(request):  # Document Creation.
         else:
             
             workflow={
-                "created_by" :    form["created_by"],
-                "company_id" :   form['company_id'],
+                
                 "workflow_title": form["wf_title"],
                 "workflow_id": form["workflow_id"],
                 "data_type": form['data_type'],
@@ -89,11 +86,11 @@ def update_workflow(request):  # Document Creation.
                        
                         }
                 )
-            old_workflow = get_wf_object(form["workflow_id"])['workflows']
-            old_workflow["data_type"]= "Archive Data"
+            old_workflow = get_wf_object(form["workflow_id"])
+            old_workflow['workflows']["data_type"]= "Archive Data"
 
             updt_wf = json.loads(update_wf(form["workflow_id"], old_workflow))
-            nw_wf = json.loads(save_wf({key: val for key, val in workflow.items() if key != 'workflow_id'}))
+            nw_wf = json.loads(save_wf({key: val for key, val in workflow.items() if key != 'workflow_id'},form['company_id'],form["created_by"]))
 
             if updt_wf["isSuccess"]:
                 try:
@@ -148,9 +145,8 @@ def my_workflows(request):  # List of my documents.
             )
         else:
             for wf in workflows:
-                    
-                    if wf['created_by'] == created_by:
-                        filtered_list.append(wf)
+                if wf['created_by'] == created_by:
+                    filtered_list.append(wf)
 
         return Response(
             {"workflow": filtered_list, "title": "My Workflows"}, status=status.HTTP_200_OK
