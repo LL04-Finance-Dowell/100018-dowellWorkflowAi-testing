@@ -36,25 +36,40 @@ export const detailTemplate = createAsyncThunk(
   }
 );
 
-export const mineTemplates = createAsyncThunk("template/mine", async (data) => {
-  try {
-    const res = await templateServices.mineTemplates(data);
+export const mineTemplates = createAsyncThunk(
+  "template/mine",
+  async (data, thunkAPI) => {
+    try {
+      const res = await templateServices.mineTemplates(data);
 
-    console.log("mine teplatessssssssss", res.data);
+      console.log("mine teplatessssssssss", res.data);
 
-    return res.data;
-  } catch (error) {
-    console.log(error);
+      let templates = res.data.filter(
+        (item) =>
+          item.data_type ===
+          thunkAPI.getState().auth?.userDetail?.portfolio_info?.data_type
+      );
+
+      return templates;
+    } catch (error) {
+      console.log(error);
+    }
   }
-});
+);
 
 export const savedTemplates = createAsyncThunk(
   "template/saved",
-  async (data) => {
+  async (data, thunkAPI) => {
     try {
       const res = await templateServices.savedTemplates(data);
 
-      return res.data;
+      let templates = res.data.filter(
+        (item) =>
+          item.data_type ===
+          thunkAPI.getState().auth?.userDetail?.portfolio_info?.data_type
+      );
+
+      return templates;
     } catch (error) {
       console.log(error);
     }

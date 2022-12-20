@@ -47,18 +47,33 @@ export const signDocument = createAsyncThunk("document/sign", async (data) => {
   }
 });
 
-export const mineDocuments = createAsyncThunk("document/mine", async (data) => {
-  try {
-    const res = await documentServices.mineDocuments(data);
-    console.log("inseideeee");
+export const mineDocuments = createAsyncThunk(
+  "document/mine",
+  async (data, thunkAPI) => {
+    try {
+      const res = await documentServices.mineDocuments(data);
+      console.log("inseideeee");
 
-    console.log("mine document", res.data);
+      console.log("mine document", res.data);
 
-    return res.data.documents;
-  } catch (error) {
-    console.log(error);
+      let documents = [];
+
+      if (res.data.documents?.length > 0) {
+        documents = res.data.documents.filter(
+          (item) =>
+            item.data_type ===
+            thunkAPI.getState().auth?.userDetail?.portfolio_info?.data_type
+        );
+      } else {
+        documents = [];
+      }
+
+      return documents;
+    } catch (error) {
+      console.log(error);
+    }
   }
-});
+);
 
 export const rejectedDocuments = createAsyncThunk(
   "document/rejected",

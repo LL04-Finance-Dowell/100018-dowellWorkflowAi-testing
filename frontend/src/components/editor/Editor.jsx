@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { setEditorLink } from "../../features/app/appSlice";
 import { LoadingSpinner } from "../LoadingSpinner/LoadingSpinner";
@@ -14,6 +14,16 @@ const Editor = () => {
   const { editorStatus: docStatus } = useSelector((state) => state.document);
   const { editorStatus: tempStatus } = useSelector((state) => state.template);
   const [toggleDecision, setToggleDecision] = useState(false);
+
+  /*   useEffect(() => {
+    window.addEventListener("message", function (event) {
+      console.log("Message received from the child: " + event.data); // Message received from child
+    });
+  }, []);
+
+  useEffect(() => {
+    window.parent.postMessage(data, "*");
+  }, []); */
 
   const handleFrameClose = () => {
     setToggleDecision(true);

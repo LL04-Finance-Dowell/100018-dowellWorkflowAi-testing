@@ -10,6 +10,14 @@ import { setSelectedWorkflowsToDoc } from "../../../../../features/app/appSlice"
 import Collapse from "../../../../../layouts/collapse/Collapse";
 import { LoadingSpinner } from "../../../../LoadingSpinner/LoadingSpinner";
 import { useForm } from "react-hook-form";
+import {
+  InfoBoxContainer,
+  InfoContentBox,
+  InfoContentContainer,
+  InfoContentText,
+  InfoSearchbar,
+  InfoTitleBox,
+} from "../../../../infoBox/styledComponents";
 
 const InfoBoxes = () => {
   const { register, watch } = useForm();
@@ -84,11 +92,11 @@ const InfoBoxes = () => {
   return (
     <div ref={ref} style={{ y: y }} className={styles.container}>
       {compInfoBoxes?.map((infoBox) => (
-        <div key={infoBox.id} className={styles.box}>
-          <div
+        <InfoBoxContainer key={infoBox.id} className={styles.box}>
+          <InfoTitleBox
             style={{ pointerEvents: infoBox?.status === "pending" && "none" }}
             onClick={() => handleTogleBox(infoBox.id)}
-            className={styles.title__box}
+            /*  className={styles.title__box} */
           >
             {infoBox.status && infoBox.status === "pending" ? (
               <LoadingSpinner />
@@ -102,34 +110,32 @@ const InfoBoxes = () => {
                 >
                   {infoBox.isOpen ? <MdOutlineRemove /> : <GrAdd />}
                 </div>
-                <a className={styles.title}>{infoBox.title}</a>
+                <a>{infoBox.title}</a>
               </>
             )}
-          </div>
+          </InfoTitleBox>
 
           <Collapse open={!infoBox.isOpen}>
-            <div className={styles.content__container}>
-              <input
-                /*  value={searchValue} */
-                /*  onChange={(e) => handleSearch(e, infoBox.id)} */
+            <InfoContentContainer>
+              <InfoSearchbar
                 placeholder="Search"
                 {...register(`${infoBox.title}`)}
               />
 
-              <ol className={styles.content__box}>
+              <InfoContentBox className={styles.content__box}>
                 {[...infoBox.contents].reverse().map((item) => (
-                  <li
+                  <InfoContentText
                     onClick={() => addToSelectedWorkFlows(item)}
                     key={item._id}
-                    className={styles.content}
+                    /* className={styles.content} */
                   >
                     {item.workflows?.workflow_title}
-                  </li>
+                  </InfoContentText>
                 ))}
-              </ol>
-            </div>
+              </InfoContentBox>
+            </InfoContentContainer>
           </Collapse>
-        </div>
+        </InfoBoxContainer>
       ))}
     </div>
   );

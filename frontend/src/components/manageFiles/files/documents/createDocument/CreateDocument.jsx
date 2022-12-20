@@ -34,6 +34,7 @@ const CreateDocument = ({ handleToggleOverlay }) => {
       company_id: userDetail?.portfolio_info.org_id,
       template_id: template,
       created_by: userDetail?.userinfo.username,
+      data_type: userDetail?.portfolio_info.data_type,
     };
 
     dispatch(createDocument(createDocumentData));

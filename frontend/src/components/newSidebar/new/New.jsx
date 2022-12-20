@@ -24,6 +24,7 @@ const New = () => {
       const data = {
         created_by: userDetail?.userinfo.username,
         company_id: userDetail?.portfolio_info.org_id,
+        data_type: userDetail?.portfolio_info.data_type,
       };
 
       dispatch(createTemplate(data));

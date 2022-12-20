@@ -27,12 +27,14 @@ import NewTemplate from "./pages/Templates/NewTemplate/NewTemplate";
 import NewWorkFlow from "./pages/Workflows/NewWorkflow/NewWorkFlow";
 import DraftF from "./pages/Workflows/DraftF/DraftF";
 import { dowellLoginUrl } from "./httpCommon/httpCommon";
+import WorkflowAiSettings from "./components/workflowAiSettings/WorkflowAiSettings";
 function App() {
   useDowellLogin();
 
   return (
     <Routes>
       <Route path={"/"} element={<WorkflowApp />} />
+      <Route path="/settings" element={<WorkflowAiSettings />} />
       <Route path={"documents"}>
         <Route index element={<DocumentsPage />} />
         {/*  <Route path={"new"} element={<CreateNewDocumentPage />} />

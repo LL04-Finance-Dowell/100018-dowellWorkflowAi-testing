@@ -94,21 +94,15 @@ const CreateWorkflows = ({ handleToggleOverlay }) => {
     const steps = internalWorkflows.map((item) => ({
       step_name: item.step_name,
       role: item.role,
-      rights: "",
-      display_before: "",
-      skip: "",
-      limit: "",
-      start_time: "",
-      end_time: "",
-      member_portfolio: "",
-      member_type: "",
-      reminder: "",
     }));
 
     if (currentWorkflow) {
       const updateData = {
+        created_by: userDetail?.portfolio_info.username,
+        company_id: userDetail?.portfolio_info.org_id,
         wf_title: workflowTitle,
         workflow_id: currentWorkflow._id,
+        data_type: userDetail?.portfolio_info.data_type,
         steps,
       };
 
@@ -118,6 +112,7 @@ const CreateWorkflows = ({ handleToggleOverlay }) => {
         created_by: userDetail?.userinfo.username,
         wf_title: workflowTitle,
         company_id: userDetail?.portfolio_info.org_id,
+        data_type: userDetail?.portfolio_info.data_type,
         steps,
       };
 
