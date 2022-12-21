@@ -4,7 +4,31 @@ api_url = `https://100094.pythonanywhere.com/v0.1/`
 
 ###  Workflow Process Service.
 
+_POST_ to `process/new/`
 
+- Save Workflows to document
+
+Request Body
+
+```
+{
+    "workflows": "<JSON Object Array of the workflow process choices>",
+    "document_id": "<document_id_of_selected_document_to_process>",
+    "company_id": "<company_id_of_authenticated_user>",
+    "created_by": "<user_name_of_authenticated_user>",
+    "data_type":"<real|archive|test|learning data>"
+}
+
+```
+
+Response - 201
+
+
+Response - 500
+
+```
+    "Failed to save Workflows to document"
+```
 
 ### Template Management
 
