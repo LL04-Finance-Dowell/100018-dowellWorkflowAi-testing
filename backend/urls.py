@@ -31,7 +31,11 @@ from .intelligent_search import (
     search,
 )
 
-from .process import save_and_start_processing, save_workflows_to_document
+from .process import (
+    save_and_start_processing,
+    save_workflows_to_document,
+    verify_process,
+)
 
 from .views import api
 
@@ -40,6 +44,7 @@ urlpatterns = [
     # Workflow Processing-----------------------
     path("process/new/", save_workflows_to_document),
     path("process/start/", save_and_start_processing),
+    path("process/verify/", verify_process),
     # Search----------------------------
     path("search/<str:str>", search),
     # Templates-----------------------------------------------------
@@ -75,7 +80,6 @@ urlpatterns = [
     ),
     path("documents/detail/", document_detail, name="document"),
     path("documents/document_content/", get_document_content, name="document_content"),
-
     path("workflows/", create_workflow, name="workflows"),
     path("workflows/detail/", workflow_detail, name="workflow_detail"),
     path("workflows/mine/", my_workflows, name="my_workflows"),
