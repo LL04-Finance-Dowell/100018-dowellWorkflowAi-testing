@@ -21,8 +21,8 @@ export class DocumentServices {
     return httpDocument.post("/rejected/", data);
   };
 
-  drafts = (data) => {
-    return httpDocument.post("/drafts/", data);
+  savedDocuments = (data) => {
+    return httpDocument.post("/saved/", data);
   };
   contentDocument = (data) => {
     return httpDocument.post("/document_content/", data);

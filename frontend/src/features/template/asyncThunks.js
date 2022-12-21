@@ -2,6 +2,22 @@ import { createAsyncThunk } from "@reduxjs/toolkit";
 import { TemplateServices } from "../../services/templateServices";
 import { setToggleEditor, setEditorLink } from "../app/appSlice";
 
+const filterTemplates = (templates, thunkAPI) => {
+  let filteredTemplates = [];
+
+  if (templates?.length > 0) {
+    filteredTemplates = templates.filter(
+      (item) =>
+        item.data_type ===
+        thunkAPI.getState().auth?.userDetail?.portfolio_info?.data_type
+    );
+  } else {
+    filteredTemplates = [];
+  }
+
+  return filteredTemplates;
+};
+
 const templateServices = new TemplateServices();
 
 export const createTemplate = createAsyncThunk(
@@ -44,11 +60,7 @@ export const mineTemplates = createAsyncThunk(
 
       console.log("mine teplatessssssssss", res.data);
 
-      let templates = res.data.filter(
-        (item) =>
-          item.data_type ===
-          thunkAPI.getState().auth?.userDetail?.portfolio_info?.data_type
-      );
+      const templates = filterTemplates(res.data, thunkAPI);
 
       return templates;
     } catch (error) {
@@ -63,11 +75,7 @@ export const savedTemplates = createAsyncThunk(
     try {
       const res = await templateServices.savedTemplates(data);
 
-      let templates = res.data.filter(
-        (item) =>
-          item.data_type ===
-          thunkAPI.getState().auth?.userDetail?.portfolio_info?.data_type
-      );
+      const templates = filterTemplates(res.data, thunkAPI);
 
       return templates;
     } catch (error) {

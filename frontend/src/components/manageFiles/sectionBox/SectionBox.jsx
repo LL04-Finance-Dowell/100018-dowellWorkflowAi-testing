@@ -16,6 +16,7 @@ const SectionBox = ({ cardItems, title, Card, status }) => {
             <div className={styles.grid__box}>
               {Card &&
                 cardItems &&
+                cardItems.length > 0 &&
                 cardItems.map((item) => <Card key={item.id} cardItem={item} />)}
             </div>
           )}

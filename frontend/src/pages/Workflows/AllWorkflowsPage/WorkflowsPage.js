@@ -6,16 +6,22 @@ import "./style.css";
 import CreateWorkflows from "../../../components/manageFiles/files/workflows/createWorkflows/CreateWorkflow";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { mineWorkflow } from "../../../features/workflow/asyncTHunks";
+import {
+  mineWorkflows,
+  savedWorkflows,
+} from "../../../features/workflow/asyncTHunks";
 import WorkflowCard from "../../../components/hoverCard/workflowCard/WorkflowCard";
 
 const WorkflowsPage = () => {
   const { userDetail } = useSelector((state) => state.auth);
-  const { minedWorkflows, mineStatus } = useSelector((state) => state.workflow);
+  const {
+    minedWorkflows,
+    mineStatus,
+    savedWorkflowItems,
+    savedWorkflowStatus,
+  } = useSelector((state) => state.workflow);
 
   const dispatch = useDispatch();
-
-  console.log("userdetail", userDetail);
 
   useEffect(() => {
     const data = {
@@ -23,9 +29,16 @@ const WorkflowsPage = () => {
       created_by: userDetail?.userinfo.username,
     };
 
-    console.log("useEffectdata", data);
-    dispatch(mineWorkflow(data));
+    const saveddata = {
+      company_id: userDetail?.portfolio_info.org_id,
+    };
+
+    dispatch(savedWorkflows(saveddata));
+    dispatch(mineWorkflows(data));
   }, []);
+
+  console.log("wwwwwwwwwwwwwwwwwwwwwwwwwwwwww", minedWorkflows);
+  console.log("savedddddddddddddddddddddd", savedWorkflows);
 
   return (
     <WorkflowLayout>
@@ -35,7 +48,8 @@ const WorkflowsPage = () => {
             <SectionBox
               cardBgColor="#1ABC9C"
               title="drafts"
-              cardItems={drafts}
+              cardItems={minedWorkflows}
+              status={mineStatus}
               Card={WorkflowCard}
             />
           </div>
@@ -44,8 +58,8 @@ const WorkflowsPage = () => {
               Card={WorkflowCard}
               cardBgColor="#1ABC9C"
               title="saved workflows"
-              status={mineStatus}
-              cardItems={minedWorkflows}
+              status={savedWorkflowStatus}
+              cardItems={savedWorkflowItems}
             />
           </div>
         </ManageFiles>

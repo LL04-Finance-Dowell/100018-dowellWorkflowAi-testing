@@ -6,16 +6,19 @@ import { v4 as uuidv4 } from "uuid";
 import WorkflowLayout from "../../../layouts/WorkflowLayout/WorkflowLayout";
 import ManageFiles from "../../../components/manageFiles/ManageFiles";
 import { useDispatch, useSelector } from "react-redux";
-import { mineDocuments, drafts } from "../../../features/document/asyncThunks";
+import {
+  mineDocuments,
+  savedDocuments,
+} from "../../../features/document/asyncThunks";
 import DocumentCard from "../../../components/hoverCard/documentCard/DocumentCard";
 
 const DocumentsPage = () => {
   const { userDetail } = useSelector((state) => state.auth);
   const {
     minedDocuments,
-    drafts: draftItems,
+    savedDocumentsItems,
     mineStatus,
-    draftStatu,
+    savedDocumentsStatus,
   } = useSelector((state) => state.document);
   const dispatch = useDispatch();
 
@@ -29,9 +32,11 @@ const DocumentsPage = () => {
       company_id: userDetail?.portfolio_info.org_id,
     };
 
-    dispatch(drafts(draftData));
+    dispatch(savedDocuments(draftData));
     dispatch(mineDocuments(data));
   }, []);
+
+  console.log("aaaaaaaaaaa", savedDocumentsItems, minedDocuments);
 
   return (
     <WorkflowLayout>
@@ -42,8 +47,8 @@ const DocumentsPage = () => {
               cardBgColor="#1ABC9C"
               title="drafts"
               Card={DocumentCard}
-              cardItems={draftItems}
-              status={draftStatu}
+              cardItems={minedDocuments}
+              status={mineStatus}
             />
           </div>
           <div id="saved-documents">
@@ -51,8 +56,8 @@ const DocumentsPage = () => {
               cardBgColor="#1ABC9C"
               title="saved documents"
               Card={DocumentCard}
-              cardItems={minedDocuments}
-              status={mineStatus}
+              cardItems={savedDocumentsItems}
+              status={savedDocumentsStatus}
             />
           </div>
         </ManageFiles>

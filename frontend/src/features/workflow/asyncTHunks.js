@@ -2,8 +2,37 @@ import { createAsyncThunk } from "@reduxjs/toolkit";
 import { WorkflowServices } from "../../services/workflowServices";
 import { setCurrentWorkflow, setToggleManageFileForm } from "../app/appSlice";
 import { removeFromMinedWf } from "./workflowsSlice";
+import { v4 as uuidv4 } from "uuid";
 
 const workflowServices = new WorkflowServices();
+
+const filterWorkflows = (workflows, thunkAPI) => {
+  let filteredWorkflows = [];
+
+  if (workflows?.length > 0) {
+    filteredWorkflows = workflows
+      .filter(
+        (item) =>
+          item.workflows.data_type ===
+          thunkAPI.getState().auth?.userDetail?.portfolio_info?.data_type
+      )
+      .map((item) => ({
+        ...item,
+        workflows: {
+          ...item.workflows,
+          /* _id: uuidv4(), */
+          steps: item.workflows.steps.map((step) => ({
+            ...step,
+            _id: uuidv4(),
+          })),
+        },
+      }));
+  } else {
+    filteredWorkflows = [];
+  }
+
+  return filteredWorkflows;
+};
 
 export const createWorkflow = createAsyncThunk(
   "workflow/create",
@@ -24,28 +53,33 @@ export const createWorkflow = createAsyncThunk(
   }
 );
 
-export const mineWorkflow = createAsyncThunk(
+export const mineWorkflows = createAsyncThunk(
   "workflow/mine",
   async (data, thunkAPI) => {
     try {
-      const res = await workflowServices.mineWorkflow(data);
+      const res = await workflowServices.mineWorkflows(data);
 
       console.log(
         "mine workflowwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww",
         res.data
       );
 
-      let workflows = [];
+      const workflows = filterWorkflows(res.data.workflow, thunkAPI);
 
-      if (res.data.workflow?.length > 0) {
-        workflows = res.data.workflow.filter(
-          (item) =>
-            item.workflows.data_type ===
-            thunkAPI.getState().auth?.userDetail?.portfolio_info?.data_type
-        );
-      } else {
-        workflows = [];
-      }
+      return workflows;
+    } catch (error) {
+      console.log(error);
+    }
+  }
+);
+
+export const savedWorkflows = createAsyncThunk(
+  "workflow/saved",
+  async (data, thunkAPI) => {
+    try {
+      const res = await workflowServices.savedWorkflows(data);
+
+      const workflows = filterWorkflows(res.data.workflows, thunkAPI);
 
       return workflows;
     } catch (error) {

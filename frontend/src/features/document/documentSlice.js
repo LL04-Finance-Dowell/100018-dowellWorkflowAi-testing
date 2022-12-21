@@ -2,7 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 import {
   createDocument,
   detailDocument,
-  drafts,
+  savedDocuments,
   mineDocuments,
   rejectedDocuments,
   signDocument,
@@ -17,12 +17,12 @@ const initialState = {
   minedDocuments: [],
   rejectedDocuments: null,
   contentOfDocument: null,
-  drafts: [],
+  savedDocumentsItems: [],
   status: "idle",
   editorStatus: "idle",
   createDocumentStatus: "idle",
   mineStatus: "idle",
-  draftStatu: "idle",
+  savedDocumentsStatus: "idle",
   contentOfDocumentStatus: "idle",
   errorMessage: null,
 };
@@ -96,16 +96,16 @@ export const documentSlice = createSlice({
       state.status = "failed";
       state.errorMessage = action.payload;
     });
-    //drafts
-    builder.addCase(drafts.pending, (state) => {
-      state.draftStatu = "pending";
+    //savedDocuments
+    builder.addCase(savedDocuments.pending, (state) => {
+      state.savedDocumentsStatus = "pending";
     });
-    builder.addCase(drafts.fulfilled, (state, action) => {
-      state.draftStatu = "succeeded";
-      state.drafts = action.payload;
+    builder.addCase(savedDocuments.fulfilled, (state, action) => {
+      state.savedDocumentsStatus = "succeeded";
+      state.savedDocumentsItems = action.payload;
     });
-    builder.addCase(drafts.rejected, (state, action) => {
-      state.draftStatu = "failed";
+    builder.addCase(savedDocuments.rejected, (state, action) => {
+      state.savedDocumentsStatus = "failed";
       state.errorMessage = action.payload;
     });
     //contentDocumetn

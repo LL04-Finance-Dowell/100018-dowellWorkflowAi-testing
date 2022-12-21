@@ -5,7 +5,7 @@ export class WorkflowServices {
     return httpWorkflow.post("/", data);
   };
 
-  mineWorkflow = (data) => {
+  mineWorkflows = (data) => {
     return httpWorkflow.post("/mine/", data);
   };
 
@@ -14,5 +14,8 @@ export class WorkflowServices {
   };
   updateWorkflow = (data) => {
     return httpWorkflow.post("/update/", data);
+  };
+  savedWorkflows = (data) => {
+    return httpWorkflow.post("/saved/", data);
   };
 }

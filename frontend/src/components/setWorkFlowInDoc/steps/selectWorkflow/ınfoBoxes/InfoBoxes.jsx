@@ -5,7 +5,6 @@ import { GrAdd } from "react-icons/gr";
 import { MdOutlineRemove } from "react-icons/md";
 import { useScroll, useTransform } from "framer-motion";
 import { useSelector, useDispatch } from "react-redux";
-import { mineWorkflow } from "../../../../../features/workflow/asyncTHunks";
 import { setSelectedWorkflowsToDoc } from "../../../../../features/app/appSlice";
 import Collapse from "../../../../../layouts/collapse/Collapse";
 import { LoadingSpinner } from "../../../../LoadingSpinner/LoadingSpinner";
@@ -18,25 +17,31 @@ import {
   InfoSearchbar,
   InfoTitleBox,
 } from "../../../../infoBox/styledComponents";
+import { savedWorkflows } from "../../../../../features/workflow/asyncTHunks";
 
 const InfoBoxes = () => {
   const { register, watch } = useForm();
-
   const { workflow } = watch();
 
   const ref = useRef(null);
   const dispatch = useDispatch();
+
+  const { userDetail } = useSelector((state) => state.auth);
   const { currentDocToWfs, selectedWorkflowsToDoc } = useSelector(
     (state) => state.app
   );
-  const { minedWorkflows, mineStatus: wfMineStatus } = useSelector(
+  const { savedWorkflowItems, savedWorkflowStatus } = useSelector(
     (state) => state.workflow
   );
 
   const [compInfoBoxes, setCompInfoBoxes] = useState(infoBoxes);
 
   useEffect(() => {
-    dispatch(mineWorkflow);
+    const data = {
+      company_id: userDetail?.portfolio_info.org_id,
+    };
+
+    dispatch(savedWorkflows(data));
   }, []);
 
   const memorizedInfoBox = useCallback(() => {
@@ -45,17 +50,17 @@ const InfoBoxes = () => {
         item.title === "workflow"
           ? {
               ...item,
-              contents: minedWorkflows?.filter((item) =>
+              contents: savedWorkflowItems?.filter((item) =>
                 item.workflows?.workflow_title
                   .toLowerCase()
                   .includes(workflow?.toLowerCase())
               ),
-              status: wfMineStatus,
+              status: savedWorkflowStatus,
             }
           : item
       )
     );
-  }, [wfMineStatus, workflow]);
+  }, [savedWorkflowStatus, workflow]);
 
   useEffect(() => {
     memorizedInfoBox();

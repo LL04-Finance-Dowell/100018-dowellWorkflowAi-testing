@@ -4,36 +4,34 @@ import { useDispatch, useSelector } from "react-redux";
 import CollapseItem from "../collapseItem/CollapseItem";
 import { v4 as uuidv4 } from "uuid";
 import sidebarStyles from "../sidebar.module.css";
-import { mineDocuments } from "../../../features/document/asyncThunks";
+import {
+  mineDocuments,
+  savedDocuments,
+} from "../../../features/document/asyncThunks";
 import {
   mineTemplates,
   savedTemplates,
 } from "../../../features/template/asyncThunks";
-import { mineWorkflow } from "../../../features/workflow/asyncTHunks";
+import { savedWorkflows } from "../../../features/workflow/asyncTHunks";
 
 const ManageFile = () => {
   const dispatch = useDispatch();
   const { userDetail } = useSelector((state) => state.auth);
 
-  const { minedWorkflows } = useSelector((state) => state.workflow);
+  const { savedWorkflowItems } = useSelector((state) => state.workflow);
   const { savedTemplatesItems } = useSelector((state) => state.template);
-  const { minedDocuments } = useSelector((state) => state.document);
+  const { savedDocumentsItems } = useSelector((state) => state.document);
 
   const [test, setTest] = useState(manageFileItems);
 
   useEffect(() => {
     const data = {
-      created_by: userDetail?.userinfo.username,
       company_id: userDetail?.portfolio_info.org_id,
     };
 
-    const savedTemplatesItemsData = {
-      company_id: userDetail?.portfolio_info.org_id,
-    };
-
-    dispatch(mineDocuments(data));
-    dispatch(savedTemplates(savedTemplatesItemsData));
-    dispatch(mineWorkflow(data));
+    dispatch(savedDocuments(data));
+    dispatch(savedTemplates(data));
+    dispatch(savedWorkflows(data));
   }, []);
 
   useEffect(() => {
@@ -43,7 +41,9 @@ const ManageFile = () => {
           ? {
               ...item,
               count:
-                minedDocuments?.length > 0 ? minedDocuments?.length : "000",
+                savedDocumentsItems?.length > 0
+                  ? savedDocumentsItems?.length
+                  : "000",
             }
           : item.parent.includes("Templates")
           ? {
@@ -57,12 +57,14 @@ const ManageFile = () => {
           ? {
               ...item,
               count:
-                minedWorkflows?.length > 0 ? minedWorkflows?.length : "000",
+                savedWorkflowItems?.length > 0
+                  ? savedWorkflowItems?.length
+                  : "000",
             }
           : item
       )
     );
-  }, [minedDocuments, savedTemplatesItems, minedWorkflows]);
+  }, [savedDocumentsItems, savedTemplatesItems, savedWorkflowItems]);
 
   return (
     <div className={sidebarStyles.feature__box}>

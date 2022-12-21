@@ -2,7 +2,8 @@ import { createSlice } from "@reduxjs/toolkit";
 import {
   createWorkflow,
   detailWorkflow,
-  mineWorkflow,
+  mineWorkflows,
+  savedWorkflows,
   updateWorkflow,
 } from "./asyncTHunks";
 import { v4 as uuidv4 } from "uuid";
@@ -12,7 +13,9 @@ const initialState = {
   workdlowDetail: null,
   updatedWorkflow: null,
   minedWorkflows: [],
+  savedWorkflowItems: [],
   status: "idle",
+  savedWorkflowStatus: "idle",
   mineStatus: "idle",
   workflowDetailStatus: "idle",
   updateWorkflowStatus: "idle",
@@ -47,29 +50,28 @@ export const workflowSlice = createSlice({
       state.status = "failed";
       state.errorMessage = action.payload;
     });
-    //mineWorkflow
-    builder.addCase(mineWorkflow.pending, (state) => {
+    //mineWorkflows
+    builder.addCase(mineWorkflows.pending, (state) => {
       state.mineStatus = "pending";
     });
-    builder.addCase(mineWorkflow.fulfilled, (state, action) => {
+    builder.addCase(mineWorkflows.fulfilled, (state, action) => {
       state.mineStatus = "succeeded";
-      state.minedWorkflows =
-        action.payload?.length > 0
-          ? action.payload.map((item) => ({
-              ...item,
-              workflows: {
-                ...item.workflows,
-                /* _id: uuidv4(), */
-                steps: item.workflows.steps.map((step) => ({
-                  ...step,
-                  _id: uuidv4(),
-                })),
-              },
-            }))
-          : [];
+      state.minedWorkflows = action.payload;
     });
-    builder.addCase(mineWorkflow.rejected, (state, action) => {
+    builder.addCase(mineWorkflows.rejected, (state, action) => {
       state.mineStatus = "failed";
+      state.errorMessage = action.payload;
+    });
+    //savedWorkflows
+    builder.addCase(savedWorkflows.pending, (state) => {
+      state.savedWorkflowStatus = "pending";
+    });
+    builder.addCase(savedWorkflows.fulfilled, (state, action) => {
+      state.savedWorkflowStatus = "succeeded";
+      state.savedWorkflowItems = action.payload;
+    });
+    builder.addCase(savedWorkflows.rejected, (state, action) => {
+      state.savedWorkflowStatus = "failed";
       state.errorMessage = action.payload;
     });
     //detailWorkflow

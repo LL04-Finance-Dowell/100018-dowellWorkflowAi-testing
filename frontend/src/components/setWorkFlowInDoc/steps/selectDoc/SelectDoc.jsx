@@ -10,24 +10,28 @@ import "swiper/css/pagination";
 import "./swiper.css";
 import { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { mineDocuments } from "../../../../features/document/asyncThunks";
+import {
+  mineDocuments,
+  savedDocuments,
+} from "../../../../features/document/asyncThunks";
 import { setCurrentDocToWfs } from "../../../../features/app/appSlice";
 import { LoadingSpinner } from "../../../LoadingSpinner/LoadingSpinner";
 import { setContentOfDocument } from "../../../../features/document/documentSlice";
 
 const SelectDoc = () => {
   const dispatch = useDispatch();
-  const { minedDocuments, mineStatus } = useSelector((state) => state.document);
+  const { savedDocumentsItems, savedDocumentsStatus } = useSelector(
+    (state) => state.document
+  );
   const { userDetail } = useSelector((state) => state.auth);
   const { currentDocToWfs } = useSelector((state) => state.app);
 
   useEffect(() => {
     const data = {
-      created_by: userDetail?.userinfo.username,
       company_id: userDetail?.portfolio_info.org_id,
     };
 
-    dispatch(mineDocuments(data));
+    dispatch(savedDocuments(data));
   }, []);
 
   const handleAddDocument = (document) => {
@@ -37,7 +41,7 @@ const SelectDoc = () => {
 
   return (
     <div className={styles.container}>
-      {mineStatus === "pending" ? (
+      {savedDocumentsStatus === "pending" ? (
         <div
           style={{
             display: "flex",
@@ -56,7 +60,7 @@ const SelectDoc = () => {
           modules={[Navigation, Pagination]}
           className="select-doc"
         >
-          {[...minedDocuments]?.reverse().map((item, index) => (
+          {[...savedDocumentsItems]?.reverse().map((item, index) => (
             <SwiperSlide key={item.id}>
               <div className={styles.swiper__slide__box}>
                 <div className={`${styles.swiper__slide__features} animate`}>

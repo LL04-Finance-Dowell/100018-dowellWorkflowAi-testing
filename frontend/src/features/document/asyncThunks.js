@@ -2,6 +2,22 @@ import { createAsyncThunk } from "@reduxjs/toolkit";
 import { DocumentServices } from "../../services/documentServices";
 import { setEditorLink } from "../app/appSlice";
 
+const filterDocuments = (documents, thunkAPI) => {
+  let filteredDocuments = [];
+
+  if (documents?.length > 0) {
+    filteredDocuments = documents.filter(
+      (item) =>
+        item.data_type ===
+        thunkAPI.getState().auth?.userDetail?.portfolio_info?.data_type
+    );
+  } else {
+    filteredDocuments = [];
+  }
+
+  return filteredDocuments;
+};
+
 const documentServices = new DocumentServices();
 
 export const createDocument = createAsyncThunk(
@@ -56,17 +72,7 @@ export const mineDocuments = createAsyncThunk(
 
       console.log("mine document", res.data);
 
-      let documents = [];
-
-      if (res.data.documents?.length > 0) {
-        documents = res.data.documents.filter(
-          (item) =>
-            item.data_type ===
-            thunkAPI.getState().auth?.userDetail?.portfolio_info?.data_type
-        );
-      } else {
-        documents = [];
-      }
+      const documents = filterDocuments(res.data.documents, thunkAPI);
 
       return documents;
     } catch (error) {
@@ -91,18 +97,21 @@ export const rejectedDocuments = createAsyncThunk(
   }
 );
 
-export const drafts = createAsyncThunk("document/drafts", async (data) => {
-  try {
-    const res = await documentServices.drafts(data);
-    console.log("inseideeee");
+export const savedDocuments = createAsyncThunk(
+  "document/saved",
+  async (data, thunkAPI) => {
+    try {
+      const res = await documentServices.savedDocuments(data);
+      console.log("inseideeee");
 
-    console.log("document", res.data);
+      const documents = filterDocuments(res.data.documents, thunkAPI);
 
-    return res.data.documents;
-  } catch (error) {
-    console.log(error);
+      return documents;
+    } catch (error) {
+      console.log(error);
+    }
   }
-});
+);
 
 export const contentDocument = createAsyncThunk(
   "document/contentDocument",
