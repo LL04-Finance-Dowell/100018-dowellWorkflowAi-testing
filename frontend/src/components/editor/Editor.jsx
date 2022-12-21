@@ -25,6 +25,11 @@ const Editor = () => {
     window.parent.postMessage(data, "*");
   }, []); */
 
+  console.log(
+    "editorLink: if create tempalte it is for template, if u create document it is for document",
+    editorLink
+  );
+
   const handleFrameClose = () => {
     setToggleDecision(true);
   };

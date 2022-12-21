@@ -25,7 +25,11 @@ const DocumentsPage = () => {
       created_by: userDetail?.userinfo.username,
     };
 
-    dispatch(drafts(data));
+    const draftData = {
+      company_id: userDetail?.portfolio_info.org_id,
+    };
+
+    dispatch(drafts(draftData));
     dispatch(mineDocuments(data));
   }, []);
 

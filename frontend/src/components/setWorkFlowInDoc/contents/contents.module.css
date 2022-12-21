@@ -10,6 +10,7 @@
   border: solid 1px #a4afb7;
   padding: 20px;
   background: #fff;
+  overflow: hidden;
 }
 
 .content__box table thead tr th {
@@ -47,10 +48,7 @@
 }
 
 .no__data {
-  position: absolute;
-  left: 50%;
-  right: 50%;
-  transform: translate(-50%, -50%);
+  margin: auto;
   text-align: center;
   width: 100%;
   color: var(--e-global-color-1342d1f);

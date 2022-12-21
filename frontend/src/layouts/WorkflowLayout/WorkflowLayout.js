@@ -5,6 +5,7 @@ import styles from "./workflowLayout.module.css";
 import Editor from "../../components/editor/Editor";
 import { useEffect } from "react";
 import DowellLogo from "../../assets/dowell.png";
+import Spinner from "../../components/spinner/Spinner";
 
 const WorkflowLayout = ({ children }) => {
   const { userDetail, session_id } = useSelector((state) => state.auth);
@@ -20,8 +21,8 @@ const WorkflowLayout = ({ children }) => {
   return (
     <>
       <div className={styles.container}>
-        {userDetail &&
-          (!userDetail.portfolio_info ||
+        {userDetail ? (
+          !userDetail.portfolio_info ||
           userDetail.portfolio_info?.length === 0 ? (
             <div className={styles.redirect__container}>
               <div className={styles.img__container}>
@@ -44,7 +45,12 @@ const WorkflowLayout = ({ children }) => {
               </div>
               <Editor />
             </>
-          ))}
+          )
+        ) : (
+          <div style={{ margin: "auto" }}>
+            <Spinner />
+          </div>
+        )}
       </div>
     </>
   );

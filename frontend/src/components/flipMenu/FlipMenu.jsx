@@ -5,6 +5,9 @@ import { HiOutlineDocument } from "react-icons/hi";
 import { FaSearch } from "react-icons/fa";
 import { FaHeadSideVirus } from "react-icons/fa";
 import { v4 as uuidv4 } from "uuid";
+import { useDispatch, useSelector } from "react-redux";
+import { setToggleManageFileForm } from "../../features/app/appSlice";
+import { useNavigate } from "react-router-dom";
 
 const FlipMenu = () => {
   return (
@@ -40,12 +43,30 @@ export const FlipFront = (props) => {
 };
 
 export const FlipBack = (props) => {
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const {} = useSelector((state) => state.app);
+
+  const handleClick = (role) => {
+    if (role === "newDoc") {
+      console.log("wwwwwwwwwwwwwwwwwwwwwwwwwww", role);
+      navigate("/documents/#newDocument");
+      dispatch(setToggleManageFileForm(true));
+    }
+  };
+
   return (
     <div
       style={{ background: "#7A7A7A" }}
       className={`${styles.flip__box} ${styles.back__box}`}
     >
-      <button className={styles.flip__button}>{props.buttonText}</button>
+      <button
+        onClick={() => handleClick(props.role)}
+        type="button"
+        className={styles.flip__button}
+      >
+        {props.buttonText}
+      </button>
     </div>
   );
 };
@@ -56,27 +77,31 @@ export const flipItems = [
     icon: FaRegBell,
     frontBg: "#1ABC9C",
     text: "000",
-    buttonText: "View",
+    buttonText: "view",
+    role: "",
   },
   {
     id: uuidv4(),
     icon: HiOutlineDocument,
     frontBg: "#7A7A7A",
     text: "new",
-    buttonText: "Drafts documents",
+    buttonText: "Create document",
+    role: "newDoc",
   },
   {
     id: uuidv4(),
     icon: FaSearch,
     frontBg: "#61CE70",
-    text: "Search",
+    text: "search",
     buttonText: "search document",
+    role: "",
   },
   {
     id: uuidv4(),
     icon: FaHeadSideVirus,
     frontBg: "#C3D6BE",
-    text: "Support",
+    text: "support",
     buttonText: "dowell knowladge centre",
+    role: "",
   },
 ];

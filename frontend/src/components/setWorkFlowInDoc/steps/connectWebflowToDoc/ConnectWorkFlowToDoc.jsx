@@ -27,6 +27,8 @@ const ConnectWorkFlowToDoc = () => {
     (state) => state.app
   );
 
+  console.log("wftooooooooooo", wfToDocument);
+
   const [currentSteps, setCurrentSteps] = useState([]);
 
   useEffect(() => {
