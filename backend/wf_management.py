@@ -152,5 +152,15 @@ def my_workflows(request):  # List of my documents.
             {"workflow": filtered_list, "title": "My Workflows"}, status=status.HTTP_200_OK
         )
 
-
-
+@api_view(["POST"])
+def saved_workflows(request):
+    if request.method == "POST":
+        try:
+            return Response(
+                        {"workflows": get_wf_list(request.data["company_id"])}, status=status.HTTP_200_OK
+                        )
+        except:
+            return Response(
+                        {"workflows": [], "title": "No Workflow Found"}, status=status.HTTP_200_OK
+                        
+                        )

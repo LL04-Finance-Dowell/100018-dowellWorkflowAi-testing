@@ -468,9 +468,9 @@ Response-200
 }
 ```
 
-_POST_ `documents/drafts/`
+_POST_ `documents/saved/`
 
-- Getting a Drafted Documents using company_id
+- Getting a Saved Documents using company_id
 
 Request Body
 
@@ -485,7 +485,7 @@ Response-200
 
 ```
 {
-    "documents":["list of drafted documents"]
+    "documents":["list of saved documents"]
 }
 
 ```
@@ -515,6 +515,9 @@ Response-200
 ```
 {"content":"<content_id_and_data>}
 ```
+
+
+
 
 ### Worfklow Management
 
@@ -670,6 +673,25 @@ Response-200
 
 }
 
-```
+
+
+_POST_ `workflows/saved/`
+
+- List of my Organization Workflows.
+
+Request Body
 
 ```
+{
+    "company_id": "<auth_company_id>",
+}
+```
+
+Response-200
+
+```
+
+    [<List of Saved Workflows within company>]
+
+```
+
