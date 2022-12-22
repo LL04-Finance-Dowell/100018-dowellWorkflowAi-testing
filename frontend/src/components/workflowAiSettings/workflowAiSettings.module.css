@@ -18,6 +18,10 @@
   width: 100%;
 }
 
+.section__container form {
+  width: 100%;
+}
+
 .section__box {
   width: 100%;
   display: flex;

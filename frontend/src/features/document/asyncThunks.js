@@ -9,7 +9,7 @@ const filterDocuments = (documents, thunkAPI) => {
     filteredDocuments = documents.filter(
       (item) =>
         item.data_type ===
-        thunkAPI.getState().auth?.userDetail?.portfolio_info?.data_type
+        thunkAPI.getState().auth?.userDetail?.portfolio_info[0]?.data_type
     );
   } else {
     filteredDocuments = [];

@@ -98,11 +98,11 @@ const CreateWorkflows = ({ handleToggleOverlay }) => {
 
     if (currentWorkflow) {
       const updateData = {
-        created_by: userDetail?.portfolio_info.username,
-        company_id: userDetail?.portfolio_info.org_id,
+        created_by: userDetail?.portfolio_info[0].username,
+        company_id: userDetail?.portfolio_info[0].org_id,
         wf_title: workflowTitle,
         workflow_id: currentWorkflow._id,
-        data_type: userDetail?.portfolio_info.data_type,
+        data_type: userDetail?.portfolio_info[0].data_type,
         steps,
       };
 
@@ -111,8 +111,8 @@ const CreateWorkflows = ({ handleToggleOverlay }) => {
       const data = {
         created_by: userDetail?.userinfo.username,
         wf_title: workflowTitle,
-        company_id: userDetail?.portfolio_info.org_id,
-        data_type: userDetail?.portfolio_info.data_type,
+        company_id: userDetail?.portfolio_info[0].org_id,
+        data_type: userDetail?.portfolio_info[0].data_type,
         steps,
       };
 

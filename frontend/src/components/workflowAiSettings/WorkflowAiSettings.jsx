@@ -56,7 +56,7 @@ const WorkflowAiSettings = () => {
         ))}
         <input type="submit" />
       </form>
-      {/* <TeamsInWorkflowAi /> */}
+      <TeamsInWorkflowAi />
     </div>
   );
 };

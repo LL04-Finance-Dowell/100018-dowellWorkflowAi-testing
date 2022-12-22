@@ -23,8 +23,8 @@ const New = () => {
       e.preventDefault();
       const data = {
         created_by: userDetail?.userinfo.username,
-        company_id: userDetail?.portfolio_info.org_id,
-        data_type: userDetail?.portfolio_info.data_type,
+        company_id: userDetail?.portfolio_info[0].org_id,
+        data_type: userDetail?.portfolio_info[0].data_type,
       };
 
       dispatch(createTemplate(data));

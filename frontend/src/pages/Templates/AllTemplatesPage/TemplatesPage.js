@@ -26,12 +26,12 @@ const TemplatesPage = () => {
 
   useEffect(() => {
     const savedTemplatesData = {
-      company_id: userDetail?.portfolio_info.org_id,
+      company_id: userDetail?.portfolio_info[0].org_id,
     };
 
     const mineData = {
-      company_id: userDetail?.portfolio_info.org_id,
-      created_by: userDetail?.portfolio_info.username,
+      company_id: userDetail?.portfolio_info[0].org_id,
+      created_by: userDetail?.portfolio_info[0].username,
     };
 
     dispatch(mineTemplates(mineData));

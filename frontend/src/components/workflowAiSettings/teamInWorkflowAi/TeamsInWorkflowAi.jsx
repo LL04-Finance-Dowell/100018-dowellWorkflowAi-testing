@@ -18,7 +18,7 @@ const TeamsInWorkflowAi = () => {
         {teamsInWorkflowAI[0].title}
       </h2>
       <div className={workflowAiSettingsStyles.section__container}>
-        <form onSubmit={handleSubmit(onSubmit)}>
+        <form style={{ width: "100%" }} onSubmit={handleSubmit(onSubmit)}>
           <div className={workflowAiSettingsStyles.section__box}>
             {teamsInWorkflowAI[0].children[0].column.map((colItem) => (
               <InfoBox
@@ -28,6 +28,28 @@ const TeamsInWorkflowAi = () => {
               />
             ))}
           </div>
+          <input type="submit" />
+        </form>
+        <div className={workflowAiSettingsStyles.section__box}>
+          {teamsInWorkflowAI[0].children[1].column.map((colItem) => (
+            <InfoBox
+              register={register}
+              items={colItem.child}
+              title={colItem.childTitle}
+            />
+          ))}
+        </div>
+        <form>
+          <div className={workflowAiSettingsStyles.section__box}>
+            {teamsInWorkflowAI[0].children[2].column.map((colItem) => (
+              <InfoBox
+                register={register}
+                items={colItem.child}
+                title={colItem.childTitle}
+              />
+            ))}
+          </div>
+          <input type="submit" />
         </form>
       </div>
     </div>

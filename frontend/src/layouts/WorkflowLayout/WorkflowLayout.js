@@ -12,6 +12,7 @@ const WorkflowLayout = ({ children }) => {
 
   const handleClick = () => {
     if (session_id) {
+      sessionStorage.clear();
       window.location.replace(
         `https://100093.pythonanywhere.com/?session_id=${session_id}`
       );

@@ -24,12 +24,12 @@ const DocumentsPage = () => {
 
   useEffect(() => {
     const data = {
-      company_id: userDetail?.portfolio_info.org_id,
+      company_id: userDetail?.portfolio_info[0].org_id,
       created_by: userDetail?.userinfo.username,
     };
 
     const draftData = {
-      company_id: userDetail?.portfolio_info.org_id,
+      company_id: userDetail?.portfolio_info[0].org_id,
     };
 
     dispatch(savedDocuments(draftData));

@@ -25,12 +25,12 @@ const WorkflowsPage = () => {
 
   useEffect(() => {
     const data = {
-      company_id: userDetail?.portfolio_info.org_id,
+      company_id: userDetail?.portfolio_info[0].org_id,
       created_by: userDetail?.userinfo.username,
     };
 
     const saveddata = {
-      company_id: userDetail?.portfolio_info.org_id,
+      company_id: userDetail?.portfolio_info[0].org_id,
     };
 
     dispatch(savedWorkflows(saveddata));

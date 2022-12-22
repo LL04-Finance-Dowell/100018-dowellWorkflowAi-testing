@@ -31,10 +31,10 @@ const CreateDocument = ({ handleToggleOverlay }) => {
     dispatch(setToggleManageFileForm(false));
 
     const createDocumentData = {
-      company_id: userDetail?.portfolio_info.org_id,
+      company_id: userDetail?.portfolio_info[0].org_id,
       template_id: template,
       created_by: userDetail?.userinfo.username,
-      data_type: userDetail?.portfolio_info.data_type,
+      data_type: userDetail?.portfolio_info[0].data_type,
     };
 
     dispatch(createDocument(createDocumentData));
@@ -58,7 +58,7 @@ const CreateDocument = ({ handleToggleOverlay }) => {
 
   useEffect(() => {
     const data = {
-      company_id: userDetail?.portfolio_info.org_id,
+      company_id: userDetail?.portfolio_info[0].org_id,
     };
 
     dispatch(savedTemplates(data));

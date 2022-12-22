@@ -9,7 +9,7 @@ const Footer = ({ handleIconClick }) => {
     <div className={styles.container}>
       <div className={styles.mode__box}>
         <h1>6</h1>
-        <h2>{userDetail?.portfolio_info.data_type}</h2>
+        <h2>{userDetail?.portfolio_info[0].data_type}</h2>
       </div>
       <div className={styles.icon__box}>
         {footerIcons.map((item) => (

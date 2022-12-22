@@ -14,7 +14,7 @@ const filterWorkflows = (workflows, thunkAPI) => {
       .filter(
         (item) =>
           item.workflows.data_type ===
-          thunkAPI.getState().auth?.userDetail?.portfolio_info?.data_type
+          thunkAPI.getState().auth?.userDetail?.portfolio_info[0]?.data_type
       )
       .map((item) => ({
         ...item,
