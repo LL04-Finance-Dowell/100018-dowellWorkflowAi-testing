@@ -235,7 +235,7 @@ def get_process_object(workflow_process_id):
         return []
 
 
-def save_uuid_hash(uuid_hash, user_email, document_id):
+def save_uuid_hash(uuid_hash, process_id, user_email, document_id):
     url = "http://100002.pythonanywhere.com/"
     payload = json.dumps(
         {

@@ -1,4 +1,5 @@
 import json
+import uuid
 import requests
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
@@ -8,6 +9,7 @@ from .mongo_db_connection import (
     get_process_object,
     get_document_object,
     update_document,
+    save_uuid_hash
 )
 
 
@@ -201,10 +203,19 @@ def generate_links(process, document_id):
 
     return links
 
+#token generation
+def gen_token(process_id, user_name, document_id):
+    uuid_hash = uuid.uuid4().hex
+    res = save_uuid_hash(uuid_hash, process_id, user_name, document_id)
+    if res:
+        return uuid_hash
+
 
 # application link
 def verification_link(process_id, user_name, document_id):
-    link = f"https://ll04-finance-dowell.github.io/100018-dowellWorkflowAi-testing/verify/{process_id}/{user_name}/{document_id}"
+    token = gen_token(process_id, user_name, document_id)
+    if token:
+        link = f"https://ll04-finance-dowell.github.io/100018-dowellWorkflowAi-testing/verify/{token}/"
     return link
 
 
