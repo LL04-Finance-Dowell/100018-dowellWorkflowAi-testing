@@ -5,6 +5,9 @@ import { useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import FormLayout from "../../../../../formLayout/FormLayout";
 import AssignButton from "../../../../../assignButton/AssignButton";
+import { useDispatch, useSelector } from "react-redux";
+import { setProcessSteps } from "../../../../../../../features/app/appSlice";
+import { useEffect } from "react";
 
 const AssignTask = () => {
   const {
@@ -12,24 +15,95 @@ const AssignTask = () => {
     handleSubmit,
 
     formState: { isSubmitSuccessful },
+    watch,
   } = useForm();
   const [loading, setLoading] = useState(false);
+  const dispatch = useDispatch();
+  const { selectedMembersForProcess, docCurrentWorkflow } = useSelector((state) => state.app);
+  const watchRoleValChange = watch("role", false);
+  const watchCurrentMemberValChange = watch("members", false);
 
   const onSubmit = (data) => {
     setLoading(true);
     console.log("task", data);
+    dispatch(setProcessSteps({ ...data, "workflow": docCurrentWorkflow._id }))
     setTimeout(() => setLoading(false), 2000);
   };
+
+  const [ membersForCurrentUser, setMembersForCurrentUser ] = useState([]);
+  const [ memberPortfolios, setMemberPortfolios ] = useState([]);
+
+  useEffect(() => {
+    
+    let foundMembers = selectedMembersForProcess.map(user => {
+      return {
+        id : uuidv4(),
+        option: user?.username,
+      }
+    });
+    
+    setMembersForCurrentUser(foundMembers);
+
+    const foundCurrentMemberPortfolio = selectedMembersForProcess.find(user => user.username === foundMembers[0].option)
+    
+    if (!foundCurrentMemberPortfolio) return
+
+    setMemberPortfolios([{ id: uuidv4(), option: foundCurrentMemberPortfolio.portfolio_name }])
+    
+  }, [selectedMembersForProcess])
+
+  useEffect(() => {
+    
+    if (!watchRoleValChange) return 
+
+    const currentRoleVal = watchRoleValChange.split("_")[1];
+
+    let [ membersMatchingCriteria, foundMembers ] = [ [], [] ];
+
+    if (currentRoleVal === "Team Member") membersMatchingCriteria = selectedMembersForProcess.filter(user => user.member_type === "team_member");
+
+    if (currentRoleVal === "Guest (enter phone/email)") membersMatchingCriteria = selectedMembersForProcess.filter(user => user.member_type === "guest");
+    
+    if (currentRoleVal === "Public (link)") membersMatchingCriteria = selectedMembersForProcess.filter(user => user.member_type === "public");
+
+    foundMembers = membersMatchingCriteria.map(user => {
+      return {
+        id : uuidv4(),
+        option: user?.username,
+      }
+    });
+
+    setMembersForCurrentUser(foundMembers);
+
+  }, [watchRoleValChange, selectedMembersForProcess])
+
+  useEffect(() => {
+
+    if (!watchCurrentMemberValChange) return 
+
+    const valAfterUuid = watchCurrentMemberValChange.split("_")[1];
+
+    if (watchCurrentMemberValChange.indexOf(valAfterUuid) === -1) return
+
+    const currentMemberVal = watchCurrentMemberValChange.slice(watchCurrentMemberValChange.indexOf(valAfterUuid), watchCurrentMemberValChange.length);
+    
+    const foundCurrentMemberPortfolio = selectedMembersForProcess.find(user => user.username === currentMemberVal)
+    
+    if (!foundCurrentMemberPortfolio) return
+
+    setMemberPortfolios([{ id: uuidv4(), option: foundCurrentMemberPortfolio.portfolio_name }])
+    
+  }, [watchCurrentMemberValChange, selectedMembersForProcess])
 
   return (
     <FormLayout isSubmitted={isSubmitSuccessful} loading={loading}>
       <form onSubmit={handleSubmit(onSubmit)}>
         <Select register={register} name="role" options={roleArray} />
-        <Select register={register} name="members" options={members} />
+        <Select register={register} name="members" options={membersForCurrentUser} />
         <Select
           register={register}
           name="memberPortfolio"
-          options={membersPortfolio}
+          options={memberPortfolios}
         />
         <select
           required

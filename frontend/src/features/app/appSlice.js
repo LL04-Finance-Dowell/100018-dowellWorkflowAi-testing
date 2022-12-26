@@ -13,6 +13,8 @@ const initialState = {
     workflows: [],
   },
   dropdownToggle: false,
+  processSteps: [],
+  selectedMembersForProcess: [],
 };
 
 export const appSlice = createSlice({
@@ -84,6 +86,23 @@ export const appSlice = createSlice({
       };
       state.dropdownToggle = false;
     },
+    setProcessSteps: (state, action) => {
+      state.processSteps = [
+        ...state.processSteps,
+        action.payload,
+      ]
+    },
+    setSelectedMembersForProcess: (state, action) => {
+      state.selectedMembersForProcess = [
+        ...state.selectedMembersForProcess,
+        action.payload,
+      ]
+    },
+    removeFromSelectedMembersForProcess: (state, action) => {
+      state.selectedMembersForProcess = state.selectedMembersForProcess.filter(
+        (item) => item.username !== action.payload
+      );
+    },
   },
 });
 
@@ -99,6 +118,9 @@ export const {
   setDropdowndToggle,
   resetSetWorkflows,
   removeFromSelectedWorkflowsToDoc,
+  setProcessSteps,
+  setSelectedMembersForProcess,
+  removeFromSelectedMembersForProcess,
 } = appSlice.actions;
 
 export default appSlice.reducer;

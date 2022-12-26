@@ -9,7 +9,7 @@ import Contents from "../../contents/Contents";
 import { v4 as uuidv4 } from "uuid";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { setDocCurrentWorkflow } from "../../../../features/app/appSlice";
+import { setDocCurrentWorkflow, setProcessSteps } from "../../../../features/app/appSlice";
 import Collapse from "../../../../layouts/collapse/Collapse";
 import { FaArrowDown } from "react-icons/fa";
 import { FaArrowUp } from "react-icons/fa";
@@ -36,6 +36,7 @@ const ConnectWorkFlowToDoc = () => {
   }, [docCurrentWorkflow]);
 
   const [contentToggle, setContentToggle] = useState(false);
+  const [ showSteps, setShowSteps ] = useState([]);
 
   console.log("sssssssssssssssssss", wfToDocument);
 
@@ -43,6 +44,13 @@ const ConnectWorkFlowToDoc = () => {
     setCurrentSteps(
       docCurrentWorkflow ? docCurrentWorkflow?.workflows?.steps : []
     );
+    let singleShowStepArr = docCurrentWorkflow ? docCurrentWorkflow?.workflows?.steps.map(step => {
+      return {
+        _id: step._id,
+        showStep: true
+      }
+    }) : []
+    setShowSteps(singleShowStepArr)
   }, [docCurrentWorkflow]);
 
   const handleToggleContent = (id) => {
@@ -54,6 +62,22 @@ const ConnectWorkFlowToDoc = () => {
   };
 
   console.log("currrrr", contentOfDocument);
+
+  const handleSkipSelection = (e, showStepIdToUpdate, workflowId) => {
+    let currentShowSteps = showSteps.slice();
+    let foundStepIndex = currentShowSteps.findIndex(step => step._id === showStepIdToUpdate);
+    
+    if (foundStepIndex === -1) return
+    
+    if (e.target.checked) {
+      currentShowSteps[foundStepIndex].showStep = false;
+      dispatch(setProcessSteps({ 'skipped': true, 'workflow': workflowId }))
+      return setShowSteps(currentShowSteps)
+    }
+
+    currentShowSteps[foundStepIndex].showStep = true;
+    setShowSteps(currentShowSteps)
+  }
 
   return (
     <>
@@ -102,10 +126,11 @@ const ConnectWorkFlowToDoc = () => {
                         {item.step_name}
                       </div>
                       <div className={styles.skip}>
-                        <input type="checkbox" />
+                        <input type="checkbox" onChange={(e) => handleSkipSelection(e, item._id, docCurrentWorkflow._id)} />
                         Skip this Step
                       </div>
 
+                      { showSteps.find(step => step._id === item._id && step.showStep) ? <>
                       <AssignDocumentMap />
                       <div>
                         <div className={styles.table__of__contents__header}>
@@ -128,7 +153,10 @@ const ConnectWorkFlowToDoc = () => {
                       <AsignTask />
                       <AssignLocation />
                       <AssignTime />
-                    </div>
+                      </> :
+                      <>Skipped</>
+                      }
+                    </div> 
                   ))}
               </div>
             )}

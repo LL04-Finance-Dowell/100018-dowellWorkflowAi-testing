@@ -5,7 +5,7 @@ import { GrAdd } from "react-icons/gr";
 import { MdOutlineRemove } from "react-icons/md";
 import { useScroll, useTransform } from "framer-motion";
 import { useSelector, useDispatch } from "react-redux";
-import { setSelectedWorkflowsToDoc } from "../../../../../features/app/appSlice";
+import { removeFromSelectedMembersForProcess, setSelectedMembersForProcess, setSelectedWorkflowsToDoc } from "../../../../../features/app/appSlice";
 import Collapse from "../../../../../layouts/collapse/Collapse";
 import { LoadingSpinner } from "../../../../LoadingSpinner/LoadingSpinner";
 import { useForm } from "react-hook-form";
@@ -27,7 +27,7 @@ const InfoBoxes = () => {
   const dispatch = useDispatch();
 
   const { userDetail } = useSelector((state) => state.auth);
-  const { currentDocToWfs, selectedWorkflowsToDoc } = useSelector(
+  const { currentDocToWfs, selectedWorkflowsToDoc, selectedMembersForProcess } = useSelector(
     (state) => state.app
   );
   const { savedWorkflowItems, savedWorkflowStatus } = useSelector(
@@ -57,10 +57,16 @@ const InfoBoxes = () => {
               ),
               status: savedWorkflowStatus,
             }
-          : item
+          : 
+          item.title === "team" ? {
+            ...item,
+            contents: userDetail?.selected_product?.userportfolio.filter(user => user.member_type === "team_member"),
+            status: "done"
+          } :
+          item
       )
     );
-  }, [savedWorkflowStatus, workflow]);
+  }, [savedWorkflowStatus, workflow, userDetail]);
 
   useEffect(() => {
     memorizedInfoBox();
@@ -82,6 +88,11 @@ const InfoBoxes = () => {
   };
 
   const addToSelectedWorkFlows = (selectedWorkFlow) => {
+    if (selectedWorkFlow.member_type && selectedWorkFlow.username) {
+      if (selectedMembersForProcess.find(member => member.username === selectedWorkFlow.username)) return dispatch(removeFromSelectedMembersForProcess(selectedWorkFlow.username))
+      return dispatch(setSelectedMembersForProcess(selectedWorkFlow));
+    }
+
     if (currentDocToWfs) {
       const isInclude = selectedWorkflowsToDoc.find(
         (item) => item._id === selectedWorkFlow._id
@@ -128,13 +139,18 @@ const InfoBoxes = () => {
               />
 
               <InfoContentBox className={styles.content__box}>
-                {[...infoBox.contents].reverse().map((item) => (
+                {[...infoBox?.contents].reverse().map((item) => (
                   <InfoContentText
                     onClick={() => addToSelectedWorkFlows(item)}
                     key={item._id}
                     /* className={styles.content} */
                   >
-                    {item.workflows?.workflow_title}
+                    <span style={
+                      item.username ? selectedMembersForProcess.find(member => member.username === item.username) ? { color: "#0048ff"} : {} : 
+                      item.workflows && item._id ? selectedWorkflowsToDoc.find(addedWorkflow => addedWorkflow._id === item._id) ? { color: "#0048ff"} : {} :
+                      {}}>
+                      {item.workflows && item.workflows.workflow_title ? item.workflows.workflow_title : item.username}
+                    </span>
                   </InfoContentText>
                 ))}
               </InfoContentBox>

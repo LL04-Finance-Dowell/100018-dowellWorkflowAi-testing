@@ -1,7 +1,62 @@
 import styles from "./infoTable.module.css";
 import { v4 as uuidv4 } from "uuid";
+import { useSelector } from "react-redux";
+import { useState } from "react";
+import { useEffect } from "react";
 
 const InfoTable = () => {
+  const { processSteps } = useSelector((state) => state.app);
+  const [ tableInfoToDisplay, setTableInfoToDisplay ] = useState([]);
+
+  useEffect(() => {
+    const skippedStepObj = { id: uuidv4(), content: "Step skipped" };
+    let infoDataToDisplay = [];
+
+    processSteps.forEach(step => {
+      let [ newTableDataObj, currentDataObj ] = [ {}, { id: uuidv4(), content: step.members && typeof step.members === "string" ? step.members.slice(step.members.indexOf("_") + 1) : ""} ];
+
+      if (step.skipped) {
+        newTableDataObj = {
+          id: uuidv4(),
+          content: "Step skipped",
+          addEdits: [skippedStepObj],
+          approves: [skippedStepObj],
+          comments: [skippedStepObj],
+          views: [skippedStepObj],
+        }
+        return infoDataToDisplay.push(newTableDataObj)
+      }
+
+      const existingTableObj = infoDataToDisplay.find(elem => elem.content === step?.displayDoc.split("_")[1]);
+      
+      if (existingTableObj) {
+
+        if (step.taskFeature === "Add/Edit") return existingTableObj.addEdits.push(currentDataObj)
+        if (step.taskFeature === "Approve") return existingTableObj.approves.push(currentDataObj)
+        if (step.taskFeature === "Comment") return existingTableObj.comments.push(currentDataObj)
+        if (step.taskFeature === "View") return existingTableObj.views.push(currentDataObj)
+
+      }
+      
+      newTableDataObj = {
+        id: uuidv4(),
+        content: step?.displayDoc.split("_")[1],
+        addEdits: step.taskFeature === "Add/Edit" ? [currentDataObj] : [],
+        approves: step.taskFeature === "Approve" ? [currentDataObj] : [],
+        comments: step.taskFeature === "Comment" ? [currentDataObj] : [],
+        views: step.taskFeature === "View" ? [currentDataObj] : [],
+      }
+      
+      infoDataToDisplay.push(newTableDataObj);
+
+    });
+    
+    setTableInfoToDisplay(infoDataToDisplay);
+
+  }, [processSteps])
+
+  if (tableInfoToDisplay.length === 0) return <></>
+
   return (
     <div>
       <table className={styles.info__table}>
@@ -12,7 +67,7 @@ const InfoTable = () => {
           <th>Comment & Sign</th>
           <th>View & Sign</th>
         </tr>
-        {infoTable.map((item, index) => (
+        {tableInfoToDisplay.map((item, index) => (
           <tr id={item.id}>
             <td>
               <h2 className={`${styles.title__content} h2-small`}>

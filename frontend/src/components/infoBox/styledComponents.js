@@ -62,6 +62,7 @@ export const InfoContentText = styled.li`
   white-space: break-spaces;
   font-weight: 400;
   font-family: "Roboto";
+  cursor: pointer;
 `;
 
 export const InfoContentFormText = styled.li`
