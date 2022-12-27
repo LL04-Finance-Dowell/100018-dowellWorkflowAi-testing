@@ -43,6 +43,7 @@ def save_workflows_to_document(request):
 def new_process(workflows, created_by, company_id, data_type):
     process_title = ""
     process_steps = []
+    print("Workflows in new process", workflows)
     try:
         for workflow in workflows:
             process_steps.extend(workflow["workflows"]["steps"])
