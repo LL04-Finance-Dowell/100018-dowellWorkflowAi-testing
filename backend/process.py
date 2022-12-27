@@ -9,7 +9,7 @@ from .mongo_db_connection import (
     get_process_object,
     get_document_object,
     update_document,
-    save_uuid_hash
+    save_uuid_hash,
 )
 
 
@@ -22,10 +22,10 @@ from .mongo_db_connection import (
 def save_workflows_to_document(request):
     process_id = new_process(
         workflows=request.data["workflows"],
-        document_id=request.data["document_id"],
         created_by=request.data["created_by"],
         company_id=request.data["company_id"],
         data_type=request.data["data_type"],
+        document_id=request.data["document_id"],
     )
     print(process_id)
     if process_id:
@@ -40,7 +40,7 @@ def save_workflows_to_document(request):
 
 
 # Create Process.
-def new_process(workflows, created_by, company_id, data_type):
+def new_process(workflows, created_by, company_id, data_type, document_id):
     process_title = ""
     process_steps = []
     print("Workflows in new process", workflows)
@@ -52,7 +52,7 @@ def new_process(workflows, created_by, company_id, data_type):
             )
         print(process_steps)
         res = save_wf_process(
-            process_title, process_steps, created_by, company_id, data_type
+            process_title, process_steps, created_by, company_id, data_type, document_id
         )
         return res["inserted_id"]
     except:
@@ -204,7 +204,8 @@ def generate_links(process, document_id):
 
     return links
 
-#token generation
+
+# token generation
 def gen_token(process_id, user_name, document_id):
     uuid_hash = uuid.uuid4().hex
     res = save_uuid_hash(uuid_hash, process_id, user_name, document_id)
