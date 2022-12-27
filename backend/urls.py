@@ -46,7 +46,7 @@ urlpatterns = [
     path("process/start/", save_and_start_processing),
     path("process/verify/", verify_process),
     # Search----------------------------
-    path("search/<str:str>", search),
+    path("search/", search),
     # Templates-----------------------------------------------------
     path("templates/", create_template),
     path("templates/detail/", template_detail),

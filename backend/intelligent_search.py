@@ -8,35 +8,26 @@ from django.db.models import  Q
 
 # searchable =  [get_template_object(id),]
 
-@api_view(["GET",'POST'])
-def search(request,str,company='6365ee18ff915c925f3a6691'):
+@api_view(['POST'])
+def search(request):
     # print(request.POST.cleaned_data.keys)
     get_search_result={'workflow':[],'document':[],'template':[]}
 
-    if request.method == "GET":
+    if request.method == "POST":
         
-        workflow_list = get_wf_list(company)
-        documents = get_document_list(company)
-        templats = get_template_list(company)
+        workflow_list = get_wf_list(request.data["company_id"])
+        documents = get_document_list(request.data["company_id"])
+        templats = get_template_list(request.data["company_id"])
 
-        get_search_result["document"]=[doc for doc in documents if doc.get("document_name")==str ]
-        get_search_result["workflow"]=[wf for wf in workflow_list if wf.get("workflow_title")==str ]
-        get_search_result["template"]=[temp for temp in templats if temp.get("template_name")==str ]
-
-        # for wf in workflow_list:
-        #     if wf.get("workflow_title") == str:
-        #         get_search_result["workflow"].append(wf)
-        # for doc in documents:
-        #     if str ==doc.get('document_name'):
-        #         get_search_result["document"].append(doc)
-        # for template in templats:
-        #     if str == template.get('template_name'):
-        #         get_search_result["template"].append(template)
+        get_search_result["document"]=[doc for doc in documents if doc.get("document_name")==request.data["search"] ]
+        get_search_result["workflow"]=[wf for wf in workflow_list if wf.get("workflow_title")==request.data["search"] ]
+        get_search_result["template"]=[temp for temp in templats if temp.get("template_name")==request.data["search"] ]
+        
+        
         
     return Response(
         {
-            "message": "Search Listing Success",
-            'search_keyword':str,
+            'search_keyword':request.data['search'],
             "search_result": get_search_result,
         },
         status=status.HTTP_200_OK,
