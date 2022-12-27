@@ -6,11 +6,9 @@ from rest_framework.response import Response
 from rest_framework import status
 from django.db.models import  Q
 
-# searchable =  [get_template_object(id),]
 
 @api_view(['POST'])
 def search(request):
-    # print(request.POST.cleaned_data.keys)
     get_search_result={'workflow':[],'document':[],'template':[]}
 
     if request.method == "POST":
