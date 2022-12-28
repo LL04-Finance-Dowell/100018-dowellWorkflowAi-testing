@@ -738,7 +738,10 @@ Response-200
 ```
 {
     "search_keyword":"user_search_input",
-    "search_result": {"workflow": ["list_of_existing_workflows_with_searched_title"],
-                      "document":["list_of_existing_documents_with_searched_name"],
-                      template=["list_of_existing_te,templates_with_searched_name"]},
+    "search_result": {
+                "workflow": ["list_of_existing_workflows_with_searched_title"],
+                "document":["list_of_existing_documents_with_searched_name"],
+                "templat":["list_of_existing_te,templates_with_searched_name"]
+                }
 }
+```
