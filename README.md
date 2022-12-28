@@ -720,12 +720,12 @@ Response-200
 ```
 
 ### Intelligent Search
-
+- search document, workflow and template.
 
 _POST_ `search/`
 
-```
-Request
+
+Request Body
 
 ```
 {
