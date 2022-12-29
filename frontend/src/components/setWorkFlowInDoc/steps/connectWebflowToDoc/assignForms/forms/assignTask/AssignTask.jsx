@@ -6,10 +6,10 @@ import { v4 as uuidv4 } from "uuid";
 import FormLayout from "../../../../../formLayout/FormLayout";
 import AssignButton from "../../../../../assignButton/AssignButton";
 import { useDispatch, useSelector } from "react-redux";
-import { setProcessSteps } from "../../../../../../../features/app/appSlice";
+import { updateSingleProcessStep } from "../../../../../../../features/app/appSlice";
 import { useEffect } from "react";
 
-const AssignTask = () => {
+const AssignTask = ({ currentStepIndex }) => {
   const {
     register,
     handleSubmit,
@@ -20,13 +20,13 @@ const AssignTask = () => {
   const [loading, setLoading] = useState(false);
   const dispatch = useDispatch();
   const { selectedMembersForProcess, docCurrentWorkflow } = useSelector((state) => state.app);
-  const watchRoleValChange = watch("role", false);
-  const watchCurrentMemberValChange = watch("members", false);
+  const watchRoleValChange = watch("member_type", false);
+  const watchCurrentMemberValChange = watch("member", false);
 
   const onSubmit = (data) => {
     setLoading(true);
     console.log("task", data);
-    dispatch(setProcessSteps({ ...data, "workflow": docCurrentWorkflow._id }))
+    dispatch(updateSingleProcessStep({ ...data, "indexToUpdate": currentStepIndex , "workflow": docCurrentWorkflow._id }))
     setTimeout(() => setLoading(false), 2000);
   };
 
@@ -56,15 +56,13 @@ const AssignTask = () => {
     
     if (!watchRoleValChange) return 
 
-    const currentRoleVal = watchRoleValChange.split("_")[1];
-
     let [ membersMatchingCriteria, foundMembers ] = [ [], [] ];
 
-    if (currentRoleVal === "Team Member") membersMatchingCriteria = selectedMembersForProcess.filter(user => user.member_type === "team_member");
+    if (watchRoleValChange === "Team Member") membersMatchingCriteria = selectedMembersForProcess.filter(user => user.member_type === "team_member");
 
-    if (currentRoleVal === "Guest (enter phone/email)") membersMatchingCriteria = selectedMembersForProcess.filter(user => user.member_type === "guest");
+    if (watchRoleValChange === "Guest (enter phone/email)") membersMatchingCriteria = selectedMembersForProcess.filter(user => user.member_type === "guest");
     
-    if (currentRoleVal === "Public (link)") membersMatchingCriteria = selectedMembersForProcess.filter(user => user.member_type === "public");
+    if (watchRoleValChange === "Public (link)") membersMatchingCriteria = selectedMembersForProcess.filter(user => user.member_type === "public");
 
     foundMembers = membersMatchingCriteria.map(user => {
       return {
@@ -81,13 +79,7 @@ const AssignTask = () => {
 
     if (!watchCurrentMemberValChange) return 
 
-    const valAfterUuid = watchCurrentMemberValChange.split("_")[1];
-
-    if (watchCurrentMemberValChange.indexOf(valAfterUuid) === -1) return
-
-    const currentMemberVal = watchCurrentMemberValChange.slice(watchCurrentMemberValChange.indexOf(valAfterUuid), watchCurrentMemberValChange.length);
-    
-    const foundCurrentMemberPortfolio = selectedMembersForProcess.find(user => user.username === currentMemberVal)
+    const foundCurrentMemberPortfolio = selectedMembersForProcess.find(user => user.username === watchCurrentMemberValChange)
     
     if (!foundCurrentMemberPortfolio) return
 
@@ -98,16 +90,17 @@ const AssignTask = () => {
   return (
     <FormLayout isSubmitted={isSubmitSuccessful} loading={loading}>
       <form onSubmit={handleSubmit(onSubmit)}>
-        <Select register={register} name="role" options={roleArray} />
-        <Select register={register} name="members" options={membersForCurrentUser} />
+        <Select register={register} name="member_type" options={roleArray} takeNormalValue={true} />
+        <Select register={register} name="member" options={membersForCurrentUser} takeNormalValue={true} />
         <Select
           register={register}
-          name="memberPortfolio"
+          name="member_portfolio"
           options={memberPortfolios}
+          takeNormalValue={true}
         />
         <select
           required
-          {...register("taskFeature")}
+          {...register("rights")}
           size={taskFeatures.length}
           className={globalStyles.task__features}
         >
@@ -119,8 +112,9 @@ const AssignTask = () => {
         </select>
         <Select
           register={register}
-          name="displayDoc"
+          name="display_before"
           options={displayDocument}
+          takeNormalValue={true}
         />
         <AssignButton loading={loading} buttonText="Assign Task" />
       </form>

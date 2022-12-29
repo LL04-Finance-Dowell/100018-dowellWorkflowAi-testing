@@ -9,7 +9,7 @@ import Contents from "../../contents/Contents";
 import { v4 as uuidv4 } from "uuid";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { setDocCurrentWorkflow, setProcessSteps } from "../../../../features/app/appSlice";
+import { setDocCurrentWorkflow, setProcessSteps, updateSingleProcessStep } from "../../../../features/app/appSlice";
 import Collapse from "../../../../layouts/collapse/Collapse";
 import { FaArrowDown } from "react-icons/fa";
 import { FaArrowUp } from "react-icons/fa";
@@ -23,7 +23,7 @@ const ConnectWorkFlowToDoc = () => {
   const { contentOfDocument, contentOfDocumentStatus } = useSelector(
     (state) => state.document
   );
-  const { wfToDocument, docCurrentWorkflow } = useSelector(
+  const { wfToDocument, docCurrentWorkflow, selectedWorkflowsToDoc } = useSelector(
     (state) => state.app
   );
 
@@ -53,6 +53,21 @@ const ConnectWorkFlowToDoc = () => {
     setShowSteps(singleShowStepArr)
   }, [docCurrentWorkflow]);
 
+  useEffect(() => {
+    
+    const stepsPerWorkflow = selectedWorkflowsToDoc.map(workflow => {
+      let steps = workflow.workflows.steps;
+      let stepsObj = {
+        workflow: workflow._id,
+        steps: steps
+      }
+      return stepsObj
+    })
+    
+    dispatch(setProcessSteps(stepsPerWorkflow))
+
+  }, [selectedWorkflowsToDoc])
+
   const handleToggleContent = (id) => {
     setCurrentSteps((prev) =>
       prev.map((step) =>
@@ -63,7 +78,7 @@ const ConnectWorkFlowToDoc = () => {
 
   console.log("currrrr", contentOfDocument);
 
-  const handleSkipSelection = (e, showStepIdToUpdate, workflowId) => {
+  const handleSkipSelection = (e, showStepIdToUpdate, workflowId, stepIndexToUpdate) => {
     let currentShowSteps = showSteps.slice();
     let foundStepIndex = currentShowSteps.findIndex(step => step._id === showStepIdToUpdate);
     
@@ -71,7 +86,16 @@ const ConnectWorkFlowToDoc = () => {
     
     if (e.target.checked) {
       currentShowSteps[foundStepIndex].showStep = false;
-      dispatch(setProcessSteps({ 'skipped': true, 'workflow': workflowId }))
+      dispatch(updateSingleProcessStep({ 
+        'skip': true, 
+        'workflow': workflowId, 
+        'indexToUpdate': stepIndexToUpdate, 
+        'member_type': '',
+        'member': '',
+        'member_portfolio': '',
+        'rights': '',
+        'display_before': ''
+      }))
       return setShowSteps(currentShowSteps)
     }
 
@@ -114,7 +138,7 @@ const ConnectWorkFlowToDoc = () => {
             {docCurrentWorkflow && (
               <div className={styles.step__container}>
                 {currentSteps &&
-                  currentSteps?.map((item) => (
+                  currentSteps?.map((item, index) => (
                     <div key={item._id} className={styles.step__box}>
                       <div
                         onClick={() => setContentToggle((prev) => !prev)}
@@ -126,12 +150,11 @@ const ConnectWorkFlowToDoc = () => {
                         {item.step_name}
                       </div>
                       <div className={styles.skip}>
-                        <input type="checkbox" onChange={(e) => handleSkipSelection(e, item._id, docCurrentWorkflow._id)} />
+                        <input type="checkbox" onChange={(e) => handleSkipSelection(e, item._id, docCurrentWorkflow._id, index)} />
                         Skip this Step
                       </div>
 
-                      { showSteps.find(step => step._id === item._id && step.showStep) ? <>
-                      <AssignDocumentMap />
+                      <AssignDocumentMap currentStepIndex={index} />
                       <div>
                         <div className={styles.table__of__contents__header}>
                           <span>Table of Contents</span>
@@ -150,12 +173,9 @@ const ConnectWorkFlowToDoc = () => {
                           />
                         )}
                       </div>
-                      <AsignTask />
-                      <AssignLocation />
-                      <AssignTime />
-                      </> :
-                      <>Skipped</>
-                      }
+                      {showSteps.find(step => step._id === item._id && step.showStep) ? <AsignTask currentStepIndex={index} /> : <>Skipped</>}
+                      <AssignLocation currentStepIndex={index} />
+                      <AssignTime currentStepIndex={index} />
                     </div> 
                   ))}
               </div>

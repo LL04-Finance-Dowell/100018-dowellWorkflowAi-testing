@@ -87,10 +87,7 @@ export const appSlice = createSlice({
       state.dropdownToggle = false;
     },
     setProcessSteps: (state, action) => {
-      state.processSteps = [
-        ...state.processSteps,
-        action.payload,
-      ]
+      state.processSteps = action.payload
     },
     setSelectedMembersForProcess: (state, action) => {
       state.selectedMembersForProcess = [
@@ -103,6 +100,25 @@ export const appSlice = createSlice({
         (item) => item.username !== action.payload
       );
     },
+    updateSingleProcessStep: (state, action) => {
+      const currentProcessSteps = [ ...state.processSteps ];
+
+      if (!action.payload.workflow) return state.processSteps = currentProcessSteps;
+      
+      const foundStepIndex = currentProcessSteps.findIndex(step => step.workflow === action.payload.workflow);
+      
+      if (foundStepIndex === -1) return state.processSteps = currentProcessSteps;
+      
+      const currentStepToUpdate = currentProcessSteps[foundStepIndex];
+      const updatedStepObj = { ...currentStepToUpdate.steps[action.payload.indexToUpdate], ...action.payload };
+      
+      delete updatedStepObj.indexToUpdate;
+      delete updatedStepObj.workflow;
+      
+      currentStepToUpdate.steps[action.payload.indexToUpdate] = updatedStepObj;
+      
+      state.processSteps = currentProcessSteps;
+    }
   },
 });
 
@@ -121,6 +137,7 @@ export const {
   setProcessSteps,
   setSelectedMembersForProcess,
   removeFromSelectedMembersForProcess,
+  updateSingleProcessStep,
 } = appSlice.actions;
 
 export default appSlice.reducer;

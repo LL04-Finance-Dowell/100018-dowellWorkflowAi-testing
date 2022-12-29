@@ -77,19 +77,23 @@ const ProcessDocument = () => {
     }
 
     selectedWorkflowsToDoc.forEach(workflow => {
-      const foundProcessSteps = processSteps.filter(process => process.workflow === workflow._id)
+      const foundProcessSteps = processSteps.find(process => process.workflow === workflow._id)
       let newWorkflowObj = {
         "created_by": workflow?.created_by,
         "company_id": workflow?.company_id,
         "data_type": workflow?.workflows?.data_type,
         "wf_title": workflow?.workflows?.workflow_title,
-        "steps": foundProcessSteps,
+        "steps": foundProcessSteps ? foundProcessSteps.steps.map(step => {
+          let copyOfCurrentStep = { ...step };
+          if (copyOfCurrentStep._id) delete copyOfCurrentStep._id;
+          return copyOfCurrentStep
+        }) : [],
       }
       newProcessObj.workflows.push(newWorkflowObj);
     })
 
     console.log("Process obj to post: ", newProcessObj);
-    
+
     try {
       const response = await (await createNewProcess(newProcessObj)).data;
       console.log("process response: ", response);

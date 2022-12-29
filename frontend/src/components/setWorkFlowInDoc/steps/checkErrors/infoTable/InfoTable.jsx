@@ -5,20 +5,31 @@ import { useState } from "react";
 import { useEffect } from "react";
 
 const InfoTable = () => {
-  const { processSteps } = useSelector((state) => state.app);
+  const { processSteps, docCurrentWorkflow } = useSelector((state) => state.app);
   const [ tableInfoToDisplay, setTableInfoToDisplay ] = useState([]);
 
   useEffect(() => {
+    if (!docCurrentWorkflow) return
+
     const skippedStepObj = { id: uuidv4(), content: "Step skipped" };
     let infoDataToDisplay = [];
+    const currentWorkflowDataToFormat = processSteps.find(step => step.workflow === docCurrentWorkflow._id);
 
-    processSteps.forEach(step => {
-      let [ newTableDataObj, currentDataObj ] = [ {}, { id: uuidv4(), content: step.members && typeof step.members === "string" ? step.members.slice(step.members.indexOf("_") + 1) : ""} ];
+    if (!currentWorkflowDataToFormat) return
 
-      if (step.skipped) {
+    currentWorkflowDataToFormat.steps.forEach(step => {
+      let [ newTableDataObj, currentDataObj ] = [ 
+        {}, 
+        { 
+          id: uuidv4(), 
+          content: `${step.member ? step.member + ", " : ""} ${step.location ? step.location + ", " : ""} ${step.start_time ? step.start_time + ", " : ""} ${step.end_time ? step.end_time + ", " : ""} ${step.step_name ? step.step_name + ", ": ""}`,
+        } 
+      ];
+
+      if (step.skip) {
         newTableDataObj = {
           id: uuidv4(),
-          content: "Step skipped",
+          content: `Step skipped, ${step.start_time ? step.start_time + ", " : ""} ${step.end_time ? step.end_time + ", " : ""} ${step.step_name ? step.step_name + ", ": ""}`,
           addEdits: [skippedStepObj],
           approves: [skippedStepObj],
           comments: [skippedStepObj],
@@ -27,24 +38,24 @@ const InfoTable = () => {
         return infoDataToDisplay.push(newTableDataObj)
       }
 
-      const existingTableObj = infoDataToDisplay.find(elem => elem.content === step?.displayDoc.split("_")[1]);
+      const existingTableObj = infoDataToDisplay.find(elem => elem.content === step.display_before);
       
       if (existingTableObj) {
 
-        if (step.taskFeature === "Add/Edit") return existingTableObj.addEdits.push(currentDataObj)
-        if (step.taskFeature === "Approve") return existingTableObj.approves.push(currentDataObj)
-        if (step.taskFeature === "Comment") return existingTableObj.comments.push(currentDataObj)
-        if (step.taskFeature === "View") return existingTableObj.views.push(currentDataObj)
+        if (step.rights === "Add/Edit") return existingTableObj.addEdits.push(currentDataObj)
+        if (step.rights === "Approve") return existingTableObj.approves.push(currentDataObj)
+        if (step.rights === "Comment") return existingTableObj.comments.push(currentDataObj)
+        if (step.rights === "View") return existingTableObj.views.push(currentDataObj)
 
       }
       
       newTableDataObj = {
         id: uuidv4(),
-        content: step?.displayDoc.split("_")[1],
-        addEdits: step.taskFeature === "Add/Edit" ? [currentDataObj] : [],
-        approves: step.taskFeature === "Approve" ? [currentDataObj] : [],
-        comments: step.taskFeature === "Comment" ? [currentDataObj] : [],
-        views: step.taskFeature === "View" ? [currentDataObj] : [],
+        content: step.display_before ? step.display_before : "",
+        addEdits: step.rights === "Add/Edit" ? [currentDataObj] : [],
+        approves: step.rights === "Approve" ? [currentDataObj] : [],
+        comments: step.rights === "Comment" ? [currentDataObj] : [],
+        views: step.rights === "View" ? [currentDataObj] : [],
       }
       
       infoDataToDisplay.push(newTableDataObj);

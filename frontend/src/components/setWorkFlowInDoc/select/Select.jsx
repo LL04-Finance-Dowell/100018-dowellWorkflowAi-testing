@@ -1,6 +1,6 @@
 import styles from "./select.module.css";
 
-const Select = ({ options, register, name, takeIdValue, ...rest }) => {
+const Select = ({ options, register, name, takeIdValue, takeNormalValue, ...rest }) => {
   return (
     <select
       id={name}
@@ -10,7 +10,7 @@ const Select = ({ options, register, name, takeIdValue, ...rest }) => {
       {...rest}
     >
       {options.map((item) => (
-        <option value={takeIdValue && item._id ? item._id : `${item.id}_${item.option}`} key={item.id}>
+        <option value={takeIdValue && item._id ? item._id : takeNormalValue ? item.option : `${item.id}_${item.option}`} key={item.id}>
           {item.option}
         </option>
       ))}

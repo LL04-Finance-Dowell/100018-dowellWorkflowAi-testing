@@ -5,32 +5,37 @@ import { v4 as uuidv4 } from "uuid";
 import FormLayout from "../../../../../formLayout/FormLayout";
 import { useState } from "react";
 import AssignButton from "../../../../../assignButton/AssignButton";
+import { useDispatch, useSelector } from "react-redux";
+import { updateSingleProcessStep } from "../../../../../../../features/app/appSlice";
 
-const AssignTime = () => {
+const AssignTime = ({ currentStepIndex }) => {
   const {
     register,
     handleSubmit,
     formState: { isSubmitted },
   } = useForm();
   const [loading, setLoading] = useState(false);
+  const { docCurrentWorkflow } = useSelector((state) => state.app);
+  const dispatch = useDispatch();
 
   const onSubmit = (data) => {
     setLoading(true);
     console.log("location", data);
+    dispatch(updateSingleProcessStep({ ...data, "indexToUpdate": currentStepIndex, "workflow": docCurrentWorkflow._id }))
     setTimeout(() => setLoading(false), 2000);
   };
 
   return (
     <FormLayout isSubmitted={isSubmitted} loading={loading}>
       <form onSubmit={handleSubmit(onSubmit)}>
-        <Select register={register} name="limitTime" options={limitTimes} />
+        <Select register={register} name="limit" options={limitTimes} takeNormalValue={true} />
         <input
-          {...register("startTime")}
+          {...register("start_time")}
           className={globalStyles.time__input}
           type="time"
         />
         <input
-          {...register("endTime")}
+          {...register("end_time")}
           className={globalStyles.time__input}
           type="time"
         />
@@ -38,6 +43,7 @@ const AssignTime = () => {
           register={register}
           name="reminder"
           options={reminderFrequency}
+          takeNormalValue={true}
         />
         <AssignButton loading={loading} buttonText="Assign Period" />
       </form>
