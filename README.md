@@ -788,3 +788,29 @@ Response-200
     [<List of Saved Workflows within company>]
 
 ```
+### Intelligent Search
+- search document, workflow and template.
+
+_POST_ `search/`
+
+
+Request Body
+
+```
+{
+    "company_id":"i",
+    "search":search keyword"
+}
+```
+Response-200
+
+```
+{
+    "search_keyword":"user_search_input",
+    "search_result": {
+                "workflow": ["list_of_existing_workflows_with_searched_title"],
+                "document":["list_of_existing_documents_with_searched_name"],
+                "templat":["list_of_existing_te,templates_with_searched_name"]
+                }
+}
+```
