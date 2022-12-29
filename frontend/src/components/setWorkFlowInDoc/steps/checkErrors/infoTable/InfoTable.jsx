@@ -42,20 +42,20 @@ const InfoTable = () => {
       
       if (existingTableObj) {
 
-        if (step.rights === "Add/Edit") return existingTableObj.addEdits.push(currentDataObj)
-        if (step.rights === "Approve") return existingTableObj.approves.push(currentDataObj)
-        if (step.rights === "Comment") return existingTableObj.comments.push(currentDataObj)
-        if (step.rights === "View") return existingTableObj.views.push(currentDataObj)
+        if (step.rights === "ADD/EDIT") return existingTableObj.addEdits.push(currentDataObj)
+        if (step.rights === "APPROVE") return existingTableObj.approves.push(currentDataObj)
+        if (step.rights === "COMMENT") return existingTableObj.comments.push(currentDataObj)
+        if (step.rights === "VIEW") return existingTableObj.views.push(currentDataObj)
 
       }
       
       newTableDataObj = {
         id: uuidv4(),
         content: step.display_before ? step.display_before : "",
-        addEdits: step.rights === "Add/Edit" ? [currentDataObj] : [],
-        approves: step.rights === "Approve" ? [currentDataObj] : [],
-        comments: step.rights === "Comment" ? [currentDataObj] : [],
-        views: step.rights === "View" ? [currentDataObj] : [],
+        addEdits: step.rights === "ADD/EDIT" ? [currentDataObj] : [],
+        approves: step.rights === "APPROVE" ? [currentDataObj] : [],
+        comments: step.rights === "COMMENT" ? [currentDataObj] : [],
+        views: step.rights === "VIEW" ? [currentDataObj] : [],
       }
       
       infoDataToDisplay.push(newTableDataObj);

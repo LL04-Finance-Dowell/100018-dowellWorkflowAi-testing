@@ -51,22 +51,15 @@ const ConnectWorkFlowToDoc = () => {
       }
     }) : []
     setShowSteps(singleShowStepArr)
+
+    if (!docCurrentWorkflow) return
+
+    const [ stepsForWorkflow, stepsObj ] = [ [], { workflow: docCurrentWorkflow._id, steps: docCurrentWorkflow.workflows?.steps, }];
+    stepsForWorkflow.push(stepsObj);
+    
+    dispatch(setProcessSteps(stepsForWorkflow));
+
   }, [docCurrentWorkflow]);
-
-  useEffect(() => {
-    
-    const stepsPerWorkflow = selectedWorkflowsToDoc.map(workflow => {
-      let steps = workflow.workflows.steps;
-      let stepsObj = {
-        workflow: workflow._id,
-        steps: steps
-      }
-      return stepsObj
-    })
-    
-    dispatch(setProcessSteps(stepsPerWorkflow))
-
-  }, [selectedWorkflowsToDoc])
 
   const handleToggleContent = (id) => {
     setCurrentSteps((prev) =>
@@ -173,7 +166,7 @@ const ConnectWorkFlowToDoc = () => {
                           />
                         )}
                       </div>
-                      {showSteps.find(step => step._id === item._id && step.showStep) ? <AsignTask currentStepIndex={index} /> : <>Skipped</>}
+                      <AsignTask currentStepIndex={index} stepSkipped={showSteps.find(step => step._id === item._id && step.showStep)} />
                       <AssignLocation currentStepIndex={index} />
                       <AssignTime currentStepIndex={index} />
                     </div> 

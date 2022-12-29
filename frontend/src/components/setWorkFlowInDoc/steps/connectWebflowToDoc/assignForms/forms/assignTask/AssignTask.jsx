@@ -9,7 +9,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { updateSingleProcessStep } from "../../../../../../../features/app/appSlice";
 import { useEffect } from "react";
 
-const AssignTask = ({ currentStepIndex }) => {
+const AssignTask = ({ currentStepIndex, stepSkipped }) => {
   const {
     register,
     handleSubmit,
@@ -58,11 +58,11 @@ const AssignTask = ({ currentStepIndex }) => {
 
     let [ membersMatchingCriteria, foundMembers ] = [ [], [] ];
 
-    if (watchRoleValChange === "Team Member") membersMatchingCriteria = selectedMembersForProcess.filter(user => user.member_type === "team_member");
+    if (watchRoleValChange === "TEAM_MEMBER") membersMatchingCriteria = selectedMembersForProcess.filter(user => user.member_type === "team_member");
 
-    if (watchRoleValChange === "Guest (enter phone/email)") membersMatchingCriteria = selectedMembersForProcess.filter(user => user.member_type === "guest");
+    if (watchRoleValChange === "GUEST") membersMatchingCriteria = selectedMembersForProcess.filter(user => user.member_type === "guest");
     
-    if (watchRoleValChange === "Public (link)") membersMatchingCriteria = selectedMembersForProcess.filter(user => user.member_type === "public");
+    if (watchRoleValChange === "PUBLIC") membersMatchingCriteria = selectedMembersForProcess.filter(user => user.member_type === "public");
 
     foundMembers = membersMatchingCriteria.map(user => {
       return {
@@ -90,15 +90,15 @@ const AssignTask = ({ currentStepIndex }) => {
   return (
     <FormLayout isSubmitted={isSubmitSuccessful} loading={loading}>
       <form onSubmit={handleSubmit(onSubmit)}>
-        <Select register={register} name="member_type" options={roleArray} takeNormalValue={true} />
+        { stepSkipped ? <Select register={register} name="member_type" options={roleArray} takeNormalValue={true} /> : <p>Step skipped</p> }
         <Select register={register} name="member" options={membersForCurrentUser} takeNormalValue={true} />
-        <Select
+        { stepSkipped ? <Select
           register={register}
           name="member_portfolio"
           options={memberPortfolios}
           takeNormalValue={true}
-        />
-        <select
+        /> : <p>Step skipped</p> }
+        { stepSkipped ? <select
           required
           {...register("rights")}
           size={taskFeatures.length}
@@ -109,13 +109,13 @@ const AssignTask = ({ currentStepIndex }) => {
               {item.feature}
             </option>
           ))}
-        </select>
-        <Select
+        </select> : <p>Step skipped</p> }
+        { stepSkipped ? <Select
           register={register}
           name="display_before"
           options={displayDocument}
           takeNormalValue={true}
-        />
+        /> : <p>Step skipped</p> }
         <AssignButton loading={loading} buttonText="Assign Task" />
       </form>
     </FormLayout>
@@ -128,9 +128,10 @@ export const roleArray = [
   {
     id: uuidv4(),
     option: "Team Member",
+    normalValue: "TEAM_MEMBER",
   },
-  { id: uuidv4(), option: "Guest (enter phone/email)" },
-  { id: uuidv4(), option: "Public (link)" },
+  { id: uuidv4(), option: "Guest (enter phone/email)", normalValue: "GUEST" },
+  { id: uuidv4(), option: "Public (link)", normalValue: "PUBLIC" },
 ];
 
 export const members = [
@@ -149,10 +150,10 @@ export const members = [
 ];
 
 export const taskFeatures = [
-  { id: uuidv4(), feature: "Add/Edit" },
-  { id: uuidv4(), feature: "View" },
-  { id: uuidv4(), feature: "Comment" },
-  { id: uuidv4(), feature: "Approve" },
+  { id: uuidv4(), feature: "ADD/EDIT" },
+  { id: uuidv4(), feature: "VIEW" },
+  { id: uuidv4(), feature: "COMMENT" },
+  { id: uuidv4(), feature: "APPROVE" },
 ];
 
 export const membersPortfolio = [
@@ -162,8 +163,8 @@ export const membersPortfolio = [
 ];
 
 export const displayDocument = [
-  { id: uuidv4(), option: "Display document before processing this step" },
-  { id: uuidv4(), option: "Display document after processing this step" },
-  { id: uuidv4(), option: "Display document only in this step" },
-  { id: uuidv4(), option: "Display document in all steps" },
+  { id: uuidv4(), option: "Display document before processing this step", normalValue: "document_before_processing_this_step" },
+  { id: uuidv4(), option: "Display document after processing this step", normalValue: "document_after_processing_this_step" },
+  { id: uuidv4(), option: "Display document only in this step", normalValue: "document_only_this_step" },
+  { id: uuidv4(), option: "Display document in all steps", normalValue: "document_in_all_steps" },
 ];

@@ -14,7 +14,7 @@ import { setContentOfDocument } from "../../../../features/document/documentSlic
 
 const ProcessDocument = () => {
   const [currentProcess, setCurrentProcess] = useState();
-  const { currentDocToWfs, selectedWorkflowsToDoc, processSteps } = useSelector((state) => state.app);
+  const { currentDocToWfs, selectedWorkflowsToDoc, processSteps, docCurrentWorkflow } = useSelector((state) => state.app);
   const [ workflowsDataToDisplay, setWorkflowsDataToDisplay ] = useState([]);
   const { userDetail } = useSelector((state) => state.auth);
   const [ newProcessLoading, setNewProcessLoading ] = useState(false);
@@ -63,7 +63,7 @@ const ProcessDocument = () => {
   const handleStartNewProcess = async () => {
     if (!userDetail) return
     if (!currentDocToWfs) return toast.info("You have not selected a document");
-    if (selectedWorkflowsToDoc.length < 1) return toast.info("You have not selected any workflows");
+    if (!docCurrentWorkflow) return toast.info("You have not selected any workflow");
     if (processSteps.length < 1) return toast.info("You have not configured steps for any workflow");
     
     setNewProcessLoading(true);
@@ -72,25 +72,22 @@ const ProcessDocument = () => {
       "document_id": currentDocToWfs?._id,
       "company_id": userDetail?.portfolio_info[0]?.org_id,
       "created_by": userDetail?.userinfo?.username,
-      "data_type": userDetail?.portfolio_info[0].data_type,
-      "workflows": [],
+      "data_type": userDetail?.portfolio_info[0].data_type === "Real_Data" ? "real" : userDetail?.portfolio_info[0].data_type,
+      "workflows": [{
+        "workflows": {
+          "workflow_title": docCurrentWorkflow.workflows?.workflow_title,
+          steps: [],
+        }
+      }],
     }
 
-    selectedWorkflowsToDoc.forEach(workflow => {
-      const foundProcessSteps = processSteps.find(process => process.workflow === workflow._id)
-      let newWorkflowObj = {
-        "created_by": workflow?.created_by,
-        "company_id": workflow?.company_id,
-        "data_type": workflow?.workflows?.data_type,
-        "wf_title": workflow?.workflows?.workflow_title,
-        "steps": foundProcessSteps ? foundProcessSteps.steps.map(step => {
-          let copyOfCurrentStep = { ...step };
-          if (copyOfCurrentStep._id) delete copyOfCurrentStep._id;
-          return copyOfCurrentStep
-        }) : [],
-      }
-      newProcessObj.workflows.push(newWorkflowObj);
-    })
+    const foundProcessSteps = processSteps.find(process => process.workflow === docCurrentWorkflow._id);
+    newProcessObj.workflows[0].workflows.steps = foundProcessSteps ? foundProcessSteps.steps.map(step => {
+      let copyOfCurrentStep = { ...step };
+      if (copyOfCurrentStep._id) delete copyOfCurrentStep._id;
+      if (copyOfCurrentStep.toggleContent) delete copyOfCurrentStep.toggleContent;
+      return copyOfCurrentStep
+    }) : [];
 
     console.log("Process obj to post: ", newProcessObj);
 
@@ -102,8 +99,6 @@ const ProcessDocument = () => {
       
       dispatch(resetSetWorkflows());
       dispatch(setContentOfDocument(null));
-      dispatch(setProcessSteps([]));
-      dispatch(setSelectedMembersForProcess([]));
 
     } catch (error) {
       setNewProcessLoading(false);

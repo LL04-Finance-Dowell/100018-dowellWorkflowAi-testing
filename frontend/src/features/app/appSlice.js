@@ -85,6 +85,8 @@ export const appSlice = createSlice({
         workflows: [],
       };
       state.dropdownToggle = false;
+      state.selectedMembersForProcess = [];
+      state.processSteps = [];
     },
     setProcessSteps: (state, action) => {
       state.processSteps = action.payload
@@ -114,6 +116,7 @@ export const appSlice = createSlice({
       
       delete updatedStepObj.indexToUpdate;
       delete updatedStepObj.workflow;
+      delete updatedStepObj.toggleContent;
       
       currentStepToUpdate.steps[action.payload.indexToUpdate] = updatedStepObj;
       

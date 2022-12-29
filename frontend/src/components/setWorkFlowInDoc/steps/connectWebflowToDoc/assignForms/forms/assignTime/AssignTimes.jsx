@@ -54,18 +54,18 @@ const AssignTime = ({ currentStepIndex }) => {
 export default AssignTime;
 
 export const limitTimes = [
-  { id: uuidv4(), option: "No time limit" },
-  { id: uuidv4(), option: "Within 1 hour" },
-  { id: uuidv4(), option: "Within 8 hour" },
-  { id: uuidv4(), option: "Within 24 hour" },
-  { id: uuidv4(), option: "Within 3 days" },
-  { id: uuidv4(), option: "Within 7 days" },
-  { id: uuidv4(), option: "Custom time" },
+  { id: uuidv4(), option: "No time limit", normalValue: "no_time_limit" },
+  { id: uuidv4(), option: "Within 1 hour", normalValue: "within_1_hour" },
+  { id: uuidv4(), option: "Within 8 hour", normalValue: "within_8_hours" },
+  { id: uuidv4(), option: "Within 24 hour", normalValue: "within_24_hours" },
+  { id: uuidv4(), option: "Within 3 days", normalValue: "within_3_days" },
+  { id: uuidv4(), option: "Within 7 days", normalValue: "within_7_days" },
+  { id: uuidv4(), option: "Custom time", normalValue: "custom_time" },
 ];
 
 export const reminderFrequency = [
-  { id: uuidv4(), option: "Send reminder every hour" },
-  { id: uuidv4(), option: "Send reminder every day" },
-  { id: uuidv4(), option: "I will decide later" },
-  { id: uuidv4(), option: "Skip this step to continue" },
+  { id: uuidv4(), option: "Send reminder every hour", normalValue: "send_reminder_every_hour" },
+  { id: uuidv4(), option: "Send reminder every day", normalValue: "send_reminder_every_day" },
+  { id: uuidv4(), option: "I will decide later", normalValue: "decide_later" },
+  { id: uuidv4(), option: "Skip this step to continue", normalValue: "skip_for_now" },
 ];
