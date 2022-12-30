@@ -121,7 +121,7 @@ export const appSlice = createSlice({
       currentStepToUpdate.steps[action.payload.indexToUpdate] = updatedStepObj;
       
       state.processSteps = currentProcessSteps;
-    }
+    },
   },
 });
 
@@ -141,6 +141,7 @@ export const {
   setSelectedMembersForProcess,
   removeFromSelectedMembersForProcess,
   updateSingleProcessStep,
+  setNewWorkflowSavedToDoc,
 } = appSlice.actions;
 
 export default appSlice.reducer;

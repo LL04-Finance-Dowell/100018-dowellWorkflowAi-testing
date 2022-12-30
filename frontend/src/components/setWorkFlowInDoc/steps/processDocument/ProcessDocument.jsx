@@ -8,7 +8,7 @@ import AssignButton from "../../assignButton/AssignButton";
 import { useDispatch, useSelector } from "react-redux";
 import { removeFromSelectedWorkflowsToDoc, resetSetWorkflows, setProcessSteps, setSelectedMembersForProcess } from "../../../../features/app/appSlice";
 import { toast } from "react-toastify";
-import { createNewProcess } from "../../../../services/processServices";
+import { saveWorkflowsToDocument, startNewProcess } from "../../../../services/processServices";
 import { LoadingSpinner } from "../../../LoadingSpinner/LoadingSpinner";
 import { setContentOfDocument } from "../../../../features/document/documentSlice";
 
@@ -18,11 +18,15 @@ const ProcessDocument = () => {
   const [ workflowsDataToDisplay, setWorkflowsDataToDisplay ] = useState([]);
   const { userDetail } = useSelector((state) => state.auth);
   const [ newProcessLoading, setNewProcessLoading ] = useState(false);
+  const [ newWorkflowSavedToDoc, setNewWorkflowSavedToDoc ] = useState(null);
+  const [ saveWorkflowsLoading, setSaveWorkflowsLoading ] = useState(false);
+  const [ currentProcessValue, setCurrentProcessValue ] = useState(null);
 
   const dispatch = useDispatch();
 
   useEffect(() => {
     setCurrentProcess(processDocument[0]);
+    setCurrentProcessValue(processDocument[0].value);
   }, []);
 
   useEffect(() => {
@@ -39,6 +43,7 @@ const ProcessDocument = () => {
 
   const handleCurrentProcess = (item) => {
     setCurrentProcess(item);
+    setCurrentProcessValue(item.value);
   };
 
   const {
@@ -55,18 +60,15 @@ const ProcessDocument = () => {
     setTimeout(() => setLoading(false), 2000);
   };
 
-  const handleSaveWorkflowToDocument = () => {
-    if (workflowsDataToDisplay.length < 1) return
-    toast.success("Sucessfully saved workflows to document")
-  }
+  const handleSaveWorkflowToDocument = async (e) => {
+    e.preventDefault();
 
-  const handleStartNewProcess = async () => {
     if (!userDetail) return
     if (!currentDocToWfs) return toast.info("You have not selected a document");
     if (!docCurrentWorkflow) return toast.info("You have not selected any workflow");
     if (processSteps.length < 1) return toast.info("You have not configured steps for any workflow");
     
-    setNewProcessLoading(true);
+    setSaveWorkflowsLoading(true);
 
     const newProcessObj = {
       "document_id": currentDocToWfs?._id,
@@ -92,18 +94,58 @@ const ProcessDocument = () => {
     console.log("Process obj to post: ", newProcessObj);
 
     try {
-      const response = await (await createNewProcess(newProcessObj)).data;
-      console.log("process response: ", response);
+      const response = await (await saveWorkflowsToDocument(newProcessObj)).data;
+      console.log("save workflows response: ", response);
       toast.success("Succesfully saved workflows to document!");
-      setNewProcessLoading(false);
+      setSaveWorkflowsLoading(false);
+      setNewWorkflowSavedToDoc({ "saveSuccess" : true });
+      setTimeout(() => setNewWorkflowSavedToDoc(null), 1500);
+    } catch (error) {
+      setSaveWorkflowsLoading(false);
+      console.log(error.response ? error.response.data : error.message);
+      toast.error("An error occured while trying to save your workflows to your document");
+    }
+  }
+
+  const handleStartNewProcess = async () => {
+    if (!userDetail) return
+    if (!currentDocToWfs) return toast.info("You have not selected a document");
+    if (!docCurrentWorkflow) return toast.info("You have not selected any workflow");
+
+    const startProcessObj = {
+      "how_to": currentProcessValue,
+      "document_id": currentDocToWfs?._id,
+      "company_id": userDetail?.portfolio_info[0]?.org_id,
+      "created_by": userDetail?.userinfo?.username,
+      "data_type": userDetail?.portfolio_info[0].data_type === "Real_Data" ? "real" : userDetail?.portfolio_info[0].data_type,
+      "workflows": [{
+        "workflows": {
+          "workflow_title": docCurrentWorkflow.workflows?.workflow_title,
+          steps: [],
+        }
+      }],
+    };
+    
+    const foundProcessSteps = processSteps.find(process => process.workflow === docCurrentWorkflow._id);
+    startProcessObj.workflows[0].workflows.steps = foundProcessSteps ? foundProcessSteps.steps.map(step => {
+      let copyOfCurrentStep = { ...step };
+      if (copyOfCurrentStep._id) delete copyOfCurrentStep._id;
+      if (copyOfCurrentStep.toggleContent) delete copyOfCurrentStep.toggleContent;
+      return copyOfCurrentStep
+    }) : [];
+
+    setNewProcessLoading(true);
+
+    try {
       
-      dispatch(resetSetWorkflows());
-      dispatch(setContentOfDocument(null));
+      const response = await (await startNewProcess(startProcessObj)).data;
+      console.log("process response: ", response)
+      setNewProcessLoading(false);
 
     } catch (error) {
       setNewProcessLoading(false);
-      console.log(error);
-      toast.error("An error occured while trying to save your workflows to your document");
+      console.log(error.response ? error.response.data : error.message);
+      toast.error("An error occured while trying to start a new process");
     }
   }
 
@@ -129,10 +171,14 @@ const ProcessDocument = () => {
             </FormLayout>
           </div>
 
-          <div className={styles.button__container} onClick={handleSaveWorkflowToDocument}>
-            <a className={styles.save__workflows__button}>
-              Save Workflows to document
-            </a>
+          <div className={styles.button__container}>
+            { 
+              newWorkflowSavedToDoc ? <p>Workflows saved to document</p> :
+              saveWorkflowsLoading ? <LoadingSpinner /> : 
+              <a className={styles.save__workflows__button} onClick={handleSaveWorkflowToDocument}>
+                Save Workflows to document
+              </a>
+            }
             <a className={styles.close__button}>Close</a>
           </div>
         </div>
@@ -201,26 +247,31 @@ export const processDocument = [
     id: uuidv4(),
     process: "Member (Team > Guest > Public)",
     processDetail: "Member (Team > Guest > Public)",
+    value: "member",
   },
   {
     id: uuidv4(),
     process: "Workflows (1 > 2 > 3...)",
     processDetail: "Workflows (1 > 2 > 3...)",
+    value: "workflow",
   },
   {
     id: uuidv4(),
     process: "Workflow steps (Step1 > Step2 > Step3..)",
     processDetail: "Workflow steps (Step1 > Step2 > Step3..)",
+    value: "steps",
   },
   {
     id: uuidv4(),
     process: "Document content",
     processDetail: "Document content",
+    value: "document_content",
   },
   {
     id: uuidv4(),
     process: "Signing location",
     processDetail: "Signing location",
+    value: "signing_location"
   },
-  { id: uuidv4(), process: "Time limit", processDetail: "Time limit" },
+  { id: uuidv4(), process: "Time limit", processDetail: "Time limit", value: "time_limit" },
 ];
