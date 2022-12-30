@@ -10,6 +10,7 @@ from .mongo_db_connection import (
     get_document_object,
     update_document,
     save_uuid_hash,
+    get_uuid_object,
 )
 
 
@@ -27,7 +28,6 @@ def save_workflows_to_document(request):
         data_type=request.data["data_type"],
         document_id=request.data["document_id"],
     )
-    print(process_id)
     if process_id:
         # update the doc.
         doc = update_document_with_process(
@@ -43,31 +43,30 @@ def save_workflows_to_document(request):
 def new_process(workflows, created_by, company_id, data_type, document_id):
     process_title = ""
     process_steps = []
-    print("Workflows in new process", workflows)
-    try:
-        for workflow in workflows:
-            process_steps.extend(workflow["workflows"]["steps"])
-            process_title = (
-                process_title + workflow["workflows"]["workflow_title"] + " - "
-            )
-        print(process_steps)
-        res = save_wf_process(
+
+    # construct process
+    for workflow in workflows:
+        process_steps.extend(workflow["workflows"]["steps"])
+        process_title = process_title + workflow["workflows"]["workflow_title"] + " - "
+
+    # save to collection.
+    res = json.loads(
+        save_wf_process(
             process_title, process_steps, created_by, company_id, data_type, document_id
         )
+    )
+    # return process id.
+    if res["isSuccess"]:
         return res["inserted_id"]
-    except:
-        return
 
 
 # update document with process id.
 def update_document_with_process(document_id, workflow_process_id):
-    document = get_document_object(document_id)
-    if not document:
+    try:
+        res = json.loads(update_document(document_id, workflow_process_id))
+        return res["isSuccess"]
+    except:
         return
-    res = update_document(document_id, document["content"], workflow_process_id)
-    if res["isSuccess"]:
-        return True
-    return
 
 
 # ---------------------------------------------------------------------------------#
@@ -84,7 +83,6 @@ def save_and_start_processing(request):
         company_id=request.data["company_id"],
         data_type=request.data["data_type"],
     )
-    # print(process_id)
     if process_id:
         # update the doc.
         doc = update_document_with_process(
@@ -92,21 +90,20 @@ def save_and_start_processing(request):
             workflow_process_id=process_id,
         )
         if doc:
-            return Response(status=status.HTTP_200_OK)
-    # fire up the processing action
-    resp = start_processing(how_to=request.data["how_to"], process_id=process_id)
-    return resp
+            # fire up the processing action
+            return start_processing(
+                how_to=request.data["how_to"],
+                process_id=process_id,
+                document_id=request.data["document_id"],
+            )
+    return Response(
+        status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+    )
 
 
 #  Begin processing the Workflow.
 def start_processing(how_to, process_id, document_id):
-    process = get_process_object(process_id)
-    if not process:
-        return Response(
-            {"message": "Failed to Start Processing"},
-            status=status.HTTP_500_INTERNAL_SERVER_ERROR,
-        )
-
+    print("choices")
     if how_to == "member":
         return process_by_member(process_id, document_id)
 
@@ -122,18 +119,18 @@ def start_processing(how_to, process_id, document_id):
     if how_to == "signing_location":
         return process_by_signing_location(process_id, document_id)
 
-    return Response(
-        {"message": "Failed to Start Processing"}, status=status.HTTP_400_BAD_REQUEST
-    )
+    return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
 # Process by member choice.
 def process_by_member(process_id, document_id):
+    print("process_by_member")
     # find a process
     try:
         process = get_process_object(process_id)
     except:
         return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
     # time to generate links
     links = generate_links(process, document_id)
     if links:
@@ -182,6 +179,7 @@ def process_by_signing_location(process_id, document_id):
 
 # Links generation
 def generate_links(process, document_id):
+    print("gen links")
     links = []
     # iterate the process steps
     for step in process["process_steps"]:
@@ -190,35 +188,36 @@ def generate_links(process, document_id):
             if "member" in step:
                 member_name = step["member"]
                 link = verification_link(process, member_name, document_id)
-                links.extend({member_name: link})
         elif "member_type" == "GUEST":
             if "member" in step:
                 member_name = "guest"
                 link = verification_link(process, member_name, document_id)
-                links.extend({member_name: link})
         elif "member_type" == "PUBLIC":
             if "member" in step:
                 member_name = "public"
                 link = verification_link(process, member_name, document_id)
-                links.extend({member_name: link})
+
+        links.extend({member_name: link})
 
     return links
 
 
-# token generation
-def gen_token(process_id, user_name, document_id):
-    uuid_hash = uuid.uuid4().hex
-    res = save_uuid_hash(uuid_hash, process_id, user_name, document_id)
-    if res:
-        return uuid_hash
-
-
 # application link
 def verification_link(process_id, user_name, document_id):
+    print("ver link")
     token = gen_token(process_id, user_name, document_id)
     if token:
         link = f"https://ll04-finance-dowell.github.io/100018-dowellWorkflowAi-testing/verify/{token}/"
     return link
+
+
+# token generation
+def gen_token(process_id, user_name, document_id):
+    print("gen token")
+    uuid_hash = uuid.uuid4().hex
+    res = save_uuid_hash(uuid_hash, process_id, user_name, document_id)
+    if res:
+        return uuid_hash
 
 
 # ---------------------------------------------------------------------------------#
@@ -228,6 +227,13 @@ def verification_link(process_id, user_name, document_id):
 
 @api_view(["POST"])
 def verify_process(request):
+
+    # token info
+    try:
+        token = get_uuid_object(request.data["token"])
+    except:
+        return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
     try:
         verified = verify(request.data["process_id"])
     except:

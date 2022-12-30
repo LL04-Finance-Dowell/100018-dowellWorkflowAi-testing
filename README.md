@@ -788,11 +788,12 @@ Response-200
     [<List of Saved Workflows within company>]
 
 ```
+
 ### Intelligent Search
+
 - search document, workflow and template.
 
 _POST_ `search/`
-
 
 Request Body
 
@@ -802,6 +803,7 @@ Request Body
     "search":search keyword"
 }
 ```
+
 Response-200
 
 ```

@@ -33,15 +33,15 @@ WF_CONNECTION_LIST = [
     "ABCDE",
 ]
 
-WF_PROCESS_CONNECTION = [
+PROCESS_CONNECTION_LIST = [
     "Documents",
-    "bangalore",
-    "Documentation",
-    "WorflowProcess",
+    "bangalore" "Documentation",
+    "WorkflowProcess",
     "WorkflowProcess",
     "1000180001",
     "ABCDE",
 ]
+
 TEMPLATE_CONNECTION_LIST = [
     "Documents",
     "bangalore",
@@ -91,6 +91,15 @@ WF_CONNECTION_DICT = {
     "function_ID": "ABCDE",
 }
 
+WF_PROCESS_DICT = {
+    "cluster": "Documents",
+    "database": "Documentation",
+    "collection": "WorkflowProcess",
+    "document": "WorkflowProcess",
+    "team_member_ID": "1000180001",
+    "function_ID": "ABCDE",
+}
+
 TEMPLATE_CONNECTION_DICT = {
     "cluster": "Documents",
     "database": "Documentation",
@@ -108,7 +117,6 @@ DOCUMENT_CONNECTION_DICT = {
     "team_member_ID": "11689044433",
     "function_ID": "ABCDE",
 }
-
 
 
 def get_event_id():
@@ -162,12 +170,6 @@ def get_user(user_name):
         return []
 
 
-# def get_members(session_id):
-#     payload = {"session_id": session_id}
-#     r = requests.post(url=url, data=payload)
-#     return r.json()
-
-
 def get_user_info_by_username(username):
     fields = {"Username": username}
     response = dowellconnection(*REGISTRATION_ARGS, "fetch", fields, "nil")
@@ -179,11 +181,14 @@ def get_user_info_by_username(username):
 
 
 #  -------------------------------Workflow Process------------------
-def save_wf_process(process_title, process_steps,  user, company_id):
+def save_wf_process(
+    process_title, process_steps, user, company_id, data_type, document_id
+):
+    # print("got here")
     url = "http://100002.pythonanywhere.com/"
     payload = json.dumps(
         {
-            **WF_PROCESS_CONNECTION,
+            **WF_PROCESS_DICT,
             "command": "insert",
             "field": {
                 "eventId": get_event_id(),
@@ -191,6 +196,8 @@ def save_wf_process(process_title, process_steps,  user, company_id):
                 "workflow_steps": process_steps,
                 "company_id": company_id,
                 "created_by": user,
+                "data_type": data_type,
+                "document_id": document_id,
             },
             "update_field": {"order_nos": 21},
             "platform": "bangalore",
@@ -198,7 +205,7 @@ def save_wf_process(process_title, process_steps,  user, company_id):
     )
     headers = {"Content-Type": "application/json"}
     response = requests.request("POST", url, headers=headers, data=payload)
-    print("SAVE WORKFLOW ENTRY----------- \n", response.text)
+    print("SAVE WORKFLOW PROCESS----------- \n", response.text)
     return response.text
 
 
@@ -227,7 +234,7 @@ def save_wf_process(process_title, process_steps,  user, company_id):
 
 def get_process_object(workflow_process_id):
     fields = {"_id": str(workflow_process_id)}
-    response_obj = dowellconnection(*WF_PROCESS_CONNECTION, "find", fields, "nil")
+    response_obj = dowellconnection(*PROCESS_CONNECTION_LIST, "find", fields, "nil")
     res_obj = json.loads(response_obj)
     if len(res_obj["data"]):
         return res_obj["data"]
@@ -246,6 +253,7 @@ def save_uuid_hash(uuid_hash, process_id, user_email, document_id):
                 "email": user_email,
                 "uuid_hash": uuid_hash,
                 "document_id": document_id,
+                "process_id": process_id,
                 "status": True,  #   if True: valid ? Invalid
             },
             "update_field": {"order_nos": 21},
@@ -303,7 +311,7 @@ def update_uuid_object(uuid_hash):
 # -------------------------------- Workflows-------------------
 
 
-def save_wf(workflows,company_id,created_by):
+def save_wf(workflows, company_id, created_by):
     url = "http://100002.pythonanywhere.com/"
     payload = json.dumps(
         {
@@ -312,9 +320,8 @@ def save_wf(workflows,company_id,created_by):
             "field": {
                 "eventId": get_event_id(),
                 "workflows": workflows,
-                "created_by" :    created_by,
-                "company_id" :   company_id,
-                
+                "created_by": created_by,
+                "company_id": company_id,
             },
             "update_field": {"order_nos": 21},
             "platform": "bangalore",
@@ -328,7 +335,7 @@ def save_wf(workflows,company_id,created_by):
 
 def update_wf(workflow_id, old_workflow):
     url = "http://100002.pythonanywhere.com/"
-    
+
     payload = json.dumps(
         {
             **WF_CONNECTION_DICT,
@@ -338,10 +345,9 @@ def update_wf(workflow_id, old_workflow):
             },
             "update_field": {
                 "eventId": get_event_id(),
-                "workflows": old_workflow['workflows'],
-                "created_by" :    old_workflow['created_by'],
-                "company_id" :   old_workflow['company_id'],
-                
+                "workflows": old_workflow["workflows"],
+                "created_by": old_workflow["created_by"],
+                "company_id": old_workflow["company_id"],
             },
             "platform": "bangalore",
         }
@@ -397,6 +403,7 @@ def get_all_wf_list():
     else:
         return []
 
+
 def get_wf_list(company_id):
     fields = {"company_id": str(company_id)}
     response_obj = dowellconnection(*WF_CONNECTION_LIST, "fetch", fields, "nil")
@@ -408,7 +415,7 @@ def get_wf_list(company_id):
 
 
 # ------------------------------------------ Templates-----------------------------
-def save_template(name, data, page, created_by, company_id,data_type):
+def save_template(name, data, page, created_by, company_id, data_type):
     url = "http://100002.pythonanywhere.com/"
     event_id = get_event_id()
     payload = json.dumps(
@@ -422,7 +429,7 @@ def save_template(name, data, page, created_by, company_id,data_type):
                 "page": page,
                 "company_id": company_id,
                 "created_by": created_by,
-                "data_type":data_type,
+                "data_type": data_type,
             },
             "update_field": {"order_nos": 21},
             "platform": "bangalore",
@@ -500,7 +507,7 @@ def get_template_list(company_id):
 
 
 # -------------------------- Document----------------------------------------
-def save_document(name, data, created_by, company_id,page,data_type):
+def save_document(name, data, created_by, company_id, page, data_type):
     url = "http://100002.pythonanywhere.com/"
     event_id = get_event_id()
     dd = datetime.now()
@@ -521,8 +528,8 @@ def save_document(name, data, created_by, company_id,page,data_type):
                 "reject_message": "",
                 "rejected_by": "",
                 "update_time": time,
-                "page":page,
-                "data_type":data_type
+                "page": page,
+                "data_type": data_type,
             },
             "update_field": {"order_nos": 21},
             "platform": "bangalore",
@@ -535,8 +542,9 @@ def save_document(name, data, created_by, company_id,page,data_type):
     return response.text
 
 
-def update_document(document_id, data, workflow_process_id):
+def update_document(document_id, workflow_process_id):
     url = "http://100002.pythonanywhere.com/"
+
     payload = json.dumps(
         {
             **DOCUMENT_CONNECTION_DICT,
@@ -544,7 +552,7 @@ def update_document(document_id, data, workflow_process_id):
             "field": {
                 "_id": document_id,
             },
-            "update_field": {**data, "workflow_process":  workflow_process_id},
+            "update_field": {"workflow_process": workflow_process_id},
             "platform": "bangalore",
         }
     )
