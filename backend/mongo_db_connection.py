@@ -35,7 +35,8 @@ WF_CONNECTION_LIST = [
 
 PROCESS_CONNECTION_LIST = [
     "Documents",
-    "bangalore" "Documentation",
+    "bangalore",
+    "Documentation",
     "WorkflowProcess",
     "WorkflowProcess",
     "1000180001",
@@ -193,7 +194,7 @@ def save_wf_process(
             "field": {
                 "eventId": get_event_id(),
                 "process_title": process_title,
-                "workflow_steps": process_steps,
+                "process_steps": process_steps,
                 "company_id": company_id,
                 "created_by": user,
                 "data_type": data_type,
@@ -233,9 +234,11 @@ def save_wf_process(
 
 
 def get_process_object(workflow_process_id):
+    print("got here", workflow_process_id)
     fields = {"_id": str(workflow_process_id)}
     response_obj = dowellconnection(*PROCESS_CONNECTION_LIST, "find", fields, "nil")
     res_obj = json.loads(response_obj)
+    print("getiing process object......")
     if len(res_obj["data"]):
         return res_obj["data"]
     else:

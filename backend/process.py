@@ -84,15 +84,17 @@ def save_and_start_processing(request):
         data_type=request.data["data_type"],
     )
     if process_id:
+
         # update the doc.
         doc = update_document_with_process(
             document_id=request.data["document_id"],
             workflow_process_id=process_id,
         )
         if doc:
+            print("in doc")
             # fire up the processing action
             return start_processing(
-                how_to=request.data["how_to"],
+                how_to=request.data["criteria"],
                 process_id=process_id,
                 document_id=request.data["document_id"],
             )
@@ -126,18 +128,16 @@ def start_processing(how_to, process_id, document_id):
 def process_by_member(process_id, document_id):
     print("process_by_member")
     # find a process
-    try:
-        process = get_process_object(process_id)
-    except:
-        return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-        
+    process = get_process_object(process_id)
+
     # time to generate links
-    links = generate_links(process, document_id)
-    if links:
-        return Response(
-            links,
-            status=status.HTTP_200_OK,
-        )
+    if process:
+        links = generate_links(process, document_id)
+        if links:
+            return Response(
+                links,
+                status=status.HTTP_200_OK,
+            )
     return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
@@ -184,21 +184,24 @@ def generate_links(process, document_id):
     # iterate the process steps
     for step in process["process_steps"]:
         # check the member type.
-        if "member_type" == "TEAM_MEMBER":
+        if step["member_type"] == "TEAM_MEMBER":
+            print("here")
             if "member" in step:
                 member_name = step["member"]
+                print("member", member_name)
                 link = verification_link(process, member_name, document_id)
-        elif "member_type" == "GUEST":
+                print("check", link)
+                links.append({member_name: link})
+        if step["member_type"] == "GUEST":
             if "member" in step:
                 member_name = "guest"
                 link = verification_link(process, member_name, document_id)
-        elif "member_type" == "PUBLIC":
+                links.extend({member_name: link})
+        if step["member_type"] == "PUBLIC":
             if "member" in step:
                 member_name = "public"
                 link = verification_link(process, member_name, document_id)
-
-        links.extend({member_name: link})
-
+                links.extend({member_name: link})
     return links
 
 
