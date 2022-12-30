@@ -28,6 +28,7 @@ import NewWorkFlow from "./pages/Workflows/NewWorkflow/NewWorkFlow";
 import DraftF from "./pages/Workflows/DraftF/DraftF";
 import { dowellLoginUrl } from "./httpCommon/httpCommon";
 import WorkflowAiSettings from "./components/workflowAiSettings/WorkflowAiSettings";
+import VerificationPage from "./pages/Verification/VerificationPage";
 function App() {
   useDowellLogin();
 
@@ -68,6 +69,7 @@ function App() {
         element={<NewWorkFlow />}
       />
       <Route path="/WorkFlows/DraftF/DraftF" element={<DraftF />} /> */}
+      <Route path={"/verify/:token"} element={<VerificationPage />} />
       <Route path={"*"} element={<>Page not found</>} />
     </Routes>
   );
