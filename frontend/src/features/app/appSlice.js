@@ -141,7 +141,6 @@ export const {
   setSelectedMembersForProcess,
   removeFromSelectedMembersForProcess,
   updateSingleProcessStep,
-  setNewWorkflowSavedToDoc,
 } = appSlice.actions;
 
 export default appSlice.reducer;
