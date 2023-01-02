@@ -10,7 +10,7 @@ Request Body
 
 ```
 {
-    "how_to": "<member|workflow|steps|document_content|signing_location>"
+    "criteria": "<member|workflow|steps|document_content|signing_location>"
     "document_id": "<document_id_of_selected_document_to_process>",
     "company_id": "<company_id_of_authenticated_user>",
     "created_by": "<user_name_of_authenticated_user>",
