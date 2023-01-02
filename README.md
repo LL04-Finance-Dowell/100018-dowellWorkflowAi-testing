@@ -4,7 +4,34 @@ api_url = `https://100094.pythonanywhere.com/v0.1/`
 
 ### Workflow Process Service.
 
+_POST_ to `process/verify/`
+
+- Verification Checks for document link
+
+Request Body
+
+```
+{
+    "token": "<get this token from the url path>"
+}
+```
+
+Response-201
+
+```
+{
+    "editor_link": "<link_to_the_editor>
+}
+
+```
+
+Response-500
+
+" verification failed"
+
 _POST_ to `process/start/`
+
+- Save and Start Processing
 
 Request Body
 
@@ -51,7 +78,7 @@ Response - 201
 Response - 500
 
 ```
-    "Failed to save Workflows to document"
+    "Failed to create process and start processing."
 ```
 
 _POST_ to `process/new/`

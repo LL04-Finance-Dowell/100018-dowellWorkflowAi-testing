@@ -245,7 +245,7 @@ def get_process_object(workflow_process_id):
         return []
 
 
-def save_uuid_hash(uuid_hash, process_id, user_email, document_id):
+def save_uuid_hash(uuid_hash, process_id, user_name, document_id):
     url = "http://100002.pythonanywhere.com/"
     payload = json.dumps(
         {
@@ -253,7 +253,7 @@ def save_uuid_hash(uuid_hash, process_id, user_email, document_id):
             "command": "insert",
             "field": {
                 "eventId": get_event_id(),
-                "email": user_email,
+                "user_name": user_name,
                 "uuid_hash": uuid_hash,
                 "document_id": document_id,
                 "process_id": process_id,

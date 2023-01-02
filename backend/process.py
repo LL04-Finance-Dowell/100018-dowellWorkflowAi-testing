@@ -179,7 +179,6 @@ def process_by_signing_location(process_id, document_id):
 
 # Links generation
 def generate_links(process, document_id):
-    print("gen links")
     links = []
     # iterate the process steps
     for step in process["process_steps"]:
@@ -189,34 +188,31 @@ def generate_links(process, document_id):
             if "member" in step:
                 member_name = step["member"]
                 print("member", member_name)
-                link = verification_link(process, member_name, document_id)
-                print("check", link)
+                link = verification_link(process["_id"], member_name, document_id)
                 links.append({member_name: link})
         if step["member_type"] == "GUEST":
             if "member" in step:
                 member_name = "guest"
-                link = verification_link(process, member_name, document_id)
+                link = verification_link(process["_id"], member_name, document_id)
                 links.extend({member_name: link})
         if step["member_type"] == "PUBLIC":
             if "member" in step:
                 member_name = "public"
-                link = verification_link(process, member_name, document_id)
+                link = verification_link(process["_id"], member_name, document_id)
                 links.extend({member_name: link})
     return links
 
 
 # application link
 def verification_link(process_id, user_name, document_id):
-    print("ver link")
     token = gen_token(process_id, user_name, document_id)
     if token:
-        link = f"https://ll04-finance-dowell.github.io/100018-dowellWorkflowAi-testing/verify/{token}/"
+        link = f"https://ll04-finance-dowell.github.io/100018-dowellWorkflowAi-testing/#/verify/{token}/"
     return link
 
 
 # token generation
 def gen_token(process_id, user_name, document_id):
-    print("gen token")
     uuid_hash = uuid.uuid4().hex
     res = save_uuid_hash(uuid_hash, process_id, user_name, document_id)
     if res:
@@ -230,24 +226,25 @@ def gen_token(process_id, user_name, document_id):
 
 @api_view(["POST"])
 def verify_process(request):
-
     # token info
     try:
         token = get_uuid_object(request.data["token"])
     except:
         return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
+   # now verify
     try:
-        verified = verify(request.data["process_id"])
+        verified = verify(process_id=token["process_id"], user_name=token["user_name"])
     except:
         return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
+    #document link
     if verified:
-        link = generate_link(request.data["document_id"])
-        if not link:
+        doc_link = generate_link(token["document_id"])
+        if not doc_link:
             return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-        return link
+        return Response(doc_link.json(), status=status.HTTP_201_CREATED)
 
 
 def verify(process_id, user_name):
@@ -265,12 +262,12 @@ def verify(process_id, user_name):
             return
 
         # Check if the current step should be skipped
-        if step["skip"]:
-            continue
+        # if step["skip"]:
+        #     continue
 
         # how should be steps.
-        if check_display_right(step):
-            continue
+        # if check_display_right(step):
+        #     continue
 
         # Check if the current step is within the allowed time period.
         # if not check_time_limit(step):
@@ -281,8 +278,7 @@ def verify(process_id, user_name):
         #     continue
 
         # Apply the current step to the document.
-        return verified
-    return
+    return verified
 
 
 # Check display in the step.
@@ -333,6 +329,7 @@ def check_location(step):
 
 #  A single Link
 def generate_link(document_id):
+    print("single link")
     editor_api = "https://100058.pythonanywhere.com/api/generate-editor-link/"
     document = get_document_object(document_id)
     if not document:
@@ -353,11 +350,9 @@ def generate_link(document_id):
             "update_field": {"document_name": "", "content": "", "page": ""},
         },
     }
-    try:
-        link = json(requests.post(editor_api, data=json.dumps(payload)))
-        return link
-    except:
-        return
+
+    link = requests.post(editor_api, data=json.dumps(payload))
+    return link
 
 
 # send reminders
