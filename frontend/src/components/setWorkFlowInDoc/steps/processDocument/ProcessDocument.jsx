@@ -126,7 +126,7 @@ const ProcessDocument = () => {
     if (!docCurrentWorkflow) return toast.info("You have not selected any workflow");
 
     const startProcessObj = extractProcessObj();
-    startProcessObj.how_to = currentProcessValue;
+    startProcessObj.criteria = currentProcessValue;
 
     console.log("Starting process obj to post: ", startProcessObj);
 
