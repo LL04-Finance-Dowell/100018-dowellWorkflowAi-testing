@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import { toast } from "react-toastify";
 import { LoadingSpinner } from "../../components/LoadingSpinner/LoadingSpinner";
+import { verifyProcess } from "../../services/processServices";
 
 const VerificationPage = () => {
     const { token } = useParams();
@@ -8,17 +10,20 @@ const VerificationPage = () => {
 
     useEffect(() => {
         
-        console.log("Current token: ", token)
-
-        setTimeout(() => setLoading(false), 1500)
+        verifyProcess(token).then(res => {
+            setLoading(false);
+            window.location = res.data.editor_link;
+        }).catch(err => {
+            console.log(err.response ? err.response.data : err.message);
+            setLoading(false);
+            toast.info("Process verification failed.")
+        })
         
     }, [token])
 
-    if (loading) return <LoadingSpinner />
+    if (loading) return <LoadingSpinner width={"3rem"} height={"3rem"} />
 
-    return <>
-        Verification page
-    </>
+    return <></>
 }
 
 export default VerificationPage;
