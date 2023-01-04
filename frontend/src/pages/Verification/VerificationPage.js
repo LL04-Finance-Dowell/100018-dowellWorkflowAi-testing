@@ -12,7 +12,7 @@ const VerificationPage = () => {
         
         verifyProcess(token).then(res => {
             setLoading(false);
-            window.location = res.data.editor_link;
+            window.location = res.data;
         }).catch(err => {
             console.log(err.response ? err.response.data : err.message);
             setLoading(false);
