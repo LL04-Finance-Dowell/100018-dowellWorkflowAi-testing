@@ -1,0 +1,11 @@
+.workflow__Verification__Page__Container {
+    position: relative;
+    height: 100vh;
+}
+
+.workflow__Verification__Page__Container .verification__Spinner__Item {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}

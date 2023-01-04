@@ -166,6 +166,84 @@
   background-color: var(--e-global-color-text);
 }
 
+.process__Generated__Links__Overlay {
+  background: rgba(0, 0, 0, 0.12);
+  backdrop-filter: blur(5px);
+  height: 100%;
+  width: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  animation: fadeIn 0.2s ease-in-out;
+  z-index: 99999;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.process__Generated__Links__Container__Close__Icon {
+  position: absolute;
+  top: 4%;
+  right: 2%;
+  cursor: pointer;
+}
+
+.process__Generated__Links__Container {
+  background-color: var(--white);
+  width: 60%;
+  border-radius: 10px;
+  overflow-y: auto;
+  padding: 4% 2%;
+  height: 20rem;
+  position: relative;
+}
+
+.process__Generated__Links__Container .process__Generated__Links__Title__Item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 2%;
+}
+
+.process__Generated__Links__Container .process__Generated__Links__Copy__Item {
+  background-color: #61ce70;
+  color: #fff;
+  cursor: pointer;
+  padding: 1% 2%;
+  border-radius: 5px;
+}
+
+.process__Generated__Links__Container .process__Generated__Links__Link__Item.single__Link {
+  background: #efefef;
+  overflow-x: auto;
+  white-space: nowrap;
+  padding: 1%;
+  width: 35%;
+  cursor: pointer;
+}
+
+.process__Generated__Links__Container .process__Generated__Links__Link__Item {
+  width: 22%;
+}
+
+.process__Generated__Links__Container .process__Generated__Links__Link__Item::-webkit-scrollbar {
+  width: 5px;
+  height: 4px;
+}
+  
+.process__Generated__Links__Container .process__Generated__Links__Link__Item::-webkit-scrollbar-track {
+  background: #efefef;
+}
+  
+.process__Generated__Links__Container .process__Generated__Links__Link__Item::-webkit-scrollbar-thumb {
+  background: #61ce70;
+}
+
+.process__Generated__Links__Container .process__Generated__Links__Link__Item::-webkit-scrollbar-thumb:hover {
+  background: #1f7628;
+}
+
 @media (max-width: 768px) {
   .box {
     flex-direction: column;
@@ -206,5 +284,13 @@
     padding: 10px;
     border: 2px solid var(--e-global-color-accent);
     border-bottom: none !important;
+  }
+}
+
+@keyframes fadeIn {
+  from{
+      opacity: 0;
+  }to{
+      opacity: 1;
   }
 }

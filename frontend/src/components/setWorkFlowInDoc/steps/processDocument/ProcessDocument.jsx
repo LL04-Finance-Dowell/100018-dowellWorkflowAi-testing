@@ -11,6 +11,8 @@ import { toast } from "react-toastify";
 import { saveWorkflowsToDocument, startNewProcess } from "../../../../services/processServices";
 import { LoadingSpinner } from "../../../LoadingSpinner/LoadingSpinner";
 import { setContentOfDocument } from "../../../../features/document/documentSlice";
+import { AiOutlineClose } from "react-icons/ai";
+import React from "react";
 
 const ProcessDocument = () => {
   const [currentProcess, setCurrentProcess] = useState();
@@ -21,6 +23,9 @@ const ProcessDocument = () => {
   const [ newWorkflowSavedToDoc, setNewWorkflowSavedToDoc ] = useState(null);
   const [ saveWorkflowsLoading, setSaveWorkflowsLoading ] = useState(false);
   const [ currentProcessValue, setCurrentProcessValue ] = useState(null);
+  const [ showGeneratedLinksPopup, setShowGeneratedLinksPopup ] = useState(false);
+  const [ generatedLinks, setGeneratedLinks ] = useState([])
+  const [ copiedLinks, setCopiedLinks ] = useState([]);
 
   const dispatch = useDispatch();
 
@@ -137,6 +142,8 @@ const ProcessDocument = () => {
       const response = await (await startNewProcess(startProcessObj)).data;
       console.log("process response: ", response)
       setNewProcessLoading(false);
+      setGeneratedLinks(response);
+      setShowGeneratedLinksPopup(true);
 
     } catch (error) {
       setNewProcessLoading(false);
@@ -145,7 +152,17 @@ const ProcessDocument = () => {
     }
   }
 
+  const handleCopyLink = (link) => {
+    if (!link) return
+
+    navigator.clipboard.writeText(link);
+    const currentCopiedLinks  = copiedLinks.slice();
+    currentCopiedLinks.push(link);
+    setCopiedLinks(currentCopiedLinks);
+  }
+
   return (
+    <>
     <div className={styles.container}>
       <h2 className={`h2-small step-title ${styles.header}`}>
         5. Process Document
@@ -225,7 +242,34 @@ const ProcessDocument = () => {
           style={{ backgroundColor: "var(--e-global-color-1342d1f)" }}
         ></span>
       </div>
+      
     </div>
+    {
+      showGeneratedLinksPopup && <div className={styles.process__Generated__Links__Overlay}>
+        <div className={styles.process__Generated__Links__Container}>
+          <div className={styles.process__Generated__Links__Container__Close__Icon} onClick={() => setShowGeneratedLinksPopup(false)}>
+            <AiOutlineClose />
+          </div>
+          <div className={styles.process__Generated__Links__Title__Item}>
+            <span>S/No.</span>
+            <span className={styles.process__Generated__Links__Link__Item}>Links</span>
+            <span>QR Code</span>
+            <span>Copy</span>
+          </div>
+          {
+            React.Children.toArray(generatedLinks.map((link, index) => {
+              return <div className={styles.process__Generated__Links__Title__Item}>
+                <span className={styles.process__Generated__Links__Num__Item}>{index + 1}.</span>
+                <span className={`${styles.process__Generated__Links__Link__Item} ${styles.single__Link}`} onClick={() => handleCopyLink(Object.values(link)[0])}>{typeof link === "object" ? Object.values(link)[0] : ""}</span>
+                <span className={styles.process__Generated__Links__Num__Item}>QR Code</span>
+                <span className={styles.process__Generated__Links__Copy__Item} onClick={() => handleCopyLink(Object.values(link)[0])}>{typeof link === "object" && copiedLinks.includes(Object.values(link)[0]) ? "Copied" : "Copy"}</span>
+              </div>
+            }))
+          }
+        </div>
+      </div>
+    }
+  </>
   );
 };
 

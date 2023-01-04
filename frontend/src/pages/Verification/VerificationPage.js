@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { toast } from "react-toastify";
-import { LoadingSpinner } from "../../components/LoadingSpinner/LoadingSpinner";
+import Spinner from "../../components/spinner/Spinner";
 import { verifyProcess } from "../../services/processServices";
+import "./style.css";
 
 const VerificationPage = () => {
     const { token } = useParams();
@@ -21,7 +22,11 @@ const VerificationPage = () => {
         
     }, [token])
 
-    if (loading) return <LoadingSpinner width={"3rem"} height={"3rem"} />
+    if (loading) return <div className="workflow__Verification__Page__Container">
+        <div className="verification__Spinner__Item">
+            <Spinner />
+        </div>
+    </div>
 
     return <></>
 }
