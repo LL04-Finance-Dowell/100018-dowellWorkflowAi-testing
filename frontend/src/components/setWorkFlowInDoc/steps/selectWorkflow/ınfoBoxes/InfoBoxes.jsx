@@ -63,6 +63,11 @@ const InfoBoxes = () => {
             contents: userDetail?.selected_product?.userportfolio.filter(user => user.member_type === "team_member"),
             status: "done"
           } :
+          item.title === "guest" ? {
+            ...item,
+            contents: userDetail?.selected_product?.userportfolio.filter(user => user.member_type === "guest"),
+            status: "done"
+          } :
           item
       )
     );
@@ -71,6 +76,17 @@ const InfoBoxes = () => {
   useEffect(() => {
     memorizedInfoBox();
   }, [memorizedInfoBox]);
+
+  useEffect(() => {
+
+    userDetail.selected_product?.userportfolio?.forEach(user => {
+
+      if (selectedMembersForProcess.find(member => member.username === user.username)) return dispatch(removeFromSelectedMembersForProcess(user.username))
+      dispatch(setSelectedMembersForProcess(user));
+
+    })
+
+  }, [currentDocToWfs])
 
   const { scrollYProgress } = useScroll({
     target: ref,
@@ -89,8 +105,9 @@ const InfoBoxes = () => {
 
   const addToSelectedWorkFlows = (selectedWorkFlow) => {
     if (selectedWorkFlow.member_type && selectedWorkFlow.username) {
-      if (selectedMembersForProcess.find(member => member.username === selectedWorkFlow.username)) return dispatch(removeFromSelectedMembersForProcess(selectedWorkFlow.username))
-      return dispatch(setSelectedMembersForProcess(selectedWorkFlow));
+      return
+      // if (selectedMembersForProcess.find(member => member.username === selectedWorkFlow.username)) return dispatch(removeFromSelectedMembersForProcess(selectedWorkFlow.username))
+      // return dispatch(setSelectedMembersForProcess(selectedWorkFlow));
     }
 
     if (currentDocToWfs) {
@@ -146,7 +163,7 @@ const InfoBoxes = () => {
                     /* className={styles.content} */
                   >
                     <span style={
-                      item.username ? selectedMembersForProcess.find(member => member.username === item.username) ? { color: "#0048ff"} : {} : 
+                      // item.username ? selectedMembersForProcess.find(member => member.username === item.username) ? { color: "#0048ff"} : {} : 
                       item.workflows && item._id ? selectedWorkflowsToDoc.find(addedWorkflow => addedWorkflow._id === item._id) ? { color: "#0048ff"} : {} :
                       {}}>
                       {item.workflows && item.workflows.workflow_title ? item.workflows.workflow_title : item.username}
