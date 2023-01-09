@@ -8,23 +8,62 @@ import FlipMenu from "../../components/flipMenu/FlipMenu";
 import DocumnetCard from "../../components/hoverCard/documentCard/DocumentCard";
 import TemplateCard from "../../components/hoverCard/templateCard/TemplateCard";
 import WorkflowCard from "../../components/hoverCard/workflowCard/WorkflowCard";
+import { useSelector } from "react-redux";
+import { useEffect, useState } from "react";
+import { DocumentServices } from "../../services/documentServices";
+import Spinner from "../../components/spinner/Spinner";
 
 const WorkflowApp = () => {
+  const documentServices = new DocumentServices();
+  const { userDetail } = useSelector(state => state.auth);
+  const [ notificationsLoading, setNotificationLoading ] = useState(true);
+  const [ notificationsForUser, setNotificationsForUser ] = useState(notifications);
+  
+  useEffect(() => {
+    if (!userDetail) return setNotificationLoading(false);
+
+    documentServices.signDocument({ "company_id": userDetail?.portfolio_info[0]?.org_id}).then(res => {
+      const currentNotifications = notificationsForUser.slice();
+      let updatedNotifications = currentNotifications.map(notification => {
+        const data = res.data.map(dataObj => {
+          let copyOfDataObj = { ...dataObj };
+          copyOfDataObj.type = "sign-document";
+          return copyOfDataObj
+        })
+        if (notification.title === "documents") notification.items = data;
+        return notification
+      })
+      setNotificationsForUser(updatedNotifications);
+      setNotificationLoading(false);
+    }).catch(err => {
+      console.log("Failed: ", err.response)
+      setNotificationLoading(false);
+      console.log("did not fetch documentsss");
+    })
+
+  }, [])
+
   return (
     <WorkflowLayout>
       <div className={styles.container}>
         <CustomerSupport />
         <FlipMenu />
         <div className={styles.section__container}>
-          {notifications.map((item) => (
-            <SectionBox
-              key={item.id}
-              Card={item.card}
-              title={`notifications - ${item.title}`}
-              cardItems={item.items}
-              cardBgColor={item.cardBgColor}
-            />
-          ))}
+          {
+            notificationsLoading ? <div>
+              <Spinner />
+              <p>Notifications loading...</p> 
+            </div> :
+            notificationsForUser.map((item) => (
+              <SectionBox
+                key={item.id}
+                Card={item.card}
+                title={`notifications - ${item.title}`}
+                cardItems={item.items}
+                cardBgColor={item.cardBgColor}
+              />
+            ))
+          }
           <div className={styles.tasks__container}>
             <HandleTasks feature="incomplate" tasks={incomplateTasks} />
             <HandleTasks feature="complated" tasks={complatedTasks} />

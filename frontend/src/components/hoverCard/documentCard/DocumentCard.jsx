@@ -3,11 +3,31 @@ import { useDispatch } from "react-redux";
 import HoverCard from "../HoverCard";
 import { Button } from "../styledComponents";
 import { detailDocument } from "../../../features/document/asyncThunks";
+import { useState } from "react";
+import { toast } from "react-toastify";
+import { LoadingSpinner } from "../../LoadingSpinner/LoadingSpinner";
+import { getProcessLink } from "../../../services/processServices";
 
 const DocumentCard = ({ cardItem }) => {
   const dispatch = useDispatch();
+  const [ dataLoading, setDataLoading ] = useState(false);
 
-  const handleDetailDocumnet = (item) => {
+  const handleDetailDocumnet = async (item) => {
+    if (dataLoading) return
+    if (item.type === "sign-document") {
+      setDataLoading(true);
+      try {
+        const dataToPost = { document_id: item._id };
+        const response = await (await getProcessLink(dataToPost));
+        window.location = response;
+      } catch (error) {
+        console.log(error.response ? error.response.data : error.message);
+        setDataLoading(false);
+        toast.info("Could not get notification link")
+      }
+      return
+    }
+
     const data = {
       document_name: item.document_name,
       document_id: item._id,
@@ -27,7 +47,7 @@ const DocumentCard = ({ cardItem }) => {
       <div>
         {cardItem._id ? (
           <Button onClick={() => handleDetailDocumnet(cardItem)}>
-            Click Here
+            { dataLoading ? <LoadingSpinner /> : "Click Here" }
           </Button>
         ) : (
           "no item"
