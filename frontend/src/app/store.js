@@ -17,7 +17,6 @@ import templateReducer from "../features/template/templateSlice";
 import documentReducer from "../features/document/documentSlice";
 import appReducer from "../features/app/appSlice";
 import authReducer from "../features/auth/authSlice";
-import legalReducer from "../features/legalSigning/legalSlice";
 import { combineReducers, configureStore } from "@reduxjs/toolkit";
 import storage from "redux-persist/lib/storage";
 import storageSession from "redux-persist/lib/storage/session";
@@ -37,7 +36,6 @@ const rootReducer = combineReducers({
   document: documentReducer,
   app: appReducer,
   auth: authReducer,
-  legal: legalReducer,
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
