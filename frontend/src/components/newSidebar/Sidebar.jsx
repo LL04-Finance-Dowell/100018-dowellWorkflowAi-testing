@@ -149,7 +149,7 @@ const Sidebar = () => {
             <h3>Agree to terms</h3>
             {
               legalStatusLoading ? <LoadingSpinner /> : <div className={styles.legal__Content__Form__Container}>
-                { dateAgreed.length > 1 && <span className={styles.date__Agreed}>You agreed on: {formatDateAndTime(dateAgreed)}</span> }
+                { dateAgreed && dateAgreed.length > 1 && <span className={styles.date__Agreed}>You agreed on: {formatDateAndTime(dateAgreed)}</span> }
                 <label className={styles.legal__Agree}>
                   <input checked={legalTermsAgreed} type="checkbox" onChange={handleAgreeCheckBoxClick} />
                   I agree with the privacy policy and terms and conditions
