@@ -16,7 +16,7 @@ const VerificationPage = () => {
     useEffect(() => {
         const dataToPost = {
             token: token,
-            username: userDetail?.userinfo?.username,
+            user_name: userDetail?.userinfo?.username,
             portfolio: userDetail?.portfolio_info[0]?.portfolio_name,
         }
 
