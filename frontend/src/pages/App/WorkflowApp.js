@@ -12,17 +12,20 @@ import { useSelector } from "react-redux";
 import { useEffect, useState } from "react";
 import { DocumentServices } from "../../services/documentServices";
 import Spinner from "../../components/spinner/Spinner";
+import ProgressBar from "../../components/progressBar/ProgressBar";
 
 const WorkflowApp = () => {
   const documentServices = new DocumentServices();
   const { userDetail } = useSelector(state => state.auth);
   const [ notificationsLoading, setNotificationLoading ] = useState(true);
   const [ notificationsForUser, setNotificationsForUser ] = useState(notifications);
-  
+  const [ finalStatus, setFinalStatus ] = useState(null);
+
   useEffect(() => {
     if (!userDetail) return setNotificationLoading(false);
 
     documentServices.signDocument({ "company_id": userDetail?.portfolio_info[0]?.org_id}).then(res => {
+      setFinalStatus(100);
       const currentNotifications = notificationsForUser.slice();
       let updatedNotifications = currentNotifications.map(notification => {
         const data = res.data.map(dataObj => {
@@ -52,7 +55,10 @@ const WorkflowApp = () => {
           {
             notificationsLoading ? <div>
               <Spinner />
-              <p>Notifications loading...</p> 
+              <div style={{ margin: "0 auto 0 1.5%", textAlign: "center" }}>
+                <p>Notifications loading...</p> 
+                <ProgressBar durationInMS={17000} finalWidth={finalStatus} />
+              </div>
             </div> :
             notificationsForUser.map((item) => (
               <SectionBox

@@ -21,7 +21,7 @@ import { savedWorkflows } from "../../../../../features/workflow/asyncTHunks";
 
 const InfoBoxes = () => {
   const { register, watch } = useForm();
-  const { workflow } = watch();
+  const { workflow, team } = watch();
 
   const ref = useRef(null);
   const dispatch = useDispatch();
@@ -50,7 +50,10 @@ const InfoBoxes = () => {
         item.title === "workflow"
           ? {
               ...item,
-              contents: savedWorkflowItems?.filter((item) =>
+              contents: team?.length > 1 ? savedWorkflowItems?.filter((item) => 
+                item.created_by.toLocaleLowerCase().includes(team?.toLocaleLowerCase())
+              )
+              : savedWorkflowItems?.filter((item) =>
                 item.workflows?.workflow_title
                   .toLowerCase()
                   .includes(workflow?.toLowerCase())
@@ -60,7 +63,8 @@ const InfoBoxes = () => {
           : 
           item.title === "team" ? {
             ...item,
-            contents: userDetail?.selected_product?.userportfolio.filter(user => user.member_type === "team_member"),
+            contents: team?.length > 1 ? userDetail?.selected_product?.userportfolio.filter(user => user.member_type === "team_member").filter(user => user.username.toLocaleLowerCase().includes(team.toLocaleLowerCase())) :
+            userDetail?.selected_product?.userportfolio.filter(user => user.member_type === "team_member"),
             status: "done"
           } :
           item.title === "guest" ? {
@@ -71,7 +75,7 @@ const InfoBoxes = () => {
           item
       )
     );
-  }, [savedWorkflowStatus, workflow, userDetail]);
+  }, [savedWorkflowStatus, workflow, team, userDetail]);
 
   useEffect(() => {
     memorizedInfoBox();
@@ -164,7 +168,7 @@ const InfoBoxes = () => {
                   >
                     <span style={
                       // item.username ? selectedMembersForProcess.find(member => member.username === item.username) ? { color: "#0048ff"} : {} : 
-                      item.workflows && item._id ? selectedWorkflowsToDoc.find(addedWorkflow => addedWorkflow._id === item._id) ? { color: "#0048ff"} : {} :
+                      item.workflows && item._id ? selectedWorkflowsToDoc.find(addedWorkflow => addedWorkflow._id === item._id) ? { backgroundColor: "#0048ff", color: "#fff", padding: "2% 3%", borderRadius: "5px" } : {} :
                       {}}>
                       {item.workflows && item.workflows.workflow_title ? item.workflows.workflow_title : item.username}
                     </span>

@@ -21,12 +21,10 @@ const Contents = ({ contents, toggleContent, feature, currentStepIndex, showChec
     console.log(selectedContents);
   }; */
 
-  const handleCheckboxSelection = (e) => {
-    const valueAsJSON = JSON.parse(e.target.value);
+  const handleContentSelection = (valueAsJSON) => {
     const contentStepAlreadyAdded = tableOfContentForStep.find(step => step.workflow === docCurrentWorkflow._id && step._id === valueAsJSON._id && step.stepIndex === currentStepIndex);
     
     if (contentStepAlreadyAdded) {
-      e.target.checked = false
       return dispatch(removeFromTableOfContentForStep(valueAsJSON._id))
     }
 
@@ -37,7 +35,6 @@ const Contents = ({ contents, toggleContent, feature, currentStepIndex, showChec
     }
 
     dispatch(setTableOfContentForStep(newTableOfContentObj));
-    e.target.checked = true;
   }
 
   return (
@@ -87,8 +84,8 @@ const Contents = ({ contents, toggleContent, feature, currentStepIndex, showChec
                   key={item._id}
                 >
                   <span>
-                    { showCheckBoxForContent && <input type={"checkbox"} value={JSON.stringify(item)} onChange={handleCheckboxSelection} /> }
-                    <a>{item.id}</a>
+                    {/* { showCheckBoxForContent && <input type={"checkbox"} value={JSON.stringify(item)} onChange={handleCheckboxSelection} /> } */}
+                    <a style={tableOfContentForStep.find(step => step.workflow === docCurrentWorkflow._id && step._id === item._id && step.stepIndex === currentStepIndex) ? { backgroundColor: "#0048ff", color: "#fff", padding: "2% 30%", borderRadius: "5px", width: "100%" } : {}} onClick={() => handleContentSelection(item)}>{item.id}</a>
                   </span>
                 </li>
               ))}

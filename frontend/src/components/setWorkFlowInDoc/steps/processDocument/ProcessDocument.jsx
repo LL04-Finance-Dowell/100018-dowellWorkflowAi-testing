@@ -13,6 +13,7 @@ import { LoadingSpinner } from "../../../LoadingSpinner/LoadingSpinner";
 import { setContentOfDocument } from "../../../../features/document/documentSlice";
 import { AiOutlineClose } from "react-icons/ai";
 import React from "react";
+import ProgressBar from "../../../progressBar/ProgressBar";
 
 const ProcessDocument = () => {
   const [currentProcess, setCurrentProcess] = useState();
@@ -208,7 +209,7 @@ const ProcessDocument = () => {
               {processDocument.map((item) => (
                 <>
                   <div
-                    onClick={() => handleCurrentProcess(item)}
+                    onClick={newProcessLoading ? () => {} : () => handleCurrentProcess(item)}
                     className={`${styles.process__box} ${
                       item.id === currentProcess?.id && styles.active__process
                     }`}
@@ -226,7 +227,7 @@ const ProcessDocument = () => {
                     <div className={styles.process__detail__box}>
                       <p>{currentProcess && currentProcess.processDetail}</p>
                       { 
-                        newProcessLoading ? <LoadingSpinner /> : 
+                        newProcessLoading ? <ProgressBar durationInMS={65000} /> : 
                         <p className={styles.start__processing__button} onClick={handleStartNewProcess}>
                           Save & Start Processing
                         </p>

@@ -9,7 +9,7 @@
 
 .box {
   width: 100%;
-  background-color: var(--e-global-color-secondary);
+  background-color: var(--e-global-color-9d2ac19);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -29,12 +29,13 @@
   gap: 20px;
   border: none;
   outline: none;
-  color: #fff;
+  color: #000;
 }
 
 .current__item__box:hover {
   background-color: rgba(84, 89, 95, 0.9);
   transition: 0.3s ease all;
+  color: #fff;
 }
 
 .current__item__box:focus {

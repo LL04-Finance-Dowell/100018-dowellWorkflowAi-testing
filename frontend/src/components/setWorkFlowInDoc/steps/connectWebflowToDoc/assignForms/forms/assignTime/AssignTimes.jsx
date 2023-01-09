@@ -13,7 +13,9 @@ const AssignTime = ({ currentStepIndex }) => {
     register,
     handleSubmit,
     formState: { isSubmitted },
+    watch
   } = useForm();
+  const { limit } = watch();
   const [loading, setLoading] = useState(false);
   const { docCurrentWorkflow } = useSelector((state) => state.app);
   const dispatch = useDispatch();
@@ -29,16 +31,22 @@ const AssignTime = ({ currentStepIndex }) => {
     <FormLayout isSubmitted={isSubmitted} loading={loading}>
       <form onSubmit={handleSubmit(onSubmit)}>
         <Select register={register} name="limit" options={limitTimes} takeNormalValue={true} />
-        <input
-          {...register("start_time")}
-          className={globalStyles.time__input}
-          type="time"
-        />
-        <input
-          {...register("end_time")}
-          className={globalStyles.time__input}
-          type="time"
-        />
+        {
+          !limit ? <></> :
+          limit === "no_time_limit" ? <></> :
+          <>
+            <input
+              {...register("start_time")}
+              className={globalStyles.time__input}
+              type="time"
+            />
+            <input
+              {...register("end_time")}
+              className={globalStyles.time__input}
+              type="time"
+            />
+          </>
+        }
         <Select
           register={register}
           name="reminder"
