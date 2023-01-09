@@ -19,7 +19,7 @@ export const httpWorkflow = axios.create({
 
 export const httpTemplate = axios.create({ baseURL: api_url + "/templates/" });
 
-export const httpDocument = axios.create({ baseURL: api_url + "/documents/" });
+export const httpDocument = axios.create({ baseURL: api_url + "documents/" });
 
 export const httpAuth = axios.create({ baseURL: auth_url });
 
