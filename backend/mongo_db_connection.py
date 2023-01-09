@@ -315,6 +315,16 @@ def get_process_object(workflow_process_id):
     else:
         return []
 
+def get_process_list(company_id):
+    fields = {"company_id": str(company_id)}
+    response_obj = dowellconnection(*LINK_CONNECTION_LIST, "fetch", fields, "nil")
+    res_obj = json.loads(response_obj)
+    if len(res_obj["data"]):
+        return res_obj["data"]
+    else:
+        return []
+
+# ---------- Hashes --------------------------
 
 def save_uuid_hash(process_links, process_id, document_id, processing_choice):
     url = "http://100002.pythonanywhere.com/"

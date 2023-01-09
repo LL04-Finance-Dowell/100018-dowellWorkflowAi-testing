@@ -35,6 +35,8 @@ from .process import (
     save_and_start_processing,
     save_workflows_to_document,
     verify_process,
+    get_process_link,
+    processes
 )
 
 from .views import api
@@ -42,9 +44,11 @@ from .views import api
 urlpatterns = [
     path("", api),
     # Workflow Processing-----------------------
+    path("processes/", processes),
     path("process/new/", save_workflows_to_document),
     path("process/start/", save_and_start_processing),
     path("process/verify/", verify_process),
+    path("process/link/", get_process_link),
     # path("process/doc-map/", document_map),
     # Search----------------------------
     path("search/", search),

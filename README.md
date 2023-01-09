@@ -4,6 +4,30 @@ api_url = `https://100094.pythonanywhere.com/v0.1/`
 
 ### Workflow Process Service.
 
+_POST_ to `process/link/`
+
+- Request Body
+
+```
+{
+    "document_id": "<selected_doc_id>"
+}
+```
+
+Response - 200
+
+```
+<verification_link>
+```
+
+Response - 401
+
+```
+"User is not part of this process"
+```
+
+Response - 500
+
 _POST_ to `process/verify/`
 
 - Verification Checks for document link
@@ -27,9 +51,22 @@ Response-201
 
 ```
 
+Response - 401
+
+```
+"User is not part of this process"
+```
+
+Response - 403
+
+```
+ "Portfolio for this user is Unauthorized"
+```
+
 Response-500
 
 " verification failed"
+
 
 _POST_ to `process/start/`
 

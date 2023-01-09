@@ -11,8 +11,43 @@ from .mongo_db_connection import (
     update_document,
     save_process_links,
     get_links_object_by_process_id,
+    get_links_object_by_document_id,
+    get_process_list,
 )
 
+# ---------------------------------------------------------------------------------#
+# API Endpoint - 4. ---------  Workflows process Notification API
+# ---------------------------------------------------------------------------------#
+
+
+@api_view(["POST"])
+def processes(request): # Pending Workflow processes.
+    try:
+        processes = get_process_list(request.data["company_id"])
+    except:
+        return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    if len(processes) <= 0:
+        return Response([], status=status.HTTP_200_OK)
+    return Response(processes, status=status.HTTP_200_OK)
+
+
+@api_view(["POST"])
+def get_process_link(request): # Get a links process for person having notifications
+    # get links info
+    try:
+        links_info = get_links_object_by_document_id(request.data["document_id"])
+    except:
+        return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    # check presence in link
+    for link in links_info["links"]:
+        if request.data["user_name"] in link:
+            verify_link = link.get(request.data["user_name"])
+            break
+        else:
+            return Response(
+                "User is not part of this process", status=status.HTTP_401_UNAUTHORIZED
+            )
+    return Response(verify_link, status=status.HTTP_200_OK)
 
 
 # ---------------------------------------------------------------------------------#
@@ -157,7 +192,7 @@ def save_and_start_processing(request):
         data_type=request.data["data_type"],
     )
     if process:
-        # update the doc. DB-2
+        # update the doc. DB - 2
         res = json.loads(
             update_document(
                 document_id=request.data["document_id"],
@@ -274,7 +309,6 @@ def new_process(workflows, created_by, company_id, data_type, document_id):
             "process_id": res["inserted_id"],
         }
         return process
-
 
 
 # ---------------------------------------------------------------------------------#
