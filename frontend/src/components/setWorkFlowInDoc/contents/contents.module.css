@@ -61,10 +61,14 @@
   /* margin-bottom: 8px; */
   padding: 0;
   cursor: pointer;
-  width: fit-content;
+  width: 100%;
   display: flex;
   align-items: center;
   margin-bottom: 0;
+}
+
+.content__box ol li input[type=checkbox] {
+  margin-right: 4px;
 }
 
 .content__box ol li::before {

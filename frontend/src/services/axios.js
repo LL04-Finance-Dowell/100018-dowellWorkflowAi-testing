@@ -2,6 +2,7 @@ import axios from "axios";
 
 const workflowAPIBaseURL = "https://100094.pythonanywhere.com/v0.1/";
 const loginBaseURL = "https://100014.pythonanywhere.com/api/";
+const legalBaseURL = "https://100087.pythonanywhere.com/api/";
 
 const authAxiosInstance = axios.create({
   withCredentials: true,
@@ -12,6 +13,11 @@ const workflowAxiosInstance = axios.create({
   withCredentials: true,
   baseURL: workflowAPIBaseURL,
 });
+
+const legalAxiosInstance = axios.create({
+  // withCredentials: true,
+  baseURL: legalBaseURL,
+})
 
 const dowellLoginUrl =
   "https://100014.pythonanywhere.com/?redirect_url=" +
@@ -27,4 +33,5 @@ export {
   dowellLoginUrl,
   workflowAxiosInstance,
   dowellLogoutUrl,
+  legalAxiosInstance,
 };

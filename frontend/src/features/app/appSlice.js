@@ -15,6 +15,7 @@ const initialState = {
   dropdownToggle: false,
   processSteps: [],
   selectedMembersForProcess: [],
+  tableOfContentForStep: [],
 };
 
 export const appSlice = createSlice({
@@ -122,6 +123,17 @@ export const appSlice = createSlice({
       
       state.processSteps = currentProcessSteps;
     },
+    setTableOfContentForStep: (state, action) => {
+      state.tableOfContentForStep = [
+        ...state.tableOfContentForStep,
+        action.payload,
+      ]
+    },
+    removeFromTableOfContentForStep: (state, action) => {
+      state.tableOfContentForStep = state.tableOfContentForStep.filter(
+        (content) => content._id !== action.payload
+      );
+    },
   },
 });
 
@@ -141,6 +153,8 @@ export const {
   setSelectedMembersForProcess,
   removeFromSelectedMembersForProcess,
   updateSingleProcessStep,
+  setTableOfContentForStep,
+  removeFromTableOfContentForStep,
 } = appSlice.actions;
 
 export default appSlice.reducer;

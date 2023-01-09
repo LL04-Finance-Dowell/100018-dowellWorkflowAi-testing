@@ -1,10 +1,14 @@
 import { useState } from "react";
 import { useRef } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { removeFromTableOfContentForStep, setTableOfContentForStep } from "../../../features/app/appSlice";
 import styles from "./contents.module.css";
 
-const Contents = ({ contents, toggleContent, feature }) => {
+const Contents = ({ contents, toggleContent, feature, currentStepIndex, showCheckBoxForContent }) => {
   const contentRef = useRef(null);
   const [currentTableItem, setCurrentTableItem] = useState(null);
+  const dispatch = useDispatch();
+  const { docCurrentWorkflow, tableOfContentForStep } = useSelector((state) => state.app);
 
   /*  const handleAddContent = (content) => {
     console.log(content);
@@ -16,6 +20,25 @@ const Contents = ({ contents, toggleContent, feature }) => {
 
     console.log(selectedContents);
   }; */
+
+  const handleCheckboxSelection = (e) => {
+    const valueAsJSON = JSON.parse(e.target.value);
+    const contentStepAlreadyAdded = tableOfContentForStep.find(step => step.workflow === docCurrentWorkflow._id && step._id === valueAsJSON._id && step.stepIndex === currentStepIndex);
+    
+    if (contentStepAlreadyAdded) {
+      e.target.checked = false
+      return dispatch(removeFromTableOfContentForStep(valueAsJSON._id))
+    }
+
+    const newTableOfContentObj = {
+      ...valueAsJSON,
+      "workflow": docCurrentWorkflow._id,
+      "stepIndex": currentStepIndex,
+    }
+
+    dispatch(setTableOfContentForStep(newTableOfContentObj));
+    e.target.checked = true;
+  }
 
   return (
     <div
@@ -64,6 +87,7 @@ const Contents = ({ contents, toggleContent, feature }) => {
                   key={item._id}
                 >
                   <span>
+                    { showCheckBoxForContent && <input type={"checkbox"} value={JSON.stringify(item)} onChange={handleCheckboxSelection} /> }
                     <a>{item.id}</a>
                   </span>
                 </li>

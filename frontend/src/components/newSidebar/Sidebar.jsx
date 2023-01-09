@@ -5,7 +5,7 @@ import CollapseItem from "./collapseItem/CollapseItem";
 import Notifications from "./notifications/Notifications";
 import New from "./new/New";
 import Search from "./search/Search";
-import { AiOutlineMenuFold } from "react-icons/ai";
+import { AiOutlineClose, AiOutlineMenuFold } from "react-icons/ai";
 import { FaPowerOff } from "react-icons/fa";
 import { FaUserAlt } from "react-icons/fa";
 import { ImHome3 } from "react-icons/im";
@@ -22,19 +22,77 @@ import { AiTwotoneSetting } from "react-icons/ai";
 import { dowellLogoutUrl } from "../../services/axios";
 import ManageFile from "./manageFile/ManageFile";
 import UserDetail from "./userDetail/UserDetail";
+import { useState } from "react";
+import { setCancellationPeriod, setCompanyAddress, setCompanyCountry, setCompanyEmail, setCompanyJurisdiction, setCompanyName, setCompanyRegistrationNumber, setLastUpdateDate, setReimbursePeriod, setWebsiteContactPageUrl, setWebsiteDescription, setWebsiteName } from "../../features/legalSigning/legalSlice";
+import { getAgreeStatus, registerNewWebsite } from "../../services/legalService";
+import { LoadingSpinner } from "../LoadingSpinner/LoadingSpinner";
 
 const Sidebar = () => {
   const dispatch = useDispatch();
   const { userDetail, currentUser, session_id } = useSelector(
     (state) => state.auth
   );
-
+  const [ showLegalPopup, setShowLegalPopup ] = useState(false);
+  const legalState = useSelector((state) => state.legal);
+  const [ disableSubmitLegal, setDisableSubmitLegal ] = useState(true);
+  const [ submitLegalLoading, setSubmitLegalLoading ] = useState(false);
+  const [ newLegalEventId, setNewLegalEventId ] = useState(null);
+  const [ legalTermsAgreed, setLegalTermsAgreed ] = useState(false);
+  const [ params, setParams ] = useSearchParams();
   const navigate = useNavigate();
+
+  useEffect(() => {
+
+    if (legalState.app_or_website_or_service_name.length < 1 || legalState.description.length < 1 || legalState.company_name.length < 1 || legalState.company_address.length < 1 || 
+      legalState.company_registration_number.length < 1 || legalState.company_country.length < 1 || legalState.contact_email_id.length < 1 || legalState.website_contact_page_url.length < 1 || 
+      legalState.last_update_date.length < 1 || legalState.app_or_website_governed_by_or_jurisdiction.length < 1 || legalState.days_allowed_for_cancellation_of_order_or_product.length < 1 || 
+      legalState.days_allowed_for_cancellation_of_order_or_product.length < 1 || legalState.reimburse_days.length < 1
+    ) return setDisableSubmitLegal(true);
+    
+    setDisableSubmitLegal(false);
+    
+  }, [legalState])
+
+  useEffect(() => {
+    
+    const eventID = params.get("event_id");
+    const termsAgreed = params.get("agree_to_terms");
+
+    if (!eventID || !termsAgreed) return
+
+    getAgreeStatus(eventID).then(res => {
+      setLegalTermsAgreed(res.data.data[0]?.i_agree);
+      setNewLegalEventId(eventID);
+      setShowLegalPopup(true);
+    }).catch(error => {
+      console.log(error.response ? error.response.data : error.message);
+    });
+
+  }, [params])
 
   const handleLogout = () => {
     sessionStorage.clear();
     window.location.replace(dowellLogoutUrl);
   };
+
+  const handleNewRegistration = async () => {
+    setSubmitLegalLoading(true)
+    try {
+      const newRegistrationResponse = await (await registerNewWebsite(legalState)).data;
+      setSubmitLegalLoading(false);
+      if (newRegistrationResponse.isSuccess) {
+        setNewLegalEventId(newRegistrationResponse.data[0]?.eventId)
+      }
+    } catch (error) {
+      setSubmitLegalLoading(false);
+      console.log(error.response ? error.response.data : error.message);
+    }
+  }
+
+  const handleAgreeCheckBoxClick = (e) => {
+    e.preventDefault();
+    window.location = `https://100087.pythonanywhere.com/policy/${newLegalEventId}/website-privacy-policy/?redirect_url=${window.location.href}&event_id=${newLegalEventId}&agree_to_terms=true`
+  }
 
   const handleClick = (feature) => {
     feature === "logout" && handleLogout();
@@ -44,6 +102,7 @@ const Sidebar = () => {
         "_blank"
       );
     feature === "home" && navigate(`/`);
+    feature === "shield" && setShowLegalPopup(true);
     /*  feature === "shield" && ;
     feature === "settings" && ; */
   };
@@ -110,6 +169,87 @@ const Sidebar = () => {
         <CollapseItem items={knowledge} />
       </div>
       <Footer topSideIcons={iconBoxItems} handleIconClick={handleClick} />
+      {
+        showLegalPopup && 
+        <div className={styles.legal__Overlay__Container}>
+          <div className={styles.legal__Content__Container}>
+            <div className={styles.legal__Overlay__Container__Close__Icon} onClick={() => setShowLegalPopup(false)}>
+              <AiOutlineClose />
+            </div>
+            {
+              newLegalEventId ? <>
+                <div className={styles.success__Legal__Message}>
+                  Successfully registered website!
+                </div>
+                <h3>Agree to terms</h3>
+                <div className={styles.legal__Content__Form__Container}>
+                  <label className={styles.legal__Agree}>
+                    <input checked={legalTermsAgreed} type="checkbox" onChange={handleAgreeCheckBoxClick} />
+                    I agree with the privacy policy and terms and conditions
+                  </label>
+                  <button disabled={!legalTermsAgreed} className={`${styles.legal__Register__Btn} ${styles.continue__Btn}`} onClick={() => setShowLegalPopup(false)}>{"Continue"}</button>
+                </div>
+              </> : <>
+                <h3>Register WorkflowAi</h3>
+              
+                <div className={styles.legal__Content__Form__Container}>
+                  <p>Platform: {legalState.platform_type}</p>
+                  <p>Website URL: {legalState.app_or_website_or_service_url}</p>
+                  <label>
+                    Website Name: 
+                    <input type={"text"} value={legalState.app_or_website_or_service_name} onChange={(e) => dispatch(setWebsiteName(e.target.value))} />
+                  </label>
+                  <label>
+                    Website Description: 
+                    <input type={"text"} value={legalState.description} onChange={(e) => dispatch(setWebsiteDescription(e.target.value))} />
+                  </label>
+                  <label>
+                    Company Name: 
+                    <input type={"text"} value={legalState.company_name} onChange={(e) => dispatch(setCompanyName(e.target.value))} />
+                  </label>
+                  <label>
+                    Company Address: 
+                    <input type={"text"} value={legalState.company_address} onChange={(e) => dispatch(setCompanyAddress(e.target.value))} />
+                  </label>
+                  <label>
+                    Company Registration Number: 
+                    <input type={"text"} value={legalState.company_registration_number} onChange={(e) => dispatch(setCompanyRegistrationNumber(e.target.value))}  />
+                  </label>
+                  <label>
+                    Company Country: 
+                    <input type={"text"} value={legalState.company_country} onChange={(e) => dispatch(setCompanyCountry(e.target.value))}  />
+                  </label>
+                  <label>
+                    Contact Email: 
+                    <input type={"email"} value={legalState.contact_email_id} onChange={(e) => dispatch(setCompanyEmail(e.target.value))}  />
+                  </label>
+                  <label>
+                    Contact page URL: 
+                    <input type={"text"} value={legalState.website_contact_page_url} onChange={(e) => dispatch(setWebsiteContactPageUrl(e.target.value))} />
+                  </label>
+                  <label>
+                    Update Date: 
+                    <input type={"date"} value={legalState.last_update_date} onChange={(e) => dispatch(setLastUpdateDate(e.target.value))}  />
+                  </label>
+                  <label>
+                    Jurisdiction: 
+                    <input type={"text"} value={legalState.app_or_website_governed_by_or_jurisdiction} onChange={(e) => dispatch(setCompanyJurisdiction(e.target.value))} />
+                  </label>
+                  <label>
+                    Cancellation Period: 
+                    <input type={"number"} value={legalState.days_allowed_for_cancellation_of_order_or_product} onChange={(e) => dispatch(setCancellationPeriod(e.target.value))}  />
+                  </label>
+                  <label>
+                    Reimburse Days: 
+                    <input type={"number"} value={legalState.reimburse_days} onChange={(e) => dispatch(setReimbursePeriod(e.target.value))}  />
+                  </label>
+                  <button disabled={disableSubmitLegal} className={styles.legal__Register__Btn} onClick={handleNewRegistration}>{submitLegalLoading ? <LoadingSpinner /> : "Register"}</button>
+                </div>
+              </>
+            }
+          </div>
+        </div>
+      }
     </div>
   );
 };

@@ -16,7 +16,7 @@ import React from "react";
 
 const ProcessDocument = () => {
   const [currentProcess, setCurrentProcess] = useState();
-  const { currentDocToWfs, selectedWorkflowsToDoc, processSteps, docCurrentWorkflow } = useSelector((state) => state.app);
+  const { currentDocToWfs, selectedWorkflowsToDoc, processSteps, docCurrentWorkflow, tableOfContentForStep } = useSelector((state) => state.app);
   const [ workflowsDataToDisplay, setWorkflowsDataToDisplay ] = useState([]);
   const { userDetail } = useSelector((state) => state.auth);
   const [ newProcessLoading, setNewProcessLoading ] = useState(false);
@@ -79,6 +79,8 @@ const ProcessDocument = () => {
       }],
     }
     const foundProcessSteps = processSteps.find(process => process.workflow === docCurrentWorkflow._id);
+    const tableOfContents = tableOfContentForStep.filter(content => content.workflow === docCurrentWorkflow);
+    console.log("Table of contents for current workflow: ", tableOfContents)
     processObj.workflows[0].workflows.steps = foundProcessSteps ? foundProcessSteps.steps.map(step => {
       let copyOfCurrentStep = { ...step };
       if (copyOfCurrentStep._id) delete copyOfCurrentStep._id;

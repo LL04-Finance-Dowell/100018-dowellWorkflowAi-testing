@@ -163,6 +163,8 @@ const ConnectWorkFlowToDoc = () => {
                           <Contents
                             contents={contentOfDocument}
                             toggleContent={item.toggleContent}
+                            showCheckBoxForContent={true}
+                            currentStepIndex={index}
                           />
                         )}
                       </div>
