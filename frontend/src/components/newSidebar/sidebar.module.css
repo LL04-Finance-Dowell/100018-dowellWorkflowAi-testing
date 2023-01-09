@@ -191,6 +191,13 @@
   margin-bottom: 0;
 }
 
+.date__Agreed {
+  color: #61ce70;
+  font-size: 0.875rem;
+  display: block;
+  margin-bottom: 1%;
+}
+
 @media (max-width: 768px) {
   .organization__box img {
     width: 54vw;

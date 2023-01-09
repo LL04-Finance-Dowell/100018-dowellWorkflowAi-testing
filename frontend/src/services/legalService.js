@@ -1,5 +1,7 @@
 import { legalAxiosInstance } from "./axios";
 
-export const getAgreeStatus = async (eventId) => {
-    return await legalAxiosInstance.get(`legalpolicies/${eventId}/iagreestatus/`)
+export const workflowRegistrationEventId = "FB1010000000167293994856897783";
+
+export const getAgreeStatus = async (sessionId) => {
+    return await legalAxiosInstance.get(`legalpolicies/${sessionId}/iagreestatus/`)
 }

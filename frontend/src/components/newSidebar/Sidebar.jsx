@@ -23,35 +23,36 @@ import { dowellLogoutUrl } from "../../services/axios";
 import ManageFile from "./manageFile/ManageFile";
 import UserDetail from "./userDetail/UserDetail";
 import { useState } from "react";
-import { getAgreeStatus } from "../../services/legalService";
+import { getAgreeStatus, workflowRegistrationEventId } from "../../services/legalService";
+import { LoadingSpinner } from "../LoadingSpinner/LoadingSpinner";
+import { formatDateAndTime } from "../../utils/helpers";
 
 const Sidebar = () => {
   const dispatch = useDispatch();
-  const { userDetail, currentUser, session_id } = useSelector(
+  const { userDetail, currentUser, session_id, id } = useSelector(
     (state) => state.auth
   );
+  const [ legalStatusLoading, setLegalStatusLoading ] = useState(true);
   const [ showLegalPopup, setShowLegalPopup ] = useState(false);
-  const [ newLegalEventId, setNewLegalEventId ] = useState("FB1010000000167293994856897783");
   const [ legalTermsAgreed, setLegalTermsAgreed ] = useState(false);
-  const [ params, setParams ] = useSearchParams();
+  const [ dateAgreed, setDateAgreed ] = useState("");
   const navigate = useNavigate();
 
   useEffect(() => {
 
-    const eventID = params.get("event_id");
-    const termsAgreed = params.get("agree_to_terms");
+    getAgreeStatus(session_id).then(res => {
+      const legalStatus = res.data.data[0]?.i_agree;
 
-    if (!eventID || !termsAgreed) return
-
-    getAgreeStatus(eventID).then(res => {
-      setLegalTermsAgreed(res.data.data[0]?.i_agree);
-      setNewLegalEventId(eventID);
-      setShowLegalPopup(true);
+      setLegalStatusLoading(false);
+      setLegalTermsAgreed(legalStatus);
+      setDateAgreed(res.data.data[0]?.i_agreed_datetime);
+      if (!legalStatus) setShowLegalPopup(true);
     }).catch(error => {
       console.log(error.response ? error.response.data : error.message);
+      setLegalStatusLoading(false);
     });
 
-  }, [params])
+  }, [])
 
   const handleLogout = () => {
     sessionStorage.clear();
@@ -60,7 +61,7 @@ const Sidebar = () => {
 
   const handleAgreeCheckBoxClick = (e) => {
     e.preventDefault();
-    window.location = `https://100087.pythonanywhere.com/policy/${newLegalEventId}/website-privacy-policy/?redirect_url=${window.location.href}&event_id=${newLegalEventId}&agree_to_terms=true`
+    window.location = `https://100087.pythonanywhere.com/legalpolicies/${workflowRegistrationEventId}/website-privacy-policy/policies/?redirect_url=${window.location.origin}/100018-dowellWorkflowAi-testing/%23?id=${id}&session_id=${session_id}}`
   }
 
   const handleClick = (feature) => {
@@ -146,13 +147,16 @@ const Sidebar = () => {
               <AiOutlineClose />
             </div>
             <h3>Agree to terms</h3>
-            <div className={styles.legal__Content__Form__Container}>
-              <label className={styles.legal__Agree}>
-                <input checked={legalTermsAgreed} type="checkbox" onChange={handleAgreeCheckBoxClick} />
-                I agree with the privacy policy and terms and conditions
-              </label>
-              <button disabled={!legalTermsAgreed} className={`${styles.legal__Register__Btn} ${styles.continue__Btn}`} onClick={() => setShowLegalPopup(false)}>{"Continue"}</button>
-            </div>
+            {
+              legalStatusLoading ? <LoadingSpinner /> : <div className={styles.legal__Content__Form__Container}>
+                { dateAgreed.length > 1 && <span className={styles.date__Agreed}>You agreed on: {formatDateAndTime(dateAgreed)}</span> }
+                <label className={styles.legal__Agree}>
+                  <input checked={legalTermsAgreed} type="checkbox" onChange={handleAgreeCheckBoxClick} />
+                  I agree with the privacy policy and terms and conditions
+                </label>
+                <button disabled={!legalTermsAgreed} className={`${styles.legal__Register__Btn} ${styles.continue__Btn}`} onClick={() => setShowLegalPopup(false)}>{"Continue"}</button>
+              </div>
+            }
           </div>
         </div>
       }
