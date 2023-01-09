@@ -43,6 +43,16 @@ PROCESS_CONNECTION_LIST = [
     "ABCDE",
 ]
 
+
+LINK_CONNECTION_LIST = [
+    "Documents",
+    "bangalore",
+    "Documentation",
+    "DocumentLink",
+    "DocumentLink",
+    "1000180010",
+    "ABCDE",
+]
 TEMPLATE_CONNECTION_LIST = [
     "Documents",
     "bangalore",
@@ -98,6 +108,15 @@ WF_PROCESS_DICT = {
     "collection": "WorkflowProcess",
     "document": "WorkflowProcess",
     "team_member_ID": "1000180001",
+    "function_ID": "ABCDE",
+}
+
+LINK_CONNECTION_DICT = {
+    "cluster": "Documents",
+    "database": "Documentation",
+    "collection": "DocumentLink",
+    "document": "DocumentLink",
+    "team_member_ID": "1000180010",
     "function_ID": "ABCDE",
 }
 
@@ -181,6 +200,57 @@ def get_user_info_by_username(username):
         return usrdic["data"][0]
 
 
+# ----------------------- Links Creation -------------------------
+def save_process_links(links, process_id, document_id, processing_choice):
+    url = "http://100002.pythonanywhere.com/"
+    payload = json.dumps(
+        {
+            **LINK_CONNECTION_DICT,
+            "command": "insert",
+            "field": {
+                "eventId": get_event_id(),
+                "links": links,
+                "process_id": process_id,
+                "document_id": document_id,
+                "processing_choice": processing_choice,
+            },
+            "update_field": {"order_nos": 21},
+            "platform": "bangalore",
+        }
+    )
+    headers = {"Content-Type": "application/json"}
+    response = requests.request("POST", url, headers=headers, data=payload)
+    print("SAVED LINKS ----------- \n", response.text)
+    print(response.text)
+    return response.text
+
+
+# By processID
+def get_links_object_by_process_id(process_id):
+    print("getting process link object,... \n")
+    fields = {"process_id": str(process_id)}
+    response_obj = dowellconnection(*LINK_CONNECTION_LIST, "find", fields, "nil")
+    res_obj = json.loads(response_obj)
+    # print("PL query object response :  \n", response_obj)
+    if len(res_obj["data"]):
+        return res_obj["data"]
+    else:
+        return []
+
+
+# By documentID
+def get_links_object_by_document_id(document_id):
+    print("getting process link object,... \n")
+    fields = {"document_id": str(document_id)}
+    response_obj = dowellconnection(*LINK_CONNECTION_LIST, "find", fields, "nil")
+    res_obj = json.loads(response_obj)
+    # print("PL query object response :  \n", response_obj)
+    if len(res_obj["data"]):
+        return res_obj["data"]
+    else:
+        return []
+
+
 #  -------------------------------Workflow Process------------------
 def save_wf_process(
     process_title, process_steps, user, company_id, data_type, document_id
@@ -207,6 +277,7 @@ def save_wf_process(
     headers = {"Content-Type": "application/json"}
     response = requests.request("POST", url, headers=headers, data=payload)
     print("SAVE WORKFLOW PROCESS----------- \n", response.text)
+    print(response.text)
     return response.text
 
 
@@ -245,7 +316,7 @@ def get_process_object(workflow_process_id):
         return []
 
 
-def save_uuid_hash(uuid_hash, process_id, user_name, document_id):
+def save_uuid_hash(process_links, process_id, document_id, processing_choice):
     url = "http://100002.pythonanywhere.com/"
     payload = json.dumps(
         {
@@ -253,10 +324,10 @@ def save_uuid_hash(uuid_hash, process_id, user_name, document_id):
             "command": "insert",
             "field": {
                 "eventId": get_event_id(),
-                "user_name": user_name,
-                "uuid_hash": uuid_hash,
+                "process_links": process_links,
                 "document_id": document_id,
                 "process_id": process_id,
+                "processing_choice": processing_choice,
                 "status": True,  #   if True: valid ? Invalid
             },
             "update_field": {"order_nos": 21},

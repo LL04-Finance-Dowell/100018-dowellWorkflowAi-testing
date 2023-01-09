@@ -12,7 +12,9 @@ Request Body
 
 ```
 {
-    "token": "<get this token from the url path>"
+    "token": "<get this token from the url path>",
+    "user_name": "<username_of_person_authenticated>",
+    "portfolio": "<authenticated_porfolio>",
 }
 ```
 

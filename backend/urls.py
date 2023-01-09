@@ -45,6 +45,7 @@ urlpatterns = [
     path("process/new/", save_workflows_to_document),
     path("process/start/", save_and_start_processing),
     path("process/verify/", verify_process),
+    # path("process/doc-map/", document_map),
     # Search----------------------------
     path("search/", search),
     # Templates-----------------------------------------------------
