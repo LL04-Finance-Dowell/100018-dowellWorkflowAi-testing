@@ -10,7 +10,8 @@ _POST_ to `process/link/`
 
 ```
 {
-    "document_id": "<selected_doc_id>"
+    "document_id": "<selected_doc_id>",
+    "user_name": "auth_user_name"
 }
 ```
 

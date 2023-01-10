@@ -36,6 +36,7 @@ def get_process_link(request): # Get a links process for person having notificat
     # get links info
     try:
         links_info = get_links_object_by_document_id(request.data["document_id"])
+        print(links_info)
     except:
         return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     # check presence in link
