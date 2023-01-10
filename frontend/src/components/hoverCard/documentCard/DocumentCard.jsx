@@ -1,5 +1,5 @@
 import React from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import HoverCard from "../HoverCard";
 import { Button } from "../styledComponents";
 import { detailDocument } from "../../../features/document/asyncThunks";
@@ -11,19 +11,20 @@ import { getProcessLink } from "../../../services/processServices";
 const DocumentCard = ({ cardItem }) => {
   const dispatch = useDispatch();
   const [ dataLoading, setDataLoading ] = useState(false);
+  const { userDetail } = useSelector(state => state.auth);
 
   const handleDetailDocumnet = async (item) => {
     if (dataLoading) return
     if (item.type === "sign-document") {
       setDataLoading(true);
       try {
-        const dataToPost = { document_id: item._id };
+        const dataToPost = { document_id: item._id, user_name: userDetail?.userinfo?.username };
         const response = await (await getProcessLink(dataToPost));
         window.location = response;
       } catch (error) {
         console.log(error.response ? error.response.data : error.message);
         setDataLoading(false);
-        toast.info("Could not get notification link")
+        toast.info(error.response.status !== 500 ? error.response ? error.response.data : error.message : "Could not get notification link")
       }
       return
     }
