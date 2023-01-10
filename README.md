@@ -509,6 +509,26 @@ Response-200
 }
 ```
 
+
+_POST_ `documents/map/`
+
+- Get a document content map.
+
+Request Body
+
+```
+{
+    "document_id": "given_doc_id"
+}
+```
+
+
+Response-200
+
+{
+    "content"
+}
+
 _POST_ `documents/detail/`
 
 - Getting a single Document by document_name and document_id
