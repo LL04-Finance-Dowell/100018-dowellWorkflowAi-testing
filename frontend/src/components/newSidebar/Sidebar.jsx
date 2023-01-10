@@ -46,7 +46,7 @@ const Sidebar = () => {
       setLegalStatusLoading(false);
       setLegalTermsAgreed(legalStatus);
       setDateAgreed(res.data.data[0]?.i_agreed_datetime);
-      if (!legalStatus) setShowLegalPopup(true);
+      // if (!legalStatus) setShowLegalPopup(true);
     }).catch(error => {
       console.log(error.response ? error.response.data : error.message);
       setLegalStatusLoading(false);

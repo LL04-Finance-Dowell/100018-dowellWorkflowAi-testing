@@ -16,7 +16,7 @@ const HandleTasks = ({ feature, tasks }) => {
   };
 
   const colorClass =
-    feature === "complated" ? styles.complated : styles.incomplate;
+    feature === "completed" ? styles.completed : styles.incomplete;
 
   return (
     <div className={styles.container}>
@@ -29,7 +29,7 @@ const HandleTasks = ({ feature, tasks }) => {
             onClick={() => handleToggle(item.id)}
             className={`${styles.item__parent} ${
               item.isOpen && styles.active
-            } ${feature === "incomplate" && styles.incomplate__parent}`}
+            } ${feature === "incomplete" && styles.incomplete__parent}`}
           >
             <i>
               {item.isOpen ? (

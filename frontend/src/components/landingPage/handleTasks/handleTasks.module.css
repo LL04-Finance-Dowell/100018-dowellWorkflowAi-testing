@@ -62,14 +62,14 @@
   text-transform: capitalize;
 }
 
-.incomplate {
+.incomplete {
   color: var(--e-global-color-1342d1f);
 }
 
-.complated {
+.completed {
   color: var(--e-global-color-text);
 }
 
-.incomplate__parent {
+.incomplete__parent {
   font-weight: 400;
 }

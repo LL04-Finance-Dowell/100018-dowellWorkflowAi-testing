@@ -71,8 +71,8 @@ const WorkflowApp = () => {
             ))
           }
           <div className={styles.tasks__container}>
-            <HandleTasks feature="incomplate" tasks={incomplateTasks} />
-            <HandleTasks feature="complated" tasks={complatedTasks} />
+            <HandleTasks feature="incomplete" tasks={incompleteTasks} />
+            <HandleTasks feature="completed" tasks={completedTasks} />
           </div>
         </div>
       </div>
@@ -106,7 +106,7 @@ export const notifications = [
   },
 ];
 
-export const incomplateTasks = [
+export const incompleteTasks = [
   {
     id: uuidv4(),
     parent: "documents",
@@ -133,7 +133,7 @@ export const incomplateTasks = [
   },
 ];
 
-export const complatedTasks = [
+export const completedTasks = [
   {
     id: uuidv4(),
     parent: "documents",
