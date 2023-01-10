@@ -26,23 +26,6 @@ editorApi = "https://100058.pythonanywhere.com/api/generate-editor-link/"
 
 
 @api_view(["GET", "POST"])
-def get_document_content(request):
-    content = []
-    data_id = lambda x, y: dict([(i, x[i]) for i in x if i in y])
-    wanted_keys = {"id", "data"}
-    #    {"document_id":"639825e940c57778fb3bb894"}
-
-    myDict = ast.literal_eval(
-        get_document_object(request.data["document_id"])["content"]
-    )[0]
-    content = list(
-        map(lambda x: {k: v for k, v in x.items() if k in wanted_keys}, myDict)
-    )
-
-    return content
-
-
-@api_view(["GET", "POST"])
 def create_document(request):  # Document Creation.
 
     if request.method == "POST":
@@ -118,28 +101,21 @@ def create_document(request):  # Document Creation.
     )
 
 
-@api_view(["GET", "POST"])
+@api_view(["POST"])
 def get_document_content(request):
     content = []
     data_id = lambda x, y: dict([(i, x[i]) for i in x if i in y])
     wanted_keys = {"id", "data"}
     #    {"document_id":"639825e940c57778fb3bb894"}
 
-    if request.method == "POST":
-        try:
-            myDict = ast.literal_eval(
-                get_document_object(request.data["document_id"])["content"]
-            )[0]
-            content = list(
-                map(lambda x: {k: v for k, v in x.items() if k in wanted_keys}, myDict)
-            )
-
-        except:
-            content
-    return Response(
-        {"content": content},
-        status=status.HTTP_200_OK,
+    myDict = ast.literal_eval(
+        get_document_object(request.data["document_id"])["content"]
+    )[0]
+    content = list(
+        map(lambda x: {k: v for k, v in x.items() if k in wanted_keys}, myDict)
     )
+
+    return Response(content, status=status.HTTP_200_OK)
 
 
 @api_view(["POST"])
