@@ -29,8 +29,48 @@ import DraftF from "./pages/Workflows/DraftF/DraftF";
 import { dowellLoginUrl } from "./httpCommon/httpCommon";
 import WorkflowAiSettings from "./components/workflowAiSettings/WorkflowAiSettings";
 import VerificationPage from "./pages/Verification/VerificationPage";
+import { setNotificationFinalStatus, setNotificationsForUser, setNotificationsLoading } from "./features/app/appSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { DocumentServices } from "./services/documentServices";
+
+const documentServices = new DocumentServices();
+
 function App() {
   useDowellLogin();
+
+  const dispatch = useDispatch();
+  const { userDetail } = useSelector(state => state.auth);
+  const { notificationsForUser } = useSelector(state => state.app);
+
+  useEffect(() => {
+    dispatch(setNotificationsLoading(true));
+    if (!userDetail) return dispatch(setNotificationsLoading(false));
+    dispatch(setNotificationFinalStatus(null));
+    documentServices.signDocument({ "company_id": userDetail?.portfolio_info[0]?.org_id}).then(res => {
+      dispatch(setNotificationFinalStatus(100));
+      const currentNotifications = notificationsForUser.slice();
+      let updatedNotifications = currentNotifications.map(notification => {
+        const data = res.data.map(dataObj => {
+          let copyOfDataObj = { ...dataObj };
+          copyOfDataObj.type = "sign-document";
+          return copyOfDataObj
+        })
+        const copyOfNotification = {...notification}
+        if (copyOfNotification.title === "documents") {
+          copyOfNotification.items = data;
+          return copyOfNotification
+        }
+        return notification
+      })
+      dispatch(setNotificationsForUser(updatedNotifications));
+      dispatch(setNotificationsLoading(false));
+    }).catch(err => {
+      console.log("Failed: ", err.response)
+      dispatch(setNotificationsLoading(false));
+      console.log("did not fetch documentsss");
+    })
+
+  }, [])
 
   return (
     <Routes>

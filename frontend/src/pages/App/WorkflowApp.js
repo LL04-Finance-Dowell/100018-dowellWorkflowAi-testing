@@ -13,39 +13,12 @@ import { useEffect, useState } from "react";
 import { DocumentServices } from "../../services/documentServices";
 import Spinner from "../../components/spinner/Spinner";
 import ProgressBar from "../../components/progressBar/ProgressBar";
+import { useLocation } from "react-router-dom";
 
 const WorkflowApp = () => {
-  const documentServices = new DocumentServices();
   const { userDetail } = useSelector(state => state.auth);
-  const [ notificationsLoading, setNotificationLoading ] = useState(true);
-  const [ notificationsForUser, setNotificationsForUser ] = useState(notifications);
-  const [ finalStatus, setFinalStatus ] = useState(null);
-
-  useEffect(() => {
-    if (!userDetail) return setNotificationLoading(false);
-
-    documentServices.signDocument({ "company_id": userDetail?.portfolio_info[0]?.org_id}).then(res => {
-      setFinalStatus(100);
-      const currentNotifications = notificationsForUser.slice();
-      let updatedNotifications = currentNotifications.map(notification => {
-        const data = res.data.map(dataObj => {
-          let copyOfDataObj = { ...dataObj };
-          copyOfDataObj.type = "sign-document";
-          return copyOfDataObj
-        })
-        if (notification.title === "documents") notification.items = data;
-        return notification
-      })
-      setNotificationsForUser(updatedNotifications);
-      setNotificationLoading(false);
-    }).catch(err => {
-      console.log("Failed: ", err.response)
-      setNotificationLoading(false);
-      console.log("did not fetch documentsss");
-    })
-
-  }, [])
-
+  const { notificationsLoading, notificationsForUser, notificationFinalStatus } = useSelector(state => state.app);
+  
   return (
     <WorkflowLayout>
       <div className={styles.container}>
@@ -57,7 +30,7 @@ const WorkflowApp = () => {
               <Spinner />
               <div style={{ margin: "0 auto 0 1.5%", textAlign: "center" }}>
                 <p>Notifications loading...</p> 
-                <ProgressBar durationInMS={17000} finalWidth={finalStatus} />
+                <ProgressBar durationInMS={17000} finalWidth={notificationFinalStatus} />
               </div>
             </div> :
             notificationsForUser.map((item) => (

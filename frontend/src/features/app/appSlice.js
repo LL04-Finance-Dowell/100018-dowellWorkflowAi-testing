@@ -1,5 +1,9 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { v4 as uuidv4 } from "uuid";
+import TemplateCard from "../../components/hoverCard/templateCard/TemplateCard";
+import DocumnetCard from "../../components/hoverCard/documentCard/DocumentCard";
+import WorkflowCard from "../../components/hoverCard/workflowCard/WorkflowCard";
+import { notifications } from "../../pages/App/WorkflowApp";
 
 const initialState = {
   toggleManageFileForm: false,
@@ -16,6 +20,31 @@ const initialState = {
   processSteps: [],
   selectedMembersForProcess: [],
   tableOfContentForStep: [],
+  notificationsForUser: [
+    {
+      id: uuidv4(),
+      title: "documents",
+      cardBgColor: "#1ABC9C",
+      card: DocumnetCard,
+      items: [{ id: uuidv4() }],
+    },
+    {
+      id: uuidv4(),
+      title: "templates",
+      cardBgColor: null,
+      card: TemplateCard,
+      items: [{ id: uuidv4() }],
+    },
+    {
+      id: uuidv4(),
+      title: "workflows",
+      card: WorkflowCard,
+      cardBgColor: null,
+      items: [{ id: uuidv4() }],
+    },
+  ],
+  notificationsLoading: true,
+  notificationFinalStatus: null,
 };
 
 export const appSlice = createSlice({
@@ -134,6 +163,15 @@ export const appSlice = createSlice({
         (content) => content._id !== action.payload
       );
     },
+    setNotificationsForUser: (state, action) => {
+      state.notificationsForUser = action.payload
+    },
+    setNotificationsLoading: (state, action) => {
+      state.notificationsLoading = action.payload
+    },
+    setNotificationFinalStatus: (state, action) => {
+      state.notificationFinalStatus = action.payload
+    },
   },
 });
 
@@ -155,6 +193,9 @@ export const {
   updateSingleProcessStep,
   setTableOfContentForStep,
   removeFromTableOfContentForStep,
+  setNotificationsForUser,
+  setNotificationsLoading,
+  setNotificationFinalStatus,
 } = appSlice.actions;
 
 export default appSlice.reducer;
