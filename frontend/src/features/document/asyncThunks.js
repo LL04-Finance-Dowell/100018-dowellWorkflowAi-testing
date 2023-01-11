@@ -123,7 +123,7 @@ export const contentDocument = createAsyncThunk(
 
       return res.data;
     } catch (error) {
-      console.log(error);
+      console.log("Content document fetch error: ", error);
     }
   }
 );

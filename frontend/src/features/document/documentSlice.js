@@ -114,8 +114,8 @@ export const documentSlice = createSlice({
     });
     builder.addCase(contentDocument.fulfilled, (state, action) => {
       state.contentOfDocumentStatus = "succeeded";
-      state.contentOfDocument = action.payload?.content
-        ? action.payload.content.map((item) => ({ ...item, _id: uuidv4() }))
+      state.contentOfDocument = action.payload
+        ? action.payload.map((item) => typeof item !== "object" ? null : Object.values(item)[0].map(content => ({ ...content, pageNum: Object.keys(item)[0] ,_id: uuidv4() })) ).filter(item => item).flat()
         : [];
     });
     builder.addCase(contentDocument.rejected, (state, action) => {

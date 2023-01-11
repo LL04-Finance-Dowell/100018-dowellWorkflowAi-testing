@@ -1,5 +1,4 @@
-import { useState } from "react";
-import { useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { removeFromTableOfContentForStep, setTableOfContentForStep } from "../../../features/app/appSlice";
 import styles from "./contents.module.css";
@@ -9,6 +8,7 @@ const Contents = ({ contents, toggleContent, feature, currentStepIndex, showChec
   const [currentTableItem, setCurrentTableItem] = useState(null);
   const dispatch = useDispatch();
   const { docCurrentWorkflow, tableOfContentForStep } = useSelector((state) => state.app);
+  const [ contentsPageWise, setContentsPageWise ] = useState([]);
 
   /*  const handleAddContent = (content) => {
     console.log(content);
@@ -37,6 +37,18 @@ const Contents = ({ contents, toggleContent, feature, currentStepIndex, showChec
     dispatch(setTableOfContentForStep(newTableOfContentObj));
   }
 
+  useEffect(() => {
+
+    const contentsGroupedByPageNum = contents.reduce((r, a) => {
+      r[a.pageNum] = r[a.pageNum] || [];
+      r[a.pageNum].push(a);
+      return r;
+    }, Object.create(null));
+
+    setContentsPageWise(contentsGroupedByPageNum);
+
+  }, [contents])
+
   return (
     <div
       style={{
@@ -49,28 +61,41 @@ const Contents = ({ contents, toggleContent, feature, currentStepIndex, showChec
       <div ref={contentRef} className={styles.content__box}>
         {contents.length > 0 ? (
           feature === "doc" ? (
-            <table>
-              <thead>
-                <tr>
-                  <th className={styles.table__id}>ID</th>
-                  <th className={styles.table__content}>Content</th>
-                </tr>
-              </thead>
-              <tbody>
-                {contents.map((item) => (
-                  <tr
-                    className={
-                      item._id === currentTableItem &&
-                      styles.current__table__item
-                    }
-                    key={item._id}
-                  >
-                    <th className={styles.table__id}>{item.id}</th>
-                    <th className={styles.table__content}>{item.data}</th>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+            <>
+              {
+                React.Children.toArray(Object.keys(contentsPageWise || {})).map(page => { 
+                  return <>
+                    <p>Page: {page}</p>
+                    <table style={{ marginBottom: "22px" }}>
+                      <thead>
+                        <tr>
+                          <th className={styles.table__id}>ID</th>
+                          <th className={styles.table__content}>Content</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <>
+                        {
+                          contentsPageWise[page].map(item => (
+                            <tr
+                              className={
+                                item._id === currentTableItem &&
+                                styles.current__table__item
+                              }
+                              key={item._id}
+                            >
+                              <th className={styles.table__id}>{item.id}</th>
+                              <th className={styles.table__content}>{item.data}</th>
+                            </tr>
+                          ))
+                        }
+                        </>
+                      </tbody>
+                    </table>
+                  </>
+                })
+              }
+            </>
           ) : (
             <ol>
               {contents.map((item) => (
