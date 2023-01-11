@@ -104,17 +104,12 @@ def create_document(request):  # Document Creation.
 @api_view(["POST"])
 def get_document_content(request):
     content = []
-    data_id = lambda x, y: dict([(i, x[i]) for i in x if i in y])
-    wanted_keys = {"id", "data"}
-    #    {"document_id":"639825e940c57778fb3bb894"}
-
-    myDict = ast.literal_eval(
-        get_document_object(request.data["document_id"])["content"]
-    )[0]
-    content = list(
-        map(lambda x: {k: v for k, v in x.items() if k in wanted_keys}, myDict)
-    )
-
+    myDict=ast.literal_eval(get_document_object(request.data['document_id'])['content'])[0]
+    for j in myDict:
+        content.append({
+            "id": j["id"],
+            "data":j["data"]
+        })
     return Response(content, status=status.HTTP_200_OK)
 
 
