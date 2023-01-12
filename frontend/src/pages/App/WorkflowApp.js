@@ -24,7 +24,10 @@ const WorkflowApp = () => {
 
   useEffect(() => {
     dispatch(setNotificationsLoading(true));
-    if (!userDetail) return dispatch(setNotificationsLoading(false));
+    if (!userDetail) {
+      dispatch(setNotificationsLoading(false));
+      return 
+    }
     dispatch(setNotificationFinalStatus(null));
     documentServices.signDocument({ "company_id": userDetail?.portfolio_info[0]?.org_id}).then(res => {
       dispatch(setNotificationFinalStatus(100));
@@ -51,7 +54,7 @@ const WorkflowApp = () => {
     })
 
   }, [])
-  
+
   return (
     <WorkflowLayout>
       <div className={styles.container}>
