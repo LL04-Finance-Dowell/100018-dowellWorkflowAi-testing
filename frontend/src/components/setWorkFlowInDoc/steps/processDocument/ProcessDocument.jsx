@@ -80,12 +80,13 @@ const ProcessDocument = () => {
       }],
     }
     const foundProcessSteps = processSteps.find(process => process.workflow === docCurrentWorkflow._id);
-    const tableOfContents = tableOfContentForStep.filter(content => content.workflow === docCurrentWorkflow);
+    const tableOfContents = tableOfContentForStep.filter(content => content.workflow === docCurrentWorkflow._id);
     console.log("Table of contents for current workflow: ", tableOfContents)
-    processObj.workflows[0].workflows.steps = foundProcessSteps ? foundProcessSteps.steps.map(step => {
+    processObj.workflows[0].workflows.steps = foundProcessSteps ? foundProcessSteps.steps.map((step, currentIndex) => {
       let copyOfCurrentStep = { ...step };
       if (copyOfCurrentStep._id) delete copyOfCurrentStep._id;
       if (copyOfCurrentStep.toggleContent) delete copyOfCurrentStep.toggleContent;
+      copyOfCurrentStep.table_of_content = tableOfContents.filter(content => content.stepIndex === currentIndex).map(content => content.id);
       return copyOfCurrentStep
     }) : [];
 

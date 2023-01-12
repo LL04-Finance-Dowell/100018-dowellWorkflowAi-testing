@@ -9,13 +9,13 @@ const InfoTable = () => {
   const [ tableInfoToDisplay, setTableInfoToDisplay ] = useState([]);
 
   useEffect(() => {
-    if (!docCurrentWorkflow) return
+    if (!docCurrentWorkflow) return setTableInfoToDisplay([]);
 
     const skippedStepObj = { id: uuidv4(), content: "Step skipped" };
     let infoDataToDisplay = [];
     const currentWorkflowDataToFormat = processSteps.find(step => step.workflow === docCurrentWorkflow._id);
 
-    if (!currentWorkflowDataToFormat) return
+    if (!currentWorkflowDataToFormat) return setTableInfoToDisplay([]);
 
     currentWorkflowDataToFormat.steps.forEach(step => {
       let [ newTableDataObj, currentDataObj ] = [ 

@@ -117,6 +117,7 @@ export const appSlice = createSlice({
       state.dropdownToggle = false;
       state.selectedMembersForProcess = [];
       state.processSteps = [];
+      state.tableOfContentForStep = [];
     },
     setProcessSteps: (state, action) => {
       state.processSteps = action.payload

@@ -33,7 +33,7 @@ const InfoBoxes = () => {
   const { savedWorkflowItems, savedWorkflowStatus } = useSelector(
     (state) => state.workflow
   );
-
+  const { contentOfDocument } = useSelector(state => state.document);
   const [compInfoBoxes, setCompInfoBoxes] = useState(infoBoxes);
 
   useEffect(() => {
@@ -90,7 +90,7 @@ const InfoBoxes = () => {
 
     })
 
-  }, [currentDocToWfs])
+  }, [currentDocToWfs, contentOfDocument, userDetail])
 
   const { scrollYProgress } = useScroll({
     target: ref,
