@@ -21,7 +21,7 @@ from .mongo_db_connection import (
 
 
 @api_view(["POST"])
-def processes(request): # Pending Workflow processes.
+def processes(request):  # Pending Workflow processes.
     try:
         processes = get_process_list(request.data["company_id"])
     except:
@@ -32,11 +32,11 @@ def processes(request): # Pending Workflow processes.
 
 
 @api_view(["POST"])
-def get_process_link(request): # Get a links process for person having notifications
+def get_process_link(request):  # Get a links process for person having notifications
     # get links info
     try:
         links_info = get_links_object_by_document_id(request.data["document_id"])
-        print(links_info)
+        # print(links_info)
     except:
         return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     # check presence in link
@@ -88,7 +88,18 @@ def verify_process(request):
             step["member"] == request.data["user_name"]
             and step["member_portfolio"] == request.data["portfolio"]
         ):
+            print("Started the checks....")
             map = step.get("document_map")
+            # Display check
+            if check_display_right(step):
+                continue
+
+            # Time Limit Check.
+
+            # Skip check
+
+            # Location Check
+
             break
         else:
             return Response(
@@ -134,32 +145,28 @@ def generate_link(document_id, doc_map):
 # CHECKS...........
 # Check display in the step.
 def check_display_right(step):
-    allowed = True
-    if step["display"] == "document_before_processing_this_step":
-        return allowed
-
-    if step["display"] == "document_after_processing_this_step":
-        allowed = False
-        return allowed
-
-    if step["display"] == "document_in_all_steps":
-        return allowed
-
-    if step["display"] == "document_only_this_step":
-        return allowed
+    display_allowed = {
+        "document_before_processing_this_step": True,
+        "document_after_processing_this_step": False,
+        "document_in_all_steps": True,
+        "document_only_this_step": True,
+    }
+    return display_allowed.get(step["display"], False)
 
 
 # Verify time limit of the step.
 def check_time_limit(step):
-    if step["limit"] == "within 1 hour":
+    hours = 0
+    if step["limit"] == "within_1_hour":
+
         return
-    if step["limit"] == "within 8 hours":
+    if step["limit"] == "within_8_hours":
         return
-    if step["limit"] == "within 24 hours":
+    if step["limit"] == "within_24_hours":
         return
-    if step["limit"] == "within 3 days":
+    if step["limit"] == "within_3_days":
         return
-    if step["limit"] == "within 7 days":
+    if step["limit"] == "within_7_days":
         return
     if step["limit"] == "custom_time":
         return
@@ -194,6 +201,7 @@ def save_and_start_processing(request):
     )
     if process:
         # update the doc. DB - 2
+        print("Updating document with process id.... \n")
         res = json.loads(
             update_document(
                 document_id=request.data["document_id"],
@@ -232,6 +240,7 @@ def generate_links(process, document_id, choice):
         for step in process["process_steps"]
     ]
     # Save Links - DB-3
+    print("saving process links........ \n")
     save_process_links(
         links=links,
         process_id=process["process_id"],
@@ -245,9 +254,8 @@ def generate_links(process, document_id, choice):
 def verification_link(process_id):
     # Token generation.
     print("creating verification links........... \n")
-    uuid_hash = uuid.uuid4().hex
     # create a jwt token
-    payload = {"uuid_hash": uuid_hash, "process_id": process_id}
+    payload = {"uuid_hash": uuid.uuid4().hex, "process_id": process_id}
     hash_token = jwt.encode(
         json.loads(json.dumps(payload)), "secret", algorithm="HS256"
     )
@@ -270,6 +278,7 @@ def save_workflows_to_document(request):
     )
     if process:
         # update the doc.
+        print("Updating document with process id.... \n")
         res = json.loads(
             update_document(
                 document_id=request.data["document_id"],
@@ -285,7 +294,6 @@ def save_workflows_to_document(request):
 def new_process(workflows, created_by, company_id, data_type, document_id):
     print("creating process.......... \n")
     process_title = ""
-    # TODO: get an already formatted steps
     process_steps = [
         step for workflow in workflows for step in workflow["workflows"]["steps"]
     ]
@@ -310,24 +318,3 @@ def new_process(workflows, created_by, company_id, data_type, document_id):
             "process_id": res["inserted_id"],
         }
         return process
-
-
-# ---------------------------------------------------------------------------------#
-# API Endpoint -  ---------  Document Content Map For Editor
-# ---------------------------------------------------------------------------------#
-
-
-# @api_view(["POST"])
-# def document_map(request):
-#     try:
-#         process = get_process_object(workflow_process_id=request.data["process_id"])
-#         print("process... \n", process)
-#     except:
-#         return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-#     map = []
-#     for step in process["process_steps"]:
-#         content = {step["document_map"]: step["rights"], "complete": False}
-#         map.extend(content)
-
-#     return Response(map, status=status.HTTP_200_OK)

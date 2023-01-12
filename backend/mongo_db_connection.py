@@ -220,8 +220,7 @@ def save_process_links(links, process_id, document_id, processing_choice):
     )
     headers = {"Content-Type": "application/json"}
     response = requests.request("POST", url, headers=headers, data=payload)
-    print("SAVED LINKS ----------- \n", response.text)
-    print(response.text)
+    print("SAVED LINKS ----------- \n")
     return response.text
 
 
@@ -244,7 +243,6 @@ def get_links_object_by_document_id(document_id):
     fields = {"document_id": str(document_id)}
     response_obj = dowellconnection(*LINK_CONNECTION_LIST, "find", fields, "nil")
     res_obj = json.loads(response_obj)
-    # print("PL query object response :  \n", response_obj)
     if len(res_obj["data"]):
         return res_obj["data"]
     else:
@@ -276,8 +274,7 @@ def save_wf_process(
     )
     headers = {"Content-Type": "application/json"}
     response = requests.request("POST", url, headers=headers, data=payload)
-    print("SAVE WORKFLOW PROCESS----------- \n", response.text)
-    print(response.text)
+    print("SAVE WORKFLOW PROCESS----------- \n")
     return response.text
 
 
@@ -391,7 +388,7 @@ def update_uuid_object(uuid_hash):
     )
     headers = {"Content-Type": "application/json"}
     response = requests.request("POST", url, headers=headers, data=payload)
-    print("SAVED UUID-----------: \n", response.text)
+    print("SAVED UUID-----------: \n")
     return response.text
 
 
@@ -416,7 +413,7 @@ def save_wf(workflows, company_id, created_by):
     )
     headers = {"Content-Type": "application/json"}
     response = requests.request("POST", url, headers=headers, data=payload)
-    print("SAVE WORKFLOW ENTRY----------- \n", response.text)
+    print("SAVE WORKFLOW ENTRY----------- \n")
     return response.text
 
 
@@ -441,7 +438,7 @@ def update_wf(workflow_id, old_workflow):
     )
     headers = {"Content-Type": "application/json"}
     response = requests.request("POST", url, headers=headers, data=payload)
-    print("SAVE WORKFLOW UPDATE--------------- \n", response.text)
+    print("SAVE WORKFLOW UPDATE--------------- \n")
     return response.text
 
 
@@ -463,7 +460,7 @@ def update_wf_approval(workflow_id, approval):
     )
     headers = {"Content-Type": "application/json"}
     response = requests.request("POST", url, headers=headers, data=payload)
-    print("SAVE WORKFLOW APPROVAL--------------- \n", response.text)
+    print("SAVE WORKFLOW APPROVAL--------------- \n")
     return response.text
 
 
@@ -524,7 +521,7 @@ def save_template(name, data, page, created_by, company_id, data_type):
     )
     headers = {"Content-Type": "application/json"}
     response = requests.request("POST", url, headers=headers, data=payload)
-    print("SAVED TEMPLATE----------- \n", response.text)
+    print("SAVED TEMPLATE----------- \n")
     return response.text
 
 
@@ -555,7 +552,7 @@ def update_template(template_id, data):
     )
     headers = {"Content-Type": "application/json"}
     response = requests.request("POST", url, headers=headers, data=payload)
-    print("TEMPLATE UPDATED----------- \n", response.text)
+    print("TEMPLATE UPDATED----------- \n")
     return response.text
 
 
@@ -577,7 +574,7 @@ def update_template_approval(template_id, approval):
     )
     headers = {"Content-Type": "application/json"}
     response = requests.request("POST", url, headers=headers, data=payload)
-    print("SAVE TEMPLATE APPROVAL--------------- \n", response.text)
+    print("SAVE TEMPLATE APPROVAL--------------- \n")
     return response.text
 
 
@@ -625,7 +622,7 @@ def save_document(name, data, created_by, company_id, page, data_type):
 
     headers = {"Content-Type": "application/json"}
     response = requests.request("POST", url, headers=headers, data=payload)
-    print("SAVED DOCUMENT--------------- \n", response.text)
+    print("SAVED DOCUMENT--------------- \n")
     return response.text
 
 
@@ -645,7 +642,7 @@ def update_document(document_id, workflow_process_id):
     )
     headers = {"Content-Type": "application/json"}
     response = requests.request("POST", url, headers=headers, data=payload)
-    print("DOCUMENT UPDATED------------ \n", response.text)
+    print("DOCUMENT UPDATED------------ \n")
     return response.text
 
 

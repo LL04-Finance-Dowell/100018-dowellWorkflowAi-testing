@@ -1,25 +1,15 @@
 import json
-import timeit
-import itertools
 import requests
-import jwt
 import ast
-
-
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
 from .mongo_db_connection import (
-    get_template_list,
     get_document_list,
     save_document,
     get_document_object,
     get_template_object,
-    update_document,
-    get_wf_object,
-    get_wf_list,
-    get_user_list,
-    get_user_info_by_username,
+    get_links_object_by_process_id,
 )
 
 editorApi = "https://100058.pythonanywhere.com/api/generate-editor-link/"
@@ -103,20 +93,20 @@ def create_document(request):  # Document Creation.
 
 @api_view(["POST"])
 def get_document_content(request):
-    content=[]
-    myDict=ast.literal_eval(get_document_object(request.data['document_id'])['content'])[0][0]
+    content = []
+    myDict = ast.literal_eval(
+        get_document_object(request.data["document_id"])["content"]
+    )[0][0]
     allKeys = [i for i in myDict.keys()]
     for i in allKeys:
         tempList = []
         for j in range(0, len(myDict[i])):
-            tempList.append(
-                {
-                    'id':myDict[i][j]["id"],
-                    'data':myDict[i][j]["data"]
-                })
-        content.append({
-            i : tempList,
-            })
+            tempList.append({"id": myDict[i][j]["id"], "data": myDict[i][j]["data"]})
+        content.append(
+            {
+                i: tempList,
+            }
+        )
     return Response(content, status=status.HTTP_200_OK)
 
 
@@ -179,13 +169,27 @@ def documents_to_be_signed(request):  # List of `to be signed` documents.
             d
             for d in documents
             if d.get("company_id") == request.data["company_id"]
-            and d.get("workflow_process")
+            and check_allowed( d.get("workflow_process"), request.data["user_name"])
         ]
         if len(filtered_documents) > 0:
             return Response(filtered_documents, status=status.HTTP_200_OK)
         return Response([], status=status.HTTP_200_OK)
     except:
         return Response([], status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+# check presence
+def check_allowed(process_id, user_name):
+    print(process_id)
+    flag = False
+    processing_links_info = get_links_object_by_process_id(process_id)
+    print(processing_links_info)
+    for link in processing_links_info["links"]:
+        if user_name in link:
+            flag = True
+            return flag
+    return flag
+
 
 
 @api_view(["POST"])
