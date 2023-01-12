@@ -8,16 +8,49 @@ import FlipMenu from "../../components/flipMenu/FlipMenu";
 import DocumnetCard from "../../components/hoverCard/documentCard/DocumentCard";
 import TemplateCard from "../../components/hoverCard/templateCard/TemplateCard";
 import WorkflowCard from "../../components/hoverCard/workflowCard/WorkflowCard";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useState } from "react";
 import { DocumentServices } from "../../services/documentServices";
 import Spinner from "../../components/spinner/Spinner";
 import ProgressBar from "../../components/progressBar/ProgressBar";
 import { useLocation } from "react-router-dom";
+import { setNotificationFinalStatus, setNotificationsForUser, setNotificationsLoading } from "../../features/app/appSlice";
 
 const WorkflowApp = () => {
   const { userDetail } = useSelector(state => state.auth);
   const { notificationsLoading, notificationsForUser, notificationFinalStatus } = useSelector(state => state.app);
+  const documentServices = new DocumentServices();
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(setNotificationsLoading(true));
+    if (!userDetail) return dispatch(setNotificationsLoading(false));
+    dispatch(setNotificationFinalStatus(null));
+    documentServices.signDocument({ "company_id": userDetail?.portfolio_info[0]?.org_id}).then(res => {
+      dispatch(setNotificationFinalStatus(100));
+      const currentNotifications = notificationsForUser.slice();
+      let updatedNotifications = currentNotifications.map(notification => {
+        const data = res.data.map(dataObj => {
+          let copyOfDataObj = { ...dataObj };
+          copyOfDataObj.type = "sign-document";
+          return copyOfDataObj
+        })
+        const copyOfNotification = {...notification}
+        if (copyOfNotification.title === "documents") {
+          copyOfNotification.items = data;
+          return copyOfNotification
+        }
+        return notification
+      })
+      dispatch(setNotificationsForUser(updatedNotifications));
+      dispatch(setNotificationsLoading(false));
+    }).catch(err => {
+      console.log("Failed: ", err.response)
+      dispatch(setNotificationsLoading(false));
+      console.log("did not fetch documentsss");
+    })
+
+  }, [])
   
   return (
     <WorkflowLayout>
