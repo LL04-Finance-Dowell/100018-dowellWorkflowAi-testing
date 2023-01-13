@@ -26,6 +26,8 @@ const AssignTask = ({ currentStepIndex, stepSkipped }) => {
   const onSubmit = (data) => {
     setLoading(true);
     console.log("task", data);
+    if (data.member === "" && membersForCurrentUser[0]) data.member = membersForCurrentUser[0].option
+    if (data.member_portfolio === "" && memberPortfolios[0]) data.member_portfolio = memberPortfolios[0].option
     dispatch(updateSingleProcessStep({ ...data, "indexToUpdate": currentStepIndex , "workflow": docCurrentWorkflow._id }))
     setTimeout(() => setLoading(false), 2000);
   };
@@ -50,7 +52,7 @@ const AssignTask = ({ currentStepIndex, stepSkipped }) => {
 
     setMemberPortfolios([{ id: uuidv4(), option: foundCurrentMemberPortfolio.portfolio_name }])
     
-  }, [selectedMembersForProcess])
+  }, [selectedMembersForProcess, stepSkipped])
 
   useEffect(() => {
     

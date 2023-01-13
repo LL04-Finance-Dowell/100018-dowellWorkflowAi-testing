@@ -27,7 +27,7 @@ const InfoBoxes = () => {
   const dispatch = useDispatch();
 
   const { userDetail } = useSelector((state) => state.auth);
-  const { currentDocToWfs, selectedWorkflowsToDoc, selectedMembersForProcess } = useSelector(
+  const { currentDocToWfs, selectedWorkflowsToDoc, selectedMembersForProcess, docCurrentWorkflow } = useSelector(
     (state) => state.app
   );
   const { savedWorkflowItems, savedWorkflowStatus } = useSelector(
@@ -63,7 +63,7 @@ const InfoBoxes = () => {
           : 
           item.title === "team" ? {
             ...item,
-            contents: team?.length > 1 ? userDetail?.selected_product?.userportfolio.filter(user => user.member_type === "team_member").filter(user => user.username.toLocaleLowerCase().includes(team.toLocaleLowerCase())) :
+            contents: team?.length > 1 ? userDetail?.selected_product?.userportfolio.filter(user => user.member_type === "team_member").filter(user => Array.isArray(user.username) && user.username.length > 0 ? user.username[0].toLocaleLowerCase().includes(team.toLocaleLowerCase()) : user.username.toLocaleLowerCase().includes(team.toLocaleLowerCase())) :
             userDetail?.selected_product?.userportfolio.filter(user => user.member_type === "team_member"),
             status: "done"
           } :
@@ -85,12 +85,21 @@ const InfoBoxes = () => {
 
     userDetail.selected_product?.userportfolio?.forEach(user => {
 
-      if (selectedMembersForProcess.find(member => member.username === user.username)) return dispatch(removeFromSelectedMembersForProcess(user.username))
+      if (Array.isArray(user.username) && user.username.length > 0) {
+        const copyOfUser = { ...user };
+        copyOfUser.username = user.username[0];
+
+        if (selectedMembersForProcess.find(member => member.username === copyOfUser.username)) return dispatch(removeFromSelectedMembersForProcess(copyOfUser.username))
+        dispatch(setSelectedMembersForProcess(copyOfUser));
+        return
+      }
+      
+      if (selectedMembersForProcess.find(member => member.username === Array.isArray(user.username) && user.username.length > 0 ? user.username[0] : user.username)) return dispatch(removeFromSelectedMembersForProcess(Array.isArray(user.username) && user.username.length > 0 ? user.username[0] : user.username))
       dispatch(setSelectedMembersForProcess(user));
 
     })
 
-  }, [currentDocToWfs, contentOfDocument, userDetail])
+  }, [savedWorkflowStatus, workflow, team, userDetail, currentDocToWfs])
 
   const { scrollYProgress } = useScroll({
     target: ref,
