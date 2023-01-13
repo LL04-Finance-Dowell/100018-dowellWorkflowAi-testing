@@ -53,7 +53,7 @@ const WorkflowApp = () => {
       console.log("did not fetch documentsss");
     })
 
-  }, [])
+  }, [userDetail])
 
   return (
     <WorkflowLayout>
