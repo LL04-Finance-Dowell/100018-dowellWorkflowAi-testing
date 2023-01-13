@@ -86,7 +86,7 @@ const ProcessDocument = () => {
       let copyOfCurrentStep = { ...step };
       if (copyOfCurrentStep._id) delete copyOfCurrentStep._id;
       if (copyOfCurrentStep.toggleContent) delete copyOfCurrentStep.toggleContent;
-      copyOfCurrentStep.table_of_content = tableOfContents.filter(content => content.stepIndex === currentIndex).map(content => content.id);
+      copyOfCurrentStep.document_map = tableOfContents.filter(content => content.stepIndex === currentIndex).map(content => content.id)
       return copyOfCurrentStep
     }) : [];
 
