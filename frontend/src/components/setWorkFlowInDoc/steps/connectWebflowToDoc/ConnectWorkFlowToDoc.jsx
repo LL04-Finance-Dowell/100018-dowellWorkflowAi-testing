@@ -83,6 +83,10 @@ const ConnectWorkFlowToDoc = () => {
         'skip': true, 
         'workflow': workflowId, 
         'indexToUpdate': stepIndexToUpdate, 
+        'member_type': '',
+        'member_portfolio': '',
+        'rights': '',
+        'display_before': '',
       }))
       return setShowSteps(currentShowSteps)
     }
