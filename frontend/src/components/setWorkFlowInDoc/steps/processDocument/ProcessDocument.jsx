@@ -110,7 +110,7 @@ const ProcessDocument = () => {
     try {
       const response = await (await saveWorkflowsToDocument(newProcessObj)).data;
       console.log("save workflows response: ", response);
-      toast.success("Succesfully saved workflows to document!");
+      toast.success("Successfully saved workflows to document!");
       setSaveWorkflowsLoading(false);
       setNewWorkflowSavedToDoc({ "saveSuccess" : true });
       setTimeout(() => setNewWorkflowSavedToDoc(null), 1500);
