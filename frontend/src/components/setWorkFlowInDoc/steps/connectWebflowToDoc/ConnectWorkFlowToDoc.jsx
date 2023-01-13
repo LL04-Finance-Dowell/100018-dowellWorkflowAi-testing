@@ -83,16 +83,18 @@ const ConnectWorkFlowToDoc = () => {
         'skip': true, 
         'workflow': workflowId, 
         'indexToUpdate': stepIndexToUpdate, 
-        'member_type': '',
-        'member': '',
-        'member_portfolio': '',
-        'rights': '',
-        'display_before': ''
       }))
       return setShowSteps(currentShowSteps)
     }
 
     currentShowSteps[foundStepIndex].showStep = true;
+    dispatch(
+      updateSingleProcessStep({ 
+        'skip': false, 
+        'workflow': workflowId, 
+        'indexToUpdate': stepIndexToUpdate,
+      })
+    )
     setShowSteps(currentShowSteps)
   }
 
