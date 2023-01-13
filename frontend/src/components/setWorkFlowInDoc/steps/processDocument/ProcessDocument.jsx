@@ -101,19 +101,11 @@ const ProcessDocument = () => {
     if (!docCurrentWorkflow) return toast.info("You have not selected any workflow");
     if (processSteps.length < 1) return toast.info("You have not configured steps for any workflow");
     
-    setSaveWorkflowsLoading(true);
-
     const newProcessObj = extractProcessObj();
 
-    const foundProcessSteps = processSteps.find(process => process.workflow === docCurrentWorkflow._id);
-    newProcessObj.workflows[0].workflows.steps = foundProcessSteps ? foundProcessSteps.steps.map(step => {
-      let copyOfCurrentStep = { ...step };
-      if (copyOfCurrentStep._id) delete copyOfCurrentStep._id;
-      if (copyOfCurrentStep.toggleContent) delete copyOfCurrentStep.toggleContent;
-      return copyOfCurrentStep
-    }) : [];
-
     console.log("Saving workflows process obj to post: ", newProcessObj);
+
+    setSaveWorkflowsLoading(true);
 
     try {
       const response = await (await saveWorkflowsToDocument(newProcessObj)).data;
