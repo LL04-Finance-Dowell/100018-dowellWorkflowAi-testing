@@ -21,7 +21,11 @@ const ProgressBar = ({ durationInMS, finalWidth }) => {
                 } else {
                     setCurrentStatus(width)
                     width++; 
-                    statusRef.current.style.width = width + '%'; 
+                    try {
+                        statusRef.current.style.width = width + '%';                         
+                    } catch (error) {
+                        
+                    }
                 }
             }
         }
