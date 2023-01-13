@@ -24,7 +24,7 @@ const WorkflowApp = () => {
 
   useEffect(() => {
     dispatch(setNotificationsLoading(true));
-    if (!userDetail) {
+    if (!userDetail || !userDetail.portfolio_info || userDetail.portfolio_info.length < 1) {
       dispatch(setNotificationsLoading(false));
       return 
     }
