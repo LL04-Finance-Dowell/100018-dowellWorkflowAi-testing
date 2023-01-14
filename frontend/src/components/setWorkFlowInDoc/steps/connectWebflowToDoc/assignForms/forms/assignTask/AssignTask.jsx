@@ -48,7 +48,7 @@ const AssignTask = ({ currentStepIndex, stepSkipped }) => {
 
     const foundCurrentMemberPortfolio = selectedMembersForProcess.find(user => user.username === foundMembers[0].option)
     
-    if (!foundCurrentMemberPortfolio) return
+    if (!foundCurrentMemberPortfolio) return setMemberPortfolios([])
 
     setMemberPortfolios([{ id: uuidv4(), option: foundCurrentMemberPortfolio.portfolio_name }])
     
@@ -62,9 +62,9 @@ const AssignTask = ({ currentStepIndex, stepSkipped }) => {
 
     if (watchRoleValChange === "TEAM_MEMBER") membersMatchingCriteria = selectedMembersForProcess.filter(user => user.member_type === "team_member");
 
-    if (watchRoleValChange === "GUEST") membersMatchingCriteria = selectedMembersForProcess.filter(user => user.member_type === "guest");
+    if (watchRoleValChange === "GUEST") membersMatchingCriteria = selectedMembersForProcess.filter(user => user.member_type === "public");
     
-    if (watchRoleValChange === "PUBLIC") membersMatchingCriteria = selectedMembersForProcess.filter(user => user.member_type === "public");
+    if (watchRoleValChange === "PUBLIC") membersMatchingCriteria = selectedMembersForProcess.filter(user => user.member_type === "to-be-decided");
 
     foundMembers = membersMatchingCriteria.map(user => {
       return {
@@ -75,6 +75,11 @@ const AssignTask = ({ currentStepIndex, stepSkipped }) => {
 
     setMembersForCurrentUser(foundMembers);
 
+    const foundCurrentMemberPortfolio = membersMatchingCriteria.find(user => user.username === foundMembers[0].option)
+    if (!foundCurrentMemberPortfolio) return setMemberPortfolios([])
+
+    setMemberPortfolios([{ id: uuidv4(), option: foundCurrentMemberPortfolio.portfolio_name }])
+
   }, [watchRoleValChange, selectedMembersForProcess])
 
   useEffect(() => {
@@ -83,7 +88,7 @@ const AssignTask = ({ currentStepIndex, stepSkipped }) => {
 
     const foundCurrentMemberPortfolio = selectedMembersForProcess.find(user => user.username === watchCurrentMemberValChange)
     
-    if (!foundCurrentMemberPortfolio) return
+    if (!foundCurrentMemberPortfolio) return setMemberPortfolios([]);
 
     setMemberPortfolios([{ id: uuidv4(), option: foundCurrentMemberPortfolio.portfolio_name }])
     

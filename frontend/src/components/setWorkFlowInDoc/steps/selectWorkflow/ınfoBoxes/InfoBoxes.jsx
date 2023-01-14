@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, memo, useCallback } from "react";
+import React, { useState, useEffect, useRef, memo, useCallback } from "react";
 import styles from "./infoBoxes.module.css";
 import { v4 as uuidv4 } from "uuid";
 import { GrAdd } from "react-icons/gr";
@@ -69,7 +69,7 @@ const InfoBoxes = () => {
           } :
           item.title === "guest" ? {
             ...item,
-            contents: userDetail?.selected_product?.userportfolio.filter(user => user.member_type === "guest"),
+            contents: userDetail?.selected_product?.userportfolio.filter(user => user.member_type === "public"),
             status: "done"
           } :
           item
@@ -86,11 +86,14 @@ const InfoBoxes = () => {
     userDetail.selected_product?.userportfolio?.forEach(user => {
 
       if (Array.isArray(user.username) && user.username.length > 0) {
-        const copyOfUser = { ...user };
-        copyOfUser.username = user.username[0];
-
-        if (selectedMembersForProcess.find(member => member.username === copyOfUser.username)) return dispatch(removeFromSelectedMembersForProcess(copyOfUser.username))
-        dispatch(setSelectedMembersForProcess(copyOfUser));
+        user.username.forEach(arrUsername => {
+          const copyOfUser = { ...user };
+          copyOfUser.username = arrUsername;
+  
+          if (selectedMembersForProcess.find(member => member.username === copyOfUser.username)) return dispatch(removeFromSelectedMembersForProcess(copyOfUser.username))
+          dispatch(setSelectedMembersForProcess(copyOfUser));
+        })
+        
         return
       }
       
@@ -170,6 +173,31 @@ const InfoBoxes = () => {
 
               <InfoContentBox className={styles.content__box}>
                 {[...infoBox?.contents].reverse().map((item) => (
+                  item.username ? 
+
+                  Array.isArray(item.username) ?
+                  <>
+                    {
+                      React.Children.toArray(item.username.map(user => {
+                        return <InfoContentText
+                          key={user}
+                          /* className={styles.content} */
+                        >
+                          <span>
+                            {user}
+                          </span>
+                        </InfoContentText>
+                      })) 
+                    }
+                  </> :
+
+                  <InfoContentText
+                    key={item.username}
+                    /* className={styles.content} */
+                  >
+                    <span>{item.username}</span>
+                  </InfoContentText> :
+
                   <InfoContentText
                     onClick={() => addToSelectedWorkFlows(item)}
                     key={item._id}
@@ -179,7 +207,7 @@ const InfoBoxes = () => {
                       // item.username ? selectedMembersForProcess.find(member => member.username === item.username) ? { color: "#0048ff"} : {} : 
                       item.workflows && item._id ? selectedWorkflowsToDoc.find(addedWorkflow => addedWorkflow._id === item._id) ? { backgroundColor: "#0048ff", color: "#fff", padding: "2% 3%", borderRadius: "5px" } : {} :
                       {}}>
-                      {item.workflows && item.workflows.workflow_title ? item.workflows.workflow_title : item.username}
+                      {item.workflows && item.workflows.workflow_title && item.workflows.workflow_title}
                     </span>
                   </InfoContentText>
                 ))}
