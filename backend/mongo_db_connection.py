@@ -231,10 +231,12 @@ def get_links_object_by_process_id(process_id):
     response_obj = dowellconnection(*LINK_CONNECTION_LIST, "find", fields, "nil")
     res_obj = json.loads(response_obj)
     # print("PL query object response :  \n", response_obj)
-    if len(res_obj["data"]):
-        return res_obj["data"]
-    else:
-        return []
+    if res_obj["data"] != None:
+        if len(res_obj["data"]):
+            return res_obj["data"]
+        else:
+            return []
+    return []
 
 
 # By documentID
@@ -244,11 +246,12 @@ def get_links_object_by_document_id(document_id):
     response_obj = dowellconnection(*LINK_CONNECTION_LIST, "find", fields, "nil")
     res_obj = json.loads(response_obj)
     # print("PL query object response :  \n", response_obj)
-    if len(res_obj["data"]):
-        return res_obj["data"]
-    else:
-        return []
-
+    if res_obj["data"] != None:
+        if len(res_obj["data"]):
+            return res_obj["data"]
+        else:
+            return []
+    return []
 
 #  -------------------------------Workflow Process------------------
 def save_wf_process(

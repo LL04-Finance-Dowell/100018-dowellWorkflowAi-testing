@@ -85,6 +85,7 @@ urlpatterns = [
     ),
     path("documents/detail/", document_detail, name="document"),
     path("documents/document_content/", get_document_content, name="document_content"),
+    # Workflow
     path("workflows/", create_workflow, name="workflows"),
     path("workflows/detail/", workflow_detail, name="workflow_detail"),
     path("workflows/mine/", my_workflows, name="my_workflows"),

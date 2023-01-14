@@ -164,13 +164,22 @@ def document_detail(request):  # Single document
 @api_view(["POST"])
 def documents_to_be_signed(request):  # List of `to be signed` documents.
     try:
-        documents = get_document_list(request.data["company_id"])
-        filtered_documents = [
-            d
-            for d in documents
-            if d.get("company_id") == request.data["company_id"]
-            and check_allowed( d.get("workflow_process"), request.data["user_name"])
-        ]
+        # documents =
+        # filtered_documents = [
+        #     d
+        #     for d in documents
+        #     if d.get("company_id") == request.data["company_id"]
+        #     and check_allowed( d.get("workflow_process"), request.data["user_name"])
+        # ]
+        filtered_documents = []
+        for d in get_document_list(request.data["company_id"]):
+            if "workflow_process" in d:
+                if d.get("company_id") == request.data["company_id"] and check_allowed(
+                    process_id=d.get("workflow_process"),
+                    user_name=request.data["user_name"],
+                ):
+                    filtered_documents.append(d)
+
         if len(filtered_documents) > 0:
             return Response(filtered_documents, status=status.HTTP_200_OK)
         return Response([], status=status.HTTP_200_OK)
@@ -180,16 +189,13 @@ def documents_to_be_signed(request):  # List of `to be signed` documents.
 
 # check presence
 def check_allowed(process_id, user_name):
-    print(process_id)
-    flag = False
     processing_links_info = get_links_object_by_process_id(process_id)
-    print(processing_links_info)
-    for link in processing_links_info["links"]:
-        if user_name in link:
-            flag = True
-            return flag
-    return flag
-
+    if processing_links_info:
+        for link in processing_links_info["links"]:
+            if user_name in link:
+                flag = True
+                return flag
+    return False
 
 
 @api_view(["POST"])
