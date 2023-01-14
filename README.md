@@ -18,13 +18,18 @@ _POST_ to `process/link/`
 Response - 200
 
 ```
-<verification_link>
+{
+    <verification_link>
+}
+
 ```
 
 Response - 401
 
 ```
+
 "User is not part of this process"
+
 ```
 
 Response - 500
@@ -55,19 +60,22 @@ Response-201
 Response - 401
 
 ```
+
 "User is not part of this process"
+
 ```
 
 Response - 403
 
 ```
+
  "Portfolio for this user is Unauthorized"
+
 ```
 
 Response-500
 
 " verification failed"
-
 
 _POST_ to `process/start/`
 
@@ -114,6 +122,11 @@ Request Body
 ```
 
 Response - 201
+
+```
+    "Started Processing"
+
+```
 
 Response - 500
 
@@ -509,7 +522,6 @@ Response-200
 }
 ```
 
-
 _POST_ `documents/detail/`
 
 - Getting a single Document by document_name and document_id
@@ -551,7 +563,7 @@ Request Body
 ```
 {
     "company_id": "<company_id_of_authorized_user>",
-
+    "user_name": "<auth_user_name>"
 }
 ```
 
@@ -559,16 +571,20 @@ Response-200
 
 ```
 {
-"documents":["ist of documents to be signed with their detail"]
+"documents":["list of documents to be signed with their detail"]
 }
 ```
 
-if no list
+- if no list
+
 Response-200
+
+```
 {
-"documents": []
-"message": "These document is Rejected Document."
+  "documents": []
+  "message": "These document is Rejected Document."
 }
+```
 
 _POST_ `documents/mine/`
 
