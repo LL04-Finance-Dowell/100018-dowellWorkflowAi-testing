@@ -29,7 +29,7 @@ const WorkflowApp = () => {
       return 
     }
     dispatch(setNotificationFinalStatus(null));
-    documentServices.signDocument({ "company_id": userDetail?.portfolio_info[0]?.org_id}).then(res => {
+    documentServices.signDocument({ "company_id": userDetail?.portfolio_info[0]?.org_id, user_name: userDetail?.userinfo?.username }).then(res => {
       dispatch(setNotificationFinalStatus(100));
       const currentNotifications = notificationsForUser.slice();
       let updatedNotifications = currentNotifications.map(notification => {
