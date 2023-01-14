@@ -243,6 +243,7 @@ def get_links_object_by_document_id(document_id):
     fields = {"document_id": str(document_id)}
     response_obj = dowellconnection(*LINK_CONNECTION_LIST, "find", fields, "nil")
     res_obj = json.loads(response_obj)
+    # print("PL query object response :  \n", response_obj)
     if len(res_obj["data"]):
         return res_obj["data"]
     else:

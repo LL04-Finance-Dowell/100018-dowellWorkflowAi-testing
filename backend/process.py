@@ -34,12 +34,14 @@ def processes(request):  # Pending Workflow processes.
 @api_view(["POST"])
 def get_process_link(request):  # Get a links process for person having notifications
     # get links info
-    try:
-        links_info = get_links_object_by_document_id(request.data["document_id"])
-        # print(links_info)
-    except:
-        return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    links_info = get_links_object_by_document_id(request.data["document_id"])
+    if not links_info:
+        return Response(
+            "Could not fetch process info at this time",
+            status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+        )
     # check presence in link
+
     for link in links_info["links"]:
         if request.data["user_name"] in link:
             verify_link = link.get(request.data["user_name"])
@@ -88,22 +90,30 @@ def verify_process(request):
             step["member"] == request.data["user_name"]
             and step["member_portfolio"] == request.data["portfolio"]
         ):
-            print("Started the checks....")
+            # Doc Map & Rights
             map = step.get("document_map")
+            right = step.get("rights")
+            print("Started the checks....")
             # Display check
-            if check_display_right(step):
-                continue
+            # if check_display_right(step.get("display")):
+            #     continue
 
             # Time Limit Check.
+            # if check_time_limit(step.get("limit")):
+            #     continue
 
             # Skip check
+            # if check_step_skipping(step.get("skip")):
+            #     continue
 
             # Location Check
+            # if check_location(step.get("location")):
+            #     continue
 
             break
         else:
             return Response(
-                "Portfolio for this user is Unauthorized",
+                "Document Access Forbidden",
                 status=status.HTTP_403_FORBIDDEN,
             )
     # Authorize creation
@@ -112,13 +122,14 @@ def verify_process(request):
         doc_link = generate_link(
             document_id=processing_links_info["document_id"],
             doc_map=map,
+            doc_rights=right,
         )
         return Response(doc_link.json(), status=status.HTTP_201_CREATED)
     return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 #  A single Doc Link
-def generate_link(document_id, doc_map):
+def generate_link(document_id, doc_map, doc_rights):
     print("generating document link .... \n")
     editor_api = "https://100058.pythonanywhere.com/api/generate-editor-link/"
     payload = {
@@ -135,6 +146,7 @@ def generate_link(document_id, doc_map):
             "function_ID": "ABCDE",
             "command": "update",
             "document_map": doc_map,
+            "document_right": doc_rights,
             "update_field": {"document_name": "", "content": "", "page": ""},
         },
     }
