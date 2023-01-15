@@ -12,6 +12,7 @@ const DocumentCard = ({ cardItem }) => {
   const dispatch = useDispatch();
   const [ dataLoading, setDataLoading ] = useState(false);
   const { userDetail } = useSelector(state => state.auth);
+  const [ verificationLink, setVerificationLink ] = useState(null)
 
   const handleDetailDocumnet = async (item) => {
     if (dataLoading) return
@@ -20,7 +21,8 @@ const DocumentCard = ({ cardItem }) => {
       try {
         const dataToPost = { document_id: item._id, user_name: userDetail?.userinfo?.username };
         const response = await (await getProcessLink(dataToPost)).data;
-        window.location = response;
+        setVerificationLink(response);
+        setDataLoading(false);
       } catch (error) {
         console.log(error.response ? error.response.data : error.message);
         setDataLoading(false);
@@ -37,6 +39,10 @@ const DocumentCard = ({ cardItem }) => {
     dispatch(detailDocument(data));
   };
 
+  const handleGoToVerificationPage = () => {
+    window.location = verificationLink;
+  }
+
   const FrontSide = () => {
     return (
       <div>{cardItem.document_name ? cardItem.document_name : "no item"}</div>
@@ -47,8 +53,8 @@ const DocumentCard = ({ cardItem }) => {
     return (
       <div>
         {cardItem._id ? (
-          <Button onClick={() => handleDetailDocumnet(cardItem)}>
-            { dataLoading ? <LoadingSpinner /> : "Click Here" }
+          <Button onClick={verificationLink ? () => handleGoToVerificationPage() : () => handleDetailDocumnet(cardItem)}>
+            { dataLoading ? <LoadingSpinner /> : verificationLink ? "Go to Editor" : "Click Here" }
           </Button>
         ) : (
           "no item"
