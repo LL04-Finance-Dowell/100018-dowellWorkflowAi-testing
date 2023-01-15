@@ -220,7 +220,7 @@ const ProcessDocument = () => {
                     <div className={styles.process__detail__box}>
                       <p>{currentProcess && currentProcess.processDetail}</p>
                       { 
-                        newProcessLoading ? <ProgressBar durationInMS={65000} /> : 
+                        newProcessLoading ? <ProgressBar durationInMS={60000} /> : 
                         <p className={styles.start__processing__button} onClick={handleStartNewProcess}>
                           Save & Start Processing
                         </p>

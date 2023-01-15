@@ -19,7 +19,7 @@ const DocumentCard = ({ cardItem }) => {
       setDataLoading(true);
       try {
         const dataToPost = { document_id: item._id, user_name: userDetail?.userinfo?.username };
-        const response = await (await getProcessLink(dataToPost));
+        const response = await (await getProcessLink(dataToPost)).data;
         window.location = response;
       } catch (error) {
         console.log(error.response ? error.response.data : error.message);
