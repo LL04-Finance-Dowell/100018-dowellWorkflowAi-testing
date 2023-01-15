@@ -103,6 +103,9 @@ const ProcessDocument = () => {
     
     const newProcessObj = extractProcessObj();
 
+    if (!newProcessObj.workflows[0].workflows.steps.every(step => step.document_map.length > 0)) return toast.info("Please make sure you select at least one item from the table of contents for each step");
+    if (!newProcessObj.workflows[0].workflows.steps.every(step => step.member)) return toast.info("Please make sure you assign a user for each step");
+
     console.log("Saving workflows process obj to post: ", newProcessObj);
 
     setSaveWorkflowsLoading(true);
@@ -128,6 +131,9 @@ const ProcessDocument = () => {
 
     const startProcessObj = extractProcessObj();
     startProcessObj.criteria = currentProcessValue;
+
+    if (!startProcessObj.workflows[0].workflows.steps.every(step => step.document_map.length > 0)) return toast.info("Please make sure you select at least one item from the table of contents for each step");
+    if (!startProcessObj.workflows[0].workflows.steps.every(step => step.member)) return toast.info("Please make sure you assign a user for each step");
 
     console.log("Starting process obj to post: ", startProcessObj);
 

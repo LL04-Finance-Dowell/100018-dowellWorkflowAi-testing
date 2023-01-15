@@ -102,7 +102,7 @@ const InfoBoxes = () => {
 
     })
 
-  }, [savedWorkflowStatus, workflow, team, userDetail, currentDocToWfs])
+  }, [userDetail, currentDocToWfs, docCurrentWorkflow])
 
   const { scrollYProgress } = useScroll({
     target: ref,
