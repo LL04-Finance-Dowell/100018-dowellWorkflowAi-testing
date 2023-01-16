@@ -1,3 +1,4 @@
+import jwt
 import json
 import uuid
 import requests
@@ -7,218 +8,49 @@ from rest_framework import status
 from .mongo_db_connection import (
     save_wf_process,
     get_process_object,
-    get_document_object,
     update_document,
-    save_uuid_hash,
+    save_process_links,
+    get_links_object_by_process_id,
+    get_links_object_by_document_id,
+    get_process_list,
 )
 
-
 # ---------------------------------------------------------------------------------#
-# API Endpoint - 1. -------  Set Wofkflows in document
+# API Endpoint - 4. ---------  Workflows process Notification API
 # ---------------------------------------------------------------------------------#
 
 
 @api_view(["POST"])
-def save_workflows_to_document(request):
-    process_id = new_process(
-        workflows=request.data["workflows"],
-        created_by=request.data["created_by"],
-        company_id=request.data["company_id"],
-        data_type=request.data["data_type"],
-        document_id=request.data["document_id"],
-    )
-    print(process_id)
-    if process_id:
-        # update the doc.
-        doc = update_document_with_process(
-            document_id=request.data["document_id"],
-            workflow_process_id=process_id,
-        )
-        if doc:
-            return Response(status=status.HTTP_200_OK)
-    return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-
-# Create Process.
-def new_process(workflows, created_by, company_id, data_type, document_id):
-    process_title = ""
-    process_steps = []
-    print("Workflows in new process", workflows)
+def processes(request):  # Pending Workflow processes.
     try:
-        for workflow in workflows:
-            process_steps.extend(workflow["workflows"]["steps"])
-            process_title = (
-                process_title + workflow["workflows"]["workflow_title"] + " - "
-            )
-        print(process_steps)
-        res = save_wf_process(
-            process_title, process_steps, created_by, company_id, data_type, document_id
-        )
-        return res["inserted_id"]
+        processes = get_process_list(request.data["company_id"])
     except:
-        return
-
-
-# update document with process id.
-def update_document_with_process(document_id, workflow_process_id):
-    document = get_document_object(document_id)
-    if not document:
-        return
-    res = update_document(document_id, document["content"], workflow_process_id)
-    if res["isSuccess"]:
-        return True
-    return
-
-
-# ---------------------------------------------------------------------------------#
-# API Enpoint - 2 -------------  Start the workflow process.
-# ---------------------------------------------------------------------------------#
+        return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    if len(processes) <= 0:
+        return Response([], status=status.HTTP_200_OK)
+    return Response(processes, status=status.HTTP_200_OK)
 
 
 @api_view(["POST"])
-def save_and_start_processing(request):
-    process_id = new_process(
-        workflows=request.data["workflows"],
-        document_id=request.data["document_id"],
-        created_by=request.data["created_by"],
-        company_id=request.data["company_id"],
-        data_type=request.data["data_type"],
-    )
-    # print(process_id)
-    if process_id:
-        # update the doc.
-        doc = update_document_with_process(
-            document_id=request.data["document_id"],
-            workflow_process_id=process_id,
-        )
-        if doc:
-            return Response(status=status.HTTP_200_OK)
-    # fire up the processing action
-    resp = start_processing(how_to=request.data["how_to"], process_id=process_id)
-    return resp
-
-
-#  Begin processing the Workflow.
-def start_processing(how_to, process_id, document_id):
-    process = get_process_object(process_id)
-    if not process:
+def get_process_link(request):  # Get a links process for person having notifications
+    # get links info
+    links_info = get_links_object_by_document_id(request.data["document_id"])
+    if not links_info:
         return Response(
-            {"message": "Failed to Start Processing"},
+            "Could not fetch process info at this time",
             status=status.HTTP_500_INTERNAL_SERVER_ERROR,
         )
+    # check presence in link
 
-    if how_to == "member":
-        return process_by_member(process_id, document_id)
-
-    if how_to == "workflow":
-        return process_by_workflows(process_id, document_id)
-
-    if how_to == "steps":
-        return process_by_steps(process_id, document_id)
-
-    if how_to == "document_content":
-        return process_by_document_content(process_id, document_id)
-
-    if how_to == "signing_location":
-        return process_by_signing_location(process_id, document_id)
-
-    return Response(
-        {"message": "Failed to Start Processing"}, status=status.HTTP_400_BAD_REQUEST
-    )
-
-
-# Process by member choice.
-def process_by_member(process_id, document_id):
-    # find a process
-    try:
-        process = get_process_object(process_id)
-    except:
-        return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-    # time to generate links
-    links = generate_links(process, document_id)
-    if links:
-        return Response(
-            links,
-            status=status.HTTP_200_OK,
-        )
-    return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-
-# Process by workflows
-def process_by_workflows(process_id, document_id):
-    # find a process
-    try:
-        process = get_process_object(process_id)
-    except:
-        return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-
-# Process by Workflow Steps
-def process_by_steps(process_id, document_id):
-    # find a process
-    try:
-        process = get_process_object(process_id)
-    except:
-        return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-
-# Process by Document Content.
-def process_by_document_content(process_id, document_id):
-    # find a process
-    try:
-        process = get_process_object(process_id)
-    except:
-        return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-
-# Process by Signing Location.
-def process_by_signing_location(process_id, document_id):
-    # find a process
-    try:
-        process = get_process_object(process_id)
-    except:
-        return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-
-# Links generation
-def generate_links(process, document_id):
-    links = []
-    # iterate the process steps
-    for step in process["process_steps"]:
-        # check the member type.
-        if "member_type" == "TEAM_MEMBER":
-            if "member" in step:
-                member_name = step["member"]
-                link = verification_link(process, member_name, document_id)
-                links.extend({member_name: link})
-        elif "member_type" == "GUEST":
-            if "member" in step:
-                member_name = "guest"
-                link = verification_link(process, member_name, document_id)
-                links.extend({member_name: link})
-        elif "member_type" == "PUBLIC":
-            if "member" in step:
-                member_name = "public"
-                link = verification_link(process, member_name, document_id)
-                links.extend({member_name: link})
-
-    return links
-
-
-# token generation
-def gen_token(process_id, user_name, document_id):
-    uuid_hash = uuid.uuid4().hex
-    res = save_uuid_hash(uuid_hash, process_id, user_name, document_id)
-    if res:
-        return uuid_hash
-
-
-# application link
-def verification_link(process_id, user_name, document_id):
-    token = gen_token(process_id, user_name, document_id)
-    if token:
-        link = f"https://ll04-finance-dowell.github.io/100018-dowellWorkflowAi-testing/verify/{token}/"
-    return link
+    for link in links_info["links"]:
+        if request.data["user_name"] in link:
+            verify_link = link.get(request.data["user_name"])
+            break
+        else:
+            return Response(
+                "User is not part of this process", status=status.HTTP_401_UNAUTHORIZED
+            )
+    return Response(verify_link, status=status.HTTP_200_OK)
 
 
 # ---------------------------------------------------------------------------------#
@@ -228,82 +60,125 @@ def verification_link(process_id, user_name, document_id):
 
 @api_view(["POST"])
 def verify_process(request):
+    print("verification started...... \n")
+    # decode token
+    decoded = jwt.decode(request.data["token"], "secret", algorithms="HS256")
+    # find links
     try:
-        verified = verify(request.data["process_id"])
+        processing_links_info = get_links_object_by_process_id(decoded["process_id"])
     except:
         return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-    if verified:
-        link = generate_link(request.data["document_id"])
-        if not link:
-            return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-        return link
-
-
-def verify(process_id, user_name):
-    verified = True
-    #  get a workflow process.
+    # check presence of the user trying to access in the links
+    flag = False
+    for link in processing_links_info["links"]:
+        if request.data["user_name"] in link:
+            flag = True
+            break
+        else:
+            return Response(
+                "User is not part of this process", status=status.HTTP_401_UNAUTHORIZED
+            )
+    # get document map for that user.
     try:
-        process = get_process_object(process_id)
+        process = get_process_object(workflow_process_id=decoded["process_id"])
     except:
         return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-    # Iterate over the Process steps
+    # find the document map & run checks.
     for step in process["process_steps"]:
-        # validate the user access
-        if step["member"] != user_name:
-            return
+        # Portfolio Check.
+        if (
+            step["member"] == request.data["user_name"]
+            and step["member_portfolio"] == request.data["portfolio"]
+        ):
+            # Doc Map & Rights
+            map = step.get("document_map")
+            right = step.get("rights")
+            print("Started the checks....")
+            # Display check
+            # if check_display_right(step.get("display")):
+            #     continue
 
-        # Check if the current step should be skipped
-        if step["skip"]:
-            continue
+            # Time Limit Check.
+            # if check_time_limit(step.get("limit")):
+            #     continue
 
-        # how should be steps.
-        if check_display_right(step):
-            continue
+            # Skip check
+            # if check_step_skipping(step.get("skip")):
+            #     continue
 
-        # Check if the current step is within the allowed time period.
-        # if not check_time_limit(step):
-        #     continue
+            # Location Check
+            # if check_location(step.get("location")):
+            #     continue
 
-        # Check if the current step is within the allowed location.
-        # if not check_location(step):
-        #     continue
+            break
+        else:
+            return Response(
+                "Document Access Forbidden",
+                status=status.HTTP_403_FORBIDDEN,
+            )
+    # Authorize creation
+    if flag:
+        # generate document link.
+        doc_link = generate_link(
+            document_id=processing_links_info["document_id"],
+            doc_map=map,
+            doc_rights=right,
+        )
+        return Response(doc_link.json(), status=status.HTTP_201_CREATED)
+    return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-        # Apply the current step to the document.
-        return verified
-    return
+
+#  A single Doc Link
+def generate_link(document_id, doc_map, doc_rights):
+    print("generating document link .... \n")
+    editor_api = "https://100058.pythonanywhere.com/api/generate-editor-link/"
+    payload = {
+        "product_name": "workflowai",
+        "details": {
+            "_id": document_id,
+            "field": "document_name",
+            "action": "document",
+            "cluster": "Documents",
+            "database": "Documentation",
+            "collection": "DocumentReports",
+            "document": "documentreports",
+            "team_member_ID": "11689044433",
+            "function_ID": "ABCDE",
+            "command": "update",
+            "document_map": doc_map,
+            "document_right": doc_rights,
+            "update_field": {"document_name": "", "content": "", "page": ""},
+        },
+    }
+    link = requests.post(editor_api, data=json.dumps(payload))
+    return link
 
 
+# CHECKS...........
 # Check display in the step.
 def check_display_right(step):
-    allowed = True
-    if step["display"] == "document_before_processing_this_step":
-        return allowed
-
-    if step["display"] == "document_after_processing_this_step":
-        allowed = False
-        return allowed
-
-    if step["display"] == "document_in_all_steps":
-        return allowed
-
-    if step["display"] == "document_only_this_step":
-        return allowed
+    display_allowed = {
+        "document_before_processing_this_step": True,
+        "document_after_processing_this_step": False,
+        "document_in_all_steps": True,
+        "document_only_this_step": True,
+    }
+    return display_allowed.get(step["display"], False)
 
 
 # Verify time limit of the step.
 def check_time_limit(step):
-    if step["limit"] == "within 1 hour":
+    hours = 0
+    if step["limit"] == "within_1_hour":
+
         return
-    if step["limit"] == "within 8 hours":
+    if step["limit"] == "within_8_hours":
         return
-    if step["limit"] == "within 24 hours":
+    if step["limit"] == "within_24_hours":
         return
-    if step["limit"] == "within 3 days":
+    if step["limit"] == "within_3_days":
         return
-    if step["limit"] == "within 7 days":
+    if step["limit"] == "within_7_days":
         return
     if step["limit"] == "custom_time":
         return
@@ -322,35 +197,136 @@ def check_location(step):
     pass
 
 
-#  A single Link
-def generate_link(document_id):
-    editor_api = "https://100058.pythonanywhere.com/api/generate-editor-link/"
-    document = get_document_object(document_id)
-    if not document:
-        return
-    payload = {
-        "product_name": "workflowai",
-        "details": {
-            "_id": document_id,
-            "field": "document_name",
-            "action": "document",
-            "cluster": "Documents",
-            "database": "Documentation",
-            "collection": "DocumentReports",
-            "document": "documentreports",
-            "team_member_ID": "11689044433",
-            "function_ID": "ABCDE",
-            "command": "update",
-            "update_field": {"document_name": "", "content": "", "page": ""},
-        },
-    }
-    try:
-        link = json(requests.post(editor_api, data=json.dumps(payload)))
-        return link
-    except:
-        return
+# ---------------------------------------------------------------------------------#
+# API Enpoint - 2 -------------  Start the workflow process.
+# ---------------------------------------------------------------------------------#
 
 
-# send reminders
-def send_document_reminders(process_id):
-    pass
+@api_view(["POST"])
+def save_and_start_processing(request):
+    process = new_process(
+        workflows=request.data["workflows"],
+        document_id=request.data["document_id"],
+        created_by=request.data["created_by"],
+        company_id=request.data["company_id"],
+        data_type=request.data["data_type"],
+    )
+    if process:
+        # update the doc. DB - 2
+        print("Updating document with process id.... \n")
+        res = json.loads(
+            update_document(
+                document_id=request.data["document_id"],
+                workflow_process_id=process["process_id"],
+            )
+        )
+        if res["isSuccess"]:
+            # fire up the processing action
+            return start_processing(
+                process=process,
+                document_id=request.data["document_id"],
+                choice=request.data["criteria"],
+            )
+    return Response(
+        status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+    )
+
+
+#  Begin processing the Workflow.
+def start_processing(process, document_id, choice):
+    links = generate_links(process, document_id, choice)
+    print("started processing......")
+    if len(links) > 0:
+        return Response(
+            links,
+            status=status.HTTP_200_OK,
+        )
+    return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+# Links generation
+def generate_links(process, document_id, choice):
+    print("generating links.............\n")
+    links = [
+        {step["member"]: verification_link(process["process_id"])}
+        for step in process["process_steps"]
+    ]
+    # Save Links - DB-3
+    print("saving process links........ \n")
+    save_process_links(
+        links=links,
+        process_id=process["process_id"],
+        document_id=document_id,
+        processing_choice=choice,
+    )
+    return links
+
+
+# application link
+def verification_link(process_id):
+    # Token generation.
+    print("creating verification links........... \n")
+    # create a jwt token
+    payload = {"uuid_hash": uuid.uuid4().hex, "process_id": process_id}
+    hash_token = jwt.encode(
+        json.loads(json.dumps(payload)), "secret", algorithm="HS256"
+    )
+    return f"https://ll04-finance-dowell.github.io/100018-dowellWorkflowAi-testing/#/verify/{hash_token}/"
+
+
+# ---------------------------------------------------------------------------------#
+# API Endpoint - 1. -------  Set Wofkflows in document
+# ---------------------------------------------------------------------------------#
+
+
+@api_view(["POST"])
+def save_workflows_to_document(request):
+    process = new_process(
+        workflows=request.data["workflows"],
+        created_by=request.data["created_by"],
+        company_id=request.data["company_id"],
+        data_type=request.data["data_type"],
+        document_id=request.data["document_id"],
+    )
+    if process:
+        # update the doc.
+        print("Updating document with process id.... \n")
+        res = json.loads(
+            update_document(
+                document_id=request.data["document_id"],
+                workflow_process_id=process["process_id"],
+            )
+        )
+        if res["isSuccess"]:
+            return Response(status=status.HTTP_201_CREATED)
+    return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+# Create Process.
+def new_process(workflows, created_by, company_id, data_type, document_id):
+    print("creating process.......... \n")
+    process_title = ""
+    process_steps = [
+        step for workflow in workflows for step in workflow["workflows"]["steps"]
+    ]
+    process_title = " - ".join(
+        [workflow["workflows"]["workflow_title"] for workflow in workflows]
+    )
+    # save to collection.
+    res = json.loads(
+        save_wf_process(
+            process_title, process_steps, created_by, company_id, data_type, document_id
+        )
+    )
+    # return process id.
+    if res["isSuccess"]:
+        process = {
+            "process_title": process_title,
+            "process_steps": process_steps,
+            "created_by": created_by,
+            "company_id": company_id,
+            "data_type": data_type,
+            "document_id": document_id,
+            "process_id": res["inserted_id"],
+        }
+        return process

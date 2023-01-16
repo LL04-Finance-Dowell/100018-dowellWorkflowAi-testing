@@ -2,7 +2,137 @@
 
 api_url = `https://100094.pythonanywhere.com/v0.1/`
 
-###  Workflow Process Service.
+### Workflow Process Service.
+
+_POST_ to `process/link/`
+
+- Request Body
+
+```
+{
+    "document_id": "<selected_doc_id>",
+    "user_name": "auth_user_name"
+}
+```
+
+Response - 200
+
+```
+{
+    <verification_link>
+}
+
+```
+
+Response - 401
+
+```
+
+"User is not part of this process"
+
+```
+
+Response - 500
+
+_POST_ to `process/verify/`
+
+- Verification Checks for document link
+
+Request Body
+
+```
+{
+    "token": "<get this token from the url path>",
+    "user_name": "<username_of_person_authenticated>",
+    "portfolio": "<authenticated_porfolio>",
+}
+```
+
+Response-201
+
+```
+{
+    "editor_link": "<link_to_the_editor>
+}
+
+```
+
+Response - 401
+
+```
+
+"User is not part of this process"
+
+```
+
+Response - 403
+
+```
+
+ "Portfolio for this user is Unauthorized"
+
+```
+
+Response-500
+
+" verification failed"
+
+_POST_ to `process/start/`
+
+- Save and Start Processing
+
+Request Body
+
+```
+{
+    "criteria": "<member|workflow|steps|document_content|signing_location>"
+    "document_id": "<document_id_of_selected_document_to_process>",
+    "company_id": "<company_id_of_authenticated_user>",
+    "created_by": "<user_name_of_authenticated_user>",
+    "data_type":"<real|archive|test|learning>",
+    "workflows": [
+        {
+            "workflows":
+            {
+                "workflow_title":"<workflow_title>",
+                "steps":
+                [
+                    {
+                        "step_name"        : "<name_of_step>",
+                        "role"              : "<the_role>",
+                        "skip"            : "<True|False>",
+                        "document_map"    : "<selected_content_map>"
+                        "member_type"    : "<TEAM_MEMBER|PUBLIC|GUEST>",
+                        "member"         : "<username_selected",
+                        "member_portfolio": "Portfolio",
+                        "rights"        : "<ADD/EDIT|VIEW|COMMENT|APPROVE>",
+                        "display_before": "<document_before_processing_this_step|document_after_processing_this_step|document_in_all_steps|document_only_this_step>",
+                        "location"    :     "<choice_location_selected>",
+                        "limit"    : "<within_1_hour|within_8_hours|within_24_hours|within_3_days|within_7_days|custom_time>",
+                        "start_time": "START_DATE_AND_TIME",
+                        "end_time":    "END_DATE_AND_TIME",
+                        "reminder": "<send_reminder_every_day|send_reminder_every_hour>",
+                    },
+                ],
+            },
+        },
+    ],
+}
+
+```
+
+Response - 201
+
+```
+    "Started Processing"
+
+```
+
+Response - 500
+
+```
+    "Failed to create process and start processing."
+```
 
 _POST_ to `process/new/`
 
@@ -12,17 +142,42 @@ Request Body
 
 ```
 {
-    "workflows": "<JSON Object Array of the workflow process choices>",
     "document_id": "<document_id_of_selected_document_to_process>",
     "company_id": "<company_id_of_authenticated_user>",
     "created_by": "<user_name_of_authenticated_user>",
-    "data_type":"<real|archive|test|learning data>"
+    "data_type":"<real|archive|test|learning data>",
+    "workflows": [
+        {
+            "workflows":
+            {
+                "workflow_title":"<workflow_title>",
+                "steps":
+                [
+                    {
+                        "step_name"        : "<name_of_step>",
+                        "role"              : "<the_role>",
+                        "skip"            : "<True|False>",
+                        "document_map"    : "<selected_content_map>"
+                        "member_type"    : "<TEAM_MEMBER|PUBLIC|GUEST>",
+                        "member"         : "<username_selected",
+                        "member_portfolio": "Portfolio",
+                        "rights"        : "<ADD/EDIT|VIEW|COMMENT|APPROVE>",
+                        "display_before": "<document_before_processing_this_step|document_after_processing_this_step|document_in_all_steps|document_only_this_step>",
+                        "location"    :     "<choice_location_selected>",
+                        "limit"    : "<within_1_hour|within_8_hours|within_24_hours|within_3_days|within_7_days|custom_time>",
+                        "start_time": "START_DATE_AND_TIME",
+                        "end_time":    "END_DATE_AND_TIME",
+                        "reminder": "<send_reminder_every_day|send_reminder_every_hour>",
+                    },
+                ],
+            },
+        },
+    ],
 }
 
 ```
 
 Response - 201
-
 
 Response - 500
 
@@ -408,7 +563,7 @@ Request Body
 ```
 {
     "company_id": "<company_id_of_authorized_user>",
-
+    "user_name": "<auth_user_name>"
 }
 ```
 
@@ -416,16 +571,20 @@ Response-200
 
 ```
 {
-"documents":["ist of documents to be signed with their detail"]
+"documents":["list of documents to be signed with their detail"]
 }
 ```
 
-if no list
+- if no list
+
 Response-200
+
+```
 {
-"documents": []
-"message": "These document is Rejected Document."
+  "documents": []
+  "message": "These document is Rejected Document."
 }
+```
 
 _POST_ `documents/mine/`
 
@@ -540,9 +699,6 @@ Response-200
 {"content":"<content_id_and_data>}
 ```
 
-
-
-
 ### Worfklow Management
 
 _POST_ to `workflows/`
@@ -656,7 +812,7 @@ Request Body
 
 ```
 {
-    
+
     "created_by": "<user_name_of_authenticated_user>",
     "company_id": "<company_id_of_authorized_user>",
     "data_type":"<real|archive|test|learning data>"
@@ -697,8 +853,6 @@ Response-200
 
 }
 
-
-
 _POST_ `workflows/saved/`
 
 - List of my Organization Workflows.
@@ -720,10 +874,10 @@ Response-200
 ```
 
 ### Intelligent Search
+
 - search document, workflow and template.
 
 _POST_ `search/`
-
 
 Request Body
 
@@ -733,6 +887,7 @@ Request Body
     "search":search keyword"
 }
 ```
+
 Response-200
 
 ```
