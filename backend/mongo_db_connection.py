@@ -32,7 +32,15 @@ WF_CONNECTION_LIST = [
     "33689044433",
     "ABCDE",
 ]
-
+WF_AI_SETTING_LIST = [
+    "Documents"
+    "bangalore",
+    "Documentation"
+    "WorkflowAiSettings"
+    "WorkflowAiSettings"
+    "1000180009"
+    "ABCDE"
+]
 PROCESS_CONNECTION_LIST = [
     "Documents",
     "bangalore",
@@ -93,6 +101,7 @@ QR_ID_CONNECTION_DICT = {
     "function_ID": "ABCDE",
 }
 
+
 WF_CONNECTION_DICT = {
     "cluster": "Documents",
     "database": "Documentation",
@@ -101,7 +110,14 @@ WF_CONNECTION_DICT = {
     "team_member_ID": "33689044433",
     "function_ID": "ABCDE",
 }
-
+WF_AI_SETTING_DICT ={
+    "cluster": "Documents",
+    "database": "Documentation",
+    "collection": "WorkflowAiSettings",
+    "document": "WorkflowAiSettings",
+    "team_member_ID": "1000180009",
+    "function_ID": "ABCDE",
+}
 WF_PROCESS_DICT = {
     "cluster": "Documents",
     "database": "Documentation",
@@ -649,7 +665,44 @@ def update_document(document_id, workflow_process_id):
     print("DOCUMENT UPDATED------------ \n")
     return response.text
 
+def save_wf_setting(company_id, owner_name, version,username,portfolio_name,process):
+    url = "http://100002.pythonanywhere.com/"
+    event_id = get_event_id()
+    dd = datetime.now()
+    time = dd.strftime("%d:%m:%Y,%H:%M:%S")
+    payload = json.dumps(
+        {
+            **WF_AI_SETTING_DICT,
+            "command": "insert",
+            "field": {
+                "eventId": event_id,
+                "company_id": company_id,
+                "owner_name": owner_name,
+                "username": username,
+                "version":version,
+                "portfolio_name":portfolio_name,
+                "process":process,
+                "created_on": time,
+                
+            },
+            "update_field": {"order_nos": 21},
+            "platform": "bangalore",
+        }
+    )
 
+    headers = {"Content-Type": "application/json"}
+    response = requests.request("POST", url, headers=headers, data=payload)
+    print("SAVED WORKFLOW_AI--------------- \n")
+    return response.text
+def get_wf_setting_object(wf_setting_id):
+    fields = {"_id": wf_setting_id}
+    response_obj = dowellconnection(*WF_AI_SETTING_LIST, "find", fields, "nil")
+    # print("document object-------------- \n", response_obj)
+    res_obj = json.loads(response_obj)
+    try:
+        return res_obj["data"]
+    except:
+        return []
 def get_document_object(document_id):
     fields = {"_id": document_id}
     response_obj = dowellconnection(*DOCUMENT_CONNECTION_LIST, "find", fields, "nil")
