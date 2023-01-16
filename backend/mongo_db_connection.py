@@ -33,13 +33,24 @@ WF_CONNECTION_LIST = [
     "ABCDE",
 ]
 
-WF_PROCESS_CONNECTION = [
+PROCESS_CONNECTION_LIST = [
     "Documents",
     "bangalore",
     "Documentation",
-    "WorflowProcess",
+    "WorkflowProcess",
     "WorkflowProcess",
     "1000180001",
+    "ABCDE",
+]
+
+
+LINK_CONNECTION_LIST = [
+    "Documents",
+    "bangalore",
+    "Documentation",
+    "DocumentLink",
+    "DocumentLink",
+    "1000180010",
     "ABCDE",
 ]
 TEMPLATE_CONNECTION_LIST = [
@@ -91,6 +102,24 @@ WF_CONNECTION_DICT = {
     "function_ID": "ABCDE",
 }
 
+WF_PROCESS_DICT = {
+    "cluster": "Documents",
+    "database": "Documentation",
+    "collection": "WorkflowProcess",
+    "document": "WorkflowProcess",
+    "team_member_ID": "1000180001",
+    "function_ID": "ABCDE",
+}
+
+LINK_CONNECTION_DICT = {
+    "cluster": "Documents",
+    "database": "Documentation",
+    "collection": "DocumentLink",
+    "document": "DocumentLink",
+    "team_member_ID": "1000180010",
+    "function_ID": "ABCDE",
+}
+
 TEMPLATE_CONNECTION_DICT = {
     "cluster": "Documents",
     "database": "Documentation",
@@ -108,7 +137,6 @@ DOCUMENT_CONNECTION_DICT = {
     "team_member_ID": "11689044433",
     "function_ID": "ABCDE",
 }
-
 
 
 def get_event_id():
@@ -162,12 +190,6 @@ def get_user(user_name):
         return []
 
 
-# def get_members(session_id):
-#     payload = {"session_id": session_id}
-#     r = requests.post(url=url, data=payload)
-#     return r.json()
-
-
 def get_user_info_by_username(username):
     fields = {"Username": username}
     response = dowellconnection(*REGISTRATION_ARGS, "fetch", fields, "nil")
@@ -178,19 +200,19 @@ def get_user_info_by_username(username):
         return usrdic["data"][0]
 
 
-#  -------------------------------Workflow Process------------------
-def save_wf_process(process_title, process_steps,  user, company_id):
+# ----------------------- Links Creation -------------------------
+def save_process_links(links, process_id, document_id, processing_choice):
     url = "http://100002.pythonanywhere.com/"
     payload = json.dumps(
         {
-            **WF_PROCESS_CONNECTION,
+            **LINK_CONNECTION_DICT,
             "command": "insert",
             "field": {
                 "eventId": get_event_id(),
-                "process_title": process_title,
-                "workflow_steps": process_steps,
-                "company_id": company_id,
-                "created_by": user,
+                "links": links,
+                "process_id": process_id,
+                "document_id": document_id,
+                "processing_choice": processing_choice,
             },
             "update_field": {"order_nos": 21},
             "platform": "bangalore",
@@ -198,7 +220,65 @@ def save_wf_process(process_title, process_steps,  user, company_id):
     )
     headers = {"Content-Type": "application/json"}
     response = requests.request("POST", url, headers=headers, data=payload)
-    print("SAVE WORKFLOW ENTRY----------- \n", response.text)
+    print("SAVED LINKS ----------- \n")
+    return response.text
+
+
+# By processID
+def get_links_object_by_process_id(process_id):
+    print("getting process link object,... \n")
+    fields = {"process_id": str(process_id)}
+    response_obj = dowellconnection(*LINK_CONNECTION_LIST, "find", fields, "nil")
+    res_obj = json.loads(response_obj)
+    # print("PL query object response :  \n", response_obj)
+    if res_obj["data"] != None:
+        if len(res_obj["data"]):
+            return res_obj["data"]
+        else:
+            return []
+    return []
+
+
+# By documentID
+def get_links_object_by_document_id(document_id):
+    print("getting process link object,... \n")
+    fields = {"document_id": str(document_id)}
+    response_obj = dowellconnection(*LINK_CONNECTION_LIST, "find", fields, "nil")
+    res_obj = json.loads(response_obj)
+    # print("PL query object response :  \n", response_obj)
+    if res_obj["data"] != None:
+        if len(res_obj["data"]):
+            return res_obj["data"]
+        else:
+            return []
+    return []
+
+#  -------------------------------Workflow Process------------------
+def save_wf_process(
+    process_title, process_steps, user, company_id, data_type, document_id
+):
+    # print("got here")
+    url = "http://100002.pythonanywhere.com/"
+    payload = json.dumps(
+        {
+            **WF_PROCESS_DICT,
+            "command": "insert",
+            "field": {
+                "eventId": get_event_id(),
+                "process_title": process_title,
+                "process_steps": process_steps,
+                "company_id": company_id,
+                "created_by": user,
+                "data_type": data_type,
+                "document_id": document_id,
+            },
+            "update_field": {"order_nos": 21},
+            "platform": "bangalore",
+        }
+    )
+    headers = {"Content-Type": "application/json"}
+    response = requests.request("POST", url, headers=headers, data=payload)
+    print("SAVE WORKFLOW PROCESS----------- \n")
     return response.text
 
 
@@ -226,8 +306,20 @@ def save_wf_process(process_title, process_steps,  user, company_id):
 
 
 def get_process_object(workflow_process_id):
+    print("got here", workflow_process_id)
     fields = {"_id": str(workflow_process_id)}
-    response_obj = dowellconnection(*WF_PROCESS_CONNECTION, "find", fields, "nil")
+    response_obj = dowellconnection(*PROCESS_CONNECTION_LIST, "find", fields, "nil")
+    res_obj = json.loads(response_obj)
+    print("getiing process object......")
+    if len(res_obj["data"]):
+        return res_obj["data"]
+    else:
+        return []
+
+
+def get_process_list(company_id):
+    fields = {"company_id": str(company_id)}
+    response_obj = dowellconnection(*PROCESS_CONNECTION_LIST, "fetch", fields, "nil")
     res_obj = json.loads(response_obj)
     if len(res_obj["data"]):
         return res_obj["data"]
@@ -235,7 +327,10 @@ def get_process_object(workflow_process_id):
         return []
 
 
-def save_uuid_hash(uuid_hash, process_id, user_email, document_id):
+# ---------- Hashes --------------------------
+
+
+def save_uuid_hash(process_links, process_id, document_id, processing_choice):
     url = "http://100002.pythonanywhere.com/"
     payload = json.dumps(
         {
@@ -243,9 +338,10 @@ def save_uuid_hash(uuid_hash, process_id, user_email, document_id):
             "command": "insert",
             "field": {
                 "eventId": get_event_id(),
-                "email": user_email,
-                "uuid_hash": uuid_hash,
+                "process_links": process_links,
                 "document_id": document_id,
+                "process_id": process_id,
+                "processing_choice": processing_choice,
                 "status": True,  #   if True: valid ? Invalid
             },
             "update_field": {"order_nos": 21},
@@ -296,14 +392,14 @@ def update_uuid_object(uuid_hash):
     )
     headers = {"Content-Type": "application/json"}
     response = requests.request("POST", url, headers=headers, data=payload)
-    print("SAVED UUID-----------: \n", response.text)
+    print("SAVED UUID-----------: \n")
     return response.text
 
 
 # -------------------------------- Workflows-------------------
 
 
-def save_wf(workflows,company_id,created_by):
+def save_wf(workflows, company_id, created_by):
     url = "http://100002.pythonanywhere.com/"
     payload = json.dumps(
         {
@@ -312,9 +408,8 @@ def save_wf(workflows,company_id,created_by):
             "field": {
                 "eventId": get_event_id(),
                 "workflows": workflows,
-                "created_by" :    created_by,
-                "company_id" :   company_id,
-                
+                "created_by": created_by,
+                "company_id": company_id,
             },
             "update_field": {"order_nos": 21},
             "platform": "bangalore",
@@ -322,13 +417,13 @@ def save_wf(workflows,company_id,created_by):
     )
     headers = {"Content-Type": "application/json"}
     response = requests.request("POST", url, headers=headers, data=payload)
-    print("SAVE WORKFLOW ENTRY----------- \n", response.text)
+    print("SAVE WORKFLOW ENTRY----------- \n")
     return response.text
 
 
 def update_wf(workflow_id, old_workflow):
     url = "http://100002.pythonanywhere.com/"
-    
+
     payload = json.dumps(
         {
             **WF_CONNECTION_DICT,
@@ -338,17 +433,16 @@ def update_wf(workflow_id, old_workflow):
             },
             "update_field": {
                 "eventId": get_event_id(),
-                "workflows": old_workflow['workflows'],
-                "created_by" :    old_workflow['created_by'],
-                "company_id" :   old_workflow['company_id'],
-                
+                "workflows": old_workflow["workflows"],
+                "created_by": old_workflow["created_by"],
+                "company_id": old_workflow["company_id"],
             },
             "platform": "bangalore",
         }
     )
     headers = {"Content-Type": "application/json"}
     response = requests.request("POST", url, headers=headers, data=payload)
-    print("SAVE WORKFLOW UPDATE--------------- \n", response.text)
+    print("SAVE WORKFLOW UPDATE--------------- \n")
     return response.text
 
 
@@ -370,7 +464,7 @@ def update_wf_approval(workflow_id, approval):
     )
     headers = {"Content-Type": "application/json"}
     response = requests.request("POST", url, headers=headers, data=payload)
-    print("SAVE WORKFLOW APPROVAL--------------- \n", response.text)
+    print("SAVE WORKFLOW APPROVAL--------------- \n")
     return response.text
 
 
@@ -397,6 +491,7 @@ def get_all_wf_list():
     else:
         return []
 
+
 def get_wf_list(company_id):
     fields = {"company_id": str(company_id)}
     response_obj = dowellconnection(*WF_CONNECTION_LIST, "fetch", fields, "nil")
@@ -408,7 +503,7 @@ def get_wf_list(company_id):
 
 
 # ------------------------------------------ Templates-----------------------------
-def save_template(name, data, page, created_by, company_id,data_type):
+def save_template(name, data, page, created_by, company_id, data_type):
     url = "http://100002.pythonanywhere.com/"
     event_id = get_event_id()
     payload = json.dumps(
@@ -422,7 +517,7 @@ def save_template(name, data, page, created_by, company_id,data_type):
                 "page": page,
                 "company_id": company_id,
                 "created_by": created_by,
-                "data_type":data_type,
+                "data_type": data_type,
             },
             "update_field": {"order_nos": 21},
             "platform": "bangalore",
@@ -430,7 +525,7 @@ def save_template(name, data, page, created_by, company_id,data_type):
     )
     headers = {"Content-Type": "application/json"}
     response = requests.request("POST", url, headers=headers, data=payload)
-    print("SAVED TEMPLATE----------- \n", response.text)
+    print("SAVED TEMPLATE----------- \n")
     return response.text
 
 
@@ -461,7 +556,7 @@ def update_template(template_id, data):
     )
     headers = {"Content-Type": "application/json"}
     response = requests.request("POST", url, headers=headers, data=payload)
-    print("TEMPLATE UPDATED----------- \n", response.text)
+    print("TEMPLATE UPDATED----------- \n")
     return response.text
 
 
@@ -483,7 +578,7 @@ def update_template_approval(template_id, approval):
     )
     headers = {"Content-Type": "application/json"}
     response = requests.request("POST", url, headers=headers, data=payload)
-    print("SAVE TEMPLATE APPROVAL--------------- \n", response.text)
+    print("SAVE TEMPLATE APPROVAL--------------- \n")
     return response.text
 
 
@@ -500,7 +595,7 @@ def get_template_list(company_id):
 
 
 # -------------------------- Document----------------------------------------
-def save_document(name, data, created_by, company_id,page,data_type):
+def save_document(name, data, created_by, company_id, page, data_type):
     url = "http://100002.pythonanywhere.com/"
     event_id = get_event_id()
     dd = datetime.now()
@@ -521,8 +616,8 @@ def save_document(name, data, created_by, company_id,page,data_type):
                 "reject_message": "",
                 "rejected_by": "",
                 "update_time": time,
-                "page":page,
-                "data_type":data_type
+                "page": page,
+                "data_type": data_type,
             },
             "update_field": {"order_nos": 21},
             "platform": "bangalore",
@@ -531,12 +626,13 @@ def save_document(name, data, created_by, company_id,page,data_type):
 
     headers = {"Content-Type": "application/json"}
     response = requests.request("POST", url, headers=headers, data=payload)
-    print("SAVED DOCUMENT--------------- \n", response.text)
+    print("SAVED DOCUMENT--------------- \n")
     return response.text
 
 
-def update_document(document_id, data, workflow_process_id):
+def update_document(document_id, workflow_process_id):
     url = "http://100002.pythonanywhere.com/"
+
     payload = json.dumps(
         {
             **DOCUMENT_CONNECTION_DICT,
@@ -544,13 +640,13 @@ def update_document(document_id, data, workflow_process_id):
             "field": {
                 "_id": document_id,
             },
-            "update_field": {**data, "workflow_process":  workflow_process_id},
+            "update_field": {"workflow_process": workflow_process_id},
             "platform": "bangalore",
         }
     )
     headers = {"Content-Type": "application/json"}
     response = requests.request("POST", url, headers=headers, data=payload)
-    print("DOCUMENT UPDATED------------ \n", response.text)
+    print("DOCUMENT UPDATED------------ \n")
     return response.text
 
 
