@@ -26,6 +26,7 @@ from .wf_management import (
     update_workflow,
     saved_workflows,
 )
+from .wf_ai_setting import create_workflow_setting,get_wf_ai_setting
 
 from .intelligent_search import (
     search,
@@ -91,4 +92,10 @@ urlpatterns = [
     path("workflows/mine/", my_workflows, name="my_workflows"),
     path("workflows/update/", update_workflow, name="update_workflow"),
     path("workflows/saved/", saved_workflows, name="saved_workflow"),
+
+    #Workflow AI Setting Process
+
+    path("workflow_ai_setting/", create_workflow_setting, name="save_wf_setting"),
+    path("get_WFAI_setting/", get_wf_ai_setting, name="get_wf_ai_setting"),
+
 ]
