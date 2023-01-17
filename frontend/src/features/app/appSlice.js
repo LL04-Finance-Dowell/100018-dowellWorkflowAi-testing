@@ -3,7 +3,6 @@ import { v4 as uuidv4 } from "uuid";
 import TemplateCard from "../../components/hoverCard/templateCard/TemplateCard";
 import DocumnetCard from "../../components/hoverCard/documentCard/DocumentCard";
 import WorkflowCard from "../../components/hoverCard/workflowCard/WorkflowCard";
-import { notifications } from "../../pages/App/WorkflowApp";
 
 const initialState = {
   toggleManageFileForm: false,
@@ -47,6 +46,8 @@ const initialState = {
   notificationFinalStatus: null,
   membersSetForProcess: false,
   notificationsLoaded: false,
+  continents: [],
+  continentsLoaded: false,
 };
 
 export const appSlice = createSlice({
@@ -182,6 +183,12 @@ export const appSlice = createSlice({
     setNotificationsLoaded: (state, action) => {
       state.notificationsLoaded = action.payload
     },
+    setContinents: (state, action) => {
+      state.continents = action.payload
+    },
+    setContinentsLoaded: (state, action) => {
+      state.continentsLoaded = action.payload
+    }
   },
 });
 
@@ -208,6 +215,8 @@ export const {
   setNotificationFinalStatus,
   setMembersSetForProcess,
   setNotificationsLoaded,
+  setContinents,
+  setContinentsLoaded,
 } = appSlice.actions;
 
 export default appSlice.reducer;

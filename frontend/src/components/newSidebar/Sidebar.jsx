@@ -113,7 +113,7 @@ const Sidebar = () => {
         </h2>
       </div>
       <div className={styles.organization__box}>
-        <h2 className={styles.organization__text}>{userDetail?.selected_product?.product_name ? userDetail?.selected_product?.product_name : "My Organization"}</h2>
+        <h2 className={styles.organization__text}>{userDetail && userDetail.portfolio_info && userDetail.portfolio_info.length > 0 && userDetail.portfolio_info[0].org_name ? userDetail.portfolio_info[0].org_name : "My Organization"}</h2>
         <img
           src="https://i0.wp.com/workflowai.online/wp-content/uploads/2022/10/artistic-logo.png?fit=916%2C640&ssl=1"
           alt="org-logo"

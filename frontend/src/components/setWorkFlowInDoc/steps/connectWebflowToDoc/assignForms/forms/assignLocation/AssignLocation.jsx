@@ -6,16 +6,62 @@ import { useState } from "react";
 import AssignButton from "../../../../../assignButton/AssignButton";
 import { updateSingleProcessStep } from "../../../../../../../features/app/appSlice";
 import { useDispatch, useSelector } from "react-redux";
+import { useEffect } from "react";
+import { continentsData } from "../../../../../../../utils/continentsData";
+import ProgressBar from "../../../../../../progressBar/ProgressBar";
+import { getRegionsInCountry } from "../../../../../../../services/locationServices";
 
 const AssignLocation = ({ currentStepIndex }) => {
   const {
     register,
     handleSubmit,
     formState: { isSubmitted },
+    watch
   } = useForm();
   const [loading, setLoading] = useState(false);
   const dispatch = useDispatch();
-  const { docCurrentWorkflow } = useSelector((state) => state.app);
+  const { docCurrentWorkflow, continents, continentsLoaded } = useSelector((state) => state.app);
+  const { userDetail, session_id } = useSelector(state => state.auth);
+  const { continent, country } = watch();
+  const [ countries, setCountries ] = useState([]);
+  const [ regionsLoading, setRegionsLoading ] = useState(false);
+  const [ regions, setRegions ] = useState([])
+
+  useEffect(() => {
+
+    if (!continent || !continentsData[continent]) return setCountries([])
+
+    setCountries(continentsData[continent].map(country => {
+      
+      const countryOption = {}
+      countryOption.id = crypto.randomUUID();
+      countryOption.option = country;
+      return countryOption
+
+    }))
+
+  }, [continent])
+
+  useEffect(() => {
+    
+    if (!country) return
+
+    setRegionsLoading(true);
+
+    getRegionsInCountry(userDetail?.userinfo?.username, session_id, country).then(res => {
+      const formattedData = res.data.map(item => {
+        const regionOption = {...item}
+        regionOption.option = regionOption.name
+        return regionOption
+      });
+      setRegions(formattedData);
+      setRegionsLoading(false);
+    }).catch(err => {
+      console.log("Failed to fetch regions in ",country);
+      setRegionsLoading(false);
+    })
+
+  }, [country])
 
   const onSubmit = (data) => {
     setLoading(true);
@@ -26,10 +72,26 @@ const AssignLocation = ({ currentStepIndex }) => {
 
   return (
     <FormLayout isSubmitted={isSubmitted} loading={loading}>
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <Select register={register} name="location" options={locations} takeNormalValue={true} />
-        <AssignButton buttonText="Assign Location" loading={loading} />
-      </form>
+      {
+        !continentsLoaded ? <ProgressBar durationInMS={6000} /> :
+        continents.length > 0 ? 
+        <>
+          <Select register={register} name="continent" options={continents} takeNormalValue={true} />
+          { continent && <Select register={register} name="country" options={countries} takeNormalValue={true} /> }
+          <form onSubmit={handleSubmit(onSubmit)}>
+            {
+              !country ? <></> :
+              regionsLoading ? <div>
+                <span style={{ fontSize: "0.8rem" }}>Regions in {country} loading...</span>
+                <ProgressBar durationInMS={6000} />
+              </div> :
+              <Select register={register} name="location" options={regions} takeNormalValue={true} />
+            }
+            <AssignButton buttonText="Assign Location" loading={loading} />
+          </form>
+        </> : <></>
+      }
+      
     </FormLayout>
   );
 };
