@@ -61,36 +61,37 @@ const Notifications = () => {
 
 export default Notifications;
 
+const [ parentUuid1, parentUuid2, parentUuid3 ] = [ uuidv4(), uuidv4(), uuidv4() ]
 export const items = [
   {
-    id: uuidv4(),
+    id: parentUuid1,
     isOpen: false,
     parent: "Documents (000)",
     itemKey: "documents",
     children: [
-      { id: uuidv4(), child: "To Be Signed (000)" },
-      { id: uuidv4(), child: "Rejected by others (000)" },
-      { id: uuidv4(), child: "To start Processing (000)" },
+      { id: uuidv4(), child: "To Be Signed (000)", href: `notifications-documents-${parentUuid1}`, type: "notification" },
+      { id: uuidv4(), child: "Rejected by others (000)", href: `notifications-documents-${parentUuid1}`, type: "notification" },
+      { id: uuidv4(), child: "To start Processing (000)", href: `notifications-documents-${parentUuid1}`, type: "notification" },
     ],
   },
   {
-    id: uuidv4(),
+    id: parentUuid2,
     isOpen: false,
     parent: "Templates (000)",
     itemKey: "templates",
     children: [
-      { id: uuidv4(), child: "To Be Approved (000)" },
-      { id: uuidv4(), child: "Rejected by others (000)" },
+      { id: uuidv4(), child: "To Be Approved (000)", href: `notifications-templates-${parentUuid2}`, type: "notification" },
+      { id: uuidv4(), child: "Rejected by others (000)", href: `notifications-templates-${parentUuid2}`, type: "notification" },
     ],
   },
   {
-    id: uuidv4(),
+    id: parentUuid3,
     isOpen: false,
     parent: "Workflows (000)",
     itemKey: "workflows",
     children: [
-      { id: uuidv4(), child: "To Be Signed (000)" },
-      { id: uuidv4(), child: "Rejected by others (000)" },
+      { id: uuidv4(), child: "To Be Signed (000)", href: `notifications-workflows-${parentUuid3}`, type: "notification" },
+      { id: uuidv4(), child: "Rejected by others (000)", href: `notifications-workflows-${parentUuid3}`, type: "notification" },
     ],
   },
 ];

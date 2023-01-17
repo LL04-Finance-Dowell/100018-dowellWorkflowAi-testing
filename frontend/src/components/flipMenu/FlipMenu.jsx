@@ -8,11 +8,36 @@ import { v4 as uuidv4 } from "uuid";
 import { useDispatch, useSelector } from "react-redux";
 import { setToggleManageFileForm } from "../../features/app/appSlice";
 import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
 
 const FlipMenu = () => {
+  const [ filpItemsToDisplay, setFlipItemsToDisplay ] = useState(flipItems);
+  const { notificationsForUser } = useSelector((state) => state.app);
+
+  useEffect(() => {
+
+    if (!notificationsForUser) return
+
+    const currentFlipItems = filpItemsToDisplay.slice();
+    const totalNotificationCount = notificationsForUser.reduce((a, b) => a + b.items.length, 0);
+    
+    const updatedFlipItems = currentFlipItems.map(item => {
+      if (item.role === "viewNotifications") {
+        if (totalNotificationCount < 10) item.text = `00${totalNotificationCount}`
+        if (totalNotificationCount >= 10) item.text = `0${totalNotificationCount}`
+        if (totalNotificationCount >= 100) item.text = `${totalNotificationCount}`
+        return item
+      }
+      return item
+    })
+
+    setFlipItemsToDisplay(updatedFlipItems);
+
+  }, [notificationsForUser])
+
   return (
     <div className={styles.container}>
-      {flipItems.map((item) => (
+      {filpItemsToDisplay.map((item) => (
         <div key={item.id} className={styles.flip__container}>
           <Flip
             Back={() => <FlipBack {...item} />}
@@ -45,13 +70,16 @@ export const FlipFront = (props) => {
 export const FlipBack = (props) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const {} = useSelector((state) => state.app);
+  const { notificationsForUser } = useSelector((state) => state.app);
 
   const handleClick = (role) => {
     if (role === "newDoc") {
       console.log("wwwwwwwwwwwwwwwwwwwwwwwwwww", role);
       navigate("/documents/#newDocument");
       dispatch(setToggleManageFileForm(true));
+    }
+    if (role === "viewNotifications") {
+      navigate("/", { state: { elementIdToScrollTo: `notifications-documents-${notificationsForUser[0].id}` }})
     }
   };
 
@@ -78,7 +106,7 @@ export const flipItems = [
     frontBg: "#1ABC9C",
     text: "000",
     buttonText: "view",
-    role: "",
+    role: "viewNotifications",
   },
   {
     id: uuidv4(),

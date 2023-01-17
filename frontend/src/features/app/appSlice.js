@@ -46,6 +46,7 @@ const initialState = {
   notificationsLoading: true,
   notificationFinalStatus: null,
   membersSetForProcess: false,
+  notificationsLoaded: false,
 };
 
 export const appSlice = createSlice({
@@ -178,6 +179,9 @@ export const appSlice = createSlice({
     setMembersSetForProcess: (state, action) => {
       state.membersSetForProcess = action.payload
     },
+    setNotificationsLoaded: (state, action) => {
+      state.notificationsLoaded = action.payload
+    },
   },
 });
 
@@ -203,6 +207,7 @@ export const {
   setNotificationsLoading,
   setNotificationFinalStatus,
   setMembersSetForProcess,
+  setNotificationsLoaded,
 } = appSlice.actions;
 
 export default appSlice.reducer;

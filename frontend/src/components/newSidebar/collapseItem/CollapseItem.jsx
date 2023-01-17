@@ -4,9 +4,11 @@ import Collapse from "../../../layouts/collapse/Collapse";
 import { HashLink } from "react-router-hash-link";
 import { IoMdArrowDropright } from "react-icons/io";
 import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 function ListItem({ item }) {
   let children = null;
+  const navigate = useNavigate();
 
   if (item.children && item.children.length) {
     console.log(item);
@@ -19,12 +21,25 @@ function ListItem({ item }) {
     );
   }
 
+  const handleLinkItemClick = (e, item) => {
+    e.preventDefault();
+
+    if (!item.href) return
+    
+    if (item.type === "notification") {
+      navigate("/", { state: { elementIdToScrollTo: item.href }})
+      return
+    }
+    navigate(item.href)
+  }
+
   return (
     <li key={item.id}>
       <li style={{ color: item.asParent && styles.as__parent }}>
         <HashLink
           className={styles.hash__link}
           to={item.href ? item.href : "#"}
+          onClick={(e) => handleLinkItemClick(e, item)}
         >
           {item.child}
         </HashLink>

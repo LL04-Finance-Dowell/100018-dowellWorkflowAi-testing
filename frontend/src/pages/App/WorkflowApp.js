@@ -14,20 +14,25 @@ import { DocumentServices } from "../../services/documentServices";
 import Spinner from "../../components/spinner/Spinner";
 import ProgressBar from "../../components/progressBar/ProgressBar";
 import { useLocation } from "react-router-dom";
-import { setNotificationFinalStatus, setNotificationsForUser, setNotificationsLoading } from "../../features/app/appSlice";
+import { setNotificationFinalStatus, setNotificationsForUser, setNotificationsLoaded, setNotificationsLoading } from "../../features/app/appSlice";
 
 const WorkflowApp = () => {
   const { userDetail } = useSelector(state => state.auth);
-  const { notificationsLoading, notificationsForUser, notificationFinalStatus } = useSelector(state => state.app);
+  const { notificationsLoading, notificationsForUser, notificationFinalStatus, notificationsLoaded } = useSelector(state => state.app);
   const documentServices = new DocumentServices();
   const dispatch = useDispatch();
+  const location = useLocation();
 
   useEffect(() => {
+    if (notificationsLoaded) return
+
     dispatch(setNotificationsLoading(true));
+
     if (!userDetail || !userDetail.portfolio_info || userDetail.portfolio_info.length < 1) {
       dispatch(setNotificationsLoading(false));
       return 
     }
+
     dispatch(setNotificationFinalStatus(null));
     documentServices.signDocument({ "company_id": userDetail?.portfolio_info[0]?.org_id, user_name: userDetail?.userinfo?.username }).then(res => {
       dispatch(setNotificationFinalStatus(100));
@@ -47,6 +52,7 @@ const WorkflowApp = () => {
       })
       dispatch(setNotificationsForUser(updatedNotifications));
       dispatch(setNotificationsLoading(false));
+      dispatch(setNotificationsLoaded(true));
     }).catch(err => {
       console.log("Failed: ", err.response)
       dispatch(setNotificationsLoading(false));
@@ -54,6 +60,18 @@ const WorkflowApp = () => {
     })
 
   }, [userDetail])
+
+  useEffect(() => {
+    if (!location.state || !location.state.elementIdToScrollTo) return
+    
+    const elementToScrollTo = document.getElementById(location.state.elementIdToScrollTo)
+    
+    if (elementToScrollTo) {
+      elementToScrollTo.scrollIntoView({
+        behavior: "smooth"
+      })
+    }
+  }, [location])
 
   return (
     <WorkflowLayout>
@@ -76,6 +94,7 @@ const WorkflowApp = () => {
                 title={`notifications - ${item.title}`}
                 cardItems={item.items}
                 cardBgColor={item.cardBgColor}
+                idKey={item.id ? item.id : null}
               />
             ))
           }
