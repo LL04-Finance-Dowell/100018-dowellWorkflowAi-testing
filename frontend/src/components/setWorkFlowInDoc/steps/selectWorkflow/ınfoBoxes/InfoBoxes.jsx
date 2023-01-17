@@ -67,7 +67,7 @@ const InfoBoxes = () => {
             userDetail?.selected_product?.userportfolio.filter(user => user.member_type === "team_member"),
             status: "done"
           } :
-          item.title === "guest" ? {
+          item.title === "user" ? {
             ...item,
             contents: userDetail?.selected_product?.userportfolio.filter(user => user.member_type === "public"),
             status: "done"
