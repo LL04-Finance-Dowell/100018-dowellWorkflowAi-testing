@@ -33,13 +33,13 @@ WF_CONNECTION_LIST = [
     "ABCDE",
 ]
 WF_AI_SETTING_LIST = [
-    "Documents"
+    "Documents",
     "bangalore",
-    "Documentation"
-    "WorkflowAiSettings"
-    "WorkflowAiSettings"
-    "1000180009"
-    "ABCDE"
+    "Documentation",
+    "WorkflowAiSettings",
+    "WorkflowAiSettings",
+    "1000180009",
+    "ABCDE",
 ]
 PROCESS_CONNECTION_LIST = [
     "Documents",
