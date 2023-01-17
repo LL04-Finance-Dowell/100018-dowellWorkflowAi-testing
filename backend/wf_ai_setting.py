@@ -45,4 +45,20 @@ def create_workflow_setting(request):  # Document Creation.
 
 @api_view(["POST"])
 def get_wf_ai_setting(request):
-    pass
+    if request.method == "POST":
+        form = request.data
+        if not form:
+            return Response(
+                {"message": "Workflow AI Setting ID required"},
+                status=status.HTTP_200_OK,
+            )
+        try:
+            return Response(
+            {"workflow_ai_setting":get_wf_setting_object(form["workflow_id"])},
+            status=status.HTTP_200_OK,
+            )
+        except:
+            return Response(
+        {"workflow_ai_setting":[],"message": "Failed to get response"},
+        status=status.HTTP_200_OK,
+    )
