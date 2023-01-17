@@ -5,7 +5,7 @@ import { GrAdd } from "react-icons/gr";
 import { MdOutlineRemove } from "react-icons/md";
 import { useScroll, useTransform } from "framer-motion";
 import { useSelector, useDispatch } from "react-redux";
-import { removeFromSelectedMembersForProcess, setSelectedMembersForProcess, setSelectedWorkflowsToDoc } from "../../../../../features/app/appSlice";
+import { removeFromSelectedMembersForProcess, setMembersSetForProcess, setSelectedMembersForProcess, setSelectedWorkflowsToDoc } from "../../../../../features/app/appSlice";
 import Collapse from "../../../../../layouts/collapse/Collapse";
 import { LoadingSpinner } from "../../../../LoadingSpinner/LoadingSpinner";
 import { useForm } from "react-hook-form";
@@ -27,7 +27,7 @@ const InfoBoxes = () => {
   const dispatch = useDispatch();
 
   const { userDetail } = useSelector((state) => state.auth);
-  const { currentDocToWfs, selectedWorkflowsToDoc, selectedMembersForProcess, docCurrentWorkflow } = useSelector(
+  const { currentDocToWfs, selectedWorkflowsToDoc, selectedMembersForProcess, docCurrentWorkflow, membersSetForProcess } = useSelector(
     (state) => state.app
   );
   const { savedWorkflowItems, savedWorkflowStatus } = useSelector(
@@ -83,6 +83,8 @@ const InfoBoxes = () => {
 
   useEffect(() => {
 
+    if (membersSetForProcess) return
+
     userDetail.selected_product?.userportfolio?.forEach(user => {
 
       if (Array.isArray(user.username) && user.username.length > 0) {
@@ -102,7 +104,9 @@ const InfoBoxes = () => {
 
     })
 
-  }, [userDetail, currentDocToWfs])
+    dispatch(setMembersSetForProcess(true));
+
+  }, [userDetail, currentDocToWfs, membersSetForProcess])
 
   const { scrollYProgress } = useScroll({
     target: ref,
@@ -172,7 +176,9 @@ const InfoBoxes = () => {
               />
 
               <InfoContentBox className={styles.content__box}>
-                {[...infoBox?.contents].reverse().map((item) => (
+                <>{console.log(infoBox)}</>
+                {infoBox && infoBox.contents && infoBox.contents.length > 0 ?
+                [...infoBox?.contents].reverse().map((item) => (
                   item.username ? 
 
                   Array.isArray(item.username) ?
@@ -180,7 +186,7 @@ const InfoBoxes = () => {
                     {
                       React.Children.toArray(item.username.map(user => {
                         return <InfoContentText
-                          key={user}
+                          key={user + crypto.randomUUID()}
                           /* className={styles.content} */
                         >
                           <span>
@@ -192,7 +198,7 @@ const InfoBoxes = () => {
                   </> :
 
                   <InfoContentText
-                    key={item.username}
+                    key={item.username + crypto.randomUUID()}
                     /* className={styles.content} */
                   >
                     <span>{item.username}</span>
@@ -210,7 +216,7 @@ const InfoBoxes = () => {
                       {item.workflows && item.workflows.workflow_title && item.workflows.workflow_title}
                     </span>
                   </InfoContentText>
-                ))}
+                )) : <></>}
               </InfoContentBox>
             </InfoContentContainer>
           </Collapse>

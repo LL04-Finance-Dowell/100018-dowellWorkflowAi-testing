@@ -45,6 +45,7 @@ const initialState = {
   ],
   notificationsLoading: true,
   notificationFinalStatus: null,
+  membersSetForProcess: false,
 };
 
 export const appSlice = createSlice({
@@ -118,6 +119,7 @@ export const appSlice = createSlice({
       state.selectedMembersForProcess = [];
       state.processSteps = [];
       state.tableOfContentForStep = [];
+      state.membersSetForProcess = false;
     },
     setProcessSteps: (state, action) => {
       state.processSteps = action.payload
@@ -173,6 +175,9 @@ export const appSlice = createSlice({
     setNotificationFinalStatus: (state, action) => {
       state.notificationFinalStatus = action.payload
     },
+    setMembersSetForProcess: (state, action) => {
+      state.membersSetForProcess = action.payload
+    },
   },
 });
 
@@ -197,6 +202,7 @@ export const {
   setNotificationsForUser,
   setNotificationsLoading,
   setNotificationFinalStatus,
+  setMembersSetForProcess,
 } = appSlice.actions;
 
 export default appSlice.reducer;
