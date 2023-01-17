@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
+import { AiOutlineCloseCircle, AiOutlineInfoCircle } from "react-icons/ai";
 import { useDispatch, useSelector } from "react-redux";
 import { removeFromTableOfContentForStep, setTableOfContentForStep } from "../../../features/app/appSlice";
 import styles from "./contents.module.css";
@@ -9,6 +10,7 @@ const Contents = ({ contents, toggleContent, feature, currentStepIndex, showChec
   const dispatch = useDispatch();
   const { docCurrentWorkflow, tableOfContentForStep } = useSelector((state) => state.app);
   const [ contentsPageWise, setContentsPageWise ] = useState([]);
+  const [ showContent, setShowContent ] = useState([]);
 
   /*  const handleAddContent = (content) => {
     console.log(content);
@@ -47,7 +49,19 @@ const Contents = ({ contents, toggleContent, feature, currentStepIndex, showChec
 
     setContentsPageWise(contentsGroupedByPageNum);
 
+    setShowContent(contents.map(content => {
+      return { show: false, id: content.id }
+    }))
+
   }, [contents])
+
+  const handleShowContent = (value, id) => {
+    const currentContents = showContent.slice();
+    const contentToUpdate = currentContents.find(content => content.id === id);
+    if (!contentToUpdate) return
+    contentToUpdate.show = value;
+    setShowContent(currentContents)
+  }
 
   return (
     <div
@@ -110,7 +124,16 @@ const Contents = ({ contents, toggleContent, feature, currentStepIndex, showChec
                 >
                   <span>
                     {/* { showCheckBoxForContent && <input type={"checkbox"} value={JSON.stringify(item)} onChange={handleCheckboxSelection} /> } */}
-                    <a style={tableOfContentForStep.find(step => step.workflow === docCurrentWorkflow._id && step._id === item._id && step.stepIndex === currentStepIndex) ? { backgroundColor: "#0048ff", color: "#fff", padding: "2% 30%", borderRadius: "5px", width: "100%" } : {}} onClick={() => handleContentSelection(item)}>{item.id}</a>
+                    { showContent.find(content => content.id === item.id)?.show ?
+                      <>
+                        <p>{item.data}</p> 
+                        <AiOutlineCloseCircle className="content__Icon" onClick={() => handleShowContent(false, item.id)} />
+                      </>:
+                      <>
+                        <a style={tableOfContentForStep.find(step => step.workflow === docCurrentWorkflow._id && step._id === item._id && step.stepIndex === currentStepIndex) ? { backgroundColor: "#0048ff", color: "#fff", padding: "2% 30%", borderRadius: "5px", width: "100%" } : {}} onClick={() => handleContentSelection(item)}>{item.id}</a>
+                        <AiOutlineInfoCircle  className="content__Icon" onClick={() => handleShowContent(true, item.id)} />
+                      </>
+                    }
                   </span>
                 </li>
               ))}

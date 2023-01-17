@@ -66,12 +66,12 @@ const WorkflowApp = () => {
               <Spinner />
               <div style={{ margin: "0 auto 0 1.5%", textAlign: "center" }}>
                 <p>Notifications loading...</p> 
-                <ProgressBar durationInMS={17000} finalWidth={notificationFinalStatus} />
+                <ProgressBar durationInMS={20000} finalWidth={notificationFinalStatus} />
               </div>
             </div> :
             notificationsForUser.map((item) => (
               <SectionBox
-                key={item.id}
+                key={item._id}
                 Card={item.card}
                 title={`notifications - ${item.title}`}
                 cardItems={item.items}

@@ -33,7 +33,7 @@ const InfoBoxes = () => {
   const { savedWorkflowItems, savedWorkflowStatus } = useSelector(
     (state) => state.workflow
   );
-  const { contentOfDocument } = useSelector(state => state.document);
+  const { contentOfDocument, savedDocumentsItems } = useSelector(state => state.document);
   const [compInfoBoxes, setCompInfoBoxes] = useState(infoBoxes);
 
   useEffect(() => {
@@ -102,7 +102,7 @@ const InfoBoxes = () => {
 
     })
 
-  }, [userDetail, currentDocToWfs, docCurrentWorkflow])
+  }, [userDetail, currentDocToWfs])
 
   const { scrollYProgress } = useScroll({
     target: ref,
@@ -242,7 +242,7 @@ export const infoBoxes = [
   },
   {
     id: uuidv4(),
-    title: "guest",
+    title: "user",
     contents: [
       /*   { _id: uuidv4(), content: "guest 1" },
       { _id: uuidv4(), content: "guest 1" },

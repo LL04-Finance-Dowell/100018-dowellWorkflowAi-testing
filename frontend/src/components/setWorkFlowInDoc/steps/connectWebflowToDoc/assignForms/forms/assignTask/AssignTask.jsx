@@ -62,9 +62,9 @@ const AssignTask = ({ currentStepIndex, stepSkipped }) => {
 
     if (watchRoleValChange === "TEAM_MEMBER") membersMatchingCriteria = selectedMembersForProcess.filter(user => user.member_type === "team_member");
 
-    if (watchRoleValChange === "GUEST") membersMatchingCriteria = selectedMembersForProcess.filter(user => user.member_type === "public");
+    if (watchRoleValChange === "GUEST") membersMatchingCriteria = selectedMembersForProcess.filter(user => user.member_type === "to-be-decided");
     
-    if (watchRoleValChange === "PUBLIC") membersMatchingCriteria = selectedMembersForProcess.filter(user => user.member_type === "to-be-decided");
+    if (watchRoleValChange === "PUBLIC") membersMatchingCriteria = selectedMembersForProcess.filter(user => user.member_type === "public");
 
     foundMembers = membersMatchingCriteria.map(user => {
       return {
