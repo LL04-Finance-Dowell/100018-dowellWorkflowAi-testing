@@ -87,6 +87,7 @@ def template_detail(request):
             "_id": request.data["template_id"],
             "field": "template_name",
             "action": "template",
+            "flag": "editing",
             "command": "update",
             "update_field": {"template_name": "", "content": "", "page": ""},
         },
