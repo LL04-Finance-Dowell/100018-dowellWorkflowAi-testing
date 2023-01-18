@@ -44,6 +44,7 @@ def create_template(request):
                 "team_member_ID": "22689044433",
                 "function_ID": "ABCDE",
                 "command": "update",
+                "flag": "editing",
                 "update_field": {"template_name": "", "content": "", "page": ""},
             },
         }
