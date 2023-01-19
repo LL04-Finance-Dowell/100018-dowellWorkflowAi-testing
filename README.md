@@ -900,3 +900,104 @@ Response-200
                 }
 }
 ```
+
+_POST_ `workflow_ai_setting/`
+
+Request Body
+
+```
+{
+    "company_id": "id of company",
+    "owner_name": "owner name",
+    "username": "user name",
+    "portfolio_name": "the portfolio name",
+    "proccess":[{'list of processes'}]
+}
+```
+
+Response-200
+
+```
+{
+    
+    "workflow_setting": {
+        "_id": "created wf_setting id",
+        "eventId": "event id",
+        "company_id": "company id",
+        "owner_name": "owner name",
+        "username": "username",
+        "version": "New 1.3.0",
+        "portfolio_name": "portfolio name",
+        "process":[{'list of processes'}]
+
+                }
+}
+```
+_POST_ `get_WFAI_setting/`
+
+Request Body
+
+```
+{
+    "wf_setting_id":" id of wf_setting_id",
+    "company_id": "id of company",
+    "owner_name": "owner name",
+    "username": "user name",
+    "portfolio_name": "the portfolio name",
+}
+```
+
+Response-200
+
+```
+{
+    
+    "workflow_setting": {
+        "_id": "wf_setting id",
+        "eventId": "event id",
+        "company_id": "company id",
+        "owner_name": "owner name",
+        "username": "username",
+        "version": "New 1.3.0",
+        "portfolio_name": "portfolio name",
+        "process":[{'list of processes'}]
+
+                }
+}
+```
+_POST_ `update_WFAI_setting/`
+
+Request Body
+
+```
+{
+    "wf_setting_id":" id of wf_setting_id",
+    "company_id": "id of company",
+    "owner_name": "owner name",
+    "username": "user name",
+    "portfolio_name": "the portfolio name",
+    "proccess":[{'list of processes'}]
+
+
+}
+```
+
+Response-200
+
+```
+{
+    
+    "workflow_setting": {
+        "_id": "wf_setting id",
+        "eventId": "event id",
+        "company_id": "company id",
+        "owner_name": "owner name",
+        "username": "username",
+        "version": "Latest version",
+        "portfolio_name": "portfolio name",
+        "proccess":[{'list of processes'}]
+
+                }
+}
+```
+

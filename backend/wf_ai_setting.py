@@ -53,12 +53,12 @@ def create_workflow_setting(request):  # Document Creation.
             if wf_set["isSuccess"]:
                 try:
                     return Response(
-                        {"workflow setting":get_wf_setting_object(wf_set["inserted_id"]),},
+                        {"workflow_setting":get_wf_setting_object(wf_set["inserted_id"]),},
                         status=status.HTTP_201_CREATED,
                         )
                 except:
                     return Response(
-                        {"workflow setting":[],"message": "Failed to Save Workflow setting data"},
+                        {"workflow_setting":[],"message": "Failed to Save Workflow setting data"},
                         status=status.HTTP_200_OK,
                         )
             
