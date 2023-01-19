@@ -665,6 +665,7 @@ def update_document(document_id, workflow_process_id):
     print("DOCUMENT UPDATED------------ \n")
     return response.text
 
+
 def save_wf_setting(company_id, owner_name, version,username,portfolio_name,process):
     url = "http://100002.pythonanywhere.com/"
     event_id = get_event_id()
@@ -694,6 +695,8 @@ def save_wf_setting(company_id, owner_name, version,username,portfolio_name,proc
     response = requests.request("POST", url, headers=headers, data=payload)
     print("SAVED WORKFLOW_AI--------------- \n")
     return response.text
+
+#Get WF Setting Data
 def get_wf_setting_object(wf_setting_id):
     fields = {"_id": wf_setting_id}
     response_obj = dowellconnection(*WF_AI_SETTING_LIST, "find", fields, "nil")
@@ -703,6 +706,44 @@ def get_wf_setting_object(wf_setting_id):
         return res_obj["data"]
     except:
         return []
+def get_WFAI_setting_list(company_id):
+    fields = {"company_id": str(company_id)}
+    response_obj = dowellconnection(*WF_AI_SETTING_LIST, "fetch", fields, "nil")
+    res_obj = json.loads(response_obj)
+    if len(res_obj["data"]):
+        return res_obj["data"]
+    else:
+        return []
+# print(get_wf_setting_object('63c653b8c8151e89df92846b'))
+def wf_setting_update(wf_setting_id, wf_ai_data):
+    url = "http://100002.pythonanywhere.com/"
+    dd = datetime.now()
+    time = dd.strftime("%d:%m:%Y,%H:%M:%S")
+    payload = json.dumps(
+        {
+            **WF_AI_SETTING_DICT,
+            "command": "update",
+            "field": {
+                "_id": wf_setting_id,
+            },
+            "update_field": {
+                "eventId": get_event_id(),
+                "company_id": wf_ai_data['company_id'],
+                "owner_name": wf_ai_data['owner_name'],
+                "username": wf_ai_data['username'],
+                "version":wf_ai_data['version'],
+                "portfolio_name":wf_ai_data['portfolio_name'],
+                "process":wf_ai_data['process'],
+                "created_on": time,
+                
+            },
+            "platform": "bangalore",
+        }
+    )
+    headers = {"Content-Type": "application/json"}
+    response = requests.request("POST", url, headers=headers, data=payload)
+    print("Update WORKFLOW Setting Version--------------- \n")
+    return response.text
 def get_document_object(document_id):
     fields = {"_id": document_id}
     response_obj = dowellconnection(*DOCUMENT_CONNECTION_LIST, "find", fields, "nil")
