@@ -3,6 +3,11 @@ import { v4 as uuidv4 } from "uuid";
 import TemplateCard from "../../components/hoverCard/templateCard/TemplateCard";
 import DocumnetCard from "../../components/hoverCard/documentCard/DocumentCard";
 import WorkflowCard from "../../components/hoverCard/workflowCard/WorkflowCard";
+import {
+  processesInWorkflowAIArray,
+  permissionArray,
+  teamsInWorkflowAI,
+} from "../../components/workflowAiSettings/veriables";
 
 const initialState = {
   toggleManageFileForm: false,
@@ -48,6 +53,13 @@ const initialState = {
   notificationsLoaded: false,
   continents: [],
   continentsLoaded: false,
+  themeColor: "#61CE70",
+  settingProccess: processesInWorkflowAIArray,
+  updateProccess: processesInWorkflowAIArray,
+  permissionArray,
+  teamsInWorkflowAI,
+  column: [],
+  proccess: [],
 };
 
 export const appSlice = createSlice({
@@ -124,13 +136,13 @@ export const appSlice = createSlice({
       state.membersSetForProcess = false;
     },
     setProcessSteps: (state, action) => {
-      state.processSteps = action.payload
+      state.processSteps = action.payload;
     },
     setSelectedMembersForProcess: (state, action) => {
       state.selectedMembersForProcess = [
         ...state.selectedMembersForProcess,
         action.payload,
-      ]
+      ];
     },
     removeFromSelectedMembersForProcess: (state, action) => {
       state.selectedMembersForProcess = state.selectedMembersForProcess.filter(
@@ -138,30 +150,37 @@ export const appSlice = createSlice({
       );
     },
     updateSingleProcessStep: (state, action) => {
-      const currentProcessSteps = [ ...state.processSteps ];
+      const currentProcessSteps = [...state.processSteps];
 
-      if (!action.payload.workflow) return state.processSteps = currentProcessSteps;
-      
-      const foundStepIndex = currentProcessSteps.findIndex(step => step.workflow === action.payload.workflow);
-      
-      if (foundStepIndex === -1) return state.processSteps = currentProcessSteps;
-      
+      if (!action.payload.workflow)
+        return (state.processSteps = currentProcessSteps);
+
+      const foundStepIndex = currentProcessSteps.findIndex(
+        (step) => step.workflow === action.payload.workflow
+      );
+
+      if (foundStepIndex === -1)
+        return (state.processSteps = currentProcessSteps);
+
       const currentStepToUpdate = currentProcessSteps[foundStepIndex];
-      const updatedStepObj = { ...currentStepToUpdate.steps[action.payload.indexToUpdate], ...action.payload };
-      
+      const updatedStepObj = {
+        ...currentStepToUpdate.steps[action.payload.indexToUpdate],
+        ...action.payload,
+      };
+
       delete updatedStepObj.indexToUpdate;
       delete updatedStepObj.workflow;
       delete updatedStepObj.toggleContent;
-      
+
       currentStepToUpdate.steps[action.payload.indexToUpdate] = updatedStepObj;
-      
+
       state.processSteps = currentProcessSteps;
     },
     setTableOfContentForStep: (state, action) => {
       state.tableOfContentForStep = [
         ...state.tableOfContentForStep,
         action.payload,
-      ]
+      ];
     },
     removeFromTableOfContentForStep: (state, action) => {
       state.tableOfContentForStep = state.tableOfContentForStep.filter(
@@ -169,26 +188,64 @@ export const appSlice = createSlice({
       );
     },
     setNotificationsForUser: (state, action) => {
-      state.notificationsForUser = action.payload
+      state.notificationsForUser = action.payload;
     },
     setNotificationsLoading: (state, action) => {
-      state.notificationsLoading = action.payload
+      state.notificationsLoading = action.payload;
     },
     setNotificationFinalStatus: (state, action) => {
-      state.notificationFinalStatus = action.payload
+      state.notificationFinalStatus = action.payload;
     },
     setMembersSetForProcess: (state, action) => {
-      state.membersSetForProcess = action.payload
+      state.membersSetForProcess = action.payload;
     },
     setNotificationsLoaded: (state, action) => {
-      state.notificationsLoaded = action.payload
+      state.notificationsLoaded = action.payload;
     },
     setContinents: (state, action) => {
-      state.continents = action.payload
+      state.continents = action.payload;
     },
     setContinentsLoaded: (state, action) => {
-      state.continentsLoaded = action.payload
-    }
+      state.continentsLoaded = action.payload;
+    },
+    setThemeColor: (state, action) => {
+      state.themeColor = action.payload;
+    },
+    setSettingProccess: (state, action) => {
+      state.settingProccess = state.settingProccess.map((item) => ({
+        ...item,
+        children:
+          item.children.length === 3
+            ? [...item.children, action.payload]
+            : item.children.map((child, index) =>
+                index === 3 ? action.payload : child
+              ),
+      }));
+    },
+    setUpdateProccess: (state, action) => {
+      state.settingProccess = state.settingProccess.map((item) => ({
+        ...item,
+        children: action.payload,
+      }));
+    },
+    setColumn: (state, action) => {
+      state.column = action.payload;
+    },
+    setProccess: (state, action) => {
+      state.proccess = action.payload;
+    },
+    setPermissionArray: (state, action) => {
+      state.permissionArray = state.permissionArray.map((item) => ({
+        ...item,
+        children: action.payload,
+      }));
+    },
+    setTeamsInWorkflowAI: (state, action) => {
+      state.teamsInWorkflowAI = state.teamsInWorkflowAI.map((item) => ({
+        ...item,
+        children: action.payload,
+      }));
+    },
   },
 });
 
@@ -217,6 +274,13 @@ export const {
   setNotificationsLoaded,
   setContinents,
   setContinentsLoaded,
+  setThemeColor,
+  setSettingProccess,
+  setColumn,
+  setProccess,
+  setUpdateProccess,
+  setPermissionArray,
+  setTeamsInWorkflowAI,
 } = appSlice.actions;
 
 export default appSlice.reducer;

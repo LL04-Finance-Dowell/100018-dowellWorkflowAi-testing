@@ -3,12 +3,14 @@
   display: flex;
   align-items: center;
   flex-direction: column;
+  gap: 50px;
 }
 
 .box {
   display: flex;
   flex-direction: column;
   width: min(100%, 1140px);
+  gap: 15px;
 }
 
 .section__container {
@@ -26,6 +28,7 @@
   width: 100%;
   display: flex;
   flex-direction: column;
+  gap: 20px;
 }
 
 .title {
@@ -42,4 +45,32 @@
 .title__m {
   font-size: 19px;
   line-height: 19px;
+}
+
+.submit__button {
+  background-color: var(--e-global-color-accent);
+  cursor: pointer;
+  font-size: 15px;
+  text-transform: capitalize;
+  text-decoration: underline;
+  color: #fff;
+  padding: 12px 24px;
+  font-weight: 500;
+}
+
+.form__cont {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+}
+
+.container form button {
+  margin-top: 20px;
+}
+
+.bottom__line {
+  width: 100%;
+  height: 1px;
+  background-color: black;
 }

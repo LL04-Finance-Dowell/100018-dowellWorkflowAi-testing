@@ -14,95 +14,132 @@ import { DocumentServices } from "../../services/documentServices";
 import Spinner from "../../components/spinner/Spinner";
 import ProgressBar from "../../components/progressBar/ProgressBar";
 import { useLocation } from "react-router-dom";
-import { setNotificationFinalStatus, setNotificationsForUser, setNotificationsLoaded, setNotificationsLoading } from "../../features/app/appSlice";
+import {
+  setNotificationFinalStatus,
+  setNotificationsForUser,
+  setNotificationsLoaded,
+  setNotificationsLoading,
+} from "../../features/app/appSlice";
 
 const WorkflowApp = () => {
-  const { userDetail } = useSelector(state => state.auth);
-  const { notificationsLoading, notificationsForUser, notificationFinalStatus, notificationsLoaded } = useSelector(state => state.app);
+  const { userDetail } = useSelector((state) => state.auth);
+  const {
+    notificationsLoading,
+    notificationsForUser,
+    notificationFinalStatus,
+    notificationsLoaded,
+  } = useSelector((state) => state.app);
   const documentServices = new DocumentServices();
   const dispatch = useDispatch();
   const location = useLocation();
+  const [isVisible, setVisible] = useState(false);
 
   useEffect(() => {
-    if (notificationsLoaded) return
+    if (notificationsLoaded) return;
 
     dispatch(setNotificationsLoading(true));
 
-    if (!userDetail || !userDetail.portfolio_info || userDetail.portfolio_info.length < 1) {
+    if (
+      !userDetail ||
+      !userDetail.portfolio_info ||
+      userDetail.portfolio_info.length < 1
+    ) {
       dispatch(setNotificationsLoading(false));
-      return 
+      return;
     }
 
     dispatch(setNotificationFinalStatus(null));
-    documentServices.signDocument({ "company_id": userDetail?.portfolio_info[0]?.org_id, user_name: userDetail?.userinfo?.username }).then(res => {
-      dispatch(setNotificationFinalStatus(100));
-      const currentNotifications = notificationsForUser.slice();
-      let updatedNotifications = currentNotifications.map(notification => {
-        const data = res.data.map(dataObj => {
-          let copyOfDataObj = { ...dataObj };
-          copyOfDataObj.type = "sign-document";
-          return copyOfDataObj
-        })
-        const copyOfNotification = {...notification}
-        if (copyOfNotification.title === "documents") {
-          copyOfNotification.items = data;
-          return copyOfNotification
-        }
-        return notification
+    documentServices
+      .signDocument({
+        company_id: userDetail?.portfolio_info[0]?.org_id,
+        user_name: userDetail?.userinfo?.username,
       })
-      dispatch(setNotificationsForUser(updatedNotifications));
-      dispatch(setNotificationsLoading(false));
-      dispatch(setNotificationsLoaded(true));
-    }).catch(err => {
-      console.log("Failed: ", err.response)
-      dispatch(setNotificationsLoading(false));
-      console.log("did not fetch documentsss");
-    })
-
-  }, [userDetail])
+      .then((res) => {
+        dispatch(setNotificationFinalStatus(100));
+        const currentNotifications = notificationsForUser.slice();
+        let updatedNotifications = currentNotifications.map((notification) => {
+          const data = res.data.map((dataObj) => {
+            let copyOfDataObj = { ...dataObj };
+            copyOfDataObj.type = "sign-document";
+            return copyOfDataObj;
+          });
+          const copyOfNotification = { ...notification };
+          if (copyOfNotification.title === "documents") {
+            copyOfNotification.items = data;
+            return copyOfNotification;
+          }
+          return notification;
+        });
+        dispatch(setNotificationsForUser(updatedNotifications));
+        dispatch(setNotificationsLoading(false));
+        dispatch(setNotificationsLoaded(true));
+      })
+      .catch((err) => {
+        console.log("Failed: ", err.response);
+        dispatch(setNotificationsLoading(false));
+        console.log("did not fetch documentsss");
+      });
+  }, [userDetail]);
 
   useEffect(() => {
-    if (!location.state || !location.state.elementIdToScrollTo) return
-    
-    const elementToScrollTo = document.getElementById(location.state.elementIdToScrollTo)
-    
+    if (!location.state || !location.state.elementIdToScrollTo) return;
+
+    const elementToScrollTo = document.getElementById(
+      location.state.elementIdToScrollTo
+    );
+
     if (elementToScrollTo) {
       elementToScrollTo.scrollIntoView({
-        behavior: "smooth"
-      })
+        behavior: "smooth",
+      });
     }
-  }, [location])
+  }, [location]);
+
+  useEffect(() => {
+    if (location.hash) {
+      setVisible(true);
+    } else {
+      setVisible(false);
+    }
+  }, [location]);
 
   return (
     <WorkflowLayout>
       <div className={styles.container}>
         <CustomerSupport />
         <FlipMenu />
-        <div className={styles.section__container}>
-          {
-            notificationsLoading ? <div>
-              <Spinner />
-              <div style={{ margin: "0 auto 0 1.5%", textAlign: "center" }}>
-                <p>Notifications loading...</p> 
-                <ProgressBar durationInMS={20000} finalWidth={notificationFinalStatus} />
+        {isVisible && (
+          <div className={styles.section__container}>
+            {notificationsLoading ? (
+              <div>
+                <Spinner />
+                <div style={{ margin: "0 auto 0 1.5%", textAlign: "center" }}>
+                  <p>Notifications loading...</p>
+                  <ProgressBar
+                    durationInMS={20000}
+                    finalWidth={notificationFinalStatus}
+                  />
+                </div>
               </div>
-            </div> :
-            notificationsForUser.map((item) => (
-              <SectionBox
-                key={item._id}
-                Card={item.card}
-                title={`notifications - ${item.title}`}
-                cardItems={item.items}
-                cardBgColor={item.cardBgColor}
-                idKey={item.id ? item.id : null}
-              />
-            ))
-          }
-          <div className={styles.tasks__container}>
-            <HandleTasks feature="incomplete" tasks={incompleteTasks} />
-            <HandleTasks feature="completed" tasks={completedTasks} />
+            ) : (
+              notificationsForUser.map((item) => (
+                <div key={item._id} id={item.title}>
+                  <SectionBox
+                    Card={item.card}
+                    title={`notifications - ${item.title}`}
+                    cardItems={item.items}
+                    cardBgColor={item.cardBgColor}
+                    idKey={item.id ? item.id : null}
+                  />
+                </div>
+              ))
+            )}
+            <div className={styles.tasks__container}>
+              <HandleTasks feature="incomplete" tasks={incompleteTasks} />
+              <HandleTasks feature="completed" tasks={completedTasks} />
+            </div>
           </div>
-        </div>
+        )}
       </div>
     </WorkflowLayout>
   );

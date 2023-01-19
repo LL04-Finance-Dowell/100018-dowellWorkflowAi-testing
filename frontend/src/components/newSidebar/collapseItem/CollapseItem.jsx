@@ -24,22 +24,22 @@ function ListItem({ item }) {
   const handleLinkItemClick = (e, item) => {
     e.preventDefault();
 
-    if (!item.href) return
-    
+    if (!item.href) return;
+
     if (item.type === "notification") {
-      navigate("/", { state: { elementIdToScrollTo: item.href }})
-      return
+      navigate("/", { state: { elementIdToScrollTo: item.href } });
+      return;
     }
-    navigate(item.href)
-  }
+    navigate(item.href);
+  };
 
   return (
-    <li key={item.id}>
+    <div key={item.id}>
       <li style={{ color: item.asParent && styles.as__parent }}>
         <HashLink
           className={styles.hash__link}
           to={item.href ? item.href : "#"}
-          onClick={(e) => handleLinkItemClick(e, item)}
+          /*  onClick={(e) => handleLinkItemClick(e, item)} */
         >
           {item.child}
         </HashLink>
@@ -47,7 +47,7 @@ function ListItem({ item }) {
       <HashLink className={styles.hash__link} to={item.href ? item.href : "#"}>
         {children}
       </HashLink>
-    </li>
+    </div>
   );
 }
 
@@ -69,7 +69,8 @@ const CollapseItem = ({ items, listType }) => {
     <div className={styles.container}>
       {menuItems.map((item) => (
         <>
-          <div
+          <HashLink
+            to={item.href && item.href}
             key={item.id}
             className={`${styles.parent__item__box} ${
               item.isOpen && styles.active
@@ -85,7 +86,7 @@ const CollapseItem = ({ items, listType }) => {
                 ? `(${item.count})`
                 : `(${item.count?.toString().padStart(3, "0")})`
               : ""}
-          </div>
+          </HashLink>
           <div className={styles.children__item__container}>
             <Collapse open={item.isOpen}>
               <div className={styles.children__item__box}>
