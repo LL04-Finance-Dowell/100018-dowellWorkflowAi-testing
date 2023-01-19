@@ -941,10 +941,7 @@ Request Body
 ```
 {
     "wf_setting_id":" id of wf_setting_id",
-    "company_id": "id of company",
-    "owner_name": "owner name",
-    "username": "user name",
-    "portfolio_name": "the portfolio name",
+    "company_id": "id of company"
 }
 ```
 
