@@ -2,7 +2,6 @@ import json
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
-import dpath
 
 from .mongo_db_connection import save_wf_setting,get_wf_setting_object,wf_setting_update
 

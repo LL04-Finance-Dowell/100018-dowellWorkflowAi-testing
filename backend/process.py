@@ -145,6 +145,7 @@ def generate_link(document_id, doc_map, doc_rights):
             "team_member_ID": "11689044433",
             "function_ID": "ABCDE",
             "command": "update",
+            "flag": "signing",
             "document_map": doc_map,
             "document_right": doc_rights,
             "update_field": {"document_name": "", "content": "", "page": ""},

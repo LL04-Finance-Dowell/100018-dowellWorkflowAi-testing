@@ -57,6 +57,7 @@ def create_document(request):  # Document Creation.
                             "team_member_ID": "11689044433",
                             "function_ID": "ABCDE",
                             "command": "update",
+                            "flag": "editing",
                             "update_field": {
                                 "document_name": "",
                                 "content": "",
@@ -136,6 +137,7 @@ def document_detail(request):  # Single document
                     "_id": document_id,
                     "field": "document_name",
                     "action": "document",
+                    "flag": "editing",
                     "command": "update",
                     "update_field": {"content": "", "document_name": "", "page": ""},
                 },
@@ -164,13 +166,6 @@ def document_detail(request):  # Single document
 @api_view(["POST"])
 def documents_to_be_signed(request):  # List of `to be signed` documents.
     try:
-        # documents =
-        # filtered_documents = [
-        #     d
-        #     for d in documents
-        #     if d.get("company_id") == request.data["company_id"]
-        #     and check_allowed( d.get("workflow_process"), request.data["user_name"])
-        # ]
         filtered_documents = []
         for d in get_document_list(request.data["company_id"]):
             if "workflow_process" in d:
