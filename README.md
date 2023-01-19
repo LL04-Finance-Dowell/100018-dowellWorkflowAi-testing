@@ -993,7 +993,7 @@ Response-200
         "username": "username",
         "version": "Latest version",
         "portfolio_name": "portfolio name",
-        "proccess":[{'list of processes'}]
+        "process":[{'list of processes'}]
 
                 }
 }
