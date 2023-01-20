@@ -12,14 +12,15 @@ def versioning(version):
         version=version.removeprefix("Latest ")
     return version
 def version_control(version):
-    status=version.split(" ")[0]
-    version=version.split(" ")[-1].split(".")
-    
-    if version[1] != '9':
-        version[1] = str(int(version[1])+1)
-    
-    elif version[1] == '9' and version[-1] != '9':
-        version[-1]=str(int(version[-1])+1)
+    version=version.split(".")
+    if version[-1] != '9':
+        version[-1] = str(int(version[-1])+1)
+    elif version[1] != '9':
+        version[-1]="0"
+        version[1]=str(int(version[1])+1)
+    elif version[-1] == '9' and version[1] != '9':
+        version[-1]="0"
+        version[1]=str(int(version[1])+1)
         
     elif version[1]=='9' and version[-1]=='9':
         version[0]=str(int(version[0])+1)
@@ -28,7 +29,7 @@ def version_control(version):
     
     else:
         version[0]=str(int(version[0])+1)
-    latest= "Latest "+".".join(version)
+    latest= ".".join(version)
     return latest
 @api_view(["POST"])
 def create_workflow_setting(request):  # Document Creation.
@@ -43,12 +44,16 @@ def create_workflow_setting(request):  # Document Creation.
             
             company_id= form["company_id"]
             owner_name=form["owner_name"]
-            version="New 1.0.0"
+            
             username= form["username"]
             portfolio_name=form["portfolio_name"]
-            process=form["proccess"]
-
-            wf_set=json.loads(save_wf_setting(company_id,owner_name,version,username,portfolio_name,process))
+            processes=[{
+                "version":"1.0.0",
+                "flag":"enable",
+                "process":form["proccess"]
+                }
+            ]
+            wf_set=json.loads(save_wf_setting(company_id,owner_name,username,portfolio_name,processes))
     
             if wf_set["isSuccess"]:
                 try:
@@ -98,19 +103,16 @@ def update_WFAI_setting(request):  # Document Creation.
         else:
             old_wf_setting=get_wf_setting_object(form["wf_setting_id"])
             # print(old_wf_setting)
-            arch_wf=json.loads(save_wf_setting(old_wf_setting['company_id'], 
-                                                old_wf_setting['owner_name'], 
-                                                versioning(old_wf_setting['version']),
-                                                old_wf_setting['username'],
-                                                old_wf_setting['portfolio_name'],
-                                                old_wf_setting['process']))
-
-            old_wf_setting['process']=form["proccess"]
-            old_wf_setting['version']= version_control(old_wf_setting['version'])
-            
+            version= version_control(old_wf_setting['processes'][-1]['version'])
+            old_wf_setting['processes'][-1]['flag']='disable'
             
 
-            
+            old_wf_setting['processes'].append({
+                "version":version,
+                "flag":"enable",
+                "process":form["proccess"]
+                }
+            )
             updt_wf = json.loads(wf_setting_update(form["wf_setting_id"],old_wf_setting)
                                                     )
             
