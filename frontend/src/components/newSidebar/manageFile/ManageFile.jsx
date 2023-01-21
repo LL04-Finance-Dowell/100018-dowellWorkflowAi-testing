@@ -61,6 +61,11 @@ const ManageFile = () => {
                   ? savedWorkflowItems?.length
                   : "000",
             }
+          : item.parent.includes("Processes")
+          ? {
+              ...item,
+              count: "000",
+            }
           : item
       )
     );
@@ -119,6 +124,24 @@ export const manageFileItems = [
         id: uuidv4(),
         child: "Waiting to Process",
         href: "/workflows/set-workflow",
+      },
+    ],
+  },
+  {
+    id: uuidv4(),
+    parent: "Processes",
+    children: [
+      { id: uuidv4(), child: "New Processes", href: "/workflows/set-workflow" },
+      { id: uuidv4(), child: "Drafts", href: "/processes/#drafts" },
+      {
+        id: uuidv4(),
+        child: "saved processes",
+        href: "/processes/#saved-processes",
+      },
+      {
+        id: uuidv4(),
+        child: "Waiting to Process",
+        href: "/processes/",
       },
     ],
   },

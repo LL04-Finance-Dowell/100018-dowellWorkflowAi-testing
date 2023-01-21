@@ -29,6 +29,7 @@ import DraftF from "./pages/Workflows/DraftF/DraftF";
 import { dowellLoginUrl } from "./httpCommon/httpCommon";
 import WorkflowAiSettings from "./components/workflowAiSettings/WorkflowAiSettings";
 import VerificationPage from "./pages/Verification/VerificationPage";
+import ProccessPage from "./pages/Processes/AllProccessPage/ProcessesPage";
 
 function App() {
   useDowellLogin();
@@ -56,6 +57,9 @@ function App() {
         {/*  <Route path={"new"} element={<CreateNewWorkflowPage />} />
         <Route path={"to-approve"} element={<ApproveWorkflowPage />} />
         <Route path={"rejected"} element={<RejectedWorkflowsPage />} /> */}
+      </Route>
+      <Route path={"processes"}>
+        <Route index element={<ProccessPage />} />
       </Route>
       <Route path={"/notifications"} element={<NotificationsPage />} />
       {/* <Route path="/Documents/Documents/Documents" element={<Documents />} />

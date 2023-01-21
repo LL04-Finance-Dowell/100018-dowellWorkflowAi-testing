@@ -7,10 +7,12 @@ import {
   setCurrentWorkflow,
   setToggleManageFileForm,
 } from "../../features/app/appSlice";
+import { useNavigate } from "react-router-dom";
 
 const ManageFiles = ({ title, children, OverlayComp }) => {
-  const { userDetail } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const { userDetail } = useSelector((state) => state.auth);
   const { toggleManageFileForm } = useSelector((state) => state.app);
 
   const handleToggleOverlay = () => {
@@ -18,12 +20,17 @@ const ManageFiles = ({ title, children, OverlayComp }) => {
       dispatch(setToggleManageFileForm(!toggleManageFileForm));
       dispatch(setCurrentWorkflow(null));
     } else {
-      const data = {
-        created_by: userDetail?.userinfo.username,
-        company_id: userDetail?.portfolio_info[0].org_id,
-        data_type: userDetail?.portfolio_info[0].data_type,
-      };
-      dispatch(createTemplate(data));
+      if (title.toLowerCase() === "template") {
+        const data = {
+          created_by: userDetail?.userinfo.username,
+          company_id: userDetail?.portfolio_info[0].org_id,
+          data_type: userDetail?.portfolio_info[0].data_type,
+        };
+        dispatch(createTemplate(data));
+      }
+      if (title.toLowerCase() === "proccess") {
+        navigate("/workflows/set-workflow");
+      }
     }
   };
 

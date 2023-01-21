@@ -11,29 +11,33 @@ import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 
 const FlipMenu = () => {
-  const [ filpItemsToDisplay, setFlipItemsToDisplay ] = useState(flipItems);
+  const [filpItemsToDisplay, setFlipItemsToDisplay] = useState(flipItems);
   const { notificationsForUser } = useSelector((state) => state.app);
 
   useEffect(() => {
-
-    if (!notificationsForUser) return
+    if (!notificationsForUser) return;
 
     const currentFlipItems = filpItemsToDisplay.slice();
-    const totalNotificationCount = notificationsForUser.reduce((a, b) => a + b.items.length, 0);
-    
-    const updatedFlipItems = currentFlipItems.map(item => {
+    const totalNotificationCount = notificationsForUser.reduce(
+      (a, b) => a + b.items.length,
+      0
+    );
+
+    const updatedFlipItems = currentFlipItems.map((item) => {
       if (item.role === "viewNotifications") {
-        if (totalNotificationCount < 10) item.text = `00${totalNotificationCount}`
-        if (totalNotificationCount >= 10) item.text = `0${totalNotificationCount}`
-        if (totalNotificationCount >= 100) item.text = `${totalNotificationCount}`
-        return item
+        if (totalNotificationCount < 10)
+          item.text = `00${totalNotificationCount}`;
+        if (totalNotificationCount >= 10)
+          item.text = `0${totalNotificationCount}`;
+        if (totalNotificationCount >= 100)
+          item.text = `${totalNotificationCount}`;
+        return item;
       }
-      return item
-    })
+      return item;
+    });
 
     setFlipItemsToDisplay(updatedFlipItems);
-
-  }, [notificationsForUser])
+  }, [notificationsForUser]);
 
   return (
     <div className={styles.container}>
@@ -79,7 +83,11 @@ export const FlipBack = (props) => {
       dispatch(setToggleManageFileForm(true));
     }
     if (role === "viewNotifications") {
-      navigate("/", { state: { elementIdToScrollTo: `notifications-documents-${notificationsForUser[0].id}` }})
+      navigate("/#documents", {
+        state: {
+          elementIdToScrollTo: `notifications-documents-${notificationsForUser[0].id}`,
+        },
+      });
     }
   };
 
