@@ -669,7 +669,7 @@ def update_document(document_id, workflow_process_id):
     return response.text
 
 
-def save_wf_setting(company_id, owner_name, version, username, portfolio_name, process):
+def save_wf_setting(company_id, owner_name, username,portfolio_name,process):
     url = "http://100002.pythonanywhere.com/"
     event_id = get_event_id()
     dd = datetime.now()
@@ -683,9 +683,9 @@ def save_wf_setting(company_id, owner_name, version, username, portfolio_name, p
                 "company_id": company_id,
                 "owner_name": owner_name,
                 "username": username,
-                "version": version,
-                "portfolio_name": portfolio_name,
-                "process": process,
+                "portfolio_name":portfolio_name,
+                "processes":process,
+                "data_type":"Real_data",
                 "created_on": time,
             },
             "update_field": {"order_nos": 21},
@@ -735,12 +735,12 @@ def wf_setting_update(wf_setting_id, wf_ai_data):
             },
             "update_field": {
                 "eventId": get_event_id(),
-                "company_id": wf_ai_data["company_id"],
-                "owner_name": wf_ai_data["owner_name"],
-                "username": wf_ai_data["username"],
-                "version": wf_ai_data["version"],
-                "portfolio_name": wf_ai_data["portfolio_name"],
-                "process": wf_ai_data["process"],
+                "company_id": wf_ai_data['company_id'],
+                "owner_name": wf_ai_data['owner_name'],
+                "username": wf_ai_data['username'],
+                "portfolio_name":wf_ai_data['portfolio_name'],
+                "processes":wf_ai_data['processes'],
+                "data_type":"Real_data",
                 "created_on": time,
             },
             "platform": "bangalore",

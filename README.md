@@ -929,9 +929,9 @@ Response-200
         "company_id": "company id",
         "owner_name": "owner name",
         "username": "username",
-        "version": "New 1.3.0",
         "portfolio_name": "portfolio name",
-        "process":[{'list of processes'}]
+        "data_type":"Real_Data",
+        "processes":[{'list of processes'}]
 
                 }
 }
@@ -958,9 +958,9 @@ Response-200
         "company_id": "company id",
         "owner_name": "owner name",
         "username": "username",
-        "version": "New 1.3.0",
         "portfolio_name": "portfolio name",
-        "process":[{'list of processes'}]
+        "data_type":"Real_Data",
+        "processes":[{'list of processes'}]
 
                 }
 }
@@ -993,9 +993,9 @@ Response-200
         "company_id": "company id",
         "owner_name": "owner name",
         "username": "username",
-        "version": "Latest version",
         "portfolio_name": "portfolio name",
-        "process":[{'list of processes'}]
+        "data_type":"Real_Data",
+        "processes":[{'list of processes'}]
 
                 }
 }
