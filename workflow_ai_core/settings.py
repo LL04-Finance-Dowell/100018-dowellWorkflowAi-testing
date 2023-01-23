@@ -31,6 +31,10 @@ ALLOWED_HOSTS = ["*"]
 # Application definition
 
 INSTALLED_APPS = [
+    "drf_yasg",
+    "document",
+    "workflow",
+    "workflow_processing",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -40,9 +44,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "corsheaders",
     "rest_framework",
-    "drf_yasg",
-    "backend",
-    "workflow_processing"
+    
 ]
 
 MIDDLEWARE = [
@@ -56,7 +58,7 @@ MIDDLEWARE = [
     "corsheaders.middleware.CorsMiddleware",
 ]
 
-ROOT_URLCONF = "workflow_ai.urls"
+ROOT_URLCONF = "workflow_ai_core.urls"
 
 TEMPLATES = [
     {
@@ -74,7 +76,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = "workflow_ai.wsgi.application"
+WSGI_APPLICATION = "workflow_ai_core.wsgi.application"
 
 
 # Database

@@ -2,7 +2,7 @@ import json
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
-from .mongo_db_connection import (
+from database.mongo_db_connection import (
     save_wf,
     get_wf_object,
     get_wf_list,

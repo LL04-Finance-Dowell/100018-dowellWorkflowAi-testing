@@ -4,7 +4,7 @@ import ast
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
-from .mongo_db_connection import (
+from database.mongo_db_connection import (
     get_document_list,
     save_document,
     get_document_object,
