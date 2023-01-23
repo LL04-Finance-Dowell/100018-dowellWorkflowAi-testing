@@ -110,7 +110,7 @@ WF_CONNECTION_DICT = {
     "team_member_ID": "33689044433",
     "function_ID": "ABCDE",
 }
-WF_AI_SETTING_DICT ={
+WF_AI_SETTING_DICT = {
     "cluster": "Documents",
     "database": "Documentation",
     "collection": "WorkflowAiSettings",
@@ -269,6 +269,7 @@ def get_links_object_by_document_id(document_id):
             return []
     return []
 
+
 #  -------------------------------Workflow Process------------------
 def save_wf_process(
     process_title, process_steps, user, company_id, data_type, document_id
@@ -322,7 +323,6 @@ def save_wf_process(
 
 
 def get_process_object(workflow_process_id):
-    print("got here", workflow_process_id)
     fields = {"_id": str(workflow_process_id)}
     response_obj = dowellconnection(*PROCESS_CONNECTION_LIST, "find", fields, "nil")
     res_obj = json.loads(response_obj)
@@ -656,7 +656,10 @@ def update_document(document_id, workflow_process_id):
             "field": {
                 "_id": document_id,
             },
-            "update_field": {"workflow_process": workflow_process_id},
+            "update_field": {
+                "workflow_process": workflow_process_id,
+                "state": "processing",
+            },
             "platform": "bangalore",
         }
     )
@@ -666,7 +669,7 @@ def update_document(document_id, workflow_process_id):
     return response.text
 
 
-def save_wf_setting(company_id, owner_name, version,username,portfolio_name,process):
+def save_wf_setting(company_id, owner_name, version, username, portfolio_name, process):
     url = "http://100002.pythonanywhere.com/"
     event_id = get_event_id()
     dd = datetime.now()
@@ -680,11 +683,10 @@ def save_wf_setting(company_id, owner_name, version,username,portfolio_name,proc
                 "company_id": company_id,
                 "owner_name": owner_name,
                 "username": username,
-                "version":version,
-                "portfolio_name":portfolio_name,
-                "process":process,
+                "version": version,
+                "portfolio_name": portfolio_name,
+                "process": process,
                 "created_on": time,
-                
             },
             "update_field": {"order_nos": 21},
             "platform": "bangalore",
@@ -696,7 +698,8 @@ def save_wf_setting(company_id, owner_name, version,username,portfolio_name,proc
     print("SAVED WORKFLOW_AI--------------- \n")
     return response.text
 
-#Get WF Setting Data
+
+# Get WF Setting Data
 def get_wf_setting_object(wf_setting_id):
     fields = {"_id": wf_setting_id}
     response_obj = dowellconnection(*WF_AI_SETTING_LIST, "find", fields, "nil")
@@ -706,6 +709,8 @@ def get_wf_setting_object(wf_setting_id):
         return res_obj["data"]
     except:
         return []
+
+
 def get_WFAI_setting_list(company_id):
     fields = {"company_id": str(company_id)}
     response_obj = dowellconnection(*WF_AI_SETTING_LIST, "fetch", fields, "nil")
@@ -714,6 +719,8 @@ def get_WFAI_setting_list(company_id):
         return res_obj["data"]
     else:
         return []
+
+
 # print(get_wf_setting_object('63c653b8c8151e89df92846b'))
 def wf_setting_update(wf_setting_id, wf_ai_data):
     url = "http://100002.pythonanywhere.com/"
@@ -728,14 +735,13 @@ def wf_setting_update(wf_setting_id, wf_ai_data):
             },
             "update_field": {
                 "eventId": get_event_id(),
-                "company_id": wf_ai_data['company_id'],
-                "owner_name": wf_ai_data['owner_name'],
-                "username": wf_ai_data['username'],
-                "version":wf_ai_data['version'],
-                "portfolio_name":wf_ai_data['portfolio_name'],
-                "process":wf_ai_data['process'],
+                "company_id": wf_ai_data["company_id"],
+                "owner_name": wf_ai_data["owner_name"],
+                "username": wf_ai_data["username"],
+                "version": wf_ai_data["version"],
+                "portfolio_name": wf_ai_data["portfolio_name"],
+                "process": wf_ai_data["process"],
                 "created_on": time,
-                
             },
             "platform": "bangalore",
         }
@@ -744,6 +750,8 @@ def wf_setting_update(wf_setting_id, wf_ai_data):
     response = requests.request("POST", url, headers=headers, data=payload)
     print("Update WORKFLOW Setting Version--------------- \n")
     return response.text
+
+
 def get_document_object(document_id):
     fields = {"_id": document_id}
     response_obj = dowellconnection(*DOCUMENT_CONNECTION_LIST, "find", fields, "nil")
