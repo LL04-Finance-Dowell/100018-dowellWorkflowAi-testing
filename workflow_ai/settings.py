@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     "rest_framework",
     "drf_yasg",
     "backend",
+    "workflow_processing"
 ]
 
 MIDDLEWARE = [

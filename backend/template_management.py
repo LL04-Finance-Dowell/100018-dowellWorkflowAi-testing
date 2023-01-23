@@ -187,6 +187,7 @@ def template_list(request):  # List of Created Templates.
         status=status.HTTP_200_OK,
     )
 
+
 @api_view(["POST"])
 def org_templates(request):  # List of Created Templates.
     template_list = get_template_list(company_id=request.data["company_id"])
