@@ -2,6 +2,7 @@ import jwt
 import json
 import uuid
 import requests
+import datetime
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
@@ -14,6 +15,7 @@ from .mongo_db_connection import (
     get_links_object_by_document_id,
     get_process_list,
 )
+
 
 # ---------------------------------------------------------------------------------#
 # API Endpoint - 4. ---------  Workflows process Notification API
@@ -35,6 +37,7 @@ def processes(request):  # Pending Workflow processes.
 def get_process_link(request):  # Get a links process for person having notifications
     # get links info
     links_info = get_links_object_by_document_id(request.data["document_id"])
+    print(links_info)
     if not links_info:
         return Response(
             "Could not fetch process info at this time",
@@ -56,77 +59,6 @@ def get_process_link(request):  # Get a links process for person having notifica
 # ---------------------------------------------------------------------------------#
 # API Endpoint - 3. ---------  Verifying Process
 # ---------------------------------------------------------------------------------#
-
-
-@api_view(["POST"])
-def verify_process(request):
-    print("verification started...... \n")
-    # decode token
-    decoded = jwt.decode(request.data["token"], "secret", algorithms="HS256")
-    # find links
-    try:
-        processing_links_info = get_links_object_by_process_id(decoded["process_id"])
-    except:
-        return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-    # check presence of the user trying to access in the links
-    flag = False
-    for link in processing_links_info["links"]:
-        if request.data["user_name"] in link:
-            flag = True
-            break
-        else:
-            return Response(
-                "User is not part of this process", status=status.HTTP_401_UNAUTHORIZED
-            )
-    # get document map for that user.
-    try:
-        process = get_process_object(workflow_process_id=decoded["process_id"])
-    except:
-        return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-    # find the document map & run checks.
-    for step in process["process_steps"]:
-        # Portfolio Check.
-        if (
-            step["member"] == request.data["user_name"]
-            and step["member_portfolio"] == request.data["portfolio"]
-        ):
-            # Doc Map & Rights
-            map = step.get("document_map")
-            right = step.get("rights")
-            print("Started the checks....")
-            # Display check
-            # if check_display_right(step.get("display")):
-            #     continue
-
-            # Time Limit Check.
-            # if check_time_limit(step.get("limit")):
-            #     continue
-
-            # Skip check
-            # if check_step_skipping(step.get("skip")):
-            #     continue
-
-            # Location Check
-            # if check_location(step.get("location")):
-            #     continue
-
-            break
-        else:
-            return Response(
-                "Document Access Forbidden",
-                status=status.HTTP_403_FORBIDDEN,
-            )
-    # Authorize creation
-    if flag:
-        # generate document link.
-        doc_link = generate_link(
-            document_id=processing_links_info["document_id"],
-            doc_map=map,
-            doc_rights=right,
-        )
-        return Response(doc_link.json(), status=status.HTTP_201_CREATED)
-    return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
 
 #  A single Doc Link
 def generate_link(document_id, doc_map, doc_rights):
@@ -155,47 +87,147 @@ def generate_link(document_id, doc_map, doc_rights):
     return link
 
 
+@api_view(["POST"])
+def verify_process(request):
+    if request.data["member_type"] != "team_member":
+        pass
+    print("verification started...... \n")
+    print("normal checks.....")
+    # decode token
+    decoded = jwt.decode(request.data["token"], "secret", algorithms="HS256")
+    # find links
+    try:
+        processing_links_info = get_links_object_by_process_id(decoded["process_id"])
+    except:
+        return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        # check presence of the user trying to access in the links
+    flag = False
+    for link in processing_links_info["links"]:
+        # check user-logged in
+        if request.data["user_name"] in link:
+            flag = True
+            break
+        else:
+            return Response(
+                "User is not part of this process",
+                status=status.HTTP_401_UNAUTHORIZED,
+            )
+
+        # get document map for that user.
+    try:
+        process = get_process_object(workflow_process_id=decoded["process_id"])
+        # print(process)
+    except:
+        return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    # find the document map & run checks.
+    match = False
+    for step in process["process_steps"]:
+        # Portfolio Check.
+        if (
+            step["member"] == request.data["user_name"]
+            and step["member_portfolio"] == request.data["portfolio"]
+        ):
+            print("Started the checks.... \n")
+            # Display check
+            if not check_display_right(step.get("display_before")):
+                return Response(
+                    "missing display rights", status=status.HTTP_401_UNAUTHORIZED
+                )
+            # Location Check
+            if not check_location(step.get("location"), request.data["location"]):
+                return Response(
+                    f'Signing allowed from {step.get("location")} only',
+                    status=status.HTTP_403_FORBIDDEN,
+                )
+            # Time Limit Check.
+            # if not check_time_limit(
+            #     step.get("limit"), step.get("start_time"), step.get("end_time")
+            # ):
+            #     return Response(
+            #         "time limit for document processing elapsed",
+            #         status=status.HTTP_403_FORBIDDEN,
+            #     )
+            # Skip check
+
+            # Doc Map & Rights & match
+            map = step.get("document_map")
+            right = step.get("rights")
+            match = True
+            break
+        else:
+            return Response(
+                "unauthorized portfolio",
+                status=status.HTTP_401_UNAUTHORIZED,
+            )
+    if not match:
+        return Response(
+            "document access forbidden",
+            status=status.HTTP_403_FORBIDDEN,
+        )
+    # Authorize creation
+    if flag:
+        # generate document link.
+        doc_link = generate_link(
+            document_id=processing_links_info["document_id"],
+            doc_map=map,
+            doc_rights=right,
+        )
+        return Response(doc_link.json(), status=status.HTTP_201_CREATED)
+    return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
 # CHECKS...........
+
 # Check display in the step.
-def check_display_right(step):
+def check_display_right(display):
+    print("checking display.... \n")
     display_allowed = {
         "document_before_processing_this_step": True,
         "document_after_processing_this_step": False,
         "document_in_all_steps": True,
         "document_only_this_step": True,
     }
-    return display_allowed.get(step["display"], False)
-
-
-# Verify time limit of the step.
-def check_time_limit(step):
-    hours = 0
-    if step["limit"] == "within_1_hour":
-
-        return
-    if step["limit"] == "within_8_hours":
-        return
-    if step["limit"] == "within_24_hours":
-        return
-    if step["limit"] == "within_3_days":
-        return
-    if step["limit"] == "within_7_days":
-        return
-    if step["limit"] == "custom_time":
-        return
-
-
-# check if the step can be skipped.
-def check_step_skipping(step):
-    if step["skip"] == True:
-        return
-    else:
-        return
+    return display_allowed.get(display)
 
 
 # check signing location.
-def check_location(step):
-    pass
+def check_location(step_location, location):
+    print("checking location.... \n")
+    allow = False
+    if step_location == location:
+        allow = True
+        return allow
+    return False
+
+
+# Verify time limit of the step.
+def check_time_limit(limit, start_time, end_time):
+    print("checking time.... \n")
+    # check current time
+    print(f"start time is {start_time}.. \n")
+    print(f"end time {end_time}.... \n")
+    accepted = False
+    # no time limit
+    if limit == "no_time_limit":
+        accepted = True
+        return accepted
+    return accepted
+
+    #
+    # hours = 0
+    # if limit == "within_1_hour":
+
+    #     return
+    # if limit == "within_8_hours":
+    #     return
+    # if limit == "within_24_hours":
+    #     return
+    # if limit == "within_3_days":
+    #     return
+    # if limit == "within_7_days":
+    #     return
+    # if limit == "custom_time":
+    #     return
 
 
 # ---------------------------------------------------------------------------------#
