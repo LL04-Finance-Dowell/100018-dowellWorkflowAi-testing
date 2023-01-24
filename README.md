@@ -824,16 +824,16 @@ Request Body
         {
             "step_name": "update_existing_step_name"
             "role": "update_existing_role"
-        }]
-        },
+        }
+        ,
         {
             "step_name": "update_existing_step_name"
             "role": "update_existing_role"
-        }]
         }
+        
 
         ]
-        }
+}
 
 ```
 

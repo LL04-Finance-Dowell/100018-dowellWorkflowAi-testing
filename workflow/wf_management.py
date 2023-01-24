@@ -33,15 +33,15 @@ def create_workflow(request):  # Document Creation.
             data = {
                 "workflow_title": form["wf_title"],
                 "data_type": form["data_type"],
-                "steps": [],
+                "steps": form['steps'],
             }
-            for step in form["steps"]:
-                data["steps"].append(
-                    {
-                        "step_name": step["step_name"],
-                        "role": step["role"],
-                    }
-                )
+            # for step in form["steps"]:
+            #     data["steps"].append(
+            #         {
+            #             "step_name": step["step_name"],
+            #             "role": step["role"],
+            #         }
+            #     )
             res = json.loads(save_wf(data, form["company_id"], form["created_by"]))
             if res["isSuccess"]:
                 try:
@@ -73,15 +73,15 @@ def update_workflow(request):  # Document Creation.
                 "workflow_title": form["wf_title"],
                 "workflow_id": form["workflow_id"],
                 "data_type": form["data_type"],
-                "steps": [],
+                "steps": form["steps"],
             }
-            for step in form["steps"]:
-                workflow["steps"].append(
-                    {
-                        "step_name": step["step_name"],
-                        "role": step["role"],
-                    }
-                )
+            # for step in form["steps"]:
+            #     workflow["steps"].append(
+            #         {
+            #             "step_name": step["step_name"],
+            #             "role": step["role"],
+            #         }
+            #     )
             old_workflow = get_wf_object(form["workflow_id"])
             old_workflow["workflows"]["data_type"] = "Archive Data"
 
