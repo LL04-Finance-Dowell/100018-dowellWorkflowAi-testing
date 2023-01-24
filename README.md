@@ -44,7 +44,6 @@ Request Body
 {
     "token": "<get this token from the url path>",
     "location": "<user_city_location>",
-    "member_type": "<auth_member_type>",
     "user_name": "<username_of_person_authenticated>",
     "portfolio": "<authenticated_porfolio>",
 }

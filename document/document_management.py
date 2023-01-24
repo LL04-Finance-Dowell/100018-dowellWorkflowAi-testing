@@ -163,41 +163,22 @@ def document_detail(request):  # Single document
     )
 
 
-@api_view(["POST"])
-def documents_to_be_signed(
-    request,
-):  # List of `to be signed` documents. State being processing.
-    try:
-        filtered_documents = []
-        for d in get_document_list(request.data["company_id"]):
-            if (
-                d.get("state") == "processing"
-                and d.get("company_id") == request.data["company_id"]
-                and check_allowed(
-                    process_id=d.get("workflow_process"),
-                    user_name=request.data["user_name"],
-                )
-            ):
-                filtered_documents.append(d)
-
-        if len(filtered_documents) > 0:
-            return Response(filtered_documents, status=status.HTTP_200_OK)
-        return Response([], status=status.HTTP_200_OK)
-    except:
-        return Response([], status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-
 # @api_view(["POST"])
-# def documents_to_be_signed(request):  # List of `to be signed` documents.
+# def documents_to_be_signed(
+#     request,
+# ):  # List of `to be signed` documents. State being processing.
 #     try:
 #         filtered_documents = []
 #         for d in get_document_list(request.data["company_id"]):
-#             if "workflow_process" in d:
-#                 if d.get("company_id") == request.data["company_id"] and check_allowed(
+#             if (
+#                 d.get("state") == "processing"
+#                 and d.get("company_id") == request.data["company_id"]
+#                 and check_allowed(
 #                     process_id=d.get("workflow_process"),
 #                     user_name=request.data["user_name"],
-#                 ):
-#                     filtered_documents.append(d)
+#                 )
+#             ):
+#                 filtered_documents.append(d)
 
 #         if len(filtered_documents) > 0:
 #             return Response(filtered_documents, status=status.HTTP_200_OK)
@@ -206,8 +187,28 @@ def documents_to_be_signed(
 #         return Response([], status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
+@api_view(["POST"])
+def documents_to_be_signed(request):  # List of `to be signed` documents.
+    try:
+        filtered_documents = []
+        for d in get_document_list(request.data["company_id"]):
+            if "workflow_process" in d:
+                if d.get("company_id") == request.data["company_id"] and check_allowed(
+                    process_id=d.get("workflow_process"),
+                    user_name=request.data["user_name"],
+                ):
+                    filtered_documents.append(d)
+        if len(filtered_documents) > 0:
+            return Response(filtered_documents, status=status.HTTP_200_OK)
+        return Response([], status=status.HTTP_200_OK)
+    except:
+        print("got error...... \n")
+        return Response([], status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
 # check presence
 def check_allowed(process_id, user_name):
+    print("checking allowed... \n")
     processing_links_info = get_links_object_by_process_id(process_id)
     if processing_links_info:
         for link in processing_links_info["links"]:
