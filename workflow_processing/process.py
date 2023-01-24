@@ -91,7 +91,7 @@ def verify_process(request):
     if request.data["member_type"] != "team_member":
         pass
     print("verification started...... \n")
-    print("normal checks.....")
+    print("normal checks..... \n")
     # decode token
     decoded = jwt.decode(request.data["token"], "secret", algorithms="HS256")
     # find links

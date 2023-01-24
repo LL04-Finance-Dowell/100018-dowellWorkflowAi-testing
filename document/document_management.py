@@ -198,16 +198,17 @@ def documents_to_be_signed(request):  # List of `to be signed` documents.
                     user_name=request.data["user_name"],
                 ):
                     filtered_documents.append(d)
-
         if len(filtered_documents) > 0:
             return Response(filtered_documents, status=status.HTTP_200_OK)
         return Response([], status=status.HTTP_200_OK)
     except:
+        print("got error...... \n")
         return Response([], status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 # check presence
 def check_allowed(process_id, user_name):
+    print("checking allowed... \n")
     processing_links_info = get_links_object_by_process_id(process_id)
     if processing_links_info:
         for link in processing_links_info["links"]:
