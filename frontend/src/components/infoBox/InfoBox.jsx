@@ -12,7 +12,7 @@ import {
   InfoTitleBox,
 } from "./styledComponents";
 import { GrAdd } from "react-icons/gr";
-import { MdOutlineRemove } from "react-icons/md";
+import { MdOutlineRemove, MdOutlineAdd } from "react-icons/md";
 import { useForm } from "react-hook-form";
 import { useEffect } from "react";
 import { Collapse } from "react-bootstrap";
@@ -21,6 +21,8 @@ import { v4 as uuidv4 } from "uuid";
 import {
   setColumn,
   setPermissionArray,
+  setProccess,
+  setSettingProccess,
   setTeamsInWorkflowAI,
   setUpdateProccess,
 } from "../../features/app/appSlice";
@@ -31,8 +33,10 @@ const InfoBox = ({
   type,
   permissionContent,
   settingProccess,
+  boxType,
   boxİd,
   teamsInWorkflowAI,
+  handleItemClick,
   children,
 }) => {
   const dispatch = useDispatch();
@@ -143,8 +147,12 @@ const InfoBox = ({
   /* console.log("provvess", settingProccessArray[0].children); */
 
   return (
-    <InfoBoxContainer className={styles.container}>
-      <InfoTitleBox onClick={handleToggle}>
+    <InfoBoxContainer boxType={boxType} className="info-box-container">
+      <InfoTitleBox
+        boxType={boxType}
+        className="info-title-box"
+        onClick={handleToggle}
+      >
         <div
           style={{
             marginRight: "8px",
@@ -155,7 +163,7 @@ const InfoBox = ({
             isOpen ? (
               <MdOutlineRemove />
             ) : (
-              <GrAdd />
+              <MdOutlineAdd />
             )
           ) : (
             <input type="checkbox" checked={isOpen} />
@@ -164,11 +172,14 @@ const InfoBox = ({
         <a>{title}</a>
       </InfoTitleBox>
       <Collapse in={isOpen}>
-        <InfoContentContainer>
+        <InfoContentContainer className="info-content-cont">
           {type === "list" ? (
-            <InfoContentBox>
+            <InfoContentBox boxType={boxType}>
               {items.map((item, index) => (
-                <InfoContentText key={item._id}>
+                <InfoContentText
+                  onClick={() => handleItemClick(item)}
+                  key={item._id}
+                >
                   {index + 1}. {item.content}
                 </InfoContentText>
               ))}
@@ -176,7 +187,7 @@ const InfoBox = ({
           ) : (
             <InfoContentBox>
               {items.map((item) => (
-                <InfoContentFormText>
+                <InfoContentFormText key={item._id}>
                   <input
                     onChange={() => handlePermission(item)}
                     /* {...register(item.content)} */

@@ -1,0 +1,19 @@
+.container {
+  display: flex;
+  width: 100%;
+}
+
+.box__container {
+  background-color: var(--e-global-color-9d2ac19);
+  padding: 10px;
+  border: 1px solid var(--e-global-color-text);
+  width: 100%;
+}
+
+.selected__box {
+  display: flex;
+  padding: 8px;
+  font-size: 12px;
+  line-height: 18px;
+  gap: 5px;
+}

@@ -1,7 +1,8 @@
 import styled from "styled-components";
 
 export const InfoBoxContainer = styled.div`
-  border: none;
+  /* border: none; */
+  width: 100%;
   display: flex;
   /*  width: min(14vw, 160px); */
   flex-direction: column;
@@ -10,24 +11,37 @@ export const InfoBoxContainer = styled.div`
   /*  border: 1px solid var(--e-global-color-text); */
   overflow: hidden;
   align-self: flex-start;
+  padding: ${(props) => props.boxType === "dark" && "1px"};
+  border: ${(props) =>
+    props.boxType === "dark"
+      ? "1px solid var(--e-global-color-accent) !important"
+      : "none"};
+  & * {
+    border: ${(props) => props.boxType === "dark" && "none !important"};
+  }
 `;
 
 export const InfoTitleBox = styled.div`
   width: 100%;
   /* border-bottom: 1px solid var(--e-global-color-text); */
+  background-color: ${(props) =>
+    props.boxType === "dark" && "var(--e-global-color-text)"};
   border: 1px solid var(--e-global-color-text);
   padding: 15px 20px;
   cursor: pointer;
   font-size: 16px;
   font-weight: 700;
+  line-height: 16px;
+  text-decoration: underline;
   display: flex;
   flex-wrap: wrap;
   text-transform: capitalize;
-  color: var(--e-global-color-text) !important;
+  color: ${(props) => (props.boxType ? "white" : "var(--e-global-color-text)")};
 `;
 
 export const InfoContentContainer = styled.div`
   /* border: solid red 1px; */
+  background-color: ${(props) => props.boxType === "dark" && "white"};
   border: 1px solid var(--e-global-color-text);
   border-top: 0;
   display: flex;
@@ -41,6 +55,7 @@ export const InfoContentContainer = styled.div`
 `;
 
 export const InfoSearchbar = styled.input`
+  width: 100%;
   max-width: 100%;
   margin-inline: auto;
   background-color: transparent;

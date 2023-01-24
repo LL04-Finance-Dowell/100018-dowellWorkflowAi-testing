@@ -20,6 +20,7 @@ import CreateNewWorkflowPage from "./pages/Workflows/CreateNewWorkflowPage/Creat
 import ApproveWorkflowPage from "./pages/Workflows/ApproveWorkflowPage/ApproveWorkflowPage";
 import RejectedWorkflowsPage from "./pages/Workflows/RejectedWorkflowsPage/RejectedWorkflowsPage";
 import SetWorkflowInDoc from "./components/setWorkFlowInDoc/SetWorkflowInDoc";
+import SetWorkflowInDocNew from "./components/setWorkFlowInDocNew/SetWorkflowInDoc";
 import Documents from "./pages/Documents/Documents/Documents";
 import TempDraft from "./pages/Templates/TempDraft/TempDraft";
 import DraftsDoc from "./pages/Documents/DraftsDoc/DraftsDoc";
@@ -61,7 +62,11 @@ function App() {
       <Route path={"processes"}>
         <Route index element={<ProccessPage />} />
       </Route>
+
       <Route path={"/notifications"} element={<NotificationsPage />} />
+      <Route path={"exmp"}>
+        <Route index element={<SetWorkflowInDocNew />} />
+      </Route>
       {/* <Route path="/Documents/Documents/Documents" element={<Documents />} />
       <Route path="/Documents/DraftsDoc/DraftsDoc" element={<DraftsDoc />} />
       <Route path="/Templates/TempDraft/TempDraft" element={<TempDraft />} /> */}

@@ -7,28 +7,41 @@ import { useState } from "react";
 import { toast } from "react-toastify";
 import { LoadingSpinner } from "../../LoadingSpinner/LoadingSpinner";
 import { getProcessLink } from "../../../services/processServices";
+import { setEditorLink } from "../../../features/app/appSlice";
 
 const DocumentCard = ({ cardItem }) => {
   const dispatch = useDispatch();
-  const [ dataLoading, setDataLoading ] = useState(false);
-  const { userDetail } = useSelector(state => state.auth);
-  const [ verificationLink, setVerificationLink ] = useState(null)
+  const [dataLoading, setDataLoading] = useState(false);
+  const { userDetail } = useSelector((state) => state.auth);
+  const [verificationLink, setVerificationLink] = useState(null);
 
   const handleDetailDocumnet = async (item) => {
-    if (dataLoading) return
+    if (dataLoading) return;
     if (item.type === "sign-document") {
       setDataLoading(true);
       try {
-        const dataToPost = { document_id: item._id, user_name: userDetail?.userinfo?.username };
+        const dataToPost = {
+          document_id: item._id,
+          user_name: userDetail?.userinfo?.username,
+        };
         const response = await (await getProcessLink(dataToPost)).data;
+
+        dispatch(setEditorLink(response));
+        console.log("responseee", response);
         setVerificationLink(response);
         setDataLoading(false);
       } catch (error) {
         console.log(error.response ? error.response.data : error.message);
         setDataLoading(false);
-        toast.info(error.response.status !== 500 ? error.response ? error.response.data : error.message : "Could not get notification link")
+        toast.info(
+          error.response.status !== 500
+            ? error.response
+              ? error.response.data
+              : error.message
+            : "Could not get notification link"
+        );
       }
-      return
+      return;
     }
 
     const data = {
@@ -41,7 +54,7 @@ const DocumentCard = ({ cardItem }) => {
 
   const handleGoToVerificationPage = () => {
     window.location = verificationLink;
-  }
+  };
 
   const FrontSide = () => {
     return (
@@ -53,8 +66,20 @@ const DocumentCard = ({ cardItem }) => {
     return (
       <div>
         {cardItem._id ? (
-          <Button onClick={verificationLink ? () => handleGoToVerificationPage() : () => handleDetailDocumnet(cardItem)}>
-            { dataLoading ? <LoadingSpinner /> : verificationLink ? "Go to Editor" : "Click Here" }
+          <Button
+            onClick={
+              verificationLink
+                ? () => handleGoToVerificationPage()
+                : () => handleDetailDocumnet(cardItem)
+            }
+          >
+            {dataLoading ? (
+              <LoadingSpinner />
+            ) : verificationLink ? (
+              "Go to Editor"
+            ) : (
+              "Click Here"
+            )}
           </Button>
         ) : (
           "no item"
