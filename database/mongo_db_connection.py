@@ -154,11 +154,39 @@ DOCUMENT_CONNECTION_DICT = {
     "function_ID": "ABCDE",
 }
 
+# old 22sec query
+# def get_event_id():
+#     dd = datetime.now()
+#     time = dd.strftime("%d:%m:%Y,%H:%M:%S")
+#     url = "https://100003.pythonanywhere.com/event_creation"
+#     data = {
+#         "platformcode": "FB",
+#         "citycode": "101",
+#         "daycode": "0",
+#         "dbcode": "pfm",
+#         "ip_address": "192.168.0.41",
+#         "login_id": "lav",
+#         "session_id": "new",
+#         "processcode": "1",
+#         "regional_time": time,
+#         "dowell_time": time,
+#         "location": "22446576",
+#         "objectcode": "1",
+#         "instancecode": "100051",
+#         "context": "afdafa ",
+#         "document_id": "3004",
+#         "rules": "some rules",
+#         "status": "work",
+#     }
+#     r = requests.post(url, json=data)
+#     return r.text
+
 
 def get_event_id():
-    dd = datetime.now()
-    time = dd.strftime("%d:%m:%Y,%H:%M:%S")
-    url = "https://100003.pythonanywhere.com/event_creation"
+
+    url = "https://uxlivinglab.pythonanywhere.com/create_event"
+    # url="https://100003.pythonanywhere.com/event_creation"
+
     data = {
         "platformcode": "FB",
         "citycode": "101",
@@ -168,8 +196,6 @@ def get_event_id():
         "login_id": "lav",
         "session_id": "new",
         "processcode": "1",
-        "regional_time": time,
-        "dowell_time": time,
         "location": "22446576",
         "objectcode": "1",
         "instancecode": "100051",
@@ -177,7 +203,15 @@ def get_event_id():
         "document_id": "3004",
         "rules": "some rules",
         "status": "work",
+        "data_type": "learn",
+        "purpose_of_usage": "add",
+        "colour": "color value",
+        "hashtags": "hash tag alue",
+        "mentions": "mentions value",
+        "emojis": "emojis",
+        "bookmarks": "a book marks",
     }
+
     r = requests.post(url, json=data)
     return r.text
 
@@ -669,7 +703,7 @@ def update_document(document_id, workflow_process_id):
     return response.text
 
 
-def save_wf_setting(company_id, owner_name, username,portfolio_name,process):
+def save_wf_setting(company_id, owner_name, username, portfolio_name, process):
     url = "http://100002.pythonanywhere.com/"
     event_id = get_event_id()
     dd = datetime.now()
@@ -683,9 +717,9 @@ def save_wf_setting(company_id, owner_name, username,portfolio_name,process):
                 "company_id": company_id,
                 "owner_name": owner_name,
                 "username": username,
-                "portfolio_name":portfolio_name,
-                "processes":process,
-                "data_type":"Real_data",
+                "portfolio_name": portfolio_name,
+                "processes": process,
+                "data_type": "Real_data",
                 "created_on": time,
             },
             "update_field": {"order_nos": 21},
@@ -735,12 +769,12 @@ def wf_setting_update(wf_setting_id, wf_ai_data):
             },
             "update_field": {
                 "eventId": get_event_id(),
-                "company_id": wf_ai_data['company_id'],
-                "owner_name": wf_ai_data['owner_name'],
-                "username": wf_ai_data['username'],
-                "portfolio_name":wf_ai_data['portfolio_name'],
-                "processes":wf_ai_data['processes'],
-                "data_type":"Real_data",
+                "company_id": wf_ai_data["company_id"],
+                "owner_name": wf_ai_data["owner_name"],
+                "username": wf_ai_data["username"],
+                "portfolio_name": wf_ai_data["portfolio_name"],
+                "processes": wf_ai_data["processes"],
+                "data_type": "Real_data",
                 "created_on": time,
             },
             "platform": "bangalore",
