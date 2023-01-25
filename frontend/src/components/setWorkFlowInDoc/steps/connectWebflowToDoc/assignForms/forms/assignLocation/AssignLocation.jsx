@@ -29,7 +29,11 @@ const AssignLocation = ({ currentStepIndex }) => {
 
   useEffect(() => {
 
-    if (!continent || !continentsData[continent]) return setCountries([])
+    if (!continent || !continentsData[continent]) {
+      setCountries([])
+      setRegions([])
+      return
+    }
 
     setCountries(continentsData[continent].map(country => {
       
@@ -39,6 +43,7 @@ const AssignLocation = ({ currentStepIndex }) => {
       return countryOption
 
     }))
+    setRegions([])
 
   }, [continent])
 
