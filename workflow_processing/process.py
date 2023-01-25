@@ -20,9 +20,13 @@ from database.mongo_db_connection import (
 # API Endpoint - 4. ---------  Workflows process Notification API
 # ---------------------------------------------------------------------------------#
 
+"""
+fetches pending workflow processes.
+"""
+
 
 @api_view(["POST"])
-def processes(request):  # Pending Workflow processes.
+def processes(request):
     try:
         processes = get_process_list(request.data["company_id"])
     except:
@@ -32,8 +36,13 @@ def processes(request):  # Pending Workflow processes.
     return Response(processes, status=status.HTTP_200_OK)
 
 
+"""
+get a link process for person having notifications
+"""
+
+
 @api_view(["POST"])
-def get_process_link(request):  # Get a links process for person having notifications
+def get_process_link(request):
     # get links info
     links_info = get_links_object_by_document_id(request.data["document_id"])
     print(links_info)
@@ -97,6 +106,11 @@ def generate_link(document_id, doc_map, doc_rights):
     }
     link = requests.post(editor_api, data=json.dumps(payload))
     return link
+
+
+"""
+process verification to peform check and issue access
+"""
 
 
 @api_view(["POST"])
@@ -325,6 +339,11 @@ def verification_link(process_id):
 # ---------------------------------------------------------------------------------#
 # API Endpoint - 1. -------  Set Wofkflows in document
 # ---------------------------------------------------------------------------------#
+
+
+"""
+save workflow to document to create process.
+"""
 
 
 @api_view(["POST"])

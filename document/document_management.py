@@ -4,6 +4,7 @@ import ast
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
+from workflow_processing.process import verify_user_in_process
 from database.mongo_db_connection import (
     get_document_list,
     save_document,
@@ -11,6 +12,7 @@ from database.mongo_db_connection import (
     get_template_object,
     get_links_object_by_process_id,
 )
+
 
 editorApi = "https://100058.pythonanywhere.com/api/generate-editor-link/"
 
@@ -192,12 +194,36 @@ def documents_to_be_signed(request):  # List of `to be signed` documents.
     try:
         filtered_documents = []
         for d in get_document_list(request.data["company_id"]):
-            if "workflow_process" in d:
-                if d.get("company_id") == request.data["company_id"] and check_allowed(
+            if (
+                "workflow_process" in d
+                and d.get("company_id") == request.data["company_id"]
+                and verify_user_in_process(
                     process_id=d.get("workflow_process"),
                     user_name=request.data["user_name"],
-                ):
-                    filtered_documents.append(d)
+                )
+            ):
+                filtered_documents.append(d)
+        # filtered_documents = [
+        #     d
+        #     for d in documents
+        #     if any(("workflow_process" in d))
+        #     and (
+        #         d.get("company_id") == request.data["company_id"]
+        #         and verify_user_in_process(
+        #             process_id=d.get("workflow_process"),
+        #             user_name=request.data["user_name"],
+        #         )
+        #     )
+        # ]
+        # for d in get_document_list(request.data["company_id"]):
+        #     if "workflow_process" in d:
+        #         if d.get("company_id") == request.data[
+        #             "company_id"
+        #         ] and verify_user_in_process(
+        #             process_id=d.get("workflow_process"),
+        #             user_name=request.data["user_name"],
+        #         ):
+        #             filtered_documents.append(d)
         if len(filtered_documents) > 0:
             return Response(filtered_documents, status=status.HTTP_200_OK)
         return Response([], status=status.HTTP_200_OK)
@@ -206,20 +232,13 @@ def documents_to_be_signed(request):  # List of `to be signed` documents.
         return Response([], status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
-# check presence
-def check_allowed(process_id, user_name):
-    print("checking allowed... \n")
-    processing_links_info = get_links_object_by_process_id(process_id)
-    if processing_links_info:
-        for link in processing_links_info["links"]:
-            if user_name in link:
-                flag = True
-                return flag
-    return False
+"""
+List of my documents.
+"""
 
 
 @api_view(["POST"])
-def my_documents(request):  # List of my documents.
+def my_documents(request):
     filtered_list = []
     if request.method == "POST":
         created_by = request.data["created_by"]
