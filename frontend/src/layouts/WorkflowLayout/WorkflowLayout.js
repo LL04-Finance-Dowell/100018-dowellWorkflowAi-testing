@@ -3,21 +3,37 @@ import SideBar from "../../components/newSidebar/Sidebar";
 import "./style.css";
 import styles from "./workflowLayout.module.css";
 import Editor from "../../components/editor/Editor";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import DowellLogo from "../../assets/dowell.png";
 import Spinner from "../../components/spinner/Spinner";
 
 const WorkflowLayout = ({ children }) => {
   const { userDetail, session_id } = useSelector((state) => state.auth);
+  const [ createNewPortfolioLoading, setCreateNewPortfolioLoading ] = useState(false);
 
   const handleClick = () => {
     if (session_id) {
+      setCreateNewPortfolioLoading(true);
       sessionStorage.clear();
       window.location.replace(
         `https://100093.pythonanywhere.com/?session_id=${session_id}`
       );
     }
   };
+
+  useEffect(() => {
+
+    const closeLoadingCreatePortfolioOverlay = (e) => {
+      if (e.key === "Escape") setCreateNewPortfolioLoading(false);
+    }
+
+    document.addEventListener("keydown", closeLoadingCreatePortfolioOverlay, true)
+
+    return () => {
+      document.removeEventListener("keydown", closeLoadingCreatePortfolioOverlay, true)
+    }
+    
+  }, [])
 
   return (
     <>
@@ -35,6 +51,7 @@ const WorkflowLayout = ({ children }) => {
                   <span onClick={handleClick}> create here</span>
                 </h1>
               </div>
+              { createNewPortfolioLoading ? <div className="loading__Spinner__New__Portfolio"><Spinner /></div> : <></> }
             </div>
           ) : (
             <>
