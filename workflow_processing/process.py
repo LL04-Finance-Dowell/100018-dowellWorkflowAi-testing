@@ -37,6 +37,20 @@ def processes(request):
 
 
 """
+get process by process id
+"""
+
+
+@api_view(["POST"])
+def a_single_process(request):
+    try:
+        process = get_process_object(request.data["process_id"])
+    except:
+        return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    return Response(process, status=status.HTTP_200_OK)
+
+
+"""
 get a link process for person having notifications
 """
 
@@ -52,7 +66,6 @@ def get_process_link(request):
             status=status.HTTP_500_INTERNAL_SERVER_ERROR,
         )
     # check presence in link
-
     for link in links_info["links"]:
         if request.data["user_name"] in link:
             verify_link = link.get(request.data["user_name"])
@@ -64,6 +77,26 @@ def get_process_link(request):
     return Response(verify_link, status=status.HTTP_200_OK)
 
 
+"""
+GET-verification links for a process
+"""
+
+
+@api_view(["POST"])
+def fetch_process_links(request):
+    try:
+        process_info = get_links_object_by_process_id(request.data["process_id"])
+    except:
+        return Response(
+            "could not fetch process links",
+            status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+        )
+
+    if len(process_info["links"]) > 0:
+        return Response(process_info["links"], status=status.HTTP_200_OK)
+    return Response("no links found for this process", status=status.HTTP_404_NOT_FOUND)
+
+
 # ---------------------------------------------------------------------------------#
 # API Endpoint - 3. ---------  Verifying Process
 # ---------------------------------------------------------------------------------#
@@ -73,6 +106,7 @@ def verify_user_in_process(process_id, user_name):
     print("checking allowed... \n")
     allowed = False
     processing_links_info = get_links_object_by_process_id(process_id)
+    print(processing_links_info)
     if processing_links_info:
         for link in processing_links_info["links"]:
             if user_name in link:
@@ -132,6 +166,7 @@ def verify_process(request):
     is_allowed = verify_user_in_process(
         process_id=decoded["process_id"], user_name=request.data["user_name"]
     )
+    print(is_allowed)
     # find the document map & run checks.
     if not is_allowed:
         return Response(

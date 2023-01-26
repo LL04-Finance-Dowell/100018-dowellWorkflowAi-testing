@@ -1,5 +1,7 @@
 import requests
+import time
 import json
+import asyncio
 from datetime import datetime
 from .dowellconnection import dowellconnection
 import requests
@@ -183,9 +185,7 @@ DOCUMENT_CONNECTION_DICT = {
 
 
 def get_event_id():
-
     url = "https://uxlivinglab.pythonanywhere.com/create_event"
-
     data = {
         "platformcode": "FB",
         "citycode": "101",

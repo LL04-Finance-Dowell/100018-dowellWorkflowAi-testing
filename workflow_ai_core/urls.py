@@ -23,8 +23,10 @@ from document.intelligent_search import search
 from workflow_processing.process import (
     save_and_start_processing,
     save_workflows_to_document,
+    a_single_process,
     verify_process,
     get_process_link,
+    fetch_process_links,
     processes,
 )
 
@@ -82,6 +84,8 @@ urlpatterns = [
     path("v0.1/process/start/", save_and_start_processing),
     path("v0.1/process/verify/", verify_process),
     path("v0.1/process/link/", get_process_link),
+    path("v0.1/process/detail/", a_single_process),
+    path("v0.1/process/process-links/", fetch_process_links),
     # workflow
     path("v0.1/workflows/", create_workflow, name="workflows"),
     path("v0.1/workflows/detail/", workflow_detail, name="workflow_detail"),
