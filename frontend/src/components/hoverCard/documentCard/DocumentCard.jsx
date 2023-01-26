@@ -60,6 +60,7 @@ const DocumentCard = ({ cardItem }) => {
       token: token.slice(0, -1),
       user_name: userDetail?.userinfo?.username,
       portfolio: userDetail?.portfolio_info[0]?.portfolio_name,
+      location: userDetail?.userinfo?.city,
     }
 
     setDataLoading(true);
