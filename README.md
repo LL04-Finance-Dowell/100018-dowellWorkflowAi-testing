@@ -10,7 +10,7 @@ _POST_ to `process/link/`
 
 ```
 {
-    "workflow_process": "<workflow_process_field>",
+    "process_id": "<workflow_process_field>",
     "user_name": "auth_user_name"
 }
 ```
