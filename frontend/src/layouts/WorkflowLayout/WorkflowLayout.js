@@ -6,6 +6,7 @@ import Editor from "../../components/editor/Editor";
 import { useEffect, useState } from "react";
 import DowellLogo from "../../assets/dowell.png";
 import Spinner from "../../components/spinner/Spinner";
+import useCloseElementOnEscapekeyClick from "../../../src/hooks/useCloseElementOnEscapeKeyClick";
 
 const WorkflowLayout = ({ children }) => {
   const { userDetail, session_id } = useSelector((state) => state.auth);
@@ -21,19 +22,7 @@ const WorkflowLayout = ({ children }) => {
     }
   };
 
-  useEffect(() => {
-
-    const closeLoadingCreatePortfolioOverlay = (e) => {
-      if (e.key === "Escape") setCreateNewPortfolioLoading(false);
-    }
-
-    document.addEventListener("keydown", closeLoadingCreatePortfolioOverlay, true)
-
-    return () => {
-      document.removeEventListener("keydown", closeLoadingCreatePortfolioOverlay, true)
-    }
-    
-  }, [])
+  useCloseElementOnEscapekeyClick(() => setCreateNewPortfolioLoading(false));
 
   return (
     <>

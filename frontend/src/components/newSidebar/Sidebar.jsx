@@ -26,6 +26,8 @@ import { useState } from "react";
 import { getAgreeStatus, workflowRegistrationEventId } from "../../services/legalService";
 import { LoadingSpinner } from "../LoadingSpinner/LoadingSpinner";
 import { formatDateAndTime } from "../../utils/helpers";
+import Spinner from "../spinner/Spinner";
+import useCloseElementOnEscapekeyClick from "../../hooks/useCloseElementOnEscapeKeyClick";
 
 const Sidebar = () => {
   const dispatch = useDispatch();
@@ -37,10 +39,14 @@ const Sidebar = () => {
   const [ legalTermsAgreed, setLegalTermsAgreed ] = useState(false);
   const [ dateAgreed, setDateAgreed ] = useState("");
   const navigate = useNavigate();
+  const [ agreePageLoading, setAgreePageLoading ] = useState(false);
+
+  useCloseElementOnEscapekeyClick(() => setAgreePageLoading(false));
 
   useEffect(() => {
 
     getAgreeStatus(session_id).then(res => {
+      console.log(res.data)
       const legalStatus = res.data.data[0]?.i_agree;
 
       setLegalStatusLoading(false);
@@ -61,7 +67,8 @@ const Sidebar = () => {
 
   const handleAgreeCheckBoxClick = (e) => {
     e.preventDefault();
-    window.location = `https://100087.pythonanywhere.com/legalpolicies/${workflowRegistrationEventId}/website-privacy-policy/policies/?redirect_url=${window.location.origin}/100018-dowellWorkflowAi-testing/%23?id=${id}&session_id=${session_id}}`
+    setAgreePageLoading(true);
+    window.location = `https://100087.pythonanywhere.com/legalpolicies/${workflowRegistrationEventId}/website-privacy-policy/policies/?redirect_url=${window.location.origin}/100018-dowellWorkflowAi-testing/%23?id=${id}&session_id=${session_id}`
   }
 
   const handleClick = (feature) => {
@@ -155,6 +162,7 @@ const Sidebar = () => {
                   I agree with the privacy policy and terms and conditions
                 </label>
                 <button disabled={!legalTermsAgreed} className={`${styles.legal__Register__Btn} ${styles.continue__Btn}`} onClick={() => setShowLegalPopup(false)}>{"Continue"}</button>
+                { agreePageLoading ? <div className="loading__Spinner__New__Portfolio abs__Pos"><Spinner /></div> : <></> }
               </div>
             }
           </div>
