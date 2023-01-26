@@ -99,22 +99,20 @@ get a link process for person having notifications
 def get_process_link(request):
     # get links info
     links_info = get_links_object_by_process_id(request.data["process_id"])
-    print(links_info)
-    if not links_info:
+    user = request.data["user_name"]
+    if not links_info["links"]:
         return Response(
             "Could not fetch process info at this time",
             status=status.HTTP_500_INTERNAL_SERVER_ERROR,
         )
     # check presence in link
     for link in links_info["links"]:
-        if request.data["user_name"] in link:
-            verify_link = link.get(request.data["user_name"])
-            break
-        else:
-            return Response(
-                "User is not part of this process", status=status.HTTP_401_UNAUTHORIZED
-            )
-    return Response(verify_link, status=status.HTTP_200_OK)
+        if user in link:
+            return Response(link[user], status=status.HTTP_200_OK)
+
+    return Response(
+        "User is not part of this process", status=status.HTTP_401_UNAUTHORIZED
+    )
 
 
 """
@@ -131,7 +129,6 @@ def fetch_process_links(request):
             "could not fetch process links",
             status=status.HTTP_500_INTERNAL_SERVER_ERROR,
         )
-
     if len(process_info["links"]) > 0:
         return Response(process_info["links"], status=status.HTTP_200_OK)
     return Response("no links found for this process", status=status.HTTP_404_NOT_FOUND)
@@ -146,7 +143,7 @@ def verify_user_in_process(process_id, user_name):
     print("checking allowed... \n")
     allowed = False
     processing_links_info = get_links_object_by_process_id(process_id)
-    print(processing_links_info)
+    # print(processing_links_info)
     if processing_links_info:
         for link in processing_links_info["links"]:
             if user_name in link:
@@ -195,26 +192,15 @@ def verify_process(request):
     print("normal checks..... \n")
     # decode token
     decoded = jwt.decode(request.data["token"], "secret", algorithms="HS256")
+    print(decoded)
     # find links
-    try:
-        processing_links_info = get_links_object_by_process_id(decoded["process_id"])
-    except:
-        return Response(
-            "something went wrong when verifying process",
-            status=status.HTTP_500_INTERNAL_SERVER_ERROR,
-        )
-
-    # verify user & portfolio
-    is_allowed = verify_user_in_process(
-        process_id=decoded["process_id"], user_name=request.data["user_name"]
-    )
-    print(is_allowed)
-    # find the document map & run checks.
-    if not is_allowed:
-        return Response(
-            "user is not part of process", status=status.HTTP_500_INTERNAL_SERVER_ERROR
-        )
-
+    # try:
+    #     processing_links_info = get_links_object_by_process_id(decoded["process_id"])
+    # except:
+    #     return Response(
+    #         "something went wrong when verifying process",
+    #         status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+    #     )
     # the process
     try:
         process = get_process_object(workflow_process_id=decoded["process_id"])
@@ -224,7 +210,7 @@ def verify_process(request):
             status=status.HTTP_500_INTERNAL_SERVER_ERROR,
         )
 
-    match = False
+    # match = False
     for step in process["process_steps"]:
         # user check.
         if step["member"] == request.data["user_name"]:
@@ -232,16 +218,17 @@ def verify_process(request):
             if step["member_portfolio"] == request.data["portfolio"]:
                 print("Started the checks.... \n")
                 # Display check
-                if not check_display_right(step.get("display_before")):
-                    return Response(
-                        "missing display rights", status=status.HTTP_401_UNAUTHORIZED
-                    )
+                # if not check_display_right(step.get("display_before")):
+                #     return Response(
+                #         "missing display rights", status=status.HTTP_401_UNAUTHORIZED
+                #     )
                 # Location Check
-                if not check_location(step.get("location"), request.data["location"]):
-                    return Response(
-                        f'Signing allowed from {step.get("location")} only',
-                        status=status.HTTP_403_FORBIDDEN,
-                    )
+                # if step.get("location"):
+                #     if not check_location(step.get("location"), request.data["location"]):
+                #         return Response(
+                #             f'Signing allowed from location:{step.get("location")} only',
+                #             status=status.HTTP_403_FORBIDDEN,
+                #         )
                 # Time Limit Check.
                 # if not check_time_limit(
                 #     step.get("limit"), step.get("start_time"), step.get("end_time")
@@ -256,27 +243,26 @@ def verify_process(request):
                 map = step.get("document_map")
                 right = step.get("rights")
                 user = step.get("member")
-                match = True
-                break
-            else:
-                return Response(
-                    f'authorized portfolio for this username is { step["member_portfolio"] }',
-                    status=status.HTTP_401_UNAUTHORIZED,
-                )
-        else:
-            return Response(
-                f'authorized this user : { step["member"] } ',
-                status=status.HTTP_401_UNAUTHORIZED,
-            )
-    if not match:
-        return Response(
-            "document access forbidden",
-            status=status.HTTP_403_FORBIDDEN,
-        )
+                # match = True
+            # else:
+            #     return Response(
+            #         f'authorized portfolio for this username is { step["member_portfolio"] }',
+            #         status=status.HTTP_401_UNAUTHORIZED,
+            #     )
+        # else:
+        #     return Response(
+        #         f'authorized this user : { step["member"] } ',
+        #         status=status.HTTP_401_UNAUTHORIZED,
+        #     )
+    # if not match:
+    #     return Response(
+    #         "document access forbidden",
+    #         status=status.HTTP_403_FORBIDDEN,
+    #     )
 
     # generate document link.
     doc_link = generate_link(
-        document_id=processing_links_info["document_id"],
+        document_id=decoded["document_id"],
         doc_map=map,
         doc_rights=right,
         user=user,
@@ -390,7 +376,7 @@ def start_processing(process, document_id, choice):
 def generate_links(process, document_id, choice):
     print("generating links.............\n")
     links = [
-        {step["member"]: verification_link(process["process_id"])}
+        {step["member"]: verification_link(process["process_id"], document_id)}
         for step in process["process_steps"]
     ]
     # Save Links - DB-3
@@ -405,11 +391,15 @@ def generate_links(process, document_id, choice):
 
 
 # application link
-def verification_link(process_id):
+def verification_link(process_id, document_id):
     # Token generation.
     print("creating verification links........... \n")
     # create a jwt token
-    payload = {"uuid_hash": uuid.uuid4().hex, "process_id": process_id}
+    payload = {
+        "uuid_hash": uuid.uuid4().hex,
+        "process_id": process_id,
+        "document_id": document_id,
+    }
     hash_token = jwt.encode(
         json.loads(json.dumps(payload)), "secret", algorithm="HS256"
     )
