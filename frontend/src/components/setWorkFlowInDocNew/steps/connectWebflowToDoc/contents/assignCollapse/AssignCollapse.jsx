@@ -1,9 +1,9 @@
 import React, { useState, useCallback, memo } from "react";
-import Select from "../../../../../select/Select";
+
 import styles from "./assignCollapse.module.css";
 import { v4 as uuidv4 } from "uuid";
 import { useForm } from "react-hook-form";
-import Radio from "../../../../../radio/Radio";
+
 import Display from "./display/Display";
 import Location from "./location/Location";
 import Time from "./time/Time";

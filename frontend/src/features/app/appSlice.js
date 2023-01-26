@@ -108,14 +108,39 @@ export const appSlice = createSlice({
       state.dropdownToggle = false;
     },
     setSelectedWorkflowsToDoc: (state, action) => {
-      state.selectedWorkflowsToDoc = [
+      /*  state.selectedWorkflowsToDoc = [
         ...state.selectedWorkflowsToDoc,
         action.payload,
-      ];
+      ]; */
+      const isInclude = state.selectedWorkflowsToDoc.find(
+        (item) => item._id === action.payload._id
+      );
+
+      if (isInclude) {
+        state.selectedWorkflowsToDoc = state.selectedWorkflowsToDoc.map(
+          (item) =>
+            item._id === action.payload._id
+              ? {
+                  ...item,
+                  isSelected: item.isSelected ? !item.isSelected : true,
+                }
+              : item
+        );
+      } else {
+        state.selectedWorkflowsToDoc = [
+          ...state.selectedWorkflowsToDoc,
+          action.payload,
+        ];
+      }
     },
     removeFromSelectedWorkflowsToDoc: (state, action) => {
       state.selectedWorkflowsToDoc = state.selectedWorkflowsToDoc.filter(
         (item) => item._id !== action.payload
+      );
+    },
+    removeFromSelectedWorkflowsToDocGroup: (state) => {
+      state.selectedWorkflowsToDoc = state.selectedWorkflowsToDoc.filter(
+        (item) => item?.isSelected !== true
       );
     },
     setDropdowndToggle: (state, action) => {
@@ -261,6 +286,7 @@ export const {
   setDropdowndToggle,
   resetSetWorkflows,
   removeFromSelectedWorkflowsToDoc,
+  removeFromSelectedWorkflowsToDocGroup,
   setProcessSteps,
   setSelectedMembersForProcess,
   removeFromSelectedMembersForProcess,

@@ -16,7 +16,11 @@
 .select__header {
   padding: 20px 25px;
   border-bottom: 1px solid var(--e-global-color-text);
-  max-width: calc(100% / 3);
+  width: calc(100% / 3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
 }
 
 .selected {

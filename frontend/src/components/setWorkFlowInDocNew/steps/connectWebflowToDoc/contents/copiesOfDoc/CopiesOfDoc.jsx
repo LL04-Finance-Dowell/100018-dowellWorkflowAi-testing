@@ -1,11 +1,10 @@
 import React, { useState } from "react";
-import FormLayout from "../../../../../formLayout/FormLayout";
-import Select from "../../../../../select/Select";
-import globalStyles from "../../../connectWorkFlowToDoc.module.css";
+import FormLayout from "../../../../formLayout/FormLayout";
+import globalStyles from "../../connectWorkFlowToDoc.module.css";
 import styles from "./copiesOdDoc.module.css";
 import { v4 as uuidv4 } from "uuid";
 import { useForm } from "react-hook-form";
-import AssignButton from "../../../../../assignButton/AssignButton";
+import AssignButton from "../../../../assignButton/AssignButton";
 
 const CopiesOfDoc = () => {
   const {

@@ -8,7 +8,7 @@ import "swiper/css/navigation";
 import "swiper/css/pagination";
 
 import "./swiper.css";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import {
   mineDocuments,
@@ -27,6 +27,8 @@ const SelectDoc = () => {
   const { userDetail } = useSelector((state) => state.auth);
   const { currentDocToWfs } = useSelector((state) => state.app);
 
+  const [selectedDocuments, setSelectedDocuments] = useState([]);
+
   useEffect(() => {
     const data = {
       company_id: userDetail?.portfolio_info[0].org_id,
@@ -35,9 +37,17 @@ const SelectDoc = () => {
     dispatch(savedDocuments(data));
   }, []);
 
-  const handleAddDocument = (document) => {
-    dispatch(setCurrentDocToWfs(document));
-    dispatch(setContentOfDocument(null));
+  const handleAddSelectedDocuments = (document) => {
+    const isInclude = selectedDocuments.find(
+      (item) => item._id === document._id
+    );
+    if (isInclude) {
+      setSelectedDocuments((prev) =>
+        prev.filter((item) => item._id !== document._id)
+      );
+    } else {
+      setSelectedDocuments((prev) => [...prev, document]);
+    }
   };
 
   return (
@@ -66,34 +76,33 @@ const SelectDoc = () => {
               modules={[Navigation, Pagination]}
               className="select-doc"
             >
-              {[...savedDocumentsItems]?.reverse().map((item, index) => (
-                <SwiperSlide key={item.id}>
-                  <div className={styles.swiper__slide__box}>
-                    <div
-                      className={`${styles.swiper__slide__features} animate`}
-                    >
-                      <p className={styles.features__title}>
-                        {item.document_name}
-                      </p>
-                      <button
-                        onClick={() => handleAddDocument(item)}
-                        className={`${styles.features__button} ${
-                          item._id === currentDocToWfs?._id && styles.selected
-                        }`}
+              {savedDocuments &&
+                [...savedDocumentsItems]?.reverse().map((item, index) => (
+                  <SwiperSlide key={item._id}>
+                    <div className={styles.swiper__slide__box}>
+                      <div
+                        className={`${styles.swiper__slide__features} animate`}
                       >
-                        {item._id === currentDocToWfs?._id
-                          ? "selected"
-                          : "click here"}
-                      </button>
+                        <p className={styles.features__title}>
+                          {item.document_name}
+                        </p>
+                        <button
+                          onClick={() => handleAddSelectedDocuments(item)}
+                          className={`${styles.features__button} ${
+                            item._id === currentDocToWfs?._id && styles.selected
+                          }`}
+                        >
+                          click here
+                        </button>
+                      </div>
                     </div>
-                  </div>
-                </SwiperSlide>
-              ))}
+                  </SwiperSlide>
+                ))}
             </Swiper>
           )}
         </div>
         <div className={styles.right__container}>
-          <SelectedDocuments />
+          <SelectedDocuments selectedDocuments={selectedDocuments} />
         </div>
       </div>
     </div>

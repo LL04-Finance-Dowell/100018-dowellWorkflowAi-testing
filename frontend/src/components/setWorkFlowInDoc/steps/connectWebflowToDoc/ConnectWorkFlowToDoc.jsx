@@ -6,15 +6,13 @@ import AsignTask from "./assignForms/forms/assignTask/AssignTask";
 import AssignLocation from "./assignForms/forms/assignLocation/AssignLocation";
 import AssignTime from "./assignForms/forms/assignTime/AssignTimes";
 import Contents from "../../contents/Contents";
-import { v4 as uuidv4 } from "uuid";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { setDocCurrentWorkflow, setProcessSteps, updateSingleProcessStep } from "../../../../features/app/appSlice";
-import Collapse from "../../../../layouts/collapse/Collapse";
-import { FaArrowDown } from "react-icons/fa";
-import { FaArrowUp } from "react-icons/fa";
+import {
+  setProcessSteps,
+  updateSingleProcessStep,
+} from "../../../../features/app/appSlice";
 import Dropdown from "./dropdown/Dropdown";
-import { LoadingSpinner } from "../../../LoadingSpinner/LoadingSpinner";
 import BookSpinner from "../../../bookSpinner/BookSpinner";
 
 const ConnectWorkFlowToDoc = () => {
@@ -23,7 +21,7 @@ const ConnectWorkFlowToDoc = () => {
   const { contentOfDocument, contentOfDocumentStatus } = useSelector(
     (state) => state.document
   );
-  const { wfToDocument, docCurrentWorkflow, selectedWorkflowsToDoc } = useSelector(
+  const { wfToDocument, docCurrentWorkflow } = useSelector(
     (state) => state.app
   );
 
@@ -35,8 +33,8 @@ const ConnectWorkFlowToDoc = () => {
     setCurrentSteps(docCurrentWorkflow?.workflows?.steps);
   }, [docCurrentWorkflow]);
 
-  const [contentToggle, setContentToggle] = useState(false);
-  const [ showSteps, setShowSteps ] = useState([]);
+  const [setContentToggle] = useState(false);
+  const [showSteps, setShowSteps] = useState([]);
 
   console.log("sssssssssssssssssss", wfToDocument);
 
@@ -44,21 +42,28 @@ const ConnectWorkFlowToDoc = () => {
     setCurrentSteps(
       docCurrentWorkflow ? docCurrentWorkflow?.workflows?.steps : []
     );
-    let singleShowStepArr = docCurrentWorkflow ? docCurrentWorkflow?.workflows?.steps.map(step => {
-      return {
-        _id: step._id,
-        showStep: true
-      }
-    }) : []
-    setShowSteps(singleShowStepArr)
+    let singleShowStepArr = docCurrentWorkflow
+      ? docCurrentWorkflow?.workflows?.steps.map((step) => {
+          return {
+            _id: step._id,
+            showStep: true,
+          };
+        })
+      : [];
+    setShowSteps(singleShowStepArr);
 
-    if (!docCurrentWorkflow) return
+    if (!docCurrentWorkflow) return;
 
-    const [ stepsForWorkflow, stepsObj ] = [ [], { workflow: docCurrentWorkflow._id, steps: docCurrentWorkflow.workflows?.steps, }];
+    const [stepsForWorkflow, stepsObj] = [
+      [],
+      {
+        workflow: docCurrentWorkflow._id,
+        steps: docCurrentWorkflow.workflows?.steps,
+      },
+    ];
     stepsForWorkflow.push(stepsObj);
-    
-    dispatch(setProcessSteps(stepsForWorkflow));
 
+    dispatch(setProcessSteps(stepsForWorkflow));
   }, [docCurrentWorkflow]);
 
   const handleToggleContent = (id) => {
@@ -71,36 +76,45 @@ const ConnectWorkFlowToDoc = () => {
 
   console.log("currrrr", contentOfDocument);
 
-  const handleSkipSelection = (e, showStepIdToUpdate, workflowId, stepIndexToUpdate) => {
+  const handleSkipSelection = (
+    e,
+    showStepIdToUpdate,
+    workflowId,
+    stepIndexToUpdate
+  ) => {
     let currentShowSteps = showSteps.slice();
-    let foundStepIndex = currentShowSteps.findIndex(step => step._id === showStepIdToUpdate);
-    
-    if (foundStepIndex === -1) return
-    
+    let foundStepIndex = currentShowSteps.findIndex(
+      (step) => step._id === showStepIdToUpdate
+    );
+
+    if (foundStepIndex === -1) return;
+
     if (e.target.checked) {
       currentShowSteps[foundStepIndex].showStep = false;
-      dispatch(updateSingleProcessStep({ 
-        'skip': true, 
-        'workflow': workflowId, 
-        'indexToUpdate': stepIndexToUpdate, 
-        'member_type': '',
-        'member_portfolio': '',
-        'rights': '',
-        'display_before': '',
-      }))
-      return setShowSteps(currentShowSteps)
+      dispatch(
+        updateSingleProcessStep({
+          skip: true,
+          workflow: workflowId,
+          indexToUpdate: stepIndexToUpdate,
+          member_type: "",
+          member_portfolio: "",
+          rights: "",
+          display_before: "",
+        })
+      );
+      return setShowSteps(currentShowSteps);
     }
 
     currentShowSteps[foundStepIndex].showStep = true;
     dispatch(
-      updateSingleProcessStep({ 
-        'skip': false, 
-        'workflow': workflowId, 
-        'indexToUpdate': stepIndexToUpdate,
+      updateSingleProcessStep({
+        skip: false,
+        workflow: workflowId,
+        indexToUpdate: stepIndexToUpdate,
       })
-    )
-    setShowSteps(currentShowSteps)
-  }
+    );
+    setShowSteps(currentShowSteps);
+  };
 
   return (
     <>
@@ -149,7 +163,17 @@ const ConnectWorkFlowToDoc = () => {
                         {item.step_name}
                       </div>
                       <div className={styles.skip}>
-                        <input type="checkbox" onChange={(e) => handleSkipSelection(e, item._id, docCurrentWorkflow._id, index)} />
+                        <input
+                          type="checkbox"
+                          onChange={(e) =>
+                            handleSkipSelection(
+                              e,
+                              item._id,
+                              docCurrentWorkflow._id,
+                              index
+                            )
+                          }
+                        />
                         Skip this Step
                       </div>
 
@@ -174,10 +198,15 @@ const ConnectWorkFlowToDoc = () => {
                           />
                         )}
                       </div>
-                      <AsignTask currentStepIndex={index} stepSkipped={showSteps.find(step => step._id === item._id && step.showStep)} />
+                      <AsignTask
+                        currentStepIndex={index}
+                        stepSkipped={showSteps.find(
+                          (step) => step._id === item._id && step.showStep
+                        )}
+                      />
                       <AssignLocation currentStepIndex={index} />
                       <AssignTime currentStepIndex={index} />
-                    </div> 
+                    </div>
                   ))}
               </div>
             )}
@@ -193,29 +222,3 @@ const ConnectWorkFlowToDoc = () => {
 };
 
 export default ConnectWorkFlowToDoc;
-
-const mapDocuments = [
-  { id: uuidv4(), content: "Workflow" },
-  { id: uuidv4(), content: "Workflow A1" },
-  { id: uuidv4(), content: "Workflow A1" },
-  { id: uuidv4(), content: "Workflow A1" },
-  { id: uuidv4(), content: "Workflow A1" },
-  { id: uuidv4(), content: "Workflow A1" },
-  { id: uuidv4(), content: "Workflow A1" },
-  { id: uuidv4(), content: "Workflow A1" },
-  { id: uuidv4(), content: "Workflow A1" },
-  { id: uuidv4(), content: "Workflow A1" },
-  { id: uuidv4(), content: "Workflow A1" },
-  { id: uuidv4(), content: "Workflow A1" },
-  { id: uuidv4(), content: "Workflow A1" },
-  { id: uuidv4(), content: "Workflow A1" },
-  { id: uuidv4(), content: "Workflow A1" },
-  { id: uuidv4(), content: "Workflow A1" },
-  { id: uuidv4(), content: "Workflow A1" },
-  { id: uuidv4(), content: "Workflow A1" },
-  { id: uuidv4(), content: "Workflow A1" },
-  { id: uuidv4(), content: "Workflow A1" },
-  { id: uuidv4(), content: "Workflow A1" },
-  { id: uuidv4(), content: "Workflow A1" },
-  { id: uuidv4(), content: "Workflow A1" },
-];

@@ -60,25 +60,28 @@ const SelectDoc = () => {
           modules={[Navigation, Pagination]}
           className="select-doc"
         >
-          {[...savedDocumentsItems]?.reverse().map((item, index) => (
-            <SwiperSlide key={item.id}>
-              <div className={styles.swiper__slide__box}>
-                <div className={`${styles.swiper__slide__features} animate`}>
-                  <p className={styles.features__title}>{item.document_name}</p>
-                  <button
-                    onClick={() => handleAddDocument(item)}
-                    className={`${styles.features__button} ${
-                      item._id === currentDocToWfs?._id && styles.selected
-                    }`}
-                  >
-                    {item._id === currentDocToWfs?._id
-                      ? "selected"
-                      : "click here"}
-                  </button>
+          {savedDocuments &&
+            [...savedDocumentsItems]?.reverse().map((item, index) => (
+              <SwiperSlide key={item.id}>
+                <div className={styles.swiper__slide__box}>
+                  <div className={`${styles.swiper__slide__features} animate`}>
+                    <p className={styles.features__title}>
+                      {item.document_name}
+                    </p>
+                    <button
+                      onClick={() => handleAddDocument(item)}
+                      className={`${styles.features__button} ${
+                        item._id === currentDocToWfs?._id && styles.selected
+                      }`}
+                    >
+                      {item._id === currentDocToWfs?._id
+                        ? "selected"
+                        : "click here"}
+                    </button>
+                  </div>
                 </div>
-              </div>
-            </SwiperSlide>
-          ))}
+              </SwiperSlide>
+            ))}
         </Swiper>
       )}
 

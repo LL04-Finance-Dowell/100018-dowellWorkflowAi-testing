@@ -32,10 +32,10 @@ const SetWorkflowInDoc = () => {
           Set WorkFlows in Documents
         </h2>
         <SelectDoc />
+        <ContentMapOfDoc />
         <div className={styles.diveder}></div>
         <SelectWorkflow />
         <div className={styles.diveder}></div>
-        {/* <ContentMapOfDoc /> */}
         <ConnectWorkFlowToDoc />
         <div className={styles.diveder}></div>
         <CheckErrors />

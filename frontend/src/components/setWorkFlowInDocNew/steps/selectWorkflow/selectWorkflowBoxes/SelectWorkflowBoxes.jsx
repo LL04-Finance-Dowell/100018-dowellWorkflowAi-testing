@@ -1,11 +1,16 @@
-import { useState, useEffect, useRef, memo, useCallback } from "react";
+import React, { useState, useEffect, useRef, memo, useCallback } from "react";
 import styles from "./infoBoxes.module.css";
 import { v4 as uuidv4 } from "uuid";
 import { GrAdd } from "react-icons/gr";
 import { MdOutlineRemove } from "react-icons/md";
 import { useScroll, useTransform } from "framer-motion";
 import { useSelector, useDispatch } from "react-redux";
-import { setSelectedWorkflowsToDoc } from "../../../../../features/app/appSlice";
+import {
+  removeFromSelectedMembersForProcess,
+  setMembersSetForProcess,
+  setSelectedMembersForProcess,
+  setSelectedWorkflowsToDoc,
+} from "../../../../../features/app/appSlice";
 import Collapse from "../../../../../layouts/collapse/Collapse";
 import { LoadingSpinner } from "../../../../LoadingSpinner/LoadingSpinner";
 import { useForm } from "react-hook-form";
@@ -19,21 +24,27 @@ import {
 } from "../../../../infoBox/styledComponents";
 import { savedWorkflows } from "../../../../../features/workflow/asyncTHunks";
 
-const SelectWorkflowBoxes = () => {
+const InfoBoxes = () => {
   const { register, watch } = useForm();
-  const { workflow } = watch();
+  const { workflow, team } = watch();
 
   const ref = useRef(null);
   const dispatch = useDispatch();
 
   const { userDetail } = useSelector((state) => state.auth);
-  const { currentDocToWfs, selectedWorkflowsToDoc } = useSelector(
-    (state) => state.app
-  );
+  const {
+    currentDocToWfs,
+    selectedWorkflowsToDoc,
+    selectedMembersForProcess,
+    docCurrentWorkflow,
+    membersSetForProcess,
+  } = useSelector((state) => state.app);
   const { savedWorkflowItems, savedWorkflowStatus } = useSelector(
     (state) => state.workflow
   );
-
+  const { contentOfDocument, savedDocumentsItems } = useSelector(
+    (state) => state.document
+  );
   const [compInfoBoxes, setCompInfoBoxes] = useState(infoBoxes);
 
   useEffect(() => {
@@ -50,21 +61,101 @@ const SelectWorkflowBoxes = () => {
         item.title === "workflow"
           ? {
               ...item,
-              contents: savedWorkflowItems?.filter((item) =>
-                item.workflows?.workflow_title
-                  .toLowerCase()
-                  .includes(workflow?.toLowerCase())
-              ),
+              contents:
+                team?.length > 1
+                  ? savedWorkflowItems?.filter((item) =>
+                      item.created_by
+                        .toLocaleLowerCase()
+                        .includes(team?.toLocaleLowerCase())
+                    )
+                  : savedWorkflowItems?.filter((item) =>
+                      item.workflows?.workflow_title
+                        .toLowerCase()
+                        .includes(workflow?.toLowerCase())
+                    ),
               status: savedWorkflowStatus,
+            }
+          : item.title === "team"
+          ? {
+              ...item,
+              contents:
+                team?.length > 1
+                  ? userDetail?.selected_product?.userportfolio
+                      .filter((user) => user.member_type === "team_member")
+                      .filter((user) =>
+                        Array.isArray(user.username) && user.username.length > 0
+                          ? user.username[0]
+                              .toLocaleLowerCase()
+                              .includes(team.toLocaleLowerCase())
+                          : user.username
+                              .toLocaleLowerCase()
+                              .includes(team.toLocaleLowerCase())
+                      )
+                  : userDetail?.selected_product?.userportfolio.filter(
+                      (user) => user.member_type === "team_member"
+                    ),
+              status: "done",
+            }
+          : item.title === "user"
+          ? {
+              ...item,
+              contents: userDetail?.selected_product?.userportfolio.filter(
+                (user) => user.member_type === "public"
+              ),
+              status: "done",
             }
           : item
       )
     );
-  }, [savedWorkflowStatus, workflow]);
+  }, [savedWorkflowStatus, workflow, team, userDetail]);
 
   useEffect(() => {
     memorizedInfoBox();
   }, [memorizedInfoBox]);
+
+  useEffect(() => {
+    if (membersSetForProcess) return;
+
+    userDetail.selected_product?.userportfolio?.forEach((user) => {
+      if (Array.isArray(user.username) && user.username.length > 0) {
+        user.username.forEach((arrUsername) => {
+          const copyOfUser = { ...user };
+          copyOfUser.username = arrUsername;
+
+          if (
+            selectedMembersForProcess.find(
+              (member) => member.username === copyOfUser.username
+            )
+          )
+            return dispatch(
+              removeFromSelectedMembersForProcess(copyOfUser.username)
+            );
+          dispatch(setSelectedMembersForProcess(copyOfUser));
+        });
+
+        return;
+      }
+
+      if (
+        selectedMembersForProcess.find((member) =>
+          member.username === Array.isArray(user.username) &&
+          user.username.length > 0
+            ? user.username[0]
+            : user.username
+        )
+      )
+        return dispatch(
+          removeFromSelectedMembersForProcess(
+            Array.isArray(user.username) && user.username.length > 0
+              ? user.username[0]
+              : user.username
+          )
+        );
+      dispatch(setSelectedMembersForProcess(user));
+    });
+
+    dispatch(setMembersSetForProcess(true));
+  }, [userDetail, currentDocToWfs, membersSetForProcess]);
 
   const { scrollYProgress } = useScroll({
     target: ref,
@@ -82,6 +173,12 @@ const SelectWorkflowBoxes = () => {
   };
 
   const addToSelectedWorkFlows = (selectedWorkFlow) => {
+    if (selectedWorkFlow.member_type && selectedWorkFlow.username) {
+      return;
+      // if (selectedMembersForProcess.find(member => member.username === selectedWorkFlow.username)) return dispatch(removeFromSelectedMembersForProcess(selectedWorkFlow.username))
+      // return dispatch(setSelectedMembersForProcess(selectedWorkFlow));
+    }
+
     if (currentDocToWfs) {
       const isInclude = selectedWorkflowsToDoc.find(
         (item) => item._id === selectedWorkFlow._id
@@ -97,7 +194,7 @@ const SelectWorkflowBoxes = () => {
   return (
     <div ref={ref} style={{ y: y }} className={styles.container}>
       {compInfoBoxes?.map((infoBox) => (
-        <InfoBoxContainer key={infoBox.id}>
+        <InfoBoxContainer key={infoBox.id} className={styles.box}>
           <InfoTitleBox
             style={{ pointerEvents: infoBox?.status === "pending" && "none" }}
             onClick={() => handleTogleBox(infoBox.id)}
@@ -128,15 +225,67 @@ const SelectWorkflowBoxes = () => {
               />
 
               <InfoContentBox className={styles.content__box}>
-                {[...infoBox.contents].reverse().map((item) => (
-                  <InfoContentText
-                    onClick={() => addToSelectedWorkFlows(item)}
-                    key={item._id}
-                    /* className={styles.content} */
-                  >
-                    {item.workflows?.workflow_title}
-                  </InfoContentText>
-                ))}
+                <>{console.log(infoBox)}</>
+                {infoBox && infoBox.contents && infoBox.contents.length > 0 ? (
+                  [...infoBox?.contents].reverse().map((item) =>
+                    item.username ? (
+                      Array.isArray(item.username) ? (
+                        <>
+                          {React.Children.toArray(
+                            item.username.map((user) => {
+                              return (
+                                <InfoContentText
+                                  key={user + crypto.randomUUID()}
+                                  /* className={styles.content} */
+                                >
+                                  <span>{user}</span>
+                                </InfoContentText>
+                              );
+                            })
+                          )}
+                        </>
+                      ) : (
+                        <InfoContentText
+                          key={item.username + crypto.randomUUID()}
+                          /* className={styles.content} */
+                        >
+                          <span>{item.username}</span>
+                        </InfoContentText>
+                      )
+                    ) : (
+                      <InfoContentText
+                        onClick={() => addToSelectedWorkFlows(item)}
+                        key={item._id}
+                        /* className={styles.content} */
+                      >
+                        <span
+                          style={
+                            // item.username ? selectedMembersForProcess.find(member => member.username === item.username) ? { color: "#0048ff"} : {} :
+                            item.workflows && item._id
+                              ? selectedWorkflowsToDoc.find(
+                                  (addedWorkflow) =>
+                                    addedWorkflow._id === item._id
+                                )
+                                ? {
+                                    backgroundColor: "#0048ff",
+                                    color: "#fff",
+                                    padding: "2% 3%",
+                                    borderRadius: "5px",
+                                  }
+                                : {}
+                              : {}
+                          }
+                        >
+                          {item.workflows &&
+                            item.workflows.workflow_title &&
+                            item.workflows.workflow_title}
+                        </span>
+                      </InfoContentText>
+                    )
+                  )
+                ) : (
+                  <></>
+                )}
               </InfoContentBox>
             </InfoContentContainer>
           </Collapse>
@@ -146,35 +295,25 @@ const SelectWorkflowBoxes = () => {
   );
 };
 
-export default memo(SelectWorkflowBoxes);
+export default memo(InfoBoxes);
 
 export const infoBoxes = [
   {
     id: uuidv4(),
-    title: "Select workflows by Name",
+    title: "workflow",
     contents: [],
     isOpen: true,
   },
   {
     id: uuidv4(),
-    title: "Select workflows created by Team Member",
-    contents: [
-      /*  { _id: uuidv4(), content: "member 1" },
-      { _id: uuidv4(), content: "member 1" },
-      { _id: uuidv4(), content: "member 1" },
-      { _id: uuidv4(), content: "member 1" }, */
-    ],
+    title: "team",
+    contents: [],
     isOpen: true,
   },
   {
     id: uuidv4(),
-    title: "Select workflows created by Users",
-    contents: [
-      /*   { _id: uuidv4(), content: "guest 1" },
-      { _id: uuidv4(), content: "guest 1" },
-      { _id: uuidv4(), content: "guest 1" },
-      { _id: uuidv4(), content: "guest 1" }, */
-    ],
+    title: "user",
+    contents: [],
     isOpen: true,
   },
 ];

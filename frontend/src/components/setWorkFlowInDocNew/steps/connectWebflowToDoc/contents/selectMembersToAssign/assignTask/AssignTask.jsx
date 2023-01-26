@@ -1,9 +1,9 @@
 import { useForm } from "react-hook-form";
-import Select from "../../../../../../select/Select";
+import Select from "../../../../../select/Select";
 import { useState } from "react";
 import { v4 as uuidv4 } from "uuid";
-import FormLayout from "../../../../../../formLayout/FormLayout";
-import AssignButton from "../../../../../../assignButton/AssignButton";
+import FormLayout from "../../../../../formLayout/FormLayout";
+import AssignButton from "../../../../../assignButton/AssignButton";
 
 const AssignTask = () => {
   const {

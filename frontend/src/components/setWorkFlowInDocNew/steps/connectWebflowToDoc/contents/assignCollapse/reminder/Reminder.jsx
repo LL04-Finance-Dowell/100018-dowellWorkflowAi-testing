@@ -2,7 +2,7 @@ import React from "react";
 import parentStyles from "../assignCollapse.module.css";
 import { v4 as uuidv4 } from "uuid";
 import { useForm } from "react-hook-form";
-import Select from "../../../../../../select/Select";
+import Select from "../../../../../select/Select";
 
 const Reminder = () => {
   const { register } = useForm();

@@ -21,7 +21,13 @@ const AssignDocumentMap = ({ currentStepIndex }) => {
   const onSubmit = (data) => {
     setLoading(true);
     console.log("docement", data);
-    dispatch(updateSingleProcessStep({ ...data, "indexToUpdate": currentStepIndex, "workflow":  docCurrentWorkflow._id }));
+    dispatch(
+      updateSingleProcessStep({
+        ...data,
+        indexToUpdate: currentStepIndex,
+        workflow: docCurrentWorkflow._id,
+      })
+    );
     setTimeout(() => setLoading(false), 2000);
   };
 
@@ -31,7 +37,12 @@ const AssignDocumentMap = ({ currentStepIndex }) => {
         onSubmit={handleSubmit(onSubmit)}
         className={globalStyles.assign__document__map}
       >
-        <Select register={register} name="document_map" options={documents} takeNormalValue={true} />
+        <Select
+          register={register}
+          name="document_map"
+          options={documents}
+          takeNormalValue={true}
+        />
         <AssignButton buttonText="paste document map" loading={loading} />
       </form>
     </FormLayout>

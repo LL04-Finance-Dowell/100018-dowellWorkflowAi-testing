@@ -1,8 +1,8 @@
 import React from "react";
-import Select from "../../../../../../select/Select";
 import parentStyles from "../assignCollapse.module.css";
 import { v4 as uuidv4 } from "uuid";
 import { useForm } from "react-hook-form";
+import Select from "../../../../../select/Select";
 
 const Display = () => {
   const { register } = useForm();

@@ -1,10 +1,10 @@
-import globalStyles from "../../../connectWorkFlowToDoc.module.css";
-import Select from "../../../../../select/Select";
+import globalStyles from "../../connectWorkFlowToDoc.module.css";
 import { v4 as uuidv4 } from "uuid";
 import { useForm } from "react-hook-form";
-import AssignButton from "../../../../../assignButton/AssignButton";
+import AssignButton from "../../../../assignButton/AssignButton";
 import { useState } from "react";
-import FormLayout from "../../../../../formLayout/FormLayout";
+import FormLayout from "../../../../formLayout/FormLayout";
+import Select from "../../../../select/Select";
 
 const AssignDocumentMap = () => {
   const {

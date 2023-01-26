@@ -1,6 +1,6 @@
 import React from "react";
 import { useForm } from "react-hook-form";
-import Radio from "../../../../../radio/Radio";
+import Radio from "../../../../radio/Radio";
 import AssignTask from "./assignTask/AssignTask";
 import styles from "./selectMembersToAssign.module.css";
 import { v4 as uuidv4 } from "uuid";

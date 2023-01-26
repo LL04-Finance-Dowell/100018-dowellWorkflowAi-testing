@@ -1,10 +1,6 @@
 import styles from "./connectWorkFlowToDoc.module.css";
 import { BsChevronDown } from "react-icons/bs";
 import { BsChevronUp } from "react-icons/bs";
-import AssignDocumentMap from "./assignForms/forms/assignDocumentMap/AssignDocumentMap";
-import AsignTask from "./assignForms/forms/selectMembersToAssign/assignTask/AssignTask";
-import AssignLocation from "./assignForms/forms/assignLocation/AssignLocation";
-import AssignTime from "./assignForms/forms/assignTime/AssignTimes";
 import Contents from "../../contents/Contents";
 import { v4 as uuidv4 } from "uuid";
 import { useEffect, useState } from "react";
@@ -16,11 +12,12 @@ import { FaArrowUp } from "react-icons/fa";
 import Dropdown from "./dropdown/Dropdown";
 import { LoadingSpinner } from "../../../LoadingSpinner/LoadingSpinner";
 import BookSpinner from "../../../bookSpinner/BookSpinner";
-import CopiesOfDoc from "./assignForms/forms/copiesOfDoc/CopiesOfDoc";
-import AssignCollapse from "./assignForms/forms/assignCollapse/AssignCollapse";
 import { PrimaryButton } from "../../../styledComponents/styledComponents";
-import SelectMembersToAssign from "./assignForms/forms/selectMembersToAssign/SelectMembersToAssign";
 import { useForm } from "react-hook-form";
+import CopiesOfDoc from "./contents/copiesOfDoc/CopiesOfDoc";
+import AssignDocumentMap from "./contents/assignDocumentMap/AssignDocumentMap";
+import SelectMembersToAssign from "./contents/selectMembersToAssign/SelectMembersToAssign";
+import AssignCollapse from "./contents/assignCollapse/AssignCollapse";
 
 const ConnectWorkFlowToDoc = () => {
   const { register } = useForm();
@@ -74,47 +71,65 @@ const ConnectWorkFlowToDoc = () => {
           </div>
         ) : (
           <>
-            <div className={styles.step__box}>
-              <div>
-                <div
-                  onClick={() => setContentToggle((prev) => !prev)}
-                  className={`${styles.header} ${styles.title__box}`}
-                >
-                  workflow titleee
-                </div>
-                <div className={`${styles.step__header} ${styles.title__box}`}>
-                  step name
-                </div>
+            <Dropdown />
+            {docCurrentWorkflow && (
+              <div className={styles.step__container}>
+                {currentSteps &&
+                  currentSteps?.map((item, index) => (
+                    <div className={styles.step__box}>
+                      <div>
+                        <div
+                          onClick={() => setContentToggle((prev) => !prev)}
+                          className={`${styles.header} ${styles.title__box}`}
+                        >
+                          {docCurrentWorkflow.workflows?.workflow_title}
+                        </div>
+                        <div
+                          className={`${styles.step__header} ${styles.title__box}`}
+                        >
+                          {item.step_name}
+                        </div>
+                      </div>
+                      <div>
+                        <div className={styles.checkbox}>
+                          <input
+                            {...register("skip")}
+                            id="skip"
+                            type="checkbox"
+                          />
+                          <label htmlFor="skip"> Skip this Step</label>
+                        </div>
+                        <div className={styles.checkbox}>
+                          <input
+                            {...register("permit")}
+                            id="permit"
+                            type="checkbox"
+                          />
+                          <label htmlFor="permit">
+                            Permit internal workflow in this Step
+                          </label>
+                        </div>
+                      </div>
+                      <div className={styles.diveder}></div>
+                      <CopiesOfDoc />
+                      <div className={styles.diveder}></div>
+                      <AssignDocumentMap />
+                      <div className={styles.diveder}></div>
+                      <SelectMembersToAssign />
+                      <div className={styles.diveder}></div>
+                      <AssignCollapse />
+                      <div className={styles.container__button__box}>
+                        <PrimaryButton hoverBg="error">
+                          Reset this step & its successors
+                        </PrimaryButton>
+                        <PrimaryButton hoverBg="success">
+                          Set this step & proceed to next
+                        </PrimaryButton>
+                      </div>
+                    </div>
+                  ))}
               </div>
-              <div>
-                <div className={styles.checkbox}>
-                  <input {...register("skip")} id="skip" type="checkbox" />
-                  <label htmlFor="skip"> Skip this Step</label>
-                </div>
-                <div className={styles.checkbox}>
-                  <input {...register("permit")} id="permit" type="checkbox" />
-                  <label htmlFor="permit">
-                    Permit internal workflow in this Step
-                  </label>
-                </div>
-              </div>
-              <div className={styles.diveder}></div>
-              <CopiesOfDoc />
-              <div className={styles.diveder}></div>
-              <AssignDocumentMap />
-              <div className={styles.diveder}></div>
-              <SelectMembersToAssign />
-              <div className={styles.diveder}></div>
-              <AssignCollapse />
-              <div className={styles.container__button__box}>
-                <PrimaryButton hoverBg="error">
-                  Reset this step & its successors
-                </PrimaryButton>
-                <PrimaryButton hoverBg="success">
-                  Set this step & proceed to next
-                </PrimaryButton>
-              </div>
-            </div>
+            )}
           </>
         )}
       </div>

@@ -172,7 +172,7 @@ const InfoBox = ({
         <a>{title}</a>
       </InfoTitleBox>
       <Collapse in={isOpen}>
-        <InfoContentContainer className="info-content-cont">
+        <InfoContentContainer boxType={boxType} className="info-content-cont">
           {type === "list" ? (
             <InfoContentBox boxType={boxType}>
               {items.map((item, index) => (

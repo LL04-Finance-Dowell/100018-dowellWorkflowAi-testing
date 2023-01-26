@@ -4,20 +4,10 @@
 }
 
 .diveder {
-  /*   margin-block: 5px; */
   height: 1px;
   width: 100%;
   background-color: red;
 }
-/* .step__title__box {
-  margin-block: 25px;
-}
- */
-/* .spinner__box {
-  display: flex;
-  align-items: flex-start;
-  border: solid red 1px;
-} */
 
 .workflows__container {
   display: flex;
@@ -45,7 +35,7 @@
 .step__container {
   display: flex;
   flex-wrap: wrap;
-  gap: 20px;
+  /* gap: 20px; */
 }
 
 .step__box {
