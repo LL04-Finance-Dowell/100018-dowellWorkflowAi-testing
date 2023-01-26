@@ -194,13 +194,13 @@ def verify_process(request):
     decoded = jwt.decode(request.data["token"], "secret", algorithms="HS256")
     print(decoded)
     # find links
-    # try:
-    #     processing_links_info = get_links_object_by_process_id(decoded["process_id"])
-    # except:
-    #     return Response(
-    #         "something went wrong when verifying process",
-    #         status=status.HTTP_500_INTERNAL_SERVER_ERROR,
-    #     )
+    try:
+        processing_links_info = get_links_object_by_process_id(decoded["process_id"])
+    except:
+        return Response(
+            "something went wrong when verifying process",
+            status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+        )
     # the process
     try:
         process = get_process_object(workflow_process_id=decoded["process_id"])
@@ -211,6 +211,9 @@ def verify_process(request):
         )
 
     # match = False
+    map = None
+    right = None
+    user = None
     for step in process["process_steps"]:
         # user check.
         if step["member"] == request.data["user_name"]:
@@ -262,7 +265,7 @@ def verify_process(request):
 
     # generate document link.
     doc_link = generate_link(
-        document_id=decoded["document_id"],
+        document_id=processing_links_info["document_id"],
         doc_map=map,
         doc_rights=right,
         user=user,
