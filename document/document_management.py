@@ -10,7 +10,6 @@ from database.mongo_db_connection import (
     save_document,
     get_document_object,
     get_template_object,
-    get_links_object_by_process_id,
 )
 
 
@@ -165,107 +164,120 @@ def document_detail(request):  # Single document
     )
 
 
-# @api_view(["POST"])
-# def documents_to_be_signed(
-#     request,
-# ):  # List of `to be signed` documents. State being processing.
-#     try:
-#         filtered_documents = []
-#         for d in get_document_list(request.data["company_id"]):
-#             if (
-#                 d.get("state") == "processing"
-#                 and d.get("company_id") == request.data["company_id"]
-#                 and check_allowed(
-#                     process_id=d.get("workflow_process"),
-#                     user_name=request.data["user_name"],
-#                 )
-#             ):
-#                 filtered_documents.append(d)
-
-#         if len(filtered_documents) > 0:
-#             return Response(filtered_documents, status=status.HTTP_200_OK)
-#         return Response([], status=status.HTTP_200_OK)
-#     except:
-#         return Response([], status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+"""
+List of `to be signed` documents. State being processing.
+"""
 
 
 @api_view(["POST"])
-def documents_to_be_signed(request):  # List of `to be signed` documents.
+def documents_to_be_signed(
+    request,
+):
     try:
         filtered_documents = []
         for d in get_document_list(request.data["company_id"]):
             if (
-                "workflow_process" in d
+                d.get("state") == "processing"
                 and d.get("company_id") == request.data["company_id"]
-                and verify_user_in_process(
-                    process_id=d.get("workflow_process"),
-                    user_name=request.data["user_name"],
-                )
             ):
                 filtered_documents.append(d)
-        # filtered_documents = [
-        #     d
-        #     for d in documents
-        #     if any(("workflow_process" in d))
-        #     and (
-        #         d.get("company_id") == request.data["company_id"]
-        #         and verify_user_in_process(
-        #             process_id=d.get("workflow_process"),
-        #             user_name=request.data["user_name"],
-        #         )
-        #     )
-        # ]
-        # for d in get_document_list(request.data["company_id"]):
-        #     if "workflow_process" in d:
-        #         if d.get("company_id") == request.data[
-        #             "company_id"
-        #         ] and verify_user_in_process(
-        #             process_id=d.get("workflow_process"),
-        #             user_name=request.data["user_name"],
-        #         ):
-        #             filtered_documents.append(d)
+
         if len(filtered_documents) > 0:
             return Response(filtered_documents, status=status.HTTP_200_OK)
         return Response([], status=status.HTTP_200_OK)
     except:
-        print("got error...... \n")
         return Response([], status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
+# @api_view(["POST"])
+# def documents_to_be_signed(request):  # List of `to be signed` documents.
+#     try:
+#         filtered_documents = []
+#         # for d in get_document_list(request.data["company_id"]):
+#         #     if (
+#         #         "workflow_process" in d
+#         #         and d.get("company_id") == request.data["company_id"]
+#         #         and verify_user_in_process(
+#         #             process_id=d.get("workflow_process"),
+#         #             user_name=request.data["user_name"],
+#         #         )
+#         #     ):
+#         #         filtered_documents.append(d)
+
+#         for d in get_document_list(request.data["company_id"]):
+#             if "workflow_process" in d:
+#                 if d.get("company_id") == request.data[
+#                     "company_id"
+#                 ] and verify_user_in_process(
+#                     process_id=d.get("workflow_process"),
+#                     user_name=request.data["user_name"],
+#                 ):
+#                     filtered_documents.append(d)
+#         if len(filtered_documents) > 0:
+#             return Response(filtered_documents, status=status.HTTP_200_OK)
+#         return Response([], status=status.HTTP_200_OK)
+#     except:
+#         print("got error...... \n")
+#         return Response([], status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
 """
-List of my documents.
+List of documents `I` created.
 """
 
 
 @api_view(["POST"])
 def my_documents(request):
-    filtered_list = []
-    if request.method == "POST":
-        created_by = request.data["created_by"]
-        company_id = request.data["company_id"]
-        documents = get_document_list(company_id)
-        if not documents:
-            return Response(
-                {
-                    "documents": [],
-                    "message": "There is no document created by This user.",
-                },
-                status=status.HTTP_200_OK,
-            )
-        else:
-            for doc in documents:
-
-                if doc["created_by"] == created_by:
-                    filtered_list.append(doc)
-
+    # filtered_list = []
+    filtered_list = [
+        d
+        for d in get_document_list(request.data["company_id"])
+        if d.get("created_by") == request.data["created_by"]
+    ]
+    if len(filtered_list) > 0:
         return Response(
             {"documents": filtered_list, "title": "My Documents"},
             status=status.HTTP_200_OK,
         )
+    return Response(
+        {
+            "documents": [],
+            "message": "There is no document created by This user.",
+        },
+        status=status.HTTP_200_OK,
+    )
+
+    # if request.method == "POST":
+    #     created_by = request.data["created_by"]
+    #     company_id = request.data["company_id"]
+    #     documents = get_document_list(company_id)
+    #     if not documents:
+    #         return Response(
+    #             {
+    #                 "documents": [],
+    #                 "message": "There is no document created by This user.",
+    #             },
+    #             status=status.HTTP_200_OK,
+    #         )
+    #     else:
+    #         for doc in documents:
+
+    #             if doc["created_by"] == created_by:
+    #                 filtered_list.append(doc)
+
+    #     return Response(
+    #         {"documents": filtered_list, "title": "My Documents"},
+    #         status=status.HTTP_200_OK,
+    #     )
+
+
+"""
+List of `rejected` documents.
+"""
 
 
 @api_view(["GET", "POST"])
-def rejected_documents(request):  # List of `to be signed` documents.
+def rejected_documents(request):
     filtered_list = []
     if request.method == "POST":
         created_by = request.data["created_by"]
@@ -293,8 +305,13 @@ def rejected_documents(request):  # List of `to be signed` documents.
     )
 
 
+"""
+List of  documents belonging to an org.
+"""
+
+
 @api_view(["POST"])
-def draft_documents(request):  # List of `to be signed` documents.
+def draft_documents(request):
     if request.method == "POST":
         try:
             return Response(
