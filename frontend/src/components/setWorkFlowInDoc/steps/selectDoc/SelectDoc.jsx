@@ -61,6 +61,7 @@ const SelectDoc = () => {
           className="select-doc"
         >
           {savedDocuments &&
+            savedDocuments.length > 0 &&
             [...savedDocumentsItems]?.reverse().map((item, index) => (
               <SwiperSlide key={item.id}>
                 <div className={styles.swiper__slide__box}>

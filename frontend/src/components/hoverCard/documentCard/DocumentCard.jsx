@@ -26,7 +26,7 @@ const DocumentCard = ({ cardItem }) => {
         };
         const response = await (await getProcessLink(dataToPost)).data;
 
-        dispatch(setEditorLink(response));
+        /*  dispatch(setEditorLink(response)); */
         console.log("responseee", response);
         setVerificationLink(response);
         setDataLoading(false);

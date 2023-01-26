@@ -55,6 +55,7 @@ function App() {
       <Route path={"workflows"}>
         <Route index element={<WorkflowsPage />} />
         <Route path={"set-workflow"} element={<SetWorkflowInDoc />} />
+        <Route path={"new-set-workflow"} element={<SetWorkflowInDocNew />} />
         {/*  <Route path={"new"} element={<CreateNewWorkflowPage />} />
         <Route path={"to-approve"} element={<ApproveWorkflowPage />} />
         <Route path={"rejected"} element={<RejectedWorkflowsPage />} /> */}
@@ -64,9 +65,6 @@ function App() {
       </Route>
 
       <Route path={"/notifications"} element={<NotificationsPage />} />
-      <Route path={"exmp"}>
-        <Route index element={<SetWorkflowInDocNew />} />
-      </Route>
       {/* <Route path="/Documents/Documents/Documents" element={<Documents />} />
       <Route path="/Documents/DraftsDoc/DraftsDoc" element={<DraftsDoc />} />
       <Route path="/Templates/TempDraft/TempDraft" element={<TempDraft />} /> */}

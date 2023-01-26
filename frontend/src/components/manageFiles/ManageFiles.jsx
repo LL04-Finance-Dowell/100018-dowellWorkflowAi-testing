@@ -29,7 +29,7 @@ const ManageFiles = ({ title, children, OverlayComp }) => {
         dispatch(createTemplate(data));
       }
       if (title.toLowerCase() === "proccess") {
-        navigate("/workflows/set-workflow");
+        navigate("/workflows/new-set-workflow");
       }
     }
   };

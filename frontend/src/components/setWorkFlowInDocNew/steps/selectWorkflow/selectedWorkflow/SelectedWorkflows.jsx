@@ -25,7 +25,10 @@ const SelectedWorkflows = () => {
           <div key={workflow._id} className={styles.box__container}>
             <InfoBox
               boxType="dark"
-              items={selectedWorkdlows[0].items}
+              items={workflow.workflows.steps.map((step) => ({
+                _id: step._id,
+                content: step.step_name,
+              }))}
               title={workflow.workflows.workflow_title}
               type="list"
             />

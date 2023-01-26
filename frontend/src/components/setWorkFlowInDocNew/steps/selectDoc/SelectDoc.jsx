@@ -46,7 +46,7 @@ const SelectDoc = () => {
         prev.filter((item) => item._id !== document._id)
       );
     } else {
-      setSelectedDocuments((prev) => [...prev, document]);
+      setSelectedDocuments((prev) => [document]);
     }
   };
 
@@ -77,6 +77,7 @@ const SelectDoc = () => {
               className="select-doc"
             >
               {savedDocuments &&
+                savedDocuments.length > 0 &&
                 [...savedDocumentsItems]?.reverse().map((item, index) => (
                   <SwiperSlide key={item._id}>
                     <div className={styles.swiper__slide__box}>
@@ -92,7 +93,9 @@ const SelectDoc = () => {
                             item._id === currentDocToWfs?._id && styles.selected
                           }`}
                         >
-                          click here
+                          {item._id === currentDocToWfs?._id
+                            ? "selected"
+                            : "click here"}
                         </button>
                       </div>
                     </div>

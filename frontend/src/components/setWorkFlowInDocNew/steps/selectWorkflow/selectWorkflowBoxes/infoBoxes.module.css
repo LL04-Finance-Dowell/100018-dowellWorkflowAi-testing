@@ -5,7 +5,8 @@
 }
 
 .box {
-  width: min(14vw, 160px);
+  /*  width: min(14vw, 160px); */
+  width: 33%;
 }
 
 /* .title__box {
@@ -41,6 +42,7 @@
  */
 .content__box {
   height: 100px;
+  width: 100%;
   overflow-y: auto;
   overflow-x: hidden;
 }
@@ -65,14 +67,9 @@
   margin-bottom: 15px;
 } */
 
-/* .content {
-  line-height: 18px;
-  text-align: start;
-  font-size: 12px;
-  white-space: break-spaces;
-  font-weight: 400;
-  font-family: "Roboto";
-} */
+.content__text {
+  width: 100%;
+}
 
 @media (max-width: 767px) {
   .box {

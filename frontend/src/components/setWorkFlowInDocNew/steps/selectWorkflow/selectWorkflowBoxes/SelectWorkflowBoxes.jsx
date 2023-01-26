@@ -256,9 +256,9 @@ const InfoBoxes = () => {
                       <InfoContentText
                         onClick={() => addToSelectedWorkFlows(item)}
                         key={item._id}
-                        /* className={styles.content} */
+                        className={styles.content__text}
                       >
-                        <span
+                        <div
                           style={
                             // item.username ? selectedMembersForProcess.find(member => member.username === item.username) ? { color: "#0048ff"} : {} :
                             item.workflows && item._id
@@ -271,6 +271,7 @@ const InfoBoxes = () => {
                                     color: "#fff",
                                     padding: "2% 3%",
                                     borderRadius: "5px",
+                                    width: "100%",
                                   }
                                 : {}
                               : {}
@@ -279,7 +280,7 @@ const InfoBoxes = () => {
                           {item.workflows &&
                             item.workflows.workflow_title &&
                             item.workflows.workflow_title}
-                        </span>
+                        </div>
                       </InfoContentText>
                     )
                   )
