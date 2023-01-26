@@ -1,10 +1,9 @@
 import requests
 import time
 import json
-import asyncio
 from datetime import datetime
 from .dowellconnection import dowellconnection
-import requests
+
 
 QR_ID_CONNECTION_LIST = [
     "Documents",
