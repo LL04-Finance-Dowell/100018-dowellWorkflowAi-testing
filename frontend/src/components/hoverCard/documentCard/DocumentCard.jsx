@@ -21,8 +21,8 @@ const DocumentCard = ({ cardItem }) => {
       setDataLoading(true);
       try {
         const dataToPost = {
-          document_id: item._id,
           user_name: userDetail?.userinfo?.username,
+          process_id: item.workflow_process,
         };
         const response = await (await getProcessLink(dataToPost)).data;
 
