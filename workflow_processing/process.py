@@ -11,9 +11,49 @@ from database.mongo_db_connection import (
     update_document,
     save_process_links,
     get_links_object_by_process_id,
-    get_links_object_by_document_id,
     get_process_list,
+    update_wf_process,
 )
+
+
+"""
+assert completion of a given step finalize/reject
+"""
+
+
+@api_view(["POST"])
+def register_finalize_or_reject(request):
+    # get process
+    try:
+        process = get_process_object(workflow_process_id=request.data["process_id"])
+    except:
+        return Response(
+            "failed to get process, retry!",
+            status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+        )
+    # check the action
+    for step in process["process_steps"]:
+        # find matching step for auth member
+        if step["member"] == request.data["authorized"]:
+            if request.data["action"] == "finalize":
+                step.update({"finalized": True})
+                action = "finalized"
+                break
+            if request.data["action"] == "reject":
+                step.update({"finalized": True}, {"rejected": True})
+                action = "rejected"
+                break
+
+    # update the workflow
+    response = json.loads(
+        update_wf_process(
+            process_id=request.data["process_id"], steps=process["process_steps"]
+        )
+    )
+
+    if response["isSuccess"]:
+        return Response(f"step marked as {action}", status=status.HTTP_201_CREATED)
+    return Response("error, retry!", status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 # ---------------------------------------------------------------------------------#
@@ -58,7 +98,7 @@ get a link process for person having notifications
 @api_view(["POST"])
 def get_process_link(request):
     # get links info
-    links_info = get_links_object_by_document_id(request.data["document_id"])
+    links_info = get_links_object_by_process_id(request.data["process_id"])
     print(links_info)
     if not links_info:
         return Response(
@@ -111,12 +151,12 @@ def verify_user_in_process(process_id, user_name):
         for link in processing_links_info["links"]:
             if user_name in link:
                 allowed = True
-                break
+                return allowed
     return allowed
 
 
 #  A single Doc Link
-def generate_link(document_id, doc_map, doc_rights):
+def generate_link(document_id, doc_map, doc_rights, user, process_id):
     print("generating document link .... \n")
     editor_api = "https://100058.pythonanywhere.com/api/generate-editor-link/"
     payload = {
@@ -133,8 +173,10 @@ def generate_link(document_id, doc_map, doc_rights):
             "function_ID": "ABCDE",
             "command": "update",
             "flag": "signing",
+            "authorized": user,
             "document_map": doc_map,
             "document_right": doc_rights,
+            "process_id": process_id,
             "update_field": {"document_name": "", "content": "", "page": ""},
         },
     }
@@ -213,6 +255,7 @@ def verify_process(request):
                 # Doc Map & Rights & match
                 map = step.get("document_map")
                 right = step.get("rights")
+                user = step.get("member")
                 match = True
                 break
             else:
@@ -236,6 +279,8 @@ def verify_process(request):
         document_id=processing_links_info["document_id"],
         doc_map=map,
         doc_rights=right,
+        user=user,
+        process_id=decoded["process_id"],
     )
     return Response(doc_link.json(), status=status.HTTP_201_CREATED)
 

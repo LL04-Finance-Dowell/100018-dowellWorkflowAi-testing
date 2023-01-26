@@ -335,27 +335,25 @@ def save_wf_process(
     return response.text
 
 
-# def update_wf_process(workflow_process_id, workflows):
-#     url = "http://100002.pythonanywhere.com/"
-#     payload = json.dumps(
-#         {
-#             **WF_PROCESS_CONNECTION,
-#             # "command": "insert",
-#             "command": "update",
-#             "field": {
-#                 "_id": workflow_process_id,
-#             },
-#             "update_field": {
-#                 "eventId": get_event_id(),
-#                 "workflow": workflow,
-#             },
-#             "platform": "bangalore",
-#         }
-#     )
-#     headers = {"Content-Type": "application/json"}
-#     response = requests.request("POST", url, headers=headers, data=payload)
-#     print("SAVE WORKFLOW UPDATE--------------- \n", response.text)
-#     return response.text
+def update_wf_process(process_id, steps):
+    url = "http://100002.pythonanywhere.com/"
+    payload = json.dumps(
+        {
+            **WF_PROCESS_DICT,
+            "command": "update",
+            "field": {
+                "_id": process_id,
+            },
+            "update_field": {
+                "process_steps": steps,
+            },
+            "platform": "bangalore",
+        }
+    )
+    headers = {"Content-Type": "application/json"}
+    response = requests.request("POST", url, headers=headers, data=payload)
+    print("SAVE WORKFLOW UPDATE--------------- \n", response.text)
+    return response.text
 
 
 def get_process_object(workflow_process_id):
@@ -367,6 +365,7 @@ def get_process_object(workflow_process_id):
         return res_obj["data"]
     else:
         return []
+
 
 
 def get_process_list(company_id):
