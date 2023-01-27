@@ -209,8 +209,6 @@ def verify_process(request):
             "something went wrong when verifying process",
             status=status.HTTP_500_INTERNAL_SERVER_ERROR,
         )
-
-    # match = False
     map = None
     right = None
     user = None

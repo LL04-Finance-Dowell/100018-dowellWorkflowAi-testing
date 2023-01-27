@@ -4,6 +4,18 @@ api_url = `https://100094.pythonanywhere.com/v0.1/`
 
 ### Workflow Process Service.
 
+_POST_ to `process/verification/`
+
+- Request Body
+
+```
+{
+    "action": "finalize|reject",
+    "process_id": "sent_in_payload>",
+    "authorized": "<sent_in_payload>",
+}
+```
+
 _POST_ to `process/link/`
 
 - Request Body
