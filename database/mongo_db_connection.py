@@ -560,7 +560,7 @@ def get_wf_list(company_id):
 
 # ------------------------------------------ Templates-----------------------------
 def save_template(name, data, page, created_by, company_id, data_type):
-    url = "http://100002.pythonanywhere.com/"
+    url = "http://uxlivinglab.pythonanywhere.com"
     event_id = get_event_id()
     payload = json.dumps(
         {
