@@ -2,6 +2,7 @@ import jwt
 import json
 import uuid
 import requests
+from .models import Notification
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
@@ -43,37 +44,37 @@ def register_finalize_or_reject(request):
                 step.update({"finalized": True}, {"rejected": True})
                 action = "rejected"
                 break
-
     # update the workflow
     response = json.loads(
         update_wf_process(
             process_id=request.data["process_id"], steps=process["process_steps"]
         )
     )
-
     if response["isSuccess"]:
         return Response(f"step marked as {action}", status=status.HTTP_201_CREATED)
     return Response("error, retry!", status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
-# ---------------------------------------------------------------------------------#
-# API Endpoint - 4. ---------  Workflows process Notification API
-# ---------------------------------------------------------------------------------#
-
 """
-fetches pending workflow processes.
+fetches workflow process `I` created.
 """
 
 
 @api_view(["POST"])
 def processes(request):
+    print("fecthing processes..... \n")
     try:
         processes = get_process_list(request.data["company_id"])
     except:
         return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-    if len(processes) <= 0:
-        return Response([], status=status.HTTP_200_OK)
-    return Response(processes, status=status.HTTP_200_OK)
+    # find matching
+    print("filter my processes.... \n")
+    my_processes = [
+        p for p in processes if p["created_by"] == request.data["created_by"]
+    ]
+    if len(my_processes) > 0:
+        return Response(processes, status=status.HTTP_200_OK)
+    return Response([], status=status.HTTP_200_OK)
 
 
 """
@@ -380,6 +381,15 @@ def generate_links(process, document_id, choice):
         {step["member"]: verification_link(process["process_id"], document_id)}
         for step in process["process_steps"]
     ]
+    # SQLITE
+    # notification = Notification(
+    #     links=links,
+    #     process_id=process["process_id"],
+    #     document_id=document_id,
+    #     processing_choice=choice,
+    # )
+    # notification.save()
+
     # Save Links - DB-3
     print("saving process links........ \n")
     save_process_links(

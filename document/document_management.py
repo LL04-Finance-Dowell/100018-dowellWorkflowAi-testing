@@ -174,51 +174,24 @@ def documents_to_be_signed(
     request,
 ):
     try:
-        filtered_documents = []
-        for d in get_document_list(request.data["company_id"]):
-            if (
-                d.get("state") == "processing"
-                and d.get("company_id") == request.data["company_id"]
-            ):
-                filtered_documents.append(d)
+        filtered_documents = [
+            d
+            for d in get_document_list(request.data["company_id"])
+            if d.get("state") == "processing"
+            and d.get("company_id") == request.data["company_id"]
+        ]
+        # for d in get_document_list(request.data["company_id"]):
+        #     if (
+        #         d.get("state") == "processing"
+        #         and d.get("company_id") == request.data["company_id"]
+        #     ):
+        #         filtered_documents.append(d)
 
         if len(filtered_documents) > 0:
             return Response(filtered_documents, status=status.HTTP_200_OK)
         return Response([], status=status.HTTP_200_OK)
     except:
         return Response([], status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-
-# @api_view(["POST"])
-# def documents_to_be_signed(request):  # List of `to be signed` documents.
-#     try:
-#         filtered_documents = []
-#         # for d in get_document_list(request.data["company_id"]):
-#         #     if (
-#         #         "workflow_process" in d
-#         #         and d.get("company_id") == request.data["company_id"]
-#         #         and verify_user_in_process(
-#         #             process_id=d.get("workflow_process"),
-#         #             user_name=request.data["user_name"],
-#         #         )
-#         #     ):
-#         #         filtered_documents.append(d)
-
-#         for d in get_document_list(request.data["company_id"]):
-#             if "workflow_process" in d:
-#                 if d.get("company_id") == request.data[
-#                     "company_id"
-#                 ] and verify_user_in_process(
-#                     process_id=d.get("workflow_process"),
-#                     user_name=request.data["user_name"],
-#                 ):
-#                     filtered_documents.append(d)
-#         if len(filtered_documents) > 0:
-#             return Response(filtered_documents, status=status.HTTP_200_OK)
-#         return Response([], status=status.HTTP_200_OK)
-#     except:
-#         print("got error...... \n")
-#         return Response([], status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 """
