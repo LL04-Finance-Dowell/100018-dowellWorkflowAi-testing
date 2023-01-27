@@ -155,6 +155,10 @@ DOCUMENT_CONNECTION_DICT = {
     "function_ID": "ABCDE",
 }
 
+# time
+dd = datetime.now()
+time = dd.strftime("%d:%m:%Y,%H:%M:%S")
+
 # old 22sec query
 # def get_event_id():
 #     dd = datetime.now()
@@ -264,6 +268,7 @@ def save_process_links(links, process_id, document_id, processing_choice):
                 "process_id": process_id,
                 "document_id": document_id,
                 "processing_choice": processing_choice,
+                "created_on": time
             },
             "update_field": {"order_nos": 21},
             "platform": "bangalore",
@@ -323,6 +328,7 @@ def save_wf_process(
                 "created_by": user,
                 "data_type": data_type,
                 "document_id": document_id,
+                "created_on": time
             },
             "update_field": {"order_nos": 21},
             "platform": "bangalore",
@@ -364,7 +370,6 @@ def get_process_object(workflow_process_id):
         return res_obj["data"]
     else:
         return []
-
 
 
 def get_process_list(company_id):
@@ -460,6 +465,7 @@ def save_wf(workflows, company_id, created_by):
                 "workflows": workflows,
                 "created_by": created_by,
                 "company_id": company_id,
+                "created_on": time
             },
             "update_field": {"order_nos": 21},
             "platform": "bangalore",
@@ -568,6 +574,7 @@ def save_template(name, data, page, created_by, company_id, data_type):
                 "company_id": company_id,
                 "created_by": created_by,
                 "data_type": data_type,
+                "created_on": time
             },
             "update_field": {"order_nos": 21},
             "platform": "bangalore",
@@ -658,8 +665,6 @@ def save_document(name, data, created_by, company_id, page, data_type):
                 "eventId": event_id,
                 "document_name": name,
                 "content": data,
-                "workflow_id": "",
-                "auth_user_list": [],
                 "company_id": company_id,
                 "created_by": created_by,
                 "created_on": time,
@@ -706,8 +711,6 @@ def update_document(document_id, workflow_process_id):
 def save_wf_setting(company_id, owner_name, username, portfolio_name, process):
     url = "http://100002.pythonanywhere.com/"
     event_id = get_event_id()
-    dd = datetime.now()
-    time = dd.strftime("%d:%m:%Y,%H:%M:%S")
     payload = json.dumps(
         {
             **WF_AI_SETTING_DICT,

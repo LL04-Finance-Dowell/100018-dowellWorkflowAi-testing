@@ -6,7 +6,6 @@ class Notification(models.Model):
     document_id = models.CharField(max_length=150)
     processing_choice = models.CharField(max_length=225)
     links = models.JSONField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
-
-    def get_notifications(self):
-        return Notification.objects.all()

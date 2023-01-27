@@ -139,3 +139,4 @@ GitHub.sublime-settings
 # Test
 test.py
 *.sqlite3
+db.sqlite3
