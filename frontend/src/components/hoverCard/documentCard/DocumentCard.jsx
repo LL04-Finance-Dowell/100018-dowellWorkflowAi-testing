@@ -12,11 +12,10 @@ import {
 } from "../../../services/processServices";
 import { setEditorLink } from "../../../features/app/appSlice";
 
-const DocumentCard = ({ cardItem }) => {
+const DocumentCard = ({ cardItem, title }) => {
   const dispatch = useDispatch();
   const [dataLoading, setDataLoading] = useState(false);
   const { userDetail } = useSelector((state) => state.auth);
-  const [verificationLink, setVerificationLink] = useState(null);
 
   const handleDetailDocumnet = async (item) => {
     if (dataLoading) return;
@@ -31,8 +30,8 @@ const DocumentCard = ({ cardItem }) => {
 
         /*  dispatch(setEditorLink(response)); */
         console.log("responseee", response);
-        setVerificationLink(response);
-        setDataLoading(false);
+        // setDataLoading(false);
+        handleGoToEditor(response);
       } catch (error) {
         console.log(error.response ? error.response.data : error.message);
         setDataLoading(false);
@@ -55,9 +54,10 @@ const DocumentCard = ({ cardItem }) => {
     dispatch(detailDocument(data));
   };
 
-  const handleGoToEditor = async () => {
-    const token = verificationLink.split("verify/")[1];
-    if (!token) return (window.location = verificationLink);
+  const handleGoToEditor = async (link) => {
+    if (!link) return;
+    const token = link.split("verify/")[1];
+    if (!token) return;
 
     const dataToPost = {
       token: token.slice(0, -1),
@@ -65,8 +65,6 @@ const DocumentCard = ({ cardItem }) => {
       portfolio: userDetail?.portfolio_info[0]?.portfolio_name,
       location: userDetail?.userinfo?.city,
     };
-
-    setDataLoading(true);
 
     try {
       const response = await (await verifyProcess(dataToPost)).data;
@@ -96,18 +94,12 @@ const DocumentCard = ({ cardItem }) => {
       <div>
         {cardItem._id ? (
           <Button
-            onClick={
-              verificationLink
-                ? () => handleGoToEditor()
-                : () => handleDetailDocumnet(cardItem)
-            }
+            onClick={() => handleDetailDocumnet(cardItem)}
           >
             {dataLoading ? (
               <LoadingSpinner />
-            ) : verificationLink ? (
-              "Go to Document"
             ) : (
-              "Click Here"
+              "Sign Here"
             )}
           </Button>
         ) : (

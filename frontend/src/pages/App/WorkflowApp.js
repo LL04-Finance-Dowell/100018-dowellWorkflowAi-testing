@@ -116,7 +116,7 @@ const WorkflowApp = () => {
                 <div style={{ margin: "0 auto 0 1.5%", textAlign: "center" }}>
                   <p>Notifications loading...</p>
                   <ProgressBar
-                    durationInMS={20000}
+                    durationInMS={8000}
                     finalWidth={notificationFinalStatus}
                   />
                 </div>

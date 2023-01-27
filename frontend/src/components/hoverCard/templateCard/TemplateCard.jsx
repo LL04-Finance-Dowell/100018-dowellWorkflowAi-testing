@@ -27,7 +27,7 @@ const TemplateCard = ({ cardItem }) => {
       <div>
         {cardItem.template_name ? (
           <Button onClick={() => handleTemplateDetail(cardItem)}>
-            Click Here
+            Open Template
           </Button>
         ) : (
           "no item"
