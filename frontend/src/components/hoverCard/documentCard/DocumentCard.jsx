@@ -97,7 +97,7 @@ const DocumentCard = ({ cardItem }) => {
             {dataLoading ? (
               <LoadingSpinner />
             ) : verificationLink ? (
-              "Go to Editor"
+              "Go to Document"
             ) : (
               "Click Here"
             )}
