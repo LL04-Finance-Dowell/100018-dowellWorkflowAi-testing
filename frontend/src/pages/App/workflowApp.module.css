@@ -19,6 +19,13 @@
   padding: 10px;
 }
 
+.dowell__Advert__Container {
+  width: 100%;
+  display: flex;
+  gap: 10px;
+  padding: 0 10px;
+}
+
 @media (max-width: 768px) {
   .tasks__container {
     flex-direction: column;

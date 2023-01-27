@@ -140,6 +140,30 @@ const WorkflowApp = () => {
             </div>
           </div>
         )}
+        {
+          !isVisible && <div className={styles.dowell__Advert__Container}>
+            <iframe 
+              width="560" 
+              height="315" 
+              src="https://www.youtube.com/embed/videoseries?list=PL6rKBSwpVCYVzo4-0ZhuMwoY0FOZdqwP-" 
+              title="YouTube video player" 
+              frameborder="0" 
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+              allowfullscreen
+            >
+            </iframe>
+            <iframe 
+              width="560" 
+              height="315" 
+              src="https://www.youtube.com/embed/videoseries?list=PL6rKBSwpVCYXUW09QN3xfGRWeWMNschP9" 
+              title="YouTube video player" 
+              frameborder="0" 
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+              allowfullscreen
+            >
+            </iframe>
+          </div>
+        }
       </div>
     </WorkflowLayout>
   );
