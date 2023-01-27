@@ -36,3 +36,7 @@
 .container:hover .hover__box {
   transform: translateY(0);
 }
+
+.hover {
+  transform: translateY(0) !important;
+}

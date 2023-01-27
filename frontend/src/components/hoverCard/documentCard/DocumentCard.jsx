@@ -6,7 +6,10 @@ import { detailDocument } from "../../../features/document/asyncThunks";
 import { useState } from "react";
 import { toast } from "react-toastify";
 import { LoadingSpinner } from "../../LoadingSpinner/LoadingSpinner";
-import { getProcessLink, verifyProcess } from "../../../services/processServices";
+import {
+  getProcessLink,
+  verifyProcess,
+} from "../../../services/processServices";
 import { setEditorLink } from "../../../features/app/appSlice";
 
 const DocumentCard = ({ cardItem }) => {
@@ -54,17 +57,17 @@ const DocumentCard = ({ cardItem }) => {
 
   const handleGoToEditor = async () => {
     const token = verificationLink.split("verify/")[1];
-    if (!token) return window.location = verificationLink;
+    if (!token) return (window.location = verificationLink);
 
     const dataToPost = {
       token: token.slice(0, -1),
       user_name: userDetail?.userinfo?.username,
       portfolio: userDetail?.portfolio_info[0]?.portfolio_name,
       location: userDetail?.userinfo?.city,
-    }
+    };
 
     setDataLoading(true);
-    
+
     try {
       const response = await (await verifyProcess(dataToPost)).data;
       setDataLoading(false);
@@ -72,9 +75,14 @@ const DocumentCard = ({ cardItem }) => {
     } catch (err) {
       console.log(err.response ? err.response.data : err.message);
       setDataLoading(false);
-      toast.info(err.response ? err.response.status === 500 ? "Process verification failed" : err.response.data : "Process verification failed")
+      toast.info(
+        err.response
+          ? err.response.status === 500
+            ? "Process verification failed"
+            : err.response.data
+          : "Process verification failed"
+      );
     }
-
   };
 
   const FrontSide = () => {
@@ -108,7 +116,7 @@ const DocumentCard = ({ cardItem }) => {
       </div>
     );
   };
-  return <HoverCard Front={FrontSide} Back={BackSide} />;
+  return <HoverCard Front={FrontSide} Back={BackSide} loading={dataLoading} />;
 };
 
 export default DocumentCard;
