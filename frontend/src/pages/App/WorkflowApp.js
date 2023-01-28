@@ -20,6 +20,8 @@ import {
   setNotificationsLoaded,
   setNotificationsLoading,
 } from "../../features/app/appSlice";
+import Iframe from "../../components/iFrame/Iframe";
+import Skeleton from "../../components/skeloton/Skeleton";
 
 const WorkflowApp = () => {
   const { userDetail } = useSelector((state) => state.auth);
@@ -140,36 +142,39 @@ const WorkflowApp = () => {
             </div>
           </div>
         )}
-        {
-          !isVisible && <div className={styles.dowell__Advert__Container}>
-            <iframe 
-              width="560" 
-              height="315" 
-              src="https://www.youtube.com/embed/videoseries?list=PL6rKBSwpVCYVzo4-0ZhuMwoY0FOZdqwP-" 
-              title="YouTube video player" 
-              frameborder="0" 
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
-              allowfullscreen
-            >
-            </iframe>
-            <iframe 
-              width="560" 
-              height="315" 
-              src="https://www.youtube.com/embed/videoseries?list=PL6rKBSwpVCYXUW09QN3xfGRWeWMNschP9" 
-              title="YouTube video player" 
-              frameborder="0" 
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
-              allowfullscreen
-            >
-            </iframe>
+        {!isVisible && (
+          <div className={styles.dowell__Advert__Container}>
+            {introVideos.map((item) => (
+              <div key={item.id} className={styles.skeleton__box}>
+                <Iframe
+                  Skeleton={Skeleton}
+                  src={item.src}
+                  title="YouTube video player"
+                  frameborder="0"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                  allowfullscreen
+                />
+              </div>
+            ))}
           </div>
-        }
+        )}
       </div>
     </WorkflowLayout>
   );
 };
 
 export default WorkflowApp;
+
+export const introVideos = [
+  {
+    id: uuidv4(),
+    src: "https://www.youtube.com/embed/videoseries?list=PL6rKBSwpVCYVzo4-0ZhuMwoY0FOZdqwP-",
+  },
+  {
+    id: uuidv4(),
+    src: "https://www.youtube.com/embed/videoseries?list=PL6rKBSwpVCYXUW09QN3xfGRWeWMNschP9",
+  },
+];
 
 export const notifications = [
   {

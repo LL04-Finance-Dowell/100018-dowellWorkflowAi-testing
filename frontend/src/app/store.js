@@ -1,24 +1,10 @@
-/* import { configureStore } from "@reduxjs/toolkit";
-import workflowReducer from "../features/workflow/workflowsSlice";
-import templateReducer from "../features/template/templateSlice";
-import documentReducer from "../features/document/documentSlice";
-import appReducer from "../features/app/appSlice";
-
-export const store = configureStore({
-  reducer: {
-    workflow: workflowReducer,
-    template: templateReducer,
-    document: documentReducer,
-    app: appReducer,
-  },
-}); */
 import workflowReducer from "../features/workflow/workflowsSlice";
 import templateReducer from "../features/template/templateSlice";
 import documentReducer from "../features/document/documentSlice";
 import appReducer from "../features/app/appSlice";
 import authReducer from "../features/auth/authSlice";
+import settingsReducer from "../features/settings/settingSlice";
 import { combineReducers, configureStore } from "@reduxjs/toolkit";
-import storage from "redux-persist/lib/storage";
 import storageSession from "redux-persist/lib/storage/session";
 
 import { persistReducer, persistStore } from "redux-persist";
@@ -36,6 +22,7 @@ const rootReducer = combineReducers({
   document: documentReducer,
   app: appReducer,
   auth: authReducer,
+  settings: settingsReducer,
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

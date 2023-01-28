@@ -26,6 +26,11 @@
   padding: 0 10px;
 }
 
+.skeleton__box {
+  width: 48%;
+  height: 250px;
+}
+
 @media (max-width: 768px) {
   .tasks__container {
     flex-direction: column;

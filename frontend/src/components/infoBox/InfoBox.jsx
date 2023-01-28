@@ -8,143 +8,25 @@ import {
   InfoContentContainer,
   InfoContentFormText,
   InfoContentText,
-  InfoSearchbar,
   InfoTitleBox,
 } from "./styledComponents";
-import { GrAdd } from "react-icons/gr";
 import { MdOutlineRemove, MdOutlineAdd } from "react-icons/md";
-import { useForm } from "react-hook-form";
-import { useEffect } from "react";
 import { Collapse } from "react-bootstrap";
-import { useDispatch, useSelector } from "react-redux";
-import { v4 as uuidv4 } from "uuid";
-import {
-  setColumn,
-  setPermissionArray,
-  setProccess,
-  setSettingProccess,
-  setTeamsInWorkflowAI,
-  setUpdateProccess,
-} from "../../features/app/appSlice";
 
 const InfoBox = ({
   items,
   title,
   type,
-  permissionContent,
-  settingProccess,
   boxType,
-  boxİd,
-  teamsInWorkflowAI,
+  boxId,
   handleItemClick,
-  children,
+  onChange,
 }) => {
-  const dispatch = useDispatch();
-  const {
-    column,
-    proccess,
-    settingProccess: settingProccessArray,
-    permissionArray,
-    teamsInWorkflowAI: teamsInWorkflowAIArray,
-  } = useSelector((state) => state.app);
-
   const [isOpen, setIsOpen] = useState(false);
 
   const handleToggle = () => {
     setIsOpen((prev) => !prev);
   };
-
-  const setIsSelected = (items, item) => {
-    const ss = items.map((child) =>
-      boxİd === child._id
-        ? {
-            ...child,
-            column: child.column.map((col) =>
-              col.proccess_title === title
-                ? {
-                    ...col,
-                    items: col.items.map((colItem) =>
-                      colItem._id === item._id
-                        ? {
-                            ...colItem,
-                            isSelected: colItem.isSelected ? false : true,
-                          }
-                        : colItem
-                    ),
-                  }
-                : col
-            ),
-          }
-        : child
-    );
-
-    return ss;
-  };
-
-  const handlePermission = (item) => {
-    if (permissionContent) {
-      const ss = setIsSelected(permissionArray[0].children, item);
-
-      dispatch(setPermissionArray(ss));
-
-      const ccb = column.find((c) => c.proccess_title === title);
-
-      if (ccb) {
-        dispatch(
-          setColumn(
-            column.map((col) =>
-              col.proccess_title === title
-                ? {
-                    ...col,
-                    items: col.items.find(
-                      (childItem) => childItem._id === item._id
-                    )
-                      ? col.items.filter(
-                          (childItem) => childItem._id !== item._id
-                        )
-                      : [
-                          ...col.items,
-                          {
-                            _id: item._id,
-                            content: item.content,
-                            isSelected: false,
-                          },
-                        ],
-                  }
-                : col
-            )
-          )
-        );
-      } else {
-        dispatch(
-          setColumn([
-            ...column,
-            {
-              _id: uuidv4(),
-              items: [
-                { _id: item._id, content: item.content, isSelected: false },
-              ],
-              proccess_title: title,
-              order: item.order,
-            },
-          ])
-        );
-      }
-    }
-    if (settingProccess) {
-      const ss = setIsSelected(settingProccessArray[0].children, item);
-
-      dispatch(setUpdateProccess(ss));
-    }
-
-    if (teamsInWorkflowAI) {
-      const ss = setIsSelected(teamsInWorkflowAIArray[0].children, item);
-
-      dispatch(setTeamsInWorkflowAI(ss));
-    }
-  };
-
-  /* console.log("provvess", settingProccessArray[0].children); */
 
   return (
     <InfoBoxContainer boxType={boxType} className="info-box-container">
@@ -184,12 +66,27 @@ const InfoBox = ({
                 </InfoContentText>
               ))}
             </InfoContentBox>
+          ) : type === "radio" ? (
+            <InfoContentBox>
+              {items.map((item) => (
+                <InfoContentFormText key={item._id}>
+                  <input
+                    type="radio"
+                    id={item.content}
+                    name="portfolio"
+                    value={item._id}
+                    onChange={() => onChange({ item, title, boxId })}
+                  />
+                  <label htmlFor="javascript">{item.content}</label>
+                </InfoContentFormText>
+              ))}
+            </InfoContentBox>
           ) : (
             <InfoContentBox>
               {items.map((item) => (
                 <InfoContentFormText key={item._id}>
                   <input
-                    onChange={() => handlePermission(item)}
+                    onChange={() => onChange({ item, title, boxId })}
                     /* {...register(item.content)} */
                     checked={item.isSelected ? true : false}
                     type={"checkbox"}
