@@ -20,3 +20,10 @@
   flex-wrap: wrap;
   gap: 3px;
 }
+
+.grid__box button {
+  font-size: 16px;
+  margin-top: 15px;
+  background-color: var(--e-global-color-secondary);
+  color: white !important;
+}

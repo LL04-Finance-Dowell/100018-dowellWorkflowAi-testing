@@ -2,6 +2,7 @@ import React from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch } from "react-redux";
 import { setCurrentDocToWfs } from "../../../../../features/app/appSlice";
+import { contentDocument } from "../../../../../features/document/asyncThunks";
 import { setContentOfDocument } from "../../../../../features/document/documentSlice";
 import { PrimaryButton } from "../../../../styledComponents/styledComponents";
 import styles from "./selectedDocuments.module.css";
@@ -15,12 +16,18 @@ const SelectedDocuments = ({ selectedDocuments }) => {
   const dispatch = useDispatch();
 
   const onSubmit = (data) => {
+    console.log("submitsadsadasd");
     const { document } = data;
-    console.log("documenttttttttttttttttttttttttt", document);
+
+    console.log("first document", document);
     const currentDocument = selectedDocuments.find(
       (item) => item._id === document
     );
-    console.log("documenttttttttttttttttttttttttt", currentDocument);
+
+    const fetchData = { document_id: currentDocument._id };
+
+    console.log("second document", document);
+    dispatch(contentDocument(fetchData));
     dispatch(setCurrentDocToWfs(currentDocument));
     dispatch(setContentOfDocument(null));
   };
@@ -46,12 +53,7 @@ const SelectedDocuments = ({ selectedDocuments }) => {
                 </option>
               ))}
             </select>
-            {/* </div> */}
-            <PrimaryButton
-              type="submit"
-              /*  onClick={() => handleAddDocument()} */
-              hoverBg="success"
-            >
+            <PrimaryButton type="submit" hoverBg="success">
               Add selected document copies to process (Break processing of
               unselected)
             </PrimaryButton>

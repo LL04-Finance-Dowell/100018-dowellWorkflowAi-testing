@@ -2,15 +2,14 @@ import styles from "./selectDoc.module.css";
 import { v4 as uuidv4 } from "uuid";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Pagination } from "swiper";
-
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
-
 import "./swiper.css";
 import { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import {
+  contentDocument,
   mineDocuments,
   savedDocuments,
 } from "../../../../features/document/asyncThunks";
@@ -35,6 +34,12 @@ const SelectDoc = () => {
   }, []);
 
   const handleAddDocument = (document) => {
+    const data = { document_id: document._id };
+    /*   const data = { document_id: currentDocToWfs._id }; */
+
+    console.log(document);
+
+    dispatch(contentDocument(data));
     dispatch(setCurrentDocToWfs(document));
     dispatch(setContentOfDocument(null));
   };

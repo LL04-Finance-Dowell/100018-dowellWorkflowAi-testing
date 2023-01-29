@@ -125,7 +125,7 @@ const ConnectWorkFlowToDoc = () => {
           </h2>
         </div>
 
-        {contentOfDocumentStatus === "pending" ? (
+        {"contentOfDocumentStatus" === "pending" ? (
           <div style={{ marginBottom: "15px" }}>
             <BookSpinner />
           </div>

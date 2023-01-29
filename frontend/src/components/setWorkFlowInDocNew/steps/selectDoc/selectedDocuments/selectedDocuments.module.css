@@ -23,7 +23,7 @@
 }
 
 .selected__doc__box {
-  padding-top: 5px;
+  padding: 0.6rem;
   display: flex;
   flex-direction: column;
   flex-grow: 1;

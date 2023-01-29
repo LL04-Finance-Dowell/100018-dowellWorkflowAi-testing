@@ -23,7 +23,10 @@ import { dowellLogoutUrl } from "../../services/axios";
 import ManageFile from "./manageFile/ManageFile";
 import UserDetail from "./userDetail/UserDetail";
 import { useState } from "react";
-import { getAgreeStatus, workflowRegistrationEventId } from "../../services/legalService";
+import {
+  getAgreeStatus,
+  workflowRegistrationEventId,
+} from "../../services/legalService";
 import { LoadingSpinner } from "../LoadingSpinner/LoadingSpinner";
 import { formatDateAndTime } from "../../utils/helpers";
 import Spinner from "../spinner/Spinner";
@@ -34,31 +37,31 @@ const Sidebar = () => {
   const { userDetail, currentUser, session_id, id } = useSelector(
     (state) => state.auth
   );
-  const [ legalStatusLoading, setLegalStatusLoading ] = useState(true);
-  const [ showLegalPopup, setShowLegalPopup ] = useState(false);
-  const [ legalTermsAgreed, setLegalTermsAgreed ] = useState(false);
-  const [ dateAgreed, setDateAgreed ] = useState("");
+  const [legalStatusLoading, setLegalStatusLoading] = useState(true);
+  const [showLegalPopup, setShowLegalPopup] = useState(false);
+  const [legalTermsAgreed, setLegalTermsAgreed] = useState(false);
+  const [dateAgreed, setDateAgreed] = useState("");
   const navigate = useNavigate();
-  const [ agreePageLoading, setAgreePageLoading ] = useState(false);
+  const [agreePageLoading, setAgreePageLoading] = useState(false);
 
   useCloseElementOnEscapekeyClick(() => setAgreePageLoading(false));
 
   useEffect(() => {
+    getAgreeStatus(session_id)
+      .then((res) => {
+        console.log(res.data);
+        const legalStatus = res.data.data[0]?.i_agree;
 
-    getAgreeStatus(session_id).then(res => {
-      console.log(res.data)
-      const legalStatus = res.data.data[0]?.i_agree;
-
-      setLegalStatusLoading(false);
-      setLegalTermsAgreed(legalStatus);
-      setDateAgreed(res.data.data[0]?.i_agreed_datetime);
-      // if (!legalStatus) setShowLegalPopup(true);
-    }).catch(error => {
-      console.log(error.response ? error.response.data : error.message);
-      setLegalStatusLoading(false);
-    });
-
-  }, [])
+        setLegalStatusLoading(false);
+        setLegalTermsAgreed(legalStatus);
+        setDateAgreed(res.data.data[0]?.i_agreed_datetime);
+        // if (!legalStatus) setShowLegalPopup(true);
+      })
+      .catch((error) => {
+        console.log(error.response ? error.response.data : error.message);
+        setLegalStatusLoading(false);
+      });
+  }, []);
 
   const handleLogout = () => {
     sessionStorage.clear();
@@ -68,15 +71,14 @@ const Sidebar = () => {
   const handleAgreeCheckBoxClick = (e) => {
     e.preventDefault();
     setAgreePageLoading(true);
-    window.location = `https://100087.pythonanywhere.com/legalpolicies/${workflowRegistrationEventId}/website-privacy-policy/policies/?redirect_url=${window.location.origin}/100018-dowellWorkflowAi-testing/%23?id=${id}&session_id=${session_id}`
-  }
+    window.location = `https://100087.pythonanywhere.com/legalpolicies/${workflowRegistrationEventId}/website-privacy-policy/policies/?redirect_url=${window.location.origin}/100018-dowellWorkflowAi-testing/%23?id=${id}&session_id=${session_id}`;
+  };
 
   const handleClick = (feature) => {
     feature === "logout" && handleLogout();
     feature === "profile" &&
-      window.open(
-        `https://100093.pythonanywhere.com/?session_id=${session_id}`,
-        "_blank"
+      window.location.replace(
+        `https://100093.pythonanywhere.com/?session_id=${session_id}`
       );
     feature === "home" && navigate(`/`);
     feature === "shield" && setShowLegalPopup(true);
@@ -120,7 +122,14 @@ const Sidebar = () => {
         </h2>
       </div>
       <div className={styles.organization__box}>
-        <h2 className={styles.organization__text}>{userDetail && userDetail.portfolio_info && userDetail.portfolio_info.length > 0 && userDetail.portfolio_info[0].org_name ? userDetail.portfolio_info[0].org_name : "My Organization"}</h2>
+        <h2 className={styles.organization__text}>
+          {userDetail &&
+          userDetail.portfolio_info &&
+          userDetail.portfolio_info.length > 0 &&
+          userDetail.portfolio_info[0].org_name
+            ? userDetail.portfolio_info[0].org_name
+            : "My Organization"}
+        </h2>
         <img
           src="https://i0.wp.com/workflowai.online/wp-content/uploads/2022/10/artistic-logo.png?fit=916%2C640&ssl=1"
           alt="org-logo"
@@ -146,28 +155,52 @@ const Sidebar = () => {
         <CollapseItem items={knowledge} />
       </div>
       <Footer topSideIcons={iconBoxItems} handleIconClick={handleClick} />
-      {
-        showLegalPopup && 
+      {showLegalPopup && (
         <div className={styles.legal__Overlay__Container}>
           <div className={styles.legal__Content__Container}>
-            <div className={styles.legal__Overlay__Container__Close__Icon} onClick={() => setShowLegalPopup(false)}>
+            <div
+              className={styles.legal__Overlay__Container__Close__Icon}
+              onClick={() => setShowLegalPopup(false)}
+            >
               <AiOutlineClose />
             </div>
             <h3>Agree to terms</h3>
-            {
-              legalStatusLoading ? <LoadingSpinner /> : <div className={styles.legal__Content__Form__Container}>
-                { dateAgreed && dateAgreed.length > 1 && <span className={styles.date__Agreed}>You agreed on: {formatDateAndTime(dateAgreed)}</span> }
+            {legalStatusLoading ? (
+              <LoadingSpinner />
+            ) : (
+              <div className={styles.legal__Content__Form__Container}>
+                {dateAgreed && dateAgreed.length > 1 && (
+                  <span className={styles.date__Agreed}>
+                    You agreed on: {formatDateAndTime(dateAgreed)}
+                  </span>
+                )}
                 <label className={styles.legal__Agree}>
-                  <input checked={legalTermsAgreed} type="checkbox" onChange={handleAgreeCheckBoxClick} />
+                  <input
+                    checked={legalTermsAgreed}
+                    type="checkbox"
+                    onChange={handleAgreeCheckBoxClick}
+                  />
                   I agree with the privacy policy and terms and conditions
                 </label>
-                <button disabled={!legalTermsAgreed} className={`${styles.legal__Register__Btn} ${styles.continue__Btn}`} onClick={() => setShowLegalPopup(false)}>{"Continue"}</button>
-                { agreePageLoading ? <div className="loading__Spinner__New__Portfolio abs__Pos"><Spinner /></div> : <></> }
+                <button
+                  disabled={!legalTermsAgreed}
+                  className={`${styles.legal__Register__Btn} ${styles.continue__Btn}`}
+                  onClick={() => setShowLegalPopup(false)}
+                >
+                  {"Continue"}
+                </button>
+                {agreePageLoading ? (
+                  <div className="loading__Spinner__New__Portfolio abs__Pos">
+                    <Spinner />
+                  </div>
+                ) : (
+                  <></>
+                )}
               </div>
-            }
+            )}
           </div>
         </div>
-      }
+      )}
     </div>
   );
 };

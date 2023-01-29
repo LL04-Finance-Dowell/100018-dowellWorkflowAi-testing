@@ -16,21 +16,20 @@ const ContentMapOfDoc = () => {
   const { contentOfDocumentStatus, contentOfDocument } = useSelector(
     (state) => state.document
   );
-  const { wfToDocument } = useSelector((state) => state.app);
+  const { wfToDocument, currentDocToWfs } = useSelector((state) => state.app);
 
   const [toggleContent, setToggleContent] = useState(false);
   const [isFixed, setIsFixed] = useState(false);
   const ref = useRef(null);
-  const scroll = useScrollPosition();
+  /*  const scroll = useScrollPosition(); */
 
   const handleToggleContent = () => {
-    if (contentOfDocument && wfToDocument.document)
-      setToggleContent((prev) => !prev);
+    if (contentOfDocument && currentDocToWfs) setToggleContent((prev) => !prev);
   };
 
   useEffect(() => {
     setToggleContent(false);
-  }, [wfToDocument.document]);
+  }, [currentDocToWfs]);
 
   /* const isFixedCallback = useCallback(() => {
     if (ref.current?.getBoundingClientRect().top > 0) {
@@ -53,6 +52,8 @@ const ContentMapOfDoc = () => {
     },
   };
 
+  console.log("contentOfDocumentcontentOfDocument", contentOfDocument);
+
   return (
     <div ref={ref} className={styles.container}>
       <div className={`${styles.box} ${isFixed && styles.is__fixed}`}>
@@ -66,7 +67,7 @@ const ContentMapOfDoc = () => {
           {contentOfDocument && contentOfDocumentStatus !== "pending" ? (
             <>
               <h4 className={styles.header}>
-                Content Map of {wfToDocument?.document?.document_name}
+                Content Map of {currentDocToWfs?.document_name}
               </h4>
               <i>{toggleContent ? <IoIosArrowUp /> : <IoIosArrowDown />}</i>
             </>

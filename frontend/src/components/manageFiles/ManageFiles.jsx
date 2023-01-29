@@ -41,7 +41,7 @@ const ManageFiles = ({ title, children, OverlayComp }) => {
       )}
       <h2 className={styles.page__header}>{title} Page</h2>
       <div className={styles.content__box}>
-        <div>
+        {/*   <div>
           <h2 className={styles.header}>New {title}</h2>
           <div
             onClick={handleToggleOverlay}
@@ -52,7 +52,7 @@ const ManageFiles = ({ title, children, OverlayComp }) => {
             </i>
             <h2>Add {title}</h2>
           </div>
-        </div>
+        </div> */}
         {children}
       </div>
     </div>

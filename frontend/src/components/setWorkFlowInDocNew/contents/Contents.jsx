@@ -1,10 +1,27 @@
-import { useState } from "react";
-import { useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
+import { AiOutlineCloseCircle, AiOutlineInfoCircle } from "react-icons/ai";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  removeFromTableOfContentForStep,
+  setTableOfContentForStep,
+} from "../../../features/app/appSlice";
 import styles from "./contents.module.css";
 
-const Contents = ({ contents, toggleContent, feature }) => {
+const Contents = ({
+  contents,
+  toggleContent,
+  feature,
+  currentStepIndex,
+  showCheckBoxForContent,
+}) => {
   const contentRef = useRef(null);
   const [currentTableItem, setCurrentTableItem] = useState(null);
+  const dispatch = useDispatch();
+  const { docCurrentWorkflow, tableOfContentForStep } = useSelector(
+    (state) => state.app
+  );
+  const [contentsPageWise, setContentsPageWise] = useState([]);
+  const [showContent, setShowContent] = useState([]);
 
   /*  const handleAddContent = (content) => {
     console.log(content);
@@ -16,6 +33,55 @@ const Contents = ({ contents, toggleContent, feature }) => {
 
     console.log(selectedContents);
   }; */
+
+  const handleContentSelection = (valueAsJSON) => {
+    const contentStepAlreadyAdded = tableOfContentForStep.find(
+      (step) =>
+        step.workflow === docCurrentWorkflow._id &&
+        step._id === valueAsJSON._id &&
+        step.stepIndex === currentStepIndex
+    );
+
+    if (contentStepAlreadyAdded) {
+      return dispatch(removeFromTableOfContentForStep(valueAsJSON._id));
+    }
+
+    const newTableOfContentObj = {
+      ...valueAsJSON,
+      workflow: docCurrentWorkflow._id,
+      stepIndex: currentStepIndex,
+    };
+
+    dispatch(setTableOfContentForStep(newTableOfContentObj));
+  };
+
+  useEffect(() => {
+    const contentsGroupedByPageNum = contents.reduce((r, a) => {
+      r[a.pageNum] = r[a.pageNum] || [];
+      r[a.pageNum].push(a);
+      return r;
+    }, Object.create(null));
+
+    setContentsPageWise(contentsGroupedByPageNum);
+
+    setShowContent(
+      contents.map((content) => {
+        return { show: false, id: content.id };
+      })
+    );
+  }, [contents]);
+
+  const handleShowContent = (value, id) => {
+    const currentContents = showContent.slice();
+    const contentToUpdate = currentContents.find(
+      (content) => content.id === id
+    );
+    if (!contentToUpdate) return;
+    contentToUpdate.show = value;
+    setShowContent(currentContents);
+  };
+
+  console.log("contentscontents", contentsPageWise);
 
   return (
     <div
@@ -29,28 +95,43 @@ const Contents = ({ contents, toggleContent, feature }) => {
       <div ref={contentRef} className={styles.content__box}>
         {contents.length > 0 ? (
           feature === "doc" ? (
-            <table>
-              <thead>
-                <tr>
-                  <th className={styles.table__id}>ID</th>
-                  <th className={styles.table__content}>Content</th>
-                </tr>
-              </thead>
-              <tbody>
-                {contents.map((item) => (
-                  <tr
-                    className={
-                      item._id === currentTableItem &&
-                      styles.current__table__item
-                    }
-                    key={item._id}
-                  >
-                    <th className={styles.table__id}>{item.id}</th>
-                    <th className={styles.table__content}>{item.data}</th>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+            <>
+              {React.Children.toArray(Object.keys(contentsPageWise || {})).map(
+                (page) => {
+                  return (
+                    <>
+                      <p>Page: {page}</p>
+                      <table style={{ marginBottom: "22px" }}>
+                        <thead>
+                          <tr>
+                            <th className={styles.table__id}>ID</th>
+                            <th className={styles.table__content}>Content</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <>
+                            {contentsPageWise[page].map((item) => (
+                              <tr
+                                className={
+                                  item._id === currentTableItem &&
+                                  styles.current__table__item
+                                }
+                                key={item._id}
+                              >
+                                <th className={styles.table__id}>{item.id}</th>
+                                <th className={styles.table__content}>
+                                  {item.data}
+                                </th>
+                              </tr>
+                            ))}
+                          </>
+                        </tbody>
+                      </table>
+                    </>
+                  );
+                }
+              )}
+            </>
           ) : (
             <ol>
               {contents.map((item) => (
@@ -64,7 +145,45 @@ const Contents = ({ contents, toggleContent, feature }) => {
                   key={item._id}
                 >
                   <span>
-                    <a>{item.id}</a>
+                    {/* { showCheckBoxForContent && <input type={"checkbox"} value={JSON.stringify(item)} onChange={handleCheckboxSelection} /> } */}
+                    {showContent.find((content) => content.id === item.id)
+                      ?.show ? (
+                      <>
+                        <p>{item.data}</p>
+                        <AiOutlineCloseCircle
+                          className="content__Icon"
+                          onClick={() => handleShowContent(false, item.id)}
+                        />
+                      </>
+                    ) : (
+                      <>
+                        <a
+                          style={
+                            tableOfContentForStep.find(
+                              (step) =>
+                                step.workflow === docCurrentWorkflow._id &&
+                                step._id === item._id &&
+                                step.stepIndex === currentStepIndex
+                            )
+                              ? {
+                                  backgroundColor: "#0048ff",
+                                  color: "#fff",
+                                  padding: "2% 30%",
+                                  borderRadius: "5px",
+                                  width: "100%",
+                                }
+                              : {}
+                          }
+                          onClick={() => handleContentSelection(item)}
+                        >
+                          {item.id}
+                        </a>
+                        <AiOutlineInfoCircle
+                          className="content__Icon"
+                          onClick={() => handleShowContent(true, item.id)}
+                        />
+                      </>
+                    )}
                   </span>
                 </li>
               ))}

@@ -90,10 +90,16 @@ const SelectDoc = () => {
                         <button
                           onClick={() => handleAddSelectedDocuments(item)}
                           className={`${styles.features__button} ${
-                            item._id === currentDocToWfs?._id && styles.selected
+                            selectedDocuments.find(
+                              (selectedDocument) =>
+                                selectedDocument._id === item._id
+                            ) && styles.selected
                           }`}
                         >
-                          {item._id === currentDocToWfs?._id
+                          {selectedDocuments.find(
+                            (selectedDocument) =>
+                              selectedDocument._id === item._id
+                          )
                             ? "selected"
                             : "click here"}
                         </button>

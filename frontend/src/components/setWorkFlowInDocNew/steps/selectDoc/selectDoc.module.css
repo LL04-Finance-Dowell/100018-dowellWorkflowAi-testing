@@ -52,11 +52,13 @@
   justify-content: center;
   text-transform: capitalize;
   background-color: var(--e-global-color-9d2ac19);
+  transition: all 0.5s ease;
 }
 
 .features__button:hover {
-  background-color: transparent;
-  color: var(--e-global-color-cd6593d);
+  background-color: var(--e-global-color-accent);
+  border-color: #006400;
+  color: white;
 }
 
 .selected {

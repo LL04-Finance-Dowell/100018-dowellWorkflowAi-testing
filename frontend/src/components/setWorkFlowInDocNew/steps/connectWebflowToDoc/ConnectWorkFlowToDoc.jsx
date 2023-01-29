@@ -65,7 +65,7 @@ const ConnectWorkFlowToDoc = () => {
           3. Connect Selected Workflows to the selected Document
         </h2>
 
-        {contentOfDocumentStatus === "pending" ? (
+        {"contentOfDocumentStatus" === "pending" ? (
           <div style={{ marginBottom: "15px" }}>
             <BookSpinner />
           </div>

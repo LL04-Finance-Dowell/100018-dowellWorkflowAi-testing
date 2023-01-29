@@ -25,11 +25,11 @@ const WorkflowSwiper = ({ loop, perSlide }) => {
 
   const handleConnectWfToDoc = () => {
     dispatch(setWfToDocument());
-    if (currentDocToWfs) {
+    /*   if (currentDocToWfs) {
       const data = { document_id: currentDocToWfs._id };
       console.log(data, "dataaaaaaaaaaaaaaaaaa");
       dispatch(contentDocument(data));
-    }
+    } */
   };
 
   const handleRemoveWorflow = (id) => {
