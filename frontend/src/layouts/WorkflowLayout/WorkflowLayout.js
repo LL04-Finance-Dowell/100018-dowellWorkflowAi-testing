@@ -10,7 +10,8 @@ import useCloseElementOnEscapekeyClick from "../../../src/hooks/useCloseElementO
 
 const WorkflowLayout = ({ children }) => {
   const { userDetail, session_id } = useSelector((state) => state.auth);
-  const [ createNewPortfolioLoading, setCreateNewPortfolioLoading ] = useState(false);
+  const [createNewPortfolioLoading, setCreateNewPortfolioLoading] =
+    useState(false);
 
   const handleClick = () => {
     if (session_id) {
@@ -40,12 +41,18 @@ const WorkflowLayout = ({ children }) => {
                   <span onClick={handleClick}> create here</span>
                 </h1>
               </div>
-              { createNewPortfolioLoading ? <div className="loading__Spinner__New__Portfolio"><Spinner /></div> : <></> }
+              {createNewPortfolioLoading ? (
+                <div className="loading__Spinner__New__Portfolio">
+                  <Spinner />
+                </div>
+              ) : (
+                <></>
+              )}
             </div>
           ) : (
             <>
               <div className={styles.content__box}>
-                <div className={styles.sidebar__box}>
+                <div className={`${styles.sidebar__box} hide-scrollbar`}>
                   <SideBar />
                 </div>
                 <div className={styles.children__box}>{children}</div>
