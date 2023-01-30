@@ -34,8 +34,9 @@ const TemplatesPage = () => {
       created_by: userDetail?.portfolio_info[0].username,
     };
 
-    dispatch(mineTemplates(mineData));
-    dispatch(savedTemplates(savedTemplatesData));
+    if (mineStatus === "idle") dispatch(mineTemplates(mineData));
+    if (savedTemplatesItemsStatus === "idle")
+      dispatch(savedTemplates(savedTemplatesData));
   }, []);
 
   return (

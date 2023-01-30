@@ -33,8 +33,8 @@ const WorkflowsPage = () => {
       company_id: userDetail?.portfolio_info[0].org_id,
     };
 
-    dispatch(savedWorkflows(saveddata));
-    dispatch(mineWorkflows(data));
+    if (savedWorkflowStatus === "idle") dispatch(savedWorkflows(saveddata));
+    if (mineStatus === "idle") dispatch(mineWorkflows(data));
   }, []);
 
   console.log("wwwwwwwwwwwwwwwwwwwwwwwwwwwwww", minedWorkflows);

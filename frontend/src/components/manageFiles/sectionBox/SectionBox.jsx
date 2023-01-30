@@ -30,28 +30,29 @@ const SectionBox = ({ cardItems, title, Card, status, idKey }) => {
             </div>
           ) : (
             <>
-              {Card && cardItems && cardItems.length > 0 && (
-                <div className={styles.grid__box}>
-                  {cardItems.slice(0, sliceCount * 10).map((item) => (
-                    <Card key={item.id} cardItem={item} />
-                  ))}
-                  {cardItems.length > 10 && (
-                    <PrimaryButton
-                      style={{
-                        pointerEvents: `${
-                          cardItems.length / 10 < sliceCount && "none"
-                        }`,
-                      }}
-                      hoverBg="success"
-                      onClick={handleLoadMore}
-                    >
-                      {cardItems.length / 10 < sliceCount
-                        ? "no more load"
-                        : "load more"}
-                    </PrimaryButton>
-                  )}
-                </div>
-              )}
+              <div className={styles.grid__box}>
+                {Card &&
+                  cardItems &&
+                  cardItems.length > 0 &&
+                  cardItems
+                    .slice(0, sliceCount * 10)
+                    .map((item) => <Card key={item.id} cardItem={item} />)}
+                {cardItems.length > 10 && (
+                  <PrimaryButton
+                    style={{
+                      pointerEvents: `${
+                        cardItems.length / 10 < sliceCount && "none"
+                      }`,
+                    }}
+                    hoverBg="success"
+                    onClick={handleLoadMore}
+                  >
+                    {cardItems.length / 10 < sliceCount
+                      ? "no more load"
+                      : "load more"}
+                  </PrimaryButton>
+                )}
+              </div>
             </>
           )}
         </div>

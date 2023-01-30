@@ -24,7 +24,7 @@ const ManageFile = () => {
 
   const [test, setTest] = useState(manageFileItems);
 
-  useEffect(() => {
+  /*  useEffect(() => {
     const data = {
       company_id: userDetail?.portfolio_info[0].org_id,
     };
@@ -69,7 +69,7 @@ const ManageFile = () => {
           : item
       )
     );
-  }, [savedDocumentsItems, savedTemplatesItems, savedWorkflowItems]);
+  }, [savedDocumentsItems, savedTemplatesItems, savedWorkflowItems]); */
 
   return (
     <div className={sidebarStyles.feature__box}>

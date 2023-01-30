@@ -27,13 +27,11 @@ const DocumentsPage = () => {
       company_id: userDetail?.portfolio_info[0].org_id,
       created_by: userDetail?.userinfo.username,
     };
-
     const draftData = {
       company_id: userDetail?.portfolio_info[0].org_id,
     };
-
-    dispatch(savedDocuments(draftData));
-    dispatch(mineDocuments(data));
+    if (savedDocumentsStatus === "idle") dispatch(savedDocuments(draftData));
+    if (mineStatus === "idle") dispatch(mineDocuments(data));
   }, []);
 
   console.log("aaaaaaaaaaa", savedDocumentsItems, minedDocuments);
