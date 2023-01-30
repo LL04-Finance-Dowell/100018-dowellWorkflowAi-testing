@@ -60,6 +60,7 @@ const initialState = {
   teamsInWorkflowAI,
   column: [],
   proccess: [],
+  userDetailPosition: null,
 };
 
 export const appSlice = createSlice({
@@ -271,6 +272,9 @@ export const appSlice = createSlice({
         children: action.payload,
       }));
     },
+    setUserDetailPosition: (state, action) => {
+      state.userDetailPosition = action.payload;
+    },
   },
 });
 
@@ -307,6 +311,7 @@ export const {
   setUpdateProccess,
   setPermissionArray,
   setTeamsInWorkflowAI,
+  setUserDetailPosition,
 } = appSlice.actions;
 
 export default appSlice.reducer;

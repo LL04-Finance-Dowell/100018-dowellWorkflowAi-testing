@@ -3,6 +3,7 @@
   width: fit-content;
   height: fit-content;
   font-size: 14px;
+  z-index: 10000;
 }
 
 .info__box {
@@ -11,8 +12,8 @@
   top: 0;
   background-color: white;
   max-width: 500px;
+  display: flex;
   flex-direction: column;
-  display: none;
   z-index: 10000;
   word-break: keep-all;
   white-space: nowrap;

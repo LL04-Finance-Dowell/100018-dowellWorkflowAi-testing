@@ -31,6 +31,8 @@ import { LoadingSpinner } from "../LoadingSpinner/LoadingSpinner";
 import { formatDateAndTime } from "../../utils/helpers";
 import Spinner from "../spinner/Spinner";
 import useCloseElementOnEscapekeyClick from "../../hooks/useCloseElementOnEscapeKeyClick";
+import { BsThreeDotsVertical } from "react-icons/bs";
+import { setUserDetailPosition } from "../../features/app/appSlice";
 
 const Sidebar = () => {
   const dispatch = useDispatch();
@@ -86,6 +88,23 @@ const Sidebar = () => {
     feature === "settings" && ; */
   };
 
+  const handleToggleUserDetail = (e) => {
+    console.log("positionpostion", e.target.getBoundingClientRect());
+    const top = e.target.getBoundingClientRect().top;
+    const left = e.target.getBoundingClientRect().left + 25;
+
+    dispatch(
+      setUserDetailPosition({
+        top,
+        left,
+      })
+    );
+  };
+
+  const handleMouseLeave = () => {
+    dispatch(setUserDetailPosition(null));
+  };
+
   return (
     <div className={styles.container}>
       <div className={styles.header__box}>
@@ -110,7 +129,12 @@ const Sidebar = () => {
             {<item.icon cursor="pointer" size={25} />}
           </i>
         ))}
-        <UserDetail />
+        <BsThreeDotsVertical
+          cursor="pointer"
+          size={25}
+          onMouseEnter={(e) => handleToggleUserDetail(e)}
+          onMouseLeave={handleMouseLeave}
+        />
       </div>
       <div className={styles.user__box}>
         <i>

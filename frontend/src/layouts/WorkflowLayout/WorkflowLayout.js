@@ -1,4 +1,4 @@
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import SideBar from "../../components/newSidebar/Sidebar";
 import "./style.css";
 import styles from "./workflowLayout.module.css";
@@ -7,9 +7,13 @@ import { useEffect, useState } from "react";
 import DowellLogo from "../../assets/dowell.png";
 import Spinner from "../../components/spinner/Spinner";
 import useCloseElementOnEscapekeyClick from "../../../src/hooks/useCloseElementOnEscapeKeyClick";
+import UserDetail from "../../components/newSidebar/userDetail/UserDetail";
+import { setUserDetailPosition } from "../../features/app/appSlice";
 
 const WorkflowLayout = ({ children }) => {
+  const dispatch = useDispatch();
   const { userDetail, session_id } = useSelector((state) => state.auth);
+  const { userDetailPosition } = useSelector((state) => state.app);
   const [createNewPortfolioLoading, setCreateNewPortfolioLoading] =
     useState(false);
 
@@ -24,6 +28,14 @@ const WorkflowLayout = ({ children }) => {
   };
 
   useCloseElementOnEscapekeyClick(() => setCreateNewPortfolioLoading(false));
+
+  const handleMouseEnter = () => {
+    dispatch(setUserDetailPosition(userDetailPosition));
+  };
+
+  const handleMouseLeave = () => {
+    dispatch(setUserDetailPosition(null));
+  };
 
   return (
     <>
@@ -63,6 +75,20 @@ const WorkflowLayout = ({ children }) => {
         ) : (
           <div style={{ margin: "auto" }}>
             <Spinner />
+          </div>
+        )}
+        {userDetailPosition && (
+          <div
+            onMouseEnter={handleMouseEnter}
+            onMouseLeave={handleMouseLeave}
+            style={{
+              position: "fixed",
+              zIndex: "10000000",
+              top: `${userDetailPosition.top}px`,
+              left: `${userDetailPosition.left}px`,
+            }}
+          >
+            <UserDetail />
           </div>
         )}
       </div>

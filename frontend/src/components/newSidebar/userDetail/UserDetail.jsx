@@ -8,7 +8,7 @@ const UserDetail = () => {
 
   return (
     <div className={styles.container}>
-      <BsThreeDotsVertical cursor="pointer" size={25} />
+      {/*  <BsThreeDotsVertical cursor="pointer" size={25} /> */}
       <div className={styles.info__box}>
         <span>
           <span className={styles.title}>Member Type:</span>{" "}
