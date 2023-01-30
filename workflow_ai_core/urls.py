@@ -22,7 +22,6 @@ from drf_yasg import openapi
 from document.intelligent_search import search
 from workflow_processing.process import (
     save_and_start_processing,
-    save_workflows_to_document,
     a_single_process,
     register_finalize_or_reject,
     verify_process,
@@ -81,7 +80,6 @@ schema_view = get_schema_view(
 urlpatterns = [
     # processing.
     path("v0.1/processes/", processes),
-    path("v0.1/process/new/", save_workflows_to_document),
     path("v0.1/process/start/", save_and_start_processing),
     path("v0.1/process/verify/", verify_process),
     path("v0.1/process/link/", get_process_link),

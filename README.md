@@ -98,7 +98,8 @@ Request Body
 
 ```
 {
-    "criteria": "<member|workflow|steps|document_content|signing_location>"
+    "action": "<save_and_start_processing|save_workflow_to_document>",
+    "criteria": "<member|workflow|steps|document_content|signing_location>",
     "document_id": "<document_id_of_selected_document_to_process>",
     "company_id": "<company_id_of_authenticated_user>",
     "created_by": "<user_name_of_authenticated_user>",
@@ -145,57 +146,6 @@ Response - 500
 
 ```
     "Failed to create process and start processing."
-```
-
-_POST_ to `process/new/`
-
-- Save Workflows to document
-
-Request Body
-
-```
-{
-    "document_id": "<document_id_of_selected_document_to_process>",
-    "company_id": "<company_id_of_authenticated_user>",
-    "created_by": "<user_name_of_authenticated_user>",
-    "data_type":"<real|archive|test|learning data>",
-    "workflows": [
-        {
-            "workflows":
-            {
-                "workflow_title":"<workflow_title>",
-                "steps":
-                [
-                    {
-                        "step_name"        : "<name_of_step>",
-                        "role"              : "<the_role>",
-                        "skip"            : "<True|False>",
-                        "document_map"    : "<selected_content_map>"
-                        "member_type"    : "<TEAM_MEMBER|PUBLIC|GUEST>",
-                        "member"         : "<username_selected",
-                        "member_portfolio": "Portfolio",
-                        "rights"        : "<ADD/EDIT|VIEW|COMMENT|APPROVE>",
-                        "display_before": "<document_before_processing_this_step|document_after_processing_this_step|document_in_all_steps|document_only_this_step>",
-                        "location"    :     "<choice_location_selected>",
-                        "limit"    : "<within_1_hour|within_8_hours|within_24_hours|within_3_days|within_7_days|custom_time>",
-                        "start_time": "START_DATE_AND_TIME",
-                        "end_time":    "END_DATE_AND_TIME",
-                        "reminder": "<send_reminder_every_day|send_reminder_every_hour>",
-                    },
-                ],
-            },
-        },
-    ],
-}
-
-```
-
-Response - 201
-
-Response - 500
-
-```
-    "Failed to save Workflows to document"
 ```
 
 ### Template Management

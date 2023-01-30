@@ -139,48 +139,6 @@ def fetch_process_links(request):
 # API Endpoint - 3. ---------  Verifying Process
 # ---------------------------------------------------------------------------------#
 
-# verify user & portfolio -- utility func
-def verify_user_in_process(process_id, user_name):
-    print("checking allowed... \n")
-    allowed = False
-    processing_links_info = get_links_object_by_process_id(process_id)
-    # print(processing_links_info)
-    if processing_links_info:
-        for link in processing_links_info["links"]:
-            if user_name in link:
-                allowed = True
-                return allowed
-    return allowed
-
-
-#  A single Doc Link
-def generate_link(document_id, doc_map, doc_rights, user, process_id):
-    print("generating document link .... \n")
-    editor_api = "https://100058.pythonanywhere.com/api/generate-editor-link/"
-    payload = {
-        "product_name": "workflowai",
-        "details": {
-            "_id": document_id,
-            "field": "document_name",
-            "action": "document",
-            "cluster": "Documents",
-            "database": "Documentation",
-            "collection": "DocumentReports",
-            "document": "documentreports",
-            "team_member_ID": "11689044433",
-            "function_ID": "ABCDE",
-            "command": "update",
-            "flag": "signing",
-            "authorized": user,
-            "document_map": doc_map,
-            "document_right": doc_rights,
-            "process_id": process_id,
-            "update_field": {"document_name": "", "content": "", "page": ""},
-        },
-    }
-    link = requests.post(editor_api, data=json.dumps(payload))
-    return link
-
 
 """
 process verification to peform check and issue access
@@ -190,19 +148,9 @@ process verification to peform check and issue access
 @api_view(["POST"])
 def verify_process(request):
     print("verification started...... \n")
-    print("normal checks..... \n")
     # decode token
     decoded = jwt.decode(request.data["token"], "secret", algorithms="HS256")
-    print(decoded)
-    # find links
-    try:
-        processing_links_info = get_links_object_by_process_id(decoded["process_id"])
-    except:
-        return Response(
-            "something went wrong when verifying process",
-            status=status.HTTP_500_INTERNAL_SERVER_ERROR,
-        )
-    # the process
+    # find process
     try:
         process = get_process_object(workflow_process_id=decoded["process_id"])
     except:
@@ -264,7 +212,7 @@ def verify_process(request):
 
     # generate document link.
     doc_link = generate_link(
-        document_id=processing_links_info["document_id"],
+        document_id=process["document_id"],
         doc_map=map,
         doc_rights=right,
         user=user,
@@ -272,8 +220,6 @@ def verify_process(request):
     )
     return Response(doc_link.json(), status=status.HTTP_201_CREATED)
 
-
-# CHECKS...........
 
 # Check display in the step.
 def check_display_right(display):
@@ -311,10 +257,52 @@ def check_time_limit(limit, start_time, end_time):
     return accepted
 
 
+# verify user & portfolio -- utility func
+def verify_user_in_process(process_id, user_name):
+    print("checking allowed... \n")
+    allowed = False
+    processing_links_info = get_links_object_by_process_id(process_id)
+    # print(processing_links_info)
+    if processing_links_info:
+        for link in processing_links_info["links"]:
+            if user_name in link:
+                allowed = True
+                return allowed
+    return allowed
 
-# ---------------------------------------------------------------------------------#
-# API Enpoint - 2 -------------  Start the workflow process.
-# ---------------------------------------------------------------------------------#
+
+#  A single Doc Link
+def generate_link(document_id, doc_map, doc_rights, user, process_id):
+    print("generating document link .... \n")
+    editor_api = "https://100058.pythonanywhere.com/api/generate-editor-link/"
+    payload = {
+        "product_name": "workflowai",
+        "details": {
+            "_id": document_id,
+            "field": "document_name",
+            "action": "document",
+            "cluster": "Documents",
+            "database": "Documentation",
+            "collection": "DocumentReports",
+            "document": "documentreports",
+            "team_member_ID": "11689044433",
+            "function_ID": "ABCDE",
+            "command": "update",
+            "flag": "signing",
+            "authorized": user,
+            "document_map": doc_map,
+            "document_right": doc_rights,
+            "process_id": process_id,
+            "update_field": {"document_name": "", "content": "", "page": ""},
+        },
+    }
+    link = requests.post(editor_api, data=json.dumps(payload))
+    return link
+
+
+"""
+API-save and start processing.........
+"""
 
 
 @api_view(["POST"])
@@ -326,124 +314,26 @@ def save_and_start_processing(request):
         company_id=request.data["company_id"],
         data_type=request.data["data_type"],
     )
-    if process:
-        # update the doc. DB - 2
-        print("Updating document with process id.... \n")
-        res = json.loads(
-            update_document(
-                document_id=request.data["document_id"],
-                workflow_process_id=process["process_id"],
-            )
+    if not process:
+        return Response(
+            status=status.HTTP_500_INTERNAL_SERVER_ERROR,
         )
-        if res["isSuccess"]:
+    print("Updating document with process id.... \n")
+    res = json.loads(
+        update_document(
+            document_id=request.data["document_id"],
+            workflow_process_id=process["process_id"],
+        )
+    )
+    if res["isSuccess"]:
+        if request.data["action"] == "save_and_start_processing":
             # fire up the processing action
             return start_processing(
                 process=process,
                 document_id=request.data["document_id"],
                 choice=request.data["criteria"],
             )
-    return Response(
-        status=status.HTTP_500_INTERNAL_SERVER_ERROR,
-    )
-
-
-"""
- Begin processing the Workflow.
-"""
-
-
-def start_processing(process, document_id, choice):
-    print("started processing......")
-    links = generate_links(process, document_id, choice)
-    if len(links) > 0:
-        return Response(
-            links,
-            status=status.HTTP_200_OK,
-        )
-    return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-
-"""
-Links generation
-"""
-
-
-def generate_links(process, document_id, choice):
-    print("generating links.............\n")
-    links = [
-        {step["member"]: verification_link(process["process_id"], document_id)}
-        for step in process["process_steps"]
-    ]
-    # SQLITE
-    # notification = Notification(
-    #     links=links,
-    #     process_id=process["process_id"],
-    #     document_id=document_id,
-    #     processing_choice=choice,
-    # )
-    # notification.save()
-
-    # Save Links - DB-3
-    print("saving process links........ \n")
-    save_process_links(
-        links=links,
-        process_id=process["process_id"],
-        document_id=document_id,
-        processing_choice=choice,
-        process_title=process["process_title"]
-    )
-    return links
-
-
-"""
- application link + token generation
-"""
-
-
-def verification_link(process_id, document_id):
-    # Token generation.
-    print("creating verification links........... \n")
-    # create a jwt token
-    payload = {
-        "uuid_hash": uuid.uuid4().hex,
-        "process_id": process_id,
-        "document_id": document_id,
-    }
-    hash_token = jwt.encode(
-        json.loads(json.dumps(payload)), "secret", algorithm="HS256"
-    )
-    return f"https://ll04-finance-dowell.github.io/100018-dowellWorkflowAi-testing/#/verify/{hash_token}/"
-
-
-# ---------------------------------------------------------------------------------#
-# API Endpoint - 1. -------  Set Wofkflows in document
-# ---------------------------------------------------------------------------------#
-
-
-"""
-save workflow to document to create process.
-"""
-
-
-@api_view(["POST"])
-def save_workflows_to_document(request):
-    process = new_process(
-        workflows=request.data["workflows"],
-        created_by=request.data["created_by"],
-        company_id=request.data["company_id"],
-        data_type=request.data["data_type"],
-        document_id=request.data["document_id"],
-    )
-    if process:
-        # update the doc.
-        print("Updating document with process id.... \n")
-        res = json.loads(
-            update_document(
-                document_id=request.data["document_id"],
-                workflow_process_id=process["process_id"],
-            )
-        )
-        if res["isSuccess"]:
+        if request.data["action"] == "save_workflow_to_document":
             return Response(status=status.HTTP_201_CREATED)
     return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
@@ -480,3 +370,62 @@ def new_process(workflows, created_by, company_id, data_type, document_id):
             "process_id": res["inserted_id"],
         }
         return process
+
+
+"""
+ Begin processing the Workflow.
+"""
+
+
+def start_processing(process, document_id, choice):
+    print("started processing......")
+    links = generate_links(process, document_id, choice)
+    if len(links) > 0:
+        return Response(
+            links,
+            status=status.HTTP_200_OK,
+        )
+    return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+"""
+Links generation
+"""
+
+
+def generate_links(process, document_id, choice):
+    print("generating links.............\n")
+    links = [
+        {step["member"]: verification_link(process["process_id"], document_id)}
+        for step in process["process_steps"]
+    ]
+    # Save Links - DB-3
+    print("saving process links........ \n")
+    save_process_links(
+        links=links,
+        process_id=process["process_id"],
+        document_id=document_id,
+        processing_choice=choice,
+        process_title=process["process_title"],
+    )
+    return links
+
+
+"""
+ application link + token generation
+"""
+
+
+def verification_link(process_id, document_id):
+    # Token generation.
+    print("creating verification links........... \n")
+    # create a jwt token
+    payload = {
+        "uuid_hash": uuid.uuid4().hex,
+        "process_id": process_id,
+        "document_id": document_id,
+    }
+    hash_token = jwt.encode(
+        json.loads(json.dumps(payload)), "secret", algorithm="HS256"
+    )
+    return f"https://ll04-finance-dowell.github.io/100018-dowellWorkflowAi-testing/#/verify/{hash_token}/"
