@@ -310,21 +310,6 @@ def check_time_limit(limit, start_time, end_time):
         return accepted
     return accepted
 
-    #
-    # hours = 0
-    # if limit == "within_1_hour":
-
-    #     return
-    # if limit == "within_8_hours":
-    #     return
-    # if limit == "within_24_hours":
-    #     return
-    # if limit == "within_3_days":
-    #     return
-    # if limit == "within_7_days":
-    #     return
-    # if limit == "custom_time":
-    #     return
 
 
 # ---------------------------------------------------------------------------------#
@@ -362,10 +347,14 @@ def save_and_start_processing(request):
     )
 
 
-#  Begin processing the Workflow.
+"""
+ Begin processing the Workflow.
+"""
+
+
 def start_processing(process, document_id, choice):
-    links = generate_links(process, document_id, choice)
     print("started processing......")
+    links = generate_links(process, document_id, choice)
     if len(links) > 0:
         return Response(
             links,
@@ -374,7 +363,11 @@ def start_processing(process, document_id, choice):
     return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
-# Links generation
+"""
+Links generation
+"""
+
+
 def generate_links(process, document_id, choice):
     print("generating links.............\n")
     links = [
@@ -397,11 +390,16 @@ def generate_links(process, document_id, choice):
         process_id=process["process_id"],
         document_id=document_id,
         processing_choice=choice,
+        process_title=process["process_title"]
     )
     return links
 
 
-# application link
+"""
+ application link + token generation
+"""
+
+
 def verification_link(process_id, document_id):
     # Token generation.
     print("creating verification links........... \n")
@@ -450,7 +448,11 @@ def save_workflows_to_document(request):
     return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
-# Create Process.
+"""
+Create Process.
+"""
+
+
 def new_process(workflows, created_by, company_id, data_type, document_id):
     print("creating process.......... \n")
     process_title = ""

@@ -256,7 +256,7 @@ def get_user_info_by_username(username):
 
 
 # ----------------------- Links Creation -------------------------
-def save_process_links(links, process_id, document_id, processing_choice):
+def save_process_links(links, process_id, document_id, processing_choice, process_title):
     url = "http://100002.pythonanywhere.com/"
     payload = json.dumps(
         {
@@ -268,6 +268,7 @@ def save_process_links(links, process_id, document_id, processing_choice):
                 "process_id": process_id,
                 "document_id": document_id,
                 "processing_choice": processing_choice,
+                "process_title": process_title,
                 "created_on": time
             },
             "update_field": {"order_nos": 21},
@@ -381,74 +382,6 @@ def get_process_list(company_id):
     else:
         return []
 
-
-# ---------- Hashes --------------------------
-
-
-def save_uuid_hash(process_links, process_id, document_id, processing_choice):
-    url = "http://100002.pythonanywhere.com/"
-    payload = json.dumps(
-        {
-            **QR_ID_CONNECTION_DICT,
-            "command": "insert",
-            "field": {
-                "eventId": get_event_id(),
-                "process_links": process_links,
-                "document_id": document_id,
-                "process_id": process_id,
-                "processing_choice": processing_choice,
-                "status": True,  #   if True: valid ? Invalid
-            },
-            "update_field": {"order_nos": 21},
-            "platform": "bangalore",
-        }
-    )
-
-    headers = {"Content-Type": "application/json"}
-    response = requests.request("POST", url, headers=headers, data=payload)
-    print("SAVED UUID ENTRY", response.text)
-    return response.text
-
-
-def get_uuid_object(uuid_hash):
-    fields = {"uuid_hash": uuid_hash}
-    response_obj = dowellconnection(*QR_ID_CONNECTION_LIST, "find", fields, "nil")
-    print("UUID query object response : ", response_obj)
-    res_obj = json.loads(response_obj)
-    if len(res_obj["data"]):
-        return res_obj["data"]
-    else:
-        return []
-
-
-# for links in wf lists
-def get_uuid(document_id):
-    fields = {"document_id": document_id}
-    response_obj = dowellconnection(*QR_ID_CONNECTION_LIST, "find", fields, "nil")
-    print("UUID Hash : ", response_obj)
-    res_obj = json.loads(response_obj)
-    if len(res_obj["data"]):
-        return res_obj["data"]
-    else:
-        return []
-
-
-def update_uuid_object(uuid_hash):
-    url = "http://100002.pythonanywhere.com/"
-
-    payload = json.dumps(
-        {
-            **QR_ID_CONNECTION_DICT,
-            "command": "update",
-            "field": {"uuid_hash": uuid_hash},
-            "update_field": {"status": False},
-            "platform": "bangalore",
-        }
-    )
-    headers = {"Content-Type": "application/json"}
-    response = requests.request("POST", url, headers=headers, data=payload)
-    print("SAVED UUID-----------: \n")
-    return response.text
 
 
 # -------------------------------- Workflows-------------------
@@ -808,3 +741,72 @@ def get_document_list(company_id):
         return res_obj["data"]
     else:
         return []
+
+# ---------- Hashes --------------------------
+
+
+def save_uuid_hash(process_links, process_id, document_id, processing_choice):
+    url = "http://100002.pythonanywhere.com/"
+    payload = json.dumps(
+        {
+            **QR_ID_CONNECTION_DICT,
+            "command": "insert",
+            "field": {
+                "eventId": get_event_id(),
+                "process_links": process_links,
+                "document_id": document_id,
+                "process_id": process_id,
+                "processing_choice": processing_choice,
+                "status": True,  #   if True: valid ? Invalid
+            },
+            "update_field": {"order_nos": 21},
+            "platform": "bangalore",
+        }
+    )
+
+    headers = {"Content-Type": "application/json"}
+    response = requests.request("POST", url, headers=headers, data=payload)
+    print("SAVED UUID ENTRY", response.text)
+    return response.text
+
+
+def get_uuid_object(uuid_hash):
+    fields = {"uuid_hash": uuid_hash}
+    response_obj = dowellconnection(*QR_ID_CONNECTION_LIST, "find", fields, "nil")
+    print("UUID query object response : ", response_obj)
+    res_obj = json.loads(response_obj)
+    if len(res_obj["data"]):
+        return res_obj["data"]
+    else:
+        return []
+
+
+# for links in wf lists
+def get_uuid(document_id):
+    fields = {"document_id": document_id}
+    response_obj = dowellconnection(*QR_ID_CONNECTION_LIST, "find", fields, "nil")
+    print("UUID Hash : ", response_obj)
+    res_obj = json.loads(response_obj)
+    if len(res_obj["data"]):
+        return res_obj["data"]
+    else:
+        return []
+
+
+def update_uuid_object(uuid_hash):
+    url = "http://100002.pythonanywhere.com/"
+
+    payload = json.dumps(
+        {
+            **QR_ID_CONNECTION_DICT,
+            "command": "update",
+            "field": {"uuid_hash": uuid_hash},
+            "update_field": {"status": False},
+            "platform": "bangalore",
+        }
+    )
+    headers = {"Content-Type": "application/json"}
+    response = requests.request("POST", url, headers=headers, data=payload)
+    print("SAVED UUID-----------: \n")
+    return response.text
+
