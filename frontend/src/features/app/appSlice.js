@@ -8,8 +8,12 @@ import {
   permissionArray,
   teamsInWorkflowAI,
 } from "../../components/workflowAiSettings/veriables";
+import { getItemsCounts } from "./asyncThunks";
 
 const initialState = {
+  itemsCount: null,
+  itemsCountStatus: "idle",
+  errorMessage: null,
   toggleManageFileForm: false,
   currentWorkflow: null,
   editorLink: null,
@@ -254,6 +258,13 @@ export const appSlice = createSlice({
         children: action.payload,
       }));
     },
+    setUpdateProccessApi: (state, action) => {
+      console.log("settingProccesssettingProccess", action.payload);
+      state.settingProccess = state.settingProccess.map((item) => ({
+        ...item,
+        children: [item.children[0], ...action.payload],
+      }));
+    },
     setColumn: (state, action) => {
       state.column = action.payload;
     },
@@ -275,6 +286,20 @@ export const appSlice = createSlice({
     setUserDetailPosition: (state, action) => {
       state.userDetailPosition = action.payload;
     },
+  },
+  extraReducers: (builder) => {
+    //getItemsCount
+    builder.addCase(getItemsCounts.pending, (state) => {
+      state.itemsCountStatus = "pending";
+    });
+    builder.addCase(getItemsCounts.fulfilled, (state, action) => {
+      state.itemsCountStatus = "succeeded";
+      state.itemsCount = action.payload;
+    });
+    builder.addCase(getItemsCounts.rejected, (state, action) => {
+      state.itemsCountStatus = "error";
+      state.errorMessage = action.payload;
+    });
   },
 });
 
@@ -312,6 +337,7 @@ export const {
   setPermissionArray,
   setTeamsInWorkflowAI,
   setUserDetailPosition,
+  setUpdateProccessApi,
 } = appSlice.actions;
 
 export default appSlice.reducer;
