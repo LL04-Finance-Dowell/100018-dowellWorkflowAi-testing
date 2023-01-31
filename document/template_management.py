@@ -8,7 +8,6 @@ from database.mongo_db_connection import (
     save_template,
     update_template_approval,
     get_template_object,
-    # get_user_info_by_username,
 )
 
 editorApi = "https://100058.pythonanywhere.com/api/generate-editor-link/"
@@ -56,7 +55,7 @@ def create_template(request):
         except:
             return Response(
                 {"message": "Template Creation Failed"},
-                status=status.is_server_error,
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
         return Response(
             editor_link.json(),
@@ -135,6 +134,7 @@ def approved(request):
         for t in template_list
         if t.get("approved") == True
         and t.get("created_by") == request.data["created_by"]
+        and t.get("data_type") == request.data["data_type"]
     ]
     if not templates:
         return Response(
@@ -157,6 +157,7 @@ def not_approved_templates(request):  # List of Templates to be approved.
         for t in template_list
         if t.get("approved") == False
         and t.get("created_by") == request.data["created_by"]
+        and t.get("data_type") == request.data["data_type"]
     ]
     if not templates:
         return Response(
@@ -175,7 +176,10 @@ def template_list(request):  # List of Created Templates.
             status=status.HTTP_500_INTERNAL_SERVER_ERROR,
         )
     templates = [
-        t for t in template_list if t.get("created_by") == request.data["created_by"]
+        t
+        for t in template_list
+        if t.get("created_by") == request.data["created_by"]
+        and t.get("data_type") == request.data["data_type"]
     ]
     if not templates:
         return Response(
@@ -197,7 +201,10 @@ def org_templates(request):  # List of Created Templates.
             status=status.HTTP_500_INTERNAL_SERVER_ERROR,
         )
     templates = [
-        t for t in template_list if t.get("company_id") == request.data["company_id"]
+        t
+        for t in template_list
+        if t.get("company_id") == request.data["company_id"]
+        # and t.get("data_type") == request.data["data_type"]
     ]
     if not templates:
         return Response(
