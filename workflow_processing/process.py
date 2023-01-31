@@ -2,7 +2,6 @@ import jwt
 import json
 import uuid
 import requests
-from .models import Notification
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
@@ -135,13 +134,8 @@ def fetch_process_links(request):
     return Response("no links found for this process", status=status.HTTP_404_NOT_FOUND)
 
 
-# ---------------------------------------------------------------------------------#
-# API Endpoint - 3. ---------  Verifying Process
-# ---------------------------------------------------------------------------------#
-
-
 """
-process verification to peform check and issue access
+API - process verification to peform check and issue access
 """
 
 
@@ -161,55 +155,48 @@ def verify_process(request):
     map = None
     right = None
     user = None
+    match = False
     for step in process["process_steps"]:
         # user check.
-        if step["member"] == request.data["user_name"]:
-            # portfolio check.
-            if step["member_portfolio"] == request.data["portfolio"]:
-                print("Started the checks.... \n")
-                # Display check
-                # if not check_display_right(step.get("display_before")):
-                #     return Response(
-                #         "missing display rights", status=status.HTTP_401_UNAUTHORIZED
-                #     )
-                # Location Check
-                # if step.get("location"):
-                #     if not check_location(step.get("location"), request.data["location"]):
-                #         return Response(
-                #             f'Signing allowed from location:{step.get("location")} only',
-                #             status=status.HTTP_403_FORBIDDEN,
-                #         )
-                # Time Limit Check.
-                # if not check_time_limit(
-                #     step.get("limit"), step.get("start_time"), step.get("end_time")
-                # ):
-                #     return Response(
-                #         "time limit for document processing elapsed",
-                #         status=status.HTTP_403_FORBIDDEN,
-                #     )
-                # Skip check
+        if (
+            step["member"] == request.data["user_name"]
+            and step.get("member_portfolio") == request.data["portfolio"]
+        ):
+            print("Started the checks.... \n")
+            # Display check
+            if not check_display_right(step.get("display_before")):
+                return Response(
+                    "missing display rights", status=status.HTTP_401_UNAUTHORIZED
+                )
+            # Location Check
+            # if step.get("location"):
+            #     if not check_location(step.get("location"), request.data["location"]):
+            #         return Response(
+            #             f'Signing allowed from location:{step.get("location")} only',
+            #             status=status.HTTP_403_FORBIDDEN,
+            #         )
+            # Time Limit Check.
+            # if step.get("limit"):
+            #     if not check_time_limit(
+            #         step.get("limit"), step.get("start_time"), step.get("end_time")
+            #     ):
+            #         return Response(
+            #             "time limit for document processing elapsed",
+            #             status=status.HTTP_403_FORBIDDEN,
+            #         )
+            # Skip check
 
-                # Doc Map & Rights & match
-                map = step.get("document_map")
-                right = step.get("rights")
-                user = step.get("member")
-                # match = True
-            # else:
-            #     return Response(
-            #         f'authorized portfolio for this username is { step["member_portfolio"] }',
-            #         status=status.HTTP_401_UNAUTHORIZED,
-            #     )
-        # else:
-        #     return Response(
-        #         f'authorized this user : { step["member"] } ',
-        #         status=status.HTTP_401_UNAUTHORIZED,
-        #     )
-    # if not match:
-    #     return Response(
-    #         "document access forbidden",
-    #         status=status.HTTP_403_FORBIDDEN,
-    #     )
+            # Doc Map & Rights & match
+            map = step.get("document_map")
+            right = step.get("rights")
+            user = step.get("member")
+            match = True
 
+    if not match:
+        return Response(
+            "document access forbidden",
+            status=status.HTTP_403_FORBIDDEN,
+        )
     # generate document link.
     doc_link = generate_link(
         document_id=process["document_id"],
@@ -379,21 +366,6 @@ def new_process(workflows, created_by, company_id, data_type, document_id):
 
 def start_processing(process, document_id, choice):
     print("started processing......")
-    links = generate_links(process, document_id, choice)
-    if len(links) > 0:
-        return Response(
-            links,
-            status=status.HTTP_200_OK,
-        )
-    return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-
-"""
-Links generation
-"""
-
-
-def generate_links(process, document_id, choice):
     print("generating links.............\n")
     links = [
         {step["member"]: verification_link(process["process_id"], document_id)}
@@ -408,7 +380,12 @@ def generate_links(process, document_id, choice):
         processing_choice=choice,
         process_title=process["process_title"],
     )
-    return links
+    if len(links) > 0:
+        return Response(
+            links,
+            status=status.HTTP_200_OK,
+        )
+    return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 """
