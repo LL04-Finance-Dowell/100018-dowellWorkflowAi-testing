@@ -82,6 +82,7 @@ const InfoBoxes = () => {
                 team?.length > 1
                   ? userDetail?.selected_product?.userportfolio
                       .filter((user) => user.member_type === "team_member")
+                      .filter((user) => user.status && user.status === "enable")
                       .filter((user) =>
                         Array.isArray(user.username) && user.username.length > 0
                           ? user.username[0]
@@ -93,7 +94,8 @@ const InfoBoxes = () => {
                       )
                   : userDetail?.selected_product?.userportfolio.filter(
                       (user) => user.member_type === "team_member"
-                    ),
+                    )
+                    .filter((user) => user.status && user.status === "enable"),
               status: "done",
             }
           : item.title === "user"
@@ -101,7 +103,8 @@ const InfoBoxes = () => {
               ...item,
               contents: userDetail?.selected_product?.userportfolio.filter(
                 (user) => user.member_type === "public"
-              ),
+              )
+              .filter((user) => user.status && user.status === "enable"),
               status: "done",
             }
           : item
@@ -117,6 +120,7 @@ const InfoBoxes = () => {
     if (membersSetForProcess) return;
 
     userDetail.selected_product?.userportfolio?.forEach((user) => {
+      if (user.status && user.status !== "enable") return
       if (Array.isArray(user.username) && user.username.length > 0) {
         user.username.forEach((arrUsername) => {
           const copyOfUser = { ...user };
