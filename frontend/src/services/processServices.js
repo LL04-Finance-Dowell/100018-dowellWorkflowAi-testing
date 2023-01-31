@@ -15,3 +15,8 @@ export const verifyProcess = async (data) => {
 export const getProcessLink = async (data) => {
     return await httpProcess.post("link/", data);
 }
+
+export const processActionOptions = {
+    saveWorkflowToDocument: "save_workflow_to_document",
+    saveAndStartProcess: "save_and_start_processing",
+}

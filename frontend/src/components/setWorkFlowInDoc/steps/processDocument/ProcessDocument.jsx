@@ -8,7 +8,7 @@ import AssignButton from "../../assignButton/AssignButton";
 import { useDispatch, useSelector } from "react-redux";
 import { removeFromSelectedWorkflowsToDoc, resetSetWorkflows, setProcessSteps, setSelectedMembersForProcess } from "../../../../features/app/appSlice";
 import { toast } from "react-toastify";
-import { saveWorkflowsToDocument, startNewProcess } from "../../../../services/processServices";
+import { processActionOptions, saveWorkflowsToDocument, startNewProcess } from "../../../../services/processServices";
 import { LoadingSpinner } from "../../../LoadingSpinner/LoadingSpinner";
 import { setContentOfDocument } from "../../../../features/document/documentSlice";
 import { AiOutlineClose } from "react-icons/ai";
@@ -66,8 +66,10 @@ const ProcessDocument = () => {
     setTimeout(() => setLoading(false), 2000);
   };
 
-  const extractProcessObj = () => {
+  const extractProcessObj = (actionVal) => {
     const processObj = {
+      "action": actionVal,
+      "criteria": currentProcessValue,
       "document_id": currentDocToWfs?._id,
       "company_id": userDetail?.portfolio_info[0]?.org_id,
       "created_by": userDetail?.userinfo?.username,
@@ -90,6 +92,9 @@ const ProcessDocument = () => {
       return copyOfCurrentStep
     }) : [];
 
+    if (!processObj.workflows[0].workflows.steps.every(step => step.document_map.length > 0)) return { error : "Please make sure you select at least one item from the table of contents for each step" };
+    if (!processObj.workflows[0].workflows.steps.every(step => step.member)) return { error: "Please make sure you assign a user for each step" };
+
     return processObj;
   }
 
@@ -101,10 +106,8 @@ const ProcessDocument = () => {
     if (!docCurrentWorkflow) return toast.info("You have not selected any workflow");
     if (processSteps.length < 1) return toast.info("You have not configured steps for any workflow");
     
-    const newProcessObj = extractProcessObj();
-
-    if (!newProcessObj.workflows[0].workflows.steps.every(step => step.document_map.length > 0)) return toast.info("Please make sure you select at least one item from the table of contents for each step");
-    if (!newProcessObj.workflows[0].workflows.steps.every(step => step.member)) return toast.info("Please make sure you assign a user for each step");
+    const newProcessObj = extractProcessObj(processActionOptions.saveWorkflowToDocument);
+    if (newProcessObj.error) return toast.info(newProcessObj.error);
 
     console.log("Saving workflows process obj to post: ", newProcessObj);
 
@@ -129,11 +132,8 @@ const ProcessDocument = () => {
     if (!currentDocToWfs) return toast.info("You have not selected a document");
     if (!docCurrentWorkflow) return toast.info("You have not selected any workflow");
 
-    const startProcessObj = extractProcessObj();
-    startProcessObj.criteria = currentProcessValue;
-
-    if (!startProcessObj.workflows[0].workflows.steps.every(step => step.document_map.length > 0)) return toast.info("Please make sure you select at least one item from the table of contents for each step");
-    if (!startProcessObj.workflows[0].workflows.steps.every(step => step.member)) return toast.info("Please make sure you assign a user for each step");
+    const startProcessObj = extractProcessObj(processActionOptions.saveAndStartProcess);
+    if (startProcessObj.error) return toast.info(startProcessObj.error);
 
     console.log("Starting process obj to post: ", startProcessObj);
 
@@ -226,7 +226,7 @@ const ProcessDocument = () => {
                     <div className={styles.process__detail__box}>
                       <p>{currentProcess && currentProcess.processDetail}</p>
                       { 
-                        newProcessLoading ? <ProgressBar durationInMS={60000} /> : 
+                        newProcessLoading ? <ProgressBar durationInMS={20000} /> : 
                         <p className={styles.start__processing__button} onClick={handleStartNewProcess}>
                           Save & Start Processing
                         </p>
