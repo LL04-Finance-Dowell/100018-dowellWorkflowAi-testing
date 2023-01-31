@@ -961,4 +961,22 @@ Response-200
                 }
 }
 ```
+_POST_ `object_count/`
 
+Request Body
+
+```
+{
+    "company_id": "id of company"
+}
+```
+
+Response-200
+
+```
+{
+    "document_count": int(number of created document),
+    "template_count": int(number of created template),
+    "process_count": int(number of created process),
+    "workflow_count": int(number of created workflow)
+}

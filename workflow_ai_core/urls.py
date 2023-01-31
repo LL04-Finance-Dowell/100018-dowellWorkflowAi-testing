@@ -63,7 +63,7 @@ from workflow.wf_ai_setting import (
     get_wf_ai_setting,
     update_WFAI_setting,
 )
-
+from document.count_all import count_objects
 schema_view = get_schema_view(
     openapi.Info(
         title="WorkflowAI",
@@ -133,6 +133,11 @@ urlpatterns = [
         "v0.1/documents/document_content/",
         get_document_content,
         name="document_content",
+    ),
+    path(
+        "v0.1/object_count/",
+        count_objects,
+        name="object_count",
     ),
     # api doc
     re_path(
