@@ -8,7 +8,7 @@ import AssignButton from "../../assignButton/AssignButton";
 import { useDispatch, useSelector } from "react-redux";
 import { removeFromSelectedWorkflowsToDoc, resetSetWorkflows, setProcessSteps, setSelectedMembersForProcess } from "../../../../features/app/appSlice";
 import { toast } from "react-toastify";
-import { processActionOptions, saveWorkflowsToDocument, startNewProcess } from "../../../../services/processServices";
+import { processActionOptions, startNewProcess } from "../../../../services/processServices";
 import { LoadingSpinner } from "../../../LoadingSpinner/LoadingSpinner";
 import { setContentOfDocument } from "../../../../features/document/documentSlice";
 import { AiOutlineClose } from "react-icons/ai";
@@ -114,7 +114,7 @@ const ProcessDocument = () => {
     setSaveWorkflowsLoading(true);
 
     try {
-      const response = await (await saveWorkflowsToDocument(newProcessObj)).data;
+      const response = await (await startNewProcess(newProcessObj)).data;
       console.log("save workflows response: ", response);
       toast.success("Successfully saved workflows to document!");
       setSaveWorkflowsLoading(false);
