@@ -99,7 +99,7 @@ export const manageFileItems = [
         child: "saved documents",
         href: "/documents/#saved-documents",
       },
-      { id: uuidv4(), child: "Waiting to Process", href: "#" },
+      /*   { id: uuidv4(), child: "Waiting to Process", href: "#" }, */
     ],
   },
   {
