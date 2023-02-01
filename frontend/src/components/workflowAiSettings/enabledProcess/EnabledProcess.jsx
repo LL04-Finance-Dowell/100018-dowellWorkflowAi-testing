@@ -6,12 +6,18 @@ import SubmitButton from "../../submitButton/SubmitButton";
 import InfoBox from "../../infoBox/InfoBox";
 import { v4 as uuidv4 } from "uuid";
 import { useSelector, useDispatch } from "react-redux";
-import { setUpdateProccess } from "../../../features/app/appSlice";
+import {
+  setSettingProccess,
+  setUpdateProccess,
+} from "../../../features/app/appSlice";
 import { setIsSelected } from "../../../utils/helpers";
+import { createWorkflowSettings } from "../../../features/settings/asyncThunks";
 
 const EnabledProcess = () => {
   const dispatch = useDispatch();
   const { settingProccess, proccess } = useSelector((state) => state.app);
+  const { createWorkflowSettings: createWorkflowSettingsItems, createStatus } =
+    useSelector((state) => state.settings);
   const { userDetail } = useSelector((state) => state.auth);
   const [currentPortfolio, setCurrentPortfolio] = useState(null);
 
@@ -37,18 +43,24 @@ const EnabledProcess = () => {
       column: item.column.filter((col) => col.items.length !== 0),
     }));
 
-    console.log("payload", purePayload);
+    console.log("payload", JSON.stringify(purePayload));
 
     const createData = {
       company_id: userDetail?.portfolio_info[0]?.org_id,
       owner_name: userDetail?.portfolio_info[0]?.owner_name,
       username: userDetail?.portfolio_info[0]?.username,
-      portfolio_name: "the portfolio name",
+      portfolio_name: "the portfolio name second",
       proccess: purePayload,
     };
 
-    console.log("createdata", JSON.stringify(createData));
+    dispatch(createWorkflowSettings(createData));
   };
+
+  console.log(
+    "createWorkflowSettingsItems?.workflow_setting.processes.process",
+    createWorkflowSettingsItems?.workflow_setting.processes[0].process,
+    settingProccess
+  );
 
   const handleOnChange = ({ item, title, boxId }) => {
     const lowerCaseTitle = title.toLowerCase();
@@ -68,6 +80,14 @@ const EnabledProcess = () => {
       dispatch(setUpdateProccess(isSelectedItems));
     }
   };
+
+  createWorkflowSettingsItems &&
+    createWorkflowSettingsItems.length > 0 &&
+    console.log("createWorkflowSettingsItems", [
+      settingProccess[0].children[0],
+      ...createWorkflowSettingsItems,
+    ]);
+  console.log("createWorkflowSettingsItemsstatus", createStatus);
 
   return (
     <>
@@ -125,9 +145,13 @@ const EnabledProcess = () => {
             </div>
           </div>
         ))}
-        <SubmitButton className={workflowAiSettingsStyles.submit__button}>
+        <button
+          type="submit"
+          /*  status={createStatus} */
+          className={workflowAiSettingsStyles.submit__button}
+        >
           Update Assigned Rights for Processes
-        </SubmitButton>
+        </button>
       </form>
     </>
   );
