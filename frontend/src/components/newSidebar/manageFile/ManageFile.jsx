@@ -19,11 +19,15 @@ const ManageFile = () => {
   const dispatch = useDispatch();
   const { userDetail } = useSelector((state) => state.auth);
 
-  const { savedWorkflowItems } = useSelector((state) => state.workflow);
-  const { savedTemplatesItems } = useSelector((state) => state.template);
-  const { savedDocumentsItems } = useSelector((state) => state.document);
-
-  const { itemsCount } = useSelector((state) => state.app);
+  const { savedWorkflowItems, savedWorkflowStatus } = useSelector(
+    (state) => state.workflow
+  );
+  const { savedTemplatesItems, savedTemplatesItemsStatus } = useSelector(
+    (state) => state.template
+  );
+  const { savedDocumentsItems, savedDocumentsStatus } = useSelector(
+    (state) => state.document
+  );
 
   const [test, setTest] = useState(manageFileItems);
 
@@ -32,52 +36,47 @@ const ManageFile = () => {
       company_id: userDetail?.portfolio_info[0].org_id,
     };
 
-    /*  dispatch(savedDocuments(data));
-    dispatch(savedTemplates(data));
-    dispatch(savedWorkflows(data)); */
-    dispatch(getItemsCounts(data));
+    if (savedDocumentsStatus === "idle") dispatch(savedDocuments(data));
+    if (savedTemplatesItemsStatus === "idle") dispatch(savedTemplates(data));
+    if (savedWorkflowStatus === "idle") dispatch(savedWorkflows(data));
   }, []);
 
   useEffect(() => {
-    if (itemsCount) {
-      setTest((prev) =>
-        prev.map((item) =>
-          item.parent.includes("Documents")
-            ? {
-                ...item,
-                count:
-                  itemsCount.process_count > 0
-                    ? itemsCount.document_count
-                    : "000",
-              }
-            : item.parent.includes("Templates")
-            ? {
-                ...item,
-                count:
-                  itemsCount.process_count > 0
-                    ? itemsCount.template_count
-                    : "000",
-              }
-            : item.parent.includes("Workflows")
-            ? {
-                ...item,
-                count:
-                  itemsCount.process_count > 0
-                    ? itemsCount.process_count
-                    : "000",
-              }
-            : item.parent.includes("Processes")
-            ? {
-                ...item,
-                count: "000",
-              }
-            : item
-        )
-      );
-    }
-  }, [itemsCount]);
-
-  console.log("itemsCOunt1", itemsCount);
+    setTest((prev) =>
+      prev.map((item) =>
+        item.parent.includes("Documents")
+          ? {
+              ...item,
+              count:
+                savedDocumentsItems?.length > 0
+                  ? savedDocumentsItems?.length
+                  : "000",
+            }
+          : item.parent.includes("Templates")
+          ? {
+              ...item,
+              count:
+                savedTemplatesItems?.length > 0
+                  ? savedTemplatesItems?.length
+                  : "000",
+            }
+          : item.parent.includes("Workflows")
+          ? {
+              ...item,
+              count:
+                savedWorkflowItems?.length > 0
+                  ? savedWorkflowItems?.length
+                  : "000",
+            }
+          : item.parent.includes("Processes")
+          ? {
+              ...item,
+              count: "000",
+            }
+          : item
+      )
+    );
+  }, [savedDocumentsItems, savedTemplatesItems, savedWorkflowItems]);
 
   return (
     <div className={sidebarStyles.feature__box}>

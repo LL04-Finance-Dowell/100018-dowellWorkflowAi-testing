@@ -30,8 +30,9 @@ const DocumentsPage = () => {
     const draftData = {
       company_id: userDetail?.portfolio_info[0].org_id,
     };
-    if (savedDocumentsStatus === "idle") dispatch(savedDocuments(draftData));
-    if (mineStatus === "idle") dispatch(mineDocuments(data));
+    if (savedDocumentsStatus !== "succeeded")
+      dispatch(savedDocuments(draftData));
+    if (mineStatus !== "succeeded") dispatch(mineDocuments(data));
   }, []);
 
   console.log("aaaaaaaaaaa", savedDocumentsItems, minedDocuments);
