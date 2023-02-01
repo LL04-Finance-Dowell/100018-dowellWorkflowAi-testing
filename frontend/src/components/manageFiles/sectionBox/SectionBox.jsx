@@ -37,7 +37,7 @@ const SectionBox = ({ cardItems, title, Card, status, idKey }) => {
                   cardItems
                     .slice(0, sliceCount * 10)
                     .map((item) => <Card key={item.id} cardItem={item} />)}
-                {cardItems.length > 10 && (
+                {cardItems && cardItems.length > 10 && (
                   <PrimaryButton
                     style={{
                       pointerEvents: `${
