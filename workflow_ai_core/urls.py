@@ -36,6 +36,7 @@ from workflow.wf_management import (
     my_workflows,
     update_workflow,
     saved_workflows,
+    get_workflows,
 )
 
 from document.template_management import (
@@ -46,6 +47,7 @@ from document.template_management import (
     create_template,
     template_detail,
     approve,
+    get_templates,
 )
 
 from document.document_management import (
@@ -56,6 +58,7 @@ from document.document_management import (
     create_document,
     rejected_documents,
     get_document_content,
+    get_documents,
 )
 
 from workflow.wf_ai_setting import (
@@ -92,6 +95,8 @@ urlpatterns = [
     path("v0.1/workflows/mine/", my_workflows, name="my_workflows"),
     path("v0.1/workflows/update/", update_workflow, name="update_workflow"),
     path("v0.1/workflows/saved/", saved_workflows, name="saved_workflow"),
+    path("v0.1/workflows/get_all/", get_workflows,name="all_workflows"),
+
     # wf_settings
     path("v0.1/workflow_ai_setting/", create_workflow_setting, name="save_wf_setting"),
     path("v0.1/get_WFAI_setting/", get_wf_ai_setting, name="get_wf_ai_setting"),
@@ -106,6 +111,8 @@ urlpatterns = [
     path("v0.1/templates/pending/", not_approved_templates),
     path("v0.1/templates/saved/", org_templates),
     path("v0.1/templates/mine/", template_list),
+    path("v0.1/templates/get_all/", get_templates,name="all_templates"),
+
     # documents
     path("v0.1/documents/", create_document, name="documents"),
     path(
@@ -134,6 +141,7 @@ urlpatterns = [
         get_document_content,
         name="document_content",
     ),
+    path("v0.1/documents/get_all/", get_documents,name="all_documents"),
     path(
         "v0.1/object_count/",
         count_objects,

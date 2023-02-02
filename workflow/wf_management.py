@@ -174,3 +174,17 @@ def saved_workflows(request):
                 {"workflows": [], "title": "No Workflow Found"},
                 status=status.HTTP_200_OK,
             )
+
+@api_view(["POST"])
+def get_workflows(request):  # List of Created Templates.
+
+    workflow_list = get_wf_list(request.data["company_id"])
+
+    if workflow_list:
+        return Response(
+            {"workflows": workflow_list},
+            status=status.HTTP_200_OK,
+        )
+    else:
+        return Response( {"workflows": []},
+            status=status.HTTP_200_OK,)

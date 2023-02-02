@@ -215,3 +215,17 @@ def org_templates(request):  # List of Created Templates.
         templates,
         status=status.HTTP_200_OK,
     )
+
+@api_view(["POST"])
+def get_templates(request):  # List of Created Templates.
+
+    template_list = get_template_list(request.data["company_id"])
+
+    if template_list:
+        return Response(
+            {"templates": template_list},
+            status=status.HTTP_200_OK,
+        )
+    else:
+        return Response( {"templates": []},
+            status=status.HTTP_200_OK,)

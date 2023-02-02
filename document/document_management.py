@@ -303,3 +303,17 @@ def get_auth_roles(document_obj):
     for i in res_content_obj[0]:
         role_list.append(i["auth_user"])
     return role_list
+
+@api_view(["POST"])
+def get_documents(request):  # List of Created Templates.
+
+    document_list = get_document_list(request.data["company_id"])
+
+    if document_list:
+        return Response(
+            {"documents": document_list},
+            status=status.HTTP_200_OK,
+        )
+    else:
+        return Response( {"documents": []},
+            status=status.HTTP_200_OK,)
