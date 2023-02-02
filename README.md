@@ -204,7 +204,7 @@ Response 500
     "message": "Failed to process template creation."
 }
 ```
-_POST_ `templates/get_all/`
+_POST_ `templates/all/`
 
 - Getting a all template
 
@@ -511,7 +511,7 @@ Response-200
 }
 ```
 
-_POST_ `documents/get_all/`
+_POST_ `documents/all/`
 
 - Getting a all documents
 
@@ -752,7 +752,7 @@ Response-200
 }
 
 ```
-_POST_ `workflows/get_all/`
+_POST_ `workflows/all/`
 
 - Getting a all workflows
 

@@ -33,14 +33,14 @@ def create_workflow(request):  # Document Creation.
             data = {
                 "workflow_title": form["wf_title"],
                 "data_type": form["data_type"],
-                "steps": form['steps'],
+                "steps": form["steps"],
             }
             # for step in form["steps"]:
             #     data["steps"].append(
             #         {
             #             "step_name": step["step_name"],
             #             "role": step["role"],
-            #         } 
+            #         }
             #     )
             res = json.loads(save_wf(data, form["company_id"], form["created_by"]))
             if res["isSuccess"]:
@@ -175,16 +175,19 @@ def saved_workflows(request):
                 status=status.HTTP_200_OK,
             )
 
+
 @api_view(["POST"])
 def get_workflows(request):  # List of Created Templates.
-
     workflow_list = get_wf_list(request.data["company_id"])
+    if not workflow_list:
+        return Response({"workflows": []}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-    if workflow_list:
+    if len(workflow_list) > 0:
         return Response(
             {"workflows": workflow_list},
             status=status.HTTP_200_OK,
         )
-    else:
-        return Response( {"workflows": []},
-            status=status.HTTP_200_OK,)
+    return Response(
+        {"workflows": []},
+        status=status.HTTP_200_OK,
+    )

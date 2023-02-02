@@ -316,16 +316,21 @@ def get_auth_roles(document_obj):
         role_list.append(i["auth_user"])
     return role_list
 
+
 @api_view(["POST"])
 def get_documents(request):  # List of Created Templates.
-
     document_list = get_document_list(request.data["company_id"])
 
-    if document_list:
+    if not document_list:
+        return Response({"documents": []}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    if len(document_list) > 0:
         return Response(
             {"documents": document_list},
             status=status.HTTP_200_OK,
         )
-    else:
-        return Response( {"documents": []},
-            status=status.HTTP_200_OK,)
+
+    return Response(
+        {"documents": []},
+        status=status.HTTP_200_OK,
+    )
