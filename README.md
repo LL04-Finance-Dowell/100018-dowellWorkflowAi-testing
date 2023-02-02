@@ -204,6 +204,28 @@ Response 500
     "message": "Failed to process template creation."
 }
 ```
+_POST_ `templates/get_all/`
+
+- Getting a all template
+
+Request Body
+
+```
+{
+    "company_id": "<company_id>",
+}
+```
+
+Response-200
+
+```
+{
+    "templates": [list of all templates ]
+}
+
+```
+
+
 
 _POST_ `templates/detail/`
 
@@ -485,6 +507,27 @@ Response-200
 }
 ```
 
+_POST_ `documents/get_all/`
+
+- Getting a all documents
+
+Request Body
+
+```
+{
+    "company_id": "<company_id>",
+}
+```
+
+Response-200
+
+```
+{
+    "documents": [list of all documents ]
+}
+
+```
+
 _POST_ `documents/detail/`
 
 - Getting a single Document by document_name and document_id
@@ -699,6 +742,26 @@ Response-200
 {
     "workflow": [],
     "message": "Failed to Save Workflow"
+}
+
+```
+_POST_ `workflows/get_all/`
+
+- Getting a all workflows
+
+Request Body
+
+```
+{
+    "company_id": "<company_id>",
+}
+```
+
+Response-200
+
+```
+{
+    "workflows": [list of all workflows]
 }
 
 ```
@@ -980,3 +1043,5 @@ Response-200
     "process_count": int(number of created process),
     "workflow_count": int(number of created workflow)
 }
+
+
