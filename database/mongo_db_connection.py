@@ -263,7 +263,7 @@ def save_process_links(links, process_id, document_id, processing_choice, proces
             **LINK_CONNECTION_DICT,
             "command": "insert",
             "field": {
-                "eventId": get_event_id(),
+                "eventId": get_event_id()["event_id"],
                 "links": links,
                 "process_id": process_id,
                 "document_id": document_id,
@@ -322,7 +322,7 @@ def save_wf_process(
             **WF_PROCESS_DICT,
             "command": "insert",
             "field": {
-                "eventId": get_event_id(),
+                "eventId": get_event_id()["event_id"],
                 "process_title": process_title,
                 "process_steps": process_steps,
                 "company_id": company_id,
@@ -394,7 +394,7 @@ def save_wf(workflows, company_id, created_by):
             **WF_CONNECTION_DICT,
             "command": "insert",
             "field": {
-                "eventId": get_event_id(),
+                "eventId": get_event_id()["event_id"],
                 "workflows": workflows,
                 "created_by": created_by,
                 "company_id": company_id,
@@ -421,7 +421,7 @@ def update_wf(workflow_id, old_workflow):
                 "_id": workflow_id,
             },
             "update_field": {
-                "eventId": get_event_id(),
+                "eventId": get_event_id()["event_id"],
                 "workflows": old_workflow["workflows"],
                 "created_by": old_workflow["created_by"],
                 "company_id": old_workflow["company_id"],
@@ -494,7 +494,7 @@ def get_wf_list(company_id):
 # ------------------------------------------ Templates-----------------------------
 def save_template(name, data, page, created_by, company_id, data_type):
     url = "http://100002.pythonanywhere.com/"
-    event_id = get_event_id()
+    event_id = get_event_id()["event_id"]
     payload = json.dumps(
         {
             **TEMPLATE_CONNECTION_DICT,
@@ -587,7 +587,7 @@ def get_template_list(company_id):
 # -------------------------- Document----------------------------------------
 def save_document(name, data, created_by, company_id, page, data_type):
     url = "http://100002.pythonanywhere.com/"
-    event_id = get_event_id()
+    event_id = get_event_id()["event_id"]
     dd = datetime.now()
     time = dd.strftime("%d:%m:%Y,%H:%M:%S")
     payload = json.dumps(
