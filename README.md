@@ -160,7 +160,7 @@ Request Body
 {
     "company_id": "<company_id_of_authenticated_user>",
     "created_by": "<user_name_of_authenticated_user>",
-    "data_type":"<real|archive|test|learning data>"
+    "data_type":"<get_from_the_login_api>"
 }
 ```
 
@@ -263,7 +263,8 @@ Request Body
 ```
 {
     "company_id": "<auth_company_id>",
-    "created_by": "<auth_user_name>"
+    "created_by": "<auth_user_name>",
+    "data_type":"<get_from_the_login_api>"
 }
 ```
 
@@ -343,7 +344,8 @@ Request Body
 ```
 {
     "company_id": "<auth_company_id>",
-    "created_by": "<auth_user_name>"
+    "created_by": "<auth_user_name>",
+    "data_type":"<get_from_the_login_api>"
 }
 ```
 
@@ -386,7 +388,8 @@ Request Body
 ```
 {
     "company_id": "<auth_company_id>",
-    "created_by": "<auth_user_name>"
+    "created_by": "<auth_user_name>",
+    "data_type":"<get_from_the_login_api>"
 }
 ```
 
@@ -423,6 +426,7 @@ Request Body
 ```
 {
     "company_id": "<auth_company_id>",
+    "data_type":"<get_from_the_login_api>"
 }
 ```
 
@@ -463,7 +467,7 @@ Request Body
     "template_id": "<template_id_existing>",
     "created_by": "<user_name_of_authenticated_user>"
     "company_id": "<company_id_of_authorized_user>",
-    "data_type":"<real|archive|test|learning data>"
+    "data_type":"<get_from_the_login_api>"
 
 }
 ```
@@ -526,7 +530,8 @@ Request Body
 ```
 {
     "company_id": "<company_id_of_authorized_user>",
-    "user_name": "<auth_user_name>"
+    "user_name": "<auth_user_name>",
+    "data_type":"<get_from_the_login_api>"
 }
 ```
 
@@ -557,8 +562,9 @@ Request Body
 
 ```
 {
-    "created_by": "<name_of_user>"
+    "created_by": "<user_name_of_user>"
     "company_id": "<company_id_of_authorized_user>",
+    "data_type":"<get_from_the_login_api>"
 
 }
 ```
@@ -590,7 +596,8 @@ Request Body
 
 ```
 {
-        "company_id": "<company_id_of_authorized_user>",
+    "company_id": "<company_id_of_authorized_user>",
+    "data_type":"<get_from_the_login_api>"
 
 }
 ```
@@ -623,7 +630,7 @@ Request Body
 ```
 {
     "company_id": "<company_id_of_authorized_user>",
-
+    "data_type":"<get_from_the_login_api>"
 }
 ```
 
@@ -674,7 +681,7 @@ Request Body
 {
     "created_by": "<user_name_of_authenticated_user>",
     "company_id": "<company_id_of_authorized_user>",
-    "data_type":"<real|archive|test|learning data>"
+    "data_type":"<get_from_the_login_api>",
     "wf_title":"<workflow_title>",
      'steps': [
         {'step_name': 'step_name',
@@ -745,6 +752,7 @@ Request Body
 {
     "created_by": "<name_of_user>"
     "company_id": "<company_id_of_authorized_user>",
+    "data_type":"<get_from_the_login_api>"
 }
 ```
 
@@ -778,7 +786,7 @@ Request Body
 
     "created_by": "<user_name_of_authenticated_user>",
     "company_id": "<company_id_of_authorized_user>",
-    "data_type":"<real|archive|test|learning data>"
+    "data_type":"<get_from_the_login_api>"
     "workflow_id": "<id_specific_of_workflow>",
     "wf_title": "Workflow_title_new_or_existing",
     "steps": [
