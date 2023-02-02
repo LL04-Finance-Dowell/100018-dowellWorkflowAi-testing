@@ -15,7 +15,7 @@ editorApi = "https://100058.pythonanywhere.com/api/generate-editor-link/"
 
 @api_view(["GET", "POST"])
 def create_document(request):  # Document Creation.
-
+    
     if request.method == "POST":
         data = ""
         form = request.data  # TODO: We will get the data from form 1 by 1 - Dont Worry.
@@ -225,6 +225,7 @@ def my_documents(request):  # List of my documents.
     if request.method == "POST":
         created_by = request.data["created_by"]
         company_id = request.data["company_id"]
+        data_type = request.data["data_type"]
         documents = get_document_list(company_id)
         if not documents:
             return Response(
@@ -235,10 +236,14 @@ def my_documents(request):  # List of my documents.
                 status=status.HTTP_200_OK,
             )
         else:
+            []
             for doc in documents:
-
-                if doc["created_by"] == created_by:
-                    filtered_list.append(doc)
+                try:
+                    if doc["created_by"] == created_by and doc["data_type"]==data_type:
+                        filtered_list.append(doc)
+                except:
+                    
+                    filtered_list=[]
 
         return Response(
             {"documents": filtered_list, "title": "My Documents"},
