@@ -11,11 +11,13 @@ from database.mongo_db_connection import (
     get_template_object,
     get_links_object_by_process_id,
 )
+
 editorApi = "https://100058.pythonanywhere.com/api/generate-editor-link/"
+
 
 @api_view(["GET", "POST"])
 def create_document(request):  # Document Creation.
-    
+
     if request.method == "POST":
         data = ""
         form = request.data  # TODO: We will get the data from form 1 by 1 - Dont Worry.
@@ -29,15 +31,17 @@ def create_document(request):  # Document Creation.
             # company_id = request.data["company_id"]
             # data_type = request.data["data_type"]
             # data = get_content_from_template_collection_with_that_template_id
-            temp_data=get_template_object(request.data["template_id"])
+            temp_data = get_template_object(request.data["template_id"])
             page = temp_data["page"]
             data = temp_data["content"]
             res = json.loads(
                 save_document(
-                    "Untitled Document", data,
-                    request.data["created_by"], 
+                    "Untitled Document",
+                    data,
+                    request.data["created_by"],
                     request.data["company_id"],
-                    page, request.data["data_type"]
+                    page,
+                    request.data["data_type"],
                 )
             )
 
@@ -81,7 +85,7 @@ def create_document(request):  # Document Creation.
                         {"document": [], "message": "Failed to call editorApi"},
                         status=status.HTTP_200_OK,
                     )
-                
+
             return Response(
                 {"document": [], "message": "Unable to Create Document"},
                 status=status.HTTP_200_OK,
@@ -95,21 +99,26 @@ def create_document(request):  # Document Creation.
 
 @api_view(["POST"])
 def get_document_content(request):
-    content = []
-    myDict = ast.literal_eval(
-        get_document_object(request.data["document_id"])["content"]
-    )[0][0]
-    allKeys = [i for i in myDict.keys()]
-    for i in allKeys:
-        tempList = []
-        for j in range(0, len(myDict[i])):
-            tempList.append({"id": myDict[i][j]["id"], "data": myDict[i][j]["data"]})
-        content.append(
-            {
-                i: tempList,
-            }
-        )
-    return Response(content, status=status.HTTP_200_OK)
+
+    content = json.loads(get_document_object(request.data["document_id"])["content"])
+    updated = []
+    for c in content:
+        for x in c:
+            updated.append({"id": x.get("id"), "data": x.get("data")})
+    # myDict = ast.literal_eval(
+    #     get_document_object(request.data["document_id"])["content"]
+    # )[0][0]
+    # allKeys = [i for i in myDict.keys()]
+    # for i in allKeys:
+    #     tempList = []
+    #     for j in range(0, len(myDict[i])):
+    #         tempList.append({"id": myDict[i][j]["id"], "data": myDict[i][j]["data"]})
+    #     content.append(
+    #         {
+    #             i: tempList,
+    #         }
+    # )
+    return Response(updated, status=status.HTTP_200_OK)
 
 
 @api_view(["POST"])
@@ -239,11 +248,14 @@ def my_documents(request):  # List of my documents.
             []
             for doc in documents:
                 try:
-                    if doc["created_by"] == created_by and doc["data_type"]==data_type:
+                    if (
+                        doc["created_by"] == created_by
+                        and doc["data_type"] == data_type
+                    ):
                         filtered_list.append(doc)
                 except:
-                    
-                    filtered_list=[]
+
+                    filtered_list = []
 
         return Response(
             {"documents": filtered_list, "title": "My Documents"},
