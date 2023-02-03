@@ -99,26 +99,21 @@ def create_document(request):  # Document Creation.
 
 @api_view(["POST"])
 def get_document_content(request):
-
-    content = json.loads(get_document_object(request.data["document_id"])["content"])
-    updated = []
-    for c in content:
-        for x in c:
-            updated.append({"id": x.get("id"), "data": x.get("data")})
-    # myDict = ast.literal_eval(
-    #     get_document_object(request.data["document_id"])["content"]
-    # )[0][0]
-    # allKeys = [i for i in myDict.keys()]
-    # for i in allKeys:
-    #     tempList = []
-    #     for j in range(0, len(myDict[i])):
-    #         tempList.append({"id": myDict[i][j]["id"], "data": myDict[i][j]["data"]})
-    #     content.append(
-    #         {
-    #             i: tempList,
-    #         }
-    # )
-    return Response(updated, status=status.HTTP_200_OK)
+    content = []
+    myDict = ast.literal_eval(
+        get_document_object(request.data["document_id"])["content"]
+    )[0][0]
+    allKeys = [i for i in myDict.keys()]
+    for i in allKeys:
+        tempList = []
+        for j in range(0, len(myDict[i])):
+            tempList.append({"id": myDict[i][j]["id"], "data": myDict[i][j]["data"]})
+        content.append(
+            {
+                i: tempList,
+            }
+    )
+    return Response(content, status=status.HTTP_200_OK)
 
 
 @api_view(["POST"])
