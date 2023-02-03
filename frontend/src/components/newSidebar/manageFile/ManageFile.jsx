@@ -5,27 +5,32 @@ import CollapseItem from "../collapseItem/CollapseItem";
 import { v4 as uuidv4 } from "uuid";
 import sidebarStyles from "../sidebar.module.css";
 import {
+  allDocuments,
   mineDocuments,
   savedDocuments,
 } from "../../../features/document/asyncThunks";
 import {
+  allTemplates,
   mineTemplates,
   savedTemplates,
 } from "../../../features/template/asyncThunks";
-import { savedWorkflows } from "../../../features/workflow/asyncTHunks";
+import {
+  allWorkflows,
+  savedWorkflows,
+} from "../../../features/workflow/asyncTHunks";
 import { getItemsCounts } from "../../../features/app/asyncThunks";
 
 const ManageFile = () => {
   const dispatch = useDispatch();
   const { userDetail } = useSelector((state) => state.auth);
 
-  const { savedWorkflowItems, savedWorkflowStatus } = useSelector(
+  const { allWorkflows: allWorkflowsArray, allWorkflowsStatus } = useSelector(
     (state) => state.workflow
   );
-  const { savedTemplatesItems, savedTemplatesItemsStatus } = useSelector(
+  const { allTemplates: allTemplatesArray, allTemplatesStatus } = useSelector(
     (state) => state.template
   );
-  const { savedDocumentsItems, savedDocumentsStatus } = useSelector(
+  const { allDocuments: allDocumentsArray, allDocumentsStatus } = useSelector(
     (state) => state.document
   );
 
@@ -36,9 +41,13 @@ const ManageFile = () => {
       company_id: userDetail?.portfolio_info[0].org_id,
     };
 
-    if (savedDocumentsStatus === "idle") dispatch(savedDocuments(data));
+    /*  if (savedDocumentsStatus === "idle") dispatch(savedDocuments(data));
     if (savedTemplatesItemsStatus === "idle") dispatch(savedTemplates(data));
-    if (savedWorkflowStatus === "idle") dispatch(savedWorkflows(data));
+    if (savedWorkflowStatus === "idle") dispatch(savedWorkflows(data)); */
+
+    if (allDocumentsStatus === "idle") dispatch(allDocuments(data));
+    if (allTemplatesStatus === "idle") dispatch(allTemplates(data));
+    if (allWorkflowsStatus === "idle") dispatch(allWorkflows(data));
   }, []);
 
   useEffect(() => {
@@ -48,24 +57,24 @@ const ManageFile = () => {
           ? {
               ...item,
               count:
-                savedDocumentsItems?.length > 0
-                  ? savedDocumentsItems?.length
+                allDocumentsArray?.length > 0
+                  ? allDocumentsArray?.length
                   : "000",
             }
           : item.parent.includes("Templates")
           ? {
               ...item,
               count:
-                savedTemplatesItems?.length > 0
-                  ? savedTemplatesItems?.length
+                allTemplatesArray?.length > 0
+                  ? allTemplatesArray?.length
                   : "000",
             }
           : item.parent.includes("Workflows")
           ? {
               ...item,
               count:
-                savedWorkflowItems?.length > 0
-                  ? savedWorkflowItems?.length
+                allWorkflowsArray?.length > 0
+                  ? allWorkflowsArray?.length
                   : "000",
             }
           : item.parent.includes("Processes")
@@ -76,7 +85,7 @@ const ManageFile = () => {
           : item
       )
     );
-  }, [savedDocumentsItems, savedTemplatesItems, savedWorkflowItems]);
+  }, [allDocumentsArray, allTemplatesArray, allWorkflowsArray]);
 
   return (
     <div className={sidebarStyles.feature__box}>

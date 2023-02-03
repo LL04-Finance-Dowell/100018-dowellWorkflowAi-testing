@@ -28,4 +28,8 @@ export class TemplateServices {
   savedTemplates = (data) => {
     return httpTemplate.post("/saved/", data);
   };
+
+  allTemplates = (data) => {
+    return httpTemplate.post("/all/", data);
+  };
 }

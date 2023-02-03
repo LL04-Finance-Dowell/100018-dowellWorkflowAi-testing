@@ -6,6 +6,7 @@ import { v4 as uuidv4 } from "uuid";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
 import {
+  allTemplates,
   mineTemplates,
   savedTemplates,
 } from "../../../features/template/asyncThunks";
@@ -17,27 +18,28 @@ const TemplatesPage = () => {
   const {
     minedTemplates,
     mineStatus,
+    allTemplates: allTemplatesArray,
     savedTemplatesItemsStatus,
     savedTemplatesItems,
+    allTemplatesStatus,
   } = useSelector((state) => state.template);
   const dispatch = useDispatch();
 
   console.log("mining templateeeeeeeeeeeeeeeeeee", minedTemplates);
 
   useEffect(() => {
-    const savedTemplatesData = {
+    const data = {
       company_id: userDetail?.portfolio_info[0].org_id,
     };
 
-    const mineData = {
-      company_id: userDetail?.portfolio_info[0].org_id,
-      created_by: userDetail?.portfolio_info[0].username,
-    };
-
-    if (mineStatus === "idle") dispatch(mineTemplates(mineData));
+    /*  if (mineStatus === "idle") dispatch(mineTemplates(mineData));
     if (savedTemplatesItemsStatus === "idle")
-      dispatch(savedTemplates(savedTemplatesData));
+      dispatch(savedTemplates(savedTemplatesData)); */
+
+    if (allTemplatesStatus === "idle") dispatch(allTemplates(data));
   }, []);
+
+  console.log("allTemplatesArrayallTemplatesArray", allTemplatesArray);
 
   return (
     <WorkflowLayout>
@@ -48,8 +50,11 @@ const TemplatesPage = () => {
               cardBgColor="#1ABC9C"
               title="drafts"
               Card={TemplateCard}
-              cardItems={minedTemplates}
-              status={mineStatus}
+              cardItems={allTemplatesArray.filter(
+                (item) =>
+                  item.created_by === userDetail?.portfolio_info[0].username
+              )}
+              status={allTemplatesStatus}
             />
           </div>
           <div id="saved-templates">
@@ -57,8 +62,8 @@ const TemplatesPage = () => {
               cardBgColor="#1ABC9C"
               title="saved templates"
               Card={TemplateCard}
-              cardItems={savedTemplatesItems}
-              status={savedTemplatesItemsStatus}
+              cardItems={allTemplatesArray}
+              status={allTemplatesStatus}
             />
           </div>
         </ManageFiles>

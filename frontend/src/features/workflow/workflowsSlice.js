@@ -5,6 +5,7 @@ import {
   mineWorkflows,
   savedWorkflows,
   updateWorkflow,
+  allWorkflows,
 } from "./asyncTHunks";
 import { v4 as uuidv4 } from "uuid";
 
@@ -14,11 +15,13 @@ const initialState = {
   updatedWorkflow: null,
   minedWorkflows: [],
   savedWorkflowItems: [],
+  allWorkflows: [],
   status: "idle",
   savedWorkflowStatus: "idle",
   mineStatus: "idle",
   workflowDetailStatus: "idle",
   updateWorkflowStatus: "idle",
+  allWorkflowsStatus: "idle",
   errorMessage: null,
 };
 
@@ -31,7 +34,7 @@ export const workflowSlice = createSlice({
   initialState,
   reducers: {
     removeFromMinedWf: (state, action) => {
-      state.minedWorkflows = state.minedWorkflows.filter(
+      state.allWorkflows = state.allWorkflows.filter(
         (item) => item._id !== action.payload
       );
     },
@@ -97,6 +100,18 @@ export const workflowSlice = createSlice({
     });
     builder.addCase(updateWorkflow.rejected, (state, action) => {
       state.updateWorkflowStatus = "failed";
+      state.errorMessage = action.payload;
+    });
+    //allWorkflows
+    builder.addCase(allWorkflows.pending, (state) => {
+      state.allWorkflowsStatus = "pending";
+    });
+    builder.addCase(allWorkflows.fulfilled, (state, action) => {
+      state.allWorkflowsStatus = "succeeded";
+      state.allWorkflows = action.payload;
+    });
+    builder.addCase(allWorkflows.rejected, (state, action) => {
+      state.allWorkflowsStatus = "failed";
       state.errorMessage = action.payload;
     });
   },

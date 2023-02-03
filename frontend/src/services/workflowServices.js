@@ -18,4 +18,7 @@ export class WorkflowServices {
   savedWorkflows = (data) => {
     return httpWorkflow.post("/saved/", data);
   };
+  allWorkflows = (data) => {
+    return httpWorkflow.post("/all/", data);
+  };
 }
