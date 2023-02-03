@@ -2,6 +2,7 @@ import jwt
 import json
 import uuid
 import requests
+from threading import Thread
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
@@ -300,29 +301,62 @@ def save_and_start_processing(request):
         created_by=request.data["created_by"],
         company_id=request.data["company_id"],
         data_type=request.data["data_type"],
+        process_choice=request.data["criteria"],
     )
     if not process:
         return Response(
             status=status.HTTP_500_INTERNAL_SERVER_ERROR,
         )
     print("Updating document with process id.... \n")
-    res = json.loads(
-        update_document(
-            document_id=request.data["document_id"],
-            workflow_process_id=process["process_id"],
-        )
+    doc_data = {
+        "document_id": request.data["document_id"],
+        "process_id": process["process_id"],
+    }
+    t = Thread(
+        target=document_update,
+        args=(doc_data,),
     )
-    if res["isSuccess"]:
-        if request.data["action"] == "save_and_start_processing":
-            # fire up the processing action
-            return start_processing(
-                process=process,
-                document_id=request.data["document_id"],
-                choice=request.data["criteria"],
-            )
-        if request.data["action"] == "save_workflow_to_document":
-            return Response(status=status.HTTP_201_CREATED)
+    t.start()
+    # res = json.loads(
+    #     update_document(
+    #         document_id=request.data["document_id"],
+    #         workflow_process_id=process["process_id"],
+    #     )
+    # )
+    if request.data["action"] == "save_and_start_processing":
+        # fire up the processing action
+        return start_processing(
+            process=process,
+            document_id=request.data["document_id"],
+            # choice=request.data["criteria"],
+        )
+    if request.data["action"] == "save_workflow_to_document":
+        return Response(status=status.HTTP_201_CREATED)
+    # if res["isSuccess"]:
+    #     if request.data["action"] == "save_and_start_processing":
+    #         # fire up the processing action
+    #         return start_processing(
+    #             process=process,
+    #             document_id=request.data["document_id"],
+    #             # choice=request.data["criteria"],
+    #         )
+    #     if request.data["action"] == "save_workflow_to_document":
+    #         return Response(status=status.HTTP_201_CREATED)
     return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+"""
+document update
+"""
+
+
+def document_update(doc_data):
+    update_document(
+        document_id=doc_data["document_id"],
+        workflow_process_id=doc_data["process_id"],
+    )
+    print("Thread: Document Updated! \n")
+    return
 
 
 """
@@ -330,7 +364,9 @@ Create Process.
 """
 
 
-def new_process(workflows, created_by, company_id, data_type, document_id):
+def new_process(
+    workflows, created_by, company_id, data_type, document_id, process_choice
+):
     print("creating process.......... \n")
     process_title = ""
     process_steps = [
@@ -340,16 +376,22 @@ def new_process(workflows, created_by, company_id, data_type, document_id):
         [workflow["workflows"]["workflow_title"] for workflow in workflows]
     )
     # save to collection.
-    res = json.loads(
-        save_wf_process(
-            process_title, process_steps, created_by, company_id, data_type, document_id
-        )
+    res = save_wf_process(
+        process_title,
+        process_steps,
+        created_by,
+        company_id,
+        data_type,
+        document_id,
+        process_choice,
     )
+
     # return process id.
     if res["isSuccess"]:
         process = {
             "process_title": process_title,
             "process_steps": process_steps,
+            "process_choice": process_choice,
             "created_by": created_by,
             "company_id": company_id,
             "data_type": data_type,
@@ -364,7 +406,7 @@ def new_process(workflows, created_by, company_id, data_type, document_id):
 """
 
 
-def start_processing(process, document_id, choice):
+def start_processing(process, document_id):
     print("started processing......")
     print("generating links.............\n")
     links = [
@@ -373,19 +415,43 @@ def start_processing(process, document_id, choice):
     ]
     # Save Links - DB-3
     print("saving process links........ \n")
-    save_process_links(
-        links=links,
-        process_id=process["process_id"],
-        document_id=document_id,
-        processing_choice=choice,
-        process_title=process["process_title"],
-    )
+
+    # Spawn thread to process the data
+    data = {
+        "links": links,
+        "process_id": process["process_id"],
+        "document_id": document_id,
+        "process_choice": process["process_choice"],
+        "process_title": process["process_title"],
+    }
+    t = Thread(target=save_links, args=(data,))
+    t.start()
+    # save_process_links(
+    #     links=links,
+    #     process_id=process["process_id"],
+    #     document_id=document_id,
+    #     processing_choice=process["process_choice"],
+    #     process_title=process["process_title"],
+    # )
     if len(links) > 0:
         return Response(
             links,
             status=status.HTTP_200_OK,
         )
     return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+# thread process.
+def save_links(data):
+    save_process_links(
+        links=data["links"],
+        process_id=data["process_id"],
+        document_id=data["document_id"],
+        processing_choice=data["process_choice"],
+        process_title=data["process_title"],
+    )
+    print("Thread: Process Link! \n")
+    return
 
 
 """
