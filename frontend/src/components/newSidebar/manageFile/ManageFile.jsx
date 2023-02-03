@@ -150,11 +150,11 @@ export const manageFileItems = [
         child: "saved processes",
         href: "/processes/#saved-processes",
       },
-      /*    {
+      {
         id: uuidv4(),
         child: "Waiting to Process",
-        href: "/processes/",
-      }, */
+        href: "/workflows/new-set-workflow",
+      },
     ],
   },
 ];
