@@ -6,6 +6,8 @@ api_url = `https://100094.pythonanywhere.com/v0.1/`
 
 _POST_ to `process/verification/`
 
+- Mark step as rejected or finalized.
+
 - Request Body
 
 ```
@@ -17,6 +19,8 @@ _POST_ to `process/verification/`
 ```
 
 _POST_ to `process/link/`
+
+- get a single process link.
 
 - Request Body
 
@@ -103,7 +107,7 @@ Request Body
     "document_id": "<document_id_of_selected_document_to_process>",
     "company_id": "<company_id_of_authenticated_user>",
     "created_by": "<user_name_of_authenticated_user>",
-    "data_type":"<real|archive|test|learning>",
+    "data_type":"<get_from_login-api>",
     "workflows": [
         {
             "workflows":
