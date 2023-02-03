@@ -266,45 +266,46 @@ def my_documents(request):  # List of my documents.
 @api_view(["GET", "POST"])
 def rejected_documents(request):  # List of `to be signed` documents.
     filtered_list = []
-    if request.method == "POST":
-        created_by = request.data["created_by"]
-        company_id = request.data["company_id"]
-        documents = get_document_list(company_id)
+    created_by = request.data["created_by"]
+    company_id = request.data["company_id"]
+    documents = get_document_list(company_id)
 
-        for doc in documents:
+    for doc in documents:
 
-            if len(doc["reject_message"]) != 0 and len(doc["rejected_by"]) != 0:
+        if len(doc["reject_message"]) != 0 and len(doc["rejected_by"]) != 0:
 
-                filtered_list.append(doc)
+            filtered_list.append(doc)
 
-        return Response(
-            {
-                "documents": filtered_list,
-            },
-            status=status.HTTP_200_OK,
-        )
     return Response(
         {
-            "documents": [],
-            "message": "These document is not in Rejected Document list.",
+            "documents": filtered_list,
         },
         status=status.HTTP_200_OK,
     )
 
 
+# return Response(
+#     {
+#         "documents": [],
+#         "message": "These document is not in Rejected Document list.",
+#     },
+#     status=status.HTTP_200_OK,
+# )
+
+
 @api_view(["POST"])
 def draft_documents(request):  # List of `to be signed` documents.
-    if request.method == "POST":
-        try:
-            return Response(
-                {"documents": get_document_list(request.data["company_id"])},
-                status=status.HTTP_200_OK,
-            )
-        except:
-            return Response(
-                {"documents": [], "title": "No Document Found"},
-                status=status.HTTP_200_OK,
-            )
+
+    try:
+        return Response(
+            {"documents": get_document_list(request.data["company_id"])},
+            status=status.HTTP_200_OK,
+        )
+    except:
+        return Response(
+            {"documents": [], "title": "No Document Found"},
+            status=status.HTTP_200_OK,
+        )
 
 
 # --------------------------- HELPERS ----------------------------------------
