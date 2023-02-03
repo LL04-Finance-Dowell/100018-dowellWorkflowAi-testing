@@ -159,6 +159,9 @@ DOCUMENT_CONNECTION_DICT = {
 dd = datetime.now()
 time = dd.strftime("%d:%m:%Y,%H:%M:%S")
 
+# dowellconnection url
+url = "http://uxlivinglab.pythonanywhere.com"
+
 # old 22sec query
 # def get_event_id():
 #     dd = datetime.now()
@@ -256,8 +259,11 @@ def get_user_info_by_username(username):
 
 
 # ----------------------- Links Creation -------------------------
-def save_process_links(links, process_id, document_id, processing_choice, process_title):
-    url = "http://100002.pythonanywhere.com/"
+def save_process_links(
+    links, process_id, document_id, processing_choice, process_title
+):
+    # url = "http://100002.pythonanywhere.com/"
+
     payload = json.dumps(
         {
             **LINK_CONNECTION_DICT,
@@ -269,7 +275,7 @@ def save_process_links(links, process_id, document_id, processing_choice, proces
                 "document_id": document_id,
                 "processing_choice": processing_choice,
                 "process_title": process_title,
-                "created_on": time
+                "created_on": time,
             },
             "update_field": {"order_nos": 21},
             "platform": "bangalore",
@@ -278,7 +284,7 @@ def save_process_links(links, process_id, document_id, processing_choice, proces
     headers = {"Content-Type": "application/json"}
     response = requests.request("POST", url, headers=headers, data=payload)
     print("SAVED LINKS ----------- \n")
-    return response.text
+    return json.loads(response.text)
 
 
 # By processID
@@ -313,10 +319,15 @@ def get_links_object_by_document_id(document_id):
 
 #  -------------------------------Workflow Process------------------
 def save_wf_process(
-    process_title, process_steps, user, company_id, data_type, document_id
+    process_title,
+    process_steps,
+    user,
+    company_id,
+    data_type,
+    document_id,
+    process_choice,
 ):
-    # print("got here")
-    url = "http://100002.pythonanywhere.com/"
+    # url = "http://100002.pythonanywhere.com/"
     payload = json.dumps(
         {
             **WF_PROCESS_DICT,
@@ -329,7 +340,8 @@ def save_wf_process(
                 "created_by": user,
                 "data_type": data_type,
                 "document_id": document_id,
-                "created_on": time
+                "process_choice": process_choice,
+                "created_on": time,
             },
             "update_field": {"order_nos": 21},
             "platform": "bangalore",
@@ -338,11 +350,11 @@ def save_wf_process(
     headers = {"Content-Type": "application/json"}
     response = requests.request("POST", url, headers=headers, data=payload)
     print("SAVE WORKFLOW PROCESS----------- \n")
-    return response.text
+    return json.loads(json.loads(response.text))
 
 
 def update_wf_process(process_id, steps):
-    url = "http://100002.pythonanywhere.com/"
+    # url = "http://100002.pythonanywhere.com/"
     payload = json.dumps(
         {
             **WF_PROCESS_DICT,
@@ -358,15 +370,15 @@ def update_wf_process(process_id, steps):
     )
     headers = {"Content-Type": "application/json"}
     response = requests.request("POST", url, headers=headers, data=payload)
-    print("SAVE WORKFLOW UPDATE--------------- \n", response.text)
-    return response.text
+    print("SAVE WORKFLOW UPDATE--------------- \n", json.loads(response.text))
+    return json.loads(response.text)
 
 
 def get_process_object(workflow_process_id):
     fields = {"_id": str(workflow_process_id)}
     response_obj = dowellconnection(*PROCESS_CONNECTION_LIST, "find", fields, "nil")
     res_obj = json.loads(response_obj)
-    print("getiing process object......")
+    print("geting process object......")
     if len(res_obj["data"]):
         return res_obj["data"]
     else:
@@ -383,12 +395,11 @@ def get_process_list(company_id):
         return []
 
 
-
 # -------------------------------- Workflows-------------------
 
 
 def save_wf(workflows, company_id, created_by):
-    url = "http://100002.pythonanywhere.com/"
+    # url = "http://100002.pythonanywhere.com/"
     payload = json.dumps(
         {
             **WF_CONNECTION_DICT,
@@ -398,7 +409,7 @@ def save_wf(workflows, company_id, created_by):
                 "workflows": workflows,
                 "created_by": created_by,
                 "company_id": company_id,
-                "created_on": time
+                "created_on": time,
             },
             "update_field": {"order_nos": 21},
             "platform": "bangalore",
@@ -407,11 +418,11 @@ def save_wf(workflows, company_id, created_by):
     headers = {"Content-Type": "application/json"}
     response = requests.request("POST", url, headers=headers, data=payload)
     print("SAVE WORKFLOW ENTRY----------- \n")
-    return response.text
+    return json.loads(response.text)
 
 
 def update_wf(workflow_id, old_workflow):
-    url = "http://100002.pythonanywhere.com/"
+    # url = "http://100002.pythonanywhere.com/"
 
     payload = json.dumps(
         {
@@ -432,11 +443,11 @@ def update_wf(workflow_id, old_workflow):
     headers = {"Content-Type": "application/json"}
     response = requests.request("POST", url, headers=headers, data=payload)
     print("SAVE WORKFLOW UPDATE--------------- \n")
-    return response.text
+    return json.loads(response.text)
 
 
 def update_wf_approval(workflow_id, approval):
-    url = "http://100002.pythonanywhere.com/"
+    # url = "http://100002.pythonanywhere.com/"
     payload = json.dumps(
         {
             **WF_CONNECTION_DICT,
@@ -454,7 +465,7 @@ def update_wf_approval(workflow_id, approval):
     headers = {"Content-Type": "application/json"}
     response = requests.request("POST", url, headers=headers, data=payload)
     print("SAVE WORKFLOW APPROVAL--------------- \n")
-    return response.text
+    return json.loads(response.text)
 
 
 def get_wf_object(workflow_id):
@@ -493,7 +504,7 @@ def get_wf_list(company_id):
 
 # ------------------------------------------ Templates-----------------------------
 def save_template(name, data, page, created_by, company_id, data_type):
-    url = "http://100002.pythonanywhere.com/"
+    # url = "http://100002.pythonanywhere.com/"
     event_id = get_event_id()["event_id"]
     payload = json.dumps(
         {
@@ -507,7 +518,7 @@ def save_template(name, data, page, created_by, company_id, data_type):
                 "company_id": company_id,
                 "created_by": created_by,
                 "data_type": data_type,
-                "created_on": time
+                "created_on": time,
             },
             "update_field": {"order_nos": 21},
             "platform": "bangalore",
@@ -516,7 +527,7 @@ def save_template(name, data, page, created_by, company_id, data_type):
     headers = {"Content-Type": "application/json"}
     response = requests.request("POST", url, headers=headers, data=payload)
     print("SAVED TEMPLATE----------- \n")
-    return response.text
+    return json.loads(response.text)
 
 
 def get_template_object(template_id):
@@ -530,7 +541,7 @@ def get_template_object(template_id):
 
 
 def update_template(template_id, data):
-    url = "http://100002.pythonanywhere.com/"
+    # url = "http://100002.pythonanywhere.com/"
     payload = json.dumps(
         {
             **TEMPLATE_CONNECTION_DICT,
@@ -547,11 +558,11 @@ def update_template(template_id, data):
     headers = {"Content-Type": "application/json"}
     response = requests.request("POST", url, headers=headers, data=payload)
     print("TEMPLATE UPDATED----------- \n")
-    return response.text
+    return json.loads(response.text)
 
 
 def update_template_approval(template_id, approval):
-    url = "http://100002.pythonanywhere.com/"
+    # url = "http://100002.pythonanywhere.com/"
     payload = json.dumps(
         {
             **TEMPLATE_CONNECTION_DICT,
@@ -569,7 +580,7 @@ def update_template_approval(template_id, approval):
     headers = {"Content-Type": "application/json"}
     response = requests.request("POST", url, headers=headers, data=payload)
     print("SAVE TEMPLATE APPROVAL--------------- \n")
-    return response.text
+    return json.loads(response.text)
 
 
 def get_template_list(company_id):
@@ -586,7 +597,7 @@ def get_template_list(company_id):
 
 # -------------------------- Document----------------------------------------
 def save_document(name, data, created_by, company_id, page, data_type):
-    url = "http://100002.pythonanywhere.com/"
+    # url = "http://100002.pythonanywhere.com/"
     event_id = get_event_id()["event_id"]
     dd = datetime.now()
     time = dd.strftime("%d:%m:%Y,%H:%M:%S")
@@ -615,11 +626,11 @@ def save_document(name, data, created_by, company_id, page, data_type):
     headers = {"Content-Type": "application/json"}
     response = requests.request("POST", url, headers=headers, data=payload)
     print("SAVED DOCUMENT--------------- \n")
-    return response.text
+    return json.loads(response.text)
 
 
 def update_document(document_id, workflow_process_id):
-    url = "http://100002.pythonanywhere.com/"
+    # url = "http://100002.pythonanywhere.com/"
 
     payload = json.dumps(
         {
@@ -638,11 +649,11 @@ def update_document(document_id, workflow_process_id):
     headers = {"Content-Type": "application/json"}
     response = requests.request("POST", url, headers=headers, data=payload)
     print("DOCUMENT UPDATED------------ \n")
-    return response.text
+    return json.loads(response.text)
 
 
 def save_wf_setting(company_id, owner_name, username, portfolio_name, process):
-    url = "http://100002.pythonanywhere.com/"
+    # url = "http://100002.pythonanywhere.com/"
     event_id = get_event_id()
     payload = json.dumps(
         {
@@ -666,7 +677,7 @@ def save_wf_setting(company_id, owner_name, username, portfolio_name, process):
     headers = {"Content-Type": "application/json"}
     response = requests.request("POST", url, headers=headers, data=payload)
     print("SAVED WORKFLOW_AI--------------- \n")
-    return response.text
+    return json.loads(response.text)
 
 
 # Get WF Setting Data
@@ -693,7 +704,7 @@ def get_WFAI_setting_list(company_id):
 
 # print(get_wf_setting_object('63c653b8c8151e89df92846b'))
 def wf_setting_update(wf_setting_id, wf_ai_data):
-    url = "http://100002.pythonanywhere.com/"
+    # url = "http://100002.pythonanywhere.com/"
     dd = datetime.now()
     time = dd.strftime("%d:%m:%Y,%H:%M:%S")
     payload = json.dumps(
@@ -719,7 +730,7 @@ def wf_setting_update(wf_setting_id, wf_ai_data):
     headers = {"Content-Type": "application/json"}
     response = requests.request("POST", url, headers=headers, data=payload)
     print("Update WORKFLOW Setting Version--------------- \n")
-    return response.text
+    return json.loads(response.text)
 
 
 def get_document_object(document_id):
@@ -727,6 +738,7 @@ def get_document_object(document_id):
     response_obj = dowellconnection(*DOCUMENT_CONNECTION_LIST, "find", fields, "nil")
     # print("document object-------------- \n", response_obj)
     res_obj = json.loads(response_obj)
+    print(res_obj)
     try:
         return res_obj["data"]
     except:
@@ -742,11 +754,12 @@ def get_document_list(company_id):
     else:
         return []
 
+
 # ---------- Hashes --------------------------
 
 
 def save_uuid_hash(process_links, process_id, document_id, processing_choice):
-    url = "http://100002.pythonanywhere.com/"
+    # url = "http://100002.pythonanywhere.com/"
     payload = json.dumps(
         {
             **QR_ID_CONNECTION_DICT,
@@ -766,8 +779,8 @@ def save_uuid_hash(process_links, process_id, document_id, processing_choice):
 
     headers = {"Content-Type": "application/json"}
     response = requests.request("POST", url, headers=headers, data=payload)
-    print("SAVED UUID ENTRY", response.text)
-    return response.text
+    print("SAVED UUID ENTRY", json.loads(response.text))
+    return json.loads(response.text)
 
 
 def get_uuid_object(uuid_hash):
@@ -794,7 +807,7 @@ def get_uuid(document_id):
 
 
 def update_uuid_object(uuid_hash):
-    url = "http://100002.pythonanywhere.com/"
+    # url = "http://100002.pythonanywhere.com/"
 
     payload = json.dumps(
         {
@@ -808,5 +821,4 @@ def update_uuid_object(uuid_hash):
     headers = {"Content-Type": "application/json"}
     response = requests.request("POST", url, headers=headers, data=payload)
     print("SAVED UUID-----------: \n")
-    return response.text
-
+    return json.loads(response.text)
