@@ -5,11 +5,12 @@ import { setEditorLink } from "../app/appSlice";
 const filterDocuments = (documents, thunkAPI) => {
   let filteredDocuments = [];
 
-  if (documents?.length > 0) {
+  if (documents && documents.length && documents?.length > 0) {
     filteredDocuments = documents.filter(
       (item) =>
+        item.data_type &&
         item.data_type ===
-        thunkAPI.getState().auth?.userDetail?.portfolio_info[0]?.data_type
+          thunkAPI.getState().auth?.userDetail?.portfolio_info[0]?.data_type
     );
   } else {
     filteredDocuments = [];
@@ -124,6 +125,22 @@ export const contentDocument = createAsyncThunk(
       return res.data;
     } catch (error) {
       console.log("Content document fetch error: ", error);
+    }
+  }
+);
+
+export const allDocuments = createAsyncThunk(
+  "document/all",
+  async (data, thunkAPI) => {
+    try {
+      const res = await documentServices.allDocuments(data);
+      console.log("inseideeee");
+
+      const documents = filterDocuments(res.data.documents, thunkAPI);
+
+      return documents;
+    } catch (error) {
+      console.log(error);
     }
   }
 );

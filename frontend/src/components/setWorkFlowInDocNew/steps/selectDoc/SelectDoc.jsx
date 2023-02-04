@@ -11,6 +11,7 @@ import "./swiper.css";
 import { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import {
+  allDocuments,
   mineDocuments,
   savedDocuments,
 } from "../../../../features/document/asyncThunks";
@@ -21,7 +22,7 @@ import SelectedDocuments from "./selectedDocuments/SelectedDocuments";
 
 const SelectDoc = () => {
   const dispatch = useDispatch();
-  const { savedDocumentsItems, savedDocumentsStatus } = useSelector(
+  const { allDocuments: allDocumentsArray, allDocumentsStatus } = useSelector(
     (state) => state.document
   );
   const { userDetail } = useSelector((state) => state.auth);
@@ -34,7 +35,7 @@ const SelectDoc = () => {
       company_id: userDetail?.portfolio_info[0].org_id,
     };
 
-    dispatch(savedDocuments(data));
+    dispatch(allDocuments(data));
   }, []);
 
   const handleAddSelectedDocuments = (document) => {
@@ -57,7 +58,7 @@ const SelectDoc = () => {
       </h2>
       <div className={styles.content__continer}>
         <div className={styles.left__container}>
-          {savedDocumentsStatus === "pending" ? (
+          {allDocumentsStatus === "pending" ? (
             <div
               style={{
                 display: "flex",
@@ -76,9 +77,10 @@ const SelectDoc = () => {
               modules={[Navigation, Pagination]}
               className="select-doc"
             >
-              {savedDocuments &&
-                savedDocuments.length > 0 &&
-                [...savedDocumentsItems]?.reverse().map((item, index) => (
+              {allDocumentsArray &&
+                allDocumentsArray.length &&
+                allDocumentsArray.length > 0 &&
+                [...allDocumentsArray]?.reverse().map((item, index) => (
                   <SwiperSlide key={item._id}>
                     <div className={styles.swiper__slide__box}>
                       <div

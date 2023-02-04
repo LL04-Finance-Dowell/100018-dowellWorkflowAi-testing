@@ -5,11 +5,12 @@ import { setToggleEditor, setEditorLink } from "../app/appSlice";
 const filterTemplates = (templates, thunkAPI) => {
   let filteredTemplates = [];
 
-  if (templates?.length > 0) {
+  if (templates && templates.length && templates.length > 0) {
     filteredTemplates = templates.filter(
       (item) =>
+        item.data_type &&
         item.data_type ===
-        thunkAPI.getState().auth?.userDetail?.portfolio_info[0]?.data_type
+          thunkAPI.getState().auth?.userDetail?.portfolio_info[0]?.data_type
     );
   } else {
     filteredTemplates = [];
@@ -76,6 +77,21 @@ export const savedTemplates = createAsyncThunk(
       const res = await templateServices.savedTemplates(data);
 
       const templates = filterTemplates(res.data, thunkAPI);
+
+      return templates;
+    } catch (error) {
+      console.log(error);
+    }
+  }
+);
+
+export const allTemplates = createAsyncThunk(
+  "template/all",
+  async (data, thunkAPI) => {
+    try {
+      const res = await templateServices.allTemplates(data);
+
+      const templates = filterTemplates(res.data.templates, thunkAPI);
 
       return templates;
     } catch (error) {

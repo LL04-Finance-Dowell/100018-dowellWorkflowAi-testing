@@ -7,6 +7,7 @@ import {
   rejectedDocuments,
   signDocument,
   contentDocument,
+  allDocuments,
 } from "./asyncThunks";
 import { v4 as uuidv4 } from "uuid";
 
@@ -18,12 +19,14 @@ const initialState = {
   rejectedDocuments: null,
   contentOfDocument: null,
   savedDocumentsItems: [],
+  allDocuments: [],
   status: "idle",
   editorStatus: "idle",
   createDocumentStatus: "idle",
   mineStatus: "idle",
   savedDocumentsStatus: "idle",
   contentOfDocumentStatus: "idle",
+  allDocumentsStatus: "idle",
   errorMessage: null,
 };
 
@@ -115,11 +118,34 @@ export const documentSlice = createSlice({
     builder.addCase(contentDocument.fulfilled, (state, action) => {
       state.contentOfDocumentStatus = "succeeded";
       state.contentOfDocument = action.payload
-        ? action.payload.map((item) => typeof item !== "object" ? null : Object.values(item)[0].map(content => ({ ...content, pageNum: Object.keys(item)[0] ,_id: uuidv4() })) ).filter(item => item).flat()
+        ? action.payload
+            .map((item) =>
+              typeof item !== "object"
+                ? null
+                : Object.values(item)[0].map((content) => ({
+                    ...content,
+                    pageNum: Object.keys(item)[0],
+                    _id: uuidv4(),
+                  }))
+            )
+            .filter((item) => item)
+            .flat()
         : [];
     });
     builder.addCase(contentDocument.rejected, (state, action) => {
       state.contentOfDocumentStatus = "failed";
+      state.errorMessage = action.payload;
+    });
+    //allDocuments
+    builder.addCase(allDocuments.pending, (state) => {
+      state.allDocumentsStatus = "pending";
+    });
+    builder.addCase(allDocuments.fulfilled, (state, action) => {
+      state.allDocumentsStatus = "succeeded";
+      state.allDocuments = action.payload;
+    });
+    builder.addCase(allDocuments.rejected, (state, action) => {
+      state.allDocuments = "failed";
       state.errorMessage = action.payload;
     });
   },

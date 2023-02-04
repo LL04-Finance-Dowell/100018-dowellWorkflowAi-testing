@@ -7,6 +7,7 @@ import WorkflowLayout from "../../../layouts/WorkflowLayout/WorkflowLayout";
 import ManageFiles from "../../../components/manageFiles/ManageFiles";
 import { useDispatch, useSelector } from "react-redux";
 import {
+  allDocuments,
   mineDocuments,
   savedDocuments,
 } from "../../../features/document/asyncThunks";
@@ -18,23 +19,24 @@ const DocumentsPage = () => {
     minedDocuments,
     savedDocumentsItems,
     mineStatus,
+    allDocuments: allDocumentsArray,
     savedDocumentsStatus,
+    allDocumentsStatus,
   } = useSelector((state) => state.document);
   const dispatch = useDispatch();
 
   useEffect(() => {
     const data = {
       company_id: userDetail?.portfolio_info[0].org_id,
-      created_by: userDetail?.userinfo.username,
     };
-    const draftData = {
-      company_id: userDetail?.portfolio_info[0].org_id,
-    };
-    if (savedDocumentsStatus === "idle") dispatch(savedDocuments(draftData));
-    if (mineStatus === "idle") dispatch(mineDocuments(data));
+    /*     if (savedDocumentsStatus !== "succeeded")
+      dispatch(savedDocuments(draftData));
+    if (mineStatus !== "succeeded") dispatch(mineDocuments(data)); */
+
+    if (allDocumentsStatus === "idle") dispatch(allDocuments(data));
   }, []);
 
-  console.log("aaaaaaaaaaa", savedDocumentsItems, minedDocuments);
+  console.log("aaaaaaaaaaa", allDocumentsArray);
 
   return (
     <WorkflowLayout>
@@ -45,8 +47,11 @@ const DocumentsPage = () => {
               cardBgColor="#1ABC9C"
               title="drafts"
               Card={DocumentCard}
-              cardItems={minedDocuments}
-              status={mineStatus}
+              cardItems={allDocumentsArray.filter(
+                (item) =>
+                  item.created_by === userDetail?.portfolio_info[0].username
+              )}
+              status={allDocumentsStatus}
             />
           </div>
           <div id="saved-documents">
@@ -54,8 +59,8 @@ const DocumentsPage = () => {
               cardBgColor="#1ABC9C"
               title="saved documents"
               Card={DocumentCard}
-              cardItems={savedDocumentsItems}
-              status={savedDocumentsStatus}
+              cardItems={allDocumentsArray}
+              status={allDocumentsStatus}
             />
           </div>
         </ManageFiles>

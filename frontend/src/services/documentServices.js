@@ -24,7 +24,12 @@ export class DocumentServices {
   savedDocuments = (data) => {
     return httpDocument.post("/saved/", data);
   };
+
   contentDocument = (data) => {
     return httpDocument.post("/document_content/", data);
+  };
+
+  allDocuments = (data) => {
+    return httpDocument.post("/all/", data);
   };
 }

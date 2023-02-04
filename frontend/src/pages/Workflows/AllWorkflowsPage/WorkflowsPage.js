@@ -7,6 +7,7 @@ import CreateWorkflows from "../../../components/manageFiles/files/workflows/cre
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
+  allWorkflows,
   mineWorkflows,
   savedWorkflows,
 } from "../../../features/workflow/asyncTHunks";
@@ -19,6 +20,8 @@ const WorkflowsPage = () => {
     mineStatus,
     savedWorkflowItems,
     savedWorkflowStatus,
+    allWorkflows: allWorkflowsArray,
+    allWorkflowsStatus,
   } = useSelector((state) => state.workflow);
 
   const dispatch = useDispatch();
@@ -26,19 +29,15 @@ const WorkflowsPage = () => {
   useEffect(() => {
     const data = {
       company_id: userDetail?.portfolio_info[0].org_id,
-      created_by: userDetail?.userinfo.username,
     };
 
-    const saveddata = {
-      company_id: userDetail?.portfolio_info[0].org_id,
-    };
+    /*   if (savedWorkflowStatus === "idle") dispatch(savedWorkflows(saveddata));
+    if (mineStatus === "idle") dispatch(mineWorkflows(data)); */
 
-    if (savedWorkflowStatus === "idle") dispatch(savedWorkflows(saveddata));
-    if (mineStatus === "idle") dispatch(mineWorkflows(data));
+    if (allWorkflowsStatus === "idle") dispatch(allWorkflows(data));
   }, []);
 
-  console.log("wwwwwwwwwwwwwwwwwwwwwwwwwwwwww", minedWorkflows);
-  console.log("savedddddddddddddddddddddd", savedWorkflows);
+  console.log("wwwwwwwwwwwwwwwwwwwwwwwwwwwwww", allWorkflowsArray);
 
   return (
     <WorkflowLayout>
@@ -48,8 +47,11 @@ const WorkflowsPage = () => {
             <SectionBox
               cardBgColor="#1ABC9C"
               title="drafts"
-              cardItems={minedWorkflows}
-              status={mineStatus}
+              cardItems={allWorkflowsArray.filter(
+                (item) =>
+                  item.created_by === userDetail?.portfolio_info[0].username
+              )}
+              status={allWorkflowsStatus}
               Card={WorkflowCard}
             />
           </div>
@@ -58,8 +60,8 @@ const WorkflowsPage = () => {
               Card={WorkflowCard}
               cardBgColor="#1ABC9C"
               title="saved workflows"
-              status={savedWorkflowStatus}
-              cardItems={savedWorkflowItems}
+              status={allWorkflowsStatus}
+              cardItems={allWorkflowsArray}
             />
           </div>
         </ManageFiles>

@@ -9,12 +9,13 @@ const workflowServices = new WorkflowServices();
 const filterWorkflows = (workflows, thunkAPI) => {
   let filteredWorkflows = [];
 
-  if (workflows?.length > 0) {
+  if (workflows && workflows.length && workflows?.length > 0) {
     filteredWorkflows = workflows
       .filter(
         (item) =>
+          item.workflows.data_type &&
           item.workflows.data_type ===
-          thunkAPI.getState().auth?.userDetail?.portfolio_info[0]?.data_type
+            thunkAPI.getState().auth?.userDetail?.portfolio_info[0]?.data_type
       )
       .map((item) => ({
         ...item,
@@ -119,6 +120,21 @@ export const updateWorkflow = createAsyncThunk(
       handleAfterCreated();
 
       return res.data.workflow;
+    } catch (error) {
+      console.log(error);
+    }
+  }
+);
+
+export const allWorkflows = createAsyncThunk(
+  "workflow/all",
+  async (data, thunkAPI) => {
+    try {
+      const res = await workflowServices.allWorkflows(data);
+
+      const workflows = filterWorkflows(res.data.workflows, thunkAPI);
+
+      return workflows;
     } catch (error) {
       console.log(error);
     }

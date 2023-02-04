@@ -93,13 +93,13 @@ const DocumentCard = ({ cardItem, title }) => {
     return (
       <div>
         {cardItem._id ? (
-          <Button
-            onClick={() => handleDetailDocumnet(cardItem)}
-          >
+          <Button onClick={() => handleDetailDocumnet(cardItem)}>
             {dataLoading ? (
               <LoadingSpinner />
-            ) : (
+            ) : cardItem.type === "sign-document" ? (
               "Sign Here"
+            ) : (
+              "Open Document"
             )}
           </Button>
         ) : (

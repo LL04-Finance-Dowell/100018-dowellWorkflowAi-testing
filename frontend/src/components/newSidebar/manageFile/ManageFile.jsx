@@ -5,25 +5,34 @@ import CollapseItem from "../collapseItem/CollapseItem";
 import { v4 as uuidv4 } from "uuid";
 import sidebarStyles from "../sidebar.module.css";
 import {
+  allDocuments,
   mineDocuments,
   savedDocuments,
 } from "../../../features/document/asyncThunks";
 import {
+  allTemplates,
   mineTemplates,
   savedTemplates,
 } from "../../../features/template/asyncThunks";
-import { savedWorkflows } from "../../../features/workflow/asyncTHunks";
+import {
+  allWorkflows,
+  savedWorkflows,
+} from "../../../features/workflow/asyncTHunks";
 import { getItemsCounts } from "../../../features/app/asyncThunks";
 
 const ManageFile = () => {
   const dispatch = useDispatch();
   const { userDetail } = useSelector((state) => state.auth);
 
-  const { savedWorkflowItems } = useSelector((state) => state.workflow);
-  const { savedTemplatesItems } = useSelector((state) => state.template);
-  const { savedDocumentsItems } = useSelector((state) => state.document);
-
-  const { itemsCount } = useSelector((state) => state.app);
+  const { allWorkflows: allWorkflowsArray, allWorkflowsStatus } = useSelector(
+    (state) => state.workflow
+  );
+  const { allTemplates: allTemplatesArray, allTemplatesStatus } = useSelector(
+    (state) => state.template
+  );
+  const { allDocuments: allDocumentsArray, allDocumentsStatus } = useSelector(
+    (state) => state.document
+  );
 
   const [test, setTest] = useState(manageFileItems);
 
@@ -32,52 +41,51 @@ const ManageFile = () => {
       company_id: userDetail?.portfolio_info[0].org_id,
     };
 
-    /*  dispatch(savedDocuments(data));
-    dispatch(savedTemplates(data));
-    dispatch(savedWorkflows(data)); */
-    dispatch(getItemsCounts(data));
+    /*  if (savedDocumentsStatus === "idle") dispatch(savedDocuments(data));
+    if (savedTemplatesItemsStatus === "idle") dispatch(savedTemplates(data));
+    if (savedWorkflowStatus === "idle") dispatch(savedWorkflows(data)); */
+
+    if (allDocumentsStatus === "idle") dispatch(allDocuments(data));
+    if (allTemplatesStatus === "idle") dispatch(allTemplates(data));
+    if (allWorkflowsStatus === "idle") dispatch(allWorkflows(data));
   }, []);
 
   useEffect(() => {
-    if (itemsCount) {
-      setTest((prev) =>
-        prev.map((item) =>
-          item.parent.includes("Documents")
-            ? {
-                ...item,
-                count:
-                  itemsCount.process_count > 0
-                    ? itemsCount.document_count
-                    : "000",
-              }
-            : item.parent.includes("Templates")
-            ? {
-                ...item,
-                count:
-                  itemsCount.process_count > 0
-                    ? itemsCount.template_count
-                    : "000",
-              }
-            : item.parent.includes("Workflows")
-            ? {
-                ...item,
-                count:
-                  itemsCount.process_count > 0
-                    ? itemsCount.process_count
-                    : "000",
-              }
-            : item.parent.includes("Processes")
-            ? {
-                ...item,
-                count: "000",
-              }
-            : item
-        )
-      );
-    }
-  }, [itemsCount]);
-
-  console.log("itemsCOunt1", itemsCount);
+    setTest((prev) =>
+      prev.map((item) =>
+        item.parent.includes("Documents")
+          ? {
+              ...item,
+              count:
+                allDocumentsArray?.length > 0
+                  ? allDocumentsArray?.length
+                  : "000",
+            }
+          : item.parent.includes("Templates")
+          ? {
+              ...item,
+              count:
+                allTemplatesArray?.length > 0
+                  ? allTemplatesArray?.length
+                  : "000",
+            }
+          : item.parent.includes("Workflows")
+          ? {
+              ...item,
+              count:
+                allWorkflowsArray?.length > 0
+                  ? allWorkflowsArray?.length
+                  : "000",
+            }
+          : item.parent.includes("Processes")
+          ? {
+              ...item,
+              count: "000",
+            }
+          : item
+      )
+    );
+  }, [allDocumentsArray, allTemplatesArray, allWorkflowsArray]);
 
   return (
     <div className={sidebarStyles.feature__box}>
@@ -100,7 +108,7 @@ export const manageFileItems = [
         child: "saved documents",
         href: "/documents/#saved-documents",
       },
-      { id: uuidv4(), child: "Waiting to Process", href: "#" },
+      /*   { id: uuidv4(), child: "Waiting to Process", href: "#" }, */
     ],
   },
   {
@@ -142,11 +150,11 @@ export const manageFileItems = [
         child: "saved processes",
         href: "/processes/#saved-processes",
       },
-      /*    {
+      {
         id: uuidv4(),
         child: "Waiting to Process",
-        href: "/processes/",
-      }, */
+        href: "/workflows/new-set-workflow",
+      },
     ],
   },
 ];
