@@ -92,11 +92,10 @@ urlpatterns = [
     # workflow
     path("v0.1/workflows/", create_workflow, name="workflows"),
     path("v0.1/workflows/detail/", workflow_detail, name="workflow_detail"),
-    path("v0.1/workflows/mine/", my_workflows, name="my_workflows"),
+    # path("v0.1/workflows/mine/", my_workflows, name="my_workflows"),
     path("v0.1/workflows/update/", update_workflow, name="update_workflow"),
-    path("v0.1/workflows/saved/", saved_workflows, name="saved_workflow"),
+    # path("v0.1/workflows/saved/", saved_workflows, name="saved_workflow"),
     path("v0.1/workflows/all/", get_workflows,name="all_workflows"),
-
     # wf_settings
     path("v0.1/workflow_ai_setting/", create_workflow_setting, name="save_wf_setting"),
     path("v0.1/get_WFAI_setting/", get_wf_ai_setting, name="get_wf_ai_setting"),
@@ -107,34 +106,34 @@ urlpatterns = [
     path("v0.1/templates/", create_template),
     path("v0.1/templates/detail/", template_detail),
     path("v0.1/templates/approve/", approve),
-    path("v0.1/templates/approved/", approved),
-    path("v0.1/templates/pending/", not_approved_templates),
-    path("v0.1/templates/saved/", org_templates),
-    path("v0.1/templates/mine/", template_list),
+    # path("v0.1/templates/approved/", approved),
+    # path("v0.1/templates/pending/", not_approved_templates),
+    # path("v0.1/templates/saved/", org_templates),
+    # path("v0.1/templates/mine/", template_list),
     path("v0.1/templates/all/", get_templates,name="all_templates"),
 
     # documents
     path("v0.1/documents/", create_document, name="documents"),
-    path(
-        "v0.1/documents/to-sign/",
-        documents_to_be_signed,
-        name="documents_to_sign",
-    ),
-    path(
-        "v0.1/documents/rejected/",
-        rejected_documents,
-        name="rejected_documents",
-    ),
-    path(
-        "v0.1/documents/mine/",
-        my_documents,
-        name="my_documents",
-    ),
-    path(
-        "v0.1/documents/saved/",
-        draft_documents,
-        name="drafted_documents",
-    ),
+    # path(
+    #     "v0.1/documents/to-sign/",
+    #     documents_to_be_signed,
+    #     name="documents_to_sign",
+    # ),
+    # path(
+    #     "v0.1/documents/rejected/",
+    #     rejected_documents,
+    #     name="rejected_documents",
+    # ),
+    # path(
+    #     "v0.1/documents/mine/",
+    #     my_documents,
+    #     name="my_documents",
+    # ),
+    # path(
+    #     "v0.1/documents/saved/",
+    #     draft_documents,
+    #     name="drafted_documents",
+    # ),
     path("v0.1/documents/detail/", document_detail, name="document"),
     path(
         "v0.1/documents/document_content/",

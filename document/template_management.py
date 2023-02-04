@@ -14,6 +14,25 @@ editorApi = "https://100058.pythonanywhere.com/api/generate-editor-link/"
 
 
 @api_view(["POST"])
+def get_templates(request):  # List of Created Templates.
+
+    template_list = get_template_list(request.data["company_id"])
+
+    if not template_list:
+        return Response({"templates": []}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    if len(template_list) > 0:
+        return Response(
+            {"templates": template_list},
+            status=status.HTTP_200_OK,
+        )
+    return Response(
+        {"templates": []},
+        status=status.HTTP_200_OK,
+    )
+
+
+@api_view(["POST"])
 def create_template(request):
     data = ""
     page = ""
@@ -213,24 +232,5 @@ def org_templates(request):  # List of Created Templates.
         )
     return Response(
         templates,
-        status=status.HTTP_200_OK,
-    )
-
-
-@api_view(["POST"])
-def get_templates(request):  # List of Created Templates.
-
-    template_list = get_template_list(request.data["company_id"])
-
-    if not template_list:
-        return Response({"templates": []}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-    if len(template_list) > 0:
-        return Response(
-            {"templates": template_list},
-            status=status.HTTP_200_OK,
-        )
-    return Response(
-        {"templates": []},
         status=status.HTTP_200_OK,
     )

@@ -14,6 +14,24 @@ from database.mongo_db_connection import (
 
 editorApi = "https://100058.pythonanywhere.com/api/generate-editor-link/"
 
+@api_view(["POST"])
+def get_documents(request):  # List of Created Templates.
+    document_list = get_document_list(request.data["company_id"])
+
+    if not document_list:
+        return Response({"documents": []}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    if len(document_list) > 0:
+        return Response(
+            {"documents": document_list},
+            status=status.HTTP_200_OK,
+        )
+
+    return Response(
+        {"documents": []},
+        status=status.HTTP_200_OK,
+    )
+
 
 @api_view(["GET", "POST"])
 def create_document(request):  # Document Creation.
@@ -32,6 +50,10 @@ def create_document(request):  # Document Creation.
             # data_type = request.data["data_type"]
             # data = get_content_from_template_collection_with_that_template_id
             temp_data = get_template_object(request.data["template_id"])
+            if not temp_data:
+                return Response(
+                    "document not found", status=status.HTTP_500_INTERNAL_SERVER_ERROR
+                )
             page = temp_data["page"]
             data = temp_data["content"]
             res = json.loads(
@@ -112,7 +134,7 @@ def get_document_content(request):
             {
                 i: tempList,
             }
-    )
+        )
     return Response(content, status=status.HTTP_200_OK)
 
 
@@ -168,28 +190,28 @@ def document_detail(request):  # Single document
     )
 
 
-# @api_view(["POST"])
-# def documents_to_be_signed(
-#     request,
-# ):  # List of `to be signed` documents. State being processing.
-#     try:
-#         filtered_documents = []
-#         for d in get_document_list(request.data["company_id"]):
-#             if (
-#                 d.get("state") == "processing"
-#                 and d.get("company_id") == request.data["company_id"]
-#                 and check_allowed(
-#                     process_id=d.get("workflow_process"),
-#                     user_name=request.data["user_name"],
-#                 )
-#             ):
-#                 filtered_documents.append(d)
+@api_view(["POST"])
+def documents_to_be_signed(
+    request,
+):  # List of `to be signed` documents. State being processing.
+    try:
+        filtered_documents = []
+        for d in get_document_list(request.data["company_id"]):
+            if (
+                d.get("state") == "processing"
+                and d.get("company_id") == request.data["company_id"]
+                and check_allowed(
+                    process_id=d.get("workflow_process"),
+                    user_name=request.data["user_name"],
+                )
+            ):
+                filtered_documents.append(d)
 
-#         if len(filtered_documents) > 0:
-#             return Response(filtered_documents, status=status.HTTP_200_OK)
-#         return Response([], status=status.HTTP_200_OK)
-#     except:
-#         return Response([], status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        if len(filtered_documents) > 0:
+            return Response(filtered_documents, status=status.HTTP_200_OK)
+        return Response([], status=status.HTTP_200_OK)
+    except:
+        return Response([], status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 @api_view(["POST"])
@@ -313,20 +335,3 @@ def get_auth_roles(document_obj):
     return role_list
 
 
-@api_view(["POST"])
-def get_documents(request):  # List of Created Templates.
-    document_list = get_document_list(request.data["company_id"])
-
-    if not document_list:
-        return Response({"documents": []}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-    if len(document_list) > 0:
-        return Response(
-            {"documents": document_list},
-            status=status.HTTP_200_OK,
-        )
-
-    return Response(
-        {"documents": []},
-        status=status.HTTP_200_OK,
-    )
