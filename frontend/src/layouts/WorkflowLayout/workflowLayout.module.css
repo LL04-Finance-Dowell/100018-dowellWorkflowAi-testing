@@ -15,12 +15,14 @@
 .sidebar__box {
   width: 25%;
   background-color: var(--e-global-color-secondary);
+  z-index: 1;
 }
 
 .children__box {
   width: 75%;
   min-height: 100vh;
   position: relative;
+  z-index: 0;
 }
 
 .spinner {
