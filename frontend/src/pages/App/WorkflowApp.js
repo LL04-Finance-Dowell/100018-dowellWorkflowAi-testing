@@ -52,15 +52,22 @@ const WorkflowApp = () => {
 
     dispatch(setNotificationFinalStatus(null));
     documentServices
-      .signDocument({
+      .allDocuments({
         company_id: userDetail?.portfolio_info[0]?.org_id,
-        user_name: userDetail?.userinfo?.username,
+        // user_name: userDetail?.userinfo?.username,
+        // data_type: userDetail?.portfolio_info[0]?.data_type,
       })
       .then((res) => {
+        const documentsToSign = res.data.documents.filter(document => 
+          document.company_id === userDetail?.portfolio_info[0]?.org_id && 
+          document.data_type === userDetail?.portfolio_info[0]?.data_type && 
+          document.state === "processing"
+        )
+        console.log(documentsToSign)
         dispatch(setNotificationFinalStatus(100));
         const currentNotifications = notificationsForUser.slice();
         let updatedNotifications = currentNotifications.map((notification) => {
-          const data = res.data.map((dataObj) => {
+          const data = documentsToSign.map((dataObj) => {
             let copyOfDataObj = { ...dataObj };
             copyOfDataObj.type = "sign-document";
             return copyOfDataObj;
