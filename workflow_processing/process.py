@@ -1,7 +1,12 @@
 import jwt
 import json
 import uuid
+import datetime
 import requests
+# import the logging library
+import logging
+# Get an instance of a logger
+logger = logging.getLogger(__name__)
 from threading import Thread
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
@@ -20,6 +25,7 @@ from database.mongo_db_connection import (
 """
 assert completion of a given step finalize/reject
 """
+# TODO: Check for complete checks and mark document as state = "completed"
 
 
 @api_view(["POST"])
@@ -62,17 +68,13 @@ fetches workflow process `I` created.
 
 @api_view(["POST"])
 def processes(request):
-    print("fecthing processes..... \n")
+    # print("fecthing processes..... \n")
+    logger.warning('fetching processes was accessed at '+str(datetime.datetime.now())+' hours!')
     try:
         processes = get_process_list(request.data["company_id"])
     except:
         return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-    # find matching
-    print("filter my processes.... \n")
-    my_processes = [
-        p for p in processes if p["created_by"] == request.data["created_by"]
-    ]
-    if len(my_processes) > 0:
+    if len(processes) > 0:
         return Response(processes, status=status.HTTP_200_OK)
     return Response([], status=status.HTTP_200_OK)
 
@@ -406,11 +408,15 @@ def new_process(
 """
 
 
-def start_processing(process, document_id):
+def start_processing(process):
     print("started processing......")
     print("generating links.............\n")
     links = [
-        {step["member"]: verification_link(process["process_id"], document_id)}
+        {
+            step["member"]: verification_link(
+                process["process_id"], process["document_id"]
+            )
+        }
         for step in process["process_steps"]
     ]
     # Save Links - DB-3
@@ -420,7 +426,7 @@ def start_processing(process, document_id):
     data = {
         "links": links,
         "process_id": process["process_id"],
-        "document_id": document_id,
+        "document_id": process["document_id"],
         "process_choice": process["process_choice"],
         "process_title": process["process_title"],
     }
