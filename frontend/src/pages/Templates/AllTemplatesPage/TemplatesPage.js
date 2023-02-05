@@ -50,10 +50,14 @@ const TemplatesPage = () => {
               cardBgColor="#1ABC9C"
               title="drafts"
               Card={TemplateCard}
-              cardItems={allTemplatesArray.filter(
-                (item) =>
-                  item.created_by === userDetail?.portfolio_info[0].username
-              )}
+              cardItems={
+                allTemplatesArray &&
+                allTemplatesArray.length &&
+                allTemplatesArray.filter(
+                  (item) =>
+                    item.created_by === userDetail?.portfolio_info[0].username
+                )
+              }
               status={allTemplatesStatus}
             />
           </div>

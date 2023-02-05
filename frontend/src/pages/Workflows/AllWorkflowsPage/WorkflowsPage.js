@@ -47,10 +47,14 @@ const WorkflowsPage = () => {
             <SectionBox
               cardBgColor="#1ABC9C"
               title="drafts"
-              cardItems={allWorkflowsArray.filter(
-                (item) =>
-                  item.created_by === userDetail?.portfolio_info[0].username
-              )}
+              cardItems={
+                allWorkflowsArray &&
+                allWorkflowsArray.length &&
+                allWorkflowsArray.filter(
+                  (item) =>
+                    item.created_by === userDetail?.portfolio_info[0].username
+                )
+              }
               status={allWorkflowsStatus}
               Card={WorkflowCard}
             />
