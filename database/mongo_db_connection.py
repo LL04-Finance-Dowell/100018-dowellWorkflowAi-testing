@@ -289,11 +289,10 @@ def save_process_links(
 
 # By processID
 def get_links_object_by_process_id(process_id):
-    print("getting process link object,... \n")
+    print("getting process link object... \n")
     fields = {"process_id": str(process_id)}
     response_obj = dowellconnection(*LINK_CONNECTION_LIST, "find", fields, "nil")
     res_obj = json.loads(response_obj)
-    # print("PL query object response :  \n", response_obj)
     if res_obj["data"] != None:
         if len(res_obj["data"]):
             return res_obj["data"]

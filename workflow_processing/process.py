@@ -47,7 +47,8 @@ def register_finalize_or_reject(request):
                 action = "finalized"
                 break
             if request.data["action"] == "reject":
-                step.update({"finalized": True}, {"rejected": True})
+                step.update({"finalized": True})
+                step.update({"rejected": True})
                 action = "rejected"
                 break
     # update the workflow
