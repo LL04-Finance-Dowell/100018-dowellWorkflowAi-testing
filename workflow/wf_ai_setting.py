@@ -132,9 +132,7 @@ def update_WFAI_setting(request):  # Document Creation.
                 try:
                     return Response(
                         {
-                            "WF_Setting_Updated": get_wf_setting_object(
-                                form["wf_setting_id"]
-                            )
+                            "WF_Setting_Updated": old_wf_setting
                             # ,"WF_Setting_Archived":get_wf_setting_object(arch_wf['inserted_id'])
                         },
                         status=status.HTTP_201_CREATED,
