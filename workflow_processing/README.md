@@ -21,12 +21,24 @@ steps = [
     "stepTimeLimit": "within_1_hour|within_8_hours|within_24_hours|within_3_days|within_7_days",
     "stepStartTime": "the_time",
     "stepEndTime": "the_time",
-    "stepTask": #tasks(refer line 33),
+    "stepTask": #tasks(refer),
     "stepReminder": "no_reminder|every_hour|every_day|decide_later", # document
     "stepCloneCount": "clone_count", # display_options
     "stepDisplay": "before_this_step|_after_this_step|_only_this_step|in_all_steps",
     "steProcessingOrder": "no_order|team->user->public|team->public->user|user->team->public|user->public->team|public->team->user|public->user->team",
+    "stepDocumentCloneMap": #cloneMap(refer)
 }
+]
+
+```
+
+# cloneMaps
+
+```
+cloneMap = [
+    {
+        "user_name": "document_id"
+    }
 ]
 ```
 
@@ -54,7 +66,7 @@ task = {
 ```
 {
 "steps": steps,
-"document_id": "<the_base_doc_id>",
+"parent_document": "<the_base_doc_id>",
 "process_title": "<workflow_titles separated by a `-` >",
 }
 ```

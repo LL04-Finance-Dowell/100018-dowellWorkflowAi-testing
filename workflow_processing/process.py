@@ -1,10 +1,13 @@
 import jwt
 import json
 import uuid
+import time
 import datetime
 import requests
+
 # import the logging library
 import logging
+
 # Get an instance of a logger
 logger = logging.getLogger(__name__)
 from threading import Thread
@@ -21,6 +24,40 @@ from database.mongo_db_connection import (
     update_wf_process,
 )
 
+"""
+Background tasking using threading
+"""
+
+
+def task(func, data):
+    def wrapper(*args, **kwargs):
+        start_time = time.perf_counter()
+        t = Thread(
+            target=func,
+            args=(data,),
+        )
+
+        t.start()
+        end_time = time.perf_counter()
+        print(f"{func.__name__} took {end_time - start_time:.6f} seconds")
+        return
+
+    return wrapper
+
+
+"""
+complete document and mark as complete
+"""
+
+
+def processing_complete(process):
+    # check if all process steps are marked finalized
+    complete = True
+    for step in process["process_steps"]:
+        if not "finalized" in step:
+            complete = False
+    return complete
+
 
 """
 assert completion of a given step finalize/reject
@@ -35,8 +72,13 @@ def register_finalize_or_reject(request):
         process = get_process_object(workflow_process_id=request.data["process_id"])
     except:
         return Response(
-            "failed to get process, retry!",
+            "Failed to get process, Retry!",
             status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+        )
+    # check complete
+    if processing_complete(process=process):
+        return Response(
+            "Document processing is already complete", status=status.HTTP_200_OK
         )
     # check the action
     for step in process["process_steps"]:
@@ -52,14 +94,43 @@ def register_finalize_or_reject(request):
                 action = "rejected"
                 break
     # update the workflow
-    response = json.loads(
-        update_wf_process(
-            process_id=request.data["process_id"], steps=process["process_steps"]
-        )
+    data = {"process_id": request.data["process_id"], "steps": process["process_steps"]}
+    t = Thread(
+        target=process_update,
+        name="process update....",
+        args=(data,),
     )
-    if response["isSuccess"]:
-        return Response(f"step marked as {action}", status=status.HTTP_201_CREATED)
-    return Response("error, retry!", status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    t.start()
+    # if process is now complete change document state to `completed`
+    if processing_complete(process=process):
+        doc_data = {
+        "document_id": process["document_id"],
+        "process_id": process["process_id"],
+        "state": "completed"
+        }
+        dt = Thread(
+            target=document_update,
+            args=(doc_data,),
+        )
+        dt.start()
+    # response = json.loads(
+    #     update_wf_process(
+    #         process_id=request.data["process_id"], steps=process["process_steps"]
+    #     )
+    # )
+    # if response["isSuccess"]:
+    return Response(f"Step marked as {action}", status=status.HTTP_201_CREATED)
+    # return Response("error, retry!", status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+"""
+process update task
+"""
+
+
+def process_update(data):
+    update_wf_process(process_id=data["process_id"], steps=data["process_steps"])
+    print("Thread: process update! \n")
 
 
 """
@@ -69,8 +140,7 @@ fetches workflow process `I` created.
 
 @api_view(["POST"])
 def processes(request):
-    # print("fecthing processes..... \n")
-    logger.warning('fetching processes was accessed at '+str(datetime.datetime.now())+' hours!')
+    print("fetching processes..... \n")
     try:
         processes = get_process_list(request.data["company_id"])
     except:
@@ -90,7 +160,9 @@ def a_single_process(request):
     try:
         process = get_process_object(request.data["process_id"])
     except:
-        return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        return Response(
+            "Failed to get a process \n", status=status.HTTP_500_INTERNAL_SERVER_ERROR
+        )
     return Response(process, status=status.HTTP_200_OK)
 
 
@@ -103,6 +175,7 @@ get a link process for person having notifications
 def get_process_link(request):
     # get links info
     links_info = get_links_object_by_process_id(request.data["process_id"])
+    print(links_info)
     user = request.data["user_name"]
     if not links_info["links"]:
         return Response(
@@ -130,12 +203,12 @@ def fetch_process_links(request):
         process_info = get_links_object_by_process_id(request.data["process_id"])
     except:
         return Response(
-            "could not fetch process links",
+            "Could not fetch process links",
             status=status.HTTP_500_INTERNAL_SERVER_ERROR,
         )
     if len(process_info["links"]) > 0:
         return Response(process_info["links"], status=status.HTTP_200_OK)
-    return Response("no links found for this process", status=status.HTTP_404_NOT_FOUND)
+    return Response("No links found for this process", status=status.HTTP_404_NOT_FOUND)
 
 
 """
@@ -313,6 +386,7 @@ def save_and_start_processing(request):
     doc_data = {
         "document_id": request.data["document_id"],
         "process_id": process["process_id"],
+        "state": "processing"
     }
     t = Thread(
         target=document_update,
@@ -356,6 +430,7 @@ def document_update(doc_data):
     update_document(
         document_id=doc_data["document_id"],
         workflow_process_id=doc_data["process_id"],
+        state=doc_data["state"],
     )
     print("Thread: Document Updated! \n")
     return

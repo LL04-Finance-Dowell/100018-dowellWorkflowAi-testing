@@ -628,7 +628,7 @@ def save_document(name, data, created_by, company_id, page, data_type):
     return json.loads(response.text)
 
 
-def update_document(document_id, workflow_process_id):
+def update_document(document_id, workflow_process_id, state):
     # url = "http://100002.pythonanywhere.com/"
 
     payload = json.dumps(
@@ -640,7 +640,7 @@ def update_document(document_id, workflow_process_id):
             },
             "update_field": {
                 "workflow_process": workflow_process_id,
-                "state": "processing",
+                "state": state,
             },
             "platform": "bangalore",
         }
