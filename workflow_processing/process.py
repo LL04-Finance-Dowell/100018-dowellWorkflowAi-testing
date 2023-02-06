@@ -309,7 +309,6 @@ def save_and_start_processing(request):
         return Response(
             status=status.HTTP_500_INTERNAL_SERVER_ERROR,
         )
-    print("Updating document with process id.... \n")
     doc_data = {
         "document_id": request.data["document_id"],
         "process_id": process["process_id"],
@@ -329,7 +328,7 @@ def save_and_start_processing(request):
         # fire up the processing action
         return start_processing(
             process=process,
-            document_id=request.data["document_id"],
+            # document_id=request.data["document_id"],
             # choice=request.data["criteria"],
         )
     if request.data["action"] == "save_workflow_to_document":
