@@ -21,7 +21,7 @@ steps = [
     "stepTimeLimit": "within_1_hour|within_8_hours|within_24_hours|within_3_days|within_7_days",
     "stepStartTime": "the_time",
     "stepEndTime": "the_time",
-    "stepTask": 
+    "stepTask": #tasks(refer line 33),
     "stepReminder": "no_reminder|every_hour|every_day|decide_later", # document
     "stepCloneCount": "clone_count", # display_options
     "stepDisplay": "before_this_step|_after_this_step|_only_this_step|in_all_steps",
@@ -51,14 +51,17 @@ task = {
 
 # request_body
 
+```
 {
 "steps": steps,
 "document_id": "<the_base_doc_id>",
 "process_title": "<workflow_titles separated by a `-` >",
 }
+```
 
 # document processing.
 
+```
 processing_options = [
 "save_workflow_to_document_and_save_to_drafts",
 "cancel_process_before_completion",
@@ -72,3 +75,4 @@ processing_options = [
 "start_document_processing_content_wise",
 "close_processing_and_mark_as_completed",
 ]
+```
