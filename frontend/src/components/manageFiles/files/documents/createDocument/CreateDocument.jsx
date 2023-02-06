@@ -6,7 +6,10 @@ import Overlay from "../../../overlay/Overlay";
 import { BsArrowRightShort } from "react-icons/bs";
 import Collapse from "../../../../../layouts/collapse/Collapse";
 import { useDispatch, useSelector } from "react-redux";
-import { savedTemplates } from "../../../../../features/template/asyncThunks";
+import {
+  allTemplates,
+  savedTemplates,
+} from "../../../../../features/template/asyncThunks";
 import { useEffect } from "react";
 import { createDocument } from "../../../../../features/document/asyncThunks";
 import { setToggleManageFileForm } from "../../../../../features/app/appSlice";
@@ -16,7 +19,7 @@ const CreateDocument = ({ handleToggleOverlay }) => {
   const { userDetail } = useSelector((state) => state.auth);
 
   const dispatch = useDispatch();
-  const { savedTemplatesItems, savedTemplatesItemsStatus } = useSelector(
+  const { allTemplates: allTemplatesArray, allTemplatesStatus } = useSelector(
     (state) => state.template
   );
   const [currentOption, setCurrentOption] = useState(null);
@@ -61,14 +64,14 @@ const CreateDocument = ({ handleToggleOverlay }) => {
       company_id: userDetail?.portfolio_info[0].org_id,
     };
 
-    dispatch(savedTemplates(data));
+    dispatch(allTemplates(data));
   }, []);
 
   return (
     <Overlay title="Create Document" handleToggleOverlay={handleToggleOverlay}>
-      {savedTemplatesItemsStatus === "pending" ? (
+      {allTemplatesStatus === "pending" ? (
         <Spinner />
-      ) : savedTemplatesItems ? (
+      ) : allTemplatesArray ? (
         <form onSubmit={handleSubmit(onSubmit)}>
           <div id="template" className={styles.dropdown__container}>
             <label onClick={handleClickLabel} htmlFor="template">
@@ -81,7 +84,7 @@ const CreateDocument = ({ handleToggleOverlay }) => {
                 tabIndex={-98}
                 {...register("template")}
               >
-                {savedTemplatesItems.map((item) => (
+                {allTemplatesArray.map((item) => (
                   <option key={item._id} value={item._id}>
                     {item.template_name}
                   </option>
@@ -99,7 +102,7 @@ const CreateDocument = ({ handleToggleOverlay }) => {
             <div className={styles.dropdown__option__container}>
               <Collapse open={toggleDropdown}>
                 <div role="listbox" className={styles.dropdown__option__box}>
-                  {savedTemplatesItems.map((item) => (
+                  {allTemplatesArray.map((item) => (
                     <div
                       onClick={() => handleOptionClick(item)}
                       className={styles.dropdown__option__content}

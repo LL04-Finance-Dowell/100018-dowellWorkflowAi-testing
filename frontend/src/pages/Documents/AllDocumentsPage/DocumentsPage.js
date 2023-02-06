@@ -47,10 +47,14 @@ const DocumentsPage = () => {
               cardBgColor="#1ABC9C"
               title="drafts"
               Card={DocumentCard}
-              cardItems={allDocumentsArray.filter(
-                (item) =>
-                  item.created_by === userDetail?.portfolio_info[0].username
-              )}
+              cardItems={
+                allDocumentsArray &&
+                allDocumentsArray.length &&
+                allDocumentsArray.filter(
+                  (item) =>
+                    item.created_by === userDetail?.portfolio_info[0].username
+                )
+              }
               status={allDocumentsStatus}
             />
           </div>

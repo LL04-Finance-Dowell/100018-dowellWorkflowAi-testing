@@ -22,7 +22,10 @@ import {
   InfoSearchbar,
   InfoTitleBox,
 } from "../../../../infoBox/styledComponents";
-import { savedWorkflows } from "../../../../../features/workflow/asyncTHunks";
+import {
+  allWorkflows,
+  savedWorkflows,
+} from "../../../../../features/workflow/asyncTHunks";
 
 const InfoBoxes = () => {
   const { register, watch } = useForm();
@@ -39,7 +42,7 @@ const InfoBoxes = () => {
     docCurrentWorkflow,
     membersSetForProcess,
   } = useSelector((state) => state.app);
-  const { savedWorkflowItems, savedWorkflowStatus } = useSelector(
+  const { allWorkflows: allWorkflowsArray, allWorkflowsStatus } = useSelector(
     (state) => state.workflow
   );
   const { contentOfDocument, savedDocumentsItems } = useSelector(
@@ -52,7 +55,7 @@ const InfoBoxes = () => {
       company_id: userDetail?.portfolio_info[0].org_id,
     };
 
-    dispatch(savedWorkflows(data));
+    dispatch(allWorkflows(data));
   }, []);
 
   const memorizedInfoBox = useCallback(() => {
@@ -63,17 +66,17 @@ const InfoBoxes = () => {
               ...item,
               contents:
                 team?.length > 1
-                  ? savedWorkflowItems?.filter((item) =>
+                  ? allWorkflowsArray?.filter((item) =>
                       item.created_by
                         .toLocaleLowerCase()
                         .includes(team?.toLocaleLowerCase())
                     )
-                  : savedWorkflowItems?.filter((item) =>
+                  : allWorkflowsArray?.filter((item) =>
                       item.workflows?.workflow_title
                         .toLowerCase()
                         .includes(workflow?.toLowerCase())
                     ),
-              status: savedWorkflowStatus,
+              status: allWorkflowsStatus,
             }
           : item.title === "team"
           ? {
@@ -92,25 +95,25 @@ const InfoBoxes = () => {
                               .toLocaleLowerCase()
                               .includes(team.toLocaleLowerCase())
                       )
-                  : userDetail?.selected_product?.userportfolio.filter(
-                      (user) => user.member_type === "team_member"
-                    )
-                    .filter((user) => user.status && user.status === "enable"),
+                  : userDetail?.selected_product?.userportfolio
+                      .filter((user) => user.member_type === "team_member")
+                      .filter(
+                        (user) => user.status && user.status === "enable"
+                      ),
               status: "done",
             }
           : item.title === "user"
           ? {
               ...item,
-              contents: userDetail?.selected_product?.userportfolio.filter(
-                (user) => user.member_type === "public"
-              )
-              .filter((user) => user.status && user.status === "enable"),
+              contents: userDetail?.selected_product?.userportfolio
+                .filter((user) => user.member_type === "public")
+                .filter((user) => user.status && user.status === "enable"),
               status: "done",
             }
           : item
       )
     );
-  }, [savedWorkflowStatus, workflow, team, userDetail]);
+  }, [allWorkflowsStatus, workflow, team, userDetail]);
 
   useEffect(() => {
     memorizedInfoBox();
@@ -120,7 +123,7 @@ const InfoBoxes = () => {
     if (membersSetForProcess) return;
 
     userDetail.selected_product?.userportfolio?.forEach((user) => {
-      if (user.status && user.status !== "enable") return
+      if (user.status && user.status !== "enable") return;
       if (Array.isArray(user.username) && user.username.length > 0) {
         user.username.forEach((arrUsername) => {
           const copyOfUser = { ...user };
