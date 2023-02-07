@@ -49,20 +49,20 @@ def create_document(request):  # Document Creation.
             # company_id = request.data["company_id"]
             # data_type = request.data["data_type"]
             # data = get_content_from_template_collection_with_that_template_id
-            temp_data = get_template_object(request.data["template_id"])
-            if not temp_data:
-                return Response(
-                    "document not found", status=status.HTTP_500_INTERNAL_SERVER_ERROR
-                )
-            page = temp_data["page"]
-            data = temp_data["content"]
+            # temp_data = get_template_object(request.data["template_id"])
+            # if not temp_data:
+            #     return Response(
+            #         "document not found", status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            #     )
+            # page = request.data["page"]
+            # data = request.data["content"]
             res = json.loads(
                 save_document(
                     "Untitled Document",
-                    data,
+                    request.data["content"],
                     request.data["created_by"],
                     request.data["company_id"],
-                    page,
+                    request.data["page"],
                     request.data["data_type"],
                 )
             )
