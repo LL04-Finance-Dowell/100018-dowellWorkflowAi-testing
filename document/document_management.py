@@ -14,6 +14,7 @@ from database.mongo_db_connection import (
 
 editorApi = "https://100058.pythonanywhere.com/api/generate-editor-link/"
 
+
 @api_view(["POST"])
 def get_documents(request):  # List of Created Templates.
     document_list = get_document_list(request.data["company_id"])
@@ -37,25 +38,13 @@ def get_documents(request):  # List of Created Templates.
 def create_document(request):  # Document Creation.
 
     if request.method == "POST":
-        data = ""
-        form = request.data  # TODO: We will get the data from form 1 by 1 - Dont Worry.
-        if not form:
+
+        if not request.data:
             return Response(
                 {"documents": [], "message": "Failed to process document creation."},
                 status=status.HTTP_200_OK,
             )
         else:
-            # created_by = request.data["created_by"]
-            # company_id = request.data["company_id"]
-            # data_type = request.data["data_type"]
-            # data = get_content_from_template_collection_with_that_template_id
-            # temp_data = get_template_object(request.data["template_id"])
-            # if not temp_data:
-            #     return Response(
-            #         "document not found", status=status.HTTP_500_INTERNAL_SERVER_ERROR
-            #     )
-            # page = request.data["page"]
-            # data = request.data["content"]
             res = json.loads(
                 save_document(
                     "Untitled Document",
@@ -333,5 +322,3 @@ def get_auth_roles(document_obj):
     for i in res_content_obj[0]:
         role_list.append(i["auth_user"])
     return role_list
-
-
