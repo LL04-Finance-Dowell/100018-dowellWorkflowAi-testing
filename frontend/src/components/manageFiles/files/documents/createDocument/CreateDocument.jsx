@@ -33,7 +33,7 @@ const CreateDocument = ({ handleToggleOverlay }) => {
 
     dispatch(setToggleManageFileForm(false));
 
-    const foundTemplateObj = allTemplatesArray.find(template => template._id === template);
+    const foundTemplateObj = allTemplatesArray.find(singleTemplate => singleTemplate._id === template);
     if (!foundTemplateObj) return
 
     const createDocumentData = {
