@@ -33,11 +33,16 @@ const CreateDocument = ({ handleToggleOverlay }) => {
 
     dispatch(setToggleManageFileForm(false));
 
+    const foundTemplateObj = allTemplatesArray.find(template => template._id === template);
+    if (!foundTemplateObj) return
+
     const createDocumentData = {
       company_id: userDetail?.portfolio_info[0].org_id,
-      template_id: template,
+      // template_id: template,
       created_by: userDetail?.userinfo.username,
       data_type: userDetail?.portfolio_info[0].data_type,
+      page: foundTemplateObj?.page,
+      content: foundTemplateObj?.content,
     };
 
     dispatch(createDocument(createDocumentData));

@@ -63,7 +63,7 @@ const WorkflowApp = () => {
           document.data_type === userDetail?.portfolio_info[0]?.data_type && 
           document.state === "processing"
         )
-        console.log(documentsToSign)
+        // console.log(documentsToSign)
         dispatch(setNotificationFinalStatus(100));
         const currentNotifications = notificationsForUser.slice();
         let updatedNotifications = currentNotifications.map((notification) => {
