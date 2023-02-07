@@ -128,8 +128,7 @@ def get_document_content(request):
     allKeys = [i for i in myDict.keys()]
     for i in allKeys:
         tempList = []
-        print(myDict[i])
-        for j in range(0, len(str(myDict[i]))):
+        for j in range(0, len(myDict[i])):
             tempList.append({"id": myDict[i][j]["id"], "data": myDict[i][j]["data"]})
         content.append(
             {
