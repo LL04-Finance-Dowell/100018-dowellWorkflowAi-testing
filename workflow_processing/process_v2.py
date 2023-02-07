@@ -14,7 +14,6 @@ from database.mongo_db_connection import (
     update_wf_process,
 )
 
-
 """
 utility function to clone documents
 """
@@ -30,12 +29,13 @@ def clone_document(document_id, creator):
                 name=document["document_name"],
                 data=document["content"],
                 created_by=creator,
+                company_id=document["company_id"],
                 page=document["page"],
                 data_type=document["data_type"],
             )
         )
         return save_res["inserted_id"]
-    except:
+    except RuntimeError:
         return
 
 
@@ -60,9 +60,9 @@ def verification(request):
     decoded = jwt.decode(request.data["token"], "secret", algorithms="HS256")
     user_allowed = False
     if (
-        user_name in decoded["user_users"]
-        or user_name in decoded["public_users"]
-        or user_name in decoded["team_users"]
+            user_name in decoded["user_users"]
+            or user_name in decoded["public_users"]
+            or user_name in decoded["team_users"]
     ):
         user_allowed = True
     if not user_allowed:
@@ -76,10 +76,11 @@ def verification(request):
             "Something went wrong!, Retry", status=status.HTTP_500_INTERNAL_SERVER_ERROR
         )
     # find step the user belongs
-    map = None
+    doc_map = None
     right = None
     user = None
     match = False
+    clone_id = process["process_id"]
     for step in process["steps"]:
         # step role matching auth process
         if step.get("stepRole") == process["step_role"]:
@@ -87,7 +88,6 @@ def verification(request):
             # display check
             if step.get("stepDisplay"):
                 pass
-
             # location check
             if step.get("stepLocation"):
                 pass
@@ -101,10 +101,10 @@ def verification(request):
             # clone check
             if step.get("stepCloneCount") > 0:
                 # check if the user is part of the stepDocumentCloneMap
-                if any(user_name in dmap for dmap in step["stepDocumentCloneMap"]):
+                if any(user_name in d_map for d_map in step["stepDocumentCloneMap"]):
                     # grab the doc id and gen document link
-                    for dmap in step["stepDocumentCloneMap"]:
-                        clone_id = dmap.get("user_name")
+                    for d_map in step["stepDocumentCloneMap"]:
+                        clone_id = d_map.get("user_name")
                 else:
                     # clone the document out of the parent id
                     clone_id = clone_document(
@@ -120,7 +120,7 @@ def verification(request):
                 clone_id = process["document_id"]
 
             # Display check
-            map = step.get("document_map")
+            doc_map = step.get("document_map")
             right = step.get("rights")
             user = step.get("member")
             match = True
@@ -142,7 +142,7 @@ def verification(request):
     # generate document link.
     doc_link = generate_link(
         document_id=clone_id,
-        doc_map=map,
+        doc_map=doc_map,
         doc_rights=right,
         user=user,
         process_id=process["_id"],
@@ -196,7 +196,6 @@ def document_processing(request):
         )
         dt.start()
         return Response(status=status.HTTP_201_CREATED)
-       
 
     if request.data["action"] == "start_document_processing_content_wise":
         choice = "content"
@@ -212,13 +211,18 @@ def document_processing(request):
             ),
             process_choice=choice,
         )
+        doc_data = {
+            "document_id": process["document_id"],
+            "process_id": process["process_id"],
+            "state": "processing",
+        }
         # update doc with process.
         dt = Thread(
             target=document_update,
             args=(doc_data,),
         )
         dt.start()
-        return start_processing()
+        return start_processing(process)
 
     if request.data["action"] == "start_document_processing_wf_steps_wise":
         choice = "steps"
@@ -234,13 +238,18 @@ def document_processing(request):
             ),
             process_choice=choice,
         )
+        doc_data = {
+            "document_id": process["document_id"],
+            "process_id": process["process_id"],
+            "state": "processing",
+        }
         # update doc with process.
         dt = Thread(
             target=document_update,
             args=(doc_data,),
         )
         dt.start()
-        return start_processing()
+        return start_processing(process)
 
     if request.data["action"] == "start_document_processing_wf_wise":
         choice = "workflow"
@@ -256,13 +265,18 @@ def document_processing(request):
             ),
             process_choice=choice,
         )
+        doc_data = {
+            "document_id": process["document_id"],
+            "process_id": process["process_id"],
+            "state": "processing",
+        }
         # update doc with process.
         dt = Thread(
             target=document_update,
             args=(doc_data,),
         )
         dt.start()
-        return start_processing()
+        return start_processing(process)
 
     if request.data["action"] == "test_document_processing_content_wise":
         choice = "content"
@@ -278,13 +292,18 @@ def document_processing(request):
             ),
             process_choice=choice,
         )
+        doc_data = {
+            "document_id": process["document_id"],
+            "process_id": process["process_id"],
+            "state": "processing",
+        }
         # update doc with process.
         dt = Thread(
             target=document_update,
             args=(doc_data,),
         )
         dt.start()
-        return start_processing()
+        return start_processing(process)
 
     if request.data["action"] == "test_document_processing_wf_steps_wise":
         choice = "steps"
@@ -300,13 +319,18 @@ def document_processing(request):
             ),
             process_choice=choice,
         )
+        doc_data = {
+            "document_id": process["document_id"],
+            "process_id": process["process_id"],
+            "state": "processing",
+        }
         # update doc with process.
         dt = Thread(
             target=document_update,
             args=(doc_data,),
         )
         dt.start()
-        return start_processing()
+        return start_processing(process)
 
     if request.data["action"] == "test_document_processing_wf_wise":
         choice = "workflow"
@@ -316,24 +340,24 @@ def document_processing(request):
             created_by=request.data["document_id"],
             company_id=request.data["company_id"],
             data_type=data_type,
-            document_id=clone_document(),
+            document_id=clone_document(
+                document_id=request.data["document_id"],
+                creator=request.data["created_by"],
+            ),
             process_choice=choice,
         )
+        doc_data = {
+            "document_id": process["document_id"],
+            "process_id": process["process_id"],
+            "state": "processing",
+        }
         # update doc with process.
-        update_res = json.loads(
-            update_document(
-                document_id=process["document_id"],
-                workflow_process_id=process["process_id"],
-            )
+        dt = Thread(
+            target=document_update,
+            args=(doc_data,),
         )
-        if update_res["isSuccess"]:
-
-            return start_processing()
-        return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-    return Response(
-        "something went wrong!", status=status.HTTP_500_INTERNAL_SERVER_ERROR
-    )
+        dt.start()
+        return start_processing(process)
 
 
 """
@@ -381,7 +405,7 @@ def start_processing(process):
 
 
 def verification_link(
-    process_id, document_id, team_users, public_users, user_users, step_role
+        process_id, document_id, team_users, public_users, user_users, step_role
 ):
     print("creating verification links........... \n")
     # create a jwt token
