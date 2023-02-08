@@ -1,15 +1,3 @@
-import jwt
-import json
-import uuid
-import time
-import datetime
-import requests
-
-# import the logging library
-import logging
-
-# Get an instance of a logger
-logger = logging.getLogger(__name__)
 from threading import Thread
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
@@ -23,6 +11,18 @@ from database.mongo_db_connection import (
     get_process_list,
     update_wf_process,
 )
+import jwt
+import json
+import uuid
+import time
+import datetime
+import requests
+
+# import the logging library
+import logging
+
+# Get an instance of a logger
+logger = logging.getLogger(__name__)
 
 """
 Background tasking using threading
@@ -54,7 +54,7 @@ def processing_complete(process):
     # check if all process steps are marked finalized
     complete = True
     for step in process["process_steps"]:
-        if not "finalized" in step:
+        if "finalized" not in step:
             complete = False
     return complete
 
@@ -87,7 +87,7 @@ def register_finalize_or_reject(request):
     action = None
     for step in process["process_steps"]:
         # find matching step for auth member
-        if step["member"] == request.data["authorized"]:
+        if step["member"] == request.data["authorized"] and step["finalized"] is not True:
             if request.data["action"] == "finalize":
                 step.update({"finalized": True})
                 action = "finalized"
@@ -117,14 +117,7 @@ def register_finalize_or_reject(request):
             args=(doc_data,),
         )
         dt.start()
-    # response = json.loads(
-    #     update_wf_process(
-    #         process_id=request.data["process_id"], steps=process["process_steps"]
-    #     )
-    # )
-    # if response["isSuccess"]:
     return Response(f"Step marked as {action}", status=status.HTTP_201_CREATED)
-    # return Response("error, retry!", status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 """

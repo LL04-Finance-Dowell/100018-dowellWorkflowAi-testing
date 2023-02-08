@@ -1,5 +1,6 @@
 import json
 import jwt
+from datetime import datetime
 from threading import Thread
 from .process import new_process, check_display_right, generate_link, document_update
 from rest_framework.decorators import api_view
@@ -8,17 +9,13 @@ from rest_framework import status
 from database.mongo_db_connection import (
     get_document_object,
     save_document,
-    update_document,
     save_process_links,
     get_process_object,
     update_wf_process,
 )
 
-"""
-utility function to clone documents
-"""
 
-
+# utility function to clone documents
 def clone_document(document_id, creator):
     # get doc
     try:
@@ -39,22 +36,19 @@ def clone_document(document_id, creator):
         return
 
 
-"""
-TODO:
-- verification.
-- check data_type.
-- check if the user is part of the process steps.
-- check document clone count.
-- clone document for user trying to access the doc if it doesn't exist.
-- reduce clone counter.
-- update process step with document clone id + user_clone.
-- do rest of checks.
-- generate doc link.
-"""
-
-
 @api_view(["POST"])
 def verification(request):
+    """
+    - verification.
+    - check data_type.
+    - check if the user is part of the process steps.
+    - check document clone count.
+    - clone document for user trying to access the doc if it doesn't exist.
+    - reduce clone counter.
+    - update process step with document clone id + user_clone.
+    - do rest of checks.
+    - generate doc link.
+    """
     user_name = request.data["user_name"]
     # decode token
     decoded = jwt.decode(request.data["token"], "secret", algorithms="HS256")
@@ -87,14 +81,29 @@ def verification(request):
             print("Started the checks.... \n")
             # display check
             if step.get("stepDisplay"):
-                pass
+                if not check_display_right(step.get("stepDisplay")):
+                    return Response(
+                        "Missing display rights!", status=status.HTTP_401_UNAUTHORIZED
+                    )
             # location check
             if step.get("stepLocation"):
-                pass
+                if not check_location_right(location=step.get("stepLocation"),
+                                            my_location=request.data["location"],
+                                            continent=step.get("stepContinent"),
+                                            my_continent=request.data["continent"],
+                                            country=step.get("stepCountry"),
+                                            my_country=request.data["country"],
+                                            city=step.get("stepCity"),
+                                            my_city=request.data["city"]):
+                    return Response("Signing not permitted from your current location!",
+                                    status=status.HTTP_401_UNAUTHORIZED)
 
             # time limit check
             if step.get("stepTimeLimit"):
-                pass
+                if not check_time_limit_right(time=step.get("stepTime"), select_time_limits=step.get("stepTimeLimit"),
+                                              start_time=step.get("stepStartTime"), end_time=step.get("stepEndTime"),
+                                              creation_time=process["created_on"]):
+                    return Response("Time Limit for processing document has elapsed!", status=status.HTTP_403_FORBIDDEN)
 
             #
 
@@ -138,7 +147,6 @@ def verification(request):
         args=(process_data,),
     )
     pt.start()
-
     # generate document link.
     doc_link = generate_link(
         document_id=clone_id,
@@ -150,11 +158,7 @@ def verification(request):
     return Response(doc_link.json(), status=status.HTTP_201_CREATED)
 
 
-"""
-Thread process update
-"""
-
-
+# Thread process update
 def process_update(data):
     print("Updating process .... \n")
     update_wf_process(process_id=data["process_id"], steps=data["process_steps"])
@@ -162,13 +166,58 @@ def process_update(data):
     return
 
 
-"""
-processing is determined by action 
-"""
+# Check location right
+def check_location_right(location, my_location, continent, my_continent, county, my_country, city, my_city):
+    """
+    - check the location selection.
+    - verify matching geo information.
+    """
+    allowed = False
+    if location == "any":
+        allowed = True
+        return allowed
+    if location == "select":
+        if location == my_location and continent == my_continent and county == my_country and city == my_city:
+            allowed = True
+            return allowed
+    return allowed
+
+
+# check time limits for processing step
+def check_time_limit_right(time, select_time_limits, start_time, end_time, creation_time):
+    """
+    - check options of time selection
+    - get the current time
+    - compare with the process time
+    - compute if time has elapsed
+    - custom time; do custom calculation.
+    """
+    current_time = datetime.now().strftime("%H:%M")
+    allowed = False
+    if time == "no_time_limit":
+        allowed = True
+        return allowed
+    if time == "select":
+        if select_time_limits == "within_1_hour":
+            pass
+        if select_time_limits == "within_8_hours":
+            pass
+        if select_time_limits == "within_24_hours":
+            pass
+        if select_time_limits == "within_3_days":
+            pass
+        if select_time_limits == "within_7_days":
+            pass
+    if time == "custom":
+        pass
+    return allowed
 
 
 @api_view(["POST"])
 def document_processing(request):
+    """
+    processing is determined by action picked by user.
+    """
     data_type = "test"
     if request.data["action"] == "save_workflow_to_document_and_save_to_drafts":
         choice = "save"
@@ -360,11 +409,7 @@ def document_processing(request):
         return start_processing(process)
 
 
-"""
- Begin processing the Workflow.
-"""
-
-
+# Begin processing the Workflow.
 def start_processing(process):
     print("Generating links.............\n")
     links = []
@@ -399,11 +444,7 @@ def start_processing(process):
     return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
-"""
- application link + token generation
-"""
-
-
+# application link + token generation
 def verification_link(
         process_id, document_id, team_users, public_users, user_users, step_role
 ):
