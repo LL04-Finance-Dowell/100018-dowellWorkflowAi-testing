@@ -140,7 +140,7 @@ def processes(request):
     print("fetching processes..... \n")
     try:
         process_list = get_process_list(request.data["company_id"])
-    except:
+    except ConnectionError:
         return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     if len(process_list) > 0:
         return Response(process_list, status=status.HTTP_200_OK)
@@ -172,7 +172,6 @@ get a link process for person having notifications
 def get_process_link(request):
     # get links info
     links_info = get_links_object_by_process_id(request.data["process_id"])
-    print(links_info)
     user = request.data["user_name"]
     if not links_info["links"]:
         return Response(

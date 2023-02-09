@@ -51,6 +51,8 @@ def verification(request):
     - do rest of checks.
     - generate doc link.
     """
+    if not request.data:
+        return Response("You are missing something!", status=status.HTTP_400_BAD_REQUEST)
     user_name = request.data["user_name"]
     # decode token
     decoded = jwt.decode(request.data["token"], "secret", algorithms="HS256")
