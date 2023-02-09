@@ -2,7 +2,7 @@ import json
 import jwt
 from datetime import datetime
 from threading import Thread
-from .process import check_display_right, generate_link, document_update
+from .process import generate_link
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
@@ -13,208 +13,9 @@ from database.mongo_db_connection_v2 import (
     get_process_object,
     update_wf_process,
     save_wf_process,
-    update_document
+    update_document,
+    get_process_list,
 )
-
-
-# utility function to clone documents
-def clone_document(document_id, creator):
-    # get doc
-    try:
-        document = get_document_object(document_id)
-        # create new doc
-        save_res = json.loads(
-            save_document(
-                name=document["document_name"],
-                data=document["content"],
-                created_by=creator,
-                company_id=document["company_id"],
-                page=document["page"],
-                data_type=document["data_type"],
-            )
-        )
-        return save_res["inserted_id"]
-    except RuntimeError:
-        return
-
-
-@api_view(["POST"])
-def verification(request):
-    """
-    - verification.
-    - check data_type.
-    - check if the user is part of the process steps.
-    - check document clone count.
-    - clone document for user trying to access the doc if it doesn't exist.
-    - reduce clone counter.
-    - update process step with document clone id + user_clone.
-    - do rest of checks.
-    - generate doc link.
-    """
-    if not request.data:
-        return Response("You are missing something!", status=status.HTTP_400_BAD_REQUEST)
-    user_name = request.data["user_name"]
-    # decode token
-    decoded = jwt.decode(request.data["token"], "secret", algorithms="HS256")
-    user_allowed = False
-    if (
-            user_name in decoded["user_users"]
-            or user_name in decoded["public_users"]
-            or user_name in decoded["team_users"]
-    ):
-        user_allowed = True
-    if not user_allowed:
-        return Response(
-            "User is not part of this process", status=status.HTTP_401_UNAUTHORIZED
-        )
-    # get process
-    process = get_process_object(workflow_process_id=request.data["process_id"])
-    if not process:
-        Response(
-            "Something went wrong!, Retry", status=status.HTTP_500_INTERNAL_SERVER_ERROR
-        )
-    # find step the user belongs
-    doc_map = None
-    right = None
-    user = None
-    match = False
-    clone_id = process["process_id"]
-    for step in process["steps"]:
-        # step role matching auth process
-        if step.get("stepRole") == process["step_role"]:
-            print("Started the checks.... \n")
-            # display check
-            if step.get("stepDisplay"):
-                if not check_display_right(step.get("stepDisplay")):
-                    return Response(
-                        "Missing display rights!", status=status.HTTP_401_UNAUTHORIZED
-                    )
-            # location check
-            if step.get("stepLocation"):
-                if not check_location_right(location=step.get("stepLocation"),
-                                            my_location=request.data["location"],
-                                            continent=step.get("stepContinent"),
-                                            my_continent=request.data["continent"],
-                                            country=step.get("stepCountry"),
-                                            my_country=request.data["country"],
-                                            city=step.get("stepCity"),
-                                            my_city=request.data["city"]):
-                    return Response("Signing not permitted from your current location!",
-                                    status=status.HTTP_401_UNAUTHORIZED)
-
-            # time limit check
-            if step.get("stepTimeLimit"):
-                if not check_time_limit_right(time=step.get("stepTime"), select_time_limits=step.get("stepTimeLimit"),
-                                              start_time=step.get("stepStartTime"), end_time=step.get("stepEndTime"),
-                                              creation_time=process["created_on"]):
-                    return Response("Time Limit for processing document has elapsed!", status=status.HTTP_403_FORBIDDEN)
-
-            #
-
-            # clone check
-            if step.get("stepCloneCount") > 0:
-                # check if the user is part of the stepDocumentCloneMap
-                if any(user_name in d_map for d_map in step["stepDocumentCloneMap"]):
-                    # grab the doc id and gen document link
-                    for d_map in step["stepDocumentCloneMap"]:
-                        clone_id = d_map.get("user_name")
-                else:
-                    # clone the document out of the parent id
-                    clone_id = clone_document(
-                        document_id=process["parent_document_id"], creator=user_name
-                    )
-                    clone_count = step["stepCloneCount"] = step["stepCloneCount"] - 1
-                    # update clone count
-                    step.update({"stepCloneCount": clone_count})
-                    # update document clone map
-                    step["stepDocumentCloneMap"].extend({user_name: clone_id})
-            else:
-                # what if this step role has no clone
-                clone_id = process["document_id"]
-
-            # Display check
-            doc_map = step.get("document_map")
-            right = step.get("rights")
-            user = step.get("member")
-            match = True
-
-    if not match:
-        return Response("Document Access forbidden!", status=status.HTTP_403_FORBIDDEN)
-
-    # thread work to update the process
-    process_data = {
-        "process_id": process["_id"],
-        "process_steps": process["process_steps"],
-    }
-    pt = Thread(
-        target=process_update,
-        args=(process_data,),
-    )
-    pt.start()
-    # generate document link.
-    doc_link = generate_link(
-        document_id=clone_id,
-        doc_map=doc_map,
-        doc_rights=right,
-        user=user,
-        process_id=process["_id"],
-    )
-    return Response(doc_link.json(), status=status.HTTP_201_CREATED)
-
-
-# Thread process update
-def process_update(data):
-    print("Updating process .... \n")
-    update_wf_process(process_id=data["process_id"], steps=data["process_steps"])
-    print("Thread: Process Update! \n")
-    return
-
-
-# Check location right
-def check_location_right(location, my_location, continent, my_continent, county, my_country, city, my_city):
-    """
-    - check the location selection.
-    - verify matching geo information.
-    """
-    allowed = False
-    if location == "any":
-        allowed = True
-        return allowed
-    if location == "select":
-        if location == my_location and continent == my_continent and county == my_country and city == my_city:
-            allowed = True
-            return allowed
-    return allowed
-
-
-# check time limits for processing step
-def check_time_limit_right(time, select_time_limits, start_time, end_time, creation_time):
-    """
-    - check options of time selection
-    - get the current time
-    - compare with the process time
-    - compute if time has elapsed
-    - custom time; do custom calculation.
-    """
-    current_time = datetime.now().strftime("%H:%M")
-    allowed = False
-    if time == "no_time_limit":
-        allowed = True
-        return allowed
-    if time == "select":
-        if select_time_limits == "within_1_hour":
-            pass
-        if select_time_limits == "within_8_hours":
-            pass
-        if select_time_limits == "within_24_hours":
-            pass
-        if select_time_limits == "within_3_days":
-            pass
-        if select_time_limits == "within_7_days":
-            pass
-    if time == "custom":
-        pass
-    return allowed
 
 
 @api_view(["POST"])
@@ -222,7 +23,6 @@ def document_processing(request):
     """
     processing is determined by action picked by user.
     """
-
     if not request.data:
         return Response("You are missing something!", status=status.HTTP_400_BAD_REQUEST)
     data_type = "Testing_Data"
@@ -231,11 +31,11 @@ def document_processing(request):
         # create process with new id-
         process = new_process(
             workflows=request.data["workflows"],
-            created_by=request.data["document_id"],
+            created_by=request.data["created_by"],
             company_id=request.data["company_id"],
             data_type=request.data["data_type"],
             document_id=clone_document(
-                document_id=request.data["document_id"],
+                document_id=request.data["parent_document_id"],
                 creator=request.data["created_by"],
             ),
             process_choice=choice,
@@ -251,7 +51,7 @@ def document_processing(request):
             args=(doc_data,),
         )
         dt.start()
-        return Response(status=status.HTTP_201_CREATED)
+        return Response("Created Workflow and Saved in drafts.", status=status.HTTP_201_CREATED)
 
     if request.data["action"] == "start_document_processing_content_wise":
         choice = "content"
@@ -417,12 +217,31 @@ def document_processing(request):
     return Response("Something went wrong!", status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
-# Constructing a new process
+def clone_document(document_id, creator):
+    print("Creating a document clone... \n")
+    try:
+        document = get_document_object(document_id)
+        # create new doc
+        save_res = json.loads(
+            save_document(
+                name=document["document_name"],
+                data=document["content"],
+                created_by=creator,
+                company_id=document["company_id"],
+                page=document["page"],
+                data_type=document["data_type"],
+                state="processing"
+            )
+        )
+        return save_res["inserted_id"]
+    except RuntimeError:
+        return
+
+
 def new_process(
         workflows, created_by, company_id, data_type, document_id, process_choice
 ):
     print("creating process.......... \n")
-    process_title = ""
     process_steps = [
         step for workflow in workflows for step in workflow["workflows"]["steps"]
     ]
@@ -439,7 +258,6 @@ def new_process(
         document_id,
         process_choice,
     )
-
     # return process id.
     if res["isSuccess"]:
         process = {
@@ -482,15 +300,23 @@ def start_processing(process):
     }
     t = Thread(target=save_links_v2, args=(data,))
     t.start()
+    # update process state
+    if process["processingState"] == "draft":
+        process_data = {
+            "process_id": process["_id"],
+            "process_steps": process["process_steps"],
+            "processing_state": "processing"
+        }
+        pt = Thread(target=process_update, args=(process_data,))
+        pt.start()
     if len(links) > 0:
         return Response(
             links,
             status=status.HTTP_200_OK,
         )
-    return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    return Response("Something went wrong!", status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
-# application link + token generation
 def verification_link(
         process_id, document_id, team_users, public_users, user_users, step_role
 ):
@@ -533,3 +359,251 @@ def document_update(doc_data):
     )
     print("Thread: Document Updated! \n")
     return
+
+
+def check_user_presence(token, user_name):
+    # decode token
+    decoded = jwt.decode(token, "secret", algorithms="HS256")
+    user_allowed = False
+    if (
+            user_name in decoded["user_users"]
+            or user_name in decoded["public_users"]
+            or user_name in decoded["team_users"]
+    ):
+        user_allowed = True
+
+    return user_allowed, decoded["process_id"]
+
+
+@api_view(["POST"])
+def verification(request):
+    """
+    - verification.
+    - check data_type.
+    - check if the user is part of the process steps.
+    - check document clone count.
+    - clone document for user trying to access the doc if it doesn't exist.
+    - reduce clone counter.
+    - update process step with document clone id + user_clone.
+    - do rest of checks.
+    - generate doc link.
+    """
+    if not request.data:
+        return Response("You are missing something!", status=status.HTTP_400_BAD_REQUEST)
+    user_name = request.data["user_name"]
+    user, process_id = check_user_presence(token=request.data["token"], user_name=user_name)
+    if not user:
+        return Response(
+            "User is not part of this process", status=status.HTTP_401_UNAUTHORIZED
+        )
+    # get process
+    process = get_process_object(workflow_process_id=request.data["process_id"])
+    if not process:
+        Response(
+            "Something went wrong!, Retry", status=status.HTTP_500_INTERNAL_SERVER_ERROR
+        )
+    if process["processingState"] == "paused":
+        return Response("This workflow process is currently on hold!", status=status.HTTP_200_OK)
+
+    # find step the user belongs
+    doc_map = None
+    right = None
+    user = None
+    match = False
+    clone_id = None
+    for step in process["steps"]:
+        # step role matching auth process
+        if step.get("stepRole") == process["step_role"]:
+            print("Started the checks.... \n")
+            # display check
+            if step.get("stepDisplay"):
+                if not check_display_right(step.get("stepDisplay")):
+                    return Response(
+                        "Missing display rights!", status=status.HTTP_401_UNAUTHORIZED
+                    )
+            # location check
+            if step.get("stepLocation"):
+                if not check_location_right(location=step.get("stepLocation"),
+                                            my_location=request.data["location"],
+                                            continent=step.get("stepContinent"),
+                                            my_continent=request.data["continent"],
+                                            country=step.get("stepCountry"),
+                                            my_country=request.data["country"],
+                                            city=step.get("stepCity"),
+                                            my_city=request.data["city"]):
+                    return Response("Signing not permitted from your current location!",
+                                    status=status.HTTP_401_UNAUTHORIZED)
+            # time limit check
+            if step.get("stepTimeLimit"):
+                if not check_time_limit_right(time=step.get("stepTime"), select_time_limits=step.get("stepTimeLimit"),
+                                              start_time=step.get("stepStartTime"), end_time=step.get("stepEndTime"),
+                                              creation_time=process["createdAt"]):
+                    return Response("Time Limit for processing document has elapsed!", status=status.HTTP_403_FORBIDDEN)
+            # clone check
+            if step.get("stepCloneCount"):
+                if step.get("stepCloneCount") > 0:
+                    # check if the user is part of the stepDocumentCloneMap
+                    if any(user_name in d_map for d_map in step["stepDocumentCloneMap"]):
+                        # grab the doc id and gen document link
+                        for d_map in step["stepDocumentCloneMap"]:
+                            clone_id = d_map.get("user_name")
+                    else:
+                        # clone the document out of the parent id
+                        clone_id = clone_document(
+                            document_id=process["parentDocumentId"], creator=user_name
+                        )
+                        clone_count = step["stepCloneCount"] = step["stepCloneCount"] - 1
+                        # update clone count
+                        step.update({"stepCloneCount": clone_count})
+                        # update document clone map
+                        step["stepDocumentCloneMap"].extend({user_name: clone_id})
+                else:
+                    # what if this step role has no clone
+                    clone_id = process["document_id"]
+
+            # Display check
+            doc_map = step.get("document_map")
+            right = step.get("rights")
+            user = step.get("member")
+            match = True
+
+    if not match:
+        return Response("Document Access forbidden!", status=status.HTTP_403_FORBIDDEN)
+
+    # thread work to update the process
+    process_data = {
+        "process_id": process["_id"],
+        "process_steps": process["process_steps"],
+        "processing_state": process["processingState"]
+    }
+    pt = Thread(
+        target=process_update,
+        args=(process_data,),
+    )
+    pt.start()
+    # generate document link.
+    doc_link = generate_link(
+        document_id=clone_id,
+        doc_map=doc_map,
+        doc_rights=right,
+        user=user,
+        process_id=process["_id"],
+    )
+    return Response(doc_link.json(), status=status.HTTP_201_CREATED)
+
+
+def process_update(data):
+    print("Updating process .... \n")
+    update_wf_process(process_id=data["process_id"], steps=data["process_steps"], state=data["processing_state"])
+    print("Thread: Process Update! \n")
+    return
+
+
+def check_display_right(display):
+    print("checking display.... \n")
+    display_allowed = {
+        "before_this_step": True,
+        "after_this_step": False,
+        "in_all_steps": True,
+        "only_this_step": True,
+    }
+    return display_allowed.get(display)
+
+
+def check_location_right(location, my_location, continent, my_continent, country, my_country, city, my_city):
+    """
+    - check the location selection.
+    - verify matching geo information.
+    """
+    allowed = False
+    if location == "any":
+        allowed = True
+        return allowed
+    if location == "select":
+        if location == my_location and continent == my_continent and country == my_country and city == my_city:
+            allowed = True
+            return allowed
+    return allowed
+
+
+def check_time_limit_right(time, select_time_limits, start_time, end_time, creation_time):
+    """
+    check time limits for processing step
+    - check options of time selection
+    - get the current time
+    - compare with the process time
+    - compute if time has elapsed
+    - custom time; do custom calculation.
+    """
+    current_time = datetime.now().strftime("%H:%M")
+    allowed = False
+    if time == "no_time_limit":
+        allowed = True
+        return allowed
+    if time == "select":
+        if select_time_limits == "within_1_hour":
+            pass
+        if select_time_limits == "within_8_hours":
+            pass
+        if select_time_limits == "within_24_hours":
+            pass
+        if select_time_limits == "within_3_days":
+            pass
+        if select_time_limits == "within_7_days":
+            pass
+    if time == "custom":
+        pass
+    return allowed
+
+
+@api_view(["POST"])
+def process_draft(request):
+    """
+    Get process and begin processing it.
+    """
+    print("Processing a saved process... \n")
+    try:
+        process = get_process_object(workflow_process_id=request.data["process_id"])
+    except ConnectionError:
+        return Response("Could not start processing!", status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    if request.data["user_name"] == process["createdBy"]:
+        if process["processingState"] is not "processing":
+            return start_processing(process)
+    return Response("User not allowed to trigger processing", status=status.HTTP_401_UNAUTHORIZED)
+
+
+@api_view(["POST"])
+def halt_process(request):
+    """
+    Halt an ongoing Process
+    """
+    print("Halting a process...\n")
+    try:
+        process = get_process_object(workflow_process_id=request.data["process_id"])
+    except ConnectionError:
+        return Response("Could not pause processing!", status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    if request.data["user_name"] != process["createdBy"]:
+        return Response("User not allowed to halt processing", status=status.HTTP_401_UNAUTHORIZED)
+    if process["processingState"] == "paused":
+        return Response("Process is already paused", status=status.HTTP_200_OK)
+    res = json.loads(
+        update_wf_process(process_id=request.data["process_id"], steps=process["processingSteps"], state="paused"))
+    if res["isSuccess"]:
+        return Response("Process has been paused until manually resumed", status=status.HTTP_200_OK)
+
+
+@api_view(["POST"])
+def wf_processes(request):
+    """
+    Get all Workflow Process
+    """
+    print("Getting WF processes... \n")
+    if not request.data:
+        return Response("You are missing something!", status=status.HTTP_400_BAD_REQUEST)
+    try:
+        processes = get_process_list(company_id=request.data["company_id"])
+    except ConnectionError:
+        return Response("Something went wrong!", status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    if len(processes) > 0:
+        return Response(processes, status=status.HTTP_200_OK)
+    return Response([], status=status.HTTP_200_OK)

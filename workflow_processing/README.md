@@ -10,7 +10,7 @@ _POST_ `v0.2/process/start/`
     "created_by": "<user_name_of_authenticated_user>",
     "data_type": "<get_from_login-api>",
     "parent_document_id": "<document_id_of_selected_document_to_process>",
-    "action": "",
+    "action": "how the process should be done/what needs to be done",
     "workflows": [
         {
             "workflows": {

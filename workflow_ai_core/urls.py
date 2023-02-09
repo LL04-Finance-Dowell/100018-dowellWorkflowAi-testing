@@ -70,7 +70,7 @@ from workflow.wf_ai_setting import (
 )
 from document.count_all import count_objects
 
-from workflow_processing.process_v2 import document_processing, verification
+from workflow_processing.process_v2 import document_processing, verification, wf_processes
 
 schema_view = get_schema_view(
     openapi.Info(
@@ -103,6 +103,7 @@ urlpatterns = [
     # v2 processing.
     path("v0.2/process/start/", document_processing),
     path("v0.2/process/verify/", verification),
+    path("v0.2/wf-processes/", wf_processes),
     # processing.
     path("v0.1/processes/", processes),
     path("v0.1/process/start/", save_and_start_processing),
