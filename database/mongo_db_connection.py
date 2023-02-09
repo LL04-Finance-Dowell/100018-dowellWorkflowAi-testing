@@ -4,7 +4,6 @@ import json
 from datetime import datetime
 from .dowellconnection import dowellconnection
 
-
 QR_ID_CONNECTION_LIST = [
     "Documents",
     "bangalore",
@@ -52,7 +51,6 @@ PROCESS_CONNECTION_LIST = [
     "ABCDE",
 ]
 
-
 LINK_CONNECTION_LIST = [
     "Documents",
     "bangalore",
@@ -92,7 +90,6 @@ REGISTRATION_ARGS = [
     "ABCDE",
 ]
 
-
 QR_ID_CONNECTION_DICT = {
     "cluster": "Documents",
     "database": "Documentation",
@@ -101,7 +98,6 @@ QR_ID_CONNECTION_DICT = {
     "team_member_ID": "10008484",
     "function_ID": "ABCDE",
 }
-
 
 WF_CONNECTION_DICT = {
     "cluster": "Documents",
@@ -160,7 +156,8 @@ dd = datetime.now()
 time = dd.strftime("%d:%m:%Y,%H:%M:%S")
 
 # dowellconnection url
-url = "http://uxlivinglab.pythonanywhere.com"
+url = "https://uxlivinglab.pythonanywhere.com"
+
 
 # old 22sec query
 # def get_event_id():
@@ -260,10 +257,8 @@ def get_user_info_by_username(username):
 
 # ----------------------- Links Creation -------------------------
 def save_process_links(
-    links, process_id, document_id, processing_choice, process_title
+        links, process_id, document_id, processing_choice, process_title
 ):
-    # url = "http://100002.pythonanywhere.com/"
-
     payload = json.dumps(
         {
             **LINK_CONNECTION_DICT,
@@ -293,7 +288,7 @@ def get_links_object_by_process_id(process_id):
     fields = {"process_id": str(process_id)}
     response_obj = dowellconnection(*LINK_CONNECTION_LIST, "find", fields, "nil")
     res_obj = json.loads(response_obj)
-    if res_obj["data"] != None:
+    if res_obj["data"] is not None:
         if len(res_obj["data"]):
             return res_obj["data"]
         else:
@@ -308,7 +303,7 @@ def get_links_object_by_document_id(document_id):
     response_obj = dowellconnection(*LINK_CONNECTION_LIST, "find", fields, "nil")
     res_obj = json.loads(response_obj)
     # print("PL query object response :  \n", response_obj)
-    if res_obj["data"] != None:
+    if res_obj["data"] is not None:
         if len(res_obj["data"]):
             return res_obj["data"]
         else:
@@ -318,13 +313,13 @@ def get_links_object_by_document_id(document_id):
 
 #  -------------------------------Workflow Process------------------
 def save_wf_process(
-    process_title,
-    process_steps,
-    user,
-    company_id,
-    data_type,
-    document_id,
-    process_choice,
+        process_title,
+        process_steps,
+        user,
+        company_id,
+        data_type,
+        document_id,
+        process_choice,
 ):
     # url = "http://100002.pythonanywhere.com/"
     payload = json.dumps(
@@ -377,7 +372,7 @@ def get_process_object(workflow_process_id):
     fields = {"_id": str(workflow_process_id)}
     response_obj = dowellconnection(*PROCESS_CONNECTION_LIST, "find", fields, "nil")
     res_obj = json.loads(response_obj)
-    print("geting process object......")
+    print("getting process object......")
     if len(res_obj["data"]):
         return res_obj["data"]
     else:
@@ -486,7 +481,7 @@ def get_all_wf_list():
         wf["id"] = wf["_id"]
         wf_list.append(wf)
     if len(res_obj["data"]):
-        return wf_list  #   res_obj["data"]
+        return wf_list  # res_obj["data"]
     else:
         return []
 
@@ -687,7 +682,7 @@ def get_wf_setting_object(wf_setting_id):
     res_obj = json.loads(response_obj)
     try:
         return res_obj["data"]
-    except:
+    except RuntimeError:
         return []
 
 
@@ -740,7 +735,7 @@ def get_document_object(document_id):
     print(res_obj)
     try:
         return res_obj["data"]
-    except:
+    except RuntimeError:
         return []
 
 
@@ -769,7 +764,7 @@ def save_uuid_hash(process_links, process_id, document_id, processing_choice):
                 "document_id": document_id,
                 "process_id": process_id,
                 "processing_choice": processing_choice,
-                "status": True,  #   if True: valid ? Invalid
+                "status": True,  # if True: valid ? Invalid
             },
             "update_field": {"order_nos": 21},
             "platform": "bangalore",

@@ -2,16 +2,18 @@ import json
 import jwt
 from datetime import datetime
 from threading import Thread
-from .process import new_process, check_display_right, generate_link, document_update
+from .process import check_display_right, generate_link, document_update
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
-from database.mongo_db_connection import (
+from database.mongo_db_connection_v2 import (
     get_document_object,
     save_document,
     save_process_links,
     get_process_object,
     update_wf_process,
+    save_wf_process,
+    update_document
 )
 
 
@@ -218,7 +220,10 @@ def document_processing(request):
     """
     processing is determined by action picked by user.
     """
-    data_type = "test"
+
+    if not request.data:
+        return Response("You are missing something!", status=status.HTTP_400_BAD_REQUEST)
+    data_type = "Testing_Data"
     if request.data["action"] == "save_workflow_to_document_and_save_to_drafts":
         choice = "save"
         # create process with new id-
@@ -407,6 +412,45 @@ def document_processing(request):
         )
         dt.start()
         return start_processing(process)
+    return Response("Something went wrong!", status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+# Constructing a new process
+def new_process(
+        workflows, created_by, company_id, data_type, document_id, process_choice
+):
+    print("creating process.......... \n")
+    process_title = ""
+    process_steps = [
+        step for workflow in workflows for step in workflow["workflows"]["steps"]
+    ]
+    process_title = " - ".join(
+        [workflow["workflows"]["workflow_title"] for workflow in workflows]
+    )
+    # save to collection.
+    res = save_wf_process(
+        process_title,
+        process_steps,
+        created_by,
+        company_id,
+        data_type,
+        document_id,
+        process_choice,
+    )
+
+    # return process id.
+    if res["isSuccess"]:
+        process = {
+            "process_title": process_title,
+            "process_steps": process_steps,
+            "process_choice": process_choice,
+            "created_by": created_by,
+            "company_id": company_id,
+            "data_type": data_type,
+            "document_id": document_id,
+            "process_id": res["inserted_id"],
+        }
+        return process
 
 
 # Begin processing the Workflow.
@@ -475,4 +519,15 @@ def save_links_v2(data):
         process_title=data["process_title"],
     )
     print("Thread: Process Link Save! \n")
+    return
+
+
+# Thread to update a document
+def document_update(doc_data):
+    update_document(
+        document_id=doc_data["document_id"],
+        workflow_process_id=doc_data["process_id"],
+        state=doc_data["state"],
+    )
+    print("Thread: Document Updated! \n")
     return

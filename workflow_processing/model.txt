@@ -1,0 +1,63 @@
+# Workflow Processing
+
+WorkflowProcessModel: # A single process.
+{
+    processTitle - "workflow_titles separated by a `-`"
+    parentDocumentId - "document selected in first step"
+    processingState - "complete|draft|processing"
+    dataType - "learning|testing|realdata"
+    processSteps = {
+    "stepNumber": 1,
+    "stepRole": "<role_from_workflow_creation>",
+    "permitInternalWorkflow": "True|False",
+    "stepLocation": "any|select",
+    "stepContinent": "the_continent",
+    "stepCountry": "the_country",
+    "stepCity": "the_city",
+    "stepTime": "no_time_limit|select|custom",
+    "stepTimeLimit": "within_1_hour|within_8_hours|within_24_hours|within_3_days|within_7_days",
+    "stepStartTime": "the_time",
+    "stepEndTime": "the_time",
+    "stepPublicMembers": [{ member: "user_name", "portfolio": "member_portfolio"}],
+    "stepTeamMembers": [{ member: "user_name", "portfolio": "member_portfolio"}],
+    "stepUserMembers": [{ member: "user_name", "portfolio": "member_portfolio"}],
+    "stepTaskType": "request_for_task|assign_task",
+    "stepRights": "add_edit|view|comment|approve",
+    "stepActivityType": "team_task|individual_task",
+    "stepRights": "add_edit|view|comment|approve",
+    "stepActivityType": "team_task|individual_task",
+    "stepTaskLimitation": "portfolios_assigned_on_or_before_step_start_date_and_time",
+    "stepReminder": "no_reminder|every_hour|every_day|decide_later", # document
+    "stepCloneCount": "clone_count", # display_options
+    "stepDisplay": "before_this_step|_after_this_step|_only_this_step|in_all_steps",
+    "stepProcessingOrder":
+    {no_order|team_user_public|team_public_user|user_team_public|user_public_team|public_team_user|public_user_team},
+    "stepDocumentCloneMap": [{"user_name": "document_id"}] # the assigned people in step with doc id
+    "stepState": "processing|complete" # step processing ongoing on not.
+    },
+    processingAction - "how the process should be done"
+}
+
+
+DocumentModel: # new structure of a single document
+{
+    - parentDocumentId:  "base document",
+    - processId: "the process the document belongs to"
+    - dataType: "learning|testing|realdata"
+    - content: "document content"
+    - createdBy: "user who created the doc"
+    - companyId: "company the doc belongs to"
+    - documentState: "draft|processing|complete"
+    - createdAt: "when doc is created"
+    - rejected:  "True|False"
+    - rejectionMessage: "reason it is rejected"
+}
+
+ProcessLinkModel:  # verification links
+{
+    - documentId: "base document"
+    - processId: "process id"
+    - links: "generated links"
+    - processingChoice: "selected from process action"
+    - processTitle: "title of the process"
+}
