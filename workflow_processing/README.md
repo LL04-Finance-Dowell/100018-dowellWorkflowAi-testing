@@ -19,7 +19,7 @@ _POST_ `v0.2/process/start/`
                     {
                         "stepNumber": 1,
                         "stepRole": "<role_from_workflow_creation>",
-                        "stepStep": "True|False",
+                        "skipStep": "True|False",
                         "permitInternalWorkflow": "True|False",
                         "stepLocation": "any|select",
                         "stepContinent": "the_continent",
