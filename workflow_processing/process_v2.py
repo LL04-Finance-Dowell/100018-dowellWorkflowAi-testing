@@ -214,6 +214,34 @@ def document_processing(request):
         )
         dt.start()
         return start_processing(process)
+
+    if request.data["action"] == "close_processing_and_mark_as_completed":
+        process = get_process_object(workflow_process_id=request.data["process_id"])
+        if process["processingState"] == "complete":
+            return Response("This Workflow process is already complete", status=status.HTTP_200_OK)
+        res = json.loads(
+            update_wf_process(process_id=process["process_id"], steps=process["processingSteps"], state="complete"))
+        if res["isSuccess"]:
+            return Response("Process closed and marked as complete!", status=status.HTTP_200_OK)
+        return Response("Failed to mark process and completed!", status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    if request.data["action"] == "cancel_process_before_completion":  # document should reset to initial state.
+        process = get_process_object(workflow_process_id=request.data["process_id"])
+        if process["processingState"] == "canceled":
+            return Response("This Workflow process is Cancelled!", status=status.HTTP_200_OK)
+        res = json.loads(
+            update_wf_process(process_id=process["process_id"], steps=process["processingSteps"], state="canceled"))
+        if res["isSuccess"]:
+            return Response("Process has been cancelled!", status=status.HTTP_200_OK)
+        return Response("Failed cancel process!", status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    if request.data["action"] == "pause_processing_after_completing_ongoing_step":
+        """
+        - find the ongoing step.
+        - pause processing
+        """
+        pass
+
     return Response("Something went wrong!", status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
@@ -439,27 +467,32 @@ def verification(request):
                                               start_time=step.get("stepStartTime"), end_time=step.get("stepEndTime"),
                                               creation_time=process["createdAt"]):
                     return Response("Time Limit for processing document has elapsed!", status=status.HTTP_403_FORBIDDEN)
-            # clone check
-            if step.get("stepCloneCount"):
-                if step.get("stepCloneCount") > 0:
-                    # check if the user is part of the stepDocumentCloneMap
-                    if any(user_name in d_map for d_map in step["stepDocumentCloneMap"]):
-                        # grab the doc id and gen document link
-                        for d_map in step["stepDocumentCloneMap"]:
-                            clone_id = d_map.get("user_name")
-                    else:
-                        # clone the document out of the parent id
-                        clone_id = clone_document(
-                            document_id=process["parentDocumentId"], creator=user_name
-                        )
-                        clone_count = step["stepCloneCount"] = step["stepCloneCount"] - 1
-                        # update clone count
-                        step.update({"stepCloneCount": clone_count})
-                        # update document clone map
-                        step["stepDocumentCloneMap"].extend({user_name: clone_id})
-                else:
-                    # what if this step role has no clone
-                    clone_id = process["document_id"]
+            # check step activity
+            if step.get("stepTaskType"):
+                if step.get("stepTaskType") == "request_task":
+                    # clone check
+                    if step.get("stepCloneCount"):
+                        if step.get("stepCloneCount") > 0:
+                            # check if the user is part of the stepDocumentCloneMap
+                            if any(user_name in d_map for d_map in step["stepDocumentCloneMap"]):
+                                # grab the doc id and gen document link
+                                for d_map in step["stepDocumentCloneMap"]:
+                                    clone_id = d_map.get("user_name")
+                            else:
+                                # clone the document out of the parent id
+                                clone_id = clone_document(
+                                    document_id=process["parentDocumentId"], creator=user_name
+                                )
+                                clone_count = step["stepCloneCount"] = step["stepCloneCount"] - 1
+                                # update clone count
+                                step.update({"stepCloneCount": clone_count})
+                                # update document clone map
+                                step["stepDocumentCloneMap"].extend({user_name: clone_id})
+                        else:
+                            # what if this step role has no clone
+                            clone_id = process["document_id"]
+                if step.get("stepTaskType") == "assign_task":
+                    pass
 
             # Display check
             doc_map = step.get("document_map")

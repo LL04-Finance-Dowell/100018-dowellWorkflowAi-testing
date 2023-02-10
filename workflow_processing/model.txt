@@ -5,7 +5,7 @@ WorkflowProcessModel: # A single process.
     processTitle - "workflow_titles separated by a `-`"
     parentDocumentId - "document selected in first step"
     processingState - "complete|draft|processing"
-    dataType - "learning|testing|realdata"
+    dataType - "Learning_Data|Testing_Data|Real_Data|"
     processSteps = {
     "stepNumber": 1,
     "stepRole": "<role_from_workflow_creation>",
@@ -22,8 +22,6 @@ WorkflowProcessModel: # A single process.
     "stepTeamMembers": [{ member: "user_name", "portfolio": "member_portfolio"}],
     "stepUserMembers": [{ member: "user_name", "portfolio": "member_portfolio"}],
     "stepTaskType": "request_for_task|assign_task",
-    "stepRights": "add_edit|view|comment|approve",
-    "stepActivityType": "team_task|individual_task",
     "stepRights": "add_edit|view|comment|approve",
     "stepActivityType": "team_task|individual_task",
     "stepTaskLimitation": "portfolios_assigned_on_or_before_step_start_date_and_time",

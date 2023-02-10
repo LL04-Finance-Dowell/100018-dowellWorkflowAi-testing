@@ -284,30 +284,6 @@ def get_wf_object(workflow_id):
         return []
 
 
-def get_all_wf_list():
-    fields = {}
-    response_obj = dowellconnection(*WF_CONNECTION_LIST, "fetch", fields, "nil")
-    res_obj = json.loads(response_obj)
-    wf_list = []
-    for wf in res_obj["data"]:
-        wf["id"] = wf["_id"]
-        wf_list.append(wf)
-    if len(res_obj["data"]):
-        return wf_list  # res_obj["data"]
-    else:
-        return []
-
-
-def get_wf_list(company_id):
-    fields = {"company_id": str(company_id)}
-    response_obj = dowellconnection(*WF_CONNECTION_LIST, "fetch", fields, "nil")
-    res_obj = json.loads(response_obj)
-    if len(res_obj["data"]):
-        return res_obj["data"]
-    else:
-        return []
-
-
 # -------------------------- Document----------------------------------------
 def save_document(name, data, created_by, company_id, page, data_type, state):
     det = datetime.now()
