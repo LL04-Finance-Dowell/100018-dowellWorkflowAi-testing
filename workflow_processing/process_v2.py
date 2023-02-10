@@ -406,15 +406,7 @@ def check_user_presence(token, user_name):
 @api_view(["POST"])
 def verification(request):
     """
-    - verification.
-    - check data_type.
-    - check if the user is part of the process steps.
-    - check document clone count.
-    - clone document for user trying to access the doc if it doesn't exist.
-    - reduce clone counter.
-    - update process step with document clone id + user_clone.
-    - do rest of checks.
-    - generate doc link.
+    verification of a process step access and checks that duplicate document based on a step.
     """
     if not request.data:
         return Response("You are missing something!", status=status.HTTP_400_BAD_REQUEST)
@@ -432,7 +424,9 @@ def verification(request):
         )
     if process["processingState"] == "paused":
         return Response("This workflow process is currently on hold!", status=status.HTTP_200_OK)
-
+    # was the process not started?
+    if process["processingState"] == "save":
+        return Response("This workflow process is not activated!", status=status.HTTP_200_OK)
     # find step the user belongs
     doc_map = None
     right = None
@@ -493,16 +487,13 @@ def verification(request):
                             clone_id = process["document_id"]
                 if step.get("stepTaskType") == "assign_task":
                     pass
-
             # Display check
             doc_map = step.get("document_map")
             right = step.get("rights")
             user = step.get("member")
             match = True
-
     if not match:
         return Response("Document Access forbidden!", status=status.HTTP_403_FORBIDDEN)
-
     # thread work to update the process
     process_data = {
         "process_id": process["_id"],
@@ -561,12 +552,7 @@ def check_location_right(location, my_location, continent, my_continent, country
 
 def check_time_limit_right(time, select_time_limits, start_time, end_time, creation_time):
     """
-    check time limits for processing step
-    - check options of time selection
-    - get the current time
-    - compare with the process time
-    - compute if time has elapsed
-    - custom time; do custom calculation.
+    check time limits for processing step.
     """
     current_time = datetime.now().strftime("%H:%M")
     allowed = False
