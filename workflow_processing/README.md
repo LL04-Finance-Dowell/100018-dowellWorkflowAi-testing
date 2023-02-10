@@ -19,6 +19,7 @@ _POST_ `v0.2/process/start/`
                     {
                         "stepNumber": 1,
                         "stepRole": "<role_from_workflow_creation>",
+                        "stepStep": "True|False",
                         "permitInternalWorkflow": "True|False",
                         "stepLocation": "any|select",
                         "stepContinent": "the_continent",
@@ -28,6 +29,7 @@ _POST_ `v0.2/process/start/`
                         "stepTimeLimit": "within_1_hour|within_8_hours|within_24_hours|within_3_days|within_7_days",
                         "stepStartTime": "the_time",
                         "stepEndTime": "the_time",
+                        "stepDocumentMap": "list of content ids",
                         "stepPublicMembers": [
                             {
                                 "member": "user_name",
