@@ -499,7 +499,23 @@ def get_wf_list(company_id):
         return res_obj["data"]
     else:
         return []
+# def search_objects(company_id,term):
+#     docs = {"company_id": str(company_id),"document_name":term}
+#     templ = {"company_id": str(company_id),"template_name":term}
+#     wf= {"company_id": str(company_id),"workflow_title":term}
+#     all_= [DOCUMENT_CONNECTION_LIST,TEMPLATE_CONNECTION_LIST,WF_CONNECTION_LIST]
+#     for li in all_:
+        
+#         doc=dowellconnection(*li, "fetch", docs, "nil")
+#         temp=dowellconnection(*li, "fetch", templ, "nil")
+#         wf_  =dowellconnection(*li, "fetch", wf, "nil")
+        
+#     # if len(doc["data"]):
+#     return doc["data"]
+#     # else:
+#     #     return []
 
+# print(search_objects("6390b313d77dc467630713f2","Untitled Document"))
 
 # ------------------------------------------ Templates-----------------------------
 def save_template(name, data, page, created_by, company_id, data_type):

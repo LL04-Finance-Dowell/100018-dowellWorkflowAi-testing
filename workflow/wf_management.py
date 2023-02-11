@@ -1,4 +1,4 @@
-import json
+import json,time
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
@@ -8,7 +8,7 @@ from database.mongo_db_connection import (
     get_wf_list,
     update_wf,
 )
-
+from document.algolia import save_to_algolia
 
 def get_step(id, step_name):
     data = get_wf_object(id)["workflows"]["steps"]
@@ -40,12 +40,16 @@ def create_workflow(request):  # Document Creation.
         #             "role": step["role"],
         #         }
         #     )
+        starter = time.time()
         res = json.loads(save_wf(data, form["company_id"], form["created_by"]))
         if res["isSuccess"]:
+            wf_data=get_wf_object(res["inserted_id"])
+            save_to_algolia(wf_data)
+            print(time.time()-starter)
             try:
                 return Response(
                     {
-                        "workflow": get_wf_object(res["inserted_id"]),
+                        "workflow": wf_data,
                     },
                     status=status.HTTP_201_CREATED,
                 )
@@ -54,7 +58,6 @@ def create_workflow(request):  # Document Creation.
                     {"workflow": [], "message": "Failed to Save Workflow"},
                     status=status.HTTP_200_OK,
                 )
-
 
 @api_view(["POST"])
 def update_workflow(request):  # Document Creation.
