@@ -165,6 +165,7 @@ Request Body
     "company_id": "<company_id_of_authenticated_user>",
     "created_by": "<user_name_of_authenticated_user>",
     "data_type":"<get_from_the_login_api>"
+
 }
 ```
 
@@ -490,12 +491,11 @@ Request Body
 
 ```
 {
-    "template_id": "<template_id_existing>",
     "created_by": "<user_name_of_authenticated_user>"
     "company_id": "<company_id_of_authorized_user>",
     "data_type":"<get_from_the_login_api>",
-    "content" : "content from selected template",
-    "page": "page from selected template",
+    "page": "<template["page"]> of chosen template",
+    "content": "<template["content"]> of chosen template"
 
 }
 ```

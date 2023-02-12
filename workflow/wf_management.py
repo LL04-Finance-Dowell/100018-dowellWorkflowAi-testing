@@ -10,8 +10,25 @@ from database.mongo_db_connection import (
 )
 from document.algolia import save_to_algolia
 
-def get_step(id, step_name):
-    data = get_wf_object(id)["workflows"]["steps"]
+@api_view(["POST"])
+def get_workflows(request):
+    workflow_list = get_wf_list(request.data["company_id"])
+    if not workflow_list:
+        return Response({"workflows": []}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    if len(workflow_list) > 0:
+        return Response(
+            {"workflows": workflow_list},
+            status=status.HTTP_200_OK,
+        )
+    return Response(
+        {"workflows": []},
+        status=status.HTTP_200_OK,
+    )
+
+
+def get_step(sid, step_name):
+    data = get_wf_object(sid)["workflows"]["steps"]
     # the_step=None
     for step in data:
         if step_name == step["step_name"]:
@@ -53,7 +70,7 @@ def create_workflow(request):  # Document Creation.
                     },
                     status=status.HTTP_201_CREATED,
                 )
-            except:
+            except RuntimeError:
                 return Response(
                     {"workflow": [], "message": "Failed to Save Workflow"},
                     status=status.HTTP_200_OK,
@@ -76,13 +93,6 @@ def update_workflow(request):  # Document Creation.
             "data_type": form["data_type"],
             "steps": form["steps"],
         }
-        # for step in form["steps"]:
-        #     workflow["steps"].append(
-        #         {
-        #             "step_name": step["step_name"],
-        #             "role": step["role"],
-        #         }
-        #     )
         old_workflow = get_wf_object(form["workflow_id"])
         old_workflow["workflows"]["data_type"] = "Archive Data"
 
@@ -101,7 +111,7 @@ def update_workflow(request):  # Document Creation.
                     {"workflow": get_wf_object(nw_wf["inserted_id"])},
                     status=status.HTTP_201_CREATED,
                 )
-            except:
+            except RuntimeError:
                 return Response(
                     {"workflow": [], "message": "Failed to Update Workflow"},
                     status=status.HTTP_200_OK,
@@ -119,16 +129,10 @@ def workflow_detail(request):  # Single document
             status=status.HTTP_200_OK,
         )
 
-    try:
-        return Response(
-            {"workflow": data},
-            status=status.HTTP_201_CREATED,
-        )
-    except:
-        return Response(
-            {"workflow": [], "message": "Failed to get response"},
-            status=status.HTTP_200_OK,
-        )
+    return Response(
+        {"workflow": data},
+        status=status.HTTP_201_CREATED,
+    )
 
 
 # return Response(
@@ -169,25 +173,8 @@ def saved_workflows(request):
             {"workflows": get_wf_list(request.data["company_id"])},
             status=status.HTTP_200_OK,
         )
-    except:
+    except RuntimeError:
         return Response(
             {"workflows": [], "title": "No Workflow Found"},
             status=status.HTTP_200_OK,
         )
-
-
-@api_view(["POST"])
-def get_workflows(request):  # List of Created Templates.
-    workflow_list = get_wf_list(request.data["company_id"])
-    if not workflow_list:
-        return Response({"workflows": []}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-    if len(workflow_list) > 0:
-        return Response(
-            {"workflows": workflow_list},
-            status=status.HTTP_200_OK,
-        )
-    return Response(
-        {"workflows": []},
-        status=status.HTTP_200_OK,
-    )

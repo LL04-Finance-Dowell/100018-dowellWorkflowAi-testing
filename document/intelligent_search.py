@@ -52,7 +52,7 @@ def search(request):
     return Response(
         {
             "search_keyword": request.data["search"],
-            "search_result": get_algolia_data(request.data["search"]),
+            "search_result": get_algolia_data(request.data["search"],request.data["company_id"]),
         },
         status=status.HTTP_200_OK,
     )

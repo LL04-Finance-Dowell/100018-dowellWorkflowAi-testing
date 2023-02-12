@@ -16,12 +16,12 @@ editorApi = "https://100058.pythonanywhere.com/api/generate-editor-link/"
 @api_view(["POST"])
 def get_templates(request):  # List of Created Templates.
 
-    template_list = get_template_list(request.data["company_id"])
+    templates = get_template_list(request.data["company_id"])
 
-    if not template_list:
+    if not templates:
         return Response({"templates": []}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-    if len(template_list) > 0:
+    if len(templates) > 0:
         return Response(
             {"templates": template_list},
             status=status.HTTP_200_OK,
@@ -71,7 +71,7 @@ def create_template(request):
                 editorApi,
                 data=json.dumps(payload),
             )
-        except:
+        except ConnectionError:
             return Response(
                 {"message": "Template Creation Failed"},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
@@ -116,7 +116,7 @@ def template_detail(request):
             editorApi,
             data=json.dumps(payload),
         )
-    except:
+    except ConnectionError:
         return Response(
             {"message": "Failed to go to editor."},
             status=status.HTTP_500_INTERNAL_SERVER_ERROR,
@@ -142,7 +142,7 @@ def approve(request):
 
 @api_view(["GET", "POST"])
 def approved(request):
-    template_list = get_template_list(company_id=request.data["company_id"])
+    templates = get_template_list(company_id=request.data["company_id"])
     if not template_list:
         return Response(
             {"message": "Could not fetch your approved templates at this time"},

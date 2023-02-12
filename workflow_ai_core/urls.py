@@ -14,6 +14,8 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.conf import settings
+
+# from django.conf.urls import url
 from django.conf.urls.static import static
 from django.urls import include, path, re_path
 from rest_framework import permissions
@@ -67,6 +69,9 @@ from workflow.wf_ai_setting import (
     update_WFAI_setting,
 )
 from document.count_all import count_objects
+
+from workflow_processing.process_v2 import document_processing, verification, wf_processes
+
 schema_view = get_schema_view(
     openapi.Info(
         title="WorkflowAI",
@@ -81,6 +86,24 @@ schema_view = get_schema_view(
 )
 
 urlpatterns = [
+    # api doc
+    re_path(
+        r"^swagger(?P<format>\.json|\.yaml)$",
+        schema_view.without_ui(cache_timeout=0),
+        name="schema-json",
+    ),
+    re_path(
+        r"^swagger/$",
+        schema_view.with_ui("swagger", cache_timeout=0),
+        name="schema-swagger-ui",
+    ),
+    re_path(
+        r"^redoc/$", schema_view.with_ui("redoc", cache_timeout=0), name="schema-redoc"
+    ),
+    # v2 processing.
+    path("v0.2/process/start/", document_processing),
+    path("v0.2/process/verify/", verification),
+    path("v0.2/wf-processes/", wf_processes),
     # processing.
     path("v0.1/processes/", processes),
     path("v0.1/process/start/", save_and_start_processing),
@@ -91,11 +114,9 @@ urlpatterns = [
     path("v0.1/process/verification/", register_finalize_or_reject),
     # workflow
     path("v0.1/workflows/", create_workflow, name="workflows"),
+    path("v0.1/workflows/all/", get_workflows, name="all_workflows"),
     path("v0.1/workflows/detail/", workflow_detail, name="workflow_detail"),
-    # path("v0.1/workflows/mine/", my_workflows, name="my_workflows"),
     path("v0.1/workflows/update/", update_workflow, name="update_workflow"),
-    # path("v0.1/workflows/saved/", saved_workflows, name="saved_workflow"),
-    path("v0.1/workflows/all/", get_workflows,name="all_workflows"),
     # wf_settings
     path("v0.1/workflow_ai_setting/", create_workflow_setting, name="save_wf_setting"),
     path("v0.1/get_WFAI_setting/", get_wf_ai_setting, name="get_wf_ai_setting"),
@@ -104,16 +125,25 @@ urlpatterns = [
     path("v0.1/search/", search),
     # templates
     path("v0.1/templates/", create_template),
+    path("v0.1/templates/all/", get_templates, name="all_templates"),
     path("v0.1/templates/detail/", template_detail),
     path("v0.1/templates/approve/", approve),
-    # path("v0.1/templates/approved/", approved),
-    # path("v0.1/templates/pending/", not_approved_templates),
-    # path("v0.1/templates/saved/", org_templates),
-    # path("v0.1/templates/mine/", template_list),
-    path("v0.1/templates/all/", get_templates,name="all_templates"),
-
     # documents
     path("v0.1/documents/", create_document, name="documents"),
+    path("v0.1/documents/detail/", document_detail, name="document"),
+    path(
+        "v0.1/documents/document_content/",
+        get_document_content,
+        name="document_content",
+    ),
+    path("v0.1/documents/all/", get_documents, name="all_documents"),
+    path(
+        "v0.1/object_count/",
+        count_objects,
+        name="object_count",
+    ),
+
+    #----------------- @deprecated --------------
     # path(
     #     "v0.1/documents/to-sign/",
     #     documents_to_be_signed,
@@ -134,32 +164,15 @@ urlpatterns = [
     #     draft_documents,
     #     name="drafted_documents",
     # ),
-    path("v0.1/documents/detail/", document_detail, name="document"),
-    path(
-        "v0.1/documents/document_content/",
-        get_document_content,
-        name="document_content",
-    ),
-    path("v0.1/documents/all/", get_documents,name="all_documents"),
-    path(
-        "v0.1/object_count/",
-        count_objects,
-        name="object_count",
-    ),
-    # api doc
-    re_path(
-        r"^swagger(?P<format>\.json|\.yaml)$",
-        schema_view.without_ui(cache_timeout=0),
-        name="schema-json",
-    ),
-    re_path(
-        r"^swagger/$",
-        schema_view.with_ui("swagger", cache_timeout=0),
-        name="schema-swagger-ui",
-    ),
-    re_path(
-        r"^redoc/$", schema_view.with_ui("redoc", cache_timeout=0), name="schema-redoc"
-    ),
+    # path("v0.1/workflows/mine/", my_workflows, name="my_workflows"),
+    # path("v0.1/workflows/saved/", saved_workflows, name="saved_workflow"),
+    # path("v0.1/templates/approved/", approved),
+    # path("v0.1/templates/pending/", not_approved_templates),
+    # path("v0.1/templates/saved/", org_templates),
+    # path("v0.1/templates/mine/", template_list),
+
+
+
 ]
 if settings.DEBUG:
     urlpatterns = urlpatterns + static(

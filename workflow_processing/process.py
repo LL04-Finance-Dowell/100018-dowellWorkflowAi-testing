@@ -1,15 +1,3 @@
-import jwt
-import json
-import uuid
-import time
-import datetime
-import requests
-
-# import the logging library
-import logging
-
-# Get an instance of a logger
-logger = logging.getLogger(__name__)
 from threading import Thread
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
@@ -23,6 +11,18 @@ from database.mongo_db_connection import (
     get_process_list,
     update_wf_process,
 )
+import jwt
+import json
+import uuid
+import time
+import datetime
+import requests
+
+# import the logging library
+import logging
+
+# Get an instance of a logger
+logger = logging.getLogger(__name__)
 
 """
 Background tasking using threading
@@ -45,32 +45,28 @@ def task(func, data):
     return wrapper
 
 
-"""
-complete document and mark as complete
-"""
-
-
 def processing_complete(process):
+    """
+    complete document and mark as complete
+    """
     # check if all process steps are marked finalized
     complete = True
     for step in process["process_steps"]:
-        if not "finalized" in step:
+        if "finalized" not in step:
             complete = False
     return complete
 
 
-"""
-assert completion of a given step finalize/reject
-"""
-# TODO: Check for complete checks and mark document as state = "completed"
-
-
 @api_view(["POST"])
 def register_finalize_or_reject(request):
+    """
+    assert completion of a given step finalize/reject
+    """
     # get process
     try:
         process = get_process_object(workflow_process_id=request.data["process_id"])
-    except:
+    except ConnectionError as e:
+        print(e)
         return Response(
             "Failed to get process, Retry!",
             status=status.HTTP_500_INTERNAL_SERVER_ERROR,
@@ -81,9 +77,10 @@ def register_finalize_or_reject(request):
             "Document processing is already complete", status=status.HTTP_200_OK
         )
     # check the action
+    action = None
     for step in process["process_steps"]:
         # find matching step for auth member
-        if step["member"] == request.data["authorized"]:
+        if step["member"] == request.data["authorized"] and step["finalized"] is not True:
             if request.data["action"] == "finalize":
                 step.update({"finalized": True})
                 action = "finalized"
@@ -104,78 +101,66 @@ def register_finalize_or_reject(request):
     # if process is now complete change document state to `completed`
     if processing_complete(process=process):
         doc_data = {
-        "document_id": process["document_id"],
-        "process_id": process["process_id"],
-        "state": "completed"
+            "document_id": process["document_id"],
+            "process_id": process["process_id"],
+            "state": "completed"
         }
         dt = Thread(
             target=document_update,
             args=(doc_data,),
         )
         dt.start()
-    # response = json.loads(
-    #     update_wf_process(
-    #         process_id=request.data["process_id"], steps=process["process_steps"]
-    #     )
-    # )
-    # if response["isSuccess"]:
     return Response(f"Step marked as {action}", status=status.HTTP_201_CREATED)
-    # return Response("error, retry!", status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-
-"""
-process update task
-"""
 
 
 def process_update(data):
+    """
+    process update task
+    """
+
     update_wf_process(process_id=data["process_id"], steps=data["process_steps"])
     print("Thread: process update! \n")
 
 
-"""
-fetches workflow process `I` created.
-"""
-
-
 @api_view(["POST"])
 def processes(request):
+    """
+    fetches workflow process `I` created.
+    """
+
     print("fetching processes..... \n")
     try:
-        processes = get_process_list(request.data["company_id"])
-    except:
+        process_list = get_process_list(request.data["company_id"])
+    except ConnectionError:
         return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-    if len(processes) > 0:
-        return Response(processes, status=status.HTTP_200_OK)
+    if len(process_list) > 0:
+        return Response(process_list, status=status.HTTP_200_OK)
     return Response([], status=status.HTTP_200_OK)
-
-
-"""
-get process by process id
-"""
 
 
 @api_view(["POST"])
 def a_single_process(request):
+    """
+    get process by process id
+    """
+
     try:
         process = get_process_object(request.data["process_id"])
-    except:
+    except ConnectionError:
         return Response(
             "Failed to get a process \n", status=status.HTTP_500_INTERNAL_SERVER_ERROR
         )
     return Response(process, status=status.HTTP_200_OK)
 
 
-"""
-get a link process for person having notifications
-"""
-
-
 @api_view(["POST"])
 def get_process_link(request):
+    """
+    get a link process for person having notifications
+    """
+
     # get links info
     links_info = get_links_object_by_process_id(request.data["process_id"])
-    print(links_info)
     user = request.data["user_name"]
     if not links_info["links"]:
         return Response(
@@ -192,16 +177,15 @@ def get_process_link(request):
     )
 
 
-"""
-GET-verification links for a process
-"""
-
-
 @api_view(["POST"])
 def fetch_process_links(request):
+    """
+    GET-verification links for a process
+    """
+
     try:
         process_info = get_links_object_by_process_id(request.data["process_id"])
-    except:
+    except ConnectionError:
         return Response(
             "Could not fetch process links",
             status=status.HTTP_500_INTERNAL_SERVER_ERROR,
@@ -211,33 +195,32 @@ def fetch_process_links(request):
     return Response("No links found for this process", status=status.HTTP_404_NOT_FOUND)
 
 
-"""
-API - process verification to peform check and issue access
-"""
-
-
 @api_view(["POST"])
 def verify_process(request):
+    """
+    API - process verification to perform check and issue access
+    """
+
     print("verification started...... \n")
     # decode token
     decoded = jwt.decode(request.data["token"], "secret", algorithms="HS256")
     # find process
     try:
         process = get_process_object(workflow_process_id=decoded["process_id"])
-    except:
+    except ConnectionError:
         return Response(
             "something went wrong when verifying process",
             status=status.HTTP_500_INTERNAL_SERVER_ERROR,
         )
-    map = None
+    doc_map = None
     right = None
     user = None
     match = False
     for step in process["process_steps"]:
         # user check.
         if (
-            step["member"] == request.data["user_name"]
-            and step.get("member_portfolio") == request.data["portfolio"]
+                step["member"] == request.data["user_name"]
+                and step.get("member_portfolio") == request.data["portfolio"]
         ):
             print("Started the checks.... \n")
             # Display check
@@ -264,7 +247,7 @@ def verify_process(request):
             # Skip check
 
             # Doc Map & Rights & match
-            map = step.get("document_map")
+            doc_map = step.get("document_map")
             right = step.get("rights")
             user = step.get("member")
             match = True
@@ -277,7 +260,7 @@ def verify_process(request):
     # generate document link.
     doc_link = generate_link(
         document_id=process["document_id"],
-        doc_map=map,
+        doc_map=doc_map,
         doc_rights=right,
         user=user,
         process_id=decoded["process_id"],
@@ -364,13 +347,11 @@ def generate_link(document_id, doc_map, doc_rights, user, process_id):
     return link
 
 
-"""
-API-save and start processing.........
-"""
-
-
 @api_view(["POST"])
 def save_and_start_processing(request):
+    """
+    API-save and start processing.........
+    """
     process = new_process(
         workflows=request.data["workflows"],
         document_id=request.data["document_id"],
@@ -393,40 +374,20 @@ def save_and_start_processing(request):
         args=(doc_data,),
     )
     t.start()
-    # res = json.loads(
-    #     update_document(
-    #         document_id=request.data["document_id"],
-    #         workflow_process_id=process["process_id"],
-    #     )
-    # )
     if request.data["action"] == "save_and_start_processing":
         # fire up the processing action
         return start_processing(
             process=process,
-            # document_id=request.data["document_id"],
-            # choice=request.data["criteria"],
         )
     if request.data["action"] == "save_workflow_to_document":
         return Response(status=status.HTTP_201_CREATED)
-    # if res["isSuccess"]:
-    #     if request.data["action"] == "save_and_start_processing":
-    #         # fire up the processing action
-    #         return start_processing(
-    #             process=process,
-    #             document_id=request.data["document_id"],
-    #             # choice=request.data["criteria"],
-    #         )
-    #     if request.data["action"] == "save_workflow_to_document":
-    #         return Response(status=status.HTTP_201_CREATED)
     return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
-"""
-document update
-"""
-
-
 def document_update(doc_data):
+    """
+    document update
+    """
     update_document(
         document_id=doc_data["document_id"],
         workflow_process_id=doc_data["process_id"],
@@ -436,16 +397,13 @@ def document_update(doc_data):
     return
 
 
-"""
-Create Process.
-"""
-
-
 def new_process(
-    workflows, created_by, company_id, data_type, document_id, process_choice
+        workflows, created_by, company_id, data_type, document_id, process_choice
 ):
+    """
+    Create Process.
+    """
     print("creating process.......... \n")
-    process_title = ""
     process_steps = [
         step for workflow in workflows for step in workflow["workflows"]["steps"]
     ]
@@ -478,12 +436,11 @@ def new_process(
         return process
 
 
-"""
- Begin processing the Workflow.
-"""
-
-
 def start_processing(process):
+    """
+     Begin processing the Workflow.
+    """
+
     print("started processing......")
     print("generating links.............\n")
     links = [
@@ -507,13 +464,7 @@ def start_processing(process):
     }
     t = Thread(target=save_links, args=(data,))
     t.start()
-    # save_process_links(
-    #     links=links,
-    #     process_id=process["process_id"],
-    #     document_id=document_id,
-    #     processing_choice=process["process_choice"],
-    #     process_title=process["process_title"],
-    # )
+
     if len(links) > 0:
         return Response(
             links,
@@ -535,12 +486,11 @@ def save_links(data):
     return
 
 
-"""
- application link + token generation
-"""
-
-
 def verification_link(process_id, document_id):
+    """
+     application link + token generation
+    """
+
     # Token generation.
     print("creating verification links........... \n")
     # create a jwt token

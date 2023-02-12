@@ -19,19 +19,26 @@ def save_to_algolia(data):
     # get_search_result = get_wf_list(company_id)+get_document_list(company_id)+get_template_list(company_id)
     index.save_object(data,{'autoGenerateObjectIDIfNotExist': True}).wait()
 
-def get_algolia_data(term):
+def get_algolia_data(term,comp_id):
     # index.clear_objects()
     # get_search_result = get_wf_list("6385c0f38eca0fb652c94585")+get_document_list("6385c0f38eca0fb652c94585")+get_template_list("6385c0f38eca0fb652c94585")
     # save_to_algolia("6385c0f38eca0fb652c94585")            
     # # # # # print(get_search_result)
     # index.save_objects(get_search_result,{'autoGenerateObjectIDIfNotExist': True}).wait()
     # # # ,{'searchableAttributes': [ 'document_name', 'template_name',"workflow_title"]}
+    index.set_settings({
+    'attributesForFaceting': [
+        'company_id' # or 'filterOnly(brand)' for filtering purposes only
+    ]
+})
+    filters='company_id:'+ comp_id
 
-    
 
     results = index.search(term,{
                  # 'restrictSearchableAttributes':  [ 'document_name', 'template_name',"workflow_title"],
-                 'attributesToHighlight': []
+
+                'attributesToHighlight': [],
+                'filters': filters
                  })
     return results['hits']
 
