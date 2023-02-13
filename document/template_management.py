@@ -23,7 +23,7 @@ def get_templates(request):  # List of Created Templates.
 
     if len(templates) > 0:
         return Response(
-            {"templates": template_list},
+            {"templates": templates},
             status=status.HTTP_200_OK,
         )
     return Response(
