@@ -41,7 +41,17 @@ const CreateWorkflows = ({ handleToggleOverlay }) => {
 
   const { currentUser } = useUserContext();
 
-  const { register, handleSubmit, reset, setValue } = useForm();
+  const { register, handleSubmit, reset, setValue, watch } = useForm();
+  const { step_name, role } = watch();
+  const [ submitBtnDisabled, setSubmitBtnDisabled ] = useState(false);
+
+  useEffect(() => {
+    
+    if ((step_name) && (role)) return setSubmitBtnDisabled(true);
+
+    setSubmitBtnDisabled(false);
+
+  }, [step_name, role])
 
   const onSubmit = (data) => {
     console.log(data);
@@ -210,6 +220,7 @@ const CreateWorkflows = ({ handleToggleOverlay }) => {
               status={currentWorkflow ? updateWorkflowStatus : status}
               type="button"
               className={styles.add__button}
+              disabled={submitBtnDisabled}
             >
               {currentWorkflow ? "update" : "save"}
             </SubmitButton>
