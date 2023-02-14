@@ -3,6 +3,7 @@
   min-height: 85px;
   width: min(72.768vw, 835px) !important;
   cursor: pointer;
+  z-index: 100001;
 }
 
 .box {

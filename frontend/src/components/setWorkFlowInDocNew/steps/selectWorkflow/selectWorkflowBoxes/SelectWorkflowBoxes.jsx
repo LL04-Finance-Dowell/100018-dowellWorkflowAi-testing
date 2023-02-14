@@ -26,6 +26,7 @@ import {
   allWorkflows,
   savedWorkflows,
 } from "../../../../../features/workflow/asyncTHunks";
+import { toast } from "react-toastify";
 
 const InfoBoxes = () => {
   const { register, watch } = useForm();
@@ -190,7 +191,8 @@ const InfoBoxes = () => {
         dispatch(setSelectedWorkflowsToDoc(selectedWorkFlow));
       }
     } else {
-      alert("u have to pick document first");
+      toast.info("Please pick a document first.")
+      // alert("u have to pick document first");
     }
   };
 
@@ -275,8 +277,11 @@ const InfoBoxes = () => {
                                     padding: "2% 3%",
                                     borderRadius: "5px",
                                     width: "100%",
+                                    cursor: "pointer",
                                   }
-                                : {}
+                                : {
+                                    cursor: "pointer",
+                                  }
                               : {}
                           }
                         >

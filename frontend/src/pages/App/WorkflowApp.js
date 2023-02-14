@@ -153,6 +153,7 @@ const WorkflowApp = () => {
           <div className={styles.dowell__Advert__Container}>
             {introVideos.map((item) => (
               <div key={item.id} className={styles.skeleton__box}>
+                <span className={styles.iframe__Title}><b>{item.title}</b></span>
                 <Iframe
                   Skeleton={Skeleton}
                   src={item.src}
@@ -175,10 +176,12 @@ export default WorkflowApp;
 export const introVideos = [
   {
     id: uuidv4(),
+    title: "capabilities",
     src: "https://www.youtube.com/embed/videoseries?list=PL6rKBSwpVCYVzo4-0ZhuMwoY0FOZdqwP-",
   },
   {
     id: uuidv4(),
+    title: "examples",
     src: "https://www.youtube.com/embed/videoseries?list=PL6rKBSwpVCYXUW09QN3xfGRWeWMNschP9",
   },
 ];

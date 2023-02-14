@@ -5,7 +5,7 @@ import Contents from "../../contents/Contents";
 import { v4 as uuidv4 } from "uuid";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { setDocCurrentWorkflow } from "../../../../features/app/appSlice";
+import { setDocCurrentWorkflow, setProcessSteps, updateSingleProcessStep } from "../../../../features/app/appSlice";
 import Collapse from "../../../../layouts/collapse/Collapse";
 import { FaArrowDown, FaRegistered } from "react-icons/fa";
 import { FaArrowUp } from "react-icons/fa";
@@ -33,6 +33,8 @@ const ConnectWorkFlowToDoc = () => {
   console.log("wftooooooooooo", wfToDocument);
 
   const [currentSteps, setCurrentSteps] = useState([]);
+  const [ enabledSteps, setEnabledSteps ] = useState([]);
+  const [showSteps, setShowSteps] = useState([]);
 
   useEffect(() => {
     setCurrentSteps(docCurrentWorkflow?.workflows?.steps);
@@ -46,6 +48,42 @@ const ConnectWorkFlowToDoc = () => {
     setCurrentSteps(
       docCurrentWorkflow ? docCurrentWorkflow?.workflows?.steps : []
     );
+
+    let stepsEnabled = docCurrentWorkflow ? 
+      docCurrentWorkflow?.workflows?.steps.map((step, index) => {
+        return {
+          _id: step._id,
+          index: index,
+          enableStep: false,
+        };
+      }) : 
+    [];
+
+    if (stepsEnabled.length > 0) stepsEnabled[0].enableStep = true;
+    setEnabledSteps(stepsEnabled)
+
+    let singleShowStepArr = docCurrentWorkflow ? 
+      docCurrentWorkflow?.workflows?.steps.map((step) => {
+        return {
+          _id: step._id,
+          showStep: true,
+        };
+      }) : 
+    [];
+    setShowSteps(singleShowStepArr);
+
+    if (!docCurrentWorkflow) return;
+
+    const [stepsForWorkflow, stepsObj] = [
+      [],
+      {
+        workflow: docCurrentWorkflow?._id,
+        steps: docCurrentWorkflow?.workflows?.steps,
+      },
+    ];
+    stepsForWorkflow.push(stepsObj);
+
+    dispatch(setProcessSteps(stepsForWorkflow));
   }, [docCurrentWorkflow]);
 
   const handleToggleContent = (id) => {
@@ -57,6 +95,75 @@ const ConnectWorkFlowToDoc = () => {
   };
 
   console.log("currrrr", contentOfDocument);
+
+  const handleSkipSelection = (e, showStepIdToUpdate, workflowId, stepIndexToUpdate) => {
+    let currentShowSteps = showSteps.slice();
+    let foundStepIndex = currentShowSteps.findIndex((step) => step._id === showStepIdToUpdate);
+
+    if (foundStepIndex === -1) return;
+
+    if (e.target.checked) {
+      currentShowSteps[foundStepIndex].showStep = false;
+      dispatch(
+        updateSingleProcessStep({
+          stepSkipped: true,
+          workflow: workflowId,
+          indexToUpdate: stepIndexToUpdate,
+          stepPublicMembers: [],
+          stepTeamMembers: [],
+          stepUserMembers: [],
+          stepDisplay: "",
+        })
+      );
+      return setShowSteps(currentShowSteps);
+    }
+
+    currentShowSteps[foundStepIndex].showStep = true;
+    dispatch(
+      updateSingleProcessStep({
+        stepSkipped: false,
+        workflow: workflowId,
+        indexToUpdate: stepIndexToUpdate,
+      })
+    );
+    setShowSteps(currentShowSteps);
+  };
+
+  const handlePermitInternalSelection = (e, workflowId, stepIndexToUpdate) => {
+    if (e.target.checked) {
+      dispatch(
+        updateSingleProcessStep({
+          permitInternalWorkflow: true,
+          workflow: workflowId,
+          indexToUpdate: stepIndexToUpdate,
+        })
+      );
+      return
+    }
+    dispatch(
+      updateSingleProcessStep({
+        permitInternalWorkflow: false,
+        workflow: workflowId,
+        indexToUpdate: stepIndexToUpdate,
+      })
+    );
+  }
+
+  const handleResetStepAndSuccessors = (indexPassed) => {
+    console.log("resetting...")
+  }
+
+  const handleSetStepAndProceedToNext = (indexPassed) => {
+    const currentEnabledSteps = enabledSteps.slice();
+    const foundCurrentStepIndex = currentEnabledSteps.findIndex(step => step.index === indexPassed)
+
+    if (foundCurrentStepIndex === -1) return
+
+    if (currentEnabledSteps[foundCurrentStepIndex + 1]) {
+      currentEnabledSteps[foundCurrentStepIndex + 1].enableStep = true;
+      setEnabledSteps(currentEnabledSteps);
+    }
+  }
 
   return (
     <>
@@ -76,7 +183,18 @@ const ConnectWorkFlowToDoc = () => {
               <div className={styles.step__container}>
                 {currentSteps &&
                   currentSteps?.map((item, index) => (
-                    <div className={styles.step__box}>
+                    <div 
+                      className={styles.step__box} 
+                      style={{ 
+                        pointerEvents: enabledSteps.find(
+                          step => 
+                            step.index === index && 
+                            step._id === item._id && 
+                            step.enableStep === true
+                        ) ? 
+                        "" : 
+                        "none"
+                      }}>
                       <div>
                         <div
                           onClick={() => setContentToggle((prev) => !prev)}
@@ -96,6 +214,14 @@ const ConnectWorkFlowToDoc = () => {
                             {...register("skip")}
                             id="skip"
                             type="checkbox"
+                            onChange={(e) =>
+                              handleSkipSelection(
+                                e,
+                                item._id,
+                                docCurrentWorkflow._id,
+                                index
+                              )
+                            }
                           />
                           <label htmlFor="skip"> Skip this Step</label>
                         </div>
@@ -104,6 +230,13 @@ const ConnectWorkFlowToDoc = () => {
                             {...register("permit")}
                             id="permit"
                             type="checkbox"
+                            onChange={(e) => {
+                              handlePermitInternalSelection(
+                                e,
+                                docCurrentWorkflow._id,
+                                index
+                              )
+                            }}
                           />
                           <label htmlFor="permit">
                             Permit internal workflow in this Step
@@ -111,18 +244,18 @@ const ConnectWorkFlowToDoc = () => {
                         </div>
                       </div>
                       <div className={styles.diveder}></div>
-                      <CopiesOfDoc />
+                      <CopiesOfDoc currentStepIndex={index} />
                       <div className={styles.diveder}></div>
-                      <AssignDocumentMap />
+                      <AssignDocumentMap currentStepIndex={index} />
                       <div className={styles.diveder}></div>
-                      <SelectMembersToAssign />
+                      <SelectMembersToAssign currentStepIndex={index} />
                       <div className={styles.diveder}></div>
-                      <AssignCollapse />
+                      <AssignCollapse currentStepIndex={index} />
                       <div className={styles.container__button__box}>
-                        <PrimaryButton hoverBg="error">
+                        <PrimaryButton hoverBg="error" onClick={() => handleResetStepAndSuccessors(index)}>
                           Reset this step & its successors
                         </PrimaryButton>
-                        <PrimaryButton hoverBg="success">
+                        <PrimaryButton hoverBg="success" onClick={() => handleSetStepAndProceedToNext(index)}>
                           Set this step & proceed to next
                         </PrimaryButton>
                       </div>

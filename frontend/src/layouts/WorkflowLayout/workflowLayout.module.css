@@ -7,7 +7,7 @@
 
 .content__box {
   position: relative;
-  width: min(100%, 1140px);
+  width: min(100%, 89vw);
   display: flex;
   justify-content: space-between;
 }

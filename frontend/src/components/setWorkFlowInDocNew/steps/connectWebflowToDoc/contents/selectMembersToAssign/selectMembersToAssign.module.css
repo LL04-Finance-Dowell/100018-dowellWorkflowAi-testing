@@ -45,8 +45,44 @@
   border: 1px solid var(--e-global-color-text);
   border-radius: 5px;
   padding: 10px;
+  min-width: 100%;
+  width: max-content;
 }
 
 .open__select:focus-visible {
   border: 2px solid black;
+}
+
+.open__select option {
+  margin-bottom: 2%;
+  cursor: pointer;
+  width: max-content;
+  padding: 1% 2%;
+}
+
+.open__select option:hover {
+  background-color: var(--e-global-color-2f1e1e4);
+  color: var(--e-global-color-cd6593d);
+}
+
+.select__Members__Wrapper {
+  border: 1px solid var(--e-global-color-text);
+  overflow-x: auto;
+  overflow-y: hidden;
+  width: 100%;
+}
+
+.select__Members__Wrapper .open__select {
+  border: none;
+}
+
+.select__Members__Wrapper .user__Selected,
+.team__Selected {
+  background-color: var(--e-global-color-2f1e1e4);
+  color: var(--e-global-color-cd6593d);
+}
+
+.no__Team__Selected__Text {
+  color: var(--e-global-color-1342d1f);
+  font-size: 0.8rem;
 }

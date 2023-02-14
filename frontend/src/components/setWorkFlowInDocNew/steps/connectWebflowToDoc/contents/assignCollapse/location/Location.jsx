@@ -1,52 +1,163 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import parentStyles from "../assignCollapse.module.css";
 import { v4 as uuidv4 } from "uuid";
 import { useForm } from "react-hook-form";
 import Radio from "../../../../../radio/Radio";
 import Select from "../../../../../select/Select";
+import { useDispatch, useSelector } from "react-redux";
+import { continentsData } from "../../../../../../../utils/continentsData";
+import { getRegionsInCountry } from "../../../../../../../services/locationServices";
+import ProgressBar from "../../../../../../progressBar/ProgressBar";
+import { updateSingleProcessStep } from "../../../../../../../features/app/appSlice";
 
-const Location = () => {
-  const { register } = useForm();
+const Location = ({ currentStepIndex }) => {
+  const { 
+    register,
+    handleSubmit,
+    formState: { isSubmitted },
+    watch
+  } = useForm();
+  const { locationChoice, continent, country } = watch();
+  const dispatch = useDispatch();
+  const [ showLocationDropdowns, setShowLocationDropdowns ] = useState(false);
+  const { docCurrentWorkflow, continents, continentsLoaded } = useSelector((state) => state.app);
+  const { userDetail, session_id } = useSelector(state => state.auth);
+  const [ countries, setCountries ] = useState([]);
+  const [ regionsLoading, setRegionsLoading ] = useState(false);
+  const [ regions, setRegions ] = useState([])
+
+  const handleSetLocation = (data) => {
+    if (data.locationChoice === "selectLocation") {
+      dispatch(
+        updateSingleProcessStep({
+          stepLocation: "select",
+          stepContinent: data.continent,
+          stepCountry: data.country,
+          stepCity: data.displayDocitycument,
+          workflow: docCurrentWorkflow._id,
+          indexToUpdate: currentStepIndex,
+        })
+      )
+      return
+    }
+    dispatch(
+      updateSingleProcessStep({
+        stepLocation: "any",
+        workflow: docCurrentWorkflow._id,
+        indexToUpdate: currentStepIndex,
+      })
+    )
+  }
+
+  useEffect(() => {
+
+    if (locationChoice && locationChoice === "selectLocation") return setShowLocationDropdowns(true);
+
+    setShowLocationDropdowns(false)
+
+  }, [locationChoice])
+
+  useEffect(() => {
+
+    if (!continent || !continentsData[continent]) {
+      setCountries([])
+      setRegions([])
+      return
+    }
+
+    setCountries(continentsData[continent].map(country => {
+      
+      const countryOption = {}
+      countryOption.id = crypto.randomUUID();
+      countryOption.option = country;
+      return countryOption
+
+    }))
+    setRegions([])
+
+  }, [continent])
+
+  useEffect(() => {
+    
+    if (!country || !continent) return
+
+    setRegionsLoading(true);
+
+    getRegionsInCountry(userDetail?.userinfo?.username, session_id, country).then(res => {
+      const formattedData = res.data.map(item => {
+        const regionOption = {...item}
+        regionOption.option = regionOption.name
+        return regionOption
+      });
+      setRegions(formattedData);
+      setRegionsLoading(false);
+    }).catch(err => {
+      console.log("Failed to fetch regions in ",country);
+      setRegionsLoading(false);
+    })
+
+  }, [continent, country])
 
   return (
-    <form className={parentStyles.content__box}>
+    <>
+    <form className={parentStyles.content__box} onSubmit={handleSubmit(handleSetLocation)}>
       <div>
-        <Radio register={register} value="anyLocation" name="location">
+        <Radio register={register} value="anyLocation" name="locationChoice">
           Any Location
         </Radio>
-        <Radio register={register} value="selectLocation" name="location">
+        <Radio register={register} value="selectLocation" name="locationChoice">
           Select Location
         </Radio>
       </div>
-      <div>
-        <Select options={continents} register={register} name="continent" />
-        <Select options={countries} register={register} name="country" />
-        <Select
-          options={cities}
-          register={register}
-          name="displayDocitycument"
-        />
-      </div>
+      {
+        showLocationDropdowns ?
+        <div>
+          { !continentsLoaded ? <ProgressBar durationInMS={6000} /> : <Select options={continents} register={register} name="continent" takeOptionValue={true} /> }
+          { 
+            continent ? 
+            countries.length < 1 ? <span style={{ fontSize: "0.8rem" }}>No countries found for {continent}</span> :
+            <Select options={countries} register={register} name="country" takeOptionValue={true} /> :
+            <></>
+          }
+          { 
+            (!continent || !country) ? <></> :
+            regionsLoading ? <div>
+              <span style={{ fontSize: "0.8rem" }}>Regions in {country} loading...</span>
+              <ProgressBar durationInMS={6000} />
+            </div> :
+            <Select
+              options={regions}
+              register={register}
+              name="displayDocitycument"
+              takeOptionValue={true}
+            /> 
+          }
+        </div> :
+        <></>
+      }
       <button className={parentStyles.primary__button}>set location</button>
     </form>
+    { isSubmitted ? <p style={{ margin: "0", padding: "0px 20px 10px"}}>Saved</p> : <></> }
+
+    </>
   );
 };
 
 export default Location;
 
-export const continents = [
-  { id: uuidv4(), option: "asia" },
-  { id: uuidv4(), option: "africa" },
-  { id: uuidv4(), option: "europa" },
-  { id: uuidv4(), option: "america" },
-];
+// export const continents = [
+//   { id: uuidv4(), option: "asia" },
+//   { id: uuidv4(), option: "africa" },
+//   { id: uuidv4(), option: "europa" },
+//   { id: uuidv4(), option: "america" },
+// ];
 
-export const countries = [
-  { id: uuidv4(), option: "india" },
-  { id: uuidv4(), option: "kenya" },
-  { id: uuidv4(), option: "germany" },
-  { id: uuidv4(), option: "USA" },
-];
+// export const countries = [
+//   { id: uuidv4(), option: "india" },
+//   { id: uuidv4(), option: "kenya" },
+//   { id: uuidv4(), option: "germany" },
+//   { id: uuidv4(), option: "USA" },
+// ];
 
 export const cities = [
   { id: uuidv4(), option: "delhi" },

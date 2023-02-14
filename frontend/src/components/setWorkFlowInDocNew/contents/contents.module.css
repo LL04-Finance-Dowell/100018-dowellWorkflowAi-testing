@@ -60,7 +60,7 @@
   list-style: none;
   /* margin-bottom: 8px; */
   padding: 0;
-  cursor: pointer;
+  /* cursor: pointer; */
   width: fit-content;
   display: flex;
   align-items: center;
@@ -83,4 +83,8 @@
 .content__box ol li span:hover {
   color: var(--e-global-color-accent);
   text-decoration: underline;
+}
+
+.content__box li span a {
+  cursor: pointer;
 }

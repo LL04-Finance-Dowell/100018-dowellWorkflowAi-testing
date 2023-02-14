@@ -65,6 +65,10 @@ const initialState = {
   column: [],
   proccess: [],
   userDetailPosition: null,
+  teamsSelectedSelectedForProcess: [],
+  teamMembersSelectedForProcess: [],
+  userMembersSelectedForProcess: [],
+  publicMembersSelectedForProcess: [],
 };
 
 export const appSlice = createSlice({
@@ -164,6 +168,10 @@ export const appSlice = createSlice({
       state.processSteps = [];
       state.tableOfContentForStep = [];
       state.membersSetForProcess = false;
+      state.teamMembersSelectedForProcess = [];
+      state.userMembersSelectedForProcess = [];
+      state.publicMembersSelectedForProcess = [];
+      state.teamsSelectedSelectedForProcess = [];
     },
     setProcessSteps: (state, action) => {
       state.processSteps = action.payload;
@@ -213,9 +221,13 @@ export const appSlice = createSlice({
       ];
     },
     removeFromTableOfContentForStep: (state, action) => {
-      state.tableOfContentForStep = state.tableOfContentForStep.filter(
-        (content) => content._id !== action.payload
+      const updatedTableOfContents = state.tableOfContentForStep.filter(
+        (content) => {
+          if (content._id === action.payload.id && content.stepIndex === action.payload.stepIndex) return null
+          return content
+        }
       );
+      state.tableOfContentForStep = updatedTableOfContents.filter(content => content)
     },
     setNotificationsForUser: (state, action) => {
       state.notificationsForUser = action.payload;
@@ -286,6 +298,66 @@ export const appSlice = createSlice({
     setUserDetailPosition: (state, action) => {
       state.userDetailPosition = action.payload;
     },
+    setTeamsSelectedSelectedForProcess: (state, action) => {
+      state.teamsSelectedSelectedForProcess = [
+        ...state.teamsSelectedSelectedForProcess,
+        action.payload,
+      ]
+    },
+    removeFromTeamsSelectedSelectedForProcess: (state, action) => {
+      const updatedTeamsForProcess = state.teamsSelectedSelectedForProcess.filter(
+        (team) => {
+          if (team.id === action.payload.id && team.stepIndex === action.payload.stepIndex) return null
+          return team
+        }
+      );
+      state.teamsSelectedSelectedForProcess = updatedTeamsForProcess.filter(team => team);
+    },
+    setTeamMembersSelectedForProcess: (state, action) => {
+      state.teamMembersSelectedForProcess = [
+        ...state.teamMembersSelectedForProcess,
+        action.payload,
+      ];
+    },
+    removeFromTeamMembersSelectedForProcess: (state, action) => {
+      const updatedTeamMembersForProcess = state.teamMembersSelectedForProcess.filter(
+        (currentMember) => {
+          if (currentMember.member === action.payload.member && currentMember.portfolio === action.payload.portfolio && currentMember.stepIndex === action.payload.stepIndex) return null
+          return currentMember
+        }
+      );
+      state.teamMembersSelectedForProcess = updatedTeamMembersForProcess.filter(member => member)
+    },
+    setUserMembersSelectedForProcess: (state, action) => {
+      state.userMembersSelectedForProcess = [
+        ...state.userMembersSelectedForProcess,
+        action.payload,
+      ];
+    },
+    removeFromUserMembersSelectedForProcess: (state, action) => {
+      const updatedUserMembersForProcess = state.userMembersSelectedForProcess.filter(
+        (currentMember) => {
+          if (currentMember.member === action.payload.member && currentMember.portfolio === action.payload.portfolio && currentMember.stepIndex === action.payload.stepIndex) return null
+          return currentMember
+        }
+      );
+      state.userMembersSelectedForProcess = updatedUserMembersForProcess.filter(member => member)
+    },
+    setPublicMembersSelectedForProcess: (state, action) => {
+      state.publicMembersSelectedForProcess = [
+        ...state.publicMembersSelectedForProcess,
+        action.payload,
+      ];
+    },
+    removeFromPublicMembersSelectedForProcess: (state, action) => {
+      const updatedPublicMembersForProcess = state.publicMembersSelectedForProcess.filter(
+        (currentMember) => {
+          if (currentMember.member === action.payload.member && currentMember.portfolio === action.payload.portfolio && currentMember.stepIndex === action.payload.stepIndex) return null
+          return currentMember
+        }
+      );
+      state.publicMembersSelectedForProcess = updatedPublicMembersForProcess.filter(member => member)
+    },
   },
   extraReducers: (builder) => {
     //getItemsCount
@@ -338,6 +410,14 @@ export const {
   setTeamsInWorkflowAI,
   setUserDetailPosition,
   setUpdateProccessApi,
+  setTeamsSelectedSelectedForProcess,
+  setTeamMembersSelectedForProcess,
+  setUserMembersSelectedForProcess,
+  setPublicMembersSelectedForProcess,
+  removeFromTeamsSelectedSelectedForProcess,
+  removeFromTeamMembersSelectedForProcess,
+  removeFromUserMembersSelectedForProcess,
+  removeFromPublicMembersSelectedForProcess,
 } = appSlice.actions;
 
 export default appSlice.reducer;

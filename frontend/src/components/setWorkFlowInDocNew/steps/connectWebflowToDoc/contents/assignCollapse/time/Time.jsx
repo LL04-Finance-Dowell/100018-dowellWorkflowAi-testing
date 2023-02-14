@@ -1,48 +1,118 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import parentStyles from "../assignCollapse.module.css";
 import { v4 as uuidv4 } from "uuid";
 import { useForm } from "react-hook-form";
 import Radio from "../../../../../radio/Radio";
 import Select from "../../../../../select/Select";
+import { updateSingleProcessStep } from "../../../../../../../features/app/appSlice";
+import { useDispatch, useSelector } from "react-redux";
 
-const Time = () => {
-  const { register } = useForm();
+const Time = ({ currentStepIndex }) => {
+  const { 
+    register,
+    handleSubmit,
+    formState: { isSubmitted }
+  } = useForm();
+  const [ currentLimitSelection, setCurrentLimitSelection ] = useState(null);
+  const [ customTimeSelection, setCustomTimeSelection ] = useState(null);
+  const { docCurrentWorkflow } = useSelector((state) => state.app)
+  const handleTimeLimitSelection = (e) => setCurrentLimitSelection(e.target.value)
+  const handleCustomTimeSelection = (e) => setCustomTimeSelection(true)
+
+  const dispatch = useDispatch();
+
+  const handleSetTime = (data) => {
+    if (!currentLimitSelection) return
+    
+    if (currentLimitSelection === "noTimeLimit") {
+      dispatch(
+        updateSingleProcessStep({
+          stepTime: "no_time_limit",
+          stepTimeLimit: "",
+          stepStartTime: "",
+          stepEndTime: "",
+          workflow: docCurrentWorkflow._id,
+          indexToUpdate: currentStepIndex,
+        })
+      )
+      return
+    }
+
+    if (customTimeSelection) {
+      dispatch(
+        updateSingleProcessStep({
+          stepTime: "custom",
+          stepTimeLimit: "",
+          stepStartTime: data.startTime,
+          stepEndTime: data.endTime,
+          workflow: docCurrentWorkflow._id,
+          indexToUpdate: currentStepIndex,
+        })
+      )
+      return
+    }
+
+    dispatch(
+      updateSingleProcessStep({
+        stepTime: "select",
+        stepTimeLimit: data.timeLimit,
+        stepStartTime: "",
+        stepEndTime: "",
+        workflow: docCurrentWorkflow._id,
+        indexToUpdate: currentStepIndex,
+      })
+    )
+  }
 
   return (
-    <form className={parentStyles.content__box}>
+    <>
+    <form className={parentStyles.content__box} onSubmit={handleSubmit(handleSetTime)}>
       <div>
-        <Radio name="time" value="noTimeLimit" register={register}>
+        <Radio name="time" value="noTimeLimit" register={register} onChange={handleTimeLimitSelection}>
           No Time limit
         </Radio>
-        <Radio name="time" value="selectTimeLimit" register={register}>
+        <Radio name="time" value="selectTimeLimit" register={register} onChange={handleTimeLimitSelection}>
           Select Time limit
         </Radio>
       </div>
-      <Select options={times} register={register} name="time" />
-      <Radio name="time" value="customTime" register={register}>
-        Custom Time
-      </Radio>
-      <div>
-        <div>
-          <label htmlFor="startTime">Start</label>
-          <input {...register("startTime")} id="startTime" />
-        </div>
-        <div>
-          <label htmlFor="endTime">End</label>
-          <input {...register("endTime")} id="endTime" />
-        </div>
-      </div>
+      {
+        !currentLimitSelection ? <></> :
+        currentLimitSelection === "noTimeLimit" ? <></> :
+        <>
+          <Select options={times} register={register} name="timeLimit" takeNormalValue={true} />
+          <Radio name="customTime" value="customTime" register={register} onChange={handleCustomTimeSelection}>
+            Custom Time
+          </Radio>
+          <>
+            {
+              !customTimeSelection ? <></> :
+              <div>
+                <div>
+                  <label htmlFor="startTime">Start</label>
+                  <input required {...register("startTime")} id="startTime" type={"datetime-local"} />
+                </div>
+                <div>
+                  <label htmlFor="endTime">End</label>
+                  <input required {...register("endTime")} id="endTime" type={"datetime-local"} />
+                </div>
+              </div>
+            }
+          </>
+        </>
+      }
       <button className={parentStyles.primary__button}>set time limit</button>
     </form>
+    { isSubmitted ? <p style={{ margin: "0", padding: "0px 20px 10px"}}>Saved</p> : <></> }
+    </>
   );
 };
 
 export default Time;
 
 export const times = [
-  { id: uuidv4(), option: "within 1 hour" },
-  { id: uuidv4(), option: "within 8 hours " },
-  { id: uuidv4(), option: "within 24 hours" },
-  { id: uuidv4(), option: "within 3 days" },
-  { id: uuidv4(), option: "within 7 days" },
+  { id: uuidv4(), option: "within 1 hour", normalValue: "within_1_hour" },
+  { id: uuidv4(), option: "within 8 hours ", normalValue: "within_8_hours" },
+  { id: uuidv4(), option: "within 24 hours", normalValue: "within_24_hours" },
+  { id: uuidv4(), option: "within 3 days", normalValue: "within_3_days" },
+  { id: uuidv4(), option: "within 7 days", normalValue: "within_7_days" },
 ];

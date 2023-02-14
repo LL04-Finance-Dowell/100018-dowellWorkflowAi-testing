@@ -43,7 +43,7 @@ const Contents = ({
     );
 
     if (contentStepAlreadyAdded) {
-      return dispatch(removeFromTableOfContentForStep(valueAsJSON._id));
+      return dispatch(removeFromTableOfContentForStep({ id: valueAsJSON._id, stepIndex: currentStepIndex }));
     }
 
     const newTableOfContentObj = {
@@ -81,7 +81,7 @@ const Contents = ({
     setShowContent(currentContents);
   };
 
-  console.log("contentscontents", contentsPageWise);
+  // console.log("contentscontents", contentsPageWise);
 
   return (
     <div

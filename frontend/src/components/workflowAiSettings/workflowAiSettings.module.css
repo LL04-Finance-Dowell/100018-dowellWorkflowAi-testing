@@ -9,7 +9,7 @@
 .box {
   display: flex;
   flex-direction: column;
-  width: min(100%, 1140px);
+  width: min(100%, 89vw);
   gap: 15px;
 }
 

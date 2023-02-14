@@ -2,17 +2,35 @@ import styles from "./checkErrors.module.css";
 import Select from "../../select/Select";
 import { v4 as uuidv4 } from "uuid";
 import { useForm } from "react-hook-form";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { PrimaryButton } from "../../../styledComponents/styledComponents";
 import InfoBox from "../../../infoBox/InfoBox";
+import { useSelector } from "react-redux";
+import ProgressBar from "../../../progressBar/ProgressBar";
+import { toast } from "react-toastify";
 
 const CheckErrors = () => {
   const {
     register,
     handleSubmit,
     formState: { isSubmitted },
+    watch
   } = useForm();
   const [loading, setLoading] = useState(false);
+  const [ processTableInfo, setProcessTableInfo ] = useState({
+    workflowWise: [],
+    memberWise: [],
+    contentWise: [],
+    workflowStepWise: [],
+    locationWise: [],
+    timeWise: []
+
+  });
+  const { docCurrentWorkflow, selectedWorkflowsToDoc, processSteps } = useSelector(state => state.app);
+  const [ workflowItemsToDisplay, setWorkflowItemsToDisplay ] = useState([])
+  const [ sortItemActive, setSortItemActive ] = useState(null);
+  const [ sortLoading, setSortLoading ] = useState(false);
+  const { processOption } = watch();
 
   const onSubmit = (data) => {
     setLoading(true);
@@ -20,7 +38,60 @@ const CheckErrors = () => {
     setTimeout(() => setLoading(false), 2000);
   };
 
-  console.log("sssssssssss");
+  // console.log("sssssssssss");
+
+  useEffect(() => {
+
+    if (!docCurrentWorkflow) return
+
+    let currentDataMapItem = selectedWorkflowsToDoc.map((workflowItem) => {
+      let copyOfWorkflowObj = { ...workflowItem };
+      let copyOfNestedWorkflowObjWithSteps = { ...copyOfWorkflowObj.workflows }
+      const foundProcessSteps = processSteps.find(process => process.workflow === docCurrentWorkflow._id);
+      
+      copyOfNestedWorkflowObjWithSteps.steps = foundProcessSteps ? foundProcessSteps.steps.map((step, currentIndex) => {
+        let copyOfCurrentStep = { ...step };
+        if (copyOfCurrentStep._id) delete copyOfCurrentStep._id;
+        if (copyOfCurrentStep.toggleContent) delete copyOfCurrentStep.toggleContent;
+        copyOfCurrentStep.document_map = tableOfContents.filter(content => content.stepIndex === currentIndex).map(content => content.id)
+        if (copyOfCurrentStep.stepRights === "add_edit") copyOfCurrentStep.stepRightsToDisplay = "Add/Edit"
+        return copyOfCurrentStep
+      }) : [];
+
+      copyOfWorkflowObj.workflows = copyOfNestedWorkflowObjWithSteps;
+
+      return copyOfWorkflowObj
+
+    })
+    
+    // console.log(currentDataMapItem)
+
+    setWorkflowItemsToDisplay(currentDataMapItem)
+
+  }, [docCurrentWorkflow, selectedWorkflowsToDoc, processSteps])
+
+  const handleSortProcess = () => {
+    if (!docCurrentWorkflow) return toast.info("Please select a document");
+    if (selectedWorkflowsToDoc.length < 1) return toast.info("Please select at least one workflow first.");
+
+    setSortLoading(true);
+
+    setTimeout(() => {
+      setSortLoading(false)
+      setSortItemActive(true)
+    }, 2000);
+
+    switch (processOption) {
+      case null:
+      case "workflowWise":
+        console.log("sorting workflow wise")
+        return;
+    
+      default:
+        console.log("Invalid sort option passed")
+        return;
+    }
+  }
 
   return (
     <div className={styles.container}>
@@ -31,14 +102,16 @@ const CheckErrors = () => {
         <Select
           register={register}
           options={processOptions.map((item) => item.selectItem)}
-          name="proccess"
+          name="processOption"
+          takeNormalValue={true}
         />
-        <div className={styles.info__container}>
-          <PrimaryButton hoverBg="success">Show Procceess</PrimaryButton>
-          <PrimaryButton hoverBg="success">25%</PrimaryButton>
+        <div className={styles.info__container} style={{ alignItems: "center" }}>
+          <PrimaryButton hoverBg="success" onClick={handleSortProcess} style={{ width: "50%", height: "100%" }}>Show Process</PrimaryButton>
+          { sortLoading ? <ProgressBar durationInMS={1000} style={{ width: "50%", height: "100%" }} /> : <></> }
+          {/* <PrimaryButton hoverBg="success">25%</PrimaryButton> */}
         </div>
-        <div className={styles.proccess__container}>
-          {processOptions[0].workflows.map((item) => (
+        { sortItemActive ? <div className={styles.proccess__container}>
+          {workflowItemsToDisplay.map((item) => (
             <div className={styles.proccess__box}>
               <div
                 className={styles.first__box}
@@ -66,7 +139,8 @@ const CheckErrors = () => {
               ))}
             </div>
           ))}
-        </div>
+        </div> : <></>
+        }
       </div>
     </div>
   );
@@ -102,6 +176,7 @@ export const processOptions = [
     selectItem: {
       id: uuidv4(),
       option: "Workflow wise Process flow (Workflow 1>2>3...)",
+      normalValue: "workflowWise",
     },
     workflows: [
       {
@@ -179,6 +254,7 @@ export const processOptions = [
       id: uuidv4(),
       option:
         "Member wise Process flow in a workflow step (Team Member>User>Public)",
+      normalValue: "memberWise",
     },
 
     workflows: [
@@ -213,6 +289,7 @@ export const processOptions = [
       id: uuidv4(),
       option:
         "Content wise Process flow in a workflow step (Document content 1>2>3...)",
+      normalValue: "contentWise",
     },
 
     workflows: [
@@ -246,6 +323,7 @@ export const processOptions = [
     selectItem: {
       id: uuidv4(),
       option: "Workflow Step wise Process flow (Step1>Step2>Step3...)",
+      normalValue: "workflowStepWise",
     },
 
     workflows: [
@@ -279,6 +357,7 @@ export const processOptions = [
     selectItem: {
       id: uuidv4(),
       option: "Location wise Process flow (Location 1>2>3...)",
+      normalValue: "locationWise",
     },
 
     workflows: [
@@ -313,6 +392,7 @@ export const processOptions = [
     selectItem: {
       id: uuidv4(),
       option: "Time wise Process flow (End date and time 1>2>3...)",
+      normalValue: "timeWise",
     },
 
     workflows: [
@@ -341,3 +421,8 @@ export const processOptions = [
     ],
   },
 ];
+
+const rightsDict = {
+  "add_edit": "Add/Edit",
+
+}

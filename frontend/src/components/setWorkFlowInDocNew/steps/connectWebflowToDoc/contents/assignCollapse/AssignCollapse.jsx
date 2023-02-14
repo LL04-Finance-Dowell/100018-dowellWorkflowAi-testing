@@ -11,7 +11,7 @@ import Reminder from "./reminder/Reminder";
 import { Collapse } from "react-bootstrap";
 import { ImMinus, ImPlus } from "react-icons/im";
 
-const AssignCollapse = () => {
+const AssignCollapse = ({ currentStepIndex }) => {
   const [asignCollapses, setAssignCollapses] = useState(collapses);
   const { register } = useForm();
 
@@ -38,7 +38,7 @@ const AssignCollapse = () => {
             <span> {collapse.title}</span>
           </div>
           <Collapse in={collapse.isOpen}>
-            <div>{<collapse.component />}</div>
+            <div>{<collapse.component currentStepIndex={currentStepIndex} />}</div>
           </Collapse>
         </div>
       ))}

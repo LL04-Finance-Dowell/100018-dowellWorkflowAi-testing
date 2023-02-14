@@ -211,7 +211,7 @@ const CreateWorkflows = ({ handleToggleOverlay }) => {
               type="button"
               className={styles.add__button}
             >
-              {currentWorkflow ? "update" : "add"}
+              {currentWorkflow ? "update" : "save"}
             </SubmitButton>
           </div>
         </div>

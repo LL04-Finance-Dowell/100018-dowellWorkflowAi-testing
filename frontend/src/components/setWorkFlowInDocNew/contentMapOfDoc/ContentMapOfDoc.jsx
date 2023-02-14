@@ -11,6 +11,7 @@ import { useSelector } from "react-redux";
 import { LoadingSpinner } from "../../LoadingSpinner/LoadingSpinner";
 import { ImPencil2 } from "react-icons/im";
 import { animate, motion } from "framer-motion";
+import useChangeElementPropertyOnScroll from "../../../hooks/useChangeElementPropertyOnScroll";
 
 const ContentMapOfDoc = () => {
   const { contentOfDocumentStatus, contentOfDocument } = useSelector(
@@ -43,6 +44,9 @@ const ContentMapOfDoc = () => {
     isFixedCallback();
   }, [isFixedCallback]); */
 
+  useChangeElementPropertyOnScroll(ref, "position", "fixed", "relative", window.screen.height / 1.54);
+  useChangeElementPropertyOnScroll(ref, "top", "0", "", window.screen.height / 1.54);
+
   const variants = {
     initial: {
       x: "-100%",
@@ -52,7 +56,7 @@ const ContentMapOfDoc = () => {
     },
   };
 
-  console.log("contentOfDocumentcontentOfDocument", contentOfDocument);
+  // console.log("contentOfDocumentcontentOfDocument", contentOfDocument);
 
   return (
     <div ref={ref} className={styles.container}>

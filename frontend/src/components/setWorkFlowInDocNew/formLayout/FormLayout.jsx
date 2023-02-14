@@ -10,7 +10,7 @@ const FormLayout = ({ isSubmitted, children, loading, ...rest }) => {
       {isSubmitted && (
         <div className={styles.pasted__text}>
           {/*  <DoneIcon /> */}
-          <span> Pasted</span>
+          <span> Saved</span>
         </div>
       )}
       {loading && <div className={styles.form__loading}></div>}

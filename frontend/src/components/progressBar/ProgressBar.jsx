@@ -3,7 +3,7 @@ import { useEffect } from "react";
 import { useState } from "react";
 import "./style.css";
 
-const ProgressBar = ({ durationInMS, finalWidth }) => {
+const ProgressBar = ({ durationInMS, finalWidth, style }) => {
     const statusRef = useRef(null);
     const [ currentStatus, setCurrentStatus ] = useState("0");
 
@@ -35,7 +35,7 @@ const ProgressBar = ({ durationInMS, finalWidth }) => {
     }, [durationInMS])
 
     return <>
-        <div className="progress__Bar__Wrapper">
+        <div className="progress__Bar__Wrapper" style={style}>
             <div id={"progress__Bar__Container__Id"} ref={statusRef} className="progress__Bar__Container" style={{ width: `${currentStatus}%` }}>{finalWidth ? finalWidth : currentStatus}%</div>
         </div>
     </>

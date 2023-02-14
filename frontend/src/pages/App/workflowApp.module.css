@@ -29,6 +29,15 @@
 .skeleton__box {
   width: 48%;
   height: 250px;
+  position: relative;
+}
+
+.iframe__Title {
+  color: var(--e-global-color-accent);
+  font-size: 1.1rem;
+  position: absolute;
+  top: -12%;
+  text-transform: capitalize;
 }
 
 @media (max-width: 768px) {

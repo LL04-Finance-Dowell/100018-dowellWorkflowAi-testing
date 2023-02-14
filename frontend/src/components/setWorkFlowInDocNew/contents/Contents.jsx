@@ -6,6 +6,7 @@ import {
   setTableOfContentForStep,
 } from "../../../features/app/appSlice";
 import styles from "./contents.module.css";
+import { Tooltip } from 'react-tooltip'
 
 const Contents = ({
   contents,
@@ -43,7 +44,7 @@ const Contents = ({
     );
 
     if (contentStepAlreadyAdded) {
-      return dispatch(removeFromTableOfContentForStep(valueAsJSON._id));
+      return dispatch(removeFromTableOfContentForStep({ id: valueAsJSON._id, stepIndex: currentStepIndex }));
     }
 
     const newTableOfContentObj = {
@@ -81,18 +82,22 @@ const Contents = ({
     setShowContent(currentContents);
   };
 
-  console.log("contentscontents", contentsPageWise);
+  // console.log("contentscontents", contentsPageWise);
 
   return (
     <div
       style={{
-        maxHeight: toggleContent
-          ? `${contentRef.current?.getBoundingClientRect().height}px`
+        maxHeight: 
+          feature === "table-of-contents" ? "8rem" 
+          :
+          toggleContent ? `${contentRef.current?.getBoundingClientRect().height}px`
           : "0px",
+        padding: feature && feature === "table-of-contents" ? "0" : "",
+        overflow: feature === "table-of-contents" ? "auto" : ""
       }}
       className={styles.content__container}
     >
-      <div ref={contentRef} className={styles.content__box}>
+      <div ref={contentRef} className={styles.content__box} style={feature && feature === "table-of-contents" ? { overflow: "auto", padding: "0 6px 10px", border: "none" } : {}}>
         {contents.length > 0 ? (
           feature === "doc" ? (
             <>
@@ -133,18 +138,34 @@ const Contents = ({
               )}
             </>
           ) : (
+            <>
             <ol>
-              {contents.map((item) => (
-                <li
+              {React.Children.toArray(contents.map((item) => {
+                return <li
                   /*   className={selectedContents.map(
                     (selectedItem) =>
                       selectedItem._id === item._id &&
                       styles.current__table__item
                   )} */
                   /*  onClick={() => handleAddContent(item)} */
-                  key={item._id}
+                  // key={item._id}
+                  style={feature && feature === "table-of-contents" ? { width: "100%" } : {}}
                 >
-                  <span>
+                  <span 
+                    style={
+                      tableOfContentForStep.find(
+                        (step) =>
+                          step.workflow === docCurrentWorkflow._id &&
+                          step._id === item._id &&
+                          step.stepIndex === currentStepIndex
+                      ) && 
+                      feature && feature === "table-of-contents" ? 
+                      { 
+                        width: "100%" 
+                      } : 
+                      { }
+                    }
+                  >
                     {/* { showCheckBoxForContent && <input type={"checkbox"} value={JSON.stringify(item)} onChange={handleCheckboxSelection} /> } */}
                     {showContent.find((content) => content.id === item.id)
                       ?.show ? (
@@ -168,26 +189,40 @@ const Contents = ({
                               ? {
                                   backgroundColor: "#0048ff",
                                   color: "#fff",
-                                  padding: "2% 30%",
+                                  padding: "1%",
                                   borderRadius: "5px",
+                                  display: "block",
                                   width: "100%",
+                                  margin: "1% 0",
                                 }
-                              : {}
+                              : {
+                                display: "block",
+                                margin: "1% 0",
+                              }
                           }
-                          onClick={() => handleContentSelection(item)}
+                          onClick={
+                            () => handleContentSelection(item)
+                          }
+                          id={item._id + currentStepIndex}
                         >
                           {item.id}
                         </a>
-                        <AiOutlineInfoCircle
+                        {/* <AiOutlineInfoCircle
                           className="content__Icon"
                           onClick={() => handleShowContent(true, item.id)}
-                        />
+                        /> */}
+                        {
+                          feature && feature === "table-of-contents" ?
+                          <Tooltip anchorId={item._id + currentStepIndex} content={item.data ? item.data : "No data"} place="top" /> : 
+                          <></>
+                        }
                       </>
                     )}
                   </span>
                 </li>
-              ))}
+              }))}
             </ol>
+            </>
           )
         ) : (
           <div className={styles.no__data}>No Data</div>
