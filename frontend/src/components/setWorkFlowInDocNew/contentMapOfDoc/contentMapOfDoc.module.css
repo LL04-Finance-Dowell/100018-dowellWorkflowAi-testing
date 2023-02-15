@@ -10,10 +10,11 @@
   display: flex;
   flex-direction: column;
   width: 100%;
-  padding: 10px;
+  /* padding: 10px; */
   z-index: 1000;
-  width: min(72.768vw, 835px) !important;
+  /* width: min(72.768vw, 835px) !important; */
   white-space: nowrap;
+  margin: 10px auto;
 }
 .header__box {
   padding-inline: 20px;
