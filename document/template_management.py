@@ -11,7 +11,7 @@ from database.mongo_db_connection import (
 )
 
 editorApi = "https://100058.pythonanywhere.com/api/generate-editor-link/"
-
+from .thread_start import ThreadAlgolia
 
 @api_view(["POST"])
 def get_templates(request):  # List of Created Templates.
@@ -67,6 +67,7 @@ def create_template(request):
             },
         }
         try:
+            ThreadAlgolia(res["inserted_id"],get_template_object).start()
             editor_link = requests.post(
                 editorApi,
                 data=json.dumps(payload),

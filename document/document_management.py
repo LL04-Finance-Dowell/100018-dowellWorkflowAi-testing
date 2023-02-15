@@ -11,7 +11,7 @@ from database.mongo_db_connection import (
     get_template_object,
     get_links_object_by_process_id,
 )
-
+from .thread_start import ThreadAlgolia
 editorApi = "https://100058.pythonanywhere.com/api/generate-editor-link/"
 
 
@@ -87,6 +87,8 @@ def create_document(request):  # Document Creation.
                     "POST", editorApi, headers=headers, data=payload
                 )
                 try:
+                    ThreadAlgolia(res["inserted_id"],get_document_object).start()
+
                     return Response(
                         editor_link.json(),
                         status=status.HTTP_201_CREATED,

@@ -15,10 +15,10 @@ index.set_settings(
 
 #             {"objectID":2, "name": "dev_record","address": "ababa"}
 # ]
-def save_to_algolia(data):
+def save_to_algolia(id,func):
     # get_search_result = get_wf_list(company_id)+get_document_list(company_id)+get_template_list(company_id)
+    data = func(id)
     index.save_object(data,{'autoGenerateObjectIDIfNotExist': True}).wait()
-
 def get_algolia_data(term,comp_id):
     # index.clear_objects()
     # get_search_result = get_wf_list("6385c0f38eca0fb652c94585")+get_document_list("6385c0f38eca0fb652c94585")+get_template_list("6385c0f38eca0fb652c94585")
