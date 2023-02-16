@@ -14,7 +14,7 @@ from database.mongo_db_connection import (
 from document.thread_start import ThreadAlgolia
 
 
-@api_view(['GET'])
+@api_view(["GET"])
 def home(request):
     return Response("WorkflowAI Service is running...", status=status.HTTP_200_OK)
 
@@ -31,7 +31,7 @@ def processing_complete(process):
 
 
 @api_view(["GET"])
-def get_workflows(request,company_id):
+def get_workflows(request, company_id):
     workflow_list = get_wf_list(company_id)
     if not workflow_list:
         return Response({"workflows": []}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
@@ -161,9 +161,8 @@ def update_workflow(request):  # Document Creation.
 
 
 @api_view(["GET"])
-def workflow_detail(request,workflow_id):  # Single document
+def workflow_detail(request, workflow_id):  # Single document
 
-   
     data = get_wf_object(workflow_id)
     if not data:
         return Response(
@@ -172,9 +171,9 @@ def workflow_detail(request,workflow_id):  # Single document
         )
     else:
         return Response(
-        {"workflow": data},
-        status=status.HTTP_201_CREATED,
-    )
+            {"workflow": data},
+            status=status.HTTP_201_CREATED,
+        )
 
 
 # return Response(
