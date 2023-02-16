@@ -104,7 +104,7 @@ urlpatterns = [
     path("v0.1/workflows/update/", update_workflow, name="update_workflow"),
     # wf_settings
     path("v0.1/settings/", create_workflow_setting, name="save_wf_setting"),
-    path("v0.1/settings/:setting_id/", get_wf_ai_setting, name="get_wf_ai_setting"),
+    path("v0.1/settings/<str:wf_setting_id>/", get_wf_ai_setting, name="get_wf_ai_setting"),
     path("v0.1/settings/update/", update_wfai_setting, name="update_WFAI_setting"),
     # search
     path("v0.1/search/", search),
