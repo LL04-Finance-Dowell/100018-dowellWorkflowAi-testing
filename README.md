@@ -1,14 +1,67 @@
-# WorfklowAI Service
+## WorkflowAI Service
 
-api_url = `https://100094.pythonanywhere.com/v0.1/`
+### Introduction
 
-### Workflow Process Service.
+This backend service serves as the WorkflowAI application Backend.
+
+### WorkflowAI Service Features
+
+* Workflow Management.
+* Workflow Process Management.
+* Document Management.
+* Template Management.
+
+### Installation Guide
+
+* Clone this repository [here](https://github.com/LL04-Finance-Dowell/100018-dowellWorkflowAi-testing.git).
+* The `backend` branch is the most stable branch at any given time, ensure you're working from it.
+* Run `pip install -r requirements.txt` to install dependencies.
+
+### Usage
+
+* Run `python manage.py runserver 8001` to start the application.
+* Connect to the API using Postman on port 8001.
+
+### API Endpoints - V0.1
+
+- Base URL: `https://100094.pythonanywhere.com`
+
+| HTTP Verbs | Endpoints                            | Action                                               |
+|------------|--------------------------------------|------------------------------------------------------|
+| POST       | /v0.1/search/                        | To search templates/documents/workflows              |
+| POST       | /v0.1/templates/                     | To create a new template.                            |
+| GET        | /v0.1/templates/:templateId/         | To retrieve a single template.                       |
+| GET        | /v0.1/templates/approve/:templateId/ | To approve a single template.                        |
+| GET        | /v0.1/templates/:companyId/          | To retrieve templates of given company.              |
+| POST       | /v0.1/documents/                     | To create a new document.                            |
+| GET        | /v0.1/documents/:documentId/         | To retrieve a single document.                       |
+| GET        | /v0.1/documents/:companyId/          | To retrieve documents of a given company.            |
+| POST       | /v0.1/workflows/                     | To create a new workflow                             |
+| GET        | /v0.1/workflows/:workflowId/         | To retrieve a single workflow                        |
+| GET        | /v0.1/workflows/update/              | To update a single workflow.                         |
+| GET        | /v0.1/workflows/:companyId/          | To retrieve workflows in a company                   |
+| POST       | /v0.1/process/                       | To create a new process                              |
+| GET        | /v0.1/process/:processId/            | To retrieve a single process                         |
+| GET        | /v0.1/process/:companyId/            | To retrieve processes in a company                   |
+| GET        | v/0.1/process/verify/:processId/     | To get process verification link for a given process |
+
+### API Endpoints - V0.2 (new process page.)
+
+- Base URL: `https://100094.pythonanywhere.com`
+
+| HTTP Verbs | Endpoints                        | Action                                               |
+|------------|----------------------------------|------------------------------------------------------|
+| POST       | /v0.2/process/                   | To create a new process                              |
+| GET        | /v0.2/process/:processId/        | To retrieve a single process                         |
+| GET        | /v0.2/process/:companyId/        | To retrieve processes in a company                   |
+| POST       | /v0.2/process/verification/      | To verify a process to get access.                   |
+| POST       | /v0.2/process/mark/              | To mark a documents as finalized/rejected            |
+| GET        | v/0.1/process/verify/:processId/ | To get process verification link for a given process |
+
+### Workflow Process Endpoints Definition(Req + Res).
 
 _POST_ to `process/verification/`
-
-- Mark step as rejected or finalized.
-
-- Request Body
+Request Body
 
 ```
 {
@@ -19,10 +72,7 @@ _POST_ to `process/verification/`
 ```
 
 _POST_ to `process/link/`
-
-- get a single process link.
-
-- Request Body
+Request Body
 
 ```
 {
@@ -51,8 +101,6 @@ Response - 401
 Response - 500
 
 _POST_ to `process/verify/`
-
-- Verification Checks for document link
 
 Request Body
 
@@ -95,8 +143,6 @@ Response-500
 " verification failed"
 
 _POST_ to `process/start/`
-
-- Save and Start Processing
 
 Request Body
 
@@ -156,8 +202,6 @@ Response - 500
 
 _POST_ to `templates/`
 
-- Creates a new template
-
 Request Body
 
 ```
@@ -209,6 +253,7 @@ Response 500
     "message": "Failed to process template creation."
 }
 ```
+
 _POST_ `templates/all/`
 
 - Getting all template
@@ -229,8 +274,6 @@ Response-200
 }
 
 ```
-
-
 
 _POST_ `templates/detail/`
 
@@ -281,51 +324,6 @@ Response-500
 
 ```
 
-_POST_ `templates/approved/`
-
-- List of Approved templates for a single user.
-
-Request Body
-
-```
-{
-    "company_id": "<auth_company_id>",
-    "created_by": "<auth_user_name>",
-    "data_type":"<get_from_the_login_api>"
-}
-```
-
-Response-200
-
-```
-    [<Array of templates>]
-
-```
-
-Response-400
-
-```
-{
-    "message": "Request Could not be processed."
-}
-```
-
-Response-404
-
-```
-{
-    "message": "You have no approved templates"
-}
-```
-
-Response-500
-
-```
-{
-    "message": "Could not fetch your approved templates at this time"
-}
-```
-
 _POST_ `templates/approve/`
 
 - Approve a given template.
@@ -359,125 +357,6 @@ Response-500
 ```
 {
     "message": "Template Could not be approved"
-}
-```
-
-_POST_ `templates/pending/`
-
-- Templates Pending Approval.
-
-Request Body
-
-```
-{
-    "company_id": "<auth_company_id>",
-    "created_by": "<auth_user_name>",
-    "data_type":"<get_from_the_login_api>"
-}
-```
-
-Response-200
-
-```
-    [<Array of templates>]
-```
-
-Response-400
-
-```
-{
-    "message": "Approval Request Could not be processed."
-}
-```
-
-Response-404
-
-```
-{
-    "message": "You have no pending templates to approved"
-}
-```
-
-Response-500
-
-```
-{
-    "message": "Could not fetch templates at this time."
-}
-```
-
-_POST_ `templates/mine/`
-
-- List of my created templates.
-
-Request Body
-
-```
-{
-    "company_id": "<auth_company_id>",
-    "created_by": "<auth_user_name>",
-    "data_type":"<get_from_the_login_api>"
-}
-```
-
-Response-200
-
-```
-
-    [<Array of templates>]
-
-```
-
-Response-404
-
-```
-{
-    "message": "You have not created any templates"
-}
-```
-
-Response-500
-
-```
-{
-    "message": "Could not fetch templates at this time."
-}
-```
-
-_POST_ `templates/saved/`
-
-- List of my Organization templates.
-
-Request Body
-
-```
-{
-    "company_id": "<auth_company_id>",
-    "data_type":"<get_from_the_login_api>"
-}
-```
-
-Response-200
-
-```
-
-    [<Array of templates>]
-
-```
-
-Response-404
-
-```
-{
-    "message": "No templates in organization"
-}
-```
-
-Response-500
-
-```
-{
-    "message": "Could not fetch templates at this time."
 }
 ```
 
@@ -570,138 +449,6 @@ Response-200
 
 ```
 
-_POST_ `documents/to-sign/`
-
-- Getting a Document by company_id
-
-Request Body
-
-```
-{
-    "company_id": "<company_id_of_authorized_user>",
-    "user_name": "<auth_user_name>",
-    "data_type":"<get_from_the_login_api>"
-}
-```
-
-Response-200
-
-```
-{
-"documents":["list of documents to be signed with their detail"]
-}
-```
-
-- if no list
-
-Response-200
-
-```
-{
-  "documents": []
-  "message": "These document is Rejected Document."
-}
-```
-
-_POST_ `documents/mine/`
-
-- Getting a Document company_id and created_by
-
-Request Body
-
-```
-{
-    "created_by": "<user_name_of_user>"
-    "company_id": "<company_id_of_authorized_user>",
-    "data_type":"<get_from_the_login_api>"
-
-}
-```
-
-Response-200
-
-```
-{
-    "documents":["list of documents created by the user"]
-}
-
-```
-
-if no List
-Response-200
-
-```
-{
-    "documents": [],
-    "message": "There is no document created by This user."
-}
-```
-
-_POST_ `documents/rejected/`
-
-- Getting a Rejected Documents using company_id
-
-Request Body
-
-```
-{
-    "company_id": "<company_id_of_authorized_user>",
-    "data_type":"<get_from_the_login_api>"
-
-}
-```
-
-Response-200
-
-```
-{
-    "documents":["list of rejected documents"]
-}
-
-```
-
-If No List
-Response-200
-
-```
-{
-    "documents": [],
-    "message": "These document is not in Rejected Document list."
-}
-```
-
-_POST_ `documents/saved/`
-
-- Getting a Saved Documents using company_id
-
-Request Body
-
-```
-{
-    "company_id": "<company_id_of_authorized_user>",
-    "data_type":"<get_from_the_login_api>"
-}
-```
-
-Response-200
-
-```
-{
-    "documents":["list of saved documents"]
-}
-
-```
-
-If No List
-Response-500
-
-```
-{
-    "documents": [],
-    "message": "No Document in Drafts"
-}
-```
-
 _POST_ `documents/document_content/`
 
 - Get Data and ID of each content in document
@@ -718,7 +465,7 @@ Response-200
 {"content":"<content_id_and_data>}
 ```
 
-### Worfklow Management
+### Workflow Management
 
 _POST_ to `workflows/`
 
@@ -758,6 +505,7 @@ Response-200
 }
 
 ```
+
 _POST_ `workflows/all/`
 
 - Getting all workflows
@@ -800,7 +548,7 @@ Response-200
 
 ```
 
-If Not Availabel
+If Not Available
 Response-200
 
 ```
@@ -809,39 +557,6 @@ Response-200
     "message": "This workflow is Not Loaded."
 }
 
-```
-
-_POST_ `workflows/mine/`
-
-- Getting a Workflow company_id and created_by
-
-Request Body
-
-```
-{
-    "created_by": "<name_of_user>"
-    "company_id": "<company_id_of_authorized_user>",
-    "data_type":"<get_from_the_login_api>"
-}
-```
-
-Response-200
-
-```
-{
-    "workflow":["list of workflows created by the user"]
-}
-
-```
-
-If Not Available
-Response-200
-
-```
-{
-    "workflow":[],
-    "message": "There is no workflow created by This user."
-}
 ```
 
 _POST_ `workflows/update/`
@@ -893,29 +608,7 @@ Response-200
 
 }
 
-_POST_ `workflows/saved/`
-
-- List of my Organization Workflows.
-
-Request Body
-
-```
-{
-    "company_id": "<auth_company_id>",
-}
-```
-
-Response-200
-
-```
-
-    [<List of Saved Workflows within company>]
-
-```
-
 ### Intelligent Search
-
-- search document, workflow and template.
 
 _POST_ `search/`
 
@@ -923,7 +616,7 @@ Request Body
 
 ```
 {
-    "company_id":"i",
+    "company_id":"company_id_of_user",
     "search":search keyword"
 }
 ```
@@ -940,6 +633,7 @@ Response-200
                 }
 }
 ```
+
 ### Workflow AI Setting
 
 _POST_ `workflow_ai_setting/`
@@ -974,6 +668,7 @@ Response-200
                 }
 }
 ```
+
 _POST_ `get_WFAI_setting/`
 
 Request Body
@@ -1003,6 +698,7 @@ Response-200
                 }
 }
 ```
+
 _POST_ `update_WFAI_setting/`
 
 Request Body
@@ -1024,7 +720,6 @@ Response-200
 
 ```
 {
-    
     "workflow_setting": {
         "_id": "wf_setting id",
         "eventId": "event id",
@@ -1038,6 +733,7 @@ Response-200
                 }
 }
 ```
+
 _POST_ `object_count/`
 
 Request Body
@@ -1057,5 +753,19 @@ Response-200
     "process_count": int(number of created process),
     "workflow_count": int(number of created workflow)
 }
+```
 
+### Technologies Used
 
+* [Python](https://nodejs.org/) is a programming language that lets you work more quickly and integrate your systems
+  more effectively.
+* [Django](https://www.djangoproject.com/) is a high-level Python web framework that encourages rapid development and
+  clean, pragmatic design.
+* [Django Rest Framework](https://www.django-rest-framework.org/) Django REST framework is a powerful and flexible
+  toolkit for building Web APIs.
+* [MongoDB](https://www.mongodb.com/) is a free open source NOSQL document database with scalability and flexibility.
+  Data are stored in flexible JSON-like documents.
+
+### License
+
+This project is available for use under the Apache License.

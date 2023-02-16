@@ -86,3 +86,16 @@ _POST_ `v0.2/process/start/`
     "close_processing_and_mark_as_completed",
 }
 ```
+
+_POST_ `v0.2/processes/mark/`
+- Marks the process as finalized or rejected.
+
+Request Body
+```
+{
+    'authorized': 'get from payload',
+    'action': 'finalize|reject',
+    'process_id': 'get from payload',
+    ' 
+}
+```
