@@ -128,7 +128,7 @@ def template_detail(request, template_id):
 
 
 @api_view(["GET"])
-def approve(request,template_id):
+def approve(request, template_id):
     response = json.loads(
         update_template_approval(template_id, approval=True)
     )

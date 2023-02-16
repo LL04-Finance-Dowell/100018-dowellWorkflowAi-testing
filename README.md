@@ -62,7 +62,9 @@ This backend service serves as the WorkflowAI application Backend.
 | GET        | /v0.2/process/org/:company_id/    | To retrieve processes in a company                   |
 | POST       | /v0.2/process/verification/       | To verify a process to get access.                   |
 | POST       | /v0.2/process/mark/               | To mark a documents as finalized/rejected            |
-| GET        | v/0.1/process/verify/:process_id/ | To get process verification link for a given process |
+| GET        | /v0.2/process/verify/:process_id/ | To get process verification link for a given process |
+| GET        | /v0.2/process/start/:process_id/  | To begin processing a draft process                  |
+| GET        | /v0.2/process/pause/:process_id/  | To halt processing of an ongoing process             |
 
 ### Endpoints Definition(Request - Response).
 
