@@ -90,7 +90,7 @@ urlpatterns = [
     ),
 
     # processing.
-    path("v0.1/process", save_and_start_processing),
+    path("v0.1/process/", save_and_start_processing),
     path("v0.1/process/<str:process_id>/", a_single_process),
     path("v0.1/process/verify/", verify_process),
     path("v0.1/process/link/", get_process_link),
@@ -119,7 +119,7 @@ urlpatterns = [
     path("v0.1/documents/content/str:document_id>/", get_document_content, name="content"),
     path("v0.1/documents/org/<str:company_id>/", get_documents, name="all_documents"),
     # v2 processing.
-    path("v0.2/process", document_processing),
+    path("v0.2/process/", document_processing),
     path("v0.2/process/verify/", verification),
     path('v0.2/process/mark/', mark_process_as_finalize_or_reject),
     path("v0.2/process/org/<str:company_id>/", wf_processes),
