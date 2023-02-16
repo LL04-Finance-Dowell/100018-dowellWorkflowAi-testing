@@ -88,49 +88,41 @@ urlpatterns = [
     re_path(
         r"^redoc/$", schema_view.with_ui("redoc", cache_timeout=0), name="schema-redoc"
     ),
-    # v2 processing.
-    path("v0.2/process/start/", document_processing),
-    path("v0.2/process/verify/", verification),
-    path("v0.2/wf-processes/", wf_processes),
-    path('v0.2/process/mark/', mark_process_as_finalize_or_reject),
+
     # processing.
-    path("v0.1/processes/", processes),
-    path("v0.1/process/start/", save_and_start_processing),
+    path("v0.1/process", save_and_start_processing),
+    path("v0.1/process/<str:process_id>/", a_single_process),
     path("v0.1/process/verify/", verify_process),
     path("v0.1/process/link/", get_process_link),
-    path("v0.1/process/detail/", a_single_process),
-    path("v0.1/process/process-links/", fetch_process_links),
+    path("v0.1/process/org/<str:company_id>/", processes),
+    path("v0.1/process/links/<str:process_id>/", fetch_process_links),
     path("v0.1/process/verification/", register_finalize_or_reject),
     # workflow
     path("v0.1/workflows/", create_workflow, name="workflows"),
-    path("v0.1/workflows/all/", get_workflows, name="all_workflows"),
-    path("v0.1/workflows/detail/", workflow_detail, name="workflow_detail"),
+    path("v0.1/workflows/<str:workflow_id>/", workflow_detail, name="workflow_detail"),
+    path("v0.1/workflows/org/<str:company_id>/", get_workflows, name="all_workflows"),
     path("v0.1/workflows/update/", update_workflow, name="update_workflow"),
     # wf_settings
-    path("v0.1/workflow_ai_setting/", create_workflow_setting, name="save_wf_setting"),
+    path("v0.1/settings/", create_workflow_setting, name="save_wf_setting"),
     path("v0.1/get_WFAI_setting/", get_wf_ai_setting, name="get_wf_ai_setting"),
-    path("v0.1/update_WFAI_setting/", update_wfai_setting, name="update_WFAI_setting"),
+    path("v0.1/settings/update/", update_wfai_setting, name="update_WFAI_setting"),
     # search
     path("v0.1/search/", search),
     # templates
     path("v0.1/templates/", create_template),
-    path("v0.1/templates/all/", get_templates, name="all_templates"),
-    path("v0.1/templates/detail/", template_detail),
-    path("v0.1/templates/approve/", approve),
+    path("v0.1/templates/<str:template_id>/", template_detail),
+    path("v0.1/templates/org/<str:company_id>/", get_templates, name="all_templates"),
+    path("v0.1/templates/approve/<str:template_id>/", approve),
     # documents
     path("v0.1/documents/", create_document, name="documents"),
-    path("v0.1/documents/detail/", document_detail, name="document"),
-    path(
-        "v0.1/documents/document_content/",
-        get_document_content,
-        name="document_content",
-    ),
-    path("v0.1/documents/all/", get_documents, name="all_documents"),
-    path(
-        "v0.1/object_count/",
-        count_objects,
-        name="object_count",
-    ),
+    path("v0.1/documents/<str:document_id>/", document_detail, name="document"),
+    path("v0.1/documents/content/str:document_id>/", get_document_content, name="content"),
+    path("v0.1/documents/org/<str:company_id>/", get_documents, name="all_documents"),
+    # v2 processing.
+    path("v0.2/process", document_processing),
+    path("v0.2/process/verify/", verification),
+    path('v0.2/process/mark/', mark_process_as_finalize_or_reject),
+    path("v0.2/process/org/<str:company_id>/", wf_processes),
 
     # ----------------- @deprecated --------------
     # path(
@@ -159,6 +151,11 @@ urlpatterns = [
     # path("v0.1/templates/pending/", not_approved_templates),
     # path("v0.1/templates/saved/", org_templates),
     # path("v0.1/templates/mine/", template_list),
+    # path(
+    #     "v0.1/object_count/",
+    #     count_objects,
+    #     name="object_count",
+    # ),
 
 ]
 if settings.DEBUG:

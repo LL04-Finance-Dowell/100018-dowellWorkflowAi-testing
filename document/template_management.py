@@ -14,14 +14,12 @@ from database.mongo_db_connection import (
 editorApi = "https://100058.pythonanywhere.com/api/generate-editor-link/"
 
 
-@api_view(["POST"])
-def get_templates(request):  # List of Created Templates.
-
-    templates = get_template_list(request.data["company_id"])
-
+@api_view(["GET"])
+def get_templates(request, company_id):
+    """List of Created Templates."""
+    templates = get_template_list(company_id)
     if not templates:
         return Response({"templates": []}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
     if len(templates) > 0:
         return Response(
             {"templates": templates},
@@ -88,9 +86,9 @@ def create_template(request):
     )
 
 
-@api_view(["POST"])
-def template_detail(request):
-    data = get_template_object(template_id=request.data["template_id"])
+@api_view(["GET"])
+def template_detail(request, template_id):
+    data = get_template_object(template_id)
     if not data:
         return Response(
             {"message": "Template Not Found."},
@@ -105,7 +103,7 @@ def template_detail(request):
             "document": "templatereports",
             "team_member_ID": "22689044433",
             "function_ID": "ABCDE",
-            "_id": request.data["template_id"],
+            "_id": template_id,
             "field": "template_name",
             "action": "template",
             "flag": "editing",

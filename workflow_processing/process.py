@@ -95,12 +95,12 @@ def process_update(data):
     return
 
 
-@api_view(["POST"])
-def processes(request):
+@api_view(["GET"])
+def processes(request, company_id):
     """fetches workflow process `I` created."""
     print("fetching processes..... \n")
     try:
-        process_list = get_process_list(request.data["company_id"])
+        process_list = get_process_list(company_id)
     except ConnectionError:
         return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     if len(process_list) > 0:
@@ -108,11 +108,11 @@ def processes(request):
     return Response([], status=status.HTTP_200_OK)
 
 
-@api_view(["POST"])
-def a_single_process(request):
+@api_view(["GET"])
+def a_single_process(request, process_id):
     """get process by process id"""
     try:
-        process = get_process_object(request.data["process_id"])
+        process = get_process_object(process_id)
     except ConnectionError:
         return Response(
             "Failed to get a process \n", status=status.HTTP_500_INTERNAL_SERVER_ERROR

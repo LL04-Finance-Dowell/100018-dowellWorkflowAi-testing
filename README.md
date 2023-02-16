@@ -26,39 +26,45 @@ This backend service serves as the WorkflowAI application Backend.
 
 - Base URL: `https://100094.pythonanywhere.com`
 
-| HTTP Verbs | Endpoints                            | Action                                               |
-|------------|--------------------------------------|------------------------------------------------------|
-| POST       | /v0.1/search/                        | To search templates/documents/workflows              |
-| POST       | /v0.1/templates/                     | To create a new template.                            |
-| GET        | /v0.1/templates/:templateId/         | To retrieve a single template.                       |
-| GET        | /v0.1/templates/approve/:templateId/ | To approve a single template.                        |
-| GET        | /v0.1/templates/:companyId/          | To retrieve templates of given company.              |
-| POST       | /v0.1/documents/                     | To create a new document.                            |
-| GET        | /v0.1/documents/:documentId/         | To retrieve a single document.                       |
-| GET        | /v0.1/documents/:companyId/          | To retrieve documents of a given company.            |
-| POST       | /v0.1/workflows/                     | To create a new workflow                             |
-| GET        | /v0.1/workflows/:workflowId/         | To retrieve a single workflow                        |
-| GET        | /v0.1/workflows/update/              | To update a single workflow.                         |
-| GET        | /v0.1/workflows/:companyId/          | To retrieve workflows in a company                   |
-| POST       | /v0.1/process/                       | To create a new process                              |
-| GET        | /v0.1/process/:processId/            | To retrieve a single process                         |
-| GET        | /v0.1/process/:companyId/            | To retrieve processes in a company                   |
-| GET        | v/0.1/process/verify/:processId/     | To get process verification link for a given process |
+| HTTP Verbs | Endpoints                             | Action                                               |
+|------------|---------------------------------------|------------------------------------------------------|
+| POST       | /v0.1/search/                         | To search templates/documents/workflows              |
+| POST       | /v0.1/templates/                      | To create a new template.                            |
+| GET        | /v0.1/templates/:template_id/         | To retrieve a single template.                       |
+| GET        | /v0.1/templates/approve/:template_id/ | To approve a single template.                        |
+| GET        | /v0.1/templates/org/:company_id/      | To retrieve templates of given company.              |
+| POST       | /v0.1/documents/                      | To create a new document.                            |
+| GET        | /v0.1/documents/:document_id/         | To retrieve a single document.                       |
+| GET        | /v0.1/documents/org/:company_id/      | To retrieve documents of a given company.            |
+| GET        | v0.1/documents/content/:document_id/  | To get the content map of a single document          |
+| POST       | /v0.1/workflows/                      | To create a new workflow                             |
+| GET        | /v0.1/workflows/:workflow_id/         | To retrieve a single workflow                        |
+| GET        | /v0.1/workflows/update/               | To update a single workflow.                         |
+| GET        | /v0.1/workflows/org/:company_id/      | To retrieve workflows in a company                   |
+| POST       | /v0.1/process/                        | To create a new process                              |
+| GET        | /v0.1/process/:process_id/            | To retrieve a single process                         |
+| POST       | v0.1/process/link/                    | To retrieve verification link for a user             |
+| GET        | /v0.1/process/org/:company_id/        | To retrieve processes in a company                   |
+| GET        | v/0.1/process/verify/:process_id/     | To get process verification link for a given process |
+| POST       | v0.1/settings/                        | To set wf ai settings                                |
+| POST       | v0.1/settings/update/                 | To update wf ai settings                             |
+
+--------------
 
 ### API Endpoints - V0.2 (new process page.)
 
 - Base URL: `https://100094.pythonanywhere.com`
 
-| HTTP Verbs | Endpoints                        | Action                                               |
-|------------|----------------------------------|------------------------------------------------------|
-| POST       | /v0.2/process/                   | To create a new process                              |
-| GET        | /v0.2/process/:processId/        | To retrieve a single process                         |
-| GET        | /v0.2/process/:companyId/        | To retrieve processes in a company                   |
-| POST       | /v0.2/process/verification/      | To verify a process to get access.                   |
-| POST       | /v0.2/process/mark/              | To mark a documents as finalized/rejected            |
-| GET        | v/0.1/process/verify/:processId/ | To get process verification link for a given process |
+| HTTP Verbs | Endpoints                         | Action                                               |
+|------------|-----------------------------------|------------------------------------------------------|
+| POST       | /v0.2/process/                    | To create a new process                              |
+| GET        | /v0.2/process/:process_id/        | To retrieve a single process                         |
+| GET        | /v0.2/process/org/:company_id/    | To retrieve processes in a company                   |
+| POST       | /v0.2/process/verification/       | To verify a process to get access.                   |
+| POST       | /v0.2/process/mark/               | To mark a documents as finalized/rejected            |
+| GET        | v/0.1/process/verify/:process_id/ | To get process verification link for a given process |
 
-### Endpoints Definition(Req + Res).
+### Endpoints Definition(Request - Response).
 
 #### Process
 
@@ -86,11 +92,15 @@ Request Body
 
 Response - 200
 
-```{ <verification_link> }```
+```
+{ <verification_link> }
+```
 
 Response - 401
 
-```"User is not part of this process"```
+```
+"User is not part of this process"
+```
 
 Response - 500
 
@@ -109,19 +119,27 @@ Request Body
 
 Response-201
 
-```{ "editor_link": "<link_to_the_editor> }```
+```
+{ "editor_link": "<link_to_the_editor> }
+```
 
 Response - 401
 
-``` "User is not part of this process"```
+```
+"User is not part of this process"
+```
 
 Response - 403
 
-```"Portfolio for this user is Unauthorized"```
+```
+"Portfolio for this user is Unauthorized"
+```
 
 Response-500
 
-```" verification failed"```
+```
+" verification failed"
+```
 
 _POST_ to `process/start/`
 
@@ -168,11 +186,15 @@ Request Body
 
 Response - 201
 
-```"Started Processing"```
+```
+"Started Processing"
+```
 
 Response - 500
 
-``` "Failed to create process and start processing." ```
+``` 
+"Failed to create process and start processing." 
+```
 
 #### Template Management
 
@@ -191,80 +213,85 @@ Request Body
 
 Response-201
 
-``` { "editor_link": "<link_to_the_editor> }```
+```
+ { "editor_link": "<link_to_the_editor> }
+ ```
 
 Response-300
 
-```{ "message": "Template Name is Required" }```
+```
+{ "message": "Template Name is Required" }
+```
 
 Response-400
 
-```{ "message": "Failed to process template creation." }```
+```
+{ "message": "Failed to process template creation." }
+```
 
 Response-405
 
-``` { "message": "Template Creation failed"}```
+``` 
+{ "message": "Template Creation failed"}
+```
 
 Response 500
 
-```{ "message": "Failed to process template creation."}```
+```
+{ "message": "Failed to process template creation."}
+```
 
-_POST_ `templates/all/`
-
-- Getting all template
-
-Request Body
-
-```{ "company_id": "<company_id>",}```
+_POST_ `templates/:companyId/`
 
 Response-200
 
 ```{ "templates": [list of all templates ]}```
 
-_POST_ `templates/detail/`
-
-Request Body
-
-```
-{
-    "template_id": "<id_of_the_template>",
-    "template_name": "<name_of_template_from_list>"
-}
-```
+_POST_ `templates/:templateId/`
 
 Response-200
 
-```{ "editor_link": "<link_to_the_editor>" }```
+```
+{ "editor_link": "<link_to_the_editor>" }
+```
 
 Response-400
 
-```{"message": "Failed to fecth template" }```
+```
+{"message": "Failed to fecth template" }
+```
 
 Response-404
 
-```{"message": "Template Not Found" }```
+```
+{"message": "Template Not Found" }
+```
 
 Response-500
 
-```{"message": "Failed to fecth template" }```
+```
+{"message": "Failed to fecth template" }
+```
 
 _POST_ `templates/approve/:templateId/`
 
-Request Params
-
-```{template_id": "<id_of_template_>",}```
-
 Response-200
 
-```{"message": "Template Approved"}```
+```
+{"message": "Template Approved"}
+```
 
 Response-400
 
-```{ "message": "Approval Request Could not be processed." ```
+```
+{ "message": "Approval Request Could not be processed."
+```
 
 Response-500
 
-```{ message": "Template Could not be approved"}```
+```
+{ message": "Template Could not be approved"}
+```
 
 #### Document Management
 
@@ -295,13 +322,7 @@ Response-200
 { "document:[], "message": "Unable to Create Document"}
 ```
 
-_POST_ `documents/all/`
-
-Request Body
-
-```
-{"company_id": "<company_id>",} 
-```
+_GET_ `documents/:companyId/`
 
 Response-200
 
@@ -309,16 +330,7 @@ Response-200
 {"documents": [list of all documents ]}
 ```
 
-_POST_ `documents/detail/`
-
-Request Body
-
-```
-{
-    "document_name": "<id_of_the_document>",
-    "document_id": "<name_of_document_from_list>"
-}
-```
+_POST_ `documents/documentId/`
 
 Response-200
 
@@ -329,20 +341,10 @@ Response-200
 Response-200
 
 ```
-{
-    "document":[],
-    "message": "This Document is Not Loaded."
-}
-
+{ "document":[], "message": "This Document is Not Loaded."}
 ```
 
-_POST_ `documents/document_content/`
-
-Request Body
-
-```
-{"document_id":"<Id of specific document>"}
-```
+_GET_ `documents/content/:documentId/`
 
 Response-200
 
@@ -375,20 +377,13 @@ Response-201
 { "workflow": "<saved_workflow_data> }
 ```
 
-If Not Created
-Response-200
+Response-200(If Not Created)
 
 ```
 { "workflow": [], "message": "Failed to Save Workflow" }
 ```
 
 _POST_ `workflows/:companyId/`
-
-Request Params
-
-```
-{"company_id": "<company_id>"}
-```
 
 Response-200
 
@@ -513,7 +508,7 @@ Response-200
 }
 ```
 
-_POST_ `get_WFAI_setting/`
+_POST_ `settings/`
 
 Request Body
 
@@ -543,7 +538,7 @@ Response-200
 }
 ```
 
-_POST_ `update_WFAI_setting/`
+_POST_ `settings/update/`
 
 Request Body
 
