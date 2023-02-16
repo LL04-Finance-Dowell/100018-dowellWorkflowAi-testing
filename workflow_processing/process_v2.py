@@ -1,8 +1,8 @@
 import json
 import jwt
+import requests
 from datetime import datetime
 from threading import Thread
-from .process import generate_link
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
@@ -16,6 +16,8 @@ from database.mongo_db_connection_v2 import (
     update_document,
     get_process_list,
 )
+
+editor_api = "https://100058.pythonanywhere.com/api/generate-editor-link/"
 
 
 @api_view(["POST"])
@@ -476,13 +478,14 @@ def verification(request):
                                 step["stepDocumentCloneMap"].extend({user_name: clone_id})
                         else:
                             # what if this step role has no clone
-                            clone_id = process["document_id"]
+                            clone_id = process["parentDocumentId"]
                 if step.get("stepTaskType") == "assign_task":
                     pass
             # Display check
-            doc_map = step.get("document_map")
-            right = step.get("rights")
+            doc_map = step.get("stepDocumentMap")
+            right = step.get("stepRights")
             user = step.get("member")
+            role = step.get('stepRole')
             match = True
     if not match:
         return Response("Document Access forbidden!", status=status.HTTP_403_FORBIDDEN)
@@ -504,6 +507,7 @@ def verification(request):
         doc_rights=right,
         user=user,
         process_id=process["_id"],
+        role=role
     )
     return Response(doc_link.json(), status=status.HTTP_201_CREATED)
 
@@ -562,6 +566,34 @@ def check_time_limit_right(time, select_time_limits, start_time, end_time, creat
     return allowed
 
 
+def generate_link(document_id, doc_map, doc_rights, user, process_id, role):
+    print("generating document link .... \n")
+    payload = {
+        "product_name": "workflowai",
+        "details": {
+            '_id': document_id,
+            'field': "document_name",
+            'action': "document",
+            'cluster': "Documents",
+            'database': "Documentation",
+            'collection': "DocumentReports",
+            'document': "documentreports",
+            'team_member_ID': "11689044433",
+            'function_ID': "ABCDE",
+            'command': "update",
+            'flag': "signing",
+            'authorized': user,
+            'document_map': doc_map,
+            'document_right': doc_rights,
+            'role': role,
+            'process_id': process_id,
+            'update_field': {'document_name': "", 'content': "", 'page': ""},
+        },
+    }
+    link = requests.post(editor_api, data=json.dumps(payload))
+    return link
+
+
 @api_view(["POST"])
 def process_draft(request):
     """Get process and begin processing it."""
@@ -613,54 +645,58 @@ def wf_processes(request):
 def mark_process_as_finalize_or_reject(request):
     # get process
     try:
-        process = get_process_object(workflow_process_id=request.data["process_id"])
+        process = get_process_object(workflow_process_id=request.data['process_id'])
     except ConnectionError as e:
         print(e)
         return Response(
-            "Failed to get process, Retry!",
+            'Failed to get process, Retry!',
             status=status.HTTP_500_INTERNAL_SERVER_ERROR,
         )
         # check complete
-    if check_processing_complete(process=process):
+    if check_processing_complete(process=process, step_role=request.data['role']):
         return Response(
-            "Document processing is already complete", status=status.HTTP_200_OK
+            'Document processing is already complete', status=status.HTTP_200_OK
         )
         # check the action
     action = None
-    for step in process["processSteps"]:
+    for step in process['processSteps']:
         # find matching step for auth member
-        if step["member"] == request.data["authorized"]:
-            if request.data["action"] == "finalize":
-                step.update({"stepProcessingState": "complete"})
-                action = "finalized"
+        if step['member'] == request.data['authorized']:
+            if request.data['action'] == 'finalize':
+                step.update({'stepProcessingState': 'complete'})
+                action = 'finalized'
                 break
-            if request.data["action"] == "reject":
-                step.update({"stepProcessingState": "complete"})
-                step.update({"rejected": True})
-                action = "rejected"
+            if request.data['action'] == 'reject':
+                step.update({'stepProcessingState': 'complete'})
+                step.update({'rejected': True})
+                action = 'rejected'
                 break
     # update the workflow
-    data = {"process_id": request.data["process_id"], "process_steps": process["process_steps"]}
+    data = {'process_id': request.data['process_id'], 'process_steps': process['process_steps']}
     t = Thread(
         target=process_update,
-        name="process update....",
         args=(data,),
     )
     t.start()
     # if process is now complete change document state to `completed`
-    if check_processing_complete(process=process):
+    if check_processing_complete(process=process, step_role=request.data['role']):
         doc_data = {
-            "document_id": process["document_id"],
-            "process_id": process["_id"],
-            "state": "completed"
+            'document_id': process['document_id'],
+            'process_id': process['_id'],
+            'state': 'completed'
         }
         dt = Thread(
             target=document_update,
             args=(doc_data,),
         )
         dt.start()
-    return Response(f"Step marked as {action}", status=status.HTTP_201_CREATED)
+    return Response(f'Step marked as {action}', status=status.HTTP_201_CREATED)
 
-def check_processing_complete(process):
-    pass
 
+def check_processing_complete(process, step_role):
+    complete = True
+    for step in process['process_steps']:
+        if step['stepRole'] == step_role:
+            if step['stepProcessingState'] == 'complete':
+                complete = False
+    return complete

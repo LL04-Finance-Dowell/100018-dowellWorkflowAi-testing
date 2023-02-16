@@ -1,5 +1,6 @@
 import json
 import requests
+from .thread_start import ThreadAlgolia
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
@@ -11,7 +12,6 @@ from database.mongo_db_connection import (
 )
 
 editorApi = "https://100058.pythonanywhere.com/api/generate-editor-link/"
-from .thread_start import ThreadAlgolia
 
 
 @api_view(["POST"])

@@ -14,6 +14,11 @@ from database.mongo_db_connection import (
 from document.thread_start import ThreadAlgolia
 
 
+@api_view(['GET'])
+def home(request):
+    return Response("WorkflowAI Service is running...", status=status.HTTP_200_OK)
+
+
 def processing_complete(process):
     """
     complete document and mark as complete

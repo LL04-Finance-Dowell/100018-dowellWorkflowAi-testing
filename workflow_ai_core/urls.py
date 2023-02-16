@@ -45,6 +45,7 @@ from workflow.wf_management import (
     workflow_detail,
     update_workflow,
     get_workflows,
+    home,
 )
 from workflow_processing.process import (
     save_and_start_processing,
@@ -55,7 +56,8 @@ from workflow_processing.process import (
     fetch_process_links,
     processes,
 )
-from workflow_processing.process_v2 import document_processing, verification, wf_processes
+from workflow_processing.process_v2 import document_processing, verification, wf_processes, \
+    mark_process_as_finalize_or_reject
 
 schema_view = get_schema_view(
     openapi.Info(
@@ -71,6 +73,7 @@ schema_view = get_schema_view(
 )
 
 urlpatterns = [
+    path("", home, name="Home"),
     # api doc
     re_path(
         r"^swagger(?P<format>\.json|\.yaml)$",
@@ -89,6 +92,7 @@ urlpatterns = [
     path("v0.2/process/start/", document_processing),
     path("v0.2/process/verify/", verification),
     path("v0.2/wf-processes/", wf_processes),
+    path('v0.2/process/mark/', mark_process_as_finalize_or_reject),
     # processing.
     path("v0.1/processes/", processes),
     path("v0.1/process/start/", save_and_start_processing),
