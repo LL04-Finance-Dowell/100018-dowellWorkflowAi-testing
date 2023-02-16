@@ -110,7 +110,7 @@ urlpatterns = [
     path("v0.1/search/", search),
     # templates
     path("v0.1/templates/", create_template),
-    path("v0.1/templates/<str:template_id>/", template_detail,name="template_detail"),
+    path("v0.1/templates/<str:template_id>/", template_detail, name="template_detail"),
     path("v0.1/templates/org/<str:company_id>/", get_templates, name="all_templates"),
     path("v0.1/templates/approve/<str:template_id>/", approve),
     # documents
