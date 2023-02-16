@@ -36,7 +36,7 @@ This backend service serves as the WorkflowAI application Backend.
 | POST       | /v0.1/documents/                      | To create a new document.                            |
 | GET        | /v0.1/documents/:document_id/         | To retrieve a single document.                       |
 | GET        | /v0.1/documents/org/:company_id/      | To retrieve documents of a given company.            |
-| GET        | v0.1/documents/content/:document_id/  | To get the content map of a single document          |
+| GET        | /v0.1/documents/content/:document_id/ | To get the content map of a single document          |
 | POST       | /v0.1/workflows/                      | To create a new workflow                             |
 | GET        | /v0.1/workflows/:workflow_id/         | To retrieve a single workflow                        |
 | GET        | /v0.1/workflows/update/               | To update a single workflow.                         |
@@ -45,9 +45,10 @@ This backend service serves as the WorkflowAI application Backend.
 | GET        | /v0.1/process/:process_id/            | To retrieve a single process                         |
 | POST       | v0.1/process/link/                    | To retrieve verification link for a user             |
 | GET        | /v0.1/process/org/:company_id/        | To retrieve processes in a company                   |
-| GET        | v/0.1/process/verify/:process_id/     | To get process verification link for a given process |
-| POST       | v0.1/settings/                        | To set wf ai settings                                |
-| POST       | v0.1/settings/update/                 | To update wf ai settings                             |
+| GET        | /v/0.1/process/verify/:process_id/    | To get process verification link for a given process |
+| POST       | /v0.1/settings/                       | To set wf ai settings                                |
+| GET        | /v0.1/settings/:setting_id/           | To get a single wf ai settings                       |
+| POST       | /v0.1/settings/update/                | To update wf ai settings                             |
 
 --------------
 
