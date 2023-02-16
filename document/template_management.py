@@ -13,6 +13,7 @@ from database.mongo_db_connection import (
 editorApi = "https://100058.pythonanywhere.com/api/generate-editor-link/"
 from .thread_start import ThreadAlgolia
 
+
 @api_view(["POST"])
 def get_templates(request):  # List of Created Templates.
 
@@ -67,7 +68,7 @@ def create_template(request):
             },
         }
         try:
-            ThreadAlgolia(res["inserted_id"],get_template_object).start()
+            ThreadAlgolia(res["inserted_id"], get_template_object).start()
             editor_link = requests.post(
                 editorApi,
                 data=json.dumps(payload),
@@ -153,8 +154,8 @@ def approved(request):
         t
         for t in template_list
         if t.get("approved") == True
-        and t.get("created_by") == request.data["created_by"]
-        and t.get("data_type") == request.data["data_type"]
+           and t.get("created_by") == request.data["created_by"]
+           and t.get("data_type") == request.data["data_type"]
     ]
     if not templates:
         return Response(
@@ -176,8 +177,8 @@ def not_approved_templates(request):  # List of Templates to be approved.
         t
         for t in template_list
         if t.get("approved") == False
-        and t.get("created_by") == request.data["created_by"]
-        and t.get("data_type") == request.data["data_type"]
+           and t.get("created_by") == request.data["created_by"]
+           and t.get("data_type") == request.data["data_type"]
     ]
     if not templates:
         return Response(
@@ -199,7 +200,7 @@ def template_list(request):  # List of Created Templates.
         t
         for t in template_list
         if t.get("created_by") == request.data["created_by"]
-        and t.get("data_type") == request.data["data_type"]
+           and t.get("data_type") == request.data["data_type"]
     ]
     if not templates:
         return Response(

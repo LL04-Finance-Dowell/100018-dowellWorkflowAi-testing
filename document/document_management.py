@@ -12,6 +12,7 @@ from database.mongo_db_connection import (
     get_links_object_by_process_id,
 )
 from .thread_start import ThreadAlgolia
+
 editorApi = "https://100058.pythonanywhere.com/api/generate-editor-link/"
 
 
@@ -87,13 +88,13 @@ def create_document(request):  # Document Creation.
                     "POST", editorApi, headers=headers, data=payload
                 )
                 try:
-                    ThreadAlgolia(res["inserted_id"],get_document_object).start()
+                    ThreadAlgolia(res["inserted_id"], get_document_object).start()
 
                     return Response(
                         editor_link.json(),
                         status=status.HTTP_201_CREATED,
                     )
-                except:
+                except ConnectionError:
                     return Response(
                         {"document": [], "message": "Failed to call editorApi"},
                         status=status.HTTP_200_OK,
@@ -169,7 +170,7 @@ def document_detail(request):  # Single document
                 editor_link.json(),
                 status=status.HTTP_201_CREATED,
             )
-        except:
+        except ConnectionError:
             return Response(
                 {"document": [], "message": "Failed to call editorApi"},
                 status=status.HTTP_200_OK,
@@ -183,25 +184,25 @@ def document_detail(request):  # Single document
 
 @api_view(["POST"])
 def documents_to_be_signed(
-    request,
+        request,
 ):  # List of `to be signed` documents. State being processing.
     try:
         filtered_documents = []
         for d in get_document_list(request.data["company_id"]):
             if (
-                d.get("state") == "processing"
-                and d.get("company_id") == request.data["company_id"]
-                and check_allowed(
-                    process_id=d.get("workflow_process"),
-                    user_name=request.data["user_name"],
-                )
+                    d.get("state") == "processing"
+                    and d.get("company_id") == request.data["company_id"]
+                    and check_allowed(
+                process_id=d.get("workflow_process"),
+                user_name=request.data["user_name"],
+            )
             ):
                 filtered_documents.append(d)
 
         if len(filtered_documents) > 0:
             return Response(filtered_documents, status=status.HTTP_200_OK)
         return Response([], status=status.HTTP_200_OK)
-    except:
+    except ConnectionError:
         return Response([], status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
@@ -212,14 +213,14 @@ def documents_to_be_signed(request):  # List of `to be signed` documents.
         for d in get_document_list(request.data["company_id"]):
             if "workflow_process" in d:
                 if d.get("company_id") == request.data["company_id"] and check_allowed(
-                    process_id=d.get("workflow_process"),
-                    user_name=request.data["user_name"],
+                        process_id=d.get("workflow_process"),
+                        user_name=request.data["user_name"],
                 ):
                     filtered_documents.append(d)
         if len(filtered_documents) > 0:
             return Response(filtered_documents, status=status.HTTP_200_OK)
         return Response([], status=status.HTTP_200_OK)
-    except:
+    except ConnectionError:
         print("got error...... \n")
         return Response([], status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
@@ -257,11 +258,11 @@ def my_documents(request):  # List of my documents.
             for doc in documents:
                 try:
                     if (
-                        doc["created_by"] == created_by
-                        and doc["data_type"] == data_type
+                            doc["created_by"] == created_by
+                            and doc["data_type"] == data_type
                     ):
                         filtered_list.append(doc)
-                except:
+                except ConnectionError:
 
                     filtered_list = []
 
@@ -281,7 +282,6 @@ def rejected_documents(request):  # List of `to be signed` documents.
     for doc in documents:
 
         if len(doc["reject_message"]) != 0 and len(doc["rejected_by"]) != 0:
-
             filtered_list.append(doc)
 
     return Response(

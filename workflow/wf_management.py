@@ -1,4 +1,4 @@
-import json,time
+import json, time
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
@@ -11,6 +11,8 @@ from database.mongo_db_connection import (
 from threading import Thread
 from document.algolia import save_to_algolia
 from document.thread_start import ThreadAlgolia
+
+
 def processing_complete(process):
     """
     complete document and mark as complete
@@ -18,8 +20,10 @@ def processing_complete(process):
     # check if all process steps are marked finalized
     complete = False
     if process["isSuccess"]:
-        complete=process["isSuccess"]
+        complete = process["isSuccess"]
     return complete
+
+
 @api_view(["POST"])
 def get_workflows(request):
     workflow_list = get_wf_list(request.data["company_id"])
@@ -47,7 +51,7 @@ def get_step(sid, step_name):
 
 @api_view(["POST"])
 def create_workflow(request):  # Document Creation.
-    completed=False
+    completed = False
     form = request.data
     if not form:
         return Response(
@@ -70,12 +74,12 @@ def create_workflow(request):  # Document Creation.
         starter = time.time()
         res = json.loads(save_wf(data, form["company_id"], form["created_by"]))
         if res["isSuccess"]:
-            wf_data=get_wf_object(res["inserted_id"])
+            wf_data = get_wf_object(res["inserted_id"])
             # completed=True
-            
+
             try:
-                ThreadAlgolia(res["inserted_id"],get_wf_object).start()
-                
+                ThreadAlgolia(res["inserted_id"], get_wf_object).start()
+
                 return Response(
                     {
                         "workflow": wf_data,
@@ -88,8 +92,7 @@ def create_workflow(request):  # Document Creation.
                     status=status.HTTP_200_OK,
                 )
             # finally:
-                
-                
+
             #     # print("start thread")
             #     dt = Thread(
             #     target=save_to_algolia,
@@ -98,13 +101,14 @@ def create_workflow(request):  # Document Creation.
             #     dt.start()
     # if completed:
     #     print("start thread")
-        # if processing_complete(res):
-        #     print("tread started")
-            # dt = Thread(
-            #     target=save_to_algolia,
-            #     args=(wf_data,),
-            # )
-            # dt.start()
+    # if processing_complete(res):
+    #     print("tread started")
+    # dt = Thread(
+    #     target=save_to_algolia,
+    #     args=(wf_data,),
+    # )
+    # dt.start()
+
 
 @api_view(["POST"])
 def update_workflow(request):  # Document Creation.
@@ -137,8 +141,8 @@ def update_workflow(request):  # Document Creation.
 
         if updt_wf["isSuccess"]:
             try:
-                updated_wf=get_wf_object(nw_wf["inserted_id"])
-                ThreadAlgolia(nw_wf["inserted_id"],get_wf_object).start()
+                updated_wf = get_wf_object(nw_wf["inserted_id"])
+                ThreadAlgolia(nw_wf["inserted_id"], get_wf_object).start()
                 return Response(
                     {"workflow": updated_wf},
                     status=status.HTTP_201_CREATED,
