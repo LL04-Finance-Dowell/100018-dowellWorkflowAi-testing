@@ -58,9 +58,12 @@ This backend service serves as the WorkflowAI application Backend.
 | POST       | /v0.2/process/mark/              | To mark a documents as finalized/rejected            |
 | GET        | v/0.1/process/verify/:processId/ | To get process verification link for a given process |
 
-### Workflow Process Endpoints Definition(Req + Res).
+### Endpoints Definition(Req + Res).
+
+#### Process
 
 _POST_ to `process/verification/`
+
 Request Body
 
 ```
@@ -83,20 +86,11 @@ Request Body
 
 Response - 200
 
-```
-{
-    <verification_link>
-}
-
-```
+```{ <verification_link> }```
 
 Response - 401
 
-```
-
-"User is not part of this process"
-
-```
+```"User is not part of this process"```
 
 Response - 500
 
@@ -115,32 +109,19 @@ Request Body
 
 Response-201
 
-```
-{
-    "editor_link": "<link_to_the_editor>
-}
-
-```
+```{ "editor_link": "<link_to_the_editor> }```
 
 Response - 401
 
-```
-
-"User is not part of this process"
-
-```
+``` "User is not part of this process"```
 
 Response - 403
 
-```
-
- "Portfolio for this user is Unauthorized"
-
-```
+```"Portfolio for this user is Unauthorized"```
 
 Response-500
 
-" verification failed"
+```" verification failed"```
 
 _POST_ to `process/start/`
 
@@ -187,18 +168,13 @@ Request Body
 
 Response - 201
 
-```
-    "Started Processing"
-
-```
+```"Started Processing"```
 
 Response - 500
 
-```
-    "Failed to create process and start processing."
-```
+``` "Failed to create process and start processing." ```
 
-### Template Management
+#### Template Management
 
 _POST_ to `templates/`
 
@@ -215,44 +191,23 @@ Request Body
 
 Response-201
 
-```
-{
-    "editor_link": "<link_to_the_editor>
-}
-
-```
+``` { "editor_link": "<link_to_the_editor> }```
 
 Response-300
 
-```
-{
-    "message": "Template Name is Required"
-}
-```
+```{ "message": "Template Name is Required" }```
 
 Response-400
 
-```
-{
-    "message": "Failed to process template creation."
-}
-```
+```{ "message": "Failed to process template creation." }```
 
 Response-405
 
-```
-{
-    "message": "Template Creation failed"
-}
-```
+``` { "message": "Template Creation failed"}```
 
 Response 500
 
-```
-{
-    "message": "Failed to process template creation."
-}
-```
+```{ "message": "Failed to process template creation."}```
 
 _POST_ `templates/all/`
 
@@ -260,24 +215,13 @@ _POST_ `templates/all/`
 
 Request Body
 
-```
-{
-    "company_id": "<company_id>",
-}
-```
+```{ "company_id": "<company_id>",}```
 
 Response-200
 
-```
-{
-    "templates": [list of all templates ]
-}
-
-```
+```{ "templates": [list of all templates ]}```
 
 _POST_ `templates/detail/`
-
-- Getting a single template
 
 Request Body
 
@@ -290,81 +234,41 @@ Request Body
 
 Response-200
 
-```
-{
-    "editor_link": "<link_to_the_editor>"
-}
-
-```
+```{ "editor_link": "<link_to_the_editor>" }```
 
 Response-400
 
-```
-{
-    "message": "Failed to fecth template"
-}
-
-```
+```{"message": "Failed to fecth template" }```
 
 Response-404
 
-```
-{
-    "message": "Template Not Found"
-}
-
-```
+```{"message": "Template Not Found" }```
 
 Response-500
 
-```
-{
-    "message": "Failed to fecth template"
-}
+```{"message": "Failed to fecth template" }```
 
-```
+_POST_ `templates/approve/:templateId/`
 
-_POST_ `templates/approve/`
+Request Params
 
-- Approve a given template.
-
-Request Body
-
-```
-{
-    "template_id": "<id_of_template_>",
-}
-```
+```{template_id": "<id_of_template_>",}```
 
 Response-200
 
-```
-{
-    "message": "Template Approved"
-}
-```
+```{"message": "Template Approved"}```
 
 Response-400
 
-```
-{
-    "message": "Approval Request Could not be processed."
-}
-```
+```{ "message": "Approval Request Could not be processed." ```
 
 Response-500
 
-```
-{
-    "message": "Template Could not be approved"
-}
-```
+```{ message": "Template Could not be approved"}```
 
-### Document Management
+#### Document Management
 
 _POST_ to `documents/`
-
-- Creates a new Document by providing created_by parameter and its value from front end
 
 Request Body
 
@@ -382,44 +286,30 @@ Request Body
 Response-201
 
 ```
-{
-    "editor_link": "<link_to_the_editor>
-}
-
+{"editor_link": "<link_to_the_editor>}
 ```
 
 Response-200
 
 ```
-{   "document:[],
-    "message": "Unable to Create Document"
-}
+{ "document:[], "message": "Unable to Create Document"}
 ```
 
 _POST_ `documents/all/`
 
-- Getting a all documents
-
 Request Body
 
 ```
-{
-    "company_id": "<company_id>",
-}
+{"company_id": "<company_id>",} 
 ```
 
 Response-200
 
 ```
-{
-    "documents": [list of all documents ]
-}
-
+{"documents": [list of all documents ]}
 ```
 
 _POST_ `documents/detail/`
-
-- Getting a single Document by document_name and document_id
 
 Request Body
 
@@ -433,10 +323,7 @@ Request Body
 Response-200
 
 ```
-{
-    "editor_link": "<link_to_the_editor>"
-}
-
+{ "editor_link": "<link_to_the_editor>"}
 ```
 
 Response-200
@@ -451,12 +338,10 @@ Response-200
 
 _POST_ `documents/document_content/`
 
-- Get Data and ID of each content in document
-
 Request Body
 
 ```
- {"document_id":"<Id of specific document>"}
+{"document_id":"<Id of specific document>"}
 ```
 
 Response-200
@@ -465,11 +350,9 @@ Response-200
 {"content":"<content_id_and_data>}
 ```
 
-### Workflow Management
+#### Workflow Management
 
 _POST_ to `workflows/`
-
-- Creates a new workflow
 
 Request Body
 
@@ -489,80 +372,51 @@ Request Body
 Response-201
 
 ```
-{
-    "workflow": "<saved_workflow_data>
-}
-
+{ "workflow": "<saved_workflow_data> }
 ```
 
 If Not Created
 Response-200
 
 ```
-{
-    "workflow": [],
-    "message": "Failed to Save Workflow"
-}
-
+{ "workflow": [], "message": "Failed to Save Workflow" }
 ```
 
-_POST_ `workflows/all/`
+_POST_ `workflows/:companyId/`
 
-- Getting all workflows
+Request Params
+
+```
+{"company_id": "<company_id>"}
+```
+
+Response-200
+
+```
+{ "workflows": [list of all workflows] }
+```
+
+_POST_ `workflows/:workflowId/`
 
 Request Body
 
 ```
-{
-    "company_id": "<company_id>",
-}
+{ "workflow_id": "<id_specific_of_workflow>" }
 ```
 
 Response-200
 
 ```
-{
-    "workflows": [list of all workflows]
-}
-
+{ "workflow": "<detailed_workflow_data>" }
 ```
 
-_POST_ `workflows/detail/`
-
-- Getting a single workflow by workflow_title and workflow_id
-
-Request Body
+Response-200 (If Not Available)
 
 ```
-{
-    "workflow_id": "<id_specific_of_workflow>"
-}
-```
-
-Response-200
-
-```
-{
-    "workflow": "<detailed_workflow_data>"
-}
-
-```
-
-If Not Available
-Response-200
-
-```
-{
-    "workflow":[],
-    "message": "This workflow is Not Loaded."
-}
-
+{ "workflow":[], "message": "This workflow is Not Loaded." }
 ```
 
 _POST_ `workflows/update/`
-
-- Getting and Updating Workflow by workflow_id
-
 Request Body
 
 ```
@@ -593,22 +447,16 @@ Request Body
 Response-201
 
 ```
-{
-    "workflow":{"old(archived) workflow data"},
-}
-
-If Not Sucessfully Updated
-Response-200
-
+{ "workflow":{"old(archived) workflow data"}  }
 ```
 
-{
-"workflow":[],
-"message": "Failed to Update Workflow"
+Response-200(If Not Successfully Updated)
 
-}
+```
+{ "workflow":[], "message": "Failed to Update Workflow"}
+```
 
-### Intelligent Search
+#### Intelligent Search
 
 _POST_ `search/`
 
@@ -626,11 +474,7 @@ Response-200
 ```
 {
     "search_keyword":"user_search_input",
-    "search_result": {
-                "workflow": ["list_of_existing_workflows_with_searched_title"],
-                "document":["list_of_existing_documents_with_searched_name"],
-                "templat":["list_of_existing_te,templates_with_searched_name"]
-                }
+    "search_result": { "workflow": ["list_of_existing_workflows_with_searched_title"], "document":["list_of_existing_documents_with_searched_name"],"template":["list_of_existing_te,templates_with_searched_name]}
 }
 ```
 

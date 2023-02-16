@@ -21,29 +21,6 @@ from database.mongo_db_connection import (
     update_wf_process,
 )
 
-# Get an instance of a logger
-logger = logging.getLogger(__name__)
-
-"""
-Background tasking using threading
-"""
-
-
-def task(func, data):
-    def wrapper(*args, **kwargs):
-        start_time = time.perf_counter()
-        t = Thread(
-            target=func,
-            args=(data,),
-        )
-
-        t.start()
-        end_time = time.perf_counter()
-        print(f"{func.__name__} took {end_time - start_time:.6f} seconds")
-        return
-
-    return wrapper
-
 
 def processing_complete(process):
     """
