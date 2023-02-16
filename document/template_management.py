@@ -127,10 +127,10 @@ def template_detail(request, template_id):
     )
 
 
-@api_view(["POST"])
-def approve(request):
+@api_view(["GET"])
+def approve(request,template_id):
     response = json.loads(
-        update_template_approval(template_id=request.data["template_id"], approval=True)
+        update_template_approval(template_id, approval=True)
     )
     if not response["isSuccess"]:
         return Response(

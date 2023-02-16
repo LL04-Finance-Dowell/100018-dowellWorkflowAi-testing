@@ -110,13 +110,13 @@ urlpatterns = [
     path("v0.1/search/", search),
     # templates
     path("v0.1/templates/", create_template),
-    path("v0.1/templates/<str:template_id>/", template_detail),
+    path("v0.1/templates/<str:template_id>/", template_detail,name="template_detail"),
     path("v0.1/templates/org/<str:company_id>/", get_templates, name="all_templates"),
     path("v0.1/templates/approve/<str:template_id>/", approve),
     # documents
     path("v0.1/documents/", create_document, name="documents"),
     path("v0.1/documents/<str:document_id>/", document_detail, name="document"),
-    path("v0.1/documents/content/str:document_id>/", get_document_content, name="content"),
+    path("v0.1/documents/content/<str:document_id>/", get_document_content, name="content"),
     path("v0.1/documents/org/<str:company_id>/", get_documents, name="all_documents"),
     # v2 processing.
     path("v0.2/process/", document_processing),

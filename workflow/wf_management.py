@@ -30,9 +30,9 @@ def processing_complete(process):
     return complete
 
 
-@api_view(["POST"])
-def get_workflows(request):
-    workflow_list = get_wf_list(request.data["company_id"])
+@api_view(["GET"])
+def get_workflows(request,company_id):
+    workflow_list = get_wf_list(company_id)
     if not workflow_list:
         return Response({"workflows": []}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
@@ -160,18 +160,18 @@ def update_workflow(request):  # Document Creation.
                 )
 
 
-@api_view(["POST"])
-def workflow_detail(request):  # Single document
+@api_view(["GET"])
+def workflow_detail(request,workflow_id):  # Single document
 
-    workflow_id = request.data["workflow_id"]
+   
     data = get_wf_object(workflow_id)
-    if not request.data:
+    if not data:
         return Response(
             {"workflow": [], "message": "Failed to Load Workflow."},
             status=status.HTTP_200_OK,
         )
-
-    return Response(
+    else:
+        return Response(
         {"workflow": data},
         status=status.HTTP_201_CREATED,
     )

@@ -17,9 +17,9 @@ from .thread_start import ThreadAlgolia
 editorApi = "https://100058.pythonanywhere.com/api/generate-editor-link/"
 
 
-@api_view(["POST"])
-def get_documents(request):  # List of Created Templates.
-    document_list = get_document_list(request.data["company_id"])
+@api_view(["GET"])
+def get_documents(request,company_id):  # List of Created Templates.
+    document_list = get_document_list(company_id)
 
     if not document_list:
         return Response({"documents": []}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
@@ -112,11 +112,11 @@ def create_document(request):  # Document Creation.
     )
 
 
-@api_view(["POST"])
-def get_document_content(request):
+@api_view(["GET"])
+def get_document_content(request,document_id):
     content = []
     my_dict = ast.literal_eval(
-        get_document_object(request.data["document_id"])["content"]
+        get_document_object(document_id)["content"]
     )[0][0]
     all_keys = [i for i in my_dict.keys()]
     for i in all_keys:
@@ -131,56 +131,47 @@ def get_document_content(request):
     return Response(content, status=status.HTTP_200_OK)
 
 
-@api_view(["POST"])
-def document_detail(request):  # Single document
+@api_view(["GET"])
+def document_detail(request,document_id):  # Single document
 
-    if request.method == "POST":
-        if not request.data:
-            return Response(
-                {"document": [], "message": "Failed to Load Document."},
-                status=status.HTTP_200_OK,
-            )
-        document_id = request.data["document_id"]
-        data = get_document_object(document_id)
-        document_name = data["document_name"]
-        page = ""
-        payload = json.dumps(
-            {
-                "product_name": "workflowai",
-                "details": {
-                    "cluster": "Documents",
-                    "database": "Documentation",
-                    "collection": "DocumentReports",
-                    "document": "documentreports",
-                    "team_member_ID": "11689044433",
-                    "function_ID": "ABCDE",
-                    "_id": document_id,
-                    "field": "document_name",
-                    "action": "document",
-                    "flag": "editing",
-                    "command": "update",
-                    "update_field": {"content": "", "document_name": "", "page": ""},
-                },
-            }
-        )
-        headers = {"Content-Type": "application/json"}
 
-        editor_link = requests.request("POST", editorApi, headers=headers, data=payload)
-        try:
-            return Response(
-                editor_link.json(),
-                status=status.HTTP_201_CREATED,
-            )
-        except ConnectionError:
-            return Response(
-                {"document": [], "message": "Failed to call editorApi"},
-                status=status.HTTP_200_OK,
-            )
-
-    return Response(
-        {"document": [], "message": "This Document is Not Loaded."},
-        status=status.HTTP_200_OK,
+    data = get_document_object(document_id)
+    document_name = data["document_name"]
+    page = ""
+    payload = json.dumps(
+        {
+            "product_name": "workflowai",
+            "details": {
+                "cluster": "Documents",
+                "database": "Documentation",
+                "collection": "DocumentReports",
+                "document": "documentreports",
+                "team_member_ID": "11689044433",
+                "function_ID": "ABCDE",
+                "_id": document_id,
+                "field": "document_name",
+                "action": "document",
+                "flag": "editing",
+                "command": "update",
+                "update_field": {"content": "", "document_name": "", "page": ""},
+            },
+        }
     )
+    headers = {"Content-Type": "application/json"}
+
+    editor_link = requests.request("POST", editorApi, headers=headers, data=payload)
+    try:
+        return Response(
+            editor_link.json(),
+            status=status.HTTP_201_CREATED,
+        )
+    except ConnectionError:
+        return Response(
+            {"document": [], "message": "Failed to call editorApi"},
+            status=status.HTTP_200_OK,
+        )
+
+   
 
 
 @api_view(["POST"])
