@@ -1,10 +1,5 @@
 # hello_algolia.py
 from algoliasearch.search_client import SearchClient
-from database.mongo_db_connection import (
-    get_wf_list,
-    get_document_list,
-    get_template_list,
-)
 
 # Connect and authenticate with your Algolia app
 client = SearchClient.create("N7KJ4AQQ7Z", "9514747f86dce7e94cc5a2d56677e8e8")
@@ -18,9 +13,9 @@ index.set_settings(
 
 #             {"objectID":2, "name": "dev_record","address": "ababa"}
 # ]
-def save_to_algolia(id, func):
+def save_to_algolia(identifier, func):
     # get_search_result = get_wf_list(company_id)+get_document_list(company_id)+get_template_list(company_id)
-    data = func(id)
+    data = func(identifier)
     index.save_object(data, {'autoGenerateObjectIDIfNotExist': True}).wait()
 
 

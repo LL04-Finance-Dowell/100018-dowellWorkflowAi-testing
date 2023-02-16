@@ -1,14 +1,15 @@
-import json
-import requests
 import ast
+import json
+
+import requests
+from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from rest_framework import status
+
 from database.mongo_db_connection import (
     get_document_list,
     save_document,
     get_document_object,
-    get_template_object,
     get_links_object_by_process_id,
 )
 from .thread_start import ThreadAlgolia
@@ -114,17 +115,17 @@ def create_document(request):  # Document Creation.
 @api_view(["POST"])
 def get_document_content(request):
     content = []
-    myDict = ast.literal_eval(
+    my_dict = ast.literal_eval(
         get_document_object(request.data["document_id"])["content"]
     )[0][0]
-    allKeys = [i for i in myDict.keys()]
-    for i in allKeys:
-        tempList = []
-        for j in range(0, len(myDict[i])):
-            tempList.append({"id": myDict[i][j]["id"], "data": myDict[i][j]["data"]})
+    all_keys = [i for i in my_dict.keys()]
+    for i in all_keys:
+        temp_list = []
+        for j in range(0, len(my_dict[i])):
+            temp_list.append({"id": my_dict[i][j]["id"], "data": my_dict[i][j]["data"]})
         content.append(
             {
-                i: tempList,
+                i: temp_list,
             }
         )
     return Response(content, status=status.HTTP_200_OK)

@@ -107,7 +107,7 @@ def get_wf_ai_setting(request):
 
 
 @api_view(["POST"])
-def update_WFAI_setting(request):  # Document Creation.
+def update_wfai_setting(request):  # Document Creation.
     if request.method == "POST":
         form = request.data
         if not form:

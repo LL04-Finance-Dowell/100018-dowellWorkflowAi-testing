@@ -14,14 +14,38 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.conf import settings
-
 # from django.conf.urls import url
 from django.conf.urls.static import static
-from django.urls import include, path, re_path
-from rest_framework import permissions
-from drf_yasg.views import get_schema_view
+from django.urls import path, re_path
 from drf_yasg import openapi
+from drf_yasg.views import get_schema_view
+from rest_framework import permissions
+
+from document.count_all import count_objects
+from document.document_management import (
+    document_detail,
+    create_document,
+    get_document_content,
+    get_documents,
+)
 from document.intelligent_search import search
+from document.template_management import (
+    create_template,
+    template_detail,
+    approve,
+    get_templates,
+)
+from workflow.wf_ai_setting import (
+    create_workflow_setting,
+    get_wf_ai_setting,
+    update_wfai_setting,
+)
+from workflow.wf_management import (
+    create_workflow,
+    workflow_detail,
+    update_workflow,
+    get_workflows,
+)
 from workflow_processing.process import (
     save_and_start_processing,
     a_single_process,
@@ -31,45 +55,6 @@ from workflow_processing.process import (
     fetch_process_links,
     processes,
 )
-
-from workflow.wf_management import (
-    create_workflow,
-    workflow_detail,
-    my_workflows,
-    update_workflow,
-    saved_workflows,
-    get_workflows,
-)
-
-from document.template_management import (
-    template_list,
-    org_templates,
-    approved,
-    not_approved_templates,
-    create_template,
-    template_detail,
-    approve,
-    get_templates,
-)
-
-from document.document_management import (
-    document_detail,
-    documents_to_be_signed,
-    draft_documents,
-    my_documents,
-    create_document,
-    rejected_documents,
-    get_document_content,
-    get_documents,
-)
-
-from workflow.wf_ai_setting import (
-    create_workflow_setting,
-    get_wf_ai_setting,
-    update_WFAI_setting,
-)
-from document.count_all import count_objects
-
 from workflow_processing.process_v2 import document_processing, verification, wf_processes
 
 schema_view = get_schema_view(
@@ -120,7 +105,7 @@ urlpatterns = [
     # wf_settings
     path("v0.1/workflow_ai_setting/", create_workflow_setting, name="save_wf_setting"),
     path("v0.1/get_WFAI_setting/", get_wf_ai_setting, name="get_wf_ai_setting"),
-    path("v0.1/update_WFAI_setting/", update_WFAI_setting, name="update_WFAI_setting"),
+    path("v0.1/update_WFAI_setting/", update_wfai_setting, name="update_WFAI_setting"),
     # search
     path("v0.1/search/", search),
     # templates
@@ -143,7 +128,7 @@ urlpatterns = [
         name="object_count",
     ),
 
-    #----------------- @deprecated --------------
+    # ----------------- @deprecated --------------
     # path(
     #     "v0.1/documents/to-sign/",
     #     documents_to_be_signed,
@@ -170,8 +155,6 @@ urlpatterns = [
     # path("v0.1/templates/pending/", not_approved_templates),
     # path("v0.1/templates/saved/", org_templates),
     # path("v0.1/templates/mine/", template_list),
-
-
 
 ]
 if settings.DEBUG:

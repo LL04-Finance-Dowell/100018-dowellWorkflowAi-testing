@@ -211,7 +211,7 @@ Response 500
 ```
 _POST_ `templates/all/`
 
-- Getting a all template
+- Getting all template
 
 Request Body
 
@@ -760,7 +760,7 @@ Response-200
 ```
 _POST_ `workflows/all/`
 
-- Getting a all workflows
+- Getting all workflows
 
 Request Body
 
@@ -846,7 +846,7 @@ Response-200
 
 _POST_ `workflows/update/`
 
-- Getting and Updating Workflow workflow_id
+- Getting and Updating Workflow by workflow_id
 
 Request Body
 

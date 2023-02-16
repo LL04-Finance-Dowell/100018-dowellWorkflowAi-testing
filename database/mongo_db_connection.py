@@ -701,7 +701,7 @@ def get_wf_setting_object(wf_setting_id):
         return []
 
 
-def get_WFAI_setting_list(company_id):
+def get_wfai_setting_list(company_id):
     fields = {"company_id": str(company_id)}
     response_obj = dowellconnection(*WF_AI_SETTING_LIST, "fetch", fields, "nil")
     res_obj = json.loads(response_obj)
