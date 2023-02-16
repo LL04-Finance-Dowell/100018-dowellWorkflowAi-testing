@@ -20,9 +20,7 @@ from database.mongo_db_connection_v2 import (
 
 @api_view(["POST"])
 def document_processing(request):
-    """
-    processing is determined by action picked by user.
-    """
+    """processing is determined by action picked by user."""
     if not request.data:
         return Response("You are missing something!", status=status.HTTP_400_BAD_REQUEST)
     data_type = "Testing_Data"
@@ -236,10 +234,7 @@ def document_processing(request):
         return Response("Failed cancel process!", status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     if request.data["action"] == "pause_processing_after_completing_ongoing_step":
-        """
-        - find the ongoing step.
-        - pause processing
-        """
+        """ - find the ongoing step - pause processing"""
         pass
 
     return Response("Something went wrong!", status=status.HTTP_500_INTERNAL_SERVER_ERROR)
@@ -289,14 +284,14 @@ def new_process(
     # return process id.
     if res["isSuccess"]:
         process = {
-            "process_title": process_title,
-            "process_steps": process_steps,
-            "process_choice": process_choice,
-            "created_by": created_by,
-            "company_id": company_id,
-            "data_type": data_type,
-            "document_id": document_id,
-            "process_id": res["inserted_id"],
+            "processTitle": process_title,
+            "processSteps": process_steps,
+            "processingChoice": process_choice,
+            "createdBy": created_by,
+            "companyId": company_id,
+            "dataType": data_type,
+            "documentId": document_id,
+            "processId": res["inserted_id"],
         }
         return process
 
@@ -305,12 +300,12 @@ def new_process(
 def start_processing(process):
     print("Generating links.............\n")
     links = []
-    for step in process["process_steps"]:
+    for step in process["processSteps"]:
         links.append(
             {
                 step.get("stepName"): verification_link(
-                    process_id=process["process_id"],
-                    document_id=process["document_id"],
+                    process_id=process["processId"],
+                    document_id=process["documentId"],
                     team_users=step.get("stepTeamMembers", None),
                     public_users=step.get("stepPublicMembers", None),
                     user_users=step.get("stepUserMembers", None),
@@ -321,10 +316,10 @@ def start_processing(process):
     # Save Links -
     data = {
         "links": links,
-        "process_id": process["process_id"],
-        "document_id": process["document_id"],
-        "process_choice": process["process_choice"],
-        "process_title": process["process_title"],
+        "process_id": process["processId"],
+        "document_id": process["documentId"],
+        "process_choice": process["processingChoice"],
+        "process_title": process["processTitle"],
     }
     t = Thread(target=save_links_v2, args=(data,))
     t.start()
@@ -332,7 +327,7 @@ def start_processing(process):
     if process["processingState"] == "draft":
         process_data = {
             "process_id": process["_id"],
-            "process_steps": process["process_steps"],
+            "process_steps": process["processSteps"],
             "processing_state": "processing"
         }
         pt = Thread(target=process_update, args=(process_data,))
@@ -399,15 +394,12 @@ def check_user_presence(token, user_name):
             or user_name in decoded["team_users"]
     ):
         user_allowed = True
-
     return user_allowed, decoded["process_id"]
 
 
 @api_view(["POST"])
 def verification(request):
-    """
-    verification of a process step access and checks that duplicate document based on a step.
-    """
+    """verification of a process step access and checks that duplicate document based on a step."""
     if not request.data:
         return Response("You are missing something!", status=status.HTTP_400_BAD_REQUEST)
     user_name = request.data["user_name"]
@@ -433,7 +425,7 @@ def verification(request):
     user = None
     match = False
     clone_id = None
-    for step in process["steps"]:
+    for step in process["processSteps"]:
         # step role matching auth process
         if step.get("stepRole") == process["step_role"]:
             print("Started the checks.... \n")
@@ -497,7 +489,7 @@ def verification(request):
     # thread work to update the process
     process_data = {
         "process_id": process["_id"],
-        "process_steps": process["process_steps"],
+        "process_steps": process["processSteps"],
         "processing_state": process["processingState"]
     }
     pt = Thread(
@@ -535,10 +527,7 @@ def check_display_right(display):
 
 
 def check_location_right(location, my_location, continent, my_continent, country, my_country, city, my_city):
-    """
-    - check the location selection.
-    - verify matching geo information.
-    """
+    """- check the location selection - verify matching geo information."""
     allowed = False
     if location == "any":
         allowed = True
@@ -551,9 +540,7 @@ def check_location_right(location, my_location, continent, my_continent, country
 
 
 def check_time_limit_right(time, select_time_limits, start_time, end_time, creation_time):
-    """
-    check time limits for processing step.
-    """
+    """check time limits for processing step."""
     current_time = datetime.now().strftime("%H:%M")
     allowed = False
     if time == "no_time_limit":
@@ -577,25 +564,21 @@ def check_time_limit_right(time, select_time_limits, start_time, end_time, creat
 
 @api_view(["POST"])
 def process_draft(request):
-    """
-    Get process and begin processing it.
-    """
+    """Get process and begin processing it."""
     print("Processing a saved process... \n")
     try:
         process = get_process_object(workflow_process_id=request.data["process_id"])
     except ConnectionError:
         return Response("Could not start processing!", status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     if request.data["user_name"] == process["createdBy"]:
-        if process["processingState"] is not "processing":
+        if process["processingState"] != "processing":
             return start_processing(process)
-    return Response("User not allowed to trigger processing", status=status.HTTP_401_UNAUTHORIZED)
+    return Response("User not allowed to trigger processing!", status=status.HTTP_401_UNAUTHORIZED)
 
 
 @api_view(["POST"])
 def halt_process(request):
-    """
-    Halt an ongoing Process
-    """
+    """Halt an ongoing Process"""
     print("Halting a process...\n")
     try:
         process = get_process_object(workflow_process_id=request.data["process_id"])
@@ -608,14 +591,12 @@ def halt_process(request):
     res = json.loads(
         update_wf_process(process_id=request.data["process_id"], steps=process["processingSteps"], state="paused"))
     if res["isSuccess"]:
-        return Response("Process has been paused until manually resumed", status=status.HTTP_200_OK)
+        return Response("Process has been paused until manually resumed!", status=status.HTTP_200_OK)
 
 
 @api_view(["POST"])
 def wf_processes(request):
-    """
-    Get all Workflow Process
-    """
+    """Get all Workflow Process"""
     print("Getting WF processes... \n")
     if not request.data:
         return Response("You are missing something!", status=status.HTTP_400_BAD_REQUEST)
@@ -626,3 +607,60 @@ def wf_processes(request):
     if len(processes) > 0:
         return Response(processes, status=status.HTTP_200_OK)
     return Response([], status=status.HTTP_200_OK)
+
+
+@api_view(["POST"])
+def mark_process_as_finalize_or_reject(request):
+    # get process
+    try:
+        process = get_process_object(workflow_process_id=request.data["process_id"])
+    except ConnectionError as e:
+        print(e)
+        return Response(
+            "Failed to get process, Retry!",
+            status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+        )
+        # check complete
+    if check_processing_complete(process=process):
+        return Response(
+            "Document processing is already complete", status=status.HTTP_200_OK
+        )
+        # check the action
+    action = None
+    for step in process["processSteps"]:
+        # find matching step for auth member
+        if step["member"] == request.data["authorized"]:
+            if request.data["action"] == "finalize":
+                step.update({"stepProcessingState": "complete"})
+                action = "finalized"
+                break
+            if request.data["action"] == "reject":
+                step.update({"stepProcessingState": "complete"})
+                step.update({"rejected": True})
+                action = "rejected"
+                break
+    # update the workflow
+    data = {"process_id": request.data["process_id"], "process_steps": process["process_steps"]}
+    t = Thread(
+        target=process_update,
+        name="process update....",
+        args=(data,),
+    )
+    t.start()
+    # if process is now complete change document state to `completed`
+    if check_processing_complete(process=process):
+        doc_data = {
+            "document_id": process["document_id"],
+            "process_id": process["_id"],
+            "state": "completed"
+        }
+        dt = Thread(
+            target=document_update,
+            args=(doc_data,),
+        )
+        dt.start()
+    return Response(f"Step marked as {action}", status=status.HTTP_201_CREATED)
+
+def check_processing_complete(process):
+    pass
+

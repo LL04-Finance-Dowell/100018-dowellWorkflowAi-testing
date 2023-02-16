@@ -59,9 +59,7 @@ def processing_complete(process):
 
 @api_view(["POST"])
 def register_finalize_or_reject(request):
-    """
-    assert completion of a given step finalize/reject
-    """
+    """assert completion of a given step finalize/reject"""
     # get process
     try:
         process = get_process_object(workflow_process_id=request.data["process_id"])
@@ -80,7 +78,7 @@ def register_finalize_or_reject(request):
     action = None
     for step in process["process_steps"]:
         # find matching step for auth member
-        if step["member"] == request.data["authorized"] and step["finalized"] is not True:
+        if step["member"] == request.data["authorized"]:
             if request.data["action"] == "finalize":
                 step.update({"finalized": True})
                 action = "finalized"
@@ -91,7 +89,7 @@ def register_finalize_or_reject(request):
                 action = "rejected"
                 break
     # update the workflow
-    data = {"process_id": request.data["process_id"], "steps": process["process_steps"]}
+    data = {"process_id": request.data["process_id"], "process_steps": process["process_steps"]}
     t = Thread(
         target=process_update,
         name="process update....",
@@ -102,7 +100,7 @@ def register_finalize_or_reject(request):
     if processing_complete(process=process):
         doc_data = {
             "document_id": process["document_id"],
-            "process_id": process["process_id"],
+            "process_id": process["_id"],
             "state": "completed"
         }
         dt = Thread(
@@ -114,20 +112,15 @@ def register_finalize_or_reject(request):
 
 
 def process_update(data):
-    """
-    process update task
-    """
-
+    """process update task"""
     update_wf_process(process_id=data["process_id"], steps=data["process_steps"])
     print("Thread: process update! \n")
+    return
 
 
 @api_view(["POST"])
 def processes(request):
-    """
-    fetches workflow process `I` created.
-    """
-
+    """fetches workflow process `I` created."""
     print("fetching processes..... \n")
     try:
         process_list = get_process_list(request.data["company_id"])
@@ -140,10 +133,7 @@ def processes(request):
 
 @api_view(["POST"])
 def a_single_process(request):
-    """
-    get process by process id
-    """
-
+    """get process by process id"""
     try:
         process = get_process_object(request.data["process_id"])
     except ConnectionError:
@@ -155,11 +145,7 @@ def a_single_process(request):
 
 @api_view(["POST"])
 def get_process_link(request):
-    """
-    get a link process for person having notifications
-    """
-
-    # get links info
+    """get a link process for person having notifications"""
     links_info = get_links_object_by_process_id(request.data["process_id"])
     user = request.data["user_name"]
     if not links_info["links"]:
@@ -179,10 +165,7 @@ def get_process_link(request):
 
 @api_view(["POST"])
 def fetch_process_links(request):
-    """
-    GET-verification links for a process
-    """
-
+    """GET-verification links for a process"""
     try:
         process_info = get_links_object_by_process_id(request.data["process_id"])
     except ConnectionError:
@@ -197,10 +180,7 @@ def fetch_process_links(request):
 
 @api_view(["POST"])
 def verify_process(request):
-    """
-    API - process verification to perform check and issue access
-    """
-
+    """API - process verification to perform check and issue access"""
     print("verification started...... \n")
     # decode token
     decoded = jwt.decode(request.data["token"], "secret", algorithms="HS256")

@@ -6,6 +6,7 @@ WorkflowProcessModel: # A single process.
     parentDocumentId - "document selected in first step"
     processingState - "complete|draft|processing"
     dataType - "Learning_Data|Testing_Data|Real_Data|"
+    companyId = "the company id"
     processSteps = {
     "stepNumber": 1,
     "stepRole": "<role_from_workflow_creation>",
