@@ -594,12 +594,12 @@ def generate_link(document_id, doc_map, doc_rights, user, process_id, role):
     return link
 
 
-@api_view(["POST"])
-def process_draft(request):
+@api_view(["GET"])
+def process_draft(request, process_id):
     """Get process and begin processing it."""
     print("Processing a saved process... \n")
     try:
-        process = get_process_object(workflow_process_id=request.data["process_id"])
+        process = get_process_object(process_id)
     except ConnectionError:
         return Response("Could not start processing!", status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     if request.data["user_name"] == process["createdBy"]:
@@ -608,12 +608,12 @@ def process_draft(request):
     return Response("User not allowed to trigger processing!", status=status.HTTP_401_UNAUTHORIZED)
 
 
-@api_view(["POST"])
-def halt_process(request):
+@api_view(["GET"])
+def halt_process(request, process_id):
     """Halt an ongoing Process"""
     print("Halting a process...\n")
     try:
-        process = get_process_object(workflow_process_id=request.data["process_id"])
+        process = get_process_object(process_id)
     except ConnectionError:
         return Response("Could not pause processing!", status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     if request.data["user_name"] != process["createdBy"]:
@@ -626,14 +626,12 @@ def halt_process(request):
         return Response("Process has been paused until manually resumed!", status=status.HTTP_200_OK)
 
 
-@api_view(["POST"])
-def wf_processes(request):
+@api_view(["GET"])
+def wf_processes(request, company_id):
     """Get all Workflow Process"""
     print("Getting WF processes... \n")
-    if not request.data:
-        return Response("You are missing something!", status=status.HTTP_400_BAD_REQUEST)
     try:
-        processes = get_process_list(company_id=request.data["company_id"])
+        processes = get_process_list(company_id)
     except ConnectionError:
         return Response("Something went wrong!", status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     if len(processes) > 0:

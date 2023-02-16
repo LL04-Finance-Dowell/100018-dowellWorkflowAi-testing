@@ -18,7 +18,7 @@ editorApi = "https://100058.pythonanywhere.com/api/generate-editor-link/"
 
 
 @api_view(["GET"])
-def get_documents(request,company_id):  # List of Created Templates.
+def get_documents(request, company_id):  # List of Created Templates.
     document_list = get_document_list(company_id)
 
     if not document_list:
@@ -113,7 +113,7 @@ def create_document(request):  # Document Creation.
 
 
 @api_view(["GET"])
-def get_document_content(request,document_id):
+def get_document_content(request, document_id):
     content = []
     my_dict = ast.literal_eval(
         get_document_object(document_id)["content"]
@@ -132,8 +132,7 @@ def get_document_content(request,document_id):
 
 
 @api_view(["GET"])
-def document_detail(request,document_id):  # Single document
-
+def document_detail(request, document_id):  # Single document
 
     data = get_document_object(document_id)
     document_name = data["document_name"]
@@ -170,8 +169,6 @@ def document_detail(request,document_id):  # Single document
             {"document": [], "message": "Failed to call editorApi"},
             status=status.HTTP_200_OK,
         )
-
-   
 
 
 @api_view(["POST"])
