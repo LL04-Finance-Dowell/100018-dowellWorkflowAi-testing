@@ -46,7 +46,6 @@ def create_template(request):
             request.data["data_type"],
         )
     )
-    print(res)
     if res["isSuccess"]:
         payload = {
             "product_name": "workflowai",
@@ -88,12 +87,6 @@ def create_template(request):
 
 @api_view(["GET"])
 def template_detail(request, template_id):
-    data = get_template_object(template_id)
-    if not data:
-        return Response(
-            {"message": "Template Not Found."},
-            status=status.HTTP_404_NOT_FOUND,
-        )
     payload = {
         "product_name": "workflow_ai",
         "details": {

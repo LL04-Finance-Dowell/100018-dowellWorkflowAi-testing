@@ -35,80 +35,70 @@ def get_documents(request, company_id):  # List of Created Templates.
     )
 
 
-@api_view(["GET", "POST"])
+@api_view(["POST"])
 def create_document(request):  # Document Creation.
-
-    if request.method == "POST":
-
-        if not request.data:
-            return Response(
-                {"documents": [], "message": "Failed to process document creation."},
-                status=status.HTTP_200_OK,
+    if not request.data:
+        return Response(
+            {"documents": [], "message": "Failed to process document creation."},
+            status=status.HTTP_200_OK,
+        )
+    else:
+        res = json.loads(
+            save_document(
+                "Untitled Document",
+                request.data["content"],
+                request.data["created_by"],
+                request.data["company_id"],
+                request.data["page"],
+                request.data["data_type"],
             )
-        else:
-            res = json.loads(
-                save_document(
-                    "Untitled Document",
-                    request.data["content"],
-                    request.data["created_by"],
-                    request.data["company_id"],
-                    request.data["page"],
-                    request.data["data_type"],
-                )
-            )
-
-            if res["isSuccess"]:
-
-                payload = json.dumps(
-                    {
-                        "product_name": "workflowai",
-                        "details": {
-                            "_id": res["inserted_id"],
-                            "field": "document_name",
-                            "action": "document",
-                            "cluster": "Documents",
-                            "database": "Documentation",
-                            "collection": "DocumentReports",
-                            "document": "documentreports",
-                            "team_member_ID": "11689044433",
-                            "function_ID": "ABCDE",
-                            "command": "update",
-                            "flag": "editing",
-                            "update_field": {
-                                "document_name": "",
-                                "content": "",
-                                "page": "",
-                            },
+        )
+        if res["isSuccess"]:
+            payload = json.dumps(
+                {
+                    "product_name": "workflowai",
+                    "details": {
+                        "_id": res["inserted_id"],
+                        "field": "document_name",
+                        "action": "document",
+                        "cluster": "Documents",
+                        "database": "Documentation",
+                        "collection": "DocumentReports",
+                        "document": "documentreports",
+                        "team_member_ID": "11689044433",
+                        "function_ID": "ABCDE",
+                        "command": "update",
+                        "flag": "editing",
+                        "update_field": {
+                            "document_name": "",
+                            "content": "",
+                            "page": "",
                         },
-                    }
-                )
-                headers = {"Content-Type": "application/json"}
-
-                editor_link = requests.request(
-                    "POST", editorApi, headers=headers, data=payload
-                )
-                try:
-                    ThreadAlgolia(res["inserted_id"], get_document_object).start()
-
-                    return Response(
-                        editor_link.json(),
-                        status=status.HTTP_201_CREATED,
-                    )
-                except ConnectionError:
-                    return Response(
-                        {"document": [], "message": "Failed to call editorApi"},
-                        status=status.HTTP_200_OK,
-                    )
-
-            return Response(
-                {"document": [], "message": "Unable to Create Document"},
-                status=status.HTTP_200_OK,
+                    },
+                }
             )
+            headers = {"Content-Type": "application/json"}
 
-    return Response(
-        {"document": [], "message": "You Need To Be LoggedIn"},
-        status=status.HTTP_200_OK,
-    )
+            editor_link = requests.request(
+                "POST", editorApi, headers=headers, data=payload
+            )
+            try:
+                ThreadAlgolia(res["inserted_id"], get_document_object).start()
+
+                return Response(
+                    editor_link.json(),
+                    status=status.HTTP_201_CREATED,
+                )
+            except ConnectionError:
+                return Response(
+                    {"document": [], "message": "Failed to call editorApi"},
+                    status=status.HTTP_200_OK,
+                )
+
+        return Response(
+            {"document": [], "message": "Unable to Create Document"},
+            status=status.HTTP_200_OK,
+        )
 
 
 @api_view(["GET"])
@@ -132,10 +122,6 @@ def get_document_content(request, document_id):
 
 @api_view(["GET"])
 def document_detail(request, document_id):  # Single document
-
-    data = get_document_object(document_id)
-    document_name = data["document_name"]
-    page = ""
     payload = json.dumps(
         {
             "product_name": "workflowai",
@@ -156,7 +142,6 @@ def document_detail(request, document_id):  # Single document
         }
     )
     headers = {"Content-Type": "application/json"}
-
     editor_link = requests.request("POST", editorApi, headers=headers, data=payload)
     try:
         return Response(

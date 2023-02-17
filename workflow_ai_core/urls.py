@@ -21,7 +21,6 @@ from drf_yasg import openapi
 from drf_yasg.views import get_schema_view
 from rest_framework import permissions
 
-from document.count_all import count_objects
 from document.document_management import (
     document_detail,
     create_document,
