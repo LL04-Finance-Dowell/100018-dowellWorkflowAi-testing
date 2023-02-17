@@ -20,7 +20,6 @@ editorApi = "https://100058.pythonanywhere.com/api/generate-editor-link/"
 @api_view(["GET"])
 def get_documents(request, company_id):  # List of Created Templates.
     document_list = get_document_list(company_id)
-
     if not document_list:
         return Response({"documents": []}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
