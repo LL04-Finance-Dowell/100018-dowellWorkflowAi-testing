@@ -18,7 +18,7 @@ export const getProcessLink = async (data) => {
 }
 
 export const startNewProcessV2 = async (data) => {
-    return await newHttpProcess.post("start/", data);
+    return await newHttpProcess.post("/", data);
 }
 
 export const processActionOptions = {
