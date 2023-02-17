@@ -51,7 +51,7 @@ const DocumentCard = ({ cardItem, title }) => {
       document_id: item._id,
     };
 
-    dispatch(detailDocument(data));
+    dispatch(detailDocument(data.document_id));
   };
 
   const handleGoToEditor = async (link) => {

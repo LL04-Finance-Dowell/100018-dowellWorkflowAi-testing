@@ -6,15 +6,15 @@ import { httpProcess, newHttpProcess } from "../httpCommon/httpCommon";
 // }
 
 export const startNewProcess = async (data) => {
-    return await httpProcess.post("start/", data);
+    return await httpProcess.post("/", data);
 }
 
 export const verifyProcess = async (data) => {
-    return await httpProcess.post("verify/", data);
+    return await httpProcess.post("verify-process/", data);
 }
 
 export const getProcessLink = async (data) => {
-    return await httpProcess.post("link/", data);
+    return await httpProcess.post("verification-link/", data);
 }
 
 export const startNewProcessV2 = async (data) => {

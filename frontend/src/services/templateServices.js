@@ -5,16 +5,16 @@ export class TemplateServices {
     return httpTemplate.post("/", data);
   };
 
-  detailTemplate = (data) => {
-    return httpTemplate.post("/detail/", data);
+  detailTemplate = (templateId) => {
+    return httpTemplate.get(`/${templateId}/`);
   };
 
   approvedTemplate = (data) => {
     return httpTemplate.post("/approved/", data);
   };
 
-  approveTemplate = (data) => {
-    return httpTemplate.post("/approve/", data);
+  approveTemplate = (templateId) => {
+    return httpTemplate.get(`/approve/${templateId}`);
   };
 
   pendingTemplate = (data) => {
@@ -29,7 +29,7 @@ export class TemplateServices {
     return httpTemplate.post("/saved/", data);
   };
 
-  allTemplates = (data) => {
-    return httpTemplate.post("/all/", data);
+  allTemplates = (companyId) => {
+    return httpTemplate.get(`/org/${companyId}/`);
   };
 }

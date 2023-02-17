@@ -35,7 +35,7 @@ const SelectDoc = () => {
       company_id: userDetail?.portfolio_info[0].org_id,
     };
 
-    dispatch(allDocuments(data));
+    dispatch(allDocuments(data.company_id));
   }, []);
 
   const handleAddSelectedDocuments = (document) => {

@@ -36,7 +36,7 @@ const TemplatesPage = () => {
     if (savedTemplatesItemsStatus === "idle")
       dispatch(savedTemplates(savedTemplatesData)); */
 
-    if (allTemplatesStatus === "idle") dispatch(allTemplates(data));
+    if (allTemplatesStatus === "idle") dispatch(allTemplates(data.company_id));
   }, []);
 
   console.log("allTemplatesArrayallTemplatesArray", allTemplatesArray);

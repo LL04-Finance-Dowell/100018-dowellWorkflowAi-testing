@@ -18,7 +18,7 @@ const WorkflowCard = ({ cardItem }) => {
     dispatch(setToggleManageFileForm(true));
 
     const data = { workflow_id: item._id };
-    dispatch(detailWorkflow(data));
+    dispatch(detailWorkflow(data.workflow_id));
   };
 
   const FrontSide = () => {

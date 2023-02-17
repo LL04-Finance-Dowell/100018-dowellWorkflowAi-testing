@@ -52,11 +52,7 @@ const WorkflowApp = () => {
 
     dispatch(setNotificationFinalStatus(null));
     documentServices
-      .allDocuments({
-        company_id: userDetail?.portfolio_info[0]?.org_id,
-        // user_name: userDetail?.userinfo?.username,
-        // data_type: userDetail?.portfolio_info[0]?.data_type,
-      })
+      .allDocuments(userDetail?.portfolio_info[0]?.org_id)
       .then((res) => {
         const documentsToSign = res.data.documents.filter(document => 
           document.company_id === userDetail?.portfolio_info[0]?.org_id && 
@@ -127,6 +123,7 @@ const WorkflowApp = () => {
                   <ProgressBar
                     durationInMS={8000}
                     finalWidth={notificationFinalStatus}
+                    style={{ height: "2rem" }}
                   />
                 </div>
               </div>

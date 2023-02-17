@@ -69,7 +69,7 @@ const CreateDocument = ({ handleToggleOverlay }) => {
       company_id: userDetail?.portfolio_info[0].org_id,
     };
 
-    dispatch(allTemplates(data));
+    dispatch(allTemplates(data.company_id));
   }, []);
 
   return (

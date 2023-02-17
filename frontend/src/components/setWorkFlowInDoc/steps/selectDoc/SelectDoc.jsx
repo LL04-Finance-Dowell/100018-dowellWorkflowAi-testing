@@ -31,7 +31,7 @@ const SelectDoc = () => {
       company_id: userDetail?.portfolio_info[0].org_id,
     };
 
-    dispatch(allDocuments(data));
+    dispatch(allDocuments(data.company_id));
   }, []);
 
   const handleAddDocument = (document) => {
@@ -40,7 +40,7 @@ const SelectDoc = () => {
 
     console.log(document);
 
-    dispatch(contentDocument(data));
+    dispatch(contentDocument(data.document_id));
     dispatch(setCurrentDocToWfs(document));
     dispatch(setContentOfDocument(null));
   };

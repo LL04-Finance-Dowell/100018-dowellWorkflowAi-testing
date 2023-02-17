@@ -55,7 +55,7 @@ const InfoBoxes = () => {
       company_id: userDetail?.portfolio_info[0].org_id,
     };
 
-    dispatch(allWorkflows(data));
+    dispatch(allWorkflows(data.company_id));
   }, []);
 
   const memorizedInfoBox = useCallback(() => {

@@ -45,9 +45,9 @@ const ManageFile = () => {
     if (savedTemplatesItemsStatus === "idle") dispatch(savedTemplates(data));
     if (savedWorkflowStatus === "idle") dispatch(savedWorkflows(data)); */
 
-    if (allDocumentsStatus === "idle") dispatch(allDocuments(data));
-    if (allTemplatesStatus === "idle") dispatch(allTemplates(data));
-    if (allWorkflowsStatus === "idle") dispatch(allWorkflows(data));
+    if (allDocumentsStatus === "idle") dispatch(allDocuments(data.company_id));
+    if (allTemplatesStatus === "idle") dispatch(allTemplates(data.company_id));
+    if (allWorkflowsStatus === "idle") dispatch(allWorkflows(data.company_id));
   }, []);
 
   useEffect(() => {

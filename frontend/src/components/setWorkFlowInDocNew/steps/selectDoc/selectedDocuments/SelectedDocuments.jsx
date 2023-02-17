@@ -27,7 +27,7 @@ const SelectedDocuments = ({ selectedDocuments }) => {
     const fetchData = { document_id: currentDocument._id };
 
     console.log("second document", document);
-    dispatch(contentDocument(fetchData));
+    dispatch(contentDocument(fetchData.document_id));
     dispatch(setCurrentDocToWfs(currentDocument));
     dispatch(setContentOfDocument(null));
   };

@@ -302,15 +302,15 @@ export const teams = [
   },
   {
     id: uuidv4(),
-    content: "team 1",
+    content: "team 2",
   },
   {
     id: uuidv4(),
-    content: "team 1",
+    content: "team 3",
   },
   {
     id: uuidv4(),
-    content: "team 1",
+    content: "team 4",
   },
 ];
 

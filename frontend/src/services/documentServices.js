@@ -5,8 +5,8 @@ export class DocumentServices {
     return httpDocument.post("/", data);
   };
 
-  detailDocument = (data) => {
-    return httpDocument.post("/detail/", data);
+  detailDocument = (documentId) => {
+    return httpDocument.get(`/${documentId}/`);
   };
 
   signDocument = (data) => {
@@ -25,11 +25,11 @@ export class DocumentServices {
     return httpDocument.post("/saved/", data);
   };
 
-  contentDocument = (data) => {
-    return httpDocument.post("/document_content/", data);
+  contentDocument = (documentId) => {
+    return httpDocument.get(`/content/${documentId}/`);
   };
 
-  allDocuments = (data) => {
-    return httpDocument.post("/all/", data);
+  allDocuments = (companyId) => {
+    return httpDocument.get(`/org/${companyId}/`);
   };
 }

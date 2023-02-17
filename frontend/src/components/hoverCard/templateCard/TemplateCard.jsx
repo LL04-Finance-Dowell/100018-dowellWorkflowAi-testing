@@ -13,7 +13,7 @@ const TemplateCard = ({ cardItem }) => {
       template_name: item.template_name,
     };
 
-    dispatch(detailTemplate(data));
+    dispatch(detailTemplate(data.template_id));
   };
 
   const FrontSide = () => {

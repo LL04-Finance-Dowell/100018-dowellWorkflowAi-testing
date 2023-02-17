@@ -33,7 +33,7 @@ const DocumentsPage = () => {
       dispatch(savedDocuments(draftData));
     if (mineStatus !== "succeeded") dispatch(mineDocuments(data)); */
 
-    if (allDocumentsStatus === "idle") dispatch(allDocuments(data));
+    if (allDocumentsStatus === "idle") dispatch(allDocuments(data.company_id));
   }, []);
 
   console.log("aaaaaaaaaaa", allDocumentsArray);

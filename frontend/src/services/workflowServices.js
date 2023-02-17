@@ -9,16 +9,16 @@ export class WorkflowServices {
     return httpWorkflow.post("/mine/", data);
   };
 
-  detailWorkflow = (data) => {
-    return httpWorkflow.post("/detail/", data);
+  detailWorkflow = (workflowId) => {
+    return httpWorkflow.get(`/${workflowId}/`);
   };
   updateWorkflow = (data) => {
-    return httpWorkflow.post("/update/", data);
+    return httpWorkflow.get("/update/", data);
   };
   savedWorkflows = (data) => {
     return httpWorkflow.post("/saved/", data);
   };
-  allWorkflows = (data) => {
-    return httpWorkflow.post("/all/", data);
+  allWorkflows = (companyId) => {
+    return httpWorkflow.get(`/org/${companyId}/`);
   };
 }

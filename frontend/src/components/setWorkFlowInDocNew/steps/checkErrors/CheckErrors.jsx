@@ -106,8 +106,8 @@ const CheckErrors = () => {
           takeNormalValue={true}
         />
         <div className={styles.info__container} style={{ alignItems: "center" }}>
-          <PrimaryButton hoverBg="success" onClick={handleSortProcess} style={{ width: "50%", height: "100%" }}>Show Process</PrimaryButton>
-          { sortLoading ? <ProgressBar durationInMS={1000} style={{ width: "50%", height: "100%" }} /> : <></> }
+          <PrimaryButton hoverBg="success" onClick={handleSortProcess} style={{ width: "50%", height: "2.2rem" }}>Show Process</PrimaryButton>
+          { sortLoading ? <ProgressBar durationInMS={1000} style={{ width: "50%", height: "2.2rem" }} /> : <></> }
           {/* <PrimaryButton hoverBg="success">25%</PrimaryButton> */}
         </div>
         { sortItemActive ? <div className={styles.proccess__container}>
