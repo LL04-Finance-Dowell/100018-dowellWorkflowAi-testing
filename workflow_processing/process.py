@@ -108,20 +108,9 @@ def processes(request, company_id):
     return Response([], status=status.HTTP_200_OK)
 
 
-@api_view(["GET"])
-def a_single_process(request, process_id):
-    """get process by process id"""
-    try:
-        process = get_process_object(process_id)
-    except ConnectionError:
-        return Response(
-            "Failed to get a process \n", status=status.HTTP_500_INTERNAL_SERVER_ERROR
-        )
-    return Response(process, status=status.HTTP_200_OK)
-
-
 @api_view(["POST"])
 def get_process_link(request):
+    print("got here")
     """get a link process for person having notifications"""
     links_info = get_links_object_by_process_id(request.data["process_id"])
     user = request.data["user_name"]
@@ -138,6 +127,18 @@ def get_process_link(request):
     return Response(
         "User is not part of this process", status=status.HTTP_401_UNAUTHORIZED
     )
+
+
+@api_view(["GET"])
+def a_single_process(request, process_id):
+    """get process by process id"""
+    try:
+        process = get_process_object(process_id)
+    except ConnectionError:
+        return Response(
+            "Failed to get a process \n", status=status.HTTP_500_INTERNAL_SERVER_ERROR
+        )
+    return Response(process, status=status.HTTP_200_OK)
 
 
 @api_view(["POST"])

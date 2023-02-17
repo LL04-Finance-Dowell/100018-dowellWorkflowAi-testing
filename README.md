@@ -43,10 +43,10 @@ This backend service serves as the WorkflowAI application Backend.
 | GET        | /v0.1/workflows/org/:company_id/      | To retrieve workflows in a company                   |
 | POST       | /v0.1/process/                        | To create a new process                              |
 | GET        | /v0.1/process/:process_id/            | To retrieve a single process                         |
-| POST       | /v0.1/process/link/                   | To retrieve verification link for a user             |
+| POST       | /v0.1/process/verification-link/      | To retrieve verification link for a user             |
 | GET        | /v0.1/process/org/:company_id/        | To retrieve processes in a company                   |
-| GET        | /v/0.1/process/verify/:process_id/    | To get process verification link for a given process |
-| POST       | /v0.1/process/verification/           | To verify a given process and give access            |
+| GET        | /v/0.1/process/links/:process_id/     | To get process verification link for a given process |
+| POST       | /v0.1/process/verify-process/         | To verify a given process and give access            |
 | POST       | /v0.1/settings/                       | To set wf ai settings                                |
 | GET        | /v0.1/settings/:setting_id/           | To get a single wf ai settings                       |
 | POST       | /v0.1/settings/update/                | To update wf ai settings                             |
