@@ -21,6 +21,34 @@ export const startNewProcessV2 = async (data) => {
     return await newHttpProcess.post("/", data);
 }
 
+export const getSingleProcessV2 = async (processId) => {
+    return await newHttpProcess.get(`/${processId}/`);
+}
+
+export const getAllProcessesV2 = async (companyId) => {
+    return await newHttpProcess.get(`/org/${companyId}/`);
+}
+
+export const verifyProcessV2 = async (data) => {
+    return await newHttpProcess.post("/verification/", data)
+}
+
+export const markProcessV2 = async (data) => {
+    return await newHttpProcess.post("/mark/", data)
+}
+
+export const getProcessVerificationLinkV2 = async (processId) => {
+    return await newHttpProcess.get(`/verify/${processId}/`)
+}
+
+export const startDraftProcessingV2 = async (processId) => {
+    return await newHttpProcess.get(`/start/${processId}/`)
+}
+
+export const pauseOngoingProcessV2 = async (processId) => {
+    return await newHttpProcess.get(`/pause/${processId}/`)
+}
+
 export const processActionOptions = {
     saveWorkflowToDocument: "save_workflow_to_document",
     saveAndStartProcess: "save_and_start_processing",
