@@ -17,8 +17,9 @@ const Location = ({ currentStepIndex }) => {
     formState: { isSubmitted },
     watch
   } = useForm();
-  const { locationChoice, continent, country } = watch();
+  const { continent, country } = watch();
   const dispatch = useDispatch();
+  const [ currentLocationChoice, setCurrentLocationChoice ] = useState(null);
   const [ showLocationDropdowns, setShowLocationDropdowns ] = useState(false);
   const { docCurrentWorkflow, continents, continentsLoaded } = useSelector((state) => state.app);
   const { userDetail, session_id } = useSelector(state => state.auth);
@@ -51,11 +52,11 @@ const Location = ({ currentStepIndex }) => {
 
   useEffect(() => {
 
-    if (locationChoice && locationChoice === "selectLocation") return setShowLocationDropdowns(true);
+    if (currentLocationChoice && currentLocationChoice === "selectLocation") return setShowLocationDropdowns(true);
 
     setShowLocationDropdowns(false)
 
-  }, [locationChoice])
+  }, [currentLocationChoice])
 
   useEffect(() => {
 
@@ -102,17 +103,22 @@ const Location = ({ currentStepIndex }) => {
     <>
     <form className={parentStyles.content__box} onSubmit={handleSubmit(handleSetLocation)}>
       <div>
-        <Radio register={register} value="anyLocation" name="locationChoice">
+        <Radio register={register} value="anyLocation" name={"locationChoice"} onChange={() => setCurrentLocationChoice("anyLocation")}>
           Any Location
         </Radio>
-        <Radio register={register} value="selectLocation" name="locationChoice">
+        <Radio register={register} value="selectLocation" name={"locationChoice"} onChange={() => setCurrentLocationChoice("selectLocation")}>
           Select Location
         </Radio>
       </div>
       {
         showLocationDropdowns ?
         <div>
-          { !continentsLoaded ? <ProgressBar durationInMS={6000} /> : <Select options={continents} register={register} name="continent" takeOptionValue={true} /> }
+          { 
+            !continentsLoaded ? 
+            <ProgressBar durationInMS={6000} /> : 
+            continents.length === 0 ? <span style={{ fontSize: "0.8rem" }}>No continents available</span> :
+            <Select options={continents} register={register} name="continent" takeOptionValue={true} /> 
+          }
           { 
             continent ? 
             countries.length < 1 ? <span style={{ fontSize: "0.8rem" }}>No countries found for {continent}</span> :
@@ -123,7 +129,7 @@ const Location = ({ currentStepIndex }) => {
             (!continent || !country) ? <></> :
             regionsLoading ? <div>
               <span style={{ fontSize: "0.8rem" }}>Regions in {country} loading...</span>
-              <ProgressBar durationInMS={6000} />
+              <ProgressBar durationInMS={6000} style={{ height: "2rem" }} />
             </div> :
             <Select
               options={regions}

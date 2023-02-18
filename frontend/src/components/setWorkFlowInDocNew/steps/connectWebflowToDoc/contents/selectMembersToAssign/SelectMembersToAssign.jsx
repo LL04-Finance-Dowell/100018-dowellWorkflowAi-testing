@@ -17,12 +17,13 @@ const SelectMembersToAssign = ({ currentStepIndex }) => {
   const { register, watch } = useForm();
   const teamMembersRef = useRef(null);
   const selectMembersRef = useRef(null);
-  const [ selectTeamItem, setSelectTeamitem ] = useState(null);
-  const [ selectMembersItem, setSelectMembersItem ] = useState(null);
+  const [ currentRadioOptionSelection, setCurrentRadioOptionSelection ] = useState(null);
   const { selectedMembersForProcess, teamsSelectedSelectedForProcess, teamMembersSelectedForProcess, userMembersSelectedForProcess, publicMembersSelectedForProcess } = useSelector((state) => state.app);
   const [ selectedMembersSet, setSelectedMembersSet ] = useState(false);
-  const [ currentSelectedTeam, setCurrentSelectedTeam ] = useState(null);
   const [ currentSelectedTeams, setCurrentSelectedTeams ] = useState(null);
+  const [ userTypeOptionsEnabled, setUserTypeOptionsEnabled ] = useState([]);
+  const [ currentGroupSelectionItem, setCurrentGroupSelectionItem ] = useState(null);
+  const [ selectedOptionsTitle, setSelectedOptionsTitle ] = useState([]);
   
   const dispatch = useDispatch();
 
@@ -31,12 +32,12 @@ const SelectMembersToAssign = ({ currentStepIndex }) => {
   };
 
   useClickInside(teamMembersRef, () => {
-    if (!selectTeamItem) return toast.info("Please check either option above")
+    if (!currentRadioOptionSelection) return toast.info("Please check either option above")
     console.log("enabled team options")
   })
 
   useClickInside(selectMembersRef, () => {
-    if (!selectMembersItem) return toast.info("Please check the option above")
+    if (!currentRadioOptionSelection) return toast.info("Please check the option above")
     console.log("enabled select member options")
   })
 
@@ -92,16 +93,21 @@ const SelectMembersToAssign = ({ currentStepIndex }) => {
 
   useEffect(() => {
     
-    if (!selectTeamItem) return
+    if (!currentRadioOptionSelection) return
 
-    selectTeamItem?.teams.forEach(team => dispatch(removeFromTeamsSelectedSelectedForProcess({ id: team.id, stepIndex: currentStepIndex })))
-
-    if (selectTeamItem.allSelected) {
-      selectTeamItem?.teams.forEach(team => dispatch(setTeamsSelectedSelectedForProcess({ ...team, stepIndex: currentStepIndex })))
+    if (currentRadioOptionSelection === "selectTeam") {
+      if (currentGroupSelectionItem) currentGroupSelectionItem?.teams.forEach(team => dispatch(removeFromTeamsSelectedSelectedForProcess({ id: team.id, stepIndex: currentStepIndex })))
       return
     }
 
-  }, [selectTeamItem])
+    currentGroupSelectionItem?.teams.forEach(team => dispatch(removeFromTeamsSelectedSelectedForProcess({ id: team.id, stepIndex: currentStepIndex })))
+
+    if (currentGroupSelectionItem.allSelected) {
+      currentGroupSelectionItem?.teams.forEach(team => dispatch(setTeamsSelectedSelectedForProcess({ ...team, stepIndex: currentStepIndex })))
+      return
+    }
+
+  }, [currentRadioOptionSelection, currentGroupSelectionItem])
 
   const handleSelectTeam = (e) => {
     const parsedSelectedJsonValue = JSON.parse(e.target.value);
@@ -124,7 +130,6 @@ const SelectMembersToAssign = ({ currentStepIndex }) => {
         teamSelected: teamSelected,
       }, []]
       newSelectedTeams.push(newItem);
-      setCurrentSelectedTeam(teamSelected);
       setCurrentSelectedTeams(newSelectedTeams);
       return
     }
@@ -132,14 +137,13 @@ const SelectMembersToAssign = ({ currentStepIndex }) => {
     const copyOfCurrentSelectedTeams = currentSelectedTeams.slice();
     const teamAlreadyAdded = copyOfCurrentSelectedTeams.find(team => team.teamSelected === teamSelected && team.headerSelected === current.header)
     
-    if (teamAlreadyAdded) return setCurrentSelectedTeam(teamSelected);
+    if (teamAlreadyAdded) return;
     
     copyOfCurrentSelectedTeams.push({
       headerSelected: current.header,
       teamSelected: teamSelected,
     })
 
-    setCurrentSelectedTeam(teamSelected);
     setCurrentSelectedTeams(copyOfCurrentSelectedTeams);
   }
 
@@ -178,6 +182,37 @@ const SelectMembersToAssign = ({ currentStepIndex }) => {
     }
   }
 
+  const handleUserGroupSelection = (newRadioSelection, newGroupValue) => {
+    setCurrentGroupSelectionItem(newGroupValue);
+    setCurrentRadioOptionSelection(newRadioSelection);
+  }
+
+  const handleSelectUserOptionType = (e) => {
+    const { value, checked } = e.target;
+    const currentSelectedOptions = userTypeOptionsEnabled.slice();
+
+    if (!checked) {
+      const updatedSelectedOptions = currentSelectedOptions.filter(option => {
+        if (option.name === value && option.stepIndex === currentStepIndex) return null
+        return option
+      });
+      return setUserTypeOptionsEnabled(updatedSelectedOptions.filter(option => option))
+    }
+
+    const newUserOptionToAdd = {
+      name: value,
+      stepIndex: currentStepIndex,
+    }
+
+    currentSelectedOptions.push(newUserOptionToAdd);
+    setUserTypeOptionsEnabled(currentSelectedOptions)
+  }
+
+  const handleDisabledUserOptionSelection = (e, titleOfUserOption) => {
+    e.target.checked = false;
+    toast.info(`Please select the checkbox titled '${titleOfUserOption}' above first.`)
+  }
+
   return (
     <div className={styles.container}>
       <div className={styles.select__container}>
@@ -195,23 +230,35 @@ const SelectMembersToAssign = ({ currentStepIndex }) => {
           ))}
         </div>
         <div className={styles.select__content__container}>
-          <h3 className={styles.title}>{current.title}</h3>
+          <h3 className={styles.title}>
+            <input
+              type={"checkbox"} 
+              name={current.header} 
+              style={{ marginRight: "0.5rem" }}
+              value={current.header}
+              checked={userTypeOptionsEnabled.find(option => option.name === current.header && option.stepIndex === currentStepIndex) ? true : false}
+              onChange={handleSelectUserOptionType}
+            />
+            {current.title}
+          </h3>
           <div>
             <Radio
               register={register}
-              name={"selectItemOptionForUser" + currentStepIndex + current.title}
+              name={"selectItemOptionForUser-" + currentStepIndex + "-" + current.header}
               value={"all" + current.header}
-              onChange={() => setSelectTeamitem({...current, allSelected: true})}
+              checked={userTypeOptionsEnabled.find(option => option.name === current.header && option.stepIndex === currentStepIndex) && currentRadioOptionSelection && currentRadioOptionSelection === current.all + " first" ? true : false}
+              onChange={userTypeOptionsEnabled.find(option => option.name === current.header && option.stepIndex === currentStepIndex) ? () => handleUserGroupSelection(current.all + " first", {...current, allSelected: true}) : (e) => handleDisabledUserOptionSelection(e, current.title)}
             >
               Select all {current.header}
             </Radio>
             <Radio
               register={register}
-              name={"selectItemOptionForUser" + currentStepIndex + current.title}
+              name={"selectItemOptionForUser-" + currentStepIndex + "-" + current.header}
               value={"selectIn" + current.header}
-              onChange={() => setSelectTeamitem(current)}
+              checked={userTypeOptionsEnabled.find(option => option.name === current.header && option.stepIndex === currentStepIndex) && currentRadioOptionSelection && currentRadioOptionSelection === current.all + " second" ? true : false}
+              onChange={userTypeOptionsEnabled.find(option => option.name === current.header && option.stepIndex === currentStepIndex) ? () => handleUserGroupSelection(current.all + " second", current) : (e) => handleDisabledUserOptionSelection(e, current.title)}
             >
-              Select Teams in {current.header}
+              {current.selectInTeam}
             </Radio>
           </div>
           <div ref={teamMembersRef}>
@@ -221,7 +268,7 @@ const SelectMembersToAssign = ({ currentStepIndex }) => {
               size={current.teams.length}
               className={styles.open__select}
               onChange={handleSelectTeam}
-              style={{ pointerEvents: selectTeamItem ? "all" : "none" }}
+              style={{ pointerEvents: userTypeOptionsEnabled.find(option => option.name === current.header && option.stepIndex === currentStepIndex) && currentRadioOptionSelection ? "all" : "none" }}
             >
               {current.teams.map((item) => (
                 <option 
@@ -235,16 +282,13 @@ const SelectMembersToAssign = ({ currentStepIndex }) => {
             </select>
           </div>
           {
-            !currentSelectedTeam ? <>
-              <p className={styles.no__Team__Selected__Text}><b>Please select a team to see its members</b></p>
-            </> :
-            currentSelectedTeams && currentSelectedTeams.find(team => team.teamSelected === currentSelectedTeam && team.headerSelected === current.header) ?
             <>
               <Radio
               register={register}
-              name={"selectAllMembers" + currentStepIndex + current.title}
+              name={"selectItemOptionForUser-" + currentStepIndex + "-" + current.header}
               value={"select" + current.header}
-              onChange={(e) => setSelectMembersItem(e.target.value)}
+              checked={userTypeOptionsEnabled.find(option => option.name === current.header && option.stepIndex === currentStepIndex) && currentRadioOptionSelection && currentRadioOptionSelection === "selectTeam" ? true : false}
+              onChange={userTypeOptionsEnabled.find(option => option.name === current.header && option.stepIndex === currentStepIndex) ? (e) => setCurrentRadioOptionSelection(e.target.value) : (e) => handleDisabledUserOptionSelection(e, current.title)}
               >
                 Select Members
               </Radio>
@@ -255,7 +299,7 @@ const SelectMembersToAssign = ({ currentStepIndex }) => {
                   size={current.portfolios.length}
                   className={styles.open__select}
                   onChange={handleAddNewMember}
-                  style={{ pointerEvents: selectMembersItem ? "all" : "none" }}
+                  style={{ pointerEvents: userTypeOptionsEnabled.find(option => option.name === current.header && option.stepIndex === currentStepIndex) && currentRadioOptionSelection && currentRadioOptionSelection === "selectTeam" ? "all" : "none" }}
                 >
                   {current.portfolios.map((item) => (
                     <option 
@@ -283,8 +327,7 @@ const SelectMembersToAssign = ({ currentStepIndex }) => {
                   <Tooltip style={{ width: "max-content", zIndex: 2, whiteSpace: "pre" }} anchorId={item.id + currentStepIndex} content={`user: ${item.member} \nportfolio: ${item.portfolio}`} place="top" />
                 ))}
               </div>
-            </> :
-            <></>
+            </>
           }
         </div>
       </div>
@@ -314,6 +357,63 @@ export const teams = [
   },
 ];
 
+const teamsForTeamMembers = [
+  {
+    id: uuidv4(),
+    content: "team 1",
+  },
+  {
+    id: uuidv4(),
+    content: "team 2",
+  },
+  {
+    id: uuidv4(),
+    content: "team 3",
+  },
+  {
+    id: uuidv4(),
+    content: "team 4",
+  },
+]
+
+const teamsForUserMembers = [
+  {
+    id: uuidv4(),
+    content: "team 1",
+  },
+  {
+    id: uuidv4(),
+    content: "team 2",
+  },
+  {
+    id: uuidv4(),
+    content: "team 3",
+  },
+  {
+    id: uuidv4(),
+    content: "team 4",
+  },
+]
+
+const teamsForPublicMembers = [
+  {
+    id: uuidv4(),
+    content: "team 1",
+  },
+  {
+    id: uuidv4(),
+    content: "team 2",
+  },
+  {
+    id: uuidv4(),
+    content: "team 3",
+  },
+  {
+    id: uuidv4(),
+    content: "team 4",
+  },
+]
+
 export const members = [
   {
     id: uuidv4(),
@@ -341,7 +441,7 @@ export const selectMembers = [
     all: "Select all Team Members",
     selectInTeam: "Select Teams in Team Members",
     selectMembers: "Select Members",
-    teams: teams,
+    teams: teamsForTeamMembers,
     portfolios: members,
   },
   {
@@ -351,7 +451,7 @@ export const selectMembers = [
     all: "Select all Users",
     selectInTeam: "Select Teams in Users",
     selectMembers: "Select Users",
-    teams: teams,
+    teams: teamsForUserMembers,
     portfolios: members,
   },
   {
@@ -361,7 +461,7 @@ export const selectMembers = [
     all: "Select all Public",
     selectInTeam: "Select Teams in Public",
     selectMembers: "Select Public",
-    teams: teams,
+    teams: teamsForPublicMembers,
     portfolios: members,
   },
 ];

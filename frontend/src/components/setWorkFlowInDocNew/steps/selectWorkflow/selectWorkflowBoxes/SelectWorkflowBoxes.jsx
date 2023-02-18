@@ -202,7 +202,7 @@ const InfoBoxes = () => {
         <InfoBoxContainer key={infoBox.id} className={styles.box}>
           <InfoTitleBox
             style={{ pointerEvents: infoBox?.status === "pending" && "none" }}
-            onClick={() => handleTogleBox(infoBox.id)}
+            onClick={currentDocToWfs ? () => handleTogleBox(infoBox.id) : () => toast.info("Please select a document first.")}
             /*  className={styles.title__box} */
           >
             {infoBox.status && infoBox.status === "pending" ? (
@@ -230,20 +230,20 @@ const InfoBoxes = () => {
               />
 
               <InfoContentBox className={styles.content__box}>
-                <>{console.log(infoBox)}</>
+                {/* <>{console.log(infoBox)}</> */}
                 {infoBox && infoBox.contents && infoBox.contents.length > 0 ? (
-                  [...infoBox?.contents].reverse().map((item) =>
+                  [...infoBox?.contents].reverse().map((item, index) =>
                     item.username ? (
                       Array.isArray(item.username) ? (
                         <>
                           {React.Children.toArray(
-                            item.username.map((user) => {
+                            item.username.map((user, userIndex) => {
                               return (
                                 <InfoContentText
                                   key={user + crypto.randomUUID()}
                                   /* className={styles.content} */
                                 >
-                                  <span>{user}</span>
+                                  <span>{userIndex + 1 === 1 ? index + 1 : userIndex + 1}. {user}</span>
                                 </InfoContentText>
                               );
                             })
@@ -254,7 +254,7 @@ const InfoBoxes = () => {
                           key={item.username + crypto.randomUUID()}
                           /* className={styles.content} */
                         >
-                          <span>{item.username}</span>
+                          <span>{index + 1}. {item.username}</span>
                         </InfoContentText>
                       )
                     ) : (
@@ -285,7 +285,7 @@ const InfoBoxes = () => {
                               : {}
                           }
                         >
-                          {item.workflows &&
+                          {index + 1}. {item.workflows &&
                             item.workflows.workflow_title &&
                             item.workflows.workflow_title}
                         </div>
