@@ -1,10 +1,6 @@
 import json
-# import the logging library
-import logging
-import time
 import uuid
 from threading import Thread
-
 import jwt
 import requests
 from rest_framework import status

@@ -8,10 +8,10 @@ from rest_framework.response import Response
 
 from database.mongo_db_connection import (
     get_document_list,
-    save_document,
     get_document_object,
     get_links_object_by_process_id,
 )
+from database.mongo_db_connection_v2 import save_document
 from .thread_start import ThreadAlgolia
 
 editorApi = "https://100058.pythonanywhere.com/api/generate-editor-link/"
@@ -49,7 +49,6 @@ def create_document(request):  # Document Creation.
                 request.data["content"],
                 request.data["created_by"],
                 request.data["company_id"],
-                request.data["page"],
                 request.data["data_type"],
             )
         )

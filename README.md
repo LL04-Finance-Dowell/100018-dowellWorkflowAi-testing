@@ -48,7 +48,7 @@ This backend service serves as the WorkflowAI application Backend.
 | GET        | /v/0.1/process/links/:process_id/     | To get process verification link for a given process |
 | POST       | /v0.1/process/verify-process/         | To verify a given process and give access            |
 | POST       | /v0.1/settings/                       | To set wf ai settings                                |
-| GET        | /v0.1/settings/:setting_id/           | To get a single wf ai settings                       |
+| GET        | /v0.1/settings/:wf_setting_id/        | To get a single wf ai settings                       |
 | POST       | /v0.1/settings/update/                | To update wf ai settings                             |
 
 --------------
@@ -62,7 +62,7 @@ This backend service serves as the WorkflowAI application Backend.
 | POST       | /v0.2/process/                    | To create a new process                              |
 | GET        | /v0.2/process/:process_id/        | To retrieve a single process                         |
 | GET        | /v0.2/process/org/:company_id/    | To retrieve processes in a company                   |
-| POST       | /v0.2/process/verification/       | To verify a process to get access.                   |
+| POST       | /v0.2/process/verify-process/     | To verify a process to get access.                   |
 | POST       | /v0.2/process/mark/               | To mark a documents as finalized/rejected            |
 | GET        | /v0.2/process/verify/:process_id/ | To get process verification link for a given process |
 | GET        | /v0.2/process/start/:process_id/  | To begin processing a draft process                  |

@@ -285,7 +285,7 @@ def get_wf_object(workflow_id):
 
 
 # -------------------------- Document----------------------------------------
-def save_document(name, data, created_by, company_id, page, data_type, state):
+def save_document(name, data, created_by, company_id, data_type, state):
     det = datetime.now()
     created_time = det.strftime("%d:%m:%Y,%H:%M:%S")
     payload = json.dumps(
@@ -302,8 +302,8 @@ def save_document(name, data, created_by, company_id, page, data_type, state):
                 "rejectionMessage": "",
                 "rejectedBy": "",
                 "documentState": state,
-                "page": page,
                 "dataType": data_type,
+                "cloneList": []
             },
             "update_field": {"order_nos": 21},
             "platform": "bangalore",
@@ -338,6 +338,26 @@ def update_document(document_id, workflow_process_id, state):
             "update_field": {
                 "processId": workflow_process_id,
                 "documentState": state,
+            },
+            "platform": "bangalore",
+        }
+    )
+    headers = {"Content-Type": "application/json"}
+    response = requests.request("POST", url, headers=headers, data=payload)
+    print("DOCUMENT UPDATED------------ \n")
+    return json.loads(response.text)
+
+
+def update_document_clone(document_id, clone_list):
+    payload = json.dumps(
+        {
+            **DOCUMENT_CONNECTION_DICT,
+            "command": "update",
+            "field": {
+                "_id": document_id,
+            },
+            "update_field": {
+                "cloneList": clone_list
             },
             "platform": "bangalore",
         }

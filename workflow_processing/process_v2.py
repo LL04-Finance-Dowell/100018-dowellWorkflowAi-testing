@@ -15,6 +15,7 @@ from database.mongo_db_connection_v2 import (
     save_wf_process,
     update_document,
     get_process_list,
+    update_document_clone,
 )
 
 editor_api = "https://100058.pythonanywhere.com/api/generate-editor-link/"
@@ -424,6 +425,7 @@ def verification(request):
     # find step the user belongs
     doc_map = None
     right = None
+    role = None
     user = None
     match = False
     clone_id = None
@@ -439,14 +441,10 @@ def verification(request):
                     )
             # location check
             if step.get("stepLocation"):
-                if not check_location_right(location=step.get("stepLocation"),
-                                            my_location=request.data["location"],
-                                            continent=step.get("stepContinent"),
-                                            my_continent=request.data["continent"],
-                                            country=step.get("stepCountry"),
-                                            my_country=request.data["country"],
-                                            city=step.get("stepCity"),
-                                            my_city=request.data["city"]):
+                if not check_location_right(location=step.get("stepLocation"), my_location=request.data["location"],
+                                            continent=step.get("stepContinent"), my_continent=request.data["continent"],
+                                            country=step.get("stepCountry"), my_country=request.data["country"],
+                                            city=step.get("stepCity"), my_city=request.data["city"]):
                     return Response("Signing not permitted from your current location!",
                                     status=status.HTTP_401_UNAUTHORIZED)
             # time limit check
@@ -476,6 +474,16 @@ def verification(request):
                                 step.update({"stepCloneCount": clone_count})
                                 # update document clone map
                                 step["stepDocumentCloneMap"].extend({user_name: clone_id})
+                                # updating the document clone list
+                                data = {
+                                    'doc_id': process['parentDocumentId'],
+                                    'clone_id': clone_id
+                                }
+                                ct = Thread(
+                                    target=clone_update,
+                                    args=(data,),
+                                )
+                                ct.start()
                         else:
                             # what if this step role has no clone
                             clone_id = process["parentDocumentId"]
@@ -510,6 +518,16 @@ def verification(request):
         role=role
     )
     return Response(doc_link.json(), status=status.HTTP_201_CREATED)
+
+
+def clone_update(data):
+    """add a clone id to a documents clone list"""
+    print('Updating clone ...... \n')
+    document = get_document_object(document_id=data['doc_id'])
+    clone_list = document['cloneList'].append(data['clone_id'])
+    update_document_clone(document_id=data['doc_id'], clone_list=clone_list)
+    print('Thread: Clone Update!')
+    return
 
 
 def process_update(data):
