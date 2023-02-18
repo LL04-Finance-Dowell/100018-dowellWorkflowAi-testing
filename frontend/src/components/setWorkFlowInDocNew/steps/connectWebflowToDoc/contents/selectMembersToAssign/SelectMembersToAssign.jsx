@@ -23,7 +23,6 @@ const SelectMembersToAssign = ({ currentStepIndex }) => {
   const [ currentSelectedTeams, setCurrentSelectedTeams ] = useState(null);
   const [ userTypeOptionsEnabled, setUserTypeOptionsEnabled ] = useState([]);
   const [ currentGroupSelectionItem, setCurrentGroupSelectionItem ] = useState(null);
-  const [ selectedOptionsTitle, setSelectedOptionsTitle ] = useState([]);
   
   const dispatch = useDispatch();
 
