@@ -612,4 +612,4 @@ Response-200
 
 ### License
 
-This project is available for use under the Apache License.
+This project is available for use under the [Apache](https://github.com/LL04-Finance-Dowell/100018-dowellWorkflowAi-testing/blob/main/LICENSE) License.
