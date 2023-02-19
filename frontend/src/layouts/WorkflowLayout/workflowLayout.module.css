@@ -77,6 +77,13 @@
   font-weight: 900 !important;
 }
 
+.beta__Info__Text {
+  color: var(--e-global-color-accent);
+  width: 95%;
+  margin: 0 auto;
+  text-align: center;
+}
+
 /* The typing effect */
 @keyframes typing {
   from {

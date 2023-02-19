@@ -34,7 +34,7 @@ const WorkflowsPage = () => {
     /*   if (savedWorkflowStatus === "idle") dispatch(savedWorkflows(saveddata));
     if (mineStatus === "idle") dispatch(mineWorkflows(data)); */
 
-    if (allWorkflowsStatus === "idle") dispatch(allWorkflows(data));
+    if (allWorkflowsStatus === "idle") dispatch(allWorkflows(data.company_id));
   }, []);
 
   console.log("wwwwwwwwwwwwwwwwwwwwwwwwwwwwww", allWorkflowsArray);
