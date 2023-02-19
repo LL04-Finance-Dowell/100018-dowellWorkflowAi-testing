@@ -9,6 +9,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { setToggleManageFileForm } from "../../features/app/appSlice";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
+import React from "react";
+import { createTemplate } from "../../features/template/asyncThunks";
 
 const FlipMenu = () => {
   const [filpItemsToDisplay, setFlipItemsToDisplay] = useState(flipItems);
@@ -75,6 +77,7 @@ export const FlipBack = (props) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { notificationsForUser } = useSelector((state) => state.app);
+  const { userDetail } = useSelector((state) => state.auth);
 
   const handleClick = (role) => {
     if (role === "newDoc") {
@@ -89,20 +92,44 @@ export const FlipBack = (props) => {
         },
       });
     }
+    if (role === "newTemp") {
+      const data = {
+        created_by: userDetail?.userinfo.username,
+        company_id: userDetail?.portfolio_info[0].org_id,
+        data_type: userDetail?.portfolio_info[0].data_type,
+      };
+      dispatch(createTemplate(data));
+    }
+    if (role === "newWorkf") {
+      navigate("/workflows/#newWorkflow");
+      dispatch(setToggleManageFileForm(true));
+    }
   };
 
   return (
     <div
       style={{ background: "#7A7A7A" }}
-      className={`${styles.flip__box} ${styles.back__box}`}
+      className={`${styles.flip__box} ${styles.back__box} ${props.buttonTexts ? styles.grow__back__box : ''}`}
     >
-      <button
-        onClick={() => handleClick(props.role)}
-        type="button"
-        className={styles.flip__button}
-      >
-        {props.buttonText}
-      </button>
+      {
+        props.buttonTexts ?
+        React.Children.toArray(props.buttonTexts.map((buttonText, index) => {
+          return <button
+            onClick={() => handleClick(props.roles[index])}
+            type="button"
+            className={styles.flip__button}
+          >
+            {buttonText}
+          </button>
+            })) :
+        <button
+          onClick={() => handleClick(props.role)}
+          type="button"
+          className={styles.flip__button}
+        >
+          {props.buttonText}
+        </button>
+      }
     </div>
   );
 };
@@ -121,8 +148,16 @@ export const flipItems = [
     icon: HiOutlineDocument,
     frontBg: "#7A7A7A",
     text: "new",
-    buttonText: "Create document",
-    role: "newDoc",
+    buttonTexts: [
+      "Document",
+      "Template",
+      "Workflow"
+    ],
+    roles: [
+      "newDoc",
+      "newTemp",
+      "newWorkf",
+    ]
   },
   {
     id: uuidv4(),
@@ -137,7 +172,7 @@ export const flipItems = [
     icon: FaHeadSideVirus,
     frontBg: "#C3D6BE",
     text: "support",
-    buttonText: "dowell knowladge centre",
+    buttonText: "dowell knowledge centre",
     role: "",
   },
 ];

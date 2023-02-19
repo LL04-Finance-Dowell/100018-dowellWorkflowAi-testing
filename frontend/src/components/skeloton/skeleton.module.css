@@ -5,7 +5,7 @@
   flex-direction: column;
   gap: 10px;
   position: relative;
-  z-index: 100000;
+  z-index: 10;
 }
 
 .skeleton__container * {

@@ -56,6 +56,17 @@
   text-transform: capitalize;
 }
 
+.grow__back__box {
+  height: 250px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-direction: column;
+  gap: 10px;
+  position: relative;
+  z-index: 20;
+}
+
 @media (max-width: 768px) {
   .container {
     flex-direction: column;
