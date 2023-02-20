@@ -79,9 +79,12 @@
 
 .beta__Info__Text {
   color: var(--e-global-color-1342d1f);
-  width: 95%;
+  width: 100%;
   margin: 0 auto;
-  text-align: center;
+  padding-left: 25%;
+  position: fixed;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.08), transparent);
+  z-index: 10000000000000000000000;
 }
 
 /* The typing effect */
