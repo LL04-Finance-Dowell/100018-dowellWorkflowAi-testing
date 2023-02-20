@@ -58,16 +58,16 @@ This backend service serves as the WorkflowAI application Backend.
 
 - Base URL: `https://100094.pythonanywhere.com`
 
-| HTTP Verbs | Endpoints                          | Action                                               |
-|------------|------------------------------------|------------------------------------------------------|
-| POST       | /v0.2/process/                     | To create a new process                              |
-| GET        | /v0.2/process/:process_id/         | To retrieve a single process                         |
-| GET        | /v0.2/process/company/:company_id/ | To retrieve processes in a company                   |
-| POST       | /v0.2/process/verify-process/      | To verify a process to get access.                   |
-| POST       | /v0.2/process/mark-process/        | To mark a documents as finalized/rejected            |
-| GET        | /v0.2/process/verify/:process_id/  | To get process verification link for a given process |
-| GET        | /v0.2/process/start/:process_id/   | To begin processing a draft process                  |
-| GET        | /v0.2/process/pause/:process_id/   | To halt processing of an ongoing process             |
+| HTTP Verbs | Endpoints                         | Action                                               |
+|------------|-----------------------------------|------------------------------------------------------|
+| POST       | /v0.2/process/                    | To create a new process                              |
+| GET        | /v0.2/process/:process_id/        | To retrieve a single process                         |
+| GET        | /v0.2/process/org/:company_id/    | To retrieve processes in a company                   |
+| POST       | /v0.2/process/verify-process/     | To verify a process to get access.                   |
+| POST       | /v0.2/process/mark-process/       | To mark a documents as finalized/rejected            |
+| POST       | /v0.2/process/trigger-process/    | To trigger process according to given action         |
+| GET        | /v0.2/process/verify/:process_id/ | To get process verification link for a given process |
+
 
 ### Endpoints Definition(Request - Response).
 
@@ -613,4 +613,5 @@ Response-200
 
 ### License
 
-This project is available for use under the [Apache](https://github.com/LL04-Finance-Dowell/100018-dowellWorkflowAi-testing/blob/main/LICENSE) License.
+This project is available for use under
+the [Apache](https://github.com/LL04-Finance-Dowell/100018-dowellWorkflowAi-testing/blob/main/LICENSE) License.

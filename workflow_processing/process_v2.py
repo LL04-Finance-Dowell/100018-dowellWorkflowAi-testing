@@ -376,11 +376,20 @@ def save_links_v2(data):
     return
 
 
-# Thread to update a document
+# # Thread to update states
+# def state_update(data):
+#     update_document(document_id=data["document_id"], process_id=data["process_id"], state=data["state"])
+#     print("Thread: Document Updated! \n")
+#     update_wf_process(process_id=data["process_id"], steps=data["process_id"], state="processing")
+#     print("Thread: Process update!")
+#     return
+
+
+# Thread to update a doc
 def document_update(doc_data):
     update_document(
         document_id=doc_data["document_id"],
-        workflow_process_id=doc_data["process_id"],
+        process_id=doc_data["process_id"],
         state=doc_data["state"],
     )
     print("Thread: Document Updated! \n")
@@ -613,35 +622,42 @@ def generate_link(document_id, doc_map, doc_rights, user, process_id, role):
 
 
 @api_view(["POST"])
-def process_draft(request):
+def trigger_process(request):
     """Get process and begin processing it."""
     print("Processing a saved process... \n")
     try:
         process = get_process_object(request.data["process_id"])
     except ConnectionError:
         return Response("Could not start processing!", status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    # check user.
     if request.data["user_name"] == process["createdBy"]:
-        if process["processingState"] != "processing":
-            return start_processing(process)
+        # check action.
+        if request.data["action"] == "halt_process":
+            # check pause state.
+            if process["processingState"] != "paused":
+                res = json.loads(
+                    update_wf_process(process_id=request.data["process_id"], steps=process["processingSteps"],
+                                      state="paused"))
+                if res["isSuccess"]:
+                    return Response("Process has been paused until manually resumed!", status=status.HTTP_200_OK)
+        if request.data["action"] == "process_draft":
+            # check processing state.
+            if process["processingState"] != "processing":
+                return start_processing(process)
+        return Response("Wrong action selected", status=status.HTTP_400_BAD_REQUEST)
     return Response("User not allowed to trigger processing!", status=status.HTTP_401_UNAUTHORIZED)
 
 
-@api_view(["POST"])
-def halt_process(request):
-    """Halt an ongoing Process"""
-    print("Halting a process...\n")
+@api_view(["GET"])
+def single_process(request, process_id):
+    """A process"""
     try:
-        process = get_process_object(request.data["process_id"])
+        process = get_process_object(process_id)
     except ConnectionError:
-        return Response("Could not pause processing!", status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-    if request.data["user_name"] != process["createdBy"]:
-        return Response("User not allowed to halt processing", status=status.HTTP_401_UNAUTHORIZED)
-    if process["processingState"] == "paused":
-        return Response("Process is already paused", status=status.HTTP_200_OK)
-    res = json.loads(
-        update_wf_process(process_id=request.data["process_id"], steps=process["processingSteps"], state="paused"))
-    if res["isSuccess"]:
-        return Response("Process has been paused until manually resumed!", status=status.HTTP_200_OK)
+        return Response(
+            "Failed to get a process", status=status.HTTP_500_INTERNAL_SERVER_ERROR
+        )
+    return Response(process, status=status.HTTP_200_OK)
 
 
 @api_view(["GET"])
@@ -716,4 +732,3 @@ def check_processing_complete(process, step_role):
             if step['stepProcessingState'] == 'complete':
                 complete = False
     return complete
-

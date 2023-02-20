@@ -21,42 +21,15 @@ from drf_yasg import openapi
 from drf_yasg.views import get_schema_view
 from rest_framework import permissions
 
-from document.document_management import (
-    document_detail,
-    create_document,
-    get_document_content,
-    get_documents,
-)
+from document.document_management import document_detail, create_document, get_document_content, get_documents
 from document.intelligent_search import search
-from document.template_management import (
-    create_template,
-    template_detail,
-    approve,
-    get_templates,
-)
-from workflow.wf_ai_setting import (
-    create_workflow_setting,
-    get_wf_ai_setting,
-    update_wfai_setting,
-)
-from workflow.wf_management import (
-    create_workflow,
-    workflow_detail,
-    update_workflow,
-    get_workflows,
-    home,
-)
-from workflow_processing.process import (
-    save_and_start_processing,
-    a_single_process,
-    register_finalize_or_reject,
-    verify_process,
-    get_process_link,
-    fetch_process_links,
-    processes,
-)
+from document.template_management import  create_template, template_detail, approve, get_templates
+from workflow.wf_ai_setting import create_workflow_setting,  get_wf_ai_setting, update_wfai_setting
+from workflow.wf_management import create_workflow, workflow_detail, update_workflow, get_workflows, home
+from workflow_processing.process import save_and_start_processing, a_single_process, register_finalize_or_reject, \
+    verify_process, get_process_link, fetch_process_links, processes
 from workflow_processing.process_v2 import document_processing, verification, wf_processes, \
-    mark_process_as_finalize_or_reject
+    mark_process_as_finalize_or_reject, single_process, trigger_process
 
 schema_view = get_schema_view(
     openapi.Info(
@@ -90,17 +63,17 @@ urlpatterns = [
 
     # processing.
     path("v0.1/process/", save_and_start_processing),
+    path("v0.1/process/<str:process_id>/", a_single_process),
+    path("v0.1/process/verification/", register_finalize_or_reject),
     path("v0.1/process/verify-process/", verify_process),
     path("v0.1/process/verification-link/", get_process_link),
-    path("v0.1/process/<str:process_id>/", a_single_process),
     path("v0.1/process/org/<str:company_id>/", processes),
     path("v0.1/process/process-links/<str:process_id>/", fetch_process_links),
-    path("v0.1/process/verification/", register_finalize_or_reject),
     # workflow
     path("v0.1/workflows/", create_workflow, name="workflows"),
     path("v0.1/workflows/<str:workflow_id>/", workflow_detail, name="workflow_detail"),
-    path("v0.1/workflows/org/<str:company_id>/", get_workflows, name="all_workflows"),
     path("v0.1/workflows/update/", update_workflow, name="update_workflow"),
+    path("v0.1/workflows/org/<str:company_id>/", get_workflows, name="all_workflows"),
     # wf_settings
     path("v0.1/settings/", create_workflow_setting, name="save_wf_setting"),
     path("v0.1/settings/<str:wf_setting_id>/", get_wf_ai_setting, name="get_wf_ai_setting"),
@@ -119,10 +92,12 @@ urlpatterns = [
     path("v0.1/documents/org/<str:company_id>/", get_documents, name="all_documents"),
     # v2 processing.
     path("v0.2/process/", document_processing),
+    path("v0.2/process/<str:process_id>/", single_process),
     path("v0.2/process/verify-process/", verification),
     path('v0.2/process/mark-process/', mark_process_as_finalize_or_reject),
-    path("v0.2/process/company/<str:company_id>/", wf_processes),
-    # path("v0.2/process/")
+    path("v0.2/process/trigger-process/", trigger_process),
+    path("v0.2/process/org/<str:company_id>/", wf_processes),
+
 
     # ----------------- @deprecated --------------
     # path(

@@ -220,6 +220,7 @@ def save_wf_process(
                 "dataType": data_type,
                 "parentDocumentId": document_id,
                 "processingAction": process_choice,
+                "processingState": "draft",
                 "createdAt": time,
             },
             "update_field": {"order_nos": 21},
@@ -327,7 +328,7 @@ def get_document_object(document_id):
         return []
 
 
-def update_document(document_id, workflow_process_id, state):
+def update_document(document_id, process_id, state):
     payload = json.dumps(
         {
             **DOCUMENT_CONNECTION_DICT,
@@ -336,7 +337,7 @@ def update_document(document_id, workflow_process_id, state):
                 "_id": document_id,
             },
             "update_field": {
-                "processId": workflow_process_id,
+                "processId": process_id,
                 "documentState": state,
             },
             "platform": "bangalore",
