@@ -94,7 +94,7 @@ urlpatterns = [
     path("v0.1/process/verification-link/", get_process_link),
     path("v0.1/process/<str:process_id>/", a_single_process),
     path("v0.1/process/org/<str:company_id>/", processes),
-    path("v0.1/process/links/<str:process_id>/", fetch_process_links),
+    path("v0.1/process/process-links/<str:process_id>/", fetch_process_links),
     path("v0.1/process/verification/", register_finalize_or_reject),
     # workflow
     path("v0.1/workflows/", create_workflow, name="workflows"),
@@ -120,8 +120,9 @@ urlpatterns = [
     # v2 processing.
     path("v0.2/process/", document_processing),
     path("v0.2/process/verify-process/", verification),
-    path('v0.2/process/mark/', mark_process_as_finalize_or_reject),
-    path("v0.2/process/org/<str:company_id>/", wf_processes),
+    path('v0.2/process/mark-process/', mark_process_as_finalize_or_reject),
+    path("v0.2/process/company/<str:company_id>/", wf_processes),
+    path("v0.2/process/")
 
     # ----------------- @deprecated --------------
     # path(

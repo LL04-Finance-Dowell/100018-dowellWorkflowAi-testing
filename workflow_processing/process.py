@@ -137,11 +137,11 @@ def a_single_process(request, process_id):
     return Response(process, status=status.HTTP_200_OK)
 
 
-@api_view(["POST"])
-def fetch_process_links(request):
+@api_view(["GET"])
+def fetch_process_links(request, process_id):
     """GET-verification links for a process"""
     try:
-        process_info = get_links_object_by_process_id(request.data["process_id"])
+        process_info = get_links_object_by_process_id(process_id)
     except ConnectionError:
         return Response(
             "Could not fetch process links",

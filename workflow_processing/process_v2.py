@@ -52,6 +52,7 @@ def document_processing(request):
             args=(doc_data,),
         )
         dt.start()
+
         return Response("Created Workflow and Saved in drafts.", status=status.HTTP_201_CREATED)
 
     if request.data["action"] == "start_document_processing_content_wise":
@@ -254,7 +255,6 @@ def clone_document(document_id, creator):
                 data=document["content"],
                 created_by=creator,
                 company_id=document["company_id"],
-                page=document["page"],
                 data_type=document["data_type"],
                 state="processing"
             )
@@ -612,12 +612,12 @@ def generate_link(document_id, doc_map, doc_rights, user, process_id, role):
     return link
 
 
-@api_view(["GET"])
-def process_draft(request, process_id):
+@api_view(["POST"])
+def process_draft(request):
     """Get process and begin processing it."""
     print("Processing a saved process... \n")
     try:
-        process = get_process_object(process_id)
+        process = get_process_object(request.data["process_id"])
     except ConnectionError:
         return Response("Could not start processing!", status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     if request.data["user_name"] == process["createdBy"]:
@@ -626,12 +626,12 @@ def process_draft(request, process_id):
     return Response("User not allowed to trigger processing!", status=status.HTTP_401_UNAUTHORIZED)
 
 
-@api_view(["GET"])
-def halt_process(request, process_id):
+@api_view(["POST"])
+def halt_process(request):
     """Halt an ongoing Process"""
     print("Halting a process...\n")
     try:
-        process = get_process_object(process_id)
+        process = get_process_object(request.data["process_id"])
     except ConnectionError:
         return Response("Could not pause processing!", status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     if request.data["user_name"] != process["createdBy"]:
@@ -716,3 +716,4 @@ def check_processing_complete(process, step_role):
             if step['stepProcessingState'] == 'complete':
                 complete = False
     return complete
+
