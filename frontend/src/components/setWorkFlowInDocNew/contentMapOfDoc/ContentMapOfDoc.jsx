@@ -46,6 +46,7 @@ const ContentMapOfDoc = () => {
 
   useChangeElementPropertyOnScroll(ref, "position", "fixed", "relative", window.screen.height / 1.54);
   useChangeElementPropertyOnScroll(ref, "top", "0", "", window.screen.height / 1.54);
+  useChangeElementPropertyOnScroll(ref, "width", "66%", "100%", window.screen.height / 1.54);
 
   const variants = {
     initial: {
