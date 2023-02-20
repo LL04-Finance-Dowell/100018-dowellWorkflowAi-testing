@@ -122,7 +122,7 @@ urlpatterns = [
     path("v0.2/process/verify-process/", verification),
     path('v0.2/process/mark-process/', mark_process_as_finalize_or_reject),
     path("v0.2/process/company/<str:company_id>/", wf_processes),
-    path("v0.2/process/")
+    # path("v0.2/process/")
 
     # ----------------- @deprecated --------------
     # path(
