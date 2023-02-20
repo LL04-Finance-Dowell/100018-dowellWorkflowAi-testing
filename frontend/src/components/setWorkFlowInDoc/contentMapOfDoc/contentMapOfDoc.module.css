@@ -1,7 +1,7 @@
 .container {
   position: relative;
   min-height: 85px;
-  width: min(72.768vw, 835px) !important;
+  width: 100%;
   cursor: pointer;
 }
 
