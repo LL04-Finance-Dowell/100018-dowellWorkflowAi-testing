@@ -46,7 +46,7 @@ const ProcessDocument = () => {
     const processObj = {
       "company_id": userDetail?.portfolio_info[0]?.org_id,
       "created_by": userDetail?.userinfo?.username,
-      "data_type": userDetail?.portfolio_info[0].data_type === "Real_Data" ? "real" : userDetail?.portfolio_info[0].data_type,
+      "data_type": userDetail?.portfolio_info[0].data_type,
       "parent_document_id": currentDocToWfs?._id,
       "action": actionVal,
       "workflows": [{

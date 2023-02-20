@@ -73,7 +73,7 @@ const ProcessDocument = () => {
       "document_id": currentDocToWfs?._id,
       "company_id": userDetail?.portfolio_info[0]?.org_id,
       "created_by": userDetail?.userinfo?.username,
-      "data_type": userDetail?.portfolio_info[0].data_type === "Real_Data" ? "real" : userDetail?.portfolio_info[0].data_type,
+      "data_type": userDetail?.portfolio_info[0].data_type,
       "workflows": [{
         "workflows": {
           "workflow_title": docCurrentWorkflow.workflows?.workflow_title,
