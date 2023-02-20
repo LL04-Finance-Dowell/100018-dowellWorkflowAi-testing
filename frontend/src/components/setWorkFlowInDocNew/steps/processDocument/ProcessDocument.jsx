@@ -46,6 +46,7 @@ const ProcessDocument = () => {
     const processObj = {
       "company_id": userDetail?.portfolio_info[0]?.org_id,
       "created_by": userDetail?.userinfo?.username,
+      "creator_portfolio": userDetail?.portfolio_info[0]?.portfolio_name,
       "data_type": userDetail?.portfolio_info[0].data_type,
       "parent_document_id": currentDocToWfs?._id,
       "action": actionVal,
@@ -65,6 +66,9 @@ const ProcessDocument = () => {
       if (copyOfCurrentStep._id) delete copyOfCurrentStep._id;
       if (copyOfCurrentStep.toggleContent) delete copyOfCurrentStep.toggleContent;
       
+      copyOfCurrentStep.stepName = copyOfCurrentStep.step_name;
+      delete copyOfCurrentStep.step_name;
+
       copyOfCurrentStep.stepRole = copyOfCurrentStep.role;
       delete copyOfCurrentStep.role;
 
@@ -104,10 +108,11 @@ const ProcessDocument = () => {
     const requiredFieldKeys = Object.keys(requiredProcessStepsKeys);
 
     const pendingFieldsToFill = requiredFieldKeys.map(requiredKey => {
-      return processObj.workflows[0].workflows.steps.every(step => step[`${requiredKey}`])
+      if (processObj.workflows[0].workflows.steps.every(step => step[`${requiredKey}`])) return null
+      return "field missing"
     })
 
-    if (!pendingFieldsToFill.find(field => field === false)) return { error: `Please make sure you ${requiredProcessStepsKeys[requiredFieldKeys[pendingFieldsToFill.findIndex(field => field === false)]]} for each step` }
+    if (pendingFieldsToFill.find(field => !null)) return { error: `Please make sure you ${requiredProcessStepsKeys[requiredFieldKeys[pendingFieldsToFill.findIndex(field => field === "field missing")]]} for each step` }
 
     const membersMissingInStep = processObj.workflows[0].workflows.steps.map(step => {
       if ((step.stepPublicMembers.length < 1) && (step.stepTeamMembers.length < 1) && (step.stepUserMembers.length < 1)) return "Please assign at least one user for each step";
@@ -130,9 +135,11 @@ const ProcessDocument = () => {
     if (processSteps.length < 1) return toast.info("You have not configured steps for any workflow");
     
     const processObjToPost = extractProcessObj(newProcessActionOptions[`${processOptionSelection}`]);
+    console.log(processObjToPost)
     if (processObjToPost.error) return toast.info(processObjToPost.error)
     
     console.log("New process obj to post: ", processObjToPost)
+    return
     setNewProcessLoading(true);
 
     try {

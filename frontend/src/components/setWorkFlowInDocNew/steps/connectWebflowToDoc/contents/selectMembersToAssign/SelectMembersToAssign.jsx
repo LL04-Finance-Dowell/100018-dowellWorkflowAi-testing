@@ -101,7 +101,7 @@ const SelectMembersToAssign = ({ currentStepIndex }) => {
 
     currentGroupSelectionItem?.teams.forEach(team => dispatch(removeFromTeamsSelectedSelectedForProcess({ id: team.id, stepIndex: currentStepIndex })))
 
-    if (currentGroupSelectionItem.allSelected) {
+    if (currentGroupSelectionItem?.allSelected) {
       currentGroupSelectionItem?.teams.forEach(team => dispatch(setTeamsSelectedSelectedForProcess({ ...team, stepIndex: currentStepIndex })))
       return
     }
