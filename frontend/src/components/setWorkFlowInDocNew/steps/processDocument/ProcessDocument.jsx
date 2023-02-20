@@ -135,11 +135,10 @@ const ProcessDocument = () => {
     if (processSteps.length < 1) return toast.info("You have not configured steps for any workflow");
     
     const processObjToPost = extractProcessObj(newProcessActionOptions[`${processOptionSelection}`]);
-    console.log(processObjToPost)
+    
     if (processObjToPost.error) return toast.info(processObjToPost.error)
     
     console.log("New process obj to post: ", processObjToPost)
-    return
     setNewProcessLoading(true);
 
     try {
