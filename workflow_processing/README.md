@@ -87,7 +87,7 @@ _POST_ `v0.2/process/start/`
 }
 ```
 
-_POST_ `v0.2/processes/mark/`
+_POST_ `v0.2/process/mark-process/`
 - Marks the process as finalized or rejected.
 
 Request Body
@@ -97,5 +97,17 @@ Request Body
     'action': 'finalize|reject',
     'process_id': 'get from payload',
     ' 
+}
+```
+
+
+_POST_ `process/trigger-process/`
+- Trigger a process based on a given action
+
+Req
+```
+{
+    "action": "<halt_process|process_draft>",
+    "process_id" "the process to be triggered"
 }
 ```

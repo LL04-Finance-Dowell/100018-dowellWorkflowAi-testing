@@ -83,7 +83,6 @@ def create_document(request):  # Document Creation.
             )
             try:
                 ThreadAlgolia(res["inserted_id"], get_document_object).start()
-
                 return Response(
                     editor_link.json(),
                     status=status.HTTP_201_CREATED,
