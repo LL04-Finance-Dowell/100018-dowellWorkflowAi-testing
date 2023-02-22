@@ -31,3 +31,5 @@ export const httpAuthOther = axios.create({ baseURL: auth_url_other });
 export const httpProcess = axios.create({ baseURL: api_url + "process" });
 
 export const newHttpProcess = axios.create({ baseURL: new_process_api_url + "process"});
+
+export const searchHttpInstance = axios.create({ baseURL: api_url + "search" });

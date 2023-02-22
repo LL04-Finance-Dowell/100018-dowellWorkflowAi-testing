@@ -1,0 +1,57 @@
+.search__Manage__Files__Content{
+    gap: 20px;
+}
+
+.search__box {
+    display: flex;
+    flex-direction: row;
+    margin: 6px;
+    padding: 7px;
+    gap: 10px;
+    position: relative;
+    border: 1px solid var(--e-global-color-0363588);
+    justify-content: space-between;
+    width: 50%;
+    border-radius: 10px;
+}
+
+.search__box input {
+    flex: 90%;
+    outline: none;
+}
+
+.search__box button {
+    flex: 10%;
+    background: none;
+    color: var(--e-global-color-accent);
+}
+
+.minified__Search__Container {
+    width: 100%;
+}
+
+.minified__Search__Container button {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    margin: 10px 0;
+    gap: 10px;
+    justify-content: flex-start;
+    padding: 2% 3%;
+}
+
+.minified__Search__Container button:hover {
+    background-color: var(--e-global-color-0363588);
+}
+
+.minified__Search__Container button span.search__Item__Info {
+    background-color: var(--e-global-color-accent);
+    border-radius: 15px;
+    padding: 3px 10px;
+    color: var(--e-global-color-cd6593d);
+}
+
+.minified__Search__Container p {
+    text-align: center;
+    margin: 12px 0 20px;
+}

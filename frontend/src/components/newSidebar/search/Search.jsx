@@ -1,16 +1,80 @@
-import React from "react";
+import React, { useState } from "react";
 import styles from "./search.module.css";
 import CollapseItem from "../collapseItem/CollapseItem";
 import { v4 as uuidv4 } from "uuid";
 import { FaSearch } from "react-icons/fa";
 import { useForm } from "react-hook-form";
+import { IoMdClose } from "react-icons/io";
+import { LoadingSpinner } from "../../LoadingSpinner/LoadingSpinner";
+import { searchForItem } from "../../../services/searchServices";
+import { toast } from "react-toastify";
+import { useDispatch, useSelector } from "react-redux";
+import { Tooltip } from "react-tooltip";
+import { useNavigate } from "react-router-dom";
+import { detailDocument } from "../../../features/document/asyncThunks";
+import { detailTemplate } from "../../../features/template/asyncThunks";
+import { setToggleManageFileForm } from "../../../features/app/appSlice";
+import { detailWorkflow } from "../../../features/workflow/asyncTHunks";
 
 const Search = () => {
-  const { register, handleSubmit } = useForm();
+  const { register, handleSubmit, watch } = useForm();
+  const { search } = watch();
+  const  [ searchLoading, setSearchLoading ] = useState(false);
+  const [ searchResults, setSearchResults ] = useState([]);
+  const [ searchResultLoaded, setSearchResultLoaded ] = useState(false);
+  const { userDetail } = useSelector((state) => state.auth);
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
 
-  const onSubmit = (data) => {
-    console.log(data);
+  const onSubmit = async (data) => {
+    if (data.search.length < 1 || searchLoading) return
+
+    setSearchLoading(true);
+
+    const dataToPost = {
+      company_id: userDetail?.portfolio_info[0]?.org_id,
+      search: data.search,
+    }
+
+    try {
+      const response = await (await searchForItem(dataToPost)).data; 
+      setSearchResultLoaded(true);
+      setSearchLoading(false);
+      setSearchResults(response.search_result);     
+    } catch (error) {
+      console.log(error.response ? error.response.data : error.message);
+      setSearchLoading(false);
+      toast.error(error.response ? error.response.data : error.message)
+    }
   };
+
+  const handleSearchItemClick = (item) => {
+    if (item.document_name) {
+      const data = {
+        document_name: item.document_name,
+        document_id: item._id,
+      };
+      dispatch(detailDocument(data.document_id));
+    }
+    if (item.template_name) {
+      const data = {
+        template_id: item._id,
+        template_name: item.template_name,
+      };
+      dispatch(detailTemplate(data.template_id));
+    }
+    if (item.workflows) {
+      dispatch(setToggleManageFileForm(true));
+      const data = { 
+        workflow_id: item._id 
+      };
+      dispatch(detailWorkflow(data.workflow_id));
+    }
+  }
+
+  const handleSeeMoreBtnClick = () => {
+    navigate('/search', { state: { searchResults: searchResults, searchItem: search }})
+  }
 
   return (
     <div className={styles.container}>
@@ -21,11 +85,81 @@ const Search = () => {
       <form onSubmit={handleSubmit(onSubmit)} className={styles.search__box}>
         <input {...register("search")} placeholder="Type here to search" />
         <button type="submit">
-          <i>
-            <FaSearch />
-          </i>
-          <span>Search</span>
+          {
+            searchLoading ? <LoadingSpinner color={"#fff"} /> : <>
+            <i>
+              <FaSearch />
+            </i>
+            <span>Search</span>
+            </>
+          }
         </button>
+        {
+          searchResultLoaded ? <div className={styles.minified__Search__Results}>
+            <div className={styles.minified__Search__Top__Row}>
+              <h5>Search results</h5>
+              <button onClick={() => setSearchResultLoaded(false)}>
+                <IoMdClose />
+              </button>
+            </div>
+            <div className={styles.minified__Search__Container}>
+              {
+                searchResults.length < 1 ? <p>No items found matching {search}</p> : <>
+                  {
+                    React.Children.toArray(searchResults.slice(0, 3).map(searchResultItem => {
+                      return <button id={searchResultItem._id} onClick={() => handleSearchItemClick(searchResultItem)}>
+                        <span className={styles.search__Item__Info}>
+                          { 
+                            searchResultItem.document_name ? "Document" :
+                            searchResultItem.template_name ? "Template" :
+                            searchResultItem.workflows ? "Workflow" :
+                            ""
+                          }
+                        </span>
+                        <span>
+                          { 
+                            searchResultItem.document_name ? 
+                              searchResultItem.document_name.length > 10 ?
+                                searchResultItem.document_name.slice(0, 10) + "..." :
+                                searchResultItem.document_name
+                            :
+                            searchResultItem.template_name ? 
+                              searchResultItem.template_name.length > 10 ?
+                                searchResultItem.template_name.slice(0, 10) + "..." :
+                                searchResultItem.template_name
+                            :
+                            searchResultItem.workflows ?
+                              searchResultItem.workflows?.workflow_title.length > 10 ?
+                                searchResultItem.workflows?.workflow_title.slice(0, 10) + "..." :
+                                searchResultItem.workflows?.workflow_title
+                            :
+                            ""
+                          }
+                          <Tooltip 
+                            anchorId={searchResultItem._id} 
+                            content={
+                              searchResultItem.document_name ? searchResultItem.document_name :
+                              searchResultItem.template_name ? searchResultItem.template_name :
+                              searchResultItem.workflows?.workflow_title ? searchResultItem.workflows?.workflow_title :
+                              ""
+                            } 
+                            place="top" 
+                          />
+                        </span>
+                      </button>
+                    }))
+                  }
+                </>
+              }
+            </div>
+            { 
+              searchResults.length > 3 ? <button onClick={handleSeeMoreBtnClick}>
+                See all
+              </button> :
+              <></>
+            }
+          </div> : <></>
+        }
       </form>
 
       <CollapseItem listType="ol" items={items} />

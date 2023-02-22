@@ -9,7 +9,7 @@ import {
 } from "../../features/app/appSlice";
 import { useNavigate } from "react-router-dom";
 
-const ManageFiles = ({ title, children, OverlayComp }) => {
+const ManageFiles = ({ title, children, OverlayComp, contentBoxClassName }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { userDetail } = useSelector((state) => state.auth);
@@ -40,7 +40,7 @@ const ManageFiles = ({ title, children, OverlayComp }) => {
         <OverlayComp handleToggleOverlay={handleToggleOverlay} />
       )}
       <h2 className={styles.page__header}>{title} Page</h2>
-      <div className={styles.content__box}>
+      <div className={`${styles.content__box} ${contentBoxClassName ? contentBoxClassName : ''}`}>
         {/*   <div>
           <h2 className={styles.header}>New {title}</h2>
           <div
