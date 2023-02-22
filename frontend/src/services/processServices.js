@@ -67,3 +67,12 @@ export const newProcessActionOptions = {
     startDocumentProcessingContentWise: "start_document_processing_content_wise",
     closeProcessingAndMarkCompleted: "close_processing_and_mark_as_completed",
 }
+
+export const processActionOptionsWithLinkReturned = [
+    "test_document_processing_wf_wise",
+    "test_document_processing_wf_steps_wise",
+    "test_document_processing_content_wise",
+    "start_document_processing_wf_wise",
+    "start_document_processing_wf_steps_wise",
+    "start_document_processing_content_wise",
+]

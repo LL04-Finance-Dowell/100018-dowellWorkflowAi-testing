@@ -8,8 +8,10 @@ import AssignButton from "../../assignButton/AssignButton";
 import { PrimaryButton } from "../../../styledComponents/styledComponents";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
-import { newProcessActionOptions, startNewProcessV2 } from "../../../../services/processServices";
+import { newProcessActionOptions, processActionOptionsWithLinkReturned, startNewProcessV2 } from "../../../../services/processServices";
 import ProgressBar from "../../../progressBar/ProgressBar";
+import { AiOutlineClose } from "react-icons/ai";
+import React from "react";
 
 const ProcessDocument = () => {
   const [currentProcess, setCurrentProcess] = useState();
@@ -34,6 +36,10 @@ const ProcessDocument = () => {
   const { currentDocToWfs, selectedWorkflowsToDoc, processSteps, docCurrentWorkflow, tableOfContentForStep, teamMembersSelectedForProcess, userMembersSelectedForProcess, publicMembersSelectedForProcess } = useSelector((state) => state.app);
   const [ newProcessLoading, setNewProcessLoading ] = useState(false);
   const [ newProcessLoaded, setNewProcessLoaded ] = useState(null);
+  const [ showGeneratedLinksPopup, setShowGeneratedLinksPopup ] = useState(false);
+  const [ generatedLinks, setGeneratedLinks ] = useState([])
+  const [ copiedLinks, setCopiedLinks ] = useState([]);
+
   const dispatch = useDispatch();
 
   const onSubmit = (data) => {
@@ -146,6 +152,11 @@ const ProcessDocument = () => {
       console.log("process response: ", response);
       setNewProcessLoaded(true);
       setNewProcessLoading(false);
+      if (processActionOptionsWithLinkReturned.includes(newProcessActionOptions[`${processOptionSelection}`])) {
+        setGeneratedLinks(response);
+        setShowGeneratedLinksPopup(true);
+        return
+      }
       toast.success(typeof response === "string" ? response : "Successfully created new process");
     } catch (err) {
       console.log(err.response ? err.response.data : err.message);
@@ -153,8 +164,18 @@ const ProcessDocument = () => {
       toast.info(err.response ? err.response.status === 500 ? "New process creation failed" : err.response.data : "New process creation failed")
     }
   }
+  
+  const handleCopyLink = (link) => {
+    if (!link) return
+
+    navigator.clipboard.writeText(link);
+    const currentCopiedLinks  = copiedLinks.slice();
+    currentCopiedLinks.push(link);
+    setCopiedLinks(currentCopiedLinks);
+  }
 
   return (
+    <>
     <div className={styles.container}>
       <h2 className={`h2-small step-title align-left ${styles.header}`}>
         5. Process Document
@@ -173,6 +194,34 @@ const ProcessDocument = () => {
         </div>
       </div>
     </div>
+    {
+      showGeneratedLinksPopup && <div className={styles.process__Generated__Links__Overlay}>
+        <div className={styles.process__Generated__Links__Container}>
+          <div className={styles.process__Generated__Links__Container__Close__Icon} onClick={() => setShowGeneratedLinksPopup(false)}>
+            <AiOutlineClose />
+          </div>
+          <div className={styles.process__Generated__Links__Title__Item}>
+            <span>S/No.</span>
+            <span className={styles.process__Generated__Links__Link__Item}>Links</span>
+            <span>QR Code</span>
+            <span>Copy</span>
+          </div>
+          <div className={styles.process__Links__Container}>
+            {
+              React.Children.toArray(generatedLinks.map((link, index) => {
+                return <div className={styles.process__Generated__Links__Title__Item}>
+                  <span className={styles.process__Generated__Links__Num__Item}>{index + 1}. {typeof link === "object" ? Object.keys(link)[0] : ""}</span>
+                  <span className={`${styles.process__Generated__Links__Link__Item} ${styles.single__Link}`} onClick={() => handleCopyLink(Object.values(link)[0])}>{typeof link === "object" ? Object.values(link)[0] : ""}</span>
+                  <span className={styles.process__Generated__Links__Num__Item}>QR Code</span>
+                  <span className={styles.process__Generated__Links__Copy__Item} onClick={() => handleCopyLink(Object.values(link)[0])}>{typeof link === "object" && copiedLinks.includes(Object.values(link)[0]) ? "Copied" : "Copy"}</span>
+                </div>
+              }))
+            }
+          </div>
+        </div>
+      </div>
+    }
+    </>
   );
 };
 
