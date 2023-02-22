@@ -37,6 +37,7 @@ def get_documents(request, company_id):  # List of Created Templates.
 
 @api_view(["POST"])
 def create_document(request):  # Document Creation.
+    print("Creating document \n")
     if not request.data:
         return Response(
             {"documents": [], "message": "Failed to process document creation."},
@@ -50,6 +51,7 @@ def create_document(request):  # Document Creation.
                 request.data["created_by"],
                 request.data["company_id"],
                 request.data["data_type"],
+                state="draft"
             )
         )
         if res["isSuccess"]:
@@ -101,6 +103,7 @@ def create_document(request):  # Document Creation.
 
 @api_view(["GET"])
 def get_document_content(request, document_id):
+    print("Getting document content \n")
     content = []
     my_dict = ast.literal_eval(
         get_document_object(document_id)["content"]
@@ -120,6 +123,7 @@ def get_document_content(request, document_id):
 
 @api_view(["GET"])
 def document_detail(request, document_id):  # Single document
+    print("Get document link \n")
     payload = json.dumps(
         {
             "product_name": "workflowai",
