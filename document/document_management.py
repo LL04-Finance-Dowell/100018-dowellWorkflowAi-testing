@@ -7,8 +7,8 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
 from database.mongo_db_connection import (
-    get_document_list,
     get_document_object,
+    get_document_list,
     get_links_object_by_process_id,
 )
 from database.mongo_db_connection_v2 import save_document
@@ -19,6 +19,7 @@ editorApi = "https://100058.pythonanywhere.com/api/generate-editor-link/"
 
 @api_view(["GET"])
 def get_documents(request, company_id):  # List of Created Templates.
+    print("Getting documents \n")
     document_list = get_document_list(company_id)
     if not document_list:
         return Response({"documents": []}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

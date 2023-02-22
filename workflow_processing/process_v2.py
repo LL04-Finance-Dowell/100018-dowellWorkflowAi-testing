@@ -28,6 +28,7 @@ def document_processing(request):
         return Response("You are missing something!", status=status.HTTP_400_BAD_REQUEST)
     data_type = "Testing_Data"
     if request.data["action"] == "save_workflow_to_document_and_save_to_drafts":
+        print("save_workflow_to_document_and_save_to_drafts \n")
         choice = "save"
         # create process with new id-
         process = new_process(
@@ -45,7 +46,7 @@ def document_processing(request):
         # update doc with process.
         doc_data = {
             "document_id": process["document_id"],
-            "process_id": process["process_id"],
+            "process_id": process["_id"],
             "state": "processing",
         }
         dt = Thread(
@@ -57,15 +58,16 @@ def document_processing(request):
         return Response("Created Workflow and Saved in drafts.", status=status.HTTP_201_CREATED)
 
     if request.data["action"] == "start_document_processing_content_wise":
+        print("start_document_processing_content_wise \n")
         choice = "content"
         # create process with new id-
         process = new_process(
             workflows=request.data["workflows"],
-            created_by=request.data["document_id"],
+            created_by=request.data["parent_document_id"],
             company_id=request.data["company_id"],
             data_type=request.data["data_type"],
             document_id=clone_document(
-                document_id=request.data["document_id"],
+                document_id=request.data["parent_document_id"],
                 creator=request.data["created_by"],
             ),
             process_choice=choice,
@@ -73,7 +75,7 @@ def document_processing(request):
         )
         doc_data = {
             "document_id": process["document_id"],
-            "process_id": process["process_id"],
+            "process_id": process["_id"],
             "state": "processing",
         }
         # update doc with process.
@@ -85,15 +87,16 @@ def document_processing(request):
         return start_processing(process)
 
     if request.data["action"] == "start_document_processing_wf_steps_wise":
+        print("start_document_processing_wf_steps_wise \n")
         choice = "steps"
         # create process with new id->
         process = new_process(
             workflows=request.data["workflows"],
-            created_by=request.data["document_id"],
+            created_by=request.data["parent_document_id"],
             company_id=request.data["company_id"],
             data_type=request.data["data_type"],
             document_id=clone_document(
-                document_id=request.data["document_id"],
+                document_id=request.data["parent_document_id"],
                 creator=request.data["created_by"],
             ),
             process_choice=choice,
@@ -101,7 +104,7 @@ def document_processing(request):
         )
         doc_data = {
             "document_id": process["document_id"],
-            "process_id": process["process_id"],
+            "process_id": process["_id"],
             "state": "processing",
         }
         # update doc with process.
@@ -113,15 +116,16 @@ def document_processing(request):
         return start_processing(process)
 
     if request.data["action"] == "start_document_processing_wf_wise":
+        print("start_document_processing_wf_wise \n")
         choice = "workflow"
         # create process with new id.
         process = new_process(
             workflows=request.data["workflows"],
-            created_by=request.data["document_id"],
+            created_by=request.data["parent_document_id"],
             company_id=request.data["company_id"],
             data_type=request.data["data_type"],
             document_id=clone_document(
-                document_id=request.data["document_id"],
+                document_id=request.data["parent_document_id"],
                 creator=request.data["created_by"],
             ),
             process_choice=choice,
@@ -129,7 +133,7 @@ def document_processing(request):
         )
         doc_data = {
             "document_id": process["document_id"],
-            "process_id": process["process_id"],
+            "process_id": process["_id"],
             "state": "processing",
         }
         # update doc with process.
@@ -141,15 +145,16 @@ def document_processing(request):
         return start_processing(process)
 
     if request.data["action"] == "test_document_processing_content_wise":
+        print("test_document_processing_content_wise \n")
         choice = "content"
         # create process with new id->
         process = new_process(
             workflows=request.data["workflows"],
-            created_by=request.data["document_id"],
+            created_by=request.data["parent_document_id"],
             company_id=request.data["company_id"],
             data_type=data_type,
             document_id=clone_document(
-                document_id=request.data["document_id"],
+                document_id=request.data["parent_document_id"],
                 creator=request.data["created_by"],
             ),
             process_choice=choice,
@@ -157,7 +162,7 @@ def document_processing(request):
         )
         doc_data = {
             "document_id": process["document_id"],
-            "process_id": process["process_id"],
+            "process_id": process["_id"],
             "state": "processing",
         }
         # update doc with process.
@@ -169,15 +174,16 @@ def document_processing(request):
         return start_processing(process)
 
     if request.data["action"] == "test_document_processing_wf_steps_wise":
+        print("test_document_processing_wf_steps_wise \n")
         choice = "steps"
         # create process with new id->
         process = new_process(
             workflows=request.data["workflows"],
-            created_by=request.data["document_id"],
+            created_by=request.data["parent_document_id"],
             company_id=request.data["company_id"],
             data_type=data_type,
             document_id=clone_document(
-                document_id=request.data["document_id"],
+                document_id=request.data["parent_document_id"],
                 creator=request.data["created_by"],
             ),
             process_choice=choice,
@@ -185,7 +191,7 @@ def document_processing(request):
         )
         doc_data = {
             "document_id": process["document_id"],
-            "process_id": process["process_id"],
+            "process_id": process["_id"],
             "state": "processing",
         }
         # update doc with process.
@@ -197,15 +203,16 @@ def document_processing(request):
         return start_processing(process)
 
     if request.data["action"] == "test_document_processing_wf_wise":
+        print("test_document_processing_wf_wise \n")
         choice = "workflow"
         # create process with new id->
         process = new_process(
             workflows=request.data["workflows"],
             created_by=request.data["document_id"],
-            company_id=request.data["company_id"],
+            company_id=request.data["parent_company_id"],
             data_type=data_type,
             document_id=clone_document(
-                document_id=request.data["document_id"],
+                document_id=request.data["parent_document_id"],
                 creator=request.data["created_by"],
             ),
             process_choice=choice,
@@ -213,7 +220,7 @@ def document_processing(request):
         )
         doc_data = {
             "document_id": process["document_id"],
-            "process_id": process["process_id"],
+            "process_id": process["_id"],
             "state": "processing",
         }
         # update doc with process.
@@ -225,21 +232,23 @@ def document_processing(request):
         return start_processing(process)
 
     if request.data["action"] == "close_processing_and_mark_as_completed":
+        print("close_processing_and_mark_as_completed \n")
         process = get_process_object(workflow_process_id=request.data["process_id"])
-        if process["processingState"] == "complete":
+        if process["processing_state"] == "complete":
             return Response("This Workflow process is already complete", status=status.HTTP_200_OK)
         res = json.loads(
-            update_wf_process(process_id=process["process_id"], steps=process["processingSteps"], state="complete"))
+            update_wf_process(process_id=process["process_id"], steps=process["processing_steps"], state="complete"))
         if res["isSuccess"]:
             return Response("Process closed and marked as complete!", status=status.HTTP_200_OK)
         return Response("Failed to mark process and completed!", status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     if request.data["action"] == "cancel_process_before_completion":  # document should reset to initial state.
+        print("cancel_process_before_completion \n")
         process = get_process_object(workflow_process_id=request.data["process_id"])
-        if process["processingState"] == "canceled":
+        if process["processing_state"] == "canceled":
             return Response("This Workflow process is Cancelled!", status=status.HTTP_200_OK)
         res = json.loads(
-            update_wf_process(process_id=process["process_id"], steps=process["processingSteps"], state="canceled"))
+            update_wf_process(process_id=process["process_id"], steps=process["processing_steps"], state="canceled"))
         if res["isSuccess"]:
             return Response("Process has been cancelled!", status=status.HTTP_200_OK)
         return Response("Failed cancel process!", status=status.HTTP_500_INTERNAL_SERVER_ERROR)
@@ -258,11 +267,11 @@ def clone_document(document_id, creator):
         # create new doc
         save_res = json.loads(
             save_document(
-                name=document["documentName"],
+                name=document["document_name"],
                 data=document["content"],
                 created_by=creator,
-                company_id=document["companyId"],
-                data_type=document["dataType"],
+                company_id=document["company_id"],
+                data_type=document["data_type"],
                 state="processing"
             )
         )
@@ -295,13 +304,13 @@ def new_process(
     # return process id.
     if res["isSuccess"]:
         process = {
-            "processTitle": process_title,
-            "processSteps": process_steps,
-            "processingChoice": process_choice,
-            "createdBy": created_by,
-            "companyId": company_id,
-            "dataType": data_type,
-            "documentId": document_id,
+            "process_title": process_title,
+            "process_steps": process_steps,
+            "processing_choice": process_choice,
+            "created_by": created_by,
+            "company_id": company_id,
+            "data_type": data_type,
+            "document_id": document_id,
             "_id": res["inserted_id"],
         }
         return process
@@ -311,12 +320,12 @@ def new_process(
 def start_processing(process):
     print("Generating links.............\n")
     links = []
-    for step in process["processSteps"]:
+    for step in process["process_steps"]:
         links.append(
             {
                 step.get("stepName"): verification_link(
                     process_id=process["_id"],
-                    document_id=process["parentDocumentId"],
+                    document_id=process["parent_document_id"],
                     team_users=step.get("stepTeamMembers", None),
                     public_users=step.get("stepPublicMembers", None),
                     user_users=step.get("stepUserMembers", None),
@@ -328,9 +337,9 @@ def start_processing(process):
     data = {
         "links": links,
         "process_id": process["_id"],
-        "document_id": process["parentDocumentId"],
-        "process_choice": process["processingAction"],
-        "process_title": process["processTitle"],
+        "document_id": process["parent_document_id"],
+        "process_choice": process["processing_action"],
+        "process_title": process["process_title"],
     }
     t = Thread(target=save_links_v2, args=(data,))
     t.start()
@@ -338,7 +347,7 @@ def start_processing(process):
     if process["processingState"] == "draft":
         process_data = {
             "process_id": process["_id"],
-            "process_steps": process["processSteps"],
+            "process_steps": process["process_steps"],
             "processing_state": "processing"
         }
         pt = Thread(target=process_update, args=(process_data,))
@@ -384,15 +393,6 @@ def save_links_v2(data):
     return
 
 
-# # Thread to update states
-# def state_update(data):
-#     update_document(document_id=data["document_id"], process_id=data["process_id"], state=data["state"])
-#     print("Thread: Document Updated! \n")
-#     update_wf_process(process_id=data["process_id"], steps=data["process_id"], state="processing")
-#     print("Thread: Process update!")
-#     return
-
-
 # Thread to update a doc
 def document_update(doc_data):
     update_document(
@@ -432,10 +432,10 @@ def verification(request):
         Response(
             "Something went wrong!, Retry", status=status.HTTP_500_INTERNAL_SERVER_ERROR
         )
-    if process["processingState"] == "paused":
+    if process["processing_state"] == "paused":
         return Response("This workflow process is currently on hold!", status=status.HTTP_200_OK)
     # was the process not started?
-    if process["processingState"] == "save":
+    if process["processing_state"] == "save":
         return Response("This workflow process is not activated!", status=status.HTTP_200_OK)
     # find step the user belongs
     doc_map = None
@@ -444,7 +444,7 @@ def verification(request):
     user = None
     match = False
     clone_id = None
-    for step in process["processSteps"]:
+    for step in process["process_steps"]:
         # step role matching auth process
         if step.get("stepRole") == auth_step_role:
             print("Matched step role:", step["stepRole"])
@@ -469,7 +469,7 @@ def verification(request):
                 print("Got step limit ... \n")
                 if not check_time_limit_right(time=step.get("stepTime"), select_time_limits=step.get("stepTimeLimit"),
                                               start_time=step.get("stepStartTime"), end_time=step.get("stepEndTime"),
-                                              creation_time=process["createdAt"]):
+                                              creation_time=process["created_at"]):
                     return Response("Time Limit for processing document has elapsed!", status=status.HTTP_403_FORBIDDEN)
             # check step activity
             if step.get("stepTaskType"):
@@ -490,7 +490,7 @@ def verification(request):
                                 print("user is not part of doc clone map... \n")
                                 # clone the document out of the parent id
                                 clone_id = clone_document(
-                                    document_id=process["parentDocumentId"], creator=user_name
+                                    document_id=process["parent_document_id"], creator=user_name
                                 )
                                 clone_count = step["stepCloneCount"] = step["stepCloneCount"] - 1
                                 # update clone count
@@ -499,7 +499,7 @@ def verification(request):
                                 step["stepDocumentCloneMap"].extend({user_name: clone_id})
                                 # updating the document clone list
                                 data = {
-                                    'doc_id': process['parentDocumentId'],
+                                    'doc_id': process['parent_document_id'],
                                     'clone_id': clone_id
                                 }
                                 ct = Thread(
@@ -509,7 +509,7 @@ def verification(request):
                                 ct.start()
                         else:
                             # what if this step role has no clone
-                            clone_id = process["parentDocumentId"]
+                            clone_id = process["parent_document_id"]
                 if step.get("stepTaskType") == "assign_task":
                     print("Task Type:", step["stepTaskType"])
                     pass
@@ -529,8 +529,8 @@ def verification(request):
         # thread work to update the process
         process_data = {
             "process_id": process["_id"],
-            "process_steps": process["processSteps"],
-            "processing_state": process["processingState"]
+            "process_steps": process["process_steps"],
+            "processing_state": process["processing_state"]
         }
         pt = Thread(
             target=process_update,
@@ -554,7 +554,7 @@ def clone_update(data):
     """add a clone id to a documents clone list"""
     print('Updating clone ...... \n')
     document = get_document_object(document_id=data['doc_id'])
-    clone_list = document['cloneList'].append(data['clone_id'])
+    clone_list = document['clone_list'].append(data['clone_id'])
     update_document_clone(document_id=data['doc_id'], clone_list=clone_list)
     print('Thread: Clone Update!')
     return
@@ -731,27 +731,26 @@ def check_processing_complete(process, step_role):
 @api_view(["POST"])
 def trigger_process(request):
     """Get process and begin processing it."""
-
     print("Processing a saved process... \n")
     try:
         process = get_process_object(request.data["process_id"])
     except ConnectionError:
         return Response("Could not start processing!", status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-    if process["processingState"]:
+    if process["processing_state"]:
         # check user.
-        if request.data["user_name"] == process["createdBy"]:
+        if request.data["user_name"] == process["created_by"]:
             # check action.
             if request.data["action"] == "halt_process":
                 # check pause state.
-                if process["processingState"] != "paused":
+                if process["processing_state"] != "paused":
                     res = json.loads(
-                        update_wf_process(process_id=request.data["process_id"], steps=process["processingSteps"],
+                        update_wf_process(process_id=request.data["process_id"], steps=process["processing_steps"],
                                           state="paused"))
                     if res["isSuccess"]:
                         return Response("Process has been paused until manually resumed!", status=status.HTTP_200_OK)
             if request.data["action"] == "process_draft":
                 # check processing state.
-                if process["processingState"] != "processing":
+                if process["processing_state"] != "processing":
                     return start_processing(process)
             return Response("Wrong action selected", status=status.HTTP_400_BAD_REQUEST)
         return Response("User not allowed to trigger processing, contact document creator!",

@@ -493,17 +493,19 @@ def get_wf_list(company_id):
         return res_obj["data"]
     else:
         return []
+
+
 # def search_objects(company_id,term):
 #     docs = {"company_id": str(company_id),"document_name":term}
 #     templ = {"company_id": str(company_id),"template_name":term}
 #     wf= {"company_id": str(company_id),"workflow_title":term}
 #     all_= [DOCUMENT_CONNECTION_LIST,TEMPLATE_CONNECTION_LIST,WF_CONNECTION_LIST]
 #     for li in all_:
-        
+
 #         doc=dowellconnection(*li, "fetch", docs, "nil")
 #         temp=dowellconnection(*li, "fetch", templ, "nil")
 #         wf_  =dowellconnection(*li, "fetch", wf, "nil")
-        
+
 #     # if len(doc["data"]):
 #     return doc["data"]
 #     # else:
@@ -745,9 +747,7 @@ def wf_setting_update(wf_setting_id, wf_ai_data):
 def get_document_object(document_id):
     fields = {"_id": document_id}
     response_obj = dowellconnection(*DOCUMENT_CONNECTION_LIST, "find", fields, "nil")
-    # print("document object-------------- \n", response_obj)
     res_obj = json.loads(response_obj)
-    print(res_obj)
     try:
         return res_obj["data"]
     except RuntimeError:
