@@ -28,7 +28,7 @@ def document_processing(request):
         return Response("You are missing something!", status=status.HTTP_400_BAD_REQUEST)
     data_type = "Testing_Data"
     if request.data["action"] == "save_workflow_to_document_and_save_to_drafts":
-        print("save_workflow_to_document_and_save_to_drafts \n")
+        print("Action: save_workflow_to_document_and_save_to_drafts \n")
         choice = "save"
         # create process with new id-
         process = new_process(
@@ -45,7 +45,7 @@ def document_processing(request):
         )
         # update doc with process.
         doc_data = {
-            "document_id": process["document_id"],
+            "document_id": process["parent_document_id"],
             "process_id": process["_id"],
             "state": "processing",
         }
@@ -58,7 +58,7 @@ def document_processing(request):
         return Response("Created Workflow and Saved in drafts.", status=status.HTTP_201_CREATED)
 
     if request.data["action"] == "start_document_processing_content_wise":
-        print("start_document_processing_content_wise \n")
+        print("Action: start_document_processing_content_wise \n")
         choice = "content"
         # create process with new id-
         process = new_process(
@@ -74,7 +74,7 @@ def document_processing(request):
             creator_portfolio=request.data["creator_portfolio"]
         )
         doc_data = {
-            "document_id": process["document_id"],
+            "document_id": process["parent_document_id"],
             "process_id": process["_id"],
             "state": "processing",
         }
@@ -87,7 +87,7 @@ def document_processing(request):
         return start_processing(process)
 
     if request.data["action"] == "start_document_processing_wf_steps_wise":
-        print("start_document_processing_wf_steps_wise \n")
+        print("Action: start_document_processing_wf_steps_wise \n")
         choice = "steps"
         # create process with new id->
         process = new_process(
@@ -103,7 +103,7 @@ def document_processing(request):
             creator_portfolio=request.data["creator_portfolio"]
         )
         doc_data = {
-            "document_id": process["document_id"],
+            "document_id": process["parent_document_id"],
             "process_id": process["_id"],
             "state": "processing",
         }
@@ -116,7 +116,7 @@ def document_processing(request):
         return start_processing(process)
 
     if request.data["action"] == "start_document_processing_wf_wise":
-        print("start_document_processing_wf_wise \n")
+        print("Action: start_document_processing_wf_wise \n")
         choice = "workflow"
         # create process with new id.
         process = new_process(
@@ -132,7 +132,7 @@ def document_processing(request):
             creator_portfolio=request.data["creator_portfolio"]
         )
         doc_data = {
-            "document_id": process["document_id"],
+            "document_id": process["parent_document_id"],
             "process_id": process["_id"],
             "state": "processing",
         }
@@ -145,7 +145,7 @@ def document_processing(request):
         return start_processing(process)
 
     if request.data["action"] == "test_document_processing_content_wise":
-        print("test_document_processing_content_wise \n")
+        print("Action: test_document_processing_content_wise \n")
         choice = "content"
         # create process with new id->
         process = new_process(
@@ -161,7 +161,7 @@ def document_processing(request):
             creator_portfolio=request.data["creator_portfolio"]
         )
         doc_data = {
-            "document_id": process["document_id"],
+            "document_id": process["parent_document_id"],
             "process_id": process["_id"],
             "state": "processing",
         }
@@ -174,7 +174,7 @@ def document_processing(request):
         return start_processing(process)
 
     if request.data["action"] == "test_document_processing_wf_steps_wise":
-        print("test_document_processing_wf_steps_wise \n")
+        print("Action: test_document_processing_wf_steps_wise \n")
         choice = "steps"
         # create process with new id->
         process = new_process(
@@ -190,7 +190,7 @@ def document_processing(request):
             creator_portfolio=request.data["creator_portfolio"]
         )
         doc_data = {
-            "document_id": process["document_id"],
+            "document_id": process["parent_document_id"],
             "process_id": process["_id"],
             "state": "processing",
         }
@@ -203,7 +203,7 @@ def document_processing(request):
         return start_processing(process)
 
     if request.data["action"] == "test_document_processing_wf_wise":
-        print("test_document_processing_wf_wise \n")
+        print("Action: test_document_processing_wf_wise \n")
         choice = "workflow"
         # create process with new id->
         process = new_process(
@@ -219,7 +219,7 @@ def document_processing(request):
             creator_portfolio=request.data["creator_portfolio"]
         )
         doc_data = {
-            "document_id": process["document_id"],
+            "document_id": process["parent_document_id"],
             "process_id": process["_id"],
             "state": "processing",
         }
@@ -232,7 +232,7 @@ def document_processing(request):
         return start_processing(process)
 
     if request.data["action"] == "close_processing_and_mark_as_completed":
-        print("close_processing_and_mark_as_completed \n")
+        print("Action: close_processing_and_mark_as_completed \n")
         process = get_process_object(workflow_process_id=request.data["process_id"])
         if process["processing_state"] == "complete":
             return Response("This Workflow process is already complete", status=status.HTTP_200_OK)
@@ -306,11 +306,11 @@ def new_process(
         process = {
             "process_title": process_title,
             "process_steps": process_steps,
-            "processing_choice": process_choice,
+            "processing_action": process_choice,
             "created_by": created_by,
             "company_id": company_id,
             "data_type": data_type,
-            "document_id": document_id,
+            "parent_document_id": document_id,
             "_id": res["inserted_id"],
         }
         return process
@@ -344,7 +344,7 @@ def start_processing(process):
     t = Thread(target=save_links_v2, args=(data,))
     t.start()
     # update process state
-    if process["processingState"] == "draft":
+    if get_process_object(workflow_process_id=process["_id"])["processing_state"] == "draft":
         process_data = {
             "process_id": process["_id"],
             "process_steps": process["process_steps"],

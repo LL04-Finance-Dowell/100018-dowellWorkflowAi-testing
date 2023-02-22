@@ -173,7 +173,7 @@ def save_wf_process(
         company_id,
         data_type,
         document_id,
-        process_choice,
+        process_action,
         portfolio
 ):
     payload = json.dumps(
@@ -188,7 +188,7 @@ def save_wf_process(
                 "created_by": user,
                 "data_type": data_type,
                 "parent_document_id": document_id,
-                "processing_action": process_choice,
+                "processing_action": process_action,
                 "processing_state": "draft",
                 "created_at": time,
                 "creator_portfolio": portfolio
@@ -212,8 +212,8 @@ def update_wf_process(process_id, steps, state):
                 "_id": process_id,
             },
             "update_field": {
-                "processSteps": steps,
-                "processingState": state
+                "process_steps": steps,
+                "processing_state": state
             },
             "platform": "bangalore",
         }
@@ -237,7 +237,7 @@ def get_process_object(workflow_process_id):
 
 def get_process_list(company_id):
     print("DB: Getting process list \n")
-    fields = {"companyId": str(company_id)}
+    fields = {"company_id": str(company_id)}
     response_obj = dowellconnection(*PROCESS_CONNECTION_LIST, "fetch", fields, "nil")
     res_obj = json.loads(response_obj)
     if len(res_obj["data"]):
@@ -293,7 +293,6 @@ def get_document_object(document_id):
     fields = {"_id": document_id}
     response_obj = dowellconnection(*DOCUMENT_CONNECTION_LIST, "find", fields, "nil")
     res_obj = json.loads(response_obj)
-    print(res_obj)
     try:
         return res_obj["data"]
     except RuntimeError:
