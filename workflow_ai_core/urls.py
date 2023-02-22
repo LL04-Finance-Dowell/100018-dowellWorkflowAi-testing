@@ -93,9 +93,9 @@ urlpatterns = [
     # v2 processing.
     path("v0.2/process/", document_processing),
     path("v0.2/process/<str:process_id>/", single_process),
-    path("v0.2/process/verify-process/", verification),
-    path('v0.2/process/mark-process/', mark_process_as_finalize_or_reject),
-    path("v0.2/process/trigger-process/", trigger_process),
+    path("v0.2/process/action/verify/", verification),
+    path('v0.2/process/action/mark/', mark_process_as_finalize_or_reject),
+    path("v0.2/process/action/trigger/", trigger_process),
     path("v0.2/process/org/<str:company_id>/", wf_processes),
 
 

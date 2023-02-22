@@ -7,6 +7,9 @@ WorkflowProcessModel: # A single process.
     processingState - "complete|draft|processing"
     dataType - "Learning_Data|Testing_Data|Real_Data|"
     companyId = "the company id"
+    processingAction - "how the process should be done"
+    createdBy = "who created the proces"
+    creatorPortfolio = "portfolio of createdBy"
     processSteps = {
     "stepNumber": 1,
     "stepRole": "<role_from_workflow_creation>",
@@ -34,7 +37,6 @@ WorkflowProcessModel: # A single process.
     "stepDocumentCloneMap": [{"user_name": "document_id"}] # the assigned people in step with doc id
     "stepState": "processing|complete" # step processing ongoing on not.
     },
-    processingAction - "how the process should be done"
 }
 
 

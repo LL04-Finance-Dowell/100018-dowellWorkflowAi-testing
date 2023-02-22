@@ -346,7 +346,7 @@ def save_wf_process(
     return json.loads(json.loads(response.text))
 
 
-def update_wf_process(process_id, steps):
+def update_wf_process(process_id, state):
     # url = "http://100002.pythonanywhere.com/"
     payload = json.dumps(
         {
@@ -356,7 +356,7 @@ def update_wf_process(process_id, steps):
                 "_id": process_id,
             },
             "update_field": {
-                "process_steps": steps,
+                "processingState": state,
             },
             "platform": "bangalore",
         }

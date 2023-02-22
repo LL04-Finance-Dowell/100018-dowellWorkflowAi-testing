@@ -140,17 +140,17 @@ def document_detail(request, document_id):  # Single document
         }
     )
     headers = {"Content-Type": "application/json"}
-    editor_link = requests.request("POST", editorApi, headers=headers, data=payload)
     try:
-        return Response(
-            editor_link.json(),
-            status=status.HTTP_201_CREATED,
-        )
+        editor_link = requests.post(editorApi, headers=headers, data=payload)
     except ConnectionError:
         return Response(
             {"document": [], "message": "Failed to call editorApi"},
             status=status.HTTP_200_OK,
         )
+    return Response(
+        editor_link.json(),
+        status=status.HTTP_201_CREATED,
+    )
 
 
 @api_view(["POST"])

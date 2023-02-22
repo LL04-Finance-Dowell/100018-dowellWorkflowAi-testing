@@ -157,6 +157,7 @@ def save_process_links(
                 "processingChoice": processing_choice,
                 "processTitle": process_title,
                 "createdAt": time,
+
             },
             "update_field": {"order_nos": 21},
             "platform": "bangalore",
@@ -206,6 +207,7 @@ def save_wf_process(
         data_type,
         document_id,
         process_choice,
+        portfolio
 ):
     payload = json.dumps(
         {
@@ -222,6 +224,7 @@ def save_wf_process(
                 "processingAction": process_choice,
                 "processingState": "draft",
                 "createdAt": time,
+                "creatorPortfolio": portfolio
             },
             "update_field": {"order_nos": 21},
             "platform": "bangalore",

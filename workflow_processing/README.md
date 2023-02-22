@@ -8,6 +8,7 @@ _POST_ `v0.2/process/start/`
 {
     "company_id": "<company_id_of_authenticated_user>",
     "created_by": "<user_name_of_authenticated_user>",
+    "creator_portfolio": "portfolio_of_the_auth_user",
     "data_type": "<get_from_login-api>",
     "parent_document_id": "<document_id_of_selected_document_to_process>",
     "action": "how the process should be done/what needs to be done",
@@ -18,6 +19,7 @@ _POST_ `v0.2/process/start/`
                 "steps": [
                     {
                         "stepNumber": 1,
+                        "stepName: <the_step_name>,
                         "stepRole": "<role_from_workflow_creation>",
                         "skipStep": "True|False",
                         "permitInternalWorkflow": "True|False",

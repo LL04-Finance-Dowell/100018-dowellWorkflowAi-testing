@@ -63,11 +63,10 @@ This backend service serves as the WorkflowAI application Backend.
 | POST       | /v0.2/process/                    | To create a new process                              |
 | GET        | /v0.2/process/:process_id/        | To retrieve a single process                         |
 | GET        | /v0.2/process/org/:company_id/    | To retrieve processes in a company                   |
-| POST       | /v0.2/process/verify-process/     | To verify a process to get access.                   |
-| POST       | /v0.2/process/mark-process/       | To mark a documents as finalized/rejected            |
-| POST       | /v0.2/process/trigger-process/    | To trigger process according to given action         |
+| POST       | /v0.2/process/action/verify/      | To verify a process to get access.                   |
+| POST       | /v0.2/process/action/mark/        | To mark a documents as finalized/rejected            |
+| POST       | /v0.2/process/action/trigger/     | To trigger process according to given action         |
 | GET        | /v0.2/process/verify/:process_id/ | To get process verification link for a given process |
-
 
 ### Endpoints Definition(Request - Response).
 
