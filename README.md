@@ -26,31 +26,31 @@ This backend service serves as the WorkflowAI application Backend.
 
 - Base URL: `https://100094.pythonanywhere.com`
 
-| HTTP Verbs | Endpoints                                 | Action                                               |
-|------------|-------------------------------------------|------------------------------------------------------|
-| POST       | /v0.1/search/                             | To search templates/documents/workflows              |
-| POST       | /v0.1/templates/                          | To create a new template.                            |
-| GET        | /v0.1/templates/:template_id/             | To retrieve a single template.                       |
-| GET        | /v0.1/templates/approve/:template_id/     | To approve a single template.                        |
-| GET        | /v0.1/templates/org/:company_id/          | To retrieve templates of given company.              |
-| POST       | /v0.1/documents/                          | To create a new document.                            |
-| GET        | /v0.1/documents/:document_id/             | To retrieve a single document.                       |
-| GET        | /v0.1/documents/org/:company_id/          | To retrieve documents of a given company.            |
-| GET        | /v0.1/documents/content/:document_id/     | To get the content map of a single document          |
-| POST       | /v0.1/workflows/                          | To create a new workflow                             |
-| GET        | /v0.1/workflows/:workflow_id/             | To retrieve a single workflow                        |
-| GET        | /v0.1/workflows/update/                   | To update a single workflow.                         |
-| GET        | /v0.1/workflows/org/:company_id/          | To retrieve workflows in a company                   |
-| POST       | /v0.1/process/                            | To create a new process                              |
-| GET        | /v0.1/process/:process_id/                | To retrieve a single process                         |
-| POST       | /v0.1/process/verification-link/          | To retrieve verification link for a user             |
-| GET        | /v0.1/process/org/:company_id/            | To retrieve processes in a company                   |
-| GET        | /v/0.1/process/process-links/:process_id/ | To get process verification link for a given process |
-| POST       | /v0.1/process/verify-process/             | To verify a given process and give access            |
-| POST       | /v0.1/process/verification/               | To finalize/reject a process                         |
-| POST       | /v0.1/settings/                           | To set wf ai settings                                |
-| GET        | /v0.1/settings/:wf_setting_id/            | To get a single wf ai settings                       |
-| POST       | /v0.1/settings/update/                    | To update wf ai settings                             |
+| HTTP Verbs | Endpoints                             | Action                                               |
+|------------|---------------------------------------|------------------------------------------------------|
+| POST       | /v0.1/search/                         | To search templates/documents/workflows              |
+| POST       | /v0.1/templates/                      | To create a new template.                            |
+| GET        | /v0.1/templates/:template_id/         | To retrieve a single template.                       |
+| GET        | /v0.1/templates/approve/:template_id/ | To approve a single template.                        |
+| GET        | /v0.1/templates/org/:company_id/      | To retrieve templates of given company.              |
+| POST       | /v0.1/documents/                      | To create a new document.                            |
+| GET        | /v0.1/documents/:document_id/         | To retrieve a single document.                       |
+| GET        | /v0.1/documents/org/:company_id/      | To retrieve documents of a given company.            |
+| GET        | /v0.1/documents/content/:document_id/ | To get the content map of a single document          |
+| POST       | /v0.1/workflows/                      | To create a new workflow                             |
+| GET        | /v0.1/workflows/:workflow_id/         | To retrieve a single workflow                        |
+| GET        | /v0.1/workflows/update/               | To update a single workflow.                         |
+| GET        | /v0.1/workflows/org/:company_id/      | To retrieve workflows in a company                   |
+| POST       | /v0.1/process/                        | To create a new process                              |
+| GET        | /v0.1/process/:process_id/            | To retrieve a single process                         |
+| POST       | /v0.1/process/verification/link/      | To retrieve verification link for a user             |
+| GET        | /v0.1/process/org/:company_id/        | To retrieve processes in a company                   |
+| GET        | /v/0.1/process/links/:process_id/     | To get process verification link for a given process |
+| POST       | /v0.1/process/action/verify/          | To verify a given process and give access link       |
+| POST       | /v0.1/process/action/mark/            | To finalize/reject a process                         |
+| POST       | /v0.1/settings/                       | To set wf ai settings                                |
+| GET        | /v0.1/settings/:wf_setting_id/        | To get a single wf ai settings                       |
+| POST       | /v0.1/settings/update/                | To update wf ai settings                             |
 
 --------------
 

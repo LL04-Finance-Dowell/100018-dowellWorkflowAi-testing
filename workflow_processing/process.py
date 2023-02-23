@@ -19,9 +19,7 @@ from database.mongo_db_connection import (
 
 
 def processing_complete(process):
-    """
-    complete document and mark as complete
-    """
+    """complete document and mark as complete"""
     # check if all process steps are marked finalized
     complete = True
     for step in process["process_steps"]:
@@ -106,7 +104,7 @@ def processes(request, company_id):
 
 @api_view(["POST"])
 def get_process_link(request):
-    print("got here")
+    print("Getting a process verification link \n")
     """get a link process for person having notifications"""
     links_info = get_links_object_by_process_id(request.data["process_id"])
     user = request.data["user_name"]
@@ -128,6 +126,7 @@ def get_process_link(request):
 @api_view(["GET"])
 def a_single_process(request, process_id):
     """get process by process id"""
+    print("Getting a single process \n")
     try:
         process = get_process_object(process_id)
     except ConnectionError:
@@ -139,7 +138,8 @@ def a_single_process(request, process_id):
 
 @api_view(["GET"])
 def fetch_process_links(request, process_id):
-    """GET-verification links for a process"""
+    """verification links for a process"""
+    print("Fetching verification links \n")
     try:
         process_info = get_links_object_by_process_id(process_id)
     except ConnectionError:
@@ -154,7 +154,7 @@ def fetch_process_links(request, process_id):
 
 @api_view(["POST"])
 def verify_process(request):
-    """API - process verification to perform check and issue access"""
+    """process verification to perform check and issue access"""
     print("verification started...... \n")
     # decode token
     decoded = jwt.decode(request.data["token"], "secret", algorithms="HS256")
@@ -303,9 +303,8 @@ def generate_link(document_id, doc_map, doc_rights, user, process_id):
 
 @api_view(["POST"])
 def save_and_start_processing(request):
-    """
-    API-save and start processing.........
-    """
+    """save and start processing"""
+    print("Action: save and start processing \n")
     process = new_process(
         workflows=request.data["workflows"],
         document_id=request.data["document_id"],
@@ -339,9 +338,7 @@ def save_and_start_processing(request):
 
 
 def document_update(doc_data):
-    """
-    document update
-    """
+    """document update"""
     update_document(
         document_id=doc_data["document_id"],
         workflow_process_id=doc_data["process_id"],
@@ -354,9 +351,7 @@ def document_update(doc_data):
 def new_process(
         workflows, created_by, company_id, data_type, document_id, process_choice
 ):
-    """
-    Create Process.
-    """
+    """Create Process."""
     print("creating process.......... \n")
     process_steps = [
         step for workflow in workflows for step in workflow["workflows"]["steps"]
@@ -374,7 +369,6 @@ def new_process(
         document_id,
         process_choice,
     )
-
     # return process id.
     if res["isSuccess"]:
         process = {
@@ -391,11 +385,8 @@ def new_process(
 
 
 def start_processing(process):
-    """
-     Begin processing the Workflow.
-    """
-
-    print("started processing......")
+    """Begin processing the Workflow."""
+    print("started processing...... \n")
     print("generating links.............\n")
     links = [
         {
@@ -407,7 +398,6 @@ def start_processing(process):
     ]
     # Save Links - DB-3
     print("saving process links........ \n")
-
     # Spawn thread to process the data
     data = {
         "links": links,
@@ -441,10 +431,7 @@ def save_links(data):
 
 
 def verification_link(process_id, document_id):
-    """
-     application link + token generation
-    """
-
+    """application link + token generation"""
     # Token generation.
     print("creating verification links........... \n")
     # create a jwt token

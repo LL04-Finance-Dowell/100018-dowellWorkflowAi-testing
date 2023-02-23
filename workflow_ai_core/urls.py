@@ -64,11 +64,11 @@ urlpatterns = [
     # processing.
     path("v0.1/process/", save_and_start_processing),
     path("v0.1/process/<str:process_id>/", a_single_process),
-    path("v0.1/process/verification/", register_finalize_or_reject),
-    path("v0.1/process/verify-process/", verify_process),
-    path("v0.1/process/verification-link/", get_process_link),
+    path("v0.1/process/action/mark/", register_finalize_or_reject),
+    path("v0.1/process/action/verify/", verify_process),
+    path("v0.1/process/verification/link/", get_process_link),
     path("v0.1/process/org/<str:company_id>/", processes),
-    path("v0.1/process/process-links/<str:process_id>/", fetch_process_links),
+    path("v0.1/process/links/<str:process_id>/", fetch_process_links),
     # workflow
     path("v0.1/workflows/", create_workflow, name="workflows"),
     path("v0.1/workflows/<str:workflow_id>/", workflow_detail, name="workflow_detail"),
