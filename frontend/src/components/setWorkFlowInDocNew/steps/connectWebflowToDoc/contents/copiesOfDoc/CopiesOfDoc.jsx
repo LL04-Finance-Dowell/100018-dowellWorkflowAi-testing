@@ -16,7 +16,7 @@ const CopiesOfDoc = ({ currentStepIndex }) => {
     formState: { isSubmitSuccessful },
   } = useForm();
   const [loading, setLoading] = useState(false);
-  const { currentDocToWfs, docCurrentWorkflow } = useSelector(state => state.app);
+  const { currentDocToWfs, docCurrentWorkflow, processSteps, publicMembersSelectedForProcess, userMembersSelectedForProcess, teamMembersSelectedForProcess } = useSelector(state => state.app);
   const [ copiesFeaturesSet, setCopiesFeaturesSet ] = useState(false);
   const [ copiesFeaturesToDisplay, setCopiesFeaturesToDisplay ] = useState([]);
   const dispatch = useDispatch();
@@ -38,6 +38,35 @@ const CopiesOfDoc = ({ currentStepIndex }) => {
     setCopiesFeaturesSet(true);
 
   }, [currentDocToWfs])
+
+  useEffect(() => {
+
+    if (!currentDocToWfs) return
+
+    const [newCopiesForCurrentStep, singleCopyOfCurrentDocument] = [
+      [], 
+      {
+        id: uuidv4(), 
+        feature: currentDocToWfs?.document_name
+      }
+    ];
+
+    const previousStepDetails = processSteps.find(process => process.workflow === docCurrentWorkflow._id)?.steps[currentStepIndex - 1];
+
+    if (previousStepDetails && previousStepDetails.stepTaskType && previousStepDetails.stepTaskType === "assign_task") {
+      const totalNumberOfAssignedUsersInPreviousStep = 
+        publicMembersSelectedForProcess.filter(selectedUser => selectedUser.stepIndex === currentStepIndex - 1).length + 
+        teamMembersSelectedForProcess.filter(selectedUser => selectedUser.stepIndex === currentStepIndex - 1).length + 
+        userMembersSelectedForProcess.filter(selectedUser => selectedUser.stepIndex === currentStepIndex - 1).length
+      
+      for (let i = 1; i < totalNumberOfAssignedUsersInPreviousStep; i++) newCopiesForCurrentStep.push(singleCopyOfCurrentDocument);
+      setCopiesFeaturesToDisplay(newCopiesForCurrentStep);
+    } else {
+      newCopiesForCurrentStep.push(singleCopyOfCurrentDocument);
+      setCopiesFeaturesToDisplay(newCopiesForCurrentStep);
+    }
+
+  }, [currentDocToWfs, processSteps])
 
   const onSubmit = (data) => {
     setLoading(true);
