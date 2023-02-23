@@ -15,7 +15,7 @@ const ProcessesPage = () => {
   
   useEffect(() => {
 
-    if (processesLoaded) return console.log(allProcesses)
+    if (processesLoaded) return
     
     dispatch(setProcessesLoading(true));
 
