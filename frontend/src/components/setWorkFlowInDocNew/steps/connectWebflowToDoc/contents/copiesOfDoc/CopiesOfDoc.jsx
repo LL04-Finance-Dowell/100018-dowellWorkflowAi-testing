@@ -19,6 +19,7 @@ const CopiesOfDoc = ({ currentStepIndex }) => {
   const { currentDocToWfs, docCurrentWorkflow, processSteps, publicMembersSelectedForProcess, userMembersSelectedForProcess, teamMembersSelectedForProcess } = useSelector(state => state.app);
   const [ copiesFeaturesSet, setCopiesFeaturesSet ] = useState(false);
   const [ copiesFeaturesToDisplay, setCopiesFeaturesToDisplay ] = useState([]);
+  const [ copiesSelected, setCopiesSelected ] = useState([]);
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -43,13 +44,7 @@ const CopiesOfDoc = ({ currentStepIndex }) => {
 
     if (!currentDocToWfs) return
 
-    const [newCopiesForCurrentStep, singleCopyOfCurrentDocument] = [
-      [], 
-      {
-        id: uuidv4(), 
-        feature: currentDocToWfs?.document_name
-      }
-    ];
+    const newCopiesForCurrentStep= [];
 
     const previousStepDetails = processSteps.find(process => process.workflow === docCurrentWorkflow._id)?.steps[currentStepIndex - 1];
 
@@ -59,10 +54,16 @@ const CopiesOfDoc = ({ currentStepIndex }) => {
         teamMembersSelectedForProcess.filter(selectedUser => selectedUser.stepIndex === currentStepIndex - 1).length + 
         userMembersSelectedForProcess.filter(selectedUser => selectedUser.stepIndex === currentStepIndex - 1).length
       
-      for (let i = 1; i < totalNumberOfAssignedUsersInPreviousStep; i++) newCopiesForCurrentStep.push(singleCopyOfCurrentDocument);
+      for (let i = 1; i < totalNumberOfAssignedUsersInPreviousStep; i++) newCopiesForCurrentStep.push({
+        id: uuidv4(), 
+        feature: currentDocToWfs?.document_name
+      });
       setCopiesFeaturesToDisplay(newCopiesForCurrentStep);
     } else {
-      newCopiesForCurrentStep.push(singleCopyOfCurrentDocument);
+      newCopiesForCurrentStep.push({
+        id: uuidv4(), 
+        feature: currentDocToWfs?.document_name
+      });
       setCopiesFeaturesToDisplay(newCopiesForCurrentStep);
     }
 
@@ -72,12 +73,23 @@ const CopiesOfDoc = ({ currentStepIndex }) => {
     setLoading(true);
     console.log("documentCopies", data);
     dispatch(updateSingleProcessStep({
-      stepCloneCount: copiesFeaturesToDisplay.length,
+      stepCloneCount: copiesSelected.length,
       workflow: docCurrentWorkflow._id,
       indexToUpdate: currentStepIndex,
     }))
     setTimeout(() => setLoading(false), 2000);
   };
+
+  const handleSingleCopySelection = (item) => {
+    const currentCopiesSelected = copiesSelected.slice();
+
+    const copyAlreadyAdded = currentCopiesSelected.find(copy => copy.id === item.id);
+
+    if (copyAlreadyAdded) return setCopiesSelected(prevCopies => { return prevCopies.filter(copy => copy.id !== item.id) })
+
+    currentCopiesSelected.push(item);
+    setCopiesSelected(currentCopiesSelected);
+  }
 
   return (
     <FormLayout isSubmitted={isSubmitSuccessful} loading={loading}>
@@ -90,9 +102,10 @@ const CopiesOfDoc = ({ currentStepIndex }) => {
           {...register("taskFeature")}
           size={taskFeatures.length}
           className={globalStyles.task__features}
+          onChange={({ target }) => handleSingleCopySelection(JSON.parse(target.value))}
         >
           {copiesFeaturesToDisplay.map((item) => (
-            <option className={globalStyles.task__features__text} key={item.id}>
+            <option className={globalStyles.task__features__text} style={copiesSelected.find(copy => copy.id === item.id) ? { backgroundColor: '#0048ff', color: '#fff' }: {}} key={item.id} value={JSON.stringify(item)}>
               {item.feature}
             </option>
           ))}
