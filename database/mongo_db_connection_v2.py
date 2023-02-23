@@ -246,17 +246,6 @@ def get_process_list(company_id):
         return []
 
 
-def get_wf_object(workflow_id):
-    print("DB: Get wf object \n")
-    fields = {"_id": str(workflow_id)}
-    response_obj = dowellconnection(*WF_CONNECTION_LIST, "find", fields, "nil")
-    res_obj = json.loads(response_obj)
-    if len(res_obj["data"]):
-        return res_obj["data"]
-    else:
-        return []
-
-
 # -------------------------- Document----------------------------------------
 def save_document(name, data, created_by, company_id, data_type, state):
     det = datetime.now()

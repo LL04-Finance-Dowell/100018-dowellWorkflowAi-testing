@@ -243,7 +243,7 @@ def document_processing(request):
         return Response("Failed to mark process and completed!", status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     if request.data["action"] == "cancel_process_before_completion":  # document should reset to initial state.
-        print("cancel_process_before_completion \n")
+        print("Action: cancel_process_before_completion \n")
         process = get_process_object(workflow_process_id=request.data["process_id"])
         if process["processing_state"] == "canceled":
             return Response("This Workflow process is Cancelled!", status=status.HTTP_200_OK)
@@ -255,9 +255,9 @@ def document_processing(request):
 
     if request.data["action"] == "pause_processing_after_completing_ongoing_step":
         """ - find the ongoing step - pause processing"""
-        pass
+        return Response("This Option is currently in development", status=status.HTTP_501_NOT_IMPLEMENTED)
 
-    return Response("Something went wrong!", status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    return Response("Something went wrong!", status=status.HTTP_400_BAD_REQUEST)
 
 
 def clone_document(document_id, creator):
@@ -353,10 +353,8 @@ def start_processing(process):
         pt = Thread(target=process_update, args=(process_data,))
         pt.start()
     if len(links) > 0:
-        return Response(
-            links,
-            status=status.HTTP_200_OK,
-        )
+        return Response("Started processing", links, status=status.HTTP_200_OK,
+                        )
     return Response("Something went wrong!", status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
