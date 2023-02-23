@@ -10,7 +10,7 @@ export const startNewProcess = async (data) => {
 }
 
 export const verifyProcess = async (data) => {
-    return await httpProcess.post("action/verify", data);
+    return await httpProcess.post("action/verify/", data);
 }
 
 export const getProcessLink = async (data) => {
