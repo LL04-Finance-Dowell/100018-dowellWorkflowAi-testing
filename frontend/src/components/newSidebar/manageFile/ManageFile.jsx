@@ -33,6 +33,7 @@ const ManageFile = () => {
   const { allDocuments: allDocumentsArray, allDocumentsStatus } = useSelector(
     (state) => state.document
   );
+  const { allProcesses } = useSelector((state) => state.app);
 
   const [test, setTest] = useState(manageFileItems);
 
@@ -80,12 +81,14 @@ const ManageFile = () => {
           : item.parent.includes("Processes")
           ? {
               ...item,
-              count: "000",
+              count: allProcesses.length > 0 ? 
+                allProcesses.length
+              : "000",
             }
           : item
       )
     );
-  }, [allDocumentsArray, allTemplatesArray, allWorkflowsArray]);
+  }, [allDocumentsArray, allTemplatesArray, allWorkflowsArray, allProcesses]);
 
   return (
     <div className={sidebarStyles.feature__box}>

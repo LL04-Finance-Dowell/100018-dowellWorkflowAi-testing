@@ -15,13 +15,17 @@ import Spinner from "../../components/spinner/Spinner";
 import ProgressBar from "../../components/progressBar/ProgressBar";
 import { useLocation } from "react-router-dom";
 import {
+  setAllProcesses,
   setNotificationFinalStatus,
   setNotificationsForUser,
   setNotificationsLoaded,
   setNotificationsLoading,
+  setProcessesLoaded,
+  setProcessesLoading,
 } from "../../features/app/appSlice";
 import Iframe from "../../components/iFrame/Iframe";
 import Skeleton from "../../components/skeloton/Skeleton";
+import { getAllProcessesV2 } from "../../services/processServices";
 
 const WorkflowApp = () => {
   const { userDetail } = useSelector((state) => state.auth);
@@ -30,6 +34,8 @@ const WorkflowApp = () => {
     notificationsForUser,
     notificationFinalStatus,
     notificationsLoaded,
+    processesLoaded,
+    processesLoading,
   } = useSelector((state) => state.app);
   const documentServices = new DocumentServices();
   const dispatch = useDispatch();
@@ -107,6 +113,31 @@ const WorkflowApp = () => {
       setVisible(false);
     }
   }, [location]);
+
+  
+  useEffect(() => {
+
+    if (processesLoaded) return
+
+    if (
+      !userDetail ||
+      !userDetail.portfolio_info ||
+      userDetail.portfolio_info.length < 1
+    ) {
+      return;
+    }
+
+    getAllProcessesV2(userDetail?.portfolio_info[0]?.org_id).then(res => {
+      dispatch(setAllProcesses(res.data.filter(process => process.processing_state).reverse()));
+      dispatch(setProcessesLoading(false));
+      dispatch(setProcessesLoaded(true));
+    }).catch(err => {
+      console.log("Failed: ", err.response);
+      dispatch(setProcessesLoading(false));
+      console.log("did not fetch processes");
+    })
+
+  }, [processesLoading, userDetail])
 
   return (
     <WorkflowLayout>
