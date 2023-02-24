@@ -104,6 +104,9 @@ export const FlipBack = (props) => {
       navigate("/workflows/#newWorkflow");
       dispatch(setToggleManageFileForm(true));
     }
+    if (role === "search") {
+      navigate("/search")
+    }
   };
 
   return (
@@ -165,7 +168,7 @@ export const flipItems = [
     frontBg: "#61CE70",
     text: "search",
     buttonText: "search document",
-    role: "",
+    role: "search",
   },
   {
     id: uuidv4(),

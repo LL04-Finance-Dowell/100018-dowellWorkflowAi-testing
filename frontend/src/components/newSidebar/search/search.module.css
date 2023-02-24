@@ -55,7 +55,7 @@
 
 .minified__Search__Results {
   position: absolute;
-  top: 100%;
+  top: 85%;
   width: 100%;
   background-color: var(--e-global-color-cd6593d);
   z-index: 2;
@@ -64,7 +64,7 @@
   align-items: center;
   justify-content: center;
   flex-direction: column;
-  padding: 11% 4% 0;
+  padding: 4% 4% 0;
   border-radius: 5px;
 }
 
@@ -74,7 +74,7 @@
 }
 
 .minified__Search__Top__Row h5 {
-  margin: 6px 0 0;
+  margin-top: 8px;
   text-align: center;
 }
 
@@ -93,7 +93,7 @@
 .minified__Search__Top__Row button {
   position: absolute;
   right: 0;
-  top: -75%;
+  top: -5%;
 }
 
 .minified__Search__Container {
@@ -104,10 +104,12 @@
   display: flex;
   align-items: center;
   width: 100%;
-  margin: 10px 0;
+  margin: 3px 0;
   gap: 10px;
   justify-content: flex-start;
   padding: 3%;
+  font-size: 0.8rem;
+  transition: 0.3s ease-in-out;
 }
 
 .minified__Search__Container button:hover {
@@ -124,4 +126,12 @@
 .minified__Search__Container p {
   text-align: center;
   margin: 12px 0 20px;
+}
+
+.see__All__Btn {
+  margin-top: 6px !important;
+  font-size: 0.9rem !important;
+  padding: 7px 10px !important;
+  height: max-content !important;
+  margin-bottom: 8px !important;
 }

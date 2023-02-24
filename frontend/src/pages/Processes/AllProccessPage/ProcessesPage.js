@@ -44,7 +44,7 @@ const ProcessesPage = () => {
               cardBgColor="#1ABC9C"
               title="cancelled proccess"
               Card={ProcessCard}
-              cardItems={allProcesses.filter(process => process.processing_state && process.processing_state === "cancelled")}
+              cardItems={allProcesses.filter(process => process.processing_state === "cancelled")}
               status={processesLoading ? "pending" : "success"}
             />
           </div>

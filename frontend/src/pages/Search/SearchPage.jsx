@@ -32,7 +32,7 @@ const SearchPage = () => {
         if (state.searchResults) setSearchResults(state.searchResults)
         if (state.searchItem) setCurrentSearch(state.searchItem)
     
-    }, [])
+    }, [state])
 
     const handleSearchItemClick = (item) => {
         if (item.document_name) {
@@ -102,6 +102,8 @@ const SearchPage = () => {
                     <div className={styles.minified__Search__Container}>
                         {
                             searchLoading ? <p>Please wait...</p> :
+
+                            currentSearch.length < 1 ? <></> :
 
                             searchResults.length < 1 ? <p>No items found matching {currentSearch}</p> : <>
                                 {

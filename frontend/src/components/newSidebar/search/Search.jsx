@@ -153,7 +153,7 @@ const Search = () => {
               }
             </div>
             { 
-              searchResults.length > 3 ? <button onClick={handleSeeMoreBtnClick}>
+              searchResults.length > 3 ? <button className={styles.see__All__Btn} onClick={handleSeeMoreBtnClick}>
                 See all
               </button> :
               <></>
