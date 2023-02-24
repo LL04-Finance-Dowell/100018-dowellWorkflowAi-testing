@@ -48,7 +48,7 @@ def create_document(request):  # Document Creation.
         viewers = []
         res = json.loads(
             save_document(
-                name=request.data["name"],
+                name="Untitled Document",
                 data=request.data["content"],
                 created_by=request.data["created_by"],
                 company_id=request.data["company_id"],
