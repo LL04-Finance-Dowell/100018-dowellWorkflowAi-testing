@@ -247,7 +247,7 @@ def get_process_list(company_id):
 
 
 # -------------------------- Document----------------------------------------
-def save_document(name, data, created_by, company_id, data_type, state):
+def save_document(name, data, created_by, company_id, data_type,  page, state, auth_viewers):
     det = datetime.now()
     created_time = det.strftime("%d:%m:%Y,%H:%M:%S")
     payload = json.dumps(
@@ -264,8 +264,10 @@ def save_document(name, data, created_by, company_id, data_type, state):
                 "rejection_message": "",
                 "rejected_by": "",
                 "document_state": state,
+                "page": page,
                 "data_type": data_type,
-                "clone_list": []
+                "clone_list": [],
+                "auth_viewers": auth_viewers,
             },
             "update_field": {"order_nos": 21},
             "platform": "bangalore",

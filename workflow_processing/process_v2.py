@@ -260,19 +260,22 @@ def document_processing(request):
     return Response("Something went wrong!", status=status.HTTP_400_BAD_REQUEST)
 
 
-def clone_document(document_id, creator):
+def clone_document(document_id, creator, parent_id):
     print("Creating a document clone... \n")
     try:
         document = get_document_object(document_id)
         # create new doc
+        viewers = []
         save_res = json.loads(
             save_document(
                 name=document["document_name"],
                 data=document["content"],
-                created_by=creator,
+                page=document["page"],
+                created_by=document["created_by"],
                 company_id=document["company_id"],
                 data_type=document["data_type"],
-                state="processing"
+                state="processing",
+                auth_viewers=viewers.append(creator)
             )
         )
         return save_res["inserted_id"]
@@ -353,8 +356,7 @@ def start_processing(process):
         pt = Thread(target=process_update, args=(process_data,))
         pt.start()
     if len(links) > 0:
-        return Response("Started processing", links, status=status.HTTP_200_OK,
-                        )
+        return Response(links, status=status.HTTP_200_OK)
     return Response("Something went wrong!", status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
@@ -416,25 +418,26 @@ def verification(request):
     """verification of a process step access and checks that duplicate document based on a step."""
     print("Performing process verification.. \n")
     if not request.data:
-        return Response("You are missing something!", status=status.HTTP_400_BAD_REQUEST)
-    user_name = request.data["user_name"]
-    auth_user, process_id, auth_step_role = check_user_presence(token=request.data["token"], user_name=user_name,
-                                                                portfolio=request.data["portfolio"])
+        return Response('You are missing something!', status=status.HTTP_400_BAD_REQUEST)
+    user_name = request.data['user_name']
+    auth_user, process_id, auth_step_role = check_user_presence(token=request.data['token'], user_name=user_name,
+                                                                portfolio=request.data['portfolio'])
     if not auth_user:
         return Response(
-            "User is not part of this process", status=status.HTTP_401_UNAUTHORIZED
+            'User is not part of this process', status=status.HTTP_401_UNAUTHORIZED
         )
     # get process
     process = get_process_object(workflow_process_id=process_id)
     if not process:
         Response(
-            "Something went wrong!, Retry", status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            'Something went wrong!, Retry', status=status.HTTP_500_INTERNAL_SERVER_ERROR
         )
-    if process["processing_state"] == "paused":
-        return Response("This workflow process is currently on hold!", status=status.HTTP_200_OK)
-    # was the process not started?
-    if process["processing_state"] == "save":
-        return Response("This workflow process is not activated!", status=status.HTTP_200_OK)
+    if process['processing_state']:
+        if process['processing_state'] == 'paused':
+            return Response('This workflow process is currently on hold!', status=status.HTTP_200_OK)
+        # was the process not started?
+        if process['processing_state'] == 'save':
+            return Response('This workflow process is not activated!', status=status.HTTP_200_OK)
     # find step the user belongs
     doc_map = None
     right = None
@@ -442,7 +445,7 @@ def verification(request):
     user = None
     match = False
     clone_id = None
-    for step in process["process_steps"]:
+    for step in process['process_steps']:
         # step role matching auth process
         if step.get("stepRole") == auth_step_role:
             print("Matched step role:", step["stepRole"])
@@ -468,7 +471,7 @@ def verification(request):
                 if not check_time_limit_right(time=step.get("stepTime"), select_time_limits=step.get("stepTimeLimit"),
                                               start_time=step.get("stepStartTime"), end_time=step.get("stepEndTime"),
                                               creation_time=process["created_at"]):
-                    return Response("Time Limit for processing document has elapsed!", status=status.HTTP_403_FORBIDDEN)
+                    return Response("Time limit for processing document has elapsed!", status=status.HTTP_403_FORBIDDEN)
             # check step activity
             if step.get("stepTaskType"):
                 print("Got task type:")
@@ -477,7 +480,7 @@ def verification(request):
                     # clone check
                     if step.get("stepCloneCount"):
                         print("Got step clone count ... \n")
-                        if step.get("stepCloneCount") > 0:
+                        if step.get("stepCloneCount") > 1:
                             # check if the user is part of the stepDocumentCloneMap
                             if any(user_name in d_map for d_map in step["stepDocumentCloneMap"]):
                                 print("user is part of document clone map ...\n")
@@ -515,12 +518,9 @@ def verification(request):
                 # Display check
                 doc_map = step.get("stepDocumentMap")
                 right = step.get("stepRights")
-                user = step.get("member")
+                user = user_name
                 role = step.get('stepRole')
                 match = True
-
-    print(user)
-    print(clone_id)
     if not match:
         return Response("Document Access forbidden!", status=status.HTTP_403_FORBIDDEN)
     if clone_id and right and user and role and doc_map:
@@ -683,7 +683,7 @@ def mark_process_as_finalize_or_reject(request):
         )
         # check the action
     action = None
-    for step in process['processSteps']:
+    for step in process['process_steps']:
         # find matching step for auth member
         if step['member'] == request.data['authorized']:
             if request.data['action'] == 'finalize':

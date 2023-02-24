@@ -45,14 +45,17 @@ def create_document(request):  # Document Creation.
             status=status.HTTP_200_OK,
         )
     else:
+        viewers = []
         res = json.loads(
             save_document(
-                "Untitled Document",
-                request.data["content"],
-                request.data["created_by"],
-                request.data["company_id"],
-                request.data["data_type"],
-                state="draft"
+                name=request.data["name"],
+                data=request.data["content"],
+                created_by=request.data["created_by"],
+                company_id=request.data["company_id"],
+                page=request.data["page"],
+                data_type=request.data["data_type"],
+                state="draft",
+                auth_viewers=viewers.append(request.data["created_by"])
             )
         )
         if res["isSuccess"]:
@@ -80,7 +83,6 @@ def create_document(request):  # Document Creation.
                 }
             )
             headers = {"Content-Type": "application/json"}
-
             editor_link = requests.request(
                 "POST", editorApi, headers=headers, data=payload
             )

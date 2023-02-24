@@ -23,8 +23,8 @@ from rest_framework import permissions
 
 from document.document_management import document_detail, create_document, get_document_content, get_documents
 from document.intelligent_search import search
-from document.template_management import  create_template, template_detail, approve, get_templates
-from workflow.wf_ai_setting import create_workflow_setting,  get_wf_ai_setting, update_wfai_setting
+from document.template_management import create_template, template_detail, approve, get_templates
+from workflow.wf_ai_setting import create_workflow_setting, get_wf_ai_setting, update_wfai_setting
 from workflow.wf_management import create_workflow, workflow_detail, update_workflow, get_workflows, home
 from workflow_processing.process import save_and_start_processing, a_single_process, register_finalize_or_reject, \
     verify_process, get_process_link, fetch_process_links, processes
