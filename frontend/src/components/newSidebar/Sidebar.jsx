@@ -177,6 +177,7 @@ const Sidebar = () => {
           DoWell Knowledge Centre
         </h2>
         <CollapseItem items={knowledge} />
+        <span className={styles.knowledge__Extra__Info}>Dowell True moments user experience lab</span>
       </div>
       <Footer topSideIcons={iconBoxItems} handleIconClick={handleClick} />
       {showLegalPopup && (

@@ -198,6 +198,12 @@
   margin-bottom: 1%;
 }
 
+.knowledge__Extra__Info {
+  font-size: 0.8rem;
+  margin-top: 20px;
+  color: var(--e-global-color-9d2ac19);
+}
+
 @media (max-width: 768px) {
   .organization__box img {
     width: 54vw;

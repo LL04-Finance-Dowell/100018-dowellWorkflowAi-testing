@@ -48,7 +48,7 @@ const CopiesOfDoc = ({ currentStepIndex }) => {
 
     const previousStepDetails = processSteps.find(process => process.workflow === docCurrentWorkflow._id)?.steps[currentStepIndex - 1];
 
-    if (previousStepDetails && previousStepDetails.stepTaskType && previousStepDetails.stepTaskType === "assign_task") {
+    if (previousStepDetails && previousStepDetails.stepTaskType && previousStepDetails.stepTaskType === "request_for_task") {
       const totalNumberOfAssignedUsersInPreviousStep = 
         publicMembersSelectedForProcess.filter(selectedUser => selectedUser.stepIndex === currentStepIndex - 1).length + 
         teamMembersSelectedForProcess.filter(selectedUser => selectedUser.stepIndex === currentStepIndex - 1).length + 

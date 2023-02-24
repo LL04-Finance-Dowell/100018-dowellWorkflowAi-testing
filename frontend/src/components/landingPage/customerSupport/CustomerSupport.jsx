@@ -60,7 +60,7 @@ const CustomerSupport = () => {
               <div className={styles.knowledge__box}>
                 <div>
                   <p className={styles.knowledge__box__header}>
-                    Knowlage Center
+                    Knowledge Center
                   </p>
                   <p className={styles.knowledge__box__content}>
                     Learning Support, New Trends, Case Studies, References,
