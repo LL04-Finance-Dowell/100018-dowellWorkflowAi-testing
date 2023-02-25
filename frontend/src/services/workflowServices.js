@@ -13,7 +13,7 @@ export class WorkflowServices {
     return httpWorkflow.get(`/${workflowId}/`);
   };
   updateWorkflow = (data) => {
-    return httpWorkflow.get("/update/", data);
+    return httpWorkflow.post("/update/", data);
   };
   savedWorkflows = (data) => {
     return httpWorkflow.post("/saved/", data);
