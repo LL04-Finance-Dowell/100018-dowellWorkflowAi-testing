@@ -241,7 +241,9 @@ export const iconBoxItems = [
 ];
 
 export const footerIcons = [
-  ...iconBoxItems,
+  { id: uuidv4(), icon: FaPowerOff, feature: "logout", label: "Logout" },
+  { id: uuidv4(), icon: FaUserAlt, feature: "profile", label: "Profile" },
+  { id: uuidv4(), icon: ImHome3, feature: "home", label: "Home" },
   { id: uuidv4(), icon: FaShieldAlt, feature: "shield", label: "Legal Status" },
   { id: uuidv4(), icon: AiTwotoneSetting, feature: "settings", label: "Settings" },
 ];
