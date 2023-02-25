@@ -136,7 +136,7 @@ export const allDocuments = createAsyncThunk(
       const res = await documentServices.allDocuments(data);
       console.log("inseideeee");
 
-      const documents = filterDocuments(res.data.documents, thunkAPI);
+      const documents = filterDocuments(res.data.documents.filter(document => document.document_state !== "trash"), thunkAPI);
 
       return documents;
     } catch (error) {
