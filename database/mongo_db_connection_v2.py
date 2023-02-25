@@ -167,16 +167,6 @@ def get_links_object_by_document_id(document_id):
     return []
 
 
-def get_process_links_list(process_id, company_id):
-    fields = {"process_id": str(process_id), "company_id": company_id}
-    response_obj = dowellconnection(*LINK_CONNECTION_LIST, "fetch", fields, "nil")
-    res_obj = json.loads(response_obj)
-    if len(res_obj["data"]):
-        return res_obj["data"]
-    else:
-        return []
-
-
 #  -------------------------------Workflow Process------------------
 def save_wf_process(
         process_title,

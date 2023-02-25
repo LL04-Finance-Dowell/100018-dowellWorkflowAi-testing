@@ -14,9 +14,7 @@ from database.mongo_db_connection_v2 import (
     update_wf_process,
     save_wf_process,
     update_document,
-    get_process_list,
     update_document_clone,
-    get_process_links_list
 )
 
 editor_api = "https://100058.pythonanywhere.com/api/generate-editor-link/"
@@ -65,7 +63,7 @@ def document_processing(request):
         # create process with new id-
         process = new_process(
             workflows=request.data["workflows"],
-            created_by=request.data["parent_document_id"],
+            created_by=request.data["created_by"],
             company_id=request.data["company_id"],
             data_type=request.data["data_type"],
             document_id=clone_document(
@@ -95,7 +93,7 @@ def document_processing(request):
         # create process with new id->
         process = new_process(
             workflows=request.data["workflows"],
-            created_by=request.data["parent_document_id"],
+            created_by=request.data["created_by"],
             company_id=request.data["company_id"],
             data_type=request.data["data_type"],
             document_id=clone_document(
@@ -125,7 +123,7 @@ def document_processing(request):
         # create process with new id.
         process = new_process(
             workflows=request.data["workflows"],
-            created_by=request.data["parent_document_id"],
+            created_by=request.data["created_by"],
             company_id=request.data["company_id"],
             data_type=request.data["data_type"],
             document_id=clone_document(
@@ -155,7 +153,7 @@ def document_processing(request):
         # create process with new id->
         process = new_process(
             workflows=request.data["workflows"],
-            created_by=request.data["parent_document_id"],
+            created_by=request.data["created_by"],
             company_id=request.data["company_id"],
             data_type=data_type,
             document_id=clone_document(
@@ -185,7 +183,7 @@ def document_processing(request):
         # create process with new id->
         process = new_process(
             workflows=request.data["workflows"],
-            created_by=request.data["parent_document_id"],
+            created_by=request.data["created_by"],
             company_id=request.data["company_id"],
             data_type=data_type,
             document_id=clone_document(
@@ -215,7 +213,7 @@ def document_processing(request):
         # create process with new id->
         process = new_process(
             workflows=request.data["workflows"],
-            created_by=request.data["document_id"],
+            created_by=request.data["created_by"],
             company_id=request.data["parent_company_id"],
             data_type=data_type,
             document_id=clone_document(
@@ -334,20 +332,50 @@ def start_processing(process):
     print("Generating links.............\n")
     links = []
     for step in process["process_steps"]:
-        links.append(
-            {
-                step.get("stepName"): verification_link(
+        # create a link for everyone
+        if step.get("stepTeamMembers"):
+            for tm in step.get("stepTeamMembers"):
+                links.append({tm["member"]: verification_link(
                     process_id=process["_id"],
                     document_id=process["parent_document_id"],
-                    team_users=step.get("stepTeamMembers", None),
-                    public_users=step.get("stepPublicMembers", None),
-                    user_users=step.get("stepUserMembers", None),
                     step_role=step.get("stepRole"),
-                )
-            }
-        )
+                    auth_name=tm["member"],
+                    auth_portfolio=tm["portfolio"]
+                )})
+
+        if step.get("stepPublicMembers"):
+            for pm in step.get("stepPublicMembers"):
+                links.append({pm["member"]: verification_link(
+                    process_id=process["_id"],
+                    document_id=process["parent_document_id"],
+                    step_role=step.get("stepRole"),
+                    auth_name=pm["member"],
+                    auth_portfolio=pm["portfolio"]
+                )})
+
+        if step.get("stepUserMembers"):
+            for um in step.get("stepUserMembers"):
+                links.append({um["member"]: verification_link(
+                    process_id=process["_id"],
+                    document_id=process["parent_document_id"],
+                    step_role=step.get("stepRole"),
+                    auth_name=um["member"],
+                    auth_portfolio=um["portfolio"]
+                )})
+
+        # links.append(
+        #     {
+        #         step.get("stepName"): verification_link(
+        #             process_id=process["_id"],
+        #             document_id=process["parent_document_id"],
+        #             team_users=step.get("stepTeamMembers", None),
+        #             public_users=step.get("stepPublicMembers", None),
+        #             user_users=step.get("stepUserMembers", None),
+        #             step_role=step.get("stepRole"),
+        #         )
+        #     }
+        # )
     # Save Links -
-    # print(links)
     data = {
         "links": links,
         "process_id": process["_id"],
@@ -372,21 +400,17 @@ def start_processing(process):
     return Response("Something went wrong!", status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
-def verification_link(
-        process_id, document_id, team_users, public_users, user_users, step_role
-):
+def verification_link(process_id, document_id, step_role, auth_name, auth_portfolio):
     print("creating verification links........... \n")
     # create a jwt token
-    payload = {
-        "process_id": process_id,
-        "document_id": document_id,
-        "team_users": team_users,
-        "public_users": public_users,
-        "user_users": user_users,
-        "step_role": step_role,
-    }
     hash_token = jwt.encode(
-        json.loads(json.dumps(payload)), "secret", algorithm="HS256"
+        json.loads(json.dumps({
+            "process_id": process_id,
+            "document_id": document_id,
+            "step_role": step_role,
+            "auth_name": auth_name,
+            "auth_portfolio": auth_portfolio
+        })), "secret", algorithm="HS256"
     )
     return f"https://ll04-finance-dowell.github.io/100018-dowellWorkflowAi-testing/#/verify/{hash_token}/"
 
@@ -394,20 +418,23 @@ def verification_link(
 # thread process.
 def save_links_v2(data):
     print("saving process links........ \n")
-    save_process_links(
-        links=data["links"],
-        process_id=data["process_id"],
-        document_id=data["document_id"],
-        processing_choice=data["process_choice"],
-        process_title=data["process_title"],
-        company_id=data["company_id"]
-    )
-    print("Thread: Process Link Save! \n")
-    return
+    try:
+        save_process_links(
+            links=data["links"],
+            process_id=data["process_id"],
+            document_id=data["document_id"],
+            processing_choice=data["process_choice"],
+            process_title=data["process_title"],
+            company_id=data["company_id"]
+        )
+        print("Thread: Process Link Save! \n")
+    except ConnectionError:
+        raise RuntimeError
 
 
 # Thread to update a doc
 def document_update(doc_data):
+    print("Updating document with new state \n")
     update_document(
         document_id=doc_data["document_id"],
         process_id=doc_data["process_id"],
@@ -421,8 +448,11 @@ def check_user_presence(token, user_name, portfolio):
     print("Checking user presence in process links map \n")
     # decode token
     decoded = jwt.decode(token, "secret", algorithms="HS256")
-    user_allowed = any(user["member"] == user_name and user["portfolio"] == portfolio for user in
-                       decoded["team_users"] + decoded["public_users"] + decoded["user_users"])
+    user_allowed = False
+    if decoded["auth_name"] == user_name and decoded["auth_portfolio"] == portfolio:
+        user_allowed = True
+    # user_allowed = any(user["member"] == user_name and user["portfolio"] == portfolio for user in
+    #                    decoded["team_users"] + decoded["public_users"] + decoded["user_users"])
     return user_allowed, decoded["process_id"], decoded["step_role"]
 
 
@@ -653,33 +683,9 @@ def generate_link(document_id, doc_map, doc_rights, user, process_id, role):
     return link
 
 
-@api_view(["GET"])
-def single_process(request, process_id):
-    """A process"""
-    try:
-        process = get_process_object(process_id)
-    except ConnectionError:
-        return Response(
-            "Failed to get a process", status=status.HTTP_500_INTERNAL_SERVER_ERROR
-        )
-    return Response(process, status=status.HTTP_200_OK)
-
-
-@api_view(["GET"])
-def wf_processes(request, company_id):
-    """Get all Workflow Process"""
-    print("Getting WF processes... \n")
-    try:
-        processes = get_process_list(company_id)
-    except ConnectionError:
-        return Response("Something went wrong!", status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-    if len(processes) > 0:
-        return Response(processes, status=status.HTTP_200_OK)
-    return Response([], status=status.HTTP_200_OK)
-
-
 @api_view(["POST"])
 def mark_process_as_finalize_or_reject(request):
+    """After access is granted and the user has made changes on a document."""
     # get process
     try:
         process = get_process_object(workflow_process_id=request.data['process_id'])
@@ -767,13 +773,3 @@ def trigger_process(request):
         return Response("User not allowed to trigger processing, contact document creator!",
                         status=status.HTTP_401_UNAUTHORIZED)
     return Response("This process is not valid for processing", status=status.HTTP_403_FORBIDDEN)
-
-
-@api_view(["GET"])
-def fetch_verification_links(request, company_id, process_id):
-    """process verification links"""
-    try:
-        links = get_process_links_list(process_id=company_id, company_id=process_id)
-    except ConnectionError:
-        return Response("Failed to get process links", status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-    return Response(links, status=status.HTTP_200_OK)

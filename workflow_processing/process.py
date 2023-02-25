@@ -142,7 +142,6 @@ def fetch_process_links(request, process_id):
     print("Fetching verification links \n")
     try:
         process_info = get_links_object_by_process_id(process_id)
-        print(process_info)
     except ConnectionError:
         return Response(
             "Could not fetch process links",

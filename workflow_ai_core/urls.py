@@ -29,8 +29,8 @@ from workflow.wf_ai_setting import create_workflow_setting, get_wf_ai_setting, u
 from workflow.wf_management import create_workflow, workflow_detail, update_workflow, get_workflows, home
 from workflow_processing.process import save_and_start_processing, a_single_process, register_finalize_or_reject, \
     verify_process, get_process_link, fetch_process_links, processes
-from workflow_processing.process_v2 import document_processing, verification, wf_processes, \
-    mark_process_as_finalize_or_reject, single_process, trigger_process, fetch_verification_links
+from workflow_processing.process_v2 import document_processing, verification, \
+    mark_process_as_finalize_or_reject, trigger_process
 
 schema_view = get_schema_view(
     openapi.Info(
@@ -94,12 +94,9 @@ urlpatterns = [
     path("v0.1/documents/org/<str:company_id>/", get_documents, name="all_documents"),
     # v2 processing.
     path("v0.2/process/", document_processing),
-    path("v0.2/process/<str:process_id>/", single_process),
     path("v0.2/process/action/verify/", verification),
     path('v0.2/process/action/mark/', mark_process_as_finalize_or_reject),
     path("v0.2/process/action/trigger/", trigger_process),
-    path("v0.2/process/org/<str:company_id>/", wf_processes),
-    path("v0.2/process/org/<str:company_id>/links/<str:process_id>/", fetch_verification_links)
 
     # ----------------- @deprecated --------------
     # path(
