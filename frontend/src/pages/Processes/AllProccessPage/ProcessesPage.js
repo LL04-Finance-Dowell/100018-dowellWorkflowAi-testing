@@ -2,11 +2,40 @@ import SectionBox from "../../../components/manageFiles/sectionBox/SectionBox";
 import { v4 as uuidv4 } from "uuid";
 import WorkflowLayout from "../../../layouts/WorkflowLayout/WorkflowLayout";
 import ManageFiles from "../../../components/manageFiles/ManageFiles";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import ProcessCard from "../../../components/hoverCard/processCard/ProcessCard";
+import { useEffect } from "react";
+import { getAllProcessesV2 } from "../../../services/processServices";
+import { setAllProcesses, setProcessesLoaded, setProcessesLoading } from "../../../features/app/appSlice";
 
 const ProcessesPage = () => {
-  const { processesLoading, allProcesses } = useSelector((state) => state.app);
+  const { processesLoading, allProcesses, processesLoaded } = useSelector((state) => state.app);
+  const { userDetail } = useSelector((state) => state.auth);
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+
+    if (processesLoaded) return
+
+    if (
+      !userDetail ||
+      !userDetail.portfolio_info ||
+      userDetail.portfolio_info.length < 1
+    ) {
+      return;
+    }
+
+    getAllProcessesV2(userDetail?.portfolio_info[0]?.org_id).then(res => {
+      dispatch(setAllProcesses(res.data.filter(process => process.processing_state).reverse()));
+      dispatch(setProcessesLoading(false));
+      dispatch(setProcessesLoaded(true));
+    }).catch(err => {
+      console.log("Failed: ", err.response);
+      dispatch(setProcessesLoading(false));
+      console.log("did not fetch processes");
+    })
+
+  }, [processesLoaded, userDetail])
 
   return (
     <WorkflowLayout>
