@@ -113,7 +113,9 @@ Request Body
 ```
 {
     "token": "<get this token from the url path>",
-    "location": "<user_city_location>",
+    "continent": "<user_city_location>",
+    "country" : "<user_country>,
+    "city": "<user_city>",
     "user_name": "<username_of_person_authenticated>",
     "portfolio": "<authenticated_porfolio>",
 }
