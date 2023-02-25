@@ -18,7 +18,9 @@ const VerificationPage = () => {
             token: token,
             user_name: userDetail?.userinfo?.username,
             portfolio: userDetail?.portfolio_info[0]?.portfolio_name,
-            location: userDetail?.userinfo?.city,
+            city: userDetail?.userinfo?.city,
+            country: userDetail?.userinfo?.country,
+            continent: userDetail?.userinfo?.timezone?.split("/")[0],
         }
 
         verifyProcess(dataToPost).then(res => {
