@@ -15,7 +15,7 @@ export const dowellLogoutUrl =
   "/100018-dowellWorkflowAi-testing/%23";
 
 export const httpWorkflow = axios.create({
-  baseURL: api_url + "/workflows",
+  baseURL: api_url + "workflows",
 });
 
 export const httpApiUrl = axios.create({ baseURL: api_url });
