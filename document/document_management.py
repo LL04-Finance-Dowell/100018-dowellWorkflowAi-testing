@@ -55,7 +55,9 @@ def create_document(request):  # Document Creation.
                 page=request.data["page"],
                 data_type=request.data["data_type"],
                 state="draft",
-                auth_viewers=viewers.append(request.data["created_by"])
+                auth_viewers=viewers.append(request.data["created_by"]),
+                document_type="original",
+                parent_id=None
             )
         )
         if res["isSuccess"]:

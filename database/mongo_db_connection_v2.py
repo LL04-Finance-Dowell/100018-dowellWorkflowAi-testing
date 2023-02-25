@@ -220,7 +220,7 @@ def update_wf_process(process_id, steps, state):
     )
     headers = {"Content-Type": "application/json"}
     response = requests.request("POST", url, headers=headers, data=payload)
-    print("DB: SAVE WORKFLOW UPDATE--------------- \n", json.loads(response.text))
+    print("DB: SAVE WORKFLOW UPDATE--------------- \n",)
     return json.loads(response.text)
 
 
@@ -247,7 +247,7 @@ def get_process_list(company_id):
 
 
 # -------------------------- Document----------------------------------------
-def save_document(name, data, created_by, company_id, data_type,  page, state, auth_viewers):
+def save_document(name, data, created_by, company_id, data_type, page, state, auth_viewers, document_type, parent_id):
     det = datetime.now()
     created_time = det.strftime("%d:%m:%Y,%H:%M:%S")
     payload = json.dumps(
@@ -268,6 +268,8 @@ def save_document(name, data, created_by, company_id, data_type,  page, state, a
                 "data_type": data_type,
                 "clone_list": [],
                 "auth_viewers": auth_viewers,
+                "document_type": document_type,
+                "parent_id": parent_id
             },
             "update_field": {"order_nos": 21},
             "platform": "bangalore",

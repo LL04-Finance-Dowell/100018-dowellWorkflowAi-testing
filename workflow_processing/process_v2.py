@@ -39,6 +39,7 @@ def document_processing(request):
             document_id=clone_document(
                 document_id=request.data["parent_document_id"],
                 creator=request.data["created_by"],
+                parent_id=request.data["parent_document_id"]
             ),
             process_choice=choice,
             creator_portfolio=request.data["creator_portfolio"]
@@ -69,6 +70,7 @@ def document_processing(request):
             document_id=clone_document(
                 document_id=request.data["parent_document_id"],
                 creator=request.data["created_by"],
+                parent_id=request.data["parent_document_id"]
             ),
             process_choice=choice,
             creator_portfolio=request.data["creator_portfolio"]
@@ -98,6 +100,7 @@ def document_processing(request):
             document_id=clone_document(
                 document_id=request.data["parent_document_id"],
                 creator=request.data["created_by"],
+                parent_id=request.data["parent_document_id"]
             ),
             process_choice=choice,
             creator_portfolio=request.data["creator_portfolio"]
@@ -127,6 +130,7 @@ def document_processing(request):
             document_id=clone_document(
                 document_id=request.data["parent_document_id"],
                 creator=request.data["created_by"],
+                parent_id=request.data["parent_document_id"]
             ),
             process_choice=choice,
             creator_portfolio=request.data["creator_portfolio"]
@@ -156,6 +160,7 @@ def document_processing(request):
             document_id=clone_document(
                 document_id=request.data["parent_document_id"],
                 creator=request.data["created_by"],
+                parent_id=request.data["parent_document_id"]
             ),
             process_choice=choice,
             creator_portfolio=request.data["creator_portfolio"]
@@ -185,6 +190,7 @@ def document_processing(request):
             document_id=clone_document(
                 document_id=request.data["parent_document_id"],
                 creator=request.data["created_by"],
+                parent_id=request.data["parent_document_id"]
             ),
             process_choice=choice,
             creator_portfolio=request.data["creator_portfolio"]
@@ -214,6 +220,7 @@ def document_processing(request):
             document_id=clone_document(
                 document_id=request.data["parent_document_id"],
                 creator=request.data["created_by"],
+                parent_id=request.data["parent_document_id"]
             ),
             process_choice=choice,
             creator_portfolio=request.data["creator_portfolio"]
@@ -275,7 +282,9 @@ def clone_document(document_id, creator, parent_id):
                 company_id=document["company_id"],
                 data_type=document["data_type"],
                 state="processing",
-                auth_viewers=viewers.append(creator)
+                auth_viewers=viewers.append(creator),
+                document_type="clone",
+                parent_id=parent_id
             )
         )
         return save_res["inserted_id"]
@@ -459,8 +468,8 @@ def verification(request):
             # location check
             if step.get("stepLocation"):
                 print("Got location ... \n")
-                if not check_location_right(location=step.get("stepLocation"), my_location=request.data["location"],
-                                            continent=step.get("stepContinent"), my_continent=request.data["continent"],
+                if not check_location_right(location=step.get("stepLocation"), continent=step.get("stepContinent"),
+                                            my_continent=request.data["continent"],
                                             country=step.get("stepCountry"), my_country=request.data["country"],
                                             city=step.get("stepCity"), my_city=request.data["city"]):
                     return Response("Signing not permitted from your current location!",
@@ -491,7 +500,8 @@ def verification(request):
                                 print("user is not part of doc clone map... \n")
                                 # clone the document out of the parent id
                                 clone_id = clone_document(
-                                    document_id=process["parent_document_id"], creator=user_name
+                                    document_id=process["parent_document_id"], creator=user_name,
+                                    parent_id=process["parent_document_id"]
                                 )
                                 clone_count = step["stepCloneCount"] = step["stepCloneCount"] - 1
                                 # update clone count
@@ -512,8 +522,8 @@ def verification(request):
                             # what if this step role has no clone
                             clone_id = process["parent_document_id"]
                 if step.get("stepTaskType") == "assign_task":
-                    print("Task Type:", step["stepTaskType"])
-                    pass
+                    print("Task Type: ", step["stepTaskType"])
+                    continue
 
                 # Display check
                 doc_map = step.get("stepDocumentMap")
@@ -576,14 +586,14 @@ def check_display_right(display):
     return display_allowed.get(display)
 
 
-def check_location_right(location, my_location, continent, my_continent, country, my_country, city, my_city):
+def check_location_right(location, continent, my_continent, country, my_country, city, my_city):
     """- check the location selection - verify matching geo information."""
     allowed = False
     if location == "any":
         allowed = True
         return allowed
     if location == "select":
-        if location == my_location and continent == my_continent and country == my_country and city == my_city:
+        if continent == my_continent and country == my_country and city == my_city:
             allowed = True
             return allowed
     return allowed
