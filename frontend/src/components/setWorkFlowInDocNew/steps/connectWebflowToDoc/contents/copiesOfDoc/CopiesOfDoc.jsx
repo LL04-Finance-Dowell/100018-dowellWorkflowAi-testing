@@ -30,8 +30,9 @@ const CopiesOfDoc = ({ currentStepIndex }) => {
 
     const currentCopies = copiesFeaturesToDisplay.slice()
     const singleCopyOfCurrentDocument = {
-      id: uuidv4(), 
-      feature: currentDocToWfs?.document_name
+      id: currentDocToWfs?._id, 
+      feature: currentDocToWfs?.document_name,
+      document_number: 1,
     }
     currentCopies.push(singleCopyOfCurrentDocument);
 
@@ -53,16 +54,17 @@ const CopiesOfDoc = ({ currentStepIndex }) => {
         publicMembersSelectedForProcess.filter(selectedUser => selectedUser.stepIndex === currentStepIndex - 1).length + 
         teamMembersSelectedForProcess.filter(selectedUser => selectedUser.stepIndex === currentStepIndex - 1).length + 
         userMembersSelectedForProcess.filter(selectedUser => selectedUser.stepIndex === currentStepIndex - 1).length
-      
-      for (let i = 1; i < totalNumberOfAssignedUsersInPreviousStep; i++) newCopiesForCurrentStep.push({
-        id: uuidv4(), 
-        feature: currentDocToWfs?.document_name
+      for (let i = 0; i < totalNumberOfAssignedUsersInPreviousStep; i++) newCopiesForCurrentStep.push({
+        id: currentDocToWfs?._id, 
+        feature: currentDocToWfs?.document_name,
+        document_number: i + 1,
       });
       setCopiesFeaturesToDisplay(newCopiesForCurrentStep);
     } else {
       newCopiesForCurrentStep.push({
-        id: uuidv4(), 
-        feature: currentDocToWfs?.document_name
+        id: currentDocToWfs?._id, 
+        feature: currentDocToWfs?.document_name,
+        document_number: 1,
       });
       setCopiesFeaturesToDisplay(newCopiesForCurrentStep);
     }
@@ -77,15 +79,15 @@ const CopiesOfDoc = ({ currentStepIndex }) => {
       workflow: docCurrentWorkflow._id,
       indexToUpdate: currentStepIndex,
     }))
-    setTimeout(() => setLoading(false), 2000);
+    setTimeout(() => setLoading(false), 1000);
   };
 
   const handleSingleCopySelection = (item) => {
     const currentCopiesSelected = copiesSelected.slice();
 
-    const copyAlreadyAdded = currentCopiesSelected.find(copy => copy.id === item.id);
+    const copyAlreadyAdded = currentCopiesSelected.find(copy => copy.id === item.id && copy.document_number === item.document_number);
 
-    if (copyAlreadyAdded) return setCopiesSelected(prevCopies => { return prevCopies.filter(copy => copy.id !== item.id) })
+    if (copyAlreadyAdded) return setCopiesSelected(prevCopies => { return prevCopies.filter(copy => copy.document_number !== item.document_number) })
 
     currentCopiesSelected.push(item);
     setCopiesSelected(currentCopiesSelected);
@@ -105,7 +107,7 @@ const CopiesOfDoc = ({ currentStepIndex }) => {
           onChange={({ target }) => handleSingleCopySelection(JSON.parse(target.value))}
         >
           {copiesFeaturesToDisplay.map((item) => (
-            <option className={globalStyles.task__features__text} style={copiesSelected.find(copy => copy.id === item.id) ? { backgroundColor: '#0048ff', color: '#fff' }: {}} key={item.id} value={JSON.stringify(item)}>
+            <option className={globalStyles.task__features__text} style={copiesSelected.find(copy => copy.id === item.id && copy.document_number === item.document_number) ? { backgroundColor: '#0048ff', color: '#fff' }: {}} key={item.id} value={JSON.stringify(item)}>
               {item.feature}
             </option>
           ))}

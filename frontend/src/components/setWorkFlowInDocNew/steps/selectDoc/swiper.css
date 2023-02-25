@@ -25,6 +25,11 @@
   animation: run 1s;
 }
 
+.select-doc .swiper-pagination-horizontal {
+  max-height: 2.1rem;
+  overflow-y: auto;
+}
+
 @keyframes run {
   from {
     transform: translateX(100%);

@@ -1,6 +1,7 @@
 import styles from "./footer.module.css";
 import { footerIcons } from "../Sidebar";
 import { useSelector } from "react-redux";
+import { Tooltip } from "react-tooltip";
 
 const Footer = ({ handleIconClick }) => {
   const { userDetail } = useSelector((state) => state.auth);
@@ -13,8 +14,9 @@ const Footer = ({ handleIconClick }) => {
       </div>
       <div className={styles.icon__box}>
         {footerIcons.map((item) => (
-          <i onClick={() => handleIconClick(item.feature)} key={item.id}>
+          <i id={item.id} onClick={() => handleIconClick(item.feature)} key={item.id}>
             <item.icon cursor="pointer" size={28} />
+            <Tooltip anchorId={item.id} content={item.label} style={{ fontStyle: "normal" }} />
           </i>
         ))}
       </div>

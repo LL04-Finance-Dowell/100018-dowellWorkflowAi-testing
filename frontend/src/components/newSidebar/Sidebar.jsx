@@ -33,6 +33,7 @@ import Spinner from "../spinner/Spinner";
 import useCloseElementOnEscapekeyClick from "../../hooks/useCloseElementOnEscapeKeyClick";
 import { BsThreeDotsVertical } from "react-icons/bs";
 import { setUserDetailPosition } from "../../features/app/appSlice";
+import { Tooltip } from "react-tooltip";
 
 const Sidebar = () => {
   const dispatch = useDispatch();
@@ -125,8 +126,9 @@ const Sidebar = () => {
       </div>
       <div className={styles.icon__box}>
         {iconBoxItems.map((item) => (
-          <i onClick={() => handleClick(item.feature)} key={item.id}>
+          <i id={item.id} onClick={() => handleClick(item.feature)} key={item.id}>
             {<item.icon cursor="pointer" size={25} />}
+            <Tooltip anchorId={item.id} content={item.label} style={{ fontStyle: "normal" }} />
           </i>
         ))}
         <BsThreeDotsVertical
@@ -233,15 +235,15 @@ const Sidebar = () => {
 export default Sidebar;
 
 export const iconBoxItems = [
-  { id: uuidv4(), icon: FaPowerOff, feature: "logout" },
-  { id: uuidv4(), icon: FaUserAlt, feature: "profile" },
-  { id: uuidv4(), icon: ImHome3, feature: "home" },
+  { id: uuidv4(), icon: FaPowerOff, feature: "logout", label: "Logout" },
+  { id: uuidv4(), icon: FaUserAlt, feature: "profile", label: "Profile" },
+  { id: uuidv4(), icon: ImHome3, feature: "home", label: "Home" },
 ];
 
 export const footerIcons = [
   ...iconBoxItems,
-  { id: uuidv4(), icon: FaShieldAlt, feature: "shield" },
-  { id: uuidv4(), icon: AiTwotoneSetting, feature: "settings" },
+  { id: uuidv4(), icon: FaShieldAlt, feature: "shield", label: "Legal Status" },
+  { id: uuidv4(), icon: AiTwotoneSetting, feature: "settings", label: "Settings" },
 ];
 
 export const manageFileItems = [
