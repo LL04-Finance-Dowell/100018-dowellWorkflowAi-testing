@@ -36,14 +36,14 @@ const WorkflowLayout = ({ children }) => {
   const handleMouseLeave = () => {
     dispatch(setUserDetailPosition(null));
   };
-console.log(userDetail)
+  
   return (
     <>
       <div className={styles.container}>
         {userDetail ? (
           !userDetail.portfolio_info ||
           userDetail.portfolio_info?.length === 0 ||
-          (userDetail.portfolio_info?.length > 0 && userDetail.portfolio_info[0]?.product !== "Workflow AI") ? (
+          (userDetail.portfolio_info?.length > 0 && !userDetail.portfolio_info.find(item => item.product === "Workflow AI")) ? (
             <div className={styles.redirect__container}>
               <div className={styles.img__container}>
                 <img src={DowellLogo} />

@@ -16,10 +16,10 @@ export default function useDowellLogin() {
     const session_id = searchParams.get("session_id");
     const id = searchParams.get("id");
 
-    // remove session_id and id from url
-    window.history.replaceState({}, document.title, "/");
-    
     if (session_id) {
+      // remove session_id and/or id from url
+      window.history.replaceState({}, document.title, "/100018-dowellWorkflowAi-testing/");
+
       sessionStorage.setItem("session_id", session_id);
       dispatch(setSessionId(session_id));
       if (id || localId) {
