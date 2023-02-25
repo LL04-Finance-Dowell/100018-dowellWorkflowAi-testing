@@ -11,7 +11,7 @@ from database.mongo_db_connection import (
     get_document_list,
     get_links_object_by_process_id,
 )
-from database.mongo_db_connection_v2 import save_document
+from database.mongo_db_connection_v2 import save_document, document_to_trash
 from .thread_start import ThreadAlgolia
 
 editorApi = "https://100058.pythonanywhere.com/api/generate-editor-link/"
@@ -34,6 +34,20 @@ def get_documents(request, company_id):  # List of Created Templates.
         {"documents": []},
         status=status.HTTP_200_OK,
     )
+
+
+@api_view(['GET'])
+def trash_document(request, document_id):
+    """add document to trash"""
+    print("Adding document to trash \n")
+    document = get_document_object(document_id=document_id)
+    if not document:
+        return Response("Something went wrong!", status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    if document["document_state"] != "trash":
+        res = json.loads(document_to_trash(document_id=document_id, state="trash"))
+        if res["isSuccess"]:
+            return Response("Document Added To Trash", status=status.HTTP_200_OK)
+    return Response("Document lives in trash", status=status.HTTP_200_OK)
 
 
 @api_view(["POST"])

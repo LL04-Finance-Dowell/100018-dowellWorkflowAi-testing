@@ -110,7 +110,7 @@ url = "https://uxlivinglab.pythonanywhere.com"
 
 # ----------------------- Links Creation -------------------------
 def save_process_links(
-        links, process_id, document_id, processing_choice, process_title
+        links, process_id, document_id, processing_choice, process_title, company_id
 ):
     payload = json.dumps(
         {
@@ -124,6 +124,7 @@ def save_process_links(
                 "processing_choice": processing_choice,
                 "process_title": process_title,
                 "created_at": time,
+                "company_id": company_id
 
             },
             "update_field": {"order_nos": 21},
@@ -141,6 +142,7 @@ def get_links_object_by_process_id(process_id):
     print("DB: getting process link object... \n")
     fields = {"process_id": str(process_id)}
     response_obj = dowellconnection(*LINK_CONNECTION_LIST, "find", fields, "nil")
+    print(response_obj)
     res_obj = json.loads(response_obj)
     if res_obj["data"] is not None:
         if len(res_obj["data"]):
@@ -163,6 +165,16 @@ def get_links_object_by_document_id(document_id):
         else:
             return []
     return []
+
+
+def get_process_links_list(process_id, company_id):
+    fields = {"process_id": str(process_id), "company_id": company_id}
+    response_obj = dowellconnection(*LINK_CONNECTION_LIST, "fetch", fields, "nil")
+    res_obj = json.loads(response_obj)
+    if len(res_obj["data"]):
+        return res_obj["data"]
+    else:
+        return []
 
 
 #  -------------------------------Workflow Process------------------
@@ -220,7 +232,7 @@ def update_wf_process(process_id, steps, state):
     )
     headers = {"Content-Type": "application/json"}
     response = requests.request("POST", url, headers=headers, data=payload)
-    print("DB: SAVE WORKFLOW UPDATE--------------- \n",)
+    print("DB: SAVE WORKFLOW UPDATE--------------- \n", )
     return json.loads(response.text)
 
 
@@ -237,7 +249,10 @@ def get_process_object(workflow_process_id):
 
 def get_process_list(company_id):
     print("DB: Getting process list \n")
-    fields = {"company_id": str(company_id)}
+    fields = {
+        "company_id": str(company_id),
+
+    }
     response_obj = dowellconnection(*PROCESS_CONNECTION_LIST, "fetch", fields, "nil")
     res_obj = json.loads(response_obj)
     if len(res_obj["data"]):
@@ -269,7 +284,7 @@ def save_document(name, data, created_by, company_id, data_type, page, state, au
                 "clone_list": [],
                 "auth_viewers": auth_viewers,
                 "document_type": document_type,
-                "parent_id": parent_id
+                "parent_id": parent_id,
             },
             "update_field": {"order_nos": 21},
             "platform": "bangalore",
@@ -302,6 +317,26 @@ def update_document(document_id, process_id, state):
             },
             "update_field": {
                 "process_id": process_id,
+                "document_state": state,
+            },
+            "platform": "bangalore",
+        }
+    )
+    headers = {"Content-Type": "application/json"}
+    response = requests.request("POST", url, headers=headers, data=payload)
+    print("DB: DOCUMENT UPDATED------------ \n")
+    return json.loads(response.text)
+
+
+def document_to_trash(document_id, state):
+    payload = json.dumps(
+        {
+            **DOCUMENT_CONNECTION_DICT,
+            "command": "update",
+            "field": {
+                "_id": document_id,
+            },
+            "update_field": {
                 "document_state": state,
             },
             "platform": "bangalore",

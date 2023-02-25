@@ -108,7 +108,7 @@ def get_process_link(request):
     """get a link process for person having notifications"""
     links_info = get_links_object_by_process_id(request.data["process_id"])
     user = request.data["user_name"]
-    if not links_info["links"]:
+    if not links_info:
         return Response(
             "Could not fetch process info at this time",
             status=status.HTTP_500_INTERNAL_SERVER_ERROR,
@@ -142,6 +142,7 @@ def fetch_process_links(request, process_id):
     print("Fetching verification links \n")
     try:
         process_info = get_links_object_by_process_id(process_id)
+        print(process_info)
     except ConnectionError:
         return Response(
             "Could not fetch process links",

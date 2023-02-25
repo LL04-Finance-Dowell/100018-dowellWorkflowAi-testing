@@ -21,7 +21,8 @@ from drf_yasg import openapi
 from drf_yasg.views import get_schema_view
 from rest_framework import permissions
 
-from document.document_management import document_detail, create_document, get_document_content, get_documents
+from document.document_management import document_detail, create_document, get_document_content, get_documents, \
+    trash_document
 from document.intelligent_search import search
 from document.template_management import create_template, template_detail, approve, get_templates
 from workflow.wf_ai_setting import create_workflow_setting, get_wf_ai_setting, update_wfai_setting
@@ -29,7 +30,7 @@ from workflow.wf_management import create_workflow, workflow_detail, update_work
 from workflow_processing.process import save_and_start_processing, a_single_process, register_finalize_or_reject, \
     verify_process, get_process_link, fetch_process_links, processes
 from workflow_processing.process_v2 import document_processing, verification, wf_processes, \
-    mark_process_as_finalize_or_reject, single_process, trigger_process
+    mark_process_as_finalize_or_reject, single_process, trigger_process, fetch_verification_links
 
 schema_view = get_schema_view(
     openapi.Info(
@@ -88,6 +89,7 @@ urlpatterns = [
     # documents
     path("v0.1/documents/", create_document, name="documents"),
     path("v0.1/documents/<str:document_id>/", document_detail, name="document"),
+    path("v0.1/documents/trash/<str:document_id>/", trash_document, name="document"),
     path("v0.1/documents/content/<str:document_id>/", get_document_content, name="content"),
     path("v0.1/documents/org/<str:company_id>/", get_documents, name="all_documents"),
     # v2 processing.
@@ -97,6 +99,7 @@ urlpatterns = [
     path('v0.2/process/action/mark/', mark_process_as_finalize_or_reject),
     path("v0.2/process/action/trigger/", trigger_process),
     path("v0.2/process/org/<str:company_id>/", wf_processes),
+    path("v0.2/process/org/<str:company_id>/links/<str:process_id>/", fetch_verification_links)
 
     # ----------------- @deprecated --------------
     # path(

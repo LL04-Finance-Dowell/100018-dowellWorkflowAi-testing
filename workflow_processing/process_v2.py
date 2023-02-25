@@ -16,6 +16,7 @@ from database.mongo_db_connection_v2 import (
     update_document,
     get_process_list,
     update_document_clone,
+    get_process_links_list
 )
 
 editor_api = "https://100058.pythonanywhere.com/api/generate-editor-link/"
@@ -346,11 +347,13 @@ def start_processing(process):
             }
         )
     # Save Links -
+    # print(links)
     data = {
         "links": links,
         "process_id": process["_id"],
         "document_id": process["parent_document_id"],
         "process_choice": process["processing_action"],
+        "company_id": process["company_id"],
         "process_title": process["process_title"],
     }
     t = Thread(target=save_links_v2, args=(data,))
@@ -397,6 +400,7 @@ def save_links_v2(data):
         document_id=data["document_id"],
         processing_choice=data["process_choice"],
         process_title=data["process_title"],
+        company_id=data["company_id"]
     )
     print("Thread: Process Link Save! \n")
     return
@@ -522,8 +526,7 @@ def verification(request):
                             # what if this step role has no clone
                             clone_id = process["parent_document_id"]
                 if step.get("stepTaskType") == "assign_task":
-                    print("Task Type: ", step["stepTaskType"])
-                    continue
+                    clone_id = process["parent_document_id"]
 
                 # Display check
                 doc_map = step.get("stepDocumentMap")
@@ -752,7 +755,7 @@ def trigger_process(request):
                 # check pause state.
                 if process["processing_state"] != "paused":
                     res = json.loads(
-                        update_wf_process(process_id=request.data["process_id"], steps=process["processing_steps"],
+                        update_wf_process(process_id=request.data["process_id"], steps=process["process_steps"],
                                           state="paused"))
                     if res["isSuccess"]:
                         return Response("Process has been paused until manually resumed!", status=status.HTTP_200_OK)
@@ -764,3 +767,13 @@ def trigger_process(request):
         return Response("User not allowed to trigger processing, contact document creator!",
                         status=status.HTTP_401_UNAUTHORIZED)
     return Response("This process is not valid for processing", status=status.HTTP_403_FORBIDDEN)
+
+
+@api_view(["GET"])
+def fetch_verification_links(request, company_id, process_id):
+    """process verification links"""
+    try:
+        links = get_process_links_list(process_id=company_id, company_id=process_id)
+    except ConnectionError:
+        return Response("Failed to get process links", status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    return Response(links, status=status.HTTP_200_OK)
