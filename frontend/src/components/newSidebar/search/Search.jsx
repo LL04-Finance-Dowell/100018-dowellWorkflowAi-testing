@@ -21,6 +21,7 @@ const Search = () => {
   const { search } = watch();
   const  [ searchLoading, setSearchLoading ] = useState(false);
   const [ searchResults, setSearchResults ] = useState([]);
+  const [ searchResultItems, setSearchResultItems ] = useState([]);
   const [ searchResultLoaded, setSearchResultLoaded ] = useState(false);
   const { userDetail } = useSelector((state) => state.auth);
   const navigate = useNavigate();
@@ -41,6 +42,39 @@ const Search = () => {
       setSearchResultLoaded(true);
       setSearchLoading(false);
       setSearchResults(response.search_result);     
+      
+      let updatedItems = items.map(item => {
+        const copyOfItem = {...item};
+
+        if (copyOfItem.type === "Documents") {
+          const documentsFound = response.search_result.filter(searchResultItem => searchResultItem.document_name).slice(0, 3)
+          copyOfItem.parent = "Documents";
+          copyOfItem.count = documentsFound.length;
+          copyOfItem.children = documentsFound.map(result => {
+            return { id: uuidv4(), child: result.document_name}
+          })
+          return copyOfItem
+        }
+        if (item.type === "Templates") {
+          const templatesFound = response.search_result.filter(searchResultItem => searchResultItem.template_name).slice(0, 3)
+          copyOfItem.parent = "Templates";
+          copyOfItem.count = templatesFound.length;
+          copyOfItem.children = templatesFound.map(result => {
+            return { id: uuidv4(), child: result.template_name}
+          })
+          return copyOfItem
+        }
+
+        const workflowsFound = response.search_result.filter(searchResultItem => searchResultItem.workflows).slice(0, 3)
+        copyOfItem.parent = "Workflows";
+        copyOfItem.count = workflowsFound.length;
+        copyOfItem.children = workflowsFound.map(result => {
+          return { id: uuidv4(), child: result.workflows?.workflow_title}
+        })
+        return copyOfItem
+      })
+      setSearchResultItems(updatedItems);
+
     } catch (error) {
       console.log(error.response ? error.response.data : error.message);
       setSearchLoading(false);
@@ -162,7 +196,7 @@ const Search = () => {
         }
       </form>
 
-      <CollapseItem listType="ol" items={items} />
+      <CollapseItem listType="ol" items={searchResultItems} />
     </div>
   );
 };
@@ -174,6 +208,7 @@ export const items = [
     id: uuidv4(),
     isOpen: false,
     parent: "Documents (07)",
+    type: "Documents",
     children: [
       { id: uuidv4(), child: "Payment voucher" },
       { id: uuidv4(), child: "Answer sheet" },
@@ -188,6 +223,7 @@ export const items = [
     id: uuidv4(),
     isOpen: false,
     parent: "Templates (04)",
+    type: "Templates",
     children: [
       { id: uuidv4(), child: "Leave format" },
       { id: uuidv4(), child: "Payment voucher" },
@@ -199,6 +235,7 @@ export const items = [
     id: uuidv4(),
     isOpen: false,
     parent: "Workflows (04)",
+    type: "Workflows",
     children: [
       { id: uuidv4(), child: "Leave process" },
       { id: uuidv4(), child: "Payment process" },
