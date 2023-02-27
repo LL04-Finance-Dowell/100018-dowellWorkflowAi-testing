@@ -26,7 +26,7 @@ export const getSingleProcessV2 = async (processId) => {
 }
 
 export const getAllProcessesV2 = async (companyId) => {
-    return await newHttpProcess.get(`/org/${companyId}/`);
+    return await httpProcess.get(`/org/${companyId}/`);
 }
 
 export const verifyProcessV2 = async (data) => {
