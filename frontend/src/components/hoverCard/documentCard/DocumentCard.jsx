@@ -68,6 +68,8 @@ const DocumentCard = ({ cardItem, title }) => {
       continent: userDetail?.userinfo?.timezone?.split("/")[0],
     };
 
+    if (!dataToPost.continent) dataToPost.continent = ""
+
     try {
       const response = await (await verifyProcess(dataToPost)).data;
       setDataLoading(false);

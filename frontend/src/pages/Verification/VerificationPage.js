@@ -22,6 +22,7 @@ const VerificationPage = () => {
             country: userDetail?.userinfo?.country,
             continent: userDetail?.userinfo?.timezone?.split("/")[0],
         }
+        if (!dataToPost.continent) dataToPost.continent = ""
 
         verifyProcess(dataToPost).then(res => {
             setLoading(false);
