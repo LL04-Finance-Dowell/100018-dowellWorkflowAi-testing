@@ -85,8 +85,8 @@ const Sidebar = () => {
       );
     feature === "home" && navigate(`/`);
     feature === "shield" && setShowLegalPopup(true);
-    /*  feature === "shield" && ;
-    feature === "settings" && ; */
+    /*  feature === "shield" && ; */
+    feature === "settings" && navigate("/settings");
   };
 
   const handleToggleUserDetail = (e) => {
