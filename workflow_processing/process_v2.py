@@ -492,6 +492,18 @@ def verification(request):
         # step role matching auth process
         if step.get("stepRole") == auth_step_role:
             print("Matched step role:", step["stepRole"])
+            # location check
+            if step.get("stepLocation"):
+                print("Got location ... \n")
+                if request.data["continent"] and request.data["country"] and request.data["city"]:
+                    if not check_location_right(location=step.get("stepLocation"), continent=step.get("stepContinent"),
+                                                my_continent=request.data["continent"],
+                                                country=step.get("stepCountry"), my_country=request.data["country"],
+                                                city=step.get("stepCity"), my_city=request.data["city"]):
+                        return Response("Signing not permitted from your current location!",
+                                        status=status.HTTP_401_UNAUTHORIZED)
+                return Response("Your current location details could not be verified!",
+                                status=status.HTTP_401_UNAUTHORIZED)
             # display check
             if step.get("stepDisplay"):
                 print("Got display right... \n")
@@ -499,15 +511,6 @@ def verification(request):
                     return Response(
                         "Missing display rights!", status=status.HTTP_401_UNAUTHORIZED
                     )
-            # location check
-            if step.get("stepLocation"):
-                print("Got location ... \n")
-                if not check_location_right(location=step.get("stepLocation"), continent=step.get("stepContinent"),
-                                            my_continent=request.data["continent"],
-                                            country=step.get("stepCountry"), my_country=request.data["country"],
-                                            city=step.get("stepCity"), my_city=request.data["city"]):
-                    return Response("Signing not permitted from your current location!",
-                                    status=status.HTTP_401_UNAUTHORIZED)
             # time limit check
             if step.get("stepTimeLimit"):
                 print("Got step limit ... \n")
