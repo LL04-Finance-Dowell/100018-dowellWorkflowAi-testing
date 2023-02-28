@@ -122,18 +122,26 @@ def template_detail(request, template_id):
 
 
 @api_view(["GET"])
+def archive_template(request, template_id):
+    try:
+        delete_template(template_id)
+        return Response("Template added to trash", status=status.HTTP_200_OK)
+    except ConnectionError:
+        return Response("Failed to add template to trash", status=status.HTTP_200_OK)
+
+
+@api_view(["GET"])
 def approve(request, template_id):
     response = json.loads(
         update_template_approval(template_id, approval=True)
     )
     if not response["isSuccess"]:
         return Response(
-            {"message": "Template Could not be Approved."},
-            status=status.HTTP_500_INTERNAL_SERVER_ERROR,
-        )
+            "Template Could not be Approved.", status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     return Response({"message": "Template Approved."}, status=status.HTTP_200_OK)
 
 
+# -------------- @deprecated -----------------------
 @api_view(["GET", "POST"])
 def approved(request):
     templates = get_template_list(company_id=request.data["company_id"])
@@ -228,17 +236,3 @@ def org_templates(request):  # List of Created Templates.
         templates,
         status=status.HTTP_200_OK,
     )
-@api_view(["GET"])
-def archive_template(request,template_id):
-    try:
-        delete_template(template_id)    
-        return Response(
-            {"document": get_template_object(template_id)},
-            status=status.HTTP_200_OK,
-        )     
-    except:
-        return Response(
-            {"document": []},
-            status=status.HTTP_200_OK,
-        )
-

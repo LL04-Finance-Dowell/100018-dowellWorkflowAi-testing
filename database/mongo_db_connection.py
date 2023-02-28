@@ -831,6 +831,8 @@ def update_uuid_object(uuid_hash):
     response = requests.request("POST", url, headers=headers, data=payload)
     print("SAVED UUID-----------: \n")
     return json.loads(response.text)
+
+
 def delete_template(template_id):
     payload = json.dumps(
         {
@@ -849,6 +851,8 @@ def delete_template(template_id):
     response = requests.request("POST", url, headers=headers, data=payload)
     print("TEMPLATE ARCHIVED------------ \n")
     return json.loads(response.text)
+
+
 def delete_document(document_id):
     payload = json.dumps(
         {
@@ -867,6 +871,8 @@ def delete_document(document_id):
     response = requests.request("POST", url, headers=headers, data=payload)
     print("DOCUMENT ARCHIVED------------ \n")
     return json.loads(response.text)
+
+
 def delete_workflow(workflow_id):
     payload = json.dumps(
         {
@@ -905,6 +911,4 @@ def delete_process(process_id):
     headers = {"Content-Type": "application/json"}
     response = requests.request("POST", url, headers=headers, data=payload)
     print("PROCESS ARCHIVED------------ \n")
-
     return json.loads(response.text)
-

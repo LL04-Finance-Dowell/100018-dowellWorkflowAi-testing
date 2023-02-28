@@ -73,22 +73,11 @@ def create_workflow(request):  # Document Creation.
             "data_type": form["data_type"],
             "steps": form["steps"],
         }
-        # for step in form["steps"]:
-        #     data["steps"].append(
-        #         {
-        #             "step_name": step["step_name"],
-        #             "role": step["role"],
-        #         }
-        #     )
-        starter = time.time()
         res = json.loads(save_wf(data, form["company_id"], form["created_by"]))
         if res["isSuccess"]:
             wf_data = get_wf_object(res["inserted_id"])
-            # completed=True
-
             try:
                 ThreadAlgolia(res["inserted_id"], get_wf_object).start()
-
                 return Response(
                     {
                         "workflow": wf_data,
@@ -100,23 +89,6 @@ def create_workflow(request):  # Document Creation.
                     {"workflow": [], "message": "Failed to Save Workflow"},
                     status=status.HTTP_200_OK,
                 )
-            # finally:
-
-            #     # print("start thread")
-            #     dt = Thread(
-            #     target=save_to_algolia,
-            #     args=(get_wf_object(res["inserted_id"]),),
-            # )
-            #     dt.start()
-    # if completed:
-    #     print("start thread")
-    # if processing_complete(res):
-    #     print("tread started")
-    # dt = Thread(
-    #     target=save_to_algolia,
-    #     args=(wf_data,),
-    # )
-    # dt.start()
 
 
 @api_view(["POST"])
@@ -179,12 +151,16 @@ def workflow_detail(request, workflow_id):  # Single document
         )
 
 
-# return Response(
-#     {"workflow": [], "message": "This Workflow is Not Loaded."},
-#     status=status.HTTP_200_OK,
-# )
+@api_view(["GET"])
+def archive_workflow(request, workflow_id):
+    try:
+        delete_workflow(workflow_id)
+        return Response("Workflow Added to trash", status=status.HTTP_200_OK)
+    except ConnectionError:
+        return Response("Failed to add workflow to trash", status=status.HTTP_200_OK)
 
 
+# ------------- @deprecated --------------
 @api_view(["POST"])
 def my_workflows(request):  # List of my documents.
     filtered_list = []
@@ -222,17 +198,3 @@ def saved_workflows(request):
             {"workflows": [], "title": "No Workflow Found"},
             status=status.HTTP_200_OK,
         )
-@api_view(["GET"])
-def archive_workflow(request,workflow_id):
-    try:
-        delete_workflow(workflow_id)
-        return Response(
-            {"workflows": get_wf_object(workflow_id)},
-            status=status.HTTP_200_OK,
-        )      
-    except:
-        return Response(
-            {"workflows": []},
-            status=status.HTTP_200_OK,
-        )  
-        
