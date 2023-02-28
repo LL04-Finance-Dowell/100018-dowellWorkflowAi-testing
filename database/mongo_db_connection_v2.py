@@ -320,7 +320,7 @@ def update_document(document_id, process_id, state):
     return json.loads(response.text)
 
 
-def document_to_trash(document_id, state):
+def document_finalize(document_id, state):
     payload = json.dumps(
         {
             **DOCUMENT_CONNECTION_DICT,
@@ -358,4 +358,3 @@ def update_document_clone(document_id, clone_list):
     response = requests.request("POST", url, headers=headers, data=payload)
     print("DB: DOCUMENT UPDATED------------ \n")
     return json.loads(response.text)
-

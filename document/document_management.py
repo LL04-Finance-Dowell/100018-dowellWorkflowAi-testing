@@ -11,7 +11,7 @@ from database.mongo_db_connection import (
     get_document_list,
     get_links_object_by_process_id, delete_document
 )
-from database.mongo_db_connection_v2 import save_document, document_to_trash
+from database.mongo_db_connection_v2 import save_document
 from .thread_start import ThreadAlgolia
 
 editorApi = "https://100058.pythonanywhere.com/api/generate-editor-link/"
@@ -45,7 +45,7 @@ def create_document(request):  # Document Creation.
             status=status.HTTP_200_OK,
         )
     else:
-        viewers = []
+        viewers = [request.data["created_by"]]
         res = json.loads(
             save_document(
                 name="Untitled Document",
@@ -55,7 +55,7 @@ def create_document(request):  # Document Creation.
                 page=request.data["page"],
                 data_type=request.data["data_type"],
                 state="draft",
-                auth_viewers=viewers.append(request.data["created_by"]),
+                auth_viewers=viewers,
                 document_type="original",
                 parent_id=None
             )

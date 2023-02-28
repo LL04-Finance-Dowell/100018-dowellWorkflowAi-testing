@@ -15,9 +15,11 @@ from database.mongo_db_connection_v2 import (
     save_wf_process,
     update_document,
     update_document_clone,
+    document_finalize
 )
 
 editor_api = "https://100058.pythonanywhere.com/api/generate-editor-link/"
+notification_api = "http://100092.pythonanywhere.com/api/get-notification/"
 
 
 @api_view(["POST"])
@@ -271,7 +273,7 @@ def clone_document(document_id, creator, parent_id):
     try:
         document = get_document_object(document_id)
         # create new doc
-        viewers = []
+        viewers = [creator]
         save_res = json.loads(
             save_document(
                 name=document["document_name"],
@@ -281,7 +283,7 @@ def clone_document(document_id, creator, parent_id):
                 company_id=document["company_id"],
                 data_type=document["data_type"],
                 state="processing",
-                auth_viewers=viewers.append(creator),
+                auth_viewers=viewers,
                 document_type="clone",
                 parent_id=parent_id
             )
@@ -362,19 +364,6 @@ def start_processing(process):
                     auth_name=um["member"],
                     auth_portfolio=um["portfolio"]
                 )})
-
-        # links.append(
-        #     {
-        #         step.get("stepName"): verification_link(
-        #             process_id=process["_id"],
-        #             document_id=process["parent_document_id"],
-        #             team_users=step.get("stepTeamMembers", None),
-        #             public_users=step.get("stepPublicMembers", None),
-        #             user_users=step.get("stepUserMembers", None),
-        #             step_role=step.get("stepRole"),
-        #         )
-        #     }
-        # )
     # Save Links -
     data = {
         "links": links,
@@ -412,7 +401,32 @@ def verification_link(process_id, document_id, step_role, auth_name, auth_portfo
             "auth_portfolio": auth_portfolio
         })), "secret", algorithm="HS256"
     )
+    # setup notification
+    data = {
+        "username": auth_name,
+    }
+    nt = Thread(target=notification, args=(data,))
+    nt.start()
     return f"https://ll04-finance-dowell.github.io/100018-dowellWorkflowAi-testing/#/verify/{hash_token}/"
+
+
+# Hit notification API
+def notification(data):
+    payload = json.dumps({
+        "product_id": "99",
+        "username": data["auth_name"],
+        "product_name": "Workflow AI",
+        "title": "Document to Sign",
+        "message": "You have a document to sign"
+    })
+    headers = {"Content-Type": "application/json"}
+    try:
+        res = requests.post(url=notification_api, data=payload, headers=headers)
+        if res.status_code == 201:
+            print("Thread: Sent Notification \n")
+    except ConnectionError:
+        raise ConnectionError
+    return
 
 
 # thread process.
@@ -488,6 +502,7 @@ def verification(request):
     user = None
     match = False
     clone_id = None
+    process_changed = False
     for step in process['process_steps']:
         # step role matching auth process
         if step.get("stepRole") == auth_step_role:
@@ -502,8 +517,9 @@ def verification(request):
                                                 city=step.get("stepCity"), my_city=request.data["city"]):
                         return Response("Signing not permitted from your current location!",
                                         status=status.HTTP_401_UNAUTHORIZED)
-                return Response("Your current location details could not be verified!",
-                                status=status.HTTP_401_UNAUTHORIZED)
+                else:
+                    return Response("Your current location details could not be verified!",
+                                    status=status.HTTP_401_UNAUTHORIZED)
             # display check
             if step.get("stepDisplay"):
                 print("Got display right... \n")
@@ -548,13 +564,14 @@ def verification(request):
                                 # updating the document clone list
                                 data = {
                                     'doc_id': process['parent_document_id'],
-                                    'clone_id': clone_id
+                                    'clone_id': clone_id,
                                 }
                                 ct = Thread(
                                     target=clone_update,
                                     args=(data,),
                                 )
                                 ct.start()
+                                process_changed = True
                         else:
                             # what if this step role has no clone
                             clone_id = process["parent_document_id"]
@@ -567,20 +584,22 @@ def verification(request):
                 user = user_name
                 role = step.get('stepRole')
                 match = True
+
     if not match:
         return Response("Document Access forbidden!", status=status.HTTP_403_FORBIDDEN)
     if clone_id and right and user and role and doc_map:
-        # thread work to update the process
-        process_data = {
-            "process_id": process["_id"],
-            "process_steps": process["process_steps"],
-            "processing_state": process["processing_state"]
-        }
-        pt = Thread(
-            target=process_update,
-            args=(process_data,),
-        )
-        pt.start()
+        if process_changed is True:
+            # thread work to update the process
+            process_data = {
+                "process_id": process["_id"],
+                "process_steps": process["process_steps"],
+                "processing_state": process["processing_state"]
+            }
+            pt = Thread(
+                target=process_update,
+                args=(process_data,),
+            )
+            pt.start()
         # generate document link.
         doc_link = generate_link(
             document_id=clone_id,
@@ -624,7 +643,7 @@ def check_display_right(display):
 
 def check_location_right(location, continent, my_continent, country, my_country, city, my_city):
     """- check the location selection - verify matching geo information."""
-    allowed = False
+    print(location)
     if location == "any":
         allowed = True
         return allowed
@@ -632,7 +651,6 @@ def check_location_right(location, continent, my_continent, country, my_country,
         if continent == my_continent and country == my_country and city == my_city:
             allowed = True
             return allowed
-    return allowed
 
 
 def check_time_limit_right(time, select_time_limits, start_time, end_time, creation_time):
@@ -689,62 +707,75 @@ def generate_link(document_id, doc_map, doc_rights, user, process_id, role):
 @api_view(["POST"])
 def mark_process_as_finalize_or_reject(request):
     """After access is granted and the user has made changes on a document."""
-    # get process
+    # check if the doc is in completed state or not.
     try:
-        process = get_process_object(workflow_process_id=request.data['process_id'])
-    except ConnectionError as e:
-        print(e)
-        return Response(
-            'Failed to get process, Retry!',
-            status=status.HTTP_500_INTERNAL_SERVER_ERROR,
-        )
-        # check complete
-    if check_processing_complete(process=process, step_role=request.data['role']):
-        return Response(
-            'Document processing is already complete', status=status.HTTP_200_OK
-        )
-        # check the action
-    action = None
-    for step in process['process_steps']:
-        # find matching step for auth member
-        if step['member'] == request.data['authorized']:
-            if request.data['action'] == 'finalize':
-                step.update({'stepProcessingState': 'complete'})
-                action = 'finalized'
-                break
-            if request.data['action'] == 'reject':
-                step.update({'stepProcessingState': 'complete'})
-                step.update({'rejected': True})
-                action = 'rejected'
-                break
-    # update the workflow
-    data = {'process_id': request.data['process_id'], 'process_steps': process['process_steps']}
-    t = Thread(
-        target=process_update,
-        args=(data,),
-    )
-    t.start()
-    # if process is now complete change document state to `completed`
-    if check_processing_complete(process=process, step_role=request.data['role']):
-        doc_data = {
-            'document_id': process['document_id'],
-            'process_id': process['_id'],
-            'state': 'completed'
-        }
-        dt = Thread(
-            target=document_update,
-            args=(doc_data,),
-        )
-        dt.start()
-    return Response(f'Step marked as {action}', status=status.HTTP_201_CREATED)
+        document = get_document_object(document_id=request.data["company_id"])
+    except ConnectionError:
+        return Response("Something went wrong!", status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    # check state.
+    if document["document_state"] == "completed":
+        # say it is complete
+        return Response("Document has already been finalized", status=status.HTTP_200_OK)
+    # for processing, now we act.
+    if document["document_state"] == "processing":
+        # mark the doc as complete
+        state = None
+        if request.data["action"] == "finalize":
+            state = "complete"
+        elif request.data["action"] == "reject":
+            state = "rejected"
+        res = document_finalize(document_id=request.data["document_id"], state=state)
+        if res["isSuccess"]:
+            # get process
+            try:
+                process = get_process_object(workflow_process_id=request.data['process_id'])
+            except ConnectionError:
+                return Response(
+                    'Failed to get process, Retry!',
+                    status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                )
+            # check if the process step is complete
+            if process["processing_state"] == "complete":
+                return Response("Document has been finalized", status=status.HTTP_200_OK)
+            if process["processing_state"] == "processing":
+                # check if the process_step for auth_role is complete
+                done = None
+                for step in process["process_steps"]:
+                    if step.get("stepRole") == request.data['authorized']:
+                        step.update({'stepProcessingState': 'complete'})
+                        # update the workflow
+                        res = update_wf_process(process_id=request.data['process_id'], steps=process['process_steps'],
+                                                state="processing")
+                        if res["isSuccess"]:
+                            # check the state of the other docs
+                            if check_processing_complete(step.get("stepDocumentCloneMap").keys()):
+                                done = True
+                # update the process step state as complete
+                if done:
+                    data = {'process_id': request.data['process_id'], 'process_steps': process['process_steps'],
+                            'processing_state': "completed"}
+                    t = Thread(
+                        target=process_update,
+                        args=(data,),
+                    )
+                    t.start()
+                    # check if all the docs are marked as completed
+                return Response("document processed successfully", status=status.HTTP_200_OK)
+
+        else:
+            return Response("Error finalizing document", status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    return Response("Error finalizing document", status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
-def check_processing_complete(process, step_role):
+def check_processing_complete(process):
     complete = True
-    for step in process['process_steps']:
-        if step['stepRole'] == step_role:
-            if step['stepProcessingState'] == 'complete':
-                complete = False
+    document_clones = list(process["stepDocumentCloneMap"].keys())
+    # for every clone find the document state.
+    for clone in document_clones:
+        document = get_document_object(clone)
+        if document["document_state"] == "processing":
+            complete = False
+            return complete
     return complete
 
 
@@ -776,4 +807,3 @@ def trigger_process(request):
         return Response("User not allowed to trigger processing, contact document creator!",
                         status=status.HTTP_401_UNAUTHORIZED)
     return Response("This process is not valid for processing", status=status.HTTP_403_FORBIDDEN)
-

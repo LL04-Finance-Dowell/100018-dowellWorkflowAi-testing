@@ -28,7 +28,7 @@ from document.template_management import create_template, template_detail, appro
 from workflow.wf_ai_setting import create_workflow_setting, get_wf_ai_setting, update_wfai_setting
 from workflow.wf_management import create_workflow, workflow_detail, update_workflow, get_workflows, home, \
     archive_workflow
-from workflow_processing.process import save_and_start_processing, a_single_process, register_finalize_or_reject, \
+from workflow_processing.process import save_and_start_processing, a_single_process,\
     verify_process, get_process_link, fetch_process_links, processes, archive_process
 from workflow_processing.process_v2 import document_processing, verification, \
     mark_process_as_finalize_or_reject, trigger_process
@@ -67,7 +67,7 @@ urlpatterns = [
     path("v0.1/process/", save_and_start_processing),
     path("v0.1/process/<str:process_id>/", a_single_process),
     path("v0.1/process/delete/<str:process_id>/", archive_process),
-    path("v0.1/process/action/mark/", register_finalize_or_reject),
+    path("v0.1/process/action/mark/", mark_process_as_finalize_or_reject),
     path("v0.1/process/action/verify/", verify_process),
     path("v0.1/process/verification/link/", get_process_link),
     path("v0.1/process/org/<str:company_id>/", processes),
@@ -99,7 +99,6 @@ urlpatterns = [
     # v2 processing.
     path("v0.2/process/", document_processing),
     path("v0.2/process/action/verify/", verification),
-    path('v0.2/process/action/mark/', mark_process_as_finalize_or_reject),
     path("v0.2/process/action/trigger/", trigger_process),
 
     # ----------------- @deprecated --------------
