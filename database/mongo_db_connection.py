@@ -831,3 +831,80 @@ def update_uuid_object(uuid_hash):
     response = requests.request("POST", url, headers=headers, data=payload)
     print("SAVED UUID-----------: \n")
     return json.loads(response.text)
+def delete_template(template_id):
+    payload = json.dumps(
+        {
+            **TEMPLATE_CONNECTION_DICT,
+            "command": "update",
+            "field": {
+                "_id": template_id,
+            },
+            "update_field": {
+                "data_type": "Archive_Data",
+            },
+            "platform": "bangalore",
+        }
+    )
+    headers = {"Content-Type": "application/json"}
+    response = requests.request("POST", url, headers=headers, data=payload)
+    print("TEMPLATE ARCHIVED------------ \n")
+    return json.loads(response.text)
+def delete_document(document_id):
+    payload = json.dumps(
+        {
+            **DOCUMENT_CONNECTION_DICT,
+            "command": "update",
+            "field": {
+                "_id": document_id,
+            },
+            "update_field": {
+                "data_type": "Archive_Data",
+            },
+            "platform": "bangalore",
+        }
+    )
+    headers = {"Content-Type": "application/json"}
+    response = requests.request("POST", url, headers=headers, data=payload)
+    print("DOCUMENT ARCHIVED------------ \n")
+    return json.loads(response.text)
+def delete_workflow(workflow_id):
+    payload = json.dumps(
+        {
+            **WF_CONNECTION_DICT,
+            "command": "update",
+            "field": {
+                "_id": workflow_id,
+            },
+            "update_field": {
+                "data_type": "Archive_Data",
+            },
+            "platform": "bangalore",
+        }
+    )
+    headers = {"Content-Type": "application/json"}
+    response = requests.request("POST", url, headers=headers, data=payload)
+    print("WORKFLOW ARCHIVED------------ \n")
+
+    return json.loads(response.text)
+
+
+def delete_process(process_id):
+    payload = json.dumps(
+        {
+            **WF_PROCESS_DICT,
+            "command": "update",
+            "field": {
+                "_id": process_id,
+            },
+            "update_field": {
+                "data_type": "Archive_Data",
+            },
+            "platform": "bangalore",
+        }
+    )
+    headers = {"Content-Type": "application/json"}
+    response = requests.request("POST", url, headers=headers, data=payload)
+    print("PROCESS ARCHIVED------------ \n")
+
+    return json.loads(response.text)
+

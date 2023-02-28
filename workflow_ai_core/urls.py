@@ -21,13 +21,13 @@ from drf_yasg import openapi
 from drf_yasg.views import get_schema_view
 from rest_framework import permissions
 
-from document.document_management import document_detail, create_document, get_document_content, get_documents
+from document.document_management import document_detail, create_document, get_document_content, get_documents,archive_document
 from document.intelligent_search import search
-from document.template_management import create_template, template_detail, approve, get_templates
+from document.template_management import create_template, template_detail, approve, get_templates,archive_template
 from workflow.wf_ai_setting import create_workflow_setting, get_wf_ai_setting, update_wfai_setting
-from workflow.wf_management import create_workflow, workflow_detail, update_workflow, get_workflows, home
+from workflow.wf_management import create_workflow, workflow_detail, update_workflow, get_workflows, home,archive_workflow
 from workflow_processing.process import save_and_start_processing, a_single_process, register_finalize_or_reject, \
-    verify_process, get_process_link, fetch_process_links, processes
+    verify_process, get_process_link, fetch_process_links, processes,archive_process
 from workflow_processing.process_v2 import document_processing, verification, \
     mark_process_as_finalize_or_reject, trigger_process
 
@@ -64,7 +64,7 @@ urlpatterns = [
     # processing.
     path("v0.1/process/", save_and_start_processing),
     path("v0.1/process/<str:process_id>/", a_single_process),
-    path("v0.1/process/delete/<str:process_id>/", a_single_process),
+    path("v0.1/process/delete/<str:process_id>/", archive_process),
     path("v0.1/process/action/mark/", register_finalize_or_reject),
     path("v0.1/process/action/verify/", verify_process),
     path("v0.1/process/verification/link/", get_process_link),
@@ -74,7 +74,7 @@ urlpatterns = [
     path("v0.1/workflows/", create_workflow, name="workflows"),
     path("v0.1/workflows/<str:workflow_id>/", workflow_detail, name="workflow_detail"),
     path("v0.1/workflows/update/", update_workflow, name="update_workflow"),
-    path("v0.1/workflows/delete/<str:workflow_id>/"),
+    path("v0.1/workflows/delete/<str:workflow_id>/",archive_workflow,name="delete_workflow"),
     path("v0.1/workflows/org/<str:company_id>/", get_workflows, name="all_workflows"),
     # wf_settings
     path("v0.1/settings/", create_workflow_setting, name="save_wf_setting"),
@@ -87,11 +87,11 @@ urlpatterns = [
     path("v0.1/templates/<str:template_id>/", template_detail, name="template_detail"),
     path("v0.1/templates/org/<str:company_id>/", get_templates, name="all_templates"),
     path("v0.1/templates/approve/<str:template_id>/", approve),
-    path("v0.1/templates/delete/<str:template_id"),
+    path("v0.1/templates/delete/<str:template_id>/",archive_template,name="delete_template"),
     # documents
     path("v0.1/documents/", create_document, name="documents"),
     path("v0.1/documents/<str:document_id>/", document_detail, name="document"),
-    path("v0.1/documents/delete/<str:document_id>/"),
+    path("v0.1/documents/delete/<str:document_id>/",archive_document,name="delete_document"),
     path("v0.1/documents/content/<str:document_id>/", get_document_content, name="content"),
     path("v0.1/documents/org/<str:company_id>/", get_documents, name="all_documents"),
     # v2 processing.

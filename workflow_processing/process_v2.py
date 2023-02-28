@@ -776,3 +776,4 @@ def trigger_process(request):
         return Response("User not allowed to trigger processing, contact document creator!",
                         status=status.HTTP_401_UNAUTHORIZED)
     return Response("This process is not valid for processing", status=status.HTTP_403_FORBIDDEN)
+

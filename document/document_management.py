@@ -9,7 +9,7 @@ from rest_framework.response import Response
 from database.mongo_db_connection import (
     get_document_object,
     get_document_list,
-    get_links_object_by_process_id,
+    get_links_object_by_process_id,delete_document
 )
 from database.mongo_db_connection_v2 import save_document, document_to_trash
 from .thread_start import ThreadAlgolia
@@ -304,3 +304,20 @@ def get_auth_roles(document_obj):
     for i in res_content_obj[0]:
         role_list.append(i["auth_user"])
     return role_list
+
+@api_view(["GET"])
+def archive_document(request,document_id):
+    try:
+        delete_document(document_id)
+        return Response(
+            {"document": get_document_object(document_id)},
+            status=status.HTTP_200_OK,
+        )         
+    except:
+        return Response(
+            {"document": []},
+            status=status.HTTP_200_OK,
+        )
+
+
+# print(get_document_list("6365ee18ff915c925f3a6691"))

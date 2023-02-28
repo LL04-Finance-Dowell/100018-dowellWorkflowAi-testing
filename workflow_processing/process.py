@@ -15,6 +15,7 @@ from database.mongo_db_connection import (
     get_links_object_by_process_id,
     get_process_list,
     update_wf_process,
+    delete_process,
 )
 
 
@@ -444,3 +445,20 @@ def verification_link(process_id, document_id):
         json.loads(json.dumps(payload)), "secret", algorithm="HS256"
     )
     return f"https://ll04-finance-dowell.github.io/100018-dowellWorkflowAi-testing/#/verify/{hash_token}/"
+@api_view(["GET"])
+def archive_process(request,process_id):
+    try:
+        delete_process(process_id)
+        return Response(
+            {"workflows": get_process_object(process_id)},
+            status=status.HTTP_200_OK,
+        )      
+    except:
+        return Response(
+            {"workflows": []},
+            status=status.HTTP_200_OK,
+        )  
+        
+
+
+print(get_process_list("6365ee18ff915c925f3a6691"))

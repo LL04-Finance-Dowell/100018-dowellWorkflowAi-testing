@@ -9,6 +9,7 @@ from database.mongo_db_connection import (
     save_template,
     update_template_approval,
     get_template_object,
+    delete_template,
 )
 
 editorApi = "https://100058.pythonanywhere.com/api/generate-editor-link/"
@@ -227,3 +228,17 @@ def org_templates(request):  # List of Created Templates.
         templates,
         status=status.HTTP_200_OK,
     )
+@api_view(["GET"])
+def archive_template(request,template_id):
+    try:
+        delete_template(template_id)    
+        return Response(
+            {"document": get_template_object(template_id)},
+            status=status.HTTP_200_OK,
+        )     
+    except:
+        return Response(
+            {"document": []},
+            status=status.HTTP_200_OK,
+        )
+

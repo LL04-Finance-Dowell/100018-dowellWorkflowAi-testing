@@ -10,7 +10,10 @@ from database.mongo_db_connection import (
     get_wf_object,
     get_wf_list,
     update_wf,
+    delete_workflow,
+
 )
+
 from document.thread_start import ThreadAlgolia
 
 
@@ -219,3 +222,17 @@ def saved_workflows(request):
             {"workflows": [], "title": "No Workflow Found"},
             status=status.HTTP_200_OK,
         )
+@api_view(["GET"])
+def archive_workflow(request,workflow_id):
+    try:
+        delete_workflow(workflow_id)
+        return Response(
+            {"workflows": get_wf_object(workflow_id)},
+            status=status.HTTP_200_OK,
+        )      
+    except:
+        return Response(
+            {"workflows": []},
+            status=status.HTTP_200_OK,
+        )  
+        
