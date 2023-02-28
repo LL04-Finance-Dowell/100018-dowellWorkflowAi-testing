@@ -128,7 +128,7 @@ const Search = () => {
             </>
           }
         </button>
-        {
+        {/* {
           searchResultLoaded ? <div className={styles.minified__Search__Results}>
             <div className={styles.minified__Search__Top__Row}>
               <h5>Search results</h5>
@@ -193,10 +193,16 @@ const Search = () => {
               <></>
             }
           </div> : <></>
-        }
+        } */}
       </form>
-
       <CollapseItem listType="ol" items={searchResultItems} />
+      { 
+        searchResults.length > 3 ? <div className={styles.see__All__Btn__Container}>
+          <button className={styles.see__All__Btn} onClick={handleSeeMoreBtnClick}>
+            See more
+          </button>
+        </div> : <></>
+      }
     </div>
   );
 };
