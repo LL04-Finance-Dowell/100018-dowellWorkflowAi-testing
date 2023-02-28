@@ -15,7 +15,7 @@
 .sidebar__box {
   width: 25%;
   background-color: var(--e-global-color-secondary);
-  z-index: 1;
+  /* z-index: 1; */
 }
 
 .children__box {
@@ -86,6 +86,88 @@
   position: fixed;
   background: linear-gradient(to top, rgba(0, 0, 0, 0.08), transparent);
   z-index: 100000000000;
+}
+
+.legal__Overlay__Container {
+  background: rgba(0, 0, 0, 0.12);
+  backdrop-filter: blur(5px);
+  height: 100%;
+  width: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  animation: fadeIn 0.2s ease-in-out;
+  z-index: 99999;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #000;
+}
+
+.legal__Overlay__Container__Close__Icon {
+  position: absolute;
+  top: 4%;
+  right: 2%;
+  cursor: pointer;
+  color: #000;
+}
+
+.legal__Content__Container {
+  background-color: #fff;
+  width: 60%;
+  border-radius: 10px;
+  padding: 4% 2%;
+  position: relative;
+}
+
+.legal__Content__Form__Container {
+  max-height: 15rem;
+  overflow-y: auto;
+}
+
+.legal__Content__Container h3 {
+  margin-bottom: 5%;
+}
+
+.legal__Content__Container label {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 70%;
+  margin-bottom: 3%;
+}
+
+.legal__Content__Container label.legal__Agree {
+  width: 65%;
+  cursor: pointer;
+}
+
+.legal__Register__Btn {
+  background-color: #61ce70;
+  color: #fff;
+  padding: 1.5% 3%;
+  border-radius: 10px;
+  margin: 5% 0;
+  cursor: pointer;
+}
+
+.legal__Register__Btn:disabled,
+.legal__Register__Btn[disabled] {
+  filter: brightness(0.8);
+  cursor: not-allowed;
+}
+
+.continue__Btn {
+  margin-top: 1%;
+  margin-bottom: 0;
+}
+
+.date__Agreed {
+  color: #61ce70;
+  font-size: 0.875rem;
+  display: block;
+  margin-bottom: 1%;
 }
 
 /* The typing effect */

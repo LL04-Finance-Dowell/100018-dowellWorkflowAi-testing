@@ -72,6 +72,11 @@ const initialState = {
   processesLoading: true,
   processesLoaded: false,
   allProcesses: [],
+  legalStatusLoading: true,
+  showLegalStatusPopup: false,
+  legalTermsAgreed: false,
+  dateAgreedToLegalStatus: "",
+  legalArgeePageLoading: false,
 };
 
 export const appSlice = createSlice({
@@ -370,6 +375,21 @@ export const appSlice = createSlice({
     setAllProcesses: (state, action) => {
       state.allProcesses = action.payload
     },
+    setLegalStatusLoading: (state, action) => {
+      state.legalStatusLoading = action.payload
+    },
+    setShowLegalStatusPopup: (state, action) => {
+      state.showLegalStatusPopup = action.payload
+    },
+    setLegalTermsAgreed: (state, action) => {
+      state.legalTermsAgreed = action.payload
+    },
+    setDateAgreedToLegalStatus: (state, action) => {
+      state.dateAgreedToLegalStatus = action.payload
+    },
+    setLegalAgreePageLoading: (state, action) => {
+      state.legalArgeePageLoading = action.payload
+    },
   },
   extraReducers: (builder) => {
     //getItemsCount
@@ -433,6 +453,11 @@ export const {
   setProcessesLoading,
   setProcessesLoaded,
   setAllProcesses,
+  setLegalStatusLoading,
+  setShowLegalStatusPopup,
+  setLegalTermsAgreed,
+  setDateAgreedToLegalStatus,
+  setLegalAgreePageLoading,
 } = appSlice.actions;
 
 export default appSlice.reducer;

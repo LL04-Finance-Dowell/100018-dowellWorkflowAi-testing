@@ -8,12 +8,23 @@ import DowellLogo from "../../assets/dowell.png";
 import Spinner from "../../components/spinner/Spinner";
 import useCloseElementOnEscapekeyClick from "../../../src/hooks/useCloseElementOnEscapeKeyClick";
 import UserDetail from "../../components/newSidebar/userDetail/UserDetail";
-import { setUserDetailPosition } from "../../features/app/appSlice";
+import { setLegalAgreePageLoading, setShowLegalStatusPopup, setUserDetailPosition } from "../../features/app/appSlice";
+import { AiOutlineClose } from "react-icons/ai";
+import { LoadingSpinner } from "../../components/LoadingSpinner/LoadingSpinner";
+import { formatDateAndTime } from "../../utils/helpers";
+import { workflowRegistrationEventId } from "../../services/legalService";
 
 const WorkflowLayout = ({ children }) => {
   const dispatch = useDispatch();
-  const { userDetail, session_id } = useSelector((state) => state.auth);
-  const { userDetailPosition } = useSelector((state) => state.app);
+  const { userDetail, session_id, id } = useSelector((state) => state.auth);
+  const { 
+    userDetailPosition,
+    legalStatusLoading,
+    showLegalStatusPopup,
+    legalTermsAgreed,
+    dateAgreedToLegalStatus,
+    legalArgeePageLoading,
+  } = useSelector((state) => state.app);
   const [createNewPortfolioLoading, setCreateNewPortfolioLoading] =
     useState(false);
 
@@ -35,6 +46,12 @@ const WorkflowLayout = ({ children }) => {
 
   const handleMouseLeave = () => {
     dispatch(setUserDetailPosition(null));
+  };
+  
+  const handleAgreeCheckBoxClick = (e) => {
+    e.preventDefault();
+    dispatch(setLegalAgreePageLoading(true))
+    window.location = `https://100087.pythonanywhere.com/legalpolicies/${workflowRegistrationEventId}/website-privacy-policy/policies/?redirect_url=${window.location.origin}/100018-dowellWorkflowAi-testing/%23?id=${id}&session_id=${session_id}`;
   };
   
   return (
@@ -93,6 +110,52 @@ const WorkflowLayout = ({ children }) => {
             }}
           >
             <UserDetail />
+          </div>
+        )}
+        {showLegalStatusPopup && (
+          <div className={styles.legal__Overlay__Container}>
+            <div className={styles.legal__Content__Container}>
+              <div
+                className={styles.legal__Overlay__Container__Close__Icon}
+                onClick={() => dispatch(setShowLegalStatusPopup(false))}
+              >
+                <AiOutlineClose />
+              </div>
+              <h3>Agree to terms</h3>
+              {legalStatusLoading ? (
+                <LoadingSpinner />
+              ) : (
+                <div className={styles.legal__Content__Form__Container}>
+                  {dateAgreedToLegalStatus && dateAgreedToLegalStatus.length > 1 && (
+                    <span className={styles.date__Agreed}>
+                      You agreed on: {formatDateAndTime(dateAgreedToLegalStatus)}
+                    </span>
+                  )}
+                  <label className={styles.legal__Agree}>
+                    <input
+                      checked={legalTermsAgreed}
+                      type="checkbox"
+                      onChange={handleAgreeCheckBoxClick}
+                    />
+                    I agree with the privacy policy and terms and conditions
+                  </label>
+                  <button
+                    disabled={!legalTermsAgreed}
+                    className={`${styles.legal__Register__Btn} ${styles.continue__Btn}`}
+                    onClick={() => dispatch(setShowLegalStatusPopup(false))}
+                  >
+                    {"Continue"}
+                  </button>
+                  {legalArgeePageLoading ? (
+                    <div className="loading__Spinner__New__Portfolio abs__Pos">
+                      <Spinner />
+                    </div>
+                  ) : (
+                    <></>
+                  )}
+                </div>
+              )}
+            </div>
           </div>
         )}
       </div>
