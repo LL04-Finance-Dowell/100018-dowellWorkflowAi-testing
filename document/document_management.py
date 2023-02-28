@@ -244,7 +244,6 @@ def my_documents(request):  # List of my documents.
                 status=status.HTTP_200_OK,
             )
         else:
-            []
             for doc in documents:
                 try:
                     if (

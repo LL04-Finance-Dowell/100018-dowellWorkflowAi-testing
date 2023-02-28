@@ -75,7 +75,7 @@ urlpatterns = [
     # workflow
     path("v0.1/workflows/", create_workflow, name="workflows"),
     path("v0.1/workflows/<str:workflow_id>/", workflow_detail, name="workflow_detail"),
-    path("v0.1/workflows/update/", update_workflow, name="update_workflow"),
+    path("v0.1/workflows/update/<str:workflow_id>/", update_workflow, name="update_workflow"),
     path("v0.1/workflows/delete/<str:workflow_id>/", archive_workflow, name="delete_workflow"),
     path("v0.1/workflows/org/<str:company_id>/", get_workflows, name="all_workflows"),
     # wf_settings
