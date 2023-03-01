@@ -276,7 +276,7 @@ def clone_document(document_id, creator, parent_id):
         viewers = [creator]
         save_res = json.loads(
             save_document(
-                name=document["document_name"],
+                name=document["document_name"] + creator,
                 data=document["content"],
                 page=document["page"],
                 created_by=document["created_by"],
@@ -290,6 +290,7 @@ def clone_document(document_id, creator, parent_id):
         )
         return save_res["inserted_id"]
     except RuntimeError:
+        print("Failed to create clone \n")
         return
 
 
@@ -424,9 +425,11 @@ def notification(data):
         res = requests.post(url=notification_api, data=payload, headers=headers)
         if res.status_code == 201:
             print("Thread: Sent Notification \n")
+        else:
+            print("something went wrong on notification:", res.status_code)
     except ConnectionError:
-        raise ConnectionError
-    return
+        print("Fail: doc update thread! \n")
+        return
 
 
 # thread process.
@@ -443,19 +446,23 @@ def save_links_v2(data):
         )
         print("Thread: Process Link Save! \n")
     except ConnectionError:
-        raise RuntimeError
+        print("Fail: link saving thread! \n")
+        return
 
 
 # Thread to update a doc
 def document_update(doc_data):
     print("Updating document with new state \n")
-    update_document(
-        document_id=doc_data["document_id"],
-        process_id=doc_data["process_id"],
-        state=doc_data["state"],
-    )
-    print("Thread: Document Updated! \n")
-    return
+    try:
+        update_document(
+            document_id=doc_data["document_id"],
+            process_id=doc_data["process_id"],
+            state=doc_data["state"],
+        )
+        print("Thread: Document Updated! \n")
+    except ConnectionError:
+        print("Fail: doc update thread! \n")
+        return
 
 
 def check_user_presence(token, user_name, portfolio):
@@ -465,8 +472,6 @@ def check_user_presence(token, user_name, portfolio):
     user_allowed = False
     if decoded["auth_name"] == user_name and decoded["auth_portfolio"] == portfolio:
         user_allowed = True
-    # user_allowed = any(user["member"] == user_name and user["portfolio"] == portfolio for user in
-    #                    decoded["team_users"] + decoded["public_users"] + decoded["user_users"])
     return user_allowed, decoded["process_id"], decoded["step_role"]
 
 
@@ -474,8 +479,10 @@ def check_user_presence(token, user_name, portfolio):
 def verification(request):
     """verification of a process step access and checks that duplicate document based on a step."""
     print("Performing process verification.. \n")
-    if not request.data:
+    if not request.data["portfolio"] and request.data["user_name"] \
+            and request.data["continent"] and request.data["country"] and request.data["city"]:
         return Response('You are missing something!', status=status.HTTP_400_BAD_REQUEST)
+    # check user
     user_name = request.data['user_name']
     auth_user, process_id, auth_step_role = check_user_presence(token=request.data['token'], user_name=user_name,
                                                                 portfolio=request.data['portfolio'])
@@ -489,6 +496,7 @@ def verification(request):
         Response(
             'Something went wrong!, Retry', status=status.HTTP_500_INTERNAL_SERVER_ERROR
         )
+    # check states
     if process['processing_state']:
         if process['processing_state'] == 'paused':
             return Response('This workflow process is currently on hold!', status=status.HTTP_200_OK)
@@ -504,21 +512,24 @@ def verification(request):
     clone_id = None
     process_changed = False
     for step in process['process_steps']:
+        # check for step completeness
+        if step.get("stepProcessingState"):
+            if step.get("stepProcessingState") != "complete":
+                print("Step state", step.get("stepProcessingState"), "\n")
         # step role matching auth process
         if step.get("stepRole") == auth_step_role:
-            print("Matched step role:", step["stepRole"])
+            print("Matched step role:", step["stepRole"], "\n")
+            # find step number
+            if step.get("stepNumber"):
+                print("step number is", step.get("stepNumber"), "\n")
             # location check
             if step.get("stepLocation"):
                 print("Got location ... \n")
-                if request.data["continent"] and request.data["country"] and request.data["city"]:
-                    if not check_location_right(location=step.get("stepLocation"), continent=step.get("stepContinent"),
-                                                my_continent=request.data["continent"],
-                                                country=step.get("stepCountry"), my_country=request.data["country"],
-                                                city=step.get("stepCity"), my_city=request.data["city"]):
-                        return Response("Signing not permitted from your current location!",
-                                        status=status.HTTP_401_UNAUTHORIZED)
-                else:
-                    return Response("Your current location details could not be verified!",
+                if not check_location_right(location=step.get("stepLocation"), continent=step.get("stepContinent"),
+                                            my_continent=request.data["continent"],
+                                            country=step.get("stepCountry"), my_country=request.data["country"],
+                                            city=step.get("stepCity"), my_city=request.data["city"]):
+                    return Response("Signing not permitted from your current location!",
                                     status=status.HTTP_401_UNAUTHORIZED)
             # display check
             if step.get("stepDisplay"):
@@ -536,9 +547,9 @@ def verification(request):
                     return Response("Time limit for processing document has elapsed!", status=status.HTTP_403_FORBIDDEN)
             # check step activity
             if step.get("stepTaskType"):
-                print("Got task type:")
+                print("Got task type \n")
                 if step.get("stepTaskType") == "request_for_task":
-                    print("Task Type is :", step["stepTaskType"])
+                    print("Task Type is :", step["stepTaskType"], "\n")
                     # clone check
                     if step.get("stepCloneCount"):
                         print("Got step clone count ... \n")
@@ -576,14 +587,15 @@ def verification(request):
                             # what if this step role has no clone
                             clone_id = process["parent_document_id"]
                 if step.get("stepTaskType") == "assign_task":
+                    print("Task Type", step.get("stepTaskType"), "\n")
                     clone_id = process["parent_document_id"]
 
-                # Display check
-                doc_map = step.get("stepDocumentMap")
-                right = step.get("stepRights")
-                user = user_name
-                role = step.get('stepRole')
-                match = True
+            # Display check
+            doc_map = step.get("stepDocumentMap")
+            right = step.get("stepRights")
+            user = user_name
+            role = step.get('stepRole')
+            match = True
 
     if not match:
         return Response("Document Access forbidden!", status=status.HTTP_403_FORBIDDEN)
@@ -609,7 +621,8 @@ def verification(request):
             process_id=process["_id"],
             role=role
         )
-        return Response(doc_link.json(), status=status.HTTP_201_CREATED)
+        if doc_link:
+            return Response(doc_link.json(), status=status.HTTP_201_CREATED)
     return Response("Verification failed", status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
@@ -643,7 +656,6 @@ def check_display_right(display):
 
 def check_location_right(location, continent, my_continent, country, my_country, city, my_city):
     """- check the location selection - verify matching geo information."""
-    print(location)
     if location == "any":
         allowed = True
         return allowed
@@ -700,14 +712,23 @@ def generate_link(document_id, doc_map, doc_rights, user, process_id, role):
             'update_field': {'document_name': "", 'content': "", 'page': ""},
         },
     }
-    link = requests.post(editor_api, data=json.dumps(payload))
-    return link
+    try:
+        link = requests.post(editor_api, data=json.dumps(payload))
+        return link
+    except ConnectionError:
+        print("link generation failed")
+        return
 
 
 @api_view(["POST"])
 def mark_process_as_finalize_or_reject(request):
     """After access is granted and the user has made changes on a document."""
     # check if the doc is in completed state or not.
+    if not request.data["company_id"] \
+            and request.data["action"] \
+            and request.data["document_id"] \
+            and request.data["authorized"]:
+        return Response("You are missing something", status=status.HTTP_400_BAD_REQUEST)
     try:
         document = get_document_object(document_id=request.data["company_id"])
     except ConnectionError:
