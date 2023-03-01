@@ -28,7 +28,7 @@ const Search = () => {
   const dispatch = useDispatch();
 
   const onSubmit = async (data) => {
-    if (data.search.length < 1 || searchLoading) return
+    if (data.search.length < 1 || searchLoading) return setSearchResultItems([])
 
     setSearchLoading(true);
 
@@ -51,7 +51,7 @@ const Search = () => {
           copyOfItem.parent = "Documents";
           copyOfItem.count = documentsFound.length;
           copyOfItem.children = documentsFound.map(result => {
-            return { id: uuidv4(), child: result.document_name}
+            return { id: uuidv4(), child: result.document_name, searchItem: true}
           })
           return copyOfItem
         }
@@ -60,7 +60,7 @@ const Search = () => {
           copyOfItem.parent = "Templates";
           copyOfItem.count = templatesFound.length;
           copyOfItem.children = templatesFound.map(result => {
-            return { id: uuidv4(), child: result.template_name}
+            return { id: uuidv4(), child: result.template_name, searchItem: true}
           })
           return copyOfItem
         }
@@ -69,7 +69,7 @@ const Search = () => {
         copyOfItem.parent = "Workflows";
         copyOfItem.count = workflowsFound.length;
         copyOfItem.children = workflowsFound.map(result => {
-          return { id: uuidv4(), child: result.workflows?.workflow_title}
+          return { id: uuidv4(), child: result.workflows?.workflow_title, searchItem: true}
         })
         return copyOfItem
       })
@@ -114,7 +114,7 @@ const Search = () => {
     <div className={styles.container}>
       <h2 className={styles.title}>Search</h2>
       <p className={styles.info}>
-        Search in file names of Docs, Templates & Workflows
+        Search in file names of Documents, Templates & Workflows
       </p>
       <form onSubmit={handleSubmit(onSubmit)} className={styles.search__box}>
         <input {...register("search")} placeholder="Type here to search" />

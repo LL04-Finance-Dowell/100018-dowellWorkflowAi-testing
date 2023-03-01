@@ -1,6 +1,7 @@
 import Flip from "../flip/Flip";
 import styles from "./flipMenu.module.css";
-import { FaRegBell } from "react-icons/fa";
+import { FaFileContract, FaRegBell } from "react-icons/fa";
+import { FcWorkflow } from "react-icons/fc";
 import { HiOutlineDocument } from "react-icons/hi";
 import { FaSearch } from "react-icons/fa";
 import { FaHeadSideVirus } from "react-icons/fa";
@@ -122,7 +123,7 @@ export const FlipBack = (props) => {
             type="button"
             className={styles.flip__button}
           >
-            {buttonText}
+            {buttonIcons[index]}
           </button>
             })) :
         <button
@@ -179,3 +180,9 @@ export const flipItems = [
     role: "",
   },
 ];
+
+const buttonIcons = [
+  <HiOutlineDocument />,
+  <FaFileContract />,
+  <FcWorkflow />,   
+]

@@ -57,14 +57,23 @@
 }
 
 .grow__back__box {
-  height: 250px;
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  flex-direction: column;
+  justify-content: space-around;
+  flex-direction: row;
   gap: 10px;
   position: relative;
   z-index: 20;
+  padding-left: 15px;
+  padding-right: 15px;
+}
+
+.grow__back__box button {
+  padding: 8px;
+}
+
+.grow__back__box button svg {
+  font-size: 1.2rem;
 }
 
 @media (max-width: 768px) {
