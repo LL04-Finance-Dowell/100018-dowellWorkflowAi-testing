@@ -109,7 +109,7 @@ export const manageFileItems = [
       {
         id: uuidv4(),
         child: "saved documents",
-        href: "/documents/#saved-documents",
+        href: "/documents/saved",
       },
       /*   { id: uuidv4(), child: "Waiting to Process", href: "#" }, */
     ],
@@ -122,7 +122,7 @@ export const manageFileItems = [
       {
         id: uuidv4(),
         child: "saved templates",
-        href: "/templates/#saved-templates",
+        href: "/templates/saved",
       },
     ],
   },
@@ -134,7 +134,7 @@ export const manageFileItems = [
       {
         id: uuidv4(),
         child: "saved workflows",
-        href: "/workflows/#saved-workflows",
+        href: "/workflows/saved",
       },
       {
         id: uuidv4(),
@@ -151,7 +151,17 @@ export const manageFileItems = [
       {
         id: uuidv4(),
         child: "saved processes",
-        href: "/processes/#saved-processes",
+        href: "/processes/saved",
+      },
+      {
+        id: uuidv4(),
+        child: "paused processes",
+        href: "/processes/paused",
+      },
+      {
+        id: uuidv4(),
+        child: "cancelled processes",
+        href: "/processes/cancelled",
       },
       {
         id: uuidv4(),

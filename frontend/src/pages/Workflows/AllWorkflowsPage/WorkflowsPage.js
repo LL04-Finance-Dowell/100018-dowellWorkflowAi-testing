@@ -12,8 +12,9 @@ import {
   savedWorkflows,
 } from "../../../features/workflow/asyncTHunks";
 import WorkflowCard from "../../../components/hoverCard/workflowCard/WorkflowCard";
+import { useNavigate } from "react-router-dom";
 
-const WorkflowsPage = () => {
+const WorkflowsPage = ({ home, showOnlySaved }) => {
   const { userDetail } = useSelector((state) => state.auth);
   const {
     minedWorkflows,
@@ -25,6 +26,7 @@ const WorkflowsPage = () => {
   } = useSelector((state) => state.workflow);
 
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const data = {
@@ -37,37 +39,45 @@ const WorkflowsPage = () => {
     if (allWorkflowsStatus === "idle") dispatch(allWorkflows(data.company_id));
   }, []);
 
+  useEffect(() => {
+    if (showOnlySaved) navigate("#saved-workflows")
+  }, [showOnlySaved])
+
   console.log("wwwwwwwwwwwwwwwwwwwwwwwwwwwwww", allWorkflowsArray);
 
   return (
     <WorkflowLayout>
       <div id="new-workflow">
         <ManageFiles title="Workflow" OverlayComp={CreateWorkflows}>
-          <div id="drafts">
-            <SectionBox
-              cardBgColor="#1ABC9C"
-              title="drafts"
-              cardItems={
-                allWorkflowsArray &&
-                allWorkflowsArray.length &&
-                allWorkflowsArray.filter(
-                  (item) =>
-                    item.created_by === userDetail?.portfolio_info[0].username
-                )
-              }
-              status={allWorkflowsStatus}
-              Card={WorkflowCard}
-            />
-          </div>
-          <div id="saved-workflows">
-            <SectionBox
-              Card={WorkflowCard}
-              cardBgColor="#1ABC9C"
-              title="saved workflows"
-              status={allWorkflowsStatus}
-              cardItems={allWorkflowsArray}
-            />
-          </div>
+          {
+            home ?<div id="drafts">
+              <SectionBox
+                cardBgColor="#1ABC9C"
+                title="drafts"
+                cardItems={
+                  allWorkflowsArray &&
+                  allWorkflowsArray.length &&
+                  allWorkflowsArray.filter(
+                    (item) =>
+                      item.created_by === userDetail?.portfolio_info[0].username
+                  )
+                }
+                status={allWorkflowsStatus}
+                Card={WorkflowCard}
+              />
+            </div> : <></> 
+          }
+          {
+            showOnlySaved ? <div id="saved-workflows">
+              <SectionBox
+                Card={WorkflowCard}
+                cardBgColor="#1ABC9C"
+                title="saved workflows"
+                status={allWorkflowsStatus}
+                cardItems={allWorkflowsArray}
+              />
+            </div> : <></>
+          }
         </ManageFiles>
       </div>
     </WorkflowLayout>

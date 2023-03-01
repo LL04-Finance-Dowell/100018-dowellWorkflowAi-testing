@@ -7,11 +7,21 @@ import ProcessCard from "../../../components/hoverCard/processCard/ProcessCard";
 import { useEffect } from "react";
 import { getAllProcessesV2 } from "../../../services/processServices";
 import { setAllProcesses, setProcessesLoaded, setProcessesLoading } from "../../../features/app/appSlice";
+import { useNavigate } from "react-router-dom";
 
-const ProcessesPage = () => {
+const ProcessesPage = ({ home, showOnlySaved, showOnlyPaused, showOnlyCancelled }) => {
   const { processesLoading, allProcesses, processesLoaded } = useSelector((state) => state.app);
   const { userDetail } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    
+    if (showOnlySaved) navigate("#saved-processes");
+    if (showOnlyPaused) navigate("#paused-processes");
+    if (showOnlyCancelled) navigate("#cancelled-processes");
+
+  }, [showOnlySaved, showOnlyPaused, showOnlyCancelled])
 
   useEffect(() => {
 
@@ -41,42 +51,50 @@ const ProcessesPage = () => {
     <WorkflowLayout>
       <div id="new-proccess">
         <ManageFiles title="Proccess">
-          <div id="drafts">
-            <SectionBox
-              cardBgColor="#1ABC9C"
-              title="drafts"
-              Card={ProcessCard}
-              cardItems={allProcesses.filter(process => process.processing_state === "draft")}
-              status={processesLoading ? "pending" :"success"}
-            />
-          </div>
-          <div id="saved-processes">
-            <SectionBox
-              cardBgColor="#1ABC9C"
-              title="saved proccess"
-              Card={ProcessCard}
-              cardItems={allProcesses.filter(process => process.processing_state === "processing")}
-              status={processesLoading ? "pending" : "success"}
-            />
-          </div>
-          <div id="paused-processes">
-            <SectionBox
-              cardBgColor="#1ABC9C"
-              title="paused proccess"
-              Card={ProcessCard}
-              cardItems={allProcesses.filter(process => process.processing_state === "paused")}
-              status={processesLoading ? "pending" : "success"}
-            />
-          </div>
-          <div id="cancelled-processes">
-            <SectionBox
-              cardBgColor="#1ABC9C"
-              title="cancelled proccess"
-              Card={ProcessCard}
-              cardItems={allProcesses.filter(process => process.processing_state === "cancelled")}
-              status={processesLoading ? "pending" : "success"}
-            />
-          </div>
+          {
+            home ? <div id="drafts">
+              <SectionBox
+                cardBgColor="#1ABC9C"
+                title="drafts"
+                Card={ProcessCard}
+                cardItems={allProcesses.filter(process => process.processing_state === "draft")}
+                status={processesLoading ? "pending" :"success"}
+              />
+            </div> : <></>
+          }
+          {
+            showOnlySaved ? <div id="saved-processes">
+              <SectionBox
+                cardBgColor="#1ABC9C"
+                title="saved proccess"
+                Card={ProcessCard}
+                cardItems={allProcesses.filter(process => process.processing_state === "processing")}
+                status={processesLoading ? "pending" : "success"}
+              />
+            </div> : <></>
+          }
+          {
+            showOnlyPaused ? <div id="paused-processes">
+              <SectionBox
+                cardBgColor="#1ABC9C"
+                title="paused proccess"
+                Card={ProcessCard}
+                cardItems={allProcesses.filter(process => process.processing_state === "paused")}
+                status={processesLoading ? "pending" : "success"}
+              />
+            </div> : <></>
+          }
+          {
+            showOnlyCancelled ?<div id="cancelled-processes">
+              <SectionBox
+                cardBgColor="#1ABC9C"
+                title="cancelled proccess"
+                Card={ProcessCard}
+                cardItems={allProcesses.filter(process => process.processing_state === "cancelled")}
+                status={processesLoading ? "pending" : "success"}
+              />
+            </div> : <></>
+          }
         </ManageFiles>
       </div>
     </WorkflowLayout>
