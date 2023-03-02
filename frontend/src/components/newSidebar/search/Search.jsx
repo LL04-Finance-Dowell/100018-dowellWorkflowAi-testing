@@ -53,6 +53,7 @@ const Search = () => {
           copyOfItem.children = documentsFound.map(result => {
             return { id: uuidv4(), child: result.document_name, searchItem: true}
           })
+          copyOfItem.isOpen = true
           return copyOfItem
         }
         if (item.type === "Templates") {
@@ -62,6 +63,7 @@ const Search = () => {
           copyOfItem.children = templatesFound.map(result => {
             return { id: uuidv4(), child: result.template_name, searchItem: true}
           })
+          copyOfItem.isOpen = true
           return copyOfItem
         }
 
@@ -71,6 +73,7 @@ const Search = () => {
         copyOfItem.children = workflowsFound.map(result => {
           return { id: uuidv4(), child: result.workflows?.workflow_title, searchItem: true}
         })
+        copyOfItem.isOpen = true
         return copyOfItem
       })
       setSearchResultItems(updatedItems);
