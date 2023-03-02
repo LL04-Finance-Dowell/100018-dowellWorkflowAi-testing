@@ -63,7 +63,8 @@ const WorkflowApp = () => {
         const documentsToSign = res.data.documents.reverse().filter(document => 
           document.company_id === userDetail?.portfolio_info[0]?.org_id && 
           document.data_type === userDetail?.portfolio_info[0]?.data_type && 
-          (document.state === "processing" || document.document_state === "processing")
+          (document.state === "processing" || document.document_state === "processing") &&
+          document.auth_viewers && document.auth_viewers.includes(userDetail?.userinfo?.username)
         )
         // console.log(documentsToSign)
         dispatch(setNotificationFinalStatus(100));
