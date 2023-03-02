@@ -12,8 +12,9 @@ from database.mongo_db_connection import (
     get_links_object_by_process_id, delete_document
 )
 from database.mongo_db_connection_v2 import save_document
-from .thread_start import ThreadAlgolia,UpdateThreadAlgolia
+from .thread_start import ThreadAlgolia, UpdateThreadAlgolia
 from .algolia import get_algolia_data
+
 editorApi = "https://100058.pythonanywhere.com/api/generate-editor-link/"
 
 
@@ -41,7 +42,7 @@ def create_document(request):  # Document Creation.
     print("Creating document \n")
     if not request.data:
         return Response(
-            {"documents": [], "message": "Failed to process document creation."},
+            {"message": "Failed to process document creation."},
             status=status.HTTP_200_OK,
         )
     else:
@@ -171,162 +172,11 @@ def archive_document(request, document_id):
         return Response("Failed to add to trash", status=status.HTTP_200_OK)
 
 
-# ------------------------@deprecated-------------------
-@api_view(["POST"])
-def documents_to_be_signed(
-        request,
-):  # List of `to be signed` documents. State being processing.
-    try:
-        filtered_documents = []
-        for d in get_document_list(request.data["company_id"]):
-            if (
-                    d.get("state") == "processing"
-                    and d.get("company_id") == request.data["company_id"]
-                    and check_allowed(
-                process_id=d.get("workflow_process"),
-                user_name=request.data["user_name"],
-            )
-            ):
-                filtered_documents.append(d)
-
-        if len(filtered_documents) > 0:
-            return Response(filtered_documents, status=status.HTTP_200_OK)
-        return Response([], status=status.HTTP_200_OK)
-    except ConnectionError:
-        return Response([], status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-
-@api_view(["POST"])
-def documents_to_be_signed(request):  # List of `to be signed` documents.
-    try:
-        filtered_documents = []
-        for d in get_document_list(request.data["company_id"]):
-            if "workflow_process" in d:
-                if d.get("company_id") == request.data["company_id"] and check_allowed(
-                        process_id=d.get("workflow_process"),
-                        user_name=request.data["user_name"],
-                ):
-                    filtered_documents.append(d)
-        if len(filtered_documents) > 0:
-            return Response(filtered_documents, status=status.HTTP_200_OK)
-        return Response([], status=status.HTTP_200_OK)
-    except ConnectionError:
-        print("got error...... \n")
-        return Response([], status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-
-# check presence
-def check_allowed(process_id, user_name):
-    print("checking allowed... \n")
-    processing_links_info = get_links_object_by_process_id(process_id)
-    if processing_links_info:
-        for link in processing_links_info["links"]:
-            if user_name in link:
-                flag = True
-                return flag
-    return False
-
-
-@api_view(["POST"])
-def my_documents(request):  # List of my documents.
-    filtered_list = []
-    if request.method == "POST":
-        created_by = request.data["created_by"]
-        company_id = request.data["company_id"]
-        data_type = request.data["data_type"]
-        documents = get_document_list(company_id)
-        if not documents:
-            return Response(
-                {
-                    "documents": [],
-                    "message": "There is no document created by This user.",
-                },
-                status=status.HTTP_200_OK,
-            )
-        else:
-            for doc in documents:
-                try:
-                    if (
-                            doc["created_by"] == created_by
-                            and doc["data_type"] == data_type
-                    ):
-                        filtered_list.append(doc)
-                except ConnectionError:
-
-                    filtered_list = []
-
-        return Response(
-            {"documents": filtered_list, "title": "My Documents"},
-            status=status.HTTP_200_OK,
-        )
-
-
-@api_view(["GET", "POST"])
-def rejected_documents(request):  # List of `to be signed` documents.
-    filtered_list = []
-    created_by = request.data["created_by"]
-    company_id = request.data["company_id"]
-    documents = get_document_list(company_id)
-
-    for doc in documents:
-
-        if len(doc["reject_message"]) != 0 and len(doc["rejected_by"]) != 0:
-            filtered_list.append(doc)
-
-    return Response(
-        {
-            "documents": filtered_list,
-        },
-        status=status.HTTP_200_OK,
-    )
-
-
-# return Response(
-#     {
-#         "documents": [],
-#         "message": "These document is not in Rejected Document list.",
-#     },
-#     status=status.HTTP_200_OK,
-# )
-
-
-@api_view(["POST"])
-def draft_documents(request):  # List of `to be signed` documents.
-
-    try:
-        return Response(
-            {"documents": get_document_list(request.data["company_id"])},
-            status=status.HTTP_200_OK,
-        )
-    except:
-        return Response(
-            {"documents": [], "title": "No Document Found"},
-            status=status.HTTP_200_OK,
-        )
-
-
-# --------------------------- HELPERS ----------------------------------------
-def get_auth_roles(document_obj):
-    role_list = list()
-    content = document_obj["content"]
-    res_content_obj = json.loads(content)
-    for i in res_content_obj[0]:
-        role_list.append(i["auth_user"])
-    return role_list
-
 @api_view(["POST"])
 def document_index_update(request):
-    payload=request.data["data"]
+    payload = request.data
     try:
         UpdateThreadAlgolia(payload).start()
-    except:
+    except RuntimeError:
         ThreadAlgolia(payload["_id"], get_document_object).start()
-    return Response(
-            {
-            "search_keyword": payload["_id"],
-            "search_result": get_algolia_data(payload['_id'], payload["company_id"]),
-        },
-            status=status.HTTP_200_OK,
-        )
-
- 
+    return Response(status=status.HTTP_200_OK)

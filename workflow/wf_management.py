@@ -14,7 +14,7 @@ from database.mongo_db_connection import (
 
 )
 
-from document.thread_start import ThreadAlgolia,UpdateThreadAlgolia
+from document.thread_start import ThreadAlgolia, UpdateThreadAlgolia
 
 
 @api_view(["GET"])
@@ -198,8 +198,10 @@ def saved_workflows(request):
             {"workflows": [], "title": "No Workflow Found"},
             status=status.HTTP_200_OK,
         )
+
+
 def workflow_index_update(payload):
     try:
         UpdateThreadAlgolia(payload).start()
-    except:
+    except RuntimeError:
         ThreadAlgolia(payload["_id"], get_wf_object).start()
