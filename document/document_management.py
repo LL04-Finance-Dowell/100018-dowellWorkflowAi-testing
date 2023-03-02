@@ -322,7 +322,8 @@ def get_auth_roles(document_obj):
 def document_index_update(request):
     payload = request.data["data"]
     try:
-        UpdateThreadAlgolia(payload).start()
+        if payload["objectID"]:
+            UpdateThreadAlgolia(payload).start()
     except:
         ThreadAlgolia(payload["_id"], get_document_object).start()
     return Response(

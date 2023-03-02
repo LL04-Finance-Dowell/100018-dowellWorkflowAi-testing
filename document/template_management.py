@@ -243,9 +243,11 @@ def org_templates(request):  # List of Created Templates.
 def template_index_update(request):
     payload = request.data["data"]
     try:
-        UpdateThreadAlgolia(payload).start()
+        if payload["objectID"]:
+            UpdateThreadAlgolia(payload).start()
     except:
         ThreadAlgolia(payload["_id"], get_template_object).start()
+
     return Response(
         {
             "search_keyword": payload["_id"],
