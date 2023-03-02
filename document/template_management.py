@@ -4,7 +4,7 @@ from .thread_start import ThreadAlgolia,UpdateThreadAlgolia
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
-from .algolia import get_algolia_data
+from .algolia import update_from_algolia
 from database.mongo_db_connection import (
     get_template_list,
     save_template,
@@ -237,17 +237,10 @@ def org_templates(request):  # List of Created Templates.
         templates,
         status=status.HTTP_200_OK,
     )
-@api_view(["POST"])
-def template_index_update(request):
-    payload=request.data["data"]
+
+def template_index_update(payload):
     try:
         UpdateThreadAlgolia(payload).start()
     except:
         ThreadAlgolia(payload["_id"], get_template_object).start()
-    return Response(
-            {
-            "search_keyword": payload["_id"],
-            "search_result": get_algolia_data(payload['_id'], payload["company_id"]),
-        },
-            status=status.HTTP_200_OK,
-        )
+
