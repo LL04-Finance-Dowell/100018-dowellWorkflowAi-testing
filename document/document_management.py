@@ -13,7 +13,7 @@ from database.mongo_db_connection import (
 )
 from database.mongo_db_connection_v2 import save_document
 from .thread_start import ThreadAlgolia,UpdateThreadAlgolia
-
+from .algolia import get_algolia_data
 editorApi = "https://100058.pythonanywhere.com/api/generate-editor-link/"
 
 
@@ -314,8 +314,19 @@ def get_auth_roles(document_obj):
         role_list.append(i["auth_user"])
     return role_list
 
-def document_index_update(payload):
+@api_view(["POST"])
+def document_index_update(request):
+    payload=request.data["data"]
     try:
         UpdateThreadAlgolia(payload).start()
     except:
         ThreadAlgolia(payload["_id"], get_document_object).start()
+    return Response(
+            {
+            "search_keyword": payload["_id"],
+            "search_result": get_algolia_data(payload['_id'], payload["company_id"]),
+        },
+            status=status.HTTP_200_OK,
+        )
+
+ 
