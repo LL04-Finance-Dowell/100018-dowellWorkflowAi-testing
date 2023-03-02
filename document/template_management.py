@@ -1,6 +1,6 @@
 import json
 import requests
-from .thread_start import ThreadAlgolia,UpdateThreadAlgolia
+from .thread_start import ThreadAlgolia, UpdateThreadAlgolia
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
@@ -133,12 +133,12 @@ def archive_template(request, template_id):
 
 @api_view(["GET"])
 def approve(request, template_id):
-    response = json.loads(
-        update_template_approval(template_id, approval=True)
-    )
+    response = json.loads(update_template_approval(template_id, approval=True))
     if not response["isSuccess"]:
         return Response(
-            "Template Could not be Approved.", status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            "Template Could not be Approved.",
+            status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+        )
     return Response({"message": "Template Approved."}, status=status.HTTP_200_OK)
 
 
@@ -155,8 +155,8 @@ def approved(request):
         t
         for t in template_list
         if t.get("approved") == True
-           and t.get("created_by") == request.data["created_by"]
-           and t.get("data_type") == request.data["data_type"]
+        and t.get("created_by") == request.data["created_by"]
+        and t.get("data_type") == request.data["data_type"]
     ]
     if not templates:
         return Response(
@@ -178,8 +178,8 @@ def not_approved_templates(request):  # List of Templates to be approved.
         t
         for t in template_list
         if t.get("approved") == False
-           and t.get("created_by") == request.data["created_by"]
-           and t.get("data_type") == request.data["data_type"]
+        and t.get("created_by") == request.data["created_by"]
+        and t.get("data_type") == request.data["data_type"]
     ]
     if not templates:
         return Response(
@@ -201,7 +201,7 @@ def template_list(request):  # List of Created Templates.
         t
         for t in template_list
         if t.get("created_by") == request.data["created_by"]
-           and t.get("data_type") == request.data["data_type"]
+        and t.get("data_type") == request.data["data_type"]
     ]
     if not templates:
         return Response(
@@ -237,17 +237,19 @@ def org_templates(request):  # List of Created Templates.
         templates,
         status=status.HTTP_200_OK,
     )
+
+
 @api_view(["POST"])
 def template_index_update(request):
-    payload=request.data["data"]
+    payload = request.data["data"]
     try:
         UpdateThreadAlgolia(payload).start()
     except:
         ThreadAlgolia(payload["_id"], get_template_object).start()
     return Response(
-            {
+        {
             "search_keyword": payload["_id"],
-            "search_result": get_algolia_data(payload['_id'], payload["company_id"]),
+            "search_result": get_algolia_data(payload["_id"], payload["company_id"]),
         },
-            status=status.HTTP_200_OK,
-        )
+        status=status.HTTP_200_OK,
+    )

@@ -9,11 +9,13 @@ from rest_framework.response import Response
 from database.mongo_db_connection import (
     get_document_object,
     get_document_list,
-    get_links_object_by_process_id, delete_document
+    get_links_object_by_process_id,
+    delete_document,
 )
 from database.mongo_db_connection_v2 import save_document
-from .thread_start import ThreadAlgolia,UpdateThreadAlgolia
+from .thread_start import ThreadAlgolia, UpdateThreadAlgolia
 from .algolia import get_algolia_data
+
 editorApi = "https://100058.pythonanywhere.com/api/generate-editor-link/"
 
 
@@ -57,7 +59,7 @@ def create_document(request):  # Document Creation.
                 state="draft",
                 auth_viewers=viewers,
                 document_type="original",
-                parent_id=None
+                parent_id=None,
             )
         )
         if res["isSuccess"]:
@@ -110,9 +112,7 @@ def create_document(request):  # Document Creation.
 def get_document_content(request, document_id):
     print("Getting document content \n")
     content = []
-    my_dict = ast.literal_eval(
-        get_document_object(document_id)["content"]
-    )[0][0]
+    my_dict = ast.literal_eval(get_document_object(document_id)["content"])[0][0]
     all_keys = [i for i in my_dict.keys()]
     for i in all_keys:
         temp_list = []
@@ -166,7 +166,10 @@ def document_detail(request, document_id):  # Single document
 def archive_document(request, document_id):
     try:
         delete_document(document_id)
-        return Response("Document Added to trash", status=status.HTTP_200_OK, )
+        return Response(
+            "Document Added to trash",
+            status=status.HTTP_200_OK,
+        )
     except ConnectionError:
         return Response("Failed to add to trash", status=status.HTTP_200_OK)
 
@@ -174,18 +177,18 @@ def archive_document(request, document_id):
 # ------------------------@deprecated-------------------
 @api_view(["POST"])
 def documents_to_be_signed(
-        request,
+    request,
 ):  # List of `to be signed` documents. State being processing.
     try:
         filtered_documents = []
         for d in get_document_list(request.data["company_id"]):
             if (
-                    d.get("state") == "processing"
-                    and d.get("company_id") == request.data["company_id"]
-                    and check_allowed(
-                process_id=d.get("workflow_process"),
-                user_name=request.data["user_name"],
-            )
+                d.get("state") == "processing"
+                and d.get("company_id") == request.data["company_id"]
+                and check_allowed(
+                    process_id=d.get("workflow_process"),
+                    user_name=request.data["user_name"],
+                )
             ):
                 filtered_documents.append(d)
 
@@ -203,8 +206,8 @@ def documents_to_be_signed(request):  # List of `to be signed` documents.
         for d in get_document_list(request.data["company_id"]):
             if "workflow_process" in d:
                 if d.get("company_id") == request.data["company_id"] and check_allowed(
-                        process_id=d.get("workflow_process"),
-                        user_name=request.data["user_name"],
+                    process_id=d.get("workflow_process"),
+                    user_name=request.data["user_name"],
                 ):
                     filtered_documents.append(d)
         if len(filtered_documents) > 0:
@@ -247,8 +250,8 @@ def my_documents(request):  # List of my documents.
             for doc in documents:
                 try:
                     if (
-                            doc["created_by"] == created_by
-                            and doc["data_type"] == data_type
+                        doc["created_by"] == created_by
+                        and doc["data_type"] == data_type
                     ):
                         filtered_list.append(doc)
                 except ConnectionError:
@@ -314,19 +317,18 @@ def get_auth_roles(document_obj):
         role_list.append(i["auth_user"])
     return role_list
 
+
 @api_view(["POST"])
 def document_index_update(request):
-    payload=request.data["data"]
+    payload = request.data["data"]
     try:
         UpdateThreadAlgolia(payload).start()
     except:
         ThreadAlgolia(payload["_id"], get_document_object).start()
     return Response(
-            {
+        {
             "search_keyword": payload["_id"],
-            "search_result": get_algolia_data(payload['_id'], payload["company_id"]),
+            "search_result": get_algolia_data(payload["_id"], payload["company_id"]),
         },
-            status=status.HTTP_200_OK,
-        )
-
- 
+        status=status.HTTP_200_OK,
+    )
