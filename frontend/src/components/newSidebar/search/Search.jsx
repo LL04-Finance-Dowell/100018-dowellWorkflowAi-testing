@@ -85,30 +85,6 @@ const Search = () => {
     }
   };
 
-  const handleSearchItemClick = (item) => {
-    if (item.document_name) {
-      const data = {
-        document_name: item.document_name,
-        document_id: item._id,
-      };
-      dispatch(detailDocument(data.document_id));
-    }
-    if (item.template_name) {
-      const data = {
-        template_id: item._id,
-        template_name: item.template_name,
-      };
-      dispatch(detailTemplate(data.template_id));
-    }
-    if (item.workflows) {
-      dispatch(setToggleManageFileForm(true));
-      const data = { 
-        workflow_id: item._id 
-      };
-      dispatch(detailWorkflow(data.workflow_id));
-    }
-  }
-
   const handleSeeMoreBtnClick = () => {
     navigate('/search', { state: { searchResults: searchResults, searchItem: search }})
   }
