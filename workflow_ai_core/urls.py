@@ -22,13 +22,14 @@ from drf_yasg.views import get_schema_view
 from rest_framework import permissions
 
 from document.document_management import document_detail, create_document, get_document_content, get_documents, \
-    archive_document,document_index_update
+    archive_document
 from document.intelligent_search import search
-from document.template_management import create_template, template_detail, approve, get_templates, archive_template,template_index_update
+from document.template_management import create_template, template_detail, approve, get_templates, archive_template, \
+    index_update
 from workflow.wf_ai_setting import create_workflow_setting, get_wf_ai_setting, update_wfai_setting
 from workflow.wf_management import create_workflow, workflow_detail, update_workflow, get_workflows, home, \
     archive_workflow
-from workflow_processing.process import save_and_start_processing, a_single_process,\
+from workflow_processing.process import save_and_start_processing, a_single_process, \
     verify_process, get_process_link, fetch_process_links, processes, archive_process
 from workflow_processing.process_v2 import document_processing, verification, \
     mark_process_as_finalize_or_reject, trigger_process
@@ -85,17 +86,16 @@ urlpatterns = [
     path("v0.1/settings/update/", update_wfai_setting, name="update_WFAI_setting"),
     # search
     path("v0.1/search/", search),
+    # index
+    path("v0.1/index/", index_update),
     # templates
     path("v0.1/templates/", create_template),
-    path("v0.1/templates/editor_payload/", template_index_update,name="template_index_update"),
-
     path("v0.1/templates/<str:template_id>/", template_detail, name="template_detail"),
     path("v0.1/templates/org/<str:company_id>/", get_templates, name="all_templates"),
     path("v0.1/templates/approve/<str:template_id>/", approve),
     path("v0.1/templates/delete/<str:template_id>/", archive_template, name="delete_template"),
     # documents
     path("v0.1/documents/", create_document, name="documents"),
-    path("v0.1/documents/editor_payload/", document_index_update, name="document_index_update"),
     path("v0.1/documents/<str:document_id>/", document_detail, name="document"),
     path("v0.1/documents/delete/<str:document_id>/", archive_document, name="delete_document"),
     path("v0.1/documents/content/<str:document_id>/", get_document_content, name="content"),
@@ -105,8 +105,6 @@ urlpatterns = [
     path("v0.2/process/action/verify/", verification),
     path("v0.2/process/action/trigger/", trigger_process),
 
-
-    
     # ----------------- @deprecated --------------
     # path(
     #     "v0.1/documents/to-sign/",
