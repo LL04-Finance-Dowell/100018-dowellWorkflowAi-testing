@@ -144,6 +144,7 @@ def approve(request, template_id):
 
 @api_view(["POST"])
 def index_update(request):
+    print("updating the algolia index... \n")
     try:
         UpdateThreadAlgolia(request.data).start()
         return Response(status=status.HTTP_200_OK)
