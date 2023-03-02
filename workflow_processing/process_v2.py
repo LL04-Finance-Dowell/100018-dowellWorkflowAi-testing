@@ -723,14 +723,18 @@ def generate_link(document_id, doc_map, doc_rights, user, process_id, role):
 @api_view(["POST"])
 def mark_process_as_finalize_or_reject(request):
     """After access is granted and the user has made changes on a document."""
+    print("finalize or reject.. \n")
     # check if the doc is in completed state or not.
     if not request.data["company_id"] and request.data["action"] \
             and request.data["document_id"] and request.data["process_id"] and request.data["authorized"]:
         return Response("You are missing something", status=status.HTTP_400_BAD_REQUEST)
     try:
-        document = get_document_object(document_id=request.data["company_id"])
+        document = get_document_object(document_id=request.data["document_id"])
     except ConnectionError:
         return Response("Something went wrong!", status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    # check if the document is old
+    if document["workflow_process"]:
+        return Response("Use a new version of this document", status=status.HTTP_200_OK)
     # check state.
     if document["document_state"] == "completed":
         # say it is complete
