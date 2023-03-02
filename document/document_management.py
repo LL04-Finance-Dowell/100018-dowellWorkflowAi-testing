@@ -12,7 +12,7 @@ from database.mongo_db_connection import (
     get_links_object_by_process_id, delete_document
 )
 from database.mongo_db_connection_v2 import save_document
-from .thread_start import ThreadAlgolia
+from .thread_start import ThreadAlgolia,UpdateThreadAlgolia
 
 editorApi = "https://100058.pythonanywhere.com/api/generate-editor-link/"
 
@@ -313,3 +313,9 @@ def get_auth_roles(document_obj):
     for i in res_content_obj[0]:
         role_list.append(i["auth_user"])
     return role_list
+
+def document_index_update(payload):
+    try:
+        UpdateThreadAlgolia(payload).start()
+    except:
+        ThreadAlgolia(payload["_id"], get_document_object).start()

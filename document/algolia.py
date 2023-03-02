@@ -5,7 +5,7 @@ from algoliasearch.search_client import SearchClient
 client = SearchClient.create("N7KJ4AQQ7Z", "9514747f86dce7e94cc5a2d56677e8e8")
 index = client.init_index("workflow_index")
 index.set_settings(
-    {'searchableAttributes': ['document_name', 'template_name', 'workflows,workflow_title']
+    {'searchableAttributes': ['_id','document_name', 'template_name', 'workflows,workflow_title']
      })
 
 
@@ -39,3 +39,10 @@ def get_algolia_data(term, comp_id):
         'filters': filters
     })
     return results['hits']
+
+def update_from_algolia(payload):
+    data=get_algolia_data(payload['_id'], payload['company_id'])
+    payload['objectID']=data[0]['objectID']
+    index.partial_update_object(payload)
+
+
