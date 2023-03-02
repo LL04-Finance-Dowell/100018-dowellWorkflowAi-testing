@@ -12,6 +12,7 @@ import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import React from "react";
 import { createTemplate } from "../../features/template/asyncThunks";
+import { Tooltip } from "react-tooltip";
 
 const FlipMenu = () => {
   const [filpItemsToDisplay, setFlipItemsToDisplay] = useState(flipItems);
@@ -122,8 +123,10 @@ export const FlipBack = (props) => {
             onClick={() => handleClick(props.roles[index])}
             type="button"
             className={styles.flip__button}
+            id={buttonText.id}
           >
             {buttonIcons[index]}
+            <Tooltip anchorId={buttonText.id} content={buttonText.text} offset={0} />
           </button>
             })) :
         <button
@@ -153,9 +156,9 @@ export const flipItems = [
     frontBg: "#7A7A7A",
     text: "new",
     buttonTexts: [
-      "Document",
-      "Template",
-      "Workflow"
+      { id: uuidv4(), text: "Document" },
+      { id: uuidv4(), text: "Template" },
+      { id: uuidv4(), text: "Workflow" }
     ],
     roles: [
       "newDoc",
