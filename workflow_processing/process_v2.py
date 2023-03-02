@@ -724,10 +724,8 @@ def generate_link(document_id, doc_map, doc_rights, user, process_id, role):
 def mark_process_as_finalize_or_reject(request):
     """After access is granted and the user has made changes on a document."""
     # check if the doc is in completed state or not.
-    if not request.data["company_id"] \
-            and request.data["action"] \
-            and request.data["document_id"] \
-            and request.data["authorized"]:
+    if not request.data["company_id"] and request.data["action"] \
+            and request.data["document_id"] and request.data["process_id"] and request.data["authorized"]:
         return Response("You are missing something", status=status.HTTP_400_BAD_REQUEST)
     try:
         document = get_document_object(document_id=request.data["company_id"])
