@@ -143,7 +143,7 @@ def approve(request, template_id):
 
 
 @api_view(["POST"])
-def template_index_update(request):
+def index_update(request):
     try:
         UpdateThreadAlgolia(request.data).start()
         return Response(status=status.HTTP_200_OK)
