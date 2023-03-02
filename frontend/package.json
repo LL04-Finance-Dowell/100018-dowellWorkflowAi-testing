@@ -13,6 +13,7 @@
     "bootstrap": "^5.2.2",
     "framer-motion": "^7.6.7",
     "gh-pages": "^4.0.0",
+    "moment-timezone": "^0.5.41",
     "react": "^18.2.0",
     "react-bootstrap": "^2.6.0",
     "react-dom": "^18.2.0",

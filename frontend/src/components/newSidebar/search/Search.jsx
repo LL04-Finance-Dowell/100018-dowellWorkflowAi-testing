@@ -51,7 +51,7 @@ const Search = () => {
           copyOfItem.parent = "Documents";
           copyOfItem.count = documentsFound.length;
           copyOfItem.children = documentsFound.map(result => {
-            return { id: uuidv4(), child: result.document_name, searchItem: true}
+            return { id: uuidv4(), child: result.document_name, searchItem: true, href: "#", itemObj: result}
           })
           copyOfItem.isOpen = true
           return copyOfItem
@@ -61,7 +61,7 @@ const Search = () => {
           copyOfItem.parent = "Templates";
           copyOfItem.count = templatesFound.length;
           copyOfItem.children = templatesFound.map(result => {
-            return { id: uuidv4(), child: result.template_name, searchItem: true}
+            return { id: uuidv4(), child: result.template_name, searchItem: true, href: "#", itemObj: result}
           })
           copyOfItem.isOpen = true
           return copyOfItem
@@ -71,7 +71,7 @@ const Search = () => {
         copyOfItem.parent = "Workflows";
         copyOfItem.count = workflowsFound.length;
         copyOfItem.children = workflowsFound.map(result => {
-          return { id: uuidv4(), child: result.workflows?.workflow_title, searchItem: true}
+          return { id: uuidv4(), child: result.workflows?.workflow_title, searchItem: true, href: "#", itemObj: result}
         })
         copyOfItem.isOpen = true
         return copyOfItem
@@ -200,7 +200,7 @@ const Search = () => {
       </form>
       <CollapseItem listType="ol" items={searchResultItems} />
       { 
-        searchResults.length > 3 ? <div className={styles.see__All__Btn__Container}>
+        searchResultItems.length > 3 ? <div className={styles.see__All__Btn__Container}>
           <button className={styles.see__All__Btn} onClick={handleSeeMoreBtnClick}>
             See more
           </button>

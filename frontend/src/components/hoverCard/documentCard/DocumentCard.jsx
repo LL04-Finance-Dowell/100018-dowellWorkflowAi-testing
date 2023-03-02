@@ -11,6 +11,7 @@ import {
   verifyProcess,
 } from "../../../services/processServices";
 import { setEditorLink } from "../../../features/app/appSlice";
+import { timeZoneToCountryObj } from "../../../utils/timezonesObj";
 
 const DocumentCard = ({ cardItem, title }) => {
   const dispatch = useDispatch();
@@ -68,7 +69,13 @@ const DocumentCard = ({ cardItem, title }) => {
       continent: userDetail?.userinfo?.timezone?.split("/")[0],
     };
 
-    if (!dataToPost.continent) dataToPost.continent = ""
+    if (!dataToPost.continent || !dataToPost.continent?.length < 1 || !dataToPost.city || dataToPost.city?.length < 1 || !dataToPost.country || dataToPost.country?.length < 1) {
+      const userTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+      
+      dataToPost.city = userTimezone.split("/")[1];
+      dataToPost.country = timeZoneToCountryObj[userTimezone] ? timeZoneToCountryObj[userTimezone] : "";
+      dataToPost.continent = userTimezone.split("/")[0];
+    }
 
     try {
       const response = await (await verifyProcess(dataToPost)).data;

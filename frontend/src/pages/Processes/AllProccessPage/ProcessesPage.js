@@ -20,8 +20,9 @@ const ProcessesPage = ({ home, showOnlySaved, showOnlyPaused, showOnlyCancelled 
     if (showOnlySaved) navigate("#saved-processes");
     if (showOnlyPaused) navigate("#paused-processes");
     if (showOnlyCancelled) navigate("#cancelled-processes");
+    if (home) navigate('#drafts')
 
-  }, [showOnlySaved, showOnlyPaused, showOnlyCancelled])
+  }, [showOnlySaved, showOnlyPaused, showOnlyCancelled, home])
 
   useEffect(() => {
 

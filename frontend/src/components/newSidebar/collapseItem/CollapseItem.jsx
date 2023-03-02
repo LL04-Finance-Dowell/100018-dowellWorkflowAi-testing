@@ -5,10 +5,16 @@ import { HashLink } from "react-router-hash-link";
 import { IoMdArrowDropright } from "react-icons/io";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { detailTemplate } from "../../../features/template/asyncThunks";
+import { detailDocument } from "../../../features/document/asyncThunks";
+import { setToggleManageFileForm } from "../../../features/app/appSlice";
+import { detailWorkflow } from "../../../features/workflow/asyncTHunks";
+import { useDispatch } from "react-redux";
 
 function ListItem({ item }) {
   let children = null;
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   if (item.children && item.children.length) {
     console.log(item);
@@ -26,9 +32,22 @@ function ListItem({ item }) {
 
     if (!item.href) return;
 
-    if (item.type === "notification") {
-      navigate("/", { state: { elementIdToScrollTo: item.href } });
-      return;
+    if (item.searchItem && item.itemObj) {
+      const searchItemObj = item.itemObj;
+      if (searchItemObj.document_name) {
+        dispatch(detailDocument(searchItemObj._id));
+        return
+      }
+      if (searchItemObj.template_name) {
+        dispatch(detailTemplate(searchItemObj._id));
+        return
+      }
+      if (searchItemObj.workflows) {
+        dispatch(setToggleManageFileForm(true));
+        dispatch(detailWorkflow(searchItemObj._id));
+        return
+      }
+      return
     }
     navigate(item.href);
   };
@@ -39,7 +58,7 @@ function ListItem({ item }) {
         <HashLink
           className={styles.hash__link}
           to={item.href ? item.href : "#"}
-          /*  onClick={(e) => handleLinkItemClick(e, item)} */
+          onClick={(e) => handleLinkItemClick(e, item)}
         >
           {item.child}
         </HashLink>

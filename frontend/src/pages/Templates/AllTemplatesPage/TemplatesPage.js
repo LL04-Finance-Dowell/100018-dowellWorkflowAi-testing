@@ -43,7 +43,8 @@ const TemplatesPage = ({ home, showOnlySaved }) => {
 
   useEffect(() => {
     if (showOnlySaved) navigate("#saved-templates")
-  }, [showOnlySaved])
+    if (home) navigate('#drafts')
+  }, [showOnlySaved, home])
 
   console.log("allTemplatesArrayallTemplatesArray", allTemplatesArray);
 

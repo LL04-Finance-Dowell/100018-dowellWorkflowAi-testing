@@ -136,11 +136,11 @@ export const manageFileItems = [
         child: "saved workflows",
         href: "/workflows/saved",
       },
-      {
-        id: uuidv4(),
-        child: "Waiting to Process",
-        href: "/workflows/set-workflow",
-      },
+      // {
+      //   id: uuidv4(),
+      //   child: "Waiting to Process",
+      //   href: "/workflows/set-workflow",
+      // },
     ],
   },
   {
@@ -163,11 +163,11 @@ export const manageFileItems = [
         child: "cancelled processes",
         href: "/processes/cancelled",
       },
-      {
-        id: uuidv4(),
-        child: "Waiting to Process",
-        href: "/workflows/new-set-workflow",
-      },
+      // {
+      //   id: uuidv4(),
+      //   child: "Waiting to Process",
+      //   href: "/workflows/new-set-workflow",
+      // },
     ],
   },
 ];

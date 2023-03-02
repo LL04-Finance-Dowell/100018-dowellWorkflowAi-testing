@@ -194,7 +194,7 @@ export const manageFileItems = [
       { id: uuidv4(), child: "New Document", href: "/documents/#newDocument" },
       { id: uuidv4(), child: "Drafts", href: "/documents/#drafts" },
       { id: uuidv4(), child: "Created by me", href: "/documents/#createdByMe" },
-      { id: uuidv4(), child: "Waiting to Process", href: "#" },
+      // { id: uuidv4(), child: "Waiting to Process", href: "#" },
     ],
   },
   {
@@ -213,11 +213,11 @@ export const manageFileItems = [
       { id: uuidv4(), child: "New Workflow", href: "/workflows/#newWorkflow" },
       { id: uuidv4(), child: "Drafts", href: "/workflows/#drafts" },
       { id: uuidv4(), child: "Created by me", href: "/workflows/#createdByMe" },
-      {
-        id: uuidv4(),
-        child: "Waiting to Process",
-        href: "/workflows/set-workflow",
-      },
+      // {
+      //   id: uuidv4(),
+      //   child: "Waiting to Process",
+      //   href: "/workflows/set-workflow",
+      // },
     ],
   },
 ];

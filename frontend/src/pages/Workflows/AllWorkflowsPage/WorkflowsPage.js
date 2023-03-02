@@ -41,7 +41,8 @@ const WorkflowsPage = ({ home, showOnlySaved }) => {
 
   useEffect(() => {
     if (showOnlySaved) navigate("#saved-workflows")
-  }, [showOnlySaved])
+    if (home) navigate('#drafts')
+  }, [showOnlySaved, home])
 
   console.log("wwwwwwwwwwwwwwwwwwwwwwwwwwwwww", allWorkflowsArray);
 

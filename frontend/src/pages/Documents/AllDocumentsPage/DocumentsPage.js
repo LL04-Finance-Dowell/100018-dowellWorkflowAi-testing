@@ -40,7 +40,8 @@ const DocumentsPage = ({ home, showOnlySaved }) => {
 
   useEffect(() => {
     if (showOnlySaved) navigate("#saved-documents")
-  }, [showOnlySaved])
+    if (home) navigate('#drafts')
+  }, [showOnlySaved, home])
 
   console.log("aaaaaaaaaaa", allDocumentsArray);
 

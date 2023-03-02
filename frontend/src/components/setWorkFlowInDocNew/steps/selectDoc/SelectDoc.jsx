@@ -80,7 +80,7 @@ const SelectDoc = () => {
               {allDocumentsArray &&
                 allDocumentsArray.length &&
                 allDocumentsArray.length > 0 &&
-                [...allDocumentsArray]?.reverse().map((item, index) => (
+                [...allDocumentsArray]?.map((item, index) => (
                   <SwiperSlide key={item._id}>
                     <div className={styles.swiper__slide__box}>
                       <div
