@@ -9,7 +9,8 @@ from rest_framework.response import Response
 from database.mongo_db_connection import (
     get_document_object,
     get_document_list,
-    get_links_object_by_process_id, delete_document
+    get_links_object_by_process_id,
+    delete_document,
 )
 from database.mongo_db_connection_v2 import save_document
 from .thread_start import ThreadAlgolia, UpdateThreadAlgolia
@@ -58,7 +59,7 @@ def create_document(request):  # Document Creation.
                 state="draft",
                 auth_viewers=viewers,
                 document_type="original",
-                parent_id=None
+                parent_id=None,
             )
         )
         if res["isSuccess"]:
@@ -111,9 +112,7 @@ def create_document(request):  # Document Creation.
 def get_document_content(request, document_id):
     print("Getting document content \n")
     content = []
-    my_dict = ast.literal_eval(
-        get_document_object(document_id)["content"]
-    )[0][0]
+    my_dict = ast.literal_eval(get_document_object(document_id)["content"])[0][0]
     all_keys = [i for i in my_dict.keys()]
     for i in all_keys:
         temp_list = []
@@ -167,16 +166,9 @@ def document_detail(request, document_id):  # Single document
 def archive_document(request, document_id):
     try:
         delete_document(document_id)
-        return Response("Document Added to trash", status=status.HTTP_200_OK, )
+        return Response(
+            "Document Added to trash",
+            status=status.HTTP_200_OK,
+        )
     except ConnectionError:
         return Response("Failed to add to trash", status=status.HTTP_200_OK)
-
-
-@api_view(["POST"])
-def document_index_update(request):
-    payload = request.data
-    try:
-        UpdateThreadAlgolia(payload).start()
-    except RuntimeError:
-        ThreadAlgolia(payload["_id"], get_document_object).start()
-    return Response(status=status.HTTP_200_OK)

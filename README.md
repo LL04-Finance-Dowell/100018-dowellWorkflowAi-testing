@@ -598,6 +598,26 @@ Response-200
 }
 ```
 
+_POST_ `documents/editor_payload/`
+
+Request Body
+
+```
+{
+    "data": "payload from editor",
+    
+}
+```
+_POST_ `templates/editor_payload/`
+
+Request Body
+
+```
+{
+    "data": "payload from editor",
+    
+}
+```
 ### Technologies Used
 
 * [Python](https://nodejs.org/) is a programming language that lets you work more quickly and integrate your systems
@@ -613,3 +633,4 @@ Response-200
 
 This project is available for use under
 the [Apache](https://github.com/LL04-Finance-Dowell/100018-dowellWorkflowAi-testing/blob/main/LICENSE) License.
+

@@ -133,12 +133,12 @@ def archive_template(request, template_id):
 
 @api_view(["GET"])
 def approve(request, template_id):
-    response = json.loads(
-        update_template_approval(template_id, approval=True)
-    )
+    response = json.loads(update_template_approval(template_id, approval=True))
     if not response["isSuccess"]:
         return Response(
-            "Template Could not be Approved.", status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            "Template Could not be Approved.",
+            status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+        )
     return Response({"message": "Template Approved."}, status=status.HTTP_200_OK)
 
 
