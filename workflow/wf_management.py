@@ -14,7 +14,7 @@ from database.mongo_db_connection import (
 
 )
 
-from document.thread_start import ThreadAlgolia,UpdateThreadAlgolia
+from document.thread_start import ThreadAlgolia, UpdateThreadAlgolia
 
 
 @api_view(["GET"])
@@ -160,30 +160,39 @@ def archive_workflow(request, workflow_id):
         return Response("Failed to add workflow to trash", status=status.HTTP_200_OK)
 
 
-# ------------- @deprecated --------------
-@api_view(["POST"])
-def my_workflows(request):  # List of my documents.
-    filtered_list = []
-    created_by = request.data["created_by"]
-    company_id = request.data["company_id"]
-    workflows = get_wf_list(company_id)
-    if not workflows:
-        return Response(
-            {
-                "workflow": [],
-                "message": "There is no Workflow created by This user.",
-            },
-            status=status.HTTP_200_OK,
-        )
-    else:
-        for wf in workflows:
-            if wf["created_by"] == created_by:
-                filtered_list.append(wf)
+def workflow_index_update(payload):
+    try:
+        UpdateThreadAlgolia(payload).start()
+    except:
+        ThreadAlgolia(payload["_id"], get_wf_object).start()
 
-    return Response(
-        {"workflow": filtered_list, "title": "My Workflows"},
-        status=status.HTTP_200_OK,
-    )
+
+# ---------- DONT! add any new code below this message ------------
+# --------------------------------------------------------------------
+# ------------------------@Deprecated APIs -------------------
+# @api_view(["POST"])
+# def my_workflows(request):  # List of my documents.
+#     filtered_list = []
+#     created_by = request.data["created_by"]
+#     company_id = request.data["company_id"]
+#     workflows = get_wf_list(company_id)
+#     if not workflows:
+#         return Response(
+#             {
+#                 "workflow": [],
+#                 "message": "There is no Workflow created by This user.",
+#             },
+#             status=status.HTTP_200_OK,
+#         )
+#     else:
+#         for wf in workflows:
+#             if wf["created_by"] == created_by:
+#                 filtered_list.append(wf)
+#
+#     return Response(
+#         {"workflow": filtered_list, "title": "My Workflows"},
+#         status=status.HTTP_200_OK,
+#     )
 
 
 @api_view(["POST"])
@@ -198,8 +207,3 @@ def saved_workflows(request):
             {"workflows": [], "title": "No Workflow Found"},
             status=status.HTTP_200_OK,
         )
-def workflow_index_update(payload):
-    try:
-        UpdateThreadAlgolia(payload).start()
-    except:
-        ThreadAlgolia(payload["_id"], get_wf_object).start()

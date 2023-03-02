@@ -1,6 +1,6 @@
 import json
 import requests
-from .thread_start import ThreadAlgolia,UpdateThreadAlgolia
+from .thread_start import ThreadAlgolia, UpdateThreadAlgolia
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
@@ -142,104 +142,106 @@ def approve(request, template_id):
     return Response({"message": "Template Approved."}, status=status.HTTP_200_OK)
 
 
-# -------------- @deprecated -----------------------
-@api_view(["GET", "POST"])
-def approved(request):
-    templates = get_template_list(company_id=request.data["company_id"])
-    if not template_list:
-        return Response(
-            {"message": "Could not fetch your approved templates at this time"},
-            status=status.HTTP_500_INTERNAL_SERVER_ERROR,
-        )
-    templates = [
-        t
-        for t in template_list
-        if t.get("approved") == True
-           and t.get("created_by") == request.data["created_by"]
-           and t.get("data_type") == request.data["data_type"]
-    ]
-    if not templates:
-        return Response(
-            {"message": "You have no approved templates"},
-            status=status.HTTP_404_NOT_FOUND,
-        )
-    return Response(templates, status=status.HTTP_200_OK)
-
-
-@api_view(["POST"])
-def not_approved_templates(request):  # List of Templates to be approved.
-    template_list = get_template_list(company_id=request.data["company_id"])
-    if not template_list:
-        return Response(
-            {"message": "Could not fetch templates at this time."},
-            status=status.HTTP_500_INTERNAL_SERVER_ERROR,
-        )
-    templates = [
-        t
-        for t in template_list
-        if t.get("approved") == False
-           and t.get("created_by") == request.data["created_by"]
-           and t.get("data_type") == request.data["data_type"]
-    ]
-    if not templates:
-        return Response(
-            {"message": "You have no pending templates to approved"},
-            status=status.HTTP_404_NOT_FOUND,
-        )
-    return Response(templates, status=status.HTTP_200_OK)
-
-
-@api_view(["POST"])
-def template_list(request):  # List of Created Templates.
-    template_list = get_template_list(company_id=request.data["company_id"])
-    if not template_list:
-        return Response(
-            {"message": "Could not fetch templates at this time."},
-            status=status.HTTP_500_INTERNAL_SERVER_ERROR,
-        )
-    templates = [
-        t
-        for t in template_list
-        if t.get("created_by") == request.data["created_by"]
-           and t.get("data_type") == request.data["data_type"]
-    ]
-    if not templates:
-        return Response(
-            {"message": "You have not created any templates"},
-            status=status.HTTP_404_NOT_FOUND,
-        )
-    return Response(
-        templates,
-        status=status.HTTP_200_OK,
-    )
-
-
-@api_view(["POST"])
-def org_templates(request):  # List of Created Templates.
-    template_list = get_template_list(company_id=request.data["company_id"])
-    if not template_list:
-        return Response(
-            {"message": "Could not fetch templates at this time."},
-            status=status.HTTP_500_INTERNAL_SERVER_ERROR,
-        )
-    templates = [
-        t
-        for t in template_list
-        if t.get("company_id") == request.data["company_id"]
-        # and t.get("data_type") == request.data["data_type"]
-    ]
-    if not templates:
-        return Response(
-            {"message": "No created templates in organization"},
-            status=status.HTTP_404_NOT_FOUND,
-        )
-    return Response(
-        templates,
-        status=status.HTTP_200_OK,
-    )
-
 def template_index_update(payload):
     try:
         UpdateThreadAlgolia(payload).start()
-    except:
+    except RuntimeError:
         ThreadAlgolia(payload["_id"], get_template_object).start()
+
+# ---------- DONT! add any new code below this message ------------
+# --------------------------------------------------------------------
+# ------------------------@Deprecated APIs -------------------
+# @api_view(["GET", "POST"])
+# def approved(request):
+#     templates = get_template_list(company_id=request.data["company_id"])
+#     if not template_list:
+#         return Response(
+#             {"message": "Could not fetch your approved templates at this time"},
+#             status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+#         )
+#     templates = [
+#         t
+#         for t in template_list
+#         if t.get("approved") == True
+#            and t.get("created_by") == request.data["created_by"]
+#            and t.get("data_type") == request.data["data_type"]
+#     ]
+#     if not templates:
+#         return Response(
+#             {"message": "You have no approved templates"},
+#             status=status.HTTP_404_NOT_FOUND,
+#         )
+#     return Response(templates, status=status.HTTP_200_OK)
+#
+#
+# @api_view(["POST"])
+# def not_approved_templates(request):  # List of Templates to be approved.
+#     template_list = get_template_list(company_id=request.data["company_id"])
+#     if not template_list:
+#         return Response(
+#             {"message": "Could not fetch templates at this time."},
+#             status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+#         )
+#     templates = [
+#         t
+#         for t in template_list
+#         if t.get("approved") == False
+#            and t.get("created_by") == request.data["created_by"]
+#            and t.get("data_type") == request.data["data_type"]
+#     ]
+#     if not templates:
+#         return Response(
+#             {"message": "You have no pending templates to approved"},
+#             status=status.HTTP_404_NOT_FOUND,
+#         )
+#     return Response(templates, status=status.HTTP_200_OK)
+#
+#
+# @api_view(["POST"])
+# def template_list(request):  # List of Created Templates.
+#     template_list = get_template_list(company_id=request.data["company_id"])
+#     if not template_list:
+#         return Response(
+#             {"message": "Could not fetch templates at this time."},
+#             status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+#         )
+#     templates = [
+#         t
+#         for t in template_list
+#         if t.get("created_by") == request.data["created_by"]
+#            and t.get("data_type") == request.data["data_type"]
+#     ]
+#     if not templates:
+#         return Response(
+#             {"message": "You have not created any templates"},
+#             status=status.HTTP_404_NOT_FOUND,
+#         )
+#     return Response(
+#         templates,
+#         status=status.HTTP_200_OK,
+#     )
+#
+#
+# @api_view(["POST"])
+# def org_templates(request):  # List of Created Templates.
+#     template_list = get_template_list(company_id=request.data["company_id"])
+#     if not template_list:
+#         return Response(
+#             {"message": "Could not fetch templates at this time."},
+#             status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+#         )
+#     templates = [
+#         t
+#         for t in template_list
+#         if t.get("company_id") == request.data["company_id"]
+#         # and t.get("data_type") == request.data["data_type"]
+#     ]
+#     if not templates:
+#         return Response(
+#             {"message": "No created templates in organization"},
+#             status=status.HTTP_404_NOT_FOUND,
+#         )
+#     return Response(
+#         templates,
+#         status=status.HTTP_200_OK,
+#     )
