@@ -15,7 +15,6 @@ from pathlib import Path
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
 
@@ -26,7 +25,6 @@ SECRET_KEY = "django-insecure-)_w-=ulkg8#7(q1^b&2+!+n%+b)8v$%wfq_mm6a+t!k7g9c$tk
 DEBUG = True
 
 ALLOWED_HOSTS = ["*"]
-
 
 # Application definition
 
@@ -77,7 +75,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "workflow_ai_core.wsgi.application"
 
-
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
@@ -87,7 +84,6 @@ DATABASES = {
         "NAME": BASE_DIR / "db.sqlite3",
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/4.1/ref/settings/#auth-password-validators
@@ -107,7 +103,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/4.1/topics/i18n/
 
@@ -118,7 +113,6 @@ TIME_ZONE = "UTC"
 USE_I18N = True
 
 USE_TZ = True
-
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.1/howto/static-files/
@@ -144,32 +138,7 @@ EMAIL_USE_TLS = True
 EMAIL_HOST_USER = "docs@dowellresearch.sg"
 EMAIL_HOST_PASSWORD = "jpcjzsnzarucochh"
 
-MEDIA_URL = "/media/"
-MEDIA_ROOT = Path(BASE_DIR / "media")
+# Media files
 
-
-# LOGGING = {
-#     "version": 1,
-#     # The version number of our log
-#     "disable_existing_loggers": False,
-#     # django uses some of its own loggers for internal operations. In case you want to disable them just replace the False above with true.
-#     # A handler for WARNING. It is basically writing the WARNING messages into a file called WARNING.log
-#     "handlers": {
-#         "file": {
-#             "level": "WARNING",
-#             "class": "logging.FileHandler",
-#             "filename": BASE_DIR / "warning.log",
-#         },
-#     },
-#     # A logger for WARNING which has a handler called 'file'. A logger can have multiple handler
-#     "loggers": {
-#         # notice the blank '', Usually you would put built in loggers like django or root here based on your needs
-#         "": {
-#             "handlers": [
-#                 "file", 
-#             ],  # notice how file variable is called in handler which has been defined above
-#             "level": "WARNING",
-#             "propagate": True,
-#         },
-#     },
-# }
+MEDIA_ROOT = BASE_DIR / 'media'
+MEDIA_URL = '/media/'
