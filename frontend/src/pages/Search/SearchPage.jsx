@@ -19,17 +19,22 @@ import styles from "./style.module.css";
 
 const SearchPage = () => {
     const [ searchResults, setSearchResults ] = useState([]);
+    const [ searchResultsToDisplay, setSearchResultsToDisplay ] = useState([]);
     const { state } = useLocation();
     const [ currentSearch, setCurrentSearch ] = useState("");
     const  [ searchLoading, setSearchLoading ] = useState(false);
     const { userDetail } = useSelector((state) => state.auth);
+    const [ currentSearchOption, setCurrentSearchOption ] = useState(searchCategories.all);
     const dispatch = useDispatch();
 
     useEffect(() => {
     
         if (!state) return
 
-        if (state.searchResults) setSearchResults(state.searchResults)
+        if (state.searchResults) {
+            setSearchResults(state.searchResults)
+            setSearchResultsToDisplay(state.searchResults)
+        }
         if (state.searchItem) setCurrentSearch(state.searchItem)
     
     }, [state])
@@ -60,6 +65,7 @@ const SearchPage = () => {
 
     const handleSearchInputChange = (value) => {
         setCurrentSearch(value)
+        if (value.length < 1) return
         setSearchLoading(true);
     }
 
@@ -83,10 +89,38 @@ const SearchPage = () => {
 
     }, [searchLoading])
 
+    useEffect(() => {
+
+        const currentSearchResults = searchResults.slice();
+
+        switch (currentSearchOption) {
+            case searchCategories.all:
+                setSearchResultsToDisplay(currentSearchResults)
+                break;
+            
+            case searchCategories.documents:
+                setSearchResultsToDisplay(currentSearchResults.filter(searchResultItem => searchResultItem.document_name))
+                break;
+            
+            case searchCategories.templates:
+                setSearchResultsToDisplay(currentSearchResults.filter(searchResultItem => searchResultItem.template_name))
+                break;
+            
+            case searchCategories.workflows:
+                setSearchResultsToDisplay(currentSearchResults.filter(searchResultItem => searchResultItem.workflows))
+                break;
+
+            default:
+                console.log("Invalid search option")
+                break;
+        }
+
+    }, [currentSearchOption, searchResults])
+
     return <>
         <WorkflowLayout>
             <div className={styles.search__Page__Container}>
-                <ManageFiles title="Search" contentBoxClassName={styles.search__Manage__Files__Content}>
+                <ManageFiles title="Search for Documents, Templates and Workflows" contentBoxClassName={styles.search__Manage__Files__Content} removePageSuffix={true}>
                     <form onSubmit={(e) => e.preventDefault()} className={styles.search__box}>
                         <button type="submit">
                         {
@@ -104,45 +138,75 @@ const SearchPage = () => {
                             searchLoading ? <p>Please wait...</p> :
 
                             currentSearch.length < 1 ? <></> :
+                            
+                            <>
+                                <div className={styles.mini__Select__Row}>
+                                    <label>
+                                        <input type={"radio"} checked={currentSearchOption === searchCategories.all ? true : false} value={searchCategories.all} onChange={(e) => setCurrentSearchOption(e.target.value)} />
+                                        All
+                                    </label>
+                                    <label>
+                                        <input type={"radio"} checked={currentSearchOption === searchCategories.documents ? true : false} value={searchCategories.documents} onChange={(e) => setCurrentSearchOption(e.target.value)} />
+                                        Documents
+                                    </label>
+                                    <label>
+                                        <input type={"radio"} checked={currentSearchOption === searchCategories.templates ? true : false} value={searchCategories.templates} onChange={(e) => setCurrentSearchOption(e.target.value)} />
+                                        Templates
+                                    </label>
+                                    <label>
+                                        <input type={"radio"} checked={currentSearchOption === searchCategories.workflows ? true : false} value={searchCategories.workflows} onChange={(e) => setCurrentSearchOption(e.target.value)} />
+                                        Workflows
+                                    </label>
+                                </div>
 
-                            searchResults.length < 1 ? <p>No items found matching {currentSearch}</p> : <>
                                 {
-                                    React.Children.toArray(searchResults.map(searchResultItem => {
-                                        return <button id={searchResultItem._id} onClick={() => handleSearchItemClick(searchResultItem)}>
-                                        <span className={styles.search__Item__Info}>
-                                            { 
-                                                searchResultItem.document_name ? "Document" :
-                                                searchResultItem.template_name ? "Template" :
-                                                searchResultItem.workflows ? "Workflow" :
-                                                ""
-                                            }
-                                        </span>
-                                        <span>
-                                            { 
-                                                searchResultItem.document_name ? 
-                                                    searchResultItem.document_name
-                                                :
-                                                searchResultItem.template_name ? 
-                                                    searchResultItem.template_name
-                                                :
-                                                searchResultItem.workflows ?
-                                                    searchResultItem.workflows?.workflow_title
-                                                :
-                                                ""
-                                            }
-                                            <Tooltip
-                                                anchorId={searchResultItem._id} 
-                                                content={
-                                                    searchResultItem.document_name ? searchResultItem.document_name :
-                                                    searchResultItem.template_name ? searchResultItem.template_name :
-                                                    searchResultItem.workflows?.workflow_title ? searchResultItem.workflows?.workflow_title :
-                                                    ""
-                                                } 
-                                                place="top" 
-                                            />
-                                        </span>
-                                        </button>
-                                    }))
+                                    searchResultsToDisplay.length < 1 ? <p>No {currentSearchOption === searchCategories.all ? "items" : currentSearchOption} found matching {currentSearch}</p> : <>
+                                    {
+                                        React.Children.toArray(searchResultsToDisplay.map(searchResultItem => {
+                                            return <button id={searchResultItem._id} onClick={() => handleSearchItemClick(searchResultItem)}>
+                                                <span className={
+                                                    `${styles.search__Item__Info} 
+                                                    ${
+                                                        searchResultItem.document_name ? styles.search__Item__Doc : 
+                                                        searchResultItem.template_name ? styles.search__Item__Temp : 
+                                                        searchResultItem.workflows ? styles.search__Item__Workf : ''
+                                                    }`
+                                                }>
+                                                    { 
+                                                        searchResultItem.document_name ? "Document" :
+                                                        searchResultItem.template_name ? "Template" :
+                                                        searchResultItem.workflows ? "Workflow" :
+                                                        ""
+                                                    }
+                                                </span>
+                                                <span>
+                                                    { 
+                                                        searchResultItem.document_name ? 
+                                                            searchResultItem.document_name
+                                                        :
+                                                        searchResultItem.template_name ? 
+                                                            searchResultItem.template_name
+                                                        :
+                                                        searchResultItem.workflows ?
+                                                            searchResultItem.workflows?.workflow_title
+                                                        :
+                                                        ""
+                                                    }
+                                                    <Tooltip
+                                                        anchorId={searchResultItem._id} 
+                                                        content={
+                                                            searchResultItem.document_name ? searchResultItem.document_name :
+                                                            searchResultItem.template_name ? searchResultItem.template_name :
+                                                            searchResultItem.workflows?.workflow_title ? searchResultItem.workflows?.workflow_title :
+                                                            ""
+                                                        } 
+                                                        place="top" 
+                                                    />
+                                                </span>
+                                                </button>
+                                        }))
+                                    }
+                                    </>
                                 }
                             </>
                         }
@@ -154,3 +218,10 @@ const SearchPage = () => {
 }
 
 export default SearchPage;
+
+const searchCategories = {
+    documents: "documents",
+    templates: "templates",
+    workflows: "workflows",
+    all: "all",
+}

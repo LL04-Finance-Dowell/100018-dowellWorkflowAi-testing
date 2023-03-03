@@ -45,13 +45,40 @@
 }
 
 .minified__Search__Container button span.search__Item__Info {
-    background-color: var(--e-global-color-accent);
     border-radius: 15px;
     padding: 3px 10px;
     color: var(--e-global-color-cd6593d);
 }
 
+.minified__Search__Container button span.search__Item__Doc {
+    background-color: var(--e-global-color-accent);
+}
+
+.minified__Search__Container button span.search__Item__Temp {
+    background-color: var(--e-global-color-62c33d9);
+}
+
+.minified__Search__Container button span.search__Item__Workf {
+    background-color: var(--e-global-color-1342d1f);
+}
+
 .minified__Search__Container p {
     text-align: center;
     margin: 12px 0 20px;
+}
+
+.mini__Select__Row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 80%;
+    margin: 0 auto;
+}
+
+.mini__Select__Row label {
+    cursor: pointer;
+}
+
+.mini__Select__Row label input {
+    margin-right: 0.5rem;
 }
