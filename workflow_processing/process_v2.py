@@ -1,6 +1,9 @@
 import json
+import uuid
 import jwt
+import qrcode
 import requests
+from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime
 from threading import Thread
 from rest_framework.decorators import api_view
@@ -15,11 +18,13 @@ from database.mongo_db_connection_v2 import (
     save_wf_process,
     update_document,
     update_document_clone,
-    document_finalize
+    document_finalize,
+    update_document_viewers,
+    save_process_qrcodes
 )
 
 editor_api = "https://100058.pythonanywhere.com/api/generate-editor-link/"
-notification_api = "http://100092.pythonanywhere.com/api/get-notification/"
+notification_api = "https://100092.pythonanywhere.com/api/get-notification/"
 
 
 @api_view(["POST"])
@@ -39,7 +44,7 @@ def document_processing(request):
             data_type=request.data["data_type"],
             document_id=clone_document(
                 document_id=request.data["parent_document_id"],
-                creator=request.data["created_by"],
+                auth_viewer=None,
                 parent_id=request.data["parent_document_id"]
             ),
             process_choice=choice,
@@ -70,7 +75,7 @@ def document_processing(request):
             data_type=request.data["data_type"],
             document_id=clone_document(
                 document_id=request.data["parent_document_id"],
-                creator=request.data["created_by"],
+                auth_viewer=None,
                 parent_id=request.data["parent_document_id"]
             ),
             process_choice=choice,
@@ -100,7 +105,7 @@ def document_processing(request):
             data_type=request.data["data_type"],
             document_id=clone_document(
                 document_id=request.data["parent_document_id"],
-                creator=request.data["created_by"],
+                auth_viewer=None,
                 parent_id=request.data["parent_document_id"]
             ),
             process_choice=choice,
@@ -130,7 +135,7 @@ def document_processing(request):
             data_type=request.data["data_type"],
             document_id=clone_document(
                 document_id=request.data["parent_document_id"],
-                creator=request.data["created_by"],
+                auth_viewer=None,
                 parent_id=request.data["parent_document_id"]
             ),
             process_choice=choice,
@@ -160,7 +165,7 @@ def document_processing(request):
             data_type=data_type,
             document_id=clone_document(
                 document_id=request.data["parent_document_id"],
-                creator=request.data["created_by"],
+                auth_viewer=None,
                 parent_id=request.data["parent_document_id"]
             ),
             process_choice=choice,
@@ -190,7 +195,7 @@ def document_processing(request):
             data_type=data_type,
             document_id=clone_document(
                 document_id=request.data["parent_document_id"],
-                creator=request.data["created_by"],
+                auth_viewer=None,
                 parent_id=request.data["parent_document_id"]
             ),
             process_choice=choice,
@@ -220,7 +225,7 @@ def document_processing(request):
             data_type=data_type,
             document_id=clone_document(
                 document_id=request.data["parent_document_id"],
-                creator=request.data["created_by"],
+                auth_viewer=None,
                 parent_id=request.data["parent_document_id"]
             ),
             process_choice=choice,
@@ -268,22 +273,25 @@ def document_processing(request):
     return Response("Something went wrong!", status=status.HTTP_400_BAD_REQUEST)
 
 
-def clone_document(document_id, creator, parent_id):
+def clone_document(document_id, auth_viewer, parent_id):
     print("Creating a document clone... \n")
     try:
         document = get_document_object(document_id)
         # create new doc
-        viewers = [creator]
+        if auth_viewer is None:
+            auth = ""
+        else:
+            auth = auth_viewer
         save_res = json.loads(
             save_document(
-                name=document["document_name"] + creator,
+                name=document["document_name"] + "-" + auth,
                 data=document["content"],
                 page=document["page"],
                 created_by=document["created_by"],
                 company_id=document["company_id"],
                 data_type=document["data_type"],
                 state="processing",
-                auth_viewers=viewers,
+                auth_viewers=[auth],
                 document_type="clone",
                 parent_id=parent_id
             )
@@ -297,6 +305,21 @@ def clone_document(document_id, creator, parent_id):
 def new_process(
         workflows, created_by, company_id, data_type, document_id, process_choice, creator_portfolio
 ):
+    """
+    Structures a process entry to persistent storage
+
+    Args:
+        workflows (dict): a dictionary containing workflow info
+        company_id (str): org object id where the process belongs
+        data_type (str): env of accessing the wfAI app
+        process_choice (str): selected choice to process
+        creator_portfolio (str): portfolio of the process creator
+        created_by (str): process username
+        document_id (str): parent document object id
+
+    Returns:
+        a structured process.
+    """
     print("creating process.......... \n")
     process_steps = [
         step for workflow in workflows for step in workflow["workflows"]["steps"]
@@ -332,66 +355,109 @@ def new_process(
 
 # Begin processing the Workflow.
 def start_processing(process):
-    print("Generating links.............\n")
+    """
+    Generate links and qrcodes for each member in the process steps, update the auth viewer of the process document
+    with first step users in the process steps, and update the processing state of the process.
+
+    Args:
+        process (dict): A dictionary containing information about the process.
+
+    Returns:
+        Response: A JSON response containing the generated links, or an error message.
+    """
     links = []
+    qrcodes = []
+    auth_viewers_set = set()
+
+    # generate links for each member in each step
     for step in process["process_steps"]:
-        # create a link for everyone
-        if step.get("stepTeamMembers"):
-            for tm in step.get("stepTeamMembers"):
-                links.append({tm["member"]: verification_link(
-                    process_id=process["_id"],
-                    document_id=process["parent_document_id"],
-                    step_role=step.get("stepRole"),
-                    auth_name=tm["member"],
-                    auth_portfolio=tm["portfolio"]
-                )})
+        if step.get("stepNumber") == 1:
+            members = step.get("stepTeamMembers", []) + step.get("stepPublicMembers", []) + step.get("stepUserMembers",
+                                                                                                     [])
+            auth_viewers_set.update([member["member"] for member in members])
 
-        if step.get("stepPublicMembers"):
-            for pm in step.get("stepPublicMembers"):
-                links.append({pm["member"]: verification_link(
-                    process_id=process["_id"],
-                    document_id=process["parent_document_id"],
-                    step_role=step.get("stepRole"),
-                    auth_name=pm["member"],
-                    auth_portfolio=pm["portfolio"]
-                )})
+        links += [{member["member"]: verification_link(process_id=process["_id"],
+                                                       document_id=process["parent_document_id"],
+                                                       step_role=step.get("stepRole"),
+                                                       auth_name=member["member"],
+                                                       auth_portfolio=member["portfolio"]
+                                                       )} for member in step.get("stepTeamMembers", [])
+                  + step.get("stepPublicMembers", []) + step.get("stepUserMembers", [])]
 
-        if step.get("stepUserMembers"):
-            for um in step.get("stepUserMembers"):
-                links.append({um["member"]: verification_link(
-                    process_id=process["_id"],
-                    document_id=process["parent_document_id"],
-                    step_role=step.get("stepRole"),
-                    auth_name=um["member"],
-                    auth_portfolio=um["portfolio"]
-                )})
-    # Save Links -
+        qrcodes += [{member["member"]: process_qrcode(process_id=process["_id"],
+                                                      document_id=process["parent_document_id"],
+                                                      step_role=step.get("stepRole"),
+                                                      auth_name=member["member"],
+                                                      auth_portfolio=member["portfolio"]
+                                                      )} for member in step.get("stepTeamMembers", [])
+                    + step.get("stepPublicMembers", []) + step.get("stepUserMembers", [])]
+
+    # update authorized viewers for the parent document
+    auth_data = {"document_id": process["parent_document_id"], "auth_viewers": list(auth_viewers_set)}
+    at = ThreadPoolExecutor().submit(update_document_authorize, auth_data)
+
+    # save links
     data = {
         "links": links,
         "process_id": process["_id"],
         "document_id": process["parent_document_id"],
-        "process_choice": process["processing_action"],
-        "company_id": process["company_id"],
-        "process_title": process["process_title"],
+        "process_choice": process["company_id"],
+        "process_title": process["process_title"]
     }
-    t = Thread(target=save_links_v2, args=(data,))
-    t.start()
-    # update process state
+    t = ThreadPoolExecutor().submit(save_links_v2, data)
+
+    # save qrcodes
+    code_data = {
+        "qrcodes": qrcodes,
+        "process_id": process["_id"],
+        "document_id": process["parent_document_id"],
+        "process_choice": process["company_id"],
+        "process_title": process["process_title"]
+    }
+    c = ThreadPoolExecutor().submit(save_qrcodes, code_data)
+
+    # update processing state of the process
     if get_process_object(workflow_process_id=process["_id"])["processing_state"] == "draft":
         process_data = {
             "process_id": process["_id"],
             "process_steps": process["process_steps"],
             "processing_state": "processing"
         }
-        pt = Thread(target=process_update, args=(process_data,))
-        pt.start()
-    if len(links) > 0:
-        return Response(links, status=status.HTTP_200_OK)
-    return Response("Something went wrong!", status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        pt = ThreadPoolExecutor().submit(process_update, process_data)
+
+    # return generated links
+    if links and qrcodes:
+        return Response({"links": links, "qrcodes": qrcodes}, status=status.HTTP_200_OK)
+    else:
+        raise Exception("Failed to generate links for the given process.")
+
+
+def update_document_authorize(data):
+    print("Updating the document with auth viewers \n")
+    try:
+        update_document_viewers(document_id=data["document_id"], auth_viewers=data["auth_viewers"])
+        print("Thread: Doc Authorize \n")
+    except ConnectionError:
+        print("Fail: doc auth thread \n")
+        return
 
 
 def verification_link(process_id, document_id, step_role, auth_name, auth_portfolio):
+    """
+    Create a JWT encoded unique verification link
+
+    Args:
+        process_id (str): the object id of the process
+        document_id(str): the object id of the document
+        step_role(str): the authorized step role.
+        auth_name(str): the authorized username.
+        auth_portfolio(str): the authorized user portfolio
+
+    Returns:
+        A unique verification link with the jwt hash
+    """
     print("creating verification links........... \n")
+
     # create a jwt token
     hash_token = jwt.encode(
         json.loads(json.dumps({
@@ -402,27 +468,73 @@ def verification_link(process_id, document_id, step_role, auth_name, auth_portfo
             "auth_portfolio": auth_portfolio
         })), "secret", algorithm="HS256"
     )
+
     # setup notification
-    data = {
-        "username": auth_name,
-    }
-    nt = Thread(target=notification, args=(data,))
-    nt.start()
+    data = {"username": auth_name}
+    nt = ThreadPoolExecutor().submit(notification, data)
     return f"https://ll04-finance-dowell.github.io/100018-dowellWorkflowAi-testing/#/verify/{hash_token}/"
 
 
-# Hit notification API
+def process_qrcode(process_id, document_id, step_role, auth_name, auth_portfolio):
+    """
+    Generates a qrcode for the data provided and stores the qrcodes
+
+    Args:
+        process_id (str): the object id of the process
+        document_id(str): the object id of the document
+        step_role(str): the authorized step role.
+        auth_name(str): the authorized username.
+        auth_portfolio(str): the authorized user portfolio
+
+    Returns:
+        qrcode link based on that data.
+    """
+    print("generating qrcodes .... \n")
+    # create a jwt token
+    hash_token = jwt.encode(
+        json.loads(json.dumps({
+            "process_id": process_id,
+            "document_id": document_id,
+            "step_role": step_role,
+            "auth_name": auth_name,
+            "auth_portfolio": auth_portfolio
+        })), "secret", algorithm="HS256"
+    )
+    qr_path = f"media/qrcodes/{uuid.uuid4().hex}.png"
+    qr_url = f"https://100094.pythonanywhere.com/{qr_path}"
+    qr_code = qrcode.QRCode(error_correction=qrcode.constants.ERROR_CORRECT_H)
+
+    # taking url or text
+    url = f"https://ll04-finance-dowell.github.io/100018-dowellWorkflowAi-testing/#/verify/{hash_token}/"
+
+    # adding URL or text to QRcode
+    qr_code.add_data(url)
+
+    # generating QR code
+    qr_code.make()
+
+    # taking color name from user
+    qr_color = "black"
+
+    # adding color to QR code
+    qr_img = qr_code.make_image(fill_color=qr_color, back_color="#DCDCDC")
+
+    qr_img.save(qr_path)
+
+    return qr_url
+
+
 def notification(data):
-    payload = json.dumps({
-        "product_id": "99",
-        "username": data["auth_name"],
-        "product_name": "Workflow AI",
-        "title": "Document to Sign",
-        "message": "You have a document to sign"
-    })
-    headers = {"Content-Type": "application/json"}
+    """post notifications for extension."""
+    print("creating a notification.......  \n")
     try:
-        res = requests.post(url=notification_api, data=payload, headers=headers)
+        res = requests.post(url=notification_api, data=json.dumps({
+            "product_id": "99",
+            "username": data["auth_name"],
+            "product_name": "Workflow AI",
+            "title": "Document to Sign",
+            "message": "You have a document to sign"
+        }), headers={"Content-Type": "application/json"})
         if res.status_code == 201:
             print("Thread: Sent Notification \n")
         else:
@@ -447,6 +559,23 @@ def save_links_v2(data):
         print("Thread: Process Link Save! \n")
     except ConnectionError:
         print("Fail: link saving thread! \n")
+        return
+
+
+def save_qrcodes(data):
+    print("saving process qrcodes........ \n")
+    try:
+        save_process_qrcodes(
+            qrcodes=data["qrcodes"],
+            process_id=data["process_id"],
+            document_id=data["document_id"],
+            processing_choice=data["process_choice"],
+            process_title=data["process_title"],
+            company_id=data["company_id"]
+        )
+        print("Thread: Process QR Save! \n")
+    except ConnectionError:
+        print("Fail: QR saving thread! \n")
         return
 
 
@@ -564,7 +693,7 @@ def verification(request):
                                 print("user is not part of doc clone map... \n")
                                 # clone the document out of the parent id
                                 clone_id = clone_document(
-                                    document_id=process["parent_document_id"], creator=user_name,
+                                    document_id=process["parent_document_id"], auth_viewer=user_name,
                                     parent_id=process["parent_document_id"]
                                 )
                                 clone_count = step["stepCloneCount"] = step["stepCloneCount"] - 1

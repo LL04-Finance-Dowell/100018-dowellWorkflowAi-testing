@@ -7,16 +7,6 @@ from datetime import datetime
 from .dowellconnection import dowellconnection
 from .mongo_db_connection import TEMPLATE_CONNECTION_LIST, get_event_id, get_template_object, get_wf_list, get_wf_object
 
-QR_ID_CONNECTION_LIST = [
-    "Documents",
-    "bangalore",
-    "Documentation",
-    "qridtokens",
-    "qridtokens",
-    "10008484",
-    "ABCDE",
-]
-
 WF_CONNECTION_LIST = [
     "Documents",
     "bangalore",
@@ -102,12 +92,57 @@ DOCUMENT_CONNECTION_DICT = {
     "function_ID": "ABCDE",
 }
 
+QR_CONNECTION_LIST = [
+    "Documents",
+    "bangalore",
+    "Documentation",
+    "qridtokens",
+    "qridtokens",
+    "10008484",
+    "ABCDE",
+]
+
+QR_CONNECTION_DICT = {
+    "cluster": "Documents",
+    "database": "Documentation",
+    "collection": "qridtokens",
+    "document": "qridtokens",
+    "team_member_ID": "10008484",
+    "function_ID": "ABCDE",
+}
+
 # time
 dd = datetime.now()
 time = dd.strftime("%d:%m:%Y,%H:%M:%S")
 
 # DB connection  URL
 url = "https://uxlivinglab.pythonanywhere.com"
+
+
+def save_process_qrcodes(qrcodes, process_id, document_id, processing_choice, process_title, company_id):
+    payload = json.dumps(
+        {
+            **QR_CONNECTION_DICT,
+            "command": "insert",
+            "field": {
+                "event_id": get_event_id()["event_id"],
+                "qrcodes": qrcodes,
+                "process_id": process_id,
+                "document_id": document_id,
+                "processing_choice": processing_choice,
+                "process_title": process_title,
+                "created_at": time,
+                "company_id": company_id
+
+            },
+            "update_field": {"order_nos": 21},
+            "platform": "bangalore",
+        }
+    )
+    headers = {"Content-Type": "application/json"}
+    response = requests.request("POST", url, headers=headers, data=payload)
+    print("DB: SAVED QRCODES ----------- \n")
+    return json.loads(response.text)
 
 
 # ----------------------- Links Creation -------------------------
@@ -356,5 +391,25 @@ def update_document_clone(document_id, clone_list):
     )
     headers = {"Content-Type": "application/json"}
     response = requests.request("POST", url, headers=headers, data=payload)
-    print("DB: DOCUMENT UPDATED------------ \n")
+    print("DB: DOCUMENT CLONE LIST UPDATED------------ \n")
+    return json.loads(response.text)
+
+
+def update_document_viewers(document_id, auth_viewers):
+    payload = json.dumps(
+        {
+            **DOCUMENT_CONNECTION_DICT,
+            "command": "update",
+            "field": {
+                "_id": document_id,
+            },
+            "update_field": {
+                "auth_viewers": auth_viewers
+            },
+            "platform": "bangalore",
+        }
+    )
+    headers = {"Content-Type": "application/json"}
+    response = requests.request("POST", url, headers=headers, data=payload)
+    print("DB: DOCUMENT AUTH VIEWERS UPDATED------------ \n")
     return json.loads(response.text)

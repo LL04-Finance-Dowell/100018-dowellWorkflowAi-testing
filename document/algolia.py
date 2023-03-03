@@ -58,5 +58,5 @@ def update_from_algolia(payload):
         payload["objectID"] = data[0]["objectID"]
         index.partial_update_object(payload)
 
-    except:
+    except RuntimeError:
         index.save_object(payload, {"autoGenerateObjectIDIfNotExist": True})

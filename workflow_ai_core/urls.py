@@ -76,7 +76,6 @@ urlpatterns = [
     # workflow
     path("v0.1/workflows/", create_workflow, name="workflows"),
     path("v0.1/workflows/update/", update_workflow, name="update_workflow"),
-
     path("v0.1/workflows/<str:workflow_id>/", workflow_detail, name="workflow_detail"),
     path("v0.1/workflows/delete/<str:workflow_id>/", archive_workflow, name="delete_workflow"),
     path("v0.1/workflows/org/<str:company_id>/", get_workflows, name="all_workflows"),
@@ -104,40 +103,6 @@ urlpatterns = [
     path("v0.2/process/", document_processing),
     path("v0.2/process/action/verify/", verification),
     path("v0.2/process/action/trigger/", trigger_process),
-
-    # ----------------- @deprecated --------------
-    # path(
-    #     "v0.1/documents/to-sign/",
-    #     documents_to_be_signed,
-    #     name="documents_to_sign",
-    # ),
-    # path(
-    #     "v0.1/documents/rejected/",
-    #     rejected_documents,
-    #     name="rejected_documents",
-    # ),
-    # path(
-    #     "v0.1/documents/mine/",
-    #     my_documents,
-    #     name="my_documents",
-    # ),
-    # path(
-    #     "v0.1/documents/saved/",
-    #     draft_documents,
-    #     name="drafted_documents",
-    # ),
-    # path("v0.1/workflows/mine/", my_workflows, name="my_workflows"),
-    # path("v0.1/workflows/saved/", saved_workflows, name="saved_workflow"),
-    # path("v0.1/templates/approved/", approved),
-    # path("v0.1/templates/pending/", not_approved_templates),
-    # path("v0.1/templates/saved/", org_templates),
-    # path("v0.1/templates/mine/", template_list),
-    # path(
-    #     "v0.1/object_count/",
-    #     count_objects,
-    #     name="object_count",
-    # ),
-
 ]
 if settings.DEBUG:
     urlpatterns = urlpatterns + static(
