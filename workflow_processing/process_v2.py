@@ -394,27 +394,29 @@ def start_processing(process):
 
     # update authorized viewers for the parent document
     auth_data = {"document_id": process["parent_document_id"], "auth_viewers": list(auth_viewers_set)}
-    at = ThreadPoolExecutor().submit(update_document_authorize, auth_data)
+    Thread(target=update_document_authorize, args=(auth_data,)).start()
 
     # save links
     data = {
         "links": links,
         "process_id": process["_id"],
         "document_id": process["parent_document_id"],
-        "process_choice": process["company_id"],
+        "company_id": process["company_id"],
+        "process_choice": process["processing_action"],
         "process_title": process["process_title"]
     }
-    t = ThreadPoolExecutor().submit(save_links_v2, data)
+    Thread(target=save_links_v2, args=(data,)).start()
 
     # save qrcodes
     code_data = {
         "qrcodes": qrcodes,
         "process_id": process["_id"],
         "document_id": process["parent_document_id"],
-        "process_choice": process["company_id"],
+        "process_choice": process["processing_action"],
+        "company_id": process["company_id"],
         "process_title": process["process_title"]
     }
-    c = ThreadPoolExecutor().submit(save_qrcodes, code_data)
+    Thread(target=save_qrcodes, args=(code_data,)).start()
 
     # update processing state of the process
     if get_process_object(workflow_process_id=process["_id"])["processing_state"] == "draft":
@@ -423,7 +425,7 @@ def start_processing(process):
             "process_steps": process["process_steps"],
             "processing_state": "processing"
         }
-        pt = ThreadPoolExecutor().submit(process_update, process_data)
+        Thread(target=process_update, args=(process_data,)).start()
 
     # return generated links
     if links and qrcodes:
@@ -471,7 +473,7 @@ def verification_link(process_id, document_id, step_role, auth_name, auth_portfo
 
     # setup notification
     data = {"username": auth_name}
-    nt = ThreadPoolExecutor().submit(notification, data)
+    Thread(target=notification, args=(data,)).start()
     return f"https://ll04-finance-dowell.github.io/100018-dowellWorkflowAi-testing/#/verify/{hash_token}/"
 
 
@@ -502,6 +504,8 @@ def process_qrcode(process_id, document_id, step_role, auth_name, auth_portfolio
     )
     qr_path = f"100094.pythonanywhere.com/media/qrcodes/{uuid.uuid4().hex}.png"
     qr_url = f"https://{qr_path}"
+    # qr_path = f"media/qrcodes/{uuid.uuid4().hex}.png"
+    # qr_url = f"https://100094.pythonanywhere.com/{qr_path}"
     qr_code = qrcode.QRCode(error_correction=qrcode.constants.ERROR_CORRECT_H)
 
     # taking url or text
@@ -530,7 +534,7 @@ def notification(data):
     try:
         res = requests.post(url=notification_api, data=json.dumps({
             "product_id": "99",
-            "username": data["auth_name"],
+            "username": data["username"],
             "product_name": "Workflow AI",
             "title": "Document to Sign",
             "message": "You have a document to sign"

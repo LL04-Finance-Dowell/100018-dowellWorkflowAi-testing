@@ -413,3 +413,18 @@ def update_document_viewers(document_id, auth_viewers):
     response = requests.request("POST", url, headers=headers, data=payload)
     print("DB: DOCUMENT AUTH VIEWERS UPDATED------------ \n")
     return json.loads(response.text)
+
+
+def get_links_list(company_id):
+    print("DB: Getting process list \n")
+    fields = {
+        "company_id": str(company_id),
+        "process_id": str("640260a8bd505fa70c180aa9")
+
+    }
+    response_obj = dowellconnection(*LINK_CONNECTION_LIST, "fetch", fields, "nil")
+    res_obj = json.loads(response_obj)
+    if len(res_obj["data"]):
+        return res_obj["data"]
+    else:
+        return []
