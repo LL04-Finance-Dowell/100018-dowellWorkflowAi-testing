@@ -865,9 +865,6 @@ def mark_process_as_finalize_or_reject(request):
         document = get_document_object(document_id=request.data["document_id"])
     except ConnectionError:
         return Response("Something went wrong!", status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-    # check if the document is old
-    if document["workflow_process"]:
-        return Response("Use a new version of this document", status=status.HTTP_200_OK)
     # check state.
     if document["document_state"] == "completed":
         # say it is complete
