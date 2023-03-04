@@ -856,7 +856,6 @@ def generate_link(document_id, doc_map, doc_rights, user, process_id, role):
 @api_view(["POST"])
 def mark_process_as_finalize_or_reject(request):
     """After access is granted and the user has made changes on a document."""
-    print("finalize or reject.. \n")
     # check if the doc is in completed state or not.
     if not request.data["company_id"] and request.data["action"] \
             and request.data["document_id"] and request.data["process_id"] and request.data["authorized"]:
@@ -866,9 +865,10 @@ def mark_process_as_finalize_or_reject(request):
     except ConnectionError:
         return Response("Something went wrong!", status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     # check state.
-    if document["document_state"] == "completed":
-        # say it is complete
+    if document["document_state"] == "complete":
         return Response("Document has already been finalized", status=status.HTTP_200_OK)
+    if document["document_state"] == "draft":
+        return Response("Document is not active", status=status.HTTP_200_OK)
     # for processing, now we act.
     if document["document_state"] == "processing":
         # mark the doc as complete
@@ -907,11 +907,7 @@ def mark_process_as_finalize_or_reject(request):
                 if done:
                     data = {'process_id': request.data['process_id'], 'process_steps': process['process_steps'],
                             'processing_state': "completed"}
-                    t = Thread(
-                        target=process_update,
-                        args=(data,),
-                    )
-                    t.start()
+                    Thread(target=process_update, args=(data,)).start()
                     # check if all the docs are marked as completed
                 return Response("document processed successfully", status=status.HTTP_200_OK)
 
