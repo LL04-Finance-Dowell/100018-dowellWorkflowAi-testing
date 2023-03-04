@@ -188,7 +188,7 @@ const ProcessDocument = () => {
           <Select name="processOptionSelection" options={proccesses} takeActionValue={true} register={register} />
           { 
             newProcessLoading ? 
-            <ProgressBar durationInMS={15000} finalWidth={newProcessLoaded ? "100" : null} style={{ height: "40px" }} /> :
+            <ProgressBar durationInMS={18000} finalWidth={newProcessLoaded ? "100" : null} style={{ height: "40px" }} /> :
             <button hoverBg="success" onClick={handleProcessBtnClick}>Save / Start Proccess</button>
           }
         </div>
