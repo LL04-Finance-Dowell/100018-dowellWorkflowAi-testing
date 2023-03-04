@@ -49,7 +49,7 @@
   top: 0;
   left: 0;
   animation: fadeIn 0.2s ease-in-out;
-  z-index: 99999;
+  z-index: 100002;
   overflow: hidden;
   display: flex;
   align-items: center;
@@ -65,10 +65,10 @@
 
 .process__Generated__Links__Container {
   background-color: var(--white);
-  width: 60%;
+  width: 73%;
   border-radius: 10px;
   padding: 4% 2%;
-  height: 20rem;
+  max-height: 30rem;
   position: relative;
 }
 
@@ -83,40 +83,57 @@
   background-color: #61ce70;
   color: #fff;
   cursor: pointer;
-  padding: 1% 2%;
+  /* padding: 7% 5%; */
   border-radius: 5px;
+  display: flex;
+  height: 2.3rem;
+  width: 4.3rem;
+  align-items: center;
+  justify-content: center;
 }
 
-.process__Generated__Links__Container .process__Generated__Links__Link__Item.single__Link {
-  background: #efefef;
-  overflow-x: auto;
-  white-space: nowrap;
-  padding: 1%;
-  width: 35%;
-  cursor: pointer;
+.process__Links__Wrapper {
+  overflow-y: auto;
+  max-height: 25rem;
 }
 
-.process__Generated__Links__Container .process__Generated__Links__Link__Item {
-  width: 22%;
-}
-
-.process__Generated__Links__Container .process__Generated__Links__Link__Item::-webkit-scrollbar {
+.process__Generated__Links__Container .process__Links__Wrapper::-webkit-scrollbar {
   width: 5px;
   height: 4px;
 }
   
-.process__Generated__Links__Container .process__Generated__Links__Link__Item::-webkit-scrollbar-track {
+.process__Generated__Links__Container .process__Links__Wrapper::-webkit-scrollbar-track {
   background: #efefef;
 }
   
-.process__Generated__Links__Container .process__Generated__Links__Link__Item::-webkit-scrollbar-thumb {
+.process__Generated__Links__Container .process__Links__Wrapper::-webkit-scrollbar-thumb {
   background: #61ce70;
 }
 
-.process__Generated__Links__Container .process__Generated__Links__Link__Item::-webkit-scrollbar-thumb:hover {
+.process__Generated__Links__Container .process__Links__Wrapper::-webkit-scrollbar-thumb:hover {
   background: #1f7628;
 }
 
-.process__Links__Container {
-  overflow-y: auto;
+.process__Generated__Links__Container table thead,
+.process__Generated__Links__Container table td {
+  padding: 0.3rem 0.8rem;
+}
+
+.process__Generated__Links__Container table thead {
+  background-color: #61ce70;
+  color: var(--white);
+}
+
+.process__Links__Container td img {
+  width: 7rem;
+  height: 7rem;
+}
+
+.process__Links__Container tr:hover {
+  background: #efefef;
+  transition: 0.3s ease-in-out;
+}
+
+.single__Link {
+  cursor: pointer;
 }

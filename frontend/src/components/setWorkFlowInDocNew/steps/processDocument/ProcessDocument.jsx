@@ -37,7 +37,7 @@ const ProcessDocument = () => {
   const [ newProcessLoading, setNewProcessLoading ] = useState(false);
   const [ newProcessLoaded, setNewProcessLoaded ] = useState(null);
   const [ showGeneratedLinksPopup, setShowGeneratedLinksPopup ] = useState(false);
-  const [ generatedLinks, setGeneratedLinks ] = useState([])
+  const [ generatedLinks, setGeneratedLinks ] = useState(null)
   const [ copiedLinks, setCopiedLinks ] = useState([]);
 
   const dispatch = useDispatch();
@@ -200,23 +200,39 @@ const ProcessDocument = () => {
           <div className={styles.process__Generated__Links__Container__Close__Icon} onClick={() => setShowGeneratedLinksPopup(false)}>
             <AiOutlineClose />
           </div>
-          <div className={styles.process__Generated__Links__Title__Item}>
-            <span>S/No.</span>
-            <span className={styles.process__Generated__Links__Link__Item}>Links</span>
-            <span>QR Code</span>
-            <span>Copy</span>
-          </div>
-          <div className={styles.process__Links__Container}>
-            {
-              React.Children.toArray(generatedLinks.map((link, index) => {
-                return <div className={styles.process__Generated__Links__Title__Item}>
-                  <span className={styles.process__Generated__Links__Num__Item}>{index + 1}. {typeof link === "object" ? Object.keys(link)[0] : ""}</span>
-                  <span className={`${styles.process__Generated__Links__Link__Item} ${styles.single__Link}`} onClick={() => handleCopyLink(Object.values(link)[0])}>{typeof link === "object" ? Object.values(link)[0] : ""}</span>
-                  <span className={styles.process__Generated__Links__Num__Item}>QR Code</span>
-                  <span className={styles.process__Generated__Links__Copy__Item} onClick={() => handleCopyLink(Object.values(link)[0])}>{typeof link === "object" && copiedLinks.includes(Object.values(link)[0]) ? "Copied" : "Copy"}</span>
-                </div>
-              }))
-            }
+          <div className={styles.process__Links__Wrapper}>
+            <table>
+              <thead>
+                <tr>
+                  <td>S/No.</td>
+                  <td>Name</td>
+                  <td>Link</td>
+                  <td>QR Code</td>
+                  <td>Copy</td>
+                </tr>
+              </thead>
+              <tbody className={styles.process__Links__Container}>
+                {
+                  React.Children.toArray(generatedLinks?.links?.map((link, index) => {
+                    return <tr>
+                      <td>{index + 1}.</td>
+                      <td>{typeof link === "object" ? Object.keys(link)[0] : ""}</td>
+                      <td className={styles.single__Link} onClick={() => handleCopyLink(Object.values(link)[0])}>{typeof link === "object" ? Object.values(link)[0] : ""}</td>
+                      <td>
+                        {
+                          generatedLinks?.qrcodes[index] && typeof generatedLinks?.qrcodes[index] === "object" ? 
+                          <img src={Object.values(generatedLinks?.qrcodes[index])[0]} alt="qr code" /> :
+                          <>Qr code</>
+                        }
+                      </td>
+                      <td>
+                        <span className={styles.process__Generated__Links__Copy__Item} onClick={() => handleCopyLink(Object.values(link)[0])}>{typeof link === "object" && copiedLinks.includes(Object.values(link)[0]) ? "Copied" : "Copy"}</span>
+                      </td>
+                    </tr>
+                  }))
+                }
+              </tbody>
+            </table>
           </div>
         </div>
       </div>
