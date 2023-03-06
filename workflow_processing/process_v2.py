@@ -507,10 +507,10 @@ def process_qrcode(process_id, document_id, step_role, auth_name, auth_portfolio
             "auth_portfolio": auth_portfolio
         })), "secret", algorithm="HS256"
     )
-    # qr_path = f"100094.pythonanywhere.com/media/qrcodes/{uuid.uuid4().hex}.png"
-    # qr_url = f"https://{qr_path}"
-    qr_path = f"media/qrcodes/{uuid.uuid4().hex}.png"
-    qr_url = f"https://100094.pythonanywhere.com/{qr_path}"
+    qr_path = f"100094.pythonanywhere.com/media/qrcodes/{uuid.uuid4().hex}.png"
+    qr_url = f"https://{qr_path}"
+    # qr_path = f"media/qrcodes/{uuid.uuid4().hex}.png"
+    # qr_url = f"https://100094.pythonanywhere.com/{qr_path}"
     qr_code = qrcode.QRCode(error_correction=qrcode.constants.ERROR_CORRECT_H)
 
     # taking url or text
@@ -685,7 +685,8 @@ def verification(request):
             # find step 1 and clone documents
             if step.get("stepNumber") == 1:
                 clone_id = process["parent_document_id"]
-                Thread(target=create_copies, args=process).start()
+                data = {"process": process, "doc_id": clone_id}
+                Thread(target=create_copies, args=(data,)).start()
 
             # check if user in the document clone map and grab their clone id.
             if step.get("stepNumber") > 1:
@@ -693,7 +694,8 @@ def verification(request):
                     for d_map in step["stepDocumentCloneMap"]:
                         clone_id = d_map.get("user_name")
                 else:
-                    Thread(target=create_copies, args=process).start()
+                    data = {"process": process, "doc_id": process["parent_document_id"]}
+                    Thread(target=create_copies, args=(data,)).start()
 
             # set access.
             doc_map = step.get("stepDocumentMap")
@@ -721,24 +723,35 @@ def verification(request):
     return Response("Verification failed", status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
-def create_copies(process):
+def create_copies(data):
+    document = get_document_object(document_id=data["doc_id"])
+    if document["document_state"] == "complete":
+        return
+
+    # if doc has not been finalized.
+    process = data["process"]
     copies = []
     for step in process['process_steps']:
         if step.get("stepNumber") == 2:
-            copies += [{member["member"]: clone_document(document_id=process["parent_document_id"],
+            copies += [{member["member"]: clone_document(document_id=data["doc_id"],
                                                          auth_viewer=member["member"],
                                                          parent_id=process["parent_document_id"])} for member in
                        step.get("stepTeamMembers", []) + step.get("stepPublicMembers", []) + step.get("stepUserMembers",
                                                                                                       [])]
             step["stepDocumentCloneMap"].extend(copies)
 
-        if step.get("stepNumber") == 3:
-            pass
+        # if step.get("stepNumber") == 3:
+        #     copies += [{member["member"]: clone_document(document_id=data["doc_id"],
+        #                                                  auth_viewer=member["member"],
+        #                                                  parent_id=process["parent_document_id"])} for member in
+        #                step.get("stepTeamMembers", []) + step.get("stepPublicMembers", []) + step.get("stepUserMembers",
+        #                                                                                               [])]
+        #     step["stepDocumentCloneMap"].extend(copies)
 
     # updating the document clone list
     data = {
         'doc_id': process['parent_document_id'],
-        'clone_ids': list(copies.values()),
+        'clone_ids': [d['member'] for d in copies if 'member' in d]
     }
     ct = Thread(
         target=clone_update,
@@ -753,7 +766,7 @@ def create_copies(process):
         "processing_state": process["processing_state"]
     }
     Thread(target=process_update, args=(process_data,)).start()
-    print("Thread: Create copies!")
+    print("Thread: Create copies! \n")
     return
 
 

@@ -104,7 +104,6 @@ def processes(request, company_id):
 
 @api_view(["POST"])
 def get_process_link(request):
-    print("Getting a process verification link \n")
     """get a link process for person having notifications"""
     links_info = get_links_object_by_process_id(request.data["process_id"])
     user = request.data["user_name"]
