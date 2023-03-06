@@ -371,8 +371,8 @@ def document_finalize(document_id, state):
     )
     headers = {"Content-Type": "application/json"}
     response = requests.request("POST", url, headers=headers, data=payload)
-    print("DB: DOCUMENT UPDATED------------ \n")
-    return json.loads(response.text)
+    print("DB: DOCUMENT FINALIZED------------ \n")
+    return json.loads(json.loads(response.text))
 
 
 def update_document_clone(document_id, clone_list):
@@ -395,7 +395,7 @@ def update_document_clone(document_id, clone_list):
     return json.loads(response.text)
 
 
-def update_document_viewers(document_id, auth_viewers):
+def update_document_viewers(document_id, auth_viewers, doc_name):
     payload = json.dumps(
         {
             **DOCUMENT_CONNECTION_DICT,
@@ -404,6 +404,7 @@ def update_document_viewers(document_id, auth_viewers):
                 "_id": document_id,
             },
             "update_field": {
+                "document_name": doc_name,
                 "auth_viewers": auth_viewers
             },
             "platform": "bangalore",

@@ -24,7 +24,7 @@ from database.mongo_db_connection_v2 import (
 )
 
 editor_api = "https://100058.pythonanywhere.com/api/generate-editor-link/"
-notification_api = "https://100092.pythonanywhere.com/api/get-notification/"
+notification_api = "https://100092.pythonanywhere.com/notification/sendProductNotification/"
 
 
 @api_view(["POST"])
@@ -218,7 +218,7 @@ def document_processing(request):
             data_type=data_type,
             document_id=clone_document(
                 document_id=request.data["parent_document_id"],
-                auth_viewer=None,
+                auth_viewer=request.data["created_by"],
                 parent_id=request.data["parent_document_id"]
             ),
             process_choice=choice,
@@ -280,11 +280,12 @@ def clone_document(document_id, auth_viewer, parent_id):
     """
     try:
         document = get_document_object(document_id)
-        # create new doc
         if auth_viewer is None:
             auth = ""
         else:
             auth = auth_viewer
+
+        # create new doc
         save_res = json.loads(
             save_document(
                 name=document["document_name"] + " - " + auth,
@@ -323,7 +324,6 @@ def new_process(
     Returns:
         a structured process.
     """
-    print("creating process.......... \n")
     process_steps = [
         step for workflow in workflows for step in workflow["workflows"]["steps"]
     ]
@@ -356,7 +356,6 @@ def new_process(
         return process
 
 
-# Begin processing the Workflow.
 def start_processing(process):
     """
     Generate links and qrcodes for each member in the process steps, update the auth viewer of the process document
@@ -383,7 +382,8 @@ def start_processing(process):
                                                        document_id=process["parent_document_id"],
                                                        step_role=step.get("stepRole"),
                                                        auth_name=member["member"],
-                                                       auth_portfolio=member["portfolio"]
+                                                       auth_portfolio=member["portfolio"],
+                                                       company_id=process["company_id"]
                                                        )} for member in step.get("stepTeamMembers", [])
                   + step.get("stepPublicMembers", []) + step.get("stepUserMembers", [])]
 
@@ -440,14 +440,16 @@ def start_processing(process):
 def update_document_authorize(data):
     """Updating the document with auth viewers"""
     try:
-        update_document_viewers(document_id=data["document_id"], auth_viewers=data["auth_viewers"])
+        document = get_document_object(data["document_id"])
+        doc_name = document["document_name"] + " ".join(data["auth_viewers"])
+        update_document_viewers(document_id=data["document_id"], auth_viewers=data["auth_viewers"], doc_name=doc_name)
         print("Thread: Doc Authorize \n")
     except ConnectionError:
         print("Fail: doc auth thread \n")
         return
 
 
-def verification_link(process_id, document_id, step_role, auth_name, auth_portfolio):
+def verification_link(process_id, document_id, step_role, auth_name, auth_portfolio, company_id):
     """
     Create a JWT encoded unique verification link
 
@@ -457,11 +459,11 @@ def verification_link(process_id, document_id, step_role, auth_name, auth_portfo
         step_role(str): the authorized step role.
         auth_name(str): the authorized username.
         auth_portfolio(str): the authorized user portfolio
+        company_id (str): the object id of the company
 
     Returns:
         A unique verification link with the jwt hash
     """
-    print("creating verification links........... \n")
 
     # create a jwt token
     hash_token = jwt.encode(
@@ -475,7 +477,8 @@ def verification_link(process_id, document_id, step_role, auth_name, auth_portfo
     )
 
     # setup notification
-    data = {"username": auth_name}
+    data = {"username": auth_name, "portfolio": auth_portfolio, "process_id": process_id, "company_id": company_id,
+            "link": f"https://ll04-finance-dowell.github.io/100018-dowellWorkflowAi-testing/#/verify/{hash_token}/"}
     Thread(target=notification, args=(data,)).start()
     return f"https://ll04-finance-dowell.github.io/100018-dowellWorkflowAi-testing/#/verify/{hash_token}/"
 
@@ -494,7 +497,6 @@ def process_qrcode(process_id, document_id, step_role, auth_name, auth_portfolio
     Returns:
         qrcode link based on that data.
     """
-    print("generating qrcodes .... \n")
     # create a jwt token
     hash_token = jwt.encode(
         json.loads(json.dumps({
@@ -505,10 +507,10 @@ def process_qrcode(process_id, document_id, step_role, auth_name, auth_portfolio
             "auth_portfolio": auth_portfolio
         })), "secret", algorithm="HS256"
     )
-    qr_path = f"100094.pythonanywhere.com/media/qrcodes/{uuid.uuid4().hex}.png"
-    qr_url = f"https://{qr_path}"
-    # qr_path = f"media/qrcodes/{uuid.uuid4().hex}.png"
-    # qr_url = f"https://100094.pythonanywhere.com/{qr_path}"
+    # qr_path = f"100094.pythonanywhere.com/media/qrcodes/{uuid.uuid4().hex}.png"
+    # qr_url = f"https://{qr_path}"
+    qr_path = f"media/qrcodes/{uuid.uuid4().hex}.png"
+    qr_url = f"https://100094.pythonanywhere.com/{qr_path}"
     qr_code = qrcode.QRCode(error_correction=qrcode.constants.ERROR_CORRECT_H)
 
     # taking url or text
@@ -535,11 +537,17 @@ def notification(data):
     """post notifications for extension."""
     try:
         res = requests.post(url=notification_api, data=json.dumps({
-            "product_id": "99",
             "username": data["username"],
-            "product_name": "Workflow AI",
+            "portfolio": data["portfolio"],
+            "productName": "Workflow AI",
+            "companyId": data["company_id"],
             "title": "Document to Sign",
-            "message": "You have a document to sign"
+            "orgName": "Workflow AI",
+            "message": "You have a document to sign.",
+            "link": data["link"],
+            "seen": False,
+            "duration": " no limit"
+
         }), headers={"Content-Type": "application/json"})
         if res.status_code == 201:
             print("Thread: Sent Notification \n")
@@ -616,6 +624,7 @@ def verification(request):
     if not request.data["portfolio"] and request.data["user_name"] \
             and request.data["continent"] and request.data["country"] and request.data["city"]:
         return Response('You are missing something!', status=status.HTTP_400_BAD_REQUEST)
+
     # check user
     user_name = request.data['user_name']
     auth_user, process_id, auth_step_role = check_user_presence(token=request.data['token'], user_name=user_name,
@@ -624,12 +633,14 @@ def verification(request):
         return Response(
             'User is not part of this process', status=status.HTTP_401_UNAUTHORIZED
         )
+
     # get process
     process = get_process_object(workflow_process_id=process_id)
     if not process:
         Response(
             'Something went wrong!, Retry', status=status.HTTP_500_INTERNAL_SERVER_ERROR
         )
+
     # check states
     if process['processing_state']:
         if process['processing_state'] == 'paused':
@@ -637,25 +648,17 @@ def verification(request):
         # was the process not started?
         if process['processing_state'] == 'save':
             return Response('This workflow process is not activated!', status=status.HTTP_200_OK)
-    # find step the user belongs
+
     doc_map = None
     right = None
     role = None
     user = None
     match = False
     clone_id = None
-    process_changed = False
+
+    # find step the user belongs
     for step in process['process_steps']:
-        # check for step completeness
-        # if step.get("stepProcessingState"):
-        # if step.get("stepProcessingState") != "complete":
-        # step role matching auth process
         if step.get("stepRole") == auth_step_role:
-
-            # find step number
-            if step.get("stepNumber"):
-                print("step number is", step.get("stepNumber"), "\n")
-
             # location check
             if step.get("stepLocation"):
                 if not check_location_right(location=step.get("stepLocation"), continent=step.get("stepContinent"),
@@ -679,76 +682,32 @@ def verification(request):
                                               creation_time=process["created_at"]):
                     return Response("Time limit for processing document has elapsed!", status=status.HTTP_403_FORBIDDEN)
 
-            # check step activity
-            if step.get("stepTaskType"):
-                if step.get("stepTaskType") == "request_for_task":
+            # find step 1 and clone documents
+            if step.get("stepNumber") == 1:
+                clone_id = process["parent_document_id"]
+                Thread(target=create_copies, args=process).start()
 
-                    # clone check
-                    if step.get("stepCloneCount"):
-                        if step.get("stepCloneCount") > 1:
-                            # check if the user is part of the stepDocumentCloneMap
-                            if any(user_name in d_map for d_map in step["stepDocumentCloneMap"]):
+            # check if user in the document clone map and grab their clone id.
+            if step.get("stepNumber") > 1:
+                if any(user_name in d_map for d_map in step["stepDocumentCloneMap"]):
+                    for d_map in step["stepDocumentCloneMap"]:
+                        clone_id = d_map.get("user_name")
+                else:
+                    Thread(target=create_copies, args=process).start()
 
-                                # grab the doc id and gen document link
-                                for d_map in step["stepDocumentCloneMap"]:
-                                    clone_id = d_map.get("user_name")
-                            else:
-
-                                # clone the document out of the parent id
-                                clone_id = clone_document(
-                                    document_id=process["parent_document_id"], auth_viewer=user_name,
-                                    parent_id=process["parent_document_id"]
-                                )
-                                clone_count = step["stepCloneCount"] = step["stepCloneCount"] - 1
-                                # update clone count
-                                step.update({"stepCloneCount": clone_count})
-                                # update document clone map
-                                step["stepDocumentCloneMap"].extend({user_name: clone_id})
-                                # updating the document clone list
-                                data = {
-                                    'doc_id': process['parent_document_id'],
-                                    'clone_id': clone_id,
-                                }
-                                ct = Thread(
-                                    target=clone_update,
-                                    args=(data,),
-                                )
-                                ct.start()
-                                process_changed = True
-
-                        # what if this step role has no clone
-                        else:
-                            clone_id = process["parent_document_id"]
-                if step.get("stepTaskType") == "assign_task":
-                    clone_id = process["parent_document_id"]
-
-            # Display check
+            # set access.
             doc_map = step.get("stepDocumentMap")
             right = step.get("stepRights")
             user = user_name
             role = step.get('stepRole')
             match = True
 
+    # do we have access?
     if not match:
         return Response("Document Access forbidden!", status=status.HTTP_403_FORBIDDEN)
 
-    # is everything right.
+    # is everything right, generate document link.
     if clone_id and right and user and role and doc_map:
-        if process_changed is True:
-
-            # thread work to update the process
-            process_data = {
-                "process_id": process["_id"],
-                "process_steps": process["process_steps"],
-                "processing_state": process["processing_state"]
-            }
-            pt = Thread(
-                target=process_update,
-                args=(process_data,),
-            )
-            pt.start()
-
-        # generate document link.
         doc_link = generate_link(
             document_id=clone_id,
             doc_map=doc_map,
@@ -762,10 +721,46 @@ def verification(request):
     return Response("Verification failed", status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
+def create_copies(process):
+    copies = []
+    for step in process['process_steps']:
+        if step.get("stepNumber") == 2:
+            copies += [{member["member"]: clone_document(document_id=process["parent_document_id"],
+                                                         auth_viewer=member["member"],
+                                                         parent_id=process["parent_document_id"])} for member in
+                       step.get("stepTeamMembers", []) + step.get("stepPublicMembers", []) + step.get("stepUserMembers",
+                                                                                                      [])]
+            step["stepDocumentCloneMap"].extend(copies)
+
+        if step.get("stepNumber") == 3:
+            pass
+
+    # updating the document clone list
+    data = {
+        'doc_id': process['parent_document_id'],
+        'clone_ids': list(copies.values()),
+    }
+    ct = Thread(
+        target=clone_update,
+        args=(data,),
+    )
+    ct.start()
+
+    # thread work to update the process
+    process_data = {
+        "process_id": process["_id"],
+        "process_steps": process["process_steps"],
+        "processing_state": process["processing_state"]
+    }
+    Thread(target=process_update, args=(process_data,)).start()
+    print("Thread: Create copies!")
+    return
+
+
 def clone_update(data):
     """add a clone id to a documents clone list"""
     document = get_document_object(document_id=data['doc_id'])
-    clone_list = document['clone_list'].append(data['clone_id'])
+    clone_list = document['clone_list'].extend(data['clone_ids'])
     update_document_clone(document_id=data['doc_id'], clone_list=clone_list)
     print('Thread: Clone Update!')
     return
@@ -855,7 +850,8 @@ def generate_link(document_id, doc_map, doc_rights, user, process_id, role):
 def mark_process_as_finalize_or_reject(request):
     """After access is granted and the user has made changes on a document."""
     if not request.data["company_id"] and request.data["action"] \
-            and request.data["document_id"] and request.data["process_id"] and request.data["authorized"]:
+            and request.data["document_id"] and request.data["process_id"] and request.data["authorized"] \
+            and request.data["role"]:
         return Response("You are missing something", status=status.HTTP_400_BAD_REQUEST)
 
     # get document
@@ -866,10 +862,10 @@ def mark_process_as_finalize_or_reject(request):
 
     # check state.
     if document["document_state"] == "complete":
-        return Response("Document has already been finalized", status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        return Response("Document has already been finalized", status=status.HTTP_200_OK)
 
     # mark the doc as complete
-    state = None
+
     if request.data["action"] == "finalize":
         state = "complete"
     elif request.data["action"] == "reject":
@@ -877,59 +873,60 @@ def mark_process_as_finalize_or_reject(request):
 
     # mark document as finalize.
     res = document_finalize(document_id=request.data["document_id"], state=state)
-    if not res["isSuccess"]:
-        return Response("Failed to finalize document", status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    if res["isSuccess"]:
+        # data = {
+        #     "process_id": request.data['process_id'],
+        #     "auth_user": request.data["authorized"],
+        #     "auth_role": request.data["role"]
+        #
+        # }
+        # Thread(target=background_processing, args=(data,)).start()
+        return Response("document processes successfully", status=status.HTTP_200_OK)
 
+    return Response("Error processing the document", status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+def background_processing(data):
+    """find the process and check the auth role, and documents and clone the right ones"""
     # get process
     try:
-        process = get_process_object(workflow_process_id=request.data['process_id'])
+        process = get_process_object(workflow_process_id=data['process_id'])
     except ConnectionError:
         return Response('Failed to get process, Retry!', status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-    # check if the process step is complete update the process step state as complete
-    done = update_process_step(process, request.data["authorized"])
-    if not done:
-        return Response("Document has already been finalized", status=status.HTTP_200_OK)
+    for step in process['process_steps']:
+        if step.get("stepRole") == data["auth_role"]:
+            for d_map in step["stepDocumentCloneMap"]:
+                while d_map.get("user_name") != data["auth_user"]:
+                    # clone the document out of the parent id
+                    clone_document(
+                        document_id=process["parent_document_id"], auth_viewer=d_map.get("user_name"),
+                        parent_id=process["parent_document_id"]
+                    )
+            step.update({"stepProcessingState": "complete"})
 
+    # update the process
+    res = json.loads(
+        update_wf_process(process_id=data['process_id'], steps=process['process_steps'], state="processing"))
+    if not res["isSuccess"]:
+        return
+
+    # check if the process step is complete update the process step state as complete
+    n_process = get_process_object(data['process_id'])
+    complete = True
+    for step in n_process["process_steps"]:
+        if step.get("stepProcessingState") != "complete":
+            complete = False
+
+    if not complete:
+        return
     # mark process as complete
     data = {
-        'process_id': request.data['process_id'],
-        'process_steps': process['process_steps'],
+        'process_id': data['process_id'],
+        'process_steps': n_process['process_steps'],
         'processing_state': "complete"
     }
     Thread(target=process_update, args=(data,)).start()
-    return Response("document processed successfully", status=status.HTTP_200_OK)
-
-
-def update_process_step(process, authorized):
-    """
-    Updates process step based on the authorization
-
-    Args:
-        process (dict): a dictionary containing the process information
-        authorized (str): a step role that is authorized
-
-    Returns:
-        done (bool): if the update is done or not.
-    """
-    done = False
-    if process["processing_state"] == "complete":
-        return done
-
-    # check if the process_step for auth_role is complete
-    for step in process["process_steps"]:
-        if step.get("stepRole") == authorized:
-            step.update({'stepProcessingState': 'complete'})
-
-            # update the workflow
-            res = update_wf_process(process_id=process['process_id'], steps=process['process_steps'],
-                                    state="processing")
-            # check the state of the other docs
-            if res["isSuccess"]:
-                if check_processing_complete(step.get("stepDocumentCloneMap").keys()):
-                    done = True
-                    return done
-    return done
 
 
 def check_processing_complete(process):
