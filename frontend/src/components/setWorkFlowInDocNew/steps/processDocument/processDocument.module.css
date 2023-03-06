@@ -90,6 +90,7 @@
   width: 4.3rem;
   align-items: center;
   justify-content: center;
+  margin: 0 auto;
 }
 
 .process__Links__Wrapper {
@@ -97,20 +98,24 @@
   max-height: 25rem;
 }
 
-.process__Generated__Links__Container .process__Links__Wrapper::-webkit-scrollbar {
+.process__Generated__Links__Container .process__Links__Wrapper::-webkit-scrollbar,
+.process__Links__Container td::-webkit-scrollbar {
   width: 5px;
-  height: 4px;
+  height: 8px;
 }
   
-.process__Generated__Links__Container .process__Links__Wrapper::-webkit-scrollbar-track {
+.process__Generated__Links__Container .process__Links__Wrapper::-webkit-scrollbar-track,
+.process__Links__Container td::-webkit-scrollbar-track {
   background: #efefef;
 }
   
-.process__Generated__Links__Container .process__Links__Wrapper::-webkit-scrollbar-thumb {
+.process__Generated__Links__Container .process__Links__Wrapper::-webkit-scrollbar-thumb,
+.process__Links__Container td::-webkit-scrollbar-thumb {
   background: #61ce70;
 }
 
-.process__Generated__Links__Container .process__Links__Wrapper::-webkit-scrollbar-thumb:hover {
+.process__Generated__Links__Container .process__Links__Wrapper::-webkit-scrollbar-thumb:hover,
+.process__Links__Container td::-webkit-scrollbar-thumb:hover {
   background: #1f7628;
 }
 
@@ -127,6 +132,14 @@
 .process__Links__Container td img {
   width: 7rem;
   height: 7rem;
+}
+
+.process__Links__Container td {
+  max-width: 10rem;
+  overflow-x: auto;
+  white-space: nowrap;
+  text-align: center;
+  vertical-align: middle;
 }
 
 .process__Links__Container tr:hover {
