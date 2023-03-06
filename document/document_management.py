@@ -21,7 +21,6 @@ editorApi = "https://100058.pythonanywhere.com/api/generate-editor-link/"
 
 @api_view(["GET"])
 def get_documents(request, company_id):  # List of Created Templates.
-    print("Getting documents \n")
     document_list = get_document_list(company_id)
     if not document_list:
         return Response({"documents": []}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
@@ -40,7 +39,6 @@ def get_documents(request, company_id):  # List of Created Templates.
 
 @api_view(["POST"])
 def create_document(request):  # Document Creation.
-    print("Creating document \n")
     if not request.data:
         return Response(
             {"message": "Failed to process document creation."},
@@ -110,7 +108,6 @@ def create_document(request):  # Document Creation.
 
 @api_view(["GET"])
 def get_document_content(request, document_id):
-    print("Getting document content \n")
     content = []
     my_dict = ast.literal_eval(get_document_object(document_id)["content"])[0][0]
     all_keys = [i for i in my_dict.keys()]
@@ -128,7 +125,6 @@ def get_document_content(request, document_id):
 
 @api_view(["GET"])
 def document_detail(request, document_id):  # Single document
-    print("Get document link \n")
     payload = json.dumps(
         {
             "product_name": "workflowai",

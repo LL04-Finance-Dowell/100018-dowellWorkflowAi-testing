@@ -86,7 +86,7 @@ def create_workflow_setting(request):  # Document Creation.
 
 
 @api_view(["GET"])
-def get_wf_ai_setting(request,wf_setting_id):
+def get_wf_ai_setting(request, wf_setting_id):
     try:
         return Response(
             {"workflow_ai_setting": get_wf_setting_object(wf_setting_id)},
