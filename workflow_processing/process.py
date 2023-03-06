@@ -93,7 +93,6 @@ def process_update(data):
 @api_view(["GET"])
 def processes(request, company_id):
     """fetches workflow process `I` created."""
-    print("fetching processes..... \n")
     try:
         process_list = get_process_list(company_id)
     except ConnectionError:
@@ -108,13 +107,13 @@ def get_process_link(request):
     print("Getting a process verification link \n")
     """get a link process for person having notifications"""
     links_info = get_links_object_by_process_id(request.data["process_id"])
-    print(links_info)
     user = request.data["user_name"]
     if not links_info:
         return Response(
             "Could not fetch process info at this time",
             status=status.HTTP_500_INTERNAL_SERVER_ERROR,
         )
+
     # check presence in link
     for link in links_info["links"]:
         if user in link:
@@ -128,7 +127,6 @@ def get_process_link(request):
 @api_view(["GET"])
 def a_single_process(request, process_id):
     """get process by process id"""
-    print("Getting a single process \n")
     try:
         process = get_process_object(process_id)
     except ConnectionError:
@@ -144,7 +142,6 @@ def fetch_process_links(request, process_id):
     print("Fetching verification links \n")
     try:
         process_info = get_links_object_by_process_id(process_id)
-        print(process_info)
     except ConnectionError:
         return Response(
             "Could not fetch process links",
