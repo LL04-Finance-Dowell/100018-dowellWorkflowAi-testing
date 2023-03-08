@@ -37,7 +37,7 @@ const Editor = () => {
   const handleDecision = (status) => {
     if (status === "ok") {
       dispatch(setEditorLink(null));
-      window.location.reload();
+      /*  window.location.reload(); */
     }
     setToggleDecision(false);
   };

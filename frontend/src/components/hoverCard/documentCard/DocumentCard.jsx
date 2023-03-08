@@ -13,10 +13,24 @@ import {
 import { setEditorLink } from "../../../features/app/appSlice";
 import { timeZoneToCountryObj } from "../../../utils/timezonesObj";
 
+import { AiOutlineHeart } from "react-icons/ai";
+import { handleFavorites } from "../../../features/favorites/asyncThunks";
+
 const DocumentCard = ({ cardItem, title }) => {
   const dispatch = useDispatch();
   const [dataLoading, setDataLoading] = useState(false);
   const { userDetail } = useSelector((state) => state.auth);
+  const { singleFavorite } = useSelector((state) => state.favorites);
+
+  const handleFavoritess = (id) => {
+    /*  const data = {
+      id,
+      type: "document",
+    };
+    dispatch(handleFavorites(data)); */
+
+    console.log("idddddddd", id, singleFavorite);
+  };
 
   const handleDetailDocumnet = async (item) => {
     if (dataLoading) return;
@@ -69,11 +83,20 @@ const DocumentCard = ({ cardItem, title }) => {
       continent: userDetail?.userinfo?.timezone?.split("/")[0],
     };
 
-    if (!dataToPost.continent || !dataToPost.continent?.length < 1 || !dataToPost.city || dataToPost.city?.length < 1 || !dataToPost.country || dataToPost.country?.length < 1) {
+    if (
+      !dataToPost.continent ||
+      !dataToPost.continent?.length < 1 ||
+      !dataToPost.city ||
+      dataToPost.city?.length < 1 ||
+      !dataToPost.country ||
+      dataToPost.country?.length < 1
+    ) {
       const userTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-      
+
       dataToPost.city = userTimezone.split("/")[1];
-      dataToPost.country = timeZoneToCountryObj[userTimezone] ? timeZoneToCountryObj[userTimezone] : "";
+      dataToPost.country = timeZoneToCountryObj[userTimezone]
+        ? timeZoneToCountryObj[userTimezone]
+        : "";
       dataToPost.continent = userTimezone.split("/")[0];
     }
 
@@ -116,6 +139,9 @@ const DocumentCard = ({ cardItem, title }) => {
         ) : (
           "no item"
         )}
+        {/* <div onClick={() => handleFavoritess(cardItem)}>
+          <AiOutlineHeart />
+        </div> */}
       </div>
     );
   };

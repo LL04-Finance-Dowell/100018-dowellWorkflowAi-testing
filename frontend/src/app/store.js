@@ -3,6 +3,7 @@ import templateReducer from "../features/template/templateSlice";
 import documentReducer from "../features/document/documentSlice";
 import appReducer from "../features/app/appSlice";
 import authReducer from "../features/auth/authSlice";
+import favoritesReducer from "../features/favorites/favoritesSlice";
 import settingsReducer from "../features/settings/settingSlice";
 import { combineReducers, configureStore } from "@reduxjs/toolkit";
 import storageSession from "redux-persist/lib/storage/session";
@@ -23,6 +24,7 @@ const rootReducer = combineReducers({
   app: appReducer,
   auth: authReducer,
   settings: settingsReducer,
+  favorites: favoritesReducer,
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
