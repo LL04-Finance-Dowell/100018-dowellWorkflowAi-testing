@@ -1,6 +1,6 @@
 # hello_algolia.py
 from algoliasearch.search_client import SearchClient
-from .models import FavoriteData
+from .models import FavoriteWorkflow,FavoriteDocument,FavoriteTemplte
 # import jsonfield
 # from django.db import models
 
@@ -47,11 +47,15 @@ def save_to_algolia(identifier, func):
     
 def save_as_favorite(identifier, func,type):
     data = func(identifier)
-    data['favorite']=True
-    data['type']=type
-    
-    FavoriteData.objects.get_or_create(data)
-
+    # data['favorite']=True
+    # data['type']=type
+    if type=="workflow":
+        FavoriteWorkflow.objects.get_or_create(data)
+    if type=="document":
+        FavoriteDocument.objects.get_or_create(data)
+    if type=="template":
+        FavoriteTemplte.objects.get_or_create(data)
+        
 def get_algolia_data(term, comp_id):
     index.set_settings({
         "attributesForFaceting": ["company_id"]
