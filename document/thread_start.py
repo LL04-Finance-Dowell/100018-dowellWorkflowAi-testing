@@ -28,4 +28,4 @@ class FavoriteThreadAlgolia(Thread):
         Thread.__init__(self)
 
     def run(self):
-        save_as_favorite(self.id, self.func,self.type)
+        save_as_favorite(self.id, self.type)

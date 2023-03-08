@@ -1,6 +1,11 @@
 # hello_algolia.py
 from algoliasearch.search_client import SearchClient
 from .models import FavoriteWorkflow,FavoriteDocument,FavoriteTemplte
+from database.mongo_db_connection import (
+    get_document_object,
+    get_wf_object,
+    get_template_object,
+)
 # import jsonfield
 # from django.db import models
 
@@ -45,16 +50,24 @@ def save_to_algolia(identifier, func):
     data = func(identifier)
     index.save_object(data, {"autoGenerateObjectIDIfNotExist": True}).wait()
     
-def save_as_favorite(identifier, func,type):
-    data = func(identifier)
+def save_as_favorite(identifier, type):
     # data['favorite']=True
     # data['type']=type
     if type=="workflow":
-        FavoriteWorkflow.objects.get_or_create(data)
+        data=get_wf_object(identifier)
+        model=FavoriteWorkflow(**data)
+        model.save()
     if type=="document":
-        FavoriteDocument.objects.get_or_create(data)
+        data=get_document_object(identifier)
+        data['content']=eval(data['content'])
+        model=FavoriteDocument(**data)
+        model.save()
     if type=="template":
-        FavoriteTemplte.objects.get_or_create(data)
+        data=get_template_object(identifier)
+        data['content']=eval(data['content'])
+
+        model=FavoriteTemplte(**data)
+        model.save()
         
 def get_algolia_data(term, comp_id):
     index.set_settings({
