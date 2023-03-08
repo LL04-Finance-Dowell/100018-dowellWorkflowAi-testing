@@ -107,7 +107,7 @@ urlpatterns = [
     path("v0.2/process/action/verify/", verification),
     path("v0.2/process/action/trigger/", trigger_process),
 
-    path("v0.2/favorite/<str:id>/<str:type>/", favorite),
+    path("v0.2/favorite/<str:item_id>/<str:item_type>/", favorite),
 
 ]
 if settings.DEBUG:

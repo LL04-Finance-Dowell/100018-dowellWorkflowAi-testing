@@ -7,11 +7,11 @@ from .thread_start import FavoriteThread
 @api_view(["GET"])
 def favorite(request, item_id, item_type):
     try:
-        if type == "document":
+        if item_type == "document":
             FavoriteThread(item_id, item_type).start()
-        if type == "template":
+        if item_type == "template":
             FavoriteThread(item_id, item_type).start()
-        if type == "workflow":
+        if item_type == "workflow":
             FavoriteThread(item_id, item_type).start()
         return Response(status=status.HTTP_200_OK)
     except RuntimeError:
