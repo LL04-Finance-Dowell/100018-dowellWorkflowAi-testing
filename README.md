@@ -623,12 +623,7 @@ _POST_ `/v0.2/favorite/<str:id>/<str:type>/`
 Request Body
 
 ```
-{
-    "id": "id",
-    "type":"template|document|workflow"
-    
-}
-
+no need
 ```
 _POST_ `/v0.1/favorites/`
 
