@@ -9,6 +9,7 @@ from database.mongo_db_connection import (
 from database.mongo_db_connection_v2 import save_document
 from .thread_start import FavoriteThreadAlgolia
 
+
 @api_view(["GET"])
 def favorite(request, id,type):
     try:

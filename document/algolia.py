@@ -1,5 +1,8 @@
 # hello_algolia.py
 from algoliasearch.search_client import SearchClient
+from .models import FavoriteData
+# import jsonfield
+# from django.db import models
 
 # Connect and authenticate with your Algolia app
 client = SearchClient.create("N7KJ4AQQ7Z", "9514747f86dce7e94cc5a2d56677e8e8")
@@ -32,6 +35,11 @@ favorited.set_settings(
 
 #             {"objectID":2, "name": "dev_record","address": "ababa"}
 # ]
+# class FavoriteData(models.Model):
+#     data = jsonfield.JSONField()
+#     # data_type= models.TextField(max_length=50,default=None)
+
+
 def save_to_algolia(identifier, func):
     # get_search_result = get_wf_list(company_id)+get_document_list(company_id)+get_template_list(company_id)
     data = func(identifier)
@@ -41,7 +49,8 @@ def save_as_favorite(identifier, func,type):
     data = func(identifier)
     data['favorite']=True
     data['type']=type
-    favorited.save_object(data, {"autoGenerateObjectIDIfNotExist": True}).wait()
+    
+    FavoriteData.objects.get_or_create(data)
 
 def get_algolia_data(term, comp_id):
     index.set_settings({
@@ -80,3 +89,5 @@ def update_from_algolia(payload):
 
     except:
         index.save_object(payload, {"autoGenerateObjectIDIfNotExist": True})
+
+
