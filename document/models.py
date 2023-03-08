@@ -68,3 +68,17 @@ def save_as_favorite(identifier, type):
             pass
         model = FavoriteTemplate(**data)
         model.save()
+
+
+def remove_favorite(identifier, type):
+    if type == "workflow":
+
+        FavoriteWorkflow.objects.filter(_id=identifier).delete()
+
+    if type == "document":
+
+        FavoriteDocument.objects.filter(_id=identifier).delete()
+
+    if type == "template":
+
+        FavoriteTemplate.objects.filter(_id=identifier).delete()
