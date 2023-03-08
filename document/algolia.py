@@ -1,10 +1,6 @@
 from algoliasearch.search_client import SearchClient
 from .models import FavoriteWorkflow, FavoriteDocument, FavoriteTemplte
-from database.mongo_db_connection import (
-    get_document_object,
-    get_wf_object,
-    get_template_object,
-)
+
 
 client = SearchClient.create("N7KJ4AQQ7Z", "9514747f86dce7e94cc5a2d56677e8e8")
 index = client.init_index("workflow_index")
@@ -38,28 +34,6 @@ def save_to_algolia(identifier, func):
     data = func(identifier)
     index.save_object(data, {"autoGenerateObjectIDIfNotExist": True}).wait()
 
-
-def save_as_favorite(identifier, type):
-    if type == "workflow":
-        data = get_wf_object(identifier)
-        model = FavoriteWorkflow(**data)
-        model.save()
-    if type == "document":
-        data = get_document_object(identifier)
-        try:
-            data["content"] = eval(data["content"])
-        except:
-            pass
-        model = FavoriteDocument(**data)
-        model.save()
-    if type == "template":
-        data = get_template_object(identifier)
-        try:
-            data["content"] = eval(data["content"])
-        except:
-            pass
-        model = FavoriteTemplte(**data)
-        model.save()
 
 
 def get_algolia_data(term, comp_id):

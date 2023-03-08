@@ -7,20 +7,21 @@ from database.mongo_db_connection import (
     get_template_object,get_wf_object
 )
 from database.mongo_db_connection_v2 import save_document
-from .thread_start import FavoriteThreadAlgolia
+from .thread_start import FavoriteThread
 
 
 @api_view(["GET"])
 def favorite(request, id,type):
     try:
         if type=="document":
-            FavoriteThreadAlgolia(id, get_document_object,type).start()
+            FavoriteThread(id, type).start()
         if type=="template":
-            FavoriteThreadAlgolia(id, get_template_object,type).start()
+            FavoriteThread(id,type).start()
         if type=="workflow":
-            FavoriteThreadAlgolia(id, get_wf_object,type).start()
+            FavoriteThread(id, type).start()
         return Response(status=status.HTTP_200_OK)
     except RuntimeError:
         return
+        
     
     

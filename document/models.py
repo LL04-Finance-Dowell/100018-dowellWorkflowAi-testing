@@ -1,6 +1,10 @@
 import jsonfield
 from django.db import models
-
+from database.mongo_db_connection import (
+    get_document_object,
+    get_wf_object,
+    get_template_object,
+)
 
 class FavoriteTemplte(models.Model):
     _id = models.TextField(primary_key=True)
@@ -40,3 +44,28 @@ class FavoriteWorkflow(models.Model):
     created_by = jsonfield.JSONField(null=True)
     eventId = jsonfield.JSONField(null=True)
     workflows = jsonfield.JSONField(null=True)
+
+
+
+def save_as_favorite(identifier, type):
+    if type == "workflow":
+        data = get_wf_object(identifier)
+        model = FavoriteWorkflow(**data)
+        model.save()
+    if type == "document":
+        data = get_document_object(identifier)
+        try:
+            data["content"] = eval(data["content"])
+        except:
+            pass
+        model = FavoriteDocument(**data)
+        model.save()
+    if type == "template":
+        data = get_template_object(identifier)
+        try:
+            data["content"] = eval(data["content"])
+        except:
+            pass
+        model = FavoriteTemplte(**data)
+        model.save()
+
