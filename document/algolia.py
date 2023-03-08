@@ -1,5 +1,5 @@
 from algoliasearch.search_client import SearchClient
-from .models import FavoriteWorkflow, FavoriteDocument, FavoriteTemplte
+from .models import FavoriteWorkflow, FavoriteDocument, FavoriteTemplate
 from database.mongo_db_connection import (
     get_document_object,
     get_wf_object,
@@ -48,7 +48,7 @@ def save_as_favorite(identifier, type):
         data = get_document_object(identifier)
         try:
             data["content"] = eval(data["content"])
-        except:
+        except RuntimeError:
             pass
         model = FavoriteDocument(**data)
         model.save()
@@ -56,9 +56,9 @@ def save_as_favorite(identifier, type):
         data = get_template_object(identifier)
         try:
             data["content"] = eval(data["content"])
-        except:
+        except RuntimeError:
             pass
-        model = FavoriteTemplte(**data)
+        model = FavoriteTemplate(**data)
         model.save()
 
 
