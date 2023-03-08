@@ -618,7 +618,7 @@ Request Body
     
 }
 ```
-_POST_ `/favorite/<str:id>/<str:type>/`
+_POST_ `/v0.2/favorite/<str:id>/<str:type>/`
 
 Request Body
 
@@ -630,8 +630,18 @@ Request Body
 }
 
 ```
-_POST_ `/favorites/`
+_POST_ `/v0.1/favorites/`
 
+Request Body
+
+```
+{
+    "company_id": "company_id",
+    "created_by":"created user name"
+    
+}
+
+```
 Response Body
 
 ```

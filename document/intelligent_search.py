@@ -21,11 +21,17 @@ def search(request):
     )
 
 
-@api_view(["GET"])
+@api_view(["GET","POST"])
 def get_fav(request):
-    documents = FavoriteDocument.objects.values()
-    templates = FavoriteTemplate.objects.values()
-    workflows = FavoriteWorkflow.objects.values()
+    documents=[]
+    templates=[]
+    workflows=[]
+    if request.method=="POST":
+        company_id=request.data['company_id']
+        created_by=request.data['created_by']
+        documents = FavoriteDocument.objects.filter(company_id=company_id,created_by=created_by).values()
+        templates = FavoriteTemplate.objects.filter(company_id=company_id,created_by=created_by).values()
+        workflows = FavoriteWorkflow.objects.filter(company_id=company_id,created_by=created_by).values()
     return Response(
         {
             "documents": documents,
