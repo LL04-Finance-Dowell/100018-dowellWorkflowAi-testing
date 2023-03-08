@@ -1,15 +1,4 @@
 from algoliasearch.search_client import SearchClient
-<<<<<<< HEAD
-from .models import FavoriteWorkflow, FavoriteDocument, FavoriteTemplte
-
-=======
-from .models import FavoriteWorkflow, FavoriteDocument, FavoriteTemplate
-from database.mongo_db_connection import (
-    get_document_object,
-    get_wf_object,
-    get_template_object,
-)
->>>>>>> 77bc53ec92f049e9856e3e995f7022a650df86b9
 
 client = SearchClient.create("N7KJ4AQQ7Z", "9514747f86dce7e94cc5a2d56677e8e8")
 index = client.init_index("workflow_index")
@@ -43,32 +32,6 @@ def save_to_algolia(identifier, func):
     data = func(identifier)
     index.save_object(data, {"autoGenerateObjectIDIfNotExist": True}).wait()
 
-
-<<<<<<< HEAD
-=======
-def save_as_favorite(identifier, type):
-    if type == "workflow":
-        data = get_wf_object(identifier)
-        model = FavoriteWorkflow(**data)
-        model.save()
-    if type == "document":
-        data = get_document_object(identifier)
-        try:
-            data["content"] = eval(data["content"])
-        except RuntimeError:
-            pass
-        model = FavoriteDocument(**data)
-        model.save()
-    if type == "template":
-        data = get_template_object(identifier)
-        try:
-            data["content"] = eval(data["content"])
-        except RuntimeError:
-            pass
-        model = FavoriteTemplate(**data)
-        model.save()
-
->>>>>>> 77bc53ec92f049e9856e3e995f7022a650df86b9
 
 def get_algolia_data(term, comp_id):
     index.set_settings({"attributesForFaceting": ["company_id"]})
