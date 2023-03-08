@@ -33,7 +33,7 @@ class Migration(migrations.Migration):
             ],
         ),
         migrations.CreateModel(
-            name='FavoriteTemplte',
+            name='FavoriteTemplate',
             fields=[
                 ('_id', models.TextField(primary_key=True, serialize=False)),
                 ('company_id', jsonfield.fields.JSONField(null=True)),

@@ -23,7 +23,7 @@ from rest_framework import permissions
 
 from document.document_management import document_detail, create_document, get_document_content, get_documents, \
     archive_document
-from document.intelligent_search import search,get_fav
+from document.intelligent_search import search, get_fav
 from document.save_favorites import favorite
 
 from document.template_management import create_template, template_detail, approve, get_templates, archive_template, \
@@ -108,8 +108,6 @@ urlpatterns = [
     path("v0.2/process/action/trigger/", trigger_process),
 
     path("v0.2/favorite/<str:id>/<str:type>/", favorite),
-
-
 
 ]
 if settings.DEBUG:

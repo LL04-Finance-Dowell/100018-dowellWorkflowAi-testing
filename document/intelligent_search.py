@@ -1,4 +1,4 @@
-from .algolia import get_algolia_data,get_fav_data
+from .algolia import get_algolia_data, get_fav_data
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
@@ -8,7 +8,6 @@ import json
 from django.core import serializers
 
 client = SearchClient.create("N7KJ4AQQ7Z", "9514747f86dce7e94cc5a2d56677e8e8")
-
 
 
 @api_view(["POST"])
@@ -21,17 +20,17 @@ def search(request):
         status=status.HTTP_200_OK,
     )
 
+
 @api_view(["GET"])
 def get_fav(request):
-    documents= FavoriteDocument.objects.values()
-    templtets = FavoriteTemplte.objects.values()
-    workflows= FavoriteWorkflow.objects.values()
+    documents = FavoriteDocument.objects.values()
+    templates = FavoriteTemplate.objects.values()
+    workflows = FavoriteWorkflow.objects.values()
     return Response(
         {
             "documents": documents,
-            "templates":templtets,
-            "workflows":workflows
+            "templates": templates,
+            "workflows": workflows
         },
         status=status.HTTP_200_OK,
     )
-

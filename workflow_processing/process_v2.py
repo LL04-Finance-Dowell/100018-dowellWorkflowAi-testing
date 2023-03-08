@@ -894,7 +894,7 @@ def mark_process_as_finalize_or_reject(request):
         #
         # }
         # Thread(target=background_processing, args=(data,)).start()
-        return Response("document processes successfully", status=status.HTTP_200_OK)
+        return Response("document processed successfully", status=status.HTTP_200_OK)
 
     return Response("Error processing the document", status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
