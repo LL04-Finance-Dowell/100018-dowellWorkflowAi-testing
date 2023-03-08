@@ -7,14 +7,12 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
 from database.mongo_db_connection import (
-    get_document_object,
-    get_document_list,
-    get_links_object_by_process_id,
     delete_document,
+    get_document_list,
+    get_document_object,
 )
 from database.mongo_db_connection_v2 import save_document
 from .thread_start import ThreadAlgolia, UpdateThreadAlgolia
-from .algolia import get_algolia_data
 
 editorApi = "https://100058.pythonanywhere.com/api/generate-editor-link/"
 
@@ -58,6 +56,7 @@ def create_document(request):  # Document Creation.
                 auth_viewers=viewers,
                 document_type="original",
                 parent_id=None,
+                process_id="",
             )
         )
         if res["isSuccess"]:
