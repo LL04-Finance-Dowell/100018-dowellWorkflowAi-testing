@@ -6,6 +6,7 @@ from database.mongo_db_connection import (
     get_template_object,
 )
 
+
 class FavoriteTemplate(models.Model):
     _id = models.TextField(primary_key=True)
     company_id = jsonfield.JSONField(null=True)
@@ -24,6 +25,7 @@ class FavoriteDocument(models.Model):
     created_by = jsonfield.JSONField(null=True)
     eventId = jsonfield.JSONField(null=True)
     page = jsonfield.JSONField(null=True)
+
     auth_user_list = jsonfield.JSONField(null=True)
     content = jsonfield.JSONField(null=True)
     created_on = jsonfield.JSONField(null=True)
@@ -45,7 +47,6 @@ class FavoriteWorkflow(models.Model):
     workflows = jsonfield.JSONField(null=True)
 
 
-
 def save_as_favorite(identifier, type):
     if type == "workflow":
         data = get_wf_object(identifier)
@@ -65,6 +66,5 @@ def save_as_favorite(identifier, type):
             data["content"] = eval(data["content"])
         except:
             pass
-        model = FavoriteTemplte(**data)
+        model = FavoriteTemplate(**data)
         model.save()
-
