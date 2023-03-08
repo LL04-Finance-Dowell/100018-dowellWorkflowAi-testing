@@ -23,7 +23,9 @@ from rest_framework import permissions
 
 from document.document_management import document_detail, create_document, get_document_content, get_documents, \
     archive_document
-from document.intelligent_search import search
+from document.intelligent_search import search,get_fav
+from document.save_favorites import favorite
+
 from document.template_management import create_template, template_detail, approve, get_templates, archive_template, \
     index_update
 from workflow.wf_ai_setting import create_workflow_setting, get_wf_ai_setting, update_wfai_setting
@@ -85,6 +87,7 @@ urlpatterns = [
     path("v0.1/settings/update/", update_wfai_setting, name="update_WFAI_setting"),
     # search
     path("v0.1/search/", search),
+    path("v0.1/favorites/", get_fav),
     # index
     path("v0.1/index/", index_update),
     # templates
@@ -103,6 +106,11 @@ urlpatterns = [
     path("v0.2/process/", document_processing),
     path("v0.2/process/action/verify/", verification),
     path("v0.2/process/action/trigger/", trigger_process),
+
+    path("v0.2/favorite/<str:id>/<str:type>/", favorite),
+
+
+
 ]
 if settings.DEBUG:
     urlpatterns = urlpatterns + static(

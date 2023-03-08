@@ -1,5 +1,5 @@
 from threading import Thread
-from .algolia import save_to_algolia, update_from_algolia
+from .algolia import save_to_algolia, update_from_algolia,save_as_favorite
 
 
 class ThreadAlgolia(Thread):
@@ -19,3 +19,13 @@ class UpdateThreadAlgolia(Thread):
 
     def run(self):
         update_from_algolia(self.payload)
+
+class FavoriteThreadAlgolia(Thread):
+    def __init__(self, id, func, type):
+        self.id = id
+        self.func = func
+        self.type = type
+        Thread.__init__(self)
+
+    def run(self):
+        save_as_favorite(self.id, self.type)

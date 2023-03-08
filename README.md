@@ -618,6 +618,29 @@ Request Body
     
 }
 ```
+_POST_ `/favorite/<str:id>/<str:type>/`
+
+Request Body
+
+```
+{
+    "id": "id",
+    "type":"template|document|workflow"
+    
+}
+
+```
+_POST_ `/favorites/`
+
+Response Body
+
+```
+{
+    "documents": [list of favorite documents],
+    "templates": [list of favorite templates],
+    "workflows": [list of favorite workflows]
+}
+```
 ### Technologies Used
 
 * [Python](https://nodejs.org/) is a programming language that lets you work more quickly and integrate your systems
