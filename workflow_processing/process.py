@@ -1,6 +1,7 @@
 import json
 import uuid
 from threading import Thread
+
 import jwt
 import requests
 from rest_framework import status
@@ -8,14 +9,14 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
 from database.mongo_db_connection import (
-    save_wf_process,
-    get_process_object,
-    update_document,
-    save_process_links,
+    delete_process,
     get_links_object_by_process_id,
     get_process_list,
+    get_process_object,
+    save_process_links,
+    save_wf_process,
+    update_document,
     update_wf_process,
-    delete_process,
 )
 
 
@@ -61,7 +62,10 @@ def register_finalize_or_reject(request):
                 action = "rejected"
                 break
     # update the workflow
-    data = {"process_id": request.data["process_id"], "process_steps": process["process_steps"]}
+    data = {
+        "process_id": request.data["process_id"],
+        "process_steps": process["process_steps"],
+    }
     t = Thread(
         target=process_update,
         name="process update....",
@@ -73,7 +77,7 @@ def register_finalize_or_reject(request):
         doc_data = {
             "document_id": process["document_id"],
             "process_id": process["_id"],
-            "state": "completed"
+            "state": "completed",
         }
         dt = Thread(
             target=document_update,
@@ -85,7 +89,9 @@ def register_finalize_or_reject(request):
 
 def process_update(data):
     """process update task"""
-    update_wf_process(process_id=data["process_id"], steps=data["process_steps"], state=data["state"])
+    update_wf_process(
+        process_id=data["process_id"], steps=data["process_steps"], state=data["state"]
+    )
     print("Thread: process update! \n")
     return
 
@@ -172,8 +178,8 @@ def verify_process(request):
     for step in process["process_steps"]:
         # user check.
         if (
-                step["member"] == request.data["user_name"]
-                and step.get("member_portfolio") == request.data["portfolio"]
+            step["member"] == request.data["user_name"]
+            and step.get("member_portfolio") == request.data["portfolio"]
         ):
             print("Started the checks.... \n")
             # Display check
@@ -319,7 +325,7 @@ def save_and_start_processing(request):
     doc_data = {
         "document_id": request.data["document_id"],
         "process_id": process["process_id"],
-        "state": "processing"
+        "state": "processing",
     }
     t = Thread(
         target=document_update,
@@ -348,7 +354,7 @@ def document_update(doc_data):
 
 
 def new_process(
-        workflows, created_by, company_id, data_type, document_id, process_choice
+    workflows, created_by, company_id, data_type, document_id, process_choice
 ):
     """Create Process."""
     print("creating process.......... \n")
@@ -454,4 +460,7 @@ def archive_process(request, process_id):
             status=status.HTTP_200_OK,
         )
     except ConnectionError:
-        return Response("Failed to add to process to trash", status=status.HTTP_200_OK, )
+        return Response(
+            "Failed to add to process to trash",
+            status=status.HTTP_200_OK,
+        )

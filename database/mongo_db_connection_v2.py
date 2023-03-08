@@ -5,7 +5,13 @@ import time
 import json
 from datetime import datetime
 from .dowellconnection import dowellconnection
-from .mongo_db_connection import TEMPLATE_CONNECTION_LIST, get_event_id, get_template_object, get_wf_list, get_wf_object
+from .mongo_db_connection import (
+    TEMPLATE_CONNECTION_LIST,
+    get_event_id,
+    get_template_object,
+    get_wf_list,
+    get_wf_object,
+)
 
 WF_CONNECTION_LIST = [
     "Documents",
@@ -119,7 +125,9 @@ time = dd.strftime("%d:%m:%Y,%H:%M:%S")
 url = "https://uxlivinglab.pythonanywhere.com"
 
 
-def save_process_qrcodes(qrcodes, process_id, document_id, processing_choice, process_title, company_id):
+def save_process_qrcodes(
+    qrcodes, process_id, document_id, processing_choice, process_title, company_id
+):
     payload = json.dumps(
         {
             **QR_CONNECTION_DICT,
@@ -132,8 +140,7 @@ def save_process_qrcodes(qrcodes, process_id, document_id, processing_choice, pr
                 "processing_choice": processing_choice,
                 "process_title": process_title,
                 "created_at": time,
-                "company_id": company_id
-
+                "company_id": company_id,
             },
             "update_field": {"order_nos": 21},
             "platform": "bangalore",
@@ -147,7 +154,7 @@ def save_process_qrcodes(qrcodes, process_id, document_id, processing_choice, pr
 
 # ----------------------- Links Creation -------------------------
 def save_process_links(
-        links, process_id, document_id, processing_choice, process_title, company_id
+    links, process_id, document_id, processing_choice, process_title, company_id
 ):
     payload = json.dumps(
         {
@@ -161,8 +168,7 @@ def save_process_links(
                 "processing_choice": processing_choice,
                 "process_title": process_title,
                 "created_at": time,
-                "company_id": company_id
-
+                "company_id": company_id,
             },
             "update_field": {"order_nos": 21},
             "platform": "bangalore",
@@ -206,14 +212,14 @@ def get_links_object_by_document_id(document_id):
 
 #  -------------------------------Workflow Process------------------
 def save_wf_process(
-        process_title,
-        process_steps,
-        user,
-        company_id,
-        data_type,
-        document_id,
-        process_action,
-        portfolio
+    process_title,
+    process_steps,
+    user,
+    company_id,
+    data_type,
+    document_id,
+    process_action,
+    portfolio,
 ):
     payload = json.dumps(
         {
@@ -230,7 +236,7 @@ def save_wf_process(
                 "processing_action": process_action,
                 "processing_state": "draft",
                 "created_at": time,
-                "creator_portfolio": portfolio
+                "creator_portfolio": portfolio,
             },
             "update_field": {"order_nos": 21},
             "platform": "bangalore",
@@ -250,16 +256,15 @@ def update_wf_process(process_id, steps, state):
             "field": {
                 "_id": process_id,
             },
-            "update_field": {
-                "process_steps": steps,
-                "processing_state": state
-            },
+            "update_field": {"process_steps": steps, "processing_state": state},
             "platform": "bangalore",
         }
     )
     headers = {"Content-Type": "application/json"}
     response = requests.request("POST", url, headers=headers, data=payload)
-    print("DB: SAVE WORKFLOW UPDATE--------------- \n", )
+    print(
+        "DB: SAVE WORKFLOW UPDATE--------------- \n",
+    )
     return json.loads(response.text)
 
 
@@ -278,7 +283,6 @@ def get_process_list(company_id):
     print("DB: Getting process list \n")
     fields = {
         "company_id": str(company_id),
-
     }
     response_obj = dowellconnection(*PROCESS_CONNECTION_LIST, "fetch", fields, "nil")
     res_obj = json.loads(response_obj)
@@ -289,7 +293,19 @@ def get_process_list(company_id):
 
 
 # -------------------------- Document----------------------------------------
-def save_document(name, data, created_by, company_id, data_type, page, state, auth_viewers, document_type, parent_id):
+def save_document(
+    name,
+    data,
+    created_by,
+    company_id,
+    data_type,
+    page,
+    state,
+    auth_viewers,
+    document_type,
+    parent_id,
+    process_id,
+):
     det = datetime.now()
     created_time = det.strftime("%d:%m:%Y,%H:%M:%S")
     payload = json.dumps(
@@ -312,6 +328,7 @@ def save_document(name, data, created_by, company_id, data_type, page, state, au
                 "auth_viewers": auth_viewers,
                 "document_type": document_type,
                 "parent_id": parent_id,
+                "process_id": process_id,
             },
             "update_field": {"order_nos": 21},
             "platform": "bangalore",
@@ -383,9 +400,7 @@ def update_document_clone(document_id, clone_list):
             "field": {
                 "_id": document_id,
             },
-            "update_field": {
-                "clone_list": clone_list
-            },
+            "update_field": {"clone_list": clone_list},
             "platform": "bangalore",
         }
     )
@@ -403,10 +418,7 @@ def update_document_viewers(document_id, auth_viewers, doc_name):
             "field": {
                 "_id": document_id,
             },
-            "update_field": {
-                "document_name": doc_name,
-                "auth_viewers": auth_viewers
-            },
+            "update_field": {"document_name": doc_name, "auth_viewers": auth_viewers},
             "platform": "bangalore",
         }
     )
@@ -420,8 +432,7 @@ def get_links_list(company_id):
     print("DB: Getting process list \n")
     fields = {
         "company_id": str(company_id),
-        "process_id": str("640260a8bd505fa70c180aa9")
-
+        "process_id": str("640260a8bd505fa70c180aa9"),
     }
     response_obj = dowellconnection(*LINK_CONNECTION_LIST, "fetch", fields, "nil")
     res_obj = json.loads(response_obj)
