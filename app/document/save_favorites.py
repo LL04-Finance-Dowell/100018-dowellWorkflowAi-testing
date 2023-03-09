@@ -15,7 +15,7 @@ def favorite(request, item_id, item_type):
 
 
 @api_view(["GET"])
-def delete_favorite(request,item_id, item_type):
+def delete_favorite(request, item_id, item_type):
     try:
 
         DeleteFavoriteThread(item_id, item_type).start()

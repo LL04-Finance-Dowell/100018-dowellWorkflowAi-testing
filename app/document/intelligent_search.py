@@ -15,28 +15,32 @@ def search(request):
     return Response(
         {
             "search_keyword": request.data["search"],
-            "search_result": get_algolia_data(request.data["search"], request.data["company_id"]),
+            "search_result": get_algolia_data(
+                request.data["search"], request.data["company_id"]
+            ),
         },
         status=status.HTTP_200_OK,
     )
 
 
-@api_view(["GET","POST"])
+@api_view(["GET", "POST"])
 def get_fav(request):
-    documents=[]
-    templates=[]
-    workflows=[]
-    if request.method=="POST":
-        company_id=request.data['company_id']
-        created_by=request.data['created_by']
-        documents = FavoriteDocument.objects.filter(company_id=company_id,created_by=created_by).values()
-        templates = FavoriteTemplate.objects.filter(company_id=company_id,created_by=created_by).values()
-        workflows = FavoriteWorkflow.objects.filter(company_id=company_id,created_by=created_by).values()
+    documents = []
+    templates = []
+    workflows = []
+    if request.method == "POST":
+        company_id = request.data["company_id"]
+        created_by = request.data["created_by"]
+        documents = FavoriteDocument.objects.filter(
+            company_id=company_id, created_by=created_by
+        ).values()
+        templates = FavoriteTemplate.objects.filter(
+            company_id=company_id, created_by=created_by
+        ).values()
+        workflows = FavoriteWorkflow.objects.filter(
+            company_id=company_id, created_by=created_by
+        ).values()
     return Response(
-        {
-            "documents": documents,
-            "templates": templates,
-            "workflows": workflows
-        },
+        {"documents": documents, "templates": templates, "workflows": workflows},
         status=status.HTTP_200_OK,
     )
