@@ -48,9 +48,9 @@ def document_processing(request):
             company_id=request.data["company_id"],
             data_type=request.data["data_type"],
             document_id=clone_document(
-                document_id=request.data["parent_document_id"],
+                document_id=request.data["document_id"],
                 auth_viewer=None,
-                parent_id=request.data["parent_document_id"],
+                parent_id=request.data["document_id"],
                 process_id="",
             ),
             process_choice=choice,
@@ -58,7 +58,7 @@ def document_processing(request):
         )
         # update doc with process.
         doc_data = {
-            "document_id": process["parent_document_id"],
+            "document_id": process["document_id"],
             "process_id": process["_id"],
             "state": "processing",
         }
@@ -81,16 +81,16 @@ def document_processing(request):
             company_id=request.data["company_id"],
             data_type=request.data["data_type"],
             document_id=clone_document(
-                document_id=request.data["parent_document_id"],
+                document_id=request.data["document_id"],
                 auth_viewer=None,
-                parent_id=request.data["parent_document_id"],
+                parent_id=request.data["document_id"],
                 process_id="",
             ),
             process_choice=choice,
             creator_portfolio=request.data["creator_portfolio"],
         )
         doc_data = {
-            "document_id": process["parent_document_id"],
+            "document_id": process["document_id"],
             "process_id": process["_id"],
             "state": "processing",
         }
@@ -111,16 +111,16 @@ def document_processing(request):
             company_id=request.data["company_id"],
             data_type=request.data["data_type"],
             document_id=clone_document(
-                document_id=request.data["parent_document_id"],
+                document_id=request.data["document_id"],
                 auth_viewer=None,
-                parent_id=request.data["parent_document_id"],
+                parent_id=request.data["document_id"],
                 process_id="",
             ),
             process_choice=choice,
             creator_portfolio=request.data["creator_portfolio"],
         )
         doc_data = {
-            "document_id": process["parent_document_id"],
+            "document_id": process["document_id"],
             "process_id": process["_id"],
             "state": "processing",
         }
@@ -141,16 +141,16 @@ def document_processing(request):
             company_id=request.data["company_id"],
             data_type=request.data["data_type"],
             document_id=clone_document(
-                document_id=request.data["parent_document_id"],
+                document_id=request.data["document_id"],
                 auth_viewer=None,
-                parent_id=request.data["parent_document_id"],
+                parent_id=request.data["document_id"],
                 process_id="",
             ),
             process_choice=choice,
             creator_portfolio=request.data["creator_portfolio"],
         )
         doc_data = {
-            "document_id": process["parent_document_id"],
+            "document_id": process["document_id"],
             "process_id": process["_id"],
             "state": "processing",
         }
@@ -171,16 +171,16 @@ def document_processing(request):
             company_id=request.data["company_id"],
             data_type=data_type,
             document_id=clone_document(
-                document_id=request.data["parent_document_id"],
+                document_id=request.data["document_id"],
                 auth_viewer=None,
-                parent_id=request.data["parent_document_id"],
+                parent_id=request.data["document_id"],
                 process_id="",
             ),
             process_choice=choice,
             creator_portfolio=request.data["creator_portfolio"],
         )
         doc_data = {
-            "document_id": process["parent_document_id"],
+            "document_id": process["document_id"],
             "process_id": process["_id"],
             "state": "processing",
         }
@@ -201,16 +201,16 @@ def document_processing(request):
             company_id=request.data["company_id"],
             data_type=data_type,
             document_id=clone_document(
-                document_id=request.data["parent_document_id"],
+                document_id=request.data["document_id"],
                 auth_viewer=None,
-                parent_id=request.data["parent_document_id"],
+                parent_id=request.data["document_id"],
                 process_id="",
             ),
             process_choice=choice,
             creator_portfolio=request.data["creator_portfolio"],
         )
         doc_data = {
-            "document_id": process["parent_document_id"],
+            "document_id": process["document_id"],
             "process_id": process["_id"],
             "state": "processing",
         }
@@ -228,19 +228,19 @@ def document_processing(request):
         process = new_process(
             workflows=request.data["workflows"],
             created_by=request.data["created_by"],
-            company_id=request.data["parent_company_id"],
+            company_id=request.data["company_id"],
             data_type=data_type,
             document_id=clone_document(
-                document_id=request.data["parent_document_id"],
+                document_id=request.data["document_id"],
                 auth_viewer=request.data["created_by"],
-                parent_id=request.data["parent_document_id"],
+                parent_id=request.data["document_id"],
                 process_id="",
             ),
             process_choice=choice,
             creator_portfolio=request.data["creator_portfolio"],
         )
         doc_data = {
-            "document_id": process["parent_document_id"],
+            "document_id": process["document_id"],
             "process_id": process["_id"],
             "state": "processing",
         }
