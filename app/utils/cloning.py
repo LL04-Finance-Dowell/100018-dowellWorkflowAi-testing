@@ -1,6 +1,6 @@
 import json
 
-from app.database.mongo_db_connection_v2 import (
+from app.utils.mongo_db_connection_v2 import (
     get_document_object,
     save_document,
 )

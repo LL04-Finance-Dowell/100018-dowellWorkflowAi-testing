@@ -4,6 +4,8 @@ import uuid
 import jwt
 from threading import Thread
 from .threads import notification
+from app.constants import VERIFICATION_LINK
+
 
 def process_links(
     process_id, document_id, step_role, auth_name, auth_portfolio, company_id
@@ -46,10 +48,10 @@ def process_links(
         "portfolio": auth_portfolio,
         "process_id": process_id,
         "company_id": company_id,
-        "link": f"https://ll04-finance-dowell.github.io/100018-dowellWorkflowAi-testing/#/verify/{hash_token}/",
+        "link": f"{VERIFICATION_LINK}/{hash_token}/",
     }
     Thread(target=notification, args=(data,)).start()
-    return f"https://ll04-finance-dowell.github.io/100018-dowellWorkflowAi-testing/#/verify/{hash_token}/"
+    return f"{VERIFICATION_LINK}/{hash_token}/"
 
 
 def process_qrcode(process_id, document_id, step_role, auth_name, auth_portfolio):
@@ -89,7 +91,7 @@ def process_qrcode(process_id, document_id, step_role, auth_name, auth_portfolio
     qr_code = qrcode.QRCode(error_correction=qrcode.constants.ERROR_CORRECT_H)
 
     # taking url or text
-    url = f"https://ll04-finance-dowell.github.io/100018-dowellWorkflowAi-testing/#/verify/{hash_token}/"
+    url = f"{VERIFICATION_LINK}/{hash_token}/"
 
     # adding URL or text to QRcode
     qr_code.add_data(url)

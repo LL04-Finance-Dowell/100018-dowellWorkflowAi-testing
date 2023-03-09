@@ -22,47 +22,37 @@ from drf_yasg import openapi
 from drf_yasg.views import get_schema_view
 from rest_framework import permissions
 
-from app.document.document_management import (
+
+from app.views import (
     document_detail,
     create_document,
     get_document_content,
     get_documents,
     archive_document,
-)
-from app.document.intelligent_search import search, get_fav
-from app.document.save_favorites import favorite, delete_favorite
-
-from app.document.template_management import (
+    search,
+    get_fav,
+    favorite,
+    delete_favorite,
     create_template,
     template_detail,
     approve,
     get_templates,
     archive_template,
     index_update,
-)
-from app.workflow.wf_ai_setting import (
     create_workflow_setting,
     get_wf_ai_setting,
     update_wfai_setting,
-)
-from app.workflow.wf_management import (
     create_workflow,
     workflow_detail,
     update_workflow,
     get_workflows,
     home,
     archive_workflow,
-)
-from app.workflow.process import (
-    save_and_start_processing,
     a_single_process,
-    verify_process,
     get_process_link,
     fetch_process_links,
     processes,
     archive_process,
-)
-from app.workflow.process_v2 import (
     document_processing,
     process_verification,
     mark_process_as_finalize_or_reject,
@@ -99,11 +89,11 @@ urlpatterns = [
         r"^redoc/$", schema_view.with_ui("redoc", cache_timeout=0), name="schema-redoc"
     ),
     # processing.
-    path("v0.1/process/", save_and_start_processing),
+    # path("v0.1/process/", save_and_start_processing),
     path("v0.1/process/<str:process_id>/", a_single_process),
     path("v0.1/process/delete/<str:process_id>/", archive_process),
     path("v0.1/process/action/mark/", mark_process_as_finalize_or_reject),
-    path("v0.1/process/action/verify/", verify_process),
+    # path("v0.1/process/action/verify/", verify_process),
     path("v0.1/process/verification/link/", get_process_link),
     path("v0.1/process/org/<str:company_id>/", processes),
     path("v0.1/process/links/<str:process_id>/", fetch_process_links),

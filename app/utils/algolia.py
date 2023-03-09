@@ -1,6 +1,7 @@
-from algoliasearch.search_client import SearchClient
 
-client = SearchClient.create("N7KJ4AQQ7Z", "9514747f86dce7e94cc5a2d56677e8e8")
+from app.constants import ALGOLIA_CLIENT
+
+client = ALGOLIA_CLIENT
 index = client.init_index("workflow_index")
 index.set_settings(
     {

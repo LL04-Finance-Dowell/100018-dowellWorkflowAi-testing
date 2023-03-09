@@ -1,6 +1,6 @@
 import jsonfield
 from django.db import models
-from app.database.mongo_db_connection import (
+from app.utils.mongo_db_connection import (
     get_document_object,
     get_wf_object,
     get_template_object,

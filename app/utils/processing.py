@@ -1,13 +1,14 @@
-from . import threads, verification
+from . import checks, verification
+from . import threads
 from threading import Thread
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from app.database.mongo_db_connection_v2 import (
+from app.utils.mongo_db_connection_v2 import (
     get_process_object,
     save_wf_process,
 )
-from . import checks, link_gen
+from . import link_gen
 
 
 def start(process):

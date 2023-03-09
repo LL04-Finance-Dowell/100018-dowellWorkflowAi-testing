@@ -2,7 +2,7 @@ from threading import Thread
 
 import requests
 
-from app.database.mongo_db_connection_v2 import (
+from app.utils.mongo_db_connection_v2 import (
     get_document_object,
     save_process_links,
     save_process_qrcodes,
@@ -11,10 +11,11 @@ from app.database.mongo_db_connection_v2 import (
     update_document_viewers,
     update_wf_process,
 )
+from . import threads
 
-from . import cloning, threads
+from . import cloning
 
-notification_api = "https://100092.pythonanywhere.com/notification/notification/"
+from app.constants import NOTIFICATION_API
 
 
 def update_document_authorize(data):
@@ -37,7 +38,7 @@ def notification(data):
     """post notifications for extension."""
     try:
         res = requests.post(
-            url=notification_api,
+            url=NOTIFICATION_API,
             data={
                 "username": data["username"],
                 "portfolio": data["portfolio"],
