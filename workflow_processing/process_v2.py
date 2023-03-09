@@ -602,10 +602,10 @@ def process_qrcode(process_id, document_id, step_role, auth_name, auth_portfolio
         "secret",
         algorithm="HS256",
     )
-    qr_path = f"100094.pythonanywhere.com/media/qrcodes/{uuid.uuid4().hex}.png"
-    qr_url = f"https://{qr_path}"
-    # qr_path = f"media/qrcodes/{uuid.uuid4().hex}.png"
-    # qr_url = f"https://100094.pythonanywhere.com/{qr_path}"
+    # qr_path = f"100094.pythonanywhere.com/media/qrcodes/{uuid.uuid4().hex}.png"
+    # qr_url = f"https://{qr_path}"
+    qr_path = f"media/qrcodes/{uuid.uuid4().hex}.png"
+    qr_url = f"https://100094.pythonanywhere.com/{qr_path}"
     qr_code = qrcode.QRCode(error_correction=qrcode.constants.ERROR_CORRECT_H)
 
     # taking url or text
@@ -633,20 +633,17 @@ def notification(data):
     try:
         res = requests.post(
             url=notification_api,
-            data=json.dumps(
-                {
-                    "username": data["username"],
-                    "portfolio": data["portfolio"],
-                    "productName": "Workflow AI",
-                    "companyId": data["company_id"],
-                    "title": "Document to Sign",
-                    "orgName": "Workflow AI",
-                    "message": "You have a document to sign.",
-                    "link": data["link"],
-                    "seen": False,
-                    "duration": " no limit",
-                }
-            ),
+            data={
+                "username": data["username"],
+                "portfolio": data["portfolio"],
+                "productName": "Workflow AI",
+                "companyId": data["company_id"],
+                "title": "Document to Sign",
+                "orgName": "Workflow AI",
+                "message": "You have a document to sign.",
+                "link": data["link"],
+                "duration": "no limit",
+            },
             headers={"Content-Type": "application/json"},
         )
         if res.status_code == 201:
