@@ -14,6 +14,7 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.conf import settings
+
 # from django.conf.urls import url
 from django.conf.urls.static import static
 from django.urls import path, re_path
@@ -21,20 +22,52 @@ from drf_yasg import openapi
 from drf_yasg.views import get_schema_view
 from rest_framework import permissions
 
-from app.document.document_management import document_detail, create_document, get_document_content, get_documents, \
-    archive_document
+from app.document.document_management import (
+    document_detail,
+    create_document,
+    get_document_content,
+    get_documents,
+    archive_document,
+)
 from app.document.intelligent_search import search, get_fav
-from app.document.save_favorites import favorite,delete_favorite
+from app.document.save_favorites import favorite, delete_favorite
 
-from app.document.template_management import create_template, template_detail, approve, get_templates, archive_template, \
-    index_update
-from app.workflow.wf_ai_setting import create_workflow_setting, get_wf_ai_setting, update_wfai_setting
-from app.workflow.wf_management import create_workflow, workflow_detail, update_workflow, get_workflows, home, \
-    archive_workflow
-from app.workflow.process import save_and_start_processing, a_single_process, \
-    verify_process, get_process_link, fetch_process_links, processes, archive_process
-from app.workflow.process_v2 import document_processing, verification, \
-    mark_process_as_finalize_or_reject, trigger_process
+from app.document.template_management import (
+    create_template,
+    template_detail,
+    approve,
+    get_templates,
+    archive_template,
+    index_update,
+)
+from app.workflow.wf_ai_setting import (
+    create_workflow_setting,
+    get_wf_ai_setting,
+    update_wfai_setting,
+)
+from app.workflow.wf_management import (
+    create_workflow,
+    workflow_detail,
+    update_workflow,
+    get_workflows,
+    home,
+    archive_workflow,
+)
+from app.workflow.process import (
+    save_and_start_processing,
+    a_single_process,
+    verify_process,
+    get_process_link,
+    fetch_process_links,
+    processes,
+    archive_process,
+)
+from app.workflow.process_v2 import (
+    document_processing,
+    process_verification,
+    mark_process_as_finalize_or_reject,
+    trigger_process,
+)
 
 schema_view = get_schema_view(
     openapi.Info(
@@ -65,7 +98,6 @@ urlpatterns = [
     re_path(
         r"^redoc/$", schema_view.with_ui("redoc", cache_timeout=0), name="schema-redoc"
     ),
-
     # processing.
     path("v0.1/process/", save_and_start_processing),
     path("v0.1/process/<str:process_id>/", a_single_process),
@@ -79,11 +111,19 @@ urlpatterns = [
     path("v0.1/workflows/", create_workflow, name="workflows"),
     path("v0.1/workflows/update/", update_workflow, name="update_workflow"),
     path("v0.1/workflows/<str:workflow_id>/", workflow_detail, name="workflow_detail"),
-    path("v0.1/workflows/delete/<str:workflow_id>/", archive_workflow, name="delete_workflow"),
+    path(
+        "v0.1/workflows/delete/<str:workflow_id>/",
+        archive_workflow,
+        name="delete_workflow",
+    ),
     path("v0.1/workflows/org/<str:company_id>/", get_workflows, name="all_workflows"),
     # wf_settings
     path("v0.1/settings/", create_workflow_setting, name="save_wf_setting"),
-    path("v0.1/settings/<str:wf_setting_id>/", get_wf_ai_setting, name="get_wf_ai_setting"),
+    path(
+        "v0.1/settings/<str:wf_setting_id>/",
+        get_wf_ai_setting,
+        name="get_wf_ai_setting",
+    ),
     path("v0.1/settings/update/", update_wfai_setting, name="update_WFAI_setting"),
     # search
     path("v0.1/search/", search),
@@ -95,18 +135,29 @@ urlpatterns = [
     path("v0.1/templates/<str:template_id>/", template_detail, name="template_detail"),
     path("v0.1/templates/org/<str:company_id>/", get_templates, name="all_templates"),
     path("v0.1/templates/approve/<str:template_id>/", approve),
-    path("v0.1/templates/delete/<str:template_id>/", archive_template, name="delete_template"),
+    path(
+        "v0.1/templates/delete/<str:template_id>/",
+        archive_template,
+        name="delete_template",
+    ),
     # documents
     path("v0.1/documents/", create_document, name="documents"),
     path("v0.1/documents/<str:document_id>/", document_detail, name="document"),
-    path("v0.1/documents/delete/<str:document_id>/", archive_document, name="delete_document"),
-    path("v0.1/documents/content/<str:document_id>/", get_document_content, name="content"),
+    path(
+        "v0.1/documents/delete/<str:document_id>/",
+        archive_document,
+        name="delete_document",
+    ),
+    path(
+        "v0.1/documents/content/<str:document_id>/",
+        get_document_content,
+        name="content",
+    ),
     path("v0.1/documents/org/<str:company_id>/", get_documents, name="all_documents"),
     # v2 processing.
     path("v0.2/process/", document_processing),
-    path("v0.2/process/action/verify/", verification),
+    path("v0.2/process/action/verify/", process_verification),
     path("v0.2/process/action/trigger/", trigger_process),
-
     path("v0.2/favorite/<str:item_id>/<str:item_type>/", favorite),
     path("v0.2/delete/<str:item_id>/<str:item_type>/", delete_favorite),
 ]
