@@ -3,7 +3,7 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
 
-from database.mongo_db_connection import (
+from app.database.mongo_db_connection import (
     save_wf_setting,
     get_wf_setting_object,
     wf_setting_update,

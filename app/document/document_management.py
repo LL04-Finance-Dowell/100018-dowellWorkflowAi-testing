@@ -6,12 +6,12 @@ from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
-from database.mongo_db_connection import (
+from app.database.mongo_db_connection import (
     delete_document,
     get_document_list,
     get_document_object,
 )
-from database.mongo_db_connection_v2 import save_document
+from app.database.mongo_db_connection_v2 import save_document
 from .thread_start import ThreadAlgolia, UpdateThreadAlgolia
 
 editorApi = "https://100058.pythonanywhere.com/api/generate-editor-link/"

@@ -3,7 +3,7 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
 from algoliasearch.search_client import SearchClient
-from .models import *
+from ..models import *
 import json
 from django.core import serializers
 

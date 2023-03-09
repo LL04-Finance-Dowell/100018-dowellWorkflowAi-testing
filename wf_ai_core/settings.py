@@ -30,10 +30,8 @@ ALLOWED_HOSTS = ["*"]
 
 INSTALLED_APPS = [
     "drf_yasg",
-    "document",
-    "workflow",
+    "app",
     "corsheaders",
-    "workflow_processing",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -52,10 +50,10 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
-    'corsheaders.middleware.CorsMiddleware',
+    "corsheaders.middleware.CorsMiddleware",
 ]
 
-ROOT_URLCONF = "workflow_ai_core.urls"
+ROOT_URLCONF = "wf_ai_core.urls"
 
 TEMPLATES = [
     {
@@ -73,7 +71,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = "workflow_ai_core.wsgi.application"
+WSGI_APPLICATION = "wf_ai_core.wsgi.application"
 
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
@@ -140,5 +138,5 @@ EMAIL_HOST_PASSWORD = "jpcjzsnzarucochh"
 
 # Media files
 
-MEDIA_ROOT = BASE_DIR / 'media'
-MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / "media"
+MEDIA_URL = "/media/"

@@ -1,6 +1,6 @@
 from threading import Thread
 from .algolia import save_to_algolia, update_from_algolia
-from .models import save_as_favorite,remove_favorite
+from ..models import save_as_favorite,remove_favorite
 
 
 class ThreadAlgolia(Thread):

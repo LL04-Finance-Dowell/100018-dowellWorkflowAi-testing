@@ -11,7 +11,7 @@ from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
-from database.mongo_db_connection_v2 import (
+from app.database.mongo_db_connection_v2 import (
     document_finalize,
     get_document_object,
     get_process_object,

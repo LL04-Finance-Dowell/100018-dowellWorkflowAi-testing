@@ -5,7 +5,7 @@ from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
-from database.mongo_db_connection import (
+from app.database.mongo_db_connection import (
     save_wf,
     get_wf_object,
     get_wf_list,
@@ -14,7 +14,7 @@ from database.mongo_db_connection import (
 
 )
 
-from document.thread_start import ThreadAlgolia, UpdateThreadAlgolia
+from app.document.thread_start import ThreadAlgolia, UpdateThreadAlgolia
 
 
 @api_view(["GET"])
