@@ -1,6 +1,6 @@
 from django.apps import AppConfig
 
 
-class DocumentConfig(AppConfig):
+class DatabaseConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
-    name = 'document'
+    name = 'app'

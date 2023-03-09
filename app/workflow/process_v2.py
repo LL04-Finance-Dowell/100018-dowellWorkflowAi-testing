@@ -11,7 +11,7 @@ from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
-from database.mongo_db_connection_v2 import (
+from app.database.mongo_db_connection_v2 import (
     document_finalize,
     get_document_object,
     get_process_object,
@@ -48,9 +48,9 @@ def document_processing(request):
             company_id=request.data["company_id"],
             data_type=request.data["data_type"],
             document_id=clone_document(
-                document_id=request.data["parent_document_id"],
+                document_id=request.data["document_id"],
                 auth_viewer=None,
-                parent_id=request.data["parent_document_id"],
+                parent_id=request.data["document_id"],
                 process_id="",
             ),
             process_choice=choice,
@@ -58,7 +58,7 @@ def document_processing(request):
         )
         # update doc with process.
         doc_data = {
-            "document_id": process["parent_document_id"],
+            "document_id": process["document_id"],
             "process_id": process["_id"],
             "state": "processing",
         }
@@ -81,16 +81,16 @@ def document_processing(request):
             company_id=request.data["company_id"],
             data_type=request.data["data_type"],
             document_id=clone_document(
-                document_id=request.data["parent_document_id"],
+                document_id=request.data["document_id"],
                 auth_viewer=None,
-                parent_id=request.data["parent_document_id"],
+                parent_id=request.data["document_id"],
                 process_id="",
             ),
             process_choice=choice,
             creator_portfolio=request.data["creator_portfolio"],
         )
         doc_data = {
-            "document_id": process["parent_document_id"],
+            "document_id": process["document_id"],
             "process_id": process["_id"],
             "state": "processing",
         }
@@ -111,16 +111,16 @@ def document_processing(request):
             company_id=request.data["company_id"],
             data_type=request.data["data_type"],
             document_id=clone_document(
-                document_id=request.data["parent_document_id"],
+                document_id=request.data["document_id"],
                 auth_viewer=None,
-                parent_id=request.data["parent_document_id"],
+                parent_id=request.data["document_id"],
                 process_id="",
             ),
             process_choice=choice,
             creator_portfolio=request.data["creator_portfolio"],
         )
         doc_data = {
-            "document_id": process["parent_document_id"],
+            "document_id": process["document_id"],
             "process_id": process["_id"],
             "state": "processing",
         }
@@ -141,16 +141,16 @@ def document_processing(request):
             company_id=request.data["company_id"],
             data_type=request.data["data_type"],
             document_id=clone_document(
-                document_id=request.data["parent_document_id"],
+                document_id=request.data["document_id"],
                 auth_viewer=None,
-                parent_id=request.data["parent_document_id"],
+                parent_id=request.data["document_id"],
                 process_id="",
             ),
             process_choice=choice,
             creator_portfolio=request.data["creator_portfolio"],
         )
         doc_data = {
-            "document_id": process["parent_document_id"],
+            "document_id": process["document_id"],
             "process_id": process["_id"],
             "state": "processing",
         }
@@ -171,16 +171,16 @@ def document_processing(request):
             company_id=request.data["company_id"],
             data_type=data_type,
             document_id=clone_document(
-                document_id=request.data["parent_document_id"],
+                document_id=request.data["document_id"],
                 auth_viewer=None,
-                parent_id=request.data["parent_document_id"],
+                parent_id=request.data["document_id"],
                 process_id="",
             ),
             process_choice=choice,
             creator_portfolio=request.data["creator_portfolio"],
         )
         doc_data = {
-            "document_id": process["parent_document_id"],
+            "document_id": process["document_id"],
             "process_id": process["_id"],
             "state": "processing",
         }
@@ -201,16 +201,16 @@ def document_processing(request):
             company_id=request.data["company_id"],
             data_type=data_type,
             document_id=clone_document(
-                document_id=request.data["parent_document_id"],
+                document_id=request.data["document_id"],
                 auth_viewer=None,
-                parent_id=request.data["parent_document_id"],
+                parent_id=request.data["document_id"],
                 process_id="",
             ),
             process_choice=choice,
             creator_portfolio=request.data["creator_portfolio"],
         )
         doc_data = {
-            "document_id": process["parent_document_id"],
+            "document_id": process["document_id"],
             "process_id": process["_id"],
             "state": "processing",
         }
@@ -228,19 +228,19 @@ def document_processing(request):
         process = new_process(
             workflows=request.data["workflows"],
             created_by=request.data["created_by"],
-            company_id=request.data["parent_company_id"],
+            company_id=request.data["company_id"],
             data_type=data_type,
             document_id=clone_document(
-                document_id=request.data["parent_document_id"],
+                document_id=request.data["document_id"],
                 auth_viewer=request.data["created_by"],
-                parent_id=request.data["parent_document_id"],
+                parent_id=request.data["document_id"],
                 process_id="",
             ),
             process_choice=choice,
             creator_portfolio=request.data["creator_portfolio"],
         )
         doc_data = {
-            "document_id": process["parent_document_id"],
+            "document_id": process["document_id"],
             "process_id": process["_id"],
             "state": "processing",
         }
@@ -602,10 +602,10 @@ def process_qrcode(process_id, document_id, step_role, auth_name, auth_portfolio
         "secret",
         algorithm="HS256",
     )
-    qr_path = f"100094.pythonanywhere.com/media/qrcodes/{uuid.uuid4().hex}.png"
-    qr_url = f"https://{qr_path}"
-    # qr_path = f"media/qrcodes/{uuid.uuid4().hex}.png"
-    # qr_url = f"https://100094.pythonanywhere.com/{qr_path}"
+    # qr_path = f"100094.pythonanywhere.com/media/qrcodes/{uuid.uuid4().hex}.png"
+    # qr_url = f"https://{qr_path}"
+    qr_path = f"media/qrcodes/{uuid.uuid4().hex}.png"
+    qr_url = f"https://100094.pythonanywhere.com/{qr_path}"
     qr_code = qrcode.QRCode(error_correction=qrcode.constants.ERROR_CORRECT_H)
 
     # taking url or text
@@ -633,20 +633,17 @@ def notification(data):
     try:
         res = requests.post(
             url=notification_api,
-            data=json.dumps(
-                {
-                    "username": data["username"],
-                    "portfolio": data["portfolio"],
-                    "productName": "Workflow AI",
-                    "companyId": data["company_id"],
-                    "title": "Document to Sign",
-                    "orgName": "Workflow AI",
-                    "message": "You have a document to sign.",
-                    "link": data["link"],
-                    "seen": False,
-                    "duration": " no limit",
-                }
-            ),
+            data={
+                "username": data["username"],
+                "portfolio": data["portfolio"],
+                "productName": "Workflow AI",
+                "companyId": data["company_id"],
+                "title": "Document to Sign",
+                "orgName": "Workflow AI",
+                "message": "You have a document to sign.",
+                "link": data["link"],
+                "duration": "no limit",
+            },
             headers={"Content-Type": "application/json"},
         )
         if res.status_code == 201:

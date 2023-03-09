@@ -21,19 +21,19 @@ from drf_yasg import openapi
 from drf_yasg.views import get_schema_view
 from rest_framework import permissions
 
-from document.document_management import document_detail, create_document, get_document_content, get_documents, \
+from app.document.document_management import document_detail, create_document, get_document_content, get_documents, \
     archive_document
-from document.intelligent_search import search, get_fav
-from document.save_favorites import favorite
+from app.document.intelligent_search import search, get_fav
+from app.document.save_favorites import favorite,delete_favorite
 
-from document.template_management import create_template, template_detail, approve, get_templates, archive_template, \
+from app.document.template_management import create_template, template_detail, approve, get_templates, archive_template, \
     index_update
-from workflow.wf_ai_setting import create_workflow_setting, get_wf_ai_setting, update_wfai_setting
-from workflow.wf_management import create_workflow, workflow_detail, update_workflow, get_workflows, home, \
+from app.workflow.wf_ai_setting import create_workflow_setting, get_wf_ai_setting, update_wfai_setting
+from app.workflow.wf_management import create_workflow, workflow_detail, update_workflow, get_workflows, home, \
     archive_workflow
-from workflow_processing.process import save_and_start_processing, a_single_process, \
+from app.workflow.process import save_and_start_processing, a_single_process, \
     verify_process, get_process_link, fetch_process_links, processes, archive_process
-from workflow_processing.process_v2 import document_processing, verification, \
+from app.workflow.process_v2 import document_processing, verification, \
     mark_process_as_finalize_or_reject, trigger_process
 
 schema_view = get_schema_view(
@@ -108,7 +108,7 @@ urlpatterns = [
     path("v0.2/process/action/trigger/", trigger_process),
 
     path("v0.2/favorite/<str:item_id>/<str:item_type>/", favorite),
-
+    path("v0.2/delete/<str:item_id>/<str:item_type>/", delete_favorite),
 ]
 if settings.DEBUG:
     urlpatterns = urlpatterns + static(

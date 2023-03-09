@@ -8,7 +8,7 @@ from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
-from database.mongo_db_connection import (
+from app.database.mongo_db_connection import (
     delete_process,
     get_links_object_by_process_id,
     get_process_list,

@@ -1,6 +1,6 @@
 import jsonfield
 from django.db import models
-from database.mongo_db_connection import (
+from app.database.mongo_db_connection import (
     get_document_object,
     get_wf_object,
     get_template_object,
@@ -68,3 +68,17 @@ def save_as_favorite(identifier, type):
             pass
         model = FavoriteTemplate(**data)
         model.save()
+
+
+def remove_favorite(identifier, type):
+    if type == "workflow":
+
+        FavoriteWorkflow.objects.filter(_id=identifier).delete()
+
+    if type == "document":
+
+        FavoriteDocument.objects.filter(_id=identifier).delete()
+
+    if type == "template":
+
+        FavoriteTemplate.objects.filter(_id=identifier).delete()

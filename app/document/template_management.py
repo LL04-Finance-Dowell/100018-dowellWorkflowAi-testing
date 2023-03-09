@@ -5,7 +5,7 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
 from .algolia import get_algolia_data
-from database.mongo_db_connection import (
+from app.database.mongo_db_connection import (
     get_template_list,
     save_template,
     update_template_approval,

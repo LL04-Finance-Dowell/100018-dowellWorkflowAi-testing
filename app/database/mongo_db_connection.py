@@ -257,7 +257,7 @@ def get_user_info_by_username(username):
 
 # ----------------------- Links Creation -------------------------
 def save_process_links(
-        links, process_id, document_id, processing_choice, process_title
+    links, process_id, document_id, processing_choice, process_title
 ):
     payload = json.dumps(
         {
@@ -284,7 +284,6 @@ def save_process_links(
 
 # By processID
 def get_links_object_by_process_id(process_id):
-    print("getting process link object... \n")
     fields = {"process_id": str(process_id)}
     response_obj = dowellconnection(*LINK_CONNECTION_LIST, "find", fields, "nil")
     res_obj = json.loads(response_obj)
@@ -298,7 +297,6 @@ def get_links_object_by_process_id(process_id):
 
 # By documentID
 def get_links_object_by_document_id(document_id):
-    print("getting process link object,... \n")
     fields = {"document_id": str(document_id)}
     response_obj = dowellconnection(*LINK_CONNECTION_LIST, "find", fields, "nil")
     res_obj = json.loads(response_obj)
@@ -312,15 +310,14 @@ def get_links_object_by_document_id(document_id):
 
 #  -------------------------------Workflow Process------------------
 def save_wf_process(
-        process_title,
-        process_steps,
-        user,
-        company_id,
-        data_type,
-        document_id,
-        process_choice,
+    process_title,
+    process_steps,
+    user,
+    company_id,
+    data_type,
+    document_id,
+    process_choice,
 ):
-    # url = "http://100002.pythonanywhere.com/"
     payload = json.dumps(
         {
             **WF_PROCESS_DICT,

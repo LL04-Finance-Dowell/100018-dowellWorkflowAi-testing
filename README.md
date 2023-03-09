@@ -646,6 +646,14 @@ Response Body
     "workflows": [list of favorite workflows]
 }
 ```
+
+_POST_ `/v0.2/delete/<str:id>/<str:type>/`
+
+Request Body
+
+```
+no need
+```
 ### Technologies Used
 
 * [Python](https://nodejs.org/) is a programming language that lets you work more quickly and integrate your systems
