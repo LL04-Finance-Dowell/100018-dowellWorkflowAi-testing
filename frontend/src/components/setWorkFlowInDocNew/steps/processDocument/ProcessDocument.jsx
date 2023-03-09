@@ -118,14 +118,14 @@ const ProcessDocument = () => {
       return "field missing"
     })
 
-    if (pendingFieldsToFill.find(field => !null)) return { error: `Please make sure you ${requiredProcessStepsKeys[requiredFieldKeys[pendingFieldsToFill.findIndex(field => field === "field missing")]]} for each step` }
+    if (pendingFieldsToFill.find(field => field === "field missing")) return { error: `Please make sure you ${requiredProcessStepsKeys[requiredFieldKeys[pendingFieldsToFill.findIndex(field => field === "field missing")]]} for each step` }
 
     const membersMissingInStep = processObj.workflows[0].workflows.steps.map(step => {
       if ((step.stepPublicMembers.length < 1) && (step.stepTeamMembers.length < 1) && (step.stepUserMembers.length < 1)) return "Please assign at least one user for each step";
       return null
     })
 
-    if (membersMissingInStep.find(member => !null)) return { error: membersMissingInStep.find(member => !null) }
+    if (membersMissingInStep.find(member => member === "Please assign at least one user for each step")) return { error: membersMissingInStep.find(member => member === "Please assign at least one user for each step") }
 
     if (!processObj.workflows[0].workflows.steps.every(step => step.stepDocumentMap.length > 0)) return { error : "Please make sure you select at least one item from the table of contents for each step" };
     

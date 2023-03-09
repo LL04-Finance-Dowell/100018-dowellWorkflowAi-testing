@@ -65,7 +65,7 @@ const WorkflowApp = () => {
           document.data_type === userDetail?.portfolio_info[0]?.data_type && 
           (document.state === "processing" || document.document_state === "processing") &&
           document.auth_viewers && document.auth_viewers.includes(userDetail?.userinfo?.username)
-        )
+        ).filter(document => document.process_id)
         // console.log(documentsToSign)
         dispatch(setNotificationFinalStatus(100));
         const currentNotifications = notificationsForUser.slice();
