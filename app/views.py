@@ -881,8 +881,10 @@ def get_fav(request):
     )
 
 
-@api_view(["GET"])
-def favorite(request, item_id, item_type):
+@api_view(["POST"])
+def favorite(request):
+    item_id=request.data["item_id"]
+    item_type=request.data["item_type"]
     try:
 
         FavoriteThread(item_id, item_type).start()
