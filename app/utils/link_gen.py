@@ -2,7 +2,7 @@ import json
 
 import requests
 
-editor_api = "https://100058.pythonanywhere.com/api/generate-editor-link/"
+from app.constants import EDITOR_API
 
 
 def document(document_id, doc_map, doc_rights, user, process_id, role):
@@ -29,7 +29,7 @@ def document(document_id, doc_map, doc_rights, user, process_id, role):
         },
     }
     try:
-        link = requests.post(editor_api, data=json.dumps(payload))
+        link = requests.post(EDITOR_API, data=json.dumps(payload))
         return link
     except ConnectionError:
         return

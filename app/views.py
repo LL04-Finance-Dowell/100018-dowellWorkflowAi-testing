@@ -381,7 +381,7 @@ def process_verification(request):
     if access_link:
         return Response(access_link, status.HTTP_200_OK)
 
-    return Response("Verification failed", status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    return Response("Access to document denied at this time!", status=status.HTTP_401_UNAUTHORIZED)
 
 
 @api_view(["POST"])
@@ -421,7 +421,14 @@ def mark_process_as_finalize_or_reject(request):
     # mark document as finalize.
     res = document_finalize(document_id=request.data["document_id"], state=state)
     if res["isSuccess"]:
-        # TODO: Find the documents in next step and change their state to processing
+        # Signal for further processing.
+        data = {
+            "process_id": request.data["process_id"],
+            "auth_step_role": request.data["role"],
+            "authorized": request.data["authorized"],
+            "document_id": request.data["document_id"]
+        }
+        Thread(target=threads.background, args=(data,)).start()
         return Response("document processed successfully", status=status.HTTP_200_OK)
 
     return Response(

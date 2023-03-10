@@ -10,6 +10,7 @@ from app.utils.mongo_db_connection_v2 import (
     update_document_clone,
     update_document_viewers,
     update_wf_process,
+    get_process_object,
 )
 from . import threads
 
@@ -36,28 +37,30 @@ def update_document_authorize(data):
 
 def notification(data):
     """post notifications for extension."""
+    payload = {
+        "username": data["username"],
+        "portfolio": data["portfolio"],
+        "productName": "Workflow AI",
+        "companyId": data["company_id"],
+        "title": "Document to Sign",
+        "orgName": "WorkflowAi",
+        "message": "You have a document to sign.",
+        "link": data["link"],
+        "duration": "no limit",  # TODO: pass reminder time here
+    }
     try:
         res = requests.post(
             url=NOTIFICATION_API,
-            data={
-                "username": data["username"],
-                "portfolio": data["portfolio"],
-                "productName": "Workflow AI",
-                "companyId": data["company_id"],
-                "title": "Document to Sign",
-                "orgName": "Workflow AI",
-                "message": "You have a document to sign.",
-                "link": data["link"],
-                "duration": "no limit",
-            },
+            data=payload,
             headers={"Content-Type": "application/json"},
         )
         if res.status_code == 201:
             print("Thread: Sent Notification \n")
         else:
             print("something went wrong on notification:", res.status_code)
+
     except ConnectionError:
-        print("Fail: doc update thread! \n")
+        print("Fail: notification  thread! \n")
         return
 
 
@@ -121,65 +124,126 @@ def clone_update(data):
 
 
 def process_update(data):
+    # update processing state
     update_wf_process(
         process_id=data["process_id"],
         steps=data["process_steps"],
         state=data["processing_state"],
     )
+    # add this users to the document clone map
+    process = get_process_object(workflow_process_id=data["process_id"])
+    doc_id = process["parent_document_id"]
+    for step in process["process_steps"]:
+        if step.get("stepNumber") == 1:
+            for user in data["auth_viewers"]:
+                mp = [{user: doc_id}]
+                step.get("stepDocumentCloneMap").extend(mp)
+
+    update_wf_process(
+        process_id=process["_id"],
+        steps=process["process_steps"],
+        state=process["processing_state"],
+    )
+
     print("Thread: Process Update! \n")
     return
 
 
-def create_copies(data):
-    document = get_document_object(document_id=data["doc_id"])
-    if document["document_state"] == "complete":
+def background(data):
+    # check if doc is complete
+    document = get_document_object(document_id=data["document_id"])
+    if document["document_state"] != "complete":
         return
 
-    # if doc has not been finalized.
-    process = data["process"]
+    # get process
+    process = get_process_object(workflow_process_id=data["process_id"])
+    user_name = data["authorized"]
     copies = []
+    step_one_done = False
+    all_done = False
     for step in process["process_steps"]:
         if step.get("stepNumber") == 2:
-            copies += [
-                {
-                    member["member"]: cloning.document(
-                        document_id=data["doc_id"],
-                        auth_viewer=member["member"],
-                        parent_id=process["parent_document_id"],
-                        process_id=process["_id"],
-                    )
-                }
-                for member in step.get("stepTeamMembers", [])
-                + step.get("stepPublicMembers", [])
-                + step.get("stepUserMembers", [])
-            ]
-            step["stepDocumentCloneMap"].extend(copies)
+            # check if the documents members documents are complete
+            if step["stepDocumentCloneMap"]:
+                for d_map in step["stepDocumentCloneMap"]:
+                    if (
+                        get_document_object(d_map.get(user_name))["document_state"]
+                        != "complete"
+                    ):
+                        all_done = True
+                        print("not done")
+                        return
+                    else:
+                        print("all_done")
+                        all_done_one = True
 
-        # if step.get("stepNumber") == 3:
-        #     copies += [{member["member"]: clone_document(document_id=data["doc_id"],
-        #                                                  auth_viewer=member["member"],
-        #                                                  parent_id=process["parent_document_id"])} for member in
-        #                step.get("stepTeamMembers", []) + step.get("stepPublicMembers", []) + step.get("stepUserMembers",
-        #                                                                                               [])]
-        #     step["stepDocumentCloneMap"].extend(copies)
+            else:
+                copies += [
+                    {
+                        member["member"]: cloning.document(
+                            document_id=process["parent_document_id"],
+                            auth_viewer=member["member"],
+                            parent_id=process["parent_document_id"],
+                            process_id=process["_id"],
+                        )
+                    }
+                    for member in step.get("stepTeamMembers", [])
+                    + step.get("stepPublicMembers", [])
+                    + step.get("stepUserMembers", [])
+                ]
+                step["stepDocumentCloneMap"].extend(copies)
+    # For another step
+    # if step_one_done:
+    #     for step in process["process_steps"]:
+    #         if step.get("stepNumber") == 3:
+    #             # check if the documents members documents are complete
+    #             if step["stepDocumentCloneMap"]:
+    #                 for d_map in step["stepDocumentCloneMap"]:
+    #                     if (
+    #                         get_document_object(d_map.get(user_name))["document_state"]
+    #                         != "complete"
+    #                     ):
+    #                         return
+    #                     else:
+    #                         all_done_two = True
+    #                         all_done = True
+    #             else:
+    #                 copies += [
+    #                     {
+    #                         member["member"]: cloning.document(
+    #                             document_id=data["doc_id"],
+    #                             auth_viewer=member["member"],
+    #                             parent_id=process["parent_document_id"],
+    #                             process_id=process["_id"],
+    #                         )
+    #                     }
+    #                     for member in step.get("stepTeamMembers", [])
+    #                     + step.get("stepPublicMembers", [])
+    #                     + step.get("stepUserMembers", [])
+    #                 ]
+    #                 step["stepDocumentCloneMap"].extend(copies)
 
     # updating the document clone list
-    data = {
-        "doc_id": process["parent_document_id"],
-        "clone_ids": [d["member"] for d in copies if "member" in d],
-    }
-    ct = Thread(
-        target=threads.clone_update,
-        args=(data,),
-    )
-    ct.start()
+    clone_ids = [d["member"] for d in copies if "member" in d]
+    if clone_ids:
+        data = {
+            "doc_id": process["parent_document_id"],
+            "clone_ids": clone_ids,
+        }
+        Thread(
+            target=threads.clone_update,
+            args=(data,),
+        ).start()
 
-    # thread work to update the process
-    process_data = {
-        "process_id": process["_id"],
-        "process_steps": process["process_steps"],
-        "processing_state": process["processing_state"],
-    }
-    Thread(target=threads.process_update, args=(process_data,)).start()
+    # if all steps are done mark the step as done
+    # for step in process["process_steps"]:
+    #     if step.ge
+    # update the process
+    update_wf_process(
+        process_id=process["_id"],
+        steps=process["process_steps"],
+        state=process["processing_state"],
+    )
     print("Thread: Create copies! \n")
+
     return
