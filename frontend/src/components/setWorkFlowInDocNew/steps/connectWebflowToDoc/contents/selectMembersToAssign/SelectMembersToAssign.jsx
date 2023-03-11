@@ -77,11 +77,11 @@ const SelectMembersToAssign = ({ currentStepIndex }) => {
         return member
       }
       if (member.header === "Users") {
-        member.portfolios = extractAndFormatPortfoliosForMembers("public")
+        member.portfolios = extractAndFormatPortfoliosForMembers("to-be-decided")
         return member
       }
 
-      member.portfolios = extractAndFormatPortfoliosForMembers("to-be-decided")
+      member.portfolios = extractAndFormatPortfoliosForMembers("public")
       return member
     });
 

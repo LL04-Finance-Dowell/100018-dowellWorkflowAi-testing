@@ -17,10 +17,14 @@ import { setAllDocuments } from "../../../features/document/documentSlice";
 import { setAllTemplates } from "../../../features/template/templateSlice";
 import { setAllWorkflows } from "../../../features/workflow/workflowsSlice";
 
-const SectionBox = ({ cardItems, title, Card, status, idKey, itemType }) => {
+const SectionBox = ({ cardItems, title, Card, status, idKey, itemType, hideFavoriteIcon }) => {
   const [sliceCount, setSliceCount] = useState(1);
   const [ refreshLoading, setRefreshLoading ] = useState(false);
   const { userDetail } = useSelector(state => state.auth);
+  const { processesLoading } = useSelector(state => state.app);
+  const { allDocumentsStatus } = useSelector(state => state.document);
+  const { allTemplatesStatus } = useSelector(state => state.template);
+  const { allWorkflowsStatus } = useSelector(state => state.workflow);
   const dispatch = useDispatch();
 
   const handleLoadMore = () => {
@@ -138,12 +142,45 @@ const SectionBox = ({ cardItems, title, Card, status, idKey, itemType }) => {
           >
             {title}
             { 
-              itemType && <button style={{ "background": "none" }} onClick={handleRefresh}>
-                {
-                  refreshLoading ? <LoadingSpinner color={"black"} width={"1.2rem"} height={"1.2rem"} /> :
-                  <IoIosRefresh />
-                }
-              </button> 
+              itemType ?
+                itemType === "documents" ?
+                allDocumentsStatus !== "pending" ?
+                <button style={{ "background": "none" }} onClick={handleRefresh}>
+                    {
+                      refreshLoading ? <LoadingSpinner color={"black"} width={"1.2rem"} height={"1.2rem"} /> :
+                      <IoIosRefresh />
+                    }
+                  </button> : <></> 
+                :
+                itemType === "templates" ?
+                allTemplatesStatus !== "pending" ?
+                <button style={{ "background": "none" }} onClick={handleRefresh}>
+                    {
+                      refreshLoading ? <LoadingSpinner color={"black"} width={"1.2rem"} height={"1.2rem"} /> :
+                      <IoIosRefresh />
+                    }
+                  </button> : <></> 
+                :
+                itemType === "workflows" ?
+                allWorkflowsStatus !== "pending" ?
+                <button style={{ "background": "none" }} onClick={handleRefresh}>
+                    {
+                      refreshLoading ? <LoadingSpinner color={"black"} width={"1.2rem"} height={"1.2rem"} /> :
+                      <IoIosRefresh />
+                    }
+                  </button> : <></> 
+                :
+                itemType === "processes" ?
+                !processesLoading ?
+                  <button style={{ "background": "none" }} onClick={handleRefresh}>
+                    {
+                      refreshLoading ? <LoadingSpinner color={"black"} width={"1.2rem"} height={"1.2rem"} /> :
+                      <IoIosRefresh />
+                    }
+                  </button> : <></> 
+                :
+                <></>
+              : <></>
             }
           </h2>
           {status === "pending" ? (
@@ -161,7 +198,7 @@ const SectionBox = ({ cardItems, title, Card, status, idKey, itemType }) => {
                     cardItems.length > 0 &&
                     cardItems
                       .slice(0, sliceCount * 10)
-                      .map((item) => <Card key={item.id} cardItem={item} />)}
+                      .map((item) => <Card key={item.id} cardItem={item} hideFavoriteIcon={hideFavoriteIcon} />)}
                   {cardItems && cardItems.length > 10 && (
                     <PrimaryButton
                       style={{

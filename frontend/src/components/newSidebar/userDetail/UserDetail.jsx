@@ -27,7 +27,7 @@ const UserDetail = () => {
           {userDetail.portfolio_info[0].data_type}
         </span>
         <span>
-          <span className={styles.title}>Operation Righ:</span>{" "}
+          <span className={styles.title}>Operation Rights:</span>{" "}
           {userDetail.portfolio_info[0].operations_right}
         </span>
         <span>

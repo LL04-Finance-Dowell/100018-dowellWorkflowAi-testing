@@ -14,7 +14,7 @@ import { useAppContext } from "../../../contexts/AppContext";
 import { toast } from "react-toastify";
 import { addNewFavoriteForUser, deleteFavoriteForUser } from "../../../services/favoritesServices";
 import { MdFavorite } from "react-icons/md";
-import { AiOutlineHeart } from "react-icons/ai";
+import { AiFillStar, AiOutlineHeart, AiOutlineStar } from "react-icons/ai";
 
 const WorkflowCard = ({ cardItem }) => {
   const dispatch = useDispatch();
@@ -104,8 +104,8 @@ const WorkflowCard = ({ cardItem }) => {
               }} onClick={() => handleFavoritess(cardItem, favoriteItems.workflows.find(item => item._id === cardItem._id) ? "remove" : "add")}>
                 {
                   favoriteItems.workflows.find(item => item._id === cardItem._id) ?
-                  <MdFavorite /> :
-                  <AiOutlineHeart />
+                  <AiFillStar /> :
+                  <AiOutlineStar />
                 }
               </div>      
             </div>

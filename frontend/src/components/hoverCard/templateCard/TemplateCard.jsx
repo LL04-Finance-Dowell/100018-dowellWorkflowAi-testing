@@ -1,5 +1,5 @@
 import React from "react";
-import { AiOutlineHeart } from "react-icons/ai";
+import { AiFillStar, AiOutlineHeart, AiOutlineStar } from "react-icons/ai";
 import { MdFavorite } from "react-icons/md";
 import { useDispatch } from "react-redux";
 import { toast } from "react-toastify";
@@ -64,8 +64,8 @@ const TemplateCard = ({ cardItem }) => {
         }} onClick={() => handleFavoritess(cardItem, favoriteItems.templates.find(item => item._id === cardItem._id) ? "remove" : "add")}>
           {
             favoriteItems.templates.find(item => item._id === cardItem._id) ?
-            <MdFavorite /> :
-            <AiOutlineHeart />
+            <AiFillStar /> :
+            <AiOutlineStar />
           }
         </div>
         {cardItem.template_name ? (

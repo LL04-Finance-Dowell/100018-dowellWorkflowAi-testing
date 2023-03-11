@@ -13,13 +13,13 @@ import {
 import { setEditorLink } from "../../../features/app/appSlice";
 import { timeZoneToCountryObj } from "../../../utils/timezonesObj";
 
-import { AiOutlineHeart } from "react-icons/ai";
+import { AiFillStar, AiOutlineHeart, AiOutlineStar } from "react-icons/ai";
 import { handleFavorites } from "../../../features/favorites/asyncThunks";
 import { useAppContext } from "../../../contexts/AppContext";
 import { MdFavorite } from "react-icons/md";
 import { addNewFavoriteForUser, deleteFavoriteForUser } from "../../../services/favoritesServices";
 
-const DocumentCard = ({ cardItem, title }) => {
+const DocumentCard = ({ cardItem, title, hideFavoriteIcon }) => {
   const dispatch = useDispatch();
   const [dataLoading, setDataLoading] = useState(false);
   const { userDetail } = useSelector((state) => state.auth);
@@ -151,7 +151,7 @@ const DocumentCard = ({ cardItem, title }) => {
   const BackSide = () => {
     return (
       <div>
-        <div style={{ 
+        {!hideFavoriteIcon && <div style={{ 
           cursor: "pointer", 
           position: "absolute", 
           right: "0", 
@@ -159,10 +159,10 @@ const DocumentCard = ({ cardItem, title }) => {
         }} onClick={() => handleFavoritess(cardItem, favoriteItems.documents.find(item => item._id === cardItem._id) ? "remove" : "add")}>
           {
             favoriteItems.documents.find(item => item._id === cardItem._id) ?
-            <MdFavorite /> :
-            <AiOutlineHeart />
+            <AiFillStar /> :
+            <AiOutlineStar />
           }
-        </div>
+        </div>}
         {cardItem._id ? (
           <Button onClick={() => handleDetailDocumnet(cardItem)}>
             {dataLoading ? (
