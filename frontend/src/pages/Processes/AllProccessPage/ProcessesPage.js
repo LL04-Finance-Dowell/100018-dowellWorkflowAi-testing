@@ -51,7 +51,7 @@ const ProcessesPage = ({ home, showOnlySaved, showOnlyPaused, showOnlyCancelled 
   return (
     <WorkflowLayout>
       <div id="new-proccess">
-        <ManageFiles title="Proccess">
+        <ManageFiles title="Proccesses" removePageSuffix={true}>
           {
             home ? <div id="drafts">
               <SectionBox
@@ -60,6 +60,7 @@ const ProcessesPage = ({ home, showOnlySaved, showOnlyPaused, showOnlyCancelled 
                 Card={ProcessCard}
                 cardItems={allProcesses.filter(process => process.processing_state === "draft")}
                 status={processesLoading ? "pending" :"success"}
+                itemType={"processes"}
               />
             </div> : <></>
           }
@@ -71,6 +72,7 @@ const ProcessesPage = ({ home, showOnlySaved, showOnlyPaused, showOnlyCancelled 
                 Card={ProcessCard}
                 cardItems={allProcesses.filter(process => process.processing_state === "processing")}
                 status={processesLoading ? "pending" : "success"}
+                itemType={"processes"}
               />
             </div> : <></>
           }
@@ -82,6 +84,7 @@ const ProcessesPage = ({ home, showOnlySaved, showOnlyPaused, showOnlyCancelled 
                 Card={ProcessCard}
                 cardItems={allProcesses.filter(process => process.processing_state === "paused")}
                 status={processesLoading ? "pending" : "success"}
+                itemType={"processes"}
               />
             </div> : <></>
           }
@@ -93,6 +96,7 @@ const ProcessesPage = ({ home, showOnlySaved, showOnlyPaused, showOnlyCancelled 
                 Card={ProcessCard}
                 cardItems={allProcesses.filter(process => process.processing_state === "cancelled")}
                 status={processesLoading ? "pending" : "success"}
+                itemType={"processes"}
               />
             </div> : <></>
           }

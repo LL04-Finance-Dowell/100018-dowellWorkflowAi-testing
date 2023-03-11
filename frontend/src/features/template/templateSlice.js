@@ -24,6 +24,11 @@ const initialState = {
 export const templateSlice = createSlice({
   name: "template",
   initialState,
+  reducers: {
+    setAllTemplates: (state, action) => {
+      state.allTemplates = action.payload
+    },
+  },
   extraReducers: (builder) => {
     //createTemplate
     builder.addCase(createTemplate.pending, (state) => {
@@ -89,6 +94,6 @@ export const templateSlice = createSlice({
 });
 
 // Action creators are generated for each case reducer function
-export const {} = templateSlice.actions;
+export const { setAllTemplates } = templateSlice.actions;
 
 export default templateSlice.reducer;

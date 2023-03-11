@@ -11,6 +11,7 @@ import { Provider } from "react-redux";
 import { persistor, store } from "./app/store";
 import { PersistGate } from "redux-persist/integration/react";
 import 'react-tooltip/dist/react-tooltip.css'
+import { AppContextProvider } from "./contexts/AppContext";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
@@ -18,7 +19,9 @@ root.render(
     <HashRouter>
       <Provider store={store}>
         <PersistGate loading={null} persistor={persistor}>
-          <App />
+          <AppContextProvider>
+            <App />
+          </AppContextProvider>
           <ToastContainer />
         </PersistGate>
       </Provider>

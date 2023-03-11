@@ -9,3 +9,15 @@ export class FavoriteServices {
     return httpFovorites.post("/");
   };
 }
+
+export const getFavoritesForUser = async (data) => {
+  return await httpFovorites.post("/", data);
+}
+
+export const addNewFavoriteForUser = async (itemId, itemType) => {
+  return await httpFovorite.get(`/favorite/${itemId}/${itemType}/`);
+}
+
+export const deleteFavoriteForUser = async (itemId, itemType) => {
+  return await httpFovorite.get(`/delete/${itemId}/${itemType}/`)
+}

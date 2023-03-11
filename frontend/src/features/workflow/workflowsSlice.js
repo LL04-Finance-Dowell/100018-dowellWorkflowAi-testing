@@ -38,6 +38,9 @@ export const workflowSlice = createSlice({
         (item) => item._id !== action.payload
       );
     },
+    setAllWorkflows: (state, action) => {
+      state.allWorkflows = action.payload
+    },
   },
   extraReducers: (builder) => {
     //createWorkflow
@@ -118,6 +121,6 @@ export const workflowSlice = createSlice({
 });
 
 // Action creators are generated for each case reducer function
-export const { removeFromMinedWf } = workflowSlice.actions;
+export const { removeFromMinedWf, setAllWorkflows } = workflowSlice.actions;
 
 export default workflowSlice.reducer;

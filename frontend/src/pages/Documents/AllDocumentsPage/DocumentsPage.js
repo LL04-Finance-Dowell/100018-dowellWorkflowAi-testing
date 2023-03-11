@@ -48,7 +48,7 @@ const DocumentsPage = ({ home, showOnlySaved }) => {
   return (
     <WorkflowLayout>
       <div id="new-document">
-        <ManageFiles title="Document" OverlayComp={CreateDocument}>
+        <ManageFiles title="Documents" OverlayComp={CreateDocument} removePageSuffix={true}>
           {
             home ? <div id="drafts">
               <SectionBox
@@ -64,6 +64,7 @@ const DocumentsPage = ({ home, showOnlySaved }) => {
                   )
                 }
                 status={allDocumentsStatus}
+                itemType={"documents"}
               />
             </div> : <></>
           }
@@ -75,6 +76,7 @@ const DocumentsPage = ({ home, showOnlySaved }) => {
                 Card={DocumentCard}
                 cardItems={allDocumentsArray}
                 status={allDocumentsStatus}
+                itemType={"documents"}
               />
             </div> : <></>
           }

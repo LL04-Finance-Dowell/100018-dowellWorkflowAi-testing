@@ -15,21 +15,46 @@ import { timeZoneToCountryObj } from "../../../utils/timezonesObj";
 
 import { AiOutlineHeart } from "react-icons/ai";
 import { handleFavorites } from "../../../features/favorites/asyncThunks";
+import { useAppContext } from "../../../contexts/AppContext";
+import { MdFavorite } from "react-icons/md";
+import { addNewFavoriteForUser, deleteFavoriteForUser } from "../../../services/favoritesServices";
 
 const DocumentCard = ({ cardItem, title }) => {
   const dispatch = useDispatch();
   const [dataLoading, setDataLoading] = useState(false);
   const { userDetail } = useSelector((state) => state.auth);
   const { singleFavorite } = useSelector((state) => state.favorites);
+  const { favoriteItems, addToFavoritesState, removeFromFavoritesState } = useAppContext();
 
-  const handleFavoritess = (id) => {
+  const handleFavoritess = async (item, actionType) => {
     /*  const data = {
       id,
       type: "document",
     };
     dispatch(handleFavorites(data)); */
 
-    console.log("idddddddd", id, singleFavorite);
+    if (actionType === "add") {
+      addToFavoritesState("documents", item)
+      try {
+        const response = await addNewFavoriteForUser(item._id, 'document');
+        console.log(response)
+      } catch (error) {
+        toast.info("Failed to add document to favorites")
+        removeFromFavoritesState("documents", item._id)
+      }
+    }
+
+    if (actionType === "remove") {
+      removeFromFavoritesState("documents", item._id)
+      try {
+        const response = await deleteFavoriteForUser(item._id, 'document');
+        console.log(response)
+      } catch (error) {
+        toast.info("Failed to remove document from favorites")
+        removeFromFavoritesState("documents", item._id)
+      }
+    }
+    // console.log(favoriteItems)
   };
 
   const handleDetailDocumnet = async (item) => {
@@ -126,6 +151,18 @@ const DocumentCard = ({ cardItem, title }) => {
   const BackSide = () => {
     return (
       <div>
+        <div style={{ 
+          cursor: "pointer", 
+          position: "absolute", 
+          right: "0", 
+          top: "0"
+        }} onClick={() => handleFavoritess(cardItem, favoriteItems.documents.find(item => item._id === cardItem._id) ? "remove" : "add")}>
+          {
+            favoriteItems.documents.find(item => item._id === cardItem._id) ?
+            <MdFavorite /> :
+            <AiOutlineHeart />
+          }
+        </div>
         {cardItem._id ? (
           <Button onClick={() => handleDetailDocumnet(cardItem)}>
             {dataLoading ? (
@@ -139,9 +176,6 @@ const DocumentCard = ({ cardItem, title }) => {
         ) : (
           "no item"
         )}
-        {/* <div onClick={() => handleFavoritess(cardItem)}>
-          <AiOutlineHeart />
-        </div> */}
       </div>
     );
   };

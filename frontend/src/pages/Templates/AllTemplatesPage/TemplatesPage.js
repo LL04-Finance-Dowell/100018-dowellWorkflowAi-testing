@@ -51,7 +51,7 @@ const TemplatesPage = ({ home, showOnlySaved }) => {
   return (
     <WorkflowLayout>
       <div id="new-template">
-        <ManageFiles title="Template">
+        <ManageFiles title="Templates" removePageSuffix={true}>
           {
             home ? <div id="drafts">
               <SectionBox
@@ -67,6 +67,7 @@ const TemplatesPage = ({ home, showOnlySaved }) => {
                   )
                 }
                 status={allTemplatesStatus}
+                itemType={"templates"}
               />
             </div> : <></>
           }
@@ -78,6 +79,7 @@ const TemplatesPage = ({ home, showOnlySaved }) => {
                 Card={TemplateCard}
                 cardItems={allTemplatesArray}
                 status={allTemplatesStatus}
+                itemType={"templates"}
               />
             </div> : <></>
           }

@@ -26,6 +26,10 @@ import {
 import Iframe from "../../components/iFrame/Iframe";
 import Skeleton from "../../components/skeloton/Skeleton";
 import { getAllProcessesV2 } from "../../services/processServices";
+import { useAppContext } from "../../contexts/AppContext";
+import { getFavoritesForUser } from "../../services/favoritesServices";
+import React from "react";
+import DocumentCard from "../../components/hoverCard/documentCard/DocumentCard";
 
 const WorkflowApp = () => {
   const { userDetail } = useSelector((state) => state.auth);
@@ -41,56 +45,73 @@ const WorkflowApp = () => {
   const dispatch = useDispatch();
   const location = useLocation();
   const [isVisible, setVisible] = useState(false);
+  const { favoriteItems, setFavoriteitems, favoriteItemsLoaded, setFavoriteitemsLoaded } = useAppContext();
 
   useEffect(() => {
-    if (notificationsLoaded) return;
 
-    dispatch(setNotificationsLoading(true));
+    if (!notificationsLoaded) {
+      dispatch(setNotificationsLoading(true));
 
-    if (
-      !userDetail ||
-      !userDetail.portfolio_info ||
-      userDetail.portfolio_info.length < 1
-    ) {
-      dispatch(setNotificationsLoading(false));
-      return;
+      if (
+        !userDetail ||
+        !userDetail.portfolio_info ||
+        userDetail.portfolio_info.length < 1
+      ) {
+        dispatch(setNotificationsLoading(false));
+        return;
+      }
+  
+      dispatch(setNotificationFinalStatus(null));
+      documentServices
+        .allDocuments(userDetail?.portfolio_info[0]?.org_id)
+        .then((res) => {
+          const documentsToSign = res.data.documents.reverse().filter(document => 
+            document.company_id === userDetail?.portfolio_info[0]?.org_id && 
+            document.data_type === userDetail?.portfolio_info[0]?.data_type && 
+            (document.state === "processing" || document.document_state === "processing") &&
+            document.auth_viewers && document.auth_viewers.includes(userDetail?.userinfo?.username)
+          ).filter(document => document.process_id)
+          // console.log(documentsToSign)
+          dispatch(setNotificationFinalStatus(100));
+          const currentNotifications = notificationsForUser.slice();
+          let updatedNotifications = currentNotifications.map((notification) => {
+            const data = documentsToSign.map((dataObj) => {
+              let copyOfDataObj = { ...dataObj };
+              copyOfDataObj.type = "sign-document";
+              return copyOfDataObj;
+            });
+            const copyOfNotification = { ...notification };
+            if (copyOfNotification.title === "documents") {
+              copyOfNotification.items = data;
+              return copyOfNotification;
+            }
+            return notification;
+          });
+          dispatch(setNotificationsForUser(updatedNotifications));
+          dispatch(setNotificationsLoading(false));
+          dispatch(setNotificationsLoaded(true));
+        })
+        .catch((err) => {
+          console.log("Failed: ", err.response);
+          dispatch(setNotificationsLoading(false));
+          console.log("did not fetch documentsss");
+        });  
     }
 
-    dispatch(setNotificationFinalStatus(null));
-    documentServices
-      .allDocuments(userDetail?.portfolio_info[0]?.org_id)
-      .then((res) => {
-        const documentsToSign = res.data.documents.reverse().filter(document => 
-          document.company_id === userDetail?.portfolio_info[0]?.org_id && 
-          document.data_type === userDetail?.portfolio_info[0]?.data_type && 
-          (document.state === "processing" || document.document_state === "processing") &&
-          document.auth_viewers && document.auth_viewers.includes(userDetail?.userinfo?.username)
-        ).filter(document => document.process_id)
-        // console.log(documentsToSign)
-        dispatch(setNotificationFinalStatus(100));
-        const currentNotifications = notificationsForUser.slice();
-        let updatedNotifications = currentNotifications.map((notification) => {
-          const data = documentsToSign.map((dataObj) => {
-            let copyOfDataObj = { ...dataObj };
-            copyOfDataObj.type = "sign-document";
-            return copyOfDataObj;
-          });
-          const copyOfNotification = { ...notification };
-          if (copyOfNotification.title === "documents") {
-            copyOfNotification.items = data;
-            return copyOfNotification;
-          }
-          return notification;
-        });
-        dispatch(setNotificationsForUser(updatedNotifications));
-        dispatch(setNotificationsLoading(false));
-        dispatch(setNotificationsLoaded(true));
+    if (!favoriteItemsLoaded) {
+      const dataToPost = {
+        "company_id": userDetail?.portfolio_info[0]?.org_id,
+        "created_by": userDetail?.userinfo?.username,
+      }
+  
+      getFavoritesForUser(dataToPost).then(res => {
+        setFavoriteitems(res.data);
+        setFavoriteitemsLoaded(true)
+      }).catch(err => {
+        console.log("Failed to fetch favorites")
       })
-      .catch((err) => {
-        console.log("Failed: ", err.response);
-        dispatch(setNotificationsLoading(false));
-        console.log("did not fetch documentsss");
-      });
+    }
+
   }, [userDetail]);
 
   useEffect(() => {
@@ -179,6 +200,48 @@ const WorkflowApp = () => {
           </div>
         )}
         {!isVisible && (
+          <>
+          <div style={{ marginBottom: "45px" }}>
+            <>
+              {
+                !favoriteItemsLoaded ? <p>Loading favorites...</p> : 
+                <>
+                {
+                  React.Children.toArray(Object.keys(favoriteItems).map(key => {
+                    if (key === "documents" && favoriteItems[key].length > 0) return <div>
+                      <SectionBox
+                        cardBgColor="#1ABC9C"
+                        title="favorite documents"
+                        Card={DocumentCard}
+                        cardItems={favoriteItems[key]}
+                        status={favoriteItemsLoaded}
+                      />
+                    </div>
+                    if (key === "templates" && favoriteItems[key].length > 0) return <div>
+                      <SectionBox
+                        cardBgColor="#1ABC9C"
+                        title="favorite templates"
+                        Card={TemplateCard}
+                        cardItems={favoriteItems[key]}
+                        status={favoriteItemsLoaded}
+                      />
+                    </div>
+                    if (key === "workflows" && favoriteItems[key].length > 0) return <div>
+                      <SectionBox
+                        cardBgColor="#1ABC9C"
+                        title="favorite workflows"
+                        Card={WorkflowCard}
+                        cardItems={favoriteItems[key]}
+                        status={favoriteItemsLoaded}
+                      />
+                    </div>
+                    return <></>
+                  }))
+                }
+                </>
+              }
+            </>
+          </div>
           <div className={styles.dowell__Advert__Container}>
             {introVideos.map((item) => (
               <div key={item.id} className={styles.skeleton__box}>
@@ -194,6 +257,7 @@ const WorkflowApp = () => {
               </div>
             ))}
           </div>
+          </>
         )}
       </div>
     </WorkflowLayout>

@@ -37,6 +37,9 @@ export const documentSlice = createSlice({
     setContentOfDocument: (state, action) => {
       state.contentOfDocument = action.payload;
     },
+    setAllDocuments: (state, action) => {
+      state.allDocuments = action.payload
+    },
   },
   extraReducers: (builder) => {
     //createDocument
@@ -152,6 +155,6 @@ export const documentSlice = createSlice({
 });
 
 // Action creators are generated for each case reducer function
-export const { setContentOfDocument } = documentSlice.actions;
+export const { setContentOfDocument, setAllDocuments } = documentSlice.actions;
 
 export default documentSlice.reducer;
