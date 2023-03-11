@@ -381,7 +381,9 @@ def process_verification(request):
     if access_link:
         return Response(access_link, status.HTTP_200_OK)
 
-    return Response("Access to document denied at this time!", status=status.HTTP_401_UNAUTHORIZED)
+    return Response(
+        "Access to document denied at this time!", status=status.HTTP_401_UNAUTHORIZED
+    )
 
 
 @api_view(["POST"])
@@ -426,7 +428,7 @@ def mark_process_as_finalize_or_reject(request):
             "process_id": request.data["process_id"],
             "auth_step_role": request.data["role"],
             "authorized": request.data["authorized"],
-            "document_id": request.data["document_id"]
+            "document_id": request.data["document_id"],
         }
         Thread(target=threads.background, args=(data,)).start()
         return Response("document processed successfully", status=status.HTTP_200_OK)
@@ -889,21 +891,26 @@ def get_fav(request):
 
 
 @api_view(["GET"])
-def favorite(request,item_id,item_type):
+def favorite(request, item_id, item_type):
     # item_id=request.data["item_id"]
     # item_type=request.data["item_type"]
     try:
 
         FavoriteThread(item_id, item_type).start()
-        return Response(item_type+" with id "+ item_id + "is added to favorite" ,status=status.HTTP_200_OK)
+        return Response(
+            item_type + " with id " + item_id + "is added to favorite",
+            status=status.HTTP_200_OK,
+        )
     except RuntimeError:
-        return Response(item_type+" with id "+ item_id + "is Not added to favorite" ,status=status.HTTP_200_OK)
+        return Response(
+            item_type + " with id " + item_id + "is Not added to favorite",
+            status=status.HTTP_200_OK,
+        )
 
 
 @api_view(["GET"])
 def delete_favorite(request, item_id, item_type):
     try:
-
         DeleteFavoriteThread(item_id, item_type).start()
         return Response(status=status.HTTP_200_OK)
     except RuntimeError:
