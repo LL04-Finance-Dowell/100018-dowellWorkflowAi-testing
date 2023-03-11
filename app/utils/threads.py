@@ -197,7 +197,7 @@ def background(data):
                     copies += [
                         {
                             member["member"]: cloning.document(
-                                document_id=process["parent_document_id"],
+                                document_id=data["document_id"],
                                 auth_viewer=member["member"],
                                 parent_id=process["parent_document_id"],
                                 process_id=process["_id"],
