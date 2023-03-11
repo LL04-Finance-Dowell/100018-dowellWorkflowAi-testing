@@ -889,13 +889,15 @@ def get_fav(request):
 
 
 @api_view(["GET"])
-def favorite(request, item_id, item_type):
+def favorite(request,item_id,item_type):
+    # item_id=request.data["item_id"]
+    # item_type=request.data["item_type"]
     try:
 
         FavoriteThread(item_id, item_type).start()
-        return Response(status=status.HTTP_200_OK)
+        return Response(item_type+" with id "+ item_id + "is added to favorite" ,status=status.HTTP_200_OK)
     except RuntimeError:
-        return
+        return Response(item_type+" with id "+ item_id + "is Not added to favorite" ,status=status.HTTP_200_OK)
 
 
 @api_view(["GET"])
