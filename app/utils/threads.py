@@ -2,7 +2,7 @@ from threading import Thread
 
 import requests
 
-from app.utils.mongo_db_connection_v2 import (
+from app.utils.mongo_db_connection import (
     get_document_object,
     save_process_links,
     save_process_qrcodes,

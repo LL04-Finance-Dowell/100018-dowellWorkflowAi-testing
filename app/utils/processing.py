@@ -2,12 +2,9 @@ from . import checks, verification
 from . import threads
 from threading import Thread
 from rest_framework import status
-from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from app.utils.mongo_db_connection_v2 import (
-    get_process_object,
-    save_wf_process,
-)
+from app.utils.mongo_db_connection import save_wf_process
+
 from . import link_gen
 
 
@@ -243,5 +240,6 @@ def verify(process, auth_step_role, location_data, user_name):
             process_id=process["_id"],
             role=role,
         )
+        print(doc_link)
 
         return doc_link.json()

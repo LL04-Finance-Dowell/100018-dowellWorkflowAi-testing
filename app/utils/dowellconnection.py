@@ -1,8 +1,7 @@
 import json
 import requests
 
-# url = "http://100002.pythonanywhere.com/"
-url = "http://uxlivinglab.pythonanywhere.com"
+from app.constants import DOWELLCONNECTION_URL
 
 
 def dowellconnection(
@@ -32,5 +31,5 @@ def dowellconnection(
         }
     )
     headers = {"content-type": "application/json"}
-    response = requests.request("POST", url, headers=headers, data=data)
+    response = requests.request("POST", DOWELLCONNECTION_URL, headers=headers, data=data)
     return json.loads(response.text)

@@ -1,50 +1,49 @@
-import json
 import ast
+import json
 from threading import Thread
+
 import requests
-from .utils.algolia import get_algolia_data, get_fav_data
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from .utils.thread_start import ThreadAlgolia, UpdateThreadAlgolia
-from .utils.thread_start import FavoriteThread, DeleteFavoriteThread
-from .constants import EDITOR_API
-from .models import FavoriteDocument, FavoriteWorkflow, FavoriteTemplate
 
-from app.utils.mongo_db_connection_v2 import (
-    document_finalize,
-    get_document_object,
-    get_process_object,
-    update_wf_process,
-    save_document,
-    get_links_object_by_process_id,
-)
+from app.utils import checks, cloning, processing, threads
 from app.utils.mongo_db_connection import (
-    save_wf_setting,
-    get_wf_setting_object,
-    wf_setting_update,
-    get_wf_list,
-    get_process_list,
-    update_wf,
-    delete_workflow,
     delete_document,
+    delete_process,
+    delete_template,
+    delete_workflow,
+    document_finalize,
     get_document_list,
     get_document_object,
+    get_links_object_by_process_id,
+    get_process_list,
+    get_process_object,
     get_template_list,
-    save_template,
-    update_template_approval,
     get_template_object,
-    delete_template,
-    save_wf,
-    delete_process,
-    get_wf_object,
     get_wf_list,
+    get_wf_object,
+    get_wf_setting_object,
+    save_document,
+    save_template,
+    save_wf,
+    save_wf_setting,
+    update_template_approval,
     update_wf,
-    delete_workflow,
+    update_wf_process,
+    wf_setting_update,
 )
-from app.utils import checks, processing, threads
+
+from .constants import EDITOR_API
+from .models import FavoriteDocument, FavoriteTemplate, FavoriteWorkflow
 from .utils import setting
-from app.utils import cloning
+from .utils.algolia import get_algolia_data, get_fav_data
+from .utils.thread_start import (
+    DeleteFavoriteThread,
+    FavoriteThread,
+    ThreadAlgolia,
+    UpdateThreadAlgolia,
+)
 
 
 @api_view(["GET"])
