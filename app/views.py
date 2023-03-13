@@ -404,7 +404,6 @@ def mark_process_as_finalize_or_reject(request):
     # get document
     try:
         document = get_document_object(document_id=request.data["document_id"])
-        print(document)
     except ConnectionError:
         return Response(
             "Something went wrong!", status=status.HTTP_500_INTERNAL_SERVER_ERROR

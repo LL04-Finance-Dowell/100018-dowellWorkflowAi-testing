@@ -22,12 +22,13 @@ from app.constants import NOTIFICATION_API
 
 def update_document_authorize(data):
     """Updating the document with auth viewers"""
+    print("Doc Auth")
     try:
         document = get_document_object(data["document_id"])
         doc_name = document["document_name"] + " ".join(data["auth_viewers"])
         update_document_viewers(
             document_id=data["document_id"],
-            auth_viewers=data["auth_viewers"],
+            auth_viewers=document["auth_viewers"].extend(data["auth_viewers"]),
             doc_name=doc_name,
         )
         print("Thread: Doc Authorize \n")
@@ -168,6 +169,7 @@ def background(data):
 
     # get process
     process = get_process_object(workflow_process_id=data["process_id"])
+    step_one = process["process_steps"][0]
     user_name = data["authorized"]
     copies = []
     step_two_done = False
@@ -193,28 +195,28 @@ def background(data):
         print(users)
         for usr in users:
             document_states = [
-                get_document_object(d_map.get(usr))["document_state"] == "complete"
+                get_document_object(d_map.get(usr))["document_state"] == "finalized"
                 for d_map in step_two["stepDocumentCloneMap"]
             ]
             print(document_states)
             if all(document_states):
                 complete = True
-                return
 
     # if the clone map is empty we execute
     else:
         if step_two["stepTaskType"] == "assign_task":
             print("in assign task 2 \n")
-            for d_m in step_two["stepDocumentCloneMap"]:
+            for d_m in step_one["stepDocumentCloneMap"]: #TODO: Find a way to update the clone map at this point
                 docs = list(d_m.values())
                 for d in docs:
-                    data = {
-                        "document_id": d,
-                        "auth_viewers": user_name,
-                    }
-                    Thread(
-                        target=threads.update_document_authorize, args=(data,)
-                    ).start()
+                    for usr in users:
+                        data = {
+                            "document_id": d,
+                            "auth_viewers": usr,
+                        }
+                        Thread(
+                            target=threads.update_document_authorize, args=(data,)
+                        ).start()
 
         if step_two["stepTaskType"] == "request_for_task":
             print("in req 2", step_two["stepTaskType"], "\n")
@@ -235,22 +237,23 @@ def background(data):
             changed = True
 
     # for step 3 , step 2 should be done
+    step_three = process["process_steps"][2]
     if complete:
         print("In step 3 \n")
-        step_three = process["process_steps"][2]
+        
         # get all users
-        users = (
+        users = [
             member["member"]
             for member in step_three.get("stepTeamMembers", [])
             + step_three.get("stepPublicMembers", [])
             + step_three.get("stepUserMembers", [])
-        )
+        ]
 
         # check if all docs for respective users are complete
         if step_three["stepDocumentCloneMap"] != []:
             for usr in users:
                 document_states = [
-                    get_document_object(d_map.get(usr))["document_state"] == "complete"
+                    get_document_object(d_map.get(usr))["document_state"] == "finalized"
                     for d_map in step_three["stepDocumentCloneMap"]
                 ]
                 if all(document_states):
@@ -260,16 +263,19 @@ def background(data):
         else:
             if step_three["stepTaskType"] == "assign_task":
                 print("in assign task 3 \n")
-                for d_m in step_three["stepDocumentCloneMap"]:
+                for d_m in step_two["stepDocumentCloneMap"]: #TODO: Find a way to update the clone map at this point
+                    # find all doc id from step 2 
                     docs = list(d_m.values())
+                    # authorize all user in step three all docs in step 2
                     for d in docs:
-                        data = {
-                            "document_id": d,
-                            "auth_viewers": user_name,
-                        }
-                        Thread(
-                            target=threads.update_document_authorize, args=(data,)
-                        ).start()
+                        for usr in users:
+                            data = {
+                                "document_id": d,
+                                "auth_viewers": usr,
+                            }
+                            Thread(
+                                target=threads.update_document_authorize, args=(data,)
+                            ).start()
 
             if step_three["stepTaskType"] == "request_for_task":
                 print("in req 3 \n")
@@ -439,6 +445,6 @@ def background(data):
             steps=process["process_steps"],
             state=process["processing_state"],
         )
-        print("Thread: Create copies! \n")
+    print("Thread: Create copies! \n")
 
     return
