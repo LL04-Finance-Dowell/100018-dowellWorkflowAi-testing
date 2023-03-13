@@ -217,7 +217,7 @@ def background(data):
                     ).start()
 
         if step_two["stepTaskType"] == "request_for_task":
-            print("in req 2")
+            print("in req 2", step_two["stepTaskType"])
             copies += [
                 {
                     member["member"]: cloning.document(
@@ -286,8 +286,9 @@ def background(data):
                     + step_three.get("stepPublicMembers", [])
                     + step_three.get("stepUserMembers", [])
                 ]
-                step_three["stepDocumentCloneMap"].extend(copies)
                 changed = True
+                step_three["stepDocumentCloneMap"].extend(copies)
+                
 
     # for step in process["process_steps"]:
     #     if step[1]:

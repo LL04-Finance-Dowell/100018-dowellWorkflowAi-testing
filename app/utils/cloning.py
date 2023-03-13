@@ -42,6 +42,7 @@ def document(document_id, auth_viewer, parent_id, process_id):
                 process_id=process_id,
             )
         )
+        print("Success Cloning \n")
         return save_res["inserted_id"]
     except RuntimeError:
         print("Failed to create clone \n")
