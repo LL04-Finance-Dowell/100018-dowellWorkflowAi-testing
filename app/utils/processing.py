@@ -239,6 +239,5 @@ def verify(process, auth_step_role, location_data, user_name):
             process_id=process["_id"],
             role=role,
         )
-        print(doc_link)
 
         return doc_link.json()

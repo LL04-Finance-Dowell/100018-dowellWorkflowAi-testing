@@ -66,7 +66,6 @@ def user_presence(token, user_name, portfolio):
     # decode token
     # decoded = jwt.decode(token, "secret", algorithms="HS256")
     link_info = get_link_object(unique_hash=token)
-    print(link_info)
     user_allowed = False
     if link_info["user_name"] == user_name and link_info["auth_portfolio"] == portfolio:
         user_allowed = True
