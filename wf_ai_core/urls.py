@@ -96,7 +96,7 @@ urlpatterns = [
     # path("v0.1/process/action/verify/", verify_process),
     path("v0.1/process/verification/link/", get_process_link),
     path("v0.1/process/org/<str:company_id>/", processes),
-    path("v0.1/process/links/<str:process_id>/", fetch_process_links),
+    path("v0.1/process/org/links/fetch/", fetch_process_links),
     # workflow
     path("v0.1/workflows/", create_workflow, name="workflows"),
     path("v0.1/workflows/update/", update_workflow, name="update_workflow"),

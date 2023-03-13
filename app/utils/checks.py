@@ -2,6 +2,8 @@ from datetime import datetime
 
 import jwt
 
+from app.utils.mongo_db_connection import get_link_object
+
 
 def display_right(display):
     display_allowed = {
@@ -49,12 +51,23 @@ def time_limit_right(time, select_time_limits, start_time, end_time, creation_ti
     return allowed
 
 
+# def user_presence(token, user_name, portfolio):
+#     """Checking user presence in process links map"""
+#     # decode token
+#     decoded = jwt.decode(token, "secret", algorithms="HS256")
+#     user_allowed = False
+#     if decoded["auth_name"] == user_name and decoded["auth_portfolio"] == portfolio:
+#         user_allowed = True
+#     return user_allowed, decoded["process_id"], decoded["step_role"]
+
+
 def user_presence(token, user_name, portfolio):
     """Checking user presence in process links map"""
     # decode token
-    decoded = jwt.decode(token, "secret", algorithms="HS256")
+    # decoded = jwt.decode(token, "secret", algorithms="HS256")
+    link_info = get_link_object(unique_hash=token)
+    print(link_info)
     user_allowed = False
-    if decoded["auth_name"] == user_name and decoded["auth_portfolio"] == portfolio:
+    if link_info["user_name"] == user_name and link_info["auth_portfolio"] == portfolio:
         user_allowed = True
-    return user_allowed, decoded["process_id"], decoded["step_role"]
-
+    return user_allowed, link_info["process_id"], link_info["auth_role"]

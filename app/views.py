@@ -17,6 +17,8 @@ from app.utils.mongo_db_connection import (
     get_document_list,
     get_document_object,
     get_links_object_by_process_id,
+    get_links_object_by_document_id,
+    get_process_link_list,
     get_process_list,
     get_process_object,
     get_template_list,
@@ -67,9 +69,9 @@ def document_processing(request):
             company_id=request.data["company_id"],
             data_type=request.data["data_type"],
             document_id=cloning.document(
-                document_id=request.data["document_id"],
+                document_id=request.data["parent_document_id"],
                 auth_viewer=None,
-                parent_id=request.data["document_id"],
+                parent_id=request.data["parent_document_id"],
                 process_id="",
             ),
             process_choice=choice,
@@ -100,9 +102,9 @@ def document_processing(request):
             company_id=request.data["company_id"],
             data_type=request.data["data_type"],
             document_id=cloning.document(
-                document_id=request.data["document_id"],
+                document_id=request.data["parent_document_id"],
                 auth_viewer=None,
-                parent_id=request.data["document_id"],
+                parent_id=request.data["parent_document_id"],
                 process_id="",
             ),
             process_choice=choice,
@@ -132,7 +134,7 @@ def document_processing(request):
             document_id=cloning.document(
                 document_id=request.data["parent_document_id"],
                 auth_viewer=None,
-                parent_id=request.data["document_id"],
+                parent_id=request.data["parent_document_id"],
                 process_id="",
             ),
             process_choice=choice,
@@ -341,7 +343,7 @@ def process_verification(request):
         )
 
     # check user
-    user_name = request.data["user_name"]
+    user_name = request.data["user_name"] 
     auth_user, process_id, auth_step_role = checks.user_presence(
         token=request.data["token"],
         user_name=user_name,
@@ -1051,8 +1053,6 @@ def index_update(request):
         return
 
 
-# Old
-
 
 @api_view(["GET"])
 def processes(request, company_id):
@@ -1064,6 +1064,20 @@ def processes(request, company_id):
     if len(process_list) > 0:
         return Response(process_list, status=status.HTTP_200_OK)
     return Response([], status=status.HTTP_200_OK)
+
+
+
+
+@api_view(["GET"])
+def a_single_process(request, process_id):
+    """get process by process id"""
+    try:
+        process = get_process_object(process_id)
+    except ConnectionError:
+        return Response(
+            "Failed to get a process \n", status=status.HTTP_500_INTERNAL_SERVER_ERROR
+        )
+    return Response(process, status=status.HTTP_200_OK)
 
 
 @api_view(["POST"])
@@ -1087,32 +1101,19 @@ def get_process_link(request):
     )
 
 
-@api_view(["GET"])
-def a_single_process(request, process_id):
-    """get process by process id"""
-    try:
-        process = get_process_object(process_id)
-    except ConnectionError:
-        return Response(
-            "Failed to get a process \n", status=status.HTTP_500_INTERNAL_SERVER_ERROR
-        )
-    return Response(process, status=status.HTTP_200_OK)
 
-
-@api_view(["GET"])
-def fetch_process_links(request, process_id):
+@api_view(["POST"])
+def fetch_process_links(request):
     """verification links for a process"""
     print("Fetching verification links \n")
     try:
-        process_info = get_links_object_by_process_id(process_id)
+        process_info = get_links_object_by_process_id(request.data["process_id"])
+        return Response(process_info, status.HTTP_200_OK)
     except ConnectionError:
         return Response(
             "Could not fetch process links",
             status=status.HTTP_500_INTERNAL_SERVER_ERROR,
         )
-    if process_info["links"]:
-        return Response(process_info["links"], status=status.HTTP_200_OK)
-    return Response("No links found for this process", status=status.HTTP_404_NOT_FOUND)
 
 
 @api_view(["GET"])

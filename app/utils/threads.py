@@ -6,6 +6,7 @@ from app.utils.mongo_db_connection import (
     get_document_object,
     save_process_links,
     save_process_qrcodes,
+    save_uuid_hash,
     update_document,
     update_document_clone,
     update_document_viewers,
@@ -64,16 +65,32 @@ def notification(data):
         return
 
 
-# thread process.
+def save_link_hashes(data):
+    """save single link"""
+    try:
+        save_uuid_hash(
+            link=data["link"],
+            process_id=data["process_id"],
+            document_id=data["document_id"],
+            auth_role=data["step_role"],
+            user_name=data["username"],
+            auth_portfolio=data["portfolio"],
+            unique_hash=data["unique_hash"],
+            # company_id=data["company_id"],
+            # process_title=data["process_title"],
+        )
+    except ConnectionError:
+        print("Fail to save a single VF link! \n")
+
+
 def save_links_v2(data):
     """saving process links"""
+    # print(data["links"])
     try:
         save_process_links(
             links=data["links"],
             process_id=data["process_id"],
             document_id=data["document_id"],
-            processing_choice=data["process_choice"],
-            process_title=data["process_title"],
             company_id=data["company_id"],
         )
         print("Thread: Process Link Save! \n")
@@ -124,12 +141,6 @@ def clone_update(data):
 
 
 def process_update(data):
-    # update processing state
-    update_wf_process(
-        process_id=data["process_id"],
-        steps=data["process_steps"],
-        state=data["processing_state"],
-    )
     # add this users to the document clone map
     process = get_process_object(workflow_process_id=data["process_id"])
     doc_id = process["parent_document_id"]
@@ -142,7 +153,7 @@ def process_update(data):
     update_wf_process(
         process_id=process["_id"],
         steps=process["process_steps"],
-        state=process["processing_state"],
+        state=data["processing_state"],
     )
 
     print("Thread: Process Update! \n")
@@ -176,7 +187,7 @@ def background(data):
                         step_two_done = True
 
             else:
-                #TODO: Testing
+                # TODO: Testing
                 if step.get("stepTaskType") == "assign_task":
                     # just find documents from step 1 and update their auth_viewers
                     for st in process["process_steps"]:

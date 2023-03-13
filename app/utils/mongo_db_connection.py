@@ -99,7 +99,6 @@ def get_event_id():
 
 # --------- User Info-------------------------
 
-
 def get_user_list(company_id):
     field = {"company_id": str(company_id)}
     response_obj = dowellconnection(*USER_CONNECTION_LIST, "fetch", field, "nil")
@@ -133,7 +132,7 @@ def get_user_info_by_username(username):
 
 # ----------------------- Links Creation -------------------------
 def save_process_links(
-    links, process_id, document_id, processing_choice, process_title
+    links, process_id, document_id, company_id
 ):
     payload = json.dumps(
         {
@@ -144,8 +143,7 @@ def save_process_links(
                 "links": links,
                 "process_id": process_id,
                 "document_id": document_id,
-                "processing_choice": processing_choice,
-                "process_title": process_title,
+                "company_id": company_id,
                 "created_on": time,
             },
             "update_field": {"order_nos": 21},
@@ -160,8 +158,20 @@ def save_process_links(
 
 # By processID
 def get_links_object_by_process_id(process_id):
-    fields = {"process_id": str(process_id)}
+    fields = {"process_id": str(process_id),}
     response_obj = dowellconnection(*LINK_CONNECTION_LIST, "find", fields, "nil")
+    res_obj = json.loads(response_obj)
+    if res_obj["data"] is not None:
+        if len(res_obj["data"]):
+            return res_obj["data"]
+        else:
+            return []
+    return []
+
+
+def get_link_object(unique_hash):
+    fields = {"unique_hash": str(unique_hash), }
+    response_obj = dowellconnection(*QR_ID_CONNECTION_LIST, "find", fields, "nil")
     res_obj = json.loads(response_obj)
     if res_obj["data"] is not None:
         if len(res_obj["data"]):
@@ -215,64 +225,15 @@ def save_process_qrcodes(
 
 
 # ----------------------- Links Creation -------------------------
-def save_process_links(
-    links, process_id, document_id, processing_choice, process_title, company_id
-):
-    payload = json.dumps(
-        {
-            **LINK_CONNECTION_DICT,
-            "command": "insert",
-            "field": {
-                "event_id": get_event_id()["event_id"],
-                "links": links,
-                "process_id": process_id,
-                "document_id": document_id,
-                "processing_choice": processing_choice,
-                "process_title": process_title,
-                "created_at": time,
-                "company_id": company_id,
-            },
-            "update_field": {"order_nos": 21},
-            "platform": "bangalore",
-        }
-    )
-    headers = {"Content-Type": "application/json"}
-    response = requests.request(
-        "POST", DOWELLCONNECTION_URL, headers=headers, data=payload
-    )
-    print("DB: SAVED LINKS ----------- \n")
-    return json.loads(response.text)
 
-
-# By processID
-def get_links_object_by_process_id(process_id):
-    print("DB: getting process link object... \n")
-    fields = {"process_id": str(process_id)}
-    response_obj = dowellconnection(*LINK_CONNECTION_LIST, "find", fields, "nil")
-    print(response_obj)
+def get_process_link_list(company_id):
+    fields = {"company_id": str(company_id)}
+    response_obj = dowellconnection(*LINK_CONNECTION_LIST, "fetch", fields, "nil")
     res_obj = json.loads(response_obj)
-    if res_obj["data"] is not None:
-        if len(res_obj["data"]):
-            return res_obj["data"]
-        else:
-            return []
-    return []
-
-
-# By documentID
-def get_links_object_by_document_id(document_id):
-    print("DB: getting process link object... \n")
-    fields = {"document_id": str(document_id)}
-    response_obj = dowellconnection(*LINK_CONNECTION_LIST, "find", fields, "nil")
-    res_obj = json.loads(response_obj)
-    # print("PL query object response :  \n", response_obj)
-    if res_obj["data"] is not None:
-        if len(res_obj["data"]):
-            return res_obj["data"]
-        else:
-            return []
-    return []
-
+    if len(res_obj["data"]):
+        return res_obj["data"]
+    else:
+        return []
 
 #  -------------------------------Workflow Process------------------
 def save_wf_process(
@@ -375,7 +336,7 @@ def get_process_list(company_id):
 
 
 def save_wf(workflows, company_id, created_by):
-    # DOWELLCONNECTION_URL = "http://100002.pythonanywhere.com/"
+   
     payload = json.dumps(
         {
             **WF_CONNECTION_DICT,
@@ -398,7 +359,7 @@ def save_wf(workflows, company_id, created_by):
 
 
 def update_wf(workflow_id, old_workflow):
-    # DOWELLCONNECTION_URL = "http://100002.pythonanywhere.com/"
+  
 
     payload = json.dumps(
         {
@@ -423,7 +384,7 @@ def update_wf(workflow_id, old_workflow):
 
 
 def update_wf_approval(workflow_id, approval):
-    # DOWELLCONNECTION_URL = "http://100002.pythonanywhere.com/"
+    
     payload = json.dumps(
         {
             **WF_CONNECTION_DICT,
@@ -478,27 +439,10 @@ def get_wf_list(company_id):
         return []
 
 
-# def search_objects(company_id,term):
-#     docs = {"company_id": str(company_id),"document_name":term}
-#     templ = {"company_id": str(company_id),"template_name":term}
-#     wf= {"company_id": str(company_id),"workflow_title":term}
-#     all_= [DOCUMENT_CONNECTION_LIST,TEMPLATE_CONNECTION_LIST,WF_CONNECTION_LIST]
-#     for li in all_:
-
-#         doc=dowellconnection(*li, "fetch", docs, "nil")
-#         temp=dowellconnection(*li, "fetch", templ, "nil")
-#         wf_  =dowellconnection(*li, "fetch", wf, "nil")
-
-#     # if len(doc["data"]):
-#     return doc["data"]
-#     # else:
-#     #     return []
-
-# print(search_objects("6390b313d77dc467630713f2","Untitled Document"))
 
 # ------------------------------------------ Templates-----------------------------
 def save_template(name, data, page, created_by, company_id, data_type):
-    # DOWELLCONNECTION_URL = "http://100002.pythonanywhere.com/"
+
     event_id = get_event_id()["event_id"]
     payload = json.dumps(
         {
@@ -535,7 +479,6 @@ def get_template_object(template_id):
 
 
 def update_template(template_id, data):
-    # DOWELLCONNECTION_URL = "http://100002.pythonanywhere.com/"
     payload = json.dumps(
         {
             **TEMPLATE_CONNECTION_DICT,
@@ -737,7 +680,6 @@ def get_links_list(company_id):
         return []
 
 def save_wf_setting(company_id, owner_name, username, portfolio_name, process):
-    # url = "http://100002.pythonanywhere.com/"
     event_id = get_event_id()
     payload = json.dumps(
         {
@@ -786,9 +728,8 @@ def get_wfai_setting_list(company_id):
         return []
 
 
-# print(get_wf_setting_object('63c653b8c8151e89df92846b'))
 def wf_setting_update(wf_setting_id, wf_ai_data):
-    # url = "http://100002.pythonanywhere.com/"
+
     dd = datetime.now()
     time = dd.strftime("%d:%m:%Y,%H:%M:%S")
     payload = json.dumps(
@@ -840,17 +781,20 @@ def get_document_list(company_id):
 # ---------- Hashes --------------------------
 
 
-def save_uuid_hash(process_links, process_id, document_id, processing_choice):
+def save_uuid_hash(link, process_id, document_id, auth_role, user_name, auth_portfolio, unique_hash):
     payload = json.dumps(
         {
             **QR_ID_CONNECTION_DICT,
             "command": "insert",
             "field": {
                 "eventId": get_event_id(),
-                "process_links": process_links,
+                "link": link,
+                "auth_role": auth_role,
+                "user_name": user_name,
+                "auth_portfolio": auth_portfolio,
+                "unique_hash": unique_hash,
                 "document_id": document_id,
                 "process_id": process_id,
-                "processing_choice": processing_choice,
                 "status": True,  # if True: valid ? Invalid
             },
             "update_field": {"order_nos": 21},
@@ -860,7 +804,7 @@ def save_uuid_hash(process_links, process_id, document_id, processing_choice):
 
     headers = {"Content-Type": "application/json"}
     response = requests.request("POST", DOWELLCONNECTION_URL, headers=headers, data=payload)
-    print("SAVED UUID ENTRY", json.loads(response.text))
+    print("SAVED VERIFICATION LINK .. \n", )
     return json.loads(response.text)
 
 

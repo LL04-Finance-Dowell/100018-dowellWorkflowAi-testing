@@ -98,6 +98,7 @@ def start(process):
                     auth_name=member["member"],
                     auth_portfolio=member["portfolio"],
                     company_id=process["company_id"],
+                    process_title=process["process_title"],
                 )
             }
             for member in step.get("stepTeamMembers", [])
@@ -133,8 +134,6 @@ def start(process):
         "process_id": process["_id"],
         "document_id": process["parent_document_id"],
         "company_id": process["company_id"],
-        "process_choice": process["processing_action"],
-        "process_title": process["process_title"],
     }
     Thread(target=threads.save_links_v2, args=(data,)).start()
 
