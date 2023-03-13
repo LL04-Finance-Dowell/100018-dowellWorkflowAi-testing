@@ -343,7 +343,7 @@ def process_verification(request):
         )
 
     # check user
-    user_name = request.data["user_name"] 
+    user_name = request.data["user_name"]
     auth_user, process_id, auth_step_role = checks.user_presence(
         token=request.data["token"],
         user_name=user_name,
@@ -390,6 +390,7 @@ def process_verification(request):
 @api_view(["POST"])
 def mark_process_as_finalize_or_reject(request):
     """After access is granted and the user has made changes on a document."""
+    print("Marking Finalize|reject")
     if (
         not request.data["company_id"]
         and request.data["action"]
@@ -403,6 +404,7 @@ def mark_process_as_finalize_or_reject(request):
     # get document
     try:
         document = get_document_object(document_id=request.data["document_id"])
+        print(document)
     except ConnectionError:
         return Response(
             "Something went wrong!", status=status.HTTP_500_INTERNAL_SERVER_ERROR
@@ -1053,7 +1055,6 @@ def index_update(request):
         return
 
 
-
 @api_view(["GET"])
 def processes(request, company_id):
     """fetches workflow process `I` created."""
@@ -1064,8 +1065,6 @@ def processes(request, company_id):
     if len(process_list) > 0:
         return Response(process_list, status=status.HTTP_200_OK)
     return Response([], status=status.HTTP_200_OK)
-
-
 
 
 @api_view(["GET"])
@@ -1099,7 +1098,6 @@ def get_process_link(request):
     return Response(
         "User is not part of this process", status=status.HTTP_401_UNAUTHORIZED
     )
-
 
 
 @api_view(["POST"])

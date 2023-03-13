@@ -181,8 +181,8 @@ def background(data):
     step_two = process["process_steps"][1]
 
     # check if all docs for respective users are complete
-    if step_two["stepDocumentCloneMap"]:
-        print("In step 2")
+    if step_two["stepDocumentCloneMap"] != []:
+        print("In step 2 \n")
         print("checking clone", step_two["stepDocumentCloneMap"])
         users = [
             member["member"]
@@ -204,7 +204,7 @@ def background(data):
     # if the clone map is empty we execute
     else:
         if step_two["stepTaskType"] == "assign_task":
-            print("in assign task 2")
+            print("in assign task 2 \n")
             for d_m in step_two["stepDocumentCloneMap"]:
                 docs = list(d_m.values())
                 for d in docs:
@@ -217,13 +217,13 @@ def background(data):
                     ).start()
 
         if step_two["stepTaskType"] == "request_for_task":
-            print("in req 2", step_two["stepTaskType"])
+            print("in req 2", step_two["stepTaskType"], "\n")
             copies += [
                 {
                     member["member"]: cloning.document(
                         document_id=data["document_id"],
                         auth_viewer=member["member"],
-                        parent_id=process["document_id"],
+                        parent_id=process["parent_document_id"],
                         process_id=process["_id"],
                     )
                 }
@@ -236,7 +236,7 @@ def background(data):
 
     # for step 3 , step 2 should be done
     if complete:
-        print("In step 3")
+        print("In step 3 \n")
         step_three = process["process_steps"][2]
         # get all users
         users = (
@@ -247,7 +247,7 @@ def background(data):
         )
 
         # check if all docs for respective users are complete
-        if step_three["stepDocumentCloneMap"]:
+        if step_three["stepDocumentCloneMap"] != []:
             for usr in users:
                 document_states = [
                     get_document_object(d_map.get(usr))["document_state"] == "complete"
@@ -259,7 +259,7 @@ def background(data):
         # if the clone map is empty we execute
         else:
             if step_three["stepTaskType"] == "assign_task":
-                print("in assign task 3")
+                print("in assign task 3 \n")
                 for d_m in step_three["stepDocumentCloneMap"]:
                     docs = list(d_m.values())
                     for d in docs:
@@ -272,13 +272,13 @@ def background(data):
                         ).start()
 
             if step_three["stepTaskType"] == "request_for_task":
-                print("in req 3")
+                print("in req 3 \n")
                 copies += [
                     {
                         member["member"]: cloning.document(
                             document_id=data["document_id"],
                             auth_viewer=member["member"],
-                            parent_id=process["document_id"],
+                            parent_id=process["parent_document_id"],
                             process_id=process["_id"],
                         )
                     }
