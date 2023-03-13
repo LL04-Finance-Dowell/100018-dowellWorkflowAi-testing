@@ -163,7 +163,7 @@ def process_update(data):
 def background(data):
     # check if doc is complete
     document = get_document_object(document_id=data["document_id"])
-    if document["document_state"] != "complete":
+    if document["document_state"] != "finalized":
         return
 
     # get process
@@ -172,33 +172,41 @@ def background(data):
     copies = []
     step_two_done = False
     incomplete = True
+    changed = False
 
     # check if the second process is done or not
     complete = False
 
-    # get all users
-    users = (
-        process["process_steps"][1]("stepTeamMembers", [])
-        + process["process_steps"][1]("stepPublicMembers", [])
-        + process["process_steps"][1]("stepUserMembers", [])
-    )
+    # Set Second Step.
+    step_two = process["process_steps"][1]
 
     # check if all docs for respective users are complete
-    if process["process_steps"][1]["stepDocumentCloneMap"]:
+    if step_two["stepDocumentCloneMap"]:
+        print("In step 2")
+        print("checking clone", step_two["stepDocumentCloneMap"])
+        users = [
+            member["member"]
+            for member in step_two.get("stepTeamMembers", [])
+            + step_two.get("stepPublicMembers", [])
+            + step_two.get("stepUserMembers", [])
+        ]
+        print(users)
         for usr in users:
             document_states = [
                 get_document_object(d_map.get(usr))["document_state"] == "complete"
-                for d_map in process["process_steps"][1]["stepDocumentCloneMap"]
+                for d_map in step_two["stepDocumentCloneMap"]
             ]
+            print(document_states)
             if all(document_states):
                 complete = True
+                return
 
     # if the clone map is empty we execute
     else:
-        if process["process_steps"][1]["stepTaskType"] == "assign_task":
-            for d_m in process["process_steps"][1]["stepDocumentCloneMap"]:
+        if step_two["stepTaskType"] == "assign_task":
+            print("in assign task 2")
+            for d_m in step_two["stepDocumentCloneMap"]:
                 docs = list(d_m.values())
-
                 for d in docs:
                     data = {
                         "document_id": d,
@@ -208,7 +216,8 @@ def background(data):
                         target=threads.update_document_authorize, args=(data,)
                     ).start()
 
-        if process["process_steps"][1]["stepTaskType"] == "request_for_task":
+        if step_two["stepTaskType"] == "request_for_task":
+            print("in req 2")
             copies += [
                 {
                     member["member"]: cloning.document(
@@ -218,37 +227,41 @@ def background(data):
                         process_id=process["_id"],
                     )
                 }
-                for member in process["process_steps"][1]("stepTeamMembers", [])
-                + process["process_steps"][1]("stepPublicMembers", [])
-                + process["process_steps"][1]("stepUserMembers", [])
+                for member in step_two.get("stepTeamMembers", [])
+                + step_two.get("stepPublicMembers", [])
+                + step_two.get("stepUserMembers", [])
             ]
-            process["process_steps"][1]["stepDocumentCloneMap"].extend(copies)
+            step_two["stepDocumentCloneMap"].extend(copies)
+            changed = True
 
     # for step 3 , step 2 should be done
     if complete:
+        print("In step 3")
+        step_three = process["process_steps"][2]
         # get all users
         users = (
-            process["process_steps"][2]("stepTeamMembers", [])
-            + process["process_steps"][2]("stepPublicMembers", [])
-            + process["process_steps"][2]("stepUserMembers", [])
+            member["member"]
+            for member in step_three.get("stepTeamMembers", [])
+            + step_three.get("stepPublicMembers", [])
+            + step_three.get("stepUserMembers", [])
         )
 
         # check if all docs for respective users are complete
-        if process["process_steps"][2]["stepDocumentCloneMap"]:
+        if step_three["stepDocumentCloneMap"]:
             for usr in users:
                 document_states = [
                     get_document_object(d_map.get(usr))["document_state"] == "complete"
-                    for d_map in process["process_steps"][1]["stepDocumentCloneMap"]
+                    for d_map in step_three["stepDocumentCloneMap"]
                 ]
                 if all(document_states):
                     complete = True
 
         # if the clone map is empty we execute
         else:
-            if process["process_steps"][2]["stepTaskType"] == "assign_task":
-                for d_m in process["process_steps"][2]["stepDocumentCloneMap"]:
+            if step_three["stepTaskType"] == "assign_task":
+                print("in assign task 3")
+                for d_m in step_three["stepDocumentCloneMap"]:
                     docs = list(d_m.values())
-
                     for d in docs:
                         data = {
                             "document_id": d,
@@ -258,7 +271,8 @@ def background(data):
                             target=threads.update_document_authorize, args=(data,)
                         ).start()
 
-            if process["process_steps"][2]["stepTaskType"] == "request_for_task":
+            if step_three["stepTaskType"] == "request_for_task":
+                print("in req 3")
                 copies += [
                     {
                         member["member"]: cloning.document(
@@ -268,11 +282,12 @@ def background(data):
                             process_id=process["_id"],
                         )
                     }
-                    for member in process["process_steps"][2]("stepTeamMembers", [])
-                    + process["process_steps"][2]("stepPublicMembers", [])
-                    + process["process_steps"][2]("stepUserMembers", [])
+                    for member in step_three.get("stepTeamMembers", [])
+                    + step_three.get("stepPublicMembers", [])
+                    + step_three.get("stepUserMembers", [])
                 ]
-                process["process_steps"][2]["stepDocumentCloneMap"].extend(copies)
+                step_three["stepDocumentCloneMap"].extend(copies)
+                changed = True
 
     # for step in process["process_steps"]:
     #     if step[1]:
@@ -406,22 +421,23 @@ def background(data):
     #                     step["stepDocumentCloneMap"].extend(copies)
 
     # updating the document clone list
-    clone_ids = [d["member"] for d in copies if "member" in d]
-    if clone_ids:
-        data = {
-            "doc_id": process["parent_document_id"],
-            "clone_ids": clone_ids,
-        }
-        Thread(
-            target=threads.clone_update,
-            args=(data,),
-        ).start()
-    # update the process
-    update_wf_process(
-        process_id=process["_id"],
-        steps=process["process_steps"],
-        state=process["processing_state"],
-    )
-    print("Thread: Create copies! \n")
+    if changed:
+        clone_ids = [d["member"] for d in copies if "member" in d]
+        if clone_ids:
+            data = {
+                "doc_id": process["parent_document_id"],
+                "clone_ids": clone_ids,
+            }
+            Thread(
+                target=threads.clone_update,
+                args=(data,),
+            ).start()
+        # update the process
+        update_wf_process(
+            process_id=process["_id"],
+            steps=process["process_steps"],
+            state=process["processing_state"],
+        )
+        print("Thread: Create copies! \n")
 
     return
