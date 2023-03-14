@@ -270,6 +270,7 @@ def verify(process, auth_step_role, location_data, user_name):
 
     # is everything right, generate document link.
     if clone_id and right and user and role and doc_map:
+        print("something missing")
         doc_link = link_gen.document(
             document_id=clone_id,
             doc_map=doc_map,
