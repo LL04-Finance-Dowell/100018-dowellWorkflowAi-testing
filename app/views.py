@@ -50,7 +50,7 @@ from .utils.thread_start import (
 
 @api_view(["GET"])
 def home(request):
-    return Response("WorkflowAI Service is running...", status=status.HTTP_200_OK)
+    return Response("WorkflowAI Service is running...", status.HTTP_200_OK)
 
 
 @api_view(["POST"])
@@ -338,9 +338,7 @@ def process_verification(request):
         and request.data["country"]
         and request.data["city"]
     ):
-        return Response(
-            "You are missing something!", status=status.HTTP_400_BAD_REQUEST
-        )
+        return Response("You are missing something!", status.HTTP_400_BAD_REQUEST)
 
     # check user
     user_name = request.data["user_name"]
@@ -351,26 +349,24 @@ def process_verification(request):
     )
     if not auth_user:
         return Response(
-            "User is not part of this process", status=status.HTTP_401_UNAUTHORIZED
+            "User is not part of this process", status.HTTP_401_UNAUTHORIZED
         )
 
     # get process
     process = get_process_object(workflow_process_id=process_id)
     if not process:
-        Response(
-            "Something went wrong!, Retry", status=status.HTTP_500_INTERNAL_SERVER_ERROR
-        )
+        Response("Something went wrong!, Retry", status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     # check states
     if process["processing_state"]:
         if process["processing_state"] == "paused":
             return Response(
-                "This workflow process is currently on hold!", status=status.HTTP_200_OK
+                "This workflow process is currently on hold!", status.HTTP_200_OK
             )
         # was the process not started?
         if process["processing_state"] == "save":
             return Response(
-                "This workflow process is not activated!", status=status.HTTP_200_OK
+                "This workflow process is not activated!", status.HTTP_200_OK
             )
     location_data = {
         "city": request.data["city"],
@@ -383,7 +379,7 @@ def process_verification(request):
         return Response(access_link, status.HTTP_200_OK)
 
     return Response(
-        "Access to document denied at this time!", status=status.HTTP_401_UNAUTHORIZED
+        "Access to document denied at this time!", status.HTTP_401_UNAUTHORIZED
     )
 
 
@@ -399,21 +395,17 @@ def mark_process_as_finalize_or_reject(request):
         and request.data["authorized"]
         and request.data["role"]
     ):
-        return Response("You are missing something", status=status.HTTP_400_BAD_REQUEST)
+        return Response("You are missing something", status.HTTP_400_BAD_REQUEST)
 
     # get document
     try:
         document = get_document_object(document_id=request.data["document_id"])
     except ConnectionError:
-        return Response(
-            "Something went wrong!", status=status.HTTP_500_INTERNAL_SERVER_ERROR
-        )
+        return Response("Something went wrong!", status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     # check state.
     if document["document_state"] == "finalized":
-        return Response(
-            "Document has already been finalized", status=status.HTTP_200_OK
-        )
+        return Response("Document has already been finalized", status.HTTP_200_OK)
 
     # mark the doc as complete
 
@@ -426,17 +418,17 @@ def mark_process_as_finalize_or_reject(request):
     res = document_finalize(document_id=request.data["document_id"], state=state)
     if res["isSuccess"]:
         # Signal for further processing.
-        data = {
-            "process_id": request.data["process_id"],
-            "auth_step_role": request.data["role"],
-            "authorized": request.data["authorized"],
-            "document_id": request.data["document_id"],
-        }
-        Thread(target=threads.background, args=(data,)).start()
-        return Response("document processed successfully", status=status.HTTP_200_OK)
+        if processing.background(
+            process_id=request.data["process_id"],
+            document_id=request.data["document_id"],
+        ):
+            return Response("document processed successfully", status.HTTP_200_OK)
+        return Response(
+            "Document processed but failed to trigger second step", status.HTTP_200_OK
+        )
 
     return Response(
-        "Error processing the document", status=status.HTTP_500_INTERNAL_SERVER_ERROR
+        "Error processing the document", status.HTTP_500_INTERNAL_SERVER_ERROR
     )
 
 
