@@ -329,19 +329,21 @@ def background(process_id, document_id):
             print("in assign task 2 \n")
             for d_m in step_one["stepDocumentCloneMap"]:
                 docs = list(d_m.values())
-                for doc_id in docs:
+                print("docs", docs)
+                for docid in docs:
                     for usr in users:
-                        document = get_document_object(doc_id)
+                        document = get_document_object(docid)
                         doc_name = document["document_name"] + " ".join(usr)
                         viewers = document["auth_viewers"]
                         viewers.append(usr)
                         print("the viewers", viewers)
                         update_document_viewers(
-                            document_id=doc_id,
+                            document_id=docid,
                             auth_viewers=usr,
                             doc_name=doc_name,
+                            state="processing"
                         )
-                        step_two["stepDocumentCloneMap"].append({usr: d})
+                        step_two["stepDocumentCloneMap"].append({usr: docid})
                 # doc clone map update
 
         if step_two["stepTaskType"] == "request_for_task":
@@ -394,19 +396,21 @@ def background(process_id, document_id):
                     # find all doc id from step 2
                     docs = list(d_m.values())
                     # authorize all user in step three all docs in step 2
-                    for d in docs:
+                    print("the docs", docs)
+                    for docid in docs:
                         for usr in users:
-                            document = get_document_object(doc_id)
+                            document = get_document_object(docid)
                             doc_name = document["document_name"] + " ".join(usr)
                             viewers = document["auth_viewers"]
                             viewers.append(usr)
                             print("the viewers", viewers)
                             update_document_viewers(
-                                document_id=doc_id,
+                                document_id=docid,
                                 auth_viewers=usr,
                                 doc_name=doc_name,
+                                state="processing"
                             )
-                            step_three["stepDocumentCloneMap"].append({usr: d})
+                            step_three["stepDocumentCloneMap"].append({usr: docid})
 
             if step_three["stepTaskType"] == "request_for_task":
                 print("in req 3 \n")
@@ -445,6 +449,12 @@ def background(process_id, document_id):
         steps=process["process_steps"],
         state=process["processing_state"],
     )
+    """
+      TODO: After all is done we can grab all documents and update their status to finalized.
+      TODO: Update all steps as complete.
+      TODO: Update the process as complete.
+    """
+    
     print("Thread: Create copies! \n")
 
     return True

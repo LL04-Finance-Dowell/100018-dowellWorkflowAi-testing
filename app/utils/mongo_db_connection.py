@@ -646,7 +646,7 @@ def update_document_clone(document_id, clone_list):
     return json.loads(response.text)
 
 
-def update_document_viewers(document_id, auth_viewers, doc_name):
+def update_document_viewers(document_id, auth_viewers, doc_name, state):
     payload = json.dumps(
         {
             **DOCUMENT_CONNECTION_DICT,
@@ -654,7 +654,7 @@ def update_document_viewers(document_id, auth_viewers, doc_name):
             "field": {
                 "_id": document_id,
             },
-            "update_field": {"document_name": doc_name, "auth_viewers": auth_viewers},
+            "update_field": {"document_name": doc_name, "auth_viewers": auth_viewers, "document_state": state},
             "platform": "bangalore",
         }
     )

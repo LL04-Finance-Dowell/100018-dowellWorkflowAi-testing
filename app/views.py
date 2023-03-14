@@ -405,7 +405,10 @@ def mark_process_as_finalize_or_reject(request):
 
     # check state.
     if document["document_state"] == "finalized":
-        return Response("Document has already been finalized", status.HTTP_200_OK)
+        return Response("document has already been finalized", status.HTTP_200_OK)
+    
+    if document["document_state"] == "rejected":
+        return Response("document has already been rejected", status.HTTP_200_OK)
 
     # mark the doc as complete
 
