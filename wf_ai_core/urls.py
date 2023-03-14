@@ -148,7 +148,7 @@ urlpatterns = [
     path("v0.2/process/", document_processing),
     path("v0.2/process/action/verify/", process_verification),
     path("v0.2/process/action/trigger/", trigger_process),
-    path("v0.2/favorite/<str:item_id>/<str:item_type>/", favorite),
+    path("v0.2/favorite/", favorite),
     path("v0.2/delete/<str:item_id>/<str:item_type>/", delete_favorite),
 ]
 if settings.DEBUG:
