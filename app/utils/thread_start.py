@@ -1,6 +1,7 @@
 from threading import Thread
+
+from app.utils.favourites import remove_favorite, save_as_favorite
 from .algolia import save_to_algolia, update_from_algolia
-from ..models import save_as_favorite, remove_favorite
 
 
 class ThreadAlgolia(Thread):
@@ -23,14 +24,14 @@ class UpdateThreadAlgolia(Thread):
 
 
 class FavoriteThread(Thread):
-    def __init__(self, item_id, item_type,username):
+    def __init__(self, item_id, item_type, username):
         self.id = item_id
         self.type = item_type
         self.username = username
         Thread.__init__(self)
 
     def run(self):
-        save_as_favorite(self.id, self.type,self.username)
+        save_as_favorite(self.id, self.type, self.username)
 
 
 class DeleteFavoriteThread(Thread):
