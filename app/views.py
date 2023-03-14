@@ -876,15 +876,15 @@ def get_fav(request):
     workflows = []
     if request.method == "POST":
         company_id = request.data["company_id"]
-        created_by = request.data["created_by"]
+        username = request.data["username"]
         documents = FavoriteDocument.objects.filter(
-            company_id=company_id, created_by=created_by
+            company_id=company_id, username=username
         ).values()
         templates = FavoriteTemplate.objects.filter(
-            company_id=company_id, created_by=created_by
+            company_id=company_id, username=username
         ).values()
         workflows = FavoriteWorkflow.objects.filter(
-            company_id=company_id, created_by=created_by
+            company_id=company_id, username=username
         ).values()
     return Response(
         {"documents": documents, "templates": templates, "workflows": workflows},
@@ -892,13 +892,14 @@ def get_fav(request):
     )
 
 
-@api_view(["GET"])
-def favorite(request, item_id, item_type):
-    # item_id=request.data["item_id"]
-    # item_type=request.data["item_type"]
+@api_view(["POST"])
+def favorite(request):
+    item_id=request.data["item_id"]
+    item_type=request.data["item_type"]
+    username= request.data["username"]
     try:
 
-        FavoriteThread(item_id, item_type).start()
+        FavoriteThread(item_id, item_type,username).start()
         return Response(
             item_type + " with id " + item_id + "is added to favorite",
             status=status.HTTP_200_OK,

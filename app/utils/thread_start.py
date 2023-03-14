@@ -23,13 +23,14 @@ class UpdateThreadAlgolia(Thread):
 
 
 class FavoriteThread(Thread):
-    def __init__(self, item_id, item_type):
+    def __init__(self, item_id, item_type,username):
         self.id = item_id
         self.type = item_type
+        self.username = username
         Thread.__init__(self)
 
     def run(self):
-        save_as_favorite(self.id, self.type)
+        save_as_favorite(self.id, self.type,self.username)
 
 
 class DeleteFavoriteThread(Thread):

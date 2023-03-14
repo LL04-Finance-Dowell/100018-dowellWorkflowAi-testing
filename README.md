@@ -618,12 +618,25 @@ Request Body
     
 }
 ```
-_POST_ `/v0.2/favorite/<str:id>/<str:type>/`
+_POST_ `/v0.2/favorite/`
 
 Request Body
 
 ```
-no need
+{
+    "item_id":"id_of_item"
+    "item_type":"template|document|workflow"
+    "username": "logged_in_user"
+    
+}
+
+Response Body
+
+{
+saved_favorites
+}
+
+
 ```
 _POST_ `/v0.1/favorites/`
 

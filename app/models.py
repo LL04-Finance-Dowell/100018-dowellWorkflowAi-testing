@@ -17,6 +17,7 @@ class FavoriteTemplate(models.Model):
     eventId = jsonfield.JSONField(null=True)
     page = jsonfield.JSONField(null=True)
     template_name = jsonfield.JSONField(null=True)
+    username= models.TextField(max_length=200,default=created_by)
 
 
 class FavoriteDocument(models.Model):
@@ -36,6 +37,7 @@ class FavoriteDocument(models.Model):
     update_time = jsonfield.JSONField(null=True)
     workflow_id = jsonfield.JSONField(null=True)
     workflow_process = jsonfield.JSONField(null=True)
+    username= models.TextField(max_length=200,default=created_by)
 
 
 class FavoriteWorkflow(models.Model):
@@ -45,15 +47,19 @@ class FavoriteWorkflow(models.Model):
     created_by = jsonfield.JSONField(null=True)
     eventId = jsonfield.JSONField(null=True)
     workflows = jsonfield.JSONField(null=True)
+    username= models.TextField(max_length=200,default=created_by)
 
 
-def save_as_favorite(identifier, type):
+def save_as_favorite(identifier, type,username):
     if type == "workflow":
         data = get_wf_object(identifier)
+        data['username']=username
         model = FavoriteWorkflow(**data)
         model.save()
     if type == "document":
         data = get_document_object(identifier)
+        data['username']=username
+
         try:
             data["content"] = eval(data["content"])
         except:
@@ -62,6 +68,7 @@ def save_as_favorite(identifier, type):
         model.save()
     if type == "template":
         data = get_template_object(identifier)
+        data['username']=username
         try:
             data["content"] = eval(data["content"])
         except:
