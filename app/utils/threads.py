@@ -223,7 +223,7 @@ def background(data):
                         Thread(
                             target=threads.update_document_authorize, args=(data,)
                         ).start()
-                        step_two["stepDocumentCloneMap"].extend({usr: d})
+                        step_two["stepDocumentCloneMap"].append({usr: d})
                 # doc clone map update
 
         if step_two["stepTaskType"] == "request_for_task":
@@ -241,7 +241,8 @@ def background(data):
                 + step_two.get("stepPublicMembers", [])
                 + step_two.get("stepUserMembers", [])
             ]
-            step_two["stepDocumentCloneMap"].extend(copies)
+            for cp in copies:
+                step_two["stepDocumentCloneMap"].append(cp)
 
     # for step 3 , step 2 should be done
     step_three = process["process_steps"][2]
@@ -300,7 +301,8 @@ def background(data):
                     + step_three.get("stepPublicMembers", [])
                     + step_three.get("stepUserMembers", [])
                 ]
-                step_three["stepDocumentCloneMap"].extend(copies)
+                for cp in copies:
+                    step_three["stepDocumentCloneMap"].append(cp)
 
     # updating the document clone list
 
