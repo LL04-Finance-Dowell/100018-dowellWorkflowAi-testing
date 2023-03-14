@@ -26,9 +26,15 @@ def update_document_authorize(data):
     try:
         document = get_document_object(data["document_id"])
         doc_name = document["document_name"] + " ".join(data["auth_viewers"])
+        
+        viewers = document["auth_viewers"]
+        for viewer in data["auth_viewers"]:
+            viewers.append(viewer)
+
+        print("the viewers", viewers)
         update_document_viewers(
             document_id=data["document_id"],
-            auth_viewers=document["auth_viewers"].extend(data["auth_viewers"]),
+            auth_viewers=viewers,
             doc_name=doc_name,
         )
         print("Thread: Doc Authorize \n")
@@ -206,7 +212,9 @@ def background(data):
     else:
         if step_two["stepTaskType"] == "assign_task":
             print("in assign task 2 \n")
-            for d_m in step_one["stepDocumentCloneMap"]: #TODO: Find a way to update the clone map at this point
+            for d_m in step_one[
+                "stepDocumentCloneMap"
+            ]:  # TODO: Find a way to update the clone map at this point
                 docs = list(d_m.values())
                 for d in docs:
                     for usr in users:
@@ -240,7 +248,7 @@ def background(data):
     step_three = process["process_steps"][2]
     if complete:
         print("In step 3 \n")
-        
+
         # get all users
         users = [
             member["member"]
@@ -263,8 +271,10 @@ def background(data):
         else:
             if step_three["stepTaskType"] == "assign_task":
                 print("in assign task 3 \n")
-                for d_m in step_two["stepDocumentCloneMap"]: #TODO: Find a way to update the clone map at this point
-                    # find all doc id from step 2 
+                for d_m in step_two[
+                    "stepDocumentCloneMap"
+                ]:  # TODO: Find a way to update the clone map at this point
+                    # find all doc id from step 2
                     docs = list(d_m.values())
                     # authorize all user in step three all docs in step 2
                     for d in docs:
@@ -294,7 +304,6 @@ def background(data):
                 ]
                 changed = True
                 step_three["stepDocumentCloneMap"].extend(copies)
-                
 
     # for step in process["process_steps"]:
     #     if step[1]:

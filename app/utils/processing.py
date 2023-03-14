@@ -80,6 +80,44 @@ def start(process):
     auth_viewers_set = set()
 
     # generate links for each member in each step
+
+    # step_one = process["process_steps"][0]
+    # members = [
+    #     member["member"]
+    #     for member in step_one.get("stepTeamMembers", [])
+    #     + step_one.get("stepPublicMembers", [])
+    #     + step_one.get("stepUserMembers", [])
+    # ]
+    # auth_viewers_set.update(members)
+
+    # links = [
+    #     {
+    #         member: verification.process_links(
+    #             process_id=process["_id"],
+    #             document_id=process["parent_document_id"],
+    #             step_role=step_one.get("stepRole"),
+    #             auth_name=member["member"],
+    #             auth_portfolio=member["portfolio"],
+    #             company_id=process["company_id"],
+    #             process_title=process["process_title"],
+    #         )
+    #     }
+    #     for member in members
+    # ]
+
+    # qrcodes += [
+    #     {
+    #         member: verification.process_qrcode(
+    #             process_id=process["_id"],
+    #             document_id=process["parent_document_id"],
+    #             step_role=step_one.get("stepRole"),
+    #             auth_name=member["member"],
+    #             auth_portfolio=member["portfolio"],
+    #         )
+    #     }
+    #     for member in members
+    # ]
+
     for step in process["process_steps"]:
         if step.get("stepNumber") == 1:
             members = (
@@ -122,6 +160,7 @@ def start(process):
         ]
 
     # update authorized viewers for the parent document
+    print("the auth_viewers", list(auth_viewers_set))
     auth_data = {
         "document_id": process["parent_document_id"],
         "auth_viewers": list(auth_viewers_set),
