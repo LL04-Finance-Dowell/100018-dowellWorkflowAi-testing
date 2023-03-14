@@ -87,3 +87,8 @@
 .cancel__button {
   background-color: rgba(206, 0, 0, 1);
 }
+
+.decision__mini__text {
+  font-weight: normal;
+  font-size: 1rem;
+}

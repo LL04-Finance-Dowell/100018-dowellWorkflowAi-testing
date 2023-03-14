@@ -190,6 +190,7 @@ const WorkflowApp = () => {
                     cardBgColor={item.cardBgColor}
                     idKey={item.id ? item.id : null}
                     hideFavoriteIcon={true}
+                    itemType={"notifications"}
                   />
                 </div>
               ))

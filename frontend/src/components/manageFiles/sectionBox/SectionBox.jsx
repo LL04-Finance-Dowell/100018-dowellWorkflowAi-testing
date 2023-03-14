@@ -12,7 +12,7 @@ import { toast } from "react-toastify";
 import { TemplateServices } from "../../../services/templateServices";
 import { WorkflowServices } from "../../../services/workflowServices";
 import { getAllProcessesV2 } from "../../../services/processServices";
-import { setAllProcesses } from "../../../features/app/appSlice";
+import { setAllProcesses, setNotificationsForUser } from "../../../features/app/appSlice";
 import { setAllDocuments } from "../../../features/document/documentSlice";
 import { setAllTemplates } from "../../../features/template/templateSlice";
 import { setAllWorkflows } from "../../../features/workflow/workflowsSlice";
@@ -21,7 +21,7 @@ const SectionBox = ({ cardItems, title, Card, status, idKey, itemType, hideFavor
   const [sliceCount, setSliceCount] = useState(1);
   const [ refreshLoading, setRefreshLoading ] = useState(false);
   const { userDetail } = useSelector(state => state.auth);
-  const { processesLoading } = useSelector(state => state.app);
+  const { processesLoading, notificationsForUser, notificationsLoading } = useSelector(state => state.app);
   const { allDocumentsStatus } = useSelector(state => state.document);
   const { allTemplatesStatus } = useSelector(state => state.template);
   const { allWorkflowsStatus } = useSelector(state => state.workflow);
@@ -128,6 +128,46 @@ const SectionBox = ({ cardItems, title, Card, status, idKey, itemType, hideFavor
         setRefreshLoading(false);
       })
     }
+
+    if (itemType === "notifications") {
+      setRefreshLoading(true);
+
+      const documentService = new DocumentServices();
+      
+      documentService.allDocuments(userDetail?.portfolio_info[0]?.org_id).then(res => {
+        const documentsToSign = res.data.documents.reverse().filter(document => 
+          document.company_id === userDetail?.portfolio_info[0]?.org_id && 
+          document.data_type === userDetail?.portfolio_info[0]?.data_type && 
+          (document.state === "processing" || document.document_state === "processing") &&
+          document.auth_viewers && document.auth_viewers.includes(userDetail?.userinfo?.username)
+        ).filter(document => document.process_id)
+
+        const currentNotifications = notificationsForUser.slice();
+        let updatedNotifications = currentNotifications.map((notification) => {
+          const data = documentsToSign.map((dataObj) => {
+            let copyOfDataObj = { ...dataObj };
+            copyOfDataObj.type = "sign-document";
+            return copyOfDataObj;
+          });
+          const copyOfNotification = { ...notification };
+          if (copyOfNotification.title === "documents") {
+            copyOfNotification.items = data;
+            return copyOfNotification;
+          }
+          return notification;
+        });
+
+        dispatch(setNotificationsForUser(updatedNotifications));
+        toast.success("Successfully refreshed notifications")
+        setRefreshLoading(false)
+
+      }).catch(err => {
+        console.log("Refresh for notifications failed")
+        toast.info("Refresh for notifications failed")
+        setRefreshLoading(false);
+      })
+
+    }
   }
 
   console.log("slideCount", sliceCount);
@@ -172,6 +212,15 @@ const SectionBox = ({ cardItems, title, Card, status, idKey, itemType, hideFavor
                 :
                 itemType === "processes" ?
                 !processesLoading ?
+                  <button style={{ "background": "none" }} onClick={handleRefresh}>
+                    {
+                      refreshLoading ? <LoadingSpinner color={"black"} width={"1.2rem"} height={"1.2rem"} /> :
+                      <IoIosRefresh />
+                    }
+                  </button> : <></> 
+                :
+                itemType === "notifications" ?
+                !notificationsLoading ?
                   <button style={{ "background": "none" }} onClick={handleRefresh}>
                     {
                       refreshLoading ? <LoadingSpinner color={"black"} width={"1.2rem"} height={"1.2rem"} /> :

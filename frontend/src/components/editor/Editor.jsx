@@ -61,7 +61,11 @@ const Editor = () => {
           {toggleDecision && (
             <div className={styles.decision__container}>
               <div className={styles.decision__box}>
-                <h2>Have you saved your work?</h2>
+                <h2>
+                  Do you want to close?
+                  <br />
+                  <span className={styles.decision__mini__text}>Save your work before closing</span>
+                </h2>
                 <div className={styles.button__container}>
                   <button
                     className={styles.ok__button}
