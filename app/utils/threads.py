@@ -241,6 +241,7 @@ def background(data):
                 + step_two.get("stepPublicMembers", [])
                 + step_two.get("stepUserMembers", [])
             ]
+            print("the copies", copies)
             for cp in copies:
                 step_two["stepDocumentCloneMap"].append(cp)
 
@@ -284,7 +285,7 @@ def background(data):
                             Thread(
                                 target=threads.update_document_authorize, args=(data,)
                             ).start()
-                            step_three["stepDocumentCloneMap"].extend({usr: d})
+                            step_three["stepDocumentCloneMap"].append({usr: d})
 
             if step_three["stepTaskType"] == "request_for_task":
                 print("in req 3 \n")
@@ -301,6 +302,7 @@ def background(data):
                     + step_three.get("stepPublicMembers", [])
                     + step_three.get("stepUserMembers", [])
                 ]
+                print("the copies", copies)
                 for cp in copies:
                     step_three["stepDocumentCloneMap"].append(cp)
 
