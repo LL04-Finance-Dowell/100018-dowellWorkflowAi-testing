@@ -645,7 +645,7 @@ Request Body
 ```
 {
     "company_id": "company_id",
-    "created_by":"created user name"
+    "username":"logged in user name"
     
 }
 
