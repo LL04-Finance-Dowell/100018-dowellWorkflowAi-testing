@@ -14,8 +14,8 @@ export const getFavoritesForUser = async (data) => {
   return await httpFovorites.post("/", data);
 }
 
-export const addNewFavoriteForUser = async (itemId, itemType) => {
-  return await httpFovorite.get(`/favorite/${itemId}/${itemType}/`);
+export const addNewFavoriteForUser = async (data) => {
+  return await httpFovorite.post(`/favorite/`, data);
 }
 
 export const deleteFavoriteForUser = async (itemId, itemType) => {

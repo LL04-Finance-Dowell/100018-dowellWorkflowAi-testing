@@ -1,7 +1,7 @@
 import React from "react";
 import { AiFillStar, AiOutlineHeart, AiOutlineStar } from "react-icons/ai";
 import { MdFavorite } from "react-icons/md";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import { useAppContext } from "../../../contexts/AppContext";
 import { detailTemplate } from "../../../features/template/asyncThunks";
@@ -12,6 +12,7 @@ import { Button } from "../styledComponents";
 const TemplateCard = ({ cardItem }) => {
   const dispatch = useDispatch();
   const { favoriteItems, addToFavoritesState, removeFromFavoritesState } = useAppContext();
+  const { userDetail } = useSelector((state) => state.auth);
 
   const handleTemplateDetail = (item) => {
     const data = {
@@ -26,7 +27,12 @@ const TemplateCard = ({ cardItem }) => {
     if (actionType === "add") {
       addToFavoritesState("templates", item)
       try {
-        const response = await addNewFavoriteForUser(item._id, 'template');
+        const data = {
+          item_id: item._id,
+          item_type: "template",
+          username: userDetail?.userinfo?.username,
+        }
+        const response = await addNewFavoriteForUser(data);
         console.log(response)
       } catch (error) {
         toast.info("Failed to add template to favorites")

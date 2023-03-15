@@ -1,5 +1,5 @@
 import React from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import {
   setCurrentWorkflow,
   setToggleManageFileForm,
@@ -19,6 +19,7 @@ import { AiFillStar, AiOutlineHeart, AiOutlineStar } from "react-icons/ai";
 const WorkflowCard = ({ cardItem }) => {
   const dispatch = useDispatch();
   const { favoriteItems, addToFavoritesState, removeFromFavoritesState } = useAppContext();
+  const { userDetail } = useSelector((state) => state.auth);
 
   const handleUpdateWorkflow = (item) => {
     dispatch(setToggleManageFileForm(true));
@@ -31,7 +32,12 @@ const WorkflowCard = ({ cardItem }) => {
     if (actionType === "add") {
       addToFavoritesState("workflows", item)
       try {
-        const response = await addNewFavoriteForUser(item._id, 'workflow');
+        const data = {
+          item_id: item._id,
+          item_type: "workflow",
+          username: userDetail?.userinfo?.username,
+        }
+        const response = await addNewFavoriteForUser(data);
         console.log(response)
       } catch (error) {
         toast.info("Failed to add workflow to favorites")

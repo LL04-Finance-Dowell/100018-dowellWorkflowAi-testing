@@ -36,7 +36,12 @@ const DocumentCard = ({ cardItem, title, hideFavoriteIcon }) => {
     if (actionType === "add") {
       addToFavoritesState("documents", item)
       try {
-        const response = await addNewFavoriteForUser(item._id, 'document');
+        const data = {
+          item_id: item._id,
+          item_type: "document",
+          username: userDetail?.userinfo?.username,
+        }
+        const response = await addNewFavoriteForUser(data);
         console.log(response)
       } catch (error) {
         toast.info("Failed to add document to favorites")

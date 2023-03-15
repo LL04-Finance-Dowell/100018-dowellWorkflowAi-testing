@@ -101,7 +101,7 @@ const WorkflowApp = () => {
     if (!favoriteItemsLoaded) {
       const dataToPost = {
         "company_id": userDetail?.portfolio_info[0]?.org_id,
-        "created_by": userDetail?.userinfo?.username,
+        "username": userDetail?.userinfo?.username,
       }
   
       getFavoritesForUser(dataToPost).then(res => {
@@ -109,6 +109,7 @@ const WorkflowApp = () => {
         setFavoriteitemsLoaded(true)
       }).catch(err => {
         console.log("Failed to fetch favorites")
+        setFavoriteitemsLoaded(true)
       })
     }
 
@@ -206,7 +207,7 @@ const WorkflowApp = () => {
           <div style={{ marginBottom: "45px" }}>
             <>
               {
-                !favoriteItemsLoaded ? <p>Loading favorites...</p> : 
+                !favoriteItemsLoaded ? <p style={{ textAlign: "center" }}>Loading favorites...</p> : 
                 <>
                 {
                   React.Children.toArray(Object.keys(favoriteItems).map(key => {
