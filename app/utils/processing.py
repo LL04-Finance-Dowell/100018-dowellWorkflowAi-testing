@@ -176,6 +176,7 @@ def start(process):
         + step_one.get("stepPublicMembers", [])
         + step_one.get("stepUserMembers", [])
     ]
+    print("the auth users", auth_users)
 
     # update authorized viewers for the parent document
     document = get_document_object(process["parent_document_id"])
@@ -189,6 +190,20 @@ def start(process):
         document_id=document["_id"],
         auth_viewers=viewers,
         doc_name=doc_name,
+        state="processing",
+    )
+
+    # add this users to the document clone map of step one
+    doc_id = process["parent_document_id"]
+    for step in process["process_steps"]:
+        if step.get("stepNumber") == 1:
+            for user in viewers:
+                step.get("stepDocumentCloneMap").append({user: doc_id})
+
+    # now update the process
+    update_wf_process(
+        process_id=process["_id"],
+        steps=process["process_steps"],
         state="processing",
     )
 
@@ -211,16 +226,6 @@ def start(process):
         "process_title": process["process_title"],
     }
     Thread(target=threads.save_qrcodes, args=(code_data,)).start()
-
-    # update processing state of the process
-    process_data = {
-        "process_id": process["_id"],
-        "document_id": process["parent_document_id"],
-        "process_steps": process["process_steps"],
-        "auth_viewers": auth_users,
-        "processing_state": "processing",
-    }
-    Thread(target=threads.process_update, args=(process_data,)).start()
 
     # return generated links
     if links and qrcodes:
@@ -336,7 +341,7 @@ def background(process_id, document_id):
                 get_document_object(d_map.get(usr))["document_state"] == "finalized"
                 for d_map in step_two["stepDocumentCloneMap"]
             ]
-            print(document_states)
+            print("is done" , document_states)
             if all(document_states):
                 complete = True
 
