@@ -1,9 +1,9 @@
-from app.utils import cloning
-from . import checks, verification
-from . import threads
 from threading import Thread
+
 from rest_framework import status
 from rest_framework.response import Response
+
+from app.utils import cloning
 from app.utils.mongo_db_connection import (
     get_document_object,
     get_process_object,
@@ -12,8 +12,9 @@ from app.utils.mongo_db_connection import (
     update_document_viewers,
     update_wf_process,
 )
-
+from . import checks, verification
 from . import link_gen
+from . import threads
 
 
 def new(
@@ -85,7 +86,7 @@ def start(process):
     """
     links = []
     qrcodes = []
-    auth_viewers_set = set()
+    # auth_viewers = []
 
     # generate links for each member in each step
 
@@ -127,13 +128,13 @@ def start(process):
     # ]
 
     for step in process["process_steps"]:
-        if step.get("stepNumber") == 1:
-            members = (
-                step.get("stepTeamMembers", [])
-                + step.get("stepPublicMembers", [])
-                + step.get("stepUserMembers", [])
-            )
-            auth_viewers_set.update([member["member"] for member in members])
+        # if step.get("stepNumber") == 1:
+        #     members = [
+        #         step.get("stepTeamMembers", [])
+        #         + step.get("stepPublicMembers", [])
+        #         + step.get("stepUserMembers", [])
+        #     ]
+        #     auth_viewers.append([member["member"] for member in members])
 
         links += [
             {
@@ -167,13 +168,29 @@ def start(process):
             + step.get("stepUserMembers", [])
         ]
 
+    # set auth users
+    step_one = process["process_steps"][0]
+    auth_users = [
+        member["member"]
+        for member in step_one.get("stepTeamMembers", [])
+        + step_one.get("stepPublicMembers", [])
+        + step_one.get("stepUserMembers", [])
+    ]
+
     # update authorized viewers for the parent document
-    print("the auth_viewers", list(auth_viewers_set))
-    auth_data = {
-        "document_id": process["parent_document_id"],
-        "auth_viewers": list(auth_viewers_set),
-    }
-    Thread(target=threads.update_document_authorize, args=(auth_data,)).start()
+    document = get_document_object(process["parent_document_id"])
+    doc_name = document["document_name"] + " ".join(auth_users)
+    viewers = document["auth_viewers"]
+    for viewer in auth_users:
+        viewers.append(viewer)
+
+    print("the viewers", viewers)
+    update_document_viewers(
+        document_id=document["_id"],
+        auth_viewers=viewers,
+        doc_name=doc_name,
+        state="processing",
+    )
 
     # save links
     data = {
@@ -200,7 +217,7 @@ def start(process):
         "process_id": process["_id"],
         "document_id": process["parent_document_id"],
         "process_steps": process["process_steps"],
-        "auth_viewers": list(auth_viewers_set),
+        "auth_viewers": auth_users,
         "processing_state": "processing",
     }
     Thread(target=threads.process_update, args=(process_data,)).start()
@@ -302,19 +319,19 @@ def background(process_id, document_id):
 
     # Set Second Step.
     step_two = process["process_steps"][1]
+    step_two_users = [
+        member["member"]
+        for member in step_two.get("stepTeamMembers", [])
+        + step_two.get("stepPublicMembers", [])
+        + step_two.get("stepUserMembers", [])
+    ]
 
-    # check if all docs for respective users are complete
-    if step_two["stepDocumentCloneMap"] != []:
+    # check if all docs for respective users are complete in step 2
+    if step_two["stepDocumentCloneMap"]:
         print("In step 2 \n")
         print("checking clone", step_two["stepDocumentCloneMap"])
-        users = [
-            member["member"]
-            for member in step_two.get("stepTeamMembers", [])
-            + step_two.get("stepPublicMembers", [])
-            + step_two.get("stepUserMembers", [])
-        ]
-        print("the users", users)
-        for usr in users:
+        print("the users", step_two_users)
+        for usr in step_two_users:
             document_states = [
                 get_document_object(d_map.get(usr))["document_state"] == "finalized"
                 for d_map in step_two["stepDocumentCloneMap"]
@@ -331,7 +348,7 @@ def background(process_id, document_id):
                 docs = list(d_m.values())
                 print("docs", docs)
                 for docid in docs:
-                    for usr in users:
+                    for usr in step_two_users:
                         document = get_document_object(docid)
                         doc_name = document["document_name"] + " ".join(usr)
                         viewers = document["auth_viewers"]
@@ -341,7 +358,7 @@ def background(process_id, document_id):
                             document_id=docid,
                             auth_viewers=usr,
                             doc_name=doc_name,
-                            state="processing"
+                            state="processing",
                         )
                         step_two["stepDocumentCloneMap"].append({usr: docid})
                 # doc clone map update
@@ -408,7 +425,7 @@ def background(process_id, document_id):
                                 document_id=docid,
                                 auth_viewers=usr,
                                 doc_name=doc_name,
-                                state="processing"
+                                state="processing",
                             )
                             step_three["stepDocumentCloneMap"].append({usr: docid})
 
@@ -454,7 +471,7 @@ def background(process_id, document_id):
       TODO: Update all steps as complete.
       TODO: Update the process as complete.
     """
-    
+
     print("Thread: Create copies! \n")
 
     return True
