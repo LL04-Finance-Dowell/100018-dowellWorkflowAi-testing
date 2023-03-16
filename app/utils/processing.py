@@ -193,7 +193,7 @@ def start(process):
             doc_name=doc_name,
             state="processing",
         )
-    else: 
+    else:
         print("No Auth viewers")
 
     # add this users to the document clone map of step one
@@ -344,7 +344,7 @@ def background(process_id, document_id):
                 get_document_object(d_map.get(usr))["document_state"] == "finalized"
                 for d_map in step_two["stepDocumentCloneMap"]
             ]
-            print("is done" , document_states)
+            print("is done", document_states)
             if all(document_states):
                 complete = True
 
@@ -369,6 +369,7 @@ def background(process_id, document_id):
                             state="processing",
                         )
                         step_two["stepDocumentCloneMap"].append({usr: docid})
+                        print("the clone map", step_two["stepDocumentCloneMap"])
                 # doc clone map update
 
         if step_two["stepTaskType"] == "request_for_task":
@@ -389,72 +390,80 @@ def background(process_id, document_id):
             print("the copies", copies)
             for cp in copies:
                 step_two["stepDocumentCloneMap"].append(cp)
+            print("the clone map", step_two["stepDocumentCloneMap"])
 
     # for step 3 , step 2 should be done
-    step_three = process["process_steps"][2]
+
     if complete:
         print("In step 3 \n")
+        if process["process_steps"][2]:
+            step_three = process["process_steps"][2]
 
-        # get all users
-        users = [
-            member["member"]
-            for member in step_three.get("stepTeamMembers", [])
-            + step_three.get("stepPublicMembers", [])
-            + step_three.get("stepUserMembers", [])
-        ]
+            # get all users
+            users = [
+                member["member"]
+                for member in step_three.get("stepTeamMembers", [])
+                + step_three.get("stepPublicMembers", [])
+                + step_three.get("stepUserMembers", [])
+            ]
 
-        # check if all docs for respective users are complete
-        if step_three["stepDocumentCloneMap"] != []:
-            for usr in users:
-                document_states = [
-                    get_document_object(d_map.get(usr))["document_state"] == "finalized"
-                    for d_map in step_three["stepDocumentCloneMap"]
-                ]
-                if all(document_states):
-                    complete = True
+            # check if all docs for respective users are complete
+            if step_three["stepDocumentCloneMap"] != []:
+                for usr in users:
+                    document_states = [
+                        get_document_object(d_map.get(usr))["document_state"]
+                        == "finalized"
+                        for d_map in step_three["stepDocumentCloneMap"]
+                    ]
+                    if all(document_states):
+                        complete = True
 
-        # if the clone map is empty we execute
-        else:
-            if step_three["stepTaskType"] == "assign_task":
-                print("in assign task 3 \n")
-                for d_m in step_two["stepDocumentCloneMap"]:
-                    # find all doc id from step 2
-                    docs = list(d_m.values())
-                    # authorize all user in step three all docs in step 2
-                    print("the docs", docs)
-                    for docid in docs:
-                        for usr in users:
-                            document = get_document_object(docid)
-                            doc_name = document["document_name"] + " ".join(usr)
-                            viewers = document["auth_viewers"]
-                            viewers.append(usr)
-                            print("the viewers", viewers)
-                            update_document_viewers(
-                                document_id=docid,
-                                auth_viewers=usr,
-                                doc_name=doc_name,
-                                state="processing",
+            # if the clone map is empty we execute
+            else:
+                if step_three["stepTaskType"] == "assign_task":
+                    print("in assign task 3 \n")
+                    for d_m in step_two["stepDocumentCloneMap"]:
+                        # find all doc id from step 2
+                        docs = list(d_m.values())
+                        # authorize all user in step three all docs in step 2
+                        print("the docs", docs)
+                        for docid in docs:
+                            for usr in users:
+                                document = get_document_object(docid)
+                                doc_name = document["document_name"] + " ".join(usr)
+                                viewers = document["auth_viewers"]
+                                viewers.append(usr)
+                                print("the viewers", viewers)
+                                update_document_viewers(
+                                    document_id=docid,
+                                    auth_viewers=usr,
+                                    doc_name=doc_name,
+                                    state="processing",
+                                )
+                                step_three["stepDocumentCloneMap"].append({usr: docid})
+                                print("the clone map", step_three["stepDocumentCloneMap"])
+
+                if step_three["stepTaskType"] == "request_for_task":
+                    print("in req 3 \n")
+                    copies += [
+                        {
+                            member["member"]: cloning.document(
+                                document_id=document_id,
+                                auth_viewer=member["member"],
+                                parent_id=process["parent_document_id"],
+                                process_id=process["_id"],
                             )
-                            step_three["stepDocumentCloneMap"].append({usr: docid})
-
-            if step_three["stepTaskType"] == "request_for_task":
-                print("in req 3 \n")
-                copies += [
-                    {
-                        member["member"]: cloning.document(
-                            document_id=document_id,
-                            auth_viewer=member["member"],
-                            parent_id=process["parent_document_id"],
-                            process_id=process["_id"],
-                        )
-                    }
-                    for member in step_three.get("stepTeamMembers", [])
-                    + step_three.get("stepPublicMembers", [])
-                    + step_three.get("stepUserMembers", [])
-                ]
-                print("the copies", copies)
-                for cp in copies:
-                    step_three["stepDocumentCloneMap"].append(cp)
+                        }
+                        for member in step_three.get("stepTeamMembers", [])
+                        + step_three.get("stepPublicMembers", [])
+                        + step_three.get("stepUserMembers", [])
+                    ]
+                    print("the copies", copies)
+                    for cp in copies:
+                        step_three["stepDocumentCloneMap"].append(cp)
+                    print("the clone map", step_three["stepDocumentCloneMap"])
+    else:
+        print("No step three")
 
     # updating the document clone list
 
