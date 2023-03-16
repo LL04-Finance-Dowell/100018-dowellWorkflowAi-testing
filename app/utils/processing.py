@@ -186,12 +186,15 @@ def start(process):
         viewers.append(viewer)
 
     print("the viewers", viewers)
-    update_document_viewers(
-        document_id=document["_id"],
-        auth_viewers=viewers,
-        doc_name=doc_name,
-        state="processing",
-    )
+    if len(viewers) > 0:
+        update_document_viewers(
+            document_id=document["_id"],
+            auth_viewers=viewers,
+            doc_name=doc_name,
+            state="processing",
+        )
+    else: 
+        print("No Auth viewers")
 
     # add this users to the document clone map of step one
     doc_id = process["parent_document_id"]

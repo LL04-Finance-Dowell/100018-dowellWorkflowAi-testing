@@ -20,23 +20,24 @@ def document(document_id, auth_viewer, parent_id, process_id):
         inserted_id (str):
     """
     try:
+        viewers = []
         document = get_document_object(document_id)
-        if auth_viewer is None:
-            auth = ""
+        if auth_viewer is not None:
+            viewers.append(auth_viewer)
         else:
-            auth = auth_viewer
+            viewers = []
 
         # create new doc
         save_res = json.loads(
             save_document(
-                name=document["document_name"] + " - " + auth,
+                name=document["document_name"],
                 data=document["content"],
                 page=document["page"],
                 created_by=document["created_by"],
                 company_id=document["company_id"],
                 data_type=document["data_type"],
                 state="processing",
-                auth_viewers=[auth],
+                auth_viewers=viewers,
                 document_type="clone",
                 parent_id=parent_id,
                 process_id=process_id,
