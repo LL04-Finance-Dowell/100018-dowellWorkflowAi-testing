@@ -39,7 +39,7 @@ const TemplatesPage = ({ home, showOnlySaved }) => {
       dispatch(savedTemplates(savedTemplatesData)); */
 
     if (allTemplatesStatus === "idle") dispatch(allTemplates(data.company_id));
-  }, []);
+  }, [userDetail]);
 
   useEffect(() => {
     if (showOnlySaved) navigate("#saved-templates")

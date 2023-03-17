@@ -37,7 +37,7 @@ const WorkflowsPage = ({ home, showOnlySaved }) => {
     if (mineStatus === "idle") dispatch(mineWorkflows(data)); */
 
     if (allWorkflowsStatus === "idle") dispatch(allWorkflows(data.company_id));
-  }, []);
+  }, [userDetail]);
 
   useEffect(() => {
     if (showOnlySaved) navigate("#saved-workflows")
