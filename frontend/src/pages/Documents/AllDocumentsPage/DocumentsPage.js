@@ -36,7 +36,7 @@ const DocumentsPage = ({ home, showOnlySaved }) => {
     if (mineStatus !== "succeeded") dispatch(mineDocuments(data)); */
 
     if (allDocumentsStatus === "idle") dispatch(allDocuments(data.company_id));
-  }, []);
+  }, [userDetail]);
 
   useEffect(() => {
     if (showOnlySaved) navigate("#saved-documents")
@@ -60,7 +60,8 @@ const DocumentsPage = ({ home, showOnlySaved }) => {
                   allDocumentsArray.length &&
                   allDocumentsArray.filter(
                     (item) =>
-                      item.created_by === userDetail?.portfolio_info[0].username
+                      item.created_by === userDetail?.portfolio_info[0].username &&
+                      item.document_type === 'original'
                   )
                 }
                 status={allDocumentsStatus}
@@ -74,7 +75,7 @@ const DocumentsPage = ({ home, showOnlySaved }) => {
                 cardBgColor="#1ABC9C"
                 title="saved documents"
                 Card={DocumentCard}
-                cardItems={allDocumentsArray}
+                cardItems={allDocumentsArray.filter(document => document.document_type === 'original')}
                 status={allDocumentsStatus}
                 itemType={"documents"}
               />

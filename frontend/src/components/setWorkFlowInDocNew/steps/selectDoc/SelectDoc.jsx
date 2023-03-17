@@ -29,6 +29,8 @@ const SelectDoc = () => {
   const { currentDocToWfs } = useSelector((state) => state.app);
 
   const [selectedDocuments, setSelectedDocuments] = useState([]);
+  const [ selectedDocumentCopies, setSelectedDocumentCopies ] = useState([]);
+  const [ currentSelectedDocument, setCurrentSelectedDocument ] = useState(null);
 
   useEffect(() => {
     const data = {
@@ -39,6 +41,9 @@ const SelectDoc = () => {
   }, []);
 
   const handleAddSelectedDocuments = (document) => {
+    setCurrentSelectedDocument(document);
+    setSelectedDocumentCopies(allDocumentsArray.filter(item => item.parent_id === document._id))
+
     const isInclude = selectedDocuments.find(
       (item) => item._id === document._id
     );
@@ -80,7 +85,7 @@ const SelectDoc = () => {
               {allDocumentsArray &&
                 allDocumentsArray.length &&
                 allDocumentsArray.length > 0 &&
-                [...allDocumentsArray]?.map((item, index) => (
+                [...allDocumentsArray]?.filter(document => document.document_type === 'original').map((item, index) => (
                   <SwiperSlide key={item._id}>
                     <div className={styles.swiper__slide__box}>
                       <div
@@ -113,7 +118,7 @@ const SelectDoc = () => {
           )}
         </div>
         <div className={styles.right__container}>
-          <SelectedDocuments selectedDocuments={selectedDocuments} />
+          <SelectedDocuments selectedDocument={currentSelectedDocument} selectedDocuments={selectedDocumentCopies} />
         </div>
       </div>
     </div>

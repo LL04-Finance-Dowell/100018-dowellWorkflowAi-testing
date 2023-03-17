@@ -7,7 +7,7 @@ import { setContentOfDocument } from "../../../../../features/document/documentS
 import { PrimaryButton } from "../../../../styledComponents/styledComponents";
 import styles from "./selectedDocuments.module.css";
 
-const SelectedDocuments = ({ selectedDocuments }) => {
+const SelectedDocuments = ({ selectedDocument, selectedDocuments }) => {
   const {
     register,
     handleSubmit,
@@ -16,26 +16,32 @@ const SelectedDocuments = ({ selectedDocuments }) => {
   const dispatch = useDispatch();
 
   const onSubmit = (data) => {
-    console.log("submitsadsadasd");
+    if (!selectedDocument) return
+    
+    // console.log("submitsadsadasd");
     const { document } = data;
 
-    console.log("first document", document);
-    const currentDocument = selectedDocuments.find(
-      (item) => item._id === document
-    );
+    // console.log("first document", document);
+    // const currentDocument = selectedDocuments.find(
+      // (item) => item._id === document
+    // );
 
-    const fetchData = { document_id: currentDocument._id };
+    // const fetchData = { document_id: currentDocument?._id };
 
-    console.log("second document", document);
-    dispatch(contentDocument(fetchData.document_id));
-    dispatch(setCurrentDocToWfs(currentDocument));
+    // console.log("second document", document);
+    dispatch(contentDocument(selectedDocument._id));
+    dispatch(setCurrentDocToWfs(selectedDocument));
     dispatch(setContentOfDocument(null));
   };
 
   return (
     <div className={`${styles.container} ${isSubmitted && styles.selected}`}>
       {/*  <div className={styles.selected__doc__box}> */}
-      {selectedDocuments?.length > 0 ? (
+      {
+      !selectedDocument ? (
+        <h3 className={styles.no__item}>Please select document</h3>
+      ) :
+      selectedDocuments?.length > 0 ? (
         <>
           <h2 className={styles.header}>
             Copies of the selected document (select for processing)
@@ -60,7 +66,13 @@ const SelectedDocuments = ({ selectedDocuments }) => {
           </form>
         </>
       ) : (
-        <h3 className={styles.no__item}>Please select document</h3>
+        <>
+          <h3 className={styles.no__item}>No document copies for {selectedDocument.document_name}</h3>
+          <PrimaryButton type="submit" hoverBg="success" onClick={onSubmit}>
+            Add selected document copies to process (Break processing of
+            unselected)
+          </PrimaryButton>
+        </>
       )}
     </div>
   );
