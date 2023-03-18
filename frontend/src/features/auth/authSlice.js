@@ -20,6 +20,9 @@ export const appSlice = createSlice({
     setId: (state, action) => {
       state.id = action.payload;
     },
+    updateUserDetail: (state, action) => {
+      state.userDetail = action.payload
+    },
   },
   extraReducers: (builder) => {
     //getUserInfo
@@ -62,6 +65,6 @@ export const appSlice = createSlice({
 });
 
 // Action creators are generated for each case reducer function
-export const { setSessionId, setId } = appSlice.actions;
+export const { setSessionId, setId, updateUserDetail } = appSlice.actions;
 
 export default appSlice.reducer;

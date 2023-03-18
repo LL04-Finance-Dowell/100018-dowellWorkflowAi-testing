@@ -84,7 +84,8 @@ const InfoBoxes = () => {
               ...item,
               contents:
                 team?.length > 1
-                  ? userDetail?.selected_product?.userportfolio
+                  ? userDetail?.userportfolio ?
+                    userDetail?.userportfolio
                       .filter((user) => user.member_type === "team_member")
                       .filter((user) =>
                         Array.isArray(user.username) && user.username.length > 0
@@ -95,7 +96,24 @@ const InfoBoxes = () => {
                               .toLocaleLowerCase()
                               .includes(team.toLocaleLowerCase())
                       )
-                  : userDetail?.selected_product?.userportfolio.filter(
+                    :
+                    userDetail?.selected_product?.userportfolio
+                      .filter((user) => user.member_type === "team_member")
+                      .filter((user) =>
+                        Array.isArray(user.username) && user.username.length > 0
+                          ? user.username[0]
+                              .toLocaleLowerCase()
+                              .includes(team.toLocaleLowerCase())
+                          : user.username
+                              .toLocaleLowerCase()
+                              .includes(team.toLocaleLowerCase())
+                      )
+                  : userDetail?.userportfolio ?
+                    userDetail?.userportfolio.filter(
+                      (user) => user.member_type === "team_member"
+                    )
+                    :
+                    userDetail?.selected_product?.userportfolio.filter(
                       (user) => user.member_type === "team_member"
                     ),
               status: "done",
@@ -103,9 +121,15 @@ const InfoBoxes = () => {
           : item.title === "user"
           ? {
               ...item,
-              contents: userDetail?.selected_product?.userportfolio.filter(
-                (user) => user.member_type === "public"
-              ),
+              contents: userDetail?.userportfolio ?
+                userDetail?.userportfolio.filter(
+                  (user) => user.member_type === "public"
+                ) 
+                :  
+                userDetail?.selected_product?.userportfolio.filter(
+                  (user) => user.member_type === "public"
+                )
+              ,
               status: "done",
             }
           : item
@@ -119,6 +143,49 @@ const InfoBoxes = () => {
 
   useEffect(() => {
     if (membersSetForProcess) return;
+
+    if (userDetail.userportfolio) {
+      userDetail.userportfolio?.forEach((user) => {
+        if (Array.isArray(user.username) && user.username.length > 0) {
+          user.username.forEach((arrUsername) => {
+            const copyOfUser = { ...user };
+            copyOfUser.username = arrUsername;
+  
+            if (
+              selectedMembersForProcess.find(
+                (member) => member.username === copyOfUser.username
+              )
+            )
+              return dispatch(
+                removeFromSelectedMembersForProcess(copyOfUser.username)
+              );
+            dispatch(setSelectedMembersForProcess(copyOfUser));
+          });
+  
+          return;
+        }
+  
+        if (
+          selectedMembersForProcess.find((member) =>
+            member.username === Array.isArray(user.username) &&
+            user.username.length > 0
+              ? user.username[0]
+              : user.username
+          )
+        )
+          return dispatch(
+            removeFromSelectedMembersForProcess(
+              Array.isArray(user.username) && user.username.length > 0
+                ? user.username[0]
+                : user.username
+            )
+          );
+        dispatch(setSelectedMembersForProcess(user));
+      });
+
+      dispatch(setMembersSetForProcess(true));
+      return
+    }
 
     userDetail.selected_product?.userportfolio?.forEach((user) => {
       if (Array.isArray(user.username) && user.username.length > 0) {

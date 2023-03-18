@@ -8,11 +8,13 @@ import DowellLogo from "../../assets/dowell.png";
 import Spinner from "../../components/spinner/Spinner";
 import useCloseElementOnEscapekeyClick from "../../../src/hooks/useCloseElementOnEscapeKeyClick";
 import UserDetail from "../../components/newSidebar/userDetail/UserDetail";
-import { setLegalAgreePageLoading, setShowLegalStatusPopup, setUserDetailPosition } from "../../features/app/appSlice";
+import { setAdminUser, setAdminUserPortfolioLoaded, setLegalAgreePageLoading, setShowLegalStatusPopup, setUserDetailPosition } from "../../features/app/appSlice";
 import { AiOutlineClose } from "react-icons/ai";
 import { LoadingSpinner } from "../../components/LoadingSpinner/LoadingSpinner";
 import { formatDateAndTime } from "../../utils/helpers";
 import { workflowRegistrationEventId } from "../../services/legalService";
+import { AuthServices } from "../../services/authServices";
+import { updateUserDetail } from "../../features/auth/authSlice";
 
 const WorkflowLayout = ({ children }) => {
   const dispatch = useDispatch();
@@ -24,6 +26,7 @@ const WorkflowLayout = ({ children }) => {
     legalTermsAgreed,
     dateAgreedToLegalStatus,
     legalArgeePageLoading,
+    adminUserPortfolioLoaded,
   } = useSelector((state) => state.app);
   const [createNewPortfolioLoading, setCreateNewPortfolioLoading] =
     useState(false);
@@ -53,6 +56,31 @@ const WorkflowLayout = ({ children }) => {
     dispatch(setLegalAgreePageLoading(true))
     window.location = `https://100087.pythonanywhere.com/legalpolicies/${workflowRegistrationEventId}/website-privacy-policy/policies/?redirect_url=${window.location.origin}/100018-dowellWorkflowAi-testing/%23?id=${id}&session_id=${session_id}`;
   };
+  
+  useEffect(() => {
+    
+    if (!session_id || !userDetail || !userDetail.portfolio_info || userDetail.portfolio_info.length < 1) return
+
+    const workflowProduct = userDetail?.portfolio_info?.find(item => item.product === "Workflow AI")
+    if (!workflowProduct || workflowProduct.member_type !== "owner") return
+    
+    if (adminUserPortfolioLoaded) return
+
+    // admin user
+    dispatch(setAdminUser(true));
+    
+    // updating details for owner
+    const authService = new AuthServices();
+    authService.getUserDetail({ session_id: session_id, product: workflowProduct.product }).then(res => {
+      // console.log(res.data);
+      dispatch(updateUserDetail(res.data));
+      dispatch(setAdminUserPortfolioLoaded(true));
+    }).catch(err => {
+      console.log("Failed to update admin user: ", err.response ? err.response.data : err.message);
+      dispatch(setAdminUserPortfolioLoaded(true));
+    })
+
+  }, [])
   
   return (
     <>

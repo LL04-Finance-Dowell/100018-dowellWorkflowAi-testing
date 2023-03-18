@@ -77,6 +77,8 @@ const initialState = {
   legalTermsAgreed: false,
   dateAgreedToLegalStatus: "",
   legalArgeePageLoading: false,
+  adminUser: false,
+  adminUserPortfolioLoaded: false,
 };
 
 export const appSlice = createSlice({
@@ -390,6 +392,12 @@ export const appSlice = createSlice({
     setLegalAgreePageLoading: (state, action) => {
       state.legalArgeePageLoading = action.payload
     },
+    setAdminUser: (state, action) => {
+      state.adminUser = action.payload
+    },
+    setAdminUserPortfolioLoaded: (state, action) => {
+      state.adminUserPortfolioLoaded = action.payload
+    },
   },
   extraReducers: (builder) => {
     //getItemsCount
@@ -458,6 +466,8 @@ export const {
   setLegalTermsAgreed,
   setDateAgreedToLegalStatus,
   setLegalAgreePageLoading,
+  setAdminUser,
+  setAdminUserPortfolioLoaded,
 } = appSlice.actions;
 
 export default appSlice.reducer;
