@@ -162,6 +162,8 @@ const ConnectWorkFlowToDoc = () => {
     if (currentEnabledSteps[foundCurrentStepIndex + 1]) {
       currentEnabledSteps[foundCurrentStepIndex + 1].enableStep = true;
       setEnabledSteps(currentEnabledSteps);
+      const foundNextStepElem = document.getElementById(`process-step-${foundCurrentStepIndex + 1}`);
+      if (foundNextStepElem) foundNextStepElem.scrollIntoView();
     }
   }
 
@@ -194,7 +196,9 @@ const ConnectWorkFlowToDoc = () => {
                         ) ? 
                         "" : 
                         "none"
-                      }}>
+                      }}
+                      id={`process-step-${index}`}
+                    >
                       <div>
                         <div
                           onClick={() => setContentToggle((prev) => !prev)}
