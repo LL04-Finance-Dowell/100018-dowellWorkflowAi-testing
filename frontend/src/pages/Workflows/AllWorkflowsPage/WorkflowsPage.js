@@ -14,7 +14,7 @@ import {
 import WorkflowCard from "../../../components/hoverCard/workflowCard/WorkflowCard";
 import { useNavigate } from "react-router-dom";
 
-const WorkflowsPage = ({ home, showOnlySaved }) => {
+const WorkflowsPage = ({ home, showOnlySaved, showOnlyTrashed }) => {
   const { userDetail } = useSelector((state) => state.auth);
   const {
     minedWorkflows,
@@ -41,8 +41,9 @@ const WorkflowsPage = ({ home, showOnlySaved }) => {
 
   useEffect(() => {
     if (showOnlySaved) navigate("#saved-workflows")
+    if (showOnlyTrashed) navigate("#trashed-workflows")
     if (home) navigate('#drafts')
-  }, [showOnlySaved, home])
+  }, [showOnlySaved, showOnlyTrashed, home])
 
   console.log("wwwwwwwwwwwwwwwwwwwwwwwwwwwwww", allWorkflowsArray);
 
@@ -77,6 +78,18 @@ const WorkflowsPage = ({ home, showOnlySaved }) => {
                 title="saved workflows"
                 status={allWorkflowsStatus}
                 cardItems={allWorkflowsArray}
+                itemType={"workflows"}
+              />
+            </div> : <></>
+          }
+          {
+            showOnlyTrashed ? <div id="trashed-workflows">
+              <SectionBox
+                Card={WorkflowCard}
+                cardBgColor="#1ABC9C"
+                title="trashed workflows"
+                status={allWorkflowsStatus}
+                cardItems={[]}
                 itemType={"workflows"}
               />
             </div> : <></>

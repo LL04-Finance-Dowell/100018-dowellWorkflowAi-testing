@@ -18,8 +18,9 @@ import { handleFavorites } from "../../../features/favorites/asyncThunks";
 import { useAppContext } from "../../../contexts/AppContext";
 import { MdFavorite } from "react-icons/md";
 import { addNewFavoriteForUser, deleteFavoriteForUser } from "../../../services/favoritesServices";
+import { RiDeleteBin6Line } from "react-icons/ri";
 
-const DocumentCard = ({ cardItem, title, hideFavoriteIcon }) => {
+const DocumentCard = ({ cardItem, title, hideFavoriteIcon, hideDeleteIcon }) => {
   const dispatch = useDispatch();
   const [dataLoading, setDataLoading] = useState(false);
   const { userDetail } = useSelector((state) => state.auth);
@@ -61,6 +62,10 @@ const DocumentCard = ({ cardItem, title, hideFavoriteIcon }) => {
     }
     // console.log(favoriteItems)
   };
+
+  const handleTrashDocument = (cardItem) => {
+
+  }
 
   const handleDetailDocumnet = async (item) => {
     if (dataLoading) return;
@@ -181,6 +186,14 @@ const DocumentCard = ({ cardItem, title, hideFavoriteIcon }) => {
         ) : (
           "no item"
         )}
+        {!hideDeleteIcon && <div style={{ 
+          cursor: "pointer", 
+          position: "absolute", 
+          right: "0", 
+          bottom: "0"
+        }} onClick={() => handleTrashDocument(cardItem)}>
+          <RiDeleteBin6Line color="red" />
+        </div>}
       </div>
     );
   };

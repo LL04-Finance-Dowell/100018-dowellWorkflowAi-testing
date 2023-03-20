@@ -9,7 +9,7 @@ import { getAllProcessesV2 } from "../../../services/processServices";
 import { setAllProcesses, setProcessesLoaded, setProcessesLoading } from "../../../features/app/appSlice";
 import { useNavigate } from "react-router-dom";
 
-const ProcessesPage = ({ home, showOnlySaved, showOnlyPaused, showOnlyCancelled }) => {
+const ProcessesPage = ({ home, showOnlySaved, showOnlyPaused, showOnlyCancelled, showOnlyTrashed }) => {
   const { processesLoading, allProcesses, processesLoaded } = useSelector((state) => state.app);
   const { userDetail } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
@@ -20,9 +20,10 @@ const ProcessesPage = ({ home, showOnlySaved, showOnlyPaused, showOnlyCancelled 
     if (showOnlySaved) navigate("#saved-processes");
     if (showOnlyPaused) navigate("#paused-processes");
     if (showOnlyCancelled) navigate("#cancelled-processes");
+    if (showOnlyTrashed) navigate("#thrashed-processes");
     if (home) navigate('#drafts')
 
-  }, [showOnlySaved, showOnlyPaused, showOnlyCancelled, home])
+  }, [showOnlySaved, showOnlyPaused, showOnlyCancelled, showOnlyTrashed, home])
 
   useEffect(() => {
 
@@ -95,6 +96,18 @@ const ProcessesPage = ({ home, showOnlySaved, showOnlyPaused, showOnlyCancelled 
                 title="cancelled proccess"
                 Card={ProcessCard}
                 cardItems={allProcesses.filter(process => process.processing_state === "cancelled")}
+                status={processesLoading ? "pending" : "success"}
+                itemType={"processes"}
+              />
+            </div> : <></>
+          }
+          {
+            showOnlyTrashed ?<div id="trashed-processes">
+              <SectionBox
+                cardBgColor="#1ABC9C"
+                title="trashed proccess"
+                Card={ProcessCard}
+                cardItems={allProcesses.filter(process => process.processing_state === "trash")}
                 status={processesLoading ? "pending" : "success"}
                 itemType={"processes"}
               />

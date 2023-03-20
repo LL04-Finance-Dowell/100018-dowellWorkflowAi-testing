@@ -17,7 +17,7 @@ import { setAllDocuments } from "../../../features/document/documentSlice";
 import { setAllTemplates } from "../../../features/template/templateSlice";
 import { setAllWorkflows } from "../../../features/workflow/workflowsSlice";
 
-const SectionBox = ({ cardItems, title, Card, status, idKey, itemType, hideFavoriteIcon }) => {
+const SectionBox = ({ cardItems, title, Card, status, idKey, itemType, hideFavoriteIcon, hideDeleteIcon }) => {
   const [sliceCount, setSliceCount] = useState(1);
   const [ refreshLoading, setRefreshLoading ] = useState(false);
   const { userDetail } = useSelector(state => state.auth);
@@ -247,7 +247,7 @@ const SectionBox = ({ cardItems, title, Card, status, idKey, itemType, hideFavor
                     cardItems.length > 0 &&
                     cardItems
                       .slice(0, sliceCount * 10)
-                      .map((item) => <Card key={item.id} cardItem={item} hideFavoriteIcon={hideFavoriteIcon} />)}
+                      .map((item) => <Card key={item.id} cardItem={item} hideFavoriteIcon={hideFavoriteIcon} hideDeleteIcon={hideDeleteIcon} />)}
                   {cardItems && cardItems.length > 10 && (
                     <PrimaryButton
                       style={{

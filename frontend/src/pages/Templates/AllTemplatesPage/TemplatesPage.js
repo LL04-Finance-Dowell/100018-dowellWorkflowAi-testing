@@ -13,7 +13,7 @@ import {
 import TemplateCard from "../../../components/hoverCard/templateCard/TemplateCard";
 import { useNavigate } from "react-router-dom";
 
-const TemplatesPage = ({ home, showOnlySaved }) => {
+const TemplatesPage = ({ home, showOnlySaved, showOnlyTrashed }) => {
   const { userDetail } = useSelector((state) => state.auth);
 
   const {
@@ -43,8 +43,9 @@ const TemplatesPage = ({ home, showOnlySaved }) => {
 
   useEffect(() => {
     if (showOnlySaved) navigate("#saved-templates")
+    if (showOnlyTrashed) navigate("#trashed-templates")
     if (home) navigate('#drafts')
-  }, [showOnlySaved, home])
+  }, [showOnlySaved, showOnlyTrashed, home])
 
   console.log("allTemplatesArrayallTemplatesArray", allTemplatesArray);
 
@@ -78,6 +79,18 @@ const TemplatesPage = ({ home, showOnlySaved }) => {
                 title="saved templates"
                 Card={TemplateCard}
                 cardItems={allTemplatesArray}
+                status={allTemplatesStatus}
+                itemType={"templates"}
+              />
+            </div> : <></>
+          }
+          {
+            showOnlyTrashed ? <div id="trashed-templates">
+              <SectionBox
+                cardBgColor="#1ABC9C"
+                title="trashed templates"
+                Card={TemplateCard}
+                cardItems={[]}
                 status={allTemplatesStatus}
                 itemType={"templates"}
               />

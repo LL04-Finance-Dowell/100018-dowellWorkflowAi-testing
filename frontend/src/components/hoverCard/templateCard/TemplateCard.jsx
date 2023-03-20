@@ -1,6 +1,7 @@
 import React from "react";
 import { AiFillStar, AiOutlineHeart, AiOutlineStar } from "react-icons/ai";
 import { MdFavorite } from "react-icons/md";
+import { RiDeleteBin6Line } from "react-icons/ri";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import { useAppContext } from "../../../contexts/AppContext";
@@ -53,6 +54,10 @@ const TemplateCard = ({ cardItem }) => {
     // console.log(favoriteItems)
   };
 
+  const handleTrashTemplate = (cardItem) => {
+    
+  }
+
   const FrontSide = () => {
     return (
       <div>{cardItem.template_name ? cardItem.template_name : "no item"}</div>
@@ -81,6 +86,14 @@ const TemplateCard = ({ cardItem }) => {
         ) : (
           "no item"
         )}
+        <div style={{ 
+          cursor: "pointer", 
+          position: "absolute", 
+          right: "0", 
+          bottom: "0"
+        }} onClick={() => handleTrashTemplate(cardItem)}>
+          <RiDeleteBin6Line color="red" />
+        </div>
       </div>
     );
   };

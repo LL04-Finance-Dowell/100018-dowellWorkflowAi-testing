@@ -192,6 +192,7 @@ const WorkflowApp = () => {
                     idKey={item.id ? item.id : null}
                     hideFavoriteIcon={true}
                     itemType={"notifications"}
+                    hideDeleteIcon={true}
                   />
                 </div>
               ))

@@ -28,6 +28,10 @@ const WorkflowCard = ({ cardItem }) => {
     dispatch(detailWorkflow(data.workflow_id));
   };
 
+  const handleTrashWorkflow = (item) => {
+    // console.log(item)
+  }
+
   const handleFavoritess = async (item, actionType) => {
     if (actionType === "add") {
       addToFavoritesState("workflows", item)
@@ -94,7 +98,10 @@ const WorkflowCard = ({ cardItem }) => {
               </div>
             </>
             <div className={styles.button__group}>
-              <a className={styles.delete}>
+              <a 
+                className={styles.delete}
+                onClick={() => handleTrashWorkflow(cardItem)}
+              >
                 <RiDeleteBin6Line color="red" />
               </a>
               <a

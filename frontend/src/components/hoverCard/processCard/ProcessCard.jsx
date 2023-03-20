@@ -1,4 +1,5 @@
 import React from "react";
+import { RiDeleteBin6Line } from "react-icons/ri";
 import { useSelector } from "react-redux";
 import HoverCard from "../HoverCard";
 import { Button } from "../styledComponents";
@@ -9,6 +10,10 @@ const ProcessCard = ({ cardItem, title }) => {
   const handleProcessItemClick = async (item) => {
     console.log(item)
   };
+
+  const handleTrashProcess = (item) => {
+
+  }
 
   const FrontSide = () => {
     return (
@@ -26,6 +31,14 @@ const ProcessCard = ({ cardItem, title }) => {
         ) : (
           "no item"
         )}
+        <div style={{ 
+          cursor: "pointer", 
+          position: "absolute", 
+          right: "0", 
+          bottom: "0"
+        }} onClick={() => handleTrashProcess(cardItem)}>
+          <RiDeleteBin6Line color="red" />
+        </div>
       </div>
     );
   };

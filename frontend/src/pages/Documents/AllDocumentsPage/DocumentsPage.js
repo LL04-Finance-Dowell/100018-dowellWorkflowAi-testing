@@ -14,7 +14,7 @@ import {
 import DocumentCard from "../../../components/hoverCard/documentCard/DocumentCard";
 import { useNavigate } from "react-router-dom";
 
-const DocumentsPage = ({ home, showOnlySaved }) => {
+const DocumentsPage = ({ home, showOnlySaved, showOnlyTrashed }) => {
   const { userDetail } = useSelector((state) => state.auth);
   const {
     minedDocuments,
@@ -40,8 +40,9 @@ const DocumentsPage = ({ home, showOnlySaved }) => {
 
   useEffect(() => {
     if (showOnlySaved) navigate("#saved-documents")
+    if (showOnlyTrashed) navigate("#trashed-documents")
     if (home) navigate('#drafts')
-  }, [showOnlySaved, home])
+  }, [showOnlySaved, showOnlyTrashed, home])
 
   console.log("aaaaaaaaaaa", allDocumentsArray);
 
@@ -76,6 +77,18 @@ const DocumentsPage = ({ home, showOnlySaved }) => {
                 title="saved documents"
                 Card={DocumentCard}
                 cardItems={allDocumentsArray.filter(document => document.document_type === 'original')}
+                status={allDocumentsStatus}
+                itemType={"documents"}
+              />
+            </div> : <></>
+          }
+          {
+            showOnlyTrashed ? <div id="trashed-documents">
+              <SectionBox
+                cardBgColor="#1ABC9C"
+                title="trashed documents"
+                Card={DocumentCard}
+                cardItems={[]}
                 status={allDocumentsStatus}
                 itemType={"documents"}
               />
