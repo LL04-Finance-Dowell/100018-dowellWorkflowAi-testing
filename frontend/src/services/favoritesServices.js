@@ -1,23 +1,23 @@
-import { httpFovorite, httpFovorites } from "../httpCommon/httpCommon";
+import { httpFavourite } from "../httpCommon/httpCommon";
 
 export class FavoriteServices {
   addFavorite = (data) => {
-    return httpFovorite.post(`/${data.id}/${data.type}`);
+    
   };
 
   getFavorites = () => {
-    return httpFovorites.post("/");
+    
   };
 }
 
-export const getFavoritesForUser = async (data) => {
-  return await httpFovorites.post("/", data);
+export const getFavoritesForUser = async (companyId) => {
+  return await httpFavourite.get(`/favourites/org/${companyId}/`);
 }
 
 export const addNewFavoriteForUser = async (data) => {
-  return await httpFovorite.post(`/favorite/`, data);
+  return await httpFavourite.post(`/favourites/`, data);
 }
 
 export const deleteFavoriteForUser = async (itemId, itemType) => {
-  return await httpFovorite.get(`/delete/${itemId}/${itemType}/`)
+  return await httpFavourite.get(`/delete/${itemId}/${itemType}/`)
 }

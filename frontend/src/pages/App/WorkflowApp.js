@@ -104,10 +104,12 @@ const WorkflowApp = () => {
         "username": userDetail?.userinfo?.username,
       }
   
-      getFavoritesForUser(dataToPost).then(res => {
-        setFavoriteitems(res.data);
-        setFavoriteitemsLoaded(true)
+      getFavoritesForUser(dataToPost.company_id).then(res => {
+        console.log(res.data)
+        // setFavoriteitems(res.data);
+        // setFavoriteitemsLoaded(true)
       }).catch(err => {
+        console.log(err.response ? err.response.data : err.message);
         console.log("Failed to fetch favorites")
         setFavoriteitemsLoaded(true)
       })

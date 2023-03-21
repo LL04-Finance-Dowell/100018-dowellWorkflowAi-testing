@@ -36,6 +36,4 @@ export const newHttpProcess = axios.create({
 
 export const searchHttpInstance = axios.create({ baseURL: api_url + "search" });
 
-export const httpFovorites = axios.create({ baseURL: api_url + "favorites" });
-
-export const httpFovorite = axios.create({ baseURL: new_process_api_url });
+export const httpFavourite = axios.create({ baseURL: api_url });
