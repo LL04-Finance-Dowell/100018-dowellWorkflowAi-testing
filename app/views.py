@@ -1,14 +1,13 @@
 import ast
 import json
-from threading import Thread
 
 import requests
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
-from app.utils import checks, cloning, processing, threads
-from app.utils.favourites import create_favorite, create_favourite, list_favourites, remove_favorite, remove_favourite
+from app.utils import checks, cloning, processing
+from app.utils.favourites import create_favourite, list_favourites, remove_favourite
 from app.utils.mongo_db_connection import (
     delete_document,
     delete_process,
@@ -17,9 +16,7 @@ from app.utils.mongo_db_connection import (
     document_finalize,
     get_document_list,
     get_document_object,
-    get_links_object_by_document_id,
     get_links_object_by_process_id,
-    get_process_link_list,
     get_process_list,
     get_process_object,
     get_template_list,
@@ -38,15 +35,9 @@ from app.utils.mongo_db_connection import (
 )
 
 from .constants import EDITOR_API
-from .models import FavoriteDocument, FavoriteTemplate, FavoriteWorkflow
 from .utils import setting
-from .utils.algolia import get_algolia_data, get_fav_data
-from .utils.thread_start import (
-    DeleteFavoriteThread,
-    FavoriteThread,
-    ThreadAlgolia,
-    UpdateThreadAlgolia,
-)
+from .utils.algolia import get_algolia_data
+from .utils.thread_start import ThreadAlgolia, UpdateThreadAlgolia
 
 
 @api_view(["GET"])
@@ -773,40 +764,52 @@ def search(request):
     )
 
 
-@api_view(["GET","POST"])
+@api_view(["GET", "POST"])
 def favorites(request):
-    """ `Favourite` an Item( workflow | template | document) or List favourites"""
+    """`Favourite` an Item( workflow | template | document) or List favourites"""
     if not request.data:
-            return Response("You are missing something", status.HTTP_400_BAD_REQUEST)
-    
+        return Response("You are missing something", status.HTTP_400_BAD_REQUEST)
+
     # create a fav
     if request.method == "POST":
-        
+
         try:
-            create_favourite(data=request.data["item"], type=request.data["item_type"], username=request.data["username"])
+            create_favourite(
+                data=request.data["item"],
+                type=request.data["item_type"],
+                username=request.data["username"],
+            )
         except RuntimeError:
             return Response(
                 "Item could not be  added to favorite",
                 status.HTTP_200_OK,
             )
-        
+
     # List favs
     if request.method == "GET":
         try:
-            list_favourites(favourited_by=request.data["username"], company_id=request.data["company_id"])
+            list_favourites(
+                favourited_by=request.data["username"],
+                company_id=request.data["company_id"],
+            )
         except RuntimeError:
             return Response(
                 "failed to get favourites",
                 status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
-    
+
     # delete a fav
     if request.method == "DELETE":
         try:
-            remove_favourite(identifier=request.data["item_id"], type=["item_type"], username=request.data["username"])
+            remove_favourite(
+                identifier=request.data["item_id"],
+                type=["item_type"],
+                username=request.data["username"],
+            )
         except RuntimeError:
-            return Response("failed to process request", status.HTTP_500_INTERNAL_SERVER_ERROR)
-
+            return Response(
+                "failed to process request", status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
 
 
 @api_view(["GET"])

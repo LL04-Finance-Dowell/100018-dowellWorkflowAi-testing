@@ -31,9 +31,6 @@ from app.views import (
     get_documents,
     archive_document,
     search,
-    get_fav,
-    favorite,
-    delete_favorite,
     create_template,
     template_detail,
     approve,
@@ -118,7 +115,6 @@ urlpatterns = [
     path("v0.1/settings/update/", update_wfai_setting, name="update_WFAI_setting"),
     # search
     path("v0.1/search/", search),
-    
     # index
     path("v0.1/index/", index_update),
     # Favourites
