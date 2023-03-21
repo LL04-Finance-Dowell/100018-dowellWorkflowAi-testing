@@ -764,7 +764,7 @@ def search(request):
     )
 
 
-@api_view(["GET", "POST"])
+@api_view(["POST"])
 def favorites(request):
     """`Favourite` an Item( workflow | template | document) or List favourites"""
     if not request.data:
@@ -785,31 +785,32 @@ def favorites(request):
                 status.HTTP_200_OK,
             )
 
-    # List favs
-    if request.method == "GET":
-        try:
-            list_favourites(
-                favourited_by=request.data["username"],
-                company_id=request.data["company_id"],
-            )
-        except RuntimeError:
-            return Response(
-                "failed to get favourites",
-                status.HTTP_500_INTERNAL_SERVER_ERROR,
-            )
 
+@api_view(["GET"])
+def all_favourites(request, company_id):
+    # List favs
+    try:
+        list_favourites(company_id=company_id)
+    except RuntimeError:
+        return Response(
+            "failed to get favourites",
+            status.HTTP_500_INTERNAL_SERVER_ERROR,
+        )
+
+
+@api_view(["DELETE"])
+def trash_favourites(request, item_id, item_type, username):
     # delete a fav
-    if request.method == "DELETE":
-        try:
-            remove_favourite(
-                identifier=request.data["item_id"],
-                type=["item_type"],
-                username=request.data["username"],
-            )
-        except RuntimeError:
-            return Response(
-                "failed to process request", status.HTTP_500_INTERNAL_SERVER_ERROR
-            )
+    try:
+        remove_favourite(
+            identifier=item_id,
+            type=item_type,
+            username=username,
+        )
+    except RuntimeError:
+        return Response(
+            "failed to process request", status.HTTP_500_INTERNAL_SERVER_ERROR
+        )
 
 
 @api_view(["GET"])

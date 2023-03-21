@@ -9,7 +9,7 @@ from app.serializers import (
 )
 
 
-def list_favourites(favourited_by, company_id):
+def list_favourites(company_id):
     """
     Get all favourites
 
@@ -21,19 +21,13 @@ def list_favourites(favourited_by, company_id):
         Response: a http response to client
     """
     try:
-        documents = FavoriteDocument.objects.filter(
-            company_id=company_id, favourited_by=favourited_by
-        )
+        documents = FavoriteDocument.objects.filter(company_id=company_id)
         doc_serializer = FavouriteDocumentSerializer(documents, many=True)
 
-        templates = FavoriteTemplate.objects.filter(
-            company_id=company_id, favourited_by=favourited_by
-        )
+        templates = FavoriteTemplate.objects.filter(company_id=company_id)
         template_serializer = FavouriteTemplateSerializer(templates, many=True)
 
-        workflows = FavoriteWorkflow.objects.filter(
-            company_id=company_id, favourited_by=favourited_by
-        )
+        workflows = FavoriteWorkflow.objects.filter(company_id=company_id)
         workflow_serializer = FavouriteWorkflowSerializer(workflows, many=True)
         return Response(
             {

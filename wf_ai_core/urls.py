@@ -24,6 +24,7 @@ from rest_framework import permissions
 
 
 from app.views import (
+    all_favourites,
     document_detail,
     create_document,
     favorites,
@@ -39,6 +40,7 @@ from app.views import (
     index_update,
     create_workflow_setting,
     get_wf_ai_setting,
+    trash_favourites,
     update_wfai_setting,
     create_workflow,
     workflow_detail,
@@ -119,6 +121,11 @@ urlpatterns = [
     path("v0.1/index/", index_update),
     # Favourites
     path("v0.1/favorites/", favorites),
+    path("v0.1/favourites/org/<str:company_id>/", all_favourites),
+    path(
+        "v0.1/favourites/delete/<str:item_id>/<str:item_type>/<str:username>/",
+        trash_favourites,
+    ),
     # templates
     path("v0.1/templates/", create_template),
     path("v0.1/templates/<str:template_id>/", template_detail, name="template_detail"),
