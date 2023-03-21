@@ -6,66 +6,128 @@ This backend service serves as the WorkflowAI application Backend.
 
 ### WorkflowAI Service Features
 
-* Workflow Management.
-* Workflow Process Management.
-* Document Management.
-* Template Management.
+- Workflow Management.
+- Workflow Process Management.
+- Document Management.
+- Template Management.
 
 ### Installation Guide
 
-* Clone this repository [here](https://github.com/LL04-Finance-Dowell/100018-dowellWorkflowAi-testing.git).
-* The `backend` branch is the most stable branch at any given time, ensure you're working from it.
-* Run `pip install -r requirements.txt` to install dependencies.
+- Clone this repository [here](https://github.com/LL04-Finance-Dowell/100018-dowellWorkflowAi-testing.git).
+- The `backend` branch is the most stable branch at any given time, ensure you're working from it.
+- Run `pip install -r requirements.txt` to install dependencies.
 
 ### Usage
 
-* Run `python manage.py runserver 8001` to start the application.
-* Connect to the API using Postman on port 8001.
+- Run `python manage.py runserver 8001` to start the application.
+- Connect to the API using Postman on port 8001.
 
 ### API Endpoints - V0.1
 
 - Base URL: `https://100094.pythonanywhere.com`
 
-| HTTP Verbs | Endpoints                             | Action                                               |
-|------------|---------------------------------------|------------------------------------------------------|
-| POST       | /v0.1/search/                         | To search templates/documents/workflows              |
-| POST       | /v0.1/templates/                      | To create a new template.                            |
-| GET        | /v0.1/templates/:template_id/         | To retrieve a single template.                       |
-| GET        | /v0.1/templates/approve/:template_id/ | To approve a single template.                        |
-| GET        | /v0.1/templates/org/:company_id/      | To retrieve templates of given company.              |
-| POST       | /v0.1/documents/                      | To create a new document.                            |
-| GET        | /v0.1/documents/:document_id/         | To retrieve a single document.                       |
-| GET        | /v0.1/documents/org/:company_id/      | To retrieve documents of a given company.            |
-| GET        | /v0.1/documents/content/:document_id/ | To get the content map of a single document          |
-| POST       | /v0.1/workflows/                      | To create a new workflow                             |
-| GET        | /v0.1/workflows/:workflow_id/         | To retrieve a single workflow                        |
-| GET        | /v0.1/workflows/update/               | To update a single workflow.                         |
-| GET        | /v0.1/workflows/org/:company_id/      | To retrieve workflows in a company                   |
-| POST       | /v0.1/process/                        | To create a new process                              |
-| GET        | /v0.1/process/:process_id/            | To retrieve a single process                         |
-| POST       | /v0.1/process/verification/link/      | To retrieve verification link for a user             |
-| GET        | /v0.1/process/org/:company_id/        | To retrieve processes in a company                   |
-| GET        | /v/0.1/process/links/:process_id/     | To get process verification link for a given process |
-| POST       | /v0.1/process/action/verify/          | To verify a given process and give access link       |
-| POST       | /v0.1/process/action/mark/            | To finalize/reject a process                         |
-| POST       | /v0.1/settings/                       | To set wf ai settings                                |
-| GET        | /v0.1/settings/:wf_setting_id/        | To get a single wf ai settings                       |
-| POST       | /v0.1/settings/update/                | To update wf ai settings                             |
+| HTTP Verbs      | Endpoints                             | Action                                               |
+| --------------- | ------------------------------------- | ---------------------------------------------------- |
+| POST            | /v0.1/search/                         | To search templates/documents/workflows              |
+| POST            | /v0.1/templates/                      | To create a new template.                            |
+| GET             | /v0.1/templates/:template_id/         | To retrieve a single template.                       |
+| GET             | /v0.1/templates/approve/:template_id/ | To approve a single template.                        |
+| GET             | /v0.1/templates/org/:company_id/      | To retrieve templates of given company.              |
+| POST            | /v0.1/documents/                      | To create a new document.                            |
+| GET             | /v0.1/documents/:document_id/         | To retrieve a single document.                       |
+| GET             | /v0.1/documents/org/:company_id/      | To retrieve documents of a given company.            |
+| GET             | /v0.1/documents/content/:document_id/ | To get the content map of a single document          |
+| POST            | /v0.1/workflows/                      | To create a new workflow                             |
+| GET             | /v0.1/workflows/:workflow_id/         | To retrieve a single workflow                        |
+| GET             | /v0.1/workflows/update/               | To update a single workflow.                         |
+| GET             | /v0.1/workflows/org/:company_id/      | To retrieve workflows in a company                   |
+| POST            | /v0.1/process/                        | To create a new process                              |
+| GET             | /v0.1/process/:process_id/            | To retrieve a single process                         |
+| POST            | /v0.1/process/verification/link/      | To retrieve verification link for a user             |
+| GET             | /v0.1/process/org/:company_id/        | To retrieve processes in a company                   |
+| GET             | /v/0.1/process/links/:process_id/     | To get process verification link for a given process |
+| POST            | /v0.1/process/action/verify/          | To verify a given process and give access link       |
+| POST            | /v0.1/process/action/mark/            | To finalize/reject a process                         |
+| POST            | /v0.1/settings/                       | To set wf ai settings                                |
+| GET             | /v0.1/settings/:wf_setting_id/        | To get a single wf ai settings                       |
+| POST            | /v0.1/settings/update/                | To update wf ai settings                             |
+| GET/POST/DELETE | v0.1/favourites/                      | To list / create / delete favourites                 |
 
---------------
+---
 
 ### API Endpoints - V0.2 (new process page.)
 
 - Base URL: `https://100094.pythonanywhere.com`
 
-| HTTP Verbs | Endpoints                         | Action                                               |
-|------------|-----------------------------------|------------------------------------------------------|
-| POST       | /v0.2/process/                    | To create a new process                              |
-| POST       | /v0.2/process/action/verify/      | To verify a process to get access.                   |
-| POST       | /v0.2/process/action/mark/        | To mark a documents as finalized/rejected            |
-| POST       | /v0.2/process/action/trigger/     | To trigger process according to given action         |
+| HTTP Verbs | Endpoints                     | Action                                       |
+| ---------- | ----------------------------- | -------------------------------------------- |
+| POST       | /v0.2/process/                | To create a new process                      |
+| POST       | /v0.2/process/action/verify/  | To verify a process to get access.           |
+| POST       | /v0.2/process/action/mark/    | To mark a documents as finalized/rejected    |
+| POST       | /v0.2/process/action/trigger/ | To trigger process according to given action |
 
 ### Endpoints Definition(Request - Response).
+
+#### Favourites
+
+_GET_ to `favourites/`
+
+- List all favs
+
+Request Body
+
+```
+{
+    "company_id" : "logged in org id",
+    "username": "username of logged in person"
+}
+```
+
+Response
+
+200
+
+500
+
+_POST_ to `favourites/`
+
+- Create a favourite
+
+Request Body
+
+```
+{
+    "item": "the whole single_item",
+    "username": "logged in person",
+    "item_type: "workflow|template|document"
+}
+```
+
+Response
+
+201
+
+400
+
+500
+
+_DELETE_ to `favourites/`
+
+- Delete an item from favs
+
+Request Body
+
+```
+{
+    "username": "logged in person",
+    "item_id": "id of what they are removing",
+    "item_type": "workflow|template|document"
+}
+```
+
+204
+
+500
 
 #### Process
 
@@ -196,8 +258,8 @@ Response - 201
 
 Response - 500
 
-``` 
-"Failed to create process and start processing." 
+```
+"Failed to create process and start processing."
 ```
 
 #### Template Management
@@ -219,7 +281,7 @@ Response-201
 
 ```
  { "editor_link": "<link_to_the_editor> }
- ```
+```
 
 Response-300
 
@@ -235,7 +297,7 @@ Response-400
 
 Response-405
 
-``` 
+```
 { "message": "Template Creation failed"}
 ```
 
@@ -249,7 +311,7 @@ _POST_ `templates/:companyId/`
 
 Response-200
 
-```{ "templates": [list of all templates ]}```
+`{ "templates": [list of all templates ]}`
 
 _POST_ `templates/:templateId/`
 
@@ -436,7 +498,7 @@ Request Body
             "step_name": "update_existing_step_name"
             "role": "update_existing_role"
         }
-        
+
 
         ]
 }
@@ -497,7 +559,7 @@ Response-200
 
 ```
 {
-    
+
     "workflow_setting": {
         "_id": "created wf_setting id",
         "eventId": "event id",
@@ -527,7 +589,7 @@ Response-200
 
 ```
 {
-    
+
     "workflow_setting": {
         "_id": "wf_setting id",
         "eventId": "event id",
@@ -605,9 +667,10 @@ Request Body
 ```
 {
     "data": "payload from editor",
-    
+
 }
 ```
+
 _POST_ `templates/editor_payload/`
 
 Request Body
@@ -615,9 +678,10 @@ Request Body
 ```
 {
     "data": "payload from editor",
-    
+
 }
 ```
+
 _POST_ `/v0.2/favorite/`
 
 Request Body
@@ -627,7 +691,7 @@ Request Body
     "item_id":"id_of_item"
     "item_type":"template|document|workflow"
     "username": "logged_in_user"
-    
+
 }
 
 Response Body
@@ -638,6 +702,7 @@ saved_favorites
 
 
 ```
+
 _POST_ `/v0.1/favorites/`
 
 Request Body
@@ -646,10 +711,11 @@ Request Body
 {
     "company_id": "company_id",
     "username":"logged in user name"
-    
+
 }
 
 ```
+
 Response Body
 
 ```
@@ -667,19 +733,19 @@ Request Body
 ```
 no need
 ```
+
 ### Technologies Used
 
-* [Python](https://nodejs.org/) is a programming language that lets you work more quickly and integrate your systems
+- [Python](https://nodejs.org/) is a programming language that lets you work more quickly and integrate your systems
   more effectively.
-* [Django](https://www.djangoproject.com/) is a high-level Python web framework that encourages rapid development and
+- [Django](https://www.djangoproject.com/) is a high-level Python web framework that encourages rapid development and
   clean, pragmatic design.
-* [Django Rest Framework](https://www.django-rest-framework.org/) Django REST framework is a powerful and flexible
+- [Django Rest Framework](https://www.django-rest-framework.org/) Django REST framework is a powerful and flexible
   toolkit for building Web APIs.
-* [MongoDB](https://www.mongodb.com/) is a free open source NOSQL document database with scalability and flexibility.
+- [MongoDB](https://www.mongodb.com/) is a free open source NOSQL document database with scalability and flexibility.
   Data are stored in flexible JSON-like documents.
 
 ### License
 
 This project is available for use under
 the [Apache](https://github.com/LL04-Finance-Dowell/100018-dowellWorkflowAi-testing/blob/main/LICENSE) License.
-

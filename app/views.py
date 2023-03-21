@@ -8,6 +8,7 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
 from app.utils import checks, cloning, processing, threads
+from app.utils.favourites import create_favorite, create_favourite, list_favourites, remove_favorite, remove_favourite
 from app.utils.mongo_db_connection import (
     delete_document,
     delete_process,
@@ -760,6 +761,7 @@ def archive_document(request, document_id):
 
 @api_view(["POST"])
 def search(request):
+    """Get all Org Data"""
     return Response(
         {
             "search_keyword": request.data["search"],
@@ -771,55 +773,40 @@ def search(request):
     )
 
 
-@api_view(["GET", "POST"])
-def get_fav(request):
-    documents = []
-    templates = []
-    workflows = []
+@api_view(["GET","POST"])
+def favorites(request):
+    """ `Favourite` an Item( workflow | template | document) or List favourites"""
+    if not request.data:
+            return Response("You are missing something", status.HTTP_400_BAD_REQUEST)
+    
+    # create a fav
     if request.method == "POST":
-        company_id = request.data["company_id"]
-        username = request.data["username"]
-        documents = FavoriteDocument.objects.filter(
-            company_id=company_id, username=username
-        ).values()
-        templates = FavoriteTemplate.objects.filter(
-            company_id=company_id, username=username
-        ).values()
-        workflows = FavoriteWorkflow.objects.filter(
-            company_id=company_id, username=username
-        ).values()
-    return Response(
-        {"documents": documents, "templates": templates, "workflows": workflows},
-        status=status.HTTP_200_OK,
-    )
+        
+        try:
+            create_favourite(data=request.data["item"], type=request.data["item_type"], username=request.data["username"])
+        except RuntimeError:
+            return Response(
+                "Item could not be  added to favorite",
+                status.HTTP_200_OK,
+            )
+        
+    # List favs
+    if request.method == "GET":
+        try:
+            list_favourites(favourited_by=request.data["username"], company_id=request.data["company_id"])
+        except RuntimeError:
+            return Response(
+                "failed to get favourites",
+                status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
+    
+    # delete a fav
+    if request.method == "DELETE":
+        try:
+            remove_favourite(identifier=request.data["item_id"], type=["item_type"], username=request.data["username"])
+        except RuntimeError:
+            return Response("failed to process request", status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-
-@api_view(["POST"])
-def favorite(request):
-    item_id = request.data["item_id"]
-    item_type = request.data["item_type"]
-    username = request.data["username"]
-    try:
-
-        FavoriteThread(item_id, item_type, username).start()
-        return Response(
-            item_type + " with id " + item_id + "is added to favorite",
-            status=status.HTTP_200_OK,
-        )
-    except RuntimeError:
-        return Response(
-            item_type + " with id " + item_id + "is Not added to favorite",
-            status=status.HTTP_200_OK,
-        )
-
-
-@api_view(["GET"])
-def delete_favorite(request, item_id, item_type):
-    try:
-        DeleteFavoriteThread(item_id, item_type).start()
-        return Response(status=status.HTTP_200_OK)
-    except RuntimeError:
-        return
 
 
 @api_view(["GET"])

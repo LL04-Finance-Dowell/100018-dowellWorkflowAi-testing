@@ -26,6 +26,7 @@ from rest_framework import permissions
 from app.views import (
     document_detail,
     create_document,
+    favorites,
     get_document_content,
     get_documents,
     archive_document,
@@ -117,9 +118,11 @@ urlpatterns = [
     path("v0.1/settings/update/", update_wfai_setting, name="update_WFAI_setting"),
     # search
     path("v0.1/search/", search),
-    path("v0.1/favorites/", get_fav),
+    
     # index
     path("v0.1/index/", index_update),
+    # Favourites
+    path("v0.1/favorites/", favorites),
     # templates
     path("v0.1/templates/", create_template),
     path("v0.1/templates/<str:template_id>/", template_detail, name="template_detail"),
@@ -148,8 +151,6 @@ urlpatterns = [
     path("v0.2/process/", document_processing),
     path("v0.2/process/action/verify/", process_verification),
     path("v0.2/process/action/trigger/", trigger_process),
-    path("v0.2/favorite/", favorite),
-    path("v0.2/delete/<str:item_id>/<str:item_type>/", delete_favorite),
 ]
 if settings.DEBUG:
     urlpatterns = urlpatterns + static(
