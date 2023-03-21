@@ -1,7 +1,5 @@
 from datetime import datetime
 
-import jwt
-
 from app.utils.mongo_db_connection import get_link_object
 
 

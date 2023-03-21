@@ -1,5 +1,4 @@
-from threading import Thread
-
+import json
 import requests
 
 from app.utils.mongo_db_connection import (
@@ -9,43 +8,40 @@ from app.utils.mongo_db_connection import (
     save_uuid_hash,
     update_document,
     update_document_clone,
-    update_document_viewers,
     update_wf_process,
     get_process_object,
 )
-from . import threads
 
-from . import cloning
 
 from app.constants import NOTIFICATION_API
 
 
-def update_document_authorize(data):
-    """Updating the document with auth viewers"""
-    print("Doc Auth")
-    try:
-        document = get_document_object(data["document_id"])
-        doc_name = document["document_name"] + " ".join(data["auth_viewers"])
+# def update_document_authorize(data):
+#     """Updating the document with auth viewers"""
+#     print("Doc Auth")
+#     try:
+#         document = get_document_object(data["document_id"])
+#         doc_name = document["document_name"] + " ".join(data["auth_viewers"])
 
-        viewers = document["auth_viewers"]
-        for viewer in data["auth_viewers"]:
-            viewers.append(viewer)
+#         viewers = document["auth_viewers"]
+#         for viewer in data["auth_viewers"]:
+#             viewers.append(viewer)
 
-        print("the viewers", viewers)
-        update_document_viewers(
-            document_id=data["document_id"],
-            auth_viewers=viewers,
-            doc_name=doc_name,
-        )
-        print("Thread: Doc Authorize \n")
-    except ConnectionError:
-        print("Fail: doc auth thread \n")
-        return
+#         print("the viewers", viewers)
+#         update_document_viewers(
+#             document_id=data["document_id"],
+#             auth_viewers=viewers,
+#             doc_name=doc_name,
+#         )
+#         print("Thread: Doc Authorize \n")
+#     except ConnectionError:
+#         print("Fail: doc auth thread \n")
+#         return
 
 
 def notification(data):
     """post notifications for extension."""
-    payload = {
+    payload = json.dumps({
         "username": data["username"],
         "portfolio": data["portfolio"],
         "productName": "Workflow AI",
@@ -55,7 +51,7 @@ def notification(data):
         "message": "You have a document to sign.",
         "link": data["link"],
         "duration": "no limit",  # TODO: pass reminder time here
-    }
+    })
     try:
         res = requests.post(
             url=NOTIFICATION_API,

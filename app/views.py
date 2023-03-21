@@ -16,8 +16,8 @@ from app.utils.mongo_db_connection import (
     document_finalize,
     get_document_list,
     get_document_object,
-    get_links_object_by_process_id,
     get_links_object_by_document_id,
+    get_links_object_by_process_id,
     get_process_link_list,
     get_process_list,
     get_process_object,
@@ -62,7 +62,6 @@ def document_processing(request):
         )
     data_type = "Testing_Data"
     if request.data["action"] == "save_workflow_to_document_and_save_to_drafts":
-        choice = "save"
         process = processing.new(
             workflows=request.data["workflows"],
             created_by=request.data["created_by"],
@@ -74,28 +73,14 @@ def document_processing(request):
                 parent_id=request.data["parent_document_id"],
                 process_id="",
             ),
-            process_choice=choice,
+            process_choice="save_process",
             creator_portfolio=request.data["creator_portfolio"],
         )
-        # update doc with process.
-        doc_data = {
-            "document_id": process["document_id"],
-            "process_id": process["_id"],
-            "state": "processing",
-        }
-        dt = Thread(
-            target=threads.document_update,
-            args=(doc_data,),
-        )
-        dt.start()
-
         return Response(
             "Created Workflow and Saved in drafts.", status=status.HTTP_201_CREATED
         )
 
     if request.data["action"] == "start_document_processing_content_wise":
-        choice = "content"
-        # create process with new id-
         process = processing.new(
             workflows=request.data["workflows"],
             created_by=request.data["created_by"],
@@ -107,25 +92,12 @@ def document_processing(request):
                 parent_id=request.data["parent_document_id"],
                 process_id="",
             ),
-            process_choice=choice,
+            process_choice="content_wise",
             creator_portfolio=request.data["creator_portfolio"],
         )
-        doc_data = {
-            "document_id": process["document_id"],
-            "process_id": process["_id"],
-            "state": "processing",
-        }
-        # update doc with process.
-        dt = Thread(
-            target=threads.document_update,
-            args=(doc_data,),
-        )
-        dt.start()
         return processing.start(process)
 
     if request.data["action"] == "start_document_processing_wf_steps_wise":
-        choice = "steps"
-        # create process with new id->
         process = processing.new(
             workflows=request.data["workflows"],
             created_by=request.data["created_by"],
@@ -137,25 +109,12 @@ def document_processing(request):
                 parent_id=request.data["parent_document_id"],
                 process_id="",
             ),
-            process_choice=choice,
+            process_choice="step_wise",
             creator_portfolio=request.data["creator_portfolio"],
         )
-        doc_data = {
-            "document_id": process["document_id"],
-            "process_id": process["_id"],
-            "state": "processing",
-        }
-        # update doc with process.
-        dt = Thread(
-            target=threads.document_update,
-            args=(doc_data,),
-        )
-        dt.start()
         return processing.start(process)
 
     if request.data["action"] == "start_document_processing_wf_wise":
-        choice = "workflow"
-        # create process with new id.
         process = processing.new(
             workflows=request.data["workflows"],
             created_by=request.data["created_by"],
@@ -167,25 +126,12 @@ def document_processing(request):
                 parent_id=request.data["parent_document_id"],
                 process_id="",
             ),
-            process_choice=choice,
+            process_choice="workflow",
             creator_portfolio=request.data["creator_portfolio"],
         )
-        doc_data = {
-            "document_id": process["parent_document_id"],
-            "process_id": process["_id"],
-            "state": "processing",
-        }
-        # update doc with process.
-        dt = Thread(
-            target=threads.document_update,
-            args=(doc_data,),
-        )
-        dt.start()
         return processing.start(process)
 
     if request.data["action"] == "test_document_processing_content_wise":
-        choice = "content"
-        # create process with new id->
         process = processing.new(
             workflows=request.data["workflows"],
             created_by=request.data["created_by"],
@@ -197,25 +143,12 @@ def document_processing(request):
                 parent_id=request.data["parent_document_id"],
                 process_id="",
             ),
-            process_choice=choice,
+            process_choice="content",
             creator_portfolio=request.data["creator_portfolio"],
         )
-        doc_data = {
-            "document_id": process["parent_document_id"],
-            "process_id": process["_id"],
-            "state": "processing",
-        }
-        # update doc with process.
-        dt = Thread(
-            target=threads.document_update,
-            args=(doc_data,),
-        )
-        dt.start()
         return processing.start(process)
 
     if request.data["action"] == "test_document_processing_wf_steps_wise":
-        choice = "steps"
-        # create process with new id->
         process = processing.new(
             workflows=request.data["workflows"],
             created_by=request.data["created_by"],
@@ -227,24 +160,12 @@ def document_processing(request):
                 parent_id=request.data["parent_document_id"],
                 process_id="",
             ),
-            process_choice=choice,
+            process_choice="workflow_steps",
             creator_portfolio=request.data["creator_portfolio"],
         )
-        doc_data = {
-            "document_id": process["parent_document_id"],
-            "process_id": process["_id"],
-            "state": "processing",
-        }
-        # update doc with process.
-        dt = Thread(
-            target=threads.document_update,
-            args=(doc_data,),
-        )
-        dt.start()
         return processing.start(process)
 
     if request.data["action"] == "test_document_processing_wf_wise":
-        choice = "workflow"
         # create process with new id->
         process = processing.new(
             workflows=request.data["workflows"],
@@ -257,24 +178,12 @@ def document_processing(request):
                 parent_id=request.data["parent_document_id"],
                 process_id="",
             ),
-            process_choice=choice,
+            process_choice="workflow",
             creator_portfolio=request.data["creator_portfolio"],
         )
-        doc_data = {
-            "document_id": process["parent_document_id"],
-            "process_id": process["_id"],
-            "state": "processing",
-        }
-        # update doc with process.
-        dt = Thread(
-            target=threads.document_update,
-            args=(doc_data,),
-        )
-        dt.start()
         return processing.start(process)
 
     if request.data["action"] == "close_processing_and_mark_as_completed":
-
         process = get_process_object(workflow_process_id=request.data["process_id"])
         if process["processing_state"] == "complete":
             return Response(
@@ -296,10 +205,8 @@ def document_processing(request):
             status=status.HTTP_500_INTERNAL_SERVER_ERROR,
         )
 
-    if (
-        request.data["action"] == "cancel_process_before_completion"
-    ):  # document should reset to initial state.
-
+    if request.data["action"] == "cancel_process_before_completion":
+        # document should reset to initial state.
         process = get_process_object(workflow_process_id=request.data["process_id"])
         if process["processing_state"] == "canceled":
             return Response(
@@ -406,7 +313,7 @@ def mark_process_as_finalize_or_reject(request):
     # check state.
     if document["document_state"] == "finalized":
         return Response("document has already been finalized", status.HTTP_200_OK)
-    
+
     if document["document_state"] == "rejected":
         return Response("document has already been rejected", status.HTTP_200_OK)
 
@@ -889,12 +796,12 @@ def get_fav(request):
 
 @api_view(["POST"])
 def favorite(request):
-    item_id=request.data["item_id"]
-    item_type=request.data["item_type"]
-    username= request.data["username"]
+    item_id = request.data["item_id"]
+    item_type = request.data["item_type"]
+    username = request.data["username"]
     try:
 
-        FavoriteThread(item_id, item_type,username).start()
+        FavoriteThread(item_id, item_type, username).start()
         return Response(
             item_type + " with id " + item_id + "is added to favorite",
             status=status.HTTP_200_OK,

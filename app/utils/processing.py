@@ -192,6 +192,7 @@ def start(process):
             auth_viewers=viewers,
             doc_name=doc_name,
             state="processing",
+            process_id=process["_id"]
         )
     else:
         print("No Auth viewers")
@@ -367,6 +368,7 @@ def background(process_id, document_id):
                             auth_viewers=usr,
                             doc_name=doc_name,
                             state="processing",
+                            process_id=process["_id"]
                         )
                         step_two["stepDocumentCloneMap"].append({usr: docid})
                         print("the clone map", step_two["stepDocumentCloneMap"])
@@ -439,6 +441,7 @@ def background(process_id, document_id):
                                     auth_viewers=usr,
                                     doc_name=doc_name,
                                     state="processing",
+                                    process_id=process["_id"]
                                 )
                                 step_three["stepDocumentCloneMap"].append({usr: docid})
                                 print("the clone map", step_three["stepDocumentCloneMap"])

@@ -31,23 +31,6 @@ def process_links(
     Returns:
         A unique verification link with the jwt hash
     """
-
-    # create a jwt token
-    # hash_token = jwt.encode(
-    #     json.loads(
-    #         json.dumps(
-    #             {
-    #                 "process_id": process_id,
-    #                 "document_id": document_id,
-    #                 "step_role": step_role,
-    #                 "auth_name": auth_name,
-    #                 "auth_portfolio": auth_portfolio,
-    #             }
-    #         )
-    #     ),
-    #     "secret",
-    #     algorithm="HS256",
-    # )
     hash = uuid.uuid4().hex
     data = {
         "username": auth_name,
