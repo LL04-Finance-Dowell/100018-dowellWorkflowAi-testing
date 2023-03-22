@@ -901,7 +901,7 @@ def delete_template(template_id):
         "POST", DOWELLCONNECTION_URL, headers=headers, data=payload
     )
     print("TEMPLATE ARCHIVED------------ \n")
-    return json.loads(response.text)
+    return json.loads(json.loads(response.text))
 
 
 def delete_document(document_id):
@@ -923,7 +923,7 @@ def delete_document(document_id):
         "POST", DOWELLCONNECTION_URL, headers=headers, data=payload
     )
     print("DOCUMENT ARCHIVED------------ \n")
-    return json.loads(response.text)
+    return json.loads(json.loads(response.text))
 
 
 def delete_workflow(workflow_id):
@@ -946,7 +946,7 @@ def delete_workflow(workflow_id):
     )
     print("WORKFLOW ARCHIVED------------ \n")
 
-    return json.loads(response.text)
+    return json.loads(json.loads(response.text))
 
 
 def delete_process(process_id):
@@ -968,7 +968,7 @@ def delete_process(process_id):
         "POST", DOWELLCONNECTION_URL, headers=headers, data=payload
     )
     print("PROCESS ARCHIVED------------ \n")
-    return json.loads(response.text)
+    return json.loads(json.loads(response.text))
 
 def targeted_population(database, collection, fields, period):
     """
