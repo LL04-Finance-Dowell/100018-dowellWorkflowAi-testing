@@ -6,7 +6,7 @@ NOTIFICATION_API = "https://100092.pythonanywhere.com/notification/notification/
 VERIFICATION_LINK = (
     "https://ll04-finance-dowell.github.io/100018-dowellWorkflowAi-testing/#/verify"
 )
-
+TARGETED_POPULATION_URL = "https://100032.pythonanywhere.com/api/targeted_population/"
 DOWELLCONNECTION_URL = "https://uxlivinglab.pythonanywhere.com"
 OLD_DOWELLCONNECTION_URL = "http://100002.pythonanywhere.com/"
 USER_CONNECTION_LIST = [
