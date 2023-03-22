@@ -105,7 +105,7 @@ const WorkflowApp = () => {
       }
   
       getFavoritesForUser(dataToPost.company_id).then(res => {
-        console.log(res.data)
+        // console.log(res.data)
         setFavoriteitems(res.data);
         setFavoriteitemsLoaded(true)
       }).catch(err => {
