@@ -772,45 +772,46 @@ def favorites(request):
 
     # create a fav
     if request.method == "POST":
-
-        try:
-            create_favourite(
-                data=request.data["item"],
-                type=request.data["item_type"],
-                username=request.data["username"],
-            )
-        except RuntimeError:
+        msg = create_favourite(
+            item=request.data["item"],
+            type=request.data["item_type"],
+            username=request.data["username"],
+        )
+        if not msg:
             return Response(
-                "Item could not be  added to favorite",
-                status.HTTP_200_OK,
+                "Item could not be added to favorites",
+                status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
+
+        return Response(msg, status.HTTP_201_CREATED)
 
 
 @api_view(["GET"])
 def all_favourites(request, company_id):
     # List favs
-    try:
-        list_favourites(company_id=company_id)
-    except RuntimeError:
+    data = list_favourites(company_id=company_id)
+    if not data:
         return Response(
             "failed to get favourites",
             status.HTTP_500_INTERNAL_SERVER_ERROR,
         )
+    return Response(data, status.HTTP_200_OK)
 
 
 @api_view(["DELETE"])
 def trash_favourites(request, item_id, item_type, username):
     # delete a fav
-    try:
-        remove_favourite(
-            identifier=item_id,
-            type=item_type,
-            username=username,
-        )
-    except RuntimeError:
+    msg = remove_favourite(
+        identifier=item_id,
+        type=item_type,
+        username=username,
+    )
+    if not msg:
         return Response(
-            "failed to process request", status.HTTP_500_INTERNAL_SERVER_ERROR
+            "failed to remove from favourites", status.HTTP_500_INTERNAL_SERVER_ERROR
         )
+
+    return Response(msg, status.HTTP_204_NO_CONTENT)
 
 
 @api_view(["GET"])

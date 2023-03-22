@@ -1,6 +1,3 @@
-from rest_framework import status
-from rest_framework.response import Response
-
 from app.models import FavoriteDocument, FavoriteTemplate, FavoriteWorkflow
 from app.serializers import (
     FavouriteDocumentSerializer,
@@ -29,19 +26,15 @@ def list_favourites(company_id):
 
         workflows = FavoriteWorkflow.objects.filter(company_id=company_id)
         workflow_serializer = FavouriteWorkflowSerializer(workflows, many=True)
-        return Response(
-            {
-                "documents": doc_serializer.data,
-                "templates": template_serializer.data,
-                "workflows": workflow_serializer.data,
-            },
-            status.HTTP_200_OK,
-        )
+
     except RuntimeError:
-        return Response(
-            "failed to get favourites",
-            status.HTTP_500_INTERNAL_SERVER_ERROR,
-        )
+        return None
+
+    return {
+        "documents": doc_serializer.data,
+        "templates": template_serializer.data,
+        "workflows": workflow_serializer.data,
+    }
 
 
 def create_favourite(item, type, username):
@@ -54,9 +47,9 @@ def create_favourite(item, type, username):
         username: identifier of person creating the fav
 
     Returns:
-        Response: http response to client
+        msg(str): response success
     """
-
+    msg = "Item added to favourites"
     if type == "workflow":
         data = {
             "_id": item["_id"],
@@ -68,9 +61,9 @@ def create_favourite(item, type, username):
         serializer = FavouriteWorkflowSerializer(data=data)
         if serializer.is_valid():
             serializer.save()
-            return Response("Item added to favourites", status.HTTP_201_CREATED)
+            return msg
 
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        print(serializer.errors)
 
     if type == "document":
         data = {
@@ -82,9 +75,9 @@ def create_favourite(item, type, username):
         serializer = FavouriteDocumentSerializer(data=data)
         if serializer.is_valid():
             serializer.save()
-            return Response("Item added to favourites", status.HTTP_201_CREATED)
+            return msg
 
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        print(serializer.errors)
 
     # Fav
     if type == "template":
@@ -98,43 +91,39 @@ def create_favourite(item, type, username):
         serializer = FavouriteTemplateSerializer(data=data)
         if serializer.is_valid():
             serializer.save()
-            return Response("Item added to favourites", status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            return msg
+
+        print(serializer.errors)
+
+    return None
 
 
 def remove_favourite(identifier, type, username):
+    msg = "Item removed from favourites."
+
     if type == "workflow":
         try:
             FavoriteWorkflow.objects.filter(
                 _id=identifier, favourited_by=username
             ).delete()
-            return Response("Item removed from favourites", status.HTTP_204_NO_CONTENT)
+            return msg
         except:
-            return Response(
-                "Failed to remove item from favourites",
-                status.HTTP_500_INTERNAL_SERVER_ERROR,
-            )
+            return None
 
     if type == "document":
         try:
             FavoriteDocument.objects.filter(
                 _id=identifier, favourited_by=username
             ).delete()
-            return Response("Item removed from favourites", status.HTTP_204_NO_CONTENT)
+            return msg
         except:
-            return Response(
-                "Failed to remove item from favourites",
-                status.HTTP_500_INTERNAL_SERVER_ERROR,
-            )
+            return None
 
     if type == "template":
         try:
             FavoriteTemplate.objects.filter(
                 _id=identifier, favourited_by=username
             ).delete()
-            return Response("Item removed from favourites", status.HTTP_204_NO_CONTENT)
+            return msg
         except:
-            return Response(
-                "Failed to remove item from favourites",
-                status.HTTP_500_INTERNAL_SERVER_ERROR,
-            )
+            return None

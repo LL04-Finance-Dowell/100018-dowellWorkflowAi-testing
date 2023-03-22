@@ -120,7 +120,7 @@ urlpatterns = [
     # index
     path("v0.1/index/", index_update),
     # Favourites
-    path("v0.1/favorites/", favorites),
+    path("v0.1/favourites/", favorites),
     path("v0.1/favourites/org/<str:company_id>/", all_favourites),
     path(
         "v0.1/favourites/delete/<str:item_id>/<str:item_type>/<str:username>/",
