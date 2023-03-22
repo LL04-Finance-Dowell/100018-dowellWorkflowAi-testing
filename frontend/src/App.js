@@ -43,7 +43,7 @@ function App() {
       <Route path={"documents"}>
         <Route index element={<DocumentsPage home={true} />} />
         <Route path={"saved"} element={<DocumentsPage showOnlySaved={true} />} />
-        <Route path={"trash"} element={<DocumentsPage showOnlyTrashed={true} />} />
+        {/* <Route path={"trash"} element={<DocumentsPage showOnlyTrashed={true} />} /> */}
         {/*  <Route path={"new"} element={<CreateNewDocumentPage />} />
         <Route path={"to-sign"} element={<SignDocumentsPage />} />
         <Route path={"rejected"} element={<RejectedDocumentsPage />} />
@@ -52,7 +52,7 @@ function App() {
       <Route path={"templates"}>
         <Route index element={<TemplatesPage home={true} />} />
         <Route path={"saved"} element={<TemplatesPage showOnlySaved={true} />}/>
-        <Route path={"trash"} element={<TemplatesPage showOnlyTrashed={true} />}/>
+        {/* <Route path={"trash"} element={<TemplatesPage showOnlyTrashed={true} />}/> */}
         {/* <Route path={"new"} element={<CreateNewTemplatePage />} />
         <Route path={"to-approve"} element={<ApproveTemplatesPage />} />
         <Route path={"rejected"} element={<RejectedTemplatesPage />} /> */}
@@ -62,7 +62,7 @@ function App() {
         <Route path={"set-workflow"} element={<SetWorkflowInDoc />} />
         <Route path={"new-set-workflow"} element={<SetWorkflowInDocNew />} />
         <Route path={"saved"} element={<WorkflowsPage showOnlySaved={true} />}/>
-        <Route path={"trash"} element={<WorkflowsPage showOnlyTrashed={true} />}/>
+        {/* <Route path={"trash"} element={<WorkflowsPage showOnlyTrashed={true} />}/> */}
         {/*  <Route path={"new"} element={<CreateNewWorkflowPage />} />
         <Route path={"to-approve"} element={<ApproveWorkflowPage />} />
         <Route path={"rejected"} element={<RejectedWorkflowsPage />} /> */}
@@ -72,7 +72,7 @@ function App() {
         <Route path={"saved"} element={<ProccessPage showOnlySaved={true} />}/>
         <Route path={"paused"} element={<ProccessPage showOnlyPaused={true} />}/>
         <Route path={"cancelled"} element={<ProccessPage showOnlyCancelled={true} />}/>
-        <Route path={"trash"} element={<ProccessPage showOnlyTrashed={true} />}/>
+        {/* <Route path={"trash"} element={<ProccessPage showOnlyTrashed={true} />}/> */}
       </Route>
 
       <Route path={"/notifications"} element={<NotificationsPage />} />
