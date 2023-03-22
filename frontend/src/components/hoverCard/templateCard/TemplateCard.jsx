@@ -26,10 +26,14 @@ const TemplateCard = ({ cardItem }) => {
 
   const handleFavoritess = async (item, actionType) => {
     if (actionType === "add") {
-      addToFavoritesState("templates", item)
+      addToFavoritesState("templates", {...item, 'favourited_by': userDetail?.userinfo?.username})
       try {
         const data = {
-          item_id: item._id,
+          item: {
+            _id: item._id,
+            company_id: item.company_id,
+            template_name: item.template_name,
+          },
           item_type: "template",
           username: userDetail?.userinfo?.username,
         }
@@ -44,11 +48,11 @@ const TemplateCard = ({ cardItem }) => {
     if (actionType === "remove") {
       removeFromFavoritesState("templates", item._id)
       try {
-        const response = await deleteFavoriteForUser(item._id, 'template');
+        const response = await deleteFavoriteForUser(item._id, 'template', userDetail?.userinfo?.username);
         console.log(response)
       } catch (error) {
         toast.info("Failed to remove template from favorites")
-        removeFromFavoritesState("templates", item._id)
+        addToFavoritesState("templates", {...item, 'favourited_by': userDetail?.userinfo?.username})
       }
     }
     // console.log(favoriteItems)

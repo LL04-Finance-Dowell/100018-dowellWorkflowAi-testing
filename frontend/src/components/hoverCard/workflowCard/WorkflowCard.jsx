@@ -34,10 +34,14 @@ const WorkflowCard = ({ cardItem }) => {
 
   const handleFavoritess = async (item, actionType) => {
     if (actionType === "add") {
-      addToFavoritesState("workflows", item)
+      addToFavoritesState("workflows", {...item, 'favourited_by': userDetail?.userinfo?.username})
       try {
         const data = {
-          item_id: item._id,
+          item: {
+            _id: item._id,
+            company_id: item.company_id,
+            workflows: item.workflows,
+          },
           item_type: "workflow",
           username: userDetail?.userinfo?.username,
         }
@@ -52,11 +56,11 @@ const WorkflowCard = ({ cardItem }) => {
     if (actionType === "remove") {
       removeFromFavoritesState("workflows", item._id)
       try {
-        const response = await deleteFavoriteForUser(item._id, 'workflow');
+        const response = await deleteFavoriteForUser(item._id, 'workflow', userDetail?.userinfo?.username);
         console.log(response)
       } catch (error) {
         toast.info("Failed to remove workflow from favorites")
-        removeFromFavoritesState("workflows", item._id)
+        addToFavoritesState("workflows", {...item, 'favourited_by': userDetail?.userinfo?.username})
       }
     }
     // console.log(favoriteItems)

@@ -106,12 +106,12 @@ const WorkflowApp = () => {
   
       getFavoritesForUser(dataToPost.company_id).then(res => {
         console.log(res.data)
-        // setFavoriteitems(res.data);
-        // setFavoriteitemsLoaded(true)
+        setFavoriteitems(res.data);
+        setFavoriteitemsLoaded(true)
       }).catch(err => {
         console.log(err.response ? err.response.data : err.message);
         console.log("Failed to fetch favorites")
-        setFavoriteitemsLoaded(true)
+        // setFavoriteitemsLoaded(true)
       })
     }
 
@@ -219,7 +219,7 @@ const WorkflowApp = () => {
                         cardBgColor="#1ABC9C"
                         title="favorite documents"
                         Card={DocumentCard}
-                        cardItems={favoriteItems[key]}
+                        cardItems={favoriteItems[key].filter(item => item.favourited_by === userDetail?.userinfo?.username)}
                         status={favoriteItemsLoaded}
                       />
                     </div>
@@ -228,7 +228,7 @@ const WorkflowApp = () => {
                         cardBgColor="#1ABC9C"
                         title="favorite templates"
                         Card={TemplateCard}
-                        cardItems={favoriteItems[key]}
+                        cardItems={favoriteItems[key].filter(item => item.favourited_by === userDetail?.userinfo?.username)}
                         status={favoriteItemsLoaded}
                       />
                     </div>
@@ -237,7 +237,7 @@ const WorkflowApp = () => {
                         cardBgColor="#1ABC9C"
                         title="favorite workflows"
                         Card={WorkflowCard}
-                        cardItems={favoriteItems[key]}
+                        cardItems={favoriteItems[key].filter(item => item.favourited_by === userDetail?.userinfo?.username)}
                         status={favoriteItemsLoaded}
                       />
                     </div>

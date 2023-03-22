@@ -35,10 +35,14 @@ const DocumentCard = ({ cardItem, title, hideFavoriteIcon, hideDeleteIcon }) => 
     dispatch(handleFavorites(data)); */
 
     if (actionType === "add") {
-      addToFavoritesState("documents", item)
+      addToFavoritesState("documents", {...item, 'favourited_by': userDetail?.userinfo?.username})
       try {
         const data = {
-          item_id: item._id,
+          item: {
+            _id: item._id,
+            company_id: item.company_id,
+            document_name: item.document_name,
+          },
           item_type: "document",
           username: userDetail?.userinfo?.username,
         }
@@ -53,11 +57,11 @@ const DocumentCard = ({ cardItem, title, hideFavoriteIcon, hideDeleteIcon }) => 
     if (actionType === "remove") {
       removeFromFavoritesState("documents", item._id)
       try {
-        const response = await deleteFavoriteForUser(item._id, 'document');
+        const response = await deleteFavoriteForUser(item._id, 'document', userDetail?.userinfo?.username);
         console.log(response)
       } catch (error) {
         toast.info("Failed to remove document from favorites")
-        removeFromFavoritesState("documents", item._id)
+        addToFavoritesState("documents", {...item, 'favourited_by': userDetail?.userinfo?.username})
       }
     }
     // console.log(favoriteItems)
