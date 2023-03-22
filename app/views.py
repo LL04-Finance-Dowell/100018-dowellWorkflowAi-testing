@@ -565,15 +565,6 @@ def workflow_detail(request, workflow_id):  # Single document
         )
 
 
-@api_view(["GET"])
-def archive_workflow(request, workflow_id):
-    try:
-        delete_workflow(workflow_id)
-        return Response("Workflow Added to trash", status=status.HTTP_200_OK)
-    except ConnectionError:
-        return Response("Failed to add workflow to trash", status=status.HTTP_200_OK)
-
-
 def workflow_index_update(payload):
     try:
         UpdateThreadAlgolia(payload).start()
@@ -738,16 +729,37 @@ def document_detail(request, document_id):  # Single document
     )
 
 
-@api_view(["GET"])
-def archive_document(request, document_id):
-    try:
-        delete_document(document_id)
-        return Response(
-            "Document Added to trash",
-            status=status.HTTP_200_OK,
-        )
-    except ConnectionError:
-        return Response("Failed to add to trash", status=status.HTTP_200_OK)
+@api_view(["POST"])
+def archives(request):
+    """Archiving  (Template | Workflow | Document)"""
+    if not request.data:
+        return Response("You are missing something", status.HTTP_400_BAD_REQUEST)
+
+    id = request.data["item_id"]
+
+    if request.data["item_type"] == "workflow":
+        res = delete_workflow(id)
+        if res["isSuccess"]:
+            return Response("Item moved to archives", status.HTTP_200_OK)
+
+    if request.data["item_type"] == "document":
+        res = delete_document(id)
+        if res["isSuccess"]:
+            return Response("Item moved to archives", status.HTTP_200_OK)
+
+    if request.data["item_type"] == "template":
+        res = delete_template(id)
+        if res["isSuccess"]:
+            return Response("Item moved to archives", status.HTTP_200_OK)
+
+    if request.data["item_type"] == "process":
+        res = delete_process(id)
+        if res["isSuccess"]:
+            return Response("Item moved to archives", status.HTTP_200_OK)
+
+    return Response(
+        "Item could not be moved to archives", status.HTTP_500_INTERNAL_SERVER_ERROR
+    )
 
 
 @api_view(["POST"])
@@ -921,15 +933,6 @@ def template_detail(request, template_id):
 
 
 @api_view(["GET"])
-def archive_template(request, template_id):
-    try:
-        delete_template(template_id)
-        return Response("Template added to trash", status=status.HTTP_200_OK)
-    except ConnectionError:
-        return Response("Failed to add template to trash", status=status.HTTP_200_OK)
-
-
-@api_view(["GET"])
 def approve(request, template_id):
     response = json.loads(update_template_approval(template_id, approval=True))
     if not response["isSuccess"]:
@@ -1005,19 +1008,4 @@ def fetch_process_links(request):
         return Response(
             "Could not fetch process links",
             status=status.HTTP_500_INTERNAL_SERVER_ERROR,
-        )
-
-
-@api_view(["GET"])
-def archive_process(request, process_id):
-    try:
-        delete_process(process_id)
-        return Response(
-            "Process added to trash",
-            status=status.HTTP_200_OK,
-        )
-    except ConnectionError:
-        return Response(
-            "Failed to add to process to trash",
-            status=status.HTTP_200_OK,
         )

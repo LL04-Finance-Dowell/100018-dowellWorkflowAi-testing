@@ -25,18 +25,17 @@ from rest_framework import permissions
 
 from app.views import (
     all_favourites,
+    archives,
     document_detail,
     create_document,
     favorites,
     get_document_content,
     get_documents,
-    archive_document,
     search,
     create_template,
     template_detail,
     approve,
     get_templates,
-    archive_template,
     index_update,
     create_workflow_setting,
     get_wf_ai_setting,
@@ -47,12 +46,10 @@ from app.views import (
     update_workflow,
     get_workflows,
     home,
-    archive_workflow,
     a_single_process,
     get_process_link,
     fetch_process_links,
     processes,
-    archive_process,
     document_processing,
     process_verification,
     mark_process_as_finalize_or_reject,
@@ -88,10 +85,11 @@ urlpatterns = [
     re_path(
         r"^redoc/$", schema_view.with_ui("redoc", cache_timeout=0), name="schema-redoc"
     ),
+    # archives
+    path("v0.1/archives/", archives),
     # processing.
     # path("v0.1/process/", save_and_start_processing),
     path("v0.1/process/<str:process_id>/", a_single_process),
-    path("v0.1/process/delete/<str:process_id>/", archive_process),
     path("v0.1/process/action/mark/", mark_process_as_finalize_or_reject),
     # path("v0.1/process/action/verify/", verify_process),
     path("v0.1/process/verification/link/", get_process_link),
@@ -101,11 +99,6 @@ urlpatterns = [
     path("v0.1/workflows/", create_workflow, name="workflows"),
     path("v0.1/workflows/update/", update_workflow, name="update_workflow"),
     path("v0.1/workflows/<str:workflow_id>/", workflow_detail, name="workflow_detail"),
-    path(
-        "v0.1/workflows/delete/<str:workflow_id>/",
-        archive_workflow,
-        name="delete_workflow",
-    ),
     path("v0.1/workflows/org/<str:company_id>/", get_workflows, name="all_workflows"),
     # wf_settings
     path("v0.1/settings/", create_workflow_setting, name="save_wf_setting"),
@@ -131,19 +124,9 @@ urlpatterns = [
     path("v0.1/templates/<str:template_id>/", template_detail, name="template_detail"),
     path("v0.1/templates/org/<str:company_id>/", get_templates, name="all_templates"),
     path("v0.1/templates/approve/<str:template_id>/", approve),
-    path(
-        "v0.1/templates/delete/<str:template_id>/",
-        archive_template,
-        name="delete_template",
-    ),
     # documents
     path("v0.1/documents/", create_document, name="documents"),
     path("v0.1/documents/<str:document_id>/", document_detail, name="document"),
-    path(
-        "v0.1/documents/delete/<str:document_id>/",
-        archive_document,
-        name="delete_document",
-    ),
     path(
         "v0.1/documents/content/<str:document_id>/",
         get_document_content,
