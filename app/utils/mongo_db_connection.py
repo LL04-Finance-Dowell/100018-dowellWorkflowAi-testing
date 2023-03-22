@@ -882,7 +882,8 @@ def update_uuid_object(uuid_hash):
     return json.loads(response.text)
 
 
-def delete_template(template_id):
+def delete_template(template_id, data_type):
+
     payload = json.dumps(
         {
             **TEMPLATE_CONNECTION_DICT,
@@ -891,7 +892,7 @@ def delete_template(template_id):
                 "_id": template_id,
             },
             "update_field": {
-                "data_type": "Archive_Data",
+                "data_type": data_type,
             },
             "platform": "bangalore",
         }
@@ -904,7 +905,7 @@ def delete_template(template_id):
     return json.loads(json.loads(response.text))
 
 
-def delete_document(document_id):
+def delete_document(document_id, data_type):
     payload = json.dumps(
         {
             **DOCUMENT_CONNECTION_DICT,
@@ -913,7 +914,7 @@ def delete_document(document_id):
                 "_id": document_id,
             },
             "update_field": {
-                "data_type": "Archive_Data",
+                "data_type": data_type,
             },
             "platform": "bangalore",
         }
@@ -926,7 +927,7 @@ def delete_document(document_id):
     return json.loads(json.loads(response.text))
 
 
-def delete_workflow(workflow_id):
+def delete_workflow(workflow_id, data_type):
     payload = json.dumps(
         {
             **WF_CONNECTION_DICT,
@@ -935,7 +936,7 @@ def delete_workflow(workflow_id):
                 "_id": workflow_id,
             },
             "update_field": {
-                "data_type": "Archive_Data",
+                "data_type": data_type,
             },
             "platform": "bangalore",
         }
@@ -949,7 +950,7 @@ def delete_workflow(workflow_id):
     return json.loads(json.loads(response.text))
 
 
-def delete_process(process_id):
+def delete_process(process_id, data_type):
     payload = json.dumps(
         {
             **WF_PROCESS_DICT,
@@ -958,7 +959,7 @@ def delete_process(process_id):
                 "_id": process_id,
             },
             "update_field": {
-                "data_type": "Archive_Data",
+                "data_type": data_type,
             },
             "platform": "bangalore",
         }

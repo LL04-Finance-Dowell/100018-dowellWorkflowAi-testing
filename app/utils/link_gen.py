@@ -35,27 +35,6 @@ def document(document_id, doc_map, doc_rights, user, process_id, role):
         return
 
 
-#    payload = json.dumps(
-#         {
-#             "product_name": "workflowai",
-#             "details": {
-#                 "cluster": "Documents",
-#                 "database": "Documentation",
-#                 "collection": ,
-#                 "document": ,
-#                 "team_member_ID": "11689044433",
-#                 "function_ID": "ABCDE",
-#                 "_id": document_id,
-#                 "field": "document_name",
-#                 "action": "document",
-#                 "flag": "editing",
-#                 "command": "update",
-#                 "update_field": {"content": "", "document_name": "", "page": ""},
-#             },
-#         }
-#     )
-
-
 def editor(item_id, type):
 
     if type == "document":

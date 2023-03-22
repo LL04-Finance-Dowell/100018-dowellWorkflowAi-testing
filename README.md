@@ -29,6 +29,7 @@ This backend service serves as the WorkflowAI application Backend.
 | HTTP Verbs | Endpoints                                          | Action                                               |
 | ---------- | -------------------------------------------------- | ---------------------------------------------------- |
 | POST       | v0.1/archives/                                     | To archive a workflow/document/template/process/     |
+| POST       | v0.1/archives/restore/                             | To restore a workflow/document/template/process/     |
 | POST       | /v0.1/search/                                      | To search templates/documents/workflows              |
 | POST       | /v0.1/templates/                                   | To create a new template.                            |
 | GET        | /v0.1/templates/:template_id/                      | To retrieve a single template.                       |
@@ -76,6 +77,19 @@ This backend service serves as the WorkflowAI application Backend.
 _POST_ to `archives/`
 
 - Archive an item or you can say (add to trash).
+
+Request Body
+
+```
+{
+    "item_id": "object id",
+    "item_type": "workflow|template|document|process"
+}
+```
+
+_POST_ to `archives/restore/`
+
+- Restore an item from archives.
 
 Request Body
 

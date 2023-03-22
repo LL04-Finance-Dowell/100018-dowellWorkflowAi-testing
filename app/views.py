@@ -714,27 +714,59 @@ def archives(request):
     id = request.data["item_id"]
 
     if request.data["item_type"] == "workflow":
-        res = delete_workflow(id)
+        res = delete_workflow(id, "Archive_Data")
         if res["isSuccess"]:
             return Response("Workflow moved to archives", status.HTTP_200_OK)
 
     if request.data["item_type"] == "document":
-        res = delete_document(id)
+        res = delete_document(id, "Archive_Data")
         if res["isSuccess"]:
             return Response("Document moved to archives", status.HTTP_200_OK)
 
     if request.data["item_type"] == "template":
-        res = delete_template(id)
+        res = delete_template(id, "Archive_Data")
         if res["isSuccess"]:
             return Response("Template moved to archives", status.HTTP_200_OK)
 
     if request.data["item_type"] == "process":
-        res = delete_process(id)
+        res = delete_process(id, "Archive_Data")
         if res["isSuccess"]:
             return Response("Process moved to archives", status.HTTP_200_OK)
 
     return Response(
         "Item could not be moved to archives", status.HTTP_500_INTERNAL_SERVER_ERROR
+    )
+
+@api_view(["POST"])
+def archive_restore(request):
+    """Restore  (Template | Workflow | Document)"""
+    if not request.data:
+        return Response("You are missing something", status.HTTP_400_BAD_REQUEST)
+
+    id = request.data["item_id"]
+
+    if request.data["item_type"] == "workflow":
+        res = delete_workflow(id, "Real_Data")
+        if res["isSuccess"]:
+            return Response("Workflow restored from archives", status.HTTP_200_OK)
+
+    if request.data["item_type"] == "document":
+        res = delete_document(id, "Real_Data")
+        if res["isSuccess"]:
+            return Response("Document restored from archives", status.HTTP_200_OK)
+
+    if request.data["item_type"] == "template":
+        res = delete_template(id, "Real_Data")
+        if res["isSuccess"]:
+            return Response("Template restored from archives", status.HTTP_200_OK)
+
+    if request.data["item_type"] == "process":
+        res = delete_process(id, "Real_Data")
+        if res["isSuccess"]:
+            return Response("Process restored from archives", status.HTTP_200_OK)
+
+    return Response(
+        "Item could not be restored from archives", status.HTTP_500_INTERNAL_SERVER_ERROR
     )
 
 

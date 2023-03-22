@@ -25,6 +25,7 @@ from rest_framework import permissions
 
 from app.views import (
     all_favourites,
+    archive_restore,
     archives,
     document_detail,
     create_document,
@@ -87,6 +88,7 @@ urlpatterns = [
     ),
     # archives
     path("v0.1/archives/", archives),
+    path("v0.1/archives/restore/", archive_restore),
     # processing.
     # path("v0.1/process/", save_and_start_processing),
     path("v0.1/process/<str:process_id>/", a_single_process),
