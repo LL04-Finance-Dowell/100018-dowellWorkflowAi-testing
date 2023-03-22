@@ -33,3 +33,68 @@ def document(document_id, doc_map, doc_rights, user, process_id, role):
         return link
     except ConnectionError:
         return
+
+
+#    payload = json.dumps(
+#         {
+#             "product_name": "workflowai",
+#             "details": {
+#                 "cluster": "Documents",
+#                 "database": "Documentation",
+#                 "collection": ,
+#                 "document": ,
+#                 "team_member_ID": "11689044433",
+#                 "function_ID": "ABCDE",
+#                 "_id": document_id,
+#                 "field": "document_name",
+#                 "action": "document",
+#                 "flag": "editing",
+#                 "command": "update",
+#                 "update_field": {"content": "", "document_name": "", "page": ""},
+#             },
+#         }
+#     )
+
+
+def editor(item_id, type):
+
+    if type == "document":
+        collection = "DocumentReports"
+        document = "documentreports"
+        action = "document"
+        field = "document_name"
+        team_member_id = "11689044433"
+
+    if type == "template":
+        collection = "TemplateReports"
+        document = "templatereports"
+        action = "template"
+        field = "template_name"
+        team_member_id = "22689044433"
+
+    payload = {
+        "product_name": "workflow_ai",
+        "details": {
+            "cluster": "Documents",
+            "database": "Documentation",
+            "collection": collection,
+            "document": document,
+            "team_member_ID": team_member_id,
+            "function_ID": "ABCDE",
+            "_id": item_id,
+            "field": field,
+            "action": action,
+            "flag": "editing",
+            "command": "update",
+            "update_field": {field: "", "content": "", "page": ""},
+        },
+    }
+    try:
+        response = requests.post(
+            EDITOR_API,
+            data=json.dumps(payload),
+        )
+    except:
+        return None
+
+    return response.json()

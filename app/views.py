@@ -6,7 +6,7 @@ from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
-from app.utils import checks, cloning, processing
+from app.utils import checks, cloning, link_gen, processing
 from app.utils.favourites import create_favourite, list_favourites, remove_favourite
 from app.utils.mongo_db_connection import (
     delete_document,
@@ -695,38 +695,14 @@ def get_document_content(request, document_id):
 
 
 @api_view(["GET"])
-def document_detail(request, document_id):  # Single document
-    payload = json.dumps(
-        {
-            "product_name": "workflowai",
-            "details": {
-                "cluster": "Documents",
-                "database": "Documentation",
-                "collection": "DocumentReports",
-                "document": "documentreports",
-                "team_member_ID": "11689044433",
-                "function_ID": "ABCDE",
-                "_id": document_id,
-                "field": "document_name",
-                "action": "document",
-                "flag": "editing",
-                "command": "update",
-                "update_field": {"content": "", "document_name": "", "page": ""},
-            },
-        }
-    )
-    headers = {"Content-Type": "application/json"}
-    try:
-        editor_link = requests.post(EDITOR_API, headers=headers, data=payload)
-    except ConnectionError:
-        return Response(
-            {"document": [], "message": "Failed to call EDITOR_API"},
-            status=status.HTTP_200_OK,
-        )
-    return Response(
-        editor_link.json(),
-        status=status.HTTP_201_CREATED,
-    )
+def document_detail(request, document_id): 
+    """editor link for a document"""
+    editor_link = link_gen.editor(document_id, "document")
+
+    if not editor_link:
+        return Response("Could not open document editor.", status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
+    return Response(editor_link, status.HTTP_201_CREATED)
 
 
 @api_view(["POST"])
@@ -740,39 +716,25 @@ def archives(request):
     if request.data["item_type"] == "workflow":
         res = delete_workflow(id)
         if res["isSuccess"]:
-            return Response("Item moved to archives", status.HTTP_200_OK)
+            return Response("Workflow moved to archives", status.HTTP_200_OK)
 
     if request.data["item_type"] == "document":
         res = delete_document(id)
         if res["isSuccess"]:
-            return Response("Item moved to archives", status.HTTP_200_OK)
+            return Response("Document moved to archives", status.HTTP_200_OK)
 
     if request.data["item_type"] == "template":
         res = delete_template(id)
         if res["isSuccess"]:
-            return Response("Item moved to archives", status.HTTP_200_OK)
+            return Response("Template moved to archives", status.HTTP_200_OK)
 
     if request.data["item_type"] == "process":
         res = delete_process(id)
         if res["isSuccess"]:
-            return Response("Item moved to archives", status.HTTP_200_OK)
+            return Response("Process moved to archives", status.HTTP_200_OK)
 
     return Response(
         "Item could not be moved to archives", status.HTTP_500_INTERNAL_SERVER_ERROR
-    )
-
-
-@api_view(["POST"])
-def search(request):
-    """Get all Org Data"""
-    return Response(
-        {
-            "search_keyword": request.data["search"],
-            "search_result": get_algolia_data(
-                request.data["search"], request.data["company_id"]
-            ),
-        },
-        status=status.HTTP_200_OK,
     )
 
 
@@ -899,38 +861,13 @@ def create_template(request):
 
 @api_view(["GET"])
 def template_detail(request, template_id):
-    payload = {
-        "product_name": "workflow_ai",
-        "details": {
-            "cluster": "Documents",
-            "database": "Documentation",
-            "collection": "TemplateReports",
-            "document": "templatereports",
-            "team_member_ID": "22689044433",
-            "function_ID": "ABCDE",
-            "_id": template_id,
-            "field": "template_name",
-            "action": "template",
-            "flag": "editing",
-            "command": "update",
-            "update_field": {"template_name": "", "content": "", "page": ""},
-        },
-    }
-    try:
-        editor_link = requests.post(
-            EDITOR_API,
-            data=json.dumps(payload),
-        )
-    except ConnectionError:
-        return Response(
-            {"message": "Failed to go to editor."},
-            status=status.HTTP_500_INTERNAL_SERVER_ERROR,
-        )
-    return Response(
-        editor_link.json(),
-        status=status.HTTP_200_OK,
-    )
+    """editor link for a document"""
+    editor_link = link_gen.editor(template_id, "template")
 
+    if not editor_link:
+        return Response("Could not open template editor.", status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
+    return Response(editor_link, status.HTTP_201_CREATED)
 
 @api_view(["GET"])
 def approve(request, template_id):
@@ -1009,3 +946,16 @@ def fetch_process_links(request):
             "Could not fetch process links",
             status=status.HTTP_500_INTERNAL_SERVER_ERROR,
         )
+
+@api_view(["POST"])
+def search(request):
+    """Get all Org Data"""
+    return Response(
+        {
+            "search_keyword": request.data["search"],
+            "search_result": get_algolia_data(
+                request.data["search"], request.data["company_id"]
+            ),
+        },
+        status=status.HTTP_200_OK,
+    )
