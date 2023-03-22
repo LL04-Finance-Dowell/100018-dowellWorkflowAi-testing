@@ -50,7 +50,7 @@ const DocumentCard = ({ cardItem, title, hideFavoriteIcon, hideDeleteIcon }) => 
           username: userDetail?.userinfo?.username,
         }
         const response = await addNewFavoriteForUser(data);
-        console.log(response)
+        toast.success(response)
       } catch (error) {
         toast.info("Failed to add document to favorites")
         removeFromFavoritesState("documents", item._id)
@@ -61,7 +61,7 @@ const DocumentCard = ({ cardItem, title, hideFavoriteIcon, hideDeleteIcon }) => 
       removeFromFavoritesState("documents", item._id)
       try {
         const response = await deleteFavoriteForUser(item._id, 'document', userDetail?.userinfo?.username);
-        console.log(response)
+        toast.success(response)
       } catch (error) {
         toast.info("Failed to remove document from favorites")
         addToFavoritesState("documents", {...item, 'favourited_by': userDetail?.userinfo?.username})
@@ -82,7 +82,7 @@ const DocumentCard = ({ cardItem, title, hideFavoriteIcon, hideDeleteIcon }) => 
 
     try {
       const response = await (await moveItemToArchive(cardItem._id, 'document')).data;
-      console.log(response)
+      toast.success(response)
     } catch (error) {
       console.log(error.response ? error.response.data : error.message);
       copyOfDocumentToUpdate.data_type = "Real_Data";

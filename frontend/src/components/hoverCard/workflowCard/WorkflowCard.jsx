@@ -46,10 +46,10 @@ const WorkflowCard = ({ cardItem }) => {
 
     try {
       const response = await (await moveItemToArchive(cardItem._id, 'workflow')).data;
-      console.log(response)
-      console.log("worked")
+      toast.success(response)
     } catch (error) {
       console.log(error.response ? error.response.data : error.message);
+      toast.info(error.response ? error.response.data : error.message);
       copyOfWorkflowsObj.data_type = "Real_Data";
       copyOfWorkflowToUpdate.workflows = copyOfWorkflowsObj;
       copyOfAllWorkflows[foundWorkflowIndex] = copyOfWorkflowToUpdate;
@@ -71,7 +71,7 @@ const WorkflowCard = ({ cardItem }) => {
           username: userDetail?.userinfo?.username,
         }
         const response = await addNewFavoriteForUser(data);
-        console.log(response)
+        toast.success(response)
       } catch (error) {
         toast.info("Failed to add workflow to favorites")
         removeFromFavoritesState("workflows", item._id)
@@ -82,7 +82,7 @@ const WorkflowCard = ({ cardItem }) => {
       removeFromFavoritesState("workflows", item._id)
       try {
         const response = await deleteFavoriteForUser(item._id, 'workflow', userDetail?.userinfo?.username);
-        console.log(response)
+        toast.success(response)
       } catch (error) {
         toast.info("Failed to remove workflow from favorites")
         addToFavoritesState("workflows", {...item, 'favourited_by': userDetail?.userinfo?.username})

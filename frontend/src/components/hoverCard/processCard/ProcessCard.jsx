@@ -1,6 +1,7 @@
 import React from "react";
 import { RiDeleteBin6Line } from "react-icons/ri";
 import { useDispatch, useSelector } from "react-redux";
+import { toast } from "react-toastify";
 import { setAllProcesses } from "../../../features/app/appSlice";
 import { moveItemToArchive } from "../../../services/archiveServices";
 import HoverCard from "../HoverCard";
@@ -27,9 +28,10 @@ const ProcessCard = ({ cardItem, title }) => {
 
     try {
       const response = await (await moveItemToArchive(cardItem._id, 'process')).data;
-      console.log(response)
+      toast.success(response)
     } catch (error) {
       console.log(error.response ? error.response.data : error.message);
+      toast.info(error.response ? error.response.data : error.message);
       copyOfProcessToUpdate.data_type = "Real_Data";
       copyOfAllProcesses[foundProcessIndex] = copyOfProcessToUpdate;
       dispatch(setAllProcesses(copyOfAllProcesses));

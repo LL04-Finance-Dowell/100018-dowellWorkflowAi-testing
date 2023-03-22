@@ -41,7 +41,7 @@ const TemplateCard = ({ cardItem }) => {
           username: userDetail?.userinfo?.username,
         }
         const response = await addNewFavoriteForUser(data);
-        console.log(response)
+        toast.success(response)
       } catch (error) {
         toast.info("Failed to add template to favorites")
         removeFromFavoritesState("templates", item._id)
@@ -52,7 +52,7 @@ const TemplateCard = ({ cardItem }) => {
       removeFromFavoritesState("templates", item._id)
       try {
         const response = await deleteFavoriteForUser(item._id, 'template', userDetail?.userinfo?.username);
-        console.log(response)
+        toast.success(response)
       } catch (error) {
         toast.info("Failed to remove template from favorites")
         addToFavoritesState("templates", {...item, 'favourited_by': userDetail?.userinfo?.username})
@@ -73,9 +73,10 @@ const TemplateCard = ({ cardItem }) => {
 
     try {
       const response = await (await moveItemToArchive(cardItem._id, 'template')).data;
-      console.log(response)
+      toast.success(response)
     } catch (error) {
       console.log(error.response ? error.response.data : error.message);
+      toast.info(error.response ? error.response.data : error.message);
       copyOfTemplateToUpdate.data_type = "Real_Data";
       copyOfAllTemplates[foundTemplateIndex] = copyOfTemplateToUpdate;
       dispatch(setAllTemplates(copyOfAllTemplates));
