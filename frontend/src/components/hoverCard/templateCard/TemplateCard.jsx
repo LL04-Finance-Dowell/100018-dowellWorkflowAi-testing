@@ -6,6 +6,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import { useAppContext } from "../../../contexts/AppContext";
 import { detailTemplate } from "../../../features/template/asyncThunks";
+import { setAllTemplates } from "../../../features/template/templateSlice";
+import { moveItemToArchive } from "../../../services/archiveServices";
 import { addNewFavoriteForUser, deleteFavoriteForUser } from "../../../services/favoritesServices";
 import HoverCard from "../HoverCard";
 import { Button } from "../styledComponents";
@@ -14,6 +16,7 @@ const TemplateCard = ({ cardItem }) => {
   const dispatch = useDispatch();
   const { favoriteItems, addToFavoritesState, removeFromFavoritesState } = useAppContext();
   const { userDetail } = useSelector((state) => state.auth);
+  const { allTemplates } = useSelector(state => state.template);
 
   const handleTemplateDetail = (item) => {
     const data = {
@@ -58,8 +61,25 @@ const TemplateCard = ({ cardItem }) => {
     // console.log(favoriteItems)
   };
 
-  const handleTrashTemplate = (cardItem) => {
-    
+  const handleTrashTemplate = async (cardItem) => {
+    const copyOfAllTemplates = [...allTemplates];
+    const foundTemplateIndex = copyOfAllTemplates.findIndex(item => item._id === cardItem._id);
+    if (foundTemplateIndex === -1) return
+
+    const copyOfTemplateToUpdate = { ...copyOfAllTemplates[foundTemplateIndex] };
+    copyOfTemplateToUpdate.data_type = "Archive_Data";
+    copyOfAllTemplates[foundTemplateIndex] = copyOfTemplateToUpdate;
+    dispatch(setAllTemplates(copyOfAllTemplates));
+
+    try {
+      const response = await (await moveItemToArchive(cardItem._id, 'template')).data;
+      console.log(response)
+    } catch (error) {
+      console.log(error.response ? error.response.data : error.message);
+      copyOfTemplateToUpdate.data_type = "Real_Data";
+      copyOfAllTemplates[foundTemplateIndex] = copyOfTemplateToUpdate;
+      dispatch(setAllTemplates(copyOfAllTemplates));
+    }
   }
 
   const FrontSide = () => {

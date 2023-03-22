@@ -19,6 +19,8 @@ import { useAppContext } from "../../../contexts/AppContext";
 import { MdFavorite } from "react-icons/md";
 import { addNewFavoriteForUser, deleteFavoriteForUser } from "../../../services/favoritesServices";
 import { RiDeleteBin6Line } from "react-icons/ri";
+import { moveItemToArchive } from "../../../services/archiveServices";
+import { setAllDocuments } from "../../../features/document/documentSlice";
 
 const DocumentCard = ({ cardItem, title, hideFavoriteIcon, hideDeleteIcon }) => {
   const dispatch = useDispatch();
@@ -26,6 +28,7 @@ const DocumentCard = ({ cardItem, title, hideFavoriteIcon, hideDeleteIcon }) => 
   const { userDetail } = useSelector((state) => state.auth);
   const { singleFavorite } = useSelector((state) => state.favorites);
   const { favoriteItems, addToFavoritesState, removeFromFavoritesState } = useAppContext();
+  const { allDocuments } = useSelector(state => state.document);
 
   const handleFavoritess = async (item, actionType) => {
     /*  const data = {
@@ -67,8 +70,25 @@ const DocumentCard = ({ cardItem, title, hideFavoriteIcon, hideDeleteIcon }) => 
     // console.log(favoriteItems)
   };
 
-  const handleTrashDocument = (cardItem) => {
+  const handleTrashDocument = async (cardItem) => {
+    const copyOfAllDocuments = [...allDocuments];
+    const foundDocumentIndex = copyOfAllDocuments.findIndex(item => item._id === cardItem._id);
+    if (foundDocumentIndex === -1) return
 
+    const copyOfDocumentToUpdate = { ...copyOfAllDocuments[foundDocumentIndex] };
+    copyOfDocumentToUpdate.data_type = "Archive_Data";
+    copyOfAllDocuments[foundDocumentIndex] = copyOfDocumentToUpdate;
+    dispatch(setAllDocuments(copyOfAllDocuments));
+
+    try {
+      const response = await (await moveItemToArchive(cardItem._id, 'document')).data;
+      console.log(response)
+    } catch (error) {
+      console.log(error.response ? error.response.data : error.message);
+      copyOfDocumentToUpdate.data_type = "Real_Data";
+      copyOfAllDocuments[foundDocumentIndex] = copyOfDocumentToUpdate;
+      dispatch(setAllDocuments(copyOfAllDocuments));
+    }
   }
 
   const handleDetailDocumnet = async (item) => {

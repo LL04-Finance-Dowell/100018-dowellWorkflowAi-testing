@@ -15,11 +15,14 @@ import { toast } from "react-toastify";
 import { addNewFavoriteForUser, deleteFavoriteForUser } from "../../../services/favoritesServices";
 import { MdFavorite } from "react-icons/md";
 import { AiFillStar, AiOutlineHeart, AiOutlineStar } from "react-icons/ai";
+import { moveItemToArchive } from "../../../services/archiveServices";
+import { setAllWorkflows } from "../../../features/workflow/workflowsSlice";
 
 const WorkflowCard = ({ cardItem }) => {
   const dispatch = useDispatch();
   const { favoriteItems, addToFavoritesState, removeFromFavoritesState } = useAppContext();
   const { userDetail } = useSelector((state) => state.auth);
+  const { allWorkflows } = useSelector((state) => state.workflow);
 
   const handleUpdateWorkflow = (item) => {
     dispatch(setToggleManageFileForm(true));
@@ -28,8 +31,30 @@ const WorkflowCard = ({ cardItem }) => {
     dispatch(detailWorkflow(data.workflow_id));
   };
 
-  const handleTrashWorkflow = (item) => {
+  const handleTrashWorkflow = async (cardItem) => {
     // console.log(item)
+    const copyOfAllWorkflows = [...allWorkflows];
+    const foundWorkflowIndex = copyOfAllWorkflows.findIndex(item => item._id === cardItem._id);
+    if (foundWorkflowIndex === -1) return
+
+    const copyOfWorkflowToUpdate = { ...copyOfAllWorkflows[foundWorkflowIndex] };
+    const copyOfWorkflowsObj = { ...copyOfWorkflowToUpdate.workflows };
+    copyOfWorkflowsObj.data_type = "Archive_Data";
+    copyOfWorkflowToUpdate.workflows = copyOfWorkflowsObj;
+    copyOfAllWorkflows[foundWorkflowIndex] = copyOfWorkflowToUpdate;
+    dispatch(setAllWorkflows(copyOfAllWorkflows));
+
+    try {
+      const response = await (await moveItemToArchive(cardItem._id, 'workflow')).data;
+      console.log(response)
+      console.log("worked")
+    } catch (error) {
+      console.log(error.response ? error.response.data : error.message);
+      copyOfWorkflowsObj.data_type = "Real_Data";
+      copyOfWorkflowToUpdate.workflows = copyOfWorkflowsObj;
+      copyOfAllWorkflows[foundWorkflowIndex] = copyOfWorkflowToUpdate;
+      dispatch(setAllWorkflows(copyOfAllWorkflows));
+    }
   }
 
   const handleFavoritess = async (item, actionType) => {

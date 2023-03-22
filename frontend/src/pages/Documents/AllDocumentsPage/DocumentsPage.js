@@ -63,7 +63,7 @@ const DocumentsPage = ({ home, showOnlySaved, showOnlyTrashed }) => {
                     (item) =>
                       item.created_by === userDetail?.portfolio_info[0].username &&
                       item.document_type === 'original'
-                  )
+                  ).filter(item => item.data_type === userDetail?.portfolio_info[0]?.data_type)
                 }
                 status={allDocumentsStatus}
                 itemType={"documents"}
@@ -76,7 +76,7 @@ const DocumentsPage = ({ home, showOnlySaved, showOnlyTrashed }) => {
                 cardBgColor="#1ABC9C"
                 title="saved documents"
                 Card={DocumentCard}
-                cardItems={allDocumentsArray.filter(document => document.document_type === 'original')}
+                cardItems={allDocumentsArray.filter(document => document.document_type === 'original').filter(item => item.data_type === userDetail?.portfolio_info[0]?.data_type)}
                 status={allDocumentsStatus}
                 itemType={"documents"}
               />

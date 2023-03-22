@@ -62,7 +62,7 @@ const WorkflowsPage = ({ home, showOnlySaved, showOnlyTrashed }) => {
                   allWorkflowsArray.filter(
                     (item) =>
                       item.created_by === userDetail?.portfolio_info[0].username
-                  )
+                  ).filter(item => item.workflows && item.workflows?.data_type === userDetail?.portfolio_info[0]?.data_type)
                 }
                 status={allWorkflowsStatus}
                 Card={WorkflowCard}
@@ -77,7 +77,7 @@ const WorkflowsPage = ({ home, showOnlySaved, showOnlyTrashed }) => {
                 cardBgColor="#1ABC9C"
                 title="saved workflows"
                 status={allWorkflowsStatus}
-                cardItems={allWorkflowsArray}
+                cardItems={allWorkflowsArray.filter(item =>  item.workflows && item.workflows?.data_type === userDetail?.portfolio_info[0]?.data_type)}
                 itemType={"workflows"}
               />
             </div> : <></>

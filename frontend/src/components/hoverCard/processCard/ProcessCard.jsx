@@ -1,18 +1,39 @@
 import React from "react";
 import { RiDeleteBin6Line } from "react-icons/ri";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { setAllProcesses } from "../../../features/app/appSlice";
+import { moveItemToArchive } from "../../../services/archiveServices";
 import HoverCard from "../HoverCard";
 import { Button } from "../styledComponents";
 
 const ProcessCard = ({ cardItem, title }) => {
   const { userDetail } = useSelector((state) => state.auth);
+  const { allProcesses } = useSelector(state => state.app);
+  const dispatch = useDispatch();
 
   const handleProcessItemClick = async (item) => {
     console.log(item)
   };
 
-  const handleTrashProcess = (item) => {
+  const handleTrashProcess = async (cardItem) => {
+    const copyOfAllProcesses = [...allProcesses];
+    const foundProcessIndex = copyOfAllProcesses.findIndex(item => item._id === cardItem._id);
+    if (foundProcessIndex === -1) return
 
+    const copyOfProcessToUpdate = { ...copyOfAllProcesses[foundProcessIndex] };
+    copyOfProcessToUpdate.data_type = "Archive_Data";
+    copyOfAllProcesses[foundProcessIndex] = copyOfProcessToUpdate;
+    dispatch(setAllProcesses(copyOfAllProcesses));
+
+    try {
+      const response = await (await moveItemToArchive(cardItem._id, 'process')).data;
+      console.log(response)
+    } catch (error) {
+      console.log(error.response ? error.response.data : error.message);
+      copyOfProcessToUpdate.data_type = "Real_Data";
+      copyOfAllProcesses[foundProcessIndex] = copyOfProcessToUpdate;
+      dispatch(setAllProcesses(copyOfAllProcesses));
+    }
   }
 
   const FrontSide = () => {

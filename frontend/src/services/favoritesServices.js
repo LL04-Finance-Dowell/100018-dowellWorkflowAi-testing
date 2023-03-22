@@ -11,13 +11,13 @@ export class FavoriteServices {
 }
 
 export const getFavoritesForUser = async (companyId) => {
-  return await httpFavourite.get(`/favourites/org/${companyId}/`);
+  return await httpFavourite.get(`/org/${companyId}/`);
 }
 
 export const addNewFavoriteForUser = async (data) => {
-  return await httpFavourite.post(`/favourites/`, data);
+  return await httpFavourite.post(`/`, data);
 }
 
 export const deleteFavoriteForUser = async (itemId, itemType, loggedInUsername) => {
-  return await httpFavourite.delete(`/favourites/delete/${itemId}/${itemType}/${loggedInUsername}/`)
+  return await httpFavourite.delete(`/delete/${itemId}/${itemType}/${loggedInUsername}/`)
 }

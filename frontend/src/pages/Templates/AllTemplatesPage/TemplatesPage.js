@@ -65,7 +65,7 @@ const TemplatesPage = ({ home, showOnlySaved, showOnlyTrashed }) => {
                   allTemplatesArray.filter(
                     (item) =>
                       item.created_by === userDetail?.portfolio_info[0].username
-                  )
+                  ).filter(item => item.data_type === userDetail?.portfolio_info[0]?.data_type)
                 }
                 status={allTemplatesStatus}
                 itemType={"templates"}
@@ -78,7 +78,7 @@ const TemplatesPage = ({ home, showOnlySaved, showOnlyTrashed }) => {
                 cardBgColor="#1ABC9C"
                 title="saved templates"
                 Card={TemplateCard}
-                cardItems={allTemplatesArray}
+                cardItems={allTemplatesArray.filter(item => item.data_type === userDetail?.portfolio_info[0]?.data_type)}
                 status={allTemplatesStatus}
                 itemType={"templates"}
               />
