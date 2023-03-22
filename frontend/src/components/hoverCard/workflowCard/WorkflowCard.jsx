@@ -69,9 +69,15 @@ const WorkflowCard = ({ cardItem }) => {
   const FrontSide = () => {
     return (
       <div>
-        {cardItem.workflows?.workflow_title
-          ? cardItem.workflows?.workflow_title
-          : "no item"}
+        {
+          typeof cardItem.workflows === 'string' ?
+            JSON.parse(cardItem.workflows)?.workflow_title ?
+              JSON.parse(cardItem.workflows)?.workflow_title :
+              "no item" :
+          cardItem.workflows?.workflow_title
+            ? cardItem.workflows?.workflow_title
+            : "no item"
+        }
       </div>
     );
   };
@@ -127,7 +133,57 @@ const WorkflowCard = ({ cardItem }) => {
               </div>      
             </div>
           </>
-        ) : (
+        ) : 
+        typeof cardItem.workflows === 'string' ? (
+            <>
+              <>
+                <div className={styles.test}>
+                  <table>
+                    <thead>
+                      <tr>
+                        <th>Step Name</th>
+                        <th>Role</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {JSON.parse(cardItem.workflows)?.steps.map((item) => (
+                        <tr key={item._id}>
+                          <th>{item.step_name}</th>
+                          <th>{item.role}</th>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </>
+              <div className={styles.button__group}>
+                <a 
+                  className={styles.delete}
+                  onClick={() => handleTrashWorkflow(cardItem)}
+                >
+                  <RiDeleteBin6Line color="red" />
+                </a>
+                <a
+                  onClick={() => handleUpdateWorkflow(cardItem)}
+                  className={styles.update}
+                >
+                  <i>
+                    <RxUpdate color="green" />
+                  </i>
+                </a>
+                <div style={{ 
+                  cursor: "pointer",
+                }} onClick={() => handleFavoritess(cardItem, favoriteItems.workflows.find(item => item._id === cardItem._id) ? "remove" : "add")}>
+                  {
+                    favoriteItems.workflows.find(item => item._id === cardItem._id) ?
+                    <AiFillStar /> :
+                    <AiOutlineStar />
+                  }
+                </div>      
+              </div>
+            </>  
+        ) :
+        (
           <div style={{ margin: "auto" }}>no item</div>
         )}
       </div>
