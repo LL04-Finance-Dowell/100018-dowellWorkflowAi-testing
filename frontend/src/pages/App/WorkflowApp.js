@@ -214,7 +214,7 @@ const WorkflowApp = () => {
                 <>
                 {
                   React.Children.toArray(Object.keys(favoriteItems).map(key => {
-                    if (key === "documents" && favoriteItems[key].length > 0) return <div>
+                    if (key === "documents" && favoriteItems[key].filter(item => item.favourited_by === userDetail?.userinfo?.username).length > 0) return <div>
                       <SectionBox
                         cardBgColor="#1ABC9C"
                         title="favorite documents"
@@ -223,7 +223,7 @@ const WorkflowApp = () => {
                         status={favoriteItemsLoaded}
                       />
                     </div>
-                    if (key === "templates" && favoriteItems[key].length > 0) return <div>
+                    if (key === "templates" && favoriteItems[key].filter(item => item.favourited_by === userDetail?.userinfo?.username).length > 0) return <div>
                       <SectionBox
                         cardBgColor="#1ABC9C"
                         title="favorite templates"
@@ -232,7 +232,7 @@ const WorkflowApp = () => {
                         status={favoriteItemsLoaded}
                       />
                     </div>
-                    if (key === "workflows" && favoriteItems[key].length > 0) return <div>
+                    if (key === "workflows" && favoriteItems[key].filter(item => item.favourited_by === userDetail?.userinfo?.username).length > 0) return <div>
                       <SectionBox
                         cardBgColor="#1ABC9C"
                         title="favorite workflows"
