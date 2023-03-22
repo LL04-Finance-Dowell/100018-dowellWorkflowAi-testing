@@ -4,7 +4,7 @@ from app.serializers import (
     FavouriteTemplateSerializer,
     FavouriteWorkflowSerializer,
 )
-
+import json
 
 def list_favourites(company_id):
     """
@@ -53,7 +53,7 @@ def create_favourite(item, type, username):
     if type == "workflow":
         data = {
             "_id": item["_id"],
-            "workflows": item["workflows"],
+            "workflows": json.dumps(item["workflows"]),
             "company_id": item["company_id"],
             "favourited_by": username,
         }
