@@ -70,7 +70,7 @@ const WorkflowCard = ({ cardItem }) => {
           item_type: "workflow",
           username: userDetail?.userinfo?.username,
         }
-        const response = await addNewFavoriteForUser(data);
+        const response = await (await addNewFavoriteForUser(data)).data;
         toast.success(response)
       } catch (error) {
         toast.info("Failed to add workflow to favorites")
@@ -81,7 +81,7 @@ const WorkflowCard = ({ cardItem }) => {
     if (actionType === "remove") {
       removeFromFavoritesState("workflows", item._id)
       try {
-        const response = await deleteFavoriteForUser(item._id, 'workflow', userDetail?.userinfo?.username);
+        const response = await (await deleteFavoriteForUser(item._id, 'workflow', userDetail?.userinfo?.username)).data;
         toast.success(response)
       } catch (error) {
         toast.info("Failed to remove workflow from favorites")
