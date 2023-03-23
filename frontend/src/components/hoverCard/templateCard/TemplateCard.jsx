@@ -52,7 +52,7 @@ const TemplateCard = ({ cardItem }) => {
       removeFromFavoritesState("templates", item._id)
       try {
         const response = await (await deleteFavoriteForUser(item._id, 'template', userDetail?.userinfo?.username)).data;
-        toast.success(response)
+        toast.success('Item removed from favourites')
       } catch (error) {
         toast.info("Failed to remove template from favorites")
         addToFavoritesState("templates", {...item, 'favourited_by': userDetail?.userinfo?.username})

@@ -82,7 +82,7 @@ const WorkflowCard = ({ cardItem }) => {
       removeFromFavoritesState("workflows", item._id)
       try {
         const response = await (await deleteFavoriteForUser(item._id, 'workflow', userDetail?.userinfo?.username)).data;
-        toast.success(response)
+        toast.success('Item removed from favourites')
       } catch (error) {
         toast.info("Failed to remove workflow from favorites")
         addToFavoritesState("workflows", {...item, 'favourited_by': userDetail?.userinfo?.username})

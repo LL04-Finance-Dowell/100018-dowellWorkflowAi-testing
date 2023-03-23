@@ -61,7 +61,7 @@ const DocumentCard = ({ cardItem, title, hideFavoriteIcon, hideDeleteIcon }) => 
       removeFromFavoritesState("documents", item._id)
       try {
         const response = await (await deleteFavoriteForUser(item._id, 'document', userDetail?.userinfo?.username)).data;
-        toast.success(response)
+        toast.success('Item removed from favourites')
       } catch (error) {
         toast.info("Failed to remove document from favorites")
         addToFavoritesState("documents", {...item, 'favourited_by': userDetail?.userinfo?.username})
