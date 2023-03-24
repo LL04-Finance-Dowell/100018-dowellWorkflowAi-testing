@@ -279,7 +279,7 @@ def process_verification(request):
 @api_view(["POST"])
 def mark_process_as_finalize_or_reject(request):
     """After access is granted and the user has made changes on a document."""
-    if request.data:
+    if not request.data:
         return Response("You are missing something", status.HTTP_400_BAD_REQUEST)
 
     # get document
