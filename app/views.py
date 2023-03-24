@@ -227,7 +227,7 @@ def document_processing(request):
 @api_view(["POST"])
 def process_verification(request):
     """verification of a process step access and checks that duplicate document based on a step."""
-    if request.data:
+    if not request.data:
         return Response("You are missing something!", status.HTTP_400_BAD_REQUEST)
 
     # check user
@@ -253,11 +253,14 @@ def process_verification(request):
             return Response(
                 "This workflow process is currently on hold!", status.HTTP_200_OK
             )
+        
         # was the process not started?
         if process["processing_state"] == "save":
             return Response(
                 "This workflow process is not activated!", status.HTTP_200_OK
             )
+        
+    # set request location data
     location_data = {
         "city": request.data["city"],
         "country": request.data["country"],

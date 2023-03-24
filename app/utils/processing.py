@@ -191,13 +191,7 @@ def start(process):
 
 
 def verify(process, auth_step_role, location_data, user_name):
-    doc_map = None
-    right = None
-    role = None
-    user = None
-    match = False
-    clone_id = None
-
+    
     # find step the user belongs
     for step in process["process_steps"]:
         if step.get("stepRole") == auth_step_role:
@@ -242,7 +236,8 @@ def verify(process, auth_step_role, location_data, user_name):
             if any(user_name in d_map for d_map in step["stepDocumentCloneMap"]):
                 for d_map in step["stepDocumentCloneMap"]:
                     clone_id = d_map.get(user_name)
-
+                    break
+                    
             # set access.
             doc_map = step.get("stepDocumentMap")
             right = step.get("stepRights")
@@ -256,7 +251,6 @@ def verify(process, auth_step_role, location_data, user_name):
 
     # is everything right, generate document link.
     if clone_id and right and user and role and doc_map:
-        print("something missing")
         doc_link = link_gen.document(
             document_id=clone_id,
             doc_map=doc_map,
@@ -265,8 +259,11 @@ def verify(process, auth_step_role, location_data, user_name):
             process_id=process["_id"],
             role=role,
         )
-
         return doc_link.json()
+    else:
+        print("something missing")
+
+    return None
 
 
 def background(process_id, document_id):

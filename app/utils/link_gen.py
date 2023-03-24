@@ -29,10 +29,15 @@ def document(document_id, doc_map, doc_rights, user, process_id, role):
         },
     }
     try:
-        link = requests.post(EDITOR_API, data=json.dumps(payload))
-        return link
+        link = requests.post(
+            EDITOR_API,
+            data=json.dumps(payload),
+            headers={"Content-Type": "application/json"},
+        )
     except ConnectionError:
         return
+    
+    return link
 
 
 def editor(item_id, type):
