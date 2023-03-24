@@ -21,6 +21,7 @@ import { addNewFavoriteForUser, deleteFavoriteForUser } from "../../../services/
 import { RiDeleteBin6Line } from "react-icons/ri";
 import { moveItemToArchive } from "../../../services/archiveServices";
 import { setAllDocuments } from "../../../features/document/documentSlice";
+import { BsBookmark, BsFillBookmarkFill } from "react-icons/bs";
 
 const DocumentCard = ({ cardItem, title, hideFavoriteIcon, hideDeleteIcon }) => {
   const dispatch = useDispatch();
@@ -193,8 +194,8 @@ const DocumentCard = ({ cardItem, title, hideFavoriteIcon, hideDeleteIcon }) => 
         }} onClick={() => handleFavoritess(cardItem, favoriteItems.documents.find(item => item._id === cardItem._id) ? "remove" : "add")}>
           {
             favoriteItems.documents.find(item => item._id === cardItem._id) ?
-            <AiFillStar /> :
-            <AiOutlineStar />
+            <BsFillBookmarkFill /> :
+            <BsBookmark />
           }
         </div>}
         {cardItem._id ? (

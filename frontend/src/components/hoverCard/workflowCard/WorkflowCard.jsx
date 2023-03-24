@@ -17,6 +17,7 @@ import { MdFavorite } from "react-icons/md";
 import { AiFillStar, AiOutlineHeart, AiOutlineStar } from "react-icons/ai";
 import { moveItemToArchive } from "../../../services/archiveServices";
 import { setAllWorkflows } from "../../../features/workflow/workflowsSlice";
+import { BsBookmark, BsFillBookmarkFill } from "react-icons/bs";
 
 const WorkflowCard = ({ cardItem }) => {
   const dispatch = useDispatch();
@@ -152,8 +153,8 @@ const WorkflowCard = ({ cardItem }) => {
               }} onClick={() => handleFavoritess(cardItem, favoriteItems.workflows.find(item => item._id === cardItem._id) ? "remove" : "add")}>
                 {
                   favoriteItems.workflows.find(item => item._id === cardItem._id) ?
-                  <AiFillStar /> :
-                  <AiOutlineStar />
+                  <BsFillBookmarkFill /> :
+                  <BsBookmark />
                 }
               </div>      
             </div>

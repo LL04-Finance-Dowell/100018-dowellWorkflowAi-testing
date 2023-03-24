@@ -1,5 +1,6 @@
 import React from "react";
 import { AiFillStar, AiOutlineHeart, AiOutlineStar } from "react-icons/ai";
+import { BsBookmark, BsFillBookmarkFill } from "react-icons/bs";
 import { MdFavorite } from "react-icons/md";
 import { RiDeleteBin6Line } from "react-icons/ri";
 import { useDispatch, useSelector } from "react-redux";
@@ -100,8 +101,8 @@ const TemplateCard = ({ cardItem }) => {
         }} onClick={() => handleFavoritess(cardItem, favoriteItems.templates.find(item => item._id === cardItem._id) ? "remove" : "add")}>
           {
             favoriteItems.templates.find(item => item._id === cardItem._id) ?
-            <AiFillStar /> :
-            <AiOutlineStar />
+            <BsFillBookmarkFill /> :
+            <BsBookmark />
           }
         </div>
         {cardItem.template_name ? (
