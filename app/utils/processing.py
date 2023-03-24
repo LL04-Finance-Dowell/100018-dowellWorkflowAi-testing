@@ -191,7 +191,7 @@ def start(process):
 
 
 def verify(process, auth_step_role, location_data, user_name):
-    
+
     # find step the user belongs
     for step in process["process_steps"]:
         if step.get("stepRole") == auth_step_role:
@@ -237,7 +237,7 @@ def verify(process, auth_step_role, location_data, user_name):
                 for d_map in step["stepDocumentCloneMap"]:
                     clone_id = d_map.get(user_name)
                     break
-                    
+
             # set access.
             doc_map = step.get("stepDocumentMap")
             right = step.get("stepRights")
@@ -270,6 +270,9 @@ def background(process_id, document_id):
     # get process
     process = get_process_object(workflow_process_id=process_id)
     copies = []
+    step_1_complete = False
+    step_2_complete = False
+    step_3_complete = False
 
     #  Check Step 1
     step_one = process["process_steps"][0]
@@ -279,18 +282,26 @@ def background(process_id, document_id):
         + step_one.get("stepPublicMembers", [])
         + step_one.get("stepUserMembers", [])
     ]
-    for usr in step_one_users:
-        document_states = [
-            get_document_object(d_map.get(usr))["document_state"] == "finalized"
-            for d_map in step_one["stepDocumentCloneMap"]
-        ]
-        if all(document_states):
-            print("1 is done", document_states)
-            step_one_complete = True
 
-    # Check Step 2
-    if step_one_complete:
-        if process["process_steps"][1]:
+    # check all documents are finalized
+    clones = []
+    for usr in step_one_users:
+        for dmap in step_one["stepDocumentCloneMap"]:
+            if dmap.get(usr) is not None:
+                clones.append(dmap.get(usr))
+
+    document_states = [
+        get_document_object(c_id)["document_state"] == "finalized" for c_id in clones
+    ]
+
+    if all(document_states):
+        print("1 is done", document_states)
+        step_1_complete = True
+
+    # Now Check Step 2
+    if step_1_complete:
+        if len(process["process_steps"]) > 1:
+            print("In step 2 \n")
             step_two = process["process_steps"][1]
             step_two_users = [
                 member["member"]
@@ -300,19 +311,23 @@ def background(process_id, document_id):
             ]
 
             # check if all docs for respective users are complete in step 2
-            if step_two["stepDocumentCloneMap"]:
-                print("In step 2 \n")
+            if step_two["stepDocumentCloneMap"] != []:
                 print("checking clone", step_two["stepDocumentCloneMap"])
                 print("the users", step_two_users)
+                clones = []
                 for usr in step_two_users:
-                    document_states = [
-                        get_document_object(d_map.get(usr))["document_state"]
-                        == "finalized"
-                        for d_map in step_two["stepDocumentCloneMap"]
-                    ]
-                    if all(document_states):
-                        print("2 is done", document_states)
-                        step_2_complete = True
+                    for dmap in step_two["stepDocumentCloneMap"]:
+                        if dmap.get(usr) is not None:
+                            clones.append(dmap.get(usr))
+
+                document_states = [
+                    get_document_object(c_id)["document_state"] == "finalized"
+                    for c_id in clones
+                ]
+
+                if all(document_states):
+                    print("2 is done", document_states)
+                    step_2_complete = True
 
             # if the clone map is empty we execute
             else:
@@ -365,7 +380,7 @@ def background(process_id, document_id):
 
     # Check Step 3
     if step_2_complete:
-        if process["process_steps"][2]:
+        if len(process["process_steps"]) > 2:
             print("In step 3 \n")
             step_three = process["process_steps"][2]
             # get all users
@@ -378,15 +393,20 @@ def background(process_id, document_id):
 
             # check if all docs for respective users are complete
             if step_three["stepDocumentCloneMap"] != []:
+                clones = []
                 for usr in step_3_users:
-                    document_states = [
-                        get_document_object(d_map.get(usr))["document_state"]
-                        == "finalized"
-                        for d_map in step_three["stepDocumentCloneMap"]
-                    ]
-                    if all(document_states):
-                        print("3 is done")
-                        step_3_complete = True
+                    for dmap in step_three["stepDocumentCloneMap"]:
+                        if dmap.get(usr) is not None:
+                            clones.append(dmap.get(usr))
+
+                document_states = [
+                    get_document_object(c_id)["document_state"] == "finalized"
+                    for c_id in clones
+                ]
+
+                if all(document_states):
+                    print("2 is done", document_states)
+                    step_3_complete = True
 
             # if the clone map is empty we execute
             else:
@@ -442,7 +462,7 @@ def background(process_id, document_id):
 
     # Check Step 4
     if step_3_complete:
-        if process["process_steps"][3]:
+        if len(process["process_steps"]) > 3:
             print("In step 4 \n")
             step_four = process["process_steps"][3]
             step_4_users = [
@@ -454,15 +474,20 @@ def background(process_id, document_id):
 
             # check if all docs for respective users are complete
             if step_four["stepDocumentCloneMap"] != []:
+                clones = []
                 for usr in step_4_users:
-                    document_states = [
-                        get_document_object(d_map.get(usr))["document_state"]
-                        == "finalized"
-                        for d_map in step_four["stepDocumentCloneMap"]
-                    ]
-                    if all(document_states):
-                        print("4 is done")
-                        step_4_complete = True
+                    for dmap in step_four["stepDocumentCloneMap"]:
+                        if dmap.get(usr) is not None:
+                            clones.append(dmap.get(usr))
+
+                document_states = [
+                    get_document_object(c_id)["document_state"] == "finalized"
+                    for c_id in clones
+                ]
+
+                if all(document_states):
+                    print("4 is done", document_states)
+                    step_4_complete = True
 
             # if the clone map is empty we execute
             else:
