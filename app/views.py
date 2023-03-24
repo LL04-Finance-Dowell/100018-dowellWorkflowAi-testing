@@ -682,7 +682,7 @@ def favorites(request):
         )
         if not msg:
             return Response(
-                "Item could not be added to favorites",
+                "Item could not be added to bookmarks",
                 status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
 
@@ -695,7 +695,7 @@ def all_favourites(request, company_id):
     data = list_favourites(company_id=company_id)
     if not data:
         return Response(
-            "failed to get favourites",
+            "failed to get bookmarks",
             status.HTTP_500_INTERNAL_SERVER_ERROR,
         )
     return Response(data, status.HTTP_200_OK)
@@ -711,7 +711,7 @@ def trash_favourites(request, item_id, item_type, username):
     )
     if not msg:
         return Response(
-            "failed to remove from favourites", status.HTTP_500_INTERNAL_SERVER_ERROR
+            "failed to remove from bookmarks", status.HTTP_500_INTERNAL_SERVER_ERROR
         )
 
     return Response(msg, status.HTTP_204_NO_CONTENT)

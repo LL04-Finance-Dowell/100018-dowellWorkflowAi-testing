@@ -39,7 +39,7 @@ def list_favourites(company_id):
 
 def create_favourite(item, type, username):
     """
-    Add to favourites
+    Add to favourites/Bookmarks
 
     Args:
         item(dict): the item details
@@ -49,7 +49,7 @@ def create_favourite(item, type, username):
     Returns:
         msg(str): response success
     """
-    msg = "Item added to favourites"
+    msg = "Item added to bookmarks"
     if type == "workflow":
         data = {
             "_id": item["_id"],
@@ -99,7 +99,7 @@ def create_favourite(item, type, username):
 
 
 def remove_favourite(identifier, type, username):
-    msg = "Item removed from favourites."
+    msg = "Item removed from bookmarks."
 
     if type == "workflow":
         try:
