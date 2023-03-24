@@ -27,3 +27,24 @@
   background-color: var(--e-global-color-secondary);
   color: white !important;
 }
+
+.refresh__btn {
+  background: none;
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  background-color: var(--e-global-color-secondary); 
+  color: var(--e-global-color-cd6593d);
+  padding: 1% 2%;
+  border-radius: 6px;
+  gap: 10px;
+  transition: 0.3s ease-in-out;
+}
+
+.refresh__btn span {
+  font-size: 0.9rem;
+}
+
+.refresh__btn:hover {
+  filter: brightness(0.8);
+}

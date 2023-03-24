@@ -185,47 +185,52 @@ const SectionBox = ({ cardItems, title, Card, status, idKey, itemType, hideFavor
               itemType ?
                 itemType === "documents" ?
                 allDocumentsStatus !== "pending" ?
-                <button style={{ "background": "none" }} onClick={handleRefresh}>
+                <button className={styles.refresh__btn} onClick={handleRefresh}>
                     {
-                      refreshLoading ? <LoadingSpinner color={"black"} width={"1.2rem"} height={"1.2rem"} /> :
+                      refreshLoading ? <LoadingSpinner color={"white"} width={"1rem"} height={"1rem"} /> :
                       <IoIosRefresh />
                     }
+                    <span>Refresh</span>
                   </button> : <></> 
                 :
                 itemType === "templates" ?
                 allTemplatesStatus !== "pending" ?
-                <button style={{ "background": "none" }} onClick={handleRefresh}>
+                <button className={styles.refresh__btn} onClick={handleRefresh}>
                     {
-                      refreshLoading ? <LoadingSpinner color={"black"} width={"1.2rem"} height={"1.2rem"} /> :
+                      refreshLoading ? <LoadingSpinner color={"white"} width={"1rem"} height={"1rem"} /> :
                       <IoIosRefresh />
                     }
+                    <span>Refresh</span>
                   </button> : <></> 
                 :
                 itemType === "workflows" ?
                 allWorkflowsStatus !== "pending" ?
-                <button style={{ "background": "none" }} onClick={handleRefresh}>
+                <button className={styles.refresh__btn} onClick={handleRefresh}>
                     {
-                      refreshLoading ? <LoadingSpinner color={"black"} width={"1.2rem"} height={"1.2rem"} /> :
+                      refreshLoading ? <LoadingSpinner color={"white"} width={"1rem"} height={"1rem"} /> :
                       <IoIosRefresh />
                     }
+                    <span>Refresh</span>
                   </button> : <></> 
                 :
                 itemType === "processes" ?
                 !processesLoading ?
-                  <button style={{ "background": "none" }} onClick={handleRefresh}>
+                  <button className={styles.refresh__btn} onClick={handleRefresh}>
                     {
-                      refreshLoading ? <LoadingSpinner color={"black"} width={"1.2rem"} height={"1.2rem"} /> :
+                      refreshLoading ? <LoadingSpinner color={"white"} width={"1rem"} height={"1rem"} /> :
                       <IoIosRefresh />
                     }
+                    <span>Refresh</span>
                   </button> : <></> 
                 :
                 itemType === "notifications" ?
                 !notificationsLoading ?
-                  <button style={{ "background": "none" }} onClick={handleRefresh}>
+                  <button className={styles.refresh__btn} onClick={handleRefresh}>
                     {
-                      refreshLoading ? <LoadingSpinner color={"black"} width={"1.2rem"} height={"1.2rem"} /> :
+                      refreshLoading ? <LoadingSpinner color={"white"} width={"1rem"} height={"1rem"} /> :
                       <IoIosRefresh />
                     }
+                    <span>Refresh</span>
                   </button> : <></> 
                 :
                 <></>
