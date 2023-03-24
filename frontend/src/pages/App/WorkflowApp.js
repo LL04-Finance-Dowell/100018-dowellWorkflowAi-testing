@@ -217,7 +217,7 @@ const WorkflowApp = () => {
                     if (key === "documents" && favoriteItems[key].filter(item => item.favourited_by === userDetail?.userinfo?.username).length > 0) return <div>
                       <SectionBox
                         cardBgColor="#1ABC9C"
-                        title="favorite documents"
+                        title="bookmarked documents"
                         Card={DocumentCard}
                         cardItems={favoriteItems[key].filter(item => item.favourited_by === userDetail?.userinfo?.username)}
                         status={favoriteItemsLoaded}
@@ -226,7 +226,7 @@ const WorkflowApp = () => {
                     if (key === "templates" && favoriteItems[key].filter(item => item.favourited_by === userDetail?.userinfo?.username).length > 0) return <div>
                       <SectionBox
                         cardBgColor="#1ABC9C"
-                        title="favorite templates"
+                        title="bookmarked templates"
                         Card={TemplateCard}
                         cardItems={favoriteItems[key].filter(item => item.favourited_by === userDetail?.userinfo?.username)}
                         status={favoriteItemsLoaded}
@@ -235,7 +235,7 @@ const WorkflowApp = () => {
                     if (key === "workflows" && favoriteItems[key].filter(item => item.favourited_by === userDetail?.userinfo?.username).length > 0) return <div>
                       <SectionBox
                         cardBgColor="#1ABC9C"
-                        title="favorite workflows"
+                        title="bookmarked workflows"
                         Card={WorkflowCard}
                         cardItems={favoriteItems[key].filter(item => item.favourited_by === userDetail?.userinfo?.username)}
                         status={favoriteItemsLoaded}
