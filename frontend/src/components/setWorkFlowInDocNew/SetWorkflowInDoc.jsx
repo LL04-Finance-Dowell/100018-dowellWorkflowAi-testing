@@ -37,6 +37,8 @@ const SetWorkflowInDoc = () => {
     if (!processId && !processState) {
       dispatch(resetSetWorkflows());
       dispatch(setContentOfDocument(null));  
+      setDraftProcess(null);
+      setDraftProcessDoc(null);
     }
 
     if (continentsLoaded) return
@@ -63,7 +65,9 @@ const SetWorkflowInDoc = () => {
 
     if (!processId || !processState || processState !== 'draft') {
       dispatch(resetSetWorkflows());
-      dispatch(setContentOfDocument(null));
+      dispatch(setContentOfDocument(null));  
+      setDraftProcess(null);
+      setDraftProcessDoc(null);
       return
     }
     
