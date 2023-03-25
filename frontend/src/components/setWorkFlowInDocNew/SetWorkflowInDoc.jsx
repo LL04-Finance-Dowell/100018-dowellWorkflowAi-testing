@@ -61,7 +61,11 @@ const SetWorkflowInDoc = () => {
     const processId = searchParams.get('id');
     const processState = searchParams.get('state');
 
-    if (!processId || !processState || processState !== 'draft') return
+    if (!processId || !processState || processState !== 'draft') {
+      dispatch(resetSetWorkflows());
+      dispatch(setContentOfDocument(null));
+      return
+    }
     
     setDraftProcessLoading(true);
     

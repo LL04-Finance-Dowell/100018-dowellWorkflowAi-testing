@@ -35,7 +35,8 @@ const SelectMembersToAssign = ({ currentStepIndex, stepsPopulated, currentEnable
     Team: [],
     Users: [],
     Public: [],
-  })
+  });
+  const [ featuresUpdatedFromDraft, setFeaturesUpdatedFromDraft ] = useState(false);
   
   const dispatch = useDispatch();
 
@@ -122,7 +123,7 @@ const SelectMembersToAssign = ({ currentStepIndex, stepsPopulated, currentEnable
   }, [currentRadioOptionSelection, currentGroupSelectionItem])
 
   useEffect(() => {
-    if (!stepsPopulated) return
+    if (!stepsPopulated || featuresUpdatedFromDraft) return
 
     const stepDetails = processSteps.find(
       process => process.workflow === docCurrentWorkflow?._id
@@ -130,7 +131,7 @@ const SelectMembersToAssign = ({ currentStepIndex, stepsPopulated, currentEnable
 
     const [currentSelectedOptions, currentEnabledRadioOptionsFromStepPopulation ] = [ userTypeOptionsEnabled.slice(), { ...enableRadioOptionsFromStepPopulation } ];
 
-    if (stepDetails?.stepTeamMembers.length > 0) {
+    if (stepDetails?.stepTeamMembers?.length > 0) {
       if (currentSelectedOptions.find(item => item.name === 'Team' && item.stepIndex === currentStepIndex)) return
 
       const newUserOptionToAdd = {
@@ -150,7 +151,7 @@ const SelectMembersToAssign = ({ currentStepIndex, stepsPopulated, currentEnable
       setEnableOptionsFromStepPopulation(currentEnabledRadioOptionsFromStepPopulation);
     }
 
-    if (stepDetails?.stepPublicMembers.length > 0) {
+    if (stepDetails?.stepPublicMembers?.length > 0) {
       if (currentSelectedOptions.find(item => item.name === 'Public' && item.stepIndex === currentStepIndex)) return
 
       const newUserOptionToAdd = {
@@ -170,7 +171,7 @@ const SelectMembersToAssign = ({ currentStepIndex, stepsPopulated, currentEnable
       setEnableOptionsFromStepPopulation(currentEnabledRadioOptionsFromStepPopulation);
     }
 
-    if (stepDetails?.stepUserMembers.length > 0) {
+    if (stepDetails?.stepUserMembers?.length > 0) {
       if (currentSelectedOptions.find(item => item.name === 'Users' && item.stepIndex === currentStepIndex)) return
 
       const newUserOptionToAdd = {
@@ -190,7 +191,9 @@ const SelectMembersToAssign = ({ currentStepIndex, stepsPopulated, currentEnable
       setEnableOptionsFromStepPopulation(currentEnabledRadioOptionsFromStepPopulation);
     }
 
-  }, [stepsPopulated])
+    if (stepDetails?.stepPublicMembers || stepDetails?.stepTeamMembers || stepDetails?.stepUserMembers) setFeaturesUpdatedFromDraft(true);
+
+  }, [stepsPopulated, processSteps])
 
   const handleSelectTeam = (e) => {
     const parsedSelectedJsonValue = JSON.parse(e.target.value);
