@@ -392,7 +392,6 @@ def update_wf(workflow_id, old_workflow):
 
 
 def update_wf_approval(workflow_id, approval):
-
     payload = json.dumps(
         {
             **WF_CONNECTION_DICT,
@@ -451,14 +450,12 @@ def get_wf_list(company_id):
 
 # ------------------------------------------ Templates-----------------------------
 def save_template(name, data, page, created_by, company_id, data_type):
-
-    event_id = get_event_id()["event_id"]
     payload = json.dumps(
         {
             **TEMPLATE_CONNECTION_DICT,
             "command": "insert",
             "field": {
-                "eventId": event_id,
+                "eventId": get_event_id()["event_id"],
                 "template_name": name,
                 "content": data,
                 "page": page,
@@ -763,7 +760,7 @@ def wf_setting_update(wf_setting_id, wf_ai_data):
                 "_id": wf_setting_id,
             },
             "update_field": {
-                "eventId": get_event_id(),
+                "eventId": get_event_id()["event_id"],
                 "company_id": wf_ai_data["company_id"],
                 "owner_name": wf_ai_data["owner_name"],
                 "username": wf_ai_data["username"],
@@ -814,7 +811,7 @@ def save_uuid_hash(
             **QR_ID_CONNECTION_DICT,
             "command": "insert",
             "field": {
-                "eventId": get_event_id(),
+                "eventId": get_event_id()["event_id"],
                 "link": link,
                 "auth_role": auth_role,
                 "user_name": user_name,
@@ -833,9 +830,7 @@ def save_uuid_hash(
     response = requests.request(
         "POST", DOWELLCONNECTION_URL, headers=headers, data=payload
     )
-    print(
-        "SAVED VERIFICATION LINK .. \n",
-    )
+    print("SAVED VERIFICATION LINK .. \n")
     return json.loads(response.text)
 
 
@@ -860,11 +855,10 @@ def get_uuid(document_id):
         return res_obj["data"]
     else:
         return []
+    
 
 
 def update_uuid_object(uuid_hash):
-    # url = "http://100002.pythonanywhere.com/"
-
     payload = json.dumps(
         {
             **QR_ID_CONNECTION_DICT,

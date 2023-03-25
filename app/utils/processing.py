@@ -312,8 +312,6 @@ def background(process_id, document_id):
 
             # check if all docs for respective users are complete in step 2
             if step_two["stepDocumentCloneMap"] != []:
-                print("checking clone", step_two["stepDocumentCloneMap"])
-                print("the users", step_two_users)
                 clones = []
                 for usr in step_two_users:
                     for dmap in step_two["stepDocumentCloneMap"]:

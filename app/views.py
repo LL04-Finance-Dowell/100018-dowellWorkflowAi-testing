@@ -870,12 +870,11 @@ def get_process_link(request):
 
 
 @api_view(["POST"])
-def fetch_process_links(request):
+def fetch_process_links(request, process_id):
     """verification links for a process"""
-    print("Fetching verification links \n")
     try:
-        process_info = get_links_object_by_process_id(request.data["process_id"])
-        return Response(process_info, status.HTTP_200_OK)
+        process_info = get_links_object_by_process_id(process_id)
+        return Response(process_info["links"], status.HTTP_200_OK)
     except ConnectionError:
         return Response(
             "Could not fetch process links",
