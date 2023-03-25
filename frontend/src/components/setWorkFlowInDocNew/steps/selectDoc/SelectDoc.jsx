@@ -20,7 +20,7 @@ import { LoadingSpinner } from "../../../LoadingSpinner/LoadingSpinner";
 import { setContentOfDocument } from "../../../../features/document/documentSlice";
 import SelectedDocuments from "./selectedDocuments/SelectedDocuments";
 
-const SelectDoc = () => {
+const SelectDoc = ({ savedDoc }) => {
   const dispatch = useDispatch();
   const { allDocuments: allDocumentsArray, allDocumentsStatus } = useSelector(
     (state) => state.document
@@ -56,6 +56,11 @@ const SelectDoc = () => {
     }
   };
 
+  useEffect(() => {
+    if (!savedDoc) return
+    setSelectedDocuments([savedDoc])
+  }, [savedDoc])
+
   return (
     <div className={styles.container}>
       <h2 className="h2-small step-title align-left">
@@ -81,6 +86,7 @@ const SelectDoc = () => {
               pagination={true}
               modules={[Navigation, Pagination]}
               className="select-doc"
+              enabled={savedDoc ? false : true}
             >
               {allDocumentsArray &&
                 allDocumentsArray.length &&
@@ -102,6 +108,9 @@ const SelectDoc = () => {
                                 selectedDocument._id === item._id
                             ) && styles.selected
                           }`}
+                          style={{
+                            pointerEvents: savedDoc ? 'none' : 'all'
+                          }}
                         >
                           {selectedDocuments.find(
                             (selectedDocument) =>
@@ -118,7 +127,7 @@ const SelectDoc = () => {
           )}
         </div>
         <div className={styles.right__container}>
-          <SelectedDocuments selectedDocument={currentSelectedDocument} selectedDocuments={selectedDocumentCopies} />
+          <SelectedDocuments selectedDocument={savedDoc ? savedDoc : currentSelectedDocument} selectedDocuments={selectedDocumentCopies} disableSelections={savedDoc ? true : false} />
         </div>
       </div>
     </div>

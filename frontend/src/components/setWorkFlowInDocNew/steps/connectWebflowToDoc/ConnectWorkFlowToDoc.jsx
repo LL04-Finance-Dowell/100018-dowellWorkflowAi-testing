@@ -18,19 +18,20 @@ import CopiesOfDoc from "./contents/copiesOfDoc/CopiesOfDoc";
 import AssignDocumentMap from "./contents/assignDocumentMap/AssignDocumentMap";
 import SelectMembersToAssign from "./contents/selectMembersToAssign/SelectMembersToAssign";
 import AssignCollapse from "./contents/assignCollapse/AssignCollapse";
+import React from "react";
 
-const ConnectWorkFlowToDoc = () => {
+const ConnectWorkFlowToDoc = ({ stepsPopulated }) => {
   const { register } = useForm();
   const dispatch = useDispatch();
 
   const { contentOfDocument, contentOfDocumentStatus } = useSelector(
     (state) => state.document
   );
-  const { wfToDocument, docCurrentWorkflow } = useSelector(
+  const { wfToDocument, docCurrentWorkflow, processSteps } = useSelector(
     (state) => state.app
   );
 
-  console.log("wftooooooooooo", wfToDocument);
+  // console.log("wftooooooooooo", wfToDocument);
 
   const [currentSteps, setCurrentSteps] = useState([]);
   const [ enabledSteps, setEnabledSteps ] = useState([]);
@@ -42,7 +43,7 @@ const ConnectWorkFlowToDoc = () => {
 
   const [contentToggle, setContentToggle] = useState(false);
 
-  console.log("sssssssssssssssssss", wfToDocument);
+  // console.log("sssssssssssssssssss", wfToDocument);
 
   useEffect(() => {
     setCurrentSteps(
@@ -72,6 +73,9 @@ const ConnectWorkFlowToDoc = () => {
     [];
     setShowSteps(singleShowStepArr);
 
+    
+    if (stepsPopulated) return
+
     if (!docCurrentWorkflow) return;
 
     const [stepsForWorkflow, stepsObj] = [
@@ -84,7 +88,7 @@ const ConnectWorkFlowToDoc = () => {
     stepsForWorkflow.push(stepsObj);
 
     dispatch(setProcessSteps(stepsForWorkflow));
-  }, [docCurrentWorkflow]);
+  }, [docCurrentWorkflow, stepsPopulated]);
 
   const handleToggleContent = (id) => {
     setCurrentSteps((prev) =>
@@ -94,7 +98,7 @@ const ConnectWorkFlowToDoc = () => {
     );
   };
 
-  console.log("currrrr", contentOfDocument);
+  // console.log("currrrr", contentOfDocument);
 
   const handleSkipSelection = (e, showStepIdToUpdate, workflowId, stepIndexToUpdate) => {
     let currentShowSteps = showSteps.slice();
@@ -106,7 +110,7 @@ const ConnectWorkFlowToDoc = () => {
       currentShowSteps[foundStepIndex].showStep = false;
       dispatch(
         updateSingleProcessStep({
-          stepSkipped: true,
+          skipStep: true,
           workflow: workflowId,
           indexToUpdate: stepIndexToUpdate,
           stepPublicMembers: [],
@@ -121,7 +125,7 @@ const ConnectWorkFlowToDoc = () => {
     currentShowSteps[foundStepIndex].showStep = true;
     dispatch(
       updateSingleProcessStep({
-        stepSkipped: false,
+        skipStep: false,
         workflow: workflowId,
         indexToUpdate: stepIndexToUpdate,
       })
@@ -184,7 +188,7 @@ const ConnectWorkFlowToDoc = () => {
             {docCurrentWorkflow && (
               <div className={styles.step__container}>
                 {currentSteps &&
-                  currentSteps?.map((item, index) => (
+                  React.Children.toArray(currentSteps?.map((item, index) => (
                     <div 
                       className={styles.step__box} 
                       style={{ 
@@ -226,8 +230,13 @@ const ConnectWorkFlowToDoc = () => {
                                 index
                               )
                             }
+                            value={
+                              processSteps.find(
+                                process => process.workflow === docCurrentWorkflow?._id
+                              )?.steps[index]?.skipStep
+                            }
                           />
-                          <label htmlFor="skip"> Skip this Step</label>
+                          <label htmlFor="skip">Skip this Step</label>
                         </div>
                         <div className={styles.checkbox}>
                           <input
@@ -241,6 +250,11 @@ const ConnectWorkFlowToDoc = () => {
                                 index
                               )
                             }}
+                            value={
+                              processSteps.find(
+                                process => process.workflow === docCurrentWorkflow?._id
+                              )?.steps[index]?.permitInternalWorkflow
+                            }
                           />
                           <label htmlFor="permit">
                             Permit internal workflow in this Step
@@ -248,23 +262,23 @@ const ConnectWorkFlowToDoc = () => {
                         </div>
                       </div>
                       <div className={styles.diveder}></div>
-                      <CopiesOfDoc currentStepIndex={index} />
+                      <CopiesOfDoc currentStepIndex={index} stepsPopulated={stepsPopulated} />
                       <div className={styles.diveder}></div>
                       <AssignDocumentMap currentStepIndex={index} />
                       <div className={styles.diveder}></div>
-                      <SelectMembersToAssign currentStepIndex={index} />
+                      <SelectMembersToAssign currentStepIndex={index} stepsPopulated={stepsPopulated} currentEnabledSteps={enabledSteps} />
                       <div className={styles.diveder}></div>
-                      <AssignCollapse currentStepIndex={index} />
+                      <AssignCollapse currentStepIndex={index} stepsPopulated={stepsPopulated} />
                       <div className={styles.container__button__box}>
-                        <PrimaryButton hoverBg="error" onClick={() => handleResetStepAndSuccessors(index)}>
+                        <PrimaryButton hoverbg="error" onClick={() => handleResetStepAndSuccessors(index)}>
                           Reset this step & its successors
                         </PrimaryButton>
-                        <PrimaryButton hoverBg="success" onClick={() => handleSetStepAndProceedToNext(index)}>
+                        <PrimaryButton hoverbg="success" onClick={() => handleSetStepAndProceedToNext(index)}>
                           Set this step & proceed to next
                         </PrimaryButton>
                       </div>
                     </div>
-                  ))}
+                  )))}
               </div>
             )}
           </>

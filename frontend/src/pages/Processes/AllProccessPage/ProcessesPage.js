@@ -59,7 +59,7 @@ const ProcessesPage = ({ home, showOnlySaved, showOnlyPaused, showOnlyCancelled,
                 cardBgColor="#1ABC9C"
                 title="drafts"
                 Card={ProcessCard}
-                cardItems={allProcesses.filter(process => process.processing_state === "draft").filter(process => process.data_type === userDetail?.portfolio_info[0]?.data_type)}
+                cardItems={allProcesses.filter(process => process.processing_state === "draft").filter(process => process.data_type === userDetail?.portfolio_info[0]?.data_type).filter(process => process.created_by === userDetail?.userinfo?.username)}
                 status={processesLoading ? "pending" :"success"}
                 itemType={"processes"}
               />

@@ -1,6 +1,7 @@
 import React from "react";
 import { RiDeleteBin6Line } from "react-icons/ri";
 import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { setAllProcesses } from "../../../features/app/appSlice";
 import { moveItemToArchive } from "../../../services/archiveServices";
@@ -11,9 +12,11 @@ const ProcessCard = ({ cardItem, title }) => {
   const { userDetail } = useSelector((state) => state.auth);
   const { allProcesses } = useSelector(state => state.app);
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const handleProcessItemClick = async (item) => {
     console.log(item)
+    // if (item.processing_state === "draft") navigate(`/workflows/new-set-workflow?id=${item._id}&state=${item.processing_state}`)
   };
 
   const handleTrashProcess = async (cardItem) => {

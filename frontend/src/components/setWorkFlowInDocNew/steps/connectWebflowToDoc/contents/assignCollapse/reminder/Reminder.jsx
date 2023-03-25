@@ -6,14 +6,14 @@ import Select from "../../../../../select/Select";
 import { updateSingleProcessStep } from "../../../../../../../features/app/appSlice";
 import { useDispatch, useSelector } from "react-redux";
 
-const Reminder = ({ currentStepIndex }) => {
+const Reminder = ({ currentStepIndex, stepsPopulated }) => {
   const { 
     register,
     formState: { isSubmitted },
     handleSubmit,
   } = useForm();
   const dispatch = useDispatch();
-  const { docCurrentWorkflow } = useSelector((state) => state.app)
+  const { docCurrentWorkflow, processSteps } = useSelector((state) => state.app)
 
   const handleSetReminder = (data) => {
     dispatch(
@@ -28,10 +28,25 @@ const Reminder = ({ currentStepIndex }) => {
   return (
     <>
     <form className={parentStyles.content__box} onSubmit={handleSubmit(handleSetReminder)}>
-      <Select options={reminder} register={register} name="stepReminder" takeNormalValue={true} />
+      <Select 
+        options={reminder} 
+        register={register} 
+        name="stepReminder" 
+        takeNormalValue={true} 
+        currentValue={
+          processSteps.find(
+            process => process.workflow === docCurrentWorkflow?._id
+          )?.steps[currentStepIndex]?.stepReminder
+        }
+      />
       <button className={parentStyles.primary__button}>set reminder</button>
     </form>
-    { isSubmitted ? <p style={{ margin: "0", padding: "0px 20px 10px"}}>Saved</p> : <></> }
+    { 
+      isSubmitted || 
+      (stepsPopulated && processSteps.find(process => process.workflow === docCurrentWorkflow?._id)?.steps[currentStepIndex]?.stepTime) ? 
+        <p style={{ margin: "0", padding: "0px 20px 10px"}}>Saved</p> : 
+        <></> 
+    }
     </>
   );
 };

@@ -12,7 +12,7 @@ const SelectedWorkflows = () => {
     (state) => state.app
   );
 
-  console.log("selectedWorkflowsToDoc", selectedWorkflowsToDoc);
+  // console.log("selectedWorkflowsToDoc", selectedWorkflowsToDoc);
 
   const handleRemove = (workflow) => {
     dispatch(setSelectedWorkflowsToDoc(workflow));

@@ -233,7 +233,7 @@ export const appSlice = createSlice({
     removeFromTableOfContentForStep: (state, action) => {
       const updatedTableOfContents = state.tableOfContentForStep.filter(
         (content) => {
-          if (content._id === action.payload.id && content.stepIndex === action.payload.stepIndex) return null
+          if (content.id === action.payload.id && content.stepIndex === action.payload.stepIndex) return null
           return content
         }
       );

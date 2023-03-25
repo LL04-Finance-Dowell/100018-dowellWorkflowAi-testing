@@ -44,7 +44,7 @@ const TemplateCard = ({ cardItem }) => {
         const response = await (await addNewFavoriteForUser(data)).data;
         toast.success(response)
       } catch (error) {
-        toast.info("Failed to add template to favorites")
+        toast.info("Failed to add template to bookmarks")
         removeFromFavoritesState("templates", item._id)
       }
     }
@@ -53,9 +53,9 @@ const TemplateCard = ({ cardItem }) => {
       removeFromFavoritesState("templates", item._id)
       try {
         const response = await (await deleteFavoriteForUser(item._id, 'template', userDetail?.userinfo?.username)).data;
-        toast.success('Item removed from favourites')
+        toast.success('Item removed from bookmarks')
       } catch (error) {
-        toast.info("Failed to remove template from favorites")
+        toast.info("Failed to remove template from bookmarks")
         addToFavoritesState("templates", {...item, 'favourited_by': userDetail?.userinfo?.username})
       }
     }

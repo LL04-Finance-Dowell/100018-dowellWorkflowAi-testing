@@ -2,7 +2,7 @@ import React from "react";
 import styles from "./formLayout.module.css";
 
 const FormLayout = ({ isSubmitted, children, loading, ...rest }) => {
-  console.log("aaa", loading);
+  // console.log("aaa", loading);
 
   return (
     <div {...rest} className={styles.container}>

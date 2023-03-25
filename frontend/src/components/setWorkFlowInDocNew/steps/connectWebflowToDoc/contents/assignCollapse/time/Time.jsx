@@ -7,7 +7,7 @@ import Select from "../../../../../select/Select";
 import { updateSingleProcessStep } from "../../../../../../../features/app/appSlice";
 import { useDispatch, useSelector } from "react-redux";
 
-const Time = ({ currentStepIndex }) => {
+const Time = ({ currentStepIndex, stepsPopulated }) => {
   const { 
     register,
     handleSubmit,
@@ -15,7 +15,7 @@ const Time = ({ currentStepIndex }) => {
   } = useForm();
   const [ currentLimitSelection, setCurrentLimitSelection ] = useState(null);
   const [ customTimeSelection, setCustomTimeSelection ] = useState(null);
-  const { docCurrentWorkflow } = useSelector((state) => state.app)
+  const { docCurrentWorkflow, processSteps } = useSelector((state) => state.app)
   const handleTimeLimitSelection = (e) => setCurrentLimitSelection(e.target.value)
   const handleCustomTimeSelection = (e) => setCustomTimeSelection(true)
 
@@ -68,10 +68,30 @@ const Time = ({ currentStepIndex }) => {
     <>
     <form className={parentStyles.content__box} onSubmit={handleSubmit(handleSetTime)}>
       <div>
-        <Radio name="time" value="noTimeLimit" register={register} onChange={handleTimeLimitSelection}>
+        <Radio 
+          name="time" 
+          value="noTimeLimit" 
+          register={register} 
+          onChange={handleTimeLimitSelection}
+          checked={
+            processSteps.find(
+              process => process.workflow === docCurrentWorkflow?._id
+            )?.steps[currentStepIndex]?.stepTime === "no_time_limit"
+          }
+        >
           No Time limit
         </Radio>
-        <Radio name="time" value="selectTimeLimit" register={register} onChange={handleTimeLimitSelection}>
+        <Radio 
+          name="time" 
+          value="selectTimeLimit" 
+          register={register} 
+          onChange={handleTimeLimitSelection}
+          checked={
+            processSteps.find(
+              process => process.workflow === docCurrentWorkflow?._id
+            )?.steps[currentStepIndex]?.stepTime === "select"
+          }
+        >
           Select Time limit
         </Radio>
       </div>
@@ -80,7 +100,17 @@ const Time = ({ currentStepIndex }) => {
         currentLimitSelection === "noTimeLimit" ? <></> :
         <>
           <Select options={times} register={register} name="timeLimit" takeNormalValue={true} />
-          <Radio name="customTime" value="customTime" register={register} onChange={handleCustomTimeSelection}>
+          <Radio 
+            name="customTime" 
+            value="customTime" 
+            register={register} 
+            onChange={handleCustomTimeSelection}
+            checked={
+              processSteps.find(
+                process => process.workflow === docCurrentWorkflow?._id
+              )?.steps[currentStepIndex]?.stepTime === "custom"
+            }
+          >
             Custom Time
           </Radio>
           <>
@@ -102,7 +132,12 @@ const Time = ({ currentStepIndex }) => {
       }
       <button className={parentStyles.primary__button}>set time limit</button>
     </form>
-    { isSubmitted ? <p style={{ margin: "0", padding: "0px 20px 10px"}}>Saved</p> : <></> }
+    { 
+      isSubmitted || 
+      (stepsPopulated && processSteps.find(process => process.workflow === docCurrentWorkflow?._id)?.steps[currentStepIndex]?.stepTime) ? 
+        <p style={{ margin: "0", padding: "0px 20px 10px"}}>Saved</p> : 
+        <></> 
+    }
     </>
   );
 };

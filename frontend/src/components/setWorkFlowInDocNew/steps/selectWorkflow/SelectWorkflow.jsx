@@ -12,7 +12,7 @@ import {
 } from "../../../../features/app/appSlice";
 import { contentDocument } from "../../../../features/document/asyncThunks";
 
-const SelectWorkflow = () => {
+const SelectWorkflow = ({ workflowBoxOpen }) => {
   const dispatch = useDispatch();
   const { currentDocToWfs } = useSelector((state) => state.app);
 
@@ -35,13 +35,13 @@ const SelectWorkflow = () => {
         2. Select a Workflow to add to the selected document
       </h2>
       <div className={styles.content__box}>
-        <SelectWorkflowBoxes />
+        <SelectWorkflowBoxes workflowBoxOpen={workflowBoxOpen} />
         <SelectedWorkflows />
         <div className={styles.button__container}>
-          <PrimaryButton onClick={handleRemove} hoverBg="error">
+          <PrimaryButton onClick={handleRemove} hoverbg="error">
             Remove Selected Workflows from document
           </PrimaryButton>
-          <PrimaryButton onClick={handleConnectWfToDoc} hoverBg="success">
+          <PrimaryButton onClick={handleConnectWfToDoc} hoverbg="success">
             Add Selected Workflows to document
           </PrimaryButton>
         </div>

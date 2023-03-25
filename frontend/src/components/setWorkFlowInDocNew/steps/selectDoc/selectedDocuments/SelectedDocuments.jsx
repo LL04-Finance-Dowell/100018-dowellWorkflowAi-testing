@@ -7,7 +7,7 @@ import { setContentOfDocument } from "../../../../../features/document/documentS
 import { PrimaryButton } from "../../../../styledComponents/styledComponents";
 import styles from "./selectedDocuments.module.css";
 
-const SelectedDocuments = ({ selectedDocument, selectedDocuments }) => {
+const SelectedDocuments = ({ selectedDocument, selectedDocuments, disableSelections }) => {
   const {
     register,
     handleSubmit,
@@ -35,7 +35,7 @@ const SelectedDocuments = ({ selectedDocument, selectedDocuments }) => {
   };
 
   return (
-    <div className={`${styles.container} ${isSubmitted && styles.selected}`}>
+    <div className={`${styles.container} ${isSubmitted && styles.selected}`} style={{ pointerEvents: disableSelections ? 'none' : 'all' }}>
       {/*  <div className={styles.selected__doc__box}> */}
       {
       !selectedDocument ? (
@@ -68,7 +68,7 @@ const SelectedDocuments = ({ selectedDocument, selectedDocuments }) => {
       ) : (
         <>
           <h3 className={styles.no__item}>No document copies found for {selectedDocument.document_name}</h3>
-          <PrimaryButton type="submit" hoverBg="success" onClick={onSubmit}>
+          <PrimaryButton type="submit" hoverbg="success" onClick={onSubmit}>
             Add selected document copies to process (Break processing of
             unselected)
           </PrimaryButton>

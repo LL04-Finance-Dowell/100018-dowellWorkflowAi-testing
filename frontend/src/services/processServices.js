@@ -22,7 +22,7 @@ export const startNewProcessV2 = async (data) => {
 }
 
 export const getSingleProcessV2 = async (processId) => {
-    return await newHttpProcess.get(`/${processId}/`);
+    return await httpProcess.get(`/${processId}/`);
 }
 
 export const getAllProcessesV2 = async (companyId) => {

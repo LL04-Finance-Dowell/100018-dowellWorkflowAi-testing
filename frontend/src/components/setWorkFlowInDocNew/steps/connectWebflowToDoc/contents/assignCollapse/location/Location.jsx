@@ -10,7 +10,7 @@ import { getRegionsInCountry } from "../../../../../../../services/locationServi
 import ProgressBar from "../../../../../../progressBar/ProgressBar";
 import { updateSingleProcessStep } from "../../../../../../../features/app/appSlice";
 
-const Location = ({ currentStepIndex }) => {
+const Location = ({ currentStepIndex, stepsPopulated }) => {
   const { 
     register,
     handleSubmit,
@@ -21,7 +21,7 @@ const Location = ({ currentStepIndex }) => {
   const dispatch = useDispatch();
   const [ currentLocationChoice, setCurrentLocationChoice ] = useState(null);
   const [ showLocationDropdowns, setShowLocationDropdowns ] = useState(false);
-  const { docCurrentWorkflow, continents, continentsLoaded } = useSelector((state) => state.app);
+  const { docCurrentWorkflow, continents, continentsLoaded, processSteps } = useSelector((state) => state.app);
   const { userDetail, session_id } = useSelector(state => state.auth);
   const [ countries, setCountries ] = useState([]);
   const [ regionsLoading, setRegionsLoading ] = useState(false);
@@ -103,10 +103,30 @@ const Location = ({ currentStepIndex }) => {
     <>
     <form className={parentStyles.content__box} onSubmit={handleSubmit(handleSetLocation)}>
       <div>
-        <Radio register={register} value="anyLocation" name={"locationChoice"} onChange={() => setCurrentLocationChoice("anyLocation")}>
+        <Radio 
+          register={register} 
+          value="anyLocation" 
+          name={"locationChoice"} 
+          onChange={() => setCurrentLocationChoice("anyLocation")}
+          checked={
+            processSteps.find(
+              process => process.workflow === docCurrentWorkflow?._id
+            )?.steps[currentStepIndex]?.stepLocation === "any"
+          }
+        >
           Any Location
         </Radio>
-        <Radio register={register} value="selectLocation" name={"locationChoice"} onChange={() => setCurrentLocationChoice("selectLocation")}>
+        <Radio 
+          register={register} 
+          value="selectLocation" 
+          name={"locationChoice"} 
+          onChange={() => setCurrentLocationChoice("selectLocation")}
+          checked={
+            processSteps.find(
+              process => process.workflow === docCurrentWorkflow?._id
+            )?.steps[currentStepIndex]?.stepLocation === "select"
+          }
+        >
           Select Location
         </Radio>
       </div>
@@ -143,7 +163,7 @@ const Location = ({ currentStepIndex }) => {
       }
       <button className={parentStyles.primary__button}>set location</button>
     </form>
-    { isSubmitted ? <p style={{ margin: "0", padding: "0px 20px 10px"}}>Saved</p> : <></> }
+    { isSubmitted || stepsPopulated ? <p style={{ margin: "0", padding: "0px 20px 10px"}}>Saved</p> : <></> }
 
     </>
   );

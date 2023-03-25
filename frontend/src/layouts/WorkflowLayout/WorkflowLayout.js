@@ -8,13 +8,14 @@ import DowellLogo from "../../assets/dowell.png";
 import Spinner from "../../components/spinner/Spinner";
 import useCloseElementOnEscapekeyClick from "../../../src/hooks/useCloseElementOnEscapeKeyClick";
 import UserDetail from "../../components/newSidebar/userDetail/UserDetail";
-import { setAdminUser, setAdminUserPortfolioLoaded, setLegalAgreePageLoading, setShowLegalStatusPopup, setUserDetailPosition } from "../../features/app/appSlice";
+import { setAdminUser, setAdminUserPortfolioLoaded, setAllProcesses, setLegalAgreePageLoading, setProcessesLoaded, setProcessesLoading, setShowLegalStatusPopup, setUserDetailPosition } from "../../features/app/appSlice";
 import { AiOutlineClose } from "react-icons/ai";
 import { LoadingSpinner } from "../../components/LoadingSpinner/LoadingSpinner";
 import { formatDateAndTime } from "../../utils/helpers";
 import { workflowRegistrationEventId } from "../../services/legalService";
 import { AuthServices } from "../../services/authServices";
 import { updateUserDetail } from "../../features/auth/authSlice";
+import { getAllProcessesV2 } from "../../services/processServices";
 
 const WorkflowLayout = ({ children }) => {
   const dispatch = useDispatch();
@@ -27,6 +28,7 @@ const WorkflowLayout = ({ children }) => {
     dateAgreedToLegalStatus,
     legalArgeePageLoading,
     adminUserPortfolioLoaded,
+    processesLoaded
   } = useSelector((state) => state.app);
   const [createNewPortfolioLoading, setCreateNewPortfolioLoading] =
     useState(false);
@@ -61,6 +63,18 @@ const WorkflowLayout = ({ children }) => {
     
     if (!session_id || !userDetail || !userDetail.portfolio_info || userDetail.portfolio_info.length < 1) return
 
+    if (!processesLoaded) {
+      getAllProcessesV2(userDetail?.portfolio_info[0]?.org_id).then(res => {
+        dispatch(setAllProcesses(res.data.filter(process => process.processing_state).reverse()));
+        dispatch(setProcessesLoading(false));
+        dispatch(setProcessesLoaded(true));
+      }).catch(err => {
+        console.log("Failed: ", err.response);
+        dispatch(setProcessesLoading(false));
+        console.log("did not fetch processes");
+      })  
+    }
+
     const workflowProduct = userDetail?.portfolio_info?.find(item => item.product === "Workflow AI")
     if (!workflowProduct || workflowProduct.member_type !== "owner") return
     
@@ -80,7 +94,7 @@ const WorkflowLayout = ({ children }) => {
       dispatch(setAdminUserPortfolioLoaded(true));
     })
 
-  }, [])
+  }, [session_id, userDetail])
   
   return (
     <>

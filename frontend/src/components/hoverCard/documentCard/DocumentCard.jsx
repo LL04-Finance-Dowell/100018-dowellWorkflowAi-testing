@@ -53,7 +53,7 @@ const DocumentCard = ({ cardItem, title, hideFavoriteIcon, hideDeleteIcon }) => 
         const response = await (await addNewFavoriteForUser(data)).data;
         toast.success(response)
       } catch (error) {
-        toast.info("Failed to add document to favorites")
+        toast.info("Failed to add document to bookmarks")
         removeFromFavoritesState("documents", item._id)
       }
     }
@@ -62,9 +62,9 @@ const DocumentCard = ({ cardItem, title, hideFavoriteIcon, hideDeleteIcon }) => 
       removeFromFavoritesState("documents", item._id)
       try {
         const response = await (await deleteFavoriteForUser(item._id, 'document', userDetail?.userinfo?.username)).data;
-        toast.success('Item removed from favourites')
+        toast.success('Item removed from bookmarks')
       } catch (error) {
-        toast.info("Failed to remove document from favorites")
+        toast.info("Failed to remove document from bookmarks")
         addToFavoritesState("documents", {...item, 'favourited_by': userDetail?.userinfo?.username})
       }
     }

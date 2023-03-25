@@ -7,7 +7,7 @@ import AssignButton from "../../../../../assignButton/AssignButton";
 import { updateSingleProcessStep } from "../../../../../../../features/app/appSlice";
 import { useDispatch, useSelector } from "react-redux";
 
-const AssignTask = ({ currentStepIndex }) => {
+const AssignTask = ({ currentStepIndex, stepsPopulated }) => {
   const {
     register,
     handleSubmit,
@@ -16,7 +16,7 @@ const AssignTask = ({ currentStepIndex }) => {
   } = useForm();
   const [loading, setLoading] = useState(false);
   const dispatch = useDispatch();
-  const { docCurrentWorkflow } = useSelector((state) => state.app);
+  const { docCurrentWorkflow, processSteps } = useSelector((state) => state.app);
 
   const onSubmit = (data) => {
     setLoading(true);
@@ -37,7 +37,7 @@ const AssignTask = ({ currentStepIndex }) => {
   };
 
   return (
-    <FormLayout isSubmitted={isSubmitSuccessful} loading={loading}>
+    <FormLayout isSubmitted={stepsPopulated ? stepsPopulated : isSubmitSuccessful} loading={loading}>
       <form onSubmit={handleSubmit(onSubmit)}>
         <Select
           label="member order"
@@ -45,6 +45,11 @@ const AssignTask = ({ currentStepIndex }) => {
           name="memberOrder"
           options={memberOrder}
           takeNormalValue={true}
+          currentValue={
+            processSteps.find(
+              process => process.workflow === docCurrentWorkflow?._id
+            )?.steps[currentStepIndex]?.stepProcessingOrder
+          }
         />
         <Select
           label="Task Type"
@@ -52,6 +57,11 @@ const AssignTask = ({ currentStepIndex }) => {
           name="taskType"
           options={taskType}
           takeNormalValue={true}
+          currentValue={
+            processSteps.find(
+              process => process.workflow === docCurrentWorkflow?._id
+            )?.steps[currentStepIndex]?.stepTaskType
+          }
         />
         <Select
           label="Rights"
@@ -59,6 +69,11 @@ const AssignTask = ({ currentStepIndex }) => {
           name="rights"
           options={rights}
           takeNormalValue={true}
+          currentValue={
+            processSteps.find(
+              process => process.workflow === docCurrentWorkflow?._id
+            )?.steps[currentStepIndex]?.stepRights
+          }
         />
         <Select
           label="activity type"
@@ -66,6 +81,11 @@ const AssignTask = ({ currentStepIndex }) => {
           name="activityType"
           options={activityType}
           takeNormalValue={true}
+          currentValue={
+            processSteps.find(
+              process => process.workflow === docCurrentWorkflow?._id
+            )?.steps[currentStepIndex]?.stepActivityType
+          }
         />
         <Select
           label="limit task to"
@@ -73,6 +93,11 @@ const AssignTask = ({ currentStepIndex }) => {
           name="limitTaskTo"
           options={limitTaskTo}
           takeNormalValue={true}
+          currentValue={
+            processSteps.find(
+              process => process.workflow === docCurrentWorkflow?._id
+            )?.steps[currentStepIndex]?.stepTaskLimitation
+          }
         />
         <AssignButton loading={loading} buttonText="Assign Task" />
       </form>

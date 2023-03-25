@@ -6,13 +6,13 @@ import Select from "../../../../../select/Select";
 import { useDispatch, useSelector } from "react-redux";
 import { updateSingleProcessStep } from "../../../../../../../features/app/appSlice";
 
-const Display = ({ currentStepIndex }) => {
+const Display = ({ currentStepIndex, stepsPopulated }) => {
   const { 
     register, 
     handleSubmit, 
     formState: { isSubmitted }
   } = useForm();
-  const { docCurrentWorkflow } = useSelector((state) => state.app)
+  const { docCurrentWorkflow, processSteps } = useSelector((state) => state.app)
   const dispatch = useDispatch()
 
   const handleSetDisplay = (data) => {
@@ -33,12 +33,16 @@ const Display = ({ currentStepIndex }) => {
         register={register}
         name="displayDocument"
         takeNormalValue={true}
+        currentValue={processSteps.find(
+            process => process.workflow === docCurrentWorkflow?._id
+          )?.steps[currentStepIndex]?.stepDisplay
+        }
       />
       <button type="submit" className={parentStyles.primary__button}>
         set display
       </button>
     </form>
-    { isSubmitted ? <p style={{ margin: "0", padding: "0px 20px 10px"}}>Saved</p> : <></> }
+    { isSubmitted || stepsPopulated ? <p style={{ margin: "0", padding: "0px 20px 10px"}}>Saved</p> : <></> }
     </>
   );
 };

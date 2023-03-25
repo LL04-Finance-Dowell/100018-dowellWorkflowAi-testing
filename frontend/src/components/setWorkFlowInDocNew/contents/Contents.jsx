@@ -39,12 +39,12 @@ const Contents = ({
     const contentStepAlreadyAdded = tableOfContentForStep.find(
       (step) =>
         step.workflow === docCurrentWorkflow._id &&
-        step._id === valueAsJSON._id &&
+        step.id === valueAsJSON.id &&
         step.stepIndex === currentStepIndex
     );
 
     if (contentStepAlreadyAdded) {
-      return dispatch(removeFromTableOfContentForStep({ id: valueAsJSON._id, stepIndex: currentStepIndex }));
+      return dispatch(removeFromTableOfContentForStep({ id: valueAsJSON.id, stepIndex: currentStepIndex }));
     }
 
     const newTableOfContentObj = {
@@ -115,20 +115,20 @@ const Contents = ({
                         </thead>
                         <tbody>
                           <>
-                            {contentsPageWise[page].map((item) => (
+                            {React.Children.toArray(contentsPageWise[page].map((item) => (
                               <tr
                                 className={
                                   item._id === currentTableItem &&
                                   styles.current__table__item
                                 }
-                                key={item._id}
+                                // key={item._id}
                               >
                                 <th className={styles.table__id}>{item.id}</th>
                                 <th className={styles.table__content}>
                                   {item.data}
                                 </th>
                               </tr>
-                            ))}
+                            )))}
                           </>
                         </tbody>
                       </table>
@@ -156,7 +156,7 @@ const Contents = ({
                       tableOfContentForStep.find(
                         (step) =>
                           step.workflow === docCurrentWorkflow._id &&
-                          step._id === item._id &&
+                          step.id === item.id &&
                           step.stepIndex === currentStepIndex
                       ) && 
                       feature && feature === "table-of-contents" ? 
@@ -183,7 +183,7 @@ const Contents = ({
                             tableOfContentForStep.find(
                               (step) =>
                                 step.workflow === docCurrentWorkflow._id &&
-                                step._id === item._id &&
+                                step.id === item.id &&
                                 step.stepIndex === currentStepIndex
                             )
                               ? {

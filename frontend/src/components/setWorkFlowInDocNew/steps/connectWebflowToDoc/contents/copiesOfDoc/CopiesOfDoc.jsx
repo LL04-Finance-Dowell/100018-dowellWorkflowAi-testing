@@ -8,7 +8,7 @@ import AssignButton from "../../../../assignButton/AssignButton";
 import { useDispatch, useSelector } from "react-redux";
 import { updateSingleProcessStep } from "../../../../../../features/app/appSlice";
 
-const CopiesOfDoc = ({ currentStepIndex }) => {
+const CopiesOfDoc = ({ currentStepIndex, stepsPopulated }) => {
   const {
     register,
     handleSubmit,
@@ -16,7 +16,14 @@ const CopiesOfDoc = ({ currentStepIndex }) => {
     formState: { isSubmitSuccessful },
   } = useForm();
   const [loading, setLoading] = useState(false);
-  const { currentDocToWfs, docCurrentWorkflow, processSteps, publicMembersSelectedForProcess, userMembersSelectedForProcess, teamMembersSelectedForProcess } = useSelector(state => state.app);
+  const { 
+    currentDocToWfs, 
+    docCurrentWorkflow, 
+    processSteps, 
+    publicMembersSelectedForProcess, 
+    userMembersSelectedForProcess, 
+    teamMembersSelectedForProcess 
+  } = useSelector(state => state.app);
   const [ copiesFeaturesSet, setCopiesFeaturesSet ] = useState(false);
   const [ copiesFeaturesToDisplay, setCopiesFeaturesToDisplay ] = useState([]);
   const [ copiesSelected, setCopiesSelected ] = useState([]);
@@ -24,7 +31,7 @@ const CopiesOfDoc = ({ currentStepIndex }) => {
 
   useEffect(() => {
     
-    if(!currentDocToWfs) return
+    if (!currentDocToWfs || stepsPopulated) return
 
     if (copiesFeaturesSet) return
 
@@ -39,11 +46,11 @@ const CopiesOfDoc = ({ currentStepIndex }) => {
     setCopiesFeaturesToDisplay(currentCopies);
     setCopiesFeaturesSet(true);
 
-  }, [currentDocToWfs])
+  }, [currentDocToWfs, stepsPopulated])
 
   useEffect(() => {
 
-    if (!currentDocToWfs) return
+    if (!currentDocToWfs || stepsPopulated) return
 
     const newCopiesForCurrentStep= [];
 
@@ -69,7 +76,30 @@ const CopiesOfDoc = ({ currentStepIndex }) => {
       setCopiesFeaturesToDisplay(newCopiesForCurrentStep);
     }
 
-  }, [currentDocToWfs, processSteps])
+  }, [currentDocToWfs, processSteps, stepsPopulated])
+
+  useEffect(() => {
+    
+    if (copiesFeaturesSet) return
+
+    const documentCountForStep = processSteps.find(
+      process => process.workflow === docCurrentWorkflow?._id
+    )?.steps[currentStepIndex].stepCloneCount
+
+    const copiesForCurrentStep = [];
+
+    for (let i = 0; i < documentCountForStep; i++) {
+      copiesForCurrentStep.push({
+        id: currentDocToWfs?._id, 
+        feature: currentDocToWfs?.document_name,
+        document_number: i + 1,
+      });
+      setCopiesFeaturesToDisplay(copiesForCurrentStep);
+    }
+
+    setCopiesFeaturesSet(true);
+
+  }, [stepsPopulated])
 
   const onSubmit = (data) => {
     setLoading(true);
@@ -94,7 +124,7 @@ const CopiesOfDoc = ({ currentStepIndex }) => {
   }
 
   return (
-    <FormLayout isSubmitted={isSubmitSuccessful} loading={loading}>
+    <FormLayout isSubmitted={stepsPopulated ? stepsPopulated : isSubmitSuccessful} loading={loading}>
       <form onSubmit={handleSubmit(onSubmit)}>
         <h2 className={styles.header}>
           Copies of document from previous step (select for processing)
@@ -106,11 +136,11 @@ const CopiesOfDoc = ({ currentStepIndex }) => {
           className={globalStyles.task__features}
           onChange={({ target }) => handleSingleCopySelection(JSON.parse(target.value))}
         >
-          {copiesFeaturesToDisplay.map((item) => (
-            <option className={globalStyles.task__features__text} style={copiesSelected.find(copy => copy.id === item.id && copy.document_number === item.document_number) ? { backgroundColor: '#0048ff', color: '#fff' }: {}} key={item.id} value={JSON.stringify(item)}>
+          {React.Children.toArray(copiesFeaturesToDisplay.map((item) => (
+            <option className={globalStyles.task__features__text} style={copiesSelected.find(copy => copy.id === item.id && copy.document_number === item.document_number) ? { backgroundColor: '#0048ff', color: '#fff' }: {}} value={JSON.stringify(item)}>
               {item.feature}
             </option>
-          ))}
+          )))}
         </select>
         <AssignButton
           loading={loading}

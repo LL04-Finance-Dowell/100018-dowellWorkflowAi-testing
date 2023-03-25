@@ -10,6 +10,7 @@ import { detailDocument } from "../../../features/document/asyncThunks";
 import { setToggleManageFileForm } from "../../../features/app/appSlice";
 import { detailWorkflow } from "../../../features/workflow/asyncTHunks";
 import { useDispatch } from "react-redux";
+import React from "react";
 
 function ListItem({ item }) {
   let children = null;
@@ -17,7 +18,7 @@ function ListItem({ item }) {
   const dispatch = useDispatch();
 
   if (item.children && item.children.length) {
-    console.log(item);
+    // console.log(item);
     children = (
       <ul>
         {item.children.map((i) => (
@@ -86,11 +87,11 @@ const CollapseItem = ({ items, listType }) => {
 
   return (
     <div className={styles.container}>
-      {menuItems.map((item) => (
+      {React.Children.toArray(menuItems.map((item) => (
         <>
           <HashLink
             to={item.href && item.href}
-            key={item.id}
+            // key={item.id}
             className={`${styles.parent__item__box} ${
               item.isOpen && styles.active
             }`}
@@ -111,22 +112,22 @@ const CollapseItem = ({ items, listType }) => {
               <div className={styles.children__item__box}>
                 {listType && listType === "ol" ? (
                   <ol>
-                    {item.children.map((item) => (
-                      <ListItem item={item} key={item.id} />
-                    ))}
+                    {React.Children.toArray(item.children.map((item) => (
+                      <ListItem item={item} />
+                    )))}
                   </ol>
                 ) : (
                   <ul>
-                    {item.children.map((item) => (
-                      <ListItem item={item} key={item.id} />
-                    ))}
+                    {React.Children.toArray(item.children.map((item) => (
+                      <ListItem item={item} />
+                    )))}
                   </ul>
                 )}
               </div>
             </Collapse>
           </div>
         </>
-      ))}
+      )))}
     </div>
   );
 };

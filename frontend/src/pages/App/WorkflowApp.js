@@ -139,31 +139,6 @@ const WorkflowApp = () => {
     }
   }, [location]);
 
-  
-  useEffect(() => {
-
-    if (processesLoaded) return
-
-    if (
-      !userDetail ||
-      !userDetail.portfolio_info ||
-      userDetail.portfolio_info.length < 1
-    ) {
-      return;
-    }
-
-    getAllProcessesV2(userDetail?.portfolio_info[0]?.org_id).then(res => {
-      dispatch(setAllProcesses(res.data.filter(process => process.processing_state).reverse()));
-      dispatch(setProcessesLoading(false));
-      dispatch(setProcessesLoaded(true));
-    }).catch(err => {
-      console.log("Failed: ", err.response);
-      dispatch(setProcessesLoading(false));
-      console.log("did not fetch processes");
-    })
-
-  }, [processesLoading, userDetail])
-
   return (
     <WorkflowLayout>
       <div className={styles.container}>
@@ -210,7 +185,7 @@ const WorkflowApp = () => {
           <div style={{ marginBottom: "45px" }}>
             <>
               {
-                !favoriteItemsLoaded ? <p style={{ textAlign: "center" }}>Loading favorites...</p> : 
+                !favoriteItemsLoaded ? <p style={{ textAlign: "center" }}>Loading bookmarks...</p> : 
                 <>
                 {
                   React.Children.toArray(Object.keys(favoriteItems).map(key => {

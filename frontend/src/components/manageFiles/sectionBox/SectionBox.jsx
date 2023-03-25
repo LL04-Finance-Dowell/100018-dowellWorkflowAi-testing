@@ -260,7 +260,7 @@ const SectionBox = ({ cardItems, title, Card, status, idKey, itemType, hideFavor
                           cardItems.length / 10 < sliceCount && "none"
                         }`,
                       }}
-                      hoverBg="success"
+                      hoverbg="success"
                       onClick={handleLoadMore}
                     >
                       {cardItems.length / 10 < sliceCount

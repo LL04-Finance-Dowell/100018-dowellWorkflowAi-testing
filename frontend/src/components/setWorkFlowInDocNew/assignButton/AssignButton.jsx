@@ -5,7 +5,7 @@ import { PrimaryButton } from "../../styledComponents/styledComponents";
 
 const AssignButton = ({ buttonText, loading }) => {
   return (
-    <PrimaryButton hoverBg="success" type="submit">
+    <PrimaryButton hoverbg="success" type="submit">
       {loading && (
         <motion.span
           animate={{
