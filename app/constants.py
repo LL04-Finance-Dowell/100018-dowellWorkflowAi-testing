@@ -210,3 +210,23 @@ WF_AI_SETTING_DICT = {
     "team_member_ID": "1000180009",
     "function_ID": "ABCDE",
 }
+
+
+MANAGEMENT_REPORTS_DICT = {
+    "cluster": "Documents",
+    "database": "Documentation",
+    "collection": "CompanyManagementReports",
+    "document": "companymanagementreports",
+    "team_member_ID": "44689044433",
+    "function_ID": "ABCDE",
+}
+
+
+MANAGEMENT_REPORTS_LIST = [
+    "Documents",
+    "Documentation",
+    "CompanyManagementReports",
+    "companymanagementreports",
+    "44689044433",
+    "ABCDE",
+]
