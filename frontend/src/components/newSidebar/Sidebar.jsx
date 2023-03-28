@@ -224,9 +224,9 @@ export const manageFileItems = [
 		id: uuidv4(),
 		parent: "My Processes",
 		children: [
-			{ id: uuidv4(), child: "Cancelled Processes", href: "/processes/#cancelledProcess" },
-			{ id: uuidv4(), child: "Test Processes", href: "/processes/#testProcess" },
-			{ id: uuidv4(), child: "Completed Processes", href: "/processes/#completedProcess" },
+			{ id: uuidv4(), child: "Cancelled Processes", href: "/processes/cancelled" },
+			{ id: uuidv4(), child: "Test Processes", href: "/processes/tests" },
+			{ id: uuidv4(), child: "Completed Processes", href: "/processes/completed" },
 		],
 	},
 ];

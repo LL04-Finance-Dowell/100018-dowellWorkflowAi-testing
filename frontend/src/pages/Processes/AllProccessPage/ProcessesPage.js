@@ -9,7 +9,7 @@ import { getAllProcessesV2 } from "../../../services/processServices";
 import { setAllProcesses, setProcessesLoaded, setProcessesLoading } from "../../../features/app/appSlice";
 import { useNavigate } from "react-router-dom";
 
-const ProcessesPage = ({ home, showOnlySaved, showOnlyPaused, showOnlyCancelled, showOnlyTrashed }) => {
+const ProcessesPage = ({ home, showOnlySaved, showOnlyPaused, showOnlyCancelled, showOnlyTrashed, showOnlyTests, showOnlyCompleted }) => {
   const { processesLoading, allProcesses, processesLoaded } = useSelector((state) => state.app);
   const { userDetail } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
@@ -21,9 +21,11 @@ const ProcessesPage = ({ home, showOnlySaved, showOnlyPaused, showOnlyCancelled,
     if (showOnlyPaused) navigate("#paused-processes");
     if (showOnlyCancelled) navigate("#cancelled-processes");
     if (showOnlyTrashed) navigate("#thrashed-processes");
+    if (showOnlyTests) navigate("#test-processes");
+    if (showOnlyCompleted) navigate("#completed-processes");
     if (home) navigate('#drafts')
 
-  }, [showOnlySaved, showOnlyPaused, showOnlyCancelled, showOnlyTrashed, home])
+  }, [showOnlySaved, showOnlyPaused, showOnlyCancelled, showOnlyTrashed, home, showOnlyTests, showOnlyCompleted])
 
   useEffect(() => {
 
@@ -108,6 +110,30 @@ const ProcessesPage = ({ home, showOnlySaved, showOnlyPaused, showOnlyCancelled,
                 title="trashed proccess"
                 Card={ProcessCard}
                 cardItems={allProcesses.filter(process => process.processing_state === "trash")}
+                status={processesLoading ? "pending" : "success"}
+                itemType={"processes"}
+              />
+            </div> : <></>
+          }
+          {
+            showOnlyTests ?<div id="test-processes">
+              <SectionBox
+                cardBgColor="#1ABC9C"
+                title="test proccess"
+                Card={ProcessCard}
+                cardItems={allProcesses.filter(process => process.processing_state === "test").filter(process => process.data_type === userDetail?.portfolio_info[0]?.data_type)}
+                status={processesLoading ? "pending" : "success"}
+                itemType={"processes"}
+              />
+            </div> : <></>
+          }
+          {
+            showOnlyCompleted ?<div id="completed-processes">
+              <SectionBox
+                cardBgColor="#1ABC9C"
+                title="completed proccess"
+                Card={ProcessCard}
+                cardItems={allProcesses.filter(process => process.processing_state === "completed").filter(process => process.data_type === userDetail?.portfolio_info[0]?.data_type)}
                 status={processesLoading ? "pending" : "success"}
                 itemType={"processes"}
               />
