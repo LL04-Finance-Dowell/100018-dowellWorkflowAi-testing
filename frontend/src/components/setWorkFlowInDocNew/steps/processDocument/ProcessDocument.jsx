@@ -62,6 +62,7 @@ const ProcessDocument = () => {
           steps: [],
         }
       }],
+      "workflows_ids": [docCurrentWorkflow._id], // this will be updated later to capture multiple workflows
     }
 
     const foundProcessSteps = processSteps.find(process => process.workflow === docCurrentWorkflow._id);
@@ -108,6 +109,13 @@ const ProcessDocument = () => {
       if (!copyOfCurrentStep.skipStep) copyOfCurrentStep.skipStep = false
       if (!copyOfCurrentStep.stepLocation) copyOfCurrentStep.stepLocation = "any"
 
+      if (copyOfCurrentStep.skipStep) {
+        copyOfCurrentStep.stepCloneCount = 0;
+        copyOfCurrentStep.stepDisplay = "in_all_steps";
+        copyOfCurrentStep.stepProcessingOrder = "no_order";
+        copyOfCurrentStep.stepRights = "add_edit";
+        copyOfCurrentStep.stepActivityType = "individual_task";
+      }
       return copyOfCurrentStep
     
     }) : [];
@@ -115,20 +123,32 @@ const ProcessDocument = () => {
     const requiredFieldKeys = Object.keys(requiredProcessStepsKeys);
 
     const pendingFieldsToFill = requiredFieldKeys.map(requiredKey => {
-      if (processObj.workflows[0].workflows.steps.every(step => step[`${requiredKey}`])) return null
+      if (processObj.workflows[0].workflows.steps.every(step => step.hasOwnProperty(requiredKey))) return null
       return "field missing"
     })
 
     if (pendingFieldsToFill.find(field => field === "field missing")) return { error: `Please make sure you ${requiredProcessStepsKeys[requiredFieldKeys[pendingFieldsToFill.findIndex(field => field === "field missing")]]} for each step` }
 
     const membersMissingInStep = processObj.workflows[0].workflows.steps.map(step => {
-      if ((step.stepPublicMembers.length < 1) && (step.stepTeamMembers.length < 1) && (step.stepUserMembers.length < 1)) return "Please assign at least one user for each step";
+      if (
+        (step.stepPublicMembers.length < 1) && 
+        (step.stepTeamMembers.length < 1) && 
+        (step.stepUserMembers.length < 1) && 
+        (!step.skipStep)
+      ) return "Please assign at least one user for each step";
       return null
     })
 
     if (membersMissingInStep.find(member => member === "Please assign at least one user for each step")) return { error: membersMissingInStep.find(member => member === "Please assign at least one user for each step") }
 
-    if (!processObj.workflows[0].workflows.steps.every(step => step.stepDocumentMap.length > 0)) return { error : "Please make sure you select at least one item from the table of contents for each step" };
+    const documentMapMissingInStep = processObj.workflows[0].workflows.steps.map(step => {
+      if (step.stepDocumentMap.length < 1 && !step.skipStep) return 'Document map missing';
+      return null
+    })
+
+    if (documentMapMissingInStep.find(stepMissing => stepMissing === 'Document map missing')) return { error : "Please make sure you select at least one item from the table of contents for each step" };
+
+    // if (!processObj.workflows[0].workflows.steps.every(step => step.stepDocumentMap.length > 0)) return { error : "Please make sure you select at least one item from the table of contents for each step" };
     
     return processObj;
   }
