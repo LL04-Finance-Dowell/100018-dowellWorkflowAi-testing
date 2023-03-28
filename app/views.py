@@ -32,6 +32,8 @@ from app.utils.mongo_db_connection import (
     update_wf,
     update_wf_process,
     wf_setting_update,
+    save_team,
+    get_team,
 )
 
 from .constants import EDITOR_API
@@ -50,7 +52,7 @@ def document_processing(request):
     """processing is determined by action picked by user."""
     if not request.data:
         return Response("You are missing something!", status.HTTP_400_BAD_REQUEST)
-    
+
     data_type = "Testing_Data"
     action = request.data["action"]
     if action == "save_workflow_to_document_and_save_to_drafts":
@@ -253,13 +255,13 @@ def process_verification(request):
             return Response(
                 "This workflow process is currently on hold!", status.HTTP_200_OK
             )
-        
+
         # was the process not started?
         if process["processing_state"] == "save":
             return Response(
                 "This workflow process is not activated!", status.HTTP_200_OK
             )
-        
+
     # set request location data
     location_data = {
         "city": request.data["city"],
@@ -352,7 +354,7 @@ def trigger_process(request):
                 "Process has been paused until manually resumed!",
                 status=status.HTTP_200_OK,
             )
-        
+
     if action == "process_draft" and state != "processing":
         return processing.start(process)
 
@@ -894,3 +896,32 @@ def search(request):
         },
         status=status.HTTP_200_OK,
     )
+
+
+@api_view(["POST"])
+def create_team(request):
+    """Create a new Team"""
+    form = request.data
+    if not form:
+        return Response("Team Data required", status.HTTP_400_BAD_REQUEST)
+
+    company_id = form["company_id"]
+    created_by = form["created_by"]
+    name = form["name"]
+    code = form["code"]
+    spec = form["spec"]
+    details = form["details"]
+    universal_code = form["universal_code"]
+
+    team_set = json.loads(
+        save_team(name, code, spec, details, universal_code, company_id, created_by)
+    )
+
+    if team_set["isSuccess"]:
+        return Response(
+            {
+                "Team Saved": get_team(team_set["inserted_id"]),
+            },
+            status=status.HTTP_201_CREATED,
+        )
+    return Response("Failed to Save Team Data", status.HTTP_500_INTERNAL_SERVER_ERROR)

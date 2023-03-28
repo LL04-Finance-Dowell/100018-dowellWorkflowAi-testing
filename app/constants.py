@@ -224,6 +224,7 @@ MANAGEMENT_REPORTS_DICT = {
 
 MANAGEMENT_REPORTS_LIST = [
     "Documents",
+    "bangalore",
     "Documentation",
     "CompanyManagementReports",
     "companymanagementreports",
