@@ -963,9 +963,9 @@ def create_team(request):
     spec = form["spec"]
     details = form["details"]
     universal_code = form["universal_code"]
-
+    data_type = form["data_type"]
     team_set = json.loads(
-        save_team(name, code, spec, details, universal_code, company_id, created_by)
+        save_team(name, code, spec, details, universal_code, company_id, created_by,data_type)
     )
 
     if team_set["isSuccess"]:

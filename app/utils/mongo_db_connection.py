@@ -1031,7 +1031,7 @@ def targeted_population(database, collection, fields, period):
     return res
 
 
-def save_team(name, code, spec, details, universal_code, company_id, created_by):
+def save_team(name, code, spec, details, universal_code, company_id, created_by,data_type):
     payload = json.dumps(
         {
             **MANAGEMENT_REPORTS_DICT,
@@ -1046,6 +1046,7 @@ def save_team(name, code, spec, details, universal_code, company_id, created_by)
                 "created_at": time,
                 "company_id": company_id,
                 "created_by": created_by,
+                "data_type":data_type,
             },
             "update_field": {"order_nos": 21},
             "platform": "bangalore",
