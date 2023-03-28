@@ -746,7 +746,37 @@ Request Body
 ```
 no need
 ```
+_POST_ `/v0.1/create_team/`
 
+Request Body
+
+```
+{
+"name":"Name of Team", 
+"code":"the code", 
+"spec":"secification",
+"details":[list of portfolios], 
+"universal_code":"universal_code", 
+"company_id":"company_id", 
+"created_by":"created_by",
+"data_type":'Real_Data' | 'Learning_Data' | 'Testing_Data'|'Archived_Data'
+}
+
+```
+Request Body
+```
+{
+    "Team Saved":{
+                "name":"Name of saved Team", 
+                "code":"saved code", 
+                "spec":"saved secification",
+                "details":[list of saved portfolios], 
+                "universal_code":"saved universal_code", 
+                "company_id":"company_id", 
+                "created_by":"created_by",
+                "data_type": saved 'Real_Data' | 'Learning_Data' | 'Testing_Data'|'Archived_Data'
+                }
+}
 ### Technologies Used
 
 - [Python](https://nodejs.org/) is a programming language that lets you work more quickly and integrate your systems
