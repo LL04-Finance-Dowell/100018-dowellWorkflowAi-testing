@@ -958,14 +958,16 @@ def create_team(request):
 
     company_id = form["company_id"]
     created_by = form["created_by"]
-    name = form["name"]
-    code = form["code"]
-    spec = form["spec"]
-    details = form["details"]
+    
+
+    team_name = form["team_name"]
+    team_code = form["team_code"]
+    team_spec = form["team_spec"]
+    portfolio_details = form["portfolio_details"]
     universal_code = form["universal_code"]
     data_type = form["data_type"]
     team_set = json.loads(
-        save_team(name, code, spec, details, universal_code, company_id, created_by,data_type)
+        save_team(team_name, team_code, team_spec, portfolio_details, universal_code, company_id, created_by,data_type)
     )
 
     if team_set["isSuccess"]:

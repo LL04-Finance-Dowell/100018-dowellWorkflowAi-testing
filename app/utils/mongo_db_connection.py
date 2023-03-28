@@ -1031,17 +1031,18 @@ def targeted_population(database, collection, fields, period):
     return res
 
 
-def save_team(name, code, spec, details, universal_code, company_id, created_by,data_type):
+def save_team(team_name, team_code, team_spec, portfolio_details, 
+              universal_code, company_id, created_by,data_type):
     payload = json.dumps(
         {
             **MANAGEMENT_REPORTS_DICT,
             "command": "insert",
             "field": {
                 "event_id": get_event_id()["event_id"],
-                "name": name,
-                "code": code,
-                "spec": spec,
-                "details": details,
+                "team_name": team_name,
+                "team_code": team_code,
+                "team_spec": team_spec,
+                "portfolio_details": portfolio_details,
                 "universal_code": universal_code,
                 "created_at": time,
                 "company_id": company_id,

@@ -752,10 +752,10 @@ Request Body
 
 ```
 {
-"name":"Name of Team", 
-"code":"the code", 
-"spec":"secification",
-"details":[list of portfolios], 
+"team_name":"Name of Team", 
+"team_code":"the code", 
+"team_spec":"secification",
+"portfolio_details":[list of portfolios], 
 "universal_code":"universal_code", 
 "company_id":"company_id", 
 "created_by":"created_by",
@@ -767,10 +767,10 @@ Request Body
 ```
 {
     "Team Saved":{
-                "name":"Name of saved Team", 
-                "code":"saved code", 
-                "spec":"saved secification",
-                "details":[list of saved portfolios], 
+                "team_name":"Name of saved Team", 
+                "team_code":"saved code", 
+                "team_spec":"saved secification",
+                "portfolio_details":[list of saved portfolios], 
                 "universal_code":"saved universal_code", 
                 "company_id":"company_id", 
                 "created_by":"created_by",
