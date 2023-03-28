@@ -72,6 +72,8 @@ function App() {
         <Route path={"saved"} element={<ProccessPage showOnlySaved={true} />}/>
         <Route path={"paused"} element={<ProccessPage showOnlyPaused={true} />}/>
         <Route path={"cancelled"} element={<ProccessPage showOnlyCancelled={true} />}/>
+        <Route path={"tests"} element={<ProccessPage showOnlyTests={true} />}/>
+        <Route path={"completed"} element={<ProccessPage showOnlyCompleted={true} />}/>
         {/* <Route path={"trash"} element={<ProccessPage showOnlyTrashed={true} />}/> */}
       </Route>
 

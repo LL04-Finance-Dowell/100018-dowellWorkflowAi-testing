@@ -10,10 +10,12 @@ import Time from "./time/Time";
 import Reminder from "./reminder/Reminder";
 import { Collapse } from "react-bootstrap";
 import { ImMinus, ImPlus } from "react-icons/im";
+import { useSelector } from "react-redux";
 
 const AssignCollapse = ({ currentStepIndex, stepsPopulated }) => {
   const [asignCollapses, setAssignCollapses] = useState(collapses);
   const { register } = useForm();
+  const { processSteps, docCurrentWorkflow } = useSelector(state => state.app);
 
   const handleCollapse = useCallback((id) => {
     // console.log("aaaaaaaaaaaaaaa", id);
@@ -26,22 +28,29 @@ const AssignCollapse = ({ currentStepIndex, stepsPopulated }) => {
 
   return (
     <div className={styles.container}>
-      {asignCollapses.map((collapse) => (
-        <div key={collapse.id} className={styles.box}>
-          <div
-            onClick={() => handleCollapse(collapse.id)}
-            className={styles.header__box}
-          >
-            <i className={styles.sign}>
-              {collapse.isOpen ? <ImMinus /> : <ImPlus />}
-            </i>
-            <span> {collapse.title}</span>
+      {
+        processSteps.find(
+          process => process.workflow === docCurrentWorkflow?._id
+        )?.steps[currentStepIndex]?.skipStep ? <p>Step skipped</p> :
+        <>
+        {asignCollapses.map((collapse) => (
+          <div key={collapse.id} className={styles.box}>
+            <div
+              onClick={() => handleCollapse(collapse.id)}
+              className={styles.header__box}
+            >
+              <i className={styles.sign}>
+                {collapse.isOpen ? <ImMinus /> : <ImPlus />}
+              </i>
+              <span> {collapse.title}</span>
+            </div>
+            <Collapse in={stepsPopulated ? stepsPopulated : collapse.isOpen}>
+              <div>{<collapse.component currentStepIndex={currentStepIndex} stepsPopulated={stepsPopulated} />}</div>
+            </Collapse>
           </div>
-          <Collapse in={stepsPopulated ? stepsPopulated : collapse.isOpen}>
-            <div>{<collapse.component currentStepIndex={currentStepIndex} stepsPopulated={stepsPopulated} />}</div>
-          </Collapse>
-        </div>
-      ))}
+        ))} 
+        </>
+      }
     </div>
   );
 };

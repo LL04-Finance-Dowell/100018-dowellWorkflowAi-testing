@@ -290,7 +290,7 @@ const InfoBoxes = ({ workflowBoxOpen }) => {
             )}
           </InfoTitleBox>
 
-          <Collapse open={!infoBox.isOpen}>
+          <Collapse open={infoBox.isOpen}>
             <InfoContentContainer>
               <InfoSearchbar
                 placeholder="Search"
@@ -379,18 +379,18 @@ export const infoBoxes = [
     id: uuidv4(),
     title: "workflow",
     contents: [],
-    isOpen: true,
+    isOpen: false,
   },
   {
     id: uuidv4(),
     title: "team",
     contents: [],
-    isOpen: true,
+    isOpen: false,
   },
   {
     id: uuidv4(),
     title: "user",
     contents: [],
-    isOpen: true,
+    isOpen: false,
   },
 ];

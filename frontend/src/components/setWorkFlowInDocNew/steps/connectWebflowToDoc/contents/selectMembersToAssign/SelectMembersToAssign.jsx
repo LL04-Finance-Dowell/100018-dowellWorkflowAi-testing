@@ -317,129 +317,151 @@ const SelectMembersToAssign = ({ currentStepIndex, stepsPopulated, currentEnable
 
   return (
     <div className={styles.container}>
-      <div className={styles.select__container}>
-        <div className={styles.select__header__box}>
-          {React.Children.toArray(selectMembersComp.map((item) => (
-            <div
-              onClick={() => handleSetCurrent(item)}
-              // key={item.id}
-              className={`${styles.select__header} ${
-                current.id === item.id && styles.selected
-              }`}
-            >
-              {item.header}
-            </div>
-          )))}
-        </div>
-        <div className={styles.select__content__container}>
-          <h3 className={styles.title}>
-            <input
-              type={"checkbox"} 
-              name={current.header} 
-              style={{ marginRight: "0.5rem" }}
-              value={current.header}
-              checked={userTypeOptionsEnabled.find(option => option.name === current.header && option.stepIndex === currentStepIndex) ? true : false}
-              onChange={handleSelectUserOptionType}
-            />
-            {current.title}
-          </h3>
-          <div>
-            <Radio
-              register={register}
-              name={"selectItemOptionForUser-" + currentStepIndex + "-" + current.header}
-              value={"all" + current.header}
-              checked={userTypeOptionsEnabled.find(option => option.name === current.header && option.stepIndex === currentStepIndex) && currentRadioOptionSelection && currentRadioOptionSelection === current.all + " first" ? true : false}
-              onChange={userTypeOptionsEnabled.find(option => option.name === current.header && option.stepIndex === currentStepIndex) ? () => handleUserGroupSelection(current.all + " first", {...current, allSelected: true}, current.header) : (e) => handleDisabledUserOptionSelection(e, current.title)}
-            >
-              Select all {current.header}
-            </Radio>
-            <Radio
-              register={register}
-              name={"selectItemOptionForUser-" + currentStepIndex + "-" + current.header}
-              value={"selectIn" + current.header}
-              checked={userTypeOptionsEnabled.find(option => option.name === current.header && option.stepIndex === currentStepIndex) && currentRadioOptionSelection && currentRadioOptionSelection === current.all + " second" ? true : false}
-              onChange={userTypeOptionsEnabled.find(option => option.name === current.header && option.stepIndex === currentStepIndex) ? () => handleUserGroupSelection(current.all + " second", current, current.header) : (e) => handleDisabledUserOptionSelection(e, current.title)}
-            >
-              {current.selectInTeam}
-            </Radio>
-          </div>
-          <div ref={teamMembersRef}>
-            <select
-              required
-              {...register("teams")}
-              size={current.teams.length}
-              className={styles.open__select}
-              onChange={handleSelectTeam}
-              style={{ pointerEvents: userTypeOptionsEnabled.find(option => option.name === current.header && option.stepIndex === currentStepIndex) && currentRadioOptionSelection ? "all" : "none" }}
-            >
-              {React.Children.toArray(current.teams.map((item) => (
-                <option 
-                  // key={item.id} 
-                  value={JSON.stringify(item)}
-                  className={teamsSelectedSelectedForProcess.find(team => team.id === item.id && team.stepIndex === currentStepIndex) ? styles.team__Selected : ""}
-                >
-                  {item.content}
-                </option>
-              )))}
-            </select>
-          </div>
-          {
-            <>
-              <Radio
-              register={register}
-              name={"selectItemOptionForUser-" + currentStepIndex + "-" + current.header}
-              value={"select" + current.header}
-              checked={userTypeOptionsEnabled.find(option => option.name === current.header && option.stepIndex === currentStepIndex) && currentRadioOptionSelection && currentRadioOptionSelection === "selectTeam" ? true : enableRadioOptionsFromStepPopulation[`${current.header}`].find(option => option.memberOptionEnabled && option.stepIndex === currentStepIndex) ? true : false}
-              onChange={userTypeOptionsEnabled.find(option => option.name === current.header && option.stepIndex === currentStepIndex) ? (e) => handleMemberRadioChange(e.target.value, current.header) : (e) => handleDisabledUserOptionSelection(e, current.title)}
+      {
+        processSteps.find(
+          process => process.workflow === docCurrentWorkflow?._id
+        )?.steps[currentStepIndex]?.skipStep ? <>
+          <div className={styles.select__header__box}>
+            {React.Children.toArray(selectMembersComp.map((item) => (
+              <div
+                onClick={() => toast.info('Step skipped')}
+                // key={item.id}
+                className={`${styles.select__header} ${
+                  current.id === item.id && styles.selected
+                }`}
               >
-                Select Members
-              </Radio>
-              <div className={styles.select__Members__Wrapper} ref={selectMembersRef}>
+                {item.header}
+              </div>
+            )))}
+          </div>
+          <p>Step skipped</p> 
+        </> :
+        <>
+          <div className={styles.select__container}>
+            <div className={styles.select__header__box}>
+              {React.Children.toArray(selectMembersComp.map((item) => (
+                <div
+                  onClick={() => handleSetCurrent(item)}
+                  // key={item.id}
+                  className={`${styles.select__header} ${
+                    current.id === item.id && styles.selected
+                  }`}
+                >
+                  {item.header}
+                </div>
+              )))}
+            </div>
+            <div className={styles.select__content__container}>
+              <h3 className={styles.title}>
+                <input
+                  type={"checkbox"} 
+                  name={current.header} 
+                  style={{ marginRight: "0.5rem" }}
+                  value={current.header}
+                  checked={userTypeOptionsEnabled.find(option => option.name === current.header && option.stepIndex === currentStepIndex) ? true : false}
+                  onChange={handleSelectUserOptionType}
+                />
+                {current.title}
+              </h3>
+              <div>
+                <Radio
+                  register={register}
+                  name={"selectItemOptionForUser-" + currentStepIndex + "-" + current.header}
+                  value={"all" + current.header}
+                  checked={userTypeOptionsEnabled.find(option => option.name === current.header && option.stepIndex === currentStepIndex) && currentRadioOptionSelection && currentRadioOptionSelection === current.all + " first" ? true : false}
+                  onChange={userTypeOptionsEnabled.find(option => option.name === current.header && option.stepIndex === currentStepIndex) ? () => handleUserGroupSelection(current.all + " first", {...current, allSelected: true}, current.header) : (e) => handleDisabledUserOptionSelection(e, current.title)}
+                >
+                  Select all {current.header}
+                </Radio>
+                <Radio
+                  register={register}
+                  name={"selectItemOptionForUser-" + currentStepIndex + "-" + current.header}
+                  value={"selectIn" + current.header}
+                  checked={userTypeOptionsEnabled.find(option => option.name === current.header && option.stepIndex === currentStepIndex) && currentRadioOptionSelection && currentRadioOptionSelection === current.all + " second" ? true : false}
+                  onChange={userTypeOptionsEnabled.find(option => option.name === current.header && option.stepIndex === currentStepIndex) ? () => handleUserGroupSelection(current.all + " second", current, current.header) : (e) => handleDisabledUserOptionSelection(e, current.title)}
+                >
+                  {current.selectInTeam}
+                </Radio>
+              </div>
+              <div ref={teamMembersRef}>
                 <select
                   required
-                  {...register("members")}
-                  size={current.portfolios.length}
+                  {...register("teams")}
+                  size={current.teams.length}
                   className={styles.open__select}
-                  onChange={handleAddNewMember}
-                  style={{ 
-                    pointerEvents: userTypeOptionsEnabled.find(option => option.name === current.header && option.stepIndex === currentStepIndex) && currentRadioOptionSelection && currentRadioOptionSelection === "selectTeam" ? 
-                    "all" : 
-                    enableRadioOptionsFromStepPopulation[`${current.header}`].find(option => option.memberOptionEnabled && option.stepIndex === currentStepIndex) && currentEnabledSteps.find(step => step.index === currentStepIndex && step.enableStep === true) ?
-                    "all" :
-                    "none" 
-                  }}
+                  onChange={handleSelectTeam}
+                  style={{ pointerEvents: userTypeOptionsEnabled.find(option => option.name === current.header && option.stepIndex === currentStepIndex) && currentRadioOptionSelection ? "all" : "none" }}
                 >
-                  {React.Children.toArray(current.portfolios.map((item) => (
+                  {React.Children.toArray(current.teams.map((item) => (
                     <option 
-                      className={
-                        current.header === "Team" ?
-                          teamMembersSelectedForProcess.find(user => user.member === item.member && user.portfolio === item.portfolio && user.stepIndex === currentStepIndex) ? styles.user__Selected : ""
-                        :
-                        current.header === "Users" ?
-                          userMembersSelectedForProcess.find(user => user.member === item.member && user.portfolio === item.portfolio && user.stepIndex === currentStepIndex) ? styles.user__Selected : ""
-                        :
-                        current.header === "Public" ?
-                          publicMembersSelectedForProcess.find(user => user.member === item.member && user.portfolio === item.portfolio && user.stepIndex === currentStepIndex) ? styles.user__Selected : ""
-                        :
-                        ""
-                      }
-                        // key={item.id} 
-                        value={JSON.stringify(item)}
-                        id={item.id + currentStepIndex}
-                      >
-                        {item.content}
+                      // key={item.id} 
+                      value={JSON.stringify(item)}
+                      className={teamsSelectedSelectedForProcess.find(team => team.id === item.id && team.stepIndex === currentStepIndex) ? styles.team__Selected : ""}
+                    >
+                      {item.content}
                     </option>
                   )))}
                 </select>
-                {current.portfolios.map((item) => (
-                  <Tooltip style={{ width: "max-content", zIndex: 2, whiteSpace: "pre" }} anchorId={item.id + currentStepIndex} content={`user: ${item.member} \nportfolio: ${item.portfolio}`} place="top" />
-                ))}
               </div>
-            </>
-          }
-        </div>
-      </div>
-      <AssignTask currentStepIndex={currentStepIndex} stepsPopulated={stepsPopulated} />
+              {
+                <>
+                  <Radio
+                  register={register}
+                  name={"selectItemOptionForUser-" + currentStepIndex + "-" + current.header}
+                  value={"select" + current.header}
+                  checked={userTypeOptionsEnabled.find(option => option.name === current.header && option.stepIndex === currentStepIndex) && currentRadioOptionSelection && currentRadioOptionSelection === "selectTeam" ? true : enableRadioOptionsFromStepPopulation[`${current.header}`].find(option => option.memberOptionEnabled && option.stepIndex === currentStepIndex) ? true : false}
+                  onChange={userTypeOptionsEnabled.find(option => option.name === current.header && option.stepIndex === currentStepIndex) ? (e) => handleMemberRadioChange(e.target.value, current.header) : (e) => handleDisabledUserOptionSelection(e, current.title)}
+                  >
+                    Select Members
+                  </Radio>
+                  <div className={styles.select__Members__Wrapper} ref={selectMembersRef}>
+                    <select
+                      required
+                      {...register("members")}
+                      size={current.portfolios.length}
+                      className={styles.open__select}
+                      onChange={handleAddNewMember}
+                      style={{ 
+                        pointerEvents: userTypeOptionsEnabled.find(option => option.name === current.header && option.stepIndex === currentStepIndex) && currentRadioOptionSelection && currentRadioOptionSelection === "selectTeam" ? 
+                        "all" : 
+                        enableRadioOptionsFromStepPopulation[`${current.header}`].find(option => option.memberOptionEnabled && option.stepIndex === currentStepIndex) && currentEnabledSteps.find(step => step.index === currentStepIndex && step.enableStep === true) ?
+                        "all" :
+                        "none" 
+                      }}
+                    >
+                      {React.Children.toArray(current.portfolios.map((item) => (
+                        <option 
+                          className={
+                            current.header === "Team" ?
+                              teamMembersSelectedForProcess.find(user => user.member === item.member && user.portfolio === item.portfolio && user.stepIndex === currentStepIndex) ? styles.user__Selected : ""
+                            :
+                            current.header === "Users" ?
+                              userMembersSelectedForProcess.find(user => user.member === item.member && user.portfolio === item.portfolio && user.stepIndex === currentStepIndex) ? styles.user__Selected : ""
+                            :
+                            current.header === "Public" ?
+                              publicMembersSelectedForProcess.find(user => user.member === item.member && user.portfolio === item.portfolio && user.stepIndex === currentStepIndex) ? styles.user__Selected : ""
+                            :
+                            ""
+                          }
+                            // key={item.id} 
+                            value={JSON.stringify(item)}
+                            id={item.id + currentStepIndex}
+                          >
+                            {item.content}
+                        </option>
+                      )))}
+                    </select>
+                    {current.portfolios.map((item) => (
+                      <Tooltip style={{ width: "max-content", zIndex: 2, whiteSpace: "pre" }} anchorId={item.id + currentStepIndex} content={`user: ${item.member} \nportfolio: ${item.portfolio}`} place="top" />
+                    ))}
+                  </div>
+                </>
+              }
+            </div>
+          </div>
+          <AssignTask currentStepIndex={currentStepIndex} stepsPopulated={stepsPopulated} />
+        </>
+      }
     </div>
   );
 };

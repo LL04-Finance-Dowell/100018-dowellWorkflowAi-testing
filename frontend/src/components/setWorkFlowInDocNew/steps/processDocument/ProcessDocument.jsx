@@ -106,6 +106,7 @@ const ProcessDocument = () => {
 
       if (!copyOfCurrentStep.permitInternalWorkflow) copyOfCurrentStep.permitInternalWorkflow = false
       if (!copyOfCurrentStep.skipStep) copyOfCurrentStep.skipStep = false
+      if (!copyOfCurrentStep.stepLocation) copyOfCurrentStep.stepLocation = "any"
 
       return copyOfCurrentStep
     
