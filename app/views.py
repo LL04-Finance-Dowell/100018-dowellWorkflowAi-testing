@@ -6,7 +6,7 @@ from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
-from app.utils import checks, cloning, link_gen, processing
+from app.utils import checks, cloning, link_gen, processing, validator
 from app.utils.favourites import create_favourite, list_favourites, remove_favourite
 from app.utils.mongo_db_connection import (
     delete_document,
@@ -69,6 +69,7 @@ def document_processing(request):
             ),
             process_choice="save_process",
             creator_portfolio=request.data["creator_portfolio"],
+            workflows_ids=request.data["workflows_ids"]
         )
         return Response("Process Saved in drafts.", status.HTTP_201_CREATED)
 
@@ -86,6 +87,7 @@ def document_processing(request):
             ),
             process_choice="content_wise",
             creator_portfolio=request.data["creator_portfolio"],
+            workflows_ids=request.data["workflows_ids"]
         )
         return processing.start(process)
 
@@ -103,6 +105,7 @@ def document_processing(request):
             ),
             process_choice="step_wise",
             creator_portfolio=request.data["creator_portfolio"],
+            workflows_ids=request.data["workflows_ids"]
         )
         return processing.start(process)
 
@@ -120,6 +123,7 @@ def document_processing(request):
             ),
             process_choice="workflow",
             creator_portfolio=request.data["creator_portfolio"],
+            workflows_ids=request.data["workflows_ids"]
         )
         return processing.start(process)
 
@@ -137,6 +141,7 @@ def document_processing(request):
             ),
             process_choice="content",
             creator_portfolio=request.data["creator_portfolio"],
+            workflows_ids=request.data["workflows_ids"]
         )
         return processing.start(process)
 
@@ -154,6 +159,7 @@ def document_processing(request):
             ),
             process_choice="workflow_steps",
             creator_portfolio=request.data["creator_portfolio"],
+            workflows_ids=request.data["workflows_ids"]
         )
         return processing.start(process)
 
@@ -171,12 +177,13 @@ def document_processing(request):
             ),
             process_choice="workflow",
             creator_portfolio=request.data["creator_portfolio"],
+            workflows_ids=request.data["workflows_ids"]
         )
         return processing.start(process)
 
     if action == "close_processing_and_mark_as_completed":
         process = get_process_object(workflow_process_id=request.data["process_id"])
-        if process["processing_state"] == "complete":
+        if process["processing_state"] == "completed":
             return Response(
                 "This Workflow process is already complete", status=status.HTTP_200_OK
             )
@@ -184,7 +191,7 @@ def document_processing(request):
             update_wf_process(
                 process_id=process["process_id"],
                 steps=process["processing_steps"],
-                state="complete",
+                state="completed",
             )
         )
         if res["isSuccess"]:
@@ -199,7 +206,7 @@ def document_processing(request):
     if action == "cancel_process_before_completion":
         # document should reset to initial state.
         process = get_process_object(workflow_process_id=request.data["process_id"])
-        if process["processing_state"] == "canceled":
+        if process["processing_state"] == "cancelled":
             return Response(
                 "This Workflow process is Cancelled!", status=status.HTTP_200_OK
             )
@@ -207,7 +214,7 @@ def document_processing(request):
             update_wf_process(
                 process_id=process["process_id"],
                 steps=process["processing_steps"],
-                state="canceled",
+                state="cancelled",
             )
         )
         if res["isSuccess"]:
@@ -325,6 +332,8 @@ def mark_process_as_finalize_or_reject(request):
 @api_view(["POST"])
 def trigger_process(request):
     """Get process and begin processing it."""
+    if not validator.validate_id(request.data["process_id"]):
+        return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
 
     try:
         process = get_process_object(request.data["process_id"])
@@ -391,6 +400,9 @@ def create_workflow_setting(request):
 @api_view(["GET"])
 def get_wf_ai_setting(request, wf_setting_id):
     """Retrive a Wf setting"""
+    if not validator.validate_id(wf_setting_id):
+        return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
+
     try:
         setting = get_wf_setting_object(wf_setting_id)
     except:
@@ -475,6 +487,9 @@ def update_workflow(request):
 @api_view(["GET"])
 def workflow_detail(request, workflow_id):
     """Single workflows"""
+    if not validator.validate_id(workflow_id):
+        return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
+
     data = get_wf_object(workflow_id)
     if not data:
         return Response(
@@ -498,6 +513,9 @@ def workflow_index_update(payload):
 @api_view(["GET"])
 def get_workflows(request, company_id):
     """List all workflows"""
+    if not validator.validate_id(company_id):
+        return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
+
     workflow_list = get_wf_list(company_id)
     if not workflow_list:
         return Response({"workflows": []}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
@@ -516,6 +534,9 @@ def get_workflows(request, company_id):
 @api_view(["GET"])
 def get_documents(request, company_id):
     """List of Created Templates."""
+    if not validator.validate_id(company_id):
+        return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
+
     document_list = get_document_list(company_id)
     if not document_list:
         return Response({"documents": []}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
@@ -577,6 +598,9 @@ def create_document(request):
 @api_view(["GET"])
 def get_document_content(request, document_id):
     """Content map of a given document"""
+    if not validator.validate_id(document_id):
+        return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
+
     content = []
     my_dict = ast.literal_eval(get_document_object(document_id)["content"])[0][0]
     all_keys = [i for i in my_dict.keys()]
@@ -595,8 +619,10 @@ def get_document_content(request, document_id):
 @api_view(["GET"])
 def document_detail(request, document_id):
     """editor link for a document"""
-    editor_link = link_gen.editor(document_id, "document")
+    if not validator.validate_id(document_id):
+        return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
 
+    editor_link = link_gen.editor(document_id, "document")
     if not editor_link:
         return Response(
             "Could not open document editor.", status.HTTP_500_INTERNAL_SERVER_ERROR
@@ -612,6 +638,8 @@ def archives(request):
         return Response("You are missing something", status.HTTP_400_BAD_REQUEST)
 
     id = request.data["item_id"]
+    if not validator.validate_id(id):
+        return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
 
     if request.data["item_type"] == "workflow":
         res = delete_workflow(id, "Archive_Data")
@@ -645,6 +673,8 @@ def archive_restore(request):
         return Response("You are missing something", status.HTTP_400_BAD_REQUEST)
 
     id = request.data["item_id"]
+    if not validator.validate_id(id):
+        return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
 
     if request.data["item_type"] == "workflow":
         res = delete_workflow(id, "Real_Data")
@@ -696,8 +726,11 @@ def favorites(request):
 
 @api_view(["GET"])
 def all_favourites(request, company_id):
-    # List favs
-    data = list_favourites(company_id=company_id)
+    """ List favs """
+    if not validator.validate_id(company_id):
+        return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
+
+    data = list_favourites(company_id)
     if not data:
         return Response(
             "failed to get bookmarks",
@@ -708,7 +741,10 @@ def all_favourites(request, company_id):
 
 @api_view(["DELETE"])
 def trash_favourites(request, item_id, item_type, username):
-    # delete a fav
+    """Trash Favourites"""
+    if not validator.validate_id(item_id):
+        return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
+
     msg = remove_favourite(
         identifier=item_id,
         type=item_type,
@@ -725,6 +761,9 @@ def trash_favourites(request, item_id, item_type, username):
 @api_view(["GET"])
 def get_templates(request, company_id):
     """List of Created Templates."""
+    if not validator.validate_id(company_id):
+        return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
+
     templates = get_template_list(company_id)
     if not templates:
         return Response({"templates": []}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
@@ -796,8 +835,10 @@ def create_template(request):
 @api_view(["GET"])
 def template_detail(request, template_id):
     """editor link for a document"""
-    editor_link = link_gen.editor(template_id, "template")
+    if not validator.validate_id(template_id):
+        return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
 
+    editor_link = link_gen.editor(template_id, "template")
     if not editor_link:
         return Response(
             "Could not open template editor.", status.HTTP_500_INTERNAL_SERVER_ERROR
@@ -808,6 +849,10 @@ def template_detail(request, template_id):
 
 @api_view(["GET"])
 def approve(request, template_id):
+    """Approve a given template"""
+    if not validator.validate_id(template_id):
+        return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
+
     response = json.loads(update_template_approval(template_id, approval=True))
     if not response["isSuccess"]:
         return Response(
@@ -829,6 +874,9 @@ def index_update(request):
 @api_view(["GET"])
 def processes(request, company_id):
     """fetches workflow process `I` created."""
+    if not validator.validate_id(company_id):
+        return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
+
     try:
         process_list = get_process_list(company_id)
     except ConnectionError:
@@ -841,6 +889,9 @@ def processes(request, company_id):
 @api_view(["GET"])
 def a_single_process(request, process_id):
     """get process by process id"""
+    if not validator.validate_id(process_id):
+        return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
+
     try:
         process = get_process_object(process_id)
     except ConnectionError:

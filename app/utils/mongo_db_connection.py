@@ -253,6 +253,7 @@ def save_wf_process(
     document_id,
     process_action,
     portfolio,
+    workflows_ids
 ):
     payload = json.dumps(
         {
@@ -268,6 +269,7 @@ def save_wf_process(
                 "parent_document_id": document_id,
                 "processing_action": process_action,
                 "processing_state": "draft",
+                "workflow_construct_ids": workflow_ids,
                 "created_at": time,
                 "creator_portfolio": portfolio,
             },

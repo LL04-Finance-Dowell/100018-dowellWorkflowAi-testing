@@ -25,6 +25,7 @@ def new(
     document_id,
     process_choice,
     creator_portfolio,
+    workflows_ids,
 ):
     """
     Structures a process entry to persistent storage
@@ -37,6 +38,7 @@ def new(
         creator_portfolio (str): portfolio of the process creator
         created_by (str): process username
         document_id (str): parent document object id
+        workflows_ids (str): all wf construct ids.
 
     Returns:
         a structured process.
@@ -57,6 +59,7 @@ def new(
         document_id,
         process_choice,
         creator_portfolio,
+        workflows_ids,
     )
     # return process id.
     if res["isSuccess"]:
@@ -267,6 +270,8 @@ def verify(process, auth_step_role, location_data, user_name):
 
 
 def background(process_id, document_id):
+    # TODO: mark notification as done
+
     # get process
     process = get_process_object(workflow_process_id=process_id)
     copies = []
