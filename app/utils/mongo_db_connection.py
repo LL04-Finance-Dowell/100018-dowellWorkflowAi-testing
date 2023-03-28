@@ -253,7 +253,7 @@ def save_wf_process(
     document_id,
     process_action,
     portfolio,
-    workflows_ids
+    workflows_ids,
 ):
     payload = json.dumps(
         {
@@ -1031,8 +1031,16 @@ def targeted_population(database, collection, fields, period):
     return res
 
 
-def save_team(team_name, team_code, team_spec, portfolio_details, 
-              universal_code, company_id, created_by,data_type):
+def save_team(
+    team_name,
+    team_code,
+    team_spec,
+    portfolio_details,
+    universal_code,
+    company_id,
+    created_by,
+    data_type,
+):
     payload = json.dumps(
         {
             **MANAGEMENT_REPORTS_DICT,
@@ -1047,7 +1055,7 @@ def save_team(team_name, team_code, team_spec, portfolio_details,
                 "created_at": time,
                 "company_id": company_id,
                 "created_by": created_by,
-                "data_type":data_type,
+                "data_type": data_type,
             },
             "update_field": {"order_nos": 21},
             "platform": "bangalore",

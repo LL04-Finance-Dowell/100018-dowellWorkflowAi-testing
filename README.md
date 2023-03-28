@@ -746,37 +746,43 @@ Request Body
 ```
 no need
 ```
+
 _POST_ `/v0.1/create_team/`
 
 Request Body
 
 ```
 {
-"team_name":"Name of Team", 
-"team_code":"the code", 
+"team_name":"Name of Team",
+"team_code":"the code",
 "team_spec":"secification",
-"portfolio_details":[list of portfolios], 
-"universal_code":"universal_code", 
-"company_id":"company_id", 
+"portfolio_details":[list of portfolios],
+"universal_code":"universal_code",
+"company_id":"company_id",
 "created_by":"created_by",
 "data_type":'Real_Data' | 'Learning_Data' | 'Testing_Data'|'Archived_Data'
 }
 
 ```
+
 Request Body
+
 ```
 {
     "Team Saved":{
-                "team_name":"Name of saved Team", 
-                "team_code":"saved code", 
+                "team_name":"Name of saved Team",
+                "team_code":"saved code",
                 "team_spec":"saved secification",
-                "portfolio_details":[list of saved portfolios], 
-                "universal_code":"saved universal_code", 
-                "company_id":"company_id", 
+                "portfolio_details":[list of saved portfolios],
+                "universal_code":"saved universal_code",
+                "company_id":"company_id",
                 "created_by":"created_by",
                 "data_type": saved 'Real_Data' | 'Learning_Data' | 'Testing_Data'|'Archived_Data'
                 }
 }
+
+```
+
 ### Technologies Used
 
 - [Python](https://nodejs.org/) is a programming language that lets you work more quickly and integrate your systems
@@ -792,3 +798,7 @@ Request Body
 
 This project is available for use under
 the [Apache](https://github.com/LL04-Finance-Dowell/100018-dowellWorkflowAi-testing/blob/main/LICENSE) License.
+
+```
+
+```
