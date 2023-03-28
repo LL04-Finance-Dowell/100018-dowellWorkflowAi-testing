@@ -72,6 +72,7 @@ const SelectMembersToAssign = ({ currentStepIndex, stepsPopulated, currentEnable
               portfolio: member.portfolio_name,
             }
           })
+          if (!membersFound) return null
           return Object.assign({}, ...membersFound)
         }
         return {
@@ -80,7 +81,7 @@ const SelectMembersToAssign = ({ currentStepIndex, stepsPopulated, currentEnable
           member: member.username,
           portfolio: member.portfolio_name
         }
-      })
+      }).filter(member => member)
 
       return memberPortfolios;
     }
