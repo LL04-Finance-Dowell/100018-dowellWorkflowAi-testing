@@ -134,6 +134,15 @@ const ConnectWorkFlowToDoc = ({ stepsPopulated }) => {
   };
 
   const handlePermitInternalSelection = (e, workflowId, stepIndexToUpdate) => {
+    const stepSkipped = processSteps.find(
+      process => process.workflow === docCurrentWorkflow?._id
+    )?.steps[stepIndexToUpdate]?.skipStep;
+
+    if (stepSkipped) {
+      e.target.checked = false;
+      return;
+    }
+
     if (e.target.checked) {
       dispatch(
         updateSingleProcessStep({
@@ -254,6 +263,13 @@ const ConnectWorkFlowToDoc = ({ stepsPopulated }) => {
                               processSteps.find(
                                 process => process.workflow === docCurrentWorkflow?._id
                               )?.steps[index]?.permitInternalWorkflow
+                            }
+                            style={
+                              {
+                                cursor: processSteps.find(
+                                  process => process.workflow === docCurrentWorkflow?._id
+                                )?.steps[index]?.skipStep ? "not-allowed" : "default"
+                              }
                             }
                           />
                           <label htmlFor="permit">

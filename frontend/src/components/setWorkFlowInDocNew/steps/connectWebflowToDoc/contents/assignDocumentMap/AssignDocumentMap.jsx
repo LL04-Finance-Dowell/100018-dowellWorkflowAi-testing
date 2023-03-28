@@ -18,7 +18,7 @@ const AssignDocumentMap = ({ currentStepIndex }) => {
   } = useForm();
   const [loading, setLoading] = useState(false);
   const { contentOfDocument } = useSelector((state) => state.document);
-  const { docCurrentWorkflow, tableOfContentForStep } = useSelector((state) => state.app);
+  const { docCurrentWorkflow, tableOfContentForStep, processSteps } = useSelector((state) => state.app);
   const dispatch = useDispatch();
 
   const onSubmit = (data) => {
@@ -94,6 +94,9 @@ const AssignDocumentMap = ({ currentStepIndex }) => {
     <p style={{ padding: "0 6px", marginBottom: "2px"}}><b>Table of Contents</b></p>
     {
       contentOfDocument ? 
+      processSteps.find(
+        process => process.workflow === docCurrentWorkflow?._id
+      )?.steps[currentStepIndex]?.skipStep ? <p>Step skipped</p> :
       <Contents
         feature={"table-of-contents"}
         contents={contentOfDocument}
@@ -102,15 +105,20 @@ const AssignDocumentMap = ({ currentStepIndex }) => {
       /> : 
       <LoadingSpinner />
     }
-    <FormLayout isSubmitted={isSubmitted} loading={loading}>
-      <form
-        onSubmit={handleSubmit(onSubmit)}
-        className={globalStyles.assign__document__map}
-      >
-        <Select register={register} takeOptionValue={true} name="document" options={documents} />
-        <AssignButton buttonText="paste document map" loading={loading} />
-      </form>
-    </FormLayout>
+    {
+      processSteps.find(
+        process => process.workflow === docCurrentWorkflow?._id
+      )?.steps[currentStepIndex]?.skipStep ? <p>Step skipped</p> :
+      <FormLayout isSubmitted={isSubmitted} loading={loading}>
+        <form
+          onSubmit={handleSubmit(onSubmit)}
+          className={globalStyles.assign__document__map}
+        >
+          <Select register={register} takeOptionValue={true} name="document" options={documents} />
+          <AssignButton buttonText="paste document map" loading={loading} />
+        </form>
+      </FormLayout>
+    }
     </>
   );
 };
