@@ -13,9 +13,9 @@ export const InfoBoxContainer = styled.div`
   align-self: flex-start;
   padding: ${(props) => props.boxType === "dark" && "1px"};
   border: ${(props) =>
-    props.boxType === "dark"
-      ? "1px solid var(--e-global-color-accent) !important"
-      : "none"};
+		props.boxType === "dark"
+			? "1px solid var(--e-global-color-accent) !important"
+			: "none"};
   & * {
     border: ${(props) => props.boxType === "dark" && "none !important"};
   }
@@ -25,7 +25,7 @@ export const InfoTitleBox = styled.div`
   width: 100%;
   /* border-bottom: 1px solid var(--e-global-color-text); */
   background-color: ${(props) =>
-    props.boxType === "dark" && "var(--e-global-color-text)"};
+		props.boxType === "dark" && "var(--e-global-color-text)"};
   border: 1px solid var(--e-global-color-text);
   padding: 15px 20px;
   cursor: pointer;
@@ -34,6 +34,7 @@ export const InfoTitleBox = styled.div`
   line-height: 16px;
   text-decoration: underline;
   display: flex;
+  align-items: center;
   flex-wrap: wrap;
   text-transform: capitalize;
   color: ${(props) => (props.boxType ? "white" : "var(--e-global-color-text)")};
@@ -55,7 +56,7 @@ export const InfoContentContainer = styled.div`
 `;
 
 export const InfoSearchbar = styled.input`
-  width: 100%;
+  width: 75%;
   max-width: 100%;
   margin-inline: auto;
   background-color: transparent;
@@ -63,6 +64,7 @@ export const InfoSearchbar = styled.input`
   border-bottom: 1px solid var(--e-global-color-text);
   padding-left: 10px;
   padding-block: 6px;
+  margin: 0 20px;
 `;
 
 export const InfoContentBox = styled.ol`
