@@ -26,6 +26,8 @@ from app.constants import (
     DOCUMENT_CONNECTION_LIST,
     WF_AI_SETTING_DICT,
     DOWELLCONNECTION_URL,
+    MANAGEMENT_REPORTS_LIST,
+    MANAGEMENT_REPORTS_DICT,
 )
 
 
@@ -251,7 +253,7 @@ def save_wf_process(
     document_id,
     process_action,
     portfolio,
-    workflows_ids
+    workflows_ids,
 ):
     payload = json.dumps(
         {
@@ -857,7 +859,6 @@ def get_uuid(document_id):
         return res_obj["data"]
     else:
         return []
-    
 
 
 def update_uuid_object(uuid_hash):
@@ -967,6 +968,7 @@ def delete_process(process_id, data_type):
     print("PROCESS ARCHIVED------------ \n")
     return json.loads(json.loads(response.text))
 
+
 def targeted_population(database, collection, fields, period):
     """
     Population Function
@@ -976,16 +978,15 @@ def targeted_population(database, collection, fields, period):
         collection(str): select collection in that db
         fields: select collection fields
         period: select period
-        
+
     """
 
     database_details = {
-        'database_name': 'mongodb',
-        'collection': collection,
-        'database': database,
-        'fields': fields
+        "database_name": "mongodb",
+        "collection": collection,
+        "database": database,
+        "fields": fields,
     }
-
 
     # number of variables for sampling rule
     number_of_variables = -1
@@ -998,40 +999,82 @@ def targeted_population(database, collection, fields, period):
         error is the error allowed in percentage
     """
 
-
     time_input = {
-        'column_name': 'Date',
-        'split': 'week',
-        'period': period,
-        'start_point': '2021/01/08',
-        'end_point': '2021/01/25',
+        "column_name": "Date",
+        "split": "week",
+        "period": period,
+        "start_point": "2021/01/08",
+        "end_point": "2021/01/25",
     }
 
-    stage_input_list = [
-    ]
+    stage_input_list = []
 
     # distribution input
-    distribution_input={
-        'normal': 1,
-        'poisson':0,
-        'binomial':0,
-        'bernoulli':0
+    distribution_input = {"normal": 1, "poisson": 0, "binomial": 0, "bernoulli": 0}
 
+    request_data = {
+        "database_details": database_details,
+        "distribution_input": distribution_input,
+        "number_of_variable": number_of_variables,
+        "stages": stage_input_list,
+        "time_input": time_input,
     }
 
+    headers = {"content-type": "application/json"}
 
-    request_data={
-        'database_details': database_details,
-        'distribution_input': distribution_input,
-        'number_of_variable':number_of_variables,
-        'stages':stage_input_list,
-        'time_input':time_input,
-    }
+    response = requests.post(
+        url=TARGETED_POPULATION_URL, json=request_data, headers=headers
+    )
 
-    headers = {'content-type': 'application/json'}
+    res = json.loads(response.text)
 
-    response = requests.post(url=TARGETED_POPULATION_URL, json=request_data,headers=headers)
-
-    res= json.loads(response.text)
-  
     return res
+
+
+def save_team(
+    team_name,
+    team_code,
+    team_spec,
+    portfolio_details,
+    universal_code,
+    company_id,
+    created_by,
+    data_type,
+):
+    payload = json.dumps(
+        {
+            **MANAGEMENT_REPORTS_DICT,
+            "command": "insert",
+            "field": {
+                "event_id": get_event_id()["event_id"],
+                "team_name": team_name,
+                "team_code": team_code,
+                "team_spec": team_spec,
+                "portfolio_details": portfolio_details,
+                "universal_code": universal_code,
+                "created_at": time,
+                "company_id": company_id,
+                "created_by": created_by,
+                "data_type": data_type,
+            },
+            "update_field": {"order_nos": 21},
+            "platform": "bangalore",
+        }
+    )
+    headers = {"Content-Type": "application/json"}
+    response = requests.request(
+        "POST", DOWELLCONNECTION_URL, headers=headers, data=payload
+    )
+    print("DB: SAVED TEAMS ----------- \n")
+    return json.loads(response.text)
+
+
+def get_team(team_id):
+    fields = {"_id": team_id}
+    response_obj = dowellconnection(*MANAGEMENT_REPORTS_LIST, "find", fields, "nil")
+    # print("document object-------------- \n", response_obj)
+    res_obj = json.loads(response_obj)
+    try:
+        return res_obj["data"]
+    except RuntimeError:
+        return []

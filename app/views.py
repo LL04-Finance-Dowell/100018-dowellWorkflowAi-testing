@@ -32,6 +32,8 @@ from app.utils.mongo_db_connection import (
     update_wf,
     update_wf_process,
     wf_setting_update,
+    save_team,
+    get_team,
 )
 
 from .constants import EDITOR_API
@@ -67,7 +69,7 @@ def document_processing(request):
             ),
             process_choice="save_process",
             creator_portfolio=request.data["creator_portfolio"],
-            workflows_ids=request.data["workflows_ids"]
+            workflows_ids=request.data["workflows_ids"],
         )
         return Response("Process Saved in drafts.", status.HTTP_201_CREATED)
 
@@ -85,7 +87,7 @@ def document_processing(request):
             ),
             process_choice="content_wise",
             creator_portfolio=request.data["creator_portfolio"],
-            workflows_ids=request.data["workflows_ids"]
+            workflows_ids=request.data["workflows_ids"],
         )
         return processing.start(process)
 
@@ -103,7 +105,7 @@ def document_processing(request):
             ),
             process_choice="step_wise",
             creator_portfolio=request.data["creator_portfolio"],
-            workflows_ids=request.data["workflows_ids"]
+            workflows_ids=request.data["workflows_ids"],
         )
         return processing.start(process)
 
@@ -121,7 +123,7 @@ def document_processing(request):
             ),
             process_choice="workflow",
             creator_portfolio=request.data["creator_portfolio"],
-            workflows_ids=request.data["workflows_ids"]
+            workflows_ids=request.data["workflows_ids"],
         )
         return processing.start(process)
 
@@ -139,7 +141,7 @@ def document_processing(request):
             ),
             process_choice="content",
             creator_portfolio=request.data["creator_portfolio"],
-            workflows_ids=request.data["workflows_ids"]
+            workflows_ids=request.data["workflows_ids"],
         )
         return processing.start(process)
 
@@ -157,7 +159,7 @@ def document_processing(request):
             ),
             process_choice="workflow_steps",
             creator_portfolio=request.data["creator_portfolio"],
-            workflows_ids=request.data["workflows_ids"]
+            workflows_ids=request.data["workflows_ids"],
         )
         return processing.start(process)
 
@@ -175,7 +177,7 @@ def document_processing(request):
             ),
             process_choice="workflow",
             creator_portfolio=request.data["creator_portfolio"],
-            workflows_ids=request.data["workflows_ids"]
+            workflows_ids=request.data["workflows_ids"],
         )
         return processing.start(process)
 
@@ -724,7 +726,7 @@ def favorites(request):
 
 @api_view(["GET"])
 def all_favourites(request, company_id):
-    """ List favs """
+    """List favs"""
     if not validator.validate_id(company_id):
         return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
 
@@ -945,3 +947,42 @@ def search(request):
         },
         status=status.HTTP_200_OK,
     )
+
+
+@api_view(["POST"])
+def create_team(request):
+    """Create a new Team"""
+    form = request.data
+    if not form:
+        return Response("Team Data required", status.HTTP_400_BAD_REQUEST)
+
+    company_id = form["company_id"]
+    created_by = form["created_by"]
+
+    team_name = form["team_name"]
+    team_code = form["team_code"]
+    team_spec = form["team_spec"]
+    portfolio_details = form["portfolio_details"]
+    universal_code = form["universal_code"]
+    data_type = form["data_type"]
+    team_set = json.loads(
+        save_team(
+            team_name,
+            team_code,
+            team_spec,
+            portfolio_details,
+            universal_code,
+            company_id,
+            created_by,
+            data_type,
+        )
+    )
+
+    if team_set["isSuccess"]:
+        return Response(
+            {
+                "Team Saved": get_team(team_set["inserted_id"]),
+            },
+            status=status.HTTP_201_CREATED,
+        )
+    return Response("Failed to Save Team Data", status.HTTP_500_INTERNAL_SERVER_ERROR)

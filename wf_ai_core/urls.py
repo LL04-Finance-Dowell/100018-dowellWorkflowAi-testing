@@ -55,6 +55,7 @@ from app.views import (
     process_verification,
     mark_process_as_finalize_or_reject,
     trigger_process,
+    create_team,
 )
 
 schema_view = get_schema_view(
@@ -139,6 +140,9 @@ urlpatterns = [
     path("v0.2/process/", document_processing),
     path("v0.2/process/action/verify/", process_verification),
     path("v0.2/process/action/trigger/", trigger_process),
+
+    path("v0.1/create_team/", create_team)
+
 ]
 if settings.DEBUG:
     urlpatterns = urlpatterns + static(
