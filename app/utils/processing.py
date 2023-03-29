@@ -1,5 +1,5 @@
 from threading import Thread
-
+import requests
 from rest_framework import status
 from rest_framework.response import Response
 
@@ -15,6 +15,7 @@ from app.utils.mongo_db_connection import (
 from . import checks, verification
 from . import link_gen
 from . import threads
+from app.constants import NOTIFICATION_API
 
 
 def new(
@@ -271,6 +272,11 @@ def verify(process, auth_step_role, location_data, user_name):
 
 def background(process_id, document_id):
     # TODO: mark notification as done
+    res = requests.delete(f"{NOTIFICATION_API}/{document_id}/")
+    if res.status_code == 204:
+        print("deleted notification")
+    else:
+        print("something went wrong on notification")
 
     # get process
     process = get_process_object(workflow_process_id=process_id)
