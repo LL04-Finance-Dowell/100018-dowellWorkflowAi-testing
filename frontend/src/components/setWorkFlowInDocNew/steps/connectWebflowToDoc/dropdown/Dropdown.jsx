@@ -8,7 +8,7 @@ import Collapse from "../../../../../layouts/collapse/Collapse";
 import styles from "./dropdown.module.css";
 import { TiArrowSortedDown, TiArrowSortedUp } from "react-icons/ti";
 
-const Dropdown = () => {
+const Dropdown = ({ disableClick }) => {
   const dispatch = useDispatch();
   const { wfToDocument, docCurrentWorkflow, dropdownToggle } = useSelector(
     (state) => state.app
@@ -16,6 +16,7 @@ const Dropdown = () => {
   /*  const [toggle, setToggle] = useState(false); */
 
   const handleToggle = () => {
+    if (disableClick) return
     dispatch(setDropdowndToggle(!dropdownToggle));
   };
 
@@ -34,6 +35,7 @@ const Dropdown = () => {
           <button
             onClick={handleToggle}
             className={`${styles.current__item__box} ${styles.box}`}
+            style={{ cursor: disableClick ? "not-allowed" : "initial" }}
           >
             <span>
               {docCurrentWorkflow

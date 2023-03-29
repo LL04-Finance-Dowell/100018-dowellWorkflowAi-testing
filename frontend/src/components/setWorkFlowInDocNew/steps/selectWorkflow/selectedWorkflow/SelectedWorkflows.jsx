@@ -5,7 +5,7 @@ import InfoBox from "../../../../infoBox/InfoBox";
 import { useDispatch, useSelector } from "react-redux";
 import { setSelectedWorkflowsToDoc } from "../../../../../features/app/appSlice";
 
-const SelectedWorkflows = () => {
+const SelectedWorkflows = ({ savedDoc }) => {
   const dispatch = useDispatch();
 
   const { selectedWorkflowsToDoc, currentDocToWfs } = useSelector(
@@ -14,7 +14,10 @@ const SelectedWorkflows = () => {
 
   // console.log("selectedWorkflowsToDoc", selectedWorkflowsToDoc);
 
-  const handleRemove = (workflow) => {
+  const handleRemove = (elem, workflow) => {
+    if (savedDoc) {
+      return elem.target.checked = false
+    }
     dispatch(setSelectedWorkflowsToDoc(workflow));
   };
 
@@ -35,9 +38,10 @@ const SelectedWorkflows = () => {
             <div className={styles.selected__box}>
               <span>{(index + 1).toString().padStart(2, "0")}.</span>
               <input
-                onClick={() => handleRemove(workflow)}
+                onClick={(e) => handleRemove(e, workflow)}
                 checked={workflow.isSelected}
                 type="checkbox"
+                style={{ cursor: savedDoc ? "not-allowed" : "initial" }}
               />
               <span>Select to remove</span>
             </div>

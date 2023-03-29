@@ -74,13 +74,17 @@ const SetWorkflowInDoc = () => {
     setDraftProcessLoading(true);
     
     if (
+      !allProcesses ||
       allProcesses.length < 1 || 
+      !allDocuments ||
       allDocuments.length < 1 || 
+      !allWorkflows ||
       allWorkflows.length < 1
     ) return
     
     const foundProcess = allProcesses.find(process => process._id === processId);
     if (!foundProcess) return setDraftProcessLoading(false);
+    if (foundProcess.processing_state !== "draft" || !foundProcess.workflow_construct_ids) return setDraftProcessLoading(false);
 
     getSingleProcessV2(foundProcess._id).then(res => {
       const fetchedProcessData = res.data;
@@ -93,68 +97,64 @@ const SetWorkflowInDoc = () => {
       
       // console.log(res.data)
 
-      setDraftProcess(res.data);
+      setDraftProcess(fetchedProcessData);
       dispatch(contentDocument(foundOriginalDoc._id));
       dispatch(setCurrentDocToWfs(foundOriginalDoc));
 
-      const foundWorkflow = allWorkflows.filter(workflow => workflow?.workflows?.workflow_title.includes(res.data.process_title));
-      
-      if (foundWorkflow[0]) {
-        dispatch(setSelectedWorkflowsToDoc(foundWorkflow[0]));
-        dispatch(setWfToDocument());
-        // console.log(foundWorkflow[0])
-        dispatch(setDocCurrentWorkflow(foundWorkflow[0]))
+      // This logic would be updated later when multiple workflows would be allowed in a process creation
+      const foundWorkflow = allWorkflows.find(workflow => workflow._id === fetchedProcessData.workflow_construct_ids[0]);
+      if (!foundWorkflow) return setDraftProcessLoading(false);
 
-        fetchedProcessData.process_steps.forEach((step, currentStepIndex) => {
-          const stepKeys = Object.keys(step);
+      dispatch(setSelectedWorkflowsToDoc(foundWorkflow));
+      dispatch(setWfToDocument());
+      // console.log(foundWorkflow)
+      dispatch(setDocCurrentWorkflow(foundWorkflow))
 
-          stepKeys.forEach(key => {
-            // console.log(key)
-            if (key === 'stepName') dispatch(updateSingleProcessStep({ 'step_name': step[key], "indexToUpdate": currentStepIndex, "workflow": foundWorkflow[0]._id }))
-            if (key === 'stepRole') dispatch(updateSingleProcessStep({ 'role': step[key], "indexToUpdate": currentStepIndex, "workflow": foundWorkflow[0]._id }))
-            
-            if (key === 'stepPublicMembers') {
-              step[key].forEach(user => {
-                // console.log(user)
-                dispatch(setPublicMembersSelectedForProcess({ member: user.member, portfolio: user.portfolio, stepIndex: currentStepIndex }))
-              })
-            }
+      fetchedProcessData.process_steps.forEach((step, currentStepIndex) => {
+        const stepKeys = Object.keys(step);
 
-            if (key === 'stepTeamMembers') {
-              step[key].forEach(user => {
-                // console.log(user)
-                dispatch(setTeamMembersSelectedForProcess({ member: user.member, portfolio: user.portfolio, stepIndex: currentStepIndex }))
-              })
-            }
-            
-            if (key === 'stepUserMembers') {
-              step[key].forEach(user => {
-                dispatch(setUserMembersSelectedForProcess({ member: user.member, portfolio: user.portfolio, stepIndex: currentStepIndex }))
-              });
-            }
-            
-            if (key === 'stepDocumentMap') {
-              step[key].forEach(item => {
-                const newTableOfContentObj = {
-                  id: item,
-                  workflow: foundWorkflow[0]._id,
-                  stepIndex: currentStepIndex,
-                };
-                dispatch(setTableOfContentForStep(newTableOfContentObj));
-              })
-            }
+        stepKeys.forEach(key => {
+          // console.log(key)
+          if (key === 'stepName') dispatch(updateSingleProcessStep({ 'step_name': step[key], "indexToUpdate": currentStepIndex, "workflow": foundWorkflow._id }))
+          if (key === 'stepRole') dispatch(updateSingleProcessStep({ 'role': step[key], "indexToUpdate": currentStepIndex, "workflow": foundWorkflow._id }))
+          
+          if (key === 'stepPublicMembers') {
+            step[key].forEach(user => {
+              // console.log(user)
+              dispatch(setPublicMembersSelectedForProcess({ member: user.member, portfolio: user.portfolio, stepIndex: currentStepIndex }))
+            })
+          }
 
-            dispatch(updateSingleProcessStep({ [`${key}`]: step[key], "indexToUpdate": currentStepIndex, "workflow": foundWorkflow[0]._id }));
-          })
-        
+          if (key === 'stepTeamMembers') {
+            step[key].forEach(user => {
+              // console.log(user)
+              dispatch(setTeamMembersSelectedForProcess({ member: user.member, portfolio: user.portfolio, stepIndex: currentStepIndex }))
+            })
+          }
+          
+          if (key === 'stepUserMembers') {
+            step[key].forEach(user => {
+              dispatch(setUserMembersSelectedForProcess({ member: user.member, portfolio: user.portfolio, stepIndex: currentStepIndex }))
+            });
+          }
+          
+          if (key === 'stepDocumentMap') {
+            step[key].forEach(item => {
+              const newTableOfContentObj = {
+                id: item,
+                workflow: foundWorkflow[0]._id,
+                stepIndex: currentStepIndex,
+              };
+              dispatch(setTableOfContentForStep(newTableOfContentObj));
+            })
+          }
+
+          dispatch(updateSingleProcessStep({ [`${key}`]: step[key], "indexToUpdate": currentStepIndex, "workflow": foundWorkflow._id }));
         })
+      
+      })
 
-        setDraftProcessDoc(foundOriginalDoc);
-        setDraftProcessLoading(false);
-
-        return
-      }
-
+      setDraftProcessDoc(foundOriginalDoc);
       setDraftProcessLoading(false);
 
     }).catch(err => {
@@ -184,7 +184,7 @@ const SetWorkflowInDoc = () => {
         <SelectDoc savedDoc={draftProcessDOc} />
         <ContentMapOfDoc />
         <div className={styles.diveder}></div>
-        <SelectWorkflow workflowBoxOpen={draftProcessDOc ? true : false} />
+        <SelectWorkflow savedDoc={draftProcessDOc} />
         <div className={styles.diveder}></div>
         <ConnectWorkFlowToDoc stepsPopulated={draftProcessDOc ? true : false} />
         <div className={styles.diveder}></div>

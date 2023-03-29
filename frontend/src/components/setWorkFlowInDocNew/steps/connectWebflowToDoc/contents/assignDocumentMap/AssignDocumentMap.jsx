@@ -93,10 +93,10 @@ const AssignDocumentMap = ({ currentStepIndex }) => {
     <>
     <p style={{ padding: "0 6px", marginBottom: "2px"}}><b>Table of Contents</b></p>
     {
-      contentOfDocument ? 
       processSteps.find(
         process => process.workflow === docCurrentWorkflow?._id
       )?.steps[currentStepIndex]?.skipStep ? <p>Step skipped</p> :
+      contentOfDocument ? 
       <Contents
         feature={"table-of-contents"}
         contents={contentOfDocument}

@@ -16,7 +16,7 @@ const ProcessCard = ({ cardItem, title }) => {
 
   const handleProcessItemClick = async (item) => {
     console.log(item)
-    // if (item.processing_state === "draft") navigate(`/workflows/new-set-workflow?id=${item._id}&state=${item.processing_state}`)
+    if (item.processing_state === "draft" && item.workflow_construct_ids) navigate(`/workflows/new-set-workflow?id=${item._id}&state=${item.processing_state}`)
   };
 
   const handleTrashProcess = async (cardItem) => {

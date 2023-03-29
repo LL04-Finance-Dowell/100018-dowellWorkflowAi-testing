@@ -62,7 +62,7 @@ const SelectDoc = ({ savedDoc }) => {
   }, [savedDoc])
 
   return (
-    <div className={styles.container}>
+    <div className={styles.container} style={{ cursor: savedDoc ? "not-allowed" : "default" }}>
       <h2 className="h2-small step-title align-left">
         1. Select a Document to add Workflows
       </h2>

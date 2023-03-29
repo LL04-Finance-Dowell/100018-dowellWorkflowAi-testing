@@ -68,7 +68,7 @@ const SelectedDocuments = ({ selectedDocument, selectedDocuments, disableSelecti
       ) : (
         <>
           <h3 className={styles.no__item}>No document copies found for {selectedDocument.document_name}</h3>
-          <PrimaryButton type="submit" hoverbg="success" onClick={onSubmit}>
+          <PrimaryButton type="submit" hoverBg="success" onClick={onSubmit}>
             Add selected document copies to process (Break processing of
             unselected)
           </PrimaryButton>

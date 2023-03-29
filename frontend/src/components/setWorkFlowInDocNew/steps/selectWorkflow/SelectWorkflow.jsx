@@ -12,15 +12,17 @@ import {
 } from "../../../../features/app/appSlice";
 import { contentDocument } from "../../../../features/document/asyncThunks";
 
-const SelectWorkflow = ({ workflowBoxOpen }) => {
+const SelectWorkflow = ({ savedDoc }) => {
 	const dispatch = useDispatch();
 	const { currentDocToWfs } = useSelector((state) => state.app);
 
 	const handleRemove = () => {
+		if (savedDoc) return
 		dispatch(removeFromSelectedWorkflowsToDocGroup());
 	};
 
 	const handleConnectWfToDoc = () => {
+		if (savedDoc) return
 		dispatch(setWfToDocument());
 		if (currentDocToWfs) {
 			// const data = { document_id: currentDocToWfs._id };
@@ -35,13 +37,13 @@ const SelectWorkflow = ({ workflowBoxOpen }) => {
 				2. Select a Workflow to add to the selected documents
 			</h2>
 			<div className={styles.content__box}>
-				<SelectWorkflowBoxes workflowBoxOpen={workflowBoxOpen} />
-				<SelectedWorkflows />
+				<SelectWorkflowBoxes savedDoc={savedDoc} />
+				<SelectedWorkflows savedDoc={savedDoc} />
 				<div className={styles.button__container}>
-					<PrimaryButton onClick={handleRemove} hoverbg="error">
+					<PrimaryButton onClick={handleRemove} hoverBg={savedDoc ? "" : "error"} disabled={savedDoc ? true : false} style={{ cursor: savedDoc ? "not-allowed" : "pointer" }}>
 						Remove Selected Workflows from document
 					</PrimaryButton>
-					<PrimaryButton onClick={handleConnectWfToDoc} hoverbg="success">
+					<PrimaryButton onClick={handleConnectWfToDoc} hoverBg={savedDoc ? "" : "success"} disabled={savedDoc ? true : false} style={{ cursor: savedDoc ? "not-allowed" : "pointer" }}>
 						Add Selected Workflows to document
 					</PrimaryButton>
 				</div>

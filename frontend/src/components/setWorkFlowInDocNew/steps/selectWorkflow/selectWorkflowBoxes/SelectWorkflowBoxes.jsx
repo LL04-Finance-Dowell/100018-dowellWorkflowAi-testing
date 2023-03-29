@@ -28,7 +28,7 @@ import {
 } from "../../../../../features/workflow/asyncTHunks";
 import { toast } from "react-toastify";
 
-const InfoBoxes = ({ workflowBoxOpen }) => {
+const InfoBoxes = ({ savedDoc }) => {
   const { register, watch } = useForm();
   const { workflow, team } = watch();
 
@@ -78,7 +78,6 @@ const InfoBoxes = ({ workflowBoxOpen }) => {
                         .includes(workflow?.toLowerCase())
                     ),
               status: allWorkflowsStatus,
-              isOpen: workflowBoxOpen,
             }
           : item.title === "team"
           ? {
@@ -269,8 +268,8 @@ const InfoBoxes = ({ workflowBoxOpen }) => {
       {React.Children.toArray(compInfoBoxes?.map((infoBox) => (
         <InfoBoxContainer className={styles.box}>
           <InfoTitleBox
-            style={{ pointerEvents: infoBox?.status === "pending" && "none" }}
-            onClick={currentDocToWfs ? () => handleTogleBox(infoBox.id) : () => toast.info("Please select a document first.")}
+            style={{ pointerEvents: infoBox?.status === "pending" && "none", cursor: savedDoc ? "not-allowed" : "initial" }}
+            onClick={currentDocToWfs ? savedDoc ? () => {} : () => handleTogleBox(infoBox.id) : () => toast.info("Please select a document first.")}
             /*  className={styles.title__box} */
           >
             {infoBox.status && infoBox.status === "pending" ? (

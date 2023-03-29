@@ -38,8 +38,9 @@ const ConnectWorkFlowToDoc = ({ stepsPopulated }) => {
   const [showSteps, setShowSteps] = useState([]);
 
   useEffect(() => {
+    if (stepsPopulated) return setCurrentSteps(stepsPopulated);
     setCurrentSteps(docCurrentWorkflow?.workflows?.steps);
-  }, [docCurrentWorkflow]);
+  }, [docCurrentWorkflow, stepsPopulated]);
 
   const [contentToggle, setContentToggle] = useState(false);
 
@@ -193,7 +194,7 @@ const ConnectWorkFlowToDoc = ({ stepsPopulated }) => {
           </div>
         ) : (
           <>
-            <Dropdown />
+            <Dropdown disableClick={stepsPopulated ? true : false} />
             {docCurrentWorkflow && (
               <div className={styles.step__container}>
                 {currentSteps &&
@@ -213,6 +214,10 @@ const ConnectWorkFlowToDoc = ({ stepsPopulated }) => {
                       id={`process-step-${index}`}
                     >
                       <div>
+                        {
+console.log(processSteps.find(
+  process => process.workflow === docCurrentWorkflow?._id
+)?.steps[index])}
                         <div
                           onClick={() => setContentToggle((prev) => !prev)}
                           className={`${styles.header} ${styles.title__box}`}
@@ -244,6 +249,11 @@ const ConnectWorkFlowToDoc = ({ stepsPopulated }) => {
                                 process => process.workflow === docCurrentWorkflow?._id
                               )?.steps[index]?.skipStep
                             }
+                            checked={
+                              processSteps.find(
+                                process => process.workflow === docCurrentWorkflow?._id
+                              )?.steps[index]?.skipStep
+                            }
                           />
                           <label htmlFor="skip">Skip this Step</label>
                         </div>
@@ -271,6 +281,11 @@ const ConnectWorkFlowToDoc = ({ stepsPopulated }) => {
                                 )?.steps[index]?.skipStep ? "not-allowed" : "default"
                               }
                             }
+                            checked={
+                              processSteps.find(
+                                process => process.workflow === docCurrentWorkflow?._id
+                              )?.steps[index]?.permitInternalWorkflow
+                            }
                           />
                           <label htmlFor="permit">
                             Permit internal workflow in this Step
@@ -286,10 +301,10 @@ const ConnectWorkFlowToDoc = ({ stepsPopulated }) => {
                       <div className={styles.diveder}></div>
                       <AssignCollapse currentStepIndex={index} stepsPopulated={stepsPopulated} />
                       <div className={styles.container__button__box}>
-                        <PrimaryButton hoverbg="error" onClick={() => handleResetStepAndSuccessors(index)}>
+                        <PrimaryButton hoverBg="error" onClick={() => handleResetStepAndSuccessors(index)}>
                           Reset this step & its successors
                         </PrimaryButton>
-                        <PrimaryButton hoverbg="success" onClick={() => handleSetStepAndProceedToNext(index)}>
+                        <PrimaryButton hoverBg="success" onClick={() => handleSetStepAndProceedToNext(index)}>
                           Set this step & proceed to next
                         </PrimaryButton>
                       </div>

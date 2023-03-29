@@ -210,7 +210,7 @@ const ProcessDocument = () => {
           { 
             newProcessLoading ? 
             <ProgressBar durationInMS={18000} finalWidth={newProcessLoaded ? "100" : null} style={{ height: "40px" }} /> :
-            <button hoverbg="success" onClick={handleProcessBtnClick}>Save / Start Proccess</button>
+            <button hoverBg="success" onClick={handleProcessBtnClick}>Save / Start Proccess</button>
           }
         </div>
       </div>
