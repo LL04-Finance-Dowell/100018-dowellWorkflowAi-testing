@@ -139,12 +139,15 @@ def start(process):
     # doc_name = document["document_name"] + " ".join(auth_users)
     # viewers = document["auth_viewers"]
     doc_id = process["parent_document_id"]
+
     viewers = []
     for viewer in auth_users:
         viewers.append(viewer)
+    
+    print(viewers)
 
     if len(viewers) > 0:
-        res = json.loads(authorize_document(doc_id, viewers))
+        res = json.loads(authorize_document(doc_id, viewers, process["_id"]))
         if res["isSuccess"]:
 
             # add this users to the document clone map of step one
@@ -347,7 +350,7 @@ def background(process_id, document_id):
                             viewers = []
                             viewers.append(usr)
                             print("the viewers", viewers)
-                            authorize_document(docid, viewers)
+                            authorize_document(docid, viewers, process["_id"])
                             # update_document_viewers(
                             #     document_id=docid,
                             #     auth_viewers=viewers,
@@ -437,7 +440,7 @@ def background(process_id, document_id):
                             viewers = []
                             viewers.append(usr)
                             print("the viewers", viewers)
-                            authorize_document(docid, viewers)
+                            authorize_document(docid, viewers, process["_id"])
                             # update_document_viewers(
                             #     document_id=docid,
                             #     auth_viewers=viewers,
@@ -538,7 +541,7 @@ def background(process_id, document_id):
                             viewers = []
                             viewers.append(usr)
                             print("the viewers", viewers)
-                            authorize_document(docid, viewers)
+                            authorize_document(docid, viewers, process["_id"])
                             # update_document_viewers(
                             #     document_id=docid,
                             #     auth_viewers=viewers,
