@@ -80,10 +80,7 @@ def new(
 
 def start(process):
     """
-    Generate links and qrcodes for each member in the process steps,
-    update the auth viewer of the process document
-    with first step users in the process steps,
-    and update the processing state of the process.
+    Start the processing cycle.
 
     Args:
         process (dict): A dictionary containing information about the process.
@@ -136,68 +133,58 @@ def start(process):
         + step_one.get("stepPublicMembers", [])
         + step_one.get("stepUserMembers", [])
     ]
-    print("the auth users", auth_users)
+    
 
     # update authorized viewers for the parent document
     # document = get_document_object(process["parent_document_id"])
     # doc_name = document["document_name"] + " ".join(auth_users)
     # viewers = document["auth_viewers"]
+    doc_id = process["parent_document_id"]
     viewers = []
     for viewer in auth_users:
         viewers.append(viewer)
 
-    print("the viewers", viewers)
     if len(viewers) > 0:
-        authorize_document(process["parent_document_id"], viewers)
-        # update_document_viewers(
-        #     document_id=document["_id"],
-        #     auth_viewers=viewers,
-        #     doc_name=doc_name,
-        #     state="processing",
-        #     process_id=process["_id"],
-        # )
+        res = json.loads(authorize_document(doc_id, viewers))
+        if res["isSuccess"]:
+
+            # add this users to the document clone map of step one
+            for step in process["process_steps"]:
+                if step.get("stepNumber") == 1:
+                    for user in viewers:
+                        step.get("stepDocumentCloneMap").append({user: doc_id})
+
+            # now update the process
+            update_wf_process(
+                process_id=process["_id"],
+                steps=process["process_steps"],
+                state="processing",
+            )
+
+            # save links
+            data = {
+                "links": links,
+                "process_id": process["_id"],
+                "document_id": process["parent_document_id"],
+                "company_id": process["company_id"],
+            }
+            Thread(target=threads.save_links_v2, args=(data,)).start()
+
+            # save qrcodes
+            code_data = {
+                "qrcodes": qrcodes,
+                "process_id": process["_id"],
+                "document_id": process["parent_document_id"],
+                "process_choice": process["processing_action"],
+                "company_id": process["company_id"],
+                "process_title": process["process_title"],
+            }
+            Thread(target=threads.save_qrcodes, args=(code_data,)).start()
+
+            # return generated links
+            return Response({"links": links, "qrcodes": qrcodes}, status.HTTP_200_OK)
     else:
-        print("No Auth viewers")
-
-    # add this users to the document clone map of step one
-    doc_id = process["parent_document_id"]
-    for step in process["process_steps"]:
-        if step.get("stepNumber") == 1:
-            for user in viewers:
-                step.get("stepDocumentCloneMap").append({user: doc_id})
-
-    # now update the process
-    update_wf_process(
-        process_id=process["_id"],
-        steps=process["process_steps"],
-        state="processing",
-    )
-
-    # save links
-    data = {
-        "links": links,
-        "process_id": process["_id"],
-        "document_id": process["parent_document_id"],
-        "company_id": process["company_id"],
-    }
-    Thread(target=threads.save_links_v2, args=(data,)).start()
-
-    # save qrcodes
-    code_data = {
-        "qrcodes": qrcodes,
-        "process_id": process["_id"],
-        "document_id": process["parent_document_id"],
-        "process_choice": process["processing_action"],
-        "company_id": process["company_id"],
-        "process_title": process["process_title"],
-    }
-    Thread(target=threads.save_qrcodes, args=(code_data,)).start()
-
-    # return generated links
-    if links and qrcodes:
-        return Response({"links": links, "qrcodes": qrcodes}, status.HTTP_200_OK)
-    else:
-        raise Exception("Failed to generate links for the given process.")
+        print("No people, no procees")
 
 
 def verify(process, auth_step_role, location_data, user_name):
