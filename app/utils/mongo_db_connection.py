@@ -453,6 +453,7 @@ def get_wf_list(company_id):
 
 
 # ------------------------------------------ Templates-----------------------------
+#TODO: Add template approval filed.
 def save_template(name, data, page, created_by, company_id, data_type):
     payload = json.dumps(
         {
@@ -663,7 +664,7 @@ def update_document_clone(document_id, clone_list):
     return json.loads(response.text)
 
 
-def update_document_viewers(document_id, auth_viewers, doc_name, state, process_id):
+def authorize_document(document_id, viewers):
     payload = json.dumps(
         {
             **DOCUMENT_CONNECTION_DICT,
@@ -674,8 +675,7 @@ def update_document_viewers(document_id, auth_viewers, doc_name, state, process_
             "update_field": {
                 "document_name": doc_name,
                 "auth_viewers": auth_viewers,
-                "document_state": state,
-                "process_id": process_id,
+                "state": "processing"
             },
             "platform": "bangalore",
         }
@@ -684,8 +684,32 @@ def update_document_viewers(document_id, auth_viewers, doc_name, state, process_
     response = requests.request(
         "POST", DOWELLCONNECTION_URL, headers=headers, data=payload
     )
-    print("DB: DOCUMENT AUTH VIEWERS UPDATED------------ \n")
+    print("DB: DOCUMENT AUTH UPDATED------------ \n")
     return json.loads(response.text)
+
+# def update_document_viewers(document_id, auth_viewers, doc_name, state, process_id):
+#     payload = json.dumps(
+#         {
+#             **DOCUMENT_CONNECTION_DICT,
+#             "command": "update",
+#             "field": {
+#                 "_id": document_id,
+#             },
+#             "update_field": {
+#                 "document_name": doc_name,
+#                 "auth_viewers": auth_viewers,
+#                 "document_state": state,
+#                 "process_id": process_id,
+#             },
+#             "platform": "bangalore",
+#         }
+#     )
+#     headers = {"Content-Type": "application/json"}
+#     response = requests.request(
+#         "POST", DOWELLCONNECTION_URL, headers=headers, data=payload
+#     )
+#     print("DB: DOCUMENT AUTH VIEWERS UPDATED------------ \n")
+#     return json.loads(response.text)
 
 
 def get_links_list(company_id):

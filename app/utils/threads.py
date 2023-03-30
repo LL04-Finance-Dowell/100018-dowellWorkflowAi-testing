@@ -16,29 +16,6 @@ from app.utils.mongo_db_connection import (
 from app.constants import NOTIFICATION_API
 
 
-# def update_document_authorize(data):
-#     """Updating the document with auth viewers"""
-#     print("Doc Auth")
-#     try:
-#         document = get_document_object(data["document_id"])
-#         doc_name = document["document_name"] + " ".join(data["auth_viewers"])
-
-#         viewers = document["auth_viewers"]
-#         for viewer in data["auth_viewers"]:
-#             viewers.append(viewer)
-
-#         print("the viewers", viewers)
-#         update_document_viewers(
-#             document_id=data["document_id"],
-#             auth_viewers=viewers,
-#             doc_name=doc_name,
-#         )
-#         print("Thread: Doc Authorize \n")
-#     except ConnectionError:
-#         print("Fail: doc auth thread \n")
-#         return
-
-
 def notification(data):
     """post notifications for extension."""
     payload = json.dumps({
