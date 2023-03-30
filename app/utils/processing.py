@@ -2,7 +2,7 @@ from threading import Thread
 import requests
 from rest_framework import status
 from rest_framework.response import Response
-
+import json
 from app.utils import cloning
 from app.utils.mongo_db_connection import (
     get_document_object,
@@ -133,7 +133,6 @@ def start(process):
         + step_one.get("stepPublicMembers", [])
         + step_one.get("stepUserMembers", [])
     ]
-    
 
     # update authorized viewers for the parent document
     # document = get_document_object(process["parent_document_id"])
