@@ -453,7 +453,7 @@ def get_wf_list(company_id):
 
 
 # ------------------------------------------ Templates-----------------------------
-#TODO: Add template approval filed.
+# TODO: Add template approval filed.
 def save_template(name, data, page, created_by, company_id, data_type):
     payload = json.dumps(
         {
@@ -672,10 +672,7 @@ def authorize_document(document_id, viewers):
             "field": {
                 "_id": document_id,
             },
-            "update_field": {
-                "auth_viewers": auth_viewers,
-                "state": "processing"
-            },
+            "update_field": {"auth_viewers": viewers, "state": "processing"},
             "platform": "bangalore",
         }
     )
@@ -685,6 +682,7 @@ def authorize_document(document_id, viewers):
     )
     print("DB: DOCUMENT AUTH UPDATED------------ \n")
     return json.loads(response.text)
+
 
 # def update_document_viewers(document_id, auth_viewers, doc_name, state, process_id):
 #     payload = json.dumps(
@@ -712,7 +710,7 @@ def authorize_document(document_id, viewers):
 
 
 def get_links_list(company_id):
-    print("DB: Getting process list \n")
+    """Get all links in an org"""
     fields = {
         "company_id": str(company_id),
         "process_id": str("640260a8bd505fa70c180aa9"),
@@ -726,6 +724,7 @@ def get_links_list(company_id):
 
 
 def save_wf_setting(company_id, owner_name, username, portfolio_name, process):
+    """Saving workflow settings"""
     payload = json.dumps(
         {
             **WF_AI_SETTING_DICT,

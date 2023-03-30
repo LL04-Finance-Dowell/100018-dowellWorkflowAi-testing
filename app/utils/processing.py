@@ -80,14 +80,17 @@ def new(
 
 def start(process):
     """
-    Generate links and qrcodes for each member in the process steps, update the auth viewer of the process document
-    with first step users in the process steps, and update the processing state of the process.
+    Generate links and qrcodes for each member in the process steps,
+    update the auth viewer of the process document
+    with first step users in the process steps,
+    and update the processing state of the process.
 
     Args:
         process (dict): A dictionary containing information about the process.
 
     Returns:
-        Response: A JSON response containing the generated links, or an error message.
+        Response: A JSON response containing the generated links, or an error
+        message.
     """
     links = []
     qrcodes = []
@@ -192,7 +195,7 @@ def start(process):
 
     # return generated links
     if links and qrcodes:
-        return Response({"links": links, "qrcodes": qrcodes}, status=status.HTTP_200_OK)
+        return Response({"links": links, "qrcodes": qrcodes}, status.HTTP_200_OK)
     else:
         raise Exception("Failed to generate links for the given process.")
 
