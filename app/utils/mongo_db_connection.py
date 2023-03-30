@@ -673,7 +673,6 @@ def authorize_document(document_id, viewers):
                 "_id": document_id,
             },
             "update_field": {
-                "document_name": doc_name,
                 "auth_viewers": auth_viewers,
                 "state": "processing"
             },
