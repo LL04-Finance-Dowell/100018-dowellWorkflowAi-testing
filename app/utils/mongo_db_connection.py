@@ -422,7 +422,7 @@ def get_wf_object(workflow_id):
     fields = {"_id": str(workflow_id)}
     response_obj = dowellconnection(*WF_CONNECTION_LIST, "find", fields, "nil")
     res_obj = json.loads(response_obj)
-    if len(res_obj["data"]):
+    if len(res_obj["data"]) > 0:
         return res_obj["data"]
     else:
         return []
@@ -436,7 +436,7 @@ def get_all_wf_list():
     for wf in res_obj["data"]:
         wf["id"] = wf["_id"]
         wf_list.append(wf)
-    if len(res_obj["data"]):
+    if len(res_obj["data"]) > 0:
         return wf_list  # res_obj["data"]
     else:
         return []
@@ -446,7 +446,7 @@ def get_wf_list(company_id):
     fields = {"company_id": str(company_id)}
     response_obj = dowellconnection(*WF_CONNECTION_LIST, "fetch", fields, "nil")
     res_obj = json.loads(response_obj)
-    if len(res_obj["data"]):
+    if len(res_obj["data"]) > 0:
         return res_obj["data"]
     else:
         return []
@@ -485,7 +485,7 @@ def get_template_object(template_id):
     fields = {"_id": template_id}
     response_obj = dowellconnection(*TEMPLATE_CONNECTION_LIST, "find", fields, "nil")
     res_obj = json.loads(response_obj)
-    if len(res_obj["data"]):
+    if len(res_obj["data"]) > 0:
         return res_obj["data"]
     else:
         return []
@@ -542,7 +542,7 @@ def get_template_list(company_id):
     }
     response_obj = dowellconnection(*TEMPLATE_CONNECTION_LIST, "fetch", fields, "nil")
     res_obj = json.loads(response_obj)
-    if len(res_obj["data"]):
+    if len(res_obj["data"]) > 0:
         return res_obj["data"]
     else:
         return []
@@ -822,7 +822,7 @@ def get_document_list(company_id):
     fields = {"company_id": str(company_id)}
     response_obj = dowellconnection(*DOCUMENT_CONNECTION_LIST, "fetch", fields, "nil")
     res_obj = json.loads(response_obj)
-    if len(res_obj["data"]):
+    if len(res_obj["data"]) > 0:
         return res_obj["data"]
     else:
         return []
