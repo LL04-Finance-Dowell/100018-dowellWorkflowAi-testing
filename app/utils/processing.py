@@ -138,7 +138,8 @@ def start(process):
     # update authorized viewers for the parent document
     # document = get_document_object(process["parent_document_id"])
     # doc_name = document["document_name"] + " ".join(auth_users)
-    viewers = document["auth_viewers"]
+    # viewers = document["auth_viewers"]
+    viewers = []
     for viewer in auth_users:
         viewers.append(viewer)
 
