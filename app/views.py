@@ -594,10 +594,10 @@ def get_document_content(request, document_id):
 
     if not validator.validate_id(document_id):
         return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
-
     content = []
     my_dict = ast.literal_eval(get_document_object(document_id)["content"])[0][0]
     all_keys = [i for i in my_dict.keys()]
+   
     for i in all_keys:
         temp_list = []
         for j in range(0, len(my_dict[i])):
@@ -607,7 +607,13 @@ def get_document_content(request, document_id):
                 i: temp_list,
             }
         )
-    return Response(content, status=status.HTTP_200_OK)
+    sorted_content=[]
+    for dicts in content:
+        for key,val in dicts.items():
+            # print(dicts[key])
+            sorted_content.append({key:sorted(dicts[key], key=lambda x: int(x["id"][1:]))})
+
+    return Response(sorted_content, status=status.HTTP_200_OK)
 
 
 @api_view(["GET"])
