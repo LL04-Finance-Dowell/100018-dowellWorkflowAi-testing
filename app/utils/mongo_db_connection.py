@@ -674,7 +674,7 @@ def authorize_document(document_id, viewers, process):
             },
             "update_field": {
                 "auth_viewers": viewers,
-                "state": "processing",
+                "document_state": "processing",
                 "process_id": process,
             },
             "platform": "bangalore",
@@ -717,7 +717,7 @@ def get_links_list(company_id):
     """Get all links in an org"""
     fields = {
         "company_id": str(company_id),
-        "process_id": str("640260a8bd505fa70c180aa9"),
+        # "process_id": str("640260a8bd505fa70c180aa9"),
     }
     response_obj = dowellconnection(*LINK_CONNECTION_LIST, "fetch", fields, "nil")
     res_obj = json.loads(response_obj)
@@ -821,7 +821,7 @@ def get_document_object(document_id):
 
 
 def get_document_list(company_id):
-    fields = {"company_id": str(company_id)}
+    fields = {"company_id": str(company_id), "data_type": "Real_Data"}
     response_obj = dowellconnection(*DOCUMENT_CONNECTION_LIST, "fetch", fields, "nil")
     res_obj = json.loads(response_obj)
     if len(res_obj["data"]) > 0:
