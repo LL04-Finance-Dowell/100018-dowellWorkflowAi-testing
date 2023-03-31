@@ -453,7 +453,7 @@ def create_workflow(request):
     return Response("Failed to Save Workflow", status=status.HTTP_200_OK)
 
 
-@api_view(["POST"])
+@api_view(["PUT"])
 def update_workflow(request):
     """Update content of a workflow"""
     form = request.data
@@ -513,10 +513,11 @@ def workflow_index_update(payload):
 @api_view(["GET"])
 def get_workflows(request, company_id):
     """List all workflows"""
+    data_type = request.query_params.get("data_type", "Real_Data")
     if not validator.validate_id(company_id):
         return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
 
-    workflow_list = get_wf_list(company_id)
+    workflow_list = get_wf_list(company_id, data_type)
     if not workflow_list:
         return Response({"workflows": []}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
@@ -533,11 +534,12 @@ def get_workflows(request, company_id):
 
 @api_view(["GET"])
 def get_documents(request, company_id):
-    """List of Created Templates."""
+    """List of Created Documents."""
+    data_type = request.query_params.get("data_type", "Real_Data")
     if not validator.validate_id(company_id):
         return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
 
-    document_list = get_document_list(company_id)
+    document_list = get_document_list(company_id, data_type)
     if not document_list:
         return Response({"documents": []}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
@@ -761,10 +763,11 @@ def trash_favourites(request, item_id, item_type, username):
 @api_view(["GET"])
 def get_templates(request, company_id):
     """List of Created Templates."""
+    data_type = request.query_params.get("data_type", "Real_Data")
     if not validator.validate_id(company_id):
         return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
 
-    templates = get_template_list(company_id)
+    templates = get_template_list(company_id, data_type)
     if not templates:
         return Response({"templates": []}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     if len(templates) > 0:
@@ -963,7 +966,7 @@ def create_team(request):
     team_code = form["team_code"]
     team_spec = form["team_spec"]
     # team_member = form["team_member"]
-    portfolio_list= form["portfolio_list"]
+    portfolio_list = form["portfolio_list"]
     details = form["details"]
     universal_code = form["universal_code"]
     data_type = form["data_type"]

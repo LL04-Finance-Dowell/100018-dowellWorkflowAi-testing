@@ -154,7 +154,7 @@ def save_process_links(links, process_id, document_id, company_id):
     response = requests.request(
         "POST", DOWELLCONNECTION_URL, headers=headers, data=payload
     )
-    print("SAVED LINKS ----------- \n")
+
     return json.loads(response.text)
 
 
@@ -226,7 +226,7 @@ def save_process_qrcodes(
     response = requests.request(
         "POST", DOWELLCONNECTION_URL, headers=headers, data=payload
     )
-    print("DB: SAVED QRCODES ----------- \n")
+
     return json.loads(response.text)
 
 
@@ -281,7 +281,7 @@ def save_wf_process(
     response = requests.request(
         "POST", DOWELLCONNECTION_URL, headers=headers, data=payload
     )
-    print("DB: SAVE WORKFLOW PROCESS----------- \n")
+
     return json.loads(json.loads(response.text))
 
 
@@ -301,9 +301,7 @@ def update_wf_process(process_id, steps, state):
     response = requests.request(
         "POST", DOWELLCONNECTION_URL, headers=headers, data=payload
     )
-    print(
-        "DB: SAVE WORKFLOW UPDATE--------------- \n",
-    )
+
     return json.loads(response.text)
 
 
@@ -345,7 +343,6 @@ def get_process_list(company_id):
 
 
 def save_wf(workflows, company_id, created_by):
-
     payload = json.dumps(
         {
             **WF_CONNECTION_DICT,
@@ -355,6 +352,12 @@ def save_wf(workflows, company_id, created_by):
                 "workflows": workflows,
                 "created_by": created_by,
                 "company_id": company_id,
+                "approved": False,
+                "rejected": False,
+                "rejected_by": "",
+                "rejected_message": "",
+                "data_type": data_type,
+                "auth_viewers": [],
                 "created_on": time,
             },
             "update_field": {"order_nos": 21},
@@ -365,7 +368,7 @@ def save_wf(workflows, company_id, created_by):
     response = requests.request(
         "POST", DOWELLCONNECTION_URL, headers=headers, data=payload
     )
-    print("SAVE WORKFLOW ENTRY----------- \n")
+
     return json.loads(response.text)
 
 
@@ -391,7 +394,7 @@ def update_wf(workflow_id, old_workflow):
     response = requests.request(
         "POST", DOWELLCONNECTION_URL, headers=headers, data=payload
     )
-    print("SAVE WORKFLOW UPDATE--------------- \n")
+
     return json.loads(response.text)
 
 
@@ -414,7 +417,6 @@ def update_wf_approval(workflow_id, approval):
     response = requests.request(
         "POST", DOWELLCONNECTION_URL, headers=headers, data=payload
     )
-    print("SAVE WORKFLOW APPROVAL--------------- \n")
     return json.loads(response.text)
 
 
@@ -442,8 +444,8 @@ def get_all_wf_list():
         return []
 
 
-def get_wf_list(company_id):
-    fields = {"company_id": str(company_id)}
+def get_wf_list(company_id, data_type):
+    fields = {"company_id": str(company_id), "data_type": data_type}
     response_obj = dowellconnection(*WF_CONNECTION_LIST, "fetch", fields, "nil")
     res_obj = json.loads(response_obj)
     if len(res_obj["data"]) > 0:
@@ -453,7 +455,6 @@ def get_wf_list(company_id):
 
 
 # ------------------------------------------ Templates-----------------------------
-# TODO: Add template approval filed.
 def save_template(name, data, page, created_by, company_id, data_type):
     payload = json.dumps(
         {
@@ -466,7 +467,12 @@ def save_template(name, data, page, created_by, company_id, data_type):
                 "page": page,
                 "company_id": company_id,
                 "created_by": created_by,
+                "approved": False,
+                "rejected": False,
+                "rejected_by": "",
+                "rejected_message": "",
                 "data_type": data_type,
+                "auth_viewers": [],
                 "created_on": time,
             },
             "update_field": {"order_nos": 21},
@@ -477,7 +483,6 @@ def save_template(name, data, page, created_by, company_id, data_type):
     response = requests.request(
         "POST", DOWELLCONNECTION_URL, headers=headers, data=payload
     )
-    print("SAVED TEMPLATE----------- \n")
     return json.loads(response.text)
 
 
@@ -509,7 +514,7 @@ def update_template(template_id, data):
     response = requests.request(
         "POST", DOWELLCONNECTION_URL, headers=headers, data=payload
     )
-    print("TEMPLATE UPDATED----------- \n")
+
     return json.loads(response.text)
 
 
@@ -532,14 +537,12 @@ def update_template_approval(template_id, approval):
     response = requests.request(
         "POST", DOWELLCONNECTION_URL, headers=headers, data=payload
     )
-    print("SAVE TEMPLATE APPROVAL--------------- \n")
+
     return json.loads(response.text)
 
 
-def get_template_list(company_id):
-    fields = {
-        "company_id": company_id,
-    }
+def get_template_list(company_id, data_type):
+    fields = {"company_id": company_id, "data_type": data_type}
     response_obj = dowellconnection(*TEMPLATE_CONNECTION_LIST, "fetch", fields, "nil")
     res_obj = json.loads(response_obj)
     if len(res_obj["data"]) > 0:
@@ -595,7 +598,7 @@ def save_document(
     response = requests.request(
         "POST", DOWELLCONNECTION_URL, headers=headers, data=payload
     )
-    print("SAVED DOCUMENT--------------- \n")
+
     return json.loads(response.text)
 
 
@@ -618,7 +621,7 @@ def update_document(document_id, process_id, state):
     response = requests.request(
         "POST", DOWELLCONNECTION_URL, headers=headers, data=payload
     )
-    print("DB: DOCUMENT UPDATED------------ \n")
+
     return json.loads(response.text)
 
 
@@ -640,7 +643,7 @@ def document_finalize(document_id, state):
     response = requests.request(
         "POST", DOWELLCONNECTION_URL, headers=headers, data=payload
     )
-    print("DB: DOCUMENT FINALIZED------------ \n")
+
     return json.loads(json.loads(response.text))
 
 
@@ -660,7 +663,7 @@ def update_document_clone(document_id, clone_list):
     response = requests.request(
         "POST", DOWELLCONNECTION_URL, headers=headers, data=payload
     )
-    print("DB: DOCUMENT CLONE LIST UPDATED------------ \n")
+
     return json.loads(response.text)
 
 
@@ -684,33 +687,9 @@ def authorize_document(document_id, viewers, process):
     response = requests.request(
         "POST", DOWELLCONNECTION_URL, headers=headers, data=payload
     )
-    print("DB: DOCUMENT AUTH UPDATED------------ \n")
+
     return json.loads(response.text)
 
-
-# def update_document_viewers(document_id, auth_viewers, doc_name, state, process_id):
-#     payload = json.dumps(
-#         {
-#             **DOCUMENT_CONNECTION_DICT,
-#             "command": "update",
-#             "field": {
-#                 "_id": document_id,
-#             },
-#             "update_field": {
-#                 "document_name": doc_name,
-#                 "auth_viewers": auth_viewers,
-#                 "document_state": state,
-#                 "process_id": process_id,
-#             },
-#             "platform": "bangalore",
-#         }
-#     )
-#     headers = {"Content-Type": "application/json"}
-#     response = requests.request(
-#         "POST", DOWELLCONNECTION_URL, headers=headers, data=payload
-#     )
-#     print("DB: DOCUMENT AUTH VIEWERS UPDATED------------ \n")
-#     return json.loads(response.text)
 
 
 def get_links_list(company_id):
@@ -752,7 +731,7 @@ def save_wf_setting(company_id, owner_name, username, portfolio_name, process):
     response = requests.request(
         "POST", DOWELLCONNECTION_URL, headers=headers, data=payload
     )
-    print("SAVED WORKFLOW_AI--------------- \n")
+
     return json.loads(response.text)
 
 
@@ -806,7 +785,7 @@ def wf_setting_update(wf_setting_id, wf_ai_data):
     response = requests.request(
         "POST", DOWELLCONNECTION_URL, headers=headers, data=payload
     )
-    print("Update WORKFLOW Setting Version--------------- \n")
+
     return json.loads(response.text)
 
 
@@ -820,8 +799,8 @@ def get_document_object(document_id):
         return []
 
 
-def get_document_list(company_id):
-    fields = {"company_id": str(company_id), "data_type": "Real_Data"}
+def get_document_list(company_id, data_type):
+    fields = {"company_id": str(company_id), "data_type": data_type}
     response_obj = dowellconnection(*DOCUMENT_CONNECTION_LIST, "fetch", fields, "nil")
     res_obj = json.loads(response_obj)
     if len(res_obj["data"]) > 0:
@@ -860,7 +839,7 @@ def save_uuid_hash(
     response = requests.request(
         "POST", DOWELLCONNECTION_URL, headers=headers, data=payload
     )
-    print("SAVED VERIFICATION LINK .. \n")
+
     return json.loads(response.text)
 
 
@@ -901,7 +880,7 @@ def update_uuid_object(uuid_hash):
     response = requests.request(
         "POST", DOWELLCONNECTION_URL, headers=headers, data=payload
     )
-    print("SAVED UUID-----------: \n")
+
     return json.loads(response.text)
 
 
@@ -924,7 +903,7 @@ def delete_template(template_id, data_type):
     response = requests.request(
         "POST", DOWELLCONNECTION_URL, headers=headers, data=payload
     )
-    print("TEMPLATE ARCHIVED------------ \n")
+
     return json.loads(json.loads(response.text))
 
 
@@ -946,7 +925,7 @@ def delete_document(document_id, data_type):
     response = requests.request(
         "POST", DOWELLCONNECTION_URL, headers=headers, data=payload
     )
-    print("DOCUMENT ARCHIVED------------ \n")
+
     return json.loads(json.loads(response.text))
 
 
@@ -968,7 +947,6 @@ def delete_workflow(workflow_id, data_type):
     response = requests.request(
         "POST", DOWELLCONNECTION_URL, headers=headers, data=payload
     )
-    print("WORKFLOW ARCHIVED------------ \n")
 
     return json.loads(json.loads(response.text))
 
@@ -991,7 +969,7 @@ def delete_process(process_id, data_type):
     response = requests.request(
         "POST", DOWELLCONNECTION_URL, headers=headers, data=payload
     )
-    print("PROCESS ARCHIVED------------ \n")
+
     return json.loads(json.loads(response.text))
 
 
@@ -1058,15 +1036,15 @@ def targeted_population(database, collection, fields, period):
 
 
 def save_team(
-            team_name,
-            team_code,
-            team_spec,
-            details,
-            universal_code,
-            portfolio_list,
-            company_id,
-            created_by,
-            data_type,
+    team_name,
+    team_code,
+    team_spec,
+    details,
+    universal_code,
+    portfolio_list,
+    company_id,
+    created_by,
+    data_type,
 ):
     payload = json.dumps(
         {
@@ -1094,7 +1072,7 @@ def save_team(
     response = requests.request(
         "POST", DOWELLCONNECTION_URL, headers=headers, data=payload
     )
-    print("DB: SAVED TEAMS ----------- \n")
+
     return json.loads(response.text)
 
 

@@ -24,51 +24,45 @@ This backend service serves as the WorkflowAI application Backend.
 
 ### API Endpoints - V0.1
 
-- Base URL: `https://100094.pythonanywhere.com`
+- Base URL: `https://100094.pythonanywhere.com/v1/`
 
-| HTTP Verbs | Endpoints                                          | Action                                               |
-| ---------- | -------------------------------------------------- | ---------------------------------------------------- |
-| POST       | v0.1/archives/                                     | To archive a workflow/document/template/process/     |
-| POST       | v0.1/archives/restore/                             | To restore a workflow/document/template/process/     |
-| POST       | /v0.1/search/                                      | To search templates/documents/workflows              |
-| POST       | /v0.1/templates/                                   | To create a new template.                            |
-| GET        | /v0.1/templates/:template_id/                      | To retrieve a single template.                       |
-| GET        | /v0.1/templates/approve/:template_id/              | To approve a single template.                        |
-| GET        | /v0.1/templates/org/:company_id/                   | To retrieve templates of given company.              |
-| POST       | /v0.1/documents/                                   | To create a new document.                            |
-| GET        | /v0.1/documents/:document_id/                      | To retrieve a single document.                       |
-| GET        | /v0.1/documents/org/:company_id/                   | To retrieve documents of a given company.            |
-| GET        | /v0.1/documents/content/:document_id/              | To get the content map of a single document          |
-| POST       | /v0.1/workflows/                                   | To create a new workflow                             |
-| GET        | /v0.1/workflows/:workflow_id/                      | To retrieve a single workflow                        |
-| GET        | /v0.1/workflows/update/                            | To update a single workflow.                         |
-| GET        | /v0.1/workflows/org/:company_id/                   | To retrieve workflows in a company                   |
-| POST       | /v0.1/process/                                     | To create a new process                              |
-| GET        | /v0.1/process/:process_id/                         | To retrieve a single process                         |
-| POST       | /v0.1/process/verification/link/                   | To retrieve verification link for a user             |
-| GET        | /v0.1/process/org/:company_id/                     | To retrieve processes in a company                   |
-| GET        | /v/0.1/process/links/:process_id/                  | To get process verification link for a given process |
-| POST       | /v0.1/process/action/verify/                       | To verify a given process and give access link       |
-| POST       | /v0.1/process/action/mark/                         | To finalize/reject a process                         |
-| POST       | /v0.1/settings/                                    | To set wf ai settings                                |
-| GET        | /v0.1/settings/:wf_setting_id/                     | To get a single wf ai settings                       |
-| POST       | /v0.1/settings/update/                             | To update wf ai settings                             |
-| POST       | v0.1/favourites/                                   | To create favourites                                 |
-| GET        | v0.1/favourites/org/:company_id                    | To list favourites                                   |
-| DELETE     | v0.1/favourites/delete/:item_id/item_type/username | To delete favourites                                 |
+| HTTP Verbs | Endpoints                                     | Action                                               |
+| ---------- | --------------------------------------------- | ---------------------------------------------------- |
+| POST       | archives/                                     | To archive a workflow/document/template/process/     |
+| POST       | archives/restore/                             | To restore a workflow/document/template/process/     |
+| POST       | search/                                       | To search templates/documents/workflows              |
+| POST       | templates/                                    | To create a new template.                            |
+| GET        | templates/:template_id/                       | To retrieve a single template.                       |
+| GET        | templates/approve/:template_id/               | To approve a single template.                        |
+| GET        | templates/org/:company_id/                    | To retrieve templates of given company.              |
+| POST       | documents/                                    | To create a new document.                            |
+| GET        | documents/:document_id/                       | To retrieve a single document.                       |
+| GET        | documents/org/:company_id/                    | To retrieve documents of a given company.            |
+| GET        | documents/content/:document_id/               | To get the content map of a single document          |
+| POST       | workflows/                                    | To create a new workflow                             |
+| GET        | workflows/:workflow_id/                       | To retrieve a single workflow                        |
+| GET        | workflows/update/                             | To update a single workflow.                         |
+| GET        | workflows/org/:company_id/                    | To retrieve workflows in a company                   |
+| POST       | process/                                      | To create a new process                              |
+| POST       | process/action/verify/                        | To verify a process to get access.                   |
+| POST       | process/action/mark/                          | To mark a documents as finalized/rejected            |
+| POST       | process/action/trigger/                       | To trigger process according to given action         |
+| GET        | process/:process_id/                          | To retrieve a single process                         |
+| POST       | process/verification/link/                    | To retrieve verification link for a user             |
+| GET        | process/org/:company_id/                      | To retrieve processes in a company                   |
+| GET        | process/links/:process_id/                    | To get process verification link for a given process |
+| POST       | process/action/verify/                        | To verify a given process and give access link       |
+| POST       | process/action/mark/                          | To finalize/reject a process                         |
+| POST       | settings/                                     | To set wf ai settings                                |
+| GET        | settings/:wf_setting_id/                      | To get a single wf ai settings                       |
+| POST       | settings/update/                              | To update wf ai settings                             |
+| POST       | favourites/                                   | To create favourites                                 |
+| GET        | favourites/org/:company_id                    | To list favourites                                   |
+| DELETE     | favourites/delete/:item_id/item_type/username | To delete favourites                                 |
 
 ---
 
-### API Endpoints - V0.2 (new process page.)
-
 - Base URL: `https://100094.pythonanywhere.com`
-
-| HTTP Verbs | Endpoints                     | Action                                       |
-| ---------- | ----------------------------- | -------------------------------------------- |
-| POST       | /v0.2/process/                | To create a new process                      |
-| POST       | /v0.2/process/action/verify/  | To verify a process to get access.           |
-| POST       | /v0.2/process/action/mark/    | To mark a documents as finalized/rejected    |
-| POST       | /v0.2/process/action/trigger/ | To trigger process according to given action |
 
 ### Endpoints Definition(Request - Response).
 
@@ -87,7 +81,7 @@ Request Body
 }
 ```
 
-_POST_ to `archives/restore/`
+_POST_ to `archives/<str:item_id>/<str:item_type>/`
 
 - Restore an item from archives.
 
@@ -134,7 +128,7 @@ Response
 
 500
 
-_DELETE_ to `favourites/delete/<str:item_id>/<str:item_type>/<str:username>/`
+_DELETE_ to `favourites/<str:item_id>/<str:item_type>/<str:username>/`
 
 - Delete an item from favs
 
@@ -220,61 +214,6 @@ Response-500
 " verification failed"
 ```
 
-_POST_ to `process/start/`
-
-Request Body
-
-```
-{
-    "action": "<save_and_start_processing|save_workflow_to_document>",
-    "criteria": "<member|workflow|steps|document_content|signing_location>",
-    "document_id": "<document_id_of_selected_document_to_process>",
-    "company_id": "<company_id_of_authenticated_user>",
-    "created_by": "<user_name_of_authenticated_user>",
-    "data_type":"<get_from_login-api>",
-    "workflows": [
-        {
-            "workflows":
-            {
-                "workflow_title":"<workflow_title>",
-                "steps":
-                [
-                    {
-                        "step_name"        : "<name_of_step>",
-                        "role"              : "<the_role>",
-                        "skip"            : "<True|False>",
-                        "document_map"    : "<selected_content_map>"
-                        "member_type"    : "<TEAM_MEMBER|PUBLIC|GUEST>",
-                        "member"         : "<username_selected",
-                        "member_portfolio": "Portfolio",
-                        "rights"        : "<ADD/EDIT|VIEW|COMMENT|APPROVE>",
-                        "display_before": "<document_before_processing_this_step|document_after_processing_this_step|document_in_all_steps|document_only_this_step>",
-                        "location"    :     "<choice_location_selected>",
-                        "limit"    : "<within_1_hour|within_8_hours|within_24_hours|within_3_days|within_7_days|custom_time>",
-                        "start_time": "START_DATE_AND_TIME",
-                        "end_time":    "END_DATE_AND_TIME",
-                        "reminder": "<send_reminder_every_day|send_reminder_every_hour>",
-                    },
-                ],
-            },
-        },
-    ],
-}
-
-```
-
-Response - 201
-
-```
-"Started Processing"
-```
-
-Response - 500
-
-```
-"Failed to create process and start processing."
-```
-
 #### Template Management
 
 _POST_ to `templates/`
@@ -324,7 +263,9 @@ _POST_ `templates/:companyId/`
 
 Response-200
 
-`{ "templates": [list of all templates ]}`
+```
+{ "templates": [list of all templates ]}
+```
 
 _POST_ `templates/:templateId/`
 
@@ -363,7 +304,7 @@ Response-200
 Response-400
 
 ```
-{ "message": "Approval Request Could not be processed."
+{ "message": "Approval Request Could not be processed."}
 ```
 
 Response-500
