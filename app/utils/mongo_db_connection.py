@@ -1078,7 +1078,7 @@ def save_team(
                 "team_code": team_code,
                 "team_spec": team_spec,
                 "universal_code": universal_code,
-                "portfolio_details": details,
+                "details": details,
                 # "team_member": team_member,
                 "portfolio_list": portfolio_list,
                 "created_at": time,

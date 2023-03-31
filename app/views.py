@@ -963,7 +963,7 @@ def create_team(request):
     team_code = form["team_code"]
     team_spec = form["team_spec"]
     # team_member = form["team_member"]
-    portfolio_list= form["list_of_portfolios"]
+    portfolio_list= form["portfolio_list"]
     details = form["details"]
     universal_code = form["universal_code"]
     data_type = form["data_type"]
