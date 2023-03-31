@@ -962,6 +962,8 @@ def create_team(request):
     team_name = form["team_name"]
     team_code = form["team_code"]
     team_spec = form["team_spec"]
+    team_member = form["team_member"]
+    list_of_portfolios= form["list_of_portfolios"]
     portfolio_details = form["portfolio_details"]
     universal_code = form["universal_code"]
     data_type = form["data_type"]
@@ -970,6 +972,8 @@ def create_team(request):
             team_name,
             team_code,
             team_spec,
+            team_member,
+            list_of_portfolios,
             portfolio_details,
             universal_code,
             company_id,
