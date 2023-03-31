@@ -23,64 +23,44 @@ from .views import (
     get_templates,
     get_wf_ai_setting,
     get_workflows,
-    index_update,
-    mark_process_as_finalize_or_reject,
+    finalize_or_reject,
     process_verification,
     processes,
-    search,
     template_detail,
     trash_favourites,
     trigger_process,
-    update_wfai_setting,
-    update_workflow,
     workflow_detail,
 )
 
 urlpatterns = [
-    # Archives
-    path("archives/", archives), # - POST
-    path("archives/<str:item_id>/<str:item_type>/", archive_restore), # -POST
-    # Process
-    path("process/", document_processing), # - POST
-    path("process/<str:process_id>/", a_single_process), # - GET
-    path("process/org/<str:company_id>/", processes), # - GET
-
-    path("verifications/", process_verification), # - POST
-    path("process/action/trigger/", trigger_process),
-    path("process/action/mark/", mark_process_as_finalize_or_reject),
-    # Links
-    path("links", get_process_link), # - GET
-    path("links/<str:process_id>/", fetch_process_links), # - GET
-    # workflow
-    path("workflows/", create_workflow), # - POST
-    path("workflows/update/", update_workflow), # - POST
+    path("companies/<str:company_id>/processes/", processes),
+    path("companies/<str:company_id>/workflows/", get_workflows),
+    path("companies/<str:company_id>/favourites/", all_favourites),
+    path("companies/<str:company_id>/templates/", get_templates),
+    path("companies/<str:company_id>/documents/", get_documents),
+    path("templates/", create_template),
+    path("templates/<str:template_id>/", template_detail),
+    path("templates/<str:template_id>/approval/", approve),
+    path("documents/", create_document),
+    path("documents/<str:document_id>/", document_detail),
+    path("documents/<str:document_id>/content/", get_document_content),
+    path("workflows/", create_workflow),
     path("workflows/<str:workflow_id>/", workflow_detail),
-    path("workflows/org/<str:company_id>/", get_workflows),
-    # Wf _settings
-    path("settings/", create_workflow_setting), # - POST
-    path("settings/<str:wf_setting_id>/", get_wf_ai_setting), # - GET
-    path("settings/update/", update_wfai_setting),
-    # Favourites
+    path("workflow-settings/", create_workflow_setting),
+    path("workflow-settings/<str:wf_setting_id>/", get_wf_ai_setting),
+    path("processes/", document_processing),
+    path("processes/<str:process_id>/", a_single_process),
+    path("processes/<str:process_id>/verify/", process_verification),
+    path("processes/<str:process_id>/trigger/", trigger_process),
+    path("processes/<str:process_id>/finalize-or-reject/", finalize_or_reject),
+    path("processes/<str:process_id>/links/", fetch_process_links),
     path("favourites/", favorites),
-    path("favourites/org/<str:company_id>/", all_favourites),
-    path( 
+    path(
         "favourites/<str:item_id>/<str:item_type>/<str:username>/",
         trash_favourites,
     ),
-    # Templates
-    path("templates/", create_template),
-    path("templates/<str:template_id>/", template_detail),
-    path("templates/org/<str:company_id>/", get_templates),
-    # path("templates/approve/<str:template_id>/", approve),
-    # Documents
-    path("documents/", create_document),
-    path("documents/<str:document_id>/", document_detail),
-    path(
-        "documents/content/<str:document_id>/",
-        get_document_content,
-    ),
-    path("documents/org/<str:company_id>/", get_documents),
-    # Teams
+    path("archives/", archives),
+    path("archives/<str:item_id>/<str:item_type>/restore/", archive_restore),
     path("teams/", create_team),
 ]
 if settings.DEBUG:

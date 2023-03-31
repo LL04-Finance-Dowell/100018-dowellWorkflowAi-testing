@@ -38,8 +38,6 @@ from app.utils.mongo_db_connection import (
 
 from .constants import EDITOR_API
 from .utils import setting
-from .utils.algolia import get_algolia_data
-from .utils.thread_start import ThreadAlgolia, UpdateThreadAlgolia
 
 
 @api_view(["GET"])
@@ -234,7 +232,7 @@ def document_processing(request):
 
 
 @api_view(["POST"])
-def process_verification(request):
+def process_verification(request, process_id):
     """verification of a process step access and checks that duplicate document based on a step."""
     if not request.data:
         return Response("You are missing something!", status.HTTP_400_BAD_REQUEST)
@@ -286,7 +284,7 @@ def process_verification(request):
 
 
 @api_view(["POST"])
-def mark_process_as_finalize_or_reject(request):
+def finalize_or_reject(request, process_id):
     """After access is granted and the user has made changes on a document."""
     if not request.data:
         return Response("You are missing something", status.HTTP_400_BAD_REQUEST)
@@ -315,11 +313,9 @@ def mark_process_as_finalize_or_reject(request):
     res = document_finalize(document_id=request.data["document_id"], state=state)
     if res["isSuccess"]:
         # Signal for further processing.
-        if processing.background(
-            process_id=request.data["process_id"],
-            document_id=request.data["document_id"],
-        ):
+        if processing.background(process_id,request.data["document_id"]):
             return Response("document processed successfully", status.HTTP_200_OK)
+            
         return Response(
             "Document processed but failed to trigger second step", status.HTTP_200_OK
         )
@@ -397,45 +393,49 @@ def create_workflow_setting(request):
     )
 
 
-@api_view(["GET"])
+@api_view(["GET", "PUT"])
 def get_wf_ai_setting(request, wf_setting_id):
     """Retrive a Wf setting"""
+
     if not validator.validate_id(wf_setting_id):
         return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
 
-    try:
-        setting = get_wf_setting_object(wf_setting_id)
-    except:
-        return Response("failed to get setting", status.HTTP_500_INTERNAL_SERVER_ERROR)
+    if request.method == "GET":
+        try:
+            setting = get_wf_setting_object(wf_setting_id)
+        except:
+            return Response(
+                "failed to get setting", status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
 
-    return Response(setting, status.HTTP_200_OK)
+        return Response(setting, status.HTTP_200_OK)
 
+    if request.method == "PUT":
+        """Update workflow Setting"""
 
-@api_view(["POST"])
-def update_wfai_setting(request):
-    """Updating WF settings"""
-    form = request.data
-    if not form:
-        return Response("Workflow Data is required", status.HTTP_400_BAD_REQUEST)
+        form = request.data
+        if not form:
+            return Response("Workflow Data is Required", status.HTTP_400_BAD_REQUEST)
 
-    old_wf_setting = get_wf_setting_object(form["wf_setting_id"])
-    version = setting.version_control(old_wf_setting["processes"][-1]["version"])
-    old_wf_setting["processes"][-1]["flag"] = "disable"
+        old_wf_setting = get_wf_setting_object(wf_setting_id)
+        version = setting.version_control(old_wf_setting["processes"][-1]["version"])
+        old_wf_setting["processes"][-1]["flag"] = "disable"
 
-    old_wf_setting["processes"].append(
-        {"version": version, "flag": "enable", "process": form["proccess"]}
-    )
-    updt_wf = json.loads(wf_setting_update(form["wf_setting_id"], old_wf_setting))
+        old_wf_setting["processes"].append(
+            {"version": version, "flag": "enable", "process": form["proccess"]}
+        )
+        updt_wf = json.loads(wf_setting_update(wf_setting_id, old_wf_setting))
 
-    if updt_wf["isSuccess"]:
-        return Response("WF_Setting_Updated", status.HTTP_201_CREATED)
+        if updt_wf["isSuccess"]:
+            return Response("Workflow Setting Updated", status.HTTP_201_CREATED)
 
-    return Response("Failed to Update Workflow", status=status.HTTP_200_OK)
+        return Response("Failed to Update Workflow", status=status.HTTP_200_OK)
 
 
 @api_view(["POST"])
 def create_workflow(request):
     """Creates a new workflow"""
+
     form = request.data
     if not form:
         return Response("Workflow Data required", status.HTTP_400_BAD_REQUEST)
@@ -453,66 +453,55 @@ def create_workflow(request):
     return Response("Failed to Save Workflow", status=status.HTTP_200_OK)
 
 
-@api_view(["PUT"])
-def update_workflow(request):
-    """Update content of a workflow"""
-    form = request.data
-    if not form:
-        return Response("Workflow Data is required", status.HTTP_400_BAD_REQUEST)
-
-    workflow = {
-        "workflow_title": form["wf_title"],
-        "workflow_id": form["workflow_id"],
-        "data_type": form["data_type"],
-        "steps": form["steps"],
-    }
-    old_workflow = get_wf_object(form["workflow_id"])
-    old_workflow["workflows"]["data_type"] = "Archive Data"
-
-    updt_wf = json.loads(update_wf(form["workflow_id"], old_workflow))
-    nw_wf = json.loads(
-        save_wf(
-            {key: val for key, val in workflow.items() if key != "workflow_id"},
-            form["company_id"],
-            form["created_by"],
-        )
-    )
-    print(nw_wf)
-    if updt_wf["isSuccess"]:
-        return Response("workflow Updated", status.HTTP_201_CREATED)
-
-    return Response("Failed to Update Workflow", status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-
-@api_view(["GET"])
+@api_view(["GET", "PUT"])
 def workflow_detail(request, workflow_id):
     """Single workflows"""
+
     if not validator.validate_id(workflow_id):
         return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
 
-    data = get_wf_object(workflow_id)
-    if not data:
-        return Response(
-            {"workflow": [], "message": "Failed to Load Workflow."},
-            status=status.HTTP_200_OK,
-        )
-    else:
-        return Response(
-            {"workflow": data},
-            status=status.HTTP_201_CREATED,
-        )
+    if request.method == "GET":
+        data = get_wf_object(workflow_id)
+        if not data:
+            return Response(
+                {"workflow": [], "message": "Failed to Load Workflow."},
+                status=status.HTTP_200_OK,
+            )
+        else:
+            return Response(
+                {"workflow": data},
+                status=status.HTTP_201_CREATED,
+            )
 
+    if request.method == "PUT":
+        """Update content of a workflow"""
 
-def workflow_index_update(payload):
-    try:
-        UpdateThreadAlgolia(payload).start()
-    except RuntimeError:
-        ThreadAlgolia(payload["_id"], get_wf_object).start()
+        form = request.data
+        if not form:
+            return Response("Workflow Data is required", status.HTTP_400_BAD_REQUEST)
+
+        workflow = {
+            "workflow_title": form["wf_title"],
+            "workflow_id": form["workflow_id"],
+            "data_type": form["data_type"],
+            "steps": form["steps"],
+        }
+        old_workflow = get_wf_object(form["workflow_id"])
+        old_workflow["workflows"]["data_type"] = "Archive Data"
+
+        updt_wf = json.loads(update_wf(form["workflow_id"], old_workflow))
+        if updt_wf["isSuccess"]:
+            return Response("workflow Updated", status.HTTP_201_CREATED)
+
+        return Response(
+            "Failed to Update Workflow", status.HTTP_500_INTERNAL_SERVER_ERROR
+        )
 
 
 @api_view(["GET"])
 def get_workflows(request, company_id):
     """List all workflows"""
+
     data_type = request.query_params.get("data_type", "Real_Data")
     if not validator.validate_id(company_id):
         return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
@@ -535,6 +524,7 @@ def get_workflows(request, company_id):
 @api_view(["GET"])
 def get_documents(request, company_id):
     """List of Created Documents."""
+
     data_type = request.query_params.get("data_type", "Real_Data")
     if not validator.validate_id(company_id):
         return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
@@ -558,6 +548,7 @@ def get_documents(request, company_id):
 @api_view(["POST"])
 def create_document(request):
     """Document Creation."""
+
     if not request.data:
         return Response(
             {"message": "Failed to process document creation."},
@@ -600,6 +591,7 @@ def create_document(request):
 @api_view(["GET"])
 def get_document_content(request, document_id):
     """Content map of a given document"""
+
     if not validator.validate_id(document_id):
         return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
 
@@ -621,6 +613,7 @@ def get_document_content(request, document_id):
 @api_view(["GET"])
 def document_detail(request, document_id):
     """editor link for a document"""
+
     if not validator.validate_id(document_id):
         return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
 
@@ -636,6 +629,7 @@ def document_detail(request, document_id):
 @api_view(["POST"])
 def archives(request):
     """Archiving  (Template | Workflow | Document)"""
+
     if not request.data:
         return Response("You are missing something", status.HTTP_400_BAD_REQUEST)
 
@@ -671,6 +665,7 @@ def archives(request):
 @api_view(["POST"])
 def archive_restore(request):
     """Restore  (Template | Workflow | Document)"""
+
     if not request.data:
         return Response("You are missing something", status.HTTP_400_BAD_REQUEST)
 
@@ -707,43 +702,47 @@ def archive_restore(request):
 @api_view(["POST"])
 def favorites(request):
     """`Favourite` an Item( workflow | template | document) or List favourites"""
+
     if not request.data:
         return Response("You are missing something", status.HTTP_400_BAD_REQUEST)
 
-    # create a fav
-    if request.method == "POST":
-        msg = create_favourite(
-            item=request.data["item"],
-            type=request.data["item_type"],
-            username=request.data["username"],
-        )
-        if not msg:
-            return Response(
-                "Item could not be added to bookmarks",
-                status.HTTP_500_INTERNAL_SERVER_ERROR,
-            )
+        # create a fav
 
-        return Response(msg, status.HTTP_201_CREATED)
+    msg = create_favourite(
+        item=request.data["item"],
+        type=request.data["item_type"],
+        username=request.data["username"],
+    )
+    if not msg:
+        return Response(
+            "Item could not be added to bookmarks",
+            status.HTTP_500_INTERNAL_SERVER_ERROR,
+        )
+
+    return Response(msg, status.HTTP_201_CREATED)
 
 
 @api_view(["GET"])
 def all_favourites(request, company_id):
     """List favs"""
+
     if not validator.validate_id(company_id):
         return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
-
+  
     data = list_favourites(company_id)
     if not data:
         return Response(
             "failed to get bookmarks",
             status.HTTP_500_INTERNAL_SERVER_ERROR,
         )
+
     return Response(data, status.HTTP_200_OK)
 
 
 @api_view(["DELETE"])
 def trash_favourites(request, item_id, item_type, username):
     """Trash Favourites"""
+
     if not validator.validate_id(item_id):
         return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
 
@@ -763,6 +762,7 @@ def trash_favourites(request, item_id, item_type, username):
 @api_view(["GET"])
 def get_templates(request, company_id):
     """List of Created Templates."""
+
     data_type = request.query_params.get("data_type", "Real_Data")
     if not validator.validate_id(company_id):
         return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
@@ -838,6 +838,7 @@ def create_template(request):
 @api_view(["GET"])
 def template_detail(request, template_id):
     """editor link for a document"""
+
     if not validator.validate_id(template_id):
         return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
 
@@ -850,9 +851,10 @@ def template_detail(request, template_id):
     return Response(editor_link, status.HTTP_201_CREATED)
 
 
-@api_view(["GET"])
+@api_view(["PUT"])
 def approve(request, template_id):
     """Approve a given template"""
+
     if not validator.validate_id(template_id):
         return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
 
@@ -865,18 +867,10 @@ def approve(request, template_id):
     return Response({"message": "Template Approved."}, status=status.HTTP_200_OK)
 
 
-@api_view(["POST"])
-def index_update(request):
-    try:
-        UpdateThreadAlgolia(request.data).start()
-        return Response(status=status.HTTP_200_OK)
-    except RuntimeError:
-        return
-
-
 @api_view(["GET"])
 def processes(request, company_id):
     """fetches workflow process `I` created."""
+
     if not validator.validate_id(company_id):
         return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
 
@@ -884,14 +878,17 @@ def processes(request, company_id):
         process_list = get_process_list(company_id)
     except ConnectionError:
         return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
     if len(process_list) > 0:
         return Response(process_list, status=status.HTTP_200_OK)
+
     return Response([], status=status.HTTP_200_OK)
 
 
 @api_view(["GET"])
 def a_single_process(request, process_id):
     """get process by process id"""
+
     if not validator.validate_id(process_id):
         return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
 
@@ -901,12 +898,14 @@ def a_single_process(request, process_id):
         return Response(
             "Failed to get a process \n", status=status.HTTP_500_INTERNAL_SERVER_ERROR
         )
+
     return Response(process, status=status.HTTP_200_OK)
 
 
 @api_view(["POST"])
 def get_process_link(request):
     """get a link process for person having notifications"""
+
     links_info = get_links_object_by_process_id(request.data["process_id"])
     user = request.data["user_name"]
     if not links_info:
@@ -928,33 +927,23 @@ def get_process_link(request):
 @api_view(["POST"])
 def fetch_process_links(request, process_id):
     """verification links for a process"""
+
     try:
         process_info = get_links_object_by_process_id(process_id)
-        return Response(process_info["links"], status.HTTP_200_OK)
+        
     except ConnectionError:
         return Response(
             "Could not fetch process links",
             status=status.HTTP_500_INTERNAL_SERVER_ERROR,
         )
 
-
-@api_view(["POST"])
-def search(request):
-    """Get all Org Data"""
-    return Response(
-        {
-            "search_keyword": request.data["search"],
-            "search_result": get_algolia_data(
-                request.data["search"], request.data["company_id"]
-            ),
-        },
-        status=status.HTTP_200_OK,
-    )
+    return Response(process_info["links"], status.HTTP_200_OK)
 
 
 @api_view(["POST"])
 def create_team(request):
     """Create a new Team"""
+
     form = request.data
     if not form:
         return Response("Team Data required", status.HTTP_400_BAD_REQUEST)
