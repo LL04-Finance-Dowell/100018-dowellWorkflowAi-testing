@@ -1058,16 +1058,15 @@ def targeted_population(database, collection, fields, period):
 
 
 def save_team(
-    team_name,
-    team_code,
-    team_spec,
-    team_member,
-    list_of_portfolios,
-    portfolio_details,
-    universal_code,
-    company_id,
-    created_by,
-    data_type,
+            team_name,
+            team_code,
+            team_spec,
+            details,
+            universal_code,
+            portfolio_list,
+            company_id,
+            created_by,
+            data_type,
 ):
     payload = json.dumps(
         {
@@ -1078,10 +1077,10 @@ def save_team(
                 "team_name": team_name,
                 "team_code": team_code,
                 "team_spec": team_spec,
-                "team_member": team_member,
-                "list_of_portfolios": list_of_portfolios,
-                "portfolio_details": portfolio_details,
                 "universal_code": universal_code,
+                "portfolio_details": details,
+                # "team_member": team_member,
+                "portfolio_list": portfolio_list,
                 "created_at": time,
                 "company_id": company_id,
                 "created_by": created_by,

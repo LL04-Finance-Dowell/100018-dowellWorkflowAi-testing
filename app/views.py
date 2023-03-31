@@ -962,9 +962,9 @@ def create_team(request):
     team_name = form["team_name"]
     team_code = form["team_code"]
     team_spec = form["team_spec"]
-    team_member = form["team_member"]
-    list_of_portfolios= form["list_of_portfolios"]
-    portfolio_details = form["portfolio_details"]
+    # team_member = form["team_member"]
+    portfolio_list= form["list_of_portfolios"]
+    details = form["details"]
     universal_code = form["universal_code"]
     data_type = form["data_type"]
     team_set = json.loads(
@@ -972,10 +972,9 @@ def create_team(request):
             team_name,
             team_code,
             team_spec,
-            team_member,
-            list_of_portfolios,
-            portfolio_details,
+            details,
             universal_code,
+            portfolio_list,
             company_id,
             created_by,
             data_type,
