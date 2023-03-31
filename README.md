@@ -22,7 +22,7 @@ This backend service serves as the WorkflowAI application Backend.
 - Run `python manage.py runserver 8001` to start the application.
 - Connect to the API using Postman on port 8001.
 
-### API Endpoints - V0.1
+### API Endpoints
 
 - Base URL: `https://100094.pythonanywhere.com/v1/`
 
