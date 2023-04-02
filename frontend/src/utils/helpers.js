@@ -40,3 +40,9 @@ export const setIsSelected = ({ items, item, boxId, title }) => {
 
   return isSelectedItems;
 };
+
+export const changeToTitleCase = (inputStr) => {
+  if (typeof inputStr !== 'string') throw Error("'inputStr' must be a string");
+
+  return inputStr.slice(0, 1).toLocaleUpperCase() + inputStr.slice(1).toLocaleLowerCase()
+}

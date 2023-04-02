@@ -22,7 +22,7 @@ import { RiDeleteBinLine } from "react-icons/ri";
 import StepTable from "./stepTable/StepTable";
 
 const CreateWorkflows = ({ handleToggleOverlay }) => {
-  const notify = (title) => toast("created" + " " + title);
+  const notify = (message) => toast.success(message);
 
   const stepNameRef = useRef(null);
   const { userDetail } = useSelector((state) => state.auth);
@@ -116,7 +116,7 @@ const CreateWorkflows = ({ handleToggleOverlay }) => {
         steps,
       };
 
-      dispatch(updateWorkflow({ updateData, handleAfterCreated }));
+      dispatch(updateWorkflow({ updateData, notify, handleAfterCreated }));
     } else {
       const data = {
         created_by: userDetail?.userinfo.username,

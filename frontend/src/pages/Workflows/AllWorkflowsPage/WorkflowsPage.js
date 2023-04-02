@@ -62,7 +62,7 @@ const WorkflowsPage = ({ home, showOnlySaved, showOnlyTrashed }) => {
 									allWorkflowsArray.filter(
 										(item) =>
 											item.created_by === userDetail?.portfolio_info[0].username
-									).filter(item => item.workflows && item.workflows?.data_type === userDetail?.portfolio_info[0]?.data_type)
+									).filter(item => item.workflows && item.workflows?.data_type === userDetail?.portfolio_info[0]?.data_type).reverse()
 								}
 								status={allWorkflowsStatus}
 								Card={WorkflowCard}
