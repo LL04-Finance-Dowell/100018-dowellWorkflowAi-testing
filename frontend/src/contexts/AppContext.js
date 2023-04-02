@@ -11,10 +11,13 @@ export const AppContextProvider = ({ children }) => {
 		templates: [],
 		workflows: [],
 	});
-
-	const [globalState, setGlobalState] = useState([]);
-
 	const [favoriteItemsLoaded, setFavoriteitemsLoaded] = useState(false);
+	const [searchItems, setSearchItems] = useState([]);
+	const [searchItemsStatus, setSearchItemsStatus] = useState({
+		documentsAdded: false,
+		templatesAdded: false,
+		workflowsAdded: false,
+	});
 
 	const addToFavoritesState = (category, value) => {
 		const currentFavorites = { ...favoriteItems };
@@ -33,10 +36,14 @@ export const AppContextProvider = ({ children }) => {
 		setFavoriteitems(currentFavorites);
 	}
 
+	const updateSearchItemStatus = (itemAdded, value) => {
+		if (itemAdded === 'documentsAdded') setSearchItemsStatus((prevItems) => { return { ...prevItems, documentsAdded: value}})
+		if (itemAdded === 'templatesAdded') setSearchItemsStatus((prevItems) => { return { ...prevItems, templatesAdded: value}})
+		if (itemAdded === 'workflowsAdded') setSearchItemsStatus((prevItems) => { return { ...prevItems, workflowsAdded: value}})
+	}
+
 	return (
 		<AppContext.Provider value={{
-			globalState,
-			setGlobalState,
 			toggleNewFileForm,
 			setToggleNewFileForm,
 			favoriteItems,
@@ -45,6 +52,10 @@ export const AppContextProvider = ({ children }) => {
 			setFavoriteitemsLoaded,
 			addToFavoritesState,
 			removeFromFavoritesState,
+			searchItems,
+			setSearchItems,
+			searchItemsStatus,
+			updateSearchItemStatus
 		}}>
 			{children}
 		</AppContext.Provider>

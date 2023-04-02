@@ -15,6 +15,8 @@ import { detailWorkflow } from "../../features/workflow/asyncTHunks";
 import WorkflowLayout from "../../layouts/WorkflowLayout/WorkflowLayout";
 import ManageFiles from "../../components/manageFiles/ManageFiles";
 import styles from "./style.module.css";
+import { searchItemByKeyAndGroupResults } from "./util";
+import { useAppContext } from "../../contexts/AppContext";
 
 const searchCategories = {
 	documents: "documents",
@@ -32,6 +34,10 @@ const SearchPage = () => {
 	const { userDetail } = useSelector((state) => state.auth);
 	const [currentSearchOption, setCurrentSearchOption] = useState(searchCategories.all);
 	const dispatch = useDispatch();
+	const { searchItems } = useAppContext();
+	const { allWorkflowsStatus } = useSelector((state) => state.workflow);
+	const { allTemplatesStatus } = useSelector((state) => state.template);
+	const { allDocumentsStatus } = useSelector((state) => state.document);
 
 	useEffect(() => {
 
@@ -72,74 +78,46 @@ const SearchPage = () => {
 	const handleSearchInputChange = (value) => {
 		setCurrentSearch(value)
 		if (value.length < 1) return
-		setSearchLoading(true);
+		// setSearchLoading(true);
 	}
 
-
-	// ********** Dummy Data **********
-	const searchForItemDummy = (dataToPost) => {
-		const dummyArray = [
-			{ _id: "as", document_name: "Doc 1" },
-			{ _id: "asd", document_name: "Doc 2" },
-			{ _id: "asda", document_name: "Doc 3" },
-			{ _id: "asdfg", template_name: "Temp 1" },
-			{ _id: "asdfgh", template_name: "Temp 2" },
-			{
-				_id: "qw", workflows: {
-					workflow_title: "Workflow 1",
-				}
-			},
-			{
-				_id: "qwe", workflows: {
-					workflow_title: "Workflow 2",
-				}
-			}
-		];
-		return Promise.resolve({ data: { search_result: dummyArray } });
-	};
-
-
 	useEffect(() => {
-		if (!searchLoading) return;
 
-		const dataToPost = {
-			company_id: userDetail?.portfolio_info[0]?.org_id,
-			search: currentSearch,
-		};
+		if (currentSearch.length < 1) return setSearchLoading(false);
+		
+		setSearchLoading(true);
 
-		searchForItemDummy(dataToPost)
-			.then((res) => {
-				setSearchLoading(false);
-				setSearchResults(res.data.search_result);
-			})
-			.catch((error) => {
-				console.log(error.response ? error.response.data : error.message);
-				setSearchLoading(false);
-				toast.error(error.response ? error.response.data : error.message);
-			});
-	}, [searchLoading]);
+		if (
+			allDocumentsStatus === 'pending' ||
+			allTemplatesStatus === 'pending' || 
+			allWorkflowsStatus === 'pending'
+		) return
 
+		try {
+			const results = searchItemByKeyAndGroupResults(currentSearch, searchItems);
+			// console.log('Search results: ', results)
+			setSearchLoading(false);
+			setSearchResults(results);
 
+		} catch (error) {
+			console.log(error)
+			setSearchLoading(false);
+		}
+		
+		// const dataToPost = {
+		// 	company_id: userDetail?.portfolio_info[0]?.org_id,
+		// 	search: currentSearch,
+		// }
+		// searchForItem(dataToPost).then(res => {
+		// 	setSearchLoading(false);
+		// 	setSearchResults(res.data.search_result);
+		// }).catch(error => {
+		// 	console.log(error.response ? error.response.data : error.message);
+		// 	setSearchLoading(false);
+		// 	toast.error(error.response ? error.response.data : error.message)
+		// })
 
-	// useEffect(() => {
-
-	// 	if (!searchLoading) return
-
-	// 	const dataToPost = {
-	// 		company_id: userDetail?.portfolio_info[0]?.org_id,
-	// 		search: currentSearch,
-	// 	}
-
-	// 	searchForItem(dataToPost).then(res => {
-	// 		setSearchLoading(false);
-	// 		setSearchResults(res.data.search_result);
-	// 	}).catch(error => {
-	// 		console.log(error.response ? error.response.data : error.message);
-	// 		setSearchLoading(false);
-	// 		toast.error(error.response ? error.response.data : error.message)
-	// 	})
-
-	// }, [searchLoading])
+	}, [currentSearch, searchItems, allDocumentsStatus, allTemplatesStatus, allWorkflowsStatus])
 
 	useEffect(() => {
 
@@ -269,3 +247,46 @@ const SearchPage = () => {
 }
 
 export default SearchPage;
+
+// // ********** Dummy Data **********
+// const searchForItemDummy = (dataToPost) => {
+// 	const dummyArray = [
+// 		{ _id: "as", document_name: "Doc 1" },
+// 		{ _id: "asd", document_name: "Doc 2" },
+// 		{ _id: "asda", document_name: "Doc 3" },
+// 		{ _id: "asdfg", template_name: "Temp 1" },
+// 		{ _id: "asdfgh", template_name: "Temp 2" },
+// 		{
+// 			_id: "qw", workflows: {
+// 				workflow_title: "Workflow 1",
+// 			}
+// 		},
+// 		{
+// 			_id: "qwe", workflows: {
+// 				workflow_title: "Workflow 2",
+// 			}
+// 		}
+// 	];
+// 	return Promise.resolve({ data: { search_result: dummyArray } });
+// };
+
+
+// useEffect(() => {
+// 	if (!searchLoading) return;
+
+// 	const dataToPost = {
+// 		company_id: userDetail?.portfolio_info[0]?.org_id,
+// 		search: currentSearch,
+// 	};
+
+// 	searchForItemDummy(dataToPost)
+// 		.then((res) => {
+// 			setSearchLoading(false);
+// 			setSearchResults(res.data.search_result);
+// 		})
+// 		.catch((error) => {
+// 			console.log(error.response ? error.response.data : error.message);
+// 			setSearchLoading(false);
+// 			toast.error(error.response ? error.response.data : error.message);
+// 		});
+// }, [searchLoading]);

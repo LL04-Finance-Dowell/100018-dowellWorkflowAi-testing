@@ -16,6 +16,7 @@ import { workflowRegistrationEventId } from "../../services/legalService";
 import { AuthServices } from "../../services/authServices";
 import { updateUserDetail } from "../../features/auth/authSlice";
 import { getAllProcessesV2 } from "../../services/processServices";
+import { useAppContext } from "../../contexts/AppContext";
 
 const WorkflowLayout = ({ children }) => {
   const dispatch = useDispatch();
@@ -32,6 +33,10 @@ const WorkflowLayout = ({ children }) => {
   } = useSelector((state) => state.app);
   const [createNewPortfolioLoading, setCreateNewPortfolioLoading] =
     useState(false);
+  const { allDocuments } = useSelector((state) => state.document);
+  const { allTemplates } = useSelector((state) => state.template);
+  const { allWorkflows } = useSelector((state) => state.workflow);
+  const { searchItemsStatus, setSearchItems, updateSearchItemStatus } = useAppContext();
 
   const handleClick = () => {
     if (session_id) {
@@ -95,6 +100,27 @@ const WorkflowLayout = ({ children }) => {
     })
 
   }, [session_id, userDetail])
+
+  useEffect(() => {
+
+    if (allDocuments?.length < 1 || allWorkflows?.length < 1 || allTemplates?.length < 1) return
+
+    if (!searchItemsStatus.documentsAdded) {
+      setSearchItems((prevItems) => { return [...prevItems, ...allDocuments] });
+      updateSearchItemStatus('documentsAdded', true);
+    }
+
+    if (!searchItemsStatus.templatesAdded) {
+      setSearchItems((prevItems) => { return [...prevItems, ...allTemplates] });
+      updateSearchItemStatus('templatesAdded', true);
+    }
+
+    if (!searchItemsStatus.workflowsAdded) {
+      setSearchItems((prevItems) => { return [...prevItems, ...allWorkflows] });
+      updateSearchItemStatus('workflowsAdded', true);
+    }
+
+  }, [allDocuments, allTemplates, allWorkflows, searchItemsStatus])
   
   return (
     <>
