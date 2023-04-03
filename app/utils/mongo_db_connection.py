@@ -437,7 +437,8 @@ def get_all_wf_list():
 
 
 def get_wf_list(company_id, data_type):
-    fields = {"company_id": str(company_id), "data_type": data_type}
+    # "data_type": data_type
+    fields = {"company_id": str(company_id), }
     response_obj = dowellconnection(*WF_CONNECTION_LIST, "fetch", fields, "nil")
     res_obj = json.loads(response_obj)
     if len(res_obj["data"]) > 0:

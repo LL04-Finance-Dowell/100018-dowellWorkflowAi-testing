@@ -280,6 +280,9 @@ def finalize_or_reject(request, process_id):
     if not request.data:
         return Response("You are missing something", status.HTTP_400_BAD_REQUEST)
 
+    item_id = request.data["item_id"]
+    item_type = request.data["item_type"]
+
     # get document
     try:
         document = get_document_object(document_id=request.data["document_id"])
@@ -297,22 +300,21 @@ def finalize_or_reject(request, process_id):
 
     if request.data["action"] == "finalize":
         state = "finalized"
+
     elif request.data["action"] == "reject":
         state = "rejected"
 
     # mark document as finalize.
-    res = finalize(
-        item_id=request.data["item_id"], state=state, item_type=request.data["type"]
-    )
+    res = finalize(item_id, state, item_type)
     if res["isSuccess"]:
         # Signal for further processing.
-        if processing.background(process_id, request.data["item_id"]):
+        if processing.background(process_id, item_id, item_type):
             return Response("document processed successfully", status.HTTP_200_OK)
 
         else:
             return Response(
-                "document processed but failed to trigger second step",
-                status.HTTP_200_OK,
+                "document processed but experienced next step failure",
+                status.HTTP_200_OK
             )
 
     return Response(
@@ -552,8 +554,9 @@ def get_workflows(request, company_id):
     if not validator.validate_id(company_id):
         return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
         
-    workflow_list = get_wf_list(company_id, data_type)
-    if not workflow_list:
+    try:
+        workflow_list = get_wf_list(company_id, data_type)
+    except ConnectionError:
         return Response({"workflows": []}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     if len(workflow_list) > 0:

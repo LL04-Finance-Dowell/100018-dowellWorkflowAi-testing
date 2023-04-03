@@ -22,6 +22,7 @@ from drf_yasg import openapi
 from drf_yasg.views import get_schema_view
 from rest_framework import permissions
 from app.views import home
+
 schema_view = get_schema_view(
     openapi.Info(
         title="WorkflowAI",
@@ -37,7 +38,7 @@ schema_view = get_schema_view(
 
 urlpatterns = [
     path("", home, name="Home"),
-     path("v1/", include("app.urls")),
+    path("v1/", include("app.urls")),
     # api doc
     re_path(
         r"^swagger(?P<format>\.json|\.yaml)$",

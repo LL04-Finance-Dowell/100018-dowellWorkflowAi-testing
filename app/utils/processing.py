@@ -246,13 +246,20 @@ def verify(process, auth_step_role, location_data, user_name):
     return doc_link
 
 
-def background(process_id, item_id):
-    # TODO: mark notification as done
+def background(process_id, item_id, item_type):
+
+    # remove from notification
     res = requests.delete(f"{NOTIFICATION_API}/{item_id}/")
     if res.status_code == 204:
         print("deleted notification")
-    else:
-        print("something went wrong on notification")
+
+    if item_type == "template":
+        # TODO: when template
+        return
+
+    if item_type == "workflow":
+        # TODO: when workflow
+        return
 
     # get process
     process = get_process_object(process_id)
