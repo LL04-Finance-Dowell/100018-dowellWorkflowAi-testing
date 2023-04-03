@@ -32,69 +32,77 @@ import WorkflowAiSettings from "./components/workflowAiSettings/WorkflowAiSettin
 import VerificationPage from "./pages/Verification/VerificationPage";
 import ProccessPage from "./pages/Processes/AllProccessPage/ProcessesPage";
 import SearchPage from "./pages/Search/SearchPage";
+import ConstructionPage from "./pages/ConstructionPage/ConstructionPage";
 
 function App() {
   useDowellLogin();
 
+  // USE ONLY WHEN APP IS BROKEN OR UNDERGOING MAJOR CHANGES
   return (
     <Routes>
-      <Route path={"/"} element={<WorkflowApp />} />
-      <Route path="/settings" element={<WorkflowAiSettings />} />
-      <Route path={"documents"}>
-        <Route index element={<DocumentsPage home={true} />} />
-        <Route path={"saved"} element={<DocumentsPage showOnlySaved={true} />} />
-        {/* <Route path={"trash"} element={<DocumentsPage showOnlyTrashed={true} />} /> */}
-        {/*  <Route path={"new"} element={<CreateNewDocumentPage />} />
-        <Route path={"to-sign"} element={<SignDocumentsPage />} />
-        <Route path={"rejected"} element={<RejectedDocumentsPage />} />
-        <Route path={"to-process"} element={<ProcessDocumentsPage />} /> */}
-      </Route>
-      <Route path={"templates"}>
-        <Route index element={<TemplatesPage home={true} />} />
-        <Route path={"saved"} element={<TemplatesPage showOnlySaved={true} />}/>
-        {/* <Route path={"trash"} element={<TemplatesPage showOnlyTrashed={true} />}/> */}
-        {/* <Route path={"new"} element={<CreateNewTemplatePage />} />
-        <Route path={"to-approve"} element={<ApproveTemplatesPage />} />
-        <Route path={"rejected"} element={<RejectedTemplatesPage />} /> */}
-      </Route>
-      <Route path={"workflows"}>
-        <Route index element={<WorkflowsPage home={true} />} />
-        <Route path={"set-workflow"} element={<SetWorkflowInDoc />} />
-        <Route path={"new-set-workflow"} element={<SetWorkflowInDocNew />} />
-        <Route path={"saved"} element={<WorkflowsPage showOnlySaved={true} />}/>
-        {/* <Route path={"trash"} element={<WorkflowsPage showOnlyTrashed={true} />}/> */}
-        {/*  <Route path={"new"} element={<CreateNewWorkflowPage />} />
-        <Route path={"to-approve"} element={<ApproveWorkflowPage />} />
-        <Route path={"rejected"} element={<RejectedWorkflowsPage />} /> */}
-      </Route>
-      <Route path={"processes"}>
-        <Route index element={<ProccessPage home={true} />} />
-        <Route path={"saved"} element={<ProccessPage showOnlySaved={true} />}/>
-        <Route path={"paused"} element={<ProccessPage showOnlyPaused={true} />}/>
-        <Route path={"cancelled"} element={<ProccessPage showOnlyCancelled={true} />}/>
-        <Route path={"tests"} element={<ProccessPage showOnlyTests={true} />}/>
-        <Route path={"completed"} element={<ProccessPage showOnlyCompleted={true} />}/>
-        {/* <Route path={"trash"} element={<ProccessPage showOnlyTrashed={true} />}/> */}
-      </Route>
-
-      <Route path={"/notifications"} element={<NotificationsPage />} />
-      {/* <Route path="/Documents/Documents/Documents" element={<Documents />} />
-      <Route path="/Documents/DraftsDoc/DraftsDoc" element={<DraftsDoc />} />
-      <Route path="/Templates/TempDraft/TempDraft" element={<TempDraft />} /> */}
-      {/* <Route
-        path="/Templates/NewTemplate/NewTemplate"
-        element={<NewTemplate />}
-      />
-      <Route
-        path="/WorkFlows/NewWorkFlow/NewWorkFlow"
-        element={<NewWorkFlow />}
-      />
-      <Route path="/WorkFlows/DraftF/DraftF" element={<DraftF />} /> */}
-      <Route path={"/verify/:token"} element={<VerificationPage />} />
-      <Route path={"/search"} element={<SearchPage />} />
-      <Route path={"*"} element={<>Page not found</>} />
+      <Route path="*" element={<ConstructionPage />} />
     </Routes>
-  );
+  )
+
+  // return (
+  //   <Routes>
+  //     <Route path={"/"} element={<WorkflowApp />} />
+  //     <Route path="/settings" element={<WorkflowAiSettings />} />
+  //     <Route path={"documents"}>
+  //       <Route index element={<DocumentsPage home={true} />} />
+  //       <Route path={"saved"} element={<DocumentsPage showOnlySaved={true} />} />
+  //       {/* <Route path={"trash"} element={<DocumentsPage showOnlyTrashed={true} />} /> */}
+  //       {/*  <Route path={"new"} element={<CreateNewDocumentPage />} />
+  //       <Route path={"to-sign"} element={<SignDocumentsPage />} />
+  //       <Route path={"rejected"} element={<RejectedDocumentsPage />} />
+  //       <Route path={"to-process"} element={<ProcessDocumentsPage />} /> */}
+  //     </Route>
+  //     <Route path={"templates"}>
+  //       <Route index element={<TemplatesPage home={true} />} />
+  //       <Route path={"saved"} element={<TemplatesPage showOnlySaved={true} />}/>
+  //       {/* <Route path={"trash"} element={<TemplatesPage showOnlyTrashed={true} />}/> */}
+  //       {/* <Route path={"new"} element={<CreateNewTemplatePage />} />
+  //       <Route path={"to-approve"} element={<ApproveTemplatesPage />} />
+  //       <Route path={"rejected"} element={<RejectedTemplatesPage />} /> */}
+  //     </Route>
+  //     <Route path={"workflows"}>
+  //       <Route index element={<WorkflowsPage home={true} />} />
+  //       <Route path={"set-workflow"} element={<SetWorkflowInDoc />} />
+  //       <Route path={"new-set-workflow"} element={<SetWorkflowInDocNew />} />
+  //       <Route path={"saved"} element={<WorkflowsPage showOnlySaved={true} />}/>
+  //       {/* <Route path={"trash"} element={<WorkflowsPage showOnlyTrashed={true} />}/> */}
+  //       {/*  <Route path={"new"} element={<CreateNewWorkflowPage />} />
+  //       <Route path={"to-approve"} element={<ApproveWorkflowPage />} />
+  //       <Route path={"rejected"} element={<RejectedWorkflowsPage />} /> */}
+  //     </Route>
+  //     <Route path={"processes"}>
+  //       <Route index element={<ProccessPage home={true} />} />
+  //       <Route path={"saved"} element={<ProccessPage showOnlySaved={true} />}/>
+  //       <Route path={"paused"} element={<ProccessPage showOnlyPaused={true} />}/>
+  //       <Route path={"cancelled"} element={<ProccessPage showOnlyCancelled={true} />}/>
+  //       <Route path={"tests"} element={<ProccessPage showOnlyTests={true} />}/>
+  //       <Route path={"completed"} element={<ProccessPage showOnlyCompleted={true} />}/>
+  //       {/* <Route path={"trash"} element={<ProccessPage showOnlyTrashed={true} />}/> */}
+  //     </Route>
+
+  //     <Route path={"/notifications"} element={<NotificationsPage />} />
+  //     {/* <Route path="/Documents/Documents/Documents" element={<Documents />} />
+  //     <Route path="/Documents/DraftsDoc/DraftsDoc" element={<DraftsDoc />} />
+  //     <Route path="/Templates/TempDraft/TempDraft" element={<TempDraft />} /> */}
+  //     {/* <Route
+  //       path="/Templates/NewTemplate/NewTemplate"
+  //       element={<NewTemplate />}
+  //     />
+  //     <Route
+  //       path="/WorkFlows/NewWorkFlow/NewWorkFlow"
+  //       element={<NewWorkFlow />}
+  //     />
+  //     <Route path="/WorkFlows/DraftF/DraftF" element={<DraftF />} /> */}
+  //     <Route path={"/verify/:token"} element={<VerificationPage />} />
+  //     <Route path={"/search"} element={<SearchPage />} />
+  //     <Route path={"*"} element={<>Page not found</>} />
+  //   </Routes>
+  // );
 }
 
 export default App;
