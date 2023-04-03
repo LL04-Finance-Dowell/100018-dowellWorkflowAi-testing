@@ -1,9 +1,10 @@
 .container {
-  position: relative;
+  position: sticky;
   min-height: 85px;
   width: 100%;
   cursor: pointer;
   z-index: 100001;
+  top: 0;
 }
 
 .box {
