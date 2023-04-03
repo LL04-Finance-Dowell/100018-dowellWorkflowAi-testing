@@ -252,6 +252,7 @@ def save_wf_process(
     process_action,
     portfolio,
     workflows_ids,
+    process_type
 ):
     payload = json.dumps(
         {
@@ -267,6 +268,7 @@ def save_wf_process(
                 "parent_document_id": document_id,
                 "processing_action": process_action,
                 "processing_state": "draft",
+                "process_type": process_type,
                 "workflow_construct_ids": workflows_ids,
                 "created_at": time,
                 "creator_portfolio": portfolio,
@@ -1019,16 +1021,7 @@ def delete_process(process_id, data_type):
 
 
 def targeted_population(database, collection, fields, period):
-    """
-    Population Function
-
-    Args:
-        database(str): select db name
-        collection(str): select collection in that db
-        fields: select collection fields
-        period: select period
-
-    """
+    """Population Function"""
 
     database_details = {
         "database_name": "mongodb",
