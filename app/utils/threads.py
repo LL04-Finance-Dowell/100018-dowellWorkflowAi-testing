@@ -20,6 +20,7 @@ def notification(data):
     """post notifications for extension."""
     payload = json.dumps({
         "username": data["username"],
+        "documentId": data["item_id"],
         "portfolio": data["portfolio"],
         "productName": "Workflow AI",
         "companyId": data["company_id"],
@@ -51,13 +52,12 @@ def save_link_hashes(data):
         save_uuid_hash(
             link=data["link"],
             process_id=data["process_id"],
-            document_id=data["document_id"],
+            item_id=data["item_id"],
             auth_role=data["step_role"],
             user_name=data["username"],
             auth_portfolio=data["portfolio"],
             unique_hash=data["unique_hash"],
-            # company_id=data["company_id"],
-            # process_title=data["process_title"],
+            item_type=data["item_type"]
         )
     except ConnectionError:
         print("Fail to save a single VF link! \n")
@@ -70,7 +70,7 @@ def save_links_v2(data):
         save_process_links(
             links=data["links"],
             process_id=data["process_id"],
-            document_id=data["document_id"],
+            item_id=data["item_id"],
             company_id=data["company_id"],
         )
         print("Thread: Process Link Save! \n")
@@ -85,7 +85,7 @@ def save_qrcodes(data):
         save_process_qrcodes(
             qrcodes=data["qrcodes"],
             process_id=data["process_id"],
-            document_id=data["document_id"],
+            item_id=data["item_id"],
             processing_choice=data["process_choice"],
             process_title=data["process_title"],
             company_id=data["company_id"],

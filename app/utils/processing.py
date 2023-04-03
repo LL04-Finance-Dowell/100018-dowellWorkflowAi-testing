@@ -9,9 +9,8 @@ from app.utils.mongo_db_connection import (
     get_process_object,
     save_wf_process,
     update_document_clone,
-    # update_document_viewers,
     update_wf_process,
-    authorize_document,
+    authorize,
 )
 from . import checks, verification
 from . import link_gen
@@ -24,33 +23,21 @@ def new(
     created_by,
     company_id,
     data_type,
-    document_id,
+    item_id,
     process_choice,
     creator_portfolio,
     workflows_ids,
+    process_type,
 ):
-    """
-    Structures a process entry to persistent storage
+    """Structures a process entry to persistent storage"""
 
-    Args:
-        workflows (dict): a dictionary containing workflow info
-        company_id (str): org object id where the process belongs
-        data_type (str): env of accessing the wfAI app
-        process_choice (str): selected choice to process
-        creator_portfolio (str): portfolio of the process creator
-        created_by (str): process username
-        document_id (str): parent document object id
-        workflows_ids (str): all wf construct ids.
-
-    Returns:
-        a structured process.
-    """
     process_steps = [
         step for workflow in workflows for step in workflow["workflows"]["steps"]
     ]
     process_title = " - ".join(
         [workflow["workflows"]["workflow_title"] for workflow in workflows]
     )
+
     # save to collection.
     res = save_wf_process(
         process_title,
@@ -58,12 +45,13 @@ def new(
         created_by,
         company_id,
         data_type,
-        document_id,
+        item_id,
         process_choice,
         creator_portfolio,
         workflows_ids,
+        process_type,
     )
-    # return process id.
+
     if res["isSuccess"]:
         process = {
             "process_title": process_title,
@@ -72,23 +60,15 @@ def new(
             "created_by": created_by,
             "company_id": company_id,
             "data_type": data_type,
-            "parent_document_id": document_id,
+            "parent_id": item_id,
             "_id": res["inserted_id"],
+            "process_type": process_type,
         }
         return process
 
 
 def start(process):
-    """
-    Start the processing cycle.
-
-    Args:
-        process (dict): A dictionary containing information about the process.
-
-    Returns:
-        Response: A JSON response containing the generated links, or an error
-        message.
-    """
+    """Start the processing cycle."""
     links = []
     qrcodes = []
     for step in process["process_steps"]:
@@ -97,7 +77,7 @@ def start(process):
             {
                 member["member"]: verification.process_links(
                     process_id=process["_id"],
-                    document_id=process["parent_document_id"],
+                    item_id=process["parent_id"],
                     step_role=step.get("stepRole"),
                     auth_name=member["member"],
                     auth_portfolio=member["portfolio"],
@@ -114,7 +94,7 @@ def start(process):
             {
                 member["member"]: verification.process_qrcode(
                     process_id=process["_id"],
-                    document_id=process["parent_document_id"],
+                    item_id=process["parent_id"],
                     step_role=step.get("stepRole"),
                     auth_name=member["member"],
                     auth_portfolio=member["portfolio"],
@@ -134,20 +114,18 @@ def start(process):
         + step_one.get("stepUserMembers", [])
     ]
 
-    # update authorized viewers for the parent document
-    # document = get_document_object(process["parent_document_id"])
-    # doc_name = document["document_name"] + " ".join(auth_users)
-    # viewers = document["auth_viewers"]
-    doc_id = process["parent_document_id"]
+    # update authorized viewers for the parent id template or document.
+    doc_id = process["parent_id"]
 
     viewers = []
     for viewer in auth_users:
         viewers.append(viewer)
 
-    print(viewers)
-
     if len(viewers) > 0:
-        res = json.loads(authorize_document(doc_id, viewers, process["_id"]))
+
+        res = json.loads(
+            authorize(doc_id, viewers, process["_id"]), process["process_type"]
+        )
         if res["isSuccess"]:
 
             # add this users to the document clone map of step one
@@ -167,7 +145,7 @@ def start(process):
             data = {
                 "links": links,
                 "process_id": process["_id"],
-                "document_id": process["parent_document_id"],
+                "item_id": doc_id,
                 "company_id": process["company_id"],
             }
             Thread(target=threads.save_links_v2, args=(data,)).start()
@@ -176,7 +154,7 @@ def start(process):
             code_data = {
                 "qrcodes": qrcodes,
                 "process_id": process["_id"],
-                "document_id": process["parent_document_id"],
+                "item_id": doc_id,
                 "process_choice": process["processing_action"],
                 "company_id": process["company_id"],
                 "process_title": process["process_title"],
@@ -185,11 +163,12 @@ def start(process):
 
             # return generated links
             return Response({"links": links, "qrcodes": qrcodes}, status.HTTP_200_OK)
-    else:
-        print("No people, no procees")
+
+    return Response("failed to start processing", status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 def verify(process, auth_step_role, location_data, user_name):
+    doc_link = None
 
     # find step the user belongs
     for step in process["process_steps"]:
@@ -246,35 +225,38 @@ def verify(process, auth_step_role, location_data, user_name):
 
     # do we have access?
     if not match:
-        return Response("Document Access forbidden!", status=status.HTTP_403_FORBIDDEN)
+        return doc_link
 
-    # is everything right, generate document link.
+    # is everything right,
     if clone_id and right and user and role and doc_map:
-        doc_link = link_gen.document(
+
+        #  generate document link.
+        doc_link = link_gen.to_editor(
             document_id=clone_id,
             doc_map=doc_map,
             doc_rights=right,
             user=user,
             process_id=process["_id"],
             role=role,
+            process_type=process["process_type"],
         )
-        return doc_link.json()
-    else:
-        print("something missing")
 
-    return None
+        return doc_link
+
+    return doc_link
 
 
-def background(process_id, document_id):
+def background(process_id, item_id):
     # TODO: mark notification as done
-    res = requests.delete(f"{NOTIFICATION_API}/{document_id}/")
+    res = requests.delete(f"{NOTIFICATION_API}/{item_id}/")
     if res.status_code == 204:
         print("deleted notification")
     else:
         print("something went wrong on notification")
 
     # get process
-    process = get_process_object(workflow_process_id=process_id)
+    process = get_process_object(process_id)
+
     copies = []
     step_1_complete = False
     step_2_complete = False
@@ -302,12 +284,11 @@ def background(process_id, document_id):
 
     if all(d_states):
         step_1_complete = True
-       
 
     # --------------------------------- Now Check Step 2---------------------------------------------
     if step_1_complete:
         if len(process["process_steps"]) > 1:
-           
+
             step_two = process["process_steps"][1]
             step_two_users = [
                 member["member"]
@@ -331,12 +312,11 @@ def background(process_id, document_id):
 
                 if all(d_states):
                     step_2_complete = True
-                   
 
             else:  # if the clone map is empty we execute
 
                 if step_two["stepTaskType"] == "assign_task":
-                    
+
                     for d_m in step_one["stepDocumentCloneMap"]:
                         docs = list(d_m.values())
 
@@ -352,7 +332,7 @@ def background(process_id, document_id):
                             step_two["stepDocumentCloneMap"].append({usr: docid})
 
                 if step_two["stepTaskType"] == "request_for_task":
-             
+
                     # Create copies of the document from step one which is the parent document and have step
                     # two members as authorized.
                     copies += [
@@ -382,7 +362,7 @@ def background(process_id, document_id):
 
         # Do we have step 3 index?
         if len(process["process_steps"]) > 2:
-            
+
             step_three = process["process_steps"][2]
             step_two = process["process_steps"][1]
 
@@ -415,9 +395,7 @@ def background(process_id, document_id):
                 for d_m in step_two["stepDocumentCloneMap"]:
                     docs = list(d_m.values())
 
-
                 if step_three["stepTaskType"] == "assign_task":
-    
 
                     # With  step 2 doc ids we can now authorized step 3 users
                     viewers = []
@@ -458,7 +436,7 @@ def background(process_id, document_id):
 
         # Do we have step 4 index?
         if len(process["process_steps"]) > 3:
-          
+
             step_four = process["process_steps"][3]
             step_four_users = [
                 member["member"]
@@ -490,9 +468,7 @@ def background(process_id, document_id):
                 for d_m in step_three["stepDocumentCloneMap"]:
                     docs = list(d_m.values())
 
-
                 if step_four["stepTaskType"] == "assign_task":
-                   
 
                     # With  step 3 doc ids we can now authorized step 4 users
                     viewers = []
@@ -504,7 +480,7 @@ def background(process_id, document_id):
                             step_four["stepDocumentCloneMap"].append({usr: docid})
 
                 if step_four["stepTaskType"] == "request_for_task":
-                    
+
                     # Create copies of the document from step two and have step
                     # three members as authorized.
                     copies = []

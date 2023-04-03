@@ -13,7 +13,7 @@ from app.utils.mongo_db_connection import (
     delete_process,
     delete_template,
     delete_workflow,
-    document_finalize,
+    finalize,
     get_document_list,
     get_document_object,
     get_links_object_by_process_id,
@@ -59,15 +59,11 @@ def document_processing(request):
             created_by=request.data["created_by"],
             company_id=request.data["company_id"],
             data_type=request.data["data_type"],
-            document_id=cloning.document(
-                document_id=request.data["parent_document_id"],
-                auth_viewer=None,
-                parent_id=request.data["parent_document_id"],
-                process_id="",
-            ),
+            item_id=request.data["parent_id"],
             process_choice="save_process",
             creator_portfolio=request.data["creator_portfolio"],
             workflows_ids=request.data["workflows_ids"],
+            process_type=request.data["process_type"],
         )
         return Response("Process Saved in drafts.", status.HTTP_201_CREATED)
 
@@ -77,15 +73,11 @@ def document_processing(request):
             created_by=request.data["created_by"],
             company_id=request.data["company_id"],
             data_type=request.data["data_type"],
-            document_id=cloning.document(
-                document_id=request.data["parent_document_id"],
-                auth_viewer=None,
-                parent_id=request.data["parent_document_id"],
-                process_id="",
-            ),
-            process_choice="content_wise",
+            item_id=request.data["parent_id"],
+            process_choice="start_content_wise",
             creator_portfolio=request.data["creator_portfolio"],
             workflows_ids=request.data["workflows_ids"],
+            process_type=request.data["process_type"],
         )
         return processing.start(process)
 
@@ -95,15 +87,11 @@ def document_processing(request):
             created_by=request.data["created_by"],
             company_id=request.data["company_id"],
             data_type=request.data["data_type"],
-            document_id=cloning.document(
-                document_id=request.data["parent_document_id"],
-                auth_viewer=None,
-                parent_id=request.data["parent_document_id"],
-                process_id="",
-            ),
-            process_choice="step_wise",
+            item_id=request.data["parent_id"],
+            process_choice="start_steps_wise",
             creator_portfolio=request.data["creator_portfolio"],
             workflows_ids=request.data["workflows_ids"],
+            process_type=request.data["process_type"],
         )
         return processing.start(process)
 
@@ -113,15 +101,11 @@ def document_processing(request):
             created_by=request.data["created_by"],
             company_id=request.data["company_id"],
             data_type=request.data["data_type"],
-            document_id=cloning.document(
-                document_id=request.data["parent_document_id"],
-                auth_viewer=None,
-                parent_id=request.data["parent_document_id"],
-                process_id="",
-            ),
-            process_choice="workflow",
+            item_id=request.data["parent_id"],
+            process_choice="start_workflow_wise",
             creator_portfolio=request.data["creator_portfolio"],
             workflows_ids=request.data["workflows_ids"],
+            process_type=request.data["process_type"],
         )
         return processing.start(process)
 
@@ -131,15 +115,11 @@ def document_processing(request):
             created_by=request.data["created_by"],
             company_id=request.data["company_id"],
             data_type=data_type,
-            document_id=cloning.document(
-                document_id=request.data["parent_document_id"],
-                auth_viewer=None,
-                parent_id=request.data["parent_document_id"],
-                process_id="",
-            ),
-            process_choice="content",
+            item_id=request.data["parent_id"],
+            process_choice="test_content_wise",
             creator_portfolio=request.data["creator_portfolio"],
             workflows_ids=request.data["workflows_ids"],
+            process_type=request.data["process_type"],
         )
         return processing.start(process)
 
@@ -149,15 +129,11 @@ def document_processing(request):
             created_by=request.data["created_by"],
             company_id=request.data["company_id"],
             data_type=data_type,
-            document_id=cloning.document(
-                document_id=request.data["parent_document_id"],
-                auth_viewer=None,
-                parent_id=request.data["parent_document_id"],
-                process_id="",
-            ),
-            process_choice="workflow_steps",
+            item_id=request.data["parent_id"],
+            process_choice="test_steps_wise",
             creator_portfolio=request.data["creator_portfolio"],
             workflows_ids=request.data["workflows_ids"],
+            process_type=request.data["process_type"],
         )
         return processing.start(process)
 
@@ -167,15 +143,11 @@ def document_processing(request):
             created_by=request.data["created_by"],
             company_id=request.data["company_id"],
             data_type=data_type,
-            document_id=cloning.document(
-                document_id=request.data["parent_document_id"],
-                auth_viewer=None,
-                parent_id=request.data["parent_document_id"],
-                process_id="",
-            ),
-            process_choice="workflow",
+            item_id=request.data["parent_id"],
+            process_choice="test_workflow_wise",
             creator_portfolio=request.data["creator_portfolio"],
             workflows_ids=request.data["workflows_ids"],
+            process_type=request.data["process_type"],
         )
         return processing.start(process)
 
@@ -232,22 +204,46 @@ def document_processing(request):
 
 
 @api_view(["POST"])
+def get_process_link(request, process_id):
+    """get a link process for person having notifications"""
+
+    links_info = get_links_object_by_process_id(process_id)
+    user = request.data["user_name"]
+    if not links_info:
+        return Response(
+            "Could not fetch process info at this time",
+            status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+        )
+
+    # check presence in link
+    for link in links_info["links"]:
+        if user in link:
+            return Response(link[user], status=status.HTTP_200_OK)
+
+    return Response(
+        "User is not part of this process", status=status.HTTP_401_UNAUTHORIZED
+    )
+
+
+@api_view(["POST"])
 def process_verification(request, process_id):
     """verification of a process step access and checks that duplicate document based on a step."""
+
     if not request.data:
         return Response("You are missing something!", status.HTTP_400_BAD_REQUEST)
 
-    # check user
-    user_name = request.data["user_name"]
-    auth_user, process_id, auth_step_role = checks.user_presence(
-        token=request.data["token"],
-        user_name=user_name,
-        portfolio=request.data["portfolio"],
-    )
-    if not auth_user:
-        return Response(
-            "User is not part of this process", status.HTTP_401_UNAUTHORIZED
-        )
+    # check user will be done on the frontend so I dont make an extra db query.
+    auth_user = request.data["auth_user"]
+    auth_role = request.data["auth_role"]
+    # auth_user, process_id, auth_step_role = checks.user_presence(
+    #     token=request.data["token"],
+    #     user_name=user_name,
+    #     portfolio=request.data["portfolio"],
+    # )
+    # if not auth_user:
+    #     return Response(
+    #         "User is not part of this process", status.HTTP_401_UNAUTHORIZED
+    #     )
 
     # get process
     process = get_process_object(workflow_process_id=process_id)
@@ -257,15 +253,11 @@ def process_verification(request, process_id):
     # check states
     if process["processing_state"]:
         if process["processing_state"] == "paused":
-            return Response(
-                "This workflow process is currently on hold!", status.HTTP_200_OK
-            )
+            return Response("this workflow process is paused!", status.HTTP_200_OK)
 
         # was the process not started?
         if process["processing_state"] == "save":
-            return Response(
-                "This workflow process is not activated!", status.HTTP_200_OK
-            )
+            return Response("this workflow process is not active!", status.HTTP_200_OK)
 
     # set request location data
     location_data = {
@@ -274,18 +266,17 @@ def process_verification(request, process_id):
         "continent": request.data["continent"],
     }
 
-    access_link = processing.verify(process, auth_step_role, location_data, user_name)
-    if access_link:
+    access_link = processing.verify(process, auth_role, location_data, auth_user)
+    if access_link is not None:
         return Response(access_link, status.HTTP_200_OK)
 
-    return Response(
-        "Access to document denied at this time!", status.HTTP_401_UNAUTHORIZED
-    )
+    return Response("access to document not allowed!", status.HTTP_401_UNAUTHORIZED)
 
 
 @api_view(["POST"])
 def finalize_or_reject(request, process_id):
     """After access is granted and the user has made changes on a document."""
+
     if not request.data:
         return Response("You are missing something", status.HTTP_400_BAD_REQUEST)
 
@@ -310,15 +301,19 @@ def finalize_or_reject(request, process_id):
         state = "rejected"
 
     # mark document as finalize.
-    res = document_finalize(document_id=request.data["document_id"], state=state)
+    res = finalize(
+        item_id=request.data["item_id"], state=state, item_type=request.data["type"]
+    )
     if res["isSuccess"]:
         # Signal for further processing.
-        if processing.background(process_id,request.data["document_id"]):
+        if processing.background(process_id, request.data["item_id"]):
             return Response("document processed successfully", status.HTTP_200_OK)
-            
-        return Response(
-            "Document processed but failed to trigger second step", status.HTTP_200_OK
-        )
+
+        else:
+            return Response(
+                "document processed but failed to trigger second step",
+                status.HTTP_200_OK,
+            )
 
     return Response(
         "Error processing the document", status.HTTP_500_INTERNAL_SERVER_ERROR
@@ -362,6 +357,57 @@ def trigger_process(request):
 
     if action == "process_draft" and state != "processing":
         return processing.start(process)
+
+
+@api_view(["GET"])
+def processes(request, company_id):
+    """fetches workflow process `I` created."""
+
+    if not validator.validate_id(company_id):
+        return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
+
+    try:
+        process_list = get_process_list(company_id)
+    except ConnectionError:
+        return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    if len(process_list) > 0:
+        return Response(process_list, status=status.HTTP_200_OK)
+
+    return Response([], status=status.HTTP_200_OK)
+
+
+@api_view(["GET"])
+def a_single_process(request, process_id):
+    """get process by process id"""
+
+    if not validator.validate_id(process_id):
+        return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
+
+    try:
+        process = get_process_object(process_id)
+    except ConnectionError:
+        return Response(
+            "Failed fetch process \n", status=status.HTTP_500_INTERNAL_SERVER_ERROR
+        )
+
+    return Response(process, status=status.HTTP_200_OK)
+
+
+@api_view(["POST"])
+def fetch_process_links(request, process_id):
+    """verification links for a process"""
+
+    try:
+        process_info = get_links_object_by_process_id(process_id)
+
+    except ConnectionError:
+        return Response(
+            "Could not fetch process links",
+            status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+        )
+
+    return Response(process_info["links"], status.HTTP_200_OK)
 
 
 @api_view(["POST"])
@@ -505,7 +551,7 @@ def get_workflows(request, company_id):
     data_type = request.query_params.get("data_type", "Real_Data")
     if not validator.validate_id(company_id):
         return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
-
+        
     workflow_list = get_wf_list(company_id, data_type)
     if not workflow_list:
         return Response({"workflows": []}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
@@ -597,7 +643,7 @@ def get_document_content(request, document_id):
     content = []
     my_dict = ast.literal_eval(get_document_object(document_id)["content"])[0][0]
     all_keys = [i for i in my_dict.keys()]
-   
+
     for i in all_keys:
         temp_list = []
         for j in range(0, len(my_dict[i])):
@@ -607,11 +653,13 @@ def get_document_content(request, document_id):
                 i: temp_list,
             }
         )
-    sorted_content=[]
+    sorted_content = []
     for dicts in content:
-        for key,val in dicts.items():
+        for key, val in dicts.items():
             # print(dicts[key])
-            sorted_content.append({key:sorted(dicts[key], key=lambda x: int(x["id"][1:]))})
+            sorted_content.append(
+                {key: sorted(dicts[key], key=lambda x: int(x["id"][1:]))}
+            )
 
     return Response(sorted_content, status=status.HTTP_200_OK)
 
@@ -734,7 +782,7 @@ def all_favourites(request, company_id):
 
     if not validator.validate_id(company_id):
         return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
-  
+
     data = list_favourites(company_id)
     if not data:
         return Response(
@@ -871,79 +919,6 @@ def approve(request, template_id):
             status=status.HTTP_500_INTERNAL_SERVER_ERROR,
         )
     return Response({"message": "Template Approved."}, status=status.HTTP_200_OK)
-
-
-@api_view(["GET"])
-def processes(request, company_id):
-    """fetches workflow process `I` created."""
-
-    if not validator.validate_id(company_id):
-        return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
-
-    try:
-        process_list = get_process_list(company_id)
-    except ConnectionError:
-        return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-    if len(process_list) > 0:
-        return Response(process_list, status=status.HTTP_200_OK)
-
-    return Response([], status=status.HTTP_200_OK)
-
-
-@api_view(["GET"])
-def a_single_process(request, process_id):
-    """get process by process id"""
-
-    if not validator.validate_id(process_id):
-        return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
-
-    try:
-        process = get_process_object(process_id)
-    except ConnectionError:
-        return Response(
-            "Failed to get a process \n", status=status.HTTP_500_INTERNAL_SERVER_ERROR
-        )
-
-    return Response(process, status=status.HTTP_200_OK)
-
-
-@api_view(["POST"])
-def get_process_link(request):
-    """get a link process for person having notifications"""
-
-    links_info = get_links_object_by_process_id(request.data["process_id"])
-    user = request.data["user_name"]
-    if not links_info:
-        return Response(
-            "Could not fetch process info at this time",
-            status=status.HTTP_500_INTERNAL_SERVER_ERROR,
-        )
-
-    # check presence in link
-    for link in links_info["links"]:
-        if user in link:
-            return Response(link[user], status=status.HTTP_200_OK)
-
-    return Response(
-        "User is not part of this process", status=status.HTTP_401_UNAUTHORIZED
-    )
-
-
-@api_view(["POST"])
-def fetch_process_links(request, process_id):
-    """verification links for a process"""
-
-    try:
-        process_info = get_links_object_by_process_id(process_id)
-        
-    except ConnectionError:
-        return Response(
-            "Could not fetch process links",
-            status=status.HTTP_500_INTERNAL_SERVER_ERROR,
-        )
-
-    return Response(process_info["links"], status.HTTP_200_OK)
 
 
 @api_view(["POST"])

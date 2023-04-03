@@ -9,39 +9,27 @@ from app.constants import VERIFICATION_LINK
 
 def process_links(
     process_id,
-    document_id,
+    item_id,
     step_role,
     auth_name,
     auth_portfolio,
     company_id,
     process_title,
+    item_type,
 ):
-    """
-    Create a JWT encoded unique verification link
+    """Create a JWT encoded unique verification link"""
 
-    Args:
-        process_id (str): the object id of the process
-        document_id(str): the object id of the document
-        step_role(str): the authorized step role.
-        auth_name(str): the authorized username.
-        auth_portfolio(str): the authorized user portfolio
-        company_id (str): the object id of the company
-        process_title (str): the name of the process title
-
-    Returns:
-        A unique verification link with the jwt hash
-    """
     hash = uuid.uuid4().hex
+    link = f"{VERIFICATION_LINK}/{hash}/?auth_user={auth_name}&auth_portfolio={auth_portfolio}&auth_role={step_role}"
     data = {
+        "link": link,
+        "process_id": process_id,
+        "item_id": item_id,
+        "step_role": step_role,
         "username": auth_name,
         "portfolio": auth_portfolio,
-        "process_id": process_id,
-        "step_role": step_role,
-        "document_id": document_id,
-        # "company_id": company_id,
         "unique_hash": hash,
-        "process_title": process_title,
-        "link": f"{VERIFICATION_LINK}/{hash}/",
+        "item_type": item_type,
     }
     # save link
     Thread(target=save_link_hashes, args=(data,)).start()
@@ -51,40 +39,29 @@ def process_links(
         "portfolio": auth_portfolio,
         "process_id": process_id,
         "step_role": step_role,
-        "document_id": document_id,
+        "item_id": item_id,
         "company_id": company_id,
         "process_title": process_title,
-        "link": f"{VERIFICATION_LINK}/{hash}/",
+        "link": link,
     }
     # setup notification
     Thread(target=notification, args=(ddata,)).start()
 
-    return f"{VERIFICATION_LINK}/{hash}/"
+    return link
 
 
-def process_qrcode(process_id, document_id, step_role, auth_name, auth_portfolio):
-    """
-    Generates a qrcode for the data provided and stores the qrcodes
+def process_qrcode(process_id, item_id, step_role, auth_name, auth_portfolio):
+    """Generates a qrcode for the data provided and stores the qrcodes"""
 
-    Args:
-        process_id (str): the object id of the process
-        document_id(str): the object id of the document
-        step_role(str): the authorized step role.
-        auth_name(str): the authorized username.
-        auth_portfolio(str): the authorized user portfolio
-
-    Returns:
-        qrcode link based on that data.
-    """
     # create a jwt token
     hash_token = jwt.encode(
         json.loads(
             json.dumps(
                 {
                     "process_id": process_id,
-                    "document_id": document_id,
+                    "item_id": item_id,
                     "step_role": step_role,
-                    "auth_name": auth_name,
+                    "auth_user": auth_name,
                     "auth_portfolio": auth_portfolio,
                 }
             )

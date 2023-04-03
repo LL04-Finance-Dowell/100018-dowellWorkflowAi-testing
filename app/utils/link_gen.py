@@ -4,19 +4,35 @@ import requests
 
 from app.constants import EDITOR_API
 
+headers = {"Content-Type": "application/json"}
 
-def document(document_id, doc_map, doc_rights, user, process_id, role):
+
+def to_editor(document_id, doc_map, doc_rights, user, process_id, role, process_type):
+    if process_type == "document":
+        collection = "DocumentReports"
+        document = "documentreports"
+        action = "document"
+        field = "document_name"
+        team_member_id = "11689044433"
+
+    elif process_type == "template":
+        collection = "TemplateReports"
+        document = "templatereports"
+        action = "template"
+        field = "template_name"
+        team_member_id = "22689044433"
+
     payload = {
         "product_name": "workflowai",
         "details": {
             "_id": document_id,
             "field": "document_name",
-            "action": "document",
+            "action": process_type,
             "cluster": "Documents",
             "database": "Documentation",
-            "collection": "DocumentReports",
-            "document": "documentreports",
-            "team_member_ID": "11689044433",
+            "collection": collection,
+            "document": document,
+            "team_member_ID": team_member_id,
             "function_ID": "ABCDE",
             "command": "update",
             "flag": "signing",
@@ -29,27 +45,23 @@ def document(document_id, doc_map, doc_rights, user, process_id, role):
         },
     }
     try:
-        link = requests.post(
-            EDITOR_API,
-            data=json.dumps(payload),
-            headers={"Content-Type": "application/json"},
-        )
+        link = requests.post(EDITOR_API, data=json.dumps(payload), headers=headers)
     except ConnectionError:
         return
-    
-    return link
+
+    return link.json()
 
 
-def editor(item_id, type):
+def editor(item_id, item_type):
 
-    if type == "document":
+    if item_type == "document":
         collection = "DocumentReports"
         document = "documentreports"
         action = "document"
         field = "document_name"
         team_member_id = "11689044433"
 
-    if type == "template":
+    if item_type == "template":
         collection = "TemplateReports"
         document = "templatereports"
         action = "template"
@@ -67,6 +79,7 @@ def editor(item_id, type):
             "function_ID": "ABCDE",
             "_id": item_id,
             "field": field,
+            "type": item_type,
             "action": action,
             "flag": "editing",
             "command": "update",
@@ -74,11 +87,8 @@ def editor(item_id, type):
         },
     }
     try:
-        response = requests.post(
-            EDITOR_API,
-            data=json.dumps(payload),
-        )
-    except:
-        return None
+        response = requests.post(EDITOR_API, data=json.dumps(payload), headers=headers)
+    except ConnectionError():
+        return 
 
     return response.json()

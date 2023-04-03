@@ -34,7 +34,7 @@ from app.constants import (
 # time
 dd = datetime.now()
 time = dd.strftime("%d:%m:%Y,%H:%M:%S")
-
+headers = {"Content-Type": "application/json"}
 
 # old 22sec query
 # def get_event_id():
@@ -133,7 +133,7 @@ def get_user_info_by_username(username):
 
 
 # ----------------------- Links Creation -------------------------
-def save_process_links(links, process_id, document_id, company_id):
+def save_process_links(links, process_id, item_id, company_id):
     payload = json.dumps(
         {
             **LINK_CONNECTION_DICT,
@@ -142,7 +142,7 @@ def save_process_links(links, process_id, document_id, company_id):
                 "eventId": get_event_id()["event_id"],
                 "links": links,
                 "process_id": process_id,
-                "document_id": document_id,
+                "item_id": item_id,
                 "company_id": company_id,
                 "created_on": time,
             },
@@ -150,7 +150,6 @@ def save_process_links(links, process_id, document_id, company_id):
             "platform": "bangalore",
         }
     )
-    headers = {"Content-Type": "application/json"}
     response = requests.request(
         "POST", DOWELLCONNECTION_URL, headers=headers, data=payload
     )
@@ -202,7 +201,7 @@ def get_links_object_by_document_id(document_id):
 
 #  -------------------------------Workflow Process------------------
 def save_process_qrcodes(
-    qrcodes, process_id, document_id, processing_choice, process_title, company_id
+    qrcodes, process_id, item_id, processing_choice, process_title, company_id
 ):
     payload = json.dumps(
         {
@@ -212,7 +211,7 @@ def save_process_qrcodes(
                 "event_id": get_event_id()["event_id"],
                 "qrcodes": qrcodes,
                 "process_id": process_id,
-                "document_id": document_id,
+                "item_id": item_id,
                 "processing_choice": processing_choice,
                 "process_title": process_title,
                 "created_at": time,
@@ -222,7 +221,6 @@ def save_process_qrcodes(
             "platform": "bangalore",
         }
     )
-    headers = {"Content-Type": "application/json"}
     response = requests.request(
         "POST", DOWELLCONNECTION_URL, headers=headers, data=payload
     )
@@ -277,7 +275,6 @@ def save_wf_process(
             "platform": "bangalore",
         }
     )
-    headers = {"Content-Type": "application/json"}
     response = requests.request(
         "POST", DOWELLCONNECTION_URL, headers=headers, data=payload
     )
@@ -297,7 +294,6 @@ def update_wf_process(process_id, steps, state):
             "platform": "bangalore",
         }
     )
-    headers = {"Content-Type": "application/json"}
     response = requests.request(
         "POST", DOWELLCONNECTION_URL, headers=headers, data=payload
     )
@@ -364,7 +360,6 @@ def save_wf(workflows, company_id, created_by):
             "platform": "bangalore",
         }
     )
-    headers = {"Content-Type": "application/json"}
     response = requests.request(
         "POST", DOWELLCONNECTION_URL, headers=headers, data=payload
     )
@@ -390,7 +385,6 @@ def update_wf(workflow_id, old_workflow):
             "platform": "bangalore",
         }
     )
-    headers = {"Content-Type": "application/json"}
     response = requests.request(
         "POST", DOWELLCONNECTION_URL, headers=headers, data=payload
     )
@@ -402,7 +396,6 @@ def update_wf_approval(workflow_id, approval):
     payload = json.dumps(
         {
             **WF_CONNECTION_DICT,
-            # "command": "insert",
             "command": "update",
             "field": {
                 "_id": workflow_id,
@@ -413,7 +406,6 @@ def update_wf_approval(workflow_id, approval):
             "platform": "bangalore",
         }
     )
-    headers = {"Content-Type": "application/json"}
     response = requests.request(
         "POST", DOWELLCONNECTION_URL, headers=headers, data=payload
     )
@@ -479,7 +471,6 @@ def save_template(name, data, page, created_by, company_id, data_type):
             "platform": "bangalore",
         }
     )
-    headers = {"Content-Type": "application/json"}
     response = requests.request(
         "POST", DOWELLCONNECTION_URL, headers=headers, data=payload
     )
@@ -510,7 +501,6 @@ def update_template(template_id, data):
             "platform": "bangalore",
         }
     )
-    headers = {"Content-Type": "application/json"}
     response = requests.request(
         "POST", DOWELLCONNECTION_URL, headers=headers, data=payload
     )
@@ -533,7 +523,6 @@ def update_template_approval(template_id, approval):
             "platform": "bangalore",
         }
     )
-    headers = {"Content-Type": "application/json"}
     response = requests.request(
         "POST", DOWELLCONNECTION_URL, headers=headers, data=payload
     )
@@ -594,7 +583,6 @@ def save_document(
         }
     )
 
-    headers = {"Content-Type": "application/json"}
     response = requests.request(
         "POST", DOWELLCONNECTION_URL, headers=headers, data=payload
     )
@@ -617,7 +605,6 @@ def update_document(document_id, process_id, state):
             "platform": "bangalore",
         }
     )
-    headers = {"Content-Type": "application/json"}
     response = requests.request(
         "POST", DOWELLCONNECTION_URL, headers=headers, data=payload
     )
@@ -625,26 +612,62 @@ def update_document(document_id, process_id, state):
     return json.loads(response.text)
 
 
-def document_finalize(document_id, state):
-    payload = json.dumps(
-        {
-            **DOCUMENT_CONNECTION_DICT,
-            "command": "update",
-            "field": {
-                "_id": document_id,
-            },
-            "update_field": {
-                "document_state": state,
-            },
-            "platform": "bangalore",
-        }
-    )
-    headers = {"Content-Type": "application/json"}
-    response = requests.request(
-        "POST", DOWELLCONNECTION_URL, headers=headers, data=payload
-    )
+def finalize(item_id, state, item_type):
+    payload = None
 
-    return json.loads(json.loads(response.text))
+    if item_type == "document":
+        payload = json.dumps(
+            {
+                **DOCUMENT_CONNECTION_DICT,
+                "command": "update",
+                "field": {
+                    "_id": item_id,
+                },
+                "update_field": {
+                    "document_state": state,
+                },
+                "platform": "bangalore",
+            }
+        )
+
+    elif item_type == "template":
+        payload = json.dumps(
+            {
+                **TEMPLATE_CONNECTION_DICT,
+                "command": "update",
+                "field": {
+                    "_id": item_id,
+                },
+                "update_field": {
+                    "document_state": state,
+                },
+                "platform": "bangalore",
+            }
+        )
+
+    elif item_type == "workflow":
+        payload = json.dumps(
+            {
+                **WF_CONNECTION_DICT,
+                "command": "update",
+                "field": {
+                    "_id": item_id,
+                },
+                "update_field": {
+                    "document_state": state,
+                },
+                "platform": "bangalore",
+            }
+        )
+
+    if payload is not None:
+        response = requests.request(
+            "POST", DOWELLCONNECTION_URL, headers=headers, data=payload
+        )
+
+        return json.loads(json.loads(response.text))
+
+    return
 
 
 def update_document_clone(document_id, clone_list):
@@ -659,7 +682,6 @@ def update_document_clone(document_id, clone_list):
             "platform": "bangalore",
         }
     )
-    headers = {"Content-Type": "application/json"}
     response = requests.request(
         "POST", DOWELLCONNECTION_URL, headers=headers, data=payload
     )
@@ -667,29 +689,51 @@ def update_document_clone(document_id, clone_list):
     return json.loads(response.text)
 
 
-def authorize_document(document_id, viewers, process):
-    payload = json.dumps(
-        {
-            **DOCUMENT_CONNECTION_DICT,
-            "command": "update",
-            "field": {
-                "_id": document_id,
-            },
-            "update_field": {
-                "auth_viewers": viewers,
-                "document_state": "processing",
-                "process_id": process,
-            },
-            "platform": "bangalore",
-        }
-    )
-    headers = {"Content-Type": "application/json"}
-    response = requests.request(
-        "POST", DOWELLCONNECTION_URL, headers=headers, data=payload
-    )
+def authorize(document_id, viewers, process, item_type):
+    payload = None
 
-    return json.loads(response.text)
+    if item_type == "document":
+        payload = json.dumps(
+            {
+                **DOCUMENT_CONNECTION_DICT,
+                "command": "update",
+                "field": {
+                    "_id": document_id,
+                },
+                "update_field": {
+                    "auth_viewers": viewers,
+                    "document_state": "processing",
+                    "process_id": process,
+                },
+                "platform": "bangalore",
+            }
+        )
 
+    if item_type == "template":
+        payload = json.dumps(
+            {
+                **TEMPLATE_CONNECTION_DICT,
+                "command": "update",
+                "field": {
+                    "_id": document_id,
+                },
+                "update_field": {
+                    "auth_viewers": viewers,
+                    "document_state": "processing",
+                    "process_id": process,
+                },
+                "platform": "bangalore",
+            }
+        )
+
+    if payload is not None:
+        response = requests.request(
+            "POST", DOWELLCONNECTION_URL, headers=headers, data=payload
+        )
+
+        return json.loads(response.text)
+
+    return
 
 
 def get_links_list(company_id):
@@ -727,7 +771,6 @@ def save_wf_setting(company_id, owner_name, username, portfolio_name, process):
         }
     )
 
-    headers = {"Content-Type": "application/json"}
     response = requests.request(
         "POST", DOWELLCONNECTION_URL, headers=headers, data=payload
     )
@@ -781,7 +824,6 @@ def wf_setting_update(wf_setting_id, wf_ai_data):
             "platform": "bangalore",
         }
     )
-    headers = {"Content-Type": "application/json"}
     response = requests.request(
         "POST", DOWELLCONNECTION_URL, headers=headers, data=payload
     )
@@ -813,7 +855,14 @@ def get_document_list(company_id, data_type):
 
 
 def save_uuid_hash(
-    link, process_id, document_id, auth_role, user_name, auth_portfolio, unique_hash
+    link,
+    process_id,
+    item_id,
+    auth_role,
+    user_name,
+    auth_portfolio,
+    unique_hash,
+    item_type,
 ):
     payload = json.dumps(
         {
@@ -822,12 +871,13 @@ def save_uuid_hash(
             "field": {
                 "eventId": get_event_id()["event_id"],
                 "link": link,
+                "item_id": document_id,
+                "process_id": process_id,
                 "auth_role": auth_role,
                 "user_name": user_name,
                 "auth_portfolio": auth_portfolio,
                 "unique_hash": unique_hash,
-                "document_id": document_id,
-                "process_id": process_id,
+                "item_type": item_type,
                 "status": True,  # if True: valid ? Invalid
             },
             "update_field": {"order_nos": 21},
@@ -835,7 +885,6 @@ def save_uuid_hash(
         }
     )
 
-    headers = {"Content-Type": "application/json"}
     response = requests.request(
         "POST", DOWELLCONNECTION_URL, headers=headers, data=payload
     )
@@ -876,7 +925,6 @@ def update_uuid_object(uuid_hash):
             "platform": "bangalore",
         }
     )
-    headers = {"Content-Type": "application/json"}
     response = requests.request(
         "POST", DOWELLCONNECTION_URL, headers=headers, data=payload
     )
@@ -899,7 +947,6 @@ def delete_template(template_id, data_type):
             "platform": "bangalore",
         }
     )
-    headers = {"Content-Type": "application/json"}
     response = requests.request(
         "POST", DOWELLCONNECTION_URL, headers=headers, data=payload
     )
@@ -921,7 +968,6 @@ def delete_document(document_id, data_type):
             "platform": "bangalore",
         }
     )
-    headers = {"Content-Type": "application/json"}
     response = requests.request(
         "POST", DOWELLCONNECTION_URL, headers=headers, data=payload
     )
@@ -943,7 +989,6 @@ def delete_workflow(workflow_id, data_type):
             "platform": "bangalore",
         }
     )
-    headers = {"Content-Type": "application/json"}
     response = requests.request(
         "POST", DOWELLCONNECTION_URL, headers=headers, data=payload
     )
@@ -965,7 +1010,6 @@ def delete_process(process_id, data_type):
             "platform": "bangalore",
         }
     )
-    headers = {"Content-Type": "application/json"}
     response = requests.request(
         "POST", DOWELLCONNECTION_URL, headers=headers, data=payload
     )
@@ -1024,8 +1068,6 @@ def targeted_population(database, collection, fields, period):
         "time_input": time_input,
     }
 
-    headers = {"content-type": "application/json"}
-
     response = requests.post(
         url=TARGETED_POPULATION_URL, json=request_data, headers=headers
     )
@@ -1068,7 +1110,6 @@ def save_team(
             "platform": "bangalore",
         }
     )
-    headers = {"Content-Type": "application/json"}
     response = requests.request(
         "POST", DOWELLCONNECTION_URL, headers=headers, data=payload
     )
