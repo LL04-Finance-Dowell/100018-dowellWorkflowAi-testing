@@ -54,6 +54,7 @@ urlpatterns = [
     path("processes/<str:process_id>/trigger/", trigger_process),
     path("processes/<str:process_id>/finalize-or-reject/", finalize_or_reject),
     path("processes/<str:process_id>/links/", fetch_process_links),
+    path("processes/<str:process_id>/user-link/",get_process_link),
     path("favourites/", favorites),
     path(
         "favourites/<str:item_id>/<str:item_type>/<str:username>/",

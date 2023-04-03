@@ -873,7 +873,6 @@ def create_template(request):
             },
         }
         try:
-            ThreadAlgolia(res["inserted_id"], get_template_object).start()
             editor_link = requests.post(
                 EDITOR_API,
                 data=json.dumps(payload),
