@@ -314,7 +314,7 @@ def finalize_or_reject(request, process_id):
         else:
             return Response(
                 "document processed but experienced next step failure",
-                status.HTTP_200_OK
+                status.HTTP_200_OK,
             )
 
     return Response(
@@ -490,10 +490,11 @@ def create_workflow(request):
 
     data = {
         "workflow_title": form["wf_title"],
-        "data_type": form["data_type"],
         "steps": form["steps"],
     }
-    res = json.loads(save_wf(data, form["company_id"], form["created_by"]))
+    res = json.loads(
+        save_wf(data, form["company_id"], form["created_by"], form["data_type"])
+    )
 
     if res["isSuccess"]:
         return Response("Workflow Created", status=status.HTTP_201_CREATED)
@@ -553,7 +554,7 @@ def get_workflows(request, company_id):
     data_type = request.query_params.get("data_type", "Real_Data")
     if not validator.validate_id(company_id):
         return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
-        
+
     try:
         workflow_list = get_wf_list(company_id, data_type)
     except ConnectionError:

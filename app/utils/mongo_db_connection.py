@@ -338,7 +338,7 @@ def get_process_list(company_id):
 # -------------------------------- Workflows-------------------
 
 
-def save_wf(workflows, company_id, created_by):
+def save_wf(workflows, company_id, created_by, data_type):
     payload = json.dumps(
         {
             **WF_CONNECTION_DICT,
