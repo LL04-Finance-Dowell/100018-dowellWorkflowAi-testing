@@ -83,6 +83,7 @@ def start(process):
                     auth_portfolio=member["portfolio"],
                     company_id=process["company_id"],
                     process_title=process["process_title"],
+                    item_type=process["process_type"]
                 )
             }
             for member in step.get("stepTeamMembers", [])
