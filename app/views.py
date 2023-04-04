@@ -239,8 +239,8 @@ def process_verification(request):
     auth_portfolio = request.data["auth_portfolio"]
     token = request.data["token"]
 
+    # verify hash details.
     link_info = get_link_object(token)
-    print(link_info)
     if not link_info:
         return Response(
             "Could not verify user permissions", status.HTTP_500_INTERNAL_SERVER_ERROR
