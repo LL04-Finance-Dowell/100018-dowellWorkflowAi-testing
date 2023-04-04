@@ -237,7 +237,7 @@ def process_verification(request):
     # auth_role = request.data["auth_role"]
     auth_user, process_id, auth_role = checks.user_presence(
         token=request.data["token"],
-        user_name=user_name,
+        user_name=request.data["auth_username"],
         portfolio=request.data["auth_portfolio"],
     )
     if not auth_user:
