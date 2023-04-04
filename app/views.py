@@ -236,6 +236,7 @@ def process_verification(request):
     # check user will be done on the frontend so I dont make an extra db query.
     auth_user = request.data["auth_username"]
     auth_role = request.data["auth_role"]
+    auth_portfolio = request.data["auth_portfolio"]
     token = request.data["token"]
 
     link_info = get_link_object(token)
@@ -246,7 +247,7 @@ def process_verification(request):
         )
 
     process_id = link_info["process_id"]
-    if link_info["user_name"] != auth_user or link_info["auth_portfolio"] != portfolio:
+    if link_info["user_name"] != auth_user or link_info["auth_portfolio"] != auth_portfolio:
         return Response(
             "User Logged in is not part of this process", status.HTTP_401_UNAUTHORIZED
         )
