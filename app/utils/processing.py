@@ -83,7 +83,7 @@ def start(process):
                     auth_portfolio=member["portfolio"],
                     company_id=process["company_id"],
                     process_title=process["process_title"],
-                    item_type=process["process_type"]
+                    item_type=process["process_type"],
                 )
             }
             for member in step.get("stepTeamMembers", [])
@@ -125,7 +125,12 @@ def start(process):
     if len(viewers) > 0:
 
         res = json.loads(
-            authorize(doc_id, viewers, process["_id"]), process["process_type"]
+            authorize(
+                document_id=doc_id,
+                viewers=viewers,
+                process=process["_id"],
+                item_type=process["process_type"],
+            )
         )
         if res["isSuccess"]:
 
