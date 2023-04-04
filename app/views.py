@@ -34,6 +34,7 @@ from app.utils.mongo_db_connection import (
     wf_setting_update,
     save_team,
     get_team,
+    get_link_object,
 )
 
 from .constants import EDITOR_API
@@ -233,16 +234,21 @@ def process_verification(request):
         return Response("You are missing something!", status.HTTP_400_BAD_REQUEST)
 
     # check user will be done on the frontend so I dont make an extra db query.
-    # auth_user = request.data["auth_username"]
-    # auth_role = request.data["auth_role"]
-    auth_user, process_id, auth_role = checks.user_presence(
-        token=request.data["token"],
-        user_name=request.data["auth_username"],
-        portfolio=request.data["auth_portfolio"],
-    )
-    if not auth_user:
+    auth_user = request.data["auth_username"]
+    auth_role = request.data["auth_role"]
+    token = request.data["token"]
+
+    link_info = get_link_object(token)
+    print(link_info)
+    if not link_info:
         return Response(
-            "User is not part of this process", status.HTTP_401_UNAUTHORIZED
+            "Could not verify user permissions", status.HTTP_500_INTERNAL_SERVER_ERROR
+        )
+
+    process_id = link_info["process_id"]
+    if link_info["user_name"] != auth_user or link_info["auth_portfolio"] != portfolio:
+        return Response(
+            "User Logged in is not part of this process", status.HTTP_401_UNAUTHORIZED
         )
 
     # get process

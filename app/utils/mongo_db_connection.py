@@ -907,8 +907,8 @@ def get_uuid_object(uuid_hash):
 
 
 # for links in wf lists
-def get_uuid(document_id):
-    fields = {"document_id": document_id}
+def get_uuid(process_id):
+    fields = {"process_id": process_id}
     response_obj = dowellconnection(*QR_ID_CONNECTION_LIST, "find", fields, "nil")
     print("UUID Hash : ", response_obj)
     res_obj = json.loads(response_obj)

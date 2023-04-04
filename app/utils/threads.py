@@ -59,6 +59,7 @@ def save_link_hashes(data):
             unique_hash=data["unique_hash"],
             item_type=data["item_type"]
         )
+        print("Thread: Single Link!")
     except ConnectionError:
         print("Fail to save a single VF link! \n")
 
