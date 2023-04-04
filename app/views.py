@@ -233,12 +233,12 @@ def process_verification(request):
         return Response("You are missing something!", status.HTTP_400_BAD_REQUEST)
 
     # check user will be done on the frontend so I dont make an extra db query.
-    auth_user = request.data["auth_username"]
-    auth_role = request.data["auth_role"]
-    auth_user, process_id, auth_step_role = checks.user_presence(
+    # auth_user = request.data["auth_username"]
+    # auth_role = request.data["auth_role"]
+    auth_user, process_id, auth_role = checks.user_presence(
         token=request.data["token"],
         user_name=user_name,
-        portfolio=request.data["portfolio"],
+        portfolio=request.data["auth_portfolio"],
     )
     if not auth_user:
         return Response(
