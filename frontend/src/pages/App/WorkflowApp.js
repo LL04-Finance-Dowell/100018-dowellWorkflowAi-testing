@@ -10,7 +10,6 @@ import TemplateCard from "../../components/hoverCard/templateCard/TemplateCard";
 import WorkflowCard from "../../components/hoverCard/workflowCard/WorkflowCard";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useState } from "react";
-import { DocumentServices } from "../../services/documentServices";
 import Spinner from "../../components/spinner/Spinner";
 import ProgressBar from "../../components/progressBar/ProgressBar";
 import { useLocation } from "react-router-dom";
@@ -41,7 +40,6 @@ const WorkflowApp = () => {
     processesLoaded,
     processesLoading,
   } = useSelector((state) => state.app);
-  const documentServices = new DocumentServices();
   const dispatch = useDispatch();
   const location = useLocation();
   const [isVisible, setVisible] = useState(false);
