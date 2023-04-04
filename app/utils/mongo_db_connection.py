@@ -154,7 +154,7 @@ def save_process_links(links, process_id, item_id, company_id):
         "POST", DOWELLCONNECTION_URL, headers=headers, data=payload
     )
 
-    return json.loads(response.text)
+    return json.loads(json.loads(response.text))
 
 
 # By processID
@@ -252,7 +252,7 @@ def save_wf_process(
     process_action,
     portfolio,
     workflows_ids,
-    process_type
+    process_type,
 ):
     payload = json.dumps(
         {
@@ -440,7 +440,9 @@ def get_all_wf_list():
 
 def get_wf_list(company_id, data_type):
     # "data_type": data_type
-    fields = {"company_id": str(company_id), }
+    fields = {
+        "company_id": str(company_id),
+    }
     response_obj = dowellconnection(*WF_CONNECTION_LIST, "fetch", fields, "nil")
     res_obj = json.loads(response_obj)
     if len(res_obj["data"]) > 0:

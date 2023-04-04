@@ -11,6 +11,7 @@ from app.utils.mongo_db_connection import (
     update_document_clone,
     update_wf_process,
     authorize,
+    save_process_links
 )
 from . import checks, verification
 from . import link_gen
@@ -147,28 +148,36 @@ def start(process):
                 state="processing",
             )
 
-            # save links
+            # save links TODO:
             data = {
                 "links": links,
                 "process_id": process["_id"],
                 "item_id": doc_id,
                 "company_id": process["company_id"],
             }
-            Thread(target=threads.save_links_v2, args=(data,)).start()
 
-            # save qrcodes
-            code_data = {
-                "qrcodes": qrcodes,
-                "process_id": process["_id"],
-                "item_id": doc_id,
-                "process_choice": process["processing_action"],
-                "company_id": process["company_id"],
-                "process_title": process["process_title"],
-            }
-            Thread(target=threads.save_qrcodes, args=(code_data,)).start()
+            res = save_process_links(
+                links=data["links"],
+                process_id=data["process_id"],
+                item_id=data["item_id"],
+                company_id=data["company_id"],
+            )
+            if res["isSuccess"]:
+                # Thread(target=threads.save_links_v2, args=(data,)).start()
 
-            # return generated links
-            return Response({"links": links, "qrcodes": qrcodes}, status.HTTP_200_OK)
+                # save qrcodes
+                code_data = {
+                    "qrcodes": qrcodes,
+                    "process_id": process["_id"],
+                    "item_id": doc_id,
+                    "process_choice": process["processing_action"],
+                    "company_id": process["company_id"],
+                    "process_title": process["process_title"],
+                }
+                Thread(target=threads.save_qrcodes, args=(code_data,)).start()
+
+                # return generated links
+                return Response({"links": links, "qrcodes": qrcodes}, status.HTTP_200_OK)
 
     return Response("failed to start processing", status.HTTP_500_INTERNAL_SERVER_ERROR)
 

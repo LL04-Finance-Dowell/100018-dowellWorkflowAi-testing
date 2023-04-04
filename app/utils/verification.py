@@ -22,31 +22,20 @@ def process_links(
 
     hash = uuid.uuid4().hex
     link = f"{VERIFICATION_LINK}/{hash}/?auth_user={auth_name}&auth_portfolio={auth_portfolio}&auth_role={step_role}"
-    data = {
-        "link": link,
-        "process_id": process_id,
-        "item_id": item_id,
-        "step_role": step_role,
-        "username": auth_name,
-        "portfolio": auth_portfolio,
-        "unique_hash": hash,
-        "item_type": item_type,
-    }
     # save link
     res = save_uuid_hash(
-        link=data["link"],
-        process_id=data["process_id"],
-        item_id=data["item_id"],
-        auth_role=data["step_role"],
-        user_name=data["username"],
-        auth_portfolio=data["portfolio"],
-        unique_hash=data["unique_hash"],
-        item_type=data["item_type"],
+        link,
+        process_id,
+        item_id,
+        step_role,
+        auth_name,
+        auth_portfolio,
+        hash,
+        item_type,
     )
 
     if res["isSuccess"]:
         # Thread(target=save_link_hashes, args=(data,)).start()
-        print("Saved single link \n")
         ddata = {
             "username": auth_name,
             "portfolio": auth_portfolio,
