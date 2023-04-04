@@ -46,6 +46,7 @@ def process_links(
 
     if res["isSuccess"]:
         # Thread(target=save_link_hashes, args=(data,)).start()
+        print("Saved single link \n")
         ddata = {
             "username": auth_name,
             "portfolio": auth_portfolio,
