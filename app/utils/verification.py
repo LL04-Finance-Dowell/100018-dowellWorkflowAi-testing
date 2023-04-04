@@ -5,6 +5,7 @@ import jwt
 from threading import Thread
 from .threads import notification, save_link_hashes
 from app.constants import VERIFICATION_LINK
+from app.utils.mongo_db_connection import save_uuid_hash
 
 
 def process_links(
@@ -32,20 +33,31 @@ def process_links(
         "item_type": item_type,
     }
     # save link
-    Thread(target=save_link_hashes, args=(data,)).start()
+    res = save_uuid_hash(
+        link=data["link"],
+        process_id=data["process_id"],
+        item_id=data["item_id"],
+        auth_role=data["step_role"],
+        user_name=data["username"],
+        auth_portfolio=data["portfolio"],
+        unique_hash=data["unique_hash"],
+        item_type=data["item_type"],
+    )
 
-    ddata = {
-        "username": auth_name,
-        "portfolio": auth_portfolio,
-        "process_id": process_id,
-        "step_role": step_role,
-        "item_id": item_id,
-        "company_id": company_id,
-        "process_title": process_title,
-        "link": link,
-    }
-    # setup notification
-    Thread(target=notification, args=(ddata,)).start()
+    if res["isSuccess"]:
+        # Thread(target=save_link_hashes, args=(data,)).start()
+        ddata = {
+            "username": auth_name,
+            "portfolio": auth_portfolio,
+            "process_id": process_id,
+            "step_role": step_role,
+            "item_id": item_id,
+            "company_id": company_id,
+            "process_title": process_title,
+            "link": link,
+        }
+        # setup notification
+        Thread(target=notification, args=(ddata,)).start()
 
     return link
 

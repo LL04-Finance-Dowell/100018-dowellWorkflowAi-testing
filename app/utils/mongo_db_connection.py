@@ -874,7 +874,7 @@ def save_uuid_hash(
             "field": {
                 "eventId": get_event_id()["event_id"],
                 "link": link,
-                "item_id": document_id,
+                "item_id": item_id,
                 "process_id": process_id,
                 "auth_role": auth_role,
                 "user_name": user_name,
@@ -892,7 +892,7 @@ def save_uuid_hash(
         "POST", DOWELLCONNECTION_URL, headers=headers, data=payload
     )
 
-    return json.loads(response.text)
+    return json.loads(json.loads(response.text))
 
 
 def get_uuid_object(uuid_hash):
