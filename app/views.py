@@ -226,14 +226,14 @@ def get_process_link(request, process_id):
 
 
 @api_view(["POST"])
-def process_verification(request, process_id):
+def process_verification(request):
     """verification of a process step access and checks that duplicate document based on a step."""
 
     if not request.data:
         return Response("You are missing something!", status.HTTP_400_BAD_REQUEST)
 
     # check user will be done on the frontend so I dont make an extra db query.
-    auth_user = request.data["auth_user"]
+    auth_user = request.data["auth_username"]
     auth_role = request.data["auth_role"]
     # auth_user, process_id, auth_step_role = checks.user_presence(
     #     token=request.data["token"],
