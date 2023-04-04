@@ -235,18 +235,18 @@ def process_verification(request):
     # check user will be done on the frontend so I dont make an extra db query.
     auth_user = request.data["auth_username"]
     auth_role = request.data["auth_role"]
-    # auth_user, process_id, auth_step_role = checks.user_presence(
-    #     token=request.data["token"],
-    #     user_name=user_name,
-    #     portfolio=request.data["portfolio"],
-    # )
-    # if not auth_user:
-    #     return Response(
-    #         "User is not part of this process", status.HTTP_401_UNAUTHORIZED
-    #     )
+    auth_user, process_id, auth_step_role = checks.user_presence(
+        token=request.data["token"],
+        user_name=user_name,
+        portfolio=request.data["portfolio"],
+    )
+    if not auth_user:
+        return Response(
+            "User is not part of this process", status.HTTP_401_UNAUTHORIZED
+        )
 
     # get process
-    process = get_process_object(workflow_process_id=process_id)
+    process = get_process_object(process_id)
     if not process:
         Response("Something went wrong!, Retry", status.HTTP_500_INTERNAL_SERVER_ERROR)
 
