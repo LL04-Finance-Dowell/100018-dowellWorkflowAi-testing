@@ -4,40 +4,60 @@ import { Link } from "react-router-dom";
 import { useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import Spinner from "../../components/spinner/Spinner";
-import { verifyProcess } from "../../services/processServices";
+import { verifyProcessForUser } from "../../services/processServices";
 import "./style.css";
 import { timeZoneToCountryObj } from "../../utils/timezonesObj";
 import dowellLogo from "../../assets/dowell.png";
+import { updateVerificationDataWithTimezone } from "../../utils/helpers";
 
 const VerificationPage = () => {
     const { token } = useParams();
     const [ loading, setLoading ] = useState(true);
     const { userDetail } = useSelector(state => state.auth);
     const [ verificationFailed, setVerificationFailed ] = useState(false);
-    const [ newLocationNeeded, setNewLocationNeeded ] = useState(false);
-    const [ newLocationObject, setNewLocationObject ] = useState(null);
 
     useEffect(() => {
         const dataToPost = {
             token: token,
             user_name: userDetail?.userinfo?.username,
             portfolio: userDetail?.portfolio_info[0]?.portfolio_name,
-            city: newLocationNeeded ? newLocationObject?.city : userDetail?.userinfo?.city,
-            country: newLocationNeeded ? newLocationObject?.country : userDetail?.userinfo?.country,
-            continent: newLocationNeeded ? newLocationObject?.continent : userDetail?.userinfo?.timezone?.split("/")[0],
+            city: userDetail?.userinfo?.city,
+            country: userDetail?.userinfo?.country,
+            continent: userDetail?.userinfo?.timezone?.split("/")[0],
         }
 
-        if (!dataToPost.continent || !dataToPost.continent?.length < 1 || !dataToPost.city || dataToPost.city?.length < 1 || !dataToPost.country || dataToPost.country?.length < 1) {
-            const userTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-            setNewLocationObject({
-                city: userTimezone.split("/")[1],
-                country: timeZoneToCountryObj[userTimezone] ? timeZoneToCountryObj[userTimezone] : "Not available",
-                continent: userTimezone.split("/")[0]
-            })
-            return setNewLocationNeeded(true)
-        }
+        const sanitizedDataToPost = updateVerificationDataWithTimezone(dataToPost);
 
-        verifyProcess(dataToPost).then(res => {
+        // NEWER VERIFICATION LINKS
+        if (window.location.href.includes('?') && window.location.href.includes('=')) {
+            const shortenedLinkToExtractParamsFrom = new URL(window.location.href).origin + "/" + window.location.href.split("verify/")[1]?.split("/")[1];
+            const paramsPassed = new URL(shortenedLinkToExtractParamsFrom).searchParams;
+            
+            // console.log(paramsPassed);
+    
+            const auth_username = paramsPassed.get('auth_user');
+            const auth_portfolio = paramsPassed.get('auth_portfolio');
+            const auth_role = paramsPassed.get('auth_role');
+    
+            if (auth_username !== userDetail?.userinfo?.username || auth_portfolio !== userDetail?.portfolio_info[0]?.portfolio_name) {
+                toast.info("You are not authorized to view this");
+                setLoading(false);
+                setVerificationFailed(true);
+                return;
+            }
+    
+            sanitizedDataToPost.auth_username = auth_username;
+            sanitizedDataToPost.auth_portfolio = auth_portfolio;      
+            sanitizedDataToPost.auth_role = auth_role;
+            
+            delete sanitizedDataToPost.user_name;
+            delete sanitizedDataToPost.portfolio;
+    
+            // console.log(sanitizedDataToPost)
+            // return setDataLoading(false);
+        }
+  
+        verifyProcessForUser(sanitizedDataToPost).then(res => {
             setLoading(false);
             window.location = res.data;
         }).catch(err => {
@@ -48,7 +68,7 @@ const VerificationPage = () => {
             toast.info(err.response ? err.response.status === 500 ? "Process verification failed" : err.response.data : "Process verification failed")
         })
         
-    }, [token, newLocationNeeded])
+    }, [token])
 
     if (loading) return <div className="workflow__Verification__Page__Container__Spinner">
         <div className="verification__Spinner__Item">

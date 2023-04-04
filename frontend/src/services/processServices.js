@@ -1,4 +1,4 @@
-import { httpProcess, newHttpProcess } from "../httpCommon/httpCommon";
+import { httpApiUrl, httpProcess, newHttpProcess } from "../httpCommon/httpCommon";
 
 // API Route Disabled
 // export const saveWorkflowsToDocument = async (data) => {
@@ -9,16 +9,16 @@ export const startNewProcess = async (data) => {
     return await httpProcess.post("/", data);
 }
 
-export const verifyProcess = async (data) => {
-    return await newHttpProcess.post("action/verify/", data);
+export const getVerifiedProcessLink = async (processId, data) => {
+    return await httpProcess.post(`${processId}/user-link/`, data);
 }
 
-export const getProcessLink = async (data) => {
-    return await httpProcess.post("verification/link/", data);
+export const verifyProcessForUser = async (data) => {
+    return await httpProcess.post(`/verify/`, data);
 }
 
 export const startNewProcessV2 = async (data) => {
-    return await newHttpProcess.post("/", data);
+    return await httpProcess.post("/", data);
 }
 
 export const getSingleProcessV2 = async (processId) => {
@@ -26,27 +26,27 @@ export const getSingleProcessV2 = async (processId) => {
 }
 
 export const getAllProcessesV2 = async (companyId) => {
-    return await httpProcess.get(`/org/${companyId}/`);
+    return await httpApiUrl.get(`/companies/${companyId}/processes/`);
 }
 
 export const verifyProcessV2 = async (data) => {
-    return await newHttpProcess.post("/verification/", data)
+    return await httpProcess.post("/verification/", data)
 }
 
 export const markProcessV2 = async (data) => {
-    return await newHttpProcess.post("/mark/", data)
+    return await httpProcess.post("/mark/", data)
 }
 
 export const getProcessVerificationLinkV2 = async (processId) => {
-    return await newHttpProcess.get(`/verify/${processId}/`)
+    return await httpProcess.get(`/verify/${processId}/`)
 }
 
 export const startDraftProcessingV2 = async (processId) => {
-    return await newHttpProcess.get(`/start/${processId}/`)
+    return await httpProcess.get(`/start/${processId}/`)
 }
 
 export const pauseOngoingProcessV2 = async (processId) => {
-    return await newHttpProcess.get(`/pause/${processId}/`)
+    return await httpProcess.get(`/pause/${processId}/`)
 }
 
 export const processActionOptions = {

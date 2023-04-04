@@ -1,4 +1,4 @@
-import { httpWorkflow } from "../httpCommon/httpCommon";
+import { httpApiUrl, httpWorkflow } from "../httpCommon/httpCommon";
 
 export class WorkflowServices {
   createWorkflow = (data) => {
@@ -12,13 +12,13 @@ export class WorkflowServices {
   detailWorkflow = (workflowId) => {
     return httpWorkflow.get(`/${workflowId}/`);
   };
-  updateWorkflow = (data) => {
-    return httpWorkflow.post("/update/", data);
+  updateWorkflow = (workflowId, data) => {
+    return httpWorkflow.put(`/${workflowId}/`, data);
   };
   savedWorkflows = (data) => {
     return httpWorkflow.post("/saved/", data);
   };
   allWorkflows = (companyId) => {
-    return httpWorkflow.get(`/org/${companyId}/`);
+    return httpApiUrl.get(`/companies/${companyId}/workflows/`);
   };
 }

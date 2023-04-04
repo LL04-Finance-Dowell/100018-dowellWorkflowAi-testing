@@ -1,4 +1,4 @@
-import { httpDocument } from "../httpCommon/httpCommon";
+import { httpApiUrl, httpDocument } from "../httpCommon/httpCommon";
 
 export class DocumentServices {
   createDocument = (data) => {
@@ -26,10 +26,10 @@ export class DocumentServices {
   };
 
   contentDocument = (documentId) => {
-    return httpDocument.get(`/content/${documentId}/`);
+    return httpDocument.get(`/${documentId}/content/`);
   };
 
   allDocuments = (companyId) => {
-    return httpDocument.get(`/org/${companyId}/`);
+    return httpApiUrl.get(`/companies/${companyId}/documents/`);
   };
 }

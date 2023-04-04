@@ -103,7 +103,7 @@ const WorkflowLayout = ({ children }) => {
 
   useEffect(() => {
 
-    if (allDocuments?.length < 1 || allWorkflows?.length < 1 || allTemplates?.length < 1) return
+    if (!allDocuments || !allWorkflows || !allTemplates || allDocuments?.length < 1 || allWorkflows?.length < 1 || allTemplates?.length < 1) return
 
     if (!searchItemsStatus.documentsAdded) {
       setSearchItems((prevItems) => { return [...prevItems, ...allDocuments] });

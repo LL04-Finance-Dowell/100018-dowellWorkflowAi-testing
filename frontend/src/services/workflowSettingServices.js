@@ -5,11 +5,11 @@ export class WorkflowSettingServices {
     return httpApiUrl.post("workflow_ai_setting/", data);
   };
 
-  getWorkflowSettings = (data) => {
-    return httpApiUrl.post("get_WFAI_setting/", data);
+  getWorkflowSettings = (wfSettingId) => {
+    return httpApiUrl.get(`workflow-settings/${wfSettingId}/`);
   };
 
-  updateWorkflowSettings = (data) => {
-    return httpApiUrl.post("update_WFAI_setting/", data);
+  updateWorkflowSettings = (wfSettingId, data) => {
+    return httpApiUrl.put(`workflow-settings/${wfSettingId}/`, data);
   };
 }

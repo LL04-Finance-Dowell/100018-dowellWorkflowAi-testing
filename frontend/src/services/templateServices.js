@@ -1,4 +1,4 @@
-import { httpTemplate } from "../httpCommon/httpCommon";
+import { httpApiUrl, httpTemplate } from "../httpCommon/httpCommon";
 
 export class TemplateServices {
   createTemplate = (data) => {
@@ -14,7 +14,7 @@ export class TemplateServices {
   };
 
   approveTemplate = (templateId) => {
-    return httpTemplate.get(`/approve/${templateId}`);
+    return httpTemplate.put(`/${templateId}/approval/`);
   };
 
   pendingTemplate = (data) => {
@@ -30,6 +30,6 @@ export class TemplateServices {
   };
 
   allTemplates = (companyId) => {
-    return httpTemplate.get(`/org/${companyId}/`);
+    return httpApiUrl.get(`/companies/${companyId}/templates/`);
   };
 }

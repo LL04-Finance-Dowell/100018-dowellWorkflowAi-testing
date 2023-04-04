@@ -1,3 +1,5 @@
+import { timeZoneToCountryObj } from "./timezonesObj";
+
 export const formatDateAndTime = (dateTime) => {
   const newDate = new Date(dateTime);
 
@@ -45,4 +47,29 @@ export const changeToTitleCase = (inputStr) => {
   if (typeof inputStr !== 'string') throw Error("'inputStr' must be a string");
 
   return inputStr.slice(0, 1).toLocaleUpperCase() + inputStr.slice(1).toLocaleLowerCase()
+}
+
+export const updateVerificationDataWithTimezone = (dataObj) => {
+  if (typeof dataObj !== 'object') throw(Error("'dataObj' must be an object"));
+
+  const outputDataObj = {...dataObj};
+
+  if (
+    !dataObj.continent ||
+    !dataObj.continent?.length < 1 ||
+    !dataObj.city ||
+    dataObj.city?.length < 1 ||
+    !dataObj.country ||
+    dataObj.country?.length < 1
+  ) {
+    const userTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+
+    outputDataObj.city = userTimezone.split("/")[1];
+    outputDataObj.country = timeZoneToCountryObj[userTimezone]
+      ? timeZoneToCountryObj[userTimezone]
+      : "";
+      outputDataObj.continent = userTimezone.split("/")[0];
+  }
+
+  return outputDataObj
 }

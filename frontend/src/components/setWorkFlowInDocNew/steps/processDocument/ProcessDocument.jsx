@@ -54,7 +54,7 @@ const ProcessDocument = () => {
       "created_by": userDetail?.userinfo?.username,
       "creator_portfolio": userDetail?.portfolio_info[0]?.portfolio_name,
       "data_type": userDetail?.portfolio_info[0].data_type,
-      "parent_document_id": currentDocToWfs?._id,
+      "parent_id": currentDocToWfs?._id,
       "action": actionVal,
       "workflows": [{
         "workflows": {
@@ -63,6 +63,7 @@ const ProcessDocument = () => {
         }
       }],
       "workflows_ids": [docCurrentWorkflow._id], // this will be updated later to capture multiple workflows
+      "process_type": "document",
     }
 
     const foundProcessSteps = processSteps.find(process => process.workflow === docCurrentWorkflow._id);

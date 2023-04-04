@@ -7,8 +7,8 @@ import { useState } from "react";
 import { toast } from "react-toastify";
 import { LoadingSpinner } from "../../LoadingSpinner/LoadingSpinner";
 import {
-  getProcessLink,
-  verifyProcess,
+  verifyProcessForUser,
+  getVerifiedProcessLink,
 } from "../../../services/processServices";
 import { setEditorLink } from "../../../features/app/appSlice";
 import { timeZoneToCountryObj } from "../../../utils/timezonesObj";
@@ -22,6 +22,7 @@ import { RiDeleteBin6Line } from "react-icons/ri";
 import { moveItemToArchive } from "../../../services/archiveServices";
 import { setAllDocuments } from "../../../features/document/documentSlice";
 import { BsBookmark, BsFillBookmarkFill } from "react-icons/bs";
+import { updateVerificationDataWithTimezone } from "../../../utils/helpers";
 
 const DocumentCard = ({ cardItem, title, hideFavoriteIcon, hideDeleteIcon }) => {
   const dispatch = useDispatch();
@@ -99,9 +100,9 @@ const DocumentCard = ({ cardItem, title, hideFavoriteIcon, hideDeleteIcon }) => 
       try {
         const dataToPost = {
           user_name: userDetail?.userinfo?.username,
-          process_id: item.process_id,
+          // process_id: item.process_id,
         };
-        const response = await (await getProcessLink(dataToPost)).data;
+        const response = await (await getVerifiedProcessLink(item.process_id, dataToPost)).data;
 
         /*  dispatch(setEditorLink(response)); */
         console.log("responseee", response);
@@ -131,11 +132,11 @@ const DocumentCard = ({ cardItem, title, hideFavoriteIcon, hideDeleteIcon }) => 
 
   const handleGoToEditor = async (link) => {
     if (!link) return;
-    const token = link.split("verify/")[1];
+    const token = link.split("verify/")[1]?.split("/")[0];
     if (!token) return;
 
     const dataToPost = {
-      token: token.slice(0, -1),
+      token: token,
       user_name: userDetail?.userinfo?.username,
       portfolio: userDetail?.portfolio_info[0]?.portfolio_name,
       city: userDetail?.userinfo?.city,
@@ -143,25 +144,37 @@ const DocumentCard = ({ cardItem, title, hideFavoriteIcon, hideDeleteIcon }) => 
       continent: userDetail?.userinfo?.timezone?.split("/")[0],
     };
 
-    if (
-      !dataToPost.continent ||
-      !dataToPost.continent?.length < 1 ||
-      !dataToPost.city ||
-      dataToPost.city?.length < 1 ||
-      !dataToPost.country ||
-      dataToPost.country?.length < 1
-    ) {
-      const userTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    const sanitizedDataToPost = updateVerificationDataWithTimezone(dataToPost);
 
-      dataToPost.city = userTimezone.split("/")[1];
-      dataToPost.country = timeZoneToCountryObj[userTimezone]
-        ? timeZoneToCountryObj[userTimezone]
-        : "";
-      dataToPost.continent = userTimezone.split("/")[0];
+    // NEWER VERIFICATION LINKS
+    if (link.includes('?') && link.includes('=')) {
+      const shortenedLinkToExtractParamsFrom = new URL(link).origin + "/" + link.split("verify/")[1]?.split("/")[1];
+      const paramsPassed = new URL(shortenedLinkToExtractParamsFrom).searchParams;
+      
+      // console.log(paramsPassed);
+
+      const auth_username = paramsPassed.get('auth_user');
+      const auth_portfolio = paramsPassed.get('auth_portfolio');
+      const auth_role = paramsPassed.get('auth_role');
+
+      if (auth_username !== userDetail?.userinfo?.username || auth_portfolio !== userDetail?.portfolio_info[0]?.portfolio_name) {
+        toast.info("You are not authorized to view this");
+        return setDataLoading(false);
+      }
+
+      sanitizedDataToPost.auth_username = auth_username;
+      sanitizedDataToPost.auth_portfolio = auth_portfolio;      
+      sanitizedDataToPost.auth_role = auth_role;
+      
+      delete sanitizedDataToPost.user_name;
+      delete sanitizedDataToPost.portfolio;
+
+      // console.log(sanitizedDataToPost)
+      // return setDataLoading(false);
     }
 
     try {
-      const response = await (await verifyProcess(dataToPost)).data;
+      const response = await (await verifyProcessForUser(sanitizedDataToPost)).data;
       setDataLoading(false);
       dispatch(setEditorLink(response));
     } catch (err) {
