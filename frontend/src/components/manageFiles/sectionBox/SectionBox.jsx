@@ -32,6 +32,8 @@ const SectionBox = ({ cardItems, title, Card, status, idKey, itemType, hideFavor
   };
 
   const handleRefresh = () => {
+    if (refreshLoading) return
+
     if (itemType === "documents") {
       setRefreshLoading(true);
 

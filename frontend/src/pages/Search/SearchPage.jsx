@@ -17,6 +17,13 @@ import ManageFiles from "../../components/manageFiles/ManageFiles";
 import styles from "./style.module.css";
 import { searchItemByKeyAndGroupResults } from "./util";
 import { useAppContext } from "../../contexts/AppContext";
+import { IoIosRefresh } from "react-icons/io";
+import { DocumentServices } from "../../services/documentServices";
+import { TemplateServices } from "../../services/templateServices";
+import { WorkflowServices } from "../../services/workflowServices";
+import { setAllDocuments } from "../../features/document/documentSlice";
+import { setAllTemplates } from "../../features/template/templateSlice";
+import { setAllWorkflows } from "../../features/workflow/workflowsSlice";
 
 const searchCategories = {
 	documents: "documents",
@@ -38,6 +45,7 @@ const SearchPage = () => {
 	const { allWorkflowsStatus } = useSelector((state) => state.workflow);
 	const { allTemplatesStatus } = useSelector((state) => state.template);
 	const { allDocumentsStatus } = useSelector((state) => state.document);
+	const [ refreshLoading, setRefreshLoading ] = useState(false);
 
 	useEffect(() => {
 
@@ -83,14 +91,19 @@ const SearchPage = () => {
 
 	useEffect(() => {
 
-		if (currentSearch.length < 1) return setSearchLoading(false);
+		if (currentSearch.length < 1) {
+			setSearchLoading(false);
+			setSearchResults([]);
+			return 
+		}
 		
 		setSearchLoading(true);
 
 		if (
 			allDocumentsStatus === 'pending' ||
 			allTemplatesStatus === 'pending' || 
-			allWorkflowsStatus === 'pending'
+			allWorkflowsStatus === 'pending' ||
+			refreshLoading
 		) return
 
 		try {
@@ -117,7 +130,7 @@ const SearchPage = () => {
 		// 	toast.error(error.response ? error.response.data : error.message)
 		// })
 
-	}, [currentSearch, searchItems, allDocumentsStatus, allTemplatesStatus, allWorkflowsStatus])
+	}, [currentSearch, searchItems, allDocumentsStatus, allTemplatesStatus, allWorkflowsStatus, refreshLoading])
 
 	useEffect(() => {
 
@@ -147,25 +160,91 @@ const SearchPage = () => {
 
 	}, [currentSearchOption, searchResults])
 
+	const handleRefresh = async () => {
+
+		if (refreshLoading) return;
+
+		setRefreshLoading(true);
+
+		const data = {
+			company_id: userDetail?.portfolio_info[0].org_id,
+		};
+	
+		const documentServices = new DocumentServices();
+		const templatesServices = new TemplateServices();
+		const workflowServices = new WorkflowServices();
+
+		try {
+			const documentsData = (await documentServices.allDocuments(data.company_id)).data;
+			dispatch(
+				setAllDocuments(
+					documentsData.documents.reverse().filter(document => 
+					document.document_state !== "trash" &&
+					document.data_type && document.data_type === userDetail?.portfolio_info[0]?.data_type
+				  )
+				)
+			);
+		} catch (error) {
+			toast.info('Refresh failed for documents')
+		}
+
+		try {
+			const templatesData = (await templatesServices.allTemplates(data.company_id)).data;
+			dispatch(
+				setAllTemplates(
+				  templatesData.templates.reverse().filter(template => 
+					template.data_type && template.data_type === userDetail?.portfolio_info[0]?.data_type
+				  )
+				)
+			);
+		} catch (error) {
+			toast.info('Refresh failed for templates')
+		}
+
+		try {
+			const workflowsData = (await workflowServices.allWorkflows(data.company_id)).data;
+			dispatch(
+				setAllWorkflows(
+				  workflowsData.workflows.filter(workflow => 
+					workflow.workflows.data_type && workflow.workflows.data_type === userDetail?.portfolio_info[0]?.data_type
+				  )
+				)
+			);
+		} catch (error) {
+			toast.info('Refresh failed for workflows')
+		}
+
+		setRefreshLoading(false);
+	}
+
 	return <>
 		<WorkflowLayout>
 			<div className={styles.search__Page__Container}>
 				<ManageFiles title="Search for Documents, Templates and Workflows" contentBoxClassName={styles.search__Manage__Files__Content} removePageSuffix={true}>
-					<form onSubmit={(e) => e.preventDefault()} className={styles.search__box}>
-						<button type="submit">
+					<div className={styles.header__Section}>
+						<form onSubmit={(e) => e.preventDefault()} className={styles.search__box}>
+							<button type="submit">
+								{
+									searchLoading ? <LoadingSpinner color={"#61ce70"} width={"1rem"} height={"1rem"} /> : <>
+										<i>
+											<FaSearch />
+										</i>
+									</>
+								}
+							</button>
+							<input value={currentSearch} placeholder="Type here to search" onChange={(e) => handleSearchInputChange(e.target.value)} />
+						</form>
+						<button className={styles.refresh__btn} onClick={handleRefresh}>
 							{
-								searchLoading ? <LoadingSpinner color={"#61ce70"} width={"1rem"} height={"1rem"} /> : <>
-									<i>
-										<FaSearch />
-									</i>
-								</>
+								refreshLoading ? <LoadingSpinner color={"white"} width={"1rem"} height={"1rem"} /> :
+								<IoIosRefresh />
 							}
+							<span>Refresh</span>
 						</button>
-						<input value={currentSearch} placeholder="Type here to search" onChange={(e) => handleSearchInputChange(e.target.value)} />
-					</form>
+					</div>
 					<div className={styles.minified__Search__Container}>
 						{
-							searchLoading ? <p>Please wait...</p> :
+							searchLoading ? <p>{`Please wait.${refreshLoading ? ' It might take awhile as items are being refreshed' : ''}...`}</p> :
 
 								currentSearch.length < 1 ? <></> :
 

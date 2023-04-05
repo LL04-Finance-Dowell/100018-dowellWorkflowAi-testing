@@ -1,18 +1,20 @@
 .search__Manage__Files__Content{
     gap: 20px;
+    width: 100%;
 }
 
 .search__box {
     display: flex;
     flex-direction: row;
-    margin: 6px auto;
+    margin: 6px 0;
     padding: 7px;
     gap: 10px;
     position: relative;
     border: 1px solid var(--e-global-color-0363588);
     justify-content: space-between;
-    width: 60%;
+    /* width: 60%; */
     border-radius: 10px;
+    flex: 90%;
 }
 
 .search__box input {
@@ -33,7 +35,7 @@
 .minified__Search__Container button {
     display: flex;
     align-items: center;
-    width: 100%;
+    width: 82%;
     margin: 10px auto;
     gap: 10px;
     justify-content: flex-start;
@@ -72,7 +74,7 @@
     align-items: center;
     justify-content: space-between;
     width: 80%;
-    margin: 0 auto;
+    margin: 0 auto 4%;
 }
 
 .mini__Select__Row label {
@@ -81,4 +83,35 @@
 
 .mini__Select__Row label input {
     margin-right: 0.5rem;
+}
+
+.header__Section {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 82%;
+    margin: 0 auto;
+    gap: 1rem;
+}
+
+.refresh__btn {
+    background: none;
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    background-color: var(--e-global-color-secondary); 
+    color: var(--e-global-color-cd6593d);
+    padding: 1% 2%;
+    border-radius: 6px;
+    gap: 10px;
+    transition: 0.3s ease-in-out;
+    flex: 10%;
+}
+
+.refresh__btn span {
+    font-size: 0.9rem;
+}
+
+.refresh__btn:hover {
+    filter: brightness(0.8);
 }
