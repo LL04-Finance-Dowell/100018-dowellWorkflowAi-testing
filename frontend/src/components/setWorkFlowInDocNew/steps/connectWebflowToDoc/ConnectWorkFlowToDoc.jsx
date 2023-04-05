@@ -120,6 +120,7 @@ const ConnectWorkFlowToDoc = ({ stepsPopulated }) => {
           stepDisplay: "",
         })
       );
+      handleSetStepAndProceedToNext(stepIndexToUpdate);
       return setShowSteps(currentShowSteps);
     }
 
@@ -132,6 +133,7 @@ const ConnectWorkFlowToDoc = ({ stepsPopulated }) => {
       })
     );
     setShowSteps(currentShowSteps);
+    handleSetStepAndProceedToNext(stepIndexToUpdate, true);
   };
 
   const handlePermitInternalSelection = (e, workflowId, stepIndexToUpdate) => {
@@ -167,15 +169,16 @@ const ConnectWorkFlowToDoc = ({ stepsPopulated }) => {
     console.log("resetting...")
   }
 
-  const handleSetStepAndProceedToNext = (indexPassed) => {
+  const handleSetStepAndProceedToNext = (indexPassed, disableNextStep=false) => {
     const currentEnabledSteps = enabledSteps.slice();
     const foundCurrentStepIndex = currentEnabledSteps.findIndex(step => step.index === indexPassed)
 
     if (foundCurrentStepIndex === -1) return
 
     if (currentEnabledSteps[foundCurrentStepIndex + 1]) {
-      currentEnabledSteps[foundCurrentStepIndex + 1].enableStep = true;
+      currentEnabledSteps[foundCurrentStepIndex + 1].enableStep = disableNextStep ? false : true;
       setEnabledSteps(currentEnabledSteps);
+      if (disableNextStep) return;
       const foundNextStepElem = document.getElementById(`process-step-${foundCurrentStepIndex + 1}`);
       if (foundNextStepElem) foundNextStepElem.scrollIntoView();
     }
@@ -214,10 +217,6 @@ const ConnectWorkFlowToDoc = ({ stepsPopulated }) => {
                       id={`process-step-${index}`}
                     >
                       <div>
-                        {
-console.log(processSteps.find(
-  process => process.workflow === docCurrentWorkflow?._id
-)?.steps[index])}
                         <div
                           onClick={() => setContentToggle((prev) => !prev)}
                           className={`${styles.header} ${styles.title__box}`}
