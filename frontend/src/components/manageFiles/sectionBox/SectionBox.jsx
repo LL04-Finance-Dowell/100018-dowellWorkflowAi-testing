@@ -100,7 +100,16 @@ const SectionBox = ({ cardItems, title, Card, status, idKey, itemType, hideFavor
         dispatch(
           setAllWorkflows(
             res.data.workflows.filter(workflow => 
-              workflow.workflows.data_type && workflow.workflows.data_type === userDetail?.portfolio_info[0]?.data_type
+              (
+                workflow?.data_type &&
+                workflow?.data_type ===
+                  userDetail?.portfolio_info[0]?.data_type
+              ) || 
+              (
+                workflow.workflows.data_type &&
+                  workflow.workflows.data_type ===
+                    userDetail?.portfolio_info[0]?.data_type
+              )
             )
           )
         );
