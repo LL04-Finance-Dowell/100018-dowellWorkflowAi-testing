@@ -132,8 +132,8 @@ const ManageFile = () => {
           : item.parent.includes("Processes")
           ? {
               ...item,
-              count: itemsCountToDisplay.templates.count > 0 ? 
-              itemsCountToDisplay.templates.count
+              count: itemsCountToDisplay.processes.count > 0 ? 
+              itemsCountToDisplay.processes.count
               : "000",
             }
           : item
