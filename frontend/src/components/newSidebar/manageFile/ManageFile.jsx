@@ -59,7 +59,7 @@ const ManageFile = () => {
 
   useEffect(() => {
     // THIS UPDATES AN INDIVIDUAL ITEM COUNT FOR EITHER DOCUMENT/TEMPLATE/WORKFLOW/PROCESS
-    if (allDocumentsArray && !itemsCountToDisplay.documents.countSet) {
+    if (allDocumentsArray && allDocumentsArray.length > 0 && !itemsCountToDisplay.documents.countSet) {
       const countOfDocuments = allDocumentsArray.filter(
         (item) =>
           item.created_by === userDetail?.portfolio_info[0].username &&
@@ -69,7 +69,7 @@ const ManageFile = () => {
       setItemsCountToDisplay(prevItems => { return {...prevItems, documents: { count: countOfDocuments, countSet: true } }});
     }
 
-    if (allTemplatesArray && !itemsCountToDisplay.templates.countSet) {
+    if (allTemplatesArray && allTemplatesArray.length > 0 && !itemsCountToDisplay.templates.countSet) {
       const countOfTemplates = allTemplatesArray.filter(
         (item) =>
           item.created_by === userDetail?.portfolio_info[0].username
@@ -78,7 +78,7 @@ const ManageFile = () => {
       setItemsCountToDisplay(prevItems => { return {...prevItems, templates: { count: countOfTemplates, countSet: true } }});
     }
 
-    if (allWorkflowsArray && !itemsCountToDisplay.workflows.countSet) {
+    if (allWorkflowsArray && allWorkflowsArray.length > 0 && !itemsCountToDisplay.workflows.countSet) {
       const countOfWorkflows = allWorkflowsArray.filter(
         (item) =>
           item.created_by === userDetail?.portfolio_info[0].username
@@ -90,7 +90,7 @@ const ManageFile = () => {
       setItemsCountToDisplay(prevItems => { return {...prevItems, workflows: { count: countOfWorkflows, countSet: true } }});
     }
 
-    if (!itemsCountToDisplay.processes.countSet) {
+    if (allProcesses.length > 0 && !itemsCountToDisplay.processes.countSet) {
       const countOfProcesses = allProcesses.filter(process => process.processing_state === "draft")
       .filter(process => process.data_type === userDetail?.portfolio_info[0]?.data_type)
       .filter(process => process.created_by === userDetail?.userinfo?.username)
