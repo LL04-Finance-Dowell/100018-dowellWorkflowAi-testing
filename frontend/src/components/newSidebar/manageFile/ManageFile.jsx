@@ -58,7 +58,7 @@ const ManageFile = () => {
   }, []);
 
   useEffect(() => {
-
+    // THIS UPDATES AN INDIVIDUAL ITEM COUNT FOR EITHER DOCUMENT/TEMPLATE/WORKFLOW/PROCESS
     if (allDocumentsArray && !itemsCountToDisplay.documents.countSet) {
       const countOfDocuments = allDocumentsArray.filter(
         (item) =>
@@ -103,6 +103,7 @@ const ManageFile = () => {
   }, [allDocumentsArray, allTemplatesArray, allWorkflowsArray, allProcesses])
 
   useEffect(() => {
+    // THIS UPDATES THE COUNT OF ITEMS IN THE MANAGE FILE SECTION FOR DOCUMENTS/TEMPLATES/WORKFLOWS/PROCESSES
     setTest((prev) =>
       prev.map((item) =>
         item.parent.includes("Documents")
