@@ -36,6 +36,12 @@ const ManageFile = () => {
   const { allProcesses } = useSelector((state) => state.app);
 
   const [test, setTest] = useState(manageFileItems);
+  const [ itemsCountToDisplay, setItemsCountToDisplay ] = useState({
+    documents: { count: 0, countSet: false },
+    workflows: { count: 0, countSet: false },
+    templates: { count: 0, countSet: false },
+    processes: { count: 0, countSet: false },
+  });
 
   useEffect(() => {
     const data = {
@@ -52,43 +58,88 @@ const ManageFile = () => {
   }, []);
 
   useEffect(() => {
+
+    if (allDocumentsArray && !itemsCountToDisplay.documents.countSet) {
+      const countOfDocuments = allDocumentsArray.filter(
+        (item) =>
+          item.created_by === userDetail?.portfolio_info[0].username &&
+          item.document_type === 'original'
+      ).filter(item => item.data_type === userDetail?.portfolio_info[0]?.data_type).length + 
+      allDocumentsArray.filter(document => document.document_type === 'original').filter(item => item.data_type === userDetail?.portfolio_info[0]?.data_type).length
+      setItemsCountToDisplay(prevItems => { return {...prevItems, documents: { count: countOfDocuments, countSet: true } }});
+    }
+
+    if (allTemplatesArray && !itemsCountToDisplay.templates.countSet) {
+      const countOfTemplates = allTemplatesArray.filter(
+        (item) =>
+          item.created_by === userDetail?.portfolio_info[0].username
+      ).filter(item => item.data_type === userDetail?.portfolio_info[0]?.data_type).length + 
+      allTemplatesArray.filter(item => item.data_type === userDetail?.portfolio_info[0]?.data_type).length
+      setItemsCountToDisplay(prevItems => { return {...prevItems, templates: { count: countOfTemplates, countSet: true } }});
+    }
+
+    if (allWorkflowsArray && !itemsCountToDisplay.workflows.countSet) {
+      const countOfWorkflows = allWorkflowsArray.filter(
+        (item) =>
+          item.created_by === userDetail?.portfolio_info[0].username
+      ).filter(
+        item => 
+        (item.workflows && (item?.data_type === userDetail?.portfolio_info[0]?.data_type || item.workflows?.data_type === userDetail?.portfolio_info[0]?.data_type)) 
+      ).length + 
+      allWorkflowsArray.filter(item => item.workflows && item.workflows?.data_type === userDetail?.portfolio_info[0]?.data_type).length
+      setItemsCountToDisplay(prevItems => { return {...prevItems, workflows: { count: countOfWorkflows, countSet: true } }});
+    }
+
+    if (!itemsCountToDisplay.processes.countSet) {
+      const countOfProcesses = allProcesses.filter(process => process.processing_state === "draft")
+      .filter(process => process.data_type === userDetail?.portfolio_info[0]?.data_type)
+      .filter(process => process.created_by === userDetail?.userinfo?.username)
+      .filter(process => process.workflow_construct_ids).length + allProcesses.filter(process => process.processing_state === "processing").filter(process => process.data_type === userDetail?.portfolio_info[0]?.data_type).length + 
+      allProcesses.filter(process => process.processing_state === "paused").filter(process => process.data_type === userDetail?.portfolio_info[0]?.data_type).length + 
+      allProcesses.filter(process => process.processing_state === "cancelled").filter(process => process.data_type === userDetail?.portfolio_info[0]?.data_type).length
+      setItemsCountToDisplay(prevItems => { return {...prevItems, processes: { count: countOfProcesses, countSet: true } }});
+    }
+
+  }, [allDocumentsArray, allTemplatesArray, allWorkflowsArray, allProcesses])
+
+  useEffect(() => {
     setTest((prev) =>
       prev.map((item) =>
         item.parent.includes("Documents")
           ? {
               ...item,
               count:
-                allDocumentsArray?.length > 0
-                  ? allDocumentsArray?.length
+                itemsCountToDisplay.documents.count > 0
+                  ? itemsCountToDisplay.documents.count
                   : "000",
             }
           : item.parent.includes("Templates")
           ? {
               ...item,
               count:
-                allTemplatesArray?.length > 0
-                  ? allTemplatesArray?.length
+                itemsCountToDisplay.templates.count > 0
+                  ? itemsCountToDisplay.templates.count
                   : "000",
             }
           : item.parent.includes("Workflows")
           ? {
               ...item,
               count:
-                allWorkflowsArray?.length > 0
-                  ? allWorkflowsArray?.length
+                itemsCountToDisplay.workflows.count > 0
+                  ? itemsCountToDisplay.workflows.count
                   : "000",
             }
           : item.parent.includes("Processes")
           ? {
               ...item,
-              count: allProcesses.length > 0 ? 
-                allProcesses.length
+              count: itemsCountToDisplay.templates.count > 0 ? 
+              itemsCountToDisplay.templates.count
               : "000",
             }
           : item
       )
     );
-  }, [allDocumentsArray, allTemplatesArray, allWorkflowsArray, allProcesses]);
+  }, [itemsCountToDisplay]);
 
   return (
     <div className={sidebarStyles.feature__box}>
