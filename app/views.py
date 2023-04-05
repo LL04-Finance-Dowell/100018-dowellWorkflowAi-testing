@@ -247,7 +247,10 @@ def process_verification(request):
         )
 
     process_id = link_info["process_id"]
-    if link_info["user_name"] != auth_user or link_info["auth_portfolio"] != auth_portfolio:
+    if (
+        link_info["user_name"] != auth_user
+        or link_info["auth_portfolio"] != auth_portfolio
+    ):
         return Response(
             "User Logged in is not part of this process", status.HTTP_401_UNAUTHORIZED
         )
@@ -582,25 +585,10 @@ def get_workflows(request, company_id):
 def get_documents(request, company_id):
     """List of Created Documents."""
 
-    data_type = request.query_params.get("data_type", "Real_Data")
-    if not validator.validate_id(company_id):
-        return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
 
-    document_list = get_document_list(company_id, data_type)
-    if not document_list:
-        return Response({"documents": []}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
 
-    if len(document_list) > 0:
-        return Response(
-            {"documents": document_list},
-            status=status.HTTP_200_OK,
-        )
-
-    return Response(
-        {"documents": []},
-        status=status.HTTP_200_OK,
-    )
-
+    
 
 @api_view(["POST"])
 def create_document(request):
