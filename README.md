@@ -54,6 +54,7 @@ This backend service serves as the WorkflowAI application Backend.
 | POST       | archives/                                 | To archive a workflow/document/template/process/ |
 | POST       | archives/:item_id/:item_type/restore/     | To restore a workflow/document/template/process/ |
 | POST       | teams/                                    | To create workflow teams                         |
+| POST       | update-to-teams/                          | To update workflow teams                         |
 
 ---
 
@@ -718,6 +719,7 @@ Request Body
 }
 
 ```
+
 _POST_ `/v0.1/update_teams/`
 
 Request Body
@@ -771,6 +773,8 @@ Request Body
 
 This project is available for use under
 the [Apache](https://github.com/LL04-Finance-Dowell/100018-dowellWorkflowAi-testing/blob/main/LICENSE) License.
+
+```
 
 ```
 

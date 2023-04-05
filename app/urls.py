@@ -62,6 +62,6 @@ urlpatterns = [
     path("archives/", archives),
     path("archives/<str:item_id>/<str:item_type>/restore/", archive_restore),
     path("teams/", create_team),
-    path("update_teams/", update_team),
+    path("update-to-teams/", update_team),
 
 ]
