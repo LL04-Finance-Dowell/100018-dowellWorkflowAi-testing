@@ -19,5 +19,5 @@ export const addNewFavoriteForUser = async (data) => {
 }
 
 export const deleteFavoriteForUser = async (itemId, itemType, loggedInUsername) => {
-  return await httpFavourite.delete(`/delete/${itemId}/${itemType}/${loggedInUsername}/`)
+  return await httpFavourite.delete(`/${itemId}/${itemType}/${loggedInUsername}/`)
 }
