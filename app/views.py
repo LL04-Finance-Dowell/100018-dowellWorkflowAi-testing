@@ -35,6 +35,7 @@ from app.utils.mongo_db_connection import (
     save_team,
     get_team,
     get_link_object,
+    update_team_data,
 )
 
 from .constants import EDITOR_API
@@ -247,7 +248,10 @@ def process_verification(request):
         )
 
     process_id = link_info["process_id"]
-    if link_info["user_name"] != auth_user or link_info["auth_portfolio"] != auth_portfolio:
+    if (
+        link_info["user_name"] != auth_user
+        or link_info["auth_portfolio"] != auth_portfolio
+    ):
         return Response(
             "User Logged in is not part of this process", status.HTTP_401_UNAUTHORIZED
         )
@@ -972,3 +976,34 @@ def create_team(request):
             status=status.HTTP_201_CREATED,
         )
     return Response("Failed to Save Team Data", status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+@api_view(["POST"])
+def update_team(request):
+    """Update Team"""
+
+    form = request.data
+    if not form:
+        return Response("Team Data required", status.HTTP_400_BAD_REQUEST)
+
+    team_data = get_team(form["team_id"])
+    team_data["company_id"] = form["company_id"]
+    team_data["created_by"] = form["created_by"]
+    team_data["team_id"] = form["team_id"]
+    team_data["team_name"] = form["team_name"]
+    team_data["team_code"] = form["team_code"]
+    team_data["team_spec"] = form["team_spec"]
+    team_data["portfolio_list"] = form["portfolio_list"]
+    team_data["details"] = form["details"]
+    team_data["universal_code"] = form["universal_code"]
+    team_data["data_type"] = form["data_type"]
+    team_set = json.loads(update_team_data(form["team_id"], team_data))
+
+    if team_set["isSuccess"]:
+        return Response(
+            {
+                "Team Updated": get_team(form["team_id"]),
+            },
+            status=status.HTTP_201_CREATED,
+        )
+    return Response("Failed to Update Team Data", status.HTTP_500_INTERNAL_SERVER_ERROR)

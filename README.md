@@ -681,7 +681,7 @@ Request Body
 no need
 ```
 
-_POST_ `/v0.1/create_team/`
+_POST_ `/v0.1/teams/`
 
 Request Body
 
@@ -718,6 +718,43 @@ Request Body
 }
 
 ```
+_POST_ `/v0.1/update_teams/`
+
+Request Body
+
+```
+{
+"team_id":"team_id",
+"team_name":"Name of Team",
+"team_code":"the code",
+"team_spec":"secification",
+"universal_code":"universal_code",
+"details":"details about the team",
+"portfolio_list":[list of portfolios],
+"company_id":"company_id",
+"created_by":"created_by",
+"data_type":'Real_Data' | 'Learning_Data' | 'Testing_Data'|'Archived_Data'
+}
+
+```
+
+Request Body
+
+```
+{
+    "Team Updated":{
+                "_id":"team_id",
+                "team_name":"Name of saved Team",
+                "team_code":"saved code",
+                "team_spec":"saved secification",
+                "universal_code":"saved universal_code",
+                "details":"details",
+                "portfolio_list":[list of saved portfolios],
+                "company_id":"company_id",
+                "created_by":"created_by",
+                "data_type": saved 'Real_Data' | 'Learning_Data' | 'Testing_Data'|'Archived_Data'
+                }
+}
 
 ### Technologies Used
 

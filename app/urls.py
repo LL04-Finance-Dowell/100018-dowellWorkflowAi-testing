@@ -28,6 +28,7 @@ from .views import (
     template_detail,
     trash_favourites,
     trigger_process,
+    update_team,
     workflow_detail,
 )
 
@@ -62,4 +63,6 @@ urlpatterns = [
     path("archives/", archives),
     path("archives/<str:item_id>/<str:item_type>/restore/", archive_restore),
     path("teams/", create_team),
+    path("update_teams/", update_team),
+
 ]
