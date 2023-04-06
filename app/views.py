@@ -1015,10 +1015,7 @@ def get_team_data(request):
     if not form:
         return Response("Team ID required", status.HTTP_400_BAD_REQUEST)
     try :
-        return Response(
-            {
-                "Team Data": get_team(form["team_id"]),
-            },
+        return Response(get_team(form["team_id"]),
             status=status.HTTP_201_CREATED,
         )
     except:

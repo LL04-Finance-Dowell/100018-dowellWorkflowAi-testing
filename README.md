@@ -55,6 +55,9 @@ This backend service serves as the WorkflowAI application Backend.
 | POST       | archives/:item_id/:item_type/restore/     | To restore a workflow/document/template/process/ |
 | POST       | teams/                                    | To create workflow teams                         |
 | POST       | update-to-teams/                          | To update workflow teams                         |
+| POST       | get-team-data/                            | To fetch data of workflow teams                         |
+
+
 
 ---
 
@@ -719,8 +722,7 @@ Request Body
 }
 
 ```
-
-_POST_ `/v0.1/update_teams/`
+_POST_ `/v1/update-to-teams/`
 
 Request Body
 
@@ -740,7 +742,7 @@ Request Body
 
 ```
 
-Request Body
+Response Body
 
 ```
 {
@@ -757,7 +759,37 @@ Request Body
                 "data_type": saved 'Real_Data' | 'Learning_Data' | 'Testing_Data'|'Archived_Data'
                 }
 }
+```
 
+_POST_ `/v1/get-team-data/`
+
+Request Body
+
+```
+{
+"team_id":"team_id",
+}
+
+```
+
+Response Body
+
+```
+{
+                "_id":"team_id",
+                "team_name":"Name of saved Team",
+                "team_code":"saved code",
+                "team_spec":"saved secification",
+                "universal_code":"saved universal_code",
+                "details":"details",
+                "portfolio_list":[list of saved portfolios],
+                "company_id":"company_id",
+                "created_by":"created_by",
+                "data_type": saved 'Real_Data' | 'Learning_Data' | 'Testing_Data'|'Archived_Data'
+                
+}
+
+```
 ### Technologies Used
 
 - [Python](https://nodejs.org/) is a programming language that lets you work more quickly and integrate your systems
