@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled from 'styled-components';
 
 export const InfoBoxContainer = styled.div`
   /* border: none; */
@@ -11,13 +11,13 @@ export const InfoBoxContainer = styled.div`
   /*  border: 1px solid var(--e-global-color-text); */
   overflow: hidden;
   align-self: flex-start;
-  padding: ${(props) => props.boxType === "dark" && "1px"};
+  padding: ${(props) => props.boxType === 'dark' && '1px'};
   border: ${(props) =>
-		props.boxType === "dark"
-			? "1px solid var(--e-global-color-accent) !important"
-			: "none"};
+    props.boxType === 'dark'
+      ? '1px solid var(--e-global-color-accent) !important'
+      : 'none'};
   & * {
-    border: ${(props) => props.boxType === "dark" && "none !important"};
+    border: ${(props) => props.boxType === 'dark' && 'none !important'};
   }
 `;
 
@@ -25,7 +25,7 @@ export const InfoTitleBox = styled.div`
   width: 100%;
   /* border-bottom: 1px solid var(--e-global-color-text); */
   background-color: ${(props) =>
-		props.boxType === "dark" && "var(--e-global-color-text)"};
+    props.boxType === 'dark' && 'var(--e-global-color-text)'};
   border: 1px solid var(--e-global-color-text);
   padding: 15px 20px;
   cursor: pointer;
@@ -37,12 +37,12 @@ export const InfoTitleBox = styled.div`
   align-items: center;
   flex-wrap: wrap;
   text-transform: capitalize;
-  color: ${(props) => (props.boxType ? "white" : "var(--e-global-color-text)")};
+  color: ${(props) => (props.boxType ? 'white' : 'var(--e-global-color-text)')};
 `;
 
 export const InfoContentContainer = styled.div`
   /* border: solid red 1px; */
-  background-color: ${(props) => props.boxType === "dark" && "white"};
+  background-color: ${(props) => props.boxType === 'dark' && 'white'};
   border: 1px solid var(--e-global-color-text);
   border-top: 0;
   display: flex;
@@ -52,20 +52,21 @@ export const InfoContentContainer = styled.div`
   font-size: 12px;
   white-space: break-spaces;
   font-weight: 400;
-  font-family: "Roboto";
+  font-family: 'Roboto';
 `;
 
 export const InfoSearchbar = styled.input`
   width: 75%;
   max-width: 100%;
-  margin-inline: auto;
   background-color: transparent;
   outline: none;
   border-bottom: 1px solid var(--e-global-color-text);
-  padding-left: 10px;
-  padding-block: 6px;
-  margin: 0 20px;
 `;
+// *Removed the below properties from the above style
+// padding-left: 10px;
+// padding-block: 6px;
+// margin-inline: auto;
+// margin: 0 20px;
 
 export const InfoContentBox = styled.ol`
   margin-bottom: 0;

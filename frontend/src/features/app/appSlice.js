@@ -1,18 +1,18 @@
-import { createSlice } from "@reduxjs/toolkit";
-import { v4 as uuidv4 } from "uuid";
-import TemplateCard from "../../components/hoverCard/templateCard/TemplateCard";
-import DocumnetCard from "../../components/hoverCard/documentCard/DocumentCard";
-import WorkflowCard from "../../components/hoverCard/workflowCard/WorkflowCard";
+import { createSlice } from '@reduxjs/toolkit';
+import { v4 as uuidv4 } from 'uuid';
+import TemplateCard from '../../components/hoverCard/templateCard/TemplateCard';
+import DocumnetCard from '../../components/hoverCard/documentCard/DocumentCard';
+import WorkflowCard from '../../components/hoverCard/workflowCard/WorkflowCard';
 import {
   processesInWorkflowAIArray,
   permissionArray,
   teamsInWorkflowAI,
-} from "../../components/workflowAiSettings/veriables";
-import { getItemsCounts } from "./asyncThunks";
+} from '../../components/workflowAiSettings/veriables';
+import { getItemsCounts } from './asyncThunks';
 
 const initialState = {
   itemsCount: null,
-  itemsCountStatus: "idle",
+  itemsCountStatus: 'idle',
   errorMessage: null,
   toggleManageFileForm: false,
   currentWorkflow: null,
@@ -31,21 +31,21 @@ const initialState = {
   notificationsForUser: [
     {
       id: uuidv4(),
-      title: "documents",
-      cardBgColor: "#1ABC9C",
+      title: 'documents',
+      cardBgColor: '#1ABC9C',
       card: DocumnetCard,
       items: [],
     },
     {
       id: uuidv4(),
-      title: "templates",
+      title: 'templates',
       cardBgColor: null,
       card: TemplateCard,
       items: [],
     },
     {
       id: uuidv4(),
-      title: "workflows",
+      title: 'workflows',
       card: WorkflowCard,
       cardBgColor: null,
       items: [],
@@ -57,7 +57,7 @@ const initialState = {
   notificationsLoaded: false,
   continents: [],
   continentsLoaded: false,
-  themeColor: "#61CE70",
+  themeColor: '#61CE70',
   settingProccess: processesInWorkflowAIArray,
   updateProccess: processesInWorkflowAIArray,
   permissionArray,
@@ -75,14 +75,14 @@ const initialState = {
   legalStatusLoading: true,
   showLegalStatusPopup: false,
   legalTermsAgreed: false,
-  dateAgreedToLegalStatus: "",
+  dateAgreedToLegalStatus: '',
   legalArgeePageLoading: false,
   adminUser: false,
   adminUserPortfolioLoaded: false,
 };
 
 export const appSlice = createSlice({
-  name: "app",
+  name: 'app',
   initialState,
   reducers: {
     setToggleManageFileForm: (state, action) => {
@@ -233,11 +233,17 @@ export const appSlice = createSlice({
     removeFromTableOfContentForStep: (state, action) => {
       const updatedTableOfContents = state.tableOfContentForStep.filter(
         (content) => {
-          if (content.id === action.payload.id && content.stepIndex === action.payload.stepIndex) return null
-          return content
+          if (
+            content.id === action.payload.id &&
+            content.stepIndex === action.payload.stepIndex
+          )
+            return null;
+          return content;
         }
       );
-      state.tableOfContentForStep = updatedTableOfContents.filter(content => content)
+      state.tableOfContentForStep = updatedTableOfContents.filter(
+        (content) => content
+      );
     },
     setNotificationsForUser: (state, action) => {
       state.notificationsForUser = action.payload;
@@ -281,7 +287,7 @@ export const appSlice = createSlice({
       }));
     },
     setUpdateProccessApi: (state, action) => {
-      console.log("settingProccesssettingProccess", action.payload);
+      console.log('settingProccesssettingProccess', action.payload);
       state.settingProccess = state.settingProccess.map((item) => ({
         ...item,
         children: [item.children[0], ...action.payload],
@@ -305,6 +311,17 @@ export const appSlice = createSlice({
         children: action.payload,
       }));
     },
+    setTeamsInWorkflowAITeams: (state, action) => {
+      state.teamsInWorkflowAI[0].children[0].column[0].items = [
+        ...state.teamsInWorkflowAI[0].children[0].column[0].items,
+        action.payload,
+      ];
+    },
+    setTeamsInWorkflowAIPortfolios: (state, action) => {
+      state.teamsInWorkflowAI[0].children[1].column[0].items = [
+        ...action.payload,
+      ];
+    },
     setUserDetailPosition: (state, action) => {
       state.userDetailPosition = action.payload;
     },
@@ -312,16 +329,21 @@ export const appSlice = createSlice({
       state.teamsSelectedSelectedForProcess = [
         ...state.teamsSelectedSelectedForProcess,
         action.payload,
-      ]
+      ];
     },
     removeFromTeamsSelectedSelectedForProcess: (state, action) => {
-      const updatedTeamsForProcess = state.teamsSelectedSelectedForProcess.filter(
-        (team) => {
-          if (team.id === action.payload.id && team.stepIndex === action.payload.stepIndex) return null
-          return team
-        }
+      const updatedTeamsForProcess =
+        state.teamsSelectedSelectedForProcess.filter((team) => {
+          if (
+            team.id === action.payload.id &&
+            team.stepIndex === action.payload.stepIndex
+          )
+            return null;
+          return team;
+        });
+      state.teamsSelectedSelectedForProcess = updatedTeamsForProcess.filter(
+        (team) => team
       );
-      state.teamsSelectedSelectedForProcess = updatedTeamsForProcess.filter(team => team);
     },
     setTeamMembersSelectedForProcess: (state, action) => {
       state.teamMembersSelectedForProcess = [
@@ -330,13 +352,19 @@ export const appSlice = createSlice({
       ];
     },
     removeFromTeamMembersSelectedForProcess: (state, action) => {
-      const updatedTeamMembersForProcess = state.teamMembersSelectedForProcess.filter(
-        (currentMember) => {
-          if (currentMember.member === action.payload.member && currentMember.portfolio === action.payload.portfolio && currentMember.stepIndex === action.payload.stepIndex) return null
-          return currentMember
-        }
+      const updatedTeamMembersForProcess =
+        state.teamMembersSelectedForProcess.filter((currentMember) => {
+          if (
+            currentMember.member === action.payload.member &&
+            currentMember.portfolio === action.payload.portfolio &&
+            currentMember.stepIndex === action.payload.stepIndex
+          )
+            return null;
+          return currentMember;
+        });
+      state.teamMembersSelectedForProcess = updatedTeamMembersForProcess.filter(
+        (member) => member
       );
-      state.teamMembersSelectedForProcess = updatedTeamMembersForProcess.filter(member => member)
     },
     setUserMembersSelectedForProcess: (state, action) => {
       state.userMembersSelectedForProcess = [
@@ -345,13 +373,19 @@ export const appSlice = createSlice({
       ];
     },
     removeFromUserMembersSelectedForProcess: (state, action) => {
-      const updatedUserMembersForProcess = state.userMembersSelectedForProcess.filter(
-        (currentMember) => {
-          if (currentMember.member === action.payload.member && currentMember.portfolio === action.payload.portfolio && currentMember.stepIndex === action.payload.stepIndex) return null
-          return currentMember
-        }
+      const updatedUserMembersForProcess =
+        state.userMembersSelectedForProcess.filter((currentMember) => {
+          if (
+            currentMember.member === action.payload.member &&
+            currentMember.portfolio === action.payload.portfolio &&
+            currentMember.stepIndex === action.payload.stepIndex
+          )
+            return null;
+          return currentMember;
+        });
+      state.userMembersSelectedForProcess = updatedUserMembersForProcess.filter(
+        (member) => member
       );
-      state.userMembersSelectedForProcess = updatedUserMembersForProcess.filter(member => member)
     },
     setPublicMembersSelectedForProcess: (state, action) => {
       state.publicMembersSelectedForProcess = [
@@ -360,56 +394,61 @@ export const appSlice = createSlice({
       ];
     },
     removeFromPublicMembersSelectedForProcess: (state, action) => {
-      const updatedPublicMembersForProcess = state.publicMembersSelectedForProcess.filter(
-        (currentMember) => {
-          if (currentMember.member === action.payload.member && currentMember.portfolio === action.payload.portfolio && currentMember.stepIndex === action.payload.stepIndex) return null
-          return currentMember
-        }
-      );
-      state.publicMembersSelectedForProcess = updatedPublicMembersForProcess.filter(member => member)
+      const updatedPublicMembersForProcess =
+        state.publicMembersSelectedForProcess.filter((currentMember) => {
+          if (
+            currentMember.member === action.payload.member &&
+            currentMember.portfolio === action.payload.portfolio &&
+            currentMember.stepIndex === action.payload.stepIndex
+          )
+            return null;
+          return currentMember;
+        });
+      state.publicMembersSelectedForProcess =
+        updatedPublicMembersForProcess.filter((member) => member);
     },
     setProcessesLoading: (state, action) => {
-      state.processesLoading = action.payload
+      state.processesLoading = action.payload;
     },
     setProcessesLoaded: (state, action) => {
-      state.processesLoaded = action.payload
+      state.processesLoaded = action.payload;
     },
     setAllProcesses: (state, action) => {
-      state.allProcesses = action.payload
+      state.allProcesses = action.payload;
     },
     setLegalStatusLoading: (state, action) => {
-      state.legalStatusLoading = action.payload
+      state.legalStatusLoading = action.payload;
     },
     setShowLegalStatusPopup: (state, action) => {
-      state.showLegalStatusPopup = action.payload
+      state.showLegalStatusPopup = action.payload;
     },
     setLegalTermsAgreed: (state, action) => {
-      state.legalTermsAgreed = action.payload
+      state.legalTermsAgreed = action.payload;
     },
     setDateAgreedToLegalStatus: (state, action) => {
-      state.dateAgreedToLegalStatus = action.payload
+      state.dateAgreedToLegalStatus = action.payload;
     },
     setLegalAgreePageLoading: (state, action) => {
-      state.legalArgeePageLoading = action.payload
+      state.legalArgeePageLoading = action.payload;
     },
     setAdminUser: (state, action) => {
-      state.adminUser = action.payload
+      state.adminUser = action.payload;
     },
     setAdminUserPortfolioLoaded: (state, action) => {
-      state.adminUserPortfolioLoaded = action.payload
+      state.adminUserPortfolioLoaded = action.payload;
     },
   },
   extraReducers: (builder) => {
     //getItemsCount
     builder.addCase(getItemsCounts.pending, (state) => {
-      state.itemsCountStatus = "pending";
+      state.itemsCountStatus = 'pending';
     });
     builder.addCase(getItemsCounts.fulfilled, (state, action) => {
-      state.itemsCountStatus = "succeeded";
+      state.itemsCountStatus = 'succeeded';
       state.itemsCount = action.payload;
     });
     builder.addCase(getItemsCounts.rejected, (state, action) => {
-      state.itemsCountStatus = "error";
+      state.itemsCountStatus = 'error';
       state.errorMessage = action.payload;
     });
   },
@@ -448,6 +487,8 @@ export const {
   setUpdateProccess,
   setPermissionArray,
   setTeamsInWorkflowAI,
+  setTeamsInWorkflowAITeams,
+  setTeamsInWorkflowAIPortfolios,
   setUserDetailPosition,
   setUpdateProccessApi,
   setTeamsSelectedSelectedForProcess,
