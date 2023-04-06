@@ -25,6 +25,8 @@ const WorkflowAiSettings = () => {
 	const { themeColor } = useSelector((state) => state.app);
 
 	const { handleSubmit, register } = useForm();
+	const { userDetail } = useSelector(state => state.auth);
+	console.log(userDetail)
 
 	const onSubmit = (data) => {
 		console.log("dataaaaaaaaaa", data);

@@ -86,7 +86,7 @@ const WorkflowCard = ({ cardItem }) => {
         toast.success('Item removed from bookmarks')
       } catch (error) {
         toast.info("Failed to remove workflow from bookmarks")
-        addToFavoritesState("workflows", {...item, 'favourited_by': userDetail?.userinfo?.username})
+        addToFavoritesState("workflows", JSON.stringify({...item, 'favourited_by': userDetail?.userinfo?.username}))
       }
     }
     // console.log(favoriteItems)
@@ -202,8 +202,8 @@ const WorkflowCard = ({ cardItem }) => {
                 }} onClick={() => handleFavoritess(cardItem, favoriteItems.workflows.find(item => item._id === cardItem._id) ? "remove" : "add")}>
                   {
                     favoriteItems.workflows.find(item => item._id === cardItem._id) ?
-                    <AiFillStar /> :
-                    <AiOutlineStar />
+                    <BsFillBookmarkFill /> :
+                    <BsBookmark />
                   }
                 </div>      
               </div>

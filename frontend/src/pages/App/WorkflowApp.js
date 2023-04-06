@@ -10,7 +10,6 @@ import TemplateCard from "../../components/hoverCard/templateCard/TemplateCard";
 import WorkflowCard from "../../components/hoverCard/workflowCard/WorkflowCard";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useState } from "react";
-import { DocumentServices } from "../../services/documentServices";
 import Spinner from "../../components/spinner/Spinner";
 import ProgressBar from "../../components/progressBar/ProgressBar";
 import { useLocation } from "react-router-dom";
@@ -41,61 +40,48 @@ const WorkflowApp = () => {
     processesLoaded,
     processesLoading,
   } = useSelector((state) => state.app);
-  const documentServices = new DocumentServices();
   const dispatch = useDispatch();
   const location = useLocation();
   const [isVisible, setVisible] = useState(false);
   const { favoriteItems, setFavoriteitems, favoriteItemsLoaded, setFavoriteitemsLoaded } = useAppContext();
+  const { allDocuments } = useSelector((state) => state.document);
 
   useEffect(() => {
 
     if (!notificationsLoaded) {
       dispatch(setNotificationsLoading(true));
 
-      if (
-        !userDetail ||
-        !userDetail.portfolio_info ||
-        userDetail.portfolio_info.length < 1
-      ) {
-        dispatch(setNotificationsLoading(false));
-        return;
-      }
-  
       dispatch(setNotificationFinalStatus(null));
-      documentServices
-        .allDocuments(userDetail?.portfolio_info[0]?.org_id)
-        .then((res) => {
-          const documentsToSign = res.data.documents.reverse().filter(document => 
-            document.company_id === userDetail?.portfolio_info[0]?.org_id && 
-            document.data_type === userDetail?.portfolio_info[0]?.data_type && 
-            (document.state === "processing" || document.document_state === "processing") &&
-            document.auth_viewers && document.auth_viewers.includes(userDetail?.userinfo?.username)
-          ).filter(document => document.process_id)
-          // console.log(documentsToSign)
-          dispatch(setNotificationFinalStatus(100));
-          const currentNotifications = notificationsForUser.slice();
-          let updatedNotifications = currentNotifications.map((notification) => {
-            const data = documentsToSign.map((dataObj) => {
-              let copyOfDataObj = { ...dataObj };
-              copyOfDataObj.type = "sign-document";
-              return copyOfDataObj;
-            });
-            const copyOfNotification = { ...notification };
-            if (copyOfNotification.title === "documents") {
-              copyOfNotification.items = data;
-              return copyOfNotification;
-            }
-            return notification;
-          });
-          dispatch(setNotificationsForUser(updatedNotifications));
-          dispatch(setNotificationsLoading(false));
-          dispatch(setNotificationsLoaded(true));
-        })
-        .catch((err) => {
-          console.log("Failed: ", err.response);
-          dispatch(setNotificationsLoading(false));
-          console.log("did not fetch documentsss");
-        });  
+
+      if (!allDocuments || allDocuments?.length < 1) return;
+      
+      const documentsToSign = allDocuments.filter(document => 
+        document.company_id === userDetail?.portfolio_info[0]?.org_id && 
+        document.data_type === userDetail?.portfolio_info[0]?.data_type && 
+        (document.state === "processing" || document.document_state === "processing") &&
+        document.auth_viewers && document.auth_viewers.includes(userDetail?.userinfo?.username)
+      ).filter(document => document.process_id)
+      // console.log(documentsToSign)
+      dispatch(setNotificationFinalStatus(100));
+
+      const currentNotifications = notificationsForUser.slice();
+      let updatedNotifications = currentNotifications.map((notification) => {
+        const data = documentsToSign.map((dataObj) => {
+          let copyOfDataObj = { ...dataObj };
+          copyOfDataObj.type = "sign-document";
+          return copyOfDataObj;
+        });
+        const copyOfNotification = { ...notification };
+        if (copyOfNotification.title === "documents") {
+          copyOfNotification.items = data;
+          return copyOfNotification;
+        }
+        return notification;
+      });
+
+      dispatch(setNotificationsForUser(updatedNotifications));
+      dispatch(setNotificationsLoading(false));
+      dispatch(setNotificationsLoaded(true));
     }
 
     if (!favoriteItemsLoaded) {
@@ -115,7 +101,7 @@ const WorkflowApp = () => {
       })
     }
 
-  }, [userDetail]);
+  }, [userDetail, allDocuments, favoriteItemsLoaded, notificationsLoaded]);
 
   useEffect(() => {
     if (!location.state || !location.state.elementIdToScrollTo) return;
