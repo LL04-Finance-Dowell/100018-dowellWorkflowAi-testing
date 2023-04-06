@@ -80,7 +80,7 @@ const WorkflowsPage = ({ home, showOnlySaved, showOnlyTrashed }) => {
 								cardBgColor="#1ABC9C"
 								title="saved workflows"
 								status={allWorkflowsStatus}
-								cardItems={allWorkflowsArray.filter(item => item.workflows && item.workflows?.data_type === userDetail?.portfolio_info[0]?.data_type)}
+								cardItems={allWorkflowsArray.filter(item => item.workflows && (item?.data_type === userDetail?.portfolio_info[0]?.data_type || item.workflows?.data_type === userDetail?.portfolio_info[0]?.data_type))}
 								itemType={"workflows"}
 							/>
 						</div> : <></>

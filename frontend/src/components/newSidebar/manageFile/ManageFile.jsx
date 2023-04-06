@@ -86,7 +86,7 @@ const ManageFile = () => {
         item => 
         (item.workflows && (item?.data_type === userDetail?.portfolio_info[0]?.data_type || item.workflows?.data_type === userDetail?.portfolio_info[0]?.data_type)) 
       ).length + 
-      allWorkflowsArray.filter(item => item.workflows && item.workflows?.data_type === userDetail?.portfolio_info[0]?.data_type).length
+      allWorkflowsArray.filter(item => item.workflows && (item?.data_type === userDetail?.portfolio_info[0]?.data_type || item.workflows?.data_type === userDetail?.portfolio_info[0]?.data_type)).length
       setItemsCountToDisplay(prevItems => { return {...prevItems, workflows: { count: countOfWorkflows, countSet: true } }});
     }
 
