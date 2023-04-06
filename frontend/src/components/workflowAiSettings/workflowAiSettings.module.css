@@ -74,3 +74,15 @@
   height: 1px;
   background-color: black;
 }
+
+.home__btn {
+  color: var(--e-global-color-text);
+  position: absolute;
+  top: 50%;
+  left: 0;
+  transform: translateY(-50%);
+}
+
+.home__btn:hover {
+  color: var(--e-global-color-text);
+}
