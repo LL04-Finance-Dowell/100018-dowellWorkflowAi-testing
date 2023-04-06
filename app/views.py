@@ -605,10 +605,6 @@ def get_documents(request, company_id):
     )
 
 
-    
-
-    
-
 @api_view(["POST"])
 def create_document(request):
     """Document Creation."""
