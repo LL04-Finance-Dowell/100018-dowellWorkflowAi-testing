@@ -1006,3 +1006,21 @@ def update_team(request):
             status=status.HTTP_201_CREATED,
         )
     return Response("Failed to Update Team Data", status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+@api_view(["POST"])
+def get_team_data(request):
+    """Update Team"""
+
+    form = request.data
+    if not form:
+        return Response("Team ID required", status.HTTP_400_BAD_REQUEST)
+    try :
+        return Response(
+            {
+                "Team Data": get_team(form["team_id"]),
+            },
+            status=status.HTTP_201_CREATED,
+        )
+    except:
+          
+        return Response("Failed to Load Team Data", status.HTTP_500_INTERNAL_SERVER_ERROR)

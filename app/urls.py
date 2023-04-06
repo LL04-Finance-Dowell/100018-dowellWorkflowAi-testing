@@ -19,6 +19,7 @@ from .views import (
     get_documents,
     get_process_link,
     get_templates,
+    get_team_data,
     get_wf_ai_setting,
     get_workflows,
     finalize_or_reject,
@@ -63,5 +64,6 @@ urlpatterns = [
     path("archives/<str:item_id>/<str:item_type>/restore/", archive_restore),
     path("teams/", create_team),
     path("update-to-teams/", update_team),
+    path("get-team-data/", get_team_data),
 
 ]
