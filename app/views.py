@@ -1010,7 +1010,7 @@ def update_team(request):
 
 
 @api_view(["GET"])
-def get_team_data(request,team_id):
+def get_team_data(request, team_id):
     """Get specific Team"""
 
     try:
@@ -1019,30 +1019,29 @@ def get_team_data(request,team_id):
             status=status.HTTP_200_OK,
         )
     except:
-
         return Response(
             "Failed to Load Team Data", status.HTTP_500_INTERNAL_SERVER_ERROR
         )
 
 
-@api_view(["POST","GET"])
-def get_all_teams(request,company_id):
+@api_view(["POST", "GET"])
+def get_all_teams(request, company_id):
     """Get All Team"""
-    all_team=get_team_list(company_id)
+    all_team = get_team_list(company_id)
     form = request.data
     if not form:
         try:
-            return Response(
-                all_team, status.HTTP_200_OK
-            )
+            return Response(all_team, status.HTTP_200_OK)
         except:
-            return Response(
-                "Data Type Required", status.HTTP_400_BAD_REQUEST
-            )
+            return Response("Data Type Required", status.HTTP_400_BAD_REQUEST)
     try:
         # print([data[form['data_type']] for data in all_team])
         return Response(
-            [data for data in all_team if form['data_type'] in str(data.get('data_type',''))],
+            [
+                data
+                for data in all_team
+                if form["data_type"] in str(data.get("data_type", ""))
+            ],
             status=status.HTTP_200_OK,
         )
     except:

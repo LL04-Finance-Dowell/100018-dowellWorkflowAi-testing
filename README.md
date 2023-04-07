@@ -58,7 +58,6 @@ This backend service serves as the WorkflowAI application Backend.
 | POST       | update-to-teams/                          | To update workflow teams                         |
 | POST       | teams/:team_id/                           | To fetch data of workflow teams                  |
 
-
 ---
 
 ### Endpoints Definition(Request - Response).
@@ -685,6 +684,8 @@ Request Body
 no need
 ```
 
+### Teams
+
 _POST_ `/v0.1/teams/`
 
 Request Body
@@ -722,6 +723,7 @@ Request Body
 }
 
 ```
+
 _POST_ `/v1/update-to-teams/`
 
 Request Body
@@ -768,20 +770,23 @@ _POST_ `/v1/teams/<str:team_id>/`
 Response Body
 
 ```
+
 {
-                "_id":"team_id",
-                "team_name":"Name of saved Team",
-                "team_code":"saved code",
-                "team_spec":"saved secification",
-                "universal_code":"saved universal_code",
-                "details":"details",
-                "portfolio_list":[list of saved portfolios],
-                "company_id":"company_id",
-                "created_by":"created_by",
-                "data_type": saved 'Real_Data' | 'Learning_Data' | 'Testing_Data'|'Archived_Data'
-                
+"\_id":"team_id",
+"team_name":"Name of saved Team",
+"team_code":"saved code",
+"team_spec":"saved secification",
+"universal_code":"saved universal_code",
+"details":"details",
+"portfolio_list":[list of saved portfolios],
+"company_id":"company_id",
+"created_by":"created_by",
+"data_type": saved 'Real_Data' | 'Learning_Data' | 'Testing_Data'|'Archived_Data'
+
 }
 
+```
+GET All TEAMS
 ```
 
 _GET_ `/v1/companies/<str:company_id>/teams/`
@@ -789,7 +794,9 @@ _GET_ `/v1/companies/<str:company_id>/teams/`
 Response Body
 
 ```
+
 [list of teams within that company id]
+
 ```
 
 _POST_ `/v1/companies/<str:company_id>/teams/`
@@ -797,6 +804,7 @@ _POST_ `/v1/companies/<str:company_id>/teams/`
 Request Body
 
 ```
+
 {
 "data_type": 'Real_Data' | 'Learning_Data' | 'Testing_Data'|'Archived_Data'
 }
@@ -806,10 +814,10 @@ Request Body
 Response Body
 
 ```
+
 [list of teams within that company id]
 
 ```
-
 
 ### Technologies Used
 
@@ -826,6 +834,8 @@ Response Body
 
 This project is available for use under
 the [Apache](https://github.com/LL04-Finance-Dowell/100018-dowellWorkflowAi-testing/blob/main/LICENSE) License.
+
+```
 
 ```
 

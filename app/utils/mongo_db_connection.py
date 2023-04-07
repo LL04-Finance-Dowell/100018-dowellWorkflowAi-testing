@@ -370,7 +370,6 @@ def save_wf(workflows, company_id, created_by, data_type):
 
 
 def update_wf(workflow_id, old_workflow):
-
     payload = json.dumps(
         {
             **WF_CONNECTION_DICT,
@@ -439,7 +438,6 @@ def get_all_wf_list():
 
 
 def get_wf_list(company_id, data_type):
-
     fields = {"company_id": str(company_id), "data_type": data_type}
     response_obj = dowellconnection(*WF_CONNECTION_LIST, "fetch", fields, "nil")
     res_obj = json.loads(response_obj)
@@ -804,7 +802,6 @@ def get_wfai_setting_list(company_id):
 
 
 def wf_setting_update(wf_setting_id, wf_ai_data):
-
     dd = datetime.now()
     time = dd.strftime("%d:%m:%Y,%H:%M:%S")
     payload = json.dumps(
@@ -936,7 +933,6 @@ def update_uuid_object(uuid_hash):
 
 
 def delete_template(template_id, data_type):
-
     payload = json.dumps(
         {
             **TEMPLATE_CONNECTION_DICT,
@@ -1122,7 +1118,6 @@ def get_team(team_id):
 
 
 def update_team_data(team_id, team_data):
-
     payload = json.dumps(
         {
             **MANAGEMENT_REPORTS_DICT,
