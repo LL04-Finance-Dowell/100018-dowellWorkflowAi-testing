@@ -19,6 +19,7 @@ from app.utils.mongo_db_connection import (
     get_links_object_by_process_id,
     get_process_list,
     get_process_object,
+    get_team_list,
     get_template_list,
     get_template_object,
     get_wf_list,
@@ -1007,17 +1008,43 @@ def update_team(request):
         )
     return Response("Failed to Update Team Data", status.HTTP_500_INTERNAL_SERVER_ERROR)
 
+
 @api_view(["POST"])
 def get_team_data(request):
-    """Update Team"""
+    """Get specific Team"""
 
     form = request.data
     if not form:
         return Response("Team ID required", status.HTTP_400_BAD_REQUEST)
-    try :
-        return Response(get_team(form["team_id"]),
-            status=status.HTTP_201_CREATED,
+    try:
+        return Response(
+            get_team(form["team_id"]),
+            status=status.HTTP_200_OK,
         )
     except:
-          
-        return Response("Failed to Load Team Data", status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+        return Response(
+            "Failed to Load Team Data", status.HTTP_500_INTERNAL_SERVER_ERROR
+        )
+
+
+@api_view(["POST"])
+def get_all_teams(request):
+    """Get All Team"""
+
+    form = request.data
+    if not form:
+        return Response(
+            "Company ID required and Data Type", status.HTTP_400_BAD_REQUEST
+        )
+    try:
+
+        return Response(
+            get_team_list(form["company_id"], form["data_type"]),
+            status=status.HTTP_200_OK,
+        )
+    except:
+
+        return Response(
+            "Failed to Load Team Data", status.HTTP_500_INTERNAL_SERVER_ERROR
+        )

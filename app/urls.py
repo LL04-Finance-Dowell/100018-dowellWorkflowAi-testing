@@ -15,6 +15,7 @@ from .views import (
     document_processing,
     favorites,
     fetch_process_links,
+    get_all_teams,
     get_document_content,
     get_documents,
     get_process_link,
@@ -65,5 +66,6 @@ urlpatterns = [
     path("teams/", create_team),
     path("update-to-teams/", update_team),
     path("get-team-data/", get_team_data),
+    path("all-team-data/", get_all_teams),
 
 ]

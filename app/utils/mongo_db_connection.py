@@ -1120,6 +1120,7 @@ def get_team(team_id):
     except RuntimeError:
         return []
 
+
 def update_team_data(team_id, team_data):
 
     payload = json.dumps(
@@ -1132,15 +1133,15 @@ def update_team_data(team_id, team_data):
             "update_field": {
                 # "eventId": get_event_id()["event_id"],
                 # "_id": team_id,
-                    "team_name": team_data['team_name'],
-                    "team_code": team_data['team_code'],
-                    "team_spec": team_data['team_spec'],
-                    "universal_code": team_data['universal_code'],
-                    "details": team_data['details'],
-                    "portfolio_list": team_data['portfolio_list'],
-                    "company_id": team_data['company_id'],
-                    "created_by": team_data['created_by'],
-                    "data_type": team_data['data_type'],
+                "team_name": team_data["team_name"],
+                "team_code": team_data["team_code"],
+                "team_spec": team_data["team_spec"],
+                "universal_code": team_data["universal_code"],
+                "details": team_data["details"],
+                "portfolio_list": team_data["portfolio_list"],
+                "company_id": team_data["company_id"],
+                "created_by": team_data["created_by"],
+                "data_type": team_data["data_type"],
             },
             "platform": "bangalore",
         }
@@ -1150,3 +1151,13 @@ def update_team_data(team_id, team_data):
     )
 
     return json.loads(response.text)
+
+
+def get_team_list(company_id, data_type):
+    fields = {"company_id": str(company_id), "data_type": data_type}
+    response_obj = dowellconnection(*MANAGEMENT_REPORTS_LIST, "fetch", fields, "nil")
+    res_obj = json.loads(response_obj)
+    if len(res_obj["data"]) > 0:
+        return res_obj["data"]
+    else:
+        return []
