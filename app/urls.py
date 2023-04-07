@@ -39,6 +39,8 @@ urlpatterns = [
     path("companies/<str:company_id>/favourites/", all_favourites),
     path("companies/<str:company_id>/templates/", get_templates),
     path("companies/<str:company_id>/documents/", get_documents),
+    path("companies/<str:company_id>/teams/", get_all_teams),
+
     path("templates/", create_template),
     path("templates/<str:template_id>/", template_detail),
     path("templates/<str:template_id>/approval/", approve),
@@ -64,8 +66,8 @@ urlpatterns = [
     path("archives/", archives),
     path("archives/<str:item_id>/<str:item_type>/restore/", archive_restore),
     path("teams/", create_team),
+    path("teams/<str:team_id>/", get_team_data),
     path("update-to-teams/", update_team),
-    path("get-team-data/", get_team_data),
-    path("all-team-data/", get_all_teams),
+    
 
 ]

@@ -33,6 +33,7 @@ This backend service serves as the WorkflowAI application Backend.
 | GET        | companies/:company_id/documents/          | To retrieve documents of a given company.        |
 | GET        | companies/:company_id/workflows/          | To retrieve workflows in a company               |
 | GET        | companies/:company_id/favourites/         | To list favourites                               |
+| POST       | companies/:company_id/teams/              | To fetch all workflow teams                      |
 | POST       | templates/                                | To create a new template.                        |
 | GET        | templates/:template_id/                   | To retrieve a single template.                   |
 | PUT        | templates/:template_id/approval/          | To approve a single template.                    |
@@ -55,8 +56,7 @@ This backend service serves as the WorkflowAI application Backend.
 | POST       | archives/:item_id/:item_type/restore/     | To restore a workflow/document/template/process/ |
 | POST       | teams/                                    | To create workflow teams                         |
 | POST       | update-to-teams/                          | To update workflow teams                         |
-| POST       | get-team-data/                            | To fetch data of workflow teams                  |
-| POST       | all-team-data/                            | To fetch all workflow teams                      |
+| POST       | teams/:team_id/                           | To fetch data of workflow teams                  |
 
 
 ---
@@ -761,14 +761,7 @@ Response Body
 }
 ```
 
-_POST_ `/v1/get-team-data/`
-
-Request Body
-
-```
-{
-"team_id":"team_id",
-}
+_POST_ `/v1/teams/<str:team_id>/`
 
 ```
 
@@ -791,13 +784,20 @@ Response Body
 
 ```
 
-_POST_ `/v1/all-team-data/`
+_GET_ `/v1/companies/<str:company_id>/teams/`
+
+Response Body
+
+```
+[list of teams within that company id]
+```
+
+_POST_ `/v1/companies/<str:company_id>/teams/`
 
 Request Body
 
 ```
 {
-"company_id":"company_id",
 "data_type": 'Real_Data' | 'Learning_Data' | 'Testing_Data'|'Archived_Data'
 }
 
