@@ -16,4 +16,8 @@ export class WorkflowSettingServices {
   createWorkflowTeam = (data) => {
     return httpApiUrl.post('teams/', data);
   };
+
+  getAllTeams = (companyId) => {
+    return httpApiUrl.get(`companies/${companyId}/teams/`)
+  }
 }

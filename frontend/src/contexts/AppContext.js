@@ -18,6 +18,8 @@ export const AppContextProvider = ({ children }) => {
 		templatesAdded: false,
 		workflowsAdded: false,
 	});
+	const [workflowTeams, setWorkflowTeams] = useState([]);
+	const [workflowTeamsLoaded, setWorkflowTeamsLoaded] = useState(false);
 
 	const addToFavoritesState = (category, value) => {
 		const currentFavorites = { ...favoriteItems };
@@ -55,7 +57,11 @@ export const AppContextProvider = ({ children }) => {
 			searchItems,
 			setSearchItems,
 			searchItemsStatus,
-			updateSearchItemStatus
+			updateSearchItemStatus,
+			workflowTeams,
+			setWorkflowTeams,
+			workflowTeamsLoaded,
+			setWorkflowTeamsLoaded,
 		}}>
 			{children}
 		</AppContext.Provider>
