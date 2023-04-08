@@ -23,10 +23,17 @@ const TeamsInWorkflowAi = () => {
   const { teamsInWorkflowAI } = useSelector((state) => state.app);
   const { userDetail } = useSelector((state) => state.auth);
   const [userPortfolios, setUserPortfolios] = useState(
-    userDetail.userportfolio.map((port) => ({
+    userDetail?.portfolio_info?.find(item => item.product === "Workflow AI")?.member_type === "owner" ?
+    userDetail?.userportfolio.map((port) => ({
       _id: v4(),
       content: port.portfolio_name,
-    }))
+    })) :
+    userDetail?.selected_product?.userportfolio.map((portfolio) => { 
+      return { 
+        _id: crypto.randomUUID(), 
+        content: portfolio.portfolio_name 
+      }
+    })
   );
   const [isValidCreateTeamData, setIsValidCreateTeamData] = useState(false);
   const [isCreatingTeam, setIsCreatingTeam] = useState(false);
