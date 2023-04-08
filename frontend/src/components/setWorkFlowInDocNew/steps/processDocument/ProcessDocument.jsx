@@ -33,7 +33,17 @@ const ProcessDocument = () => {
   const { processOptionSelection } = watch();
   const [loading, setLoading] = useState(false);
   const { userDetail } = useSelector((state) => state.auth);
-  const { currentDocToWfs, selectedWorkflowsToDoc, processSteps, docCurrentWorkflow, tableOfContentForStep, teamMembersSelectedForProcess, userMembersSelectedForProcess, publicMembersSelectedForProcess } = useSelector((state) => state.app);
+  const { 
+    currentDocToWfs, 
+    selectedWorkflowsToDoc, 
+    processSteps, 
+    docCurrentWorkflow, 
+    tableOfContentForStep, 
+    teamMembersSelectedForProcess, 
+    userMembersSelectedForProcess, 
+    publicMembersSelectedForProcess,
+    teamsSelectedSelectedForProcess
+  } = useSelector((state) => state.app);
   const [ newProcessLoading, setNewProcessLoading ] = useState(false);
   const [ newProcessLoaded, setNewProcessLoaded ] = useState(null);
   const [ showGeneratedLinksPopup, setShowGeneratedLinksPopup ] = useState(false);

@@ -10,6 +10,7 @@ import { removeFromPublicMembersSelectedForProcess, removeFromTeamMembersSelecte
 import { Tooltip } from "react-tooltip";
 import useClickInside from "../../../../../../hooks/useClickInside";
 import { toast } from "react-toastify";
+import { useAppContext } from "../../../../../../contexts/AppContext";
 
 const SelectMembersToAssign = ({ currentStepIndex, stepsPopulated, currentEnabledSteps }) => {
   const [selectMembersComp, setSelectMembersComp] = useState(selectMembers);
@@ -28,7 +29,6 @@ const SelectMembersToAssign = ({ currentStepIndex, stepsPopulated, currentEnable
     docCurrentWorkflow,
   } = useSelector((state) => state.app);
   const [ selectedMembersSet, setSelectedMembersSet ] = useState(false);
-  const [ currentSelectedTeams, setCurrentSelectedTeams ] = useState(null);
   const [ userTypeOptionsEnabled, setUserTypeOptionsEnabled ] = useState([]);
   const [ currentGroupSelectionItem, setCurrentGroupSelectionItem ] = useState(null);
   const [ enableRadioOptionsFromStepPopulation, setEnableOptionsFromStepPopulation ] = useState({
@@ -38,6 +38,7 @@ const SelectMembersToAssign = ({ currentStepIndex, stepsPopulated, currentEnable
   });
   const [ featuresUpdatedFromDraft, setFeaturesUpdatedFromDraft ] = useState(false);
   const [ radioOptionsEnabledInStep, setRadioOptionsEnabledInStep ] = useState([]);
+  const { workflowTeams } = useAppContext();
   
   const dispatch = useDispatch();
 
@@ -90,14 +91,17 @@ const SelectMembersToAssign = ({ currentStepIndex, stepsPopulated, currentEnable
     const updatedMembersState = copyOfCurrentSelectMembersState.map(member => {
       if (member.header === "Team") {
         member.portfolios = extractAndFormatPortfoliosForMembers("team_member")
+        member.teams = workflowTeams
         return member
       }
       if (member.header === "Users") {
         member.portfolios = extractAndFormatPortfoliosForMembers("to-be-decided")
+        member.teams = workflowTeams
         return member
       }
 
       member.portfolios = extractAndFormatPortfoliosForMembers("public")
+      member.teams = workflowTeams
       return member
     });
 
@@ -111,14 +115,14 @@ const SelectMembersToAssign = ({ currentStepIndex, stepsPopulated, currentEnable
     if (!currentRadioOptionSelection) return
 
     if (currentRadioOptionSelection === "selectTeam") {
-      if (currentGroupSelectionItem) currentGroupSelectionItem?.teams.forEach(team => dispatch(removeFromTeamsSelectedSelectedForProcess({ id: team.id, stepIndex: currentStepIndex })))
+      if (currentGroupSelectionItem) currentGroupSelectionItem?.teams.forEach(team => updateTeamAndPortfoliosInTeamForProcess('remove', team, currentGroupSelectionItem.header))
       return
     }
 
-    currentGroupSelectionItem?.teams.forEach(team => dispatch(removeFromTeamsSelectedSelectedForProcess({ id: team.id, stepIndex: currentStepIndex })))
+    currentGroupSelectionItem?.teams.forEach(team => updateTeamAndPortfoliosInTeamForProcess('remove', team, currentGroupSelectionItem.header))
 
     if (currentGroupSelectionItem?.allSelected) {
-      currentGroupSelectionItem?.teams.forEach(team => dispatch(setTeamsSelectedSelectedForProcess({ ...team, stepIndex: currentStepIndex })))
+      currentGroupSelectionItem?.teams.forEach(team => updateTeamAndPortfoliosInTeamForProcess('add', team, currentGroupSelectionItem.header))
       return
     }
 
@@ -197,42 +201,15 @@ const SelectMembersToAssign = ({ currentStepIndex, stepsPopulated, currentEnable
 
   }, [stepsPopulated, processSteps])
 
-  const handleSelectTeam = (e) => {
-    const parsedSelectedJsonValue = JSON.parse(e.target.value);
-    const teamSelected = parsedSelectedJsonValue.content;
-
-    const teamAddedToProcess = teamsSelectedSelectedForProcess.find(team => team.id === parsedSelectedJsonValue.id);
-    
-    if (teamAddedToProcess) {
-      dispatch(removeFromTeamsSelectedSelectedForProcess({ id: parsedSelectedJsonValue.id, stepIndex: currentStepIndex }));
-    } else {
-      dispatch(setTeamsSelectedSelectedForProcess({ ...parsedSelectedJsonValue, stepIndex: currentStepIndex }));
-    }
-    
-    console.log("Current team selected: ", teamSelected);
+  const handleSelectTeam = (parsedSelectedJsonValue) => {
+    console.log("Current team selected: ", parsedSelectedJsonValue);
     console.log("Current header: ", current.header);
-    
-    if (!currentSelectedTeams) {
-      const [ newItem, newSelectedTeams ] = [{
-        headerSelected: current.header,
-        teamSelected: teamSelected,
-      }, []]
-      newSelectedTeams.push(newItem);
-      setCurrentSelectedTeams(newSelectedTeams);
-      return
-    }
-    
-    const copyOfCurrentSelectedTeams = currentSelectedTeams.slice();
-    const teamAlreadyAdded = copyOfCurrentSelectedTeams.find(team => team.teamSelected === teamSelected && team.headerSelected === current.header)
-    
-    if (teamAlreadyAdded) return;
-    
-    copyOfCurrentSelectedTeams.push({
-      headerSelected: current.header,
-      teamSelected: teamSelected,
-    })
 
-    setCurrentSelectedTeams(copyOfCurrentSelectedTeams);
+    const teamAddedToProcess = teamsSelectedSelectedForProcess.find(team => team._id === parsedSelectedJsonValue._id && team.stepIndex === currentStepIndex && team.selectedFor === current.header);
+
+    if (teamAddedToProcess) return updateTeamAndPortfoliosInTeamForProcess('remove', parsedSelectedJsonValue, current.header)
+    
+    updateTeamAndPortfoliosInTeamForProcess('add', parsedSelectedJsonValue, current.header);
   }
 
   const handleAddNewMember = (e) => {
@@ -341,6 +318,26 @@ const SelectMembersToAssign = ({ currentStepIndex, stepsPopulated, currentEnable
     }
     currentRadioOptionsEnabled.push(newRadioOptionEnabled);
     setRadioOptionsEnabledInStep(currentRadioOptionsEnabled);
+  }
+
+  const updateTeamAndPortfoliosInTeamForProcess = (actionType, team, currentUserHeader) => {
+    if (actionType === 'add') {
+      dispatch(setTeamsSelectedSelectedForProcess({ ...team, stepIndex: currentStepIndex, selectedFor: currentUserHeader }));
+      team.portfolio_list.forEach(portfolio => {
+        if (currentUserHeader === "Team") dispatch(setTeamMembersSelectedForProcess({ member: portfolio.username, portfolio: portfolio.portfolio_name, stepIndex: currentStepIndex }))
+        if (currentUserHeader === "Users") dispatch(setUserMembersSelectedForProcess({ member: portfolio.username, portfolio: portfolio.portfolio_name, stepIndex: currentStepIndex }))
+        if (currentUserHeader === "Public") dispatch(setPublicMembersSelectedForProcess({ member: portfolio.username, portfolio: portfolio.portfolio_name, stepIndex: currentStepIndex }))
+      })
+    }
+
+    if (actionType === 'remove') {
+      dispatch(removeFromTeamsSelectedSelectedForProcess({ _id: team._id, stepIndex: currentStepIndex, selectedFor: currentUserHeader }));
+      team.portfolio_list.forEach(portfolio => {
+        if (currentUserHeader === "Team") dispatch(removeFromTeamMembersSelectedForProcess({ member: portfolio.username, portfolio: portfolio.portfolio_name, stepIndex: currentStepIndex }))
+        if (currentUserHeader === "Users") dispatch(removeFromUserMembersSelectedForProcess({ member: portfolio.username, portfolio: portfolio.portfolio_name, stepIndex: currentStepIndex }))
+        if (currentUserHeader === "Public") dispatch(removeFromPublicMembersSelectedForProcess({ member: portfolio.username, portfolio: portfolio.portfolio_name, stepIndex: currentStepIndex }))  
+      })
+    }
   }
 
   return (
@@ -453,7 +450,7 @@ const SelectMembersToAssign = ({ currentStepIndex, stepsPopulated, currentEnable
                 <select
                   required
                   {...register("teams")}
-                  size={current.teams.length}
+                  size={current.teams.length === 1 ? current.teams.length + 1 : current.teams.length}
                   className={styles.open__select}
                   onChange={handleSelectTeam}
                   style={{ 
@@ -476,14 +473,16 @@ const SelectMembersToAssign = ({ currentStepIndex, stepsPopulated, currentEnable
                     "all" :
                     "none" 
                   }}
+                  name="select-from-team"
                 >
                   {React.Children.toArray(current.teams.map((item) => (
                     <option 
                       // key={item.id} 
                       value={JSON.stringify(item)}
-                      className={teamsSelectedSelectedForProcess.find(team => team.id === item.id && team.stepIndex === currentStepIndex) ? styles.team__Selected : styles.team__Not__Selected}
+                      onClick={() => handleSelectTeam(item)}
+                      className={teamsSelectedSelectedForProcess.find(team => team._id === item._id && team.stepIndex === currentStepIndex && team.selectedFor === current.header) ? styles.team__Selected : styles.team__Not__Selected}
                     >
-                      {item.content}
+                      {item.team_name}
                     </option>
                   )))}
                 </select>
@@ -682,7 +681,7 @@ export const selectMembers = [
     all: "Select all Team Members",
     selectInTeam: "Select Teams in Team Members",
     selectMembers: "Select Members",
-    teams: teamsForTeamMembers,
+    teams: [],
     portfolios: members,
   },
   {
@@ -692,7 +691,7 @@ export const selectMembers = [
     all: "Select all Users",
     selectInTeam: "Select Teams in Users",
     selectMembers: "Select Users",
-    teams: teamsForUserMembers,
+    teams: [],
     portfolios: members,
   },
   {
@@ -702,7 +701,7 @@ export const selectMembers = [
     all: "Select all Public",
     selectInTeam: "Select Teams in Public",
     selectMembers: "Select Public",
-    teams: teamsForPublicMembers,
+    teams: [],
     portfolios: members,
   },
 ];

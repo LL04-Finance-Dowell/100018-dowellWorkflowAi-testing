@@ -237,7 +237,11 @@ const InfoBox = ({
                           }
                           /* {...register(item.content)} */
                           type={'checkbox'}
-                          value={userDetail.userportfolio[ind]}
+                          value={
+                            userDetail?.portfolio_info?.find(item => item.product === "Workflow AI")?.member_type === "owner" ?
+                            userDetail?.userportfolio[ind] :
+                            userDetail?.selected_product?.userportfolio[ind]
+                          }
                         />
                         <span key={item._id}>{item.content}</span>
                       </InfoContentFormText>

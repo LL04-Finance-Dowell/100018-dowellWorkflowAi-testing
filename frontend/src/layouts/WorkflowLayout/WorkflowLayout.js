@@ -17,6 +17,7 @@ import { AuthServices } from "../../services/authServices";
 import { updateUserDetail } from "../../features/auth/authSlice";
 import { getAllProcessesV2 } from "../../services/processServices";
 import { useAppContext } from "../../contexts/AppContext";
+import { WorkflowSettingServices } from "../../services/workflowSettingServices";
 
 const WorkflowLayout = ({ children }) => {
   const dispatch = useDispatch();
@@ -36,7 +37,14 @@ const WorkflowLayout = ({ children }) => {
   const { allDocuments } = useSelector((state) => state.document);
   const { allTemplates } = useSelector((state) => state.template);
   const { allWorkflows } = useSelector((state) => state.workflow);
-  const { searchItemsStatus, setSearchItems, updateSearchItemStatus } = useAppContext();
+  const { 
+    searchItemsStatus, 
+    setSearchItems, 
+    updateSearchItemStatus, 
+    workflowTeamsLoaded, 
+    setWorkflowTeamsLoaded, 
+    setWorkflowTeams 
+  } = useAppContext();
 
   const handleClick = () => {
     if (session_id) {
@@ -69,6 +77,7 @@ const WorkflowLayout = ({ children }) => {
     if (!session_id || !userDetail || !userDetail.portfolio_info || userDetail.portfolio_info.length < 1) return
 
     if (!processesLoaded) {
+      // Fetching processes
       getAllProcessesV2(userDetail?.portfolio_info[0]?.org_id).then(res => {
         dispatch(setAllProcesses(res.data.filter(process => process.processing_state).reverse()));
         dispatch(setProcessesLoading(false));
@@ -78,6 +87,18 @@ const WorkflowLayout = ({ children }) => {
         dispatch(setProcessesLoading(false));
         console.log("did not fetch processes");
       })  
+    }
+
+    if (!workflowTeamsLoaded) {
+      // Fetching workflow teams
+      const settingService = new WorkflowSettingServices();
+      settingService.getAllTeams(userDetail?.portfolio_info[0]?.org_id).then(res => {
+        setWorkflowTeams(res.data);
+        setWorkflowTeamsLoaded(true);
+      }).catch(err => {
+        console.log("Failed to fetch teams: ", err.response? err.response.data : err.message);
+        setWorkflowTeamsLoaded(true);
+      })
     }
 
     const workflowProduct = userDetail?.portfolio_info?.find(item => item.product === "Workflow AI")
