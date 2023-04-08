@@ -1,18 +1,21 @@
-import Flip from "../flip/Flip";
-import styles from "./flipMenu.module.css";
-import { FaFileContract, FaRegBell } from "react-icons/fa";
-import { FcWorkflow } from "react-icons/fc";
-import { HiOutlineDocument } from "react-icons/hi";
-import { FaSearch } from "react-icons/fa";
-import { FaHeadSideVirus } from "react-icons/fa";
-import { v4 as uuidv4 } from "uuid";
-import { useDispatch, useSelector } from "react-redux";
-import { setToggleManageFileForm } from "../../features/app/appSlice";
-import { useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
-import React from "react";
-import { createTemplate } from "../../features/template/asyncThunks";
-import { Tooltip } from "react-tooltip";
+import Flip from '../flip/Flip';
+import styles from './flipMenu.module.css';
+import {
+  FaFileContract,
+  FaRegBell,
+  FaHeadSideVirus,
+  FaSearch,
+} from 'react-icons/fa';
+import { FcWorkflow } from 'react-icons/fc';
+import { HiOutlineDocument } from 'react-icons/hi';
+import { v4 as uuidv4 } from 'uuid';
+import { useDispatch, useSelector } from 'react-redux';
+import { setToggleManageFileForm } from '../../features/app/appSlice';
+import { useNavigate } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import React from 'react';
+import { createTemplate } from '../../features/template/asyncThunks';
+import { Tooltip } from 'react-tooltip';
 
 const FlipMenu = () => {
   const [filpItemsToDisplay, setFlipItemsToDisplay] = useState(flipItems);
@@ -28,7 +31,7 @@ const FlipMenu = () => {
     );
 
     const updatedFlipItems = currentFlipItems.map((item) => {
-      if (item.role === "viewNotifications") {
+      if (item.role === 'viewNotifications') {
         if (totalNotificationCount < 10)
           item.text = `00${totalNotificationCount}`;
         if (totalNotificationCount >= 10)
@@ -82,19 +85,19 @@ export const FlipBack = (props) => {
   const { userDetail } = useSelector((state) => state.auth);
 
   const handleClick = (role) => {
-    if (role === "newDoc") {
-      console.log("wwwwwwwwwwwwwwwwwwwwwwwwwww", role);
-      navigate("/documents/#newDocument");
+    if (role === 'newDoc') {
+      console.log('wwwwwwwwwwwwwwwwwwwwwwwwwww', role);
+      navigate('/documents/#newDocument');
       dispatch(setToggleManageFileForm(true));
     }
-    if (role === "viewNotifications") {
-      navigate("/#documents", {
+    if (role === 'viewNotifications') {
+      navigate('/#documents', {
         state: {
           elementIdToScrollTo: `notifications-documents-${notificationsForUser[0].id}`,
         },
       });
     }
-    if (role === "newTemp") {
+    if (role === 'newTemp') {
       const data = {
         created_by: userDetail?.userinfo.username,
         company_id: userDetail?.portfolio_info[0].org_id,
@@ -102,41 +105,51 @@ export const FlipBack = (props) => {
       };
       dispatch(createTemplate(data));
     }
-    if (role === "newWorkf") {
-      navigate("/workflows/#newWorkflow");
+    if (role === 'newWorkf') {
+      navigate('/workflows/#newWorkflow');
       dispatch(setToggleManageFileForm(true));
     }
-    if (role === "search") {
-      navigate("/search")
+    if (role === 'search') {
+      navigate('/search');
     }
   };
 
   return (
     <div
-      style={{ background: "#7A7A7A" }}
-      className={`${styles.flip__box} ${styles.back__box} ${props.buttonTexts ? styles.grow__back__box : ''}`}
+      style={{ background: '#7A7A7A' }}
+      className={`${styles.flip__box} ${styles.back__box} ${
+        props.buttonTexts ? styles.grow__back__box : ''
+      }`}
     >
-      {
-        props.buttonTexts ?
-        React.Children.toArray(props.buttonTexts.map((buttonText, index) => {
-          return <button
-            onClick={() => handleClick(props.roles[index])}
-            type="button"
-            className={styles.flip__button}
-            id={buttonText.id}
-          >
-            {buttonIcons[index]}
-            <Tooltip anchorId={buttonText.id} content={buttonText.text} offset={0} />
-          </button>
-            })) :
+      {props.buttonTexts ? (
+        React.Children.toArray(
+          props.buttonTexts.map((buttonText, index) => {
+            return (
+              <button
+                onClick={() => handleClick(props.roles[index])}
+                type='button'
+                className={styles.flip__button}
+                id={buttonText.id}
+              >
+                {buttonIcons[index]}
+                <Tooltip
+                  anchorId={buttonText.id}
+                  content={buttonText.text}
+                  offset={0}
+                />
+              </button>
+            );
+          })
+        )
+      ) : (
         <button
           onClick={() => handleClick(props.role)}
-          type="button"
+          type='button'
           className={styles.flip__button}
         >
           {props.buttonText}
         </button>
-      }
+      )}
     </div>
   );
 };
@@ -145,47 +158,39 @@ export const flipItems = [
   {
     id: uuidv4(),
     icon: FaRegBell,
-    frontBg: "#1ABC9C",
-    text: "000",
-    buttonText: "view",
-    role: "viewNotifications",
+    frontBg: '#1ABC9C',
+    text: '000',
+    buttonText: 'view',
+    role: 'viewNotifications',
   },
   {
     id: uuidv4(),
     icon: HiOutlineDocument,
-    frontBg: "#7A7A7A",
-    text: "new",
+    frontBg: '#7A7A7A',
+    text: 'new',
     buttonTexts: [
-      { id: uuidv4(), text: "Document" },
-      { id: uuidv4(), text: "Template" },
-      { id: uuidv4(), text: "Workflow" }
+      { id: uuidv4(), text: 'Document' },
+      { id: uuidv4(), text: 'Template' },
+      { id: uuidv4(), text: 'Workflow' },
     ],
-    roles: [
-      "newDoc",
-      "newTemp",
-      "newWorkf",
-    ]
+    roles: ['newDoc', 'newTemp', 'newWorkf'],
   },
   {
     id: uuidv4(),
     icon: FaSearch,
-    frontBg: "#61CE70",
-    text: "search",
-    buttonText: "search document",
-    role: "search",
+    frontBg: '#61CE70',
+    text: 'search',
+    buttonText: 'search document',
+    role: 'search',
   },
   {
     id: uuidv4(),
     icon: FaHeadSideVirus,
-    frontBg: "#C3D6BE",
-    text: "support",
-    buttonText: "dowell knowledge centre",
-    role: "",
+    frontBg: '#C3D6BE',
+    text: 'support',
+    buttonText: 'dowell knowledge centre',
+    role: '',
   },
 ];
 
-const buttonIcons = [
-  <HiOutlineDocument />,
-  <FaFileContract />,
-  <FcWorkflow />,   
-]
+const buttonIcons = [<HiOutlineDocument />, <FaFileContract />, <FcWorkflow />];

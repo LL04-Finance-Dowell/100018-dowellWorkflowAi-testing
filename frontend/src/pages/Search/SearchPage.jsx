@@ -1,338 +1,567 @@
-import React from "react";
-import { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
-import { FaSearch } from "react-icons/fa";
-import { useDispatch, useSelector } from "react-redux";
-import { useLocation } from "react-router-dom";
-import { toast } from "react-toastify";
-import { Tooltip } from "react-tooltip";
-import { LoadingSpinner } from "../../components/LoadingSpinner/LoadingSpinner";
-import { setToggleManageFileForm } from "../../features/app/appSlice";
-import { detailDocument } from "../../features/document/asyncThunks";
-import { detailTemplate } from "../../features/template/asyncThunks";
-import { detailWorkflow } from "../../features/workflow/asyncTHunks";
+import React from 'react';
+import { useEffect, useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { FaSearch } from 'react-icons/fa';
+import { useDispatch, useSelector } from 'react-redux';
+import { useLocation } from 'react-router-dom';
+import { toast } from 'react-toastify';
+import { Tooltip } from 'react-tooltip';
+import { LoadingSpinner } from '../../components/LoadingSpinner/LoadingSpinner';
+import { setToggleManageFileForm } from '../../features/app/appSlice';
+import { detailDocument } from '../../features/document/asyncThunks';
+import { detailTemplate } from '../../features/template/asyncThunks';
+import { detailWorkflow } from '../../features/workflow/asyncTHunks';
 // import { searchForItem } from "../../services/searchServices";
-import WorkflowLayout from "../../layouts/WorkflowLayout/WorkflowLayout";
-import ManageFiles from "../../components/manageFiles/ManageFiles";
-import styles from "./style.module.css";
-import { searchItemByKeyAndGroupResults } from "./util";
-import { useAppContext } from "../../contexts/AppContext";
-import { IoIosRefresh } from "react-icons/io";
-import { DocumentServices } from "../../services/documentServices";
-import { TemplateServices } from "../../services/templateServices";
-import { WorkflowServices } from "../../services/workflowServices";
-import { setAllDocuments } from "../../features/document/documentSlice";
-import { setAllTemplates } from "../../features/template/templateSlice";
-import { setAllWorkflows } from "../../features/workflow/workflowsSlice";
+import WorkflowLayout from '../../layouts/WorkflowLayout/WorkflowLayout';
+import ManageFiles from '../../components/manageFiles/ManageFiles';
+import styles from './style.module.css';
+import { searchItemByKeyAndGroupResults } from './util';
+import { useAppContext } from '../../contexts/AppContext';
+import { IoIosRefresh } from 'react-icons/io';
+import { DocumentServices } from '../../services/documentServices';
+import { TemplateServices } from '../../services/templateServices';
+import { WorkflowServices } from '../../services/workflowServices';
+import { setAllDocuments } from '../../features/document/documentSlice';
+import { setAllTemplates } from '../../features/template/templateSlice';
+import { setAllWorkflows } from '../../features/workflow/workflowsSlice';
+import { current } from '@reduxjs/toolkit';
 
 const searchCategories = {
-	documents: "documents",
-	templates: "templates",
-	workflows: "workflows",
-	all: "all",
-}
+  documents: 'documents',
+  templates: 'templates',
+  workflows: 'workflows',
+  all: 'all',
+};
 
 const SearchPage = () => {
-	const [searchResults, setSearchResults] = useState([]);
-	const [searchResultsToDisplay, setSearchResultsToDisplay] = useState([]);
-	const { state } = useLocation();
-	const [currentSearch, setCurrentSearch] = useState("");
-	const [searchLoading, setSearchLoading] = useState(false);
-	const { userDetail } = useSelector((state) => state.auth);
-	const [currentSearchOption, setCurrentSearchOption] = useState(searchCategories.all);
-	const dispatch = useDispatch();
-	const { searchItems } = useAppContext();
-	const { allWorkflowsStatus } = useSelector((state) => state.workflow);
-	const { allTemplatesStatus } = useSelector((state) => state.template);
-	const { allDocumentsStatus } = useSelector((state) => state.document);
-	const [ refreshLoading, setRefreshLoading ] = useState(false);
+  const [searchResults, setSearchResults] = useState([]);
+  const [searchResultsToDisplay, setSearchResultsToDisplay] = useState([]);
+  const { state } = useLocation();
+  const [currentSearch, setCurrentSearch] = useState('');
+  const [searchLoading, setSearchLoading] = useState(false);
+  const { userDetail } = useSelector((state) => state.auth);
+  const [currentSearchOption, setCurrentSearchOption] = useState(
+    searchCategories.all
+  );
+  const dispatch = useDispatch();
+  const { searchItems } = useAppContext();
+  const { allWorkflowsStatus } = useSelector((state) => state.workflow);
+  const { allTemplatesStatus } = useSelector((state) => state.template);
+  const { allDocumentsStatus } = useSelector((state) => state.document);
+  const [refreshLoading, setRefreshLoading] = useState(false);
+  const [filterDocs, setFilterDocs] = useState([]);
+  const [filterTemps, setFilterTemps] = useState([]);
+  const [filterWorks, setFilterWorks] = useState([]);
 
-	useEffect(() => {
+  useEffect(() => {
+    if (!state) return;
 
-		if (!state) return
+    if (state.searchResults) {
+      setSearchResults(state.searchResults);
+      setSearchResultsToDisplay(state.searchResults);
+    }
+    if (state.searchItem) setCurrentSearch(state.searchItem);
+  }, [state]);
 
-		if (state.searchResults) {
-			setSearchResults(state.searchResults)
-			setSearchResultsToDisplay(state.searchResults)
-		}
-		if (state.searchItem) setCurrentSearch(state.searchItem)
+  const handleSearchItemClick = (item) => {
+    if (item.document_name) {
+      const data = {
+        document_name: item.document_name,
+        document_id: item._id,
+      };
+      dispatch(detailDocument(data.document_id));
+    }
+    if (item.template_name) {
+      const data = {
+        template_id: item._id,
+        template_name: item.template_name,
+      };
+      dispatch(detailTemplate(data.template_id));
+    }
+    if (item.workflows) {
+      dispatch(setToggleManageFileForm(true));
+      const data = {
+        workflow_id: item._id,
+      };
+      dispatch(detailWorkflow(data.workflow_id));
+    }
+  };
 
-	}, [state])
+  const handleSearchInputChange = (value) => {
+    setCurrentSearch(value);
+    if (value.length < 1) return;
+    // setSearchLoading(true);
+  };
 
-	const handleSearchItemClick = (item) => {
-		if (item.document_name) {
-			const data = {
-				document_name: item.document_name,
-				document_id: item._id,
-			};
-			dispatch(detailDocument(data.document_id));
-		}
-		if (item.template_name) {
-			const data = {
-				template_id: item._id,
-				template_name: item.template_name,
-			};
-			dispatch(detailTemplate(data.template_id));
-		}
-		if (item.workflows) {
-			dispatch(setToggleManageFileForm(true));
-			const data = {
-				workflow_id: item._id
-			};
-			dispatch(detailWorkflow(data.workflow_id));
-		}
-	}
+  useEffect(() => {
+    if (currentSearch.length < 1) {
+      setSearchLoading(false);
+      setSearchResults([]);
+      return;
+    }
 
-	const handleSearchInputChange = (value) => {
-		setCurrentSearch(value)
-		if (value.length < 1) return
-		// setSearchLoading(true);
-	}
+    setSearchLoading(true);
 
-	useEffect(() => {
+    if (
+      allDocumentsStatus === 'pending' ||
+      allTemplatesStatus === 'pending' ||
+      allWorkflowsStatus === 'pending' ||
+      refreshLoading
+    )
+      return;
 
-		if (currentSearch.length < 1) {
-			setSearchLoading(false);
-			setSearchResults([]);
-			return 
-		}
-		
-		setSearchLoading(true);
+    try {
+      const results = searchItemByKeyAndGroupResults(
+        currentSearch,
+        searchItems
+      );
+      // console.log('Search results: ', results)
+      setSearchLoading(false);
+      setSearchResults(results);
+    } catch (error) {
+      console.log(error);
+      setSearchLoading(false);
+    }
 
-		if (
-			allDocumentsStatus === 'pending' ||
-			allTemplatesStatus === 'pending' || 
-			allWorkflowsStatus === 'pending' ||
-			refreshLoading
-		) return
+    // const dataToPost = {
+    // 	company_id: userDetail?.portfolio_info[0]?.org_id,
+    // 	search: currentSearch,
+    // }
+    // searchForItem(dataToPost).then(res => {
+    // 	setSearchLoading(false);
+    // 	setSearchResults(res.data.search_result);
+    // }).catch(error => {
+    // 	console.log(error.response ? error.response.data : error.message);
+    // 	setSearchLoading(false);
+    // 	toast.error(error.response ? error.response.data : error.message)
+    // })
+  }, [
+    currentSearch,
+    searchItems,
+    allDocumentsStatus,
+    allTemplatesStatus,
+    allWorkflowsStatus,
+    refreshLoading,
+  ]);
 
-		try {
-			const results = searchItemByKeyAndGroupResults(currentSearch, searchItems);
-			// console.log('Search results: ', results)
-			setSearchLoading(false);
-			setSearchResults(results);
+  // !CHECK HERE FOR WORKFLOW SEARCH ISHS
+  useEffect(() => {
+    const currentSearchResults = searchResults.slice();
 
-		} catch (error) {
-			console.log(error)
-			setSearchLoading(false);
-		}
-		
-		// const dataToPost = {
-		// 	company_id: userDetail?.portfolio_info[0]?.org_id,
-		// 	search: currentSearch,
-		// }
-		// searchForItem(dataToPost).then(res => {
-		// 	setSearchLoading(false);
-		// 	setSearchResults(res.data.search_result);
-		// }).catch(error => {
-		// 	console.log(error.response ? error.response.data : error.message);
-		// 	setSearchLoading(false);
-		// 	toast.error(error.response ? error.response.data : error.message)
-		// })
+    switch (currentSearchOption) {
+      case searchCategories.all:
+        setSearchResultsToDisplay(currentSearchResults);
+        break;
 
-	}, [currentSearch, searchItems, allDocumentsStatus, allTemplatesStatus, allWorkflowsStatus, refreshLoading])
+      case searchCategories.documents:
+        setSearchResultsToDisplay(
+          currentSearchResults.filter(
+            (searchResultItem) => searchResultItem.document_name
+          )
+        );
+        break;
 
-	useEffect(() => {
+      case searchCategories.templates:
+        setSearchResultsToDisplay(
+          currentSearchResults.filter(
+            (searchResultItem) => searchResultItem.template_name
+          )
+        );
+        break;
 
-		const currentSearchResults = searchResults.slice();
+      case searchCategories.workflows:
+        setSearchResultsToDisplay(
+          currentSearchResults.filter(
+            (searchResultItem) => searchResultItem.workflows
+          )
+        );
+        break;
 
-		switch (currentSearchOption) {
-			case searchCategories.all:
-				setSearchResultsToDisplay(currentSearchResults)
-				break;
+      default:
+        console.log('Invalid search option');
+        break;
+    }
+  }, [currentSearchOption, searchResults]);
 
-			case searchCategories.documents:
-				setSearchResultsToDisplay(currentSearchResults.filter(searchResultItem => searchResultItem.document_name))
-				break;
+  const handleRefresh = async () => {
+    if (refreshLoading) return;
 
-			case searchCategories.templates:
-				setSearchResultsToDisplay(currentSearchResults.filter(searchResultItem => searchResultItem.template_name))
-				break;
+    setRefreshLoading(true);
 
-			case searchCategories.workflows:
-				setSearchResultsToDisplay(currentSearchResults.filter(searchResultItem => searchResultItem.workflows))
-				break;
+    const data = {
+      company_id: userDetail?.portfolio_info[0].org_id,
+    };
 
-			default:
-				console.log("Invalid search option")
-				break;
-		}
+    const documentServices = new DocumentServices();
+    const templatesServices = new TemplateServices();
+    const workflowServices = new WorkflowServices();
 
-	}, [currentSearchOption, searchResults])
+    try {
+      const documentsData = (
+        await documentServices.allDocuments(data.company_id)
+      ).data;
+      dispatch(
+        setAllDocuments(
+          documentsData.documents
+            .reverse()
+            .filter(
+              (document) =>
+                document.document_state !== 'trash' &&
+                document.data_type &&
+                document.data_type === userDetail?.portfolio_info[0]?.data_type
+            )
+        )
+      );
+    } catch (error) {
+      toast.info('Refresh failed for documents');
+    }
 
-	const handleRefresh = async () => {
+    try {
+      const templatesData = (
+        await templatesServices.allTemplates(data.company_id)
+      ).data;
+      dispatch(
+        setAllTemplates(
+          templatesData.templates
+            .reverse()
+            .filter(
+              (template) =>
+                template.data_type &&
+                template.data_type === userDetail?.portfolio_info[0]?.data_type
+            )
+        )
+      );
+    } catch (error) {
+      toast.info('Refresh failed for templates');
+    }
 
-		if (refreshLoading) return;
+    try {
+      const workflowsData = (
+        await workflowServices.allWorkflows(data.company_id)
+      ).data;
+      dispatch(
+        setAllWorkflows(
+          workflowsData.workflows.filter(
+            (workflow) =>
+              (workflow?.data_type &&
+                workflow?.data_type ===
+                  userDetail?.portfolio_info[0]?.data_type) ||
+              (workflow.workflows.data_type &&
+                workflow.workflows.data_type ===
+                  userDetail?.portfolio_info[0]?.data_type)
+          )
+        )
+      );
+    } catch (error) {
+      toast.info('Refresh failed for workflows');
+    }
 
-		setRefreshLoading(true);
+    setRefreshLoading(false);
+  };
 
-		const data = {
-			company_id: userDetail?.portfolio_info[0].org_id,
-		};
-	
-		const documentServices = new DocumentServices();
-		const templatesServices = new TemplateServices();
-		const workflowServices = new WorkflowServices();
+  useEffect(() => {
+    if (searchResultsToDisplay.length) {
+      // console.log(searchResultsToDisplay);
+      setFilterDocs(searchResultsToDisplay.filter((res) => res.document_name));
+      setFilterTemps(searchResultsToDisplay.filter((res) => res.template_name));
+      setFilterWorks(searchResultsToDisplay.filter((res) => res.workflows));
+    }
+  }, [searchResultsToDisplay]);
 
-		try {
-			const documentsData = (await documentServices.allDocuments(data.company_id)).data;
-			dispatch(
-				setAllDocuments(
-					documentsData.documents.reverse().filter(document => 
-					document.document_state !== "trash" &&
-					document.data_type && document.data_type === userDetail?.portfolio_info[0]?.data_type
-				  )
-				)
-			);
-		} catch (error) {
-			toast.info('Refresh failed for documents')
-		}
+  useEffect(() => {
+    if (filterDocs || filterTemps || filterWorks) {
+      const maxLength = Math.max(
+        ...[filterDocs.length, filterTemps.length, filterWorks.length]
+      );
+      const filterArr = [
+        { title: 'docs', arr: filterDocs },
+        { title: 'temps', arr: filterTemps },
+        { title: 'works', arr: filterWorks },
+      ];
+      filterArr.forEach(({ title, arr }) => {
+        if (arr.length < maxLength) {
+          let spaces = [];
+          for (let i = maxLength - arr.length; i > 0; i--) spaces.push('');
+          switch (title) {
+            case 'docs':
+              setFilterDocs([...filterDocs, ...spaces]);
+              break;
+            case 'temps':
+              setFilterTemps([...filterTemps, ...spaces]);
+              break;
+            case 'works':
+              setFilterWorks([...filterWorks, ...spaces]);
+              break;
+            default:
+              return;
+          }
+        }
+      });
+      console.log(filterDocs);
+      console.log(filterTemps);
+      console.log(filterWorks);
+    }
+  }, [filterDocs, filterTemps, filterWorks]);
 
-		try {
-			const templatesData = (await templatesServices.allTemplates(data.company_id)).data;
-			dispatch(
-				setAllTemplates(
-				  templatesData.templates.reverse().filter(template => 
-					template.data_type && template.data_type === userDetail?.portfolio_info[0]?.data_type
-				  )
-				)
-			);
-		} catch (error) {
-			toast.info('Refresh failed for templates')
-		}
+  return (
+    <>
+      <WorkflowLayout>
+        <div className={styles.search__Page__Container}>
+          <ManageFiles
+            title='Search for Documents, Templates and Workflows'
+            contentBoxClassName={styles.search__Manage__Files__Content}
+            removePageSuffix={true}
+          >
+            <div className={styles.header__Section}>
+              <form
+                onSubmit={(e) => e.preventDefault()}
+                className={styles.search__box}
+              >
+                <button type='submit'>
+                  {searchLoading ? (
+                    <LoadingSpinner
+                      color={'#61ce70'}
+                      width={'1rem'}
+                      height={'1rem'}
+                    />
+                  ) : (
+                    <>
+                      <i>
+                        <FaSearch />
+                      </i>
+                    </>
+                  )}
+                </button>
+                <input
+                  value={currentSearch}
+                  placeholder='Type here to search'
+                  onChange={(e) => handleSearchInputChange(e.target.value)}
+                />
+              </form>
+              <button className={styles.refresh__btn} onClick={handleRefresh}>
+                {refreshLoading ? (
+                  <LoadingSpinner
+                    color={'white'}
+                    width={'1rem'}
+                    height={'1rem'}
+                  />
+                ) : (
+                  <IoIosRefresh />
+                )}
+                <span>Refresh</span>
+              </button>
+            </div>
+            <div className={styles.minified__Search__Container}>
+              {searchLoading ? (
+                <p>{`Please wait.${
+                  refreshLoading
+                    ? ' It might take awhile as items are being refreshed'
+                    : ''
+                }...`}</p>
+              ) : currentSearch.length < 1 ? (
+                <></>
+              ) : (
+                <>
+                  <div className={styles.mini__Select__Row}>
+                    <label>
+                      <input
+                        type={'radio'}
+                        checked={
+                          currentSearchOption === searchCategories.all
+                            ? true
+                            : false
+                        }
+                        value={searchCategories.all}
+                        onChange={(e) => setCurrentSearchOption(e.target.value)}
+                      />
+                      All
+                    </label>
+                    <label>
+                      <input
+                        type={'radio'}
+                        checked={
+                          currentSearchOption === searchCategories.documents
+                            ? true
+                            : false
+                        }
+                        value={searchCategories.documents}
+                        onChange={(e) => setCurrentSearchOption(e.target.value)}
+                      />
+                      Documents
+                    </label>
+                    <label>
+                      <input
+                        type={'radio'}
+                        checked={
+                          currentSearchOption === searchCategories.templates
+                            ? true
+                            : false
+                        }
+                        value={searchCategories.templates}
+                        onChange={(e) => setCurrentSearchOption(e.target.value)}
+                      />
+                      Templates
+                    </label>
+                    <label>
+                      <input
+                        type={'radio'}
+                        checked={
+                          currentSearchOption === searchCategories.workflows
+                            ? true
+                            : false
+                        }
+                        value={searchCategories.workflows}
+                        onChange={(e) => setCurrentSearchOption(e.target.value)}
+                      />
+                      Workflows
+                    </label>
+                  </div>
 
-		try {
-			const workflowsData = (await workflowServices.allWorkflows(data.company_id)).data;
-			dispatch(
-				setAllWorkflows(
-				  workflowsData.workflows.filter(workflow => 
-					(
-						workflow?.data_type &&
-						workflow?.data_type ===
-						  userDetail?.portfolio_info[0]?.data_type
-					) || 
-					(
-					workflow.workflows.data_type &&
-						workflow.workflows.data_type ===
-						userDetail?.portfolio_info[0]?.data_type
-					)
-				  )
-				)
-			);
-		} catch (error) {
-			toast.info('Refresh failed for workflows')
-		}
+                  {searchResultsToDisplay.length < 1 ? (
+                    <p>
+                      No{' '}
+                      {currentSearchOption === searchCategories.all
+                        ? 'items'
+                        : currentSearchOption}{' '}
+                      found matching {currentSearch}
+                    </p>
+                  ) : currentSearchOption === searchCategories.all ? (
+                    <div className={`${styles.all__search__result__wrapper}`}>
+                      <div className={`${styles.all__search__result__header}`}>
+                        <span>documents</span>
+                        <span>templates</span>
+                        <span>workflows</span>
+                      </div>
 
-		setRefreshLoading(false);
-	}
+                      <div className={`${styles.all__search__result__main}`}>
+                        <article
+                          className={`${styles.all__search__result__opts}`}
+                        >
+                          {filterDocs.map((doc) => {
+                            if (doc) {
+                              return (
+                                <button
+                                  className={`${styles.all__search__result__btn} `}
+                                  id={doc._id}
+                                  onClick={() => handleSearchItemClick(doc)}
+                                >
+                                  {doc.document_name}
+                                </button>
+                              );
+                            }
+                            return <span>{doc}</span>;
+                          })}
+                        </article>
 
-	return <>
-		<WorkflowLayout>
-			<div className={styles.search__Page__Container}>
-				<ManageFiles title="Search for Documents, Templates and Workflows" contentBoxClassName={styles.search__Manage__Files__Content} removePageSuffix={true}>
-					<div className={styles.header__Section}>
-						<form onSubmit={(e) => e.preventDefault()} className={styles.search__box}>
-							<button type="submit">
-								{
-									searchLoading ? <LoadingSpinner color={"#61ce70"} width={"1rem"} height={"1rem"} /> : <>
-										<i>
-											<FaSearch />
-										</i>
-									</>
-								}
-							</button>
-							<input value={currentSearch} placeholder="Type here to search" onChange={(e) => handleSearchInputChange(e.target.value)} />
-						</form>
-						<button className={styles.refresh__btn} onClick={handleRefresh}>
-							{
-								refreshLoading ? <LoadingSpinner color={"white"} width={"1rem"} height={"1rem"} /> :
-								<IoIosRefresh />
-							}
-							<span>Refresh</span>
-						</button>
-					</div>
-					<div className={styles.minified__Search__Container}>
-						{
-							searchLoading ? <p>{`Please wait.${refreshLoading ? ' It might take awhile as items are being refreshed' : ''}...`}</p> :
+                        <article
+                          className={`${styles.all__search__result__opts}`}
+                        >
+                          {filterTemps.map((temp) => {
+                            if (temp) {
+                              return (
+                                <button
+                                  className={`${styles.all__search__result__btn} `}
+                                  id={temp._id}
+                                  onClick={() => handleSearchItemClick(temp)}
+                                >
+                                  {temp.template_name}
+                                </button>
+                              );
+                            }
+                            return <span>{temp}</span>;
+                          })}
+                        </article>
 
-								currentSearch.length < 1 ? <></> :
-
-									<>
-										<div className={styles.mini__Select__Row}>
-											<label>
-												<input type={"radio"} checked={currentSearchOption === searchCategories.all ? true : false} value={searchCategories.all} onChange={(e) => setCurrentSearchOption(e.target.value)} />
-												All
-											</label>
-											<label>
-												<input type={"radio"} checked={currentSearchOption === searchCategories.documents ? true : false} value={searchCategories.documents} onChange={(e) => setCurrentSearchOption(e.target.value)} />
-												Documents
-											</label>
-											<label>
-												<input type={"radio"} checked={currentSearchOption === searchCategories.templates ? true : false} value={searchCategories.templates} onChange={(e) => setCurrentSearchOption(e.target.value)} />
-												Templates
-											</label>
-											<label>
-												<input type={"radio"} checked={currentSearchOption === searchCategories.workflows ? true : false} value={searchCategories.workflows} onChange={(e) => setCurrentSearchOption(e.target.value)} />
-												Workflows
-											</label>
-										</div>
-
-										{
-											searchResultsToDisplay.length < 1 ? <p>No {currentSearchOption === searchCategories.all ? "items" : currentSearchOption} found matching {currentSearch}</p> : <>
-												{
-													React.Children.toArray(searchResultsToDisplay.map(searchResultItem => {
-														return <button id={searchResultItem._id} onClick={() => handleSearchItemClick(searchResultItem)}>
-															<span className={
-																`${styles.search__Item__Info} 
-                                                    ${searchResultItem.document_name ? styles.search__Item__Doc :
-																	searchResultItem.template_name ? styles.search__Item__Temp :
-																		searchResultItem.workflows ? styles.search__Item__Workf : ''
-																}`
-															}>
-																{
-																	searchResultItem.document_name ? "Document" :
-																		searchResultItem.template_name ? "Template" :
-																			searchResultItem.workflows ? "Workflow" :
-																				""
-																}
-															</span>
-															<span>
-																{
-																	searchResultItem.document_name ?
-																		searchResultItem.document_name
-																		:
-																		searchResultItem.template_name ?
-																			searchResultItem.template_name
-																			:
-																			searchResultItem.workflows ?
-																				searchResultItem.workflows?.workflow_title
-																				:
-																				""
-																}
-																<Tooltip
-																	anchorId={searchResultItem._id}
-																	content={
-																		searchResultItem.document_name ? searchResultItem.document_name :
-																			searchResultItem.template_name ? searchResultItem.template_name :
-																				searchResultItem.workflows?.workflow_title ? searchResultItem.workflows?.workflow_title :
-																					""
-																	}
-																	place="top"
-																/>
-															</span>
-														</button>
-													}))
-												}
-											</>
-										}
-									</>
-						}
-					</div>
-				</ManageFiles>
-			</div>
-		</WorkflowLayout>
-	</>
-}
+                        <article
+                          className={`${styles.all__search__result__opts}`}
+                        >
+                          {filterWorks.map((work) => {
+                            if (work) {
+                              return (
+                                <button
+                                  className={`${styles.all__search__result__btn} `}
+                                  id={work._id}
+                                  onClick={() => handleSearchItemClick(work)}
+                                >
+                                  {work.workflows.workflow_title}
+                                </button>
+                              );
+                            }
+                            return <span>{work}</span>;
+                          })}
+                        </article>
+                      </div>
+                    </div>
+                  ) : (
+                    <>
+                      {React.Children.toArray(
+                        searchResultsToDisplay.map((searchResultItem) => {
+                          return (
+                            <button
+                              id={searchResultItem._id}
+                              onClick={() =>
+                                handleSearchItemClick(searchResultItem)
+                              }
+                            >
+                              <span
+                                className={`${styles.search__Item__Info} 
+                                                    ${
+                                                      searchResultItem.document_name
+                                                        ? styles.search__Item__Doc
+                                                        : searchResultItem.template_name
+                                                        ? styles.search__Item__Temp
+                                                        : searchResultItem.workflows
+                                                        ? styles.search__Item__Workf
+                                                        : ''
+                                                    }`}
+                              >
+                                {searchResultItem.document_name
+                                  ? 'Document'
+                                  : searchResultItem.template_name
+                                  ? 'Template'
+                                  : searchResultItem.workflows
+                                  ? 'Workflow'
+                                  : ''}
+                              </span>
+                              <span>
+                                {searchResultItem.document_name
+                                  ? searchResultItem.document_name
+                                  : searchResultItem.template_name
+                                  ? searchResultItem.template_name
+                                  : searchResultItem.workflows
+                                  ? searchResultItem.workflows?.workflow_title
+                                  : ''}
+                                <Tooltip
+                                  anchorId={searchResultItem._id}
+                                  content={
+                                    searchResultItem.document_name
+                                      ? searchResultItem.document_name
+                                      : searchResultItem.template_name
+                                      ? searchResultItem.template_name
+                                      : searchResultItem.workflows
+                                          ?.workflow_title
+                                      ? searchResultItem.workflows
+                                          ?.workflow_title
+                                      : ''
+                                  }
+                                  place='top'
+                                />
+                              </span>
+                            </button>
+                          );
+                        })
+                      )}
+                    </>
+                  )}
+                </>
+              )}
+            </div>
+          </ManageFiles>
+        </div>
+      </WorkflowLayout>
+    </>
+  );
+};
 
 export default SearchPage;
 
@@ -357,7 +586,6 @@ export default SearchPage;
 // 	];
 // 	return Promise.resolve({ data: { search_result: dummyArray } });
 // };
-
 
 // useEffect(() => {
 // 	if (!searchLoading) return;
