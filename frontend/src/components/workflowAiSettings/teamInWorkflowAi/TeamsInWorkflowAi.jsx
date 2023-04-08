@@ -70,7 +70,13 @@ const TeamsInWorkflowAi = () => {
           .join('')
           .split(', ');
 
-      const portfolio_list = userDetail.userportfolio.filter((port) => {
+      const portfolio_list = userDetail?.portfolio_info?.find(item => item.product === "Workflow AI")?.member_type === "owner" ?
+      userDetail.userportfolio.filter((port) => {
+        return selectedPortfolios.find(
+          (sPort) => sPort.content === port.portfolio_name
+        );
+      }) :
+      userDetail?.selected_product?.userportfolio.filter((port) => {
         return selectedPortfolios.find(
           (sPort) => sPort.content === port.portfolio_name
         );
