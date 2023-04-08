@@ -335,8 +335,9 @@ export const appSlice = createSlice({
       const updatedTeamsForProcess =
         state.teamsSelectedSelectedForProcess.filter((team) => {
           if (
-            team.id === action.payload.id &&
-            team.stepIndex === action.payload.stepIndex
+            team._id === action.payload._id &&
+            team.stepIndex === action.payload.stepIndex &&
+            team.selectedFor === action.payload.selectedFor
           )
             return null;
           return team;

@@ -38,6 +38,7 @@
   font-weight: 600;
   color: var(--e-global-color-1342d1f);
   text-transform: capitalize;
+  text-align: center;
 }
 
 .selected {
@@ -47,3 +48,10 @@
 /* .selected__doc__box ol {
   border: solid red 1px;
 } */
+
+.continue__Text {
+  font-weight: 400;
+  color: var(--e-global-color-text);
+  font-size: 0.875rem;
+  text-transform: none;
+}
