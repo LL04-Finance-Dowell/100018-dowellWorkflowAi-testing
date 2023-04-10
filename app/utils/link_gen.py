@@ -7,15 +7,15 @@ from app.constants import EDITOR_API
 headers = {"Content-Type": "application/json"}
 
 
-def to_editor(document_id, doc_map, doc_rights, user, process_id, role, process_type):
-    if process_type == "document":
+def to_editor(item_id, item_map, item_rights, user, process_id, user_role, item_type):
+    if item_type == "document":
         collection = "DocumentReports"
         document = "documentreports"
         action = "document"
         field = "document_name"
         team_member_id = "11689044433"
 
-    elif process_type == "template":
+    elif item_type == "template":
         collection = "TemplateReports"
         document = "templatereports"
         action = "template"
@@ -25,9 +25,7 @@ def to_editor(document_id, doc_map, doc_rights, user, process_id, role, process_
     payload = {
         "product_name": "workflowai",
         "details": {
-            "_id": document_id,
             "field": "document_name",
-            "action": process_type,
             "cluster": "Documents",
             "database": "Documentation",
             "collection": collection,
@@ -35,11 +33,13 @@ def to_editor(document_id, doc_map, doc_rights, user, process_id, role, process_
             "team_member_ID": team_member_id,
             "function_ID": "ABCDE",
             "command": "update",
+            "_id": item_id,
             "flag": "signing",
+            "action": item_type,
             "authorized": user,
-            "document_map": doc_map,
-            "document_right": doc_rights,
-            "role": role,
+            "document_map": item_map,
+            "document_right": item_rights,
+            "role": user_role,
             "process_id": process_id,
             "update_field": {"document_name": "", "content": "", "page": ""},
         },
@@ -53,7 +53,6 @@ def to_editor(document_id, doc_map, doc_rights, user, process_id, role, process_
 
 
 def editor(item_id, item_type):
-
     if item_type == "document":
         collection = "DocumentReports"
         document = "documentreports"
@@ -89,6 +88,6 @@ def editor(item_id, item_type):
     try:
         response = requests.post(EDITOR_API, data=json.dumps(payload), headers=headers)
     except ConnectionError():
-        return 
+        return
 
     return response.json()

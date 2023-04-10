@@ -247,13 +247,13 @@ def verify(process, auth_step_role, location_data, user_name):
 
         #  generate document link.
         doc_link = link_gen.to_editor(
-            document_id=clone_id,
-            doc_map=doc_map,
-            doc_rights=right,
+            item_id=clone_id,
+            item_map=doc_map,
+            item_rights=right,
             user=user,
             process_id=process["_id"],
-            role=role,
-            process_type=process["process_type"],
+            user_role=role,
+            item_type=process["process_type"],
         )
 
         return doc_link
