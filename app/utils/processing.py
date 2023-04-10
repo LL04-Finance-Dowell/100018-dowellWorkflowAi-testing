@@ -348,7 +348,7 @@ def background(process_id, item_id, item_type):
                     for docid in docs:
                         for usr in step_two_users:
                             viewers.append(usr)
-                            authorize_document(docid, viewers, process["_id"])
+                            authorize(docid, viewers, process["_id"], item_type)
 
                             # update to clone map
                             step_two["stepDocumentCloneMap"].append({usr: docid})
@@ -424,7 +424,7 @@ def background(process_id, item_id, item_type):
                     for docid in docs:
                         for usr in step_three_users:
                             viewers.append(usr)
-                            authorize_document(docid, viewers, process["_id"])
+                            authorize(docid, viewers, process["_id"], item_type)
 
                             step_three["stepDocumentCloneMap"].append({usr: docid})
 
@@ -497,7 +497,7 @@ def background(process_id, item_id, item_type):
                     for docid in docs:
                         for usr in step_four_users:
                             viewers.append(usr)
-                            authorize_document(docid, viewers, process["_id"])
+                            authorize(docid, viewers, process["_id"], item_type)
 
                             step_four["stepDocumentCloneMap"].append({usr: docid})
 
