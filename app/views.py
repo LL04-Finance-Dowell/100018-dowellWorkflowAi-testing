@@ -296,18 +296,18 @@ def finalize_or_reject(request, process_id):
     item_type = request.data["item_type"]
 
     # get document
-    # if item_type == "document":
-    #     try:
-    #         document = get_document_object(document_id=request.data["document_id"])
-    #     except ConnectionError:
-    #         return Response("Something went wrong!", status.HTTP_500_INTERNAL_SERVER_ERROR)
+    if item_type == "document":
+        try:
+            document = get_document_object(item_id)
+        except ConnectionError:
+            return Response("Something went wrong!", status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-    # # check state.
-    # if document["document_state"] == "finalized":
-    #     return Response("document has already been finalized", status.HTTP_200_OK)
+    # check state.
+    if document["document_state"] == "finalized":
+        return Response("document has already been finalized", status.HTTP_200_OK)
 
-    # if document["document_state"] == "rejected":
-    #     return Response("document has already been rejected", status.HTTP_200_OK)
+    if document["document_state"] == "rejected":
+        return Response("document has already been rejected", status.HTTP_200_OK)
 
     # # mark the doc as complete
 
