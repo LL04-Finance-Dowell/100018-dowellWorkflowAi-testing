@@ -300,7 +300,9 @@ def finalize_or_reject(request, process_id):
         try:
             document = get_document_object(item_id)
         except ConnectionError:
-            return Response("Something went wrong!", status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response(
+                "Something went wrong!", status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
 
     # check state.
     if document["document_state"] == "finalized":
@@ -525,15 +527,11 @@ def workflow_detail(request, workflow_id):
     if request.method == "GET":
         data = get_wf_object(workflow_id)
         if not data:
-            return Response(
-                {"workflow": [], "message": "Failed to Load Workflow."},
-                status=status.HTTP_204_NO_CONTENT,
+            return Response("Failed to Load Workflow",
+                status=status.HTTP_204_NO_CONTENT
             )
         else:
-            return Response(
-                {"workflow": data},
-                status=status.HTTP_200_OK,
-            )
+            return Response(data, status=status.HTTP_200_OK)
 
     if request.method == "PUT":
         """Update content of a workflow"""
@@ -1021,7 +1019,7 @@ def get_team_data(request, team_id):
             "Failed to Load Team Data", status.HTTP_500_INTERNAL_SERVER_ERROR
         )
 
-    return Response(teams,status=status.HTTP_200_OK)
+    return Response(teams, status=status.HTTP_200_OK)
 
 
 @api_view(["POST", "GET"])
