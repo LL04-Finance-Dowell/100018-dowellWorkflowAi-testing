@@ -323,7 +323,7 @@ const SelectMembersToAssign = ({ currentStepIndex, stepsPopulated, currentEnable
   const updateTeamAndPortfoliosInTeamForProcess = (actionType, team, currentUserHeader) => {
     if (actionType === 'add') {
       dispatch(setTeamsSelectedSelectedForProcess({ ...team, stepIndex: currentStepIndex, selectedFor: currentUserHeader }));
-      team.portfolio_list.forEach(portfolio => {
+      team?.portfolio_list.forEach(portfolio => {
         if (currentUserHeader === "Team") dispatch(setTeamMembersSelectedForProcess({ member: portfolio.username, portfolio: portfolio.portfolio_name, stepIndex: currentStepIndex }))
         if (currentUserHeader === "Users") dispatch(setUserMembersSelectedForProcess({ member: portfolio.username, portfolio: portfolio.portfolio_name, stepIndex: currentStepIndex }))
         if (currentUserHeader === "Public") dispatch(setPublicMembersSelectedForProcess({ member: portfolio.username, portfolio: portfolio.portfolio_name, stepIndex: currentStepIndex }))
@@ -332,7 +332,7 @@ const SelectMembersToAssign = ({ currentStepIndex, stepsPopulated, currentEnable
 
     if (actionType === 'remove') {
       dispatch(removeFromTeamsSelectedSelectedForProcess({ _id: team._id, stepIndex: currentStepIndex, selectedFor: currentUserHeader }));
-      team.portfolio_list.forEach(portfolio => {
+      team?.portfolio_list.forEach(portfolio => {
         if (currentUserHeader === "Team") dispatch(removeFromTeamMembersSelectedForProcess({ member: portfolio.username, portfolio: portfolio.portfolio_name, stepIndex: currentStepIndex }))
         if (currentUserHeader === "Users") dispatch(removeFromUserMembersSelectedForProcess({ member: portfolio.username, portfolio: portfolio.portfolio_name, stepIndex: currentStepIndex }))
         if (currentUserHeader === "Public") dispatch(removeFromPublicMembersSelectedForProcess({ member: portfolio.username, portfolio: portfolio.portfolio_name, stepIndex: currentStepIndex }))  
@@ -452,7 +452,7 @@ const SelectMembersToAssign = ({ currentStepIndex, stepsPopulated, currentEnable
                   {...register("teams")}
                   size={current.teams.length === 1 ? current.teams.length + 1 : current.teams.length}
                   className={styles.open__select}
-                  onChange={handleSelectTeam}
+                  onChange={({target}) => handleSelectTeam(JSON.parse(target.value))}
                   style={{ 
                     pointerEvents: 
                       userTypeOptionsEnabled.find(option => option.name === current.header && option.stepIndex === currentStepIndex) && 
@@ -479,7 +479,6 @@ const SelectMembersToAssign = ({ currentStepIndex, stepsPopulated, currentEnable
                     <option 
                       // key={item.id} 
                       value={JSON.stringify(item)}
-                      onClick={() => handleSelectTeam(item)}
                       className={teamsSelectedSelectedForProcess.find(team => team._id === item._id && team.stepIndex === currentStepIndex && team.selectedFor === current.header) ? styles.team__Selected : styles.team__Not__Selected}
                     >
                       {item.team_name}

@@ -92,6 +92,7 @@ const ProcessDocument = () => {
 
       copyOfCurrentStep.stepPublicMembers = publicMembersSelectedForProcess.filter(selectedUser => selectedUser.stepIndex === currentIndex).map(user => {
         const copyOfUserItem = { ...user }
+        if (Array.isArray(copyOfUserItem.member)) copyOfUserItem.member = copyOfUserItem.member[0];
         delete copyOfUserItem.stepIndex;
 
         return copyOfUserItem
@@ -99,6 +100,7 @@ const ProcessDocument = () => {
 
       copyOfCurrentStep.stepTeamMembers = teamMembersSelectedForProcess.filter(selectedUser => selectedUser.stepIndex === currentIndex).map(user => {
         const copyOfUserItem = { ...user }
+        if (Array.isArray(copyOfUserItem.member)) copyOfUserItem.member = copyOfUserItem.member[0];
         delete copyOfUserItem.stepIndex;
 
         return copyOfUserItem
@@ -106,6 +108,7 @@ const ProcessDocument = () => {
 
       copyOfCurrentStep.stepUserMembers = userMembersSelectedForProcess.filter(selectedUser => selectedUser.stepIndex === currentIndex).map(user => {
         const copyOfUserItem = { ...user }
+        if (Array.isArray(copyOfUserItem.member)) copyOfUserItem.member = copyOfUserItem.member[0];
         delete copyOfUserItem.stepIndex;
 
         return copyOfUserItem
