@@ -1015,14 +1015,13 @@ def get_team_data(request, team_id):
     """Get specific Team"""
 
     try:
-        return Response(
-            get_team(team_id),
-            status=status.HTTP_200_OK,
-        )
+        teams = get_team(team_id)
     except:
         return Response(
             "Failed to Load Team Data", status.HTTP_500_INTERNAL_SERVER_ERROR
         )
+
+    return Response(teams,status=status.HTTP_200_OK)
 
 
 @api_view(["POST", "GET"])
