@@ -360,9 +360,9 @@ def background(process_id, item_id, item_type):
                     copies += [
                         {
                             member["member"]: cloning.document(
-                                document_id=document_id,
+                                document_id=item_id,
                                 auth_viewer=member["member"],
-                                parent_id=process["parent_document_id"],
+                                parent_id=process["parent_id"],
                                 process_id=process["_id"],
                             )
                         }
@@ -439,7 +439,7 @@ def background(process_id, item_id, item_type):
                                 usr: cloning.document(
                                     doc,
                                     usr,
-                                    process["parent_document_id"],
+                                    process["parent_id"],
                                     process["_id"],
                                 )
                             }
@@ -512,7 +512,7 @@ def background(process_id, item_id, item_type):
                                 usr: cloning.document(
                                     doc,
                                     usr,
-                                    process["parent_document_id"],
+                                    process["parent_id"],
                                     process["_id"],
                                 )
                             }
@@ -531,13 +531,13 @@ def background(process_id, item_id, item_type):
     # updating the document clone list
     clone_ids = [d["member"] for d in copies if "member" in d]
     if clone_ids:
-        document = get_document_object(document_id=process["parent_document_id"])
+        document = get_document_object(document_id=process["parent_id"])
         data = document["clone_list"]
         for cid in clone_ids:
             data.append(cid)
 
         update_document_clone(
-            document_id=process["parent_document_id"], clone_list=data
+            document_id=process["parent_id"], clone_list=data
         )
     # update the process
     update_wf_process(
