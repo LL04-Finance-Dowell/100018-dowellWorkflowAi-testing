@@ -527,12 +527,12 @@ def workflow_detail(request, workflow_id):
         if not data:
             return Response(
                 {"workflow": [], "message": "Failed to Load Workflow."},
-                status=status.HTTP_200_OK,
+                status=status.HTTP_204_NO_CONTENT,
             )
         else:
             return Response(
                 {"workflow": data},
-                status=status.HTTP_201_CREATED,
+                status=status.HTTP_200_OK,
             )
 
     if request.method == "PUT":
