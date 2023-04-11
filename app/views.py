@@ -1,5 +1,5 @@
 import ast
-import json
+import json,re
 
 import requests
 from rest_framework import status
@@ -670,9 +670,10 @@ def get_document_content(request, document_id):
     sorted_content = []
     for dicts in content:
         for key, val in dicts.items():
-            # print(dicts[key])
             sorted_content.append(
-                {key: sorted(dicts[key], key=lambda x: int(x["id"][1:]))}
+                
+
+                {key: sorted(dicts[key], key=lambda x: int([a for a in re.findall('\d+', x["id"])][-1]))}
             )
 
     return Response(sorted_content, status=status.HTTP_200_OK)
