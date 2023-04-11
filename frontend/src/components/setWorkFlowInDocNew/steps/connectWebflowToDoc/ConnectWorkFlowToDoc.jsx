@@ -75,9 +75,7 @@ const ConnectWorkFlowToDoc = ({ stepsPopulated }) => {
     setShowSteps(singleShowStepArr);
 
     
-    if (stepsPopulated) return
-
-    if (!docCurrentWorkflow) return;
+    if (!docCurrentWorkflow || stepsPopulated) return
 
     const [stepsForWorkflow, stepsObj] = [
       [],
