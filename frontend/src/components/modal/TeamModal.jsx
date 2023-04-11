@@ -49,7 +49,7 @@ function MyModal(props) {
     setDetails('');
     setUniversalCode('');
 
-    // !props.onSubmit(team) This method's name changes the argument to 'event';
+    // !props.onSubmit(team) <-- That method's name changes the argument to 'event';
     props.handleAddTeam(team);
   };
 

@@ -18,11 +18,15 @@ import { Collapse } from 'react-bootstrap';
 import TeamModal from '../modal/TeamModal';
 
 import { useSelector, useDispatch } from 'react-redux';
-import { setTeamsInWorkflowAITeams } from '../../features/app/appSlice';
+import {
+  setTeamInWorkflowAITeams,
+  setTeamsInWorkflowAITeams,
+} from '../../features/app/appSlice';
 
-import { teamsInWorkflowAITeams } from '../workflowAiSettings/veriables';
+// import { teamsInWorkflowAITeams } from '../workflowAiSettings/veriables';
 
 import { v4 } from 'uuid';
+import { useAppContext } from '../../contexts/AppContext';
 
 const InfoBox = ({
   boxId,
@@ -43,6 +47,8 @@ const InfoBox = ({
   const { teamsInWorkflowAI } = useSelector((state) => state.app);
   const { userDetail } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
+  const { workflowTeams } = useAppContext();
+  const [fetchedTeams, setFetchedTeams] = useState([]);
 
   const handleAddTeam = (team) => {
     setTeam(team);
@@ -76,28 +82,77 @@ const InfoBox = ({
     setItemsToDisplay(itemsMatchingSearchValue);
   }, [searchValue]);
 
+  const setupTeamInfo = (
+    name,
+    code,
+    spec,
+    details,
+    universalCode,
+    _id,
+    ind
+  ) => {
+    const allTeams = teamsInWorkflowAI[0].children[0].column[0].items;
+    const count = ind ? ind + 1 : allTeams.length + 1;
+    return {
+      _id: _id || v4(),
+      content: `Team ${count} (${name}, ${code}, ${spec}, ${details}, ${universalCode})`,
+    };
+  };
+
   // *Adds new team to app
   useEffect(() => {
     if (team.name) {
-      const allTeams = teamsInWorkflowAI[0].children[0].column[0].items;
-      const newTeam = {
-        _id: v4(),
-        content: `Team ${allTeams.length + 1} (${team.name}, ${team.code}, ${
-          team.spec
-        }, ${team.details}, ${team.universalCode})`,
-      };
-      // isSelected: !teamsInWorkflowAI[0].children[0].column[0].items.length,
+      const newTeam = setupTeamInfo(
+        team.name,
+        team.code,
+        team.spec,
+        team.details,
+        team.universalCode
+      );
 
-      dispatch(setTeamsInWorkflowAITeams(newTeam));
+      dispatch(setTeamInWorkflowAITeams(newTeam));
       setTeam({});
     }
   }, [team]);
 
-  // useEffect(() => {
-  //   if (onChange && itemsToDisplay.length) {
-  //     onChange({ item: itemsToDisplay[0], title, boxId });
-  //   }
-  // }, [itemsToDisplay]);
+  // *Populate teamsInWorkflowAITeams with fetched teams
+  useEffect(() => {
+    if (workflowTeams.length && !fetchedTeams.length) {
+      let teams = [];
+      workflowTeams.forEach((team, ind) => {
+        const {
+          team_name,
+          team_code,
+          team_spec,
+          details,
+          universal_code,
+          _id,
+        } = team;
+        const setTeam = setupTeamInfo(
+          team_name,
+          team_code,
+          team_spec,
+          details,
+          universal_code,
+          _id,
+          ind
+        );
+        teams.push(setTeam);
+      });
+      setFetchedTeams(teams);
+      // console.log(workflowTeams);
+    }
+  }, [workflowTeams]);
+
+  useEffect(() => {
+    if (fetchedTeams.length) dispatch(setTeamsInWorkflowAITeams(fetchedTeams));
+  }, [fetchedTeams]);
+
+  //TODO DELETE LATER
+  useEffect(() => {
+    // console.log('tIWFAI: ', teamsInWorkflowAI);
+    // console.log(items);
+  }, [teamsInWorkflowAI]);
 
   return (
     <InfoBoxContainer boxType={boxType} className='info-box-container'>
@@ -206,7 +261,9 @@ const InfoBox = ({
                       id={item.content}
                       name={title}
                       value={item._id}
-                      onChange={() => onChange({ item, title, boxId, type })}
+                      onChange={(e) =>
+                        onChange({ item, title, boxId, type }, e)
+                      }
                     />
                     <label htmlFor='javascript'>{item.content}</label>
                   </InfoContentFormText>
@@ -218,12 +275,13 @@ const InfoBox = ({
                   ? itemsToDisplay.map((item) => (
                       <InfoContentFormText key={item._id}>
                         <input
-                          onChange={() =>
-                            onChange({ item, title, boxId, type })
+                          onChange={(e) =>
+                            onChange({ item, title, boxId, type }, e)
                           }
                           /* {...register(item.content)} */
                           checked={item.isSelected ? true : false}
                           type='checkbox'
+                          name={title}
                         />
                         <span key={item._id}>{item.content}</span>
                       </InfoContentFormText>
@@ -232,16 +290,20 @@ const InfoBox = ({
                   ? itemsToDisplay.map((item, ind) => (
                       <InfoContentFormText key={item._id}>
                         <input
-                          onChange={() =>
-                            onChange({ item, title, boxId, type })
+                          onChange={(e) =>
+                            onChange({ item, title, boxId, type }, e)
                           }
                           /* {...register(item.content)} */
                           type={'checkbox'}
                           value={
-                            userDetail?.portfolio_info?.find(item => item.product === "Workflow AI")?.member_type === "owner" ?
-                            userDetail?.userportfolio[ind] :
-                            userDetail?.selected_product?.userportfolio[ind]
+                            userDetail?.portfolio_info?.find(
+                              (item) => item.product === 'Workflow AI'
+                            )?.member_type === 'owner'
+                              ? userDetail?.userportfolio[ind]
+                              : userDetail?.selected_product?.userportfolio[ind]
                           }
+                          name={title}
+                          checked={item.isSelected ? true : false}
                         />
                         <span key={item._id}>{item.content}</span>
                       </InfoContentFormText>

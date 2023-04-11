@@ -3,16 +3,17 @@ import { useForm } from 'react-hook-form';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   setTeamsInWorkflowAI,
-  setTeamsInWorkflowAIPortfolios,
+  setPortfoliosInWorkflowAITeams,
 } from '../../../features/app/appSlice';
 import { setIsSelected } from '../../../utils/helpers';
 import InfoBox from '../../infoBox/InfoBox';
 import SubmitButton from '../../submitButton/SubmitButton';
-import { teamsInWorkflowAI } from '../veriables';
+// import { teamsInWorkflowAI } from '../veriables';
 import workflowAiSettingsStyles from '../workflowAiSettings.module.css';
 import { v4 } from 'uuid';
 import { WorkflowSettingServices } from '../../../services/workflowSettingServices';
 import { toast } from 'react-toastify';
+import { useAppContext } from '../../../contexts/AppContext';
 
 const TeamsInWorkflowAi = () => {
   const dispatch = useDispatch();
@@ -23,22 +24,26 @@ const TeamsInWorkflowAi = () => {
   const { teamsInWorkflowAI } = useSelector((state) => state.app);
   const { userDetail } = useSelector((state) => state.auth);
   const [userPortfolios, setUserPortfolios] = useState(
-    userDetail?.portfolio_info?.find(item => item.product === "Workflow AI")?.member_type === "owner" ?
-    userDetail?.userportfolio.map((port) => ({
-      _id: v4(),
-      content: port.portfolio_name,
-    })) :
-    userDetail?.selected_product?.userportfolio.map((portfolio) => { 
-      return { 
-        _id: crypto.randomUUID(), 
-        content: portfolio.portfolio_name 
-      }
-    })
+    userDetail?.portfolio_info?.find((item) => item.product === 'Workflow AI')
+      ?.member_type === 'owner'
+      ? userDetail?.userportfolio.map((port) => ({
+          _id: v4(),
+          content: port.portfolio_name,
+        }))
+      : userDetail?.selected_product?.userportfolio.map((portfolio) => {
+          return {
+            _id: crypto.randomUUID(),
+            content: portfolio.portfolio_name,
+          };
+        })
   );
   const [isValidCreateTeamData, setIsValidCreateTeamData] = useState(false);
   const [isCreatingTeam, setIsCreatingTeam] = useState(false);
+  const { workflowTeams } = useAppContext();
+  const [handleChangeParams, setHandleChangeParams] = useState([]);
+  const [selectedTeamId, setSelectedTeamId] = useState('');
 
-  const handleOnChange = ({ item, title, boxId, type }) => {
+  const dispatchSelectedItems = ({ item, boxId, title, type }) => {
     const selectedItems = setIsSelected({
       items: teamsInWorkflowAI[0].children,
       item,
@@ -46,9 +51,16 @@ const TeamsInWorkflowAi = () => {
       title,
       type,
     });
-    // console.log(selectedItems);
-
     dispatch(setTeamsInWorkflowAI(selectedItems));
+  };
+
+  const handleOnChange = ({ item, title, boxId, type }, e) => {
+    if (e.target.name === 'teams') setSelectedTeamId(e.target.value);
+    setHandleChangeParams([{ item, title, boxId, type }, e]);
+    // dispatchSelectedItems({ item, title, boxId, type });
+
+    // console.log(teamsInWorkflowAI);
+    // console.log(workflowTeams);
   };
 
   const handleCreateNewTeam = async (e) => {
@@ -70,17 +82,20 @@ const TeamsInWorkflowAi = () => {
           .join('')
           .split(', ');
 
-      const portfolio_list = userDetail?.portfolio_info?.find(item => item.product === "Workflow AI")?.member_type === "owner" ?
-      userDetail.userportfolio.filter((port) => {
-        return selectedPortfolios.find(
-          (sPort) => sPort.content === port.portfolio_name
-        );
-      }) :
-      userDetail?.selected_product?.userportfolio.filter((port) => {
-        return selectedPortfolios.find(
-          (sPort) => sPort.content === port.portfolio_name
-        );
-      });
+      const portfolio_list =
+        userDetail?.portfolio_info?.find(
+          (item) => item.product === 'Workflow AI'
+        )?.member_type === 'owner'
+          ? userDetail.userportfolio.filter((port) => {
+              return selectedPortfolios.find(
+                (sPort) => sPort.content === port.portfolio_name
+              );
+            })
+          : userDetail?.selected_product?.userportfolio.filter((port) => {
+              return selectedPortfolios.find(
+                (sPort) => sPort.content === port.portfolio_name
+              );
+            });
 
       data = {
         team_name,
@@ -108,7 +123,12 @@ const TeamsInWorkflowAi = () => {
 
   // *Populate teamsInWorkflowAIPortfolios
   useEffect(() => {
-    dispatch(setTeamsInWorkflowAIPortfolios(userPortfolios));
+    dispatch(
+      setPortfoliosInWorkflowAITeams({
+        type: 'normal',
+        payload: userPortfolios,
+      })
+    );
   }, [userPortfolios]);
 
   useEffect(() => {
@@ -123,6 +143,61 @@ const TeamsInWorkflowAi = () => {
     if (selectedTeam && selectedPortfolios.length)
       setIsValidCreateTeamData(true);
     else setIsValidCreateTeamData(false);
+  }, [teamsInWorkflowAI]);
+
+  useEffect(() => {
+    if (selectedTeamId) {
+      workflowTeams.forEach((team) => {
+        if (selectedTeamId === team._id) {
+          const portfolioItems =
+            teamsInWorkflowAI[0].children[1].column[0].items.map((item) => {
+              if (
+                team.portfolio_list.find(
+                  (port) => port.portfolio_name === item.content
+                )
+              )
+                return item;
+            });
+
+          portfolioItems.forEach((pItem) => {
+            if (pItem) {
+              // const modItem = { ...pItem, isSelected: true };
+              dispatch(
+                setPortfoliosInWorkflowAITeams({
+                  type: 'single',
+                  payload: pItem,
+                })
+              );
+              // console.log(modItem);
+              // console.log(teamsInWorkflowAI);
+            }
+          });
+        }
+      });
+    }
+  }, [selectedTeamId]);
+
+  // !Trying something
+  useEffect(() => {
+    if (handleChangeParams.length) {
+      const [{ item, title, boxId, type }, e] = handleChangeParams;
+
+      if (e.target.name === 'teams') {
+        dispatchSelectedItems({ item, title, boxId, type });
+      } else if (
+        e.target.name === 'portfolios' &&
+        !workflowTeams.find((team) => team._id === selectedTeamId)
+      ) {
+        dispatchSelectedItems({ item, title, boxId, type });
+      }
+      // console.log(selectedTeamId);
+      // console.log(workflowTeams);
+      // console.log(handleChangeParams);
+    }
+  }, [selectedTeamId, handleChangeParams, workflowTeams]);
+
+  useEffect(() => {
+    console.log('teamin: ', teamsInWorkflowAI);
   }, [teamsInWorkflowAI]);
 
   return (

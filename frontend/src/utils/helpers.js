@@ -25,7 +25,6 @@ export const setIsSelected = ({ items, item, boxId, title, type }) => {
                       colItem._id === item._id
                         ? {
                             ...colItem,
-                            // isSelected: colItem.isSelected ? false : true,
                             isSelected: !colItem.isSelected,
                           }
                         : colItem

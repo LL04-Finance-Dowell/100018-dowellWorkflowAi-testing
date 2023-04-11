@@ -311,16 +311,42 @@ export const appSlice = createSlice({
         children: action.payload,
       }));
     },
-    setTeamsInWorkflowAITeams: (state, action) => {
+    // *setTeamInWorkflowAITeams sets the individual item in items
+    setTeamInWorkflowAITeams: (state, action) => {
       state.teamsInWorkflowAI[0].children[0].column[0].items = [
         ...state.teamsInWorkflowAI[0].children[0].column[0].items,
         action.payload,
       ];
     },
-    setTeamsInWorkflowAIPortfolios: (state, action) => {
-      state.teamsInWorkflowAI[0].children[1].column[0].items = [
-        ...action.payload,
-      ];
+    setPortfoliosInWorkflowAITeams: (state, action) => {
+      switch (action.payload.type) {
+        case 'normal':
+          state.teamsInWorkflowAI[0].children[1].column[0].items = [
+            ...action.payload.payload,
+          ];
+          break;
+        case 'single':
+          state.teamsInWorkflowAI[0].children[1].column[0].items =
+            state.teamsInWorkflowAI[0].children[1].column[0].items.map(
+              (item) => {
+                if (item._id === action.payload.payload._id) {
+                  return { ...item, isSelected: true };
+                }
+                return item;
+              }
+            );
+          console.log(state.teamsInWorkflowAI[0].children[1].column[0].items);
+          break;
+        default:
+          return state;
+      }
+    },
+    // *setTeamsInWorkflowAITeams sets the entire items array
+    setTeamsInWorkflowAITeams: (state, action) => {
+      state.teamsInWorkflowAI[0].children[0].column[0] = {
+        ...state.teamsInWorkflowAI[0].children[0].column[0],
+        items: action.payload,
+      };
     },
     setUserDetailPosition: (state, action) => {
       state.userDetailPosition = action.payload;
@@ -488,8 +514,9 @@ export const {
   setUpdateProccess,
   setPermissionArray,
   setTeamsInWorkflowAI,
+  setTeamInWorkflowAITeams,
   setTeamsInWorkflowAITeams,
-  setTeamsInWorkflowAIPortfolios,
+  setPortfoliosInWorkflowAITeams,
   setUserDetailPosition,
   setUpdateProccessApi,
   setTeamsSelectedSelectedForProcess,
