@@ -693,6 +693,7 @@ Request Body
 ```
 {
 "team_name":"Name of Team",
+"team_type":"team | user | public",
 "team_code":"the code",
 "team_spec":"secification",
 "universal_code":"universal_code",
@@ -711,6 +712,7 @@ Request Body
 {
     "Team Saved":{
                 "team_name":"Name of saved Team",
+                "team_type":"team | user | public",
                 "team_code":"saved code",
                 "team_spec":"saved secification",
                 "universal_code":"saved universal_code",
@@ -732,6 +734,7 @@ Request Body
 {
 "team_id":"team_id",
 "team_name":"Name of Team",
+"team_type":"team | user | public",
 "team_code":"the code",
 "team_spec":"secification",
 "universal_code":"universal_code",
@@ -751,6 +754,7 @@ Response Body
     "Team Updated":{
                 "_id":"team_id",
                 "team_name":"Name of saved Team",
+                "team_type":"team | user | public",
                 "team_code":"saved code",
                 "team_spec":"saved secification",
                 "universal_code":"saved universal_code",
@@ -774,6 +778,7 @@ Response Body
 {
 "\_id":"team_id",
 "team_name":"Name of saved Team",
+"team_type": "team | user | public"
 "team_code":"saved code",
 "team_spec":"saved secification",
 "universal_code":"saved universal_code",

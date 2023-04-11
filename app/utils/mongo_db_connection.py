@@ -1069,6 +1069,7 @@ def targeted_population(database, collection, fields, period):
 
 def save_team(
     team_name,
+    team_type,
     team_code,
     team_spec,
     details,
@@ -1084,6 +1085,7 @@ def save_team(
             "command": "insert",
             "field": {
                 "team_name": team_name,
+                "team_type":team_type,
                 "team_code": team_code,
                 "team_spec": team_spec,
                 "universal_code": universal_code,
@@ -1129,6 +1131,7 @@ def update_team_data(team_id, team_data):
                 # "eventId": get_event_id()["event_id"],
                 # "_id": team_id,
                 "team_name": team_data["team_name"],
+                "team_type": team_data["team_type"],
                 "team_code": team_data["team_code"],
                 "team_spec": team_data["team_spec"],
                 "universal_code": team_data["universal_code"],

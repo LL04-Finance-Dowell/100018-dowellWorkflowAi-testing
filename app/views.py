@@ -944,7 +944,7 @@ def create_team(request):
 
     company_id = form["company_id"]
     created_by = form["created_by"]
-
+    team_type = form["team_type"]
     team_name = form["team_name"]
     team_code = form["team_code"]
     team_spec = form["team_spec"]
@@ -956,6 +956,7 @@ def create_team(request):
     team_set = json.loads(
         save_team(
             team_name,
+            team_type,
             team_code,
             team_spec,
             details,
@@ -990,6 +991,7 @@ def update_team(request):
     team_data["created_by"] = form["created_by"]
     team_data["team_id"] = form["team_id"]
     team_data["team_name"] = form["team_name"]
+    team_data["team_type"] = form["team_type"]
     team_data["team_code"] = form["team_code"]
     team_data["team_spec"] = form["team_spec"]
     team_data["portfolio_list"] = form["portfolio_list"]
