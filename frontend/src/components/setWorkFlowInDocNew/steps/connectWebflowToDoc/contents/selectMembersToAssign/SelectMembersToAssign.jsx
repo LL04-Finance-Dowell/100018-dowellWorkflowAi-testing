@@ -91,17 +91,17 @@ const SelectMembersToAssign = ({ currentStepIndex, stepsPopulated, currentEnable
     const updatedMembersState = copyOfCurrentSelectMembersState.map(member => {
       if (member.header === "Team") {
         member.portfolios = extractAndFormatPortfoliosForMembers("team_member")
-        member.teams = workflowTeams
+        member.teams = workflowTeams.filter(team => team.team_type === 'team')
         return member
       }
       if (member.header === "Users") {
         member.portfolios = extractAndFormatPortfoliosForMembers("to-be-decided")
-        member.teams = workflowTeams
+        member.teams = workflowTeams.filter(team => team.team_type === 'to-be-decided')
         return member
       }
 
       member.portfolios = extractAndFormatPortfoliosForMembers("public")
-      member.teams = workflowTeams
+      member.teams = workflowTeams.filter(team => team.team_type === 'public')
       return member
     });
 
