@@ -80,8 +80,8 @@ export const workflowAiSettingsArray = [
     _id: uuidv4(),
     title: 'Workflow AI Settings',
     children: [
-      { _id: uuidv4(), items: teams, proccess_title: 'teams' },
-      { _id: uuidv4(), items: portfolios, proccess_title: 'portfolios' },
+      { _id: uuidv4(), items: [], proccess_title: 'teams' },
+      { _id: uuidv4(), items: [], proccess_title: 'portfolios' },
       { _id: uuidv4(), items: rights, proccess_title: 'rights' },
       { _id: uuidv4(), items: processes, proccess_title: 'processes' },
       { _id: uuidv4(), items: ownerships, proccess_title: 'ownerships' },
