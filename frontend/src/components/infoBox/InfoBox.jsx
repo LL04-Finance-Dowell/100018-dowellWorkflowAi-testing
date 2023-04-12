@@ -10,6 +10,7 @@ import {
   InfoSearchbar,
   InfoTitleBox,
 } from './styledComponents';
+import TypeFilter from './TypeFilter';
 
 import { AiOutlinePlus } from 'react-icons/ai';
 import { MdOutlineRemove, MdOutlineAdd } from 'react-icons/md';
@@ -140,7 +141,6 @@ const InfoBox = ({
         teams.push(setTeam);
       });
       setFetchedTeams(teams);
-      // console.log(workflowTeams);
     }
   }, [workflowTeams]);
 
@@ -148,14 +148,12 @@ const InfoBox = ({
     if (fetchedTeams.length) dispatch(setTeamsInWorkflowAITeams(fetchedTeams));
   }, [fetchedTeams]);
 
-  //TODO DELETE LATER
-  useEffect(() => {
-    // console.log('tIWFAI: ', teamsInWorkflowAI);
-    // console.log(items);
-  }, [teamsInWorkflowAI]);
-
   return (
-    <InfoBoxContainer boxType={boxType} className='info-box-container'>
+    <InfoBoxContainer
+      boxType={boxType}
+      className='info-box-container'
+      style={{ overflow: 'unset' }}
+    >
       <div className='flex'>
         <InfoTitleBox
           boxType={boxType}
@@ -189,6 +187,7 @@ const InfoBox = ({
               justifyContent: 'space-between',
               alignItems: 'center',
               padding: '10px 20px',
+              position: 'relative',
             }}
           >
             {title !== 'portfolios' ? (
@@ -201,11 +200,14 @@ const InfoBox = ({
               )
             ) : isTeams ? (
               showSearch && (
-                <InfoSearchbar
-                  placeholder='Search'
-                  value={searchValue}
-                  onChange={(e) => setSearchValue(e.target.value)}
-                />
+                <>
+                  <InfoSearchbar
+                    placeholder='Search'
+                    value={searchValue}
+                    onChange={(e) => setSearchValue(e.target.value)}
+                  />
+                  <TypeFilter />
+                </>
               )
             ) : (
               <span>Create and select Team</span>
@@ -222,7 +224,6 @@ const InfoBox = ({
                 style={{
                   padding: '4px 12px',
                   marginTop: 0,
-                  // marginRight: '2px',
                 }}
                 onClick={handleShowModal}
                 type='button'
@@ -287,27 +288,33 @@ const InfoBox = ({
                       </InfoContentFormText>
                     ))
                   : isTeams
-                  ? itemsToDisplay.map((item, ind) => (
-                      <InfoContentFormText key={item._id}>
-                        <input
-                          onChange={(e) =>
-                            onChange({ item, title, boxId, type }, e)
-                          }
-                          /* {...register(item.content)} */
-                          type={'checkbox'}
-                          value={
-                            userDetail?.portfolio_info?.find(
-                              (item) => item.product === 'Workflow AI'
-                            )?.member_type === 'owner'
-                              ? userDetail?.userportfolio[ind]
-                              : userDetail?.selected_product?.userportfolio[ind]
-                          }
-                          name={title}
-                          checked={item.isSelected ? true : false}
-                        />
-                        <span key={item._id}>{item.content}</span>
-                      </InfoContentFormText>
-                    ))
+                  ? itemsToDisplay.map((item, ind) =>
+                      item.isShow ? (
+                        <InfoContentFormText key={item._id}>
+                          <input
+                            onChange={(e) =>
+                              onChange({ item, title, boxId, type }, e)
+                            }
+                            /* {...register(item.content)} */
+                            type={'checkbox'}
+                            value={
+                              userDetail?.portfolio_info?.find(
+                                (item) => item.product === 'Workflow AI'
+                              )?.member_type === 'owner'
+                                ? userDetail?.userportfolio[ind]
+                                : userDetail?.selected_product?.userportfolio[
+                                    ind
+                                  ]
+                            }
+                            name={title}
+                            checked={item.isSelected ? true : false}
+                          />
+                          <span key={item._id}>{item.content}</span>
+                        </InfoContentFormText>
+                      ) : (
+                        ''
+                      )
+                    )
                   : ''}
               </InfoContentBox>
             )

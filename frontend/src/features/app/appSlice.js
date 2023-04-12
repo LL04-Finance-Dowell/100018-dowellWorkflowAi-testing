@@ -329,18 +329,47 @@ export const appSlice = createSlice({
           state.teamsInWorkflowAI[0].children[1].column[0].items =
             state.teamsInWorkflowAI[0].children[1].column[0].items.map(
               (item) => {
-                if (item._id === action.payload.payload._id) {
-                  return { ...item, isSelected: true };
+                let modItem = {};
+                for (let i = 0; i < action.payload.payload.length; i++) {
+                  if (item._id === action.payload.payload[i]._id) {
+                    modItem = { ...item, isSelected: true };
+                    break;
+                  } else modItem = { ...item, isSelected: false };
                 }
-                return item;
+
+                return modItem;
               }
             );
-          console.log(state.teamsInWorkflowAI[0].children[1].column[0].items);
           break;
+        case 'filter':
+          state.teamsInWorkflowAI[0].children[1].column[0].items =
+            state.teamsInWorkflowAI[0].children[1].column[0].items.map(
+              (item) => ({ ...item, isShow: false })
+            );
+
+          state.teamsInWorkflowAI[0].children[1].column[0].items =
+            state.teamsInWorkflowAI[0].children[1].column[0].items.map(
+              (item) => {
+                let modItem = {};
+                if (action.payload.payload.length) {
+                  for (let i = 0; i < action.payload.payload.length; i++) {
+                    if (item.content === action.payload.payload[i]) {
+                      modItem = { ...item, isShow: true };
+                      break;
+                    } else modItem = { ...item, isShow: false };
+                  }
+                } else {
+                  modItem = { ...item, isShow: false };
+                }
+
+                return modItem;
+              }
+            );
         default:
           return state;
       }
     },
+
     // *setTeamsInWorkflowAITeams sets the entire items array
     setTeamsInWorkflowAITeams: (state, action) => {
       state.teamsInWorkflowAI[0].children[0].column[0] = {

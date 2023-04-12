@@ -56,7 +56,7 @@ export const InfoContentContainer = styled.div`
 `;
 
 export const InfoSearchbar = styled.input`
-  width: 75%;
+  width: 65%;
   max-width: 100%;
   background-color: transparent;
   outline: none;

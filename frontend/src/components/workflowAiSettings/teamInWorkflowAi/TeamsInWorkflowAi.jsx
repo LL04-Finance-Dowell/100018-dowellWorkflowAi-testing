@@ -29,11 +29,13 @@ const TeamsInWorkflowAi = () => {
       ? userDetail?.userportfolio.map((port) => ({
           _id: v4(),
           content: port.portfolio_name,
+          isShow: false,
         }))
       : userDetail?.selected_product?.userportfolio.map((portfolio) => {
           return {
             _id: crypto.randomUUID(),
             content: portfolio.portfolio_name,
+            isShow: true,
           };
         })
   );
@@ -42,8 +44,10 @@ const TeamsInWorkflowAi = () => {
   const { workflowTeams } = useAppContext();
   const [handleChangeParams, setHandleChangeParams] = useState([]);
   const [selectedTeamId, setSelectedTeamId] = useState('');
+  const [items, setItems] = useState([]);
 
   const dispatchSelectedItems = ({ item, boxId, title, type }) => {
+    console.log(teamsInWorkflowAI[0].children);
     const selectedItems = setIsSelected({
       items: teamsInWorkflowAI[0].children,
       item,
@@ -57,10 +61,6 @@ const TeamsInWorkflowAi = () => {
   const handleOnChange = ({ item, title, boxId, type }, e) => {
     if (e.target.name === 'teams') setSelectedTeamId(e.target.value);
     setHandleChangeParams([{ item, title, boxId, type }, e]);
-    // dispatchSelectedItems({ item, title, boxId, type });
-
-    // console.log(teamsInWorkflowAI);
-    // console.log(workflowTeams);
   };
 
   const handleCreateNewTeam = async (e) => {
@@ -140,44 +140,15 @@ const TeamsInWorkflowAi = () => {
         (item) => item.isSelected
       );
 
-    if (selectedTeam && selectedPortfolios.length)
+    if (
+      selectedTeam &&
+      selectedPortfolios.length &&
+      !workflowTeams.find((team) => team._id === selectedTeam._id)
+    )
       setIsValidCreateTeamData(true);
     else setIsValidCreateTeamData(false);
   }, [teamsInWorkflowAI]);
 
-  useEffect(() => {
-    if (selectedTeamId) {
-      workflowTeams.forEach((team) => {
-        if (selectedTeamId === team._id) {
-          const portfolioItems =
-            teamsInWorkflowAI[0].children[1].column[0].items.map((item) => {
-              if (
-                team.portfolio_list.find(
-                  (port) => port.portfolio_name === item.content
-                )
-              )
-                return item;
-            });
-
-          portfolioItems.forEach((pItem) => {
-            if (pItem) {
-              // const modItem = { ...pItem, isSelected: true };
-              dispatch(
-                setPortfoliosInWorkflowAITeams({
-                  type: 'single',
-                  payload: pItem,
-                })
-              );
-              // console.log(modItem);
-              // console.log(teamsInWorkflowAI);
-            }
-          });
-        }
-      });
-    }
-  }, [selectedTeamId]);
-
-  // !Trying something
   useEffect(() => {
     if (handleChangeParams.length) {
       const [{ item, title, boxId, type }, e] = handleChangeParams;
@@ -197,8 +168,35 @@ const TeamsInWorkflowAi = () => {
   }, [selectedTeamId, handleChangeParams, workflowTeams]);
 
   useEffect(() => {
-    console.log('teamin: ', teamsInWorkflowAI);
-  }, [teamsInWorkflowAI]);
+    if (selectedTeamId) {
+      workflowTeams.forEach((team) => {
+        if (selectedTeamId === team._id) {
+          const portfolioItems =
+            teamsInWorkflowAI[0].children[1].column[0].items.map((item) => {
+              if (
+                team.portfolio_list.find(
+                  (port) => port.portfolio_name === item.content
+                )
+              )
+                return item;
+            });
+
+          portfolioItems.forEach((pItem) => {
+            dispatch(
+              setPortfoliosInWorkflowAITeams({
+                type: 'single',
+                payload: portfolioItems.filter((item) => item),
+              })
+            );
+          });
+        }
+      });
+    }
+  }, [selectedTeamId]);
+
+  // useEffect(() => {
+  //   // console.log('teamin: ', teamsInWorkflowAI);
+  // }, [teamsInWorkflowAI]);
 
   return (
     <div className={workflowAiSettingsStyles.box}>

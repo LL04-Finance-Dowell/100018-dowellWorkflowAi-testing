@@ -1,5 +1,4 @@
-import React from 'react';
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useForm } from 'react-hook-form';
 import { FaSearch } from 'react-icons/fa';
 import { useDispatch, useSelector } from 'react-redux';
@@ -25,6 +24,8 @@ import { setAllDocuments } from '../../features/document/documentSlice';
 import { setAllTemplates } from '../../features/template/templateSlice';
 import { setAllWorkflows } from '../../features/workflow/workflowsSlice';
 import { current } from '@reduxjs/toolkit';
+import { AiOutlineDown, AiOutlineUp } from 'react-icons/ai';
+import { MdFilterList } from 'react-icons/md';
 
 const searchCategories = {
   documents: 'documents',
@@ -52,6 +53,7 @@ const SearchPage = () => {
   const [filterDocs, setFilterDocs] = useState([]);
   const [filterTemps, setFilterTemps] = useState([]);
   const [filterWorks, setFilterWorks] = useState([]);
+  const [isDropdown, setIsDropdown] = useState(false);
 
   useEffect(() => {
     if (!state) return;
@@ -261,7 +263,6 @@ const SearchPage = () => {
 
   useEffect(() => {
     if (searchResultsToDisplay.length) {
-      // console.log(searchResultsToDisplay);
       setFilterDocs(searchResultsToDisplay.filter((res) => res.document_name));
       setFilterTemps(searchResultsToDisplay.filter((res) => res.template_name));
       setFilterWorks(searchResultsToDisplay.filter((res) => res.workflows));
@@ -297,9 +298,6 @@ const SearchPage = () => {
           }
         }
       });
-      console.log(filterDocs);
-      console.log(filterTemps);
-      console.log(filterWorks);
     }
   }, [filterDocs, filterTemps, filterWorks]);
 
@@ -338,31 +336,29 @@ const SearchPage = () => {
                   onChange={(e) => handleSearchInputChange(e.target.value)}
                 />
               </form>
-              <button className={styles.refresh__btn} onClick={handleRefresh}>
-                {refreshLoading ? (
-                  <LoadingSpinner
-                    color={'white'}
-                    width={'1rem'}
-                    height={'1rem'}
-                  />
-                ) : (
-                  <IoIosRefresh />
-                )}
-                <span>Refresh</span>
-              </button>
-            </div>
-            <div className={styles.minified__Search__Container}>
-              {searchLoading ? (
-                <p>{`Please wait.${
-                  refreshLoading
-                    ? ' It might take awhile as items are being refreshed'
-                    : ''
-                }...`}</p>
-              ) : currentSearch.length < 1 ? (
-                <></>
-              ) : (
-                <>
-                  <div className={styles.mini__Select__Row}>
+
+              <div className={styles.search_filter_sect}>
+                <button
+                  className={styles.search_drop_btn}
+                  onClick={() => setIsDropdown(!isDropdown)}
+                  style={isDropdown ? { borderRadius: '5px 5px 0 0' } : {}}
+                >
+                  <span className='filter_icon' style={{ marginRight: '10px' }}>
+                    <MdFilterList />
+                  </span>
+                  Filters
+                </button>
+                <div
+                  style={
+                    isDropdown
+                      ? {
+                          height: '130px',
+                        }
+                      : { height: '0' }
+                  }
+                  className={styles.search_drop_opts_super_wrapper}
+                >
+                  <div className={styles.search_drop_opts_wrapper}>
                     <label>
                       <input
                         type={'radio'}
@@ -416,7 +412,33 @@ const SearchPage = () => {
                       Workflows
                     </label>
                   </div>
+                </div>
+              </div>
 
+              <button className={styles.refresh__btn} onClick={handleRefresh}>
+                {refreshLoading ? (
+                  <LoadingSpinner
+                    color={'white'}
+                    width={'1rem'}
+                    height={'1rem'}
+                  />
+                ) : (
+                  <IoIosRefresh />
+                )}
+                <span>Refresh</span>
+              </button>
+            </div>
+            <div className={styles.minified__Search__Container}>
+              {searchLoading ? (
+                <p>{`Please wait.${
+                  refreshLoading
+                    ? ' It might take awhile as items are being refreshed'
+                    : ''
+                }...`}</p>
+              ) : currentSearch.length < 1 ? (
+                <></>
+              ) : (
+                <>
                   {searchResultsToDisplay.length < 1 ? (
                     <p>
                       No{' '}
@@ -428,19 +450,38 @@ const SearchPage = () => {
                   ) : currentSearchOption === searchCategories.all ? (
                     <div className={`${styles.all__search__result__wrapper}`}>
                       <div className={`${styles.all__search__result__header}`}>
-                        <span>documents</span>
-                        <span>templates</span>
-                        <span>workflows</span>
+                        <span
+                          style={{
+                            backgroundColor: 'var(--e-global-color-accent)',
+                          }}
+                        >
+                          documents
+                        </span>
+                        <span
+                          style={{
+                            backgroundColor: 'var(--e-global-color-62c33d9)',
+                          }}
+                        >
+                          templates
+                        </span>
+                        <span
+                          style={{
+                            backgroundColor: 'var(--e-global-color-1342d1f)',
+                          }}
+                        >
+                          workflows
+                        </span>
                       </div>
 
                       <div className={`${styles.all__search__result__main}`}>
                         <article
                           className={`${styles.all__search__result__opts}`}
                         >
-                          {filterDocs.map((doc) => {
+                          {filterDocs.map((doc, ind) => {
                             if (doc) {
                               return (
                                 <button
+                                  key={ind}
                                   className={`${styles.all__search__result__btn} `}
                                   id={doc._id}
                                   onClick={() => handleSearchItemClick(doc)}
@@ -449,17 +490,18 @@ const SearchPage = () => {
                                 </button>
                               );
                             }
-                            return <span>{doc}</span>;
+                            return <span></span>;
                           })}
                         </article>
 
                         <article
                           className={`${styles.all__search__result__opts}`}
                         >
-                          {filterTemps.map((temp) => {
+                          {filterTemps.map((temp, ind) => {
                             if (temp) {
                               return (
                                 <button
+                                  key={ind}
                                   className={`${styles.all__search__result__btn} `}
                                   id={temp._id}
                                   onClick={() => handleSearchItemClick(temp)}
@@ -468,17 +510,18 @@ const SearchPage = () => {
                                 </button>
                               );
                             }
-                            return <span>{temp}</span>;
+                            return <span></span>;
                           })}
                         </article>
 
                         <article
                           className={`${styles.all__search__result__opts}`}
                         >
-                          {filterWorks.map((work) => {
+                          {filterWorks.map((work, ind) => {
                             if (work) {
                               return (
                                 <button
+                                  key={ind}
                                   className={`${styles.all__search__result__btn} `}
                                   id={work._id}
                                   onClick={() => handleSearchItemClick(work)}
@@ -487,7 +530,7 @@ const SearchPage = () => {
                                 </button>
                               );
                             }
-                            return <span>{work}</span>;
+                            return <span></span>;
                           })}
                         </article>
                       </div>
