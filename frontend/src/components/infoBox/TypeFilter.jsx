@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { AiFillCheckSquare, AiOutlineDown, AiOutlineUp } from 'react-icons/ai';
 import './typefilter.css';
 import { v4 } from 'uuid';
-import { setPortfoliosInWorkflowAITeams } from '../../features/app/appSlice';
+import { setPortfoliosInWorkflowAITeams, setSelectedPortfolioTypeForWorkflowSettings } from '../../features/app/appSlice';
 
 const TypeFilter = () => {
   const [filter, setFilter] = useState('');
@@ -74,6 +74,7 @@ const TypeFilter = () => {
 
 const DropOpt = ({ setFilter, filter, filterOpts }) => {
   const optsRef = useRef([]);
+  const dispatch = useDispatch();
 
   const handleOptClick = (e) => {
     const optsEl = [...new Set(optsRef.current.filter((el) => el))];
@@ -82,6 +83,7 @@ const DropOpt = ({ setFilter, filter, filterOpts }) => {
     });
     e.currentTarget.classList.toggle('active');
     setFilter(e.currentTarget.id !== 'all' ? e.currentTarget.id : '');
+    dispatch(setSelectedPortfolioTypeForWorkflowSettings(e.currentTarget.id));
   };
 
   return (
