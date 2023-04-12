@@ -25,7 +25,6 @@ export const setIsSelected = ({ items, item, boxId, title, type }) => {
                       colItem._id === item._id
                         ? {
                             ...colItem,
-                            // isSelected: colItem.isSelected ? false : true,
                             isSelected: !colItem.isSelected,
                           }
                         : colItem
@@ -39,22 +38,26 @@ export const setIsSelected = ({ items, item, boxId, title, type }) => {
   };
 
   if (type === 'checkbox') {
+    console.log('enter checky');
     isSelectedItems = mainSetter();
   } else if (type === 'radio') {
-    // * Set isSelected for all options to false
-    const modItems = items.map((child) => {
-      return {
-        ...child,
-        column: child.column.map((col) => {
-          return {
-            ...col,
-            items: col.items.map((colItem) => {
-              return { ...colItem, isSelected: false };
+    console.log('enter rady');
+    // * Set isSelected for all radio options to false
+    const modItems = items.map((child) =>
+      boxId === child._id
+        ? {
+            ...child,
+            column: child.column.map((col) => {
+              return {
+                ...col,
+                items: col.items.map((colItem) => {
+                  return { ...colItem, isSelected: false };
+                }),
+              };
             }),
-          };
-        }),
-      };
-    });
+          }
+        : child
+    );
 
     isSelectedItems = mainSetter(modItems);
   }

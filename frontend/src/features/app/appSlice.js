@@ -311,16 +311,71 @@ export const appSlice = createSlice({
         children: action.payload,
       }));
     },
-    setTeamsInWorkflowAITeams: (state, action) => {
+    // *setTeamInWorkflowAITeams sets the individual item in items
+    setTeamInWorkflowAITeams: (state, action) => {
       state.teamsInWorkflowAI[0].children[0].column[0].items = [
         ...state.teamsInWorkflowAI[0].children[0].column[0].items,
         action.payload,
       ];
     },
-    setTeamsInWorkflowAIPortfolios: (state, action) => {
-      state.teamsInWorkflowAI[0].children[1].column[0].items = [
-        ...action.payload,
-      ];
+    setPortfoliosInWorkflowAITeams: (state, action) => {
+      switch (action.payload.type) {
+        case 'normal':
+          state.teamsInWorkflowAI[0].children[1].column[0].items = [
+            ...action.payload.payload,
+          ];
+          break;
+        case 'single':
+          state.teamsInWorkflowAI[0].children[1].column[0].items =
+            state.teamsInWorkflowAI[0].children[1].column[0].items.map(
+              (item) => {
+                let modItem = {};
+                for (let i = 0; i < action.payload.payload.length; i++) {
+                  if (item._id === action.payload.payload[i]._id) {
+                    modItem = { ...item, isSelected: true };
+                    break;
+                  } else modItem = { ...item, isSelected: false };
+                }
+
+                return modItem;
+              }
+            );
+          break;
+        case 'filter':
+          state.teamsInWorkflowAI[0].children[1].column[0].items =
+            state.teamsInWorkflowAI[0].children[1].column[0].items.map(
+              (item) => ({ ...item, isShow: false })
+            );
+
+          state.teamsInWorkflowAI[0].children[1].column[0].items =
+            state.teamsInWorkflowAI[0].children[1].column[0].items.map(
+              (item) => {
+                let modItem = {};
+                if (action.payload.payload.length) {
+                  for (let i = 0; i < action.payload.payload.length; i++) {
+                    if (item.content === action.payload.payload[i]) {
+                      modItem = { ...item, isShow: true };
+                      break;
+                    } else modItem = { ...item, isShow: false };
+                  }
+                } else {
+                  modItem = { ...item, isShow: false };
+                }
+
+                return modItem;
+              }
+            );
+        default:
+          return state;
+      }
+    },
+
+    // *setTeamsInWorkflowAITeams sets the entire items array
+    setTeamsInWorkflowAITeams: (state, action) => {
+      state.teamsInWorkflowAI[0].children[0].column[0] = {
+        ...state.teamsInWorkflowAI[0].children[0].column[0],
+        items: action.payload,
+      };
     },
     setUserDetailPosition: (state, action) => {
       state.userDetailPosition = action.payload;
@@ -488,8 +543,9 @@ export const {
   setUpdateProccess,
   setPermissionArray,
   setTeamsInWorkflowAI,
+  setTeamInWorkflowAITeams,
   setTeamsInWorkflowAITeams,
-  setTeamsInWorkflowAIPortfolios,
+  setPortfoliosInWorkflowAITeams,
   setUserDetailPosition,
   setUpdateProccessApi,
   setTeamsSelectedSelectedForProcess,
