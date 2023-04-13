@@ -1,5 +1,5 @@
 import ast
-import json,re
+import json, re
 
 import requests
 from rest_framework import status
@@ -527,8 +527,8 @@ def workflow_detail(request, workflow_id):
     if request.method == "GET":
         data = get_wf_object(workflow_id)
         if not data:
-            return Response("Failed to Load Workflow",
-                status=status.HTTP_204_NO_CONTENT
+            return Response(
+                "Failed to Load Workflow", status=status.HTTP_204_NO_CONTENT
             )
         else:
             return Response(data, status=status.HTTP_200_OK)
@@ -671,9 +671,12 @@ def get_document_content(request, document_id):
     for dicts in content:
         for key, val in dicts.items():
             sorted_content.append(
-                
-
-                {key: sorted(dicts[key], key=lambda x: int([a for a in re.findall('\d+', x["id"])][-1]))}
+                {
+                    key: sorted(
+                        dicts[key],
+                        key=lambda x: int([a for a in re.findall("\d+", x["id"])][-1]),
+                    )
+                }
             )
 
     return Response(sorted_content, status=status.HTTP_200_OK)
@@ -855,6 +858,9 @@ def create_template(request):
     data = ""
     page = ""
     template_name = "Untitled Template"
+    if not validator.validate_id(request.data["company_id"]):
+        return Response("Invalid company details", status.HTTP_400_BAD_REQUEST)
+
     res = json.loads(
         save_template(
             template_name,

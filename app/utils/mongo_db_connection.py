@@ -304,7 +304,6 @@ def update_wf_process(process_id, steps, state):
 
 
 def get_process_object(workflow_process_id):
-    print("DB: getting process object...... \n")
     fields = {"_id": str(workflow_process_id)}
     response_obj = dowellconnection(*PROCESS_CONNECTION_LIST, "find", fields, "nil")
     res_obj = json.loads(response_obj)
@@ -315,7 +314,6 @@ def get_process_object(workflow_process_id):
 
 
 def get_process_list(company_id):
-    print("DB: Getting process list \n")
     fields = {
         "company_id": str(company_id),
     }

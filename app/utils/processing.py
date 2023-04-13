@@ -11,7 +11,7 @@ from app.utils.mongo_db_connection import (
     update_document_clone,
     update_wf_process,
     authorize,
-    save_process_links
+    save_process_links,
 )
 from . import checks, verification
 from . import link_gen
@@ -72,8 +72,9 @@ def start(process):
     """Start the processing cycle."""
     links = []
     qrcodes = []
-    for step in process["process_steps"]:
 
+    for step in process["process_steps"]:
+        # process links
         links += [
             {
                 member["member"]: verification.process_links(
@@ -91,7 +92,7 @@ def start(process):
             + step.get("stepPublicMembers", [])
             + step.get("stepUserMembers", [])
         ]
-
+        # process qrcodes.
         qrcodes += [
             {
                 member["member"]: verification.process_qrcode(
@@ -107,7 +108,7 @@ def start(process):
             + step.get("stepUserMembers", [])
         ]
 
-    # set auth users
+    # set auth users for the document
     step_one = process["process_steps"][0]
     auth_users = [
         member["member"]
@@ -124,7 +125,6 @@ def start(process):
         viewers.append(viewer)
 
     if len(viewers) > 0:
-
         res = json.loads(
             authorize(
                 document_id=doc_id,
@@ -134,7 +134,6 @@ def start(process):
             )
         )
         if res["isSuccess"]:
-
             # add this users to the document clone map of step one
             for step in process["process_steps"]:
                 if step.get("stepNumber") == 1:
@@ -177,7 +176,9 @@ def start(process):
                 Thread(target=threads.save_qrcodes, args=(code_data,)).start()
 
                 # return generated links
-                return Response({"links": links, "qrcodes": qrcodes}, status.HTTP_200_OK)
+                return Response(
+                    {"links": links, "qrcodes": qrcodes}, status.HTTP_200_OK
+                )
 
     return Response("failed to start processing", status.HTTP_500_INTERNAL_SERVER_ERROR)
 
@@ -244,7 +245,6 @@ def verify(process, auth_step_role, location_data, user_name):
 
     # is everything right,
     if clone_id and right and user and role and doc_map:
-
         #  generate document link.
         doc_link = link_gen.to_editor(
             item_id=clone_id,
@@ -262,7 +262,6 @@ def verify(process, auth_step_role, location_data, user_name):
 
 
 def background(process_id, item_id, item_type):
-
     # remove from notification
     res = requests.delete(f"{NOTIFICATION_API}/{item_id}/")
     if res.status_code == 204:
@@ -310,7 +309,6 @@ def background(process_id, item_id, item_type):
     # --------------------------------- Now Check Step 2---------------------------------------------
     if step_1_complete:
         if len(process["process_steps"]) > 1:
-
             step_two = process["process_steps"][1]
             step_two_users = [
                 member["member"]
@@ -336,9 +334,7 @@ def background(process_id, item_id, item_type):
                     step_2_complete = True
 
             else:  # if the clone map is empty we execute
-
                 if step_two["stepTaskType"] == "assign_task":
-
                     for d_m in step_one["stepDocumentCloneMap"]:
                         docs = list(d_m.values())
 
@@ -354,7 +350,6 @@ def background(process_id, item_id, item_type):
                             step_two["stepDocumentCloneMap"].append({usr: docid})
 
                 if step_two["stepTaskType"] == "request_for_task":
-
                     # Create copies of the document from step one which is the parent document and have step
                     # two members as authorized.
                     copies += [
@@ -374,17 +369,10 @@ def background(process_id, item_id, item_type):
                     for cp in copies:
                         step_two["stepDocumentCloneMap"].append(cp)
 
-        else:
-            print("No Step 2 \n")
-    else:
-        print("Step 2 Incomplete \n")
-
     #  -------------------------------- Now Check Step 3 -------------------------------
     if step_2_complete:
-
         # Do we have step 3 index?
         if len(process["process_steps"]) > 2:
-
             step_three = process["process_steps"][2]
             step_two = process["process_steps"][1]
 
@@ -413,12 +401,10 @@ def background(process_id, item_id, item_type):
                     step_3_complete = True
 
             else:  # if the clone map is empty we execute
-
                 for d_m in step_two["stepDocumentCloneMap"]:
                     docs = list(d_m.values())
 
                 if step_three["stepTaskType"] == "assign_task":
-
                     # With  step 2 doc ids we can now authorized step 3 users
                     viewers = []
                     for docid in docs:
@@ -448,17 +434,10 @@ def background(process_id, item_id, item_type):
                     for cp in copies:
                         step_three["stepDocumentCloneMap"].append(cp)
 
-        else:
-            print("No Step 3 \n")
-    else:
-        print("No step 3 \n")
-
     # ------------------------------------- Now Check Step 4 --------------------
     if step_3_complete:
-
         # Do we have step 4 index?
         if len(process["process_steps"]) > 3:
-
             step_four = process["process_steps"][3]
             step_four_users = [
                 member["member"]
@@ -485,13 +464,11 @@ def background(process_id, item_id, item_type):
 
             # if the clone map is empty we execute
             else:
-
                 # setup documents from step 3
                 for d_m in step_three["stepDocumentCloneMap"]:
                     docs = list(d_m.values())
 
                 if step_four["stepTaskType"] == "assign_task":
-
                     # With  step 3 doc ids we can now authorized step 4 users
                     viewers = []
                     for docid in docs:
@@ -502,7 +479,6 @@ def background(process_id, item_id, item_type):
                             step_four["stepDocumentCloneMap"].append({usr: docid})
 
                 if step_four["stepTaskType"] == "request_for_task":
-
                     # Create copies of the document from step two and have step
                     # three members as authorized.
                     copies = []
@@ -520,11 +496,6 @@ def background(process_id, item_id, item_type):
 
                     for cp in copies:
                         step_four["stepDocumentCloneMap"].append(cp)
-
-        else:
-            print("No step 4")
-    else:
-        print("Step 4 Not done \n")
 
     # ---------------- Post processing Actions -------------------------------
 
@@ -545,16 +516,23 @@ def background(process_id, item_id, item_type):
         steps=process["process_steps"],
         state=process["processing_state"],
     )
-    """
-      TODO: After all is done we can grab all documents and update their status to finalized.
 
-      TODO: Update all steps as complete.
-    
-    """
     # TODO: Update the process as complete.
-    # documents = []
-    # for step in process["process_steps"]:
-    #     step.get("stepDocumentCloneMap")
+
+    # process_documents = [
+    #     step["stepDocumentCloneMap"] for step in process["process_steps"]
+    # ]
+    # process_document_ids = [
+    #     value for dictionary in process_documents for value in dictionary.values()
+    # ]
+    # process_docs_states = [
+    #     get_document_object(document_id)["document_state"] == "finalized"
+    #     for document_id in process_document_ids
+    # ]
+    # # if all are done
+    # if all(process_docs_states):
+    #     # set the process processing state as complete
+    #     update_wf_process(process["_id"], process["process_steps"], "completed")
 
     print("Thread: Create copies! \n")
 
