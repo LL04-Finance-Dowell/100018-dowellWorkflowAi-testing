@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useSelector } from 'react-redux';
 import styled from 'styled-components';
@@ -16,6 +16,7 @@ import {
 import styles from './workflowAiSettings.module.css';
 import { ImHome3 } from 'react-icons/im';
 import { Link } from 'react-router-dom';
+import { useAppContext } from '../../contexts/AppContext';
 
 const Container = styled.div`
   & button {
@@ -36,10 +37,42 @@ const WorkflowAiSettings = () => {
 
   // #7a7a7a
   // --e-global-color-text;
+  const { workflowTeams } = useAppContext();
+  const [workflowAiSettingsArrayToDisplay, setWorkflowAiSettingsArrayToDisplay] = useState(workflowAiSettingsArray);
+
+  useEffect(() => {
+    setWorkflowAiSettingsArrayToDisplay(workflowAiSettingsArray.map(setting => {
+      setting.children.forEach(child => {
+        if (child.proccess_title === 'teams') {
+          child.items = workflowTeams.map(team => {
+            return {
+              _id: team._id,
+              content: team.team_name
+            }
+          })
+        }
+        if (child.proccess_title === 'portfolios') {
+          child.items = userDetail?.portfolio_info?.find((item) => item.product === 'Workflow AI')?.member_type === 'owner' ? 
+          userDetail?.userportfolio.map((portfolio) => ({
+            _id: crypto.randomUUID(),
+            content: portfolio.portfolio_name,
+          }))
+          :
+          userDetail?.selected_product?.userportfolio.map((portfolio) => {
+            return {
+              _id: crypto.randomUUID(),
+              content: portfolio.portfolio_name,
+            };
+          })
+        }
+      })
+      return setting
+    }))
+  }, [userDetail, workflowTeams])
 
   return (
     <Container bgColor={themeColor} className={styles.container}>
-      {workflowAiSettingsArray.map((item) => (
+      {workflowAiSettingsArrayToDisplay.map((item) => (
         <div key={item._id} className={styles.box}>
           <h2
             className={`${styles.title} ${styles.title__l}`}

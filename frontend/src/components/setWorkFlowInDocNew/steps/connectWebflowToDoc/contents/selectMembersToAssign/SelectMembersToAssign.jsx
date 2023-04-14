@@ -39,6 +39,7 @@ const SelectMembersToAssign = ({ currentStepIndex, stepsPopulated, currentEnable
   const [ featuresUpdatedFromDraft, setFeaturesUpdatedFromDraft ] = useState(false);
   const [ radioOptionsEnabledInStep, setRadioOptionsEnabledInStep ] = useState([]);
   const { workflowTeams } = useAppContext();
+  const selectTeamRef = useRef();
   
   const dispatch = useDispatch();
 
@@ -91,17 +92,17 @@ const SelectMembersToAssign = ({ currentStepIndex, stepsPopulated, currentEnable
     const updatedMembersState = copyOfCurrentSelectMembersState.map(member => {
       if (member.header === "Team") {
         member.portfolios = extractAndFormatPortfoliosForMembers("team_member")
-        member.teams = workflowTeams
+        member.teams = workflowTeams.filter(team => team.team_type === 'team')
         return member
       }
       if (member.header === "Users") {
         member.portfolios = extractAndFormatPortfoliosForMembers("to-be-decided")
-        member.teams = workflowTeams
+        member.teams = workflowTeams.filter(team => team.team_type === 'to-be-decided')
         return member
       }
 
       member.portfolios = extractAndFormatPortfoliosForMembers("public")
-      member.teams = workflowTeams
+      member.teams = workflowTeams.filter(team => team.team_type === 'public')
       return member
     });
 
@@ -113,6 +114,8 @@ const SelectMembersToAssign = ({ currentStepIndex, stepsPopulated, currentEnable
   useEffect(() => {
     
     if (!currentRadioOptionSelection) return
+
+    selectTeamRef.current.value = '';
 
     if (currentRadioOptionSelection === "selectTeam") {
       if (currentGroupSelectionItem) currentGroupSelectionItem?.teams.forEach(team => updateTeamAndPortfoliosInTeamForProcess('remove', team, currentGroupSelectionItem.header))
@@ -452,7 +455,7 @@ const SelectMembersToAssign = ({ currentStepIndex, stepsPopulated, currentEnable
                   {...register("teams")}
                   size={current.teams.length === 1 ? current.teams.length + 1 : current.teams.length}
                   className={styles.open__select}
-                  onChange={({target}) => handleSelectTeam(JSON.parse(target.value))}
+                  onChange={({ target }) => handleSelectTeam(JSON.parse(target.value))}
                   style={{ 
                     pointerEvents: 
                       userTypeOptionsEnabled.find(option => option.name === current.header && option.stepIndex === currentStepIndex) && 
@@ -474,7 +477,9 @@ const SelectMembersToAssign = ({ currentStepIndex, stepsPopulated, currentEnable
                     "none" 
                   }}
                   name="select-from-team"
+                  ref={selectTeamRef}
                 >
+                  <option value={''} disabled hidden selected></option>
                   {React.Children.toArray(current.teams.map((item) => (
                     <option 
                       // key={item.id} 

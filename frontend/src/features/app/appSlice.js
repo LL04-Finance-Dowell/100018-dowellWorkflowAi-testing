@@ -79,6 +79,7 @@ const initialState = {
   legalArgeePageLoading: false,
   adminUser: false,
   adminUserPortfolioLoaded: false,
+  selectedPortfolioTypeForWorkflowSettings: null,
 };
 
 export const appSlice = createSlice({
@@ -493,6 +494,9 @@ export const appSlice = createSlice({
     setAdminUserPortfolioLoaded: (state, action) => {
       state.adminUserPortfolioLoaded = action.payload;
     },
+    setSelectedPortfolioTypeForWorkflowSettings: (state, action) => {
+      state.selectedPortfolioTypeForWorkflowSettings = action.payload;
+    },
   },
   extraReducers: (builder) => {
     //getItemsCount
@@ -566,6 +570,7 @@ export const {
   setLegalAgreePageLoading,
   setAdminUser,
   setAdminUserPortfolioLoaded,
+  setSelectedPortfolioTypeForWorkflowSettings,
 } = appSlice.actions;
 
 export default appSlice.reducer;

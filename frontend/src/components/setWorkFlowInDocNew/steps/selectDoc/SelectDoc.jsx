@@ -33,6 +33,7 @@ const SelectDoc = ({ savedDoc }) => {
   const [ currentSelectedDocument, setCurrentSelectedDocument ] = useState(null);
 
   useEffect(() => {
+    if (savedDoc) return
     const data = {
       company_id: userDetail?.portfolio_info[0].org_id,
     };

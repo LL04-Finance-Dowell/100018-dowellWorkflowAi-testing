@@ -99,7 +99,7 @@ function MyModal(props) {
           </Form.Group>
 
           <Form.Group controlId='spec'>
-            <Form.Label>Spec</Form.Label>
+            <Form.Label>Specification</Form.Label>
             <Form.Control
               type='text'
               required

@@ -18,6 +18,7 @@ import { useSearchParams } from "react-router-dom";
 import { getSingleProcessV2 } from "../../services/processServices";
 import Spinner from "../spinner/Spinner";
 import { contentDocument } from "../../features/document/asyncThunks";
+import ConstructionPage from "../../pages/ConstructionPage/ConstructionPage";
 
 const SetWorkflowInDoc = () => {
   const dispatch = useDispatch();
@@ -29,6 +30,7 @@ const SetWorkflowInDoc = () => {
   const { allWorkflows } = useSelector(state => state.workflow);
   const [ draftProcess, setDraftProcess ] = useState(null);
   const [ draftProcessDOc, setDraftProcessDoc ] = useState(null);
+  const [ isDraftProcess, setIsDraftProcess ] = useState(false);
 
   useEffect(() => {
     const processId = searchParams.get('id');
@@ -39,6 +41,7 @@ const SetWorkflowInDoc = () => {
       dispatch(setContentOfDocument(null));  
       setDraftProcess(null);
       setDraftProcessDoc(null);
+      setIsDraftProcess(false);
     }
 
     if (continentsLoaded) return
@@ -68,18 +71,19 @@ const SetWorkflowInDoc = () => {
       dispatch(setContentOfDocument(null));  
       setDraftProcess(null);
       setDraftProcessDoc(null);
+      setIsDraftProcess(false);
       return
     }
     
     setDraftProcessLoading(true);
+    setIsDraftProcess(true);
     
     if (
-      !allProcesses ||
       allProcesses.length < 1 || 
       !allDocuments ||
-      allDocuments.length < 1 || 
+      (allDocuments && allDocuments.length < 1) || 
       !allWorkflows ||
-      allWorkflows.length < 1
+      (allDocuments && allWorkflows.length < 1)
     ) return
     
     const foundProcess = allProcesses.find(process => process._id === processId);
@@ -89,10 +93,10 @@ const SetWorkflowInDoc = () => {
     getSingleProcessV2(foundProcess._id).then(res => {
       const fetchedProcessData = res.data;
       
-      const foundCloneDocUsedToCreateProcess = allDocuments.find(document => document._id === fetchedProcessData.parent_document_id);
-      if (!foundCloneDocUsedToCreateProcess) return setDraftProcessLoading(false);
+      // const foundCloneDocUsedToCreateProcess = allDocuments.find(document => document._id === fetchedProcessData.parent_document_id);
+      // if (!foundCloneDocUsedToCreateProcess) return setDraftProcessLoading(false);
       
-      const foundOriginalDoc = allDocuments.find(document => document._id === foundCloneDocUsedToCreateProcess.parent_id);
+      const foundOriginalDoc = allDocuments.find(document => document._id === fetchedProcessData.parent_document_id && document.document_type === 'original');
       if (!foundOriginalDoc) return setDraftProcessLoading(false);
       
       // console.log(res.data)
@@ -181,16 +185,46 @@ const SetWorkflowInDoc = () => {
            'Set WorkFlows in Documents'
           }
         </h2>
-        <SelectDoc savedDoc={draftProcessDOc} />
-        <ContentMapOfDoc />
-        <div className={styles.diveder}></div>
-        <SelectWorkflow savedDoc={draftProcessDOc} />
-        <div className={styles.diveder}></div>
-        <ConnectWorkFlowToDoc stepsPopulated={draftProcessDOc ? true : false} />
-        <div className={styles.diveder}></div>
-        <CheckErrors />
-        <div className={styles.diveder}></div>
-        <ProcessDocument />
+        {
+          isDraftProcess ?
+            !draftProcessLoading && draftProcess && draftProcessDOc ?
+            <ConstructionPage hideLogo={true} message={'The viewing of draft processes is currently being fixed'} />
+            // <>
+            //   <SelectDoc savedDoc={draftProcessDOc} />
+            //   <ContentMapOfDoc />
+            //   <div className={styles.diveder}></div>
+            //   <SelectWorkflow savedDoc={draftProcessDOc} />
+            //   <div className={styles.diveder}></div>
+            //   <ConnectWorkFlowToDoc stepsPopulated={true} />
+            //   <div className={styles.diveder}></div>
+            //   <CheckErrors />
+            //   <div className={styles.diveder}></div>
+            //   <ProcessDocument />
+            // </> 
+            :
+            <>
+            
+              {
+                draftProcessLoading ? <></> : 
+                <ConstructionPage hideLogo={true} message={'The viewing of draft processes is currently being fixed'} />
+                // <p style={{ textAlign: 'center' }}>Draft could not be loaded.</p>
+              }
+            </>
+          :
+          <>
+            <SelectDoc />
+            <ContentMapOfDoc />
+            <div className={styles.diveder}></div>
+            <SelectWorkflow />
+            <div className={styles.diveder}></div>
+            <ConnectWorkFlowToDoc />
+            <div className={styles.diveder}></div>
+            <CheckErrors />
+            <div className={styles.diveder}></div>
+            <ProcessDocument />
+          </>
+        }
+        
       </div>
     </WorkflowLayout>
   );

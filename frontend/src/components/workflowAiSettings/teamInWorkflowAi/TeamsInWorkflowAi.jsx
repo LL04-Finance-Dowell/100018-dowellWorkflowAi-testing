@@ -21,7 +21,7 @@ const TeamsInWorkflowAi = () => {
 
   const workflowSettingServices = new WorkflowSettingServices();
 
-  const { teamsInWorkflowAI } = useSelector((state) => state.app);
+  const { teamsInWorkflowAI, selectedPortfolioTypeForWorkflowSettings } = useSelector((state) => state.app);
   const { userDetail } = useSelector((state) => state.auth);
   const [userPortfolios, setUserPortfolios] = useState(
     userDetail?.portfolio_info?.find((item) => item.product === 'Workflow AI')
@@ -41,7 +41,7 @@ const TeamsInWorkflowAi = () => {
   );
   const [isValidCreateTeamData, setIsValidCreateTeamData] = useState(false);
   const [isCreatingTeam, setIsCreatingTeam] = useState(false);
-  const { workflowTeams } = useAppContext();
+  const { workflowTeams, setWorkflowTeams } = useAppContext();
   const [handleChangeParams, setHandleChangeParams] = useState([]);
   const [selectedTeamId, setSelectedTeamId] = useState('');
   const [items, setItems] = useState([]);
@@ -98,6 +98,8 @@ const TeamsInWorkflowAi = () => {
               );
             });
 
+      if (!selectedPortfolioTypeForWorkflowSettings) return toast.info('Please select a portfolio type');
+      
       data = {
         team_name,
         team_code,
@@ -108,12 +110,14 @@ const TeamsInWorkflowAi = () => {
         company_id: userDetail.portfolio_info[0].org_id,
         created_by: userDetail.userinfo.username,
         data_type: userDetail.portfolio_info[0].data_type,
+        team_type: selectedPortfolioTypeForWorkflowSettings === 'team_member' ? 'team' : selectedPortfolioTypeForWorkflowSettings
       };
       try {
         setIsCreatingTeam(true);
         const res = await workflowSettingServices.createWorkflowTeam(data);
         toast.success('Team created');
         setIsCreatingTeam(false);
+        setWorkflowTeams((prevTeams) => { return [ ...prevTeams, {...data, _id: crypto.randomUUID() }] })
       } catch (err) {
         console.log(err);
         toast.error('Team not created');
