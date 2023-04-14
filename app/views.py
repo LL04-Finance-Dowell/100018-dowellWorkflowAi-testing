@@ -1055,3 +1055,32 @@ def get_all_teams(request, company_id):
         return Response(
             "Failed to Load Team Data", status.HTTP_500_INTERNAL_SERVER_ERROR
         )
+
+
+@api_view(["GET"])
+def get_completed_documents(request, company_id):
+    """List of Completed Documents."""
+    data_type = request.query_params.get("data_type", "Real_Data")
+
+    if not validator.validate_id(company_id):
+        return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
+
+    document_list = get_document_list(company_id, data_type)
+
+    if not document_list:
+        return Response({"documents": []}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    if len(document_list) > 0:
+        completed = list(
+            filter(lambda doc: doc["document_state"] == "finalized", document_list)
+        )
+
+        return Response(
+            {"documents": completed},
+            status=status.HTTP_200_OK,
+        )
+
+    return Response(
+        {"documents": []},
+        status=status.HTTP_200_OK,
+    )
