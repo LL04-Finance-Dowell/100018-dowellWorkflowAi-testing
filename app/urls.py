@@ -41,7 +41,7 @@ urlpatterns = [
     path("companies/<str:company_id>/favourites/", all_favourites),
     path("companies/<str:company_id>/templates/", get_templates),
     path("companies/<str:company_id>/documents/", get_documents),
-    path("companies/<str:company_id>/documents/completed", get_completed_documents),
+    path("companies/<str:company_id>/documents/completed/", get_completed_documents),
     path("companies/<str:company_id>/teams/", get_all_teams),
     path("templates/", create_template),
     path("templates/<str:template_id>/", template_detail),
