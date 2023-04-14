@@ -31,6 +31,7 @@ from .views import (
     trigger_process,
     update_team,
     workflow_detail,
+    process_copies
 )
 
 urlpatterns = [
@@ -54,6 +55,7 @@ urlpatterns = [
     path("processes/verify/", process_verification),
     path("processes/<str:process_id>/", a_single_process),
     path("processes/<str:process_id>/trigger/", trigger_process),
+    path("processes/<str:process_id>/copies/", process_copies),
     path("processes/<str:process_id>/finalize-or-reject/", finalize_or_reject),
     path("processes/<str:process_id>/links/", fetch_process_links),
     path("processes/<str:process_id>/user-link/", get_process_link),

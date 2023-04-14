@@ -62,7 +62,7 @@ def document_processing(request):
             created_by=request.data["created_by"],
             company_id=request.data["company_id"],
             data_type=request.data["data_type"],
-            item_id=request.data["parent_id"],
+            parent_item_id=request.data["parent_id"],
             process_choice="save_process",
             creator_portfolio=request.data["creator_portfolio"],
             workflows_ids=request.data["workflows_ids"],
@@ -76,7 +76,7 @@ def document_processing(request):
             created_by=request.data["created_by"],
             company_id=request.data["company_id"],
             data_type=request.data["data_type"],
-            item_id=request.data["parent_id"],
+            parent_item_id=request.data["parent_id"],
             process_choice="start_content_wise",
             creator_portfolio=request.data["creator_portfolio"],
             workflows_ids=request.data["workflows_ids"],
@@ -90,7 +90,7 @@ def document_processing(request):
             created_by=request.data["created_by"],
             company_id=request.data["company_id"],
             data_type=request.data["data_type"],
-            item_id=request.data["parent_id"],
+            parent_item_id=request.data["parent_id"],
             process_choice="start_steps_wise",
             creator_portfolio=request.data["creator_portfolio"],
             workflows_ids=request.data["workflows_ids"],
@@ -104,7 +104,7 @@ def document_processing(request):
             created_by=request.data["created_by"],
             company_id=request.data["company_id"],
             data_type=request.data["data_type"],
-            item_id=request.data["parent_id"],
+            parent_item_id=request.data["parent_id"],
             process_choice="start_workflow_wise",
             creator_portfolio=request.data["creator_portfolio"],
             workflows_ids=request.data["workflows_ids"],
@@ -118,7 +118,7 @@ def document_processing(request):
             created_by=request.data["created_by"],
             company_id=request.data["company_id"],
             data_type=data_type,
-            item_id=request.data["parent_id"],
+            parent_item_id=request.data["parent_id"],
             process_choice="test_content_wise",
             creator_portfolio=request.data["creator_portfolio"],
             workflows_ids=request.data["workflows_ids"],
@@ -132,7 +132,7 @@ def document_processing(request):
             created_by=request.data["created_by"],
             company_id=request.data["company_id"],
             data_type=data_type,
-            item_id=request.data["parent_id"],
+            parent_item_id=request.data["parent_id"],
             process_choice="test_steps_wise",
             creator_portfolio=request.data["creator_portfolio"],
             workflows_ids=request.data["workflows_ids"],
@@ -146,7 +146,7 @@ def document_processing(request):
             created_by=request.data["created_by"],
             company_id=request.data["company_id"],
             data_type=data_type,
-            item_id=request.data["parent_id"],
+            parent_item_id=request.data["parent_id"],
             process_choice="test_workflow_wise",
             creator_portfolio=request.data["creator_portfolio"],
             workflows_ids=request.data["workflows_ids"],
@@ -158,7 +158,7 @@ def document_processing(request):
         process = get_process_object(workflow_process_id=request.data["process_id"])
         if process["processing_state"] == "completed":
             return Response(
-                "This Workflow process is already complete", status=status.HTTP_200_OK
+                "This Workflow process is already complete", status.HTTP_200_OK
             )
         res = json.loads(
             update_wf_process(
@@ -169,20 +169,18 @@ def document_processing(request):
         )
         if res["isSuccess"]:
             return Response(
-                "Process closed and marked as complete!", status=status.HTTP_200_OK
+                "Process closed and marked as complete!", status.HTTP_200_OK
             )
         return Response(
             "Failed to mark process and completed!",
-            status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            status.HTTP_500_INTERNAL_SERVER_ERROR,
         )
 
     if action == "cancel_process_before_completion":
         # document should reset to initial state.
         process = get_process_object(workflow_process_id=request.data["process_id"])
         if process["processing_state"] == "cancelled":
-            return Response(
-                "This Workflow process is Cancelled!", status=status.HTTP_200_OK
-            )
+            return Response("This Workflow process is Cancelled!", status.HTTP_200_OK)
         res = json.loads(
             update_wf_process(
                 process_id=process["process_id"],
@@ -191,19 +189,17 @@ def document_processing(request):
             )
         )
         if res["isSuccess"]:
-            return Response("Process has been cancelled!", status=status.HTTP_200_OK)
-        return Response(
-            "Failed cancel process!", status=status.HTTP_500_INTERNAL_SERVER_ERROR
-        )
+            return Response("Process has been cancelled!", status.HTTP_200_OK)
+        return Response("Failed cancel process!", status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     if action == "pause_processing_after_completing_ongoing_step":
         """- find the ongoing step - pause processing"""
         return Response(
             "This Option is currently in development",
-            status=status.HTTP_501_NOT_IMPLEMENTED,
+            status.HTTP_501_NOT_IMPLEMENTED,
         )
 
-    return Response("Something went wrong!", status=status.HTTP_400_BAD_REQUEST)
+    return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
 
 
 @api_view(["POST"])
@@ -215,17 +211,15 @@ def get_process_link(request, process_id):
     if not links_info:
         return Response(
             "Could not fetch process info at this time",
-            status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            status.HTTP_500_INTERNAL_SERVER_ERROR,
         )
 
     # check presence in link
     for link in links_info["links"]:
         if user in link:
-            return Response(link[user], status=status.HTTP_200_OK)
+            return Response(link[user], status.HTTP_200_OK)
 
-    return Response(
-        "User is not part of this process", status=status.HTTP_401_UNAUTHORIZED
-    )
+    return Response("User is not part of this process", status.HTTP_401_UNAUTHORIZED)
 
 
 @api_view(["POST"])
@@ -369,7 +363,7 @@ def trigger_process(request):
         if res["isSuccess"]:
             return Response(
                 "Process has been paused until manually resumed!",
-                status=status.HTTP_200_OK,
+                status.HTTP_200_OK,
             )
 
     if action == "process_draft" and state != "processing":
@@ -386,12 +380,12 @@ def processes(request, company_id):
     try:
         process_list = get_process_list(company_id)
     except ConnectionError:
-        return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        return Response(status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     if len(process_list) > 0:
-        return Response(process_list, status=status.HTTP_200_OK)
+        return Response(process_list, status.HTTP_200_OK)
 
-    return Response([], status=status.HTTP_200_OK)
+    return Response([], status.HTTP_200_OK)
 
 
 @api_view(["GET"])
@@ -404,27 +398,34 @@ def a_single_process(request, process_id):
     try:
         process = get_process_object(process_id)
     except ConnectionError:
-        return Response(
-            "Failed fetch process \n", status=status.HTTP_500_INTERNAL_SERVER_ERROR
-        )
+        return Response("Failed fetch process", status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-    return Response(process, status=status.HTTP_200_OK)
+    return Response(process, status.HTTP_200_OK)
 
 
 @api_view(["POST"])
 def fetch_process_links(request, process_id):
     """verification links for a process"""
-
     try:
         process_info = get_links_object_by_process_id(process_id)
-
     except ConnectionError:
-        return Response(
-            "Could not fetch process links",
-            status=status.HTTP_500_INTERNAL_SERVER_ERROR,
-        )
+        return Response("Could not fetch links", status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     return Response(process_info["links"], status.HTTP_200_OK)
+
+
+@api_view(["POST"])
+def process_copies(process_id):
+    if not validator.validate_id(process_id):
+        return Response("something went wrong!", status.HTTP_400_BAD_REQUEST)
+
+    process_id = cloning.process(process_id)
+    if process_id is None:
+        return Response(
+            "failed to create process clone", status.HTTP_500_INTERNAL_SERVER_ERROR
+        )
+
+    return Response("success created a process clone", status.HTTP_201_CREATED)
 
 
 @api_view(["POST"])
@@ -449,7 +450,7 @@ def create_workflow_setting(request):
             {
                 "workflow_setting": get_wf_setting_object(wf_set["inserted_id"]),
             },
-            status=status.HTTP_201_CREATED,
+            status.HTTP_201_CREATED,
         )
     return Response(
         "Failed to Save Workflow setting", status.HTTP_500_INTERNAL_SERVER_ERROR
@@ -492,7 +493,7 @@ def get_wf_ai_setting(request, wf_setting_id):
         if updt_wf["isSuccess"]:
             return Response("Workflow Setting Updated", status.HTTP_201_CREATED)
 
-        return Response("Failed to Update Workflow", status=status.HTTP_200_OK)
+        return Response("Failed to Update Workflow", status.HTTP_200_OK)
 
 
 @api_view(["POST"])
@@ -512,9 +513,9 @@ def create_workflow(request):
     )
 
     if res["isSuccess"]:
-        return Response("Workflow Created", status=status.HTTP_201_CREATED)
+        return Response("Workflow Created", status.HTTP_201_CREATED)
 
-    return Response("Failed to Save Workflow", status=status.HTTP_200_OK)
+    return Response("Failed to Save Workflow", status.HTTP_200_OK)
 
 
 @api_view(["GET", "PUT"])
@@ -527,11 +528,9 @@ def workflow_detail(request, workflow_id):
     if request.method == "GET":
         data = get_wf_object(workflow_id)
         if not data:
-            return Response(
-                "Failed to Load Workflow", status=status.HTTP_204_NO_CONTENT
-            )
+            return Response("Failed to Load Workflow", status.HTTP_204_NO_CONTENT)
         else:
-            return Response(data, status=status.HTTP_200_OK)
+            return Response(data, status.HTTP_200_OK)
 
     if request.method == "PUT":
         """Update content of a workflow"""
@@ -569,16 +568,16 @@ def get_workflows(request, company_id):
     try:
         workflow_list = get_wf_list(company_id, data_type)
     except ConnectionError:
-        return Response({"workflows": []}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        return Response({"workflows": []}, status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     if len(workflow_list) > 0:
         return Response(
             {"workflows": workflow_list},
-            status=status.HTTP_200_OK,
+            status.HTTP_200_OK,
         )
     return Response(
         {"workflows": []},
-        status=status.HTTP_200_OK,
+        status.HTTP_200_OK,
     )
 
 
@@ -591,17 +590,17 @@ def get_documents(request, company_id):
 
     document_list = get_document_list(company_id, data_type)
     if not document_list:
-        return Response({"documents": []}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        return Response({"documents": []}, status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     if len(document_list) > 0:
         return Response(
             {"documents": document_list},
-            status=status.HTTP_200_OK,
+            status.HTTP_200_OK,
         )
 
     return Response(
         {"documents": []},
-        status=status.HTTP_200_OK,
+        status.HTTP_200_OK,
     )
 
 
@@ -612,7 +611,7 @@ def create_document(request):
     if not request.data:
         return Response(
             {"message": "Failed to process document creation."},
-            status=status.HTTP_200_OK,
+            status.HTTP_200_OK,
         )
     else:
         viewers = [request.data["created_by"]]
@@ -644,7 +643,7 @@ def create_document(request):
 
         return Response(
             {"message": "Unable to Create Document"},
-            status=status.HTTP_200_OK,
+            status.HTTP_200_OK,
         )
 
 
@@ -679,7 +678,7 @@ def get_document_content(request, document_id):
                 }
             )
 
-    return Response(sorted_content, status=status.HTTP_200_OK)
+    return Response(sorted_content, status.HTTP_200_OK)
 
 
 @api_view(["GET"])
@@ -841,15 +840,15 @@ def get_templates(request, company_id):
 
     templates = get_template_list(company_id, data_type)
     if not templates:
-        return Response({"templates": []}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        return Response({"templates": []}, status.HTTP_500_INTERNAL_SERVER_ERROR)
     if len(templates) > 0:
         return Response(
             {"templates": templates},
-            status=status.HTTP_200_OK,
+            status.HTTP_200_OK,
         )
     return Response(
         {"templates": []},
-        status=status.HTTP_200_OK,
+        status.HTTP_200_OK,
     )
 
 
@@ -897,15 +896,15 @@ def create_template(request):
         except ConnectionError:
             return Response(
                 {"message": "Template Creation Failed"},
-                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
         return Response(
             editor_link.json(),
-            status=status.HTTP_201_CREATED,
+            status.HTTP_201_CREATED,
         )
     return Response(
         {"message": "Template creation failed."},
-        status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+        status.HTTP_500_INTERNAL_SERVER_ERROR,
     )
 
 
@@ -936,9 +935,9 @@ def approve(request, template_id):
     if not response["isSuccess"]:
         return Response(
             "Template Could not be Approved.",
-            status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            status.HTTP_500_INTERNAL_SERVER_ERROR,
         )
-    return Response({"message": "Template Approved."}, status=status.HTTP_200_OK)
+    return Response({"message": "Template Approved."}, status.HTTP_200_OK)
 
 
 @api_view(["POST"])
@@ -980,7 +979,7 @@ def create_team(request):
             {
                 "Team Saved": get_team(team_set["inserted_id"]),
             },
-            status=status.HTTP_201_CREATED,
+            status.HTTP_201_CREATED,
         )
     return Response("Failed to Save Team Data", status.HTTP_500_INTERNAL_SERVER_ERROR)
 
@@ -1012,7 +1011,7 @@ def update_team(request):
             {
                 "Team Updated": get_team(form["team_id"]),
             },
-            status=status.HTTP_201_CREATED,
+            status.HTTP_201_CREATED,
         )
     return Response("Failed to Update Team Data", status.HTTP_500_INTERNAL_SERVER_ERROR)
 
@@ -1028,7 +1027,7 @@ def get_team_data(request, team_id):
             "Failed to Load Team Data", status.HTTP_500_INTERNAL_SERVER_ERROR
         )
 
-    return Response(teams, status=status.HTTP_200_OK)
+    return Response(teams, status.HTTP_200_OK)
 
 
 @api_view(["POST", "GET"])
@@ -1049,7 +1048,7 @@ def get_all_teams(request, company_id):
                 for data in all_team
                 if form["data_type"] in str(data.get("data_type", ""))
             ],
-            status=status.HTTP_200_OK,
+            status.HTTP_200_OK,
         )
     except:
         # print([data[form['data_type']] for data in all_team])

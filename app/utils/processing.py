@@ -24,7 +24,7 @@ def new(
     created_by,
     company_id,
     data_type,
-    item_id,
+    parent_item_id,
     process_choice,
     creator_portfolio,
     workflows_ids,
@@ -39,6 +39,8 @@ def new(
         [workflow["workflows"]["workflow_title"] for workflow in workflows]
     )
 
+    process_kind = "original"
+
     # save to collection.
     res = save_wf_process(
         process_title,
@@ -46,11 +48,12 @@ def new(
         created_by,
         company_id,
         data_type,
-        item_id,
+        parent_item_id,
         process_choice,
         creator_portfolio,
         workflows_ids,
         process_type,
+        process_kind,
     )
 
     if res["isSuccess"]:
@@ -61,7 +64,7 @@ def new(
             "created_by": created_by,
             "company_id": company_id,
             "data_type": data_type,
-            "parent_id": item_id,
+            "parent_item_id": parent_item_id,
             "_id": res["inserted_id"],
             "process_type": process_type,
         }
@@ -79,7 +82,7 @@ def start(process):
             {
                 member["member"]: verification.process_links(
                     process_id=process["_id"],
-                    item_id=process["parent_id"],
+                    item_id=process["parent_item_id"],
                     step_role=step.get("stepRole"),
                     auth_name=member["member"],
                     auth_portfolio=member["portfolio"],
@@ -97,7 +100,7 @@ def start(process):
             {
                 member["member"]: verification.process_qrcode(
                     process_id=process["_id"],
-                    item_id=process["parent_id"],
+                    item_id=process["parent_item_id"],
                     step_role=step.get("stepRole"),
                     auth_name=member["member"],
                     auth_portfolio=member["portfolio"],
@@ -118,7 +121,7 @@ def start(process):
     ]
 
     # update authorized viewers for the parent id template or document.
-    doc_id = process["parent_id"]
+    doc_id = process["parent_item_id"]
 
     viewers = []
     for viewer in auth_users:
@@ -202,14 +205,14 @@ def verify(process, auth_step_role, location_data, user_name):
                 ):
                     return Response(
                         "Signing not permitted from your current location!",
-                        status=status.HTTP_401_UNAUTHORIZED,
+                        status.HTTP_401_UNAUTHORIZED,
                     )
 
             # display check
             if step.get("stepDisplay"):
                 if not checks.display_right(step.get("stepDisplay")):
                     return Response(
-                        "Missing display rights!", status=status.HTTP_401_UNAUTHORIZED
+                        "Missing display rights!", status.HTTP_401_UNAUTHORIZED
                     )
 
             # time limit check
@@ -223,7 +226,7 @@ def verify(process, auth_step_role, location_data, user_name):
                 ):
                     return Response(
                         "Time limit for processing document has elapsed!",
-                        status=status.HTTP_403_FORBIDDEN,
+                        status.HTTP_403_FORBIDDEN,
                     )
 
             # find the clone id
@@ -357,7 +360,7 @@ def background(process_id, item_id, item_type):
                             member["member"]: cloning.document(
                                 document_id=item_id,
                                 auth_viewer=member["member"],
-                                parent_id=process["parent_document_id"],
+                                parent_id=process["parent_item_id"],
                                 process_id=process["_id"],
                             )
                         }
@@ -425,7 +428,7 @@ def background(process_id, item_id, item_type):
                                 usr: cloning.document(
                                     doc,
                                     usr,
-                                    process["parent_document_id"],
+                                    process["parent_item_id"],
                                     process["_id"],
                                 )
                             }
@@ -488,7 +491,7 @@ def background(process_id, item_id, item_type):
                                 usr: cloning.document(
                                     doc,
                                     usr,
-                                    process["parent_document_id"],
+                                    process["parent_item_id"],
                                     process["_id"],
                                 )
                             }
@@ -502,13 +505,13 @@ def background(process_id, item_id, item_type):
     # updating the document clone list
     clone_ids = [d["member"] for d in copies if "member" in d]
     if clone_ids:
-        document = get_document_object(document_id=process["parent_document_id"])
+        document = get_document_object(document_id=process["parent_item_id"])
         data = document["clone_list"]
         for cid in clone_ids:
             data.append(cid)
 
         update_document_clone(
-            document_id=process["parent_document_id"], clone_list=data
+            document_id=process["parent_item_id"], clone_list=data
         )
     # update the process
     update_wf_process(
