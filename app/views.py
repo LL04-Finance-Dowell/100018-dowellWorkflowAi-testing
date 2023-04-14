@@ -1061,10 +1061,10 @@ def get_all_teams(request, company_id):
 def get_completed_documents(request, company_id):
     """List of Completed Documents."""
     data_type = request.query_params.get("data_type", "Real_Data")
-    
+
     if not validator.validate_id(company_id):
         return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
-    
+
     document_list = get_document_list(company_id, data_type)
 
     if not document_list:
@@ -1072,9 +1072,8 @@ def get_completed_documents(request, company_id):
 
     if len(document_list) > 0:
         completed = list(
-            filter(lambda doc: doc["document_state"] == "finalized", document_list)
+            filter(lambda i: i.get("document_state") == "finalized", document_list)
         )
-
         return Response(
             {"documents": completed},
             status=status.HTTP_200_OK,
