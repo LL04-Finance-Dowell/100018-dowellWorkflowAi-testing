@@ -826,7 +826,7 @@ Response Body
 ```
 ### Get Completed Documents
 
-_POST_ `/v1/companies/<str:company_id>/documents/completed/`
+_GET_ `/v1/companies/<str:company_id>/documents/completed/`
 
 Request Body
 ```
