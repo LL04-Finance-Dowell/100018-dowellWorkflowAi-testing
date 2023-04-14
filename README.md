@@ -31,6 +31,7 @@ This backend service serves as the WorkflowAI application Backend.
 | GET        | companies/:company_id/templates/          | To retrieve templates of given company.          |
 | GET        | companies/:company_id/processes/          | To retrieve processes in a company               |
 | GET        | companies/:company_id/documents/          | To retrieve documents of a given company.        |
+| GET        | companies/:company_id/documents/completed | To fetch completed documents of a given company. |
 | GET        | companies/:company_id/workflows/          | To retrieve workflows in a company               |
 | GET        | companies/:company_id/favourites/         | To list favourites                               |
 | POST       | companies/:company_id/teams/              | To fetch all workflow teams                      |
@@ -822,6 +823,22 @@ Response Body
 
 [list of teams within that company id]
 
+```
+### Get Completed Documents
+
+_POST_ `/v1/companies/<str:company_id>/documents/completed/`
+
+Request Body
+```
+{
+
+}
+```
+Request Body
+```
+{
+    [list of completed documents]
+}
 ```
 
 ### Technologies Used
