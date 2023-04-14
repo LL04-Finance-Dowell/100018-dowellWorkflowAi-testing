@@ -107,7 +107,8 @@
   border-radius: 6px;
   gap: 10px;
   transition: 0.3s ease-in-out;
-  flex-basis: 15%;
+  width: 106px;
+  justify-content: center;
 }
 
 .refresh__btn span {
@@ -129,9 +130,9 @@
   color: var(--e-global-color-cd6593d);
   font-size: 0.9rem;
   display: flex;
-  width: 100%;
+  width: 106px;
   align-items: center;
-  justify-content: flex-start;
+  justify-content: center;
   background-color: var(--e-global-color-secondary);
   color: var(--e-global-color-cd6593d);
   transition: all ease 0.5s;
@@ -177,6 +178,8 @@
   border: 1px solid var(--e-global-color-0363588);
   border-radius: 10px;
   overflow: hidden;
+  width: 82%;
+  margin: auto;
 }
 
 .all__search__result__header,

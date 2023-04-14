@@ -45,9 +45,10 @@ const TeamsInWorkflowAi = () => {
   const [handleChangeParams, setHandleChangeParams] = useState([]);
   const [selectedTeamId, setSelectedTeamId] = useState('');
   const [items, setItems] = useState([]);
+  const [unselectAllPortfolios, setUnselectAllPortfolios] = useState(false);
 
   const dispatchSelectedItems = ({ item, boxId, title, type }) => {
-    console.log(teamsInWorkflowAI[0].children);
+    // console.log(teamsInWorkflowAI[0].children);
     const selectedItems = setIsSelected({
       items: teamsInWorkflowAI[0].children,
       item,
@@ -154,16 +155,24 @@ const TeamsInWorkflowAi = () => {
       const [{ item, title, boxId, type }, e] = handleChangeParams;
 
       if (e.target.name === 'teams') {
-        dispatchSelectedItems({ item, title, boxId, type });
+        // * Actions for when teams options are clicked
+        //* If selected team is in fetched teams, only select; else, select team and unselect all portfolio options
+        if (workflowTeams.find((team) => team._id === selectedTeamId)) {
+          setUnselectAllPortfolios(false);
+          dispatchSelectedItems({ item, title, boxId, type });
+        } else {
+          console.log('selected id: ', selectedTeamId);
+          dispatchSelectedItems({ item, title, boxId, type });
+          setUnselectAllPortfolios(true);
+        }
       } else if (
         e.target.name === 'portfolios' &&
         !workflowTeams.find((team) => team._id === selectedTeamId)
       ) {
+        // * Actions for when portfolio options are clicked
+        //  * If selected team is in fetched teams, disable check option for portfolio, and vice-versa
         dispatchSelectedItems({ item, title, boxId, type });
       }
-      // console.log(selectedTeamId);
-      // console.log(workflowTeams);
-      // console.log(handleChangeParams);
     }
   }, [selectedTeamId, handleChangeParams, workflowTeams]);
 
@@ -193,6 +202,18 @@ const TeamsInWorkflowAi = () => {
       });
     }
   }, [selectedTeamId]);
+
+  // *This effect unselects all portfolios after selecting the new team radio option
+  useEffect(() => {
+    if (unselectAllPortfolios) {
+      dispatchSelectedItems({
+        item: null,
+        title: '',
+        boxId: teamsInWorkflowAI[0].children[1]._id,
+        type: 'unselect_all',
+      });
+    }
+  }, [unselectAllPortfolios]);
 
   // useEffect(() => {
   //   // console.log('teamin: ', teamsInWorkflowAI);

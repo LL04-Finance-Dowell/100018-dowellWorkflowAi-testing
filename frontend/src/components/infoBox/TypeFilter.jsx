@@ -20,11 +20,11 @@ const TypeFilter = () => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    setUserPortfolios(userDetail.selected_product.userportfolio);
+    setUserPortfolios(userDetail?.selected_product?.userportfolio);
   }, [userDetail]);
 
   useEffect(() => {
-    console.log(userPortfolios);
+    // console.log(userPortfolios);
     if (filter && userPortfolios)
       setFilteredPortfolios(
         userPortfolios.filter((item) => item.member_type === filter)
@@ -34,7 +34,7 @@ const TypeFilter = () => {
 
   useEffect(() => {
     if (filteredPortfolios.length || filter) {
-      console.log(filteredPortfolios.map((item) => item.portfolio_name));
+      // console.log(filteredPortfolios.map((item) => item.portfolio_name));
       if (filteredPortfolios.length)
         dispatch(
           setPortfoliosInWorkflowAITeams({
