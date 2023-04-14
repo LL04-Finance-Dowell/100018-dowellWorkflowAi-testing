@@ -1,3 +1,7 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 :root {
   --e-global-color-primary: #6ec1e4;
   --e-global-color-secondary: #54595f;

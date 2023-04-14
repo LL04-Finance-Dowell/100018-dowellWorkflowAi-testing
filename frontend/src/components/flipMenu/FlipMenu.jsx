@@ -1,4 +1,5 @@
 import Flip from '../flip/Flip';
+import Chat from '../Chat/Chat';
 import styles from './flipMenu.module.css';
 import {
   FaFileContract,
@@ -56,6 +57,8 @@ const FlipMenu = () => {
           />
         </div>
       ))}
+       {/* <p className='text-4xl' style={{position:'fixed',top:'80vh',left:'70rem'}}>hello</p> */}
+       <Chat/>
     </div>
   );
 };
