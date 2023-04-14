@@ -3,22 +3,39 @@ import json
 from app.utils.mongo_db_connection import (
     get_document_object,
     save_document,
+    save_wf_process,
+    get_process_object,
 )
 
 
+def process(process_id):
+    try:
+        process = get_process_object(process_id)
+        process_kind = "clone"
+        save_res = json.loads(
+            save_wf_process(
+                process["process_title"],
+                process["process_steps"],
+                process["created_by"],
+                process["company_id"],
+                process["data_type"],
+                process["parent_document_id"],
+                process["processing_action"],
+                process["creator_portfolio"],
+                process["workflow_construct_ids"],
+                process["process_type"],
+                process_kind,
+            )
+        )
+    except:
+        print("Failed to create clone \n")
+        return
+
+    return save_res["inserted_id"]
+
+
 def document(document_id, auth_viewer, parent_id, process_id):
-    """
-    Creates a copy of a document
-
-    Args:
-        document_id (str): the object id of the document to be replicated.
-        auth_viewer (str | None): the username to be authorized.
-        parent_id (str): thr parent document object id.
-        process_id (str | None): object id of a process
-
-    Returns:
-        inserted_id (str):
-    """
+    """Creates a copy of a document"""
     try:
         viewers = []
         document = get_document_object(document_id)
@@ -43,8 +60,8 @@ def document(document_id, auth_viewer, parent_id, process_id):
                 process_id=process_id,
             )
         )
-        print("Success Cloning \n")
-        return save_res["inserted_id"]
     except RuntimeError:
         print("Failed to create clone \n")
         return
+
+    return save_res["inserted_id"]
