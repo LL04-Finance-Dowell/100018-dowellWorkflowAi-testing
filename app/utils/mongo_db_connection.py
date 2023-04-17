@@ -315,20 +315,11 @@ def get_process_object(workflow_process_id):
         return []
 
 
-def get_process_list(company_id):
+def get_process_list(company_id, data_type):
     fields = {
         "company_id": str(company_id),
+        "data_type": data_type,
     }
-    response_obj = dowellconnection(*PROCESS_CONNECTION_LIST, "fetch", fields, "nil")
-    res_obj = json.loads(response_obj)
-    if len(res_obj["data"]):
-        return res_obj["data"]
-    else:
-        return []
-
-
-def get_process_list(company_id):
-    fields = {"company_id": str(company_id)}
     response_obj = dowellconnection(*PROCESS_CONNECTION_LIST, "fetch", fields, "nil")
     res_obj = json.loads(response_obj)
     if len(res_obj["data"]):

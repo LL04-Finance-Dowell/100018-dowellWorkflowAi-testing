@@ -67,6 +67,7 @@ def new(
             "parent_item_id": parent_item_id,
             "_id": res["inserted_id"],
             "process_type": process_type,
+            "process_kind": process_kind,
         }
         return process
 
@@ -510,9 +511,7 @@ def background(process_id, item_id, item_type):
         for cid in clone_ids:
             data.append(cid)
 
-        update_document_clone(
-            document_id=process["parent_item_id"], clone_list=data
-        )
+        update_document_clone(document_id=process["parent_item_id"], clone_list=data)
     # update the process
     update_wf_process(
         process_id=process["_id"],

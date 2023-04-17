@@ -376,9 +376,11 @@ def processes(request, company_id):
 
     if not validator.validate_id(company_id):
         return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
+    
+    data_type = request.query_params.get("data_type", "Real_Data")
 
     try:
-        process_list = get_process_list(company_id)
+        process_list = get_process_list(company_id, data_type)
     except ConnectionError:
         return Response(status.HTTP_500_INTERNAL_SERVER_ERROR)
 
@@ -415,17 +417,32 @@ def fetch_process_links(request, process_id):
 
 
 @api_view(["POST"])
-def process_copies(process_id):
-    if not validator.validate_id(process_id):
+def process_copies(request, process_id):
+    if not validator.validate_id(process_id) or not request.data:
         return Response("something went wrong!", status.HTTP_400_BAD_REQUEST)
 
-    process_id = cloning.process(process_id)
-    if process_id is None:
-        return Response(
-            "failed to create process clone", status.HTTP_500_INTERNAL_SERVER_ERROR
-        )
+    if request.method == "POST":
+        if not request.data:
+            return Response("something went wrong!", status.HTTP_400_BAD_REQUEST)
 
-    return Response("success created a process clone", status.HTTP_201_CREATED)
+        process_id = cloning.process(
+            process_id, request.data["created_by"], request.data["created_portfolio"]
+        )
+        if process_id is None:
+            return Response(
+                "failed to create process clone", status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+
+        return Response("success created a process clone", status.HTTP_201_CREATED)
+
+    # if request.method == "GET":
+    #     data_type = request.query_params.get("data_type", "Real_Data")
+    #     try:
+    #         copies = get_process_list(company_id, data_type)
+    #     except:
+    #         return Response([], status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    #     return Response(copies, status.HTTP_200_OK)
 
 
 @api_view(["POST"])

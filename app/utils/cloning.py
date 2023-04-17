@@ -8,7 +8,8 @@ from app.utils.mongo_db_connection import (
 )
 
 
-def process(process_id):
+def process(process_id, created_by, creator_portfolio):
+    """creating a process copy"""
     try:
         process = get_process_object(process_id)
         process_kind = "clone"
@@ -16,26 +17,25 @@ def process(process_id):
             save_wf_process(
                 process["process_title"],
                 process["process_steps"],
-                process["created_by"],
+                created_by,
                 process["company_id"],
                 process["data_type"],
-                process["parent_document_id"],
+                None,
                 process["processing_action"],
-                process["creator_portfolio"],
+                creator_portfolio,
                 process["workflow_construct_ids"],
                 process["process_type"],
                 process_kind,
             )
         )
     except:
-        print("Failed to create clone \n")
         return
 
     return save_res["inserted_id"]
 
 
 def document(document_id, auth_viewer, parent_id, process_id):
-    """Creates a copy of a document"""
+    """creating a document copy"""
     try:
         viewers = []
         document = get_document_object(document_id)
