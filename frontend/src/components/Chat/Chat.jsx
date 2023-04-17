@@ -66,10 +66,10 @@ const Chat = () => {
       .then(data => console.log(data))
   }, [])
   return (
-    <div className="bg-white ">
+<div className='fixed z-20'>
       <div>
         <button
-          className="fixed bottom-14 right-10 bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-3 mx-5 rounded-full h-14 w-14"
+          className="z-20 fixed bottom-14 right-0 bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-3 mx-5 rounded-full h-14 w-14"
           onClick={handleButtonClick}
         >
           {" "}

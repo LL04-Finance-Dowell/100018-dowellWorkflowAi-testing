@@ -1,7 +1,9 @@
 .container {
+  position: relative !important; 
   display: flex;
   flex-direction: column;
   width: 100%;
+  z-index: 10 !important;
   padding: 10px;
 }
 
@@ -20,9 +22,11 @@
 }
 
 .dowell__Advert__Container {
+  position: relative;
   width: 100%;
   display: flex;
   gap: 10px;
+  z-index: 10 !important;
   padding: 0 10px;
 }
 

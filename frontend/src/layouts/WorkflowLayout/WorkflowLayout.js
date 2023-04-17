@@ -6,6 +6,7 @@ import Editor from '../../components/editor/Editor';
 import { useEffect, useState } from 'react';
 import DowellLogo from '../../assets/dowell.png';
 import Spinner from '../../components/spinner/Spinner';
+import Chat from '../../components/Chat/Chat';
 import useCloseElementOnEscapekeyClick from '../../../src/hooks/useCloseElementOnEscapeKeyClick';
 import UserDetail from '../../components/newSidebar/userDetail/UserDetail';
 import {
@@ -219,6 +220,7 @@ const WorkflowLayout = ({ children }) => {
               <div className={styles.content__box}>
                 <div className={`${styles.sidebar__box} hide-scrollbar`}>
                   <SideBar />
+                  <Chat/>
                 </div>
                 <div className={styles.children__box}>
                   <p className={styles.beta__Info__Text}>
