@@ -4,16 +4,28 @@ import requests
 
 from app.constants import EDITOR_API
 
+from .mongo_db_connection import get_document_object
+
 headers = {"Content-Type": "application/json"}
 
 
 def to_editor(item_id, item_map, item_rights, user, process_id, user_role, item_type):
+    """navigate user to editor for signing"""
+
+    # set document
     if item_type == "document":
         collection = "DocumentReports"
         document = "documentreports"
         action = "document"
         field = "document_name"
         team_member_id = "11689044433"
+        document = get_document_object(item_id)
+
+        if document["document_state"] == "finalized":
+            item_flag = "finalized"
+
+        if document["document_state"] == "processing":
+            item_flag = "processing"
 
     elif item_type == "template":
         collection = "TemplateReports"
@@ -39,6 +51,7 @@ def to_editor(item_id, item_map, item_rights, user, process_id, user_role, item_
             "authorized": user,
             "document_map": item_map,
             "document_right": item_rights,
+            "document_flag": item_flag,
             "role": user_role,
             "process_id": process_id,
             "update_field": {"document_name": "", "content": "", "page": ""},

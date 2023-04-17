@@ -268,8 +268,6 @@ def verify(process, auth_step_role, location_data, user_name):
 def background(process_id, item_id, item_type):
     # remove from notification
     res = requests.delete(f"{NOTIFICATION_API}/{item_id}/")
-    if res.status_code == 204:
-        print("deleted notification")
 
     if item_type == "template":
         # TODO: when template
