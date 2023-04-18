@@ -44,7 +44,7 @@ def document(document_id, auth_viewers, parent_id, process_id):
         else:
             viewers = []
 
-        document_name = document["document_name"] + " (P)"
+        document_name = "-" + document["document_name"] + "-"
 
         # create new doc
         save_res = json.loads(
