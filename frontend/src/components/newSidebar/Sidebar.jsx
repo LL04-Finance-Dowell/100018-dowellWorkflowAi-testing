@@ -3,6 +3,7 @@ import styles from "./sidebar.module.css";
 import { v4 as uuidv4 } from "uuid";
 import CollapseItem from "./collapseItem/CollapseItem";
 import Notifications from "./notifications/Notifications";
+import Chat from "../Chat/Chat";
 import New from "./new/New";
 import Search from "./search/Search";
 import { AiOutlineClose, AiOutlineMenuFold } from "react-icons/ai";
@@ -163,7 +164,9 @@ const Sidebar = () => {
 					DoWell Knowledge Centre
 				</h2>
 				<CollapseItem items={knowledge} />
+			
 				<span className={styles.knowledge__Extra__Info}>Dowell True moments user experience lab</span>
+				{/* <Chat/> */}
 			</div>
 			<Footer topSideIcons={iconBoxItems} handleIconClick={handleClick} />
 		</div>
