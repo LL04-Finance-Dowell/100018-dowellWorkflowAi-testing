@@ -1103,7 +1103,6 @@ def WF_AI_SETTING(request):
 def all_wf_ai_setting(request, company_id):
     """Get All WF AI"""
     all_setting = get_wfai_setting_list(company_id)
-    print(all_setting)
     try:
         return Response(
             all_setting,
