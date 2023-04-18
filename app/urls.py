@@ -32,7 +32,8 @@ from .views import (
     trigger_process,
     update_team,
     workflow_detail,
-    process_copies
+    process_copies,
+    WF_AI_SETTING,
 )
 
 urlpatterns = [
@@ -51,7 +52,7 @@ urlpatterns = [
     path("documents/<str:document_id>/content/", get_document_content),
     path("workflows/", create_workflow),
     path("workflows/<str:workflow_id>/", workflow_detail),
-    path("workflow-settings/", create_workflow_setting),
+    # path("workflow-settings/", create_workflow_setting),
     path("workflow-settings/<str:wf_setting_id>/", get_wf_ai_setting),
     path("processes/", document_processing),
     path("processes/verify/", process_verification),
@@ -71,4 +72,6 @@ urlpatterns = [
     path("teams/", create_team),
     path("teams/<str:team_id>/", get_team_data),
     path("update-to-teams/", update_team),
+    path("workflow-settings/", WF_AI_SETTING),
+
 ]

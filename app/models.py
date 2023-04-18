@@ -1,5 +1,6 @@
 import jsonfield
 from django.db import models
+from django.core.validators import validate_comma_separated_integer_list
 
 
 class FavoriteTemplate(models.Model):
@@ -147,22 +148,17 @@ class WorkflowAiSetting(models.Model):
         ("Set_as_Documentation", "Set as Documentation"),
         ("Set_as_Project_Owner", "Set as Project Owner"),
     ]
-
-    Process = models.CharField(max_length=50, choices=Process_choice, blank=True)
-    Documents = models.CharField(max_length=250, choices=Document_choice, blank=True)
-    Templates = models.CharField(max_length=250, choices=Template_choice, blank=True)
-    Workflows = models.CharField(max_length=250, choices=Workflow_choice, blank=True)
-    Notarisation = models.CharField(
-        max_length=250, choices=Notarisation_choice, blank=True
-    )
-    Folders = models.CharField(max_length=250, choices=Folder_choice, blank=True)
-    Records = models.CharField(max_length=250, choices=Record_choice, blank=True)
-    References = models.CharField(max_length=250, choices=Reference_choice, blank=True)
-    Approval_Process = models.CharField(
-        max_length=250, choices=Reference_choice, blank=True
-    )
-    Evaluation_Process = models.CharField(
-        max_length=250, choices=Evaluation_Process_choice, blank=True
-    )
-    Reports = models.CharField(max_length=250, choices=Report_choice, blank=True)
-    Management = models.CharField(max_length=250, choices=Management_choice, blank=True)
+    company_id = jsonfield.JSONField()
+    created_by = jsonfield.JSONField()
+    Process = jsonfield.JSONField(default=None, null=True)
+    Documents = jsonfield.JSONField(default=None, null=True)
+    Templates = jsonfield.JSONField(default=None, null=True)
+    Workflows = jsonfield.JSONField(default=None, null=True)
+    Notarisation = jsonfield.JSONField(default=None, null=True)
+    Folders = jsonfield.JSONField(default=None, null=True)
+    Records = jsonfield.JSONField(default=None, null=True)
+    References = jsonfield.JSONField(default=None, null=True)
+    Approval_Process = jsonfield.JSONField(default=None, null=True)
+    Evaluation_Process = jsonfield.JSONField(default=None, null=True)
+    Reports = jsonfield.JSONField(default=None, null=True)
+    Management = jsonfield.JSONField(default=None, null=True)

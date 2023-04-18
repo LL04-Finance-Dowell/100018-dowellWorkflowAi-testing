@@ -742,7 +742,7 @@ def get_links_list(company_id):
         return []
 
 
-def save_wf_setting(company_id, owner_name, username, portfolio_name, process):
+def save_wf_setting(data):
     """Saving workflow settings"""
     payload = json.dumps(
         {
@@ -750,11 +750,20 @@ def save_wf_setting(company_id, owner_name, username, portfolio_name, process):
             "command": "insert",
             "field": {
                 "eventId": get_event_id()["event_id"],
-                "company_id": company_id,
-                "owner_name": owner_name,
-                "username": username,
-                "portfolio_name": portfolio_name,
-                "processes": process,
+                "company_id": data["company_id"],
+                "created_by": data["created_by"],
+                "Process" : data["Process"],
+                "Documents" : data["Documents"],
+                "Templates" : data["Templates"],
+                "Workflows" : data["Workflows"],
+                "Notarisation" : data["Notarisation"],
+                "Folders" : data["Folders"],
+                "Records" : data["Records"],
+                "References" : data["References"],
+                "Approval_Process" : data["Approval_Process"],
+                "Evaluation_Process" : data["Evaluation_Process"],
+                "Reports" : data["Reports"],
+                "Management" : data["Management"],
                 "data_type": "Real_data",
                 "created_on": time,
             },

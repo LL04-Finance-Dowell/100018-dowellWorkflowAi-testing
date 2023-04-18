@@ -41,7 +41,7 @@ from app.utils.mongo_db_connection import (
 
 from .constants import EDITOR_API
 from .utils import setting
-
+from .utils.wf_management import CREATE_WF_AI_SETTING
 
 @api_view(["GET"])
 def home(request):
@@ -1084,3 +1084,15 @@ def get_completed_documents(request, company_id):
         {"documents": []},
         status=status.HTTP_200_OK,
     )
+
+@api_view(["POST"])
+def WF_AI_SETTING(request):
+    
+    if not request.data:
+        return Response("You are missing something", status.HTTP_400_BAD_REQUEST)
+    # print(request.data)
+    wf_stng = json.loads(save_wf_setting(request.data))
+    if wf_stng["isSuccess"]:
+        return Response(get_wf_setting_object(wf_stng["inserted_id"]), status.HTTP_201_CREATED)
+
+    return Response("Failed to Save Workflow Setting", status.HTTP_200_OK)
