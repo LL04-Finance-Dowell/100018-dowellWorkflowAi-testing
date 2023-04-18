@@ -200,14 +200,14 @@ const SearchPage = () => {
 
     try {
       const [documentsData, templatesData, workflowsData] = await Promise.all([
-        (await documentServices.allDocuments(data.company_id)).data, 
-        (await templatesServices.allTemplates(data.company_id)).data,
-        (await workflowServices.allWorkflows(data.company_id)).data
+        documentServices.allDocuments(data.company_id), 
+        templatesServices.allTemplates(data.company_id),
+        workflowServices.allWorkflows(data.company_id),
       ]);
 
       dispatch(
         setAllDocuments(
-          documentsData.documents
+          documentsData.data.documents
             .reverse()
             .filter(
               (document) =>
@@ -220,7 +220,7 @@ const SearchPage = () => {
 
       dispatch(
         setAllTemplates(
-          templatesData.templates
+          templatesData.data.templates
             .reverse()
             .filter(
               (template) =>
@@ -232,7 +232,7 @@ const SearchPage = () => {
 
       dispatch(
         setAllWorkflows(
-          workflowsData.workflows.filter(
+          workflowsData.data.workflows.filter(
             (workflow) =>
               (workflow?.data_type &&
                 workflow?.data_type ===
