@@ -9,6 +9,7 @@ import {
   teamsInWorkflowAI,
 } from '../../components/workflowAiSettings/veriables';
 import { getItemsCounts } from './asyncThunks';
+import { act } from '@testing-library/react';
 
 const initialState = {
   itemsCount: null,
@@ -371,6 +372,38 @@ export const appSlice = createSlice({
       }
     },
 
+    setUpdateInWorkflowAITeams: (state, action) => {
+      let modItem = [];
+
+      if (action.payload) {
+        const extractedContent = action.payload.extractTeamContent(
+          action.payload.item
+        );
+
+        for (let i = 0; i < extractedContent.length; i++) {
+          const _id = uuidv4();
+          const title =
+            i === 0
+              ? 'Name'
+              : i === 1
+              ? 'Code'
+              : i === 2
+              ? 'Specification'
+              : i === 3
+              ? 'Details'
+              : i === 4
+              ? 'Universal code'
+              : '';
+          modItem.push({
+            _id,
+            content: { content: extractedContent[i], title },
+          });
+        }
+      }
+      console.log(modItem);
+      state.teamsInWorkflowAI[0].children[2].column[0].items = modItem;
+    },
+
     // *setTeamsInWorkflowAITeams sets the entire items array
     setTeamsInWorkflowAITeams: (state, action) => {
       state.teamsInWorkflowAI[0].children[0].column[0] = {
@@ -550,6 +583,7 @@ export const {
   setTeamInWorkflowAITeams,
   setTeamsInWorkflowAITeams,
   setPortfoliosInWorkflowAITeams,
+  setUpdateInWorkflowAITeams,
   setUserDetailPosition,
   setUpdateProccessApi,
   setTeamsSelectedSelectedForProcess,

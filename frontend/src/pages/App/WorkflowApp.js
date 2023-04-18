@@ -50,6 +50,50 @@ const WorkflowApp = () => {
     setFavoriteitemsLoaded,
   } = useAppContext();
   const { allDocuments } = useSelector((state) => state.document);
+  const { allTemplates } = useSelector((state) => state.template);
+  const { allWorkflows } = useSelector((state) => state.workflow);
+  // TODO Remove dummy data for 'templates' and 'workflows' when it is dynamically  available
+  const [uncompletedTasks, setUncompletedTasks] = useState([
+    {
+      id: uuidv4(),
+      parent: 'templates',
+      children: [
+        { id: uuidv4(), child: 'templates name' },
+        { id: uuidv4(), child: 'templates name' },
+      ],
+    },
+    {
+      id: uuidv4(),
+      parent: 'workflows',
+      children: [
+        { id: uuidv4(), child: 'workflows name' },
+        { id: uuidv4(), child: 'workflows name' },
+      ],
+    },
+  ]);
+  const [completedTasks, setCompletedTasks] = useState([
+    {
+      id: uuidv4(),
+      parent: 'templates',
+      children: [
+        { id: uuidv4(), child: 'templates name' },
+        { id: uuidv4(), child: 'templates name' },
+      ],
+    },
+    {
+      id: uuidv4(),
+      parent: 'workflows',
+      children: [
+        { id: uuidv4(), child: 'workflows name' },
+        { id: uuidv4(), child: 'workflows name' },
+      ],
+    },
+  ]);
+
+  // TODO 1. 'isShowUncompletedTasks' and 'isShowCompletedTasks' are just placeholding condtions
+  // TODO 2. Once 'templates' and 'workflows' are dynamic, ensure to delete them and replace with 'completedTasks.length' or 'unCompletedTasks.length' respectively
+  const [isShowUncompletedTasks, setIsShowUncompletedTasks] = useState(false);
+  const [isShowCompletedTasks, setIsShowCompletedTasks] = useState(false);
 
   useEffect(() => {
     if (!notificationsLoaded) {
@@ -135,6 +179,48 @@ const WorkflowApp = () => {
     }
   }, [location]);
 
+  useEffect(() => {
+    if (allDocuments.length) {
+      const allUncompletedDocs = allDocuments.filter(
+        (doc) => doc.document_state === 'processing'
+      );
+      const allCompletedDocs = allDocuments.filter(
+        (doc) => doc.document_state === 'finalized'
+      );
+
+      const modUncompleted = {
+        id: uuidv4(),
+        parent: 'documents',
+        isOpen: false,
+        children: allUncompletedDocs.map((doc) => ({
+          id: doc._id,
+          child: doc.document_name,
+        })),
+      };
+
+      const modCompleted = {
+        id: uuidv4(),
+        parent: 'documents',
+        isOpen: false,
+        children: allCompletedDocs.map((doc) => ({
+          id: doc._id,
+          child: doc.document_name,
+        })),
+      };
+      setUncompletedTasks([modUncompleted, ...uncompletedTasks]);
+      setCompletedTasks([modCompleted, ...completedTasks]);
+      setIsShowCompletedTasks(true);
+      setIsShowUncompletedTasks(true);
+    }
+
+    // TODO Do same for 'templates' and 'workflows' when they are dynamically available
+  }, [allDocuments, allTemplates, allWorkflows]);
+
+  useEffect(() => {
+    console.log('ct: ', completedTasks);
+    console.log('uct: ', uncompletedTasks);
+  }, [uncompletedTasks, completedTasks]);
+
   return (
     <WorkflowLayout>
       <div className={styles.container}>
@@ -171,8 +257,14 @@ const WorkflowApp = () => {
               ))
             )}
             <div className={styles.tasks__container}>
-              <HandleTasks feature='incomplete' tasks={incompleteTasks} />
-              <HandleTasks feature='completed' tasks={completedTasks} />
+              {isShowUncompletedTasks && (
+                <HandleTasks feature='incomplete' tasks={uncompletedTasks} />
+              )}
+              {isShowCompletedTasks && (
+                <HandleTasks feature='completed' tasks={completedTasks} />
+              )}
+              {/* <HandleTasks feature='incomplete' tasks={uncompletedTasks} />
+              <HandleTasks feature='completed' tasks={completedTasks} /> */}
             </div>
           </div>
         )}
@@ -325,59 +417,59 @@ export const notifications = [
   },
 ];
 
-export const incompleteTasks = [
-  {
-    id: uuidv4(),
-    parent: 'documents',
-    children: [
-      { id: uuidv4(), child: 'document name' },
-      { id: uuidv4(), child: 'document name' },
-    ],
-  },
-  {
-    id: uuidv4(),
-    parent: 'templates',
-    children: [
-      { id: uuidv4(), child: 'templates name' },
-      { id: uuidv4(), child: 'templates name' },
-    ],
-  },
-  {
-    id: uuidv4(),
-    parent: 'workflows',
-    children: [
-      { id: uuidv4(), child: 'workflows name' },
-      { id: uuidv4(), child: 'workflows name' },
-    ],
-  },
-];
+// export const incompleteTasks = [
+//   {
+//     id: uuidv4(),
+//     parent: 'documents',
+//     children: [
+//       { id: uuidv4(), child: 'document name' },
+//       { id: uuidv4(), child: 'document name' },
+//     ],
+//   },
+//   {
+//     id: uuidv4(),
+//     parent: 'templates',
+//     children: [
+//       { id: uuidv4(), child: 'templates name' },
+//       { id: uuidv4(), child: 'templates name' },
+//     ],
+//   },
+//   {
+//     id: uuidv4(),
+//     parent: 'workflows',
+//     children: [
+//       { id: uuidv4(), child: 'workflows name' },
+//       { id: uuidv4(), child: 'workflows name' },
+//     ],
+//   },
+// ];
 
-export const completedTasks = [
-  {
-    id: uuidv4(),
-    parent: 'documents',
-    isOpen: false,
-    children: [
-      { id: uuidv4(), child: 'document name' },
-      { id: uuidv4(), child: 'document name' },
-    ],
-  },
-  {
-    id: uuidv4(),
-    parent: 'templates',
-    isOpen: false,
-    children: [
-      { id: uuidv4(), child: 'templates name' },
-      { id: uuidv4(), child: 'templates name' },
-    ],
-  },
-  {
-    id: uuidv4(),
-    parent: 'workflows',
-    isOpen: false,
-    children: [
-      { id: uuidv4(), child: 'workflows name' },
-      { id: uuidv4(), child: 'workflows name' },
-    ],
-  },
-];
+// export const completedTasks = [
+//   {
+//     id: uuidv4(),
+//     parent: 'documents',
+//     isOpen: false,
+//     children: [
+//       { id: uuidv4(), child: 'document name' },
+//       { id: uuidv4(), child: 'document name' },
+//     ],
+//   },
+//   {
+//     id: uuidv4(),
+//     parent: 'templates',
+//     isOpen: false,
+//     children: [
+//       { id: uuidv4(), child: 'templates name' },
+//       { id: uuidv4(), child: 'templates name' },
+//     ],
+//   },
+//   {
+//     id: uuidv4(),
+//     parent: 'workflows',
+//     isOpen: false,
+//     children: [
+//       { id: uuidv4(), child: 'workflows name' },
+//       { id: uuidv4(), child: 'workflows name' },
+//     ],
+//   },
+// ];

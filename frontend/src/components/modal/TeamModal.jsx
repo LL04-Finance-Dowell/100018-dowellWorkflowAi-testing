@@ -41,15 +41,12 @@ function MyModal(props) {
       universalCode: universalCode.trim(),
     };
 
-    // console.log(team);
-
     setName('');
     setCode('');
     setSpec('');
     setDetails('');
     setUniversalCode('');
 
-    // !props.onSubmit(team) <-- That method's name changes the argument to 'event';
     props.handleAddTeam(team);
   };
 

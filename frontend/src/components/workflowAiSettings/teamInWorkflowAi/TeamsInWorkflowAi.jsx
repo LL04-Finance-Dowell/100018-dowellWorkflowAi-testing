@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import {
   setTeamsInWorkflowAI,
   setPortfoliosInWorkflowAITeams,
+  setUpdateInWorkflowAITeams,
 } from '../../../features/app/appSlice';
 import { setIsSelected } from '../../../utils/helpers';
 import InfoBox from '../../infoBox/InfoBox';
@@ -15,13 +16,16 @@ import { WorkflowSettingServices } from '../../../services/workflowSettingServic
 import { toast } from 'react-toastify';
 import { useAppContext } from '../../../contexts/AppContext';
 
+// TODO FIX ADDITION OF NEW TEAM TO 'workflowTeams' 132.
 const TeamsInWorkflowAi = () => {
+  // *Populating of 'teamsInWorkflowAITeams' with fetched teams is done in 'infoBox.jsx'
   const dispatch = useDispatch();
   const { register, handleSubmit } = useForm();
 
   const workflowSettingServices = new WorkflowSettingServices();
 
-  const { teamsInWorkflowAI, selectedPortfolioTypeForWorkflowSettings } = useSelector((state) => state.app);
+  const { teamsInWorkflowAI, selectedPortfolioTypeForWorkflowSettings } =
+    useSelector((state) => state.app);
   const { userDetail } = useSelector((state) => state.auth);
   const [userPortfolios, setUserPortfolios] = useState(
     userDetail?.portfolio_info?.find((item) => item.product === 'Workflow AI')
@@ -41,14 +45,24 @@ const TeamsInWorkflowAi = () => {
   );
   const [isValidCreateTeamData, setIsValidCreateTeamData] = useState(false);
   const [isCreatingTeam, setIsCreatingTeam] = useState(false);
-  const { workflowTeams, setWorkflowTeams } = useAppContext();
+  const [isValidUpdateTeam, setIsValidUpdateTeam] = useState(false);
+  const [isUpdatingTeam, setIsUpdatingTeam] = useState(false);
+  const {
+    workflowTeams,
+    setWorkflowTeams,
+    extractTeamContent,
+    setSelectedTeamIdGlobal,
+    rerun,
+    setRerun,
+    setSync,
+  } = useAppContext();
   const [handleChangeParams, setHandleChangeParams] = useState([]);
   const [selectedTeamId, setSelectedTeamId] = useState('');
   const [items, setItems] = useState([]);
   const [unselectAllPortfolios, setUnselectAllPortfolios] = useState(false);
+  const [updateData, setUpdateData] = useState({});
 
   const dispatchSelectedItems = ({ item, boxId, title, type }) => {
-    // console.log(teamsInWorkflowAI[0].children);
     const selectedItems = setIsSelected({
       items: teamsInWorkflowAI[0].children,
       item,
@@ -60,7 +74,10 @@ const TeamsInWorkflowAi = () => {
   };
 
   const handleOnChange = ({ item, title, boxId, type }, e) => {
-    if (e.target.name === 'teams') setSelectedTeamId(e.target.value);
+    if (e.target.name === 'teams') {
+      setSelectedTeamId(e.target.value);
+      setSelectedTeamIdGlobal(e.target.value);
+    }
     setHandleChangeParams([{ item, title, boxId, type }, e]);
   };
 
@@ -76,12 +93,7 @@ const TeamsInWorkflowAi = () => {
 
     if (isValidCreateTeamData) {
       const [team_name, team_code, team_spec, details, universal_code] =
-        selectedTeam.content
-          .slice(0, selectedTeam.content.length - 1)
-          .split('(')
-          .slice(1)
-          .join('')
-          .split(', ');
+        extractTeamContent(selectedTeam);
 
       const portfolio_list =
         userDetail?.portfolio_info?.find(
@@ -98,8 +110,9 @@ const TeamsInWorkflowAi = () => {
               );
             });
 
-      if (!selectedPortfolioTypeForWorkflowSettings) return toast.info('Please select a portfolio type');
-      
+      if (!selectedPortfolioTypeForWorkflowSettings)
+        return toast.info('Please select a portfolio type');
+
       data = {
         team_name,
         team_code,
@@ -110,19 +123,194 @@ const TeamsInWorkflowAi = () => {
         company_id: userDetail.portfolio_info[0].org_id,
         created_by: userDetail.userinfo.username,
         data_type: userDetail.portfolio_info[0].data_type,
-        team_type: selectedPortfolioTypeForWorkflowSettings === 'team_member' ? 'team' : selectedPortfolioTypeForWorkflowSettings
+        team_type:
+          selectedPortfolioTypeForWorkflowSettings === 'team_member'
+            ? 'team'
+            : selectedPortfolioTypeForWorkflowSettings,
       };
       try {
         setIsCreatingTeam(true);
         const res = await workflowSettingServices.createWorkflowTeam(data);
         toast.success('Team created');
         setIsCreatingTeam(false);
-        setWorkflowTeams((prevTeams) => { return [ ...prevTeams, {...data, _id: crypto.randomUUID() }] })
+        // setWorkflowTeams((prevTeams) => {
+        //   return [...prevTeams, { ...data, _id: crypto.randomUUID() }];
+        // });
       } catch (err) {
         console.log(err);
         toast.error('Team not created');
         setIsCreatingTeam(false);
       }
+    }
+  };
+
+  const selectPortfolios = () => {
+    workflowTeams.forEach((team) => {
+      if (selectedTeamId === team._id) {
+        const portfolioItems =
+          teamsInWorkflowAI[0].children[1].column[0].items.map((item) => {
+            if (
+              team.portfolio_list.find(
+                (port) => port.portfolio_name === item.content
+              )
+            )
+              return item;
+          });
+
+        portfolioItems.forEach((pItem) => {
+          dispatch(
+            setPortfoliosInWorkflowAITeams({
+              type: 'single',
+              payload: portfolioItems.filter((item) => item),
+            })
+          );
+        });
+      }
+    });
+  };
+
+  // * This confirms if there was any change to team info or portfolios
+  const checkForChanges = (
+    portfolio_list,
+    team_name,
+    team_code,
+    team_spec,
+    universal_code,
+    details
+  ) => {
+    let teamDetailsChanged = false;
+    let portfoliosChanged = false;
+    const initialTeam = workflowTeams.find(
+      (team) => team._id === selectedTeamId
+    );
+
+    if (
+      initialTeam.team_name !== team_name ||
+      initialTeam.team_code !== team_code ||
+      initialTeam.team_spec !== team_spec ||
+      initialTeam.universal_code !== universal_code ||
+      initialTeam.details !== details
+    )
+      teamDetailsChanged = true;
+
+    if (initialTeam.portfolio_list.length !== portfolio_list.length)
+      portfoliosChanged = true;
+    else {
+      for (let i = 0; i < portfolio_list.length; i++) {
+        if (
+          portfolio_list[i].portfolio_name !==
+          initialTeam.portfolio_list[i].portfolio_name
+        ) {
+          portfoliosChanged = true;
+          break;
+        }
+      }
+    }
+
+    setUpdateData({
+      team_id: selectedTeamId,
+      team_name,
+      team_code,
+      team_spec,
+      universal_code,
+      details,
+      portfolio_list,
+      company_id: userDetail.portfolio_info[0].org_id,
+      created_by: userDetail.userinfo.username,
+      data_type: userDetail.portfolio_info[0].data_type,
+      team_type:
+        selectedPortfolioTypeForWorkflowSettings === 'team_member'
+          ? 'team'
+          : selectedPortfolioTypeForWorkflowSettings,
+    });
+
+    setIsValidUpdateTeam(
+      portfoliosChanged || teamDetailsChanged ? true : false
+    );
+  };
+
+  const handleUpdateTeam = (teamInfo) => {
+    const selectedPortfolios =
+      teamsInWorkflowAI[0].children[1].column[0].items.filter(
+        (item) => item.isSelected
+      );
+    const {
+      name: team_name,
+      code: team_code,
+      spec: team_spec,
+      universalCode: universal_code,
+      details,
+    } = teamInfo;
+
+    const portfolio_list =
+      userDetail?.portfolio_info?.find((item) => item.product === 'Workflow AI')
+        ?.member_type === 'owner'
+        ? userDetail.userportfolio.filter((port) => {
+            return selectedPortfolios.find(
+              (sPort) => sPort.content === port.portfolio_name
+            );
+          })
+        : userDetail?.selected_product?.userportfolio.filter((port) => {
+            return selectedPortfolios.find(
+              (sPort) => sPort.content === port.portfolio_name
+            );
+          });
+
+    const initialItem = teamsInWorkflowAI[0].children[0].column[0].items
+      .map((item, ind) => (item.isSelected ? { item, ind } : ''))
+      .find((item) => item);
+
+    const item = {
+      ...initialItem.item,
+      content: `Team ${
+        initialItem.ind + 1
+      } (${team_name}, ${team_code}, ${team_spec}, ${details}, ${universal_code})`,
+    };
+
+    dispatch(setUpdateInWorkflowAITeams({ item, extractTeamContent }));
+    checkForChanges(
+      portfolio_list,
+      team_name,
+      team_code,
+      team_spec,
+      universal_code,
+      details
+    );
+  };
+
+  const handleUpdateTeamSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      setIsUpdatingTeam(true);
+      await workflowSettingServices.updateWorkflowTeam(updateData);
+      toast.success('Team updated');
+      updateWorkflowTeam(true, updateData);
+      // dispatchSelectedItems({
+      //   item: null,
+      //   title: '',
+      //   boxId: teamsInWorkflowAI[0].children[0]._id,
+      //   type: 'unselect_all',
+      // });
+      setIsUpdatingTeam(false);
+      setIsValidUpdateTeam(false);
+    } catch (error) {
+      setIsUpdatingTeam(false);
+      toast.error('Updating failed!');
+      console.log(error);
+    }
+  };
+
+  // *This updates teams in workflowTeams
+  const updateWorkflowTeam = (replace, teamData) => {
+    if (replace) {
+      const clone = [...workflowTeams];
+      const _id = teamData.team_id;
+      delete teamData.team_id;
+      for (let i = 0; i < clone.length; i++) {
+        if (_id === clone[i]._id) clone.splice(i, 1, { ...teamData, _id });
+      }
+      setWorkflowTeams(clone);
+    } else {
     }
   };
 
@@ -152,29 +340,31 @@ const TeamsInWorkflowAi = () => {
     )
       setIsValidCreateTeamData(true);
     else setIsValidCreateTeamData(false);
-  }, [teamsInWorkflowAI]);
+  }, [teamsInWorkflowAI, workflowTeams]);
 
   useEffect(() => {
     if (handleChangeParams.length) {
       const [{ item, title, boxId, type }, e] = handleChangeParams;
 
       if (e.target.name === 'teams') {
-        // * Actions for when teams options are clicked
+        // * Actions for when teams' options are clicked
         //* If selected team is in fetched teams, only select; else, select team and unselect all portfolio options
         if (workflowTeams.find((team) => team._id === selectedTeamId)) {
           setUnselectAllPortfolios(false);
           dispatchSelectedItems({ item, title, boxId, type });
+          dispatch(setUpdateInWorkflowAITeams({ item, extractTeamContent }));
+          setSync(true);
         } else {
-          console.log('selected id: ', selectedTeamId);
           dispatchSelectedItems({ item, title, boxId, type });
           setUnselectAllPortfolios(true);
+          dispatch(setUpdateInWorkflowAITeams());
         }
       } else if (
         e.target.name === 'portfolios' &&
         !workflowTeams.find((team) => team._id === selectedTeamId)
       ) {
         // * Actions for when portfolio options are clicked
-        //  * If selected team is in fetched teams, disable check option for portfolio, and vice-versa
+        //  * If selected team is not in fetched teams, enable check option for portfolio
         dispatchSelectedItems({ item, title, boxId, type });
       }
     }
@@ -182,32 +372,19 @@ const TeamsInWorkflowAi = () => {
 
   useEffect(() => {
     if (selectedTeamId) {
-      workflowTeams.forEach((team) => {
-        if (selectedTeamId === team._id) {
-          const portfolioItems =
-            teamsInWorkflowAI[0].children[1].column[0].items.map((item) => {
-              if (
-                team.portfolio_list.find(
-                  (port) => port.portfolio_name === item.content
-                )
-              )
-                return item;
-            });
-
-          portfolioItems.forEach((pItem) => {
-            dispatch(
-              setPortfoliosInWorkflowAITeams({
-                type: 'single',
-                payload: portfolioItems.filter((item) => item),
-              })
-            );
-          });
-        }
-      });
+      selectPortfolios();
     }
   }, [selectedTeamId]);
 
-  // *This effect unselects all portfolios after selecting the new team radio option
+  // *This returns portfolios to what it was if editting is canceled
+  useEffect(() => {
+    if (rerun) {
+      selectPortfolios();
+      setRerun(false);
+    }
+  }, [rerun]);
+
+  // *This unselects all portfolios after selecting the new team radio option
   useEffect(() => {
     if (unselectAllPortfolios) {
       dispatchSelectedItems({
@@ -220,8 +397,9 @@ const TeamsInWorkflowAi = () => {
   }, [unselectAllPortfolios]);
 
   // useEffect(() => {
-  //   // console.log('teamin: ', teamsInWorkflowAI);
-  // }, [teamsInWorkflowAI]);
+  //   console.log('teamin: ', teamsInWorkflowAI[0]);
+  //   console.log('wft: ', workflowTeams);
+  // }, [teamsInWorkflowAI, workflowTeams]);
 
   return (
     <div className={workflowAiSettingsStyles.box}>
@@ -293,12 +471,25 @@ const TeamsInWorkflowAi = () => {
                 title={colItem.proccess_title}
                 onChange={handleOnChange}
                 key={ind}
+                type='list'
+                showSearch={false}
+                showEditButton={colItem.items.length ? true : false}
+                handleUpdateTeam={handleUpdateTeam}
               />
             ))}
           </div>
-          <SubmitButton className={workflowAiSettingsStyles.submit__button}>
-            Update team details
-          </SubmitButton>
+          <button
+            className={workflowAiSettingsStyles.submit__button}
+            onClick={handleUpdateTeamSubmit}
+            disabled={!isValidUpdateTeam}
+            style={
+              !isValidUpdateTeam || isUpdatingTeam
+                ? { filter: 'grayscale(0.5)', cursor: 'not-allowed' }
+                : {}
+            }
+          >
+            {!isUpdatingTeam ? 'Update team details' : 'Updating...'}
+          </button>
         </form>
       </div>
     </div>
