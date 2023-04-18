@@ -357,10 +357,10 @@ def background(process_id, item_id, item_type):
                     copies += [
                         {
                             member["member"]: cloning.document(
-                                document_id=item_id,
-                                auth_viewer=member["member"],
-                                parent_id=process["parent_item_id"],
-                                process_id=process["_id"],
+                                item_id,
+                                member["member"],
+                                process["parent_item_id"],
+                                process["_id"],
                             )
                         }
                         for member in step_two.get("stepTeamMembers", [])
