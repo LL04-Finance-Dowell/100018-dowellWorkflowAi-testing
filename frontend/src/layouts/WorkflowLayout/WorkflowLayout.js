@@ -220,7 +220,6 @@ const WorkflowLayout = ({ children }) => {
               <div className={styles.content__box}>
                 <div className={`${styles.sidebar__box} hide-scrollbar`}>
                   <SideBar />
-                  <Chat/>
                 </div>
                 <div className={styles.children__box}>
                   <p className={styles.beta__Info__Text}>
@@ -228,6 +227,7 @@ const WorkflowLayout = ({ children }) => {
                   </p>
                   {children}
                 </div>
+                  <Chat/>
               </div>
               <Editor />
             </>

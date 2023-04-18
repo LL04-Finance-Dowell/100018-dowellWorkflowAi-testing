@@ -102,6 +102,9 @@ const Chat = () => {
             <div className={styles.my_element}>
               <div className={styles.my_element_one}>
                 <div className={styles.my_element_two}>
+                  <div className={styles.Second_popuo}>
+                    <button onClick={handlePopupClose} className={styles.close_button}>×</button>
+                  </div>
                   <h2 className={styles.my_element_text}>
                     Chat with Customers Stories
                   </h2>
@@ -136,8 +139,9 @@ const Chat = () => {
 
         {isNestedPopupOpen && (
           <div className={styles.Second_popuo_one}>
+            <button onClick={handleNestedPopupClose} className={styles.close_button}>×</button>
             <div className={styles.my_element}>
-              <div style={{ height: "100%" }}>
+              <div >
                 <div style={{ height: "10%" }}>
                   <h2 className={styles.Text_Class}>Chat with us</h2>
                   <h2 className={styles.Text_Class}>Product Name : {modals.product}</h2>
