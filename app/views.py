@@ -37,11 +37,13 @@ from app.utils.mongo_db_connection import (
     get_team,
     get_link_object,
     update_team_data,
+    get_wfai_setting_list,
 )
 
 from .constants import EDITOR_API
 from .utils import setting
 from .utils.wf_management import CREATE_WF_AI_SETTING
+
 
 @api_view(["GET"])
 def home(request):
@@ -306,7 +308,7 @@ def finalize_or_reject(request, process_id):
 
         else:
             finalize(item_id, "processing", item_type)
-            
+
     return Response(
         "Error processing the document", status.HTTP_500_INTERNAL_SERVER_ERROR
     )
@@ -357,7 +359,7 @@ def processes(request, company_id):
 
     if not validator.validate_id(company_id):
         return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
-    
+
     data_type = request.query_params.get("data_type", "Real_Data")
 
     try:
@@ -1082,14 +1084,32 @@ def get_completed_documents(request, company_id):
         status=status.HTTP_200_OK,
     )
 
+
 @api_view(["POST"])
 def WF_AI_SETTING(request):
-    
     if not request.data:
         return Response("You are missing something", status.HTTP_400_BAD_REQUEST)
     # print(request.data)
     wf_stng = json.loads(save_wf_setting(request.data))
     if wf_stng["isSuccess"]:
-        return Response(get_wf_setting_object(wf_stng["inserted_id"]), status.HTTP_201_CREATED)
+        return Response(
+            get_wf_setting_object(wf_stng["inserted_id"]), status.HTTP_201_CREATED
+        )
 
     return Response("Failed to Save Workflow Setting", status.HTTP_200_OK)
+
+
+@api_view(["GET"])
+def all_wf_ai_setting(request, company_id):
+    """Get All WF AI"""
+    all_setting = get_wfai_setting_list(company_id)
+    print(all_setting)
+    try:
+        return Response(
+            all_setting,
+            status.HTTP_200_OK,
+        )
+    except:
+        return Response(
+            "Failed to Get WF AI Data", status.HTTP_500_INTERNAL_SERVER_ERROR
+        )

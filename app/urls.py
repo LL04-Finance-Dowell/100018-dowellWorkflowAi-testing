@@ -34,6 +34,7 @@ from .views import (
     workflow_detail,
     process_copies,
     WF_AI_SETTING,
+    all_wf_ai_setting,
 )
 
 urlpatterns = [
@@ -44,6 +45,7 @@ urlpatterns = [
     path("companies/<str:company_id>/documents/", get_documents),
     path("companies/<str:company_id>/documents/completed/", get_completed_documents),
     path("companies/<str:company_id>/teams/", get_all_teams),
+    path("companies/<str:company_id>/workflows-ai-settings/", all_wf_ai_setting),
     path("templates/", create_template),
     path("templates/<str:template_id>/", template_detail),
     path("templates/<str:template_id>/approval/", approve),
