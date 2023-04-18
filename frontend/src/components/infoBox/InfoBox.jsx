@@ -12,11 +12,12 @@ import {
 } from './styledComponents';
 import TypeFilter from './TypeFilter';
 
-import { AiOutlinePlus } from 'react-icons/ai';
+import { AiOutlinePlus, AiTwotoneEdit } from 'react-icons/ai';
 import { MdOutlineRemove, MdOutlineAdd } from 'react-icons/md';
 import { Collapse } from 'react-bootstrap';
 
 import TeamModal from '../modal/TeamModal';
+import EditTeamModal from '../modal/EditTeamModal';
 
 import { useSelector, useDispatch } from 'react-redux';
 import {
@@ -37,19 +38,21 @@ const InfoBox = ({
   showSearch,
   showAddButton,
   type,
+  showEditButton,
   boxType,
   handleItemClick,
   isTeams,
+  handleUpdateTeam,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [showModal, setShowModal] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
 
   const [team, setTeam] = useState({});
   const { teamsInWorkflowAI } = useSelector((state) => state.app);
   const { userDetail } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
-  const { workflowTeams } = useAppContext();
-  const [fetchedTeams, setFetchedTeams] = useState([]);
+  const { workflowTeams, refetch, setRefetch } = useAppContext();
 
   const handleAddTeam = (team) => {
     setTeam(team);
@@ -71,16 +74,18 @@ const InfoBox = ({
   const [itemsToDisplay, setItemsToDisplay] = useState([]);
 
   useEffect(() => {
-    if (items.length) {
-      setItemsToDisplay(items);
-    }
+    setItemsToDisplay(items);
   }, [items]);
 
   useEffect(() => {
-    const itemsMatchingSearchValue = items.filter((item) =>
-      item.content.toLocaleLowerCase().includes(searchValue.toLocaleLowerCase())
-    );
-    setItemsToDisplay(itemsMatchingSearchValue);
+    if (showSearch) {
+      const itemsMatchingSearchValue = items.filter((item) =>
+        item.content
+          .toLocaleLowerCase()
+          .includes(searchValue.toLocaleLowerCase())
+      );
+      setItemsToDisplay(itemsMatchingSearchValue);
+    }
   }, [searchValue]);
 
   const setupTeamInfo = (
@@ -93,7 +98,7 @@ const InfoBox = ({
     ind
   ) => {
     const allTeams = teamsInWorkflowAI[0].children[0].column[0].items;
-    const count = ind ? ind + 1 : allTeams.length + 1;
+    const count = ind !== null ? ind + 1 : allTeams.length + 1;
     return {
       _id: _id || v4(),
       content: `Team ${count} (${name}, ${code}, ${spec}, ${details}, ${universalCode})`,
@@ -108,7 +113,9 @@ const InfoBox = ({
         team.code,
         team.spec,
         team.details,
-        team.universalCode
+        team.universalCode,
+        null,
+        null
       );
 
       dispatch(setTeamInWorkflowAITeams(newTeam));
@@ -118,7 +125,7 @@ const InfoBox = ({
 
   // *Populate teamsInWorkflowAITeams with fetched teams
   useEffect(() => {
-    if (workflowTeams.length && !fetchedTeams.length) {
+    if (workflowTeams.length) {
       let teams = [];
       workflowTeams.forEach((team, ind) => {
         const {
@@ -140,13 +147,9 @@ const InfoBox = ({
         );
         teams.push(setTeam);
       });
-      setFetchedTeams(teams);
+      dispatch(setTeamsInWorkflowAITeams(teams));
     }
   }, [workflowTeams]);
-
-  useEffect(() => {
-    if (fetchedTeams.length) dispatch(setTeamsInWorkflowAITeams(fetchedTeams));
-  }, [fetchedTeams]);
 
   return (
     <InfoBoxContainer
@@ -224,6 +227,7 @@ const InfoBox = ({
                 style={{
                   padding: '4px 12px',
                   marginTop: 0,
+                  color: 'var(--e-global-color-cd6593d)',
                 }}
                 onClick={handleShowModal}
                 type='button'
@@ -233,12 +237,37 @@ const InfoBox = ({
             )}
           </div>
 
+          {showEditButton && (
+            <button
+              style={{
+                padding: '4px 12px',
+                marginTop: 0,
+                position: 'absolute',
+                right: '5px',
+                top: '5px',
+                color: 'var(--e-global-color-cd6593d)',
+                fontSize: '1rem',
+              }}
+              onClick={() => setShowEditModal(true)}
+              type='button'
+            >
+              <AiTwotoneEdit />
+            </button>
+          )}
+
           <TeamModal
             show={showModal}
             onHide={handleCloseModal}
             backdrop='static'
             keyboard={false}
             handleAddTeam={handleAddTeam}
+          />
+
+          <EditTeamModal
+            show={showEditModal}
+            setShow={setShowEditModal}
+            handlePortfolioChange={onChange}
+            handleUpdateTeam={handleUpdateTeam}
           />
 
           {itemsToDisplay.length ? (
@@ -249,7 +278,11 @@ const InfoBox = ({
                     onClick={() => handleItemClick(item)}
                     key={item._id}
                   >
-                    {index + 1}. {item.content}
+                    {/* {index + 1}. {item.content} */}
+                    <span style={{ fontWeight: 'bold' }}>
+                      {item.content.title}:
+                    </span>{' '}
+                    <span>{item.content.content}</span>
                   </InfoContentText>
                 ))}
               </InfoContentBox>

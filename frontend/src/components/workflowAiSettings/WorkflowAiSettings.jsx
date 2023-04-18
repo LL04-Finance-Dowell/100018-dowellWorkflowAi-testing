@@ -19,7 +19,7 @@ import { Link } from 'react-router-dom';
 import { useAppContext } from '../../contexts/AppContext';
 
 const Container = styled.div`
-  & button {
+  & button:not(.edit_modal_sect button) {
     background-color: ${(props) => props.bgColor} !important;
   }
 `;
@@ -29,7 +29,7 @@ const WorkflowAiSettings = () => {
 
   const { handleSubmit, register } = useForm();
   const { userDetail } = useSelector((state) => state.auth);
-  console.log(userDetail);
+  // console.log(userDetail);
 
   const onSubmit = (data) => {
     console.log('dataaaaaaaaaa', data);
@@ -38,37 +38,46 @@ const WorkflowAiSettings = () => {
   // #7a7a7a
   // --e-global-color-text;
   const { workflowTeams } = useAppContext();
-  const [workflowAiSettingsArrayToDisplay, setWorkflowAiSettingsArrayToDisplay] = useState(workflowAiSettingsArray);
+  const [
+    workflowAiSettingsArrayToDisplay,
+    setWorkflowAiSettingsArrayToDisplay,
+  ] = useState(workflowAiSettingsArray);
 
   useEffect(() => {
-    setWorkflowAiSettingsArrayToDisplay(workflowAiSettingsArray.map(setting => {
-      setting.children.forEach(child => {
-        if (child.proccess_title === 'teams') {
-          child.items = workflowTeams.map(team => {
-            return {
-              _id: team._id,
-              content: team.team_name
-            }
-          })
-        }
-        if (child.proccess_title === 'portfolios') {
-          child.items = userDetail?.portfolio_info?.find((item) => item.product === 'Workflow AI')?.member_type === 'owner' ? 
-          userDetail?.userportfolio.map((portfolio) => ({
-            _id: crypto.randomUUID(),
-            content: portfolio.portfolio_name,
-          }))
-          :
-          userDetail?.selected_product?.userportfolio.map((portfolio) => {
-            return {
-              _id: crypto.randomUUID(),
-              content: portfolio.portfolio_name,
-            };
-          })
-        }
+    setWorkflowAiSettingsArrayToDisplay(
+      workflowAiSettingsArray.map((setting) => {
+        setting.children.forEach((child) => {
+          if (child.proccess_title === 'teams') {
+            child.items = workflowTeams.map((team) => {
+              return {
+                _id: team._id,
+                content: team.team_name,
+              };
+            });
+          }
+          if (child.proccess_title === 'portfolios') {
+            child.items =
+              userDetail?.portfolio_info?.find(
+                (item) => item.product === 'Workflow AI'
+              )?.member_type === 'owner'
+                ? userDetail?.userportfolio.map((portfolio) => ({
+                    _id: crypto.randomUUID(),
+                    content: portfolio.portfolio_name,
+                  }))
+                : userDetail?.selected_product?.userportfolio.map(
+                    (portfolio) => {
+                      return {
+                        _id: crypto.randomUUID(),
+                        content: portfolio.portfolio_name,
+                      };
+                    }
+                  );
+          }
+        });
+        return setting;
       })
-      return setting
-    }))
-  }, [userDetail, workflowTeams])
+    );
+  }, [userDetail, workflowTeams]);
 
   return (
     <Container bgColor={themeColor} className={styles.container}>

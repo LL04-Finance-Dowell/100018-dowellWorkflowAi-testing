@@ -21,7 +21,12 @@ export const AppContextProvider = ({ children }) => {
     workflowsAdded: false,
   });
   const [workflowTeams, setWorkflowTeams] = useState([]);
+  const [selectedTeamIdGlobal, setSelectedTeamIdGlobal] = useState();
   const [workflowTeamsLoaded, setWorkflowTeamsLoaded] = useState(false);
+  const [rerun, setRerun] = useState(false);
+  const [sync, setSync] = useState(true);
+
+  const [filter, setFilter] = useState('team_member');
 
   const { userDetail } = useSelector((state) => state.auth);
 
@@ -58,6 +63,15 @@ export const AppContextProvider = ({ children }) => {
       });
   };
 
+  const extractTeamContent = ({ content }) => {
+    return content
+      .slice(0, content.length - 1)
+      .split('(')
+      .slice(1)
+      .join('')
+      .split(', ');
+  };
+
   useEffect(() => {
     if (userDetail) {
       if (!workflowTeamsLoaded) {
@@ -79,7 +93,6 @@ export const AppContextProvider = ({ children }) => {
           });
       }
     }
-    // console.log('context userDetail: ', userDetail);
   }, [userDetail]);
 
   // useEffect(() => {
@@ -106,6 +119,15 @@ export const AppContextProvider = ({ children }) => {
         setWorkflowTeams,
         workflowTeamsLoaded,
         setWorkflowTeamsLoaded,
+        extractTeamContent,
+        selectedTeamIdGlobal,
+        setSelectedTeamIdGlobal,
+        rerun,
+        setRerun,
+        filter,
+        setFilter,
+        sync,
+        setSync,
       }}
     >
       {children}

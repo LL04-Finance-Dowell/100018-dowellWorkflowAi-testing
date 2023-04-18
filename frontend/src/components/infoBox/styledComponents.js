@@ -53,6 +53,7 @@ export const InfoContentContainer = styled.div`
   white-space: break-spaces;
   font-weight: 400;
   font-family: 'Roboto';
+  position: relative;
 `;
 
 export const InfoSearchbar = styled.input`

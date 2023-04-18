@@ -3,10 +3,16 @@ import { useSelector, useDispatch } from 'react-redux';
 import { AiFillCheckSquare, AiOutlineDown, AiOutlineUp } from 'react-icons/ai';
 import './typefilter.css';
 import { v4 } from 'uuid';
-import { setPortfoliosInWorkflowAITeams, setSelectedPortfolioTypeForWorkflowSettings } from '../../features/app/appSlice';
+import {
+  setPortfoliosInWorkflowAITeams,
+  setSelectedPortfolioTypeForWorkflowSettings,
+  setTeamsInWorkflowAI,
+} from '../../features/app/appSlice';
+import { useAppContext } from '../../contexts/AppContext';
+import { toast } from 'react-toastify';
+import { setIsSelected } from '../../utils/helpers';
 
-const TypeFilter = () => {
-  const [filter, setFilter] = useState('');
+const TypeFilter = ({ edit }) => {
   const [filterOpts, setFilterOpts] = useState([
     'user',
     'team_member',
@@ -17,6 +23,8 @@ const TypeFilter = () => {
   const [userPortfolios, setUserPortfolios] = useState();
   const [filteredPortfolios, setFilteredPortfolios] = useState([]);
   const { teamsInWorkflowAI } = useSelector((state) => state.app);
+  const { filter, setFilter } = useAppContext();
+
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -24,7 +32,6 @@ const TypeFilter = () => {
   }, [userDetail]);
 
   useEffect(() => {
-    // console.log(userPortfolios);
     if (filter && userPortfolios)
       setFilteredPortfolios(
         userPortfolios.filter((item) => item.member_type === filter)
@@ -34,7 +41,6 @@ const TypeFilter = () => {
 
   useEffect(() => {
     if (filteredPortfolios.length || filter) {
-      // console.log(filteredPortfolios.map((item) => item.portfolio_name));
       if (filteredPortfolios.length)
         dispatch(
           setPortfoliosInWorkflowAITeams({
@@ -53,8 +59,16 @@ const TypeFilter = () => {
   }, [filteredPortfolios]);
 
   return (
-    <section className='type_filter_sect'>
-      <button className='drop_btn' onClick={() => setIsDropdown(!isDropdown)}>
+    <section
+      className='type_filter_sect'
+      style={edit ? { top: '-28px', right: '200px' } : {}}
+    >
+      <button
+        className='drop_btn'
+        onClick={() => setIsDropdown(!isDropdown)}
+        style={edit ? { backgroundColor: '#0d6efd' } : {}}
+        type='button'
+      >
         type{' '}
         <span className='drop_icon'>
           {isDropdown ? <AiOutlineUp /> : <AiOutlineDown />}
@@ -66,25 +80,86 @@ const TypeFilter = () => {
           setFilter={setFilter}
           filter={filter}
           filterOpts={filterOpts}
+          edit={edit}
         />
       </div>
     </section>
   );
 };
 
-const DropOpt = ({ setFilter, filter, filterOpts }) => {
+const DropOpt = ({ setFilter, filter, filterOpts, edit }) => {
   const optsRef = useRef([]);
   const dispatch = useDispatch();
+  const { workflowTeams, selectedTeamIdGlobal } = useAppContext();
+  const [clicks, setClicks] = useState(false);
+  const { teamsInWorkflowAI } = useSelector((state) => state.app);
+
+  const portfolios = teamsInWorkflowAI[0].children[1].column[0].items;
+
+  const unselectAllPortfolios = () => {
+    const selectedItems = setIsSelected({
+      items: teamsInWorkflowAI[0].children,
+      item: null,
+      title: '',
+      boxId: teamsInWorkflowAI[0].children[1]._id,
+      type: 'unselect_all',
+    });
+    dispatch(setTeamsInWorkflowAI(selectedItems));
+  };
 
   const handleOptClick = (e) => {
     const optsEl = [...new Set(optsRef.current.filter((el) => el))];
-    optsEl.forEach((el) => {
-      el.classList.remove('active');
-    });
-    e.currentTarget.classList.toggle('active');
-    setFilter(e.currentTarget.id !== 'all' ? e.currentTarget.id : '');
-    dispatch(setSelectedPortfolioTypeForWorkflowSettings(e.currentTarget.id));
+    // *Prevent user from adding portfolios of different types to teams
+    // TODO Add condition to let use same fuctionality for Editting
+    if (
+      selectedTeamIdGlobal &&
+      (!workflowTeams.find((team) => team._id === selectedTeamIdGlobal) ||
+        edit) &&
+      portfolios.find((prt) => prt.isSelected)
+    ) {
+      if (!clicks) {
+        toast.warn(
+          'Changing type will unselect previously selected portfolios!'
+        );
+        toast.info('Click again to select type');
+        setClicks(true);
+      }
+
+      if (clicks) {
+        unselectAllPortfolios();
+        optsEl.forEach((el) => {
+          el.classList.remove('active');
+        });
+        e.currentTarget.classList.toggle('active');
+        setFilter(e.currentTarget.id !== 'all' ? e.currentTarget.id : '');
+        dispatch(
+          setSelectedPortfolioTypeForWorkflowSettings(e.currentTarget.id)
+        );
+        setClicks(false);
+      }
+    } else {
+      optsEl.forEach((el) => {
+        el.classList.remove('active');
+      });
+      e.currentTarget.classList.toggle('active');
+      setFilter(e.currentTarget.id !== 'all' ? e.currentTarget.id : '');
+      dispatch(setSelectedPortfolioTypeForWorkflowSettings(e.currentTarget.id));
+    }
   };
+
+  useEffect(() => {
+    if (optsRef.current.length) {
+      const optsEl = [...new Set(optsRef.current.filter((el) => el))];
+      optsEl.forEach((el) => {
+        el.classList.remove('active');
+      });
+      optsEl.find((el) => el.id === filter).classList.add('active');
+    }
+  }, [optsRef, filter]);
+
+  useEffect(() => {
+    dispatch(setSelectedPortfolioTypeForWorkflowSettings(filter));
+  }, []);
 
   return (
     <>
@@ -99,7 +174,10 @@ const DropOpt = ({ setFilter, filter, filterOpts }) => {
           >
             <div className={`drop_opt`}>
               <span className='filter_name'>{name.replace('_', ' ')}</span>
-              <span className='select_icon'>
+              <span
+                className='select_icon'
+                style={edit ? { color: '#0d6efd' } : {}}
+              >
                 <AiFillCheckSquare />
               </span>
             </div>

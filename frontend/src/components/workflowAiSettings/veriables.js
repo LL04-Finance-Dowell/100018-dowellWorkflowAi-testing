@@ -417,11 +417,11 @@ export const teamsInWorkflowAITeams = [];
 export const teamsInWorkflowAIPortfolios = [];
 
 export const teamsInWorkflowAITeamDetails = [
-  { _id: uuidv4(), content: '<Team Name>' },
-  { _id: uuidv4(), content: '<Team Code>' },
-  { _id: uuidv4(), content: '<Team Spec>' },
-  { _id: uuidv4(), content: '<Team Details>' },
-  { _id: uuidv4(), content: '<Team Universal code>' },
+  // { _id: uuidv4(), content: '<Team Name>' },
+  // { _id: uuidv4(), content: '<Team Code>' },
+  // { _id: uuidv4(), content: '<Team Spec>' },
+  // { _id: uuidv4(), content: '<Team Details>' },
+  // { _id: uuidv4(), content: '<Team Universal code>' },
 ];
 
 export const teamsInWorkflowAI = [

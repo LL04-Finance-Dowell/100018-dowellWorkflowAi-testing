@@ -24,7 +24,7 @@
 
 .drop_opts_wrapper {
   border-radius: 0 0 5px 5px;
-  transition: height ease 0.3s;
+  transition: all ease 0.3s;
   overflow: hidden;
   height: 0;
   background-color: var(--e-global-color-cd6593d);

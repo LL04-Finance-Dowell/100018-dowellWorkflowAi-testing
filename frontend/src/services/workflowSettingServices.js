@@ -16,8 +16,11 @@ export class WorkflowSettingServices {
   createWorkflowTeam = (data) => {
     return httpApiUrl.post('teams/', data);
   };
+  updateWorkflowTeam = (data) => {
+    return httpApiUrl.post('update-to-teams/', data);
+  };
 
   getAllTeams = (companyId) => {
-    return httpApiUrl.get(`companies/${companyId}/teams/`)
-  }
+    return httpApiUrl.get(`companies/${companyId}/teams/`);
+  };
 }
