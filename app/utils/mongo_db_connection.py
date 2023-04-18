@@ -764,6 +764,7 @@ def save_wf_setting(data):
                 "Evaluation_Process" : data["Evaluation_Process"],
                 "Reports" : data["Reports"],
                 "Management" : data["Management"],
+                "theme_color": data["theme_color"],
                 "data_type": "Real_data",
                 "created_on": time,
             },
