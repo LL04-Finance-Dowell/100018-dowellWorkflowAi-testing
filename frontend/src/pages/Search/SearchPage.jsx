@@ -199,9 +199,12 @@ const SearchPage = () => {
     const workflowServices = new WorkflowServices();
 
     try {
-      const documentsData = (
-        await documentServices.allDocuments(data.company_id)
-      ).data;
+      const [documentsData, templatesData, workflowsData] = await Promise.all([
+        (await documentServices.allDocuments(data.company_id)).data, 
+        (await templatesServices.allTemplates(data.company_id)).data,
+        (await workflowServices.allWorkflows(data.company_id)).data
+      ]);
+
       dispatch(
         setAllDocuments(
           documentsData.documents
@@ -214,14 +217,7 @@ const SearchPage = () => {
             )
         )
       );
-    } catch (error) {
-      toast.info('Refresh failed for documents');
-    }
 
-    try {
-      const templatesData = (
-        await templatesServices.allTemplates(data.company_id)
-      ).data;
       dispatch(
         setAllTemplates(
           templatesData.templates
@@ -233,14 +229,7 @@ const SearchPage = () => {
             )
         )
       );
-    } catch (error) {
-      toast.info('Refresh failed for templates');
-    }
 
-    try {
-      const workflowsData = (
-        await workflowServices.allWorkflows(data.company_id)
-      ).data;
       dispatch(
         setAllWorkflows(
           workflowsData.workflows.filter(
@@ -255,9 +244,8 @@ const SearchPage = () => {
         )
       );
     } catch (error) {
-      toast.info('Refresh failed for workflows');
+      console.log(error.response ? error.response.data : error.message);
     }
-
     setRefreshLoading(false);
   };
 
