@@ -75,5 +75,4 @@ urlpatterns = [
     path("teams/<str:team_id>/", get_team_data),
     path("update-to-teams/", update_team),
     path("workflow-settings/", WF_AI_SETTING),
-
 ]
