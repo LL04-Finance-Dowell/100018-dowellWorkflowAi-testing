@@ -266,7 +266,7 @@ def save_wf_process(
                 "company_id": company_id,
                 "created_by": created_by,
                 "data_type": data_type,
-                "parent_item_id": item_id,
+                "parent_item_id": parent_item_id,
                 "processing_action": process_action,
                 "processing_state": "draft",
                 "process_type": process_type,

@@ -34,20 +34,22 @@ def process(process_id, created_by, creator_portfolio):
     return save_res["inserted_id"]
 
 
-def document(document_id, auth_viewer, parent_id, process_id):
+def document(document_id, auth_viewers, parent_id, process_id):
     """creating a document copy"""
     try:
         viewers = []
         document = get_document_object(document_id)
-        if auth_viewer is not None:
-            viewers.append(auth_viewer)
+        if auth_viewers is not None:
+            viewers.append(auth_viewers)
         else:
             viewers = []
+
+        document_name = "-" + document["document_name"] + "-"
 
         # create new doc
         save_res = json.loads(
             save_document(
-                name=document["document_name"],
+                name=document_name,
                 data=document["content"],
                 page=document["page"],
                 created_by=document["created_by"],
@@ -61,7 +63,6 @@ def document(document_id, auth_viewer, parent_id, process_id):
             )
         )
     except RuntimeError:
-        print("Failed to create clone \n")
         return
 
     return save_res["inserted_id"]

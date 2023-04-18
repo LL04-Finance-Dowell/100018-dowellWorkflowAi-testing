@@ -305,11 +305,8 @@ def finalize_or_reject(request, process_id):
             return Response("document processed successfully", status.HTTP_200_OK)
 
         else:
-            return Response(
-                "document processed but experienced next step failure",
-                status.HTTP_200_OK,
-            )
-
+            finalize(item_id, "processing", item_type)
+            
     return Response(
         "Error processing the document", status.HTTP_500_INTERNAL_SERVER_ERROR
     )

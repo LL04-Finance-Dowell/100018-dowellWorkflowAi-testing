@@ -129,60 +129,60 @@ def start(process):
         viewers.append(viewer)
 
     if len(viewers) > 0:
-        res = json.loads(
-            authorize(
-                document_id=doc_id,
-                viewers=viewers,
-                process=process["_id"],
-                item_type=process["process_type"],
-            )
+        # create doc copy
+        clone_id = cloning.document(doc_id, viewers, doc_id, process["_id"])
+        # res = json.loads(
+        #     authorize(
+        #         document_id=clone_id,
+        #         viewers=viewers,
+        #         process=process["_id"],
+        #         item_type=process["process_type"],
+        #     )
+        # )
+        # if res["isSuccess"]:
+        # add this users to the document clone map of step one
+        for step in process["process_steps"]:
+            if step.get("stepNumber") == 1:
+                for user in viewers:
+                    step.get("stepDocumentCloneMap").append({user: clone_id})
+
+        # now update the process
+        update_wf_process(
+            process_id=process["_id"],
+            steps=process["process_steps"],
+            state="processing",
+        )
+
+        # save links TODO:
+        data = {
+            "links": links,
+            "process_id": process["_id"],
+            "item_id": clone_id,
+            "company_id": process["company_id"],
+        }
+
+        res = save_process_links(
+            links=data["links"],
+            process_id=data["process_id"],
+            item_id=data["item_id"],
+            company_id=data["company_id"],
         )
         if res["isSuccess"]:
-            # add this users to the document clone map of step one
-            for step in process["process_steps"]:
-                if step.get("stepNumber") == 1:
-                    for user in viewers:
-                        step.get("stepDocumentCloneMap").append({user: doc_id})
+            # Thread(target=threads.save_links_v2, args=(data,)).start()
 
-            # now update the process
-            update_wf_process(
-                process_id=process["_id"],
-                steps=process["process_steps"],
-                state="processing",
-            )
-
-            # save links TODO:
-            data = {
-                "links": links,
+            # save qrcodes
+            code_data = {
+                "qrcodes": qrcodes,
                 "process_id": process["_id"],
-                "item_id": doc_id,
+                "item_id": clone_id,
+                "process_choice": process["processing_action"],
                 "company_id": process["company_id"],
+                "process_title": process["process_title"],
             }
+            Thread(target=threads.save_qrcodes, args=(code_data,)).start()
 
-            res = save_process_links(
-                links=data["links"],
-                process_id=data["process_id"],
-                item_id=data["item_id"],
-                company_id=data["company_id"],
-            )
-            if res["isSuccess"]:
-                # Thread(target=threads.save_links_v2, args=(data,)).start()
-
-                # save qrcodes
-                code_data = {
-                    "qrcodes": qrcodes,
-                    "process_id": process["_id"],
-                    "item_id": doc_id,
-                    "process_choice": process["processing_action"],
-                    "company_id": process["company_id"],
-                    "process_title": process["process_title"],
-                }
-                Thread(target=threads.save_qrcodes, args=(code_data,)).start()
-
-                # return generated links
-                return Response(
-                    {"links": links, "qrcodes": qrcodes}, status.HTTP_200_OK
-                )
+            # return generated links
+            return Response({"links": links, "qrcodes": qrcodes}, status.HTTP_200_OK)
 
     return Response("failed to start processing", status.HTTP_500_INTERNAL_SERVER_ERROR)
 
@@ -357,10 +357,10 @@ def background(process_id, item_id, item_type):
                     copies += [
                         {
                             member["member"]: cloning.document(
-                                document_id=item_id,
-                                auth_viewer=member["member"],
-                                parent_id=process["parent_item_id"],
-                                process_id=process["_id"],
+                                item_id,
+                                member["member"],
+                                process["parent_item_id"],
+                                process["_id"],
                             )
                         }
                         for member in step_two.get("stepTeamMembers", [])
