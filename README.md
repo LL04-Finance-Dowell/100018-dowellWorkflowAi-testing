@@ -804,7 +804,7 @@ Response-200
 }
 ```
 
-_GET_ `/v1/companies/<str:company_id>/workflows-ai-settings/`
+_GET_ `/v1/companies/<str:company_id>/settings/`
 
 Response-200
 
