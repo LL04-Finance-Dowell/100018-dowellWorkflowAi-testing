@@ -552,8 +552,9 @@ def background(process_id, item_id, item_type):
     return True
 
 
+# Determine whether a given step's documents are all finalized?
 def check_step_done(step_index, process):
-    step = process["process_steps"][step_index]
+    step = process["process_steps"][step_index - 1]
     step_users = [
         member["member"]
         for member in step.get("stepTeamMembers", [])
@@ -579,15 +580,23 @@ def check_step_done(step_index, process):
 
     return False
 
-
+# Now Authorize users with te current document
 def authorize_next_step_users(step_index, process):
     prev_step = step_index - 1
     for doc_map in process["process_steps"][prev_step]:
         docs = list(doc_map.values())
 
+    step = process["process_steps"][step_index]
+    step_users = [
+        member["member"]
+        for member in step.get("stepTeamMembers", [])
+        + step.get("stepPublicMembers", [])
+        + step.get("stepUserMembers", [])
+    ]
+
     viewers = []
     for docid in docs:
-        for usr in step_two_users:
+        for usr in step_users:
             viewers.append(usr)
             authorize(docid, viewers, process["_id"], item_type)
 
@@ -599,6 +608,7 @@ def authorize_next_step_users(step_index, process):
 
 def derive_document_copies_for_step_users(step_index, process, item_id):
     step = process["process_steps"][step_index]
+    print(step)
     copies = [
         {
             member["member"]: cloning_document(
@@ -625,26 +635,26 @@ def background2(process_id, item_id, item_type):
         num_process_steps = sum(
             isinstance(element, dict) for element in process["process_steps"]
         )
-    except:
-        return False
-
-    if num_process_steps == 1:
-        if check_step_done(1, process):
-            return True
-
-    if num_process_steps >= 2:
-        if check_step_done(num_process_steps - 1, process):
+        if num_process_steps == 1:
             if check_step_done(num_process_steps, process):
                 return True
 
-            else:
-                if step["stepTaskType"] == "assign_task":
-                    authorize_next_step_users(num_process_steps, process)
+        if num_process_steps >= 2:
+            if check_step_done(num_process_steps - 1, process):
+                if check_step_done(num_process_steps, process):
+                    return True
 
-                if step["stepTaskType"] == "request_for_task":
-                    document_copies = derive_document_copies_for_step_users(
-                        num_process_steps, process, item_id
-                    )
+                else:
+                    print("got here")
+                    if step["stepTaskType"] == "assign_task":
+                        authorize_next_step_users(num_process_steps, process)
+
+                    if step["stepTaskType"] == "request_for_task":
+                        document_copies = derive_document_copies_for_step_users(
+                            num_process_steps, process, item_id
+                        )
+    except:
+        return False
 
     # updating the document clone list
     clone_ids = [d["member"] for d in document_copies if "member" in d]
