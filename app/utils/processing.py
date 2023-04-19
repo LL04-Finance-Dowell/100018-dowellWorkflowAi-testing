@@ -8,7 +8,7 @@ from rest_framework.response import Response
 from app.constants import NOTIFICATION_API
 
 from . import checks, threads
-from .helpers import cloning_document, link_to_editor
+from .helpers import cloning_document, link_to_editor, verification_data
 from .mongo_db_connection import (
     authorize,
     get_document_object,
@@ -87,7 +87,7 @@ def start(process):
 
     for step in process["process_steps"]:
         for member in all_process_step_members:
-            link, qrcode = verification.store_information(
+            link, qrcode = verification_data(
                 process_id=process["_id"],
                 item_id=process["parent_item_id"],
                 step_role=step.get("stepRole"),
@@ -98,7 +98,7 @@ def start(process):
                 item_type=process["process_type"],
             )
             links += [{member["member"]: link}]
-            qrcodes += [{member["member"]: link}]
+            qrcodes += [{member["member"]: qrcode}]
 
     # for step in process["process_steps"]:
     #     # process links
@@ -655,7 +655,9 @@ def background2(process_id, item_id, item_type):
                     authorize_next_step_users(2, process)
 
                 if step["stepTaskType"] == "assign_task":
-                    document_copies = derive_document_copies_for_step_users(2, process, item_id)
+                    document_copies = derive_document_copies_for_step_users(
+                        2, process, item_id
+                    )
 
     if num_process_steps == 3:
         if check_step_done(2, process):
@@ -669,7 +671,9 @@ def background2(process_id, item_id, item_type):
                     authorize_next_step_users(3, process)
 
                 if step["stepTaskType"] == "assign_task":
-                    document_copies = derive_document_copies_for_step_users(3, process, item_id)
+                    document_copies = derive_document_copies_for_step_users(
+                        3, process, item_id
+                    )
 
     if num_process_steps == 4:
         if check_step_done(3, process):
