@@ -802,7 +802,7 @@ def get_wfai_setting_list(company_id):
         return []
 
 
-def wf_setting_update(wf_setting_id, wf_ai_data):
+def wf_setting_update(wf_setting_id, data):
     dd = datetime.now()
     time = dd.strftime("%d:%m:%Y,%H:%M:%S")
     payload = json.dumps(
@@ -813,14 +813,20 @@ def wf_setting_update(wf_setting_id, wf_ai_data):
                 "_id": wf_setting_id,
             },
             "update_field": {
-                "eventId": get_event_id()["event_id"],
-                "company_id": wf_ai_data["company_id"],
-                "owner_name": wf_ai_data["owner_name"],
-                "username": wf_ai_data["username"],
-                "portfolio_name": wf_ai_data["portfolio_name"],
-                "processes": wf_ai_data["processes"],
+                "Process" : data["Process"],
+                "Documents" : data["Documents"],
+                "Templates" : data["Templates"],
+                "Workflows" : data["Workflows"],
+                "Notarisation" : data["Notarisation"],
+                "Folders" : data["Folders"],
+                "Records" : data["Records"],
+                "References" : data["References"],
+                "Approval_Process" : data["Approval_Process"],
+                "Evaluation_Process" : data["Evaluation_Process"],
+                "Reports" : data["Reports"],
+                "Management" : data["Management"],
+                "theme_color": data["theme_color"],
                 "data_type": "Real_data",
-                "created_on": time,
             },
             "platform": "bangalore",
         }

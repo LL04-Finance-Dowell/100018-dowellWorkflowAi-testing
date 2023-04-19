@@ -35,6 +35,7 @@ This backend service serves as the WorkflowAI application Backend.
 | GET        | companies/:company_id/workflows/          | To retrieve workflows in a company               |
 | GET        | companies/:company_id/favourites/         | To list favourites                               |
 | POST       | companies/:company_id/teams/              | To fetch all workflow teams                      |
+| POST       | companies/:company_id/workflows-ai-settings  | To fetch all workflow AI SETTING Lists        |
 | POST       | templates/                                | To create a new template.                        |
 | GET        | templates/:template_id/                   | To retrieve a single template.                   |
 | PUT        | templates/:template_id/approval/          | To approve a single template.                    |
@@ -58,6 +59,9 @@ This backend service serves as the WorkflowAI application Backend.
 | POST       | teams/                                    | To create workflow teams                         |
 | POST       | update-to-teams/                          | To update workflow teams                         |
 | POST       | teams/:team_id/                           | To fetch data of workflow teams                  |
+| POST       | workflow-settings/                        | To Create New Workflow AI Setting                |
+| POST       | update-workflow-settings/                 | To Update Existing Workflow AI Setting           |
+
 
 ---
 
@@ -490,106 +494,6 @@ Response-200
 }
 ```
 
-### Workflow AI Setting
-
-_POST_ `workflow_ai_setting/`
-
-Request Body
-
-```
-{
-    "company_id": "id of company",
-    "owner_name": "owner name",
-    "username": "user name",
-    "portfolio_name": "the portfolio name",
-    "proccess":[{'list of processes'}]
-}
-```
-
-Response-200
-
-```
-{
-
-    "workflow_setting": {
-        "_id": "created wf_setting id",
-        "eventId": "event id",
-        "company_id": "company id",
-        "owner_name": "owner name",
-        "username": "username",
-        "portfolio_name": "portfolio name",
-        "data_type":"Real_Data",
-        "processes":[{'list of processes'}]
-
-                }
-}
-```
-
-_POST_ `settings/`
-
-Request Body
-
-```
-{
-    "wf_setting_id":" id of wf_setting_id",
-    "company_id": "id of company"
-}
-```
-
-Response-200
-
-```
-{
-
-    "workflow_setting": {
-        "_id": "wf_setting id",
-        "eventId": "event id",
-        "company_id": "company id",
-        "owner_name": "owner name",
-        "username": "username",
-        "portfolio_name": "portfolio name",
-        "data_type":"Real_Data",
-        "processes":[{'list of processes'}]
-
-                }
-}
-```
-
-_POST_ `settings/update/`
-
-Request Body
-
-```
-{
-    "wf_setting_id":" id of wf_setting_id",
-    "company_id": "id of company",
-    "owner_name": "owner name",
-    "username": "user name",
-    "portfolio_name": "the portfolio name",
-    "proccess":[{'list of processes'}]
-
-
-}
-```
-
-Response-200
-
-```
-{
-    "workflow_setting": {
-        "_id": "wf_setting id",
-        "eventId": "event id",
-        "company_id": "company id",
-        "owner_name": "owner name",
-        "username": "username",
-        "portfolio_name": "portfolio name",
-        "data_type":"Real_Data",
-        "processes":[{'list of processes'}]
-
-                }
-}
-```
-
 _POST_ `object_count/`
 
 Request Body
@@ -839,6 +743,73 @@ Request Body
 {
     [list of completed documents]
 }
+```
+
+### Workflow AI Setting
+
+_POST_ `v1/workflow-settings/`
+
+Request Body
+
+```
+    {
+        
+        "company_id": "company id",
+        "created_by": "Created by ",
+        "Process": [list of proce],
+        "Documents": [],
+        "Templates": [],
+        "Workflows": [],
+        "Notarisation": [],
+        "Folders": [],
+        "Records": [],
+        "References": [],
+        "Approval_Process": [],
+        "Evaluation_Process": [],
+        "Reports": [],
+        "Management": [list of items for ],
+        "theme_color":"colorcode"
+    }
+```
+
+Response-200
+
+```
+{
+ "Message"
+}
+```
+
+_POST_ `v1/update-workflow-settings/`
+
+Request Body
+
+```
+{
+    "wf_setting_id":" id of wf_setting_id",
+    "company_id": "id of company",
+    ...
+    ...
+    ...
+    "and other key value pair of existing workflow setting"
+}
+```
+
+Response-200
+
+```
+{
+
+    "Message"
+}
+```
+
+_GET_ `/v1/companies/<str:company_id>/workflows-ai-settings/`
+
+Response-200
+
+```
+[list of saved workflow AI settings]
 ```
 
 ### Technologies Used

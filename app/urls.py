@@ -22,7 +22,7 @@ from .views import (
     get_process_link,
     get_templates,
     get_team_data,
-    get_wf_ai_setting,
+    # get_wf_ai_setting,
     get_workflows,
     finalize_or_reject,
     process_verification,
@@ -35,6 +35,7 @@ from .views import (
     process_copies,
     WF_AI_SETTING,
     all_wf_ai_setting,
+    update_wfai_setting,
 )
 
 urlpatterns = [
@@ -55,7 +56,7 @@ urlpatterns = [
     path("workflows/", create_workflow),
     path("workflows/<str:workflow_id>/", workflow_detail),
     # path("workflow-settings/", create_workflow_setting),
-    path("workflow-settings/<str:wf_setting_id>/", get_wf_ai_setting),
+    path("update-workflow-settings/", update_wfai_setting),
     path("processes/", document_processing),
     path("processes/verify/", process_verification),
     path("processes/<str:process_id>/", a_single_process),
