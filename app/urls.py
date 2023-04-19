@@ -46,7 +46,7 @@ urlpatterns = [
     path("companies/<str:company_id>/documents/", get_documents),
     path("companies/<str:company_id>/documents/completed/", get_completed_documents),
     path("companies/<str:company_id>/teams/", get_all_teams),
-    path("companies/<str:company_id>/workflows-ai-settings/", all_wf_ai_setting),
+    path("companies/<str:company_id>/settings/", all_wf_ai_setting),
     path("templates/", create_template),
     path("templates/<str:template_id>/", template_detail),
     path("templates/<str:template_id>/approval/", approve),
@@ -55,8 +55,13 @@ urlpatterns = [
     path("documents/<str:document_id>/content/", get_document_content),
     path("workflows/", create_workflow),
     path("workflows/<str:workflow_id>/", workflow_detail),
+<<<<<<< HEAD
     # path("workflow-settings/", create_workflow_setting),
     path("update-workflow-settings/", update_wfai_setting),
+=======
+    path("workflow-settings/", create_workflow_setting),
+    path("workflow-settings/<str:wf_setting_id>/", get_wf_ai_setting),
+>>>>>>> 8760da9ae0816e77281afee08c17707487dac228
     path("processes/", document_processing),
     path("processes/verify/", process_verification),
     path("processes/<str:process_id>/", a_single_process),
