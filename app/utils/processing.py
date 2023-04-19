@@ -549,31 +549,10 @@ def background(process_id, item_id, item_type):
         steps=process["process_steps"],
         state=process["processing_state"],
     )
-
-    # TODO: Update the process as complete.
-
-    # process_documents = [
-    #     step["stepDocumentCloneMap"] for step in process["process_steps"]
-    # ]
-    # process_document_ids = [
-    #     value for dictionary in process_documents for value in dictionary.values()
-    # ]
-    # process_docs_states = [
-    #     get_document_object(document_id)["document_state"] == "finalized"
-    #     for document_id in process_document_ids
-    # ]
-    # # if all are done
-    # if all(process_docs_states):
-    #     # set the process processing state as complete
-    #     update_wf_process(process["_id"], process["process_steps"], "completed")
-
-    print("Thread: Create copies! \n")
-
     return True
 
 
 def check_step_done(step_index, process):
-    done = False
     step = process["process_steps"][step_index]
     step_users = [
         member["member"]
@@ -596,10 +575,9 @@ def check_step_done(step_index, process):
 
         if all(d_states):
             step["stepState"] = "complete"
-            done = True
-            return done
+            return True
 
-    return done
+    return False
 
 
 def authorize_next_step_users(step_index, process):
@@ -642,65 +620,31 @@ def derive_document_copies_for_step_users(step_index, process, item_id):
 
 
 def background2(process_id, item_id, item_type):
-    processed = False
     try:
         process = get_process_object(process_id)
         num_process_steps = sum(
             isinstance(element, dict) for element in process["process_steps"]
         )
     except:
-        return processed
+        return False
 
     if num_process_steps == 1:
         if check_step_done(1, process):
-            processed = True
-            return processed
+            return True
 
-    if num_process_steps == 2:
-        if check_step_done(1, process):
-            if check_step_done(2, process):
-                processed = True
-                return processed
+    if num_process_steps >= 2:
+        if check_step_done(num_process_steps - 1, process):
+            if check_step_done(num_process_steps, process):
+                return True
 
             else:
-                step = process["process_steps"][2]
                 if step["stepTaskType"] == "assign_task":
-                    authorize_next_step_users(2, process)
+                    authorize_next_step_users(num_process_steps, process)
 
-                if step["stepTaskType"] == "assign_task":
+                if step["stepTaskType"] == "request_for_task":
                     document_copies = derive_document_copies_for_step_users(
-                        2, process, item_id
+                        num_process_steps, process, item_id
                     )
-
-    if num_process_steps == 3:
-        if check_step_done(2, process):
-            if check_step_done(3, process):
-                processed = True
-                return processed
-
-            else:
-                step = process["process_steps"][3]
-                if step["stepTaskType"] == "assign_task":
-                    authorize_next_step_users(3, process)
-
-                if step["stepTaskType"] == "assign_task":
-                    document_copies = derive_document_copies_for_step_users(
-                        3, process, item_id
-                    )
-
-    if num_process_steps == 4:
-        if check_step_done(3, process):
-            if check_step_done(4, process):
-                processed = True
-                return processed
-
-            else:
-                step = process["process_steps"][4]
-                if step["stepTaskType"] == "assign_task":
-                    authorize_next_step_users(4, process)
-
-                if step["stepTaskType"] == "assign_task":
-                    document_copies = derive_document_copies_for_step_users(4, process)
 
     # updating the document clone list
     clone_ids = [d["member"] for d in document_copies if "member" in d]
@@ -708,6 +652,12 @@ def background2(process_id, item_id, item_type):
         document = get_document_object(document_id=process["parent_item_id"])
         data = [cid for cid in document["clone_list"]]
         update_document_clone(document_id=process["parent_item_id"], clone_list=data)
+
+    # mark process as finalized
+    step_doc_states = [check_step_done(i, process) for i in num_process_steps]
+    if all(step_doc_states):
+        print("All Done \n")
+        pass
 
     # update the process
     res = json.loads(
@@ -717,8 +667,8 @@ def background2(process_id, item_id, item_type):
             state=process["processing_state"],
         )
     )
-    if res["isSuccess"]:
-        processed = True
-        return processed
 
-    return processed
+    if res["isSuccess"]:
+        return True
+
+    return False

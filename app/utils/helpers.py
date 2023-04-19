@@ -80,17 +80,22 @@ def cloning_document(document_id, auth_viewers, parent_id, process_id):
     """creating a document copy"""
     try:
         viewers = []
+        viewers = (
+            [item for item in set(auth_viewers)]
+            if auth_viewers is not None and isinstance(auth_viewers, list)
+            else []
+        )
 
         document = get_document_object(document_id)
-        if auth_viewers is not None:
-            if isinstance(auth_viewers, list):
-                for item in set(auth_viewers):
-                    viewers.append(item)
-            else:
-                viewers.append(auth_viewers)
+        # if auth_viewers is not None:
+        #     if isinstance(auth_viewers, list):
+        #         for item in set(auth_viewers):
+        #             viewers.append(item)
+        #     else:
+        #         viewers.append(auth_viewers)
 
-        else:
-            viewers = []
+        # else:
+        #     viewers = []
 
         document_name = "-" + document["document_name"] + "-"
 

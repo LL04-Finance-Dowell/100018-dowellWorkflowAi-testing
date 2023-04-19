@@ -309,7 +309,7 @@ def finalize_or_reject(request, process_id):
     res = finalize(item_id, state, item_type)
     if res["isSuccess"]:
         # Signal for further processing.
-        if processing.background(process_id, item_id, item_type):
+        if processing.background2(process_id, item_id, item_type):
             return Response("document processed successfully", status.HTTP_200_OK)
 
         else:
