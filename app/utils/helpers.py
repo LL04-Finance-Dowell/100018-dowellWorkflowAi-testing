@@ -1,5 +1,7 @@
 import json
-
+import uuid
+from threading import Thread
+import qrcode
 import bson
 import requests
 
@@ -17,10 +19,19 @@ from .mongo_db_connection import (
     get_process_object,
     get_wf_object,
     save_document,
+    save_uuid_hash,
     save_wf_process,
 )
 
+from .threads import notification
+
 headers = {"Content-Type": "application/json"}
+
+
+def get_domain_host():
+    current_site = Site.objects.get_current()
+    domain_host = current_site.domain
+    return domain_host
 
 
 def verification_data(
@@ -69,9 +80,15 @@ def cloning_document(document_id, auth_viewers, parent_id, process_id):
     """creating a document copy"""
     try:
         viewers = []
+
         document = get_document_object(document_id)
         if auth_viewers is not None:
-            viewers.append(auth_viewers)
+            if isinstance(auth_viewers, list):
+                for item in set(auth_viewers):
+                    viewers.append(item)
+            else:
+                viewers.append(auth_viewers)
+
         else:
             viewers = []
 
@@ -290,10 +307,10 @@ def generate_qrcode(verification_link):
 
     # In Prod -- this works
     # TODO: find out how to extract domain url
-    qr_path = f"https://100094.pythonanywhere.com/media/qrcodes/{uuid.uuid4().hex}.png"
+    # qr_path = f"https://100094.pythonanywhere.com/media/qrcodes/{uuid.uuid4().hex}.png"
 
     # On dev -- this works
-    # qr_path = f"media/qrcodes/{uuid.uuid4().hex}.png"
+    qr_path = f"media/qrcodes/{uuid.uuid4().hex}.png"
 
     qr_code = qrcode.QRCode(error_correction=qrcode.constants.ERROR_CORRECT_H)
     qr_code.add_data(verification_link)
@@ -302,7 +319,7 @@ def generate_qrcode(verification_link):
     qr_img = qr_code.make_image(fill_color=qr_color, back_color="#DCDCDC")
     qr_img.save(qr_path)
 
-    return qrcode_url
+    return qr_path
 
 
 def list_favourites(company_id):

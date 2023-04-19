@@ -78,15 +78,12 @@ def start(process):
     links = []
     qrcodes = []
 
-    all_process_step_members = [
-        step.get("stepTeamMembers", [])
-        + step.get("stepUserMembers", [])
-        + step.get("stepPublicMembers", [])
-        for step in process["process_steps"]
-    ]
-
     for step in process["process_steps"]:
-        for member in all_process_step_members:
+        for member in (
+            step.get("stepTeamMembers", [])
+            + step.get("stepUserMembers", [])
+            + step.get("stepPublicMembers", [])
+        ):
             link, qrcode = verification_data(
                 process_id=process["_id"],
                 item_id=process["parent_item_id"],
@@ -97,8 +94,24 @@ def start(process):
                 process_title=process["process_title"],
                 item_type=process["process_type"],
             )
-            links += [{member["member"]: link}]
-            qrcodes += [{member["member"]: qrcode}]
+
+            links.append({member["member"]: link})
+            qrcodes.append({member["member"]: qrcode})
+
+        # for member in all_process_step_members:
+        #     link, qrcode = verification_data(
+        #         process_id=process["_id"],
+        #         item_id=process["parent_item_id"],
+        #         step_role=step.get("stepRole"),
+        #         auth_name=member["member"],
+        #         auth_portfolio=member["portfolio"],
+        #         company_id=process["company_id"],
+        #         process_title=process["process_title"],
+        #         item_type=process["process_type"],
+        #     )
+
+        # links.append({member["member"]: link})
+        # qrcodes.append({member["member"]: qrcode})
 
     # for step in process["process_steps"]:
     #     # process links
@@ -559,7 +572,7 @@ def background(process_id, item_id, item_type):
     return True
 
 
-def check_step_done(step_index, process) -> bool:
+def check_step_done(step_index, process):
     done = False
     step = process["process_steps"][step_index]
     step_users = [
