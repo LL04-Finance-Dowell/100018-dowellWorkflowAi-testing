@@ -7,7 +7,15 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
 from app.utils import checks
-from app.utils.helpers import create_favourite, list_favourites, remove_favourite, validate_id, cloning_process, access_editor
+from app.utils.helpers import (
+    create_favourite,
+    list_favourites,
+    remove_favourite,
+    validate_id,
+    cloning_process,
+    access_editor,
+    CREATE_WF_AI_SETTING,
+)
 from app.utils.mongo_db_connection import (
     delete_document,
     delete_process,
@@ -41,8 +49,6 @@ from app.utils.mongo_db_connection import (
 )
 
 from .constants import EDITOR_API
-from .utils import setting
-from .utils.wf_management import CREATE_WF_AI_SETTING
 
 
 @api_view(["GET"])
