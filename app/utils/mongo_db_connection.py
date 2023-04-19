@@ -2,7 +2,7 @@ import requests
 import time
 import json
 from datetime import datetime
-from .dowellconnection import dowellconnection
+from app.constants import DOWELLCONNECTION_URL
 
 from app.constants import (
     QR_CONNECTION_DICT,
@@ -35,6 +35,40 @@ from app.constants import (
 dd = datetime.now()
 time = dd.strftime("%d:%m:%Y,%H:%M:%S")
 headers = {"Content-Type": "application/json"}
+
+
+def dowellconnection(
+    cluster,
+    platform,
+    database,
+    collection,
+    document,
+    team_member_ID,
+    function_ID,
+    command,
+    field,
+    update_field,
+):
+    data = json.dumps(
+        {
+            "cluster": cluster,
+            "platform": platform,
+            "database": database,
+            "collection": collection,
+            "document": document,
+            "team_member_ID": team_member_ID,
+            "function_ID": function_ID,
+            "command": command,
+            "field": field,
+            "update_field": update_field,
+        }
+    )
+    headers = {"content-type": "application/json"}
+    response = requests.request(
+        "POST", DOWELLCONNECTION_URL, headers=headers, data=data
+    )
+    return json.loads(response.text)
+
 
 # old 22sec query
 # def get_event_id():

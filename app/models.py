@@ -1,5 +1,8 @@
+import json
+
 import jsonfield
 from django.db import models
+
 
 
 class FavoriteTemplate(models.Model):
@@ -21,3 +24,5 @@ class FavoriteWorkflow(models.Model):
     company_id = jsonfield.JSONField()
     workflows = jsonfield.JSONField()
     favourited_by = models.TextField(max_length=200)
+
+

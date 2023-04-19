@@ -6,8 +6,8 @@ from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
-from app.utils import checks, cloning, link_gen, processing, validator
-from app.utils.favourites import create_favourite, list_favourites, remove_favourite
+from app.utils import checks
+from app.utils.helpers import create_favourite, list_favourites, remove_favourite, validate_id, cloning_process, access_editor
 from app.utils.mongo_db_connection import (
     delete_document,
     delete_process,
@@ -40,7 +40,6 @@ from app.utils.mongo_db_connection import (
 )
 
 from .constants import EDITOR_API
-from .utils import setting
 
 
 @api_view(["GET"])
@@ -315,7 +314,7 @@ def finalize_or_reject(request, process_id):
 @api_view(["POST"])
 def trigger_process(request):
     """Get process and begin processing it."""
-    if not validator.validate_id(request.data["process_id"]):
+    if not validate_id(request.data["process_id"]):
         return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
 
     try:
@@ -355,7 +354,7 @@ def trigger_process(request):
 def processes(request, company_id):
     """fetches workflow process `I` created."""
 
-    if not validator.validate_id(company_id):
+    if not validate_id(company_id):
         return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
     
     data_type = request.query_params.get("data_type", "Real_Data")
@@ -375,7 +374,7 @@ def processes(request, company_id):
 def a_single_process(request, process_id):
     """get process by process id"""
 
-    if not validator.validate_id(process_id):
+    if not validate_id(process_id):
         return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
 
     try:
@@ -399,14 +398,14 @@ def fetch_process_links(request, process_id):
 
 @api_view(["POST"])
 def process_copies(request, process_id):
-    if not validator.validate_id(process_id) or not request.data:
+    if not validate_id(process_id) or not request.data:
         return Response("something went wrong!", status.HTTP_400_BAD_REQUEST)
 
     if request.method == "POST":
         if not request.data:
             return Response("something went wrong!", status.HTTP_400_BAD_REQUEST)
 
-        process_id = cloning.process(
+        process_id = cloning_process(
             process_id, request.data["created_by"], request.data["created_portfolio"]
         )
         if process_id is None:
@@ -459,7 +458,7 @@ def create_workflow_setting(request):
 def get_wf_ai_setting(request, wf_setting_id):
     """Retrive a Wf setting"""
 
-    if not validator.validate_id(wf_setting_id):
+    if not validate_id(wf_setting_id):
         return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
 
     if request.method == "GET":
@@ -520,7 +519,7 @@ def create_workflow(request):
 def workflow_detail(request, workflow_id):
     """Single workflows"""
 
-    if not validator.validate_id(workflow_id):
+    if not validate_id(workflow_id):
         return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
 
     if request.method == "GET":
@@ -560,7 +559,7 @@ def get_workflows(request, company_id):
     """List all workflows"""
 
     data_type = request.query_params.get("data_type", "Real_Data")
-    if not validator.validate_id(company_id):
+    if not validate_id(company_id):
         return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
 
     try:
@@ -583,7 +582,7 @@ def get_workflows(request, company_id):
 def get_documents(request, company_id):
     """List of Created Documents."""
     data_type = request.query_params.get("data_type", "Real_Data")
-    if not validator.validate_id(company_id):
+    if not validate_id(company_id):
         return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
 
     document_list = get_document_list(company_id, data_type)
@@ -629,7 +628,7 @@ def create_document(request):
             )
         )
         if res["isSuccess"]:
-            editor_link = link_gen.editor(res["inserted_id"], "document")
+            editor_link = access_editor(res["inserted_id"], "document")
 
             if not editor_link:
                 return Response(
@@ -649,7 +648,7 @@ def create_document(request):
 def get_document_content(request, document_id):
     """Content map of a given document"""
 
-    if not validator.validate_id(document_id):
+    if not validate_id(document_id):
         return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
     content = []
     my_dict = ast.literal_eval(get_document_object(document_id)["content"])[0][0]
@@ -683,10 +682,10 @@ def get_document_content(request, document_id):
 def document_detail(request, document_id):
     """editor link for a document"""
 
-    if not validator.validate_id(document_id):
+    if not validate_id(document_id):
         return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
 
-    editor_link = link_gen.editor(document_id, "document")
+    editor_link = access_editor(document_id, "document")
     if not editor_link:
         return Response(
             "Could not open document editor.", status.HTTP_500_INTERNAL_SERVER_ERROR
@@ -703,7 +702,7 @@ def archives(request):
         return Response("You are missing something", status.HTTP_400_BAD_REQUEST)
 
     id = request.data["item_id"]
-    if not validator.validate_id(id):
+    if not validate_id(id):
         return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
 
     if request.data["item_type"] == "workflow":
@@ -739,7 +738,7 @@ def archive_restore(request):
         return Response("You are missing something", status.HTTP_400_BAD_REQUEST)
 
     id = request.data["item_id"]
-    if not validator.validate_id(id):
+    if not validate_id(id):
         return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
 
     if request.data["item_type"] == "workflow":
@@ -795,7 +794,7 @@ def favorites(request):
 def all_favourites(request, company_id):
     """List favs"""
 
-    if not validator.validate_id(company_id):
+    if not validate_id(company_id):
         return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
 
     data = list_favourites(company_id)
@@ -812,7 +811,7 @@ def all_favourites(request, company_id):
 def trash_favourites(request, item_id, item_type, username):
     """Trash Favourites"""
 
-    if not validator.validate_id(item_id):
+    if not validate_id(item_id):
         return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
 
     msg = remove_favourite(
@@ -833,7 +832,7 @@ def get_templates(request, company_id):
     """List of Created Templates."""
 
     data_type = request.query_params.get("data_type", "Real_Data")
-    if not validator.validate_id(company_id):
+    if not validate_id(company_id):
         return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
 
     templates = get_template_list(company_id, data_type)
@@ -855,7 +854,7 @@ def create_template(request):
     data = ""
     page = ""
     template_name = "Untitled Template"
-    if not validator.validate_id(request.data["company_id"]):
+    if not validate_id(request.data["company_id"]):
         return Response("Invalid company details", status.HTTP_400_BAD_REQUEST)
 
     res = json.loads(
@@ -910,10 +909,10 @@ def create_template(request):
 def template_detail(request, template_id):
     """editor link for a document"""
 
-    if not validator.validate_id(template_id):
+    if not validate_id(template_id):
         return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
 
-    editor_link = link_gen.editor(template_id, "template")
+    editor_link = access_editor(template_id, "template")
     if not editor_link:
         return Response(
             "Could not open template editor.", status.HTTP_500_INTERNAL_SERVER_ERROR
@@ -926,7 +925,7 @@ def template_detail(request, template_id):
 def approve(request, template_id):
     """Approve a given template"""
 
-    if not validator.validate_id(template_id):
+    if not validate_id(template_id):
         return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
 
     response = json.loads(update_template_approval(template_id, approval=True))
@@ -1060,7 +1059,7 @@ def get_completed_documents(request, company_id):
     """List of Completed Documents."""
     data_type = request.query_params.get("data_type", "Real_Data")
 
-    if not validator.validate_id(company_id):
+    if not validate_id(company_id):
         return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
 
     document_list = get_document_list(company_id, data_type)
