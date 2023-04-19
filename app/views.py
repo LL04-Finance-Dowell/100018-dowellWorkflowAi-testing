@@ -463,48 +463,6 @@ def create_workflow_setting(request):
     )
 
 
-<<<<<<< HEAD
-=======
-@api_view(["GET", "PUT"])
-def get_wf_ai_setting(request, wf_setting_id):
-    """Retrive a Wf setting"""
-
-    if not validate_id(wf_setting_id):
-        return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
-
-    if request.method == "GET":
-        try:
-            setting = get_wf_setting_object(wf_setting_id)
-        except:
-            return Response(
-                "failed to get setting", status.HTTP_500_INTERNAL_SERVER_ERROR
-            )
-
-        return Response(setting, status.HTTP_200_OK)
-
-    if request.method == "PUT":
-        """Update workflow Setting"""
-
-        form = request.data
-        if not form:
-            return Response("Workflow Data is Required", status.HTTP_400_BAD_REQUEST)
-
-        old_wf_setting = get_wf_setting_object(wf_setting_id)
-        version = setting.version_control(old_wf_setting["processes"][-1]["version"])
-        old_wf_setting["processes"][-1]["flag"] = "disable"
-
-        old_wf_setting["processes"].append(
-            {"version": version, "flag": "enable", "process": form["proccess"]}
-        )
-        updt_wf = json.loads(wf_setting_update(wf_setting_id, old_wf_setting))
-
-        if updt_wf["isSuccess"]:
-            return Response("Workflow Setting Updated", status.HTTP_201_CREATED)
-
-        return Response("Failed to Update Workflow", status.HTTP_200_OK)
-
-
->>>>>>> 8760da9ae0816e77281afee08c17707487dac228
 @api_view(["POST"])
 def create_workflow(request):
     """Creates a new workflow"""
@@ -1120,7 +1078,6 @@ def all_wf_ai_setting(request, company_id):
         return Response(
             "Failed to Get WF AI Data", status.HTTP_500_INTERNAL_SERVER_ERROR
         )
-<<<<<<< HEAD
 
 
 @api_view(["POST"])
@@ -1150,5 +1107,3 @@ def update_wfai_setting(request):
             return Response("Workflow Setting Updated", status.HTTP_201_CREATED)
 
         return Response("Failed to Update Workflow", status.HTTP_200_OK)
-=======
->>>>>>> 8760da9ae0816e77281afee08c17707487dac228
