@@ -6,7 +6,7 @@ from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
-from app.utils import checks
+from app.utils import checks, processing
 from app.utils.helpers import (
     create_favourite,
     list_favourites,
