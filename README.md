@@ -62,6 +62,7 @@ This backend service serves as the WorkflowAI application Backend.
 | POST       | settings/                                 | To Create New Workflow AI Setting                |
 | POST       | update-settings/                          | To Update Existing Workflow AI Setting           |
 | GET        | settings/:wf_setting_id/                  | To get a single wf ai settings                   |
+
 ---
 
 ### Endpoints Definition(Request - Response).
@@ -827,17 +828,21 @@ Response Body
 [list of teams within that company id]
 
 ```
+
 ### Get Completed Documents
 
 _GET_ `/v1/companies/<str:company_id>/documents/completed/`
 
 Request Body
+
 ```
 {
 
 }
 ```
+
 Request Body
+
 ```
 {
     [list of completed documents]
@@ -853,7 +858,7 @@ Request Body
 
 ```
     {
-        
+
         "company_id": "company id",
         "created_by": "Created by ",
         "Process": [Documents
@@ -995,6 +1000,7 @@ Response-200
 [list of saved workflow AI settings]
 
 ```
+
 _GET_ `/v1/settings/<str:cwf_settings_id>/`
 
 Response-200

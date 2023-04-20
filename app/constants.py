@@ -1,5 +1,3 @@
-
-
 EDITOR_API = "https://100058.pythonanywhere.com/api/generate-editor-link/"
 NOTIFICATION_API = "https://100092.pythonanywhere.com/notification/notification/"
 VERIFICATION_LINK = (
