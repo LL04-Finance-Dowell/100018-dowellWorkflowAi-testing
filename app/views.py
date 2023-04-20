@@ -1078,7 +1078,19 @@ def all_workflow_ai_setting(request, company_id):
         return Response(
             "Failed to Get WF AI Data", status.HTTP_500_INTERNAL_SERVER_ERROR
         )
-
+@api_view(["GET"])
+def get_workflow_ai_setting(request, wf_setting_id):
+    """Get All WF AI"""
+    setting = get_wf_setting_object(wf_setting_id)
+    try:
+        return Response(
+            setting,
+            status.HTTP_200_OK,
+        )
+    except:
+        return Response(
+            "Failed to Get WF AI Data", status.HTTP_500_INTERNAL_SERVER_ERROR
+        )
 
 @api_view(["POST"])
 def update_workflow_ai_setting(request):

@@ -36,6 +36,7 @@ from .views import (
     create_workflow_ai_setting,
     update_workflow_ai_setting,
     all_workflow_ai_setting,
+    get_workflow_ai_setting,
 )
 
 urlpatterns = [
@@ -76,4 +77,6 @@ urlpatterns = [
     path("update-to-teams/", update_team),
     path("settings/", create_workflow_ai_setting),
     path("update-settings/", update_workflow_ai_setting),
+    path("settings/<str:wf_setting_id>", get_workflow_ai_setting),
+
 ]

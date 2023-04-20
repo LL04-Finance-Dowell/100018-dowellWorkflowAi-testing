@@ -892,6 +892,16 @@ Response-200
 
 ```
 [list of saved workflow AI settings]
+
+```
+_GET_ `/v1/settings/<str:cwf_settings_id>/`
+
+Response-200
+
+```
+{
+    get wf setting with the id
+}
 ```
 
 ### Technologies Used
