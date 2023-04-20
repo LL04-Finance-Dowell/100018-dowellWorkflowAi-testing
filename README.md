@@ -35,7 +35,6 @@ This backend service serves as the WorkflowAI application Backend.
 | GET        | companies/:company_id/workflows/          | To retrieve workflows in a company               |
 | GET        | companies/:company_id/favourites/         | To list favourites                               |
 | POST       | companies/:company_id/teams/              | To fetch all workflow teams                      |
-| POST       | companies/:company_id/settings            | To fetch all workflow AI SETTING Lists           |
 | POST       | templates/                                | To create a new template.                        |
 | GET        | templates/:template_id/                   | To retrieve a single template.                   |
 | PUT        | templates/:template_id/approval/          | To approve a single template.                    |
@@ -44,6 +43,8 @@ This backend service serves as the WorkflowAI application Backend.
 | GET        | documents/:document_id/content/           | To get the content map of a single document      |
 | POST       | workflows/                                | To create a new workflow                         |
 | GET, PUT   | workflows/:workflow_id/                   | To retrieve /update a single workflow            |
+| POST       | workflow-settings/                        | To set wf ai settings                            |
+| GET, PUT   | workflow-settings/:wf_setting_id/         | To get / update a single wf ai settings          |
 | POST       | processes/                                | To create a new process                          |
 | GET        | processes/:process_id/                    | To retrieve a single process                     |
 | POST       | processes/:process_id/verify/             | To verify a process to get access.               |
@@ -57,10 +58,6 @@ This backend service serves as the WorkflowAI application Backend.
 | POST       | teams/                                    | To create workflow teams                         |
 | POST       | update-to-teams/                          | To update workflow teams                         |
 | POST       | teams/:team_id/                           | To fetch data of workflow teams                  |
-| POST       | settings/                                 | To Create New Workflow AI Setting                |
-| POST       | update-settings/                          | To Update Existing Workflow AI Setting           |
-| GET        | settings/:wf_setting_id/                  | To get a single wf ai settings          |
-
 
 ---
 
@@ -493,6 +490,106 @@ Response-200
 }
 ```
 
+### Workflow AI Setting
+
+_POST_ `workflow_ai_setting/`
+
+Request Body
+
+```
+{
+    "company_id": "id of company",
+    "owner_name": "owner name",
+    "username": "user name",
+    "portfolio_name": "the portfolio name",
+    "proccess":[{'list of processes'}]
+}
+```
+
+Response-200
+
+```
+{
+
+    "workflow_setting": {
+        "_id": "created wf_setting id",
+        "eventId": "event id",
+        "company_id": "company id",
+        "owner_name": "owner name",
+        "username": "username",
+        "portfolio_name": "portfolio name",
+        "data_type":"Real_Data",
+        "processes":[{'list of processes'}]
+
+                }
+}
+```
+
+_POST_ `settings/`
+
+Request Body
+
+```
+{
+    "wf_setting_id":" id of wf_setting_id",
+    "company_id": "id of company"
+}
+```
+
+Response-200
+
+```
+{
+
+    "workflow_setting": {
+        "_id": "wf_setting id",
+        "eventId": "event id",
+        "company_id": "company id",
+        "owner_name": "owner name",
+        "username": "username",
+        "portfolio_name": "portfolio name",
+        "data_type":"Real_Data",
+        "processes":[{'list of processes'}]
+
+                }
+}
+```
+
+_POST_ `settings/update/`
+
+Request Body
+
+```
+{
+    "wf_setting_id":" id of wf_setting_id",
+    "company_id": "id of company",
+    "owner_name": "owner name",
+    "username": "user name",
+    "portfolio_name": "the portfolio name",
+    "proccess":[{'list of processes'}]
+
+
+}
+```
+
+Response-200
+
+```
+{
+    "workflow_setting": {
+        "_id": "wf_setting id",
+        "eventId": "event id",
+        "company_id": "company id",
+        "owner_name": "owner name",
+        "username": "username",
+        "portfolio_name": "portfolio name",
+        "data_type":"Real_Data",
+        "processes":[{'list of processes'}]
+
+                }
+}
+```
+
 _POST_ `object_count/`
 
 Request Body
@@ -708,7 +805,7 @@ Response Body
 
 ```
 
-_GET_ `/v1/companies/<str:company_id>/teams/`
+_POST_ `/v1/companies/<str:company_id>/teams/`
 
 Request Body
 
@@ -741,166 +838,6 @@ Request Body
 ```
 {
     [list of completed documents]
-}
-```
-
-### Workflow AI Setting
-
-_POST_ `v1/settings/`
-
-Request Body
-
-```
-    {
-        
-        "company_id": "company id",
-        "created_by": "Created by ",
-        "Process": [Documents
-                    |Templates
-                    |Workflows
-                    |Approval_Process
-                    |Evaluation_Process
-                    |Notarisation
-                    |Reports
-                    |Folders
-                    |Records
-                    |References
-                    |Management
-                    |Portfolio_or_Team_Roles],
-        "Documents": [Save_to_Drafts
-                        |Generate_QR_code
-                        |OCR_to_Text
-                        |Version_Control
-                        |Protect_with_Password],
-        "Templates": [Save_to_Drafts
-                        |Generate_QR_code
-                        |OCR_to_Text
-                        |Version_Control
-                        |Protect_with_Password],,
-        "Workflows": [Secondary_Workflows
-                        |Reject
-                        |History_of_interaction
-                        |Set_step_timer],
-        "Notarisation": [Sign_with_Seal
-                            | Digital_Signature
-                            | Sign_before_me_or_witness
-                            | Sign_with_Identity
-                            | Invisible_Signature],
-        "Folders": [View_documents_in_folder
-                        | View_templates_in_folder
-                        | Move_to_folder
-                        | Remove_from_folder],
-        "Records": [Refer_in_another_Document
-                        | Refer_in_another_Template
-                        | View_using_workflow
-                        | Audits],
-        "References": [Show_Documents_ID
-                        | Show_Templates_ID
-                        | Show_Workflows_ID
-                        | Show_Folders_ID
-                        | Show_Processes_ID
-                        | Show_Reports_ID
-                        | Show_Records_ID
-                        | Show_Portfolio_ID
-                        | Show_Right_ID
-                        | Show_Owner_ID],
-        "Approval_Process": [Pr| eview_workflow_Process
-                               | Start_Processing
-                               | End_Processing
-                               | Workflow_wise
-                               | Workflow_step_wise
-                               | Document_Content_wise
-                               | Signing_Location_wise
-                               | Time_limit_wise
-                               Member_type_wise],
-        "Evaluation_Process": [Edit_history
-                                | Number_of_words
-                                | Language_used
-                                | Number_of_characters
-                                | Nouns_verbs_proverbs_adjectives
-                                | Spelling
-                                | Grammar
-                                | Meaning
-                                | Measurements_or_Scale],
-        "Reports": [Templates
-                    | Workflows
-                    | Documents
-                    | Processes
-                    | Folders
-                    | Records_Completed],
-        "Management": [Billing_Plans
-                       | Create_Teams
-                       | DoWell_Knowledge_Centre
-                       | Chat_with_other_Portfolios
-                       | Auto_save_Document_every_one_minute
-                       | Auto_save_Template_every_one_minute
-                       | Remove_my_account_from_Workflow_AI],
-        "Portflio_choice" ፡ [Set_as_Project_Manager
-                            | Set_as_Client
-                            | Set_as_Development
-                            | Set_as_Execution
-                            | Set_as_Design
-                            | Set_as_Quality
-                            | Set_as_Marketing
-                            | Set_as_Asset_Control
-                            | Set_as_Materials_Management
-                            | Set_as_Team_Management
-                            | Set_as_Finance_Management
-                            | Set_as_Legal_Compliances
-                            | Set_as_Documentation
-                            | Set_as_Project_Owner
-    ]
-        "theme_color":"colorcode"
-    }
-```
-
-Response-200
-
-```
-{
- "Message"
-}
-```
-
-_POST_ `v1/update-settings/`
-
-Request Body
-
-```
-{
-    "wf_setting_id":" id of wf_setting_id",
-    "company_id": "id of company",
-    ...
-    ...
-    ...
-    "and other key value pair of existing workflow setting CREATION"
-}
-```
-
-Response-200
-
-```
-{
-
-    "Message"
-}
-```
-
-_GET_ `/v1/companies/<str:company_id>/settings/`
-
-Response-200
-
-```
-[list of saved workflow AI settings]
-
-```
-_GET_ `/v1/settings/<str:cwf_settings_id>/`
-
-Response-200
-
-```
-{
-    get wf setting with the id
 }
 ```
 
