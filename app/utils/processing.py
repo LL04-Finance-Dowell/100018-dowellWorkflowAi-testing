@@ -79,11 +79,7 @@ def start(process):
     qrcodes = []
 
     for step in process["process_steps"]:
-        for member in (
-            step.get("stepTeamMembers", [])
-            + step.get("stepUserMembers", [])
-            + step.get("stepPublicMembers", [])
-        ):
+        for member in step.get("stepPublicMembers", []):
             link, qrcode = verification_data(
                 process_id=process["_id"],
                 item_id=process["parent_item_id"],
@@ -93,25 +89,44 @@ def start(process):
                 company_id=process["company_id"],
                 process_title=process["process_title"],
                 item_type=process["process_type"],
+                user_type="public"
             )
 
             links.append({member["member"]: link})
             qrcodes.append({member["member"]: qrcode})
 
-        # for member in all_process_step_members:
-        #     link, qrcode = verification_data(
-        #         process_id=process["_id"],
-        #         item_id=process["parent_item_id"],
-        #         step_role=step.get("stepRole"),
-        #         auth_name=member["member"],
-        #         auth_portfolio=member["portfolio"],
-        #         company_id=process["company_id"],
-        #         process_title=process["process_title"],
-        #         item_type=process["process_type"],
-        #     )
+        for member in step.get("stepTeamMembers", []):
+            link, qrcode = verification_data(
+                process_id=process["_id"],
+                item_id=process["parent_item_id"],
+                step_role=step.get("stepRole"),
+                auth_name=member["member"],
+                auth_portfolio=member["portfolio"],
+                company_id=process["company_id"],
+                process_title=process["process_title"],
+                item_type=process["process_type"],
+                user_type="team"
+            )
 
-        # links.append({member["member"]: link})
-        # qrcodes.append({member["member"]: qrcode})
+            links.append({member["member"]: link})
+            qrcodes.append({member["member"]: qrcode})
+
+        for member in step.get("stepUserMembers", []):
+            link, qrcode = verification_data(
+                process_id=process["_id"],
+                item_id=process["parent_item_id"],
+                step_role=step.get("stepRole"),
+                auth_name=member["member"],
+                auth_portfolio=member["portfolio"],
+                company_id=process["company_id"],
+                process_title=process["process_title"],
+                item_type=process["process_type"],
+                user_type="user"
+            )
+
+            links.append({member["member"]: link})
+            qrcodes.append({member["member"]: qrcode})
+
 
     # for step in process["process_steps"]:
     #     # process links

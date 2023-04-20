@@ -43,10 +43,11 @@ def verification_data(
     company_id,
     process_title,
     item_type,
+    user_type,
 ):
     """"""
     hash = uuid.uuid4().hex
-    link = f"{VERIFICATION_LINK}/{hash}/?auth_user={auth_name}&auth_portfolio={auth_portfolio}&auth_role={step_role}"
+    link = f"{VERIFICATION_LINK}/{hash}/?auth_user={auth_name}&auth_portfolio={auth_portfolio}&auth_role={step_role}&user_type={user_type}"
     # save link
     res = save_uuid_hash(
         link,
