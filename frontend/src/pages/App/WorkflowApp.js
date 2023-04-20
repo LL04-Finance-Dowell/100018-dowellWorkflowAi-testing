@@ -5,6 +5,7 @@ import { v4 as uuidv4 } from 'uuid';
 import SectionBox from '../../components/manageFiles/sectionBox/SectionBox';
 import HandleTasks from '../../components/landingPage/handleTasks/HandleTasks';
 import FlipMenu from '../../components/flipMenu/FlipMenu';
+import LanguageDropdown from '../../components/LanguageSelector/LanguageDropdown';
 import DocumnetCard from '../../components/hoverCard/documentCard/DocumentCard';
 import TemplateCard from '../../components/hoverCard/templateCard/TemplateCard';
 import WorkflowCard from '../../components/hoverCard/workflowCard/WorkflowCard';
@@ -225,6 +226,7 @@ const WorkflowApp = () => {
     <WorkflowLayout>
       <div className={styles.container}>
         <CustomerSupport />
+        <LanguageDropdown/>
         <FlipMenu />
         {isVisible && (
           <div className={styles.section__container}>
