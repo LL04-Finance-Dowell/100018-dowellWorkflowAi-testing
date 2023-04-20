@@ -463,45 +463,6 @@ def create_workflow_setting(request):
     )
 
 
-@api_view(["GET", "PUT"])
-def get_wf_ai_setting(request, wf_setting_id):
-    """Retrive a Wf setting"""
-
-    if not validate_id(wf_setting_id):
-        return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
-
-    if request.method == "GET":
-        try:
-            setting = get_wf_setting_object(wf_setting_id)
-        except:
-            return Response(
-                "failed to get setting", status.HTTP_500_INTERNAL_SERVER_ERROR
-            )
-
-        return Response(setting, status.HTTP_200_OK)
-
-    if request.method == "PUT":
-        """Update workflow Setting"""
-
-        form = request.data
-        if not form:
-            return Response("Workflow Data is Required", status.HTTP_400_BAD_REQUEST)
-
-        old_wf_setting = get_wf_setting_object(wf_setting_id)
-        version = setting.version_control(old_wf_setting["processes"][-1]["version"])
-        old_wf_setting["processes"][-1]["flag"] = "disable"
-
-        old_wf_setting["processes"].append(
-            {"version": version, "flag": "enable", "process": form["proccess"]}
-        )
-        updt_wf = json.loads(wf_setting_update(wf_setting_id, old_wf_setting))
-
-        if updt_wf["isSuccess"]:
-            return Response("Workflow Setting Updated", status.HTTP_201_CREATED)
-
-        return Response("Failed to Update Workflow", status.HTTP_200_OK)
-
-
 @api_view(["POST"])
 def create_workflow(request):
     """Creates a new workflow"""
@@ -1092,21 +1053,20 @@ def get_completed_documents(request, company_id):
 
 
 @api_view(["POST"])
-def WF_AI_SETTING(request):
+def create_workflow_ai_setting(request):
     if not request.data:
         return Response("You are missing something", status.HTTP_400_BAD_REQUEST)
     # print(request.data)
     wf_stng = json.loads(save_wf_setting(request.data))
     if wf_stng["isSuccess"]:
-        return Response(
-            get_wf_setting_object(wf_stng["inserted_id"]), status.HTTP_201_CREATED
+        return Response("NEW WORKFLOW AI SETTING ADDED", status.HTTP_201_CREATED
         )
 
     return Response("Failed to Save Workflow Setting", status.HTTP_200_OK)
 
 
 @api_view(["GET"])
-def all_wf_ai_setting(request, company_id):
+def all_workflow_ai_setting(request, company_id):
     """Get All WF AI"""
     all_setting = get_wfai_setting_list(company_id)
     try:
@@ -1118,3 +1078,44 @@ def all_wf_ai_setting(request, company_id):
         return Response(
             "Failed to Get WF AI Data", status.HTTP_500_INTERNAL_SERVER_ERROR
         )
+@api_view(["GET"])
+def get_workflow_ai_setting(request, wf_setting_id):
+    """Get All WF AI"""
+    setting = get_wf_setting_object(wf_setting_id)
+    try:
+        return Response(
+            setting,
+            status.HTTP_200_OK,
+        )
+    except:
+        return Response(
+            "Failed to Get WF AI Data", status.HTTP_500_INTERNAL_SERVER_ERROR
+        )
+
+@api_view(["POST"])
+def update_workflow_ai_setting(request):
+    """Retrive a Wf setting"""
+
+    if request.method == "POST":
+        """Update workflow Setting"""
+
+        form = request.data
+        if not form:
+            return Response("Workflow Data is Required", status.HTTP_400_BAD_REQUEST)
+
+        old_wf_setting = get_wf_setting_object(form["wf_setting_id"])
+        for key, new_value in form.items():
+            if key in old_wf_setting:
+                old_wf_setting[key] = new_value
+        # version = setting.version_control(old_wf_setting["processes"][-1]["version"])
+        # old_wf_setting["processes"][-1]["flag"] = "disable"
+
+        # old_wf_setting["processes"].append(
+        #     {"version": version, "flag": "enable", "process": form["proccess"]}
+        # )
+        updt_wf = json.loads(wf_setting_update(form["wf_setting_id"], old_wf_setting))
+
+        if updt_wf["isSuccess"]:
+            return Response("Workflow Setting Updated", status.HTTP_201_CREATED)
+
+        return Response("Failed to Update Workflow", status.HTTP_200_OK)

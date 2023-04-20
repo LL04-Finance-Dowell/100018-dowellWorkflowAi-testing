@@ -165,3 +165,4 @@ class WorkflowAiSetting(models.Model):
     Evaluation_Process = jsonfield.JSONField(default=None, null=True)
     Reports = jsonfield.JSONField(default=None, null=True)
     Management = jsonfield.JSONField(default=None, null=True)
+    Portflio = jsonfield.JSONField(default=None, null=True)
