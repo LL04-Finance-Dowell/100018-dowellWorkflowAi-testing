@@ -295,8 +295,7 @@ def verify(process, auth_step_role, location_data, user_name):
             user_role=role,
             item_type=process["process_type"],
         )
-
-        return doc_link
+        return Response(doc_link, status.HTTP_200_OK)
 
     return None
 
@@ -579,6 +578,7 @@ def check_step_done(step_index, process):
             return True
 
     return False
+
 
 # Now Authorize users with te current document
 def authorize_next_step_users(step_index, process):

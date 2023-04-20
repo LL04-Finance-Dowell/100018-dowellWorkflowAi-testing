@@ -262,7 +262,7 @@ def process_verification(request):
     # get process
     process = get_process_object(process_id)
     if not process:
-        Response("Something went wrong!, Retry", status.HTTP_500_INTERNAL_SERVER_ERROR)
+        return Response("Something went wrong!, Retry", status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     # check states
     if process["processing_state"]:
@@ -282,7 +282,7 @@ def process_verification(request):
 
     access_link = processing.verify(process, auth_role, location_data, auth_user)
     if access_link is not None:
-        return Response(access_link, status.HTTP_200_OK)
+        return access_link
 
     return Response("access to document not allowed!", status.HTTP_401_UNAUTHORIZED)
 
