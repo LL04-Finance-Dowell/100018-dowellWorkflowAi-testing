@@ -89,7 +89,7 @@ def start(process):
                 company_id=process["company_id"],
                 process_title=process["process_title"],
                 item_type=process["process_type"],
-                user_type="public"
+                user_type="public",
             )
 
             links.append({member["member"]: link})
@@ -105,7 +105,7 @@ def start(process):
                 company_id=process["company_id"],
                 process_title=process["process_title"],
                 item_type=process["process_type"],
-                user_type="team"
+                user_type="team",
             )
 
             links.append({member["member"]: link})
@@ -121,12 +121,11 @@ def start(process):
                 company_id=process["company_id"],
                 process_title=process["process_title"],
                 item_type=process["process_type"],
-                user_type="user"
+                user_type="user",
             )
 
             links.append({member["member"]: link})
             qrcodes.append({member["member"]: qrcode})
-
 
     # for step in process["process_steps"]:
     #     # process links
@@ -239,7 +238,22 @@ def start(process):
     return Response("failed to start processing", status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
-def verify(process, auth_step_role, location_data, user_name):
+def verify(
+    process,
+    auth_step_role,
+    location_data,
+    user_name,
+    user_type,
+    org_name,
+    user_portfolio,
+):
+    # is public valid
+    if user_type == "public":
+        if not checks.is_public_person_valid(user_portfolio, org_name):
+            return Response(
+                "You have already accessed this document", status.HTTP_200_OK
+            )
+
     # find step the user belongs
     for step in process["process_steps"]:
         if step.get("stepRole") == auth_step_role:

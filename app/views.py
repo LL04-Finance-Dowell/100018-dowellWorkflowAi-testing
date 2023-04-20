@@ -242,6 +242,8 @@ def process_verification(request):
     auth_role = request.data["auth_role"]
     auth_portfolio = request.data["auth_portfolio"]
     token = request.data["token"]
+    org_name = request.data["org_name"]
+    user_type = request.data["user_type"]
 
     # verify hash details.
     link_info = get_link_object(token)
@@ -262,7 +264,9 @@ def process_verification(request):
     # get process
     process = get_process_object(process_id)
     if not process:
-        return Response("Something went wrong!, Retry", status.HTTP_500_INTERNAL_SERVER_ERROR)
+        return Response(
+            "Something went wrong!, Retry", status.HTTP_500_INTERNAL_SERVER_ERROR
+        )
 
     # check states
     if process["processing_state"]:
@@ -280,7 +284,15 @@ def process_verification(request):
         "continent": request.data["continent"],
     }
 
-    access_link = processing.verify(process, auth_role, location_data, auth_user)
+    access_link = processing.verify(
+        process,
+        auth_role,
+        location_data,
+        auth_user,
+        user_type,
+        org_name,
+        auth_portfolio,
+    )
     if access_link is not None:
         return access_link
 
@@ -1091,7 +1103,6 @@ def get_completed_documents(request, company_id):
     )
 
 
-
 @api_view(["POST"])
 def create_workflow_ai_setting(request):
     if not request.data:
@@ -1099,8 +1110,7 @@ def create_workflow_ai_setting(request):
     # print(request.data)
     wf_stng = json.loads(save_wf_setting(request.data))
     if wf_stng["isSuccess"]:
-        return Response("NEW WORKFLOW AI SETTING ADDED", status.HTTP_201_CREATED
-        )
+        return Response("NEW WORKFLOW AI SETTING ADDED", status.HTTP_201_CREATED)
 
     return Response("Failed to Save Workflow Setting", status.HTTP_200_OK)
 
@@ -1118,6 +1128,8 @@ def all_workflow_ai_setting(request, company_id):
         return Response(
             "Failed to Get WF AI Data", status.HTTP_500_INTERNAL_SERVER_ERROR
         )
+
+
 @api_view(["GET"])
 def get_workflow_ai_setting(request, wf_setting_id):
     """Get All WF AI"""
@@ -1131,6 +1143,7 @@ def get_workflow_ai_setting(request, wf_setting_id):
         return Response(
             "Failed to Get WF AI Data", status.HTTP_500_INTERNAL_SERVER_ERROR
         )
+
 
 @api_view(["POST"])
 def update_workflow_ai_setting(request):

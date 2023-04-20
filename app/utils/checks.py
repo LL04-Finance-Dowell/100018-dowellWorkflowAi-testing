@@ -1,6 +1,7 @@
 from datetime import datetime
-
+import requests
 from app.utils.mongo_db_connection import get_link_object
+from .helpers import public_login
 
 
 def display_right(display):
@@ -68,3 +69,8 @@ def user_presence(token, user_name, portfolio):
     if link_info["user_name"] == user_name and link_info["auth_portfolio"] == portfolio:
         user_allowed = True
     return user_allowed, link_info["process_id"], link_info["auth_role"]
+
+
+def is_public_person_valid(qrid, org_name):
+    valid = public_login(qrid, org_name)
+    return valid

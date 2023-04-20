@@ -5,7 +5,7 @@ import qrcode
 import bson
 import requests
 
-from app.constants import EDITOR_API, VERIFICATION_LINK
+from app.constants import EDITOR_API, VERIFICATION_LINK, PUBLIC_LOGIN_API
 from app.models import FavoriteDocument, FavoriteTemplate, FavoriteWorkflow
 from app.serializers import (
     FavouriteDocumentSerializer,
@@ -32,6 +32,25 @@ def get_domain_host():
     current_site = Site.objects.get_current()
     domain_host = current_site.domain
     return domain_host
+
+
+def public_login(qrid, org_name):
+    res = requests.post(
+        url=PUBLIC_LOGIN_API,
+        data=json.dumps(
+            {
+                "qrid": qrid,
+                "org_name": org_name,
+                "product": "WorkflowAI",
+            }
+        ),
+        headers=headers,
+    )
+    if res.status_code == 200:
+        return True
+        
+    else:
+        return None
 
 
 def verification_data(
