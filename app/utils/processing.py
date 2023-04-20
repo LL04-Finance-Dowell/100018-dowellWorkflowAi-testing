@@ -293,7 +293,7 @@ def verify(process, auth_step_role, location_data, user_name):
             user=user,
             process_id=process["_id"],
             user_role=role,
-            item_type=process["process_type"],
+            item_type=process["process_type"]
         )
 
         return doc_link

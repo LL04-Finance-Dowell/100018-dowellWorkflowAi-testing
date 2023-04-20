@@ -1,8 +1,9 @@
 import json
 import uuid
 from threading import Thread
-import qrcode
+
 import bson
+import qrcode
 import requests
 
 from app.constants import EDITOR_API, VERIFICATION_LINK
@@ -22,16 +23,9 @@ from .mongo_db_connection import (
     save_uuid_hash,
     save_wf_process,
 )
-
 from .threads import notification
 
 headers = {"Content-Type": "application/json"}
-
-
-def get_domain_host():
-    current_site = Site.objects.get_current()
-    domain_host = current_site.domain
-    return domain_host
 
 
 def verification_data(
@@ -189,7 +183,13 @@ def access_editor(item_id, item_type):
 
 
 def link_to_editor(
-    item_id, item_map, item_rights, user, process_id, user_role, item_type
+    item_id,
+    item_map,
+    item_rights,
+    user,
+    process_id,
+    user_role,
+    item_type,
 ):
     """navigate user to editor for signing"""
 
@@ -312,10 +312,10 @@ def generate_qrcode(verification_link):
 
     # In Prod -- this works
     # TODO: find out how to extract domain url
-    # qr_path = f"https://100094.pythonanywhere.com/media/qrcodes/{uuid.uuid4().hex}.png"
+    qr_path = f"https://100094.pythonanywhere.com/media/qrcodes/{uuid.uuid4().hex}.png"
 
     # On dev -- this works
-    qr_path = f"media/qrcodes/{uuid.uuid4().hex}.png"
+    # qr_path = f"media/qrcodes/{uuid.uuid4().hex}.png"
 
     qr_code = qrcode.QRCode(error_correction=qrcode.constants.ERROR_CORRECT_H)
     qr_code.add_data(verification_link)
