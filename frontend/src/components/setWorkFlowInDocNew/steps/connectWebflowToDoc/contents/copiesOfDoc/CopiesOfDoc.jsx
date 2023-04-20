@@ -7,6 +7,7 @@ import { useForm } from "react-hook-form";
 import AssignButton from "../../../../assignButton/AssignButton";
 import { useDispatch, useSelector } from "react-redux";
 import { updateSingleProcessStep } from "../../../../../../features/app/appSlice";
+import { LoadingSpinner } from "../../../../../LoadingSpinner/LoadingSpinner";
 
 const CopiesOfDoc = ({ currentStepIndex, stepsPopulated }) => {
   const {
@@ -86,6 +87,8 @@ const CopiesOfDoc = ({ currentStepIndex, stepsPopulated }) => {
       process => process.workflow === docCurrentWorkflow?._id
     )?.steps[currentStepIndex].stepCloneCount
 
+    if (!documentCountForStep) return
+
     const copiesForCurrentStep = [];
 
     for (let i = 0; i < documentCountForStep; i++) {
@@ -99,7 +102,7 @@ const CopiesOfDoc = ({ currentStepIndex, stepsPopulated }) => {
 
     setCopiesFeaturesSet(true);
 
-  }, [stepsPopulated])
+  }, [stepsPopulated, processSteps])
 
   const onSubmit = (data) => {
     setLoading(true);
@@ -134,30 +137,36 @@ const CopiesOfDoc = ({ currentStepIndex, stepsPopulated }) => {
           </h2>
           <p>Step skipped</p> 
         </>:
-        <FormLayout isSubmitted={stepsPopulated ? stepsPopulated : isSubmitSuccessful} loading={loading}>
-          <form onSubmit={handleSubmit(onSubmit)}>
-            <h2 className={styles.header}>
-              Copies of document from previous step (select for processing)
-            </h2>
-            <select
-              required
-              {...register("taskFeature")}
-              size={taskFeatures.length}
-              className={globalStyles.task__features}
-              onChange={({ target }) => handleSingleCopySelection(JSON.parse(target.value))}
-            >
-              {React.Children.toArray(copiesFeaturesToDisplay.map((item) => (
-                <option className={globalStyles.task__features__text} style={copiesSelected.find(copy => copy.id === item.id && copy.document_number === item.document_number) ? { backgroundColor: '#0048ff', color: '#fff' }: {}} value={JSON.stringify(item)}>
-                  {item.feature}
-                </option>
-              )))}
-            </select>
-            <AssignButton
-              loading={loading}
-              buttonText="Copies of document from previous step (select for processing)"
-            />
-          </form>
-        </FormLayout>
+        <>
+        {
+          copiesFeaturesSet ? 
+          <FormLayout isSubmitted={stepsPopulated ? stepsPopulated : isSubmitSuccessful} loading={loading}>
+            <form onSubmit={handleSubmit(onSubmit)}>
+              <h2 className={styles.header}>
+                Copies of document from previous step (select for processing)
+              </h2>
+              <select
+                required
+                {...register("taskFeature")}
+                size={taskFeatures.length}
+                className={globalStyles.task__features}
+                onChange={({ target }) => handleSingleCopySelection(JSON.parse(target.value))}
+              >
+                {React.Children.toArray(copiesFeaturesToDisplay.map((item) => (
+                  <option className={globalStyles.task__features__text} style={copiesSelected.find(copy => copy.id === item.id && copy.document_number === item.document_number) ? { backgroundColor: '#0048ff', color: '#fff' }: {}} value={JSON.stringify(item)}>
+                    {item.feature}
+                  </option>
+                )))}
+              </select>
+              <AssignButton
+                loading={loading}
+                buttonText="Copies of document from previous step (select for processing)"
+              />
+            </form>
+          </FormLayout> : 
+          <LoadingSpinner />
+        }
+        </>
       }
     </>
   );

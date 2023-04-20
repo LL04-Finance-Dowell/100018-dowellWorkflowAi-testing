@@ -203,14 +203,14 @@ export const appSlice = createSlice({
       const currentProcessSteps = [...state.processSteps];
 
       if (!action.payload.workflow)
-        return (state.processSteps = currentProcessSteps);
+        return void(state.processSteps = currentProcessSteps);
 
       const foundStepIndex = currentProcessSteps.findIndex(
         (step) => step.workflow === action.payload.workflow
       );
 
       if (foundStepIndex === -1)
-        return (state.processSteps = currentProcessSteps);
+        return void(state.processSteps = currentProcessSteps);
 
       const currentStepToUpdate = currentProcessSteps[foundStepIndex];
       const updatedStepObj = {

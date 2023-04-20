@@ -98,8 +98,6 @@ const SetWorkflowInDoc = () => {
 
     getSingleProcessV2(foundProcess._id).then(res => {
       const fetchedProcessData = res.data;
-      // const foundCloneDocUsedToCreateProcess = allDocuments.find(document => document._id === fetchedProcessData.parent_document_id);
-      // if (!foundCloneDocUsedToCreateProcess) return setDraftProcessLoading(false);
       populateProcessDetails(fetchedProcessData);
       setDraftProcessLoading(false);
 
@@ -114,22 +112,21 @@ const SetWorkflowInDoc = () => {
     // console.log(process);
     const foundOriginalDoc = allDocuments.find(document => document._id === process.parent_item_id && document.document_type === 'original');
     // console.log(foundOriginalDoc);
-    if (!foundOriginalDoc) return setDraftProcessLoading(false);
+    if (!foundOriginalDoc) return;
 
     setDraftProcess(process);
     dispatch(contentDocument(foundOriginalDoc._id));
     dispatch(setCurrentDocToWfs(foundOriginalDoc));
 
-    // This logic would be updated later when multiple workflows would be allowed in a process creation
+    // This logic would be updated later when multiple workflows are configured in a process creation
     const foundWorkflow = allWorkflows.find(workflow => workflow._id === process.workflow_construct_ids[0]);
-    if (!foundWorkflow) return setDraftProcessLoading(false);
+    if (!foundWorkflow) return;
 
     dispatch(setSelectedWorkflowsToDoc(foundWorkflow));
     dispatch(setWfToDocument());
     // console.log(foundWorkflow)
     dispatch(setDocCurrentWorkflow(foundWorkflow))
     
-    return
     process?.process_steps.forEach((step, currentStepIndex) => {
       const stepKeys = Object.keys(step);
 
@@ -162,14 +159,20 @@ const SetWorkflowInDoc = () => {
           step[key].forEach(item => {
             const newTableOfContentObj = {
               id: item,
-              workflow: foundWorkflow[0]._id,
+              workflow: foundWorkflow._id,
               stepIndex: currentStepIndex,
             };
             dispatch(setTableOfContentForStep(newTableOfContentObj));
           })
         }
 
-        dispatch(updateSingleProcessStep({ [`${key}`]: step[key], "indexToUpdate": currentStepIndex, "workflow": foundWorkflow._id }));
+        const newStepObj = {
+          [`${key}`]: step[key], 
+          "indexToUpdate": currentStepIndex, 
+          "workflow": foundWorkflow._id,
+        };
+
+        dispatch(updateSingleProcessStep(newStepObj));
       })
     
     })
@@ -197,26 +200,26 @@ const SetWorkflowInDoc = () => {
         {
           isDraftProcess ?
             !draftProcessLoading && draftProcess && draftProcessDOc ?
-            <ConstructionPage hideLogo={true} message={'The viewing of draft processes is currently being fixed'} />
-            // <>
-            //   <SelectDoc savedDoc={draftProcessDOc} />
-            //   <ContentMapOfDoc />
-            //   <div className={styles.diveder}></div>
-            //   <SelectWorkflow savedDoc={draftProcessDOc} />
-            //   <div className={styles.diveder}></div>
-            //   <ConnectWorkFlowToDoc stepsPopulated={true} />
-            //   <div className={styles.diveder}></div>
-            //   <CheckErrors />
-            //   <div className={styles.diveder}></div>
-            //   <ProcessDocument />
-            // </> 
+            // <ConstructionPage hideLogo={true} message={'The viewing of draft processes is currently being fixed'} />
+            <>
+              <SelectDoc savedDoc={draftProcessDOc} />
+              <ContentMapOfDoc />
+              <div className={styles.diveder}></div>
+              <SelectWorkflow savedDoc={draftProcessDOc} />
+              <div className={styles.diveder}></div>
+              <ConnectWorkFlowToDoc stepsPopulated={true} />
+              <div className={styles.diveder}></div>
+              <CheckErrors />
+              <div className={styles.diveder}></div>
+              <ProcessDocument />
+            </> 
             :
             <>
             
               {
                 draftProcessLoading ? <></> : 
-                <ConstructionPage hideLogo={true} message={'The viewing of draft processes is currently being fixed'} />
-                // <p style={{ textAlign: 'center' }}>Draft could not be loaded.</p>
+                // <ConstructionPage hideLogo={true} message={'The viewing of draft processes is currently being fixed'} />
+                <p style={{ textAlign: 'center' }}>Draft could not be loaded.</p>
               }
             </>
           :
