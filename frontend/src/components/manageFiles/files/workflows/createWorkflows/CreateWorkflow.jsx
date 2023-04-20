@@ -47,11 +47,19 @@ const CreateWorkflows = ({ handleToggleOverlay }) => {
 
   useEffect(() => {
     
-    if ((step_name) && (role)) return setSubmitBtnDisabled(true);
+    if (((step_name) && (role)) || (step_name && !role) || (!step_name && role)) return setSubmitBtnDisabled(true);
 
     setSubmitBtnDisabled(false);
 
   }, [step_name, role])
+
+  useEffect(() => {
+
+    if (workflowTitle.length < 1 || internalWorkflows.length < 1 || currentTableCell) return setSubmitBtnDisabled(true);
+
+    setSubmitBtnDisabled(false);
+  
+  }, [workflowTitle, internalWorkflows, currentTableCell])
 
   const onSubmit = (data) => {
     console.log(data);
@@ -79,20 +87,6 @@ const CreateWorkflows = ({ handleToggleOverlay }) => {
   };
 
   const handleCreateWorkflow = () => {
-    if (workflowTitle.length < 1) {
-      console.log("add workflow title");
-      return;
-    }
-
-    if (internalWorkflows.length < 1) {
-      console.log("add steps");
-      return;
-    }
-
-    if (currentTableCell) {
-      console.log("finish update step");
-      return;
-    }
 
     const handleAfterCreated = () => {
       reset();
