@@ -35,7 +35,7 @@ This backend service serves as the WorkflowAI application Backend.
 | GET        | companies/:company_id/workflows/          | To retrieve workflows in a company               |
 | GET        | companies/:company_id/favourites/         | To list favourites                               |
 | POST       | companies/:company_id/teams/              | To fetch all workflow teams                      |
-| POST       | companies/:company_id/workflow-ai-settings| To fetch all workflow AI SETTING Lists           |
+| POST       | companies/:company_id/settings            | To fetch all workflow AI SETTING Lists           |
 | POST       | templates/                                | To create a new template.                        |
 | GET        | templates/:template_id/                   | To retrieve a single template.                   |
 | PUT        | templates/:template_id/approval/          | To approve a single template.                    |
@@ -57,9 +57,9 @@ This backend service serves as the WorkflowAI application Backend.
 | POST       | teams/                                    | To create workflow teams                         |
 | POST       | update-to-teams/                          | To update workflow teams                         |
 | POST       | teams/:team_id/                           | To fetch data of workflow teams                  |
-| POST       | workflow-ai-settings/                     | To Create New Workflow AI Setting                |
-| POST       | update-workflow-ai-settings/              | To Update Existing Workflow AI Setting           |
-| GET, PUT   | workflow-settings/:wf_setting_id/         | To get a single wf ai settings          |
+| POST       | settings/                                 | To Create New Workflow AI Setting                |
+| POST       | update-settings/                          | To Update Existing Workflow AI Setting           |
+| GET        | settings/:wf_setting_id/                  | To get a single wf ai settings          |
 
 
 ---
@@ -746,7 +746,7 @@ Request Body
 
 ### Workflow AI Setting
 
-_POST_ `v1/workflow-ai-settings/`
+_POST_ `v1/settings/`
 
 Request Body
 
@@ -862,7 +862,7 @@ Response-200
 }
 ```
 
-_POST_ `v1/update-workflow-ai-settings/`
+_POST_ `v1/update-settings/`
 
 Request Body
 
@@ -886,7 +886,7 @@ Response-200
 }
 ```
 
-_GET_ `/v1/companies/<str:company_id>/workflow-settings/`
+_GET_ `/v1/companies/<str:company_id>/settings/`
 
 Response-200
 

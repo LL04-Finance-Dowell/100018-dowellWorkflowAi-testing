@@ -46,7 +46,7 @@ urlpatterns = [
     path("companies/<str:company_id>/documents/", get_documents),
     path("companies/<str:company_id>/documents/completed/", get_completed_documents),
     path("companies/<str:company_id>/teams/", get_all_teams),
-    path("companies/<str:company_id>/workflow-ai-settings/", all_workflow_ai_setting),
+    path("companies/<str:company_id>/settings/", all_workflow_ai_setting),
     path("templates/", create_template),
     path("templates/<str:template_id>/", template_detail),
     path("templates/<str:template_id>/approval/", approve),
@@ -74,6 +74,6 @@ urlpatterns = [
     path("teams/", create_team),
     path("teams/<str:team_id>/", get_team_data),
     path("update-to-teams/", update_team),
-    path("workflow-ai-settings/", create_workflow_ai_setting),
-    path("update-workflow-ai-settings/", update_workflow_ai_setting),
+    path("settings/", create_workflow_ai_setting),
+    path("update-settings/", update_workflow_ai_setting),
 ]
