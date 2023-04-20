@@ -1053,7 +1053,7 @@ def get_completed_documents(request, company_id):
 
 
 @api_view(["POST"])
-def WF_AI_SETTING(request):
+def create_workflow_ai_setting(request):
     if not request.data:
         return Response("You are missing something", status.HTTP_400_BAD_REQUEST)
     # print(request.data)
@@ -1066,7 +1066,7 @@ def WF_AI_SETTING(request):
 
 
 @api_view(["GET"])
-def all_wf_ai_setting(request, company_id):
+def all_workflow_ai_setting(request, company_id):
     """Get All WF AI"""
     all_setting = get_wfai_setting_list(company_id)
     try:
@@ -1081,7 +1081,7 @@ def all_wf_ai_setting(request, company_id):
 
 
 @api_view(["POST"])
-def update_wfai_setting(request):
+def update_workflow_ai_setting(request):
     """Retrive a Wf setting"""
 
     if request.method == "POST":

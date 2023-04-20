@@ -33,9 +33,9 @@ from .views import (
     update_team,
     workflow_detail,
     process_copies,
-    WF_AI_SETTING,
-    all_wf_ai_setting,
-    update_wfai_setting,
+    create_workflow_ai_setting,
+    update_workflow_ai_setting,
+    all_workflow_ai_setting,
 )
 
 urlpatterns = [
@@ -46,7 +46,7 @@ urlpatterns = [
     path("companies/<str:company_id>/documents/", get_documents),
     path("companies/<str:company_id>/documents/completed/", get_completed_documents),
     path("companies/<str:company_id>/teams/", get_all_teams),
-    path("companies/<str:company_id>/settings/", all_wf_ai_setting),
+    path("companies/<str:company_id>/workflow-ai-settings/", all_workflow_ai_setting),
     path("templates/", create_template),
     path("templates/<str:template_id>/", template_detail),
     path("templates/<str:template_id>/approval/", approve),
@@ -56,7 +56,6 @@ urlpatterns = [
     path("workflows/", create_workflow),
     path("workflows/<str:workflow_id>/", workflow_detail),
     # path("workflow-settings/", create_workflow_setting),
-    path("update-workflow-settings/", update_wfai_setting),
     path("processes/", document_processing),
     path("processes/verify/", process_verification),
     path("processes/<str:process_id>/", a_single_process),
@@ -75,5 +74,6 @@ urlpatterns = [
     path("teams/", create_team),
     path("teams/<str:team_id>/", get_team_data),
     path("update-to-teams/", update_team),
-    path("workflow-settings/", WF_AI_SETTING),
+    path("workflow-ai-settings/", create_workflow_ai_setting),
+    path("update-workflow-ai-settings/", update_workflow_ai_setting),
 ]
