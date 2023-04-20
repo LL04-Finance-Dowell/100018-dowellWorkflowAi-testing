@@ -111,9 +111,9 @@ const SetWorkflowInDoc = () => {
   }, [searchParams, allProcesses, allDocuments, allWorkflows])
 
   const populateProcessDetails = (process) => {
-    console.log(process);
-    const foundOriginalDoc = allDocuments.find(document => document._id === process.parent_document_id && document.document_type === 'original');
-    console.log(foundOriginalDoc);
+    // console.log(process);
+    const foundOriginalDoc = allDocuments.find(document => document._id === process.parent_item_id && document.document_type === 'original');
+    // console.log(foundOriginalDoc);
     if (!foundOriginalDoc) return setDraftProcessLoading(false);
 
     setDraftProcess(process);
@@ -128,7 +128,8 @@ const SetWorkflowInDoc = () => {
     dispatch(setWfToDocument());
     // console.log(foundWorkflow)
     dispatch(setDocCurrentWorkflow(foundWorkflow))
-
+    
+    return
     process?.process_steps.forEach((step, currentStepIndex) => {
       const stepKeys = Object.keys(step);
 

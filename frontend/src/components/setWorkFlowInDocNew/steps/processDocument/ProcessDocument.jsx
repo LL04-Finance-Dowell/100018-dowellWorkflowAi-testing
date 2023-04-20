@@ -217,11 +217,6 @@ const ProcessDocument = () => {
     }
   }
 
-  const handleCloseSaveConfirmationModal = () => {
-    setProcessObjectToSave(null);
-    setShowConfirmationModalForSaveLater(false);
-  }
-
   const handleSaveForLaterBtnClick = () => {
     
     console.log("Process obj: ", processObjToSave);
@@ -300,7 +295,7 @@ const ProcessDocument = () => {
     {
       showConfirmationModalForSaveLater && 
       <SaveConfimationModal
-        handleCloseBtnClick={() => handleCloseSaveConfirmationModal()}
+        handleCloseBtnClick={() => setShowConfirmationModalForSaveLater(false)}
         handleSaveBtnClick={() => handleSaveForLaterBtnClick()}
         inputValue={processObjToSaveTitle}
         handleInputChange={(value) => setProcessObjectToSaveTitle(value)}
