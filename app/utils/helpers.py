@@ -312,7 +312,7 @@ def generate_qrcode(verification_link):
 
     # In Prod -- this works
     # TODO: find out how to extract domain url
-    qr_path = f"https://100094.pythonanywhere.com/media/qrcodes/{uuid.uuid4().hex}.png"
+    qr_path = f"100094.pythonanywhere.com/media/qrcodes/{uuid.uuid4().hex}.png"
 
     # On dev -- this works
     # qr_path = f"media/qrcodes/{uuid.uuid4().hex}.png"
@@ -324,7 +324,7 @@ def generate_qrcode(verification_link):
     qr_img = qr_code.make_image(fill_color=qr_color, back_color="#DCDCDC")
     qr_img.save(qr_path)
 
-    return qr_path
+    return f"https://{qr_path}"
 
 
 def list_favourites(company_id):
