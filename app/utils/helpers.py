@@ -220,15 +220,15 @@ def link_to_editor(
         action = "document"
         field = "document_name"
         team_member_id = "11689044433"
-        document = get_document_object(item_id)
+        document_item = get_document_object(item_id)
 
-        if document["document_state"] == "finalized":
+        if document_item["document_state"] == "finalized":
             item_flag = "finalized"
 
-        if document["document_state"] == "processing":
+        if document_item["document_state"] == "processing":
             item_flag = "processing"
 
-    elif item_type == "template":
+    if item_type == "template":
         collection = "TemplateReports"
         document = "templatereports"
         action = "template"
@@ -238,7 +238,7 @@ def link_to_editor(
     payload = {
         "product_name": "workflowai",
         "details": {
-            "field": "document_name",
+            "field": field,
             "cluster": "Documents",
             "database": "Documentation",
             "collection": collection,

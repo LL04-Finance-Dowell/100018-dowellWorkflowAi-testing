@@ -242,7 +242,7 @@ def save_process_qrcodes(
             **QR_CONNECTION_DICT,
             "command": "insert",
             "field": {
-                "event_id": get_event_id()["event_id"],
+                "eventId": get_event_id()["event_id"],
                 "qrcodes": qrcodes,
                 "process_id": process_id,
                 "item_id": item_id,
@@ -294,7 +294,7 @@ def save_wf_process(
             **WF_PROCESS_DICT,
             "command": "insert",
             "field": {
-                "event_id": get_event_id()["event_id"],
+                "eventId": get_event_id()["event_id"],
                 "process_title": process_title,
                 "process_steps": process_steps,
                 "company_id": company_id,
@@ -587,7 +587,7 @@ def save_document(
             **DOCUMENT_CONNECTION_DICT,
             "command": "insert",
             "field": {
-                "event_id": get_event_id()["event_id"],
+                "eventId": get_event_id()["event_id"],
                 "document_name": name,
                 "content": data,
                 "company_id": company_id,
