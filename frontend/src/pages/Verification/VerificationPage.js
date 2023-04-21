@@ -55,7 +55,7 @@ const VerificationPage = () => {
             sanitizedDataToPost.auth_portfolio = auth_portfolio;      
             sanitizedDataToPost.auth_role = auth_role;
             sanitizedDataToPost.user_type = user_type;
-            if (org_name) sanitizedDataToPost.org_name = org_name;
+            sanitizedDataToPost.org_name = isPublicUser ? 'public' : userDetail?.selected_product?.product_name;
             
             delete sanitizedDataToPost.user_name;
             delete sanitizedDataToPost.portfolio;
