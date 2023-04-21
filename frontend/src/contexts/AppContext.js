@@ -25,6 +25,7 @@ export const AppContextProvider = ({ children }) => {
   const [workflowTeamsLoaded, setWorkflowTeamsLoaded] = useState(false);
   const [rerun, setRerun] = useState(false);
   const [sync, setSync] = useState(true);
+  const [isPublicUser, setIsPublicUser] = useState(false);
 
   const [filter, setFilter] = useState('team_member');
 
@@ -73,7 +74,7 @@ export const AppContextProvider = ({ children }) => {
   };
 
   useEffect(() => {
-    if (userDetail) {
+    if (userDetail && !isPublicUser) {
       if (!workflowTeamsLoaded) {
         //* Fetching workflow teams
         const settingService = new WorkflowSettingServices();
@@ -93,7 +94,7 @@ export const AppContextProvider = ({ children }) => {
           });
       }
     }
-  }, [userDetail]);
+  }, [userDetail, isPublicUser]);
 
   // useEffect(() => {
   //   console.log('context: ', workflowTeams);
@@ -128,6 +129,8 @@ export const AppContextProvider = ({ children }) => {
         setFilter,
         sync,
         setSync,
+        isPublicUser, 
+        setIsPublicUser,
       }}
     >
       {children}

@@ -9,12 +9,15 @@ import "./style.css";
 import { timeZoneToCountryObj } from "../../utils/timezonesObj";
 import dowellLogo from "../../assets/dowell.png";
 import { updateVerificationDataWithTimezone } from "../../utils/helpers";
+import { useAppContext } from "../../contexts/AppContext";
+import { dowellLoginUrl } from "../../httpCommon/httpCommon";
 
 const VerificationPage = () => {
     const { token } = useParams();
     const [ loading, setLoading ] = useState(true);
     const { userDetail } = useSelector(state => state.auth);
     const [ verificationFailed, setVerificationFailed ] = useState(false);
+    const { isPublicUser } = useAppContext();
 
     useEffect(() => {
         const dataToPost = {
@@ -39,7 +42,7 @@ const VerificationPage = () => {
             const auth_portfolio = paramsPassed.get('auth_portfolio');
             const auth_role = paramsPassed.get('auth_role');
     
-            if (auth_username !== userDetail?.userinfo?.username || auth_portfolio !== userDetail?.portfolio_info[0]?.portfolio_name) {
+            if ((!isPublicUser) && (auth_username !== userDetail?.userinfo?.username || auth_portfolio !== userDetail?.portfolio_info[0]?.portfolio_name)) {
                 toast.info("You are not authorized to view this");
                 setLoading(false);
                 setVerificationFailed(true);
@@ -68,7 +71,12 @@ const VerificationPage = () => {
             toast.info(err.response ? err.response.status === 500 ? "Process verification failed" : err.response.data : "Process verification failed")
         })
         
-    }, [token])
+    }, [token, isPublicUser])
+
+    const handleLoginLinkClick = (e) => {
+        e.preventDefault();
+        window.location.replace(dowellLoginUrl);
+    }
 
     if (loading) return <div className="workflow__Verification__Page__Container__Spinner">
         <div className="verification__Spinner__Item">
@@ -81,7 +89,19 @@ const VerificationPage = () => {
             {
                 verificationFailed && <>
                     <img src={dowellLogo} alt={"workflow logo"} />
-                    <Link to={"/"}>Go back home</Link>
+                    <>
+                        {
+                            isPublicUser ? 
+                            <Link 
+                                to={dowellLoginUrl} 
+                                onClick={handleLoginLinkClick} 
+                                target="_blank" 
+                            >
+                                Go to WorkflowAI
+                            </Link> :
+                            <Link to={"/"}>Go back home</Link>
+                        }
+                    </>
                 </>
             }
         </div>

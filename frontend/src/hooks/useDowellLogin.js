@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { dowellLoginUrl } from "../httpCommon/httpCommon";
 import { setId, setSessionId } from "../features/auth/authSlice";
 import { getUserInfoOther, getUserInfo } from "../features/auth/asyncThunks";
+import { useAppContext } from "../contexts/AppContext";
 
 export default function useDowellLogin() {
   const dispatch = useDispatch();
@@ -11,10 +12,16 @@ export default function useDowellLogin() {
   const { session_id: localSession, id: localId } = useSelector(
     (state) => state.auth
   );
+  const { setIsPublicUser } = useAppContext();
 
   useEffect(() => {
     const session_id = searchParams.get("session_id");
     const id = searchParams.get("id");
+    const userType = searchParams.get("user_type");
+
+    if (userType && userType === "public") {
+      return setIsPublicUser(true)
+    }
 
     if (session_id) {
       // remove session_id and/or id from url
