@@ -12,7 +12,7 @@ export default function useDowellLogin() {
   const { session_id: localSession, id: localId } = useSelector(
     (state) => state.auth
   );
-  const { setIsPublicUser } = useAppContext();
+  const { setIsPublicUser, setPublicUserConfigured } = useAppContext();
 
   useEffect(() => {
     const session_id = searchParams.get("session_id");
@@ -20,8 +20,10 @@ export default function useDowellLogin() {
     const userType = searchParams.get("user_type");
 
     if (userType && userType === "public") {
-      return setIsPublicUser(true)
+      setIsPublicUser(true);
+      return setPublicUserConfigured(true)
     }
+    setPublicUserConfigured(true);
 
     if (session_id) {
       // remove session_id and/or id from url

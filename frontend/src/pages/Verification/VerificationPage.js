@@ -17,9 +17,11 @@ const VerificationPage = () => {
     const [ loading, setLoading ] = useState(true);
     const { userDetail } = useSelector(state => state.auth);
     const [ verificationFailed, setVerificationFailed ] = useState(false);
-    const { isPublicUser } = useAppContext();
+    const { isPublicUser, publicUserConfigured } = useAppContext();
 
     useEffect(() => {
+        if (!publicUserConfigured) return
+        
         const dataToPost = {
             token: token,
             user_name: userDetail?.userinfo?.username,
@@ -42,9 +44,8 @@ const VerificationPage = () => {
             const auth_portfolio = paramsPassed.get('auth_portfolio');
             const auth_role = paramsPassed.get('auth_role');
             const user_type = paramsPassed.get('user_type');
-            const org_name = paramsPassed.get('org_name');
     
-            if ((!isPublicUser) && (auth_username !== userDetail?.userinfo?.username || auth_portfolio !== userDetail?.portfolio_info[0]?.portfolio_name)) {
+            if ((!isPublicUser) && (userDetail) && (auth_username !== userDetail?.userinfo?.username || auth_portfolio !== userDetail?.portfolio_info[0]?.portfolio_name)) {
                 toast.info("You are not authorized to view this");
                 setLoading(false);
                 setVerificationFailed(true);
@@ -75,7 +76,7 @@ const VerificationPage = () => {
             toast.info(err.response ? err.response.status === 500 ? "Process verification failed" : err.response.data : "Process verification failed")
         })
         
-    }, [token, isPublicUser])
+    }, [token, isPublicUser, userDetail, publicUserConfigured])
 
     const handleLoginLinkClick = (e) => {
         e.preventDefault();
