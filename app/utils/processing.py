@@ -306,7 +306,7 @@ def verify(
             role = step["stepRole"]
             user = user_name
             match = True
-            break
+            # break
 
     # do we have access?
     if not match:
