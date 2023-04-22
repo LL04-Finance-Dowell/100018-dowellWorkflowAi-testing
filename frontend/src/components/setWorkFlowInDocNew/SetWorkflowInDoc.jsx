@@ -31,6 +31,7 @@ const SetWorkflowInDoc = () => {
   const [ draftProcess, setDraftProcess ] = useState(null);
   const [ draftProcessDOc, setDraftProcessDoc ] = useState(null);
   const [ isDraftProcess, setIsDraftProcess ] = useState(false);
+  const [ draftProcessLoaded, setDraftProcessLoaded ] = useState(false);
 
   useEffect(() => {
     const processId = searchParams.get('id');
@@ -42,6 +43,7 @@ const SetWorkflowInDoc = () => {
       setDraftProcess(null);
       setDraftProcessDoc(null);
       setIsDraftProcess(false);
+      setDraftProcessLoaded(false);
     }
 
     if (continentsLoaded) return
@@ -76,6 +78,8 @@ const SetWorkflowInDoc = () => {
       return
     }
     
+    if (draftProcessLoaded) return
+    
     setDraftProcessLoading(true);
     setIsDraftProcess(true);
     
@@ -93,6 +97,7 @@ const SetWorkflowInDoc = () => {
 
     if (localStorageProcess) {
       populateProcessDetails(foundProcess);
+      setDraftProcessLoaded(true);
       return setDraftProcessLoading(false);
     }
 
@@ -100,13 +105,14 @@ const SetWorkflowInDoc = () => {
       const fetchedProcessData = res.data;
       populateProcessDetails(fetchedProcessData);
       setDraftProcessLoading(false);
-
+      setDraftProcessLoaded(true);
     }).catch(err => {
       console.log(err.response ? err.response.data : err.message);
       setDraftProcessLoading(false);
+      setDraftProcessLoaded(true);
     })
     
-  }, [searchParams, allProcesses, allDocuments, allWorkflows])
+  }, [searchParams, allProcesses, allDocuments, allWorkflows, draftProcessLoaded])
 
   const populateProcessDetails = (process) => {
     // console.log(process);
