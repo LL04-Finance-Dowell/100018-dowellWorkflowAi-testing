@@ -301,32 +301,54 @@ def verify(
                     break
 
             # set access.
-            doc_map = step.get("stepDocumentMap")
-            right = step.get("stepRights")
+            doc_map = step["stepDocumentMap"]
+            right = step["stepRights"]
+            role = step["stepRole"]
             user = user_name
-            role = step.get("stepRole")
             match = True
-            # break
+            break
 
     # do we have access?
     if not match:
-        return None
+        return Response(
+            "Access could not be set for this user",
+            status.HTTP_500_INTERNAL_SERVER_ERROR,
+        )
 
     # is everything right,
-    if clone_id and right and user and role and doc_map:
-        #  generate document link.
-        doc_link = link_to_editor(
-            item_id=clone_id,
-            item_map=doc_map,
-            item_rights=right,
-            user=user,
-            process_id=process["_id"],
-            user_role=role,
-            item_type=process["process_type"],
+    if not clone_id:
+        return Response(
+            "No document to provide access to!", status.HTTP_500_INTERNAL_SERVER_ERROR
         )
-        return Response(doc_link, status.HTTP_200_OK)
 
-    return None
+    if not right:
+        return Response(
+            "Missing step access rights!", status.HTTP_500_INTERNAL_SERVER_ERROR
+        )
+
+    if not role:
+        return Response(
+            "Authorized role for this step not found!",
+            status.HTTP_500_INTERNAL_SERVER_ERROR,
+        )
+
+    if not doc_map:
+        return Response(
+            "Document access map for this user not found!",
+            status.HTTP_500_INTERNAL_SERVER_ERROR,
+        )
+
+        #  generate document link.
+    doc_link = link_to_editor(
+        item_id=clone_id,
+        item_map=doc_map,
+        item_rights=right,
+        user=user,
+        process_id=process["_id"],
+        user_role=role,
+        item_type=process["process_type"],
+    )
+    return Response(doc_link, status.HTTP_200_OK)
 
 
 def background(process_id, item_id, item_type):
