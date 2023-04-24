@@ -284,7 +284,7 @@ def process_verification(request):
         "continent": request.data["continent"],
     }
 
-    access_link = processing.verify(
+    return processing.verify(
         process,
         auth_role,
         location_data,
@@ -293,10 +293,7 @@ def process_verification(request):
         org_name,
         auth_portfolio,
     )
-    if access_link is not None:
-        return access_link
-
-    return Response("access to document not allowed!", status.HTTP_401_UNAUTHORIZED)
+    
 
 
 @api_view(["POST"])

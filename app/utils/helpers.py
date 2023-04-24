@@ -64,7 +64,8 @@ def verification_data(
     item_type,
     user_type,
 ):
-    """"""
+    if user_type == "public":
+        pass
     hash = uuid.uuid4().hex
     link = f"{VERIFICATION_LINK}/{hash}/?auth_user={auth_name}&auth_portfolio={auth_portfolio}&auth_role={step_role}&user_type={user_type}"
     # save link
