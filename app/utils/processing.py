@@ -248,12 +248,11 @@ def verify(
     user_portfolio,
 ):
     # is public valid
-    if user_type == "public":
-        if not checks.is_public_person_valid(user_portfolio, org_name):
-            return Response(
-                "You have already accessed this document", status.HTTP_200_OK
-            )
-
+    # if user_type == "public":
+    #     if not checks.is_public_person_valid(user_portfolio, org_name):
+    #         return Response(
+    #             "You have already accessed this document", status.HTTP_200_OK
+    #         )
     # find step the user belongs
     for step in process["process_steps"]:
         if step.get("stepRole") == auth_step_role:
@@ -297,8 +296,9 @@ def verify(
             # find the clone id
             if any(user_name in d_map for d_map in step["stepDocumentCloneMap"]):
                 for d_map in step["stepDocumentCloneMap"]:
-                    clone_id = d_map.get(user_name)
-                    break
+                    if d_map.get(user_name) is not None:
+                        clone_id = d_map.get(user_name)
+    
 
             # set access.
             doc_map = step["stepDocumentMap"]
@@ -306,7 +306,7 @@ def verify(
             role = step["stepRole"]
             user = user_name
             match = True
-            break
+            # break
 
     # do we have access?
     if not match:
