@@ -1137,12 +1137,14 @@ def get_completed_documents(request, company_id):
 def create_workflow_ai_setting(request):
     if not request.data:
         return Response("You are missing something", status.HTTP_400_BAD_REQUEST)
-    # print(request.data)
-    wf_stng = json.loads(save_wf_setting(request.data))
-    if wf_stng["isSuccess"]:
-        return Response("NEW WORKFLOW AI SETTING ADDED", status.HTTP_201_CREATED)
 
-    return Response("Failed to Save Workflow Setting", status.HTTP_200_OK)
+    try:
+        wf_stng = json.loads(save_wf_setting(request.data))
+        if wf_stng["isSuccess"]:
+            return Response("You added WorkflowAI settings for your organization", status.HTTP_201_CREATED)
+
+    except:
+        return Response("Failed to Save Workflow Setting", status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 @api_view(["GET"])
