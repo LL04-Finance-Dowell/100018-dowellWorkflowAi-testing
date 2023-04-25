@@ -777,7 +777,25 @@ def get_links_list(company_id):
         return []
 
 
-def save_wf_setting(data):
+def save_wf_setting(
+    company_id,
+    created_by,
+    data_type,
+    process,
+    documents,
+    templates,
+    workflows,
+    notarisation,
+    folders,
+    records,
+    references,
+    approval,
+    evaluation,
+    reports,
+    management,
+    portfolio,
+    theme_color,
+):
     """Saving workflow settings"""
     payload = json.dumps(
         {
@@ -785,23 +803,23 @@ def save_wf_setting(data):
             "command": "insert",
             "field": {
                 "eventId": get_event_id()["event_id"],
-                "company_id": data["company_id"],
-                "created_by": data["created_by"],
-                "Process" : data["Process"],
-                "Documents" : data["Documents"],
-                "Templates" : data["Templates"],
-                "Workflows" : data["Workflows"],
-                "Notarisation" : data["Notarisation"],
-                "Folders" : data["Folders"],
-                "Records" : data["Records"],
-                "References" : data["References"],
-                "Approval_Process" : data["Approval_Process"],
-                "Evaluation_Process" : data["Evaluation_Process"],
-                "Reports" : data["Reports"],
-                "Management" : data["Management"],
-                "Portfolio_Choice" : data["Portfolio_Choice"],
-                "theme_color": data["theme_color"],
-                "data_type": data["data_type"],
+                "company_id": company_id,
+                "created_by": created_by,
+                "Process": process,
+                "Documents": documents,
+                "Templates": templates,
+                "Workflows": workflows,
+                "Notarisation": notarisation,
+                "Folders": folders,
+                "Records": records,
+                "References": references,
+                "Approval_Process": approval,
+                "Evaluation_Process": evaluation,
+                "Reports": reports,
+                "Management": management,
+                "Portfolio_Choice": portfolio,
+                "theme_color": theme_color,
+                "data_type": data_type,
                 "created_on": time,
             },
             "update_field": {"order_nos": 21},
@@ -813,7 +831,7 @@ def save_wf_setting(data):
         "POST", DOWELLCONNECTION_URL, headers=headers, data=payload
     )
 
-    return json.loads(response.text)
+    return json.loads(json.loads(response.text))
 
 
 # Get WF Setting Data
@@ -849,19 +867,19 @@ def wf_setting_update(wf_setting_id, data):
                 "_id": wf_setting_id,
             },
             "update_field": {
-                "Process" : data["Process"],
-                "Documents" : data["Documents"],
-                "Templates" : data["Templates"],
-                "Workflows" : data["Workflows"],
-                "Notarisation" : data["Notarisation"],
-                "Folders" : data["Folders"],
-                "Records" : data["Records"],
-                "References" : data["References"],
-                "Approval_Process" : data["Approval_Process"],
-                "Evaluation_Process" : data["Evaluation_Process"],
-                "Reports" : data["Reports"],
-                "Management" : data["Management"],
-                "Portflio" : data["Portflio"],
+                "Process": data["Process"],
+                "Documents": data["Documents"],
+                "Templates": data["Templates"],
+                "Workflows": data["Workflows"],
+                "Notarisation": data["Notarisation"],
+                "Folders": data["Folders"],
+                "Records": data["Records"],
+                "References": data["References"],
+                "Approval_Process": data["Approval_Process"],
+                "Evaluation_Process": data["Evaluation_Process"],
+                "Reports": data["Reports"],
+                "Management": data["Management"],
+                "Portflio": data["Portflio"],
                 "theme_color": data["theme_color"],
                 "data_type": "Real_data",
             },

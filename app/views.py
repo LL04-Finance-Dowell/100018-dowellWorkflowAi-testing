@@ -1138,13 +1138,45 @@ def create_workflow_ai_setting(request):
     if not request.data:
         return Response("You are missing something", status.HTTP_400_BAD_REQUEST)
 
-    try:
-        wf_stng = json.loads(save_wf_setting(request.data))
-        if wf_stng["isSuccess"]:
-            return Response("You added WorkflowAI settings for your organization", status.HTTP_201_CREATED)
+    company_id = request.data["company_id"]
+    if not validate_id(company_id):
+        return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
 
-    except:
-        return Response("Failed to Save Workflow Setting", status.HTTP_500_INTERNAL_SERVER_ERROR)
+    try:
+        res = save_wf_setting(
+            company_id=company_id,
+            created_by=request.data["created_by"],
+            data_type=request.data["data_type"],
+            process=request.data["Process"],
+            documents=request.data["Documents"],
+            templates=request.data["Templates"],
+            workflows=request.data["Workflows"],
+            notarisation=request.data["Notarisation"],
+            folders=request.data["Folders"],
+            records=request.data["Records"],
+            references=request.data["References"],
+            approval=request.data["Approval_Process"],
+            evaluation=request.data["Evaluation_Process"],
+            reports=request.data["Reports"],
+            management=request.data["Management"],
+            portfolio=request.data["Portfolio_Choice"],
+            theme_color=request.data["theme_color"],
+        )
+    except Exception as e:
+        print(e)
+        return Response(
+            "Failed to Save Workflow Setting", status.HTTP_500_INTERNAL_SERVER_ERROR
+        )
+
+    if res["isSuccess"]:
+        return Response(
+                "You added WorkflowAI settings for your organization",
+                status.HTTP_201_CREATED,
+        )
+
+    return Response(
+            "Failed to Save Workflow Setting", status.HTTP_500_INTERNAL_SERVER_ERROR
+        )
 
 
 @api_view(["GET"])
