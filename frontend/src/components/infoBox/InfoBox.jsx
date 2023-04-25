@@ -52,7 +52,14 @@ const InfoBox = ({
   const { teamsInWorkflowAI } = useSelector((state) => state.app);
   const { userDetail } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
-  const { workflowTeams, refetch, setRefetch } = useAppContext();
+  const {
+    workflowTeams,
+    setIsFetchingTeams,
+    showRefetchModal,
+    setShowRefetchModal,
+  } = useAppContext();
+  const [searchValue, setSearchValue] = useState('');
+  const [itemsToDisplay, setItemsToDisplay] = useState([]);
 
   const handleAddTeam = (team) => {
     setTeam(team);
@@ -69,9 +76,6 @@ const InfoBox = ({
   const handleToggle = () => {
     setIsOpen((prev) => !prev);
   };
-
-  const [searchValue, setSearchValue] = useState('');
-  const [itemsToDisplay, setItemsToDisplay] = useState([]);
 
   useEffect(() => {
     setItemsToDisplay(items);
@@ -148,8 +152,10 @@ const InfoBox = ({
         teams.push(setTeam);
       });
       dispatch(setTeamsInWorkflowAITeams(teams));
+      setIsFetchingTeams(false);
+      setShowRefetchModal(false);
     }
-  }, [workflowTeams]);
+  }, [workflowTeams, showRefetchModal]);
 
   return (
     <InfoBoxContainer
@@ -268,6 +274,7 @@ const InfoBox = ({
             setShow={setShowEditModal}
             handlePortfolioChange={onChange}
             handleUpdateTeam={handleUpdateTeam}
+            items={itemsToDisplay}
           />
 
           {itemsToDisplay.length ? (

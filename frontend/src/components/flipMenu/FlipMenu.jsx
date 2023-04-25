@@ -57,8 +57,8 @@ const FlipMenu = () => {
           />
         </div>
       ))}
-       {/* <p className='text-4xl' style={{position:'fixed',top:'80vh',left:'70rem'}}>hello</p> */}
-       {/* <Chat/> */}
+      {/* <p className='text-4xl' style={{position:'fixed',top:'80vh',left:'70rem'}}>hello</p> */}
+      {/* <Chat/> */}
     </div>
   );
 };

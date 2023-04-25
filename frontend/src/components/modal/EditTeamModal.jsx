@@ -5,11 +5,15 @@ import { useSelector } from 'react-redux';
 import { useAppContext } from '../../contexts/AppContext';
 import TypeFilter from '../infoBox/TypeFilter';
 import { setIsSelected } from '../../utils/helpers';
-import { setTeamsInWorkflowAI } from '../../features/app/appSlice';
+import {
+  setTeamsInWorkflowAI,
+  setUpdateInWorkflowAITeams,
+} from '../../features/app/appSlice';
 import { useDispatch } from 'react-redux';
 import { toast } from 'react-toastify';
+import { LoadingSpinner } from '../LoadingSpinner/LoadingSpinner';
 
-const EditTeamModal = ({ show, setShow, handleUpdateTeam }) => {
+const EditTeamModal = ({ show, setShow, handleUpdateTeam, items }) => {
   const [name, setName] = useState('');
   const [code, setCode] = useState('');
   const [spec, setSpec] = useState('');
@@ -18,8 +22,18 @@ const EditTeamModal = ({ show, setShow, handleUpdateTeam }) => {
   const { teamsInWorkflowAI } = useSelector((state) => state.app);
   const [selectedTeam, setSelectedTeam] = useState();
   const [isPortfolios, setIsPortfolios] = useState(false);
-  const { extractTeamContent, workflowTeams, setRerun, sync, setSync } =
-    useAppContext();
+  const {
+    extractTeamContent,
+    workflowTeams,
+    setWorkflowTeams,
+    setRerun,
+    sync,
+    setSync,
+    isFetchingTeams,
+    setIsFetchingTeams,
+    showRefetchModal,
+    setShowRefetchModal,
+  } = useAppContext();
   const [portfolios, setPortfolios] = useState([]);
   const dispatch = useDispatch();
   const [clicks, setClicks] = useState(false);
@@ -77,9 +91,10 @@ const EditTeamModal = ({ show, setShow, handleUpdateTeam }) => {
   }, [teamsInWorkflowAI]);
 
   useEffect(() => {
-    if (show) document.documentElement.style.overflow = 'hidden';
+    if (show || isFetchingTeams)
+      document.documentElement.style.overflow = 'hidden';
     else document.documentElement.style.overflow = 'auto';
-  }, [show]);
+  }, [show, isFetchingTeams]);
 
   useEffect(() => {
     if (teamsInWorkflowAI) {
@@ -140,8 +155,26 @@ const EditTeamModal = ({ show, setShow, handleUpdateTeam }) => {
     else setActivateBtn(true);
   }, [teamsInWorkflowAI, name, code, spec, details, uniCode]);
 
+  useEffect(() => {
+    if (
+      show &&
+      workflowTeams.find((item) => item._id === items[0]._mId).newly_created
+    ) {
+      setWorkflowTeams([]);
+      setShowRefetchModal(true);
+      dispatch(setUpdateInWorkflowAITeams());
+    }
+  }, [show]);
+
+  useEffect(() => {
+    if (!showRefetchModal) {
+      setShow(false);
+    }
+  }, [showRefetchModal]);
+
   return (
     <section className={`edit_modal_sect ${show ? 'show' : ''}`}>
+      <Refetch show={showRefetchModal} />
       <div className={`edit_form_wrapper ${show ? 'show' : ''}`}>
         <h3 className='title'>
           Edit Team{' '}
@@ -155,94 +188,6 @@ const EditTeamModal = ({ show, setShow, handleUpdateTeam }) => {
           </button>
         </h3>
 
-        {/* <form className='edit_form' onSubmit={handleSubmit}>
-          {!isPortfolios ? (
-            <div className='team_details'>
-              <div className='form_opt'>
-                <label>
-                  Name{' '}
-                  <input
-                    type='text'
-                    required
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                  />
-                </label>
-              </div>
-
-              <div className='form_opt'>
-                <label>
-                  Code{' '}
-                  <input
-                    type='text'
-                    required
-                    value={code}
-                    onChange={(e) => setCode(e.target.value)}
-                  />
-                </label>
-              </div>
-
-              <div className='form_opt'>
-                <label>
-                  Specification{' '}
-                  <input
-                    type='text'
-                    required
-                    value={spec}
-                    onChange={(e) => setSpec(e.target.value)}
-                  />
-                </label>
-              </div>
-
-              <div className='form_opt'>
-                <label>
-                  Details{' '}
-                  <input
-                    type='text'
-                    required
-                    value={details}
-                    onChange={(e) => setDetails(e.target.value)}
-                  />
-                </label>
-              </div>
-
-              <div className='form_opt'>
-                <label>
-                  Universal Code{' '}
-                  <input
-                    type='text'
-                    required
-                    value={uniCode}
-                    onChange={(e) => setUniCode(e.target.value)}
-                  />
-                </label>
-              </div>
-            </div>
-          ) : (
-            <>
-              <TypeFilter edit={true} />
-              <div className='portfolio_details'>
-                {portfolios.map((item) => {
-                  return item.isShow ? (
-                    <div className='form_opt' key={item._id}>
-                      <label>
-                        <input
-                          type='checkbox'
-                          name='portfolios'
-                          value={item.content}
-                          checked={item.isSelected ? true : false}
-                          onChange={(e) => handleChange(e, item)}
-                        />
-                        {item.content}
-                      </label>
-                    </div>
-                  ) : (
-                    ''
-                  );
-                })}
-              </div>
-            </>
-          )} */}
         <form className='edit_form' onSubmit={handleSubmit}>
           <div className={`team_details ${isPortfolios ? 'hide_segment' : ''}`}>
             <div className='form_opt'>
@@ -360,6 +305,19 @@ const EditTeamModal = ({ show, setShow, handleUpdateTeam }) => {
             </button>
           </div>
         </form>
+      </div>
+    </section>
+  );
+};
+
+const Refetch = ({ show }) => {
+  return (
+    <section className={show ? 'refetch_modal active' : 'refetch_modal'}>
+      <div className='refetch'>
+        <h3>Getting teams, please wait.</h3>
+        <p>
+          <LoadingSpinner />
+        </p>
       </div>
     </section>
   );

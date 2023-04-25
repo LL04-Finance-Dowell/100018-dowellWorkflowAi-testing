@@ -557,7 +557,7 @@ const permissionRecords = [
 const permissionReferences = [
   {
     _id: uuidv4(),
-    content: 'ShowID number for Documents (WDOCXXXXXXXXXX)',
+    content: 'Show ID number for Documents (WDOCXXXXXXXXXX)',
     isSelected: false,
   },
   {
@@ -572,7 +572,7 @@ const permissionReferences = [
   },
   {
     _id: uuidv4(),
-    content: 'Show ID number for  Folders (WFLDXXXXXXXXX)',
+    content: 'Show ID number for Folders (WFLDXXXXXXXXX)',
     isSelected: false,
   },
   {

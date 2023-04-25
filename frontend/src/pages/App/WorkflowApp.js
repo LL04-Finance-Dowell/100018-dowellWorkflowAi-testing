@@ -263,8 +263,6 @@ const WorkflowApp = () => {
               {isShowCompletedTasks && (
                 <HandleTasks feature='completed' tasks={completedTasks} />
               )}
-              {/* <HandleTasks feature='incomplete' tasks={uncompletedTasks} />
-              <HandleTasks feature='completed' tasks={completedTasks} /> */}
             </div>
           </div>
         )}

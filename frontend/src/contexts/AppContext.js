@@ -22,11 +22,14 @@ export const AppContextProvider = ({ children }) => {
   });
   const [workflowTeams, setWorkflowTeams] = useState([]);
   const [selectedTeamIdGlobal, setSelectedTeamIdGlobal] = useState();
-  const [workflowTeamsLoaded, setWorkflowTeamsLoaded] = useState(false);
+
   const [rerun, setRerun] = useState(false);
   const [sync, setSync] = useState(true);
 
   const [filter, setFilter] = useState('team_member');
+  const [isFetchingTeams, setIsFetchingTeams] = useState(true);
+  const [showRefetchModal, setShowRefetchModal] = useState(false);
+  const [isNoPointerEvents, setIsNoPointerEvents] = useState(false);
 
   const { userDetail } = useSelector((state) => state.auth);
 
@@ -73,32 +76,22 @@ export const AppContextProvider = ({ children }) => {
   };
 
   useEffect(() => {
-    if (userDetail) {
-      if (!workflowTeamsLoaded) {
-        //* Fetching workflow teams
-        const settingService = new WorkflowSettingServices();
-        settingService
-          .getAllTeams(userDetail?.portfolio_info[0]?.org_id)
-          .then((res) => {
-            setWorkflowTeams(res.data);
-            setWorkflowTeamsLoaded(true);
-            console.log('teams fetched');
-          })
-          .catch((err) => {
-            console.log(
-              'Failed to fetch teams: ',
-              err.response ? err.response.data : err.message
-            );
-            setWorkflowTeamsLoaded(true);
-          });
-      }
+    if (userDetail || showRefetchModal) {
+      //* Fetching workflow teams
+      const settingService = new WorkflowSettingServices();
+      settingService
+        .getAllTeams(userDetail?.portfolio_info[0]?.org_id)
+        .then((res) => {
+          setWorkflowTeams(res.data);
+        })
+        .catch((err) => {
+          console.log(
+            'Failed to fetch teams: ',
+            err.response ? err.response.data : err.message
+          );
+        });
     }
-  }, [userDetail]);
-
-  // useEffect(() => {
-  //   console.log('context: ', workflowTeams);
-  //   console.log('context: ', workflowTeamsLoaded);
-  // }, [workflowTeams, workflowTeamsLoaded]);
+  }, [userDetail, showRefetchModal]);
 
   return (
     <AppContext.Provider
@@ -117,8 +110,7 @@ export const AppContextProvider = ({ children }) => {
         updateSearchItemStatus,
         workflowTeams,
         setWorkflowTeams,
-        workflowTeamsLoaded,
-        setWorkflowTeamsLoaded,
+
         extractTeamContent,
         selectedTeamIdGlobal,
         setSelectedTeamIdGlobal,
@@ -128,6 +120,12 @@ export const AppContextProvider = ({ children }) => {
         setFilter,
         sync,
         setSync,
+        isFetchingTeams,
+        setIsFetchingTeams,
+        showRefetchModal,
+        setShowRefetchModal,
+        isNoPointerEvents,
+        setIsNoPointerEvents,
       }}
     >
       {children}

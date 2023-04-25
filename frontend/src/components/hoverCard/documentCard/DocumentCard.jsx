@@ -1,36 +1,49 @@
-import React from "react";
-import { useDispatch, useSelector } from "react-redux";
-import HoverCard from "../HoverCard";
-import { Button } from "../styledComponents";
-import { detailDocument } from "../../../features/document/asyncThunks";
-import { useState } from "react";
-import { toast } from "react-toastify";
-import { LoadingSpinner } from "../../LoadingSpinner/LoadingSpinner";
+import React from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import HoverCard from '../HoverCard';
+import { Button } from '../styledComponents';
+import { detailDocument } from '../../../features/document/asyncThunks';
+import { useState } from 'react';
+import { toast } from 'react-toastify';
+import { LoadingSpinner } from '../../LoadingSpinner/LoadingSpinner';
 import {
   verifyProcessForUser,
   getVerifiedProcessLink,
-} from "../../../services/processServices";
-import { setEditorLink } from "../../../features/app/appSlice";
-import { timeZoneToCountryObj } from "../../../utils/timezonesObj";
+} from '../../../services/processServices';
+import { setEditorLink } from '../../../features/app/appSlice';
+import { timeZoneToCountryObj } from '../../../utils/timezonesObj';
 
-import { AiFillStar, AiOutlineHeart, AiOutlineStar } from "react-icons/ai";
-import { handleFavorites } from "../../../features/favorites/asyncThunks";
-import { useAppContext } from "../../../contexts/AppContext";
-import { MdFavorite } from "react-icons/md";
-import { addNewFavoriteForUser, deleteFavoriteForUser } from "../../../services/favoritesServices";
-import { RiDeleteBin6Line } from "react-icons/ri";
-import { moveItemToArchive } from "../../../services/archiveServices";
-import { setAllDocuments } from "../../../features/document/documentSlice";
-import { BsBookmark, BsFillBookmarkFill } from "react-icons/bs";
-import { updateVerificationDataWithTimezone } from "../../../utils/helpers";
+import { AiFillStar, AiOutlineHeart, AiOutlineStar } from 'react-icons/ai';
+import { handleFavorites } from '../../../features/favorites/asyncThunks';
+import { useAppContext } from '../../../contexts/AppContext';
+import { MdFavorite } from 'react-icons/md';
+import {
+  addNewFavoriteForUser,
+  deleteFavoriteForUser,
+} from '../../../services/favoritesServices';
+import { RiDeleteBin6Line } from 'react-icons/ri';
+import { moveItemToArchive } from '../../../services/archiveServices';
+import { setAllDocuments } from '../../../features/document/documentSlice';
+import { BsBookmark, BsFillBookmarkFill } from 'react-icons/bs';
+import { updateVerificationDataWithTimezone } from '../../../utils/helpers';
 
-const DocumentCard = ({ cardItem, title, hideFavoriteIcon, hideDeleteIcon }) => {
+const DocumentCard = ({
+  cardItem,
+  title,
+  hideFavoriteIcon,
+  hideDeleteIcon,
+}) => {
   const dispatch = useDispatch();
   const [dataLoading, setDataLoading] = useState(false);
   const { userDetail } = useSelector((state) => state.auth);
   const { singleFavorite } = useSelector((state) => state.favorites);
-  const { favoriteItems, addToFavoritesState, removeFromFavoritesState } = useAppContext();
-  const { allDocuments } = useSelector(state => state.document);
+  const {
+    favoriteItems,
+    addToFavoritesState,
+    removeFromFavoritesState,
+    setIsNoPointerEvents,
+  } = useAppContext();
+  const { allDocuments } = useSelector((state) => state.document);
 
   const handleFavoritess = async (item, actionType) => {
     /*  const data = {
@@ -39,8 +52,11 @@ const DocumentCard = ({ cardItem, title, hideFavoriteIcon, hideDeleteIcon }) => 
     };
     dispatch(handleFavorites(data)); */
 
-    if (actionType === "add") {
-      addToFavoritesState("documents", {...item, 'favourited_by': userDetail?.userinfo?.username})
+    if (actionType === 'add') {
+      addToFavoritesState('documents', {
+        ...item,
+        favourited_by: userDetail?.userinfo?.username,
+      });
       try {
         const data = {
           item: {
@@ -48,25 +64,34 @@ const DocumentCard = ({ cardItem, title, hideFavoriteIcon, hideDeleteIcon }) => 
             company_id: item.company_id,
             document_name: item.document_name,
           },
-          item_type: "document",
+          item_type: 'document',
           username: userDetail?.userinfo?.username,
-        }
+        };
         const response = await (await addNewFavoriteForUser(data)).data;
-        toast.success(response)
+        toast.success(response);
       } catch (error) {
-        toast.info("Failed to add document to bookmarks")
-        removeFromFavoritesState("documents", item._id)
+        toast.info('Failed to add document to bookmarks');
+        removeFromFavoritesState('documents', item._id);
       }
     }
 
-    if (actionType === "remove") {
-      removeFromFavoritesState("documents", item._id)
+    if (actionType === 'remove') {
+      removeFromFavoritesState('documents', item._id);
       try {
-        const response = await (await deleteFavoriteForUser(item._id, 'document', userDetail?.userinfo?.username)).data;
-        toast.success('Item removed from bookmarks')
+        const response = await (
+          await deleteFavoriteForUser(
+            item._id,
+            'document',
+            userDetail?.userinfo?.username
+          )
+        ).data;
+        toast.success('Item removed from bookmarks');
       } catch (error) {
-        toast.info("Failed to remove document from bookmarks")
-        addToFavoritesState("documents", {...item, 'favourited_by': userDetail?.userinfo?.username})
+        toast.info('Failed to remove document from bookmarks');
+        addToFavoritesState('documents', {
+          ...item,
+          favourited_by: userDetail?.userinfo?.username,
+        });
       }
     }
     // console.log(favoriteItems)
@@ -74,38 +99,47 @@ const DocumentCard = ({ cardItem, title, hideFavoriteIcon, hideDeleteIcon }) => 
 
   const handleTrashDocument = async (cardItem) => {
     const copyOfAllDocuments = [...allDocuments];
-    const foundDocumentIndex = copyOfAllDocuments.findIndex(item => item._id === cardItem._id);
-    if (foundDocumentIndex === -1) return
+    const foundDocumentIndex = copyOfAllDocuments.findIndex(
+      (item) => item._id === cardItem._id
+    );
+    if (foundDocumentIndex === -1) return;
 
-    const copyOfDocumentToUpdate = { ...copyOfAllDocuments[foundDocumentIndex] };
-    copyOfDocumentToUpdate.data_type = "Archive_Data";
+    const copyOfDocumentToUpdate = {
+      ...copyOfAllDocuments[foundDocumentIndex],
+    };
+    copyOfDocumentToUpdate.data_type = 'Archive_Data';
     copyOfAllDocuments[foundDocumentIndex] = copyOfDocumentToUpdate;
     dispatch(setAllDocuments(copyOfAllDocuments));
 
     try {
-      const response = await (await moveItemToArchive(cardItem._id, 'document')).data;
-      toast.success(response)
+      const response = await (
+        await moveItemToArchive(cardItem._id, 'document')
+      ).data;
+      toast.success(response);
     } catch (error) {
       console.log(error.response ? error.response.data : error.message);
-      copyOfDocumentToUpdate.data_type = "Real_Data";
+      copyOfDocumentToUpdate.data_type = 'Real_Data';
       copyOfAllDocuments[foundDocumentIndex] = copyOfDocumentToUpdate;
       dispatch(setAllDocuments(copyOfAllDocuments));
     }
-  }
+  };
 
   const handleDetailDocumnet = async (item) => {
     if (dataLoading) return;
-    if (item.type === "sign-document") {
+    if (item.type === 'sign-document') {
       setDataLoading(true);
       try {
+        setIsNoPointerEvents(true);
         const dataToPost = {
           user_name: userDetail?.userinfo?.username,
           // process_id: item.process_id,
         };
-        const response = await (await getVerifiedProcessLink(item.process_id, dataToPost)).data;
+        const response = await (
+          await getVerifiedProcessLink(item.process_id, dataToPost)
+        ).data;
 
         /*  dispatch(setEditorLink(response)); */
-        console.log("responseee", response);
+        console.log('responseee', response);
         // setDataLoading(false);
         handleGoToEditor(response);
       } catch (error) {
@@ -116,8 +150,10 @@ const DocumentCard = ({ cardItem, title, hideFavoriteIcon, hideDeleteIcon }) => 
             ? error.response
               ? error.response.data
               : error.message
-            : "Could not get notification link"
+            : 'Could not get notification link'
         );
+      } finally {
+        setIsNoPointerEvents(false);
       }
       return;
     }
@@ -132,7 +168,7 @@ const DocumentCard = ({ cardItem, title, hideFavoriteIcon, hideDeleteIcon }) => 
 
   const handleGoToEditor = async (link) => {
     if (!link) return;
-    const token = link.split("verify/")[1]?.split("/")[0];
+    const token = link.split('verify/')[1]?.split('/')[0];
     if (!token) return;
 
     const dataToPost = {
@@ -141,31 +177,36 @@ const DocumentCard = ({ cardItem, title, hideFavoriteIcon, hideDeleteIcon }) => 
       portfolio: userDetail?.portfolio_info[0]?.portfolio_name,
       city: userDetail?.userinfo?.city,
       country: userDetail?.userinfo?.country,
-      continent: userDetail?.userinfo?.timezone?.split("/")[0],
+      continent: userDetail?.userinfo?.timezone?.split('/')[0],
     };
 
     const sanitizedDataToPost = updateVerificationDataWithTimezone(dataToPost);
 
     // NEWER VERIFICATION LINKS
     if (link.includes('?') && link.includes('=')) {
-      const shortenedLinkToExtractParamsFrom = new URL(link).origin + "/" + link.split("verify/")[1]?.split("/")[1];
-      const paramsPassed = new URL(shortenedLinkToExtractParamsFrom).searchParams;
-      
+      const shortenedLinkToExtractParamsFrom =
+        new URL(link).origin + '/' + link.split('verify/')[1]?.split('/')[1];
+      const paramsPassed = new URL(shortenedLinkToExtractParamsFrom)
+        .searchParams;
+
       // console.log(paramsPassed);
 
       const auth_username = paramsPassed.get('auth_user');
       const auth_portfolio = paramsPassed.get('auth_portfolio');
       const auth_role = paramsPassed.get('auth_role');
 
-      if (auth_username !== userDetail?.userinfo?.username || auth_portfolio !== userDetail?.portfolio_info[0]?.portfolio_name) {
-        toast.info("You are not authorized to view this");
+      if (
+        auth_username !== userDetail?.userinfo?.username ||
+        auth_portfolio !== userDetail?.portfolio_info[0]?.portfolio_name
+      ) {
+        toast.info('You are not authorized to view this');
         return setDataLoading(false);
       }
 
       sanitizedDataToPost.auth_username = auth_username;
-      sanitizedDataToPost.auth_portfolio = auth_portfolio;      
+      sanitizedDataToPost.auth_portfolio = auth_portfolio;
       sanitizedDataToPost.auth_role = auth_role;
-      
+
       delete sanitizedDataToPost.user_name;
       delete sanitizedDataToPost.portfolio;
 
@@ -174,7 +215,9 @@ const DocumentCard = ({ cardItem, title, hideFavoriteIcon, hideDeleteIcon }) => 
     }
 
     try {
-      const response = await (await verifyProcessForUser(sanitizedDataToPost)).data;
+      const response = await (
+        await verifyProcessForUser(sanitizedDataToPost)
+      ).data;
       setDataLoading(false);
       dispatch(setEditorLink(response));
     } catch (err) {
@@ -183,55 +226,76 @@ const DocumentCard = ({ cardItem, title, hideFavoriteIcon, hideDeleteIcon }) => 
       toast.info(
         err.response
           ? err.response.status === 500
-            ? "Process verification failed"
+            ? 'Process verification failed'
             : err.response.data
-          : "Process verification failed"
+          : 'Process verification failed'
       );
     }
   };
 
   const FrontSide = () => {
     return (
-      <div>{cardItem.document_name ? cardItem.document_name : "no item"}</div>
+      <div>{cardItem.document_name ? cardItem.document_name : 'no item'}</div>
     );
   };
 
   const BackSide = () => {
     return (
       <div>
-        {!hideFavoriteIcon && <div style={{ 
-          cursor: "pointer", 
-          position: "absolute", 
-          right: "0", 
-          top: "0"
-        }} onClick={() => handleFavoritess(cardItem, favoriteItems.documents.find(item => item._id === cardItem._id) ? "remove" : "add")}>
-          {
-            favoriteItems.documents.find(item => item._id === cardItem._id) ?
-            <BsFillBookmarkFill /> :
-            <BsBookmark />
-          }
-        </div>}
+        {!hideFavoriteIcon && (
+          <div
+            style={{
+              cursor: 'pointer',
+              position: 'absolute',
+              right: '0',
+              top: '0',
+            }}
+            onClick={() =>
+              handleFavoritess(
+                cardItem,
+                favoriteItems.documents.find(
+                  (item) => item._id === cardItem._id
+                )
+                  ? 'remove'
+                  : 'add'
+              )
+            }
+          >
+            {favoriteItems.documents.find(
+              (item) => item._id === cardItem._id
+            ) ? (
+              <BsFillBookmarkFill />
+            ) : (
+              <BsBookmark />
+            )}
+          </div>
+        )}
         {cardItem._id ? (
           <Button onClick={() => handleDetailDocumnet(cardItem)}>
             {dataLoading ? (
               <LoadingSpinner />
-            ) : cardItem.type === "sign-document" ? (
-              "Sign Here"
+            ) : cardItem.type === 'sign-document' ? (
+              'Sign Here'
             ) : (
-              "Open Document"
+              'Open Document'
             )}
           </Button>
         ) : (
-          "no item"
+          'no item'
         )}
-        {!hideDeleteIcon && <div style={{ 
-          cursor: "pointer", 
-          position: "absolute", 
-          right: "0", 
-          bottom: "0"
-        }} onClick={() => handleTrashDocument(cardItem)}>
-          <RiDeleteBin6Line color="red" />
-        </div>}
+        {!hideDeleteIcon && (
+          <div
+            style={{
+              cursor: 'pointer',
+              position: 'absolute',
+              right: '0',
+              bottom: '0',
+            }}
+            onClick={() => handleTrashDocument(cardItem)}
+          >
+            <RiDeleteBin6Line color='red' />
+          </div>
+        )}
       </div>
     );
   };
