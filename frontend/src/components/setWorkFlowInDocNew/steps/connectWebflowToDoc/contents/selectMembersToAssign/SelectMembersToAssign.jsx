@@ -208,6 +208,8 @@ const SelectMembersToAssign = ({ currentStepIndex, stepsPopulated, currentEnable
     console.log("Current team selected: ", parsedSelectedJsonValue);
     console.log("Current header: ", current.header);
 
+    selectTeamRef.current.value = '';
+
     const teamAddedToProcess = teamsSelectedSelectedForProcess.find(team => team._id === parsedSelectedJsonValue._id && team.stepIndex === currentStepIndex && team.selectedFor === current.header);
 
     if (teamAddedToProcess) return updateTeamAndPortfoliosInTeamForProcess('remove', parsedSelectedJsonValue, current.header)

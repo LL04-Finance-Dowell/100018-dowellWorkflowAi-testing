@@ -17,11 +17,15 @@ import GeneratedLinksModal from "./components/GeneratedLinksModal/GeneratedLinks
 import SaveConfimationModal from "./components/SaveConfirmationModal/SaveConfirmationModal";
 import { setAllProcesses } from "../../../../features/app/appSlice";
 
-const ProcessDocument = () => {
+const ProcessDocument = ({ savedProcess }) => {
   const [currentProcess, setCurrentProcess] = useState();
 
   useEffect(() => {
     setCurrentProcess(processDocument[0]);
+
+    if (!savedProcess) return
+    console.log(savedProcess);
+    setProcessObjectToSaveTitle(savedProcess.process_title);
   }, []);
 
   const handleCurrentProcess = (item) => {
@@ -86,43 +90,78 @@ const ProcessDocument = () => {
     }
 
     const foundProcessSteps = processSteps.find(process => process.workflow === docCurrentWorkflow._id);
-    const tableOfContents = tableOfContentForStep.filter(content => content.workflow === docCurrentWorkflow._id);
+    let tableOfContents;
+    if (savedProcess) {
+      tableOfContents = [...new Map(tableOfContentForStep.map((content) => [content["id"],content])).values()].filter(content => content.workflow === docCurrentWorkflow._id);
+    } else {
+      tableOfContents = tableOfContentForStep.filter(content => content.workflow === docCurrentWorkflow._id);
+    }
     
     processObj.workflows[0].workflows.steps = foundProcessSteps ? foundProcessSteps.steps.map((step, currentIndex) => {
       let copyOfCurrentStep = { ...step };
       if (copyOfCurrentStep._id) delete copyOfCurrentStep._id;
       if (copyOfCurrentStep.toggleContent) delete copyOfCurrentStep.toggleContent;
       
-      copyOfCurrentStep.stepName = copyOfCurrentStep.step_name;
-      delete copyOfCurrentStep.step_name;
+      if (copyOfCurrentStep.step_name) {
+        copyOfCurrentStep.stepName = copyOfCurrentStep.step_name;
+        delete copyOfCurrentStep.step_name;
+      }
 
-      copyOfCurrentStep.stepRole = copyOfCurrentStep.role;
-      delete copyOfCurrentStep.role;
+      if (copyOfCurrentStep.role) {
+        copyOfCurrentStep.stepRole = copyOfCurrentStep.role;
+        delete copyOfCurrentStep.role;
+      }
 
-      copyOfCurrentStep.stepPublicMembers = publicMembersSelectedForProcess.filter(selectedUser => selectedUser.stepIndex === currentIndex).map(user => {
-        const copyOfUserItem = { ...user }
-        if (Array.isArray(copyOfUserItem.member)) copyOfUserItem.member = copyOfUserItem.member[0];
-        delete copyOfUserItem.stepIndex;
-
-        return copyOfUserItem
-      })
-
-      copyOfCurrentStep.stepTeamMembers = teamMembersSelectedForProcess.filter(selectedUser => selectedUser.stepIndex === currentIndex).map(user => {
-        const copyOfUserItem = { ...user }
-        if (Array.isArray(copyOfUserItem.member)) copyOfUserItem.member = copyOfUserItem.member[0];
-        delete copyOfUserItem.stepIndex;
-
-        return copyOfUserItem
-      })
-
-      copyOfCurrentStep.stepUserMembers = userMembersSelectedForProcess.filter(selectedUser => selectedUser.stepIndex === currentIndex).map(user => {
-        const copyOfUserItem = { ...user }
-        if (Array.isArray(copyOfUserItem.member)) copyOfUserItem.member = copyOfUserItem.member[0];
-        delete copyOfUserItem.stepIndex;
-
-        return copyOfUserItem
-      })
-
+      if (savedProcess) {
+        copyOfCurrentStep.stepPublicMembers = [...new Map(publicMembersSelectedForProcess.map((member) => [member["member"], member])).values()].filter(selectedUser => selectedUser.stepIndex === currentIndex).map(user => {
+          const copyOfUserItem = { ...user }
+          if (Array.isArray(copyOfUserItem.member)) copyOfUserItem.member = copyOfUserItem.member[0];
+          delete copyOfUserItem.stepIndex;
+  
+          return copyOfUserItem
+        })
+  
+        copyOfCurrentStep.stepTeamMembers = [...new Map(teamMembersSelectedForProcess.map((member) => [member["member"], member])).values()].filter(selectedUser => selectedUser.stepIndex === currentIndex).map(user => {
+          const copyOfUserItem = { ...user }
+          if (Array.isArray(copyOfUserItem.member)) copyOfUserItem.member = copyOfUserItem.member[0];
+          delete copyOfUserItem.stepIndex;
+  
+          return copyOfUserItem
+        })
+  
+        copyOfCurrentStep.stepUserMembers = [...new Map(userMembersSelectedForProcess.map((member) => [member["member"], member])).values()].filter(selectedUser => selectedUser.stepIndex === currentIndex).map(user => {
+          const copyOfUserItem = { ...user }
+          if (Array.isArray(copyOfUserItem.member)) copyOfUserItem.member = copyOfUserItem.member[0];
+          delete copyOfUserItem.stepIndex;
+  
+          return copyOfUserItem
+        })  
+      } else {
+        copyOfCurrentStep.stepPublicMembers = publicMembersSelectedForProcess.filter(selectedUser => selectedUser.stepIndex === currentIndex).map(user => {
+          const copyOfUserItem = { ...user }
+          if (Array.isArray(copyOfUserItem.member)) copyOfUserItem.member = copyOfUserItem.member[0];
+          delete copyOfUserItem.stepIndex;
+  
+          return copyOfUserItem
+        })
+  
+        copyOfCurrentStep.stepTeamMembers = teamMembersSelectedForProcess.filter(selectedUser => selectedUser.stepIndex === currentIndex).map(user => {
+          const copyOfUserItem = { ...user }
+          if (Array.isArray(copyOfUserItem.member)) copyOfUserItem.member = copyOfUserItem.member[0];
+          delete copyOfUserItem.stepIndex;
+  
+          return copyOfUserItem
+        })
+  
+        copyOfCurrentStep.stepUserMembers = userMembersSelectedForProcess.filter(selectedUser => selectedUser.stepIndex === currentIndex).map(user => {
+          const copyOfUserItem = { ...user }
+          if (Array.isArray(copyOfUserItem.member)) copyOfUserItem.member = copyOfUserItem.member[0];
+          delete copyOfUserItem.stepIndex;
+  
+          return copyOfUserItem
+        })  
+      }
+      
       copyOfCurrentStep.stepDocumentCloneMap = []
 
       copyOfCurrentStep.stepNumber = currentIndex + 1;

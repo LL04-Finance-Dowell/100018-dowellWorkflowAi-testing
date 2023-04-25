@@ -20,7 +20,7 @@ import SelectMembersToAssign from "./contents/selectMembersToAssign/SelectMember
 import AssignCollapse from "./contents/assignCollapse/AssignCollapse";
 import React from "react";
 
-const ConnectWorkFlowToDoc = ({ stepsPopulated }) => {
+const ConnectWorkFlowToDoc = ({ stepsPopulated, savedProcessSteps }) => {
   const { register } = useForm();
   const dispatch = useDispatch();
 
@@ -38,7 +38,7 @@ const ConnectWorkFlowToDoc = ({ stepsPopulated }) => {
   const [showSteps, setShowSteps] = useState([]);
 
   useEffect(() => {
-    if (stepsPopulated) return setCurrentSteps(stepsPopulated);
+    if (stepsPopulated) return setCurrentSteps(savedProcessSteps);
     setCurrentSteps(docCurrentWorkflow?.workflows?.steps);
   }, [docCurrentWorkflow, stepsPopulated]);
 
@@ -47,6 +47,10 @@ const ConnectWorkFlowToDoc = ({ stepsPopulated }) => {
   // console.log("sssssssssssssssssss", wfToDocument);
 
   useEffect(() => {
+    if (stepsPopulated) {
+      dispatch(setProcessSteps(savedProcessSteps));
+      return
+    }
     setCurrentSteps(
       docCurrentWorkflow ? docCurrentWorkflow?.workflows?.steps : []
     );
@@ -87,7 +91,7 @@ const ConnectWorkFlowToDoc = ({ stepsPopulated }) => {
     stepsForWorkflow.push(stepsObj);
 
     dispatch(setProcessSteps(stepsForWorkflow));
-  }, [docCurrentWorkflow, stepsPopulated]);
+  }, [docCurrentWorkflow, stepsPopulated, savedProcessSteps]);
 
   const handleToggleContent = (id) => {
     setCurrentSteps((prev) =>
@@ -224,14 +228,14 @@ const ConnectWorkFlowToDoc = ({ stepsPopulated }) => {
                         <div
                           className={`${styles.step__header} ${styles.title__box}`}
                         >
-                          {item.step_name}
+                          {item.step_name ? item.step_name : item.steps ? item.steps[index]?.stepName : ''}
                         </div>
                       </div>
                       <div>
                         <div className={styles.checkbox}>
                           <input
                             {...register("skip")}
-                            id="skip"
+                            id={"skip-" + index}
                             type="checkbox"
                             onChange={(e) =>
                               handleSkipSelection(
@@ -252,12 +256,12 @@ const ConnectWorkFlowToDoc = ({ stepsPopulated }) => {
                               )?.steps[index]?.skipStep
                             }
                           />
-                          <label htmlFor="skip">Skip this Step</label>
+                          <label htmlFor={"skip-" + index}>Skip this Step</label>
                         </div>
                         <div className={styles.checkbox}>
                           <input
                             {...register("permit")}
-                            id="permit"
+                            id={"permit-" + index}
                             type="checkbox"
                             onChange={(e) => {
                               handlePermitInternalSelection(
@@ -284,7 +288,7 @@ const ConnectWorkFlowToDoc = ({ stepsPopulated }) => {
                               )?.steps[index]?.permitInternalWorkflow
                             }
                           />
-                          <label htmlFor="permit">
+                          <label htmlFor={"permit-" + index}>
                             Permit internal workflow in this Step
                           </label>
                         </div>

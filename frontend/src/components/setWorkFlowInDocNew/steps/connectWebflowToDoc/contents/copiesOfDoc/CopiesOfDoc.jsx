@@ -81,13 +81,24 @@ const CopiesOfDoc = ({ currentStepIndex, stepsPopulated }) => {
 
   useEffect(() => {
     
-    if (copiesFeaturesSet) return
+    if ((copiesFeaturesSet || processSteps.length < 1) && !stepsPopulated) return
 
     const documentCountForStep = processSteps.find(
       process => process.workflow === docCurrentWorkflow?._id
     )?.steps[currentStepIndex].stepCloneCount
 
-    if (!documentCountForStep) return
+    if (!documentCountForStep) {
+      const copiesForCurrentStep = [];
+      const singleCopyOfCurrentDocument = {
+        id: currentDocToWfs?._id, 
+        feature: currentDocToWfs?.document_name,
+        document_number: 1,
+      }
+      copiesForCurrentStep.push(singleCopyOfCurrentDocument);
+
+      setCopiesFeaturesToDisplay(copiesForCurrentStep);
+      return setCopiesFeaturesSet(true);
+    }
 
     const copiesForCurrentStep = [];
 

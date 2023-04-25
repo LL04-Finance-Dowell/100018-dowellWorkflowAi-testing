@@ -120,7 +120,7 @@ const SetWorkflowInDoc = () => {
     // console.log(foundOriginalDoc);
     if (!foundOriginalDoc) return;
 
-    setDraftProcess(process);
+    // setDraftProcess(process);
     dispatch(contentDocument(foundOriginalDoc._id));
     dispatch(setCurrentDocToWfs(foundOriginalDoc));
 
@@ -137,10 +137,6 @@ const SetWorkflowInDoc = () => {
       const stepKeys = Object.keys(step);
 
       stepKeys.forEach(key => {
-        // console.log(key)
-        if (key === 'stepName') dispatch(updateSingleProcessStep({ 'step_name': step[key], "indexToUpdate": currentStepIndex, "workflow": foundWorkflow._id }))
-        if (key === 'stepRole') dispatch(updateSingleProcessStep({ 'role': step[key], "indexToUpdate": currentStepIndex, "workflow": foundWorkflow._id }))
-        
         if (key === 'stepPublicMembers') {
           step[key].forEach(user => {
             // console.log(user)
@@ -171,18 +167,20 @@ const SetWorkflowInDoc = () => {
             dispatch(setTableOfContentForStep(newTableOfContentObj));
           })
         }
-
-        const newStepObj = {
-          [`${key}`]: step[key], 
-          "indexToUpdate": currentStepIndex, 
-          "workflow": foundWorkflow._id,
-        };
-
-        dispatch(updateSingleProcessStep(newStepObj));
       })
-    
-    })
+    });
 
+    const copyOfProcessObj = structuredClone(process);
+
+    // This logic would also be updated later when multiple workflows are configured in a process creation
+    const processStepsForWorkflow = [
+      {
+        workflow: foundWorkflow._id,
+        steps: process.process_steps
+      }
+    ]
+    copyOfProcessObj.savedProcessSteps = processStepsForWorkflow;
+    setDraftProcess(copyOfProcessObj);
     setDraftProcessDoc(foundOriginalDoc);
   }
 
@@ -213,11 +211,11 @@ const SetWorkflowInDoc = () => {
               <div className={styles.diveder}></div>
               <SelectWorkflow savedDoc={draftProcessDOc} />
               <div className={styles.diveder}></div>
-              <ConnectWorkFlowToDoc stepsPopulated={true} />
+              <ConnectWorkFlowToDoc stepsPopulated={true} savedProcessSteps={draftProcess.savedProcessSteps ? draftProcess.savedProcessSteps : []} />
               <div className={styles.diveder}></div>
               <CheckErrors />
               <div className={styles.diveder}></div>
-              <ProcessDocument />
+              <ProcessDocument savedProcess={draftProcess} />
             </> 
             :
             <>

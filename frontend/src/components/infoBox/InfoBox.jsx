@@ -279,10 +279,26 @@ const InfoBox = ({
                     key={item._id}
                   >
                     {/* {index + 1}. {item.content} */}
-                    <span style={{ fontWeight: 'bold' }}>
-                      {item.content.title}:
-                    </span>{' '}
-                    <span>{item.content.content}</span>
+                    {
+                      item.contentDisplay ? <>
+                        <>
+                          {
+                            !item.displayNoContent && item.contentsToDisplay && Array.isArray(item.contentsToDisplay) ?
+                            React.Children.toArray(item.contentsToDisplay.map((itemContent, itemIndex) => {
+                              return <>
+                                <span>{itemIndex + 1}. {itemContent.header} - {itemContent.content}</span>
+                                <br />
+                              </>
+                            })) : <></>
+                          }
+                        </>
+                      </> : <>
+                        <span style={{ fontWeight: 'bold' }}>
+                          {item.content.title}:
+                        </span>{' '}
+                        <span>{item.content.content}</span> 
+                      </>
+                    }
                   </InfoContentText>
                 ))}
               </InfoContentBox>
