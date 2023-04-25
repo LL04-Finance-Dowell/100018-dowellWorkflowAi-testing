@@ -19,9 +19,11 @@ import {
   savedWorkflows,
 } from "../../../features/workflow/asyncTHunks";
 import { getItemsCounts } from "../../../features/app/asyncThunks";
+import { useTranslation } from "react-i18next";
 
 const ManageFile = () => {
   const dispatch = useDispatch();
+  const { t } = useTranslation();
   const { userDetail } = useSelector((state) => state.auth);
 
   const { allWorkflows: allWorkflowsArray, allWorkflowsStatus } = useSelector(
@@ -144,7 +146,7 @@ const ManageFile = () => {
 
   return (
     <div className={sidebarStyles.feature__box}>
-      <h2 className={sidebarStyles.feature__title}>Manage File</h2>
+      <h2 className={sidebarStyles.feature__title}>{t("Manage File")}</h2>
       <CollapseItem items={test} />
     </div>
   );

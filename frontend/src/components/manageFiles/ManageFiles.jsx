@@ -8,10 +8,13 @@ import {
   setToggleManageFileForm,
 } from "../../features/app/appSlice";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 const ManageFiles = ({ title, children, OverlayComp, contentBoxClassName, removePageSuffix }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const { t } = useTranslation();
+
   const { userDetail } = useSelector((state) => state.auth);
   const { toggleManageFileForm } = useSelector((state) => state.app);
 
@@ -39,7 +42,7 @@ const ManageFiles = ({ title, children, OverlayComp, contentBoxClassName, remove
       {OverlayComp && toggleManageFileForm && (
         <OverlayComp handleToggleOverlay={handleToggleOverlay} />
       )}
-      <h2 className={styles.page__header}>{title} {removePageSuffix ? '' : 'Page'}</h2>
+      <h2 className={styles.page__header}> {t(title)} {removePageSuffix ? '' : t('Page')} </h2>
       <div className={`${styles.content__box} ${contentBoxClassName ? contentBoxClassName : ''}`}>
         {/*   <div>
           <h2 className={styles.header}>New {title}</h2>

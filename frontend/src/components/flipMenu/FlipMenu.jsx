@@ -17,8 +17,11 @@ import { useEffect, useState } from 'react';
 import React from 'react';
 import { createTemplate } from '../../features/template/asyncThunks';
 import { Tooltip } from 'react-tooltip';
+import { useTranslation } from "react-i18next";
 
 const FlipMenu = () => {
+  const { t } = useTranslation();
+
   const [filpItemsToDisplay, setFlipItemsToDisplay] = useState(flipItems);
   const { notificationsForUser } = useSelector((state) => state.app);
 
@@ -66,6 +69,8 @@ const FlipMenu = () => {
 export default FlipMenu;
 
 export const FlipFront = (props) => {
+  const { t } = useTranslation();
+
   return (
     <div
       style={{ background: `${props.frontBg}` }}
@@ -75,7 +80,7 @@ export const FlipFront = (props) => {
         <i>
           <props.icon size={28} />
         </i>
-        <h2 className={styles.flip__text}>{props.text}</h2>
+        <h2 className={styles.flip__text}>{t(props.text)}</h2>
       </div>
     </div>
   );
@@ -84,6 +89,8 @@ export const FlipFront = (props) => {
 export const FlipBack = (props) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const { t } = useTranslation();
+
   const { notificationsForUser } = useSelector((state) => state.app);
   const { userDetail } = useSelector((state) => state.auth);
 
@@ -137,7 +144,7 @@ export const FlipBack = (props) => {
                 {buttonIcons[index]}
                 <Tooltip
                   anchorId={buttonText.id}
-                  content={buttonText.text}
+                  content={t(buttonText.text)}
                   offset={0}
                 />
               </button>
@@ -150,7 +157,7 @@ export const FlipBack = (props) => {
           type='button'
           className={styles.flip__button}
         >
-          {props.buttonText}
+          {t(props.buttonText)}
         </button>
       )}
     </div>

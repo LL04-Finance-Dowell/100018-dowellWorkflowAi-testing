@@ -16,6 +16,7 @@ import { setAllProcesses, setNotificationsForUser } from "../../../features/app/
 import { setAllDocuments } from "../../../features/document/documentSlice";
 import { setAllTemplates } from "../../../features/template/templateSlice";
 import { setAllWorkflows } from "../../../features/workflow/workflowsSlice";
+import { useTranslation } from "react-i18next";
 
 const SectionBox = ({ cardItems, title, Card, status, idKey, itemType, hideFavoriteIcon, hideDeleteIcon }) => {
   const [sliceCount, setSliceCount] = useState(1);
@@ -26,6 +27,7 @@ const SectionBox = ({ cardItems, title, Card, status, idKey, itemType, hideFavor
   const { allTemplatesStatus } = useSelector(state => state.template);
   const { allWorkflowsStatus } = useSelector(state => state.workflow);
   const dispatch = useDispatch();
+  const { t } = useTranslation();
 
   const handleLoadMore = () => {
     setSliceCount((prev) => prev + 1);
@@ -191,7 +193,7 @@ const SectionBox = ({ cardItems, title, Card, status, idKey, itemType, hideFavor
             className={maneFilesStyles.header}
             id={idKey ? title.replaceAll(" ", "") + "-" + idKey : ""}
           >
-            {title}
+            {t(title)}
             { 
               itemType ?
                 itemType === "documents" ?
@@ -201,7 +203,7 @@ const SectionBox = ({ cardItems, title, Card, status, idKey, itemType, hideFavor
                       refreshLoading ? <LoadingSpinner color={"white"} width={"1rem"} height={"1rem"} /> :
                       <IoIosRefresh />
                     }
-                    <span>Refresh</span>
+                    <span>{t("Refresh")}</span>
                   </button> : <></> 
                 :
                 itemType === "templates" ?
@@ -211,7 +213,7 @@ const SectionBox = ({ cardItems, title, Card, status, idKey, itemType, hideFavor
                       refreshLoading ? <LoadingSpinner color={"white"} width={"1rem"} height={"1rem"} /> :
                       <IoIosRefresh />
                     }
-                    <span>Refresh</span>
+                     <span>{t("Refresh")}</span>
                   </button> : <></> 
                 :
                 itemType === "workflows" ?
@@ -221,7 +223,7 @@ const SectionBox = ({ cardItems, title, Card, status, idKey, itemType, hideFavor
                       refreshLoading ? <LoadingSpinner color={"white"} width={"1rem"} height={"1rem"} /> :
                       <IoIosRefresh />
                     }
-                    <span>Refresh</span>
+                     <span>{t("Refresh")}</span>
                   </button> : <></> 
                 :
                 itemType === "processes" ?
@@ -231,7 +233,7 @@ const SectionBox = ({ cardItems, title, Card, status, idKey, itemType, hideFavor
                       refreshLoading ? <LoadingSpinner color={"white"} width={"1rem"} height={"1rem"} /> :
                       <IoIosRefresh />
                     }
-                    <span>Refresh</span>
+                     <span>{t("Refresh")}</span>
                   </button> : <></> 
                 :
                 itemType === "notifications" ?
@@ -241,7 +243,7 @@ const SectionBox = ({ cardItems, title, Card, status, idKey, itemType, hideFavor
                       refreshLoading ? <LoadingSpinner color={"white"} width={"1rem"} height={"1rem"} /> :
                       <IoIosRefresh />
                     }
-                    <span>Refresh</span>
+                     <span>{t("Refresh")}</span>
                   </button> : <></> 
                 :
                 <></>
@@ -264,6 +266,7 @@ const SectionBox = ({ cardItems, title, Card, status, idKey, itemType, hideFavor
                     cardItems
                       .slice(0, sliceCount * 10)
                       .map((item) => <Card key={item.id} cardItem={item} hideFavoriteIcon={hideFavoriteIcon} hideDeleteIcon={hideDeleteIcon} />)}
+                      {console.log( cardItems)}
                   {cardItems && cardItems.length > 10 && (
                     <PrimaryButton
                       style={{

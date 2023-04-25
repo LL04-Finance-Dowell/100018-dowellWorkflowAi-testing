@@ -6,7 +6,7 @@ import { Navigation, Pagination, Autoplay } from "swiper";
 import sliderOne from "../../../assets/sliderOne.webp";
 import sliderTwo from "../../../assets/sliderTwo.webp";
 import sliderTheree from "../../../assets/sliderTheree.webp";
-
+import { useTranslation } from "react-i18next";
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
@@ -14,7 +14,9 @@ import "swiper/css/pagination";
 import "./swiper.css";
 import { useRef } from "react";
 
+
 const CustomerSupport = () => {
+  const { t } = useTranslation();
   const ref = useRef(null);
   const { scrollYProgress } = useScroll({
     target: ref,
@@ -47,10 +49,9 @@ const CustomerSupport = () => {
               className={`${styles.support__container} ${styles.flip__card__front}`}
             >
               <div className={styles.support__box}>
-                <p className={styles.support__box__header}>Customer Support</p>
+                <p className={styles.support__box__header}>{t("Customer Support")}</p>
                 <p className={styles.support__box__content}>
-                  Learning Support, New Trends, Case Studies, References,
-                  Templates
+                  {t("Learning Support New Trends Case Studies References Templates")}
                 </p>
               </div>
             </div>
@@ -60,14 +61,13 @@ const CustomerSupport = () => {
               <div className={styles.knowledge__box}>
                 <div>
                   <p className={styles.knowledge__box__header}>
-                    Knowledge Center
+                    {t("Knowledge Center")}
                   </p>
                   <p className={styles.knowledge__box__content}>
-                    Learning Support, New Trends, Case Studies, References,
-                    Templates
+                    {t("Learning Support New Trends Case Studies References Templates")}
                   </p>
                   <button className={styles.knowledge__button}>
-                    Click Here
+                    {t("Click Here")}
                   </button>
                 </div>
               </div>

@@ -39,6 +39,9 @@ export const AppContextProvider = ({ children }) => {
 
     setFavoriteitems(currentFavorites);
   };
+  // const handleDropdownChange = () => {
+  //   console.log('language changed!');
+  //   }
 
   const removeFromFavoritesState = (category, itemId) => {
     const currentFavorites = { ...favoriteItems };
@@ -82,13 +85,13 @@ export const AppContextProvider = ({ children }) => {
           .then((res) => {
             setWorkflowTeams(res.data);
             setWorkflowTeamsLoaded(true);
-            console.log('teams fetched');
+            // console.log('teams fetched');
           })
           .catch((err) => {
-            console.log(
-              'Failed to fetch teams: ',
-              err.response ? err.response.data : err.message
-            );
+            // console.log(
+            //   'Failed to fetch teams: ',
+            //   err.response ? err.response.data : err.message
+            // );
             setWorkflowTeamsLoaded(true);
           });
       }
@@ -128,6 +131,7 @@ export const AppContextProvider = ({ children }) => {
         setFilter,
         sync,
         setSync,
+        // handleDropdownChange 
       }}
     >
       {children}

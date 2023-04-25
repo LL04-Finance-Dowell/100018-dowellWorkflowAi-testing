@@ -18,6 +18,7 @@ import { detailWorkflow } from "../../../features/workflow/asyncTHunks";
 import { useEffect } from "react";
 import { useAppContext } from "../../../contexts/AppContext";
 import { searchItemByKeyAndGroupResults } from "../../../pages/Search/util";
+import { useTranslation } from "react-i18next";
 
 const Search = () => {
   const { register, handleSubmit, watch, formState: { isSubmitSuccessful } } = useForm();
@@ -29,6 +30,7 @@ const Search = () => {
   const { userDetail } = useSelector((state) => state.auth);
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const { t } = useTranslation();
 	const { searchItems } = useAppContext();
 	const { allWorkflowsStatus } = useSelector((state) => state.workflow);
 	const { allTemplatesStatus } = useSelector((state) => state.template);
@@ -159,19 +161,19 @@ const Search = () => {
 
   return (
     <div className={styles.container}>
-      <h2 className={styles.title}>Search</h2>
+      <h2 className={styles.title}>{t("Search")}</h2>
       <p className={styles.info}>
-        Search in file names of Documents, Templates & Workflows
+        {t("Search in file names of Documents Templates & Workflows")}
       </p>
       <form onSubmit={handleSubmit(onSubmit)} className={styles.search__box}>
-        <input {...register("search")} placeholder="Type here to search" readOnly={searchLoading ? true : false} />
+        <input {...register("search")} placeholder={t("Type here to search")} readOnly={searchLoading ? true : false} />
         <button type="submit">
           {
             searchLoading ? <LoadingSpinner color={"#fff"} /> : <>
             <i>
               <FaSearch />
             </i>
-            <span>Search</span>
+            <span>{t("Search")}</span>
             </>
           }
         </button>

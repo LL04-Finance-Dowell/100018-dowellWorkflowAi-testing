@@ -6,6 +6,7 @@ import { contentDocument } from "../../../../../features/document/asyncThunks";
 import { setContentOfDocument } from "../../../../../features/document/documentSlice";
 import { PrimaryButton } from "../../../../styledComponents/styledComponents";
 import styles from "./selectedDocuments.module.css";
+import { useTranslation } from "react-i18next";
 
 const SelectedDocuments = ({ selectedDocument, selectedDocuments, disableSelections }) => {
   const {
@@ -14,6 +15,7 @@ const SelectedDocuments = ({ selectedDocument, selectedDocuments, disableSelecti
     formState: { isSubmitted },
   } = useForm();
   const dispatch = useDispatch();
+  const { t } = useTranslation();
 
   const onSubmit = (data) => {
     if (!selectedDocument) return
@@ -39,7 +41,7 @@ const SelectedDocuments = ({ selectedDocument, selectedDocuments, disableSelecti
       {/*  <div className={styles.selected__doc__box}> */}
       {
       !selectedDocument ? (
-        <h3 className={styles.no__item}>Please select document</h3>
+        <h3 className={styles.no__item}>{t("Please select document")}</h3>
       ) :
       selectedDocuments?.length > 0 ? (
         <>

@@ -1,20 +1,24 @@
 import React, { useState } from "react";
 import { useEffect } from "react";
 import styles from './Chat.module.css'
+import { BiSend } from "react-icons/bi";
 import axios from 'axios'
+import { useTranslation } from "react-i18next";
 
 const Chat = () => {
+
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const [isNestedPopupOpen, setIsNestedPopupOpen] = useState(false);
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState([]);
   const [modals, setModal] = useState([]);
 
+  const { t } = useTranslation();
 
   useEffect(() => {
     fetch('https://100096.pythonanywhere.com/send/1/')
       .then(res => res.json())
-      .then(data => setModal(data))
+      .then(data => console.warn(data))
   }, [])
 
 
@@ -106,10 +110,10 @@ const Chat = () => {
                     <button onClick={handlePopupClose} className={styles.close_button}>×</button>
                   </div>
                   <h2 className={styles.my_element_text}>
-                    Chat with Customers Stories
+                    {t("Chat with Customers Stories")}
                   </h2>
                   <p className={styles.First_p}>
-                    Hi ! How Can I Help You !!!
+                    {t("Hi ! How Can I Help You !!!")}
                   </p>
 
                   <div style={{ marginBottom: '1rem' }}>
@@ -117,11 +121,11 @@ const Chat = () => {
                       className={styles.Chat_Now}
                       onClick={handleNestedButtonClick}
                     >
-                      Chat Now
+                     {t("Chat Now")}
                     </button>
                   </div>
                   <h1 className={styles.Chat_h1}>
-                    Powered by Dowell
+                    {t("Powered by Dowell")}
                   </h1>
                 </div>
               </div>
@@ -143,9 +147,9 @@ const Chat = () => {
             <div className={styles.my_element}>
               <div >
                 <div style={{ height: "10%" }}>
-                  <h2 className={styles.Text_Class}>Chat with us</h2>
-                  <h2 className={styles.Text_Class}>Product Name : {modals.product}</h2>
-                  <h2 className={styles.Text_Class}>Portfolio No : {modals.portfolio}</h2>
+                  <h2 className={styles.Text_Class}>{t("Chat with us")}</h2>
+                  <h2 className={styles.Text_Class}>{t("Product Name")} : {modals.product}</h2>
+                  <h2 className={styles.Text_Class}>{t("Portfolio No")} : {modals.portfolio}</h2>
                   <div className={styles.chat - messages}>
                     {messages.map((msg, idx) => (
                       <div key={idx}>
@@ -171,13 +175,13 @@ const Chat = () => {
                         onChange={(e) => setMessage(e.target.value)}
                         type="text"
                         className={styles.Second_last}
-                        placeholder="Type your message here"
+                        placeholder={t("Type your message here")}
                       />
                       <button
                         onClick={handleMessageSend}
                         className={styles.Last}
                       >
-                        Send
+                        <BiSend size={25}/>
                       </button>
                     </div>
                   </div>

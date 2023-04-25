@@ -28,9 +28,13 @@ import { updateUserDetail } from '../../features/auth/authSlice';
 import { getAllProcessesV2 } from '../../services/processServices';
 import { useAppContext } from '../../contexts/AppContext';
 import { WorkflowSettingServices } from '../../services/workflowSettingServices';
+import { useTranslation } from "react-i18next";
+import i18next from "i18next"
 
 const WorkflowLayout = ({ children }) => {
   const dispatch = useDispatch();
+  const { t } = useTranslation();
+  // console.log({t})
   const { userDetail, session_id, id } = useSelector((state) => state.auth);
   const {
     userDetailPosition,
@@ -153,6 +157,7 @@ const WorkflowLayout = ({ children }) => {
         dispatch(setAdminUserPortfolioLoaded(true));
       });
   }, [session_id, userDetail]);
+  console.log(session_id)
 
   useEffect(() => {
     if (
@@ -223,7 +228,7 @@ const WorkflowLayout = ({ children }) => {
                 </div>
                 <div className={styles.children__box}>
                   <p className={styles.beta__Info__Text}>
-                    You are on the beta version of workflow.ai
+                    {t("You are on the beta version of workflow.ai")}
                   </p>
                   {children}
                 </div>

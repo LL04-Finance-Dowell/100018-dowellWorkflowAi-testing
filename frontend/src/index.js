@@ -13,6 +13,7 @@ import { persistor, store } from "./app/store";
 import { PersistGate } from "redux-persist/integration/react";
 import 'react-tooltip/dist/react-tooltip.css'
 import { AppContextProvider } from "./contexts/AppContext";
+import "./i18n";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(

@@ -30,9 +30,11 @@ import useCloseElementOnEscapekeyClick from "../../hooks/useCloseElementOnEscape
 import { BsThreeDotsVertical } from "react-icons/bs";
 import { setDateAgreedToLegalStatus, setLegalAgreePageLoading, setLegalStatusLoading, setLegalTermsAgreed, setShowLegalStatusPopup, setUserDetailPosition } from "../../features/app/appSlice";
 import { Tooltip } from "react-tooltip";
+import { useTranslation } from "react-i18next";
 
 const Sidebar = () => {
 	const dispatch = useDispatch();
+	const { t } = useTranslation();
 	const { userDetail, currentUser, session_id, id } = useSelector(
 		(state) => state.auth
 	);
@@ -43,7 +45,7 @@ const Sidebar = () => {
 	useEffect(() => {
 		getAgreeStatus(session_id)
 			.then((res) => {
-				console.log(res.data);
+				// console.log(res.data);
 				const legalStatus = res.data.data[0]?.i_agree;
 
 				dispatch(setLegalStatusLoading(false));
@@ -101,7 +103,7 @@ const Sidebar = () => {
 					/>
 				</div>
 				<div className={styles.item__box}>
-					<h2 className={styles.header}>Workflow AI</h2>
+					<h2 className={styles.header}>{t("Workflow AI")}</h2>
 				</div>
 				<div className={styles.item__box}>
 					<i>
@@ -129,7 +131,8 @@ const Sidebar = () => {
 				</i>
 
 				<h2 className={styles.user__box__text}>
-					Welcome {userDetail?.userinfo?.username}
+					{t('Welcome', { username: userDetail?.userinfo?.username })}
+					{console.log(userDetail?.userinfo?.username)}
 				</h2>
 			</div>
 			<div className={styles.organization__box}>
@@ -153,7 +156,7 @@ const Sidebar = () => {
 			<ManageFile />
 			<div className={styles.gap}></div>
 			<div className={styles.feature__box}>
-				<h2 className={styles.feature__title}>Reports</h2>
+				<h2 className={styles.feature__title}>{t("Reports")}</h2>
 				<CollapseItem items={manageFileItems} />
 			</div>
 			<div className={styles.gap}></div>
@@ -161,12 +164,12 @@ const Sidebar = () => {
 				<h2
 					className={`${styles.feature__title} ${styles.feature__title__small}`}
 				>
-					DoWell Knowledge Centre
+					{t("DoWell")} {t("Knowledge Center")}
 				</h2>
 				<CollapseItem items={knowledge} />
+
+				<span className={styles.knowledge__Extra__Info}>{t("DoWell")} {t("True moments user experience lab")}</span>
 			
-				<span className={styles.knowledge__Extra__Info}>Dowell True moments user experience lab</span>
-				{/* <Chat/> */}
 			</div>
 			<Footer topSideIcons={iconBoxItems} handleIconClick={handleClick} />
 		</div>

@@ -12,9 +12,12 @@ import { moveItemToArchive } from "../../../services/archiveServices";
 import { addNewFavoriteForUser, deleteFavoriteForUser } from "../../../services/favoritesServices";
 import HoverCard from "../HoverCard";
 import { Button } from "../styledComponents";
+import { useTranslation } from "react-i18next";
 
 const TemplateCard = ({ cardItem }) => {
   const dispatch = useDispatch();
+  const { t } = useTranslation();
+
   const { favoriteItems, addToFavoritesState, removeFromFavoritesState } = useAppContext();
   const { userDetail } = useSelector((state) => state.auth);
   const { allTemplates } = useSelector(state => state.template);
@@ -107,7 +110,7 @@ const TemplateCard = ({ cardItem }) => {
         </div>
         {cardItem.template_name ? (
           <Button onClick={() => handleTemplateDetail(cardItem)}>
-            Open Template
+            {t("Open Template")}
           </Button>
         ) : (
           "no item"

@@ -3,8 +3,10 @@ import Collapse from "../../../layouts/collapse/Collapse";
 import { useState } from "react";
 import { IoMdArrowDropright } from "react-icons/io";
 import { IoMdArrowDropup } from "react-icons/io";
+import { useTranslation } from "react-i18next";
 
 const HandleTasks = ({ feature, tasks }) => {
+  const { t } = useTranslation();
   const [compTasks, setCompTask] = useState(tasks);
 
   const handleToggle = (id) => {
@@ -21,7 +23,7 @@ const HandleTasks = ({ feature, tasks }) => {
   return (
     <div className={styles.container}>
       <h2 className={`${styles.item__box__title} ${colorClass}`}>
-        {feature} Tasks
+        {t(feature)} {t("Tasks")}
       </h2>
       {compTasks.map((item) => (
         <div key={item.id} className={styles.item__box}>
@@ -38,7 +40,7 @@ const HandleTasks = ({ feature, tasks }) => {
                 <IoMdArrowDropright size={25} />
               )}
             </i>
-            <a>{item.parent}</a>
+            <a>{t(item.parent)}</a>
           </div>
           <div className={styles.item__children__container}>
             <Collapse open={item.isOpen}>

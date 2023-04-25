@@ -30,6 +30,8 @@ import { useAppContext } from '../../contexts/AppContext';
 import { getFavoritesForUser } from '../../services/favoritesServices';
 import React from 'react';
 import DocumentCard from '../../components/hoverCard/documentCard/DocumentCard';
+import { useTranslation } from "react-i18next";
+import i18next from "i18next"
 
 const WorkflowApp = () => {
   const { userDetail } = useSelector((state) => state.auth);
@@ -42,6 +44,9 @@ const WorkflowApp = () => {
     processesLoading,
   } = useSelector((state) => state.app);
   const dispatch = useDispatch();
+
+  const { t } = useTranslation();
+
   const location = useLocation();
   const [isVisible, setVisible] = useState(false);
   const {
@@ -218,15 +223,22 @@ const WorkflowApp = () => {
   }, [allDocuments, allTemplates, allWorkflows]);
 
   useEffect(() => {
-    console.log('ct: ', completedTasks);
-    console.log('uct: ', uncompletedTasks);
+    // console.log('ct: ', completedTasks);
+    // console.log('uct: ', uncompletedTasks);
   }, [uncompletedTasks, completedTasks]);
+
+
+
+  const handleClick=(e)=>{
+    i18next.changeLanguage(e.target.value)
+    console.log(e.target.value)
+}
 
   return (
     <WorkflowLayout>
       <div className={styles.container}>
         <CustomerSupport />
-        <LanguageDropdown/>
+        <LanguageDropdown  onChange={(e)=> handleClick(e)}/>
         <FlipMenu />
         {isVisible && (
           <div className={styles.section__container}>
@@ -275,7 +287,7 @@ const WorkflowApp = () => {
             <div style={{ marginBottom: '45px' }}>
               <>
                 {!favoriteItemsLoaded ? (
-                  <p style={{ textAlign: 'center' }}>Loading bookmarks...</p>
+                  <p style={{ textAlign: 'center' }}> {t("loading")} {t("bookmarks")}...</p>
                 ) : (
                   <>
                     {React.Children.toArray(
@@ -360,7 +372,7 @@ const WorkflowApp = () => {
               {introVideos.map((item) => (
                 <div key={item.id} className={styles.skeleton__box}>
                   <span className={styles.iframe__Title}>
-                    <b>{item.title}</b>
+                  <b>{t(item.title)}</b> 
                   </span>
                   <Iframe
                     Skeleton={Skeleton}

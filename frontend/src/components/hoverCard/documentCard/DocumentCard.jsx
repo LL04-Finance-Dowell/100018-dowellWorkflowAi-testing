@@ -23,9 +23,12 @@ import { moveItemToArchive } from "../../../services/archiveServices";
 import { setAllDocuments } from "../../../features/document/documentSlice";
 import { BsBookmark, BsFillBookmarkFill } from "react-icons/bs";
 import { updateVerificationDataWithTimezone } from "../../../utils/helpers";
+import { useTranslation } from "react-i18next";
 
 const DocumentCard = ({ cardItem, title, hideFavoriteIcon, hideDeleteIcon }) => {
   const dispatch = useDispatch();
+  const { t } = useTranslation();
+
   const [dataLoading, setDataLoading] = useState(false);
   const { userDetail } = useSelector((state) => state.auth);
   const { singleFavorite } = useSelector((state) => state.favorites);
@@ -212,15 +215,15 @@ const DocumentCard = ({ cardItem, title, hideFavoriteIcon, hideDeleteIcon }) => 
           }
         </div>}
         {cardItem._id ? (
-          <Button onClick={() => handleDetailDocumnet(cardItem)}>
-            {dataLoading ? (
-              <LoadingSpinner />
-            ) : cardItem.type === "sign-document" ? (
-              "Sign Here"
-            ) : (
-              "Open Document"
-            )}
-          </Button>
+         <Button onClick={() => handleDetailDocumnet(cardItem)}>
+         {dataLoading ? (
+         <LoadingSpinner />
+         ) : cardItem.type === "sign-document" ? (
+         "Sign Here"
+         ) : (
+         t("Open Document")
+         )}
+         </Button>
         ) : (
           "no item"
         )}

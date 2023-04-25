@@ -5,8 +5,10 @@ import styles from "./notification.module.css";
 import { useSelector } from "react-redux";
 import { useEffect } from "react";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 
 const Notifications = () => {
+  const { t } = useTranslation();
   const { notificationsForUser } = useSelector((state) => state.app);
   const [notificationItems, setNotificationItems] = useState(items);
 
@@ -64,7 +66,7 @@ const Notifications = () => {
 
   return (
     <div className={styles.container}>
-      <h2 className={styles.header}>Notifications</h2>
+      <h2 className={styles.header}>{t("Notifications")}</h2>
       <div className={styles.line}></div>
       <div className={styles.collapse__box}>
         <CollapseItem listType="ol" items={notificationItems} />

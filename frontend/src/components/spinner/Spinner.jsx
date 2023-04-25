@@ -6,8 +6,10 @@ import {
   RiArrowRightLine,
   RiArrowDownLine,
 } from "react-icons/ri";
+import { useTranslation } from "react-i18next";
 
 const Spinner = () => {
+  const { t } = useTranslation();
   const container = {
     hidden: { opacity: 1, rotate: 0 },
     show: {
@@ -70,7 +72,7 @@ const Spinner = () => {
           ></motion.div>
         </motion.div>
       </motion.div>
-      <div className={styles.text}>WorkflowAi</div>
+      <div className={styles.text}>{t("Workflow AI")}</div>
     </div>
   );
 };

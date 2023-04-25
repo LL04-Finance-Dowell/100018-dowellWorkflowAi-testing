@@ -7,9 +7,11 @@ import styles from "./editor.module.css";
 import Spinner from "../spinner/Spinner";
 import { TiTick } from "react-icons/ti";
 import { MdClose } from "react-icons/md";
+import { useTranslation } from "react-i18next";
 
 const Editor = () => {
   const dispatch = useDispatch();
+  const { t } = useTranslation();
   const { editorLink } = useSelector((state) => state.app);
   const { editorStatus: docStatus } = useSelector((state) => state.document);
   const { editorStatus: tempStatus } = useSelector((state) => state.template);
@@ -51,7 +53,7 @@ const Editor = () => {
           ) : (
             editorLink && (
               <div className={styles.framer__box}>
-                <iframe src={editorLink}>inside editoerr</iframe>
+                <iframe src={editorLink}>{t("inside editoerr")}</iframe>
                 <i onClick={handleFrameClose}>
                   <AiOutlineClose size={30} />
                 </i>
@@ -62,9 +64,9 @@ const Editor = () => {
             <div className={styles.decision__container}>
               <div className={styles.decision__box}>
                 <h2>
-                  Do you want to close?
+                  {t("Do you want to close?")}
                   <br />
-                  <span className={styles.decision__mini__text}>Save your work before closing</span>
+                  <span className={styles.decision__mini__text}>{t("Save your work before closing")}</span>
                 </h2>
                 <div className={styles.button__container}>
                   <button

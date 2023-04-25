@@ -11,11 +11,14 @@ import { setToggleManageFileForm } from "../../../features/app/appSlice";
 import { detailWorkflow } from "../../../features/workflow/asyncTHunks";
 import { useDispatch } from "react-redux";
 import React from "react";
+import { useTranslation } from "react-i18next";
+
 
 function ListItem({ item }) {
   let children = null;
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const { t } = useTranslation();
 
   if (item.children && item.children.length) {
     // console.log(item);
@@ -61,7 +64,7 @@ function ListItem({ item }) {
           to={item.href ? item.href : "#"}
           onClick={(e) => handleLinkItemClick(e, item)}
         >
-          {item.child}
+          {t(item.child)}
         </HashLink>
       </li>
       <HashLink className={styles.hash__link} to={item.href ? item.href : "#"}>
@@ -72,6 +75,8 @@ function ListItem({ item }) {
 }
 
 const CollapseItem = ({ items, listType }) => {
+  const { t } = useTranslation();
+
   const [menuItems, setMenuItems] = useState(items);
   const handleParentClick = (id) => {
     setMenuItems((prev) =>
@@ -100,7 +105,7 @@ const CollapseItem = ({ items, listType }) => {
             <i>
               <IoMdArrowDropright size={25} />
             </i>
-            {item.parent}{" "}
+            {t(item.parent)}{" "}
             {item.count
               ? item.count === "000"
                 ? `(${item.count})`
@@ -113,7 +118,7 @@ const CollapseItem = ({ items, listType }) => {
                 {listType && listType === "ol" ? (
                   <ol>
                     {React.Children.toArray(item.children.map((item) => (
-                      <ListItem item={item} />
+                      <ListItem item={(item)} />
                     )))}
                   </ol>
                 ) : (

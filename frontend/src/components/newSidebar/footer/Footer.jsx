@@ -2,15 +2,18 @@ import styles from "./footer.module.css";
 import { footerIcons } from "../Sidebar";
 import { useSelector } from "react-redux";
 import { Tooltip } from "react-tooltip";
+import { useTranslation } from "react-i18next";
 
 const Footer = ({ handleIconClick }) => {
+  const { t } = useTranslation();
+
   const { userDetail } = useSelector((state) => state.auth);
 
   return (
     <div className={styles.container}>
       <div className={styles.mode__box}>
         <h1>6</h1>
-        <h2>{userDetail?.portfolio_info[0].data_type}</h2>
+        <h2>{t(userDetail?.portfolio_info[0].data_type)}</h2>
       </div>
       <div className={styles.icon__box}>
         {footerIcons.map((item) => (

@@ -7,10 +7,12 @@ import { HashLink } from "react-router-hash-link";
 import { useDispatch, useSelector } from "react-redux";
 import { createTemplate } from "../../../features/template/asyncThunks";
 import { setToggleManageFileForm } from "../../../features/app/appSlice";
+import { useTranslation } from "react-i18next";
 
 const New = () => {
   const { userDetail } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
+  const { t } = useTranslation();
 
   const [isOpen, setIsOpen] = useState(false);
 
@@ -40,7 +42,7 @@ const New = () => {
           <i>
             <FaPlus size={20} />
           </i>
-          <span>New</span>
+          <span>{t("new")}</span>
         </div>
         <Collapse open={isOpen}>
           <div className={styles.new__content}>
@@ -50,7 +52,7 @@ const New = () => {
                 to={item.href}
                 key={item.id}
               >
-                {item.content}
+                {t(item.content)}
               </HashLink>
             ))}
           </div>
