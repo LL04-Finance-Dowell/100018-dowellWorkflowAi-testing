@@ -1,5 +1,6 @@
 import ast
-import json, re
+import json
+import re
 
 import requests
 from rest_framework import status
@@ -8,13 +9,13 @@ from rest_framework.response import Response
 
 from app.utils import checks, processing
 from app.utils.helpers import (
+    CREATE_WF_AI_SETTING,
+    access_editor,
+    cloning_process,
     create_favourite,
     list_favourites,
     remove_favourite,
     validate_id,
-    cloning_process,
-    access_editor,
-    CREATE_WF_AI_SETTING,
 )
 from app.utils.mongo_db_connection import (
     delete_document,
@@ -24,28 +25,28 @@ from app.utils.mongo_db_connection import (
     finalize,
     get_document_list,
     get_document_object,
+    get_link_object,
     get_links_object_by_process_id,
     get_process_list,
     get_process_object,
+    get_team,
     get_team_list,
     get_template_list,
     get_template_object,
     get_wf_list,
     get_wf_object,
     get_wf_setting_object,
+    get_wfai_setting_list,
     save_document,
+    save_team,
     save_template,
     save_wf,
     save_wf_setting,
+    update_team_data,
     update_template_approval,
     update_wf,
     update_wf_process,
     wf_setting_update,
-    save_team,
-    get_team,
-    get_link_object,
-    update_team_data,
-    get_wfai_setting_list,
 )
 
 from .constants import EDITOR_API
@@ -1171,13 +1172,13 @@ def create_workflow_ai_setting(request):
 
     if res["isSuccess"]:
         return Response(
-                "You added WorkflowAI settings for your organization",
-                status.HTTP_201_CREATED,
+            "You added WorkflowAI settings for your organization",
+            status.HTTP_201_CREATED,
         )
 
     return Response(
-            "Failed to Save Workflow Setting", status.HTTP_500_INTERNAL_SERVER_ERROR
-        )
+        "Failed to Save Workflow Setting", status.HTTP_500_INTERNAL_SERVER_ERROR
+    )
 
 
 @api_view(["GET"])

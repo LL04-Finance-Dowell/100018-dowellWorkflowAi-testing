@@ -300,7 +300,6 @@ def verify(
                 for d_map in step["stepDocumentCloneMap"]:
                     if d_map.get(user_name) is not None:
                         clone_id = d_map.get(user_name)
-    
 
             # set access.
             doc_map = step["stepDocumentMap"]

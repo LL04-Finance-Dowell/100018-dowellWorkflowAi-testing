@@ -1,35 +1,37 @@
 import json
+
 import requests
 
+from app.constants import NOTIFICATION_API
 from app.utils.mongo_db_connection import (
     get_document_object,
+    get_process_object,
     save_process_links,
     save_process_qrcodes,
     save_uuid_hash,
     update_document,
     update_document_clone,
     update_wf_process,
-    get_process_object,
 )
-
-
-from app.constants import NOTIFICATION_API
 
 
 def notification(data):
     """post notifications for extension."""
-    payload = json.dumps({
-        "username": data["username"],
-        "documentId": data["item_id"],
-        "portfolio": data["portfolio"],
-        "productName": "Workflow AI",
-        "companyId": data["company_id"],
-        "title": "Document to Sign",
-        "orgName": "WorkflowAi",
-        "message": "You have a document to sign.",
-        "link": data["link"],
-        "duration": "no limit",  # TODO: pass reminder time here
-    })
+
+    payload = json.dumps(
+        {
+            "username": data["username"],
+            "documentId": data["item_id"],
+            "portfolio": data["portfolio"],
+            "productName": "Workflow AI",
+            "companyId": data["company_id"],
+            "title": "Document to Sign",
+            "orgName": "WorkflowAi",
+            "message": "You have a document to sign.",
+            "link": data["link"],
+            "duration": "no limit",  # TODO: pass reminder time here
+        }
+    )
     try:
         res = requests.post(
             url=NOTIFICATION_API,
@@ -47,7 +49,8 @@ def notification(data):
 
 
 def save_link_hashes(data):
-    """save single link"""
+    """Save single link"""
+
     try:
         save_uuid_hash(
             link=data["link"],
@@ -57,7 +60,7 @@ def save_link_hashes(data):
             user_name=data["username"],
             auth_portfolio=data["portfolio"],
             unique_hash=data["unique_hash"],
-            item_type=data["item_type"]
+            item_type=data["item_type"],
         )
         print("Thread: Single Link!")
     except ConnectionError:
@@ -65,8 +68,8 @@ def save_link_hashes(data):
 
 
 def save_links_v2(data):
-    """saving process links"""
-    # print(data["links"])
+    """Saving process links"""
+
     try:
         save_process_links(
             links=data["links"],
@@ -81,7 +84,8 @@ def save_links_v2(data):
 
 
 def save_qrcodes(data):
-    """saving process qrcodes........"""
+    """saving process qrcodes"""
+
     try:
         save_process_qrcodes(
             qrcodes=data["qrcodes"],
@@ -97,9 +101,9 @@ def save_qrcodes(data):
         return
 
 
-# Thread to update a doc
 def document_update(doc_data):
     """Updating document with new state"""
+
     try:
         update_document(
             document_id=doc_data["document_id"],
@@ -114,6 +118,7 @@ def document_update(doc_data):
 
 def clone_update(data):
     """add a clone id to a documents clone list"""
+
     document = get_document_object(document_id=data["doc_id"])
     clone_list = document["clone_list"].extend(data["clone_ids"])
     update_document_clone(document_id=data["doc_id"], clone_list=clone_list)
@@ -122,7 +127,8 @@ def clone_update(data):
 
 
 def process_update(data):
-    # add this users to the document clone map
+    """add this users to the document clone map"""
+
     process = get_process_object(workflow_process_id=data["process_id"])
     doc_id = process["parent_document_id"]
     for step in process["process_steps"]:
@@ -139,5 +145,3 @@ def process_update(data):
 
     print("Thread: Process Update! \n")
     return
-
-

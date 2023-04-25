@@ -1,11 +1,12 @@
 import json
 import uuid
 from threading import Thread
-import qrcode
+
 import bson
+import qrcode
 import requests
 
-from app.constants import EDITOR_API, VERIFICATION_LINK, PUBLIC_LOGIN_API
+from app.constants import EDITOR_API, PUBLIC_LOGIN_API, VERIFICATION_LINK
 from app.models import FavoriteDocument, FavoriteTemplate, FavoriteWorkflow
 from app.serializers import (
     FavouriteDocumentSerializer,
@@ -22,19 +23,22 @@ from .mongo_db_connection import (
     save_uuid_hash,
     save_wf_process,
 )
-
 from .threads import notification
 
 headers = {"Content-Type": "application/json"}
 
 
 def get_domain_host():
+    """Grab the current domain host"""
+
     current_site = Site.objects.get_current()
     domain_host = current_site.domain
     return domain_host
 
 
 def public_login(qrid, org_name):
+    """Find out if a public link has been used or not"""
+
     res = requests.post(
         url=PUBLIC_LOGIN_API,
         data=json.dumps(
@@ -48,7 +52,7 @@ def public_login(qrid, org_name):
     )
     if res.status_code == 200:
         return True
-        
+
     else:
         return None
 
@@ -66,6 +70,7 @@ def verification_data(
 ):
     if user_type == "public":
         pass
+
     hash = uuid.uuid4().hex
     link = f"{VERIFICATION_LINK}/{hash}/?auth_user={auth_name}&auth_portfolio={auth_portfolio}&auth_role={step_role}&user_type={user_type}"
     # save link
@@ -99,6 +104,7 @@ def verification_data(
 
 def cloning_document(document_id, auth_viewers, parent_id, process_id):
     """creating a document copy"""
+
     try:
         viewers = []
         viewers = (
@@ -108,17 +114,7 @@ def cloning_document(document_id, auth_viewers, parent_id, process_id):
         )
 
         document = get_document_object(document_id)
-        # if auth_viewers is not None:
-        #     if isinstance(auth_viewers, list):
-        #         for item in set(auth_viewers):
-        #             viewers.append(item)
-        #     else:
-        #         viewers.append(auth_viewers)
-
-        # else:
-        #     viewers = []
-
-        document_name = "-" + document["document_name"] + "-"
+        document_name = document["document_name"] + " |-"
 
         # create new doc
         save_res = json.loads(
@@ -279,14 +275,13 @@ def processing_complete(process):
 # Get WF Step
 def get_step(sid, step_name):
     data = get_wf_object(sid)["workflows"]["steps"]
-    # the_step=None
     for step in data:
         if step_name == step["step_name"]:
             return step
 
 
-# Validate a mongoDB ID
 def validate_id(id):
+    """Validate anything mongoDB object id"""
     try:
         if bson.objectid.ObjectId.is_valid(id):
             return True
@@ -296,8 +291,9 @@ def validate_id(id):
         return None
 
 
-# Versioning WF settings
 def versioning(version):
+    """Version workflow settings"""
+
     if version.startswith("New"):
         version = version.removeprefix("New ")
     else:
@@ -305,8 +301,9 @@ def versioning(version):
     return version
 
 
-# VC for WF settings
 def version_control(version):
+    """Version control for wf settings"""
+
     version = version.split(".")
     if version[-1] != "9":
         version[-1] = str(int(version[-1]) + 1)
@@ -349,6 +346,8 @@ def generate_qrcode(verification_link):
 
 
 def list_favourites(company_id):
+    """A List of bookmarks/favourites"""
+
     try:
         documents = FavoriteDocument.objects.filter(company_id=company_id)
         doc_serializer = FavouriteDocumentSerializer(documents, many=True)
@@ -369,20 +368,11 @@ def list_favourites(company_id):
     }
 
 
-def create_favourite(item, type, username):
-    """
-    Add to favourites/Bookmarks
+def create_favourite(item, item_type, username):
+    """Add to favourites/Bookmarks"""
 
-    Args:
-        item(dict): the item details
-        type(str): the type of item
-        username: identifier of person creating the fav
-
-    Returns:
-        msg(str): response success
-    """
     msg = "Item added to bookmarks"
-    if type == "workflow":
+    if item_type == "workflow":
         data = {
             "_id": item["_id"],
             "workflows": json.dumps(item["workflows"]),
@@ -395,9 +385,7 @@ def create_favourite(item, type, username):
             serializer.save()
             return msg
 
-        print(serializer.errors)
-
-    if type == "document":
+    if item_type == "document":
         data = {
             "_id": item["_id"],
             "document_name": item["document_name"],
@@ -409,10 +397,8 @@ def create_favourite(item, type, username):
             serializer.save()
             return msg
 
-        print(serializer.errors)
-
     # Fav
-    if type == "template":
+    if item_type == "template":
         data = {
             "_id": item["_id"],
             "template_name": item["template_name"],
@@ -425,12 +411,12 @@ def create_favourite(item, type, username):
             serializer.save()
             return msg
 
-        print(serializer.errors)
-
     return None
 
 
 def remove_favourite(identifier, type, username):
+    """Remove Item from favourites"""
+
     msg = "Item removed from bookmarks."
 
     if type == "workflow":
