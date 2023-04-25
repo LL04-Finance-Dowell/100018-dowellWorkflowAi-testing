@@ -12,6 +12,10 @@ import { newProcessActionOptions, processActionOptionsWithLinkReturned, startNew
 import ProgressBar from "../../../progressBar/ProgressBar";
 import { AiOutlineClose } from "react-icons/ai";
 import React from "react";
+import { useNavigate } from "react-router-dom";
+import GeneratedLinksModal from "./components/GeneratedLinksModal/GeneratedLinksModal";
+import SaveConfimationModal from "./components/SaveConfirmationModal/SaveConfirmationModal";
+import { setAllProcesses } from "../../../../features/app/appSlice";
 
 const ProcessDocument = () => {
   const [currentProcess, setCurrentProcess] = useState();
@@ -42,15 +46,20 @@ const ProcessDocument = () => {
     teamMembersSelectedForProcess, 
     userMembersSelectedForProcess, 
     publicMembersSelectedForProcess,
-    teamsSelectedSelectedForProcess
+    teamsSelectedSelectedForProcess,
+    allProcesses,
   } = useSelector((state) => state.app);
   const [ newProcessLoading, setNewProcessLoading ] = useState(false);
   const [ newProcessLoaded, setNewProcessLoaded ] = useState(null);
   const [ showGeneratedLinksPopup, setShowGeneratedLinksPopup ] = useState(false);
   const [ generatedLinks, setGeneratedLinks ] = useState(null)
   const [ copiedLinks, setCopiedLinks ] = useState([]);
+  const [ processObjToSave, setProcessObjectToSave ] = useState(null);
+  const [ processObjToSaveTitle, setProcessObjectToSaveTitle ] = useState("");
+  const [ showConfirmationModalForSaveLater, setShowConfirmationModalForSaveLater ] = useState(false);
 
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const onSubmit = (data) => {
     setLoading(true);
@@ -58,7 +67,7 @@ const ProcessDocument = () => {
     setTimeout(() => setLoading(false), 2000);
   };
 
-  const extractProcessObj = (actionVal) => {
+  const extractProcessObj = (actionVal, skipDataChecks=false) => {
     const processObj = {
       "company_id": userDetail?.portfolio_info[0]?.org_id,
       "created_by": userDetail?.userinfo?.username,
@@ -134,6 +143,8 @@ const ProcessDocument = () => {
     
     }) : [];
     
+    if (skipDataChecks) return processObj;
+
     const requiredFieldKeys = Object.keys(requiredProcessStepsKeys);
 
     const pendingFieldsToFill = requiredFieldKeys.map(requiredKey => {
@@ -175,10 +186,16 @@ const ProcessDocument = () => {
     if (!docCurrentWorkflow) return toast.info("You have not selected any workflow");
     if (processSteps.length < 1) return toast.info("You have not configured steps for any workflow");
     
+    if (processOptionSelection === "saveAndContinueLater") {
+      const processObjToSave = extractProcessObj(processOptionSelection, true);
+      setProcessObjectToSave(processObjToSave);
+      return setShowConfirmationModalForSaveLater(true);
+    }
+
     const processObjToPost = extractProcessObj(newProcessActionOptions[`${processOptionSelection}`]);
     
     if (processObjToPost.error) return toast.info(processObjToPost.error)
-    
+
     console.log("New process obj to post: ", processObjToPost)
     setNewProcessLoading(true);
 
@@ -199,14 +216,51 @@ const ProcessDocument = () => {
       toast.info(err.response ? err.response.status === 500 ? "New process creation failed" : err.response.data : "New process creation failed")
     }
   }
-  
-  const handleCopyLink = (link) => {
-    if (!link) return
 
-    navigator.clipboard.writeText(link);
-    const currentCopiedLinks  = copiedLinks.slice();
-    currentCopiedLinks.push(link);
-    setCopiedLinks(currentCopiedLinks);
+  const handleSaveForLaterBtnClick = () => {
+    
+    console.log("Process obj: ", processObjToSave);
+    const processObjToSaveCopy = structuredClone(processObjToSave);
+
+    processObjToSaveCopy._id = crypto.randomUUID();
+    processObjToSaveCopy.process_title = processObjToSaveTitle;
+    processObjToSaveCopy.parent_item_id = processObjToSave.parent_id;
+    processObjToSaveCopy.processing_action = processOptionSelection;
+    processObjToSaveCopy.processing_state = "draft";
+    processObjToSaveCopy.process_type = "document";
+    processObjToSaveCopy.process_kind = "original";
+    processObjToSaveCopy.workflow_construct_ids = processObjToSave.workflows_ids;
+    processObjToSaveCopy.created_at = new Date();
+    processObjToSaveCopy.saved_at = new Date();
+    processObjToSaveCopy.isFromLocalStorage = true;
+    processObjToSaveCopy.process_steps = processObjToSave.workflows[0].workflows.steps;
+
+    delete processObjToSaveCopy.workflows;
+    delete processObjToSaveCopy.parent_id;
+    delete processObjToSaveCopy.workflows_ids;
+    
+    console.log("New process obj to save: ", processObjToSaveCopy);
+
+    // saving to local storage
+    const savedProcessesInLocalStorage = JSON.parse(localStorage.getItem('user-saved-processes'));
+    if (!savedProcessesInLocalStorage) {
+      localStorage.setItem('user-saved-processes', JSON.stringify(
+        [processObjToSaveCopy]
+      ));
+    } else {
+      savedProcessesInLocalStorage.push(processObjToSaveCopy);
+      localStorage.setItem('user-saved-processes', JSON.stringify(savedProcessesInLocalStorage));
+    }
+    
+    setProcessObjectToSave(null);
+    setShowConfirmationModalForSaveLater(false);
+    
+    const copyOfProcesses = structuredClone(allProcesses);
+    copyOfProcesses.unshift(processObjToSaveCopy);
+    
+    dispatch(setAllProcesses(copyOfProcesses));
+    toast.success('Successfully saved process')
+    navigate('/processes/#drafts')
   }
 
   return (
@@ -230,47 +284,22 @@ const ProcessDocument = () => {
       </div>
     </div>
     {
-      showGeneratedLinksPopup && <div className={styles.process__Generated__Links__Overlay}>
-        <div className={styles.process__Generated__Links__Container}>
-          <div className={styles.process__Generated__Links__Container__Close__Icon} onClick={() => setShowGeneratedLinksPopup(false)}>
-            <AiOutlineClose />
-          </div>
-          <div className={styles.process__Links__Wrapper}>
-            <table>
-              <thead>
-                <tr>
-                  <td>S/No.</td>
-                  <td>Name</td>
-                  <td>Link</td>
-                  <td>QR Code</td>
-                  <td>Copy</td>
-                </tr>
-              </thead>
-              <tbody className={styles.process__Links__Container}>
-                {
-                  React.Children.toArray(generatedLinks?.links?.map((link, index) => {
-                    return <tr>
-                      <td>{index + 1}.</td>
-                      <td>{typeof link === "object" ? Object.keys(link)[0] : ""}</td>
-                      <td className={styles.single__Link} onClick={() => handleCopyLink(Object.values(link)[0])}>{typeof link === "object" ? Object.values(link)[0] : ""}</td>
-                      <td>
-                        {
-                          generatedLinks?.qrcodes[index] && typeof generatedLinks?.qrcodes[index] === "object" ? 
-                          <img src={Object.values(generatedLinks?.qrcodes[index])[0]} alt="qr code" /> :
-                          <>Qr code</>
-                        }
-                      </td>
-                      <td>
-                        <span className={styles.process__Generated__Links__Copy__Item} onClick={() => handleCopyLink(Object.values(link)[0])}>{typeof link === "object" && copiedLinks.includes(Object.values(link)[0]) ? "Copied" : "Copy"}</span>
-                      </td>
-                    </tr>
-                  }))
-                }
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
+      showGeneratedLinksPopup && 
+      <GeneratedLinksModal 
+        linksObj={generatedLinks}
+        copiedLinks={copiedLinks}
+        updateCopiedLinks={(links) => setCopiedLinks(links)}
+        handleCloseBtnClick={() => setShowGeneratedLinksPopup(false)}
+      />
+    }
+    {
+      showConfirmationModalForSaveLater && 
+      <SaveConfimationModal
+        handleCloseBtnClick={() => setShowConfirmationModalForSaveLater(false)}
+        handleSaveBtnClick={() => handleSaveForLaterBtnClick()}
+        inputValue={processObjToSaveTitle}
+        handleInputChange={(value) => setProcessObjectToSaveTitle(value)}
+      />
     }
     </>
   );
@@ -280,6 +309,7 @@ export default ProcessDocument;
 
 export const proccesses = [
   { id: uuidv4(), option: "Select", actionKey: "Select" },
+  { id: crypto.randomUUID(), option: "Save and continue later", actionKey: "saveAndContinueLater" },
   { id: uuidv4(), option: "Save workflows to document and keep it in draft", actionKey: "saveWorkflowToDocumentAndDrafts" },
   {
     id: uuidv4(),

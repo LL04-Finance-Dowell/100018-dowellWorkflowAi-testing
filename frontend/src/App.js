@@ -33,8 +33,10 @@ import VerificationPage from "./pages/Verification/VerificationPage";
 import ProccessPage from "./pages/Processes/AllProccessPage/ProcessesPage";
 import SearchPage from "./pages/Search/SearchPage";
 import ConstructionPage from "./pages/ConstructionPage/ConstructionPage";
+import { useAppContext } from "./contexts/AppContext";
 
 function App() {
+  const { isPublicUser } = useAppContext();
   useDowellLogin();
 
   // // USE ONLY WHEN APP IS BROKEN OR UNDERGOING MAJOR CHANGES
@@ -44,6 +46,13 @@ function App() {
   //   </Routes>
   // )
 
+  if (isPublicUser) return (
+    <Routes>
+      <Route path={"/verify/:token"} element={<VerificationPage />} />
+      <Route path={"*"} element={<>Page not found</>} />
+    </Routes>
+  )
+  
   return (
     <Routes>
       <Route path={"/"} element={<WorkflowApp />} />

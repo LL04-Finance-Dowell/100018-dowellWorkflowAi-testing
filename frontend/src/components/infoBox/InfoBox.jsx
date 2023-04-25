@@ -52,12 +52,7 @@ const InfoBox = ({
   const { teamsInWorkflowAI } = useSelector((state) => state.app);
   const { userDetail } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
-  const {
-    workflowTeams,
-    setIsFetchingTeams,
-    showRefetchModal,
-    setShowRefetchModal,
-  } = useAppContext();
+  const { workflowTeams } = useAppContext();
   const [searchValue, setSearchValue] = useState('');
   const [itemsToDisplay, setItemsToDisplay] = useState([]);
 
@@ -152,10 +147,8 @@ const InfoBox = ({
         teams.push(setTeam);
       });
       dispatch(setTeamsInWorkflowAITeams(teams));
-      setIsFetchingTeams(false);
-      setShowRefetchModal(false);
     }
-  }, [workflowTeams, showRefetchModal]);
+  }, [workflowTeams]);
 
   return (
     <InfoBoxContainer

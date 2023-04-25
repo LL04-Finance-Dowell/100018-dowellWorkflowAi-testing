@@ -16,7 +16,7 @@ const SubmitButton = ({
       type={type ? type : 'submit'}
       disabled={disabled}
       style={
-        disabled ? { filter: 'grayscale(0.5)', cursor: 'not-allowed' } : {}
+        disabled ? { cursor: 'not-allowed', filter: 'brightness(0.7)' } : {}
       }
     >
       {status === 'pending' ? <LoadingSpinner /> : <span>{children}</span>}

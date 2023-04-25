@@ -31,8 +31,6 @@ const EditTeamModal = ({ show, setShow, handleUpdateTeam, items }) => {
     setSync,
     isFetchingTeams,
     setIsFetchingTeams,
-    showRefetchModal,
-    setShowRefetchModal,
   } = useAppContext();
   const [portfolios, setPortfolios] = useState([]);
   const dispatch = useDispatch();
@@ -161,20 +159,12 @@ const EditTeamModal = ({ show, setShow, handleUpdateTeam, items }) => {
       workflowTeams.find((item) => item._id === items[0]._mId).newly_created
     ) {
       setWorkflowTeams([]);
-      setShowRefetchModal(true);
       dispatch(setUpdateInWorkflowAITeams());
     }
   }, [show]);
 
-  useEffect(() => {
-    if (!showRefetchModal) {
-      setShow(false);
-    }
-  }, [showRefetchModal]);
-
   return (
     <section className={`edit_modal_sect ${show ? 'show' : ''}`}>
-      <Refetch show={showRefetchModal} />
       <div className={`edit_form_wrapper ${show ? 'show' : ''}`}>
         <h3 className='title'>
           Edit Team{' '}
@@ -305,19 +295,6 @@ const EditTeamModal = ({ show, setShow, handleUpdateTeam, items }) => {
             </button>
           </div>
         </form>
-      </div>
-    </section>
-  );
-};
-
-const Refetch = ({ show }) => {
-  return (
-    <section className={show ? 'refetch_modal active' : 'refetch_modal'}>
-      <div className='refetch'>
-        <h3>Getting teams, please wait.</h3>
-        <p>
-          <LoadingSpinner />
-        </p>
       </div>
     </section>
   );

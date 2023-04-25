@@ -25,11 +25,13 @@ export const AppContextProvider = ({ children }) => {
 
   const [rerun, setRerun] = useState(false);
   const [sync, setSync] = useState(true);
+  const [isPublicUser, setIsPublicUser] = useState(false);
+  const [publicUserConfigured, setPublicUserConfigured] = useState(false);
 
   const [filter, setFilter] = useState('team_member');
   const [isFetchingTeams, setIsFetchingTeams] = useState(true);
-  const [showRefetchModal, setShowRefetchModal] = useState(false);
   const [isNoPointerEvents, setIsNoPointerEvents] = useState(false);
+  const [workflowTeamsLoaded, setWorkflowTeamsLoaded] = useState(false);
 
   const { userDetail } = useSelector((state) => state.auth);
 
@@ -76,22 +78,33 @@ export const AppContextProvider = ({ children }) => {
   };
 
   useEffect(() => {
-    if (userDetail || showRefetchModal) {
-      //* Fetching workflow teams
-      const settingService = new WorkflowSettingServices();
-      settingService
-        .getAllTeams(userDetail?.portfolio_info[0]?.org_id)
-        .then((res) => {
-          setWorkflowTeams(res.data);
-        })
-        .catch((err) => {
-          console.log(
-            'Failed to fetch teams: ',
-            err.response ? err.response.data : err.message
-          );
-        });
+    if (!publicUserConfigured) return;
+    if (userDetail && !isPublicUser) {
+      if (!workflowTeamsLoaded) {
+        //* Fetching workflow teams
+        const settingService = new WorkflowSettingServices();
+        settingService
+          .getAllTeams(userDetail?.portfolio_info[0]?.org_id)
+          .then((res) => {
+            setWorkflowTeams(res.data);
+            setWorkflowTeamsLoaded(true);
+            console.log('teams fetched');
+          })
+          .catch((err) => {
+            console.log(
+              'Failed to fetch teams: ',
+              err.response ? err.response.data : err.message
+            );
+            setWorkflowTeamsLoaded(true);
+          });
+      }
     }
-  }, [userDetail, showRefetchModal]);
+  }, [userDetail, isPublicUser, publicUserConfigured]);
+
+  // useEffect(() => {
+  //   console.log('context: ', workflowTeams);
+  //   console.log('context: ', workflowTeamsLoaded);
+  // }, [workflowTeams, workflowTeamsLoaded]);
 
   return (
     <AppContext.Provider
@@ -120,10 +133,10 @@ export const AppContextProvider = ({ children }) => {
         setFilter,
         sync,
         setSync,
-        isFetchingTeams,
-        setIsFetchingTeams,
-        showRefetchModal,
-        setShowRefetchModal,
+        isPublicUser,
+        setIsPublicUser,
+        publicUserConfigured,
+        setPublicUserConfigured,
         isNoPointerEvents,
         setIsNoPointerEvents,
       }}

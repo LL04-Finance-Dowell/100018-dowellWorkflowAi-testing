@@ -194,6 +194,7 @@ const DocumentCard = ({
       const auth_username = paramsPassed.get('auth_user');
       const auth_portfolio = paramsPassed.get('auth_portfolio');
       const auth_role = paramsPassed.get('auth_role');
+      const user_type = paramsPassed.get('user_type');
 
       if (
         auth_username !== userDetail?.userinfo?.username ||
@@ -206,6 +207,8 @@ const DocumentCard = ({
       sanitizedDataToPost.auth_username = auth_username;
       sanitizedDataToPost.auth_portfolio = auth_portfolio;
       sanitizedDataToPost.auth_role = auth_role;
+      sanitizedDataToPost.user_type = user_type;
+      sanitizedDataToPost.org_name = userDetail?.selected_product?.product_name;
 
       delete sanitizedDataToPost.user_name;
       delete sanitizedDataToPost.portfolio;

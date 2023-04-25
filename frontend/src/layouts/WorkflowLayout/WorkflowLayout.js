@@ -95,11 +95,13 @@ const WorkflowLayout = ({ children }) => {
       // Fetching processes
       getAllProcessesV2(userDetail?.portfolio_info[0]?.org_id)
         .then((res) => {
-          dispatch(
-            setAllProcesses(
-              res.data.filter((process) => process.processing_state).reverse()
-            )
-          );
+          const savedProcessesInLocalStorage = JSON.parse(localStorage.getItem('user-saved-processes'));
+          if (savedProcessesInLocalStorage) {
+            const processes = [...savedProcessesInLocalStorage, ...res.data.filter(process => process.processing_state)].sort((a, b) => new Date(b?.created_at) - new Date(a?.created_at));
+            dispatch(setAllProcesses(processes));
+          } else {
+            dispatch(setAllProcesses(res.data.filter(process => process.processing_state).reverse()));
+          }
           dispatch(setProcessesLoading(false));
           dispatch(setProcessesLoaded(true));
         })
@@ -126,9 +128,7 @@ const WorkflowLayout = ({ children }) => {
     const workflowProduct = userDetail?.portfolio_info?.find(
       (item) => item.product === 'Workflow AI'
     );
-    if (!workflowProduct || workflowProduct.member_type !== 'owner') return;
-
-    if (adminUserPortfolioLoaded) return;
+    if (!workflowProduct || workflowProduct.member_type !== 'owner' || adminUserPortfolioLoaded) return;
 
     // admin user
     dispatch(setAdminUser(true));
@@ -220,7 +220,6 @@ const WorkflowLayout = ({ children }) => {
               <div className={styles.content__box}>
                 <div className={`${styles.sidebar__box} hide-scrollbar`}>
                   <SideBar />
-                  <Chat/>
                 </div>
                 <div className={styles.children__box}>
                   <p className={styles.beta__Info__Text}>
@@ -228,6 +227,7 @@ const WorkflowLayout = ({ children }) => {
                   </p>
                   {children}
                 </div>
+                  <Chat/>
               </div>
               <Editor />
             </>

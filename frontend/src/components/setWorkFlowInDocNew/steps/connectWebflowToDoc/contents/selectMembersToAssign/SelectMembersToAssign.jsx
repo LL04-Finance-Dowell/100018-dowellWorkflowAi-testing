@@ -11,6 +11,7 @@ import { Tooltip } from "react-tooltip";
 import useClickInside from "../../../../../../hooks/useClickInside";
 import { toast } from "react-toastify";
 import { useAppContext } from "../../../../../../contexts/AppContext";
+import { LoadingSpinner } from "../../../../../LoadingSpinner/LoadingSpinner";
 
 const SelectMembersToAssign = ({ currentStepIndex, stepsPopulated, currentEnabledSteps }) => {
   const [selectMembersComp, setSelectMembersComp] = useState(selectMembers);
@@ -38,7 +39,7 @@ const SelectMembersToAssign = ({ currentStepIndex, stepsPopulated, currentEnable
   });
   const [ featuresUpdatedFromDraft, setFeaturesUpdatedFromDraft ] = useState(false);
   const [ radioOptionsEnabledInStep, setRadioOptionsEnabledInStep ] = useState([]);
-  const { workflowTeams } = useAppContext();
+  const { workflowTeams, workflowTeamsLoaded } = useAppContext();
   const selectTeamRef = useRef();
   
   const dispatch = useDispatch();
@@ -58,13 +59,12 @@ const SelectMembersToAssign = ({ currentStepIndex, stepsPopulated, currentEnable
   })
 
   useEffect(() => {
-
-    if (selectedMembersSet) return
+    if (selectedMembersSet || !workflowTeamsLoaded) return
 
     const copyOfCurrentSelectMembersState = selectMembers.slice();
 
     const extractAndFormatPortfoliosForMembers = (criteria) => {
-      const membersmatchingCriteria = selectedMembersForProcess.filter(member => member.member_type === criteria && member.status === "enable");
+      const membersmatchingCriteria = [...new Map(selectedMembersForProcess.map(member => [member['username'], member])).values()].filter(member => member.member_type === criteria && member.status === "enable");
       const memberPortfolios = membersmatchingCriteria.map(member => {
         if (Array.isArray(member.username)) {
           let membersFound = member.username.forEach(user => {
@@ -109,7 +109,7 @@ const SelectMembersToAssign = ({ currentStepIndex, stepsPopulated, currentEnable
     setSelectMembersComp(updatedMembersState);
     setSelectedMembersSet(true);
 
-  }, [selectedMembersForProcess])
+  }, [selectedMembersSet, workflowTeamsLoaded, workflowTeams, selectedMembersForProcess])
 
   useEffect(() => {
     
@@ -450,46 +450,49 @@ const SelectMembersToAssign = ({ currentStepIndex, stepsPopulated, currentEnable
                 </Radio>
               </div>
               <div ref={teamMembersRef} className={styles.team__Select__Wrapper}>
-                <select
-                  required
-                  {...register("teams")}
-                  size={current.teams.length === 1 ? current.teams.length + 1 : current.teams.length}
-                  className={styles.open__select}
-                  onChange={({ target }) => handleSelectTeam(JSON.parse(target.value))}
-                  style={{ 
-                    pointerEvents: 
-                      userTypeOptionsEnabled.find(option => option.name === current.header && option.stepIndex === currentStepIndex) && 
-                      currentRadioOptionSelection && 
-                      radioOptionsEnabledInStep.find(
-                        option => option.stepIndex === currentStepIndex && 
-                        option.currentHeader === current.header && 
-                        option.name === "selectItemOptionForUser-" + currentStepIndex + "-" + current.header
-                      )?.valueActive === "selectIn" + current.header ? 
-                    "all" : 
-                      userTypeOptionsEnabled.find(option => option.name === current.header && option.stepIndex === currentStepIndex) && 
-                      currentRadioOptionSelection && 
-                      radioOptionsEnabledInStep.find(
-                        option => option.stepIndex === currentStepIndex && 
-                        option.currentHeader === current.header && 
-                        option.name === "selectItemOptionForUser-" + currentStepIndex + "-" + current.header
-                      )?.valueActive === "all" + current.header ?
-                    "all" :
-                    "none" 
-                  }}
-                  name="select-from-team"
-                  ref={selectTeamRef}
-                >
-                  <option value={''} disabled hidden selected></option>
-                  {React.Children.toArray(current.teams.map((item) => (
-                    <option 
-                      // key={item.id} 
-                      value={JSON.stringify(item)}
-                      className={teamsSelectedSelectedForProcess.find(team => team._id === item._id && team.stepIndex === currentStepIndex && team.selectedFor === current.header) ? styles.team__Selected : styles.team__Not__Selected}
-                    >
-                      {item.team_name}
-                    </option>
-                  )))}
-                </select>
+                {
+                  !workflowTeamsLoaded ? <LoadingSpinner /> :
+                  <select
+                    required
+                    {...register("teams")}
+                    size={current.teams.length === 1 ? current.teams.length + 1 : current.teams.length}
+                    className={styles.open__select}
+                    onChange={({ target }) => handleSelectTeam(JSON.parse(target.value))}
+                    style={{ 
+                      pointerEvents: 
+                        userTypeOptionsEnabled.find(option => option.name === current.header && option.stepIndex === currentStepIndex) && 
+                        currentRadioOptionSelection && 
+                        radioOptionsEnabledInStep.find(
+                          option => option.stepIndex === currentStepIndex && 
+                          option.currentHeader === current.header && 
+                          option.name === "selectItemOptionForUser-" + currentStepIndex + "-" + current.header
+                        )?.valueActive === "selectIn" + current.header ? 
+                      "all" : 
+                        userTypeOptionsEnabled.find(option => option.name === current.header && option.stepIndex === currentStepIndex) && 
+                        currentRadioOptionSelection && 
+                        radioOptionsEnabledInStep.find(
+                          option => option.stepIndex === currentStepIndex && 
+                          option.currentHeader === current.header && 
+                          option.name === "selectItemOptionForUser-" + currentStepIndex + "-" + current.header
+                        )?.valueActive === "all" + current.header ?
+                      "all" :
+                      "none" 
+                    }}
+                    name="select-from-team"
+                    ref={selectTeamRef}
+                  >
+                    <option value={''} disabled hidden selected></option>
+                    {React.Children.toArray(current.teams.map((item) => (
+                      <option 
+                        // key={item.id} 
+                        value={JSON.stringify(item)}
+                        className={teamsSelectedSelectedForProcess.find(team => team._id === item._id && team.stepIndex === currentStepIndex && team.selectedFor === current.header) ? styles.team__Selected : styles.team__Not__Selected}
+                      >
+                        {item.team_name}
+                      </option>
+                    )))}
+                  </select>
+                }
               </div>
               {
                 <>
@@ -686,7 +689,7 @@ export const selectMembers = [
     selectInTeam: "Select Teams in Team Members",
     selectMembers: "Select Members",
     teams: [],
-    portfolios: members,
+    portfolios: [],
   },
   {
     id: uuidv4(),
@@ -696,7 +699,7 @@ export const selectMembers = [
     selectInTeam: "Select Teams in Users",
     selectMembers: "Select Users",
     teams: [],
-    portfolios: members,
+    portfolios: [],
   },
   {
     id: uuidv4(),
@@ -706,6 +709,6 @@ export const selectMembers = [
     selectInTeam: "Select Teams in Public",
     selectMembers: "Select Public",
     teams: [],
-    portfolios: members,
+    portfolios: [],
   },
 ];
