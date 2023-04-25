@@ -181,7 +181,7 @@ const WorkflowApp = () => {
   }, [location]);
 
   useEffect(() => {
-    if (allDocuments.length) {
+    if (allDocuments && allDocuments.length) {
       const allUncompletedDocs = allDocuments.filter(
         (doc) => doc.document_state === 'processing'
       );
