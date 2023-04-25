@@ -81,8 +81,8 @@ def document_processing(request):
     if action == "start_document_processing_content_wise":
         if request.data.get("process_id") is not None:
             process = get_process_object(request.data["process_id"])
-            
-        else:        
+
+        else:
             process = processing.new(
                 workflows=request.data["workflows"],
                 created_by=request.data["created_by"],
@@ -170,7 +170,7 @@ def document_processing(request):
                 workflows_ids=request.data["workflows_ids"],
                 process_type=request.data["process_type"],
             )
-            
+
         return processing.start(process)
 
     if action == "test_document_processing_wf_wise":
@@ -335,8 +335,12 @@ def finalize_or_reject(request, process_id):
     item_id = request.data["item_id"]
     item_type = request.data["item_type"]
 
-    # # mark the doc as complete
+    # Check document current state.
+    check, current_state = checks.is_finalized(item_id, item_type)
+    if not check:
+        return Response(f"Already processed as {current_state}!", status.HTTP_200_OK)
 
+    # set the right state
     if request.data["action"] == "finalize":
         state = "finalized"
 

@@ -491,6 +491,7 @@ def save_template(name, data, page, created_by, company_id, data_type):
                 "rejected_message": "",
                 "data_type": data_type,
                 "auth_viewers": [],
+                "template_state": "draft",
                 "created_on": time,
             },
             "update_field": {"order_nos": 21},
