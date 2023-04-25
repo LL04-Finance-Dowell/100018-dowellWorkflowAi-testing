@@ -22,13 +22,16 @@ export const AppContextProvider = ({ children }) => {
   });
   const [workflowTeams, setWorkflowTeams] = useState([]);
   const [selectedTeamIdGlobal, setSelectedTeamIdGlobal] = useState();
-  const [workflowTeamsLoaded, setWorkflowTeamsLoaded] = useState(false);
+
   const [rerun, setRerun] = useState(false);
   const [sync, setSync] = useState(true);
   const [isPublicUser, setIsPublicUser] = useState(false);
   const [publicUserConfigured, setPublicUserConfigured] = useState(false);
 
   const [filter, setFilter] = useState('team_member');
+  const [isFetchingTeams, setIsFetchingTeams] = useState(true);
+  const [isNoPointerEvents, setIsNoPointerEvents] = useState(false);
+  const [workflowTeamsLoaded, setWorkflowTeamsLoaded] = useState(false);
 
   const { userDetail } = useSelector((state) => state.auth);
 
@@ -75,7 +78,7 @@ export const AppContextProvider = ({ children }) => {
   };
 
   useEffect(() => {
-    if (!publicUserConfigured) return
+    if (!publicUserConfigured) return;
     if (userDetail && !isPublicUser) {
       if (!workflowTeamsLoaded) {
         //* Fetching workflow teams
@@ -120,8 +123,7 @@ export const AppContextProvider = ({ children }) => {
         updateSearchItemStatus,
         workflowTeams,
         setWorkflowTeams,
-        workflowTeamsLoaded,
-        setWorkflowTeamsLoaded,
+
         extractTeamContent,
         selectedTeamIdGlobal,
         setSelectedTeamIdGlobal,
@@ -131,10 +133,12 @@ export const AppContextProvider = ({ children }) => {
         setFilter,
         sync,
         setSync,
-        isPublicUser, 
+        isPublicUser,
         setIsPublicUser,
         publicUserConfigured,
         setPublicUserConfigured,
+        isNoPointerEvents,
+        setIsNoPointerEvents,
       }}
     >
       {children}

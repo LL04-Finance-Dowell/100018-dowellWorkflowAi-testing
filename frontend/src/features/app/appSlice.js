@@ -367,6 +367,7 @@ export const appSlice = createSlice({
                 return modItem;
               }
             );
+          break;
         default:
           return state;
       }
@@ -381,6 +382,7 @@ export const appSlice = createSlice({
         );
 
         for (let i = 0; i < extractedContent.length; i++) {
+          const _mId = action.payload.item._id;
           const _id = uuidv4();
           const title =
             i === 0
@@ -396,11 +398,11 @@ export const appSlice = createSlice({
               : '';
           modItem.push({
             _id,
+            _mId,
             content: { content: extractedContent[i], title },
           });
         }
       }
-      console.log(modItem);
       state.teamsInWorkflowAI[0].children[2].column[0].items = modItem;
     },
 

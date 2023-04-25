@@ -200,7 +200,7 @@ const SearchPage = () => {
 
     try {
       const [documentsData, templatesData, workflowsData] = await Promise.all([
-        documentServices.allDocuments(data.company_id), 
+        documentServices.allDocuments(data.company_id),
         templatesServices.allTemplates(data.company_id),
         workflowServices.allWorkflows(data.company_id),
       ]);
@@ -334,7 +334,13 @@ const SearchPage = () => {
                   <span className='filter_icon' style={{ marginRight: '10px' }}>
                     <MdFilterList />
                   </span>
-                  Filters
+                  {currentSearchOption === 'documents'
+                    ? 'Documents'
+                    : currentSearchOption === 'templates'
+                    ? 'Templates'
+                    : currentSearchOption === 'workflows'
+                    ? 'Workflows'
+                    : 'All'}
                 </button>
                 <div
                   style={
@@ -356,7 +362,10 @@ const SearchPage = () => {
                             : false
                         }
                         value={searchCategories.all}
-                        onChange={(e) => setCurrentSearchOption(e.target.value)}
+                        onChange={(e) => {
+                          setCurrentSearchOption(e.target.value);
+                          setIsDropdown(false);
+                        }}
                       />
                       All
                     </label>
@@ -369,7 +378,10 @@ const SearchPage = () => {
                             : false
                         }
                         value={searchCategories.documents}
-                        onChange={(e) => setCurrentSearchOption(e.target.value)}
+                        onChange={(e) => {
+                          setCurrentSearchOption(e.target.value);
+                          setIsDropdown(false);
+                        }}
                       />
                       Documents
                     </label>
@@ -382,7 +394,10 @@ const SearchPage = () => {
                             : false
                         }
                         value={searchCategories.templates}
-                        onChange={(e) => setCurrentSearchOption(e.target.value)}
+                        onChange={(e) => {
+                          setCurrentSearchOption(e.target.value);
+                          setIsDropdown(false);
+                        }}
                       />
                       Templates
                     </label>
@@ -395,7 +410,10 @@ const SearchPage = () => {
                             : false
                         }
                         value={searchCategories.workflows}
-                        onChange={(e) => setCurrentSearchOption(e.target.value)}
+                        onChange={(e) => {
+                          setCurrentSearchOption(e.target.value);
+                          setIsDropdown(false);
+                        }}
                       />
                       Workflows
                     </label>

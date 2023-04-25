@@ -1,12 +1,12 @@
-import React, { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { setEditorLink } from "../../features/app/appSlice";
-import { LoadingSpinner } from "../LoadingSpinner/LoadingSpinner";
-import { AiOutlineClose } from "react-icons/ai";
-import styles from "./editor.module.css";
-import Spinner from "../spinner/Spinner";
-import { TiTick } from "react-icons/ti";
-import { MdClose } from "react-icons/md";
+import React, { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { setEditorLink } from '../../features/app/appSlice';
+import { LoadingSpinner } from '../LoadingSpinner/LoadingSpinner';
+import { AiOutlineClose } from 'react-icons/ai';
+import styles from './editor.module.css';
+import Spinner from '../spinner/Spinner';
+import { TiTick } from 'react-icons/ti';
+import { MdClose } from 'react-icons/md';
 
 const Editor = () => {
   const dispatch = useDispatch();
@@ -15,27 +15,12 @@ const Editor = () => {
   const { editorStatus: tempStatus } = useSelector((state) => state.template);
   const [toggleDecision, setToggleDecision] = useState(false);
 
-  /*   useEffect(() => {
-    window.addEventListener("message", function (event) {
-      console.log("Message received from the child: " + event.data); // Message received from child
-    });
-  }, []);
-
-  useEffect(() => {
-    window.parent.postMessage(data, "*");
-  }, []); */
-
-  // console.log(
-  //   "editorLink: if create tempalte it is for template, if u create document it is for document",
-  //   editorLink
-  // );
-
   const handleFrameClose = () => {
     setToggleDecision(true);
   };
 
   const handleDecision = (status) => {
-    if (status === "ok") {
+    if (status === 'ok') {
       dispatch(setEditorLink(null));
       /*  window.location.reload(); */
     }
@@ -44,9 +29,9 @@ const Editor = () => {
 
   return (
     <>
-      {(editorLink || docStatus === "pending" || tempStatus === "pending") && (
+      {(editorLink || docStatus === 'pending' || tempStatus === 'pending') && (
         <div className={styles.framer__container}>
-          {docStatus === "pending" || tempStatus === "pending" ? (
+          {docStatus === 'pending' || tempStatus === 'pending' ? (
             <Spinner />
           ) : (
             editorLink && (
@@ -64,18 +49,20 @@ const Editor = () => {
                 <h2>
                   Do you want to close?
                   <br />
-                  <span className={styles.decision__mini__text}>Save your work before closing</span>
+                  <span className={styles.decision__mini__text}>
+                    Save your work before closing
+                  </span>
                 </h2>
                 <div className={styles.button__container}>
                   <button
                     className={styles.ok__button}
-                    onClick={() => handleDecision("ok")}
+                    onClick={() => handleDecision('ok')}
                   >
                     <TiTick size={25} />
                   </button>
                   <button
                     className={styles.cancel__button}
-                    onClick={() => handleDecision("cancel")}
+                    onClick={() => handleDecision('cancel')}
                   >
                     <MdClose size={25} />
                   </button>
