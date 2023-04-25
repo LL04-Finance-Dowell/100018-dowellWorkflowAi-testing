@@ -79,91 +79,121 @@ def document_processing(request):
         return Response("Process Saved in drafts.", status.HTTP_201_CREATED)
 
     if action == "start_document_processing_content_wise":
-        process = processing.new(
-            workflows=request.data["workflows"],
-            created_by=request.data["created_by"],
-            company_id=request.data["company_id"],
-            data_type=request.data["data_type"],
-            parent_item_id=request.data["parent_id"],
-            process_choice="start_content_wise",
-            creator_portfolio=request.data["creator_portfolio"],
-            workflows_ids=request.data["workflows_ids"],
-            process_type=request.data["process_type"],
-        )
+        if request.data.get("process_id") is not None:
+            process = get_process_object(request.data["process_id"])
+            
+        else:        
+            process = processing.new(
+                workflows=request.data["workflows"],
+                created_by=request.data["created_by"],
+                company_id=request.data["company_id"],
+                data_type=request.data["data_type"],
+                parent_item_id=request.data["parent_id"],
+                process_choice="start_content_wise",
+                creator_portfolio=request.data["creator_portfolio"],
+                workflows_ids=request.data["workflows_ids"],
+                process_type=request.data["process_type"],
+            )
+
         return processing.start(process)
 
     if action == "start_document_processing_wf_steps_wise":
-        process = processing.new(
-            workflows=request.data["workflows"],
-            created_by=request.data["created_by"],
-            company_id=request.data["company_id"],
-            data_type=request.data["data_type"],
-            parent_item_id=request.data["parent_id"],
-            process_choice="start_steps_wise",
-            creator_portfolio=request.data["creator_portfolio"],
-            workflows_ids=request.data["workflows_ids"],
-            process_type=request.data["process_type"],
-        )
+        if request.data.get("process_id") is not None:
+            process = get_process_object(request.data["process_id"])
+
+        else:
+            process = processing.new(
+                workflows=request.data["workflows"],
+                created_by=request.data["created_by"],
+                company_id=request.data["company_id"],
+                data_type=request.data["data_type"],
+                parent_item_id=request.data["parent_id"],
+                process_choice="start_steps_wise",
+                creator_portfolio=request.data["creator_portfolio"],
+                workflows_ids=request.data["workflows_ids"],
+                process_type=request.data["process_type"],
+            )
+
         return processing.start(process)
 
     if action == "start_document_processing_wf_wise":
-        process = processing.new(
-            workflows=request.data["workflows"],
-            created_by=request.data["created_by"],
-            company_id=request.data["company_id"],
-            data_type=request.data["data_type"],
-            parent_item_id=request.data["parent_id"],
-            process_choice="start_workflow_wise",
-            creator_portfolio=request.data["creator_portfolio"],
-            workflows_ids=request.data["workflows_ids"],
-            process_type=request.data["process_type"],
-        )
+        if request.data.get("process_id") is not None:
+            process = get_process_object(request.data["process_id"])
+
+        else:
+            process = processing.new(
+                workflows=request.data["workflows"],
+                created_by=request.data["created_by"],
+                company_id=request.data["company_id"],
+                data_type=request.data["data_type"],
+                parent_item_id=request.data["parent_id"],
+                process_choice="start_workflow_wise",
+                creator_portfolio=request.data["creator_portfolio"],
+                workflows_ids=request.data["workflows_ids"],
+                process_type=request.data["process_type"],
+            )
+
         return processing.start(process)
 
     if action == "test_document_processing_content_wise":
-        process = processing.new(
-            workflows=request.data["workflows"],
-            created_by=request.data["created_by"],
-            company_id=request.data["company_id"],
-            data_type=data_type,
-            parent_item_id=request.data["parent_id"],
-            process_choice="test_content_wise",
-            creator_portfolio=request.data["creator_portfolio"],
-            workflows_ids=request.data["workflows_ids"],
-            process_type=request.data["process_type"],
-        )
+        if request.data.get("process_id") is not None:
+            process = get_process_object(request.data["process_id"])
+
+        else:
+            process = processing.new(
+                workflows=request.data["workflows"],
+                created_by=request.data["created_by"],
+                company_id=request.data["company_id"],
+                data_type=data_type,
+                parent_item_id=request.data["parent_id"],
+                process_choice="test_content_wise",
+                creator_portfolio=request.data["creator_portfolio"],
+                workflows_ids=request.data["workflows_ids"],
+                process_type=request.data["process_type"],
+            )
+
         return processing.start(process)
 
     if action == "test_document_processing_wf_steps_wise":
-        process = processing.new(
-            workflows=request.data["workflows"],
-            created_by=request.data["created_by"],
-            company_id=request.data["company_id"],
-            data_type=data_type,
-            parent_item_id=request.data["parent_id"],
-            process_choice="test_steps_wise",
-            creator_portfolio=request.data["creator_portfolio"],
-            workflows_ids=request.data["workflows_ids"],
-            process_type=request.data["process_type"],
-        )
+        if request.data.get("process_id") is not None:
+            process = get_process_object(request.data["process_id"])
+
+        else:
+            process = processing.new(
+                workflows=request.data["workflows"],
+                created_by=request.data["created_by"],
+                company_id=request.data["company_id"],
+                data_type=data_type,
+                parent_item_id=request.data["parent_id"],
+                process_choice="test_steps_wise",
+                creator_portfolio=request.data["creator_portfolio"],
+                workflows_ids=request.data["workflows_ids"],
+                process_type=request.data["process_type"],
+            )
+            
         return processing.start(process)
 
     if action == "test_document_processing_wf_wise":
-        process = processing.new(
-            workflows=request.data["workflows"],
-            created_by=request.data["created_by"],
-            company_id=request.data["company_id"],
-            data_type=data_type,
-            parent_item_id=request.data["parent_id"],
-            process_choice="test_workflow_wise",
-            creator_portfolio=request.data["creator_portfolio"],
-            workflows_ids=request.data["workflows_ids"],
-            process_type=request.data["process_type"],
-        )
+        if request.data.get("process_id") is not None:
+            process = get_process_object(request.data["process_id"])
+
+        else:
+            process = processing.new(
+                workflows=request.data["workflows"],
+                created_by=request.data["created_by"],
+                company_id=request.data["company_id"],
+                data_type=data_type,
+                parent_item_id=request.data["parent_id"],
+                process_choice="test_workflow_wise",
+                creator_portfolio=request.data["creator_portfolio"],
+                workflows_ids=request.data["workflows_ids"],
+                process_type=request.data["process_type"],
+            )
+
         return processing.start(process)
 
     if action == "close_processing_and_mark_as_completed":
-        process = get_process_object(workflow_process_id=request.data["process_id"])
+        process = get_process_object(request.data["process_id"])
         if process["processing_state"] == "completed":
             return Response(
                 "This Workflow process is already complete", status.HTTP_200_OK
@@ -186,7 +216,7 @@ def document_processing(request):
 
     if action == "cancel_process_before_completion":
         # document should reset to initial state.
-        process = get_process_object(workflow_process_id=request.data["process_id"])
+        process = get_process_object(request.data["process_id"])
         if process["processing_state"] == "cancelled":
             return Response("This Workflow process is Cancelled!", status.HTTP_200_OK)
         res = json.loads(
@@ -293,7 +323,6 @@ def process_verification(request):
         org_name,
         auth_portfolio,
     )
-    
 
 
 @api_view(["POST"])

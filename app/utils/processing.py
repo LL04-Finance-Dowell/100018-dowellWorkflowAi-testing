@@ -247,12 +247,14 @@ def verify(
     org_name,
     user_portfolio,
 ):
+    # check if the prev step is done or not
     # is public valid
     # if user_type == "public":
     #     if not checks.is_public_person_valid(user_portfolio, org_name):
     #         return Response(
     #             "You have already accessed this document", status.HTTP_200_OK
     #         )
+    clone_id = None
     # find step the user belongs
     for step in process["process_steps"]:
         if step.get("stepRole") == auth_step_role:
@@ -691,7 +693,7 @@ def background2(process_id, item_id, item_type):
                 return True
 
         if num_process_steps >= 2:
-            if check_step_done(num_process_steps - 1, process):
+            if check_step_done(num_process_steps, process):
                 if check_step_done(num_process_steps, process):
                     return True
 
