@@ -239,68 +239,68 @@ const CheckErrors = () => {
                                     `Step ${index + 1} (${step?.stepName})`
                                   }
                                   type="list" 
-                                  items={
-                                    item.workflows.steps.map((step) => ({
-                                      _id: step._id,
+                                  items={[
+                                    {
+                                      _id: item?.workflows?.steps[index]?._id,
                                       contentDisplay: true,
-                                      displayNoContent: step.stepSkipped
+                                      displayNoContent: item?.workflows?.steps[index]?.stepSkipped
                                         ? true
                                         : false,
                                       contentsToDisplay: [
                                         {
                                           header: "Members",
                                           content:
-                                            step.stepPublicMembers
+                                            item?.workflows?.steps[index]?.stepPublicMembers
                                               .map((m) => m.member)
                                               .join(", ") +
-                                            step.stepTeamMembers
+                                            item?.workflows?.steps[index]?.stepTeamMembers
                                               .map((m) => m.member)
                                               .join(", ") +
-                                            step.stepPublicMembers
+                                            item?.workflows?.steps[index]?.stepPublicMembers
                                               .map((m) => m.member)
                                               .join(", "),
                                         },
                                         {
                                           header: "Task type",
-                                          content: step.stepTaskType
+                                          content: item?.workflows?.steps[index]?.stepTaskType
                                             ? taskType?.find(
                                                 (task) =>
                                                   task.normalValue ===
-                                                  step.stepTaskType
+                                                  item?.workflows?.steps[index]?.stepTaskType
                                               )?.option
                                             : "",
                                         },
                                         {
                                           header: "Rights",
-                                          content: step.stepRights
+                                          content: item?.workflows?.steps[index]?.stepRights
                                             ? rights?.find(
                                                 (right) =>
                                                   right.normalValue ===
-                                                  step.stepRights
+                                                  item?.workflows?.steps[index]?.stepRights
                                               )?.option
                                             : "",
                                         },
                                         {
                                           header: "Activity type",
-                                          content: step.stepTaskLimitation
+                                          content: item?.workflows?.steps[index]?.stepTaskLimitation
                                             ? limitTaskTo?.find(
                                                 (option) =>
                                                   option.normalValue ===
-                                                  step.stepTaskLimitation
+                                                  item?.workflows?.steps[index]?.stepTaskLimitation
                                               )?.option
                                             : "",
                                         },
                                         {
                                           header: "Location",
-                                          content: step.stepLocation,
+                                          content: item?.workflows?.steps[index]?.stepLocation,
                                         },
                                         {
                                           header: "Time limit",
-                                          content: step?.stepTime,
+                                          content: item?.workflows?.steps[index]?.stepTime,
                                         },
                                       ],
-                                    }))
-                                  }
+                                    }
+                                  ]}
                                 />
                               </div>
                             })
@@ -347,68 +347,68 @@ const CheckErrors = () => {
                                     `Step ${index + 1} (${step?.stepName})`
                                   }
                                   type="list" 
-                                  items={
-                                    item.workflows.steps.map((step) => ({
-                                      _id: step._id,
+                                  items={[
+                                    {
+                                      _id: item?.workflows?.steps[index]?._id,
                                       contentDisplay: true,
-                                      displayNoContent: step.stepSkipped
+                                      displayNoContent: item?.workflows?.steps[index]?.stepSkipped
                                         ? true
                                         : false,
                                       contentsToDisplay: [
                                         {
                                           header: "Members",
                                           content:
-                                            step.stepPublicMembers
+                                            item?.workflows?.steps[index]?.stepPublicMembers
                                               .map((m) => m.member)
                                               .join(", ") +
-                                            step.stepTeamMembers
+                                            item?.workflows?.steps[index]?.stepTeamMembers
                                               .map((m) => m.member)
                                               .join(", ") +
-                                            step.stepPublicMembers
+                                            item?.workflows?.steps[index]?.stepPublicMembers
                                               .map((m) => m.member)
                                               .join(", "),
                                         },
                                         {
                                           header: "Task type",
-                                          content: step.stepTaskType
+                                          content: item?.workflows?.steps[index]?.stepTaskType
                                             ? taskType?.find(
                                                 (task) =>
                                                   task.normalValue ===
-                                                  step.stepTaskType
+                                                  item?.workflows?.steps[index]?.stepTaskType
                                               )?.option
                                             : "",
                                         },
                                         {
                                           header: "Rights",
-                                          content: step.stepRights
+                                          content: item?.workflows?.steps[index]?.stepRights
                                             ? rights?.find(
                                                 (right) =>
                                                   right.normalValue ===
-                                                  step.stepRights
+                                                  item?.workflows?.steps[index]?.stepRights
                                               )?.option
                                             : "",
                                         },
                                         {
                                           header: "Activity type",
-                                          content: step.stepTaskLimitation
+                                          content: item?.workflows?.steps[index]?.stepTaskLimitation
                                             ? limitTaskTo?.find(
                                                 (option) =>
                                                   option.normalValue ===
-                                                  step.stepTaskLimitation
+                                                  item?.workflows?.steps[index]?.stepTaskLimitation
                                               )?.option
                                             : "",
                                         },
                                         {
                                           header: "Location",
-                                          content: step.stepLocation,
+                                          content: item?.workflows?.steps[index]?.stepLocation,
                                         },
                                         {
                                           header: "Time limit",
-                                          content: step?.stepTime,
+                                          content: item?.workflows?.steps[index]?.stepTime,
                                         },
                                       ],
-                                    }))
-                                  }
+                                    }
+                                  ]}
                                 />
                               </div>
                             })
@@ -451,68 +451,68 @@ const CheckErrors = () => {
                                     `Step ${parentIndex + 1} (${step?.stepName})`
                                   }
                                   type="list" 
-                                  items={
-                                    item.workflows.steps.map((step) => ({
-                                      _id: step._id,
+                                  items={[
+                                    {
+                                      _id: item?.workflows?.steps[parentIndex]?._id,
                                       contentDisplay: true,
-                                      displayNoContent: step.stepSkipped
+                                      displayNoContent: item?.workflows?.steps[parentIndex]?.stepSkipped
                                         ? true
                                         : false,
                                       contentsToDisplay: [
                                         {
                                           header: "Members",
                                           content:
-                                            step.stepPublicMembers
+                                            item?.workflows?.steps[parentIndex]?.stepPublicMembers
                                               .map((m) => m.member)
                                               .join(", ") +
-                                            step.stepTeamMembers
+                                            item?.workflows?.steps[parentIndex]?.stepTeamMembers
                                               .map((m) => m.member)
                                               .join(", ") +
-                                            step.stepPublicMembers
+                                            item?.workflows?.steps[parentIndex]?.stepPublicMembers
                                               .map((m) => m.member)
                                               .join(", "),
                                         },
                                         {
                                           header: "Task type",
-                                          content: step.stepTaskType
+                                          content: item?.workflows?.steps[parentIndex]?.stepTaskType
                                             ? taskType?.find(
                                                 (task) =>
                                                   task.normalValue ===
-                                                  step.stepTaskType
+                                                  item?.workflows?.steps[parentIndex]?.stepTaskType
                                               )?.option
                                             : "",
                                         },
                                         {
                                           header: "Rights",
-                                          content: step.stepRights
+                                          content: item?.workflows?.steps[parentIndex]?.stepRights
                                             ? rights?.find(
                                                 (right) =>
                                                   right.normalValue ===
-                                                  step.stepRights
+                                                  item?.workflows?.steps[parentIndex]?.stepRights
                                               )?.option
                                             : "",
                                         },
                                         {
                                           header: "Activity type",
-                                          content: step.stepTaskLimitation
+                                          content: item?.workflows?.steps[parentIndex]?.stepTaskLimitation
                                             ? limitTaskTo?.find(
                                                 (option) =>
                                                   option.normalValue ===
-                                                  step.stepTaskLimitation
+                                                  item?.workflows?.steps[parentIndex]?.stepTaskLimitation
                                               )?.option
                                             : "",
                                         },
                                         {
                                           header: "Location",
-                                          content: step.stepLocation,
+                                          content: item?.workflows?.steps[parentIndex]?.stepLocation,
                                         },
                                         {
                                           header: "Time limit",
-                                          content: step?.stepTime,
+                                          content: item?.workflows?.steps[parentIndex]?.stepTime,
                                         },
                                       ],
-                                    }))
-                                  }
+                                    }
+                                  ]}
                                 />
                               </div>
                             })
@@ -565,68 +565,68 @@ const CheckErrors = () => {
                                         `Content ${contentIndex + 1} (${content.id})`
                                       }
                                       type="list" 
-                                      items={
-                                        item.workflows.steps.map((step) => ({
-                                          _id: step._id,
+                                      items={[
+                                        {
+                                          _id: item?.workflows?.steps[contentIndex]?._id,
                                           contentDisplay: true,
-                                          displayNoContent: step.stepSkipped
+                                          displayNoContent: item?.workflows?.steps[contentIndex]?.stepSkipped
                                             ? true
                                             : false,
                                           contentsToDisplay: [
                                             {
                                               header: "Members",
                                               content:
-                                                step.stepPublicMembers
+                                                item?.workflows?.steps[contentIndex]?.stepPublicMembers
                                                   .map((m) => m.member)
                                                   .join(", ") +
-                                                step.stepTeamMembers
+                                                item?.workflows?.steps[contentIndex]?.stepTeamMembers
                                                   .map((m) => m.member)
                                                   .join(", ") +
-                                                step.stepPublicMembers
+                                                item?.workflows?.steps[contentIndex]?.stepPublicMembers
                                                   .map((m) => m.member)
                                                   .join(", "),
                                             },
                                             {
                                               header: "Task type",
-                                              content: step.stepTaskType
+                                              content: item?.workflows?.steps[contentIndex]?.stepTaskType
                                                 ? taskType?.find(
                                                     (task) =>
                                                       task.normalValue ===
-                                                      step.stepTaskType
+                                                      item?.workflows?.steps[contentIndex]?.stepTaskType
                                                   )?.option
                                                 : "",
                                             },
                                             {
                                               header: "Rights",
-                                              content: step.stepRights
+                                              content: item?.workflows?.steps[contentIndex]?.stepRights
                                                 ? rights?.find(
                                                     (right) =>
                                                       right.normalValue ===
-                                                      step.stepRights
+                                                      item?.workflows?.steps[contentIndex]?.stepRights
                                                   )?.option
                                                 : "",
                                             },
                                             {
                                               header: "Activity type",
-                                              content: step.stepTaskLimitation
+                                              content: item?.workflows?.steps[contentIndex]?.stepTaskLimitation
                                                 ? limitTaskTo?.find(
                                                     (option) =>
                                                       option.normalValue ===
-                                                      step.stepTaskLimitation
+                                                      item?.workflows?.steps[contentIndex]?.stepTaskLimitation
                                                   )?.option
                                                 : "",
                                             },
                                             {
                                               header: "Location",
-                                              content: step.stepLocation,
+                                              content: item?.workflows?.steps[contentIndex]?.stepLocation,
                                             },
                                             {
                                               header: "Time limit",
-                                              content: step?.stepTime,
+                                              content: item?.workflows?.steps[contentIndex]?.stepTime,
                                             },
                                           ],
-                                        }))
-                                      }
+                                        }
+                                      ]}
                                     />
                                   })
                                 )
@@ -666,9 +666,10 @@ const CheckErrors = () => {
                           </div>
                           {
                             React.Children.toArray(
-                              item.workflows.steps.map((step) => {
+                              item.workflows.steps.map((step, stepIndex) => {
                                 return <div className={styles.box}>
                                   <p>{item.workflows.workflow_title}, {step?.stepName}</p>
+                                  <>{console.log(teamMembersSelectedForProcess)}</>
                                   <>
                                     {
                                       React.Children.toArray(
@@ -688,75 +689,75 @@ const CheckErrors = () => {
                                             ]) :
                                             []
                                           ).values(),
-                                        ].map((member, memberIndex) => {
+                                        ].filter(m => m.stepIndex === stepIndex).map((member, memberIndex) => {
                                           return <InfoBox
                                             boxType="dark"
                                             title={
                                               `Member ${memberIndex + 1} (${member.member}) Portfolio(${member.portfolio})`
                                             }
                                             type="list" 
-                                            items={
-                                              item.workflows.steps.map((step) => ({
-                                                _id: step._id,
+                                            items={[
+                                              {
+                                                _id: item?.workflows?.steps[stepIndex]?._id,
                                                 contentDisplay: true,
-                                                displayNoContent: step.stepSkipped
+                                                displayNoContent: item?.workflows?.steps[stepIndex]?.stepSkipped
                                                   ? true
                                                   : false,
                                                 contentsToDisplay: [
                                                   {
                                                     header: "Members",
                                                     content:
-                                                      step.stepPublicMembers
+                                                      item?.workflows?.steps[stepIndex]?.stepPublicMembers
                                                         .map((m) => m.member)
                                                         .join(", ") +
-                                                      step.stepTeamMembers
+                                                      item?.workflows?.steps[stepIndex]?.stepTeamMembers
                                                         .map((m) => m.member)
                                                         .join(", ") +
-                                                      step.stepPublicMembers
+                                                      item?.workflows?.steps[stepIndex]?.stepPublicMembers
                                                         .map((m) => m.member)
                                                         .join(", "),
                                                   },
                                                   {
                                                     header: "Task type",
-                                                    content: step.stepTaskType
+                                                    content: item?.workflows?.steps[stepIndex]?.stepTaskType
                                                       ? taskType?.find(
                                                           (task) =>
                                                             task.normalValue ===
-                                                            step.stepTaskType
+                                                            item?.workflows?.steps[stepIndex]?.stepTaskType
                                                         )?.option
                                                       : "",
                                                   },
                                                   {
                                                     header: "Rights",
-                                                    content: step.stepRights
+                                                    content: item?.workflows?.steps[stepIndex]?.stepRights
                                                       ? rights?.find(
                                                           (right) =>
                                                             right.normalValue ===
-                                                            step.stepRights
+                                                            item?.workflows?.steps[stepIndex]?.stepRights
                                                         )?.option
                                                       : "",
                                                   },
                                                   {
                                                     header: "Activity type",
-                                                    content: step.stepTaskLimitation
+                                                    content: item?.workflows?.steps[stepIndex]?.stepTaskLimitation
                                                       ? limitTaskTo?.find(
                                                           (option) =>
                                                             option.normalValue ===
-                                                            step.stepTaskLimitation
+                                                            item?.workflows?.steps[stepIndex]?.stepTaskLimitation
                                                         )?.option
                                                       : "",
                                                   },
                                                   {
                                                     header: "Location",
-                                                    content: step.stepLocation,
+                                                    content: item?.workflows?.steps[stepIndex]?.stepLocation,
                                                   },
                                                   {
                                                     header: "Time limit",
-                                                    content: step?.stepTime,
+                                                    content: item?.workflows?.steps[stepIndex]?.stepTime,
                                                   },
                                                 ],
-                                              }))
-                                            }
+                                              }
+                                            ]}
                                           />
                                         })
                                       )
@@ -792,7 +793,7 @@ const CheckErrors = () => {
                         </h3>
                       </div>
                       {React.Children.toArray(
-                        item.workflows.steps.map((step) => (
+                        item.workflows.steps.map((step, index) => (
                           <div className={styles.box}>
                             <InfoBox
                               boxType="dark"
@@ -802,68 +803,68 @@ const CheckErrors = () => {
                                 step?.stepName
                               }
                               type="list"
-                              items={
-                                item.workflows.steps.map((step) => ({
-                                  _id: step._id,
+                              items={[
+                                {
+                                  _id: item?.workflows?.steps[index]?._id,
                                   contentDisplay: true,
-                                  displayNoContent: step.stepSkipped
+                                  displayNoContent: item?.workflows?.steps[index]?.stepSkipped
                                     ? true
                                     : false,
                                   contentsToDisplay: [
                                     {
                                       header: "Members",
                                       content:
-                                        step.stepPublicMembers
+                                      item?.workflows?.steps[index]?.stepPublicMembers
                                           .map((m) => m.member)
                                           .join(", ") +
-                                        step.stepTeamMembers
+                                        item?.workflows?.steps[index]?.stepTeamMembers
                                           .map((m) => m.member)
                                           .join(", ") +
-                                        step.stepPublicMembers
+                                        item?.workflows?.steps[index]?.stepPublicMembers
                                           .map((m) => m.member)
                                           .join(", "),
                                     },
                                     {
                                       header: "Task type",
-                                      content: step.stepTaskType
+                                      content: item?.workflows?.steps[index]?.stepTaskType
                                         ? taskType?.find(
                                             (task) =>
                                               task.normalValue ===
-                                              step.stepTaskType
+                                              item?.workflows?.steps[index]?.stepTaskType
                                           )?.option
                                         : "",
                                     },
                                     {
                                       header: "Rights",
-                                      content: step.stepRights
+                                      content: item?.workflows?.steps[index]?.stepRights
                                         ? rights?.find(
                                             (right) =>
                                               right.normalValue ===
-                                              step.stepRights
+                                              item?.workflows?.steps[index]?.stepRights
                                           )?.option
                                         : "",
                                     },
                                     {
                                       header: "Activity type",
-                                      content: step.stepTaskLimitation
+                                      content: item?.workflows?.steps[index]?.stepTaskLimitation
                                         ? limitTaskTo?.find(
                                             (option) =>
                                               option.normalValue ===
-                                              step.stepTaskLimitation
+                                              item?.workflows?.steps[index]?.stepTaskLimitation
                                           )?.option
                                         : "",
                                     },
                                     {
                                       header: "Location",
-                                      content: step.stepLocation,
+                                      content: item?.workflows?.steps[index]?.stepLocation,
                                     },
                                     {
                                       header: "Time limit",
-                                      content: step?.stepTime,
+                                      content: item.workflows.steps[index]?.stepTime,
                                     },
                                   ],
-                                }))
-                              }
+                                }
+                              ]}
                             />
                           </div>
                         ))
