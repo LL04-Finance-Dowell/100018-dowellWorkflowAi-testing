@@ -51,6 +51,8 @@
 
 .proccess__box {
   display: flex;
+  overflow-x: auto;
+  scrollbar-width: thin;
 }
 
 .box {

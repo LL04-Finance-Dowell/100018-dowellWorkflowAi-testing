@@ -38,9 +38,8 @@ const ConnectWorkFlowToDoc = ({ stepsPopulated, savedProcessSteps }) => {
   const [showSteps, setShowSteps] = useState([]);
 
   useEffect(() => {
-    if (stepsPopulated) return setCurrentSteps(savedProcessSteps);
     setCurrentSteps(docCurrentWorkflow?.workflows?.steps);
-  }, [docCurrentWorkflow, stepsPopulated]);
+  }, [docCurrentWorkflow]);
 
   const [contentToggle, setContentToggle] = useState(false);
 

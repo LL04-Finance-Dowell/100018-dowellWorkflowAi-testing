@@ -46,6 +46,11 @@ const CheckErrors = () => {
   // console.log("sssssssssss");
 
   useEffect(() => {
+    setWorkflowItemsToDisplay([]);
+    setSortItemActive(null);
+  }, [])
+
+  useEffect(() => {
 
     if (!docCurrentWorkflow) return
 

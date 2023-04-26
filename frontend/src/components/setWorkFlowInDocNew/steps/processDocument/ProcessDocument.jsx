@@ -261,7 +261,7 @@ const ProcessDocument = ({ savedProcess }) => {
     console.log("Process obj: ", processObjToSave);
     const processObjToSaveCopy = structuredClone(processObjToSave);
 
-    processObjToSaveCopy._id = crypto.randomUUID();
+    processObjToSaveCopy._id = savedProcess ? savedProcess._id : crypto.randomUUID();
     processObjToSaveCopy.process_title = processObjToSaveTitle;
     processObjToSaveCopy.parent_item_id = processObjToSave.parent_id;
     processObjToSaveCopy.processing_action = processOptionSelection;
@@ -287,8 +287,16 @@ const ProcessDocument = ({ savedProcess }) => {
         [processObjToSaveCopy]
       ));
     } else {
-      savedProcessesInLocalStorage.push(processObjToSaveCopy);
-      localStorage.setItem('user-saved-processes', JSON.stringify(savedProcessesInLocalStorage));
+      if (savedProcess) {
+        const foundProcessIndex = savedProcessesInLocalStorage.findIndex(process => process._id === processObjToSaveCopy._id);
+        if (foundProcessIndex === -1) return
+
+        savedProcessesInLocalStorage[foundProcessIndex] = processObjToSaveCopy;
+        localStorage.setItem('user-saved-processes', JSON.stringify(savedProcessesInLocalStorage));
+      } else {
+        savedProcessesInLocalStorage.push(processObjToSaveCopy);
+        localStorage.setItem('user-saved-processes', JSON.stringify(savedProcessesInLocalStorage));  
+      }
     }
     
     setProcessObjectToSave(null);

@@ -34,8 +34,11 @@
 
 .step__container {
   display: flex;
-  flex-wrap: wrap;
+  /* flex-wrap: wrap; */
   /* gap: 20px; */
+  width: 100%;
+  overflow-x: auto;
+  scrollbar-width: thin;
 }
 
 .step__box {

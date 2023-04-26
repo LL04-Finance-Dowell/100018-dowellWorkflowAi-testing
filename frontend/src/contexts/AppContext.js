@@ -139,6 +139,7 @@ export const AppContextProvider = ({ children }) => {
         setPublicUserConfigured,
         isNoPointerEvents,
         setIsNoPointerEvents,
+        workflowTeamsLoaded,
       }}
     >
       {children}
