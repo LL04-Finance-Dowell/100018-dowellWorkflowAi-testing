@@ -48,6 +48,19 @@ const ConnectWorkFlowToDoc = ({ stepsPopulated, savedProcessSteps }) => {
   useEffect(() => {
     if (stepsPopulated) {
       dispatch(setProcessSteps(savedProcessSteps));
+      
+      // this will also be updated in the nearest future to capture multiple workflows
+      const enabledSavedSteps = savedProcessSteps[0]?.steps?.map((step, index) => {
+        if (step.stepPublicMembers.length > 0 || step.stepTeamMembers.length > 0 || step?.stepDocumentMap?.length > 0 || step?.stepRights?.length > 0) {
+          return {
+            _id: docCurrentWorkflow?.workflows?.steps[index]._id,
+            index: index,
+            enableStep: true
+          }
+        }
+        return null
+      }).filter(step => step);
+      setEnabledSteps(enabledSavedSteps);
       return
     }
     setCurrentSteps(
