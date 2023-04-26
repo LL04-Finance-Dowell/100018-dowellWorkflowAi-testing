@@ -1143,39 +1143,43 @@ def create_workflow_ai_setting(request):
     if not validate_id(company_id):
         return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
 
-    try:
-        res = save_wf_setting(
-            company_id=company_id,
-            created_by=request.data["created_by"],
-            data_type=request.data["data_type"],
-            process=request.data["Process"],
-            documents=request.data["Documents"],
-            templates=request.data["Templates"],
-            workflows=request.data["Workflows"],
-            notarisation=request.data["Notarisation"],
-            folders=request.data["Folders"],
-            records=request.data["Records"],
-            references=request.data["References"],
-            approval=request.data["Approval_Process"],
-            evaluation=request.data["Evaluation_Process"],
-            reports=request.data["Reports"],
-            management=request.data["Management"],
-            portfolio=request.data["Portfolio_Choice"],
-            theme_color=request.data["theme_color"],
-        )
-    except Exception as e:
-        print(e)
-        return Response(
-            "Failed to Save Workflow Setting", status.HTTP_500_INTERNAL_SERVER_ERROR
-        )
+    is_exists = checks.is_wf_setting_exist(company_id, request.data["created_by"])
+    if is_exists:
+        return Response({"WF SETTING EXISTS": is_exists}, status.HTTP_200_OK)
+    else:
+        try:
+            res = save_wf_setting(
+                company_id=company_id,
+                created_by=request.data["created_by"],
+                data_type=request.data["data_type"],
+                process=request.data["Process"],
+                documents=request.data["Documents"],
+                templates=request.data["Templates"],
+                workflows=request.data["Workflows"],
+                notarisation=request.data["Notarisation"],
+                folders=request.data["Folders"],
+                records=request.data["Records"],
+                references=request.data["References"],
+                approval=request.data["Approval_Process"],
+                evaluation=request.data["Evaluation_Process"],
+                reports=request.data["Reports"],
+                management=request.data["Management"],
+                portfolio=request.data["Portfolio_Choice"],
+                theme_color=request.data["theme_color"],
+            )
+        except Exception as e:
+            print(e)
+            return Response(
+                "Failed to Save Workflow Setting", status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
 
-    if res["isSuccess"]:
-        return Response(
+        if res["isSuccess"]:
+            return Response(
                 "You added WorkflowAI settings for your organization",
                 status.HTTP_201_CREATED,
-        )
+            )
 
-    return Response(
+        return Response(
             "Failed to Save Workflow Setting", status.HTTP_500_INTERNAL_SERVER_ERROR
         )
 

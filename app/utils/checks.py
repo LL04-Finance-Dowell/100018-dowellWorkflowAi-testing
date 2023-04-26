@@ -4,13 +4,14 @@ from app.utils.mongo_db_connection import (
     get_link_object,
     get_document_object,
     get_template_object,
+    org_wfai_setting,
 )
 from .helpers import public_login
 
 
 def is_finalized(item_id, item_type):
     """Check for a process item's state"""
-    
+
     if item_type == "document":
         document = get_document_object(item_id)
         if document["document_state"] == "finalized":
@@ -31,7 +32,7 @@ def is_finalized(item_id, item_type):
 
 
 def display_right(display):
-    """ Check for the right document display rights. """
+    """Check for the right document display rights."""
 
     display_allowed = {
         "before_this_step": True,
@@ -46,14 +47,14 @@ def location_right(
     location, continent, my_continent, country, my_country, city, my_city
 ):
     """Check the location selection - verify matching geo information."""
-    
+
     if location == "any":
         return True
 
     if location == "select":
         if continent == my_continent and country == my_country and city == my_city:
             return True
-    
+
     return None
 
 
@@ -104,4 +105,9 @@ def user_presence(token, user_name, portfolio):
 
 def is_public_person_valid(qrid, org_name):
     valid = public_login(qrid, org_name)
+    return valid
+
+
+def is_wf_setting_exist(comp_id, org_name):
+    valid = org_wfai_setting(comp_id, org_name)
     return valid

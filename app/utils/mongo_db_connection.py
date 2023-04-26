@@ -856,6 +856,16 @@ def get_wfai_setting_list(company_id):
         return []
 
 
+def org_wfai_setting(company_id, org_name):
+    fields = {"company_id": str(company_id), "created_by": org_name}
+    response_obj = dowellconnection(*WF_AI_SETTING_LIST, "fetch", fields, "nil")
+    res_obj = json.loads(response_obj)
+    if len(res_obj["data"]) > 0:
+        return res_obj["data"]
+    else:
+        return []
+
+
 def wf_setting_update(wf_setting_id, data):
     dd = datetime.now()
     time = dd.strftime("%d:%m:%Y,%H:%M:%S")
