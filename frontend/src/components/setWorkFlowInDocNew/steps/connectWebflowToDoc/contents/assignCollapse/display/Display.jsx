@@ -42,7 +42,15 @@ const Display = ({ currentStepIndex, stepsPopulated }) => {
         set display
       </button>
     </form>
-    { isSubmitted || stepsPopulated ? <p style={{ margin: "0", padding: "0px 20px 10px"}}>Saved</p> : <></> }
+    { 
+      isSubmitted || 
+      processSteps.find(
+        process => process.workflow === docCurrentWorkflow?._id
+      )?.steps[currentStepIndex]?.stepDisplay ? 
+      <p style={{ margin: "0", padding: "0px 20px 10px"}}>Saved</p> 
+      : 
+      <></> 
+    }
     </>
   );
 };

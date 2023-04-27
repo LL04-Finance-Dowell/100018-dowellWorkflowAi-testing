@@ -16,8 +16,13 @@ export class WorkflowSettingServices {
   createWorkflowTeam = (data) => {
     return httpApiUrl.post('teams/', data);
   };
+
   updateWorkflowTeam = (data) => {
     return httpApiUrl.post('update-to-teams/', data);
+  };
+
+  updateEnableDisableProcesses = (data) => {
+    return httpApiUrl.post('settings/', data);
   };
 
   getAllTeams = (companyId) => {

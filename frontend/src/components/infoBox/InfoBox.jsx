@@ -55,7 +55,9 @@ const InfoBox = ({
   const dispatch = useDispatch();
   const { t } = useTranslation();
 
-  const { workflowTeams, refetch, setRefetch } = useAppContext();
+  const { workflowTeams } = useAppContext();
+  const [searchValue, setSearchValue] = useState('');
+  const [itemsToDisplay, setItemsToDisplay] = useState([]);
 
   const handleAddTeam = (team) => {
     setTeam(team);
@@ -72,9 +74,6 @@ const InfoBox = ({
   const handleToggle = () => {
     setIsOpen((prev) => !prev);
   };
-
-  const [searchValue, setSearchValue] = useState('');
-  const [itemsToDisplay, setItemsToDisplay] = useState([]);
 
   useEffect(() => {
     setItemsToDisplay(items);
@@ -271,6 +270,7 @@ const InfoBox = ({
             setShow={setShowEditModal}
             handlePortfolioChange={onChange}
             handleUpdateTeam={handleUpdateTeam}
+            items={itemsToDisplay}
           />
 
           {itemsToDisplay.length ? (
@@ -282,10 +282,26 @@ const InfoBox = ({
                     key={item._id}
                   >
                     {/* {index + 1}. {item.content} */}
-                    <span style={{ fontWeight: 'bold' }}>
-                      {item.content.title}:
-                    </span>{' '}
-                    <span>{item.content.content}</span>
+                    {
+                      item.contentDisplay ? <>
+                        <>
+                          {
+                            !item.displayNoContent && item.contentsToDisplay && Array.isArray(item.contentsToDisplay) ?
+                            React.Children.toArray(item.contentsToDisplay.map((itemContent, itemIndex) => {
+                              return <>
+                                <span>{itemIndex + 1}. {itemContent.header} - {itemContent.content}</span>
+                                <br />
+                              </>
+                            })) : <></>
+                          }
+                        </>
+                      </> : <>
+                        <span style={{ fontWeight: 'bold' }}>
+                          {item.content.title}:
+                        </span>{' '}
+                        <span>{item.content.content}</span> 
+                      </>
+                    }
                   </InfoContentText>
                 ))}
               </InfoContentBox>

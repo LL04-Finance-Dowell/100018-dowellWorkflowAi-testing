@@ -37,7 +37,18 @@ const AssignTask = ({ currentStepIndex, stepsPopulated }) => {
   };
 
   return (
-    <FormLayout isSubmitted={stepsPopulated ? stepsPopulated : isSubmitSuccessful} loading={loading}>
+    <FormLayout 
+      isSubmitted={
+        stepsPopulated && 
+        processSteps.find(
+          process => process.workflow === docCurrentWorkflow?._id
+        )?.steps[currentStepIndex]?.stepProcessingOrder ? 
+        true 
+        : 
+        isSubmitSuccessful
+      } 
+      loading={loading}
+    >
       <form onSubmit={handleSubmit(onSubmit)}>
         <Select
           label="member order"

@@ -21,7 +21,7 @@ import AssignCollapse from "./contents/assignCollapse/AssignCollapse";
 import React from "react";
 import { useTranslation } from "react-i18next";
 
-const ConnectWorkFlowToDoc = ({ stepsPopulated }) => {
+const ConnectWorkFlowToDoc = ({ stepsPopulated, savedProcessSteps }) => {
   const { register } = useForm();
   const dispatch = useDispatch();
   const { t } = useTranslation();
@@ -40,15 +40,31 @@ const ConnectWorkFlowToDoc = ({ stepsPopulated }) => {
   const [showSteps, setShowSteps] = useState([]);
 
   useEffect(() => {
-    if (stepsPopulated) return setCurrentSteps(stepsPopulated);
     setCurrentSteps(docCurrentWorkflow?.workflows?.steps);
-  }, [docCurrentWorkflow, stepsPopulated]);
+  }, [docCurrentWorkflow]);
 
   const [contentToggle, setContentToggle] = useState(false);
 
   // console.log("sssssssssssssssssss", wfToDocument);
 
   useEffect(() => {
+    if (stepsPopulated) {
+      dispatch(setProcessSteps(savedProcessSteps));
+      
+      // this will also be updated in the nearest future to capture multiple workflows
+      const enabledSavedSteps = savedProcessSteps[0]?.steps?.map((step, index) => {
+        if (step.stepPublicMembers.length > 0 || step.stepTeamMembers.length > 0 || step?.stepDocumentMap?.length > 0 || step?.stepRights?.length > 0) {
+          return {
+            _id: docCurrentWorkflow?.workflows?.steps[index]._id,
+            index: index,
+            enableStep: true
+          }
+        }
+        return null
+      }).filter(step => step);
+      setEnabledSteps(enabledSavedSteps);
+      return
+    }
     setCurrentSteps(
       docCurrentWorkflow ? docCurrentWorkflow?.workflows?.steps : []
     );
@@ -89,7 +105,7 @@ const ConnectWorkFlowToDoc = ({ stepsPopulated }) => {
     stepsForWorkflow.push(stepsObj);
 
     dispatch(setProcessSteps(stepsForWorkflow));
-  }, [docCurrentWorkflow, stepsPopulated]);
+  }, [docCurrentWorkflow, stepsPopulated, savedProcessSteps]);
 
   const handleToggleContent = (id) => {
     setCurrentSteps((prev) =>
@@ -226,14 +242,14 @@ const ConnectWorkFlowToDoc = ({ stepsPopulated }) => {
                         <div
                           className={`${styles.step__header} ${styles.title__box}`}
                         >
-                          {item.step_name}
+                          {item.step_name ? item.step_name : item.steps ? item.steps[index]?.stepName : ''}
                         </div>
                       </div>
                       <div>
                         <div className={styles.checkbox}>
                           <input
                             {...register("skip")}
-                            id="skip"
+                            id={"skip-" + index}
                             type="checkbox"
                             onChange={(e) =>
                               handleSkipSelection(
@@ -254,12 +270,12 @@ const ConnectWorkFlowToDoc = ({ stepsPopulated }) => {
                               )?.steps[index]?.skipStep
                             }
                           />
-                          <label htmlFor="skip">Skip this Step</label>
+                          <label htmlFor={"skip-" + index}>Skip this Step</label>
                         </div>
                         <div className={styles.checkbox}>
                           <input
                             {...register("permit")}
-                            id="permit"
+                            id={"permit-" + index}
                             type="checkbox"
                             onChange={(e) => {
                               handlePermitInternalSelection(
@@ -286,7 +302,7 @@ const ConnectWorkFlowToDoc = ({ stepsPopulated }) => {
                               )?.steps[index]?.permitInternalWorkflow
                             }
                           />
-                          <label htmlFor="permit">
+                          <label htmlFor={"permit-" + index}>
                             Permit internal workflow in this Step
                           </label>
                         </div>

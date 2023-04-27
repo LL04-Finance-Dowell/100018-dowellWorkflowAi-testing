@@ -163,8 +163,15 @@ const Location = ({ currentStepIndex, stepsPopulated }) => {
       }
       <button className={parentStyles.primary__button}>set location</button>
     </form>
-    { isSubmitted || stepsPopulated ? <p style={{ margin: "0", padding: "0px 20px 10px"}}>Saved</p> : <></> }
-
+    { 
+      isSubmitted || 
+      processSteps.find(
+        process => process.workflow === docCurrentWorkflow?._id
+      )?.steps[currentStepIndex]?.stepLocation ? 
+      <p style={{ margin: "0", padding: "0px 20px 10px"}}>Saved</p> 
+      : 
+      <></> 
+    }
     </>
   );
 };
