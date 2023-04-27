@@ -29,13 +29,17 @@ from app.constants import (
     WF_PROCESS_DICT,
 )
 
-# time
 dd = datetime.now()
 time = dd.strftime("%d:%m:%Y,%H:%M:%S")
 headers = {"Content-Type": "application/json"}
 
 
-def dowellconnection(
+def post_to_data_service(data):
+    response = requests.post(url=DOWELLCONNECTION_URL, data=data, headers=headers)
+    return json.loads(response.text)
+
+# The Popular dowell connection
+def get_data_from_data_service(
     cluster,
     platform,
     database,
@@ -45,9 +49,9 @@ def dowellconnection(
     function_ID,
     command,
     field,
-    update_field,
 ):
-    data = json.dumps(
+    """Pass In DB info + look fields + DB query to get data"""
+    payload = json.dumps(
         {
             "cluster": cluster,
             "platform": platform,
@@ -58,42 +62,160 @@ def dowellconnection(
             "function_ID": function_ID,
             "command": command,
             "field": field,
-            "update_field": update_field,
+            "update_field": "nil",
         }
     )
-    headers = {"content-type": "application/json"}
-    response = requests.request(
-        "POST", DOWELLCONNECTION_URL, headers=headers, data=data
+    response = post_to_data_service(payload)
+    res = json.loads(response)
+    if res["data"] is not None:
+        return res["data"]
+
+    return []
+
+
+def get_template_list(company_id, data_type):
+    return get_data_from_data_service(
+        *TEMPLATE_CONNECTION_LIST,
+        "fetch",
+        {"company_id": company_id, "data_type": data_type},
     )
-    return json.loads(response.text)
 
 
-# old 22sec query
-# def get_event_id():
-#     dd = datetime.now()
-#     time = dd.strftime("%d:%m:%Y,%H:%M:%S")
-#     url = "https://100003.pythonanywhere.com/event_creation"
-#     data = {
-#         "platformcode": "FB",
-#         "citycode": "101",
-#         "daycode": "0",
-#         "dbcode": "pfm",
-#         "ip_address": "192.168.0.41",
-#         "login_id": "lav",
-#         "session_id": "new",
-#         "processcode": "1",
-#         "regional_time": time,
-#         "dowell_time": time,
-#         "location": "22446576",
-#         "objectcode": "1",
-#         "instancecode": "100051",
-#         "context": "afdafa ",
-#         "document_id": "3004",
-#         "rules": "some rules",
-#         "status": "work",
-#     }
-#     r = requests.post(url, json=data)
-#     return r.text
+def get_links_object_by_process_id(process_id):
+    return get_data_from_data_service(
+        *LINK_CONNECTION_LIST,
+        "fetch",
+        {"process_id": str(process_id)},
+    )
+
+
+def get_link_object(unique_hash):
+    return get_data_from_data_service(
+        *QR_ID_CONNECTION_LIST, {"unique_hash": str(unique_hash)}, "find"
+    )
+
+
+def get_links_object_by_document_id(document_id):
+    return get_data_from_data_service(
+        *LINK_CONNECTION_LIST, "fetch", {"document_id": str(document_id)}
+    )
+
+
+def get_links_list(company_id):
+    return get_data_from_data_service(
+        *LINK_CONNECTION_LIST, "fetch", {"company_id": str(company_id)}
+    )
+
+
+def get_wf_setting_object(wf_setting_id):
+    return get_data_from_data_service(
+        *WF_AI_SETTING_LIST,
+        "find",
+        {"_id": wf_setting_id},
+    )
+
+
+def get_wfai_setting_list(company_id):
+    return get_data_from_data_service(
+        *WF_AI_SETTING_LIST, "fetch", {"company_id": str(company_id)}
+    )
+
+
+def get_document_object(document_id):
+    return get_data_from_data_service(
+        *DOCUMENT_CONNECTION_LIST, "find", {"_id": document_id}
+    )
+
+
+def get_document_list(company_id, data_type):
+    return get_data_from_data_service(
+        *DOCUMENT_CONNECTION_LIST,
+        "fetch",
+        {"company_id": str(company_id), "data_type": data_type},
+    )
+
+
+def get_uuid_object(uuid_hash):
+    return get_data_from_data_service(
+        *QR_ID_CONNECTION_LIST, "find", {"uuid_hash": uuid_hash}
+    )
+
+
+def get_uuid(process_id):
+    return get_data_from_data_service(
+        *QR_ID_CONNECTION_LIST, "fetch", {"process_id": process_id}
+    )
+
+
+def get_team(team_id):
+    return get_data_from_data_service(
+        *MANAGEMENT_REPORTS_LIST, "find", {"_id": team_id}
+    )
+
+
+def get_team_list(company_id):
+    return get_data_from_data_service(
+        *MANAGEMENT_REPORTS_LIST,
+        "fetch",
+        {"company_id": str(company_id)},
+    )
+
+
+def get_template_object(template_id):
+    return get_data_from_data_service(
+        *TEMPLATE_CONNECTION_LIST, "find", {"_id": template_id}
+    )
+
+
+def get_wf_list(company_id, data_type):
+    return get_data_from_data_service(
+        *WF_CONNECTION_LIST,
+        "fetch",
+        {"company_id": str(company_id), "data_type": data_type},
+    )
+
+
+def get_wf_object(workflow_id):
+    return get_data_from_data_service(
+        *WF_CONNECTION_LIST, "find", {"_id": str(workflow_id)}
+    )
+
+
+def get_all_wf_list():  # TODO: Check where it is used
+    fields = {}
+    response_obj = dowellconnection(*WF_CONNECTION_LIST, "fetch", fields, "nil")
+    res_obj = json.loads(response_obj)
+    wf_list = []
+    for wf in res_obj["data"]:
+        wf["id"] = wf["_id"]
+        wf_list.append(wf)
+    if len(res_obj["data"]) > 0:
+        return wf_list  # res_obj["data"]
+    else:
+        return []
+
+
+def get_process_object(workflow_process_id):
+    return get_data_from_data_service(
+        *PROCESS_CONNECTION_LIST, "find", {"_id": str(workflow_process_id)}
+    )
+
+
+def get_process_list(company_id, data_type):
+    return get_data_from_data_service(
+        *PROCESS_CONNECTION_LIST,
+        "fetch",
+        {
+            "company_id": str(company_id),
+            "data_type": data_type,
+        },
+    )
+
+
+def get_process_link_list(company_id):
+    return get_data_from_data_service(
+        *LINK_CONNECTION_LIST,  "fetch", {"company_id": str(company_id)}
+    )
 
 
 def get_event_id():
@@ -130,41 +252,6 @@ def get_event_id():
         return json.loads(r.text)["error"]
 
 
-# --------- User Info-------------------------
-
-
-def get_user_list(company_id):
-    field = {"company_id": str(company_id)}
-    response_obj = dowellconnection(*USER_CONNECTION_LIST, "fetch", field, "nil")
-    res_obj = json.loads(response_obj)
-    if len(res_obj["data"]):
-        return res_obj["data"]
-    else:
-        return []
-
-
-def get_user(user_name):
-    field = {"user_name": str(user_name)}
-    response_obj = dowellconnection(*REGISTRATION_ARGS, "find", field, "nil")
-    res_obj = json.loads(response_obj)
-    print(res_obj)
-    if len(res_obj["data"]):
-        return res_obj["data"]
-    else:
-        return []
-
-
-def get_user_info_by_username(username):
-    fields = {"Username": username}
-    response = dowellconnection(*REGISTRATION_ARGS, "fetch", fields, "nil")
-    usrdic = json.loads(response)
-    if len(usrdic["data"]) == 0:
-        return []
-    else:
-        return usrdic["data"][0]
-
-
-# ----------------------- Links Creation -------------------------
 def save_process_links(links, process_id, item_id, company_id):
     payload = json.dumps(
         {
@@ -182,56 +269,9 @@ def save_process_links(links, process_id, item_id, company_id):
             "platform": "bangalore",
         }
     )
-    response = requests.request(
-        "POST", DOWELLCONNECTION_URL, headers=headers, data=payload
-    )
-
-    return json.loads(json.loads(response.text))
+    return post_to_data_service(payload)
 
 
-# By processID
-def get_links_object_by_process_id(process_id):
-    fields = {
-        "process_id": str(process_id),
-    }
-    response_obj = dowellconnection(*LINK_CONNECTION_LIST, "find", fields, "nil")
-    res_obj = json.loads(response_obj)
-    if res_obj["data"] is not None:
-        if len(res_obj["data"]):
-            return res_obj["data"]
-        else:
-            return []
-    return []
-
-
-def get_link_object(unique_hash):
-    fields = {
-        "unique_hash": str(unique_hash),
-    }
-    response_obj = dowellconnection(*QR_ID_CONNECTION_LIST, "find", fields, "nil")
-    res_obj = json.loads(response_obj)
-    if res_obj["data"] is not None:
-        if len(res_obj["data"]):
-            return res_obj["data"]
-        else:
-            return []
-    return []
-
-
-# By documentID
-def get_links_object_by_document_id(document_id):
-    fields = {"document_id": str(document_id)}
-    response_obj = dowellconnection(*LINK_CONNECTION_LIST, "find", fields, "nil")
-    res_obj = json.loads(response_obj)
-    if res_obj["data"] is not None:
-        if len(res_obj["data"]):
-            return res_obj["data"]
-        else:
-            return []
-    return []
-
-
-#  -------------------------------Workflow Process------------------
 def save_process_qrcodes(
     qrcodes, process_id, item_id, processing_choice, process_title, company_id
 ):
@@ -253,27 +293,10 @@ def save_process_qrcodes(
             "platform": "bangalore",
         }
     )
-    response = requests.request(
-        "POST", DOWELLCONNECTION_URL, headers=headers, data=payload
-    )
 
-    return json.loads(response.text)
+    return post_to_data_service(payload)
 
 
-# ----------------------- Links Creation -------------------------
-
-
-def get_process_link_list(company_id):
-    fields = {"company_id": str(company_id)}
-    response_obj = dowellconnection(*LINK_CONNECTION_LIST, "fetch", fields, "nil")
-    res_obj = json.loads(response_obj)
-    if len(res_obj["data"]):
-        return res_obj["data"]
-    else:
-        return []
-
-
-#  -------------------------------Workflow Process------------------
 def save_wf_process(
     process_title,
     process_steps,
@@ -311,56 +334,7 @@ def save_wf_process(
             "platform": "bangalore",
         }
     )
-    response = requests.request(
-        "POST", DOWELLCONNECTION_URL, headers=headers, data=payload
-    )
-
-    return json.loads(json.loads(response.text))
-
-
-def update_wf_process(process_id, steps, state):
-    payload = json.dumps(
-        {
-            **WF_PROCESS_DICT,
-            "command": "update",
-            "field": {
-                "_id": process_id,
-            },
-            "update_field": {"process_steps": steps, "processing_state": state},
-            "platform": "bangalore",
-        }
-    )
-    response = requests.request(
-        "POST", DOWELLCONNECTION_URL, headers=headers, data=payload
-    )
-
-    return json.loads(response.text)
-
-
-def get_process_object(workflow_process_id):
-    fields = {"_id": str(workflow_process_id)}
-    response_obj = dowellconnection(*PROCESS_CONNECTION_LIST, "find", fields, "nil")
-    res_obj = json.loads(response_obj)
-    if len(res_obj["data"]):
-        return res_obj["data"]
-    else:
-        return []
-
-
-def get_process_list(company_id, data_type):
-    fields = {
-        "company_id": str(company_id),
-        "data_type": data_type,
-    }
-    response_obj = dowellconnection(*PROCESS_CONNECTION_LIST, "fetch", fields, "nil")
-    res_obj = json.loads(response_obj)
-    if len(res_obj["data"]):
-        return res_obj["data"]
-    else:
-        return []
-
-
-# -------------------------------- Workflows-------------------
+    return post_to_data_service(payload)
 
 
 def save_wf(workflows, company_id, created_by, data_type):
@@ -385,92 +359,9 @@ def save_wf(workflows, company_id, created_by, data_type):
             "platform": "bangalore",
         }
     )
-    response = requests.request(
-        "POST", DOWELLCONNECTION_URL, headers=headers, data=payload
-    )
-
-    return json.loads(response.text)
+    return post_to_data_service(payload)
 
 
-def update_wf(workflow_id, old_workflow):
-    payload = json.dumps(
-        {
-            **WF_CONNECTION_DICT,
-            "command": "update",
-            "field": {
-                "_id": workflow_id,
-            },
-            "update_field": {
-                "eventId": get_event_id()["event_id"],
-                "workflows": old_workflow["workflows"],
-                "created_by": old_workflow["created_by"],
-                "company_id": old_workflow["company_id"],
-            },
-            "platform": "bangalore",
-        }
-    )
-    response = requests.request(
-        "POST", DOWELLCONNECTION_URL, headers=headers, data=payload
-    )
-
-    return json.loads(response.text)
-
-
-def update_wf_approval(workflow_id, approval):
-    payload = json.dumps(
-        {
-            **WF_CONNECTION_DICT,
-            "command": "update",
-            "field": {
-                "_id": workflow_id,
-            },
-            "update_field": {
-                "approved": approval,
-            },
-            "platform": "bangalore",
-        }
-    )
-    response = requests.request(
-        "POST", DOWELLCONNECTION_URL, headers=headers, data=payload
-    )
-    return json.loads(response.text)
-
-
-def get_wf_object(workflow_id):
-    fields = {"_id": str(workflow_id)}
-    response_obj = dowellconnection(*WF_CONNECTION_LIST, "find", fields, "nil")
-    res_obj = json.loads(response_obj)
-    if len(res_obj["data"]) > 0:
-        return res_obj["data"]
-    else:
-        return []
-
-
-def get_all_wf_list():
-    fields = {}
-    response_obj = dowellconnection(*WF_CONNECTION_LIST, "fetch", fields, "nil")
-    res_obj = json.loads(response_obj)
-    wf_list = []
-    for wf in res_obj["data"]:
-        wf["id"] = wf["_id"]
-        wf_list.append(wf)
-    if len(res_obj["data"]) > 0:
-        return wf_list  # res_obj["data"]
-    else:
-        return []
-
-
-def get_wf_list(company_id, data_type):
-    fields = {"company_id": str(company_id), "data_type": data_type}
-    response_obj = dowellconnection(*WF_CONNECTION_LIST, "fetch", fields, "nil")
-    res_obj = json.loads(response_obj)
-    if len(res_obj["data"]) > 0:
-        return res_obj["data"]
-    else:
-        return []
-
-
-# ------------------------------------------ Templates-----------------------------
 def save_template(name, data, page, created_by, company_id, data_type):
     payload = json.dumps(
         {
@@ -496,76 +387,9 @@ def save_template(name, data, page, created_by, company_id, data_type):
             "platform": "bangalore",
         }
     )
-    response = requests.request(
-        "POST", DOWELLCONNECTION_URL, headers=headers, data=payload
-    )
-    return json.loads(response.text)
+    return post_to_data_service(payload)
 
 
-def get_template_object(template_id):
-    fields = {"_id": template_id}
-    response_obj = dowellconnection(*TEMPLATE_CONNECTION_LIST, "find", fields, "nil")
-    res_obj = json.loads(response_obj)
-    if len(res_obj["data"]) > 0:
-        return res_obj["data"]
-    else:
-        return []
-
-
-def update_template(template_id, data):
-    payload = json.dumps(
-        {
-            **TEMPLATE_CONNECTION_DICT,
-            "command": "update",
-            "field": {
-                "_id": template_id,
-            },
-            "update_field": {
-                "content": data,
-            },
-            "platform": "bangalore",
-        }
-    )
-    response = requests.request(
-        "POST", DOWELLCONNECTION_URL, headers=headers, data=payload
-    )
-
-    return json.loads(response.text)
-
-
-def update_template_approval(template_id, approval):
-    payload = json.dumps(
-        {
-            **TEMPLATE_CONNECTION_DICT,
-            # "command": "insert",
-            "command": "update",
-            "field": {
-                "_id": template_id,
-            },
-            "update_field": {
-                "approved": approval,
-            },
-            "platform": "bangalore",
-        }
-    )
-    response = requests.request(
-        "POST", DOWELLCONNECTION_URL, headers=headers, data=payload
-    )
-
-    return json.loads(response.text)
-
-
-def get_template_list(company_id, data_type):
-    fields = {"company_id": company_id, "data_type": data_type}
-    response_obj = dowellconnection(*TEMPLATE_CONNECTION_LIST, "fetch", fields, "nil")
-    res_obj = json.loads(response_obj)
-    if len(res_obj["data"]) > 0:
-        return res_obj["data"]
-    else:
-        return []
-
-
-# -------------------------- Document----------------------------------------
 def save_document(
     name,
     data,
@@ -579,8 +403,6 @@ def save_document(
     parent_id,
     process_id,
 ):
-    det = datetime.now()
-    created_time = det.strftime("%d:%m:%Y,%H:%M:%S")
     payload = json.dumps(
         {
             **DOCUMENT_CONNECTION_DICT,
@@ -591,7 +413,7 @@ def save_document(
                 "content": data,
                 "company_id": company_id,
                 "created_by": created_by,
-                "created_at": created_time,
+                "created_at": time,
                 "rejection_message": "",
                 "rejected_by": "",
                 "document_state": state,
@@ -608,33 +430,175 @@ def save_document(
         }
     )
 
-    response = requests.request(
-        "POST", DOWELLCONNECTION_URL, headers=headers, data=payload
-    )
-
-    return json.loads(response.text)
+    return post_to_data_service(payload)
 
 
-def update_document(document_id, process_id, state):
+def save_wf_setting(
+    company_id,
+    created_by,
+    data_type,
+    process,
+    documents,
+    templates,
+    workflows,
+    notarisation,
+    folders,
+    records,
+    references,
+    approval,
+    evaluation,
+    reports,
+    management,
+    portfolio,
+    theme_color,
+):
+    """Saving workflow settings"""
+
     payload = json.dumps(
         {
-            **DOCUMENT_CONNECTION_DICT,
-            "command": "update",
+            **WF_AI_SETTING_DICT,
+            "command": "insert",
             "field": {
-                "_id": document_id,
+                "eventId": get_event_id()["event_id"],
+                "company_id": company_id,
+                "created_by": created_by,
+                "Process": process,
+                "Documents": documents,
+                "Templates": templates,
+                "Workflows": workflows,
+                "Notarisation": notarisation,
+                "Folders": folders,
+                "Records": records,
+                "References": references,
+                "Approval_Process": approval,
+                "Evaluation_Process": evaluation,
+                "Reports": reports,
+                "Management": management,
+                "Portfolio_Choice": portfolio,
+                "theme_color": theme_color,
+                "data_type": data_type,
+                "created_on": time,
             },
-            "update_field": {
-                "process_id": process_id,
-                "document_state": state,
-            },
+            "update_field": {"order_nos": 21},
             "platform": "bangalore",
         }
     )
-    response = requests.request(
-        "POST", DOWELLCONNECTION_URL, headers=headers, data=payload
+
+    return post_to_data_service(payload)
+
+
+def save_uuid_hash(
+    link,
+    process_id,
+    item_id,
+    auth_role,
+    user_name,
+    auth_portfolio,
+    unique_hash,
+    item_type,
+):
+    payload = json.dumps(
+        {
+            **QR_ID_CONNECTION_DICT,
+            "command": "insert",
+            "field": {
+                "eventId": get_event_id()["event_id"],
+                "link": link,
+                "item_id": item_id,
+                "process_id": process_id,
+                "auth_role": auth_role,
+                "user_name": user_name,
+                "auth_portfolio": auth_portfolio,
+                "unique_hash": unique_hash,
+                "item_type": item_type,
+                "status": True,  # if True: valid ? Invalid
+            },
+            "update_field": {"order_nos": 21},
+            "platform": "bangalore",
+        }
     )
 
-    return json.loads(response.text)
+    return post_to_data_service(payload)
+
+
+def save_team(
+    team_name,
+    team_type,
+    team_code,
+    team_spec,
+    details,
+    universal_code,
+    portfolio_list,
+    company_id,
+    created_by,
+    data_type,
+):
+    payload = json.dumps(
+        {
+            **MANAGEMENT_REPORTS_DICT,
+            "command": "insert",
+            "field": {
+                "team_name": team_name,
+                "team_type": team_type,
+                "team_code": team_code,
+                "team_spec": team_spec,
+                "universal_code": universal_code,
+                "details": details,
+                # "team_member": team_member,
+                "portfolio_list": portfolio_list,
+                "created_at": time,
+                "company_id": company_id,
+                "created_by": created_by,
+                "data_type": data_type,
+            },
+            "update_field": {"order_nos": 21},
+            "platform": "bangalore",
+        }
+    )
+    return post_to_data_service(payload)
+
+
+def authorize(document_id, viewers, process, item_type):
+    payload = None
+
+    if item_type == "document":
+        payload = json.dumps(
+            {
+                **DOCUMENT_CONNECTION_DICT,
+                "command": "update",
+                "field": {
+                    "_id": document_id,
+                },
+                "update_field": {
+                    "auth_viewers": viewers,
+                    "document_state": "processing",
+                    "process_id": process,
+                },
+                "platform": "bangalore",
+            }
+        )
+
+    if item_type == "template":
+        payload = json.dumps(
+            {
+                **TEMPLATE_CONNECTION_DICT,
+                "command": "update",
+                "field": {
+                    "_id": document_id,
+                },
+                "update_field": {
+                    "auth_viewers": viewers,
+                    "document_state": "processing",
+                    "process_id": process,
+                },
+                "platform": "bangalore",
+            }
+        )
+
+    if payload is not None:
+        return post_to_data_service(payload)
+
+    return
 
 
 def finalize(item_id, state, item_type):
@@ -686,13 +650,114 @@ def finalize(item_id, state, item_type):
         )
 
     if payload is not None:
-        response = requests.request(
-            "POST", DOWELLCONNECTION_URL, headers=headers, data=payload
-        )
-
-        return json.loads(json.loads(response.text))
+        return post_to_data_service(payload)
 
     return
+
+
+def update_wf_process(process_id, steps, state):
+    payload = json.dumps(
+        {
+            **WF_PROCESS_DICT,
+            "command": "update",
+            "field": {
+                "_id": process_id,
+            },
+            "update_field": {"process_steps": steps, "processing_state": state},
+            "platform": "bangalore",
+        }
+    )
+    return post_to_data_service(payload)
+
+
+def update_wf(workflow_id, old_workflow):
+    payload = json.dumps(
+        {
+            **WF_CONNECTION_DICT,
+            "command": "update",
+            "field": {
+                "_id": workflow_id,
+            },
+            "update_field": {
+                "eventId": get_event_id()["event_id"],
+                "workflows": old_workflow["workflows"],
+                "created_by": old_workflow["created_by"],
+                "company_id": old_workflow["company_id"],
+            },
+            "platform": "bangalore",
+        }
+    )
+    return post_to_data_service(payload)
+
+
+def update_wf_approval(workflow_id, approval):
+    payload = json.dumps(
+        {
+            **WF_CONNECTION_DICT,
+            "command": "update",
+            "field": {
+                "_id": workflow_id,
+            },
+            "update_field": {
+                "approved": approval,
+            },
+            "platform": "bangalore",
+        }
+    )
+    return post_to_data_service(payload)
+
+
+def update_template(template_id, data):
+    payload = json.dumps(
+        {
+            **TEMPLATE_CONNECTION_DICT,
+            "command": "update",
+            "field": {
+                "_id": template_id,
+            },
+            "update_field": {
+                "content": data,
+            },
+            "platform": "bangalore",
+        }
+    )
+    return post_to_data_service(payload)
+
+
+def update_template_approval(template_id, approval):
+    payload = json.dumps(
+        {
+            **TEMPLATE_CONNECTION_DICT,
+            # "command": "insert",
+            "command": "update",
+            "field": {
+                "_id": template_id,
+            },
+            "update_field": {
+                "approved": approval,
+            },
+            "platform": "bangalore",
+        }
+    )
+    return post_to_data_service(payload)
+
+
+def update_document(document_id, process_id, state):
+    payload = json.dumps(
+        {
+            **DOCUMENT_CONNECTION_DICT,
+            "command": "update",
+            "field": {
+                "_id": document_id,
+            },
+            "update_field": {
+                "process_id": process_id,
+                "document_state": state,
+            },
+            "platform": "bangalore",
+        }
+    )
+    return post_to_data_service(payload)
 
 
 def update_document_clone(document_id, clone_list):
@@ -707,156 +772,10 @@ def update_document_clone(document_id, clone_list):
             "platform": "bangalore",
         }
     )
-    response = requests.request(
-        "POST", DOWELLCONNECTION_URL, headers=headers, data=payload
-    )
-
-    return json.loads(response.text)
-
-
-def authorize(document_id, viewers, process, item_type):
-    payload = None
-
-    if item_type == "document":
-        payload = json.dumps(
-            {
-                **DOCUMENT_CONNECTION_DICT,
-                "command": "update",
-                "field": {
-                    "_id": document_id,
-                },
-                "update_field": {
-                    "auth_viewers": viewers,
-                    "document_state": "processing",
-                    "process_id": process,
-                },
-                "platform": "bangalore",
-            }
-        )
-
-    if item_type == "template":
-        payload = json.dumps(
-            {
-                **TEMPLATE_CONNECTION_DICT,
-                "command": "update",
-                "field": {
-                    "_id": document_id,
-                },
-                "update_field": {
-                    "auth_viewers": viewers,
-                    "document_state": "processing",
-                    "process_id": process,
-                },
-                "platform": "bangalore",
-            }
-        )
-
-    if payload is not None:
-        response = requests.request(
-            "POST", DOWELLCONNECTION_URL, headers=headers, data=payload
-        )
-
-        return json.loads(response.text)
-
-    return
-
-
-def get_links_list(company_id):
-    """Get all links in an org"""
-    fields = {
-        "company_id": str(company_id),
-        # "process_id": str("640260a8bd505fa70c180aa9"),
-    }
-    response_obj = dowellconnection(*LINK_CONNECTION_LIST, "fetch", fields, "nil")
-    res_obj = json.loads(response_obj)
-    if len(res_obj["data"]):
-        return res_obj["data"]
-    else:
-        return []
-
-
-def save_wf_setting(
-    company_id,
-    created_by,
-    data_type,
-    process,
-    documents,
-    templates,
-    workflows,
-    notarisation,
-    folders,
-    records,
-    references,
-    approval,
-    evaluation,
-    reports,
-    management,
-    portfolio,
-    theme_color,
-):
-    """Saving workflow settings"""
-    payload = json.dumps(
-        {
-            **WF_AI_SETTING_DICT,
-            "command": "insert",
-            "field": {
-                "eventId": get_event_id()["event_id"],
-                "company_id": company_id,
-                "created_by": created_by,
-                "Process": process,
-                "Documents": documents,
-                "Templates": templates,
-                "Workflows": workflows,
-                "Notarisation": notarisation,
-                "Folders": folders,
-                "Records": records,
-                "References": references,
-                "Approval_Process": approval,
-                "Evaluation_Process": evaluation,
-                "Reports": reports,
-                "Management": management,
-                "Portfolio_Choice": portfolio,
-                "theme_color": theme_color,
-                "data_type": data_type,
-                "created_on": time,
-            },
-            "update_field": {"order_nos": 21},
-            "platform": "bangalore",
-        }
-    )
-
-    response = requests.request(
-        "POST", DOWELLCONNECTION_URL, headers=headers, data=payload
-    )
-
-    return json.loads(json.loads(response.text))
-
-
-# Get WF Setting Data
-def get_wf_setting_object(wf_setting_id):
-    fields = {"_id": wf_setting_id}
-    response_obj = dowellconnection(*WF_AI_SETTING_LIST, "find", fields, "nil")
-    # print("document object-------------- \n", response_obj)
-    res_obj = json.loads(response_obj)
-    try:
-        return res_obj["data"]
-    except RuntimeError:
-        return []
-
-
-def get_wfai_setting_list(company_id):
-    fields = {"company_id": str(company_id)}
-    response_obj = dowellconnection(*WF_AI_SETTING_LIST, "fetch", fields, "nil")
-    res_obj = json.loads(response_obj)
-    if len(res_obj["data"]):
-        return res_obj["data"]
-    else:
-        return []
+    return post_to_data_service(payload)
 
 
 def wf_setting_update(wf_setting_id, data):
-    dd = datetime.now()
-    time = dd.strftime("%d:%m:%Y,%H:%M:%S")
     payload = json.dumps(
         {
             **WF_AI_SETTING_DICT,
@@ -880,99 +799,12 @@ def wf_setting_update(wf_setting_id, data):
                 "Portflio": data["Portflio"],
                 "theme_color": data["theme_color"],
                 "data_type": "Real_data",
+                "created_at": time,
             },
             "platform": "bangalore",
         }
     )
-    response = requests.request(
-        "POST", DOWELLCONNECTION_URL, headers=headers, data=payload
-    )
-
-    return json.loads(response.text)
-
-
-def get_document_object(document_id):
-    fields = {"_id": document_id}
-    response_obj = dowellconnection(*DOCUMENT_CONNECTION_LIST, "find", fields, "nil")
-    res_obj = json.loads(response_obj)
-    try:
-        return res_obj["data"]
-    except RuntimeError:
-        return []
-
-
-def get_document_list(company_id, data_type):
-    fields = {"company_id": str(company_id), "data_type": data_type}
-    response_obj = dowellconnection(*DOCUMENT_CONNECTION_LIST, "fetch", fields, "nil")
-    res_obj = json.loads(response_obj)
-    if len(res_obj["data"]) > 0:
-        return res_obj["data"]
-    else:
-        return []
-
-
-# ---------- Hashes --------------------------
-
-
-def save_uuid_hash(
-    link,
-    process_id,
-    item_id,
-    auth_role,
-    user_name,
-    auth_portfolio,
-    unique_hash,
-    item_type,
-):
-    payload = json.dumps(
-        {
-            **QR_ID_CONNECTION_DICT,
-            "command": "insert",
-            "field": {
-                "eventId": get_event_id()["event_id"],
-                "link": link,
-                "item_id": item_id,
-                "process_id": process_id,
-                "auth_role": auth_role,
-                "user_name": user_name,
-                "auth_portfolio": auth_portfolio,
-                "unique_hash": unique_hash,
-                "item_type": item_type,
-                "status": True,  # if True: valid ? Invalid
-            },
-            "update_field": {"order_nos": 21},
-            "platform": "bangalore",
-        }
-    )
-
-    response = requests.request(
-        "POST", DOWELLCONNECTION_URL, headers=headers, data=payload
-    )
-
-    return json.loads(json.loads(response.text))
-
-
-def get_uuid_object(uuid_hash):
-    fields = {"uuid_hash": uuid_hash}
-    response_obj = dowellconnection(*QR_ID_CONNECTION_LIST, "find", fields, "nil")
-    print("UUID query object response : ", response_obj)
-    res_obj = json.loads(response_obj)
-    if len(res_obj["data"]):
-        return res_obj["data"]
-    else:
-        return []
-
-
-# for links in wf lists
-def get_uuid(process_id):
-    fields = {"process_id": process_id}
-    response_obj = dowellconnection(*QR_ID_CONNECTION_LIST, "find", fields, "nil")
-    print("UUID Hash : ", response_obj)
-    res_obj = json.loads(response_obj)
-    if len(res_obj["data"]):
-        return res_obj["data"]
-    else:
-        return []
+    return post_to_data_service(payload)
 
 
 def update_uuid_object(uuid_hash):
@@ -985,11 +817,7 @@ def update_uuid_object(uuid_hash):
             "platform": "bangalore",
         }
     )
-    response = requests.request(
-        "POST", DOWELLCONNECTION_URL, headers=headers, data=payload
-    )
-
-    return json.loads(response.text)
+    return post_to_data_service(payload)
 
 
 def delete_template(template_id, data_type):
@@ -1006,11 +834,7 @@ def delete_template(template_id, data_type):
             "platform": "bangalore",
         }
     )
-    response = requests.request(
-        "POST", DOWELLCONNECTION_URL, headers=headers, data=payload
-    )
-
-    return json.loads(json.loads(response.text))
+    return post_to_data_service(payload)
 
 
 def delete_document(document_id, data_type):
@@ -1027,11 +851,7 @@ def delete_document(document_id, data_type):
             "platform": "bangalore",
         }
     )
-    response = requests.request(
-        "POST", DOWELLCONNECTION_URL, headers=headers, data=payload
-    )
-
-    return json.loads(json.loads(response.text))
+    return post_to_data_service(payload)
 
 
 def delete_workflow(workflow_id, data_type):
@@ -1048,11 +868,7 @@ def delete_workflow(workflow_id, data_type):
             "platform": "bangalore",
         }
     )
-    response = requests.request(
-        "POST", DOWELLCONNECTION_URL, headers=headers, data=payload
-    )
-
-    return json.loads(json.loads(response.text))
+    return post_to_data_service(payload)
 
 
 def delete_process(process_id, data_type):
@@ -1069,114 +885,7 @@ def delete_process(process_id, data_type):
             "platform": "bangalore",
         }
     )
-    response = requests.request(
-        "POST", DOWELLCONNECTION_URL, headers=headers, data=payload
-    )
-
-    return json.loads(json.loads(response.text))
-
-
-def targeted_population(database, collection, fields, period):
-    """Population Function"""
-
-    database_details = {
-        "database_name": "mongodb",
-        "collection": collection,
-        "database": database,
-        "fields": fields,
-    }
-
-    # number of variables for sampling rule
-    number_of_variables = -1
-
-    """
-        period can be 'custom' or 'last_1_day' or 'last_30_days' or 'last_90_days' or 'last_180_days' or 'last_1_year' or 'life_time'
-        if custom is given then need to specify start_point and end_point
-        for others datatpe 'm_or_A_selction' can be 'maximum_point' or 'population_average'
-        the the value of that selection in 'm_or_A_value'
-        error is the error allowed in percentage
-    """
-
-    time_input = {
-        "column_name": "Date",
-        "split": "week",
-        "period": period,
-        "start_point": "2021/01/08",
-        "end_point": "2021/01/25",
-    }
-
-    stage_input_list = []
-
-    # distribution input
-    distribution_input = {"normal": 1, "poisson": 0, "binomial": 0, "bernoulli": 0}
-
-    request_data = {
-        "database_details": database_details,
-        "distribution_input": distribution_input,
-        "number_of_variable": number_of_variables,
-        "stages": stage_input_list,
-        "time_input": time_input,
-    }
-
-    response = requests.post(
-        url=TARGETED_POPULATION_URL, json=request_data, headers=headers
-    )
-
-    res = json.loads(response.text)
-
-    return res
-
-
-def save_team(
-    team_name,
-    team_type,
-    team_code,
-    team_spec,
-    details,
-    universal_code,
-    portfolio_list,
-    company_id,
-    created_by,
-    data_type,
-):
-    payload = json.dumps(
-        {
-            **MANAGEMENT_REPORTS_DICT,
-            "command": "insert",
-            "field": {
-                "team_name": team_name,
-                "team_type": team_type,
-                "team_code": team_code,
-                "team_spec": team_spec,
-                "universal_code": universal_code,
-                "details": details,
-                # "team_member": team_member,
-                "portfolio_list": portfolio_list,
-                "created_at": time,
-                "company_id": company_id,
-                "created_by": created_by,
-                "data_type": data_type,
-            },
-            "update_field": {"order_nos": 21},
-            "platform": "bangalore",
-        }
-    )
-    response = requests.request(
-        "POST", DOWELLCONNECTION_URL, headers=headers, data=payload
-    )
-
-    return json.loads(response.text)
-
-
-def get_team(team_id):
-    fields = {"_id": team_id}
-    response_obj = dowellconnection(*MANAGEMENT_REPORTS_LIST, "find", fields, "nil")
-    # print("document object-------------- \n", response_obj)
-    res_obj = json.loads(response_obj)
-    try:
-        return res_obj["data"]
-    except RuntimeError:
-        return []
+    return post_to_data_service(payload)
 
 
 def update_team_data(team_id, team_data):
@@ -1188,8 +897,6 @@ def update_team_data(team_id, team_data):
                 "_id": team_id,
             },
             "update_field": {
-                # "eventId": get_event_id()["event_id"],
-                # "_id": team_id,
                 "team_name": team_data["team_name"],
                 "team_type": team_data["team_type"],
                 "team_code": team_data["team_code"],
@@ -1204,18 +911,4 @@ def update_team_data(team_id, team_data):
             "platform": "bangalore",
         }
     )
-    response = requests.request(
-        "POST", DOWELLCONNECTION_URL, headers=headers, data=payload
-    )
-
-    return json.loads(response.text)
-
-
-def get_team_list(company_id):
-    fields = {"company_id": str(company_id)}
-    response_obj = dowellconnection(*MANAGEMENT_REPORTS_LIST, "fetch", fields, "nil")
-    res_obj = json.loads(response_obj)
-    if len(res_obj["data"]) > 0:
-        return res_obj["data"]
-    else:
-        return []
+    return post_to_data_service(payload)
