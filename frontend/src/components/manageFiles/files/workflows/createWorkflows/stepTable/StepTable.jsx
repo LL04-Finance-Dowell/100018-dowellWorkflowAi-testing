@@ -1,6 +1,7 @@
 import styles from "./stepTable.module.css";
 import { MdModeEditOutline } from "react-icons/md";
 import { RiDeleteBinLine } from "react-icons/ri";
+import { useTranslation } from "react-i18next";
 
 const StepTable = ({
   currentTableCell,
@@ -21,14 +22,15 @@ const StepTable = ({
   const handleRemoveInternalTemplate = (id) => {
     setInternalWorkflows((prev) => prev.filter((item) => item._id !== id));
   };
+  const { t } = useTranslation();
 
   return (
     <div className={styles.container}>
       <table>
         <thead>
           <tr>
-            <th>step name</th>
-            <th>role</th>
+            <th>{t("step name")}</th>
+            <th>{t("role")}</th>
           </tr>
         </thead>
         <tbody>

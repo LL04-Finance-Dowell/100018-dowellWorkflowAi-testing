@@ -11,9 +11,12 @@ import {
 	setWfToDocument,
 } from "../../../../features/app/appSlice";
 import { contentDocument } from "../../../../features/document/asyncThunks";
+import { useTranslation } from "react-i18next";
 
 const SelectWorkflow = ({ savedDoc }) => {
 	const dispatch = useDispatch();
+	const { t } = useTranslation();
+
 	const { currentDocToWfs } = useSelector((state) => state.app);
 
 	const handleRemove = () => {
@@ -34,17 +37,17 @@ const SelectWorkflow = ({ savedDoc }) => {
 	return (
 		<div className={styles.container}>
 			<h2 className={`${styles.title} h2-small step-title align-left`}>
-				2. Select a Workflow to add to the selected documents
+				2. {t("Select a Workflow to add to the selected documents")}
 			</h2>
 			<div className={styles.content__box}>
 				<SelectWorkflowBoxes savedDoc={savedDoc} />
 				<SelectedWorkflows savedDoc={savedDoc} />
 				<div className={styles.button__container}>
 					<PrimaryButton onClick={handleConnectWfToDoc} hoverBg={savedDoc ? "" : "success"} disabled={savedDoc ? true : false} style={{ cursor: savedDoc ? "not-allowed" : "pointer" }}>
-						Add Selected Workflows to document
+						{t("Add Selected Workflows to document")}
 					</PrimaryButton>
 					<PrimaryButton onClick={handleRemove} hoverBg={savedDoc ? "" : "error"} disabled={savedDoc ? true : false} style={{ cursor: savedDoc ? "not-allowed" : "pointer" }}>
-						Remove Selected Workflows from document
+						{t("Remove Selected Workflows from document")}
 					</PrimaryButton>
 				</div>
 			</div>

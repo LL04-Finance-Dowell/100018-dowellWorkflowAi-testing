@@ -6,48 +6,47 @@ import axios from 'axios'
 import { useTranslation } from "react-i18next";
 
 const Chat = () => {
+  const { t } = useTranslation();
 
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const [isNestedPopupOpen, setIsNestedPopupOpen] = useState(false);
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState([]);
-  const [modals, setModal] = useState([]);
+  const [modals, setModals] = useState({ product: "", portfolio: "" });
 
-  const { t } = useTranslation();
+useEffect(() => {
+fetch('https://100096.pythonanywhere.com/d-chat/Workflow-AI/?session_id=36ht78fmzfzgovk1lq5rqeozkpees1qi')
+.then(res => res.json())
+.then(data => setModals(data))
+}, [])
 
-  useEffect(() => {
-    fetch('https://100096.pythonanywhere.com/send/1/')
-      .then(res => res.json())
-      .then(data => console.warn(data))
-  }, [])
+const handleMessageSend = () => {
+if (message.trim() === "") {
+return;
+}
+axios.post('https://100096.pythonanywhere.com/send_message/1/',
+{
+message,
+product: modals.product,
+portfolio: modals.portfolio
+}
+)
+.then(res => {
+const newMessage = { text: message, sender: "" };
+const updatedMessages = [...messages, newMessage];
+setMessages(updatedMessages);
+setMessage("");
+})
+.catch(err => console.log(err));
+}
 
+useEffect(() => {
+// fetch messages from API and update messages state
+fetch('https://100096.pythonanywhere.com/messages/')
+.then(res => res.json())
+.then(data => setMessages(data))
+}, [])
 
-  const handleMessageSend = () => {
-    if (message.trim() === "") {
-      return;
-    }
-    console.log(message)
-    console.log(modals.product, modals.port)
-    axios.post('https://100096.pythonanywhere.com/send/1/',
-      {
-        message,
-        product: modals.product,
-        portfolio: modals.portfolio
-      }
-    )
-
-      .then(res => res.json())
-      .then(data => {
-        const newMessage = { text: message, sender: "" };
-        const updatedMessages = [...messages, newMessage];
-        setMessages(updatedMessages);
-
-        // Clear the input field
-
-        setMessage("");
-      })
-      .catch(err => console.log(err));
-  }
   const handleButtonClick = () => {
     setIsPopupOpen(true);
   };
@@ -64,8 +63,12 @@ const Chat = () => {
   const handleNestedPopupClose = () => {
     setIsNestedPopupOpen(false);
   };
+
+
+
   useEffect(() => {
-    fetch('https://100096.pythonanywhere.com/send/1/')
+    // fetch messages from API and update messages state
+    fetch('https://100096.pythonanywhere.com/send_message/1/')
       .then(res => res.json())
       .then(data => console.log(data))
   }, [])

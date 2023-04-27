@@ -4,9 +4,11 @@ import workflowAiSettingsStyles from "../workflowAiSettings.module.css";
 import { v4 as uuidv4 } from "uuid";
 import { useDispatch } from "react-redux";
 import { setThemeColor } from "../../../features/app/appSlice";
+import { useTranslation } from "react-i18next";
 
 const Themes = () => {
   const dispatch = useDispatch();
+  const { t } = useTranslation();
 
   const handleSetTheme = (color) => {
     dispatch(setThemeColor(color));
@@ -17,7 +19,7 @@ const Themes = () => {
       <h2
         className={`${workflowAiSettingsStyles.title} ${workflowAiSettingsStyles.title__m}`}
       >
-        Set Colour Theme for Workflow AI
+        {t("Set Colour Theme for Workflow AI")}
       </h2>
       <div className={workflowAiSettingsStyles.section__container}>
         {buttons.map((item) => (
@@ -27,7 +29,7 @@ const Themes = () => {
               className={styles.button}
               style={{ backgroundColor: item.color }}
             >
-              Select
+              {t("Select")}
             </div>
           </div>
         ))}

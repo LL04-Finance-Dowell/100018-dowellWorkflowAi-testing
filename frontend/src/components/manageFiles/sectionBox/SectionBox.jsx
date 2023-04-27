@@ -132,7 +132,13 @@ const SectionBox = ({ cardItems, title, Card, status, idKey, itemType, hideFavor
       };
 
       getAllProcessesV2(data.company_id).then(res => {
-        dispatch(setAllProcesses(res.data.filter(process => process.processing_state).reverse()));
+        const savedProcessesInLocalStorage = JSON.parse(localStorage.getItem('user-saved-processes'));
+        if (savedProcessesInLocalStorage) {
+          const processes = [...savedProcessesInLocalStorage, ...res.data.filter(process => process.processing_state)].sort((a, b) => new Date(b?.created_at) - new Date(a?.created_at));
+          dispatch(setAllProcesses(processes));
+        } else {
+          dispatch(setAllProcesses(res.data.filter(process => process.processing_state).reverse()));
+        }
         toast.success("Successfully refreshed processes")
         setRefreshLoading(false)
       }).catch(err => {

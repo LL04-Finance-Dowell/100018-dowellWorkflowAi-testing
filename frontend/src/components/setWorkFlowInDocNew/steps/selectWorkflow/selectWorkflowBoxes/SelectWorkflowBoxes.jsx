@@ -27,6 +27,7 @@ import {
   savedWorkflows,
 } from "../../../../../features/workflow/asyncTHunks";
 import { toast } from "react-toastify";
+import { useTranslation } from "react-i18next";
 
 const InfoBoxes = ({ savedDoc }) => {
   const { register, watch } = useForm();
@@ -34,6 +35,7 @@ const InfoBoxes = ({ savedDoc }) => {
 
   const ref = useRef(null);
   const dispatch = useDispatch();
+	const { t } = useTranslation();
 
   const { userDetail } = useSelector((state) => state.auth);
   const {
@@ -284,7 +286,7 @@ const InfoBoxes = ({ savedDoc }) => {
                 >
                   {infoBox.isOpen ? <MdOutlineRemove /> : <GrAdd />}
                 </div>
-                <a>{infoBox.title}</a>
+                <a>{t(infoBox.title)}</a>
               </>
             )}
           </InfoTitleBox>

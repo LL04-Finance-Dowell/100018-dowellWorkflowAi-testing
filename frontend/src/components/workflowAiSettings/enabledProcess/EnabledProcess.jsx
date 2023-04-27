@@ -12,9 +12,12 @@ import {
 } from "../../../features/app/appSlice";
 import { setIsSelected } from "../../../utils/helpers";
 import { createWorkflowSettings } from "../../../features/settings/asyncThunks";
+import { useTranslation } from "react-i18next";
 
 const EnabledProcess = () => {
   const dispatch = useDispatch();
+  const { t } = useTranslation();
+
   const { settingProccess, proccess } = useSelector((state) => state.app);
   const { createWorkflowSettings: createWorkflowSettingsItems, createStatus } =
     useSelector((state) => state.settings);
@@ -100,7 +103,7 @@ const EnabledProcess = () => {
             <h2
               className={`${workflowAiSettingsStyles.title} ${workflowAiSettingsStyles.title__m}`}
             >
-              {item.title}
+              {t(item.title)}
             </h2>
             <div className={workflowAiSettingsStyles.section__container}>
               {item.children && (
@@ -150,7 +153,7 @@ const EnabledProcess = () => {
           /*  status={createStatus} */
           className={workflowAiSettingsStyles.submit__button}
         >
-          Update Assigned Rights for Processes
+          {t("Update Assigned Rights for Processes")}
         </button>
       </form>
     </>

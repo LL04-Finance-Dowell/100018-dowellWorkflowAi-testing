@@ -17,6 +17,7 @@ import styles from './workflowAiSettings.module.css';
 import { ImHome3 } from 'react-icons/im';
 import { Link } from 'react-router-dom';
 import { useAppContext } from '../../contexts/AppContext';
+import { useTranslation } from "react-i18next";
 
 const Container = styled.div`
   & button:not(.edit_modal_sect button) {
@@ -25,6 +26,8 @@ const Container = styled.div`
 `;
 
 const WorkflowAiSettings = () => {
+  const { t } = useTranslation();
+
   const { themeColor } = useSelector((state) => state.app);
 
   const { handleSubmit, register } = useForm();
@@ -92,7 +95,7 @@ const WorkflowAiSettings = () => {
             <Link to='/' className={`${styles.home__btn}`}>
               <ImHome3 />
             </Link>
-            {item.title}
+            {t(item.title)}
           </h2>
           <div className={styles.section__container}>
             {item.children.map((childItem) => (

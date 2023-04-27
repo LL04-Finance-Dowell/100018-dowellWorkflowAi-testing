@@ -132,7 +132,6 @@ const Sidebar = () => {
 
 				<h2 className={styles.user__box__text}>
 					{t('Welcome', { username: userDetail?.userinfo?.username })}
-					{console.log(userDetail?.userinfo?.username)}
 				</h2>
 			</div>
 			<div className={styles.organization__box}>

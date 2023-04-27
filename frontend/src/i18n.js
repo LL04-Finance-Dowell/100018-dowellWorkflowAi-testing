@@ -33,7 +33,7 @@ const resources = {
   .init({
     resources,
     fallbackLng: "en",
-    debug: true,
+    debug: false,
     lng: "en",
     interpolation: {
       escapeValue: false, // not needed for react as it escapes by default

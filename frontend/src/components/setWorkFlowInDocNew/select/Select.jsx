@@ -1,6 +1,9 @@
 import styles from "./select.module.css";
+import { useTranslation } from "react-i18next";
 
 const Select = ({ options, register, name, label, takeOptionValue, takeNormalValue, takeActionValue, currentValue, ...rest }) => {
+  const { t } = useTranslation();
+  
   return (
     <div className={styles.container}>
       <label htmlFor={name}>{label}</label>
@@ -32,7 +35,7 @@ const Select = ({ options, register, name, label, takeOptionValue, takeNormalVal
             } 
             key={item.id}
           >
-            {item.option}
+            {t(item.option)}
           </option>
         ))}
       </select>

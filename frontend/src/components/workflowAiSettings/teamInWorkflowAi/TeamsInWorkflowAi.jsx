@@ -15,11 +15,14 @@ import { v4 } from 'uuid';
 import { WorkflowSettingServices } from '../../../services/workflowSettingServices';
 import { toast } from 'react-toastify';
 import { useAppContext } from '../../../contexts/AppContext';
+import { useTranslation } from "react-i18next";
 
 // TODO FIX ADDITION OF NEW TEAM TO 'workflowTeams' 132.
 const TeamsInWorkflowAi = () => {
   // *Populating of 'teamsInWorkflowAITeams' with fetched teams is done in 'infoBox.jsx'
   const dispatch = useDispatch();
+  const { t } = useTranslation();
+
   const { register, handleSubmit } = useForm();
 
   const workflowSettingServices = new WorkflowSettingServices();
@@ -406,7 +409,7 @@ const TeamsInWorkflowAi = () => {
       <h2
         className={`${workflowAiSettingsStyles.title} ${workflowAiSettingsStyles.title__m}`}
       >
-        {teamsInWorkflowAI[0].title}
+        {t(teamsInWorkflowAI[0].title)}
       </h2>
       <div className={workflowAiSettingsStyles.section__container}>
         <form style={{ width: '100%' }}>
@@ -436,7 +439,7 @@ const TeamsInWorkflowAi = () => {
                 : {}
             }
           >
-            {!isCreatingTeam ? 'create new team' : 'creating...'}
+            {!isCreatingTeam ? t('create new team') : t('creating...')}
           </button>
         </form>
         <div className={workflowAiSettingsStyles.section__box}>
@@ -488,7 +491,7 @@ const TeamsInWorkflowAi = () => {
                 : {}
             }
           >
-            {!isUpdatingTeam ? 'Update team details' : 'Updating...'}
+            {!isUpdatingTeam ? t('Update team details') : t('Updating...')}
           </button>
         </form>
       </div>

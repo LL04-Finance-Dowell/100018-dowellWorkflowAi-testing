@@ -19,10 +19,12 @@ import AssignDocumentMap from "./contents/assignDocumentMap/AssignDocumentMap";
 import SelectMembersToAssign from "./contents/selectMembersToAssign/SelectMembersToAssign";
 import AssignCollapse from "./contents/assignCollapse/AssignCollapse";
 import React from "react";
+import { useTranslation } from "react-i18next";
 
 const ConnectWorkFlowToDoc = ({ stepsPopulated }) => {
   const { register } = useForm();
   const dispatch = useDispatch();
+  const { t } = useTranslation();
 
   const { contentOfDocument, contentOfDocumentStatus } = useSelector(
     (state) => state.document
@@ -186,7 +188,7 @@ const ConnectWorkFlowToDoc = ({ stepsPopulated }) => {
     <>
       <div className={styles.container}>
         <h2 className="h2-small step-title align-left">
-          3. Connect Selected Workflows to the selected Document
+          3. {t("Connect Selected Workflows to the selected Document")}
         </h2>
 
         {"contentOfDocumentStatus" === "pending" ? (

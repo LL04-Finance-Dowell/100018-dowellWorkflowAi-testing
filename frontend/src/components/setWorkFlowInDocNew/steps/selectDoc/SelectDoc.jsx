@@ -19,9 +19,12 @@ import { setCurrentDocToWfs } from "../../../../features/app/appSlice";
 import { LoadingSpinner } from "../../../LoadingSpinner/LoadingSpinner";
 import { setContentOfDocument } from "../../../../features/document/documentSlice";
 import SelectedDocuments from "./selectedDocuments/SelectedDocuments";
+import { useTranslation } from "react-i18next";
 
 const SelectDoc = ({ savedDoc }) => {
   const dispatch = useDispatch();
+  const { t } = useTranslation();
+
   const { allDocuments: allDocumentsArray, allDocumentsStatus } = useSelector(
     (state) => state.document
   );
@@ -65,7 +68,7 @@ const SelectDoc = ({ savedDoc }) => {
   return (
     <div className={styles.container} style={{ cursor: savedDoc ? "not-allowed" : "default" }}>
       <h2 className="h2-small step-title align-left">
-        1. Select a Document to add Workflows
+        1. {t("Select a Document to add Workflows")}
       </h2>
       <div className={styles.content__continer}>
         <div className={styles.left__container}>
@@ -117,8 +120,8 @@ const SelectDoc = ({ savedDoc }) => {
                             (selectedDocument) =>
                               selectedDocument._id === item._id
                           )
-                            ? "selected"
-                            : "click here"}
+                            ? t("selected")
+                            : t("click here")}
                         </button>
                       </div>
                     </div>

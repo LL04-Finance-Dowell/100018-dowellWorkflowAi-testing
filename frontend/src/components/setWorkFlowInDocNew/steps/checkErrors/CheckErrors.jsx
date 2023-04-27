@@ -8,8 +8,11 @@ import InfoBox from "../../../infoBox/InfoBox";
 import { useSelector } from "react-redux";
 import ProgressBar from "../../../progressBar/ProgressBar";
 import { toast } from "react-toastify";
+import { useTranslation } from "react-i18next";
 
 const CheckErrors = () => {
+  const { t } = useTranslation();
+
   const {
     register,
     handleSubmit,
@@ -96,7 +99,7 @@ const CheckErrors = () => {
   return (
     <div className={styles.container}>
       <h2 className={`h2-small step-title align-left`}>
-        4. Check errors before processing
+        4. {t("Check errors before processing")}
       </h2>
       <div className={styles.content__box}>
         <Select
@@ -106,7 +109,7 @@ const CheckErrors = () => {
           takeNormalValue={true}
         />
         <div className={styles.info__container} style={{ alignItems: "center" }}>
-          <PrimaryButton hoverBg="success" onClick={handleSortProcess} style={{ width: "50%", height: "2.2rem" }}>Show Process</PrimaryButton>
+          <PrimaryButton hoverBg="success" onClick={handleSortProcess} style={{ width: "50%", height: "2.2rem" }}>{t("Show Process")}</PrimaryButton>
           { sortLoading ? <ProgressBar durationInMS={1000} style={{ width: "50%", height: "2.2rem" }} /> : <></> }
           {/* <PrimaryButton hoverBg="success">25%</PrimaryButton> */}
         </div>

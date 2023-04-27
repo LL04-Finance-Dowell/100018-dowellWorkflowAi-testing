@@ -40,7 +40,13 @@ const ProcessesPage = ({ home, showOnlySaved, showOnlyPaused, showOnlyCancelled,
     }
 
     getAllProcessesV2(userDetail?.portfolio_info[0]?.org_id).then(res => {
-      dispatch(setAllProcesses(res.data.filter(process => process.processing_state).reverse()));
+      const savedProcessesInLocalStorage = JSON.parse(localStorage.getItem('user-saved-processes'));
+      if (savedProcessesInLocalStorage) {
+        const processes = [...savedProcessesInLocalStorage, ...res.data.filter(process => process.processing_state)].sort((a, b) => new Date(b?.created_at) - new Date(a?.created_at));
+        dispatch(setAllProcesses(processes));
+      } else {
+        dispatch(setAllProcesses(res.data.filter(process => process.processing_state).reverse()));
+      }
       dispatch(setProcessesLoading(false));
       dispatch(setProcessesLoaded(true));
     }).catch(err => {

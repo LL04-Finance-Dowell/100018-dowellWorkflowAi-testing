@@ -12,9 +12,12 @@ import {
 } from "../../../features/app/appSlice";
 import { v4 as uuidv4 } from "uuid";
 import { setIsSelected } from "../../../utils/helpers";
+import { useTranslation } from "react-i18next";
 
 const EnabledDisabkedProcess = () => {
   const dispatch = useDispatch();
+  const { t } = useTranslation();
+
   const { column, permissionArray } = useSelector((state) => state.app);
   const { handleSubmit, register } = useForm();
 
@@ -90,7 +93,7 @@ const EnabledDisabkedProcess = () => {
           <h2
             className={`${workflowAiSettingsStyles.title} ${workflowAiSettingsStyles.title__m}`}
           >
-            {item.title}
+            {t(item.title)}
           </h2>
           <div className={workflowAiSettingsStyles.section__container}>
             {item.children?.map((childItem) => (

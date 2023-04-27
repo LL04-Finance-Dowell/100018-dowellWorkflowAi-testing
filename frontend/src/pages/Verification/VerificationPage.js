@@ -9,14 +9,19 @@ import "./style.css";
 import { timeZoneToCountryObj } from "../../utils/timezonesObj";
 import dowellLogo from "../../assets/dowell.png";
 import { updateVerificationDataWithTimezone } from "../../utils/helpers";
+import { useAppContext } from "../../contexts/AppContext";
+import { dowellLoginUrl } from "../../httpCommon/httpCommon";
 
 const VerificationPage = () => {
     const { token } = useParams();
     const [ loading, setLoading ] = useState(true);
     const { userDetail } = useSelector(state => state.auth);
     const [ verificationFailed, setVerificationFailed ] = useState(false);
+    const { isPublicUser, publicUserConfigured } = useAppContext();
 
     useEffect(() => {
+        if (!publicUserConfigured) return
+        
         const dataToPost = {
             token: token,
             user_name: userDetail?.userinfo?.username,
@@ -38,8 +43,9 @@ const VerificationPage = () => {
             const auth_username = paramsPassed.get('auth_user');
             const auth_portfolio = paramsPassed.get('auth_portfolio');
             const auth_role = paramsPassed.get('auth_role');
+            const user_type = paramsPassed.get('user_type');
     
-            if (auth_username !== userDetail?.userinfo?.username || auth_portfolio !== userDetail?.portfolio_info[0]?.portfolio_name) {
+            if ((!isPublicUser) && (userDetail) && (auth_username !== userDetail?.userinfo?.username || auth_portfolio !== userDetail?.portfolio_info[0]?.portfolio_name)) {
                 toast.info("You are not authorized to view this");
                 setLoading(false);
                 setVerificationFailed(true);
@@ -49,6 +55,8 @@ const VerificationPage = () => {
             sanitizedDataToPost.auth_username = auth_username;
             sanitizedDataToPost.auth_portfolio = auth_portfolio;      
             sanitizedDataToPost.auth_role = auth_role;
+            sanitizedDataToPost.user_type = user_type;
+            sanitizedDataToPost.org_name = isPublicUser ? 'public' : userDetail?.selected_product?.product_name;
             
             delete sanitizedDataToPost.user_name;
             delete sanitizedDataToPost.portfolio;
@@ -68,7 +76,12 @@ const VerificationPage = () => {
             toast.info(err.response ? err.response.status === 500 ? "Process verification failed" : err.response.data : "Process verification failed")
         })
         
-    }, [token])
+    }, [token, isPublicUser, userDetail, publicUserConfigured])
+
+    const handleLoginLinkClick = (e) => {
+        e.preventDefault();
+        window.location.replace(dowellLoginUrl);
+    }
 
     if (loading) return <div className="workflow__Verification__Page__Container__Spinner">
         <div className="verification__Spinner__Item">
@@ -81,7 +94,19 @@ const VerificationPage = () => {
             {
                 verificationFailed && <>
                     <img src={dowellLogo} alt={"workflow logo"} />
-                    <Link to={"/"}>Go back home</Link>
+                    <>
+                        {
+                            isPublicUser ? 
+                            <Link 
+                                to={dowellLoginUrl} 
+                                onClick={handleLoginLinkClick} 
+                                target="_blank" 
+                            >
+                                Go to WorkflowAI
+                            </Link> :
+                            <Link to={"/"}>Go back home</Link>
+                        }
+                    </>
                 </>
             }
         </div>

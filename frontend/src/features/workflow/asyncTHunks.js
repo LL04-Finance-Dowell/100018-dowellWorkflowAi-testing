@@ -103,11 +103,11 @@ export const detailWorkflow = createAsyncThunk(
     try {
       const res = await workflowServices.detailWorkflow(data);
 
-      console.log("detailWorkflow", res.data.workflow);
+      console.log("detailWorkflow", res.data);
 
-      asyncTHunks.dispatch(setCurrentWorkflow(res.data.workflow));
+      asyncTHunks.dispatch(setCurrentWorkflow(res.data));
 
-      return res.data.workflow;
+      return res.data;
     } catch (error) {
       console.log(error);
       asyncTHunks.dispatch(setToggleManageFileForm(false));

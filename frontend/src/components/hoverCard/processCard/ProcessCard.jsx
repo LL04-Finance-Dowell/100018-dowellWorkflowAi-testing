@@ -16,13 +16,20 @@ const ProcessCard = ({ cardItem, title }) => {
 
   const handleProcessItemClick = async (item) => {
     console.log(item)
-    if (item.processing_state === "draft" && item.workflow_construct_ids) navigate(`/workflows/new-set-workflow?id=${item._id}&state=${item.processing_state}`)
+    if (item.processing_state === "draft" && item.workflow_construct_ids) navigate(`/workflows/new-set-workflow?id=${item._id}&state=${item.processing_state}${item.isFromLocalStorage ? '&local=true' : ''}`)
   };
 
   const handleTrashProcess = async (cardItem) => {
     const copyOfAllProcesses = [...allProcesses];
     const foundProcessIndex = copyOfAllProcesses.findIndex(item => item._id === cardItem._id);
     if (foundProcessIndex === -1) return
+
+    if (cardItem.isFromLocalStorage) {
+      const savedProcessesInLocalStorage = JSON.parse(localStorage.getItem('user-saved-processes'));
+      localStorage.setItem('user-saved-processes', JSON.stringify(savedProcessesInLocalStorage.filter(process => process._id !== cardItem._id)));
+      dispatch(setAllProcesses(copyOfAllProcesses.filter(process => process._id !== cardItem._id)));
+      return
+    }
 
     const copyOfProcessToUpdate = { ...copyOfAllProcesses[foundProcessIndex] };
     copyOfProcessToUpdate.data_type = "Archive_Data";

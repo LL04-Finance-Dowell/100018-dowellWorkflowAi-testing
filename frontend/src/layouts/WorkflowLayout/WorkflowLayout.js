@@ -99,11 +99,13 @@ const WorkflowLayout = ({ children }) => {
       // Fetching processes
       getAllProcessesV2(userDetail?.portfolio_info[0]?.org_id)
         .then((res) => {
-          dispatch(
-            setAllProcesses(
-              res.data.filter((process) => process.processing_state).reverse()
-            )
-          );
+          const savedProcessesInLocalStorage = JSON.parse(localStorage.getItem('user-saved-processes'));
+          if (savedProcessesInLocalStorage) {
+            const processes = [...savedProcessesInLocalStorage, ...res.data.filter(process => process.processing_state)].sort((a, b) => new Date(b?.created_at) - new Date(a?.created_at));
+            dispatch(setAllProcesses(processes));
+          } else {
+            dispatch(setAllProcesses(res.data.filter(process => process.processing_state).reverse()));
+          }
           dispatch(setProcessesLoading(false));
           dispatch(setProcessesLoaded(true));
         })
@@ -130,9 +132,7 @@ const WorkflowLayout = ({ children }) => {
     const workflowProduct = userDetail?.portfolio_info?.find(
       (item) => item.product === 'Workflow AI'
     );
-    if (!workflowProduct || workflowProduct.member_type !== 'owner') return;
-
-    if (adminUserPortfolioLoaded) return;
+    if (!workflowProduct || workflowProduct.member_type !== 'owner' || adminUserPortfolioLoaded) return;
 
     // admin user
     dispatch(setAdminUser(true));
@@ -157,7 +157,6 @@ const WorkflowLayout = ({ children }) => {
         dispatch(setAdminUserPortfolioLoaded(true));
       });
   }, [session_id, userDetail]);
-  console.log(session_id)
 
   useEffect(() => {
     if (
@@ -265,7 +264,7 @@ const WorkflowLayout = ({ children }) => {
               >
                 <AiOutlineClose />
               </div>
-              <h3>Agree to terms</h3>
+              <h3>{t("Agree to terms")}</h3>
               {legalStatusLoading ? (
                 <LoadingSpinner />
               ) : (
@@ -273,7 +272,7 @@ const WorkflowLayout = ({ children }) => {
                   {dateAgreedToLegalStatus &&
                     dateAgreedToLegalStatus.length > 1 && (
                       <span className={styles.date__Agreed}>
-                        You agreed on:{' '}
+                        {t("You agreed on")}:{' '}
                         {formatDateAndTime(dateAgreedToLegalStatus)}
                       </span>
                     )}
@@ -283,14 +282,14 @@ const WorkflowLayout = ({ children }) => {
                       type='checkbox'
                       onChange={handleAgreeCheckBoxClick}
                     />
-                    I agree with the privacy policy and terms and conditions
+                    {t("I agree with the privacy policy and terms and conditions")}
                   </label>
                   <button
                     disabled={!legalTermsAgreed}
                     className={`${styles.legal__Register__Btn} ${styles.continue__Btn}`}
                     onClick={() => dispatch(setShowLegalStatusPopup(false))}
                   >
-                    {'Continue'}
+                    {t("Continue")}
                   </button>
                   {legalArgeePageLoading ? (
                     <div className='loading__Spinner__New__Portfolio abs__Pos'>

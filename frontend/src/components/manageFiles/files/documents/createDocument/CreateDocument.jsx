@@ -14,11 +14,14 @@ import { useEffect } from "react";
 import { createDocument } from "../../../../../features/document/asyncThunks";
 import { setToggleManageFileForm } from "../../../../../features/app/appSlice";
 import Spinner from "../../../../spinner/Spinner";
+import { useTranslation } from "react-i18next";
 
 const CreateDocument = ({ handleToggleOverlay }) => {
   const { userDetail } = useSelector((state) => state.auth);
 
   const dispatch = useDispatch();
+  const { t } = useTranslation();
+
   const { allTemplates: allTemplatesArray, allTemplatesStatus } = useSelector(
     (state) => state.template
   );
@@ -80,7 +83,7 @@ const CreateDocument = ({ handleToggleOverlay }) => {
         <form onSubmit={handleSubmit(onSubmit)}>
           <div id="template" className={styles.dropdown__container}>
             <label onClick={handleClickLabel} htmlFor="template">
-              Select Template <span>*</span>
+              {t("Select Template")} <span>*</span>
             </label>
             <div style={{ position: "relative" }}>
               <select
@@ -102,7 +105,8 @@ const CreateDocument = ({ handleToggleOverlay }) => {
               onClick={handleDropdown}
               className={`${styles.dropdown__current__option} `}
             >
-              {currentOption ? currentOption : "__Template Name__"}
+              {/* {currentOption ? currentOption : "__Template Name__"} */}
+              {currentOption ? currentOption : t("__Template Name__")}
             </button>
             <div className={styles.dropdown__option__container}>
               <Collapse open={toggleDropdown}>
@@ -120,14 +124,14 @@ const CreateDocument = ({ handleToggleOverlay }) => {
             </div>
           </div>
           <button type="submit" className={styles.create__button}>
-            <span>Go to Editor</span>
+            <span>{t("Go to Editor")}</span>
             <i>
               <BsArrowRightShort size={25} />
             </i>
           </button>
         </form>
       ) : (
-        <h4>No Template</h4>
+        <h4>{t("No Template")}</h4>
       )}
     </Overlay>
   );

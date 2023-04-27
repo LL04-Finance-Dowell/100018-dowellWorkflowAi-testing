@@ -26,7 +26,7 @@ export const createTemplate = createAsyncThunk(
   async (data, thunkAPI) => {
     try {
       const res = await templateServices.createTemplate(data);
-
+      console.log('template created: ', res.data);
       thunkAPI.dispatch(setEditorLink(res.data));
 
       return res.data;

@@ -29,6 +29,7 @@ import {
 
 import { v4 } from 'uuid';
 import { useAppContext } from '../../contexts/AppContext';
+import { useTranslation } from "react-i18next";
 
 const InfoBox = ({
   boxId,
@@ -52,6 +53,8 @@ const InfoBox = ({
   const { teamsInWorkflowAI } = useSelector((state) => state.app);
   const { userDetail } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
+  const { t } = useTranslation();
+
   const { workflowTeams, refetch, setRefetch } = useAppContext();
 
   const handleAddTeam = (team) => {
@@ -179,7 +182,7 @@ const InfoBox = ({
               <input type='checkbox' checked={isOpen} onChange={(e) => {}} />
             )}
           </div>{' '}
-          <a>{title}</a>
+          <a>{t(title)}</a>
         </InfoTitleBox>
       </div>
       <Collapse in={isOpen}>
@@ -213,11 +216,11 @@ const InfoBox = ({
                 </>
               )
             ) : (
-              <span>Create and select Team</span>
+              <span>{t("Create and select Team")}</span>
             )}
 
             {!itemsToDisplay.length ? (
-              <span style={{ textTransform: 'capitalize' }}>no {title}</span>
+              <span style={{ textTransform: 'capitalize' }}>{t("no")} {t(title)}</span>
             ) : (
               ''
             )}
@@ -299,7 +302,7 @@ const InfoBox = ({
                         onChange({ item, title, boxId, type }, e)
                       }
                     />
-                    <label htmlFor='javascript'>{item.content}</label>
+                    <label htmlFor='javascript'>{t(item.content)}</label>
                   </InfoContentFormText>
                 ))}
               </InfoContentBox>
@@ -317,7 +320,7 @@ const InfoBox = ({
                           type='checkbox'
                           name={title}
                         />
-                        <span key={item._id}>{item.content}</span>
+                        <span key={item._id}>{t(item.content)}</span>
                       </InfoContentFormText>
                     ))
                   : isTeams

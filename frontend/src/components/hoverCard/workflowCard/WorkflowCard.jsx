@@ -18,9 +18,12 @@ import { AiFillStar, AiOutlineHeart, AiOutlineStar } from "react-icons/ai";
 import { moveItemToArchive } from "../../../services/archiveServices";
 import { setAllWorkflows } from "../../../features/workflow/workflowsSlice";
 import { BsBookmark, BsFillBookmarkFill } from "react-icons/bs";
+import { useTranslation } from "react-i18next";
 
 const WorkflowCard = ({ cardItem }) => {
   const dispatch = useDispatch();
+  const { t } = useTranslation();
+
   const { favoriteItems, addToFavoritesState, removeFromFavoritesState } = useAppContext();
   const { userDetail } = useSelector((state) => state.auth);
   const { allWorkflows } = useSelector((state) => state.workflow);
@@ -118,14 +121,14 @@ const WorkflowCard = ({ cardItem }) => {
                 <table>
                   <thead>
                     <tr>
-                      <th>Step Name</th>
-                      <th>Role</th>
+                      <th>{t("Step Name")}</th>
+                      <th>{t("Role")}</th>
                     </tr>
                   </thead>
                   <tbody>
                     {cardItem.workflows?.steps.map((item) => (
                       <tr key={item._id}>
-                        <th>{item.step_name}</th>
+                        <th>{t(item.step_name)}</th>
                         <th>{item.role}</th>
                       </tr>
                     ))}
