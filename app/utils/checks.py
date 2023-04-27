@@ -6,6 +6,7 @@ from app.utils.mongo_db_connection import (
     get_document_object,
     get_link_object,
     get_template_object,
+    org_wfai_setting,
 )
 
 from .helpers import public_login
@@ -107,4 +108,9 @@ def user_presence(token, user_name, portfolio):
 
 def is_public_person_valid(qrid, org_name):
     valid = public_login(qrid, org_name)
+    return valid
+
+
+def is_wf_setting_exist(comp_id, org_name):
+    valid = org_wfai_setting(comp_id, org_name)
     return valid
