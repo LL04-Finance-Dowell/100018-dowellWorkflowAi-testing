@@ -5,6 +5,7 @@ from threading import Thread
 import bson
 import qrcode
 import requests
+from django.core.mail import send_mail
 
 from app.constants import EDITOR_API, PUBLIC_LOGIN_API, VERIFICATION_LINK
 from app.models import FavoriteDocument, FavoriteTemplate, FavoriteWorkflow
@@ -26,6 +27,20 @@ from .mongo_db_connection import (
 from .threads import notification
 
 headers = {"Content-Type": "application/json"}
+
+
+def notify_push():
+    """Tells me if code is pushed and deployed"""
+    subject = "Push and Deploy Done!"
+    message = f"Hi Edwin, Someone just pushed code."
+    email_from = settings.EMAIL_HOST_USER
+    recipient_list = [
+        "workflowaiedwin@gmail.com",
+    ]
+    try:
+        send_mail(subject, message, email_from, recipient_list)
+    except:
+        print("Mail not sent")
 
 
 def get_domain_host():

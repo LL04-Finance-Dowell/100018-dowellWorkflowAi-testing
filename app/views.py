@@ -8,7 +8,7 @@ from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from threading import Thread
-from app.utils import checks, processing, threads
+from app.utils import checks, processing
 from app.utils.helpers import (
     CREATE_WF_AI_SETTING,
     access_editor,
@@ -17,6 +17,7 @@ from app.utils.helpers import (
     list_favourites,
     remove_favourite,
     validate_id,
+    notify_push
 )
 from app.utils.mongo_db_connection import (
     delete_document,
@@ -57,11 +58,11 @@ from .constants import EDITOR_API
 def webhook(request):
     """Pick an event from GH and update our PA-server code"""
     if request.method == "POST":
+        # notify me about what has been done
+        notify_push()
         repo = git.Repo("/home/100094/100094.pythonanywhere.com")
         origin = repo.remotes.origin
         origin.pull()
-        # notify me about what has been done
-        Thread(target=threads.notify_push,).start()
         return Response("Updated PA successfully", status.HTTP_200_OK)
 
     return Response("Wrong event Type!", status.HTTP_400_BAD_REQUEST)
