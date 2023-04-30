@@ -38,6 +38,7 @@ def post_to_data_service(data):
     response = requests.post(url=DOWELLCONNECTION_URL, data=data, headers=headers)
     return json.loads(response.text)
 
+
 # The Popular dowell connection
 def get_data_from_data_service(
     cluster,
@@ -68,8 +69,10 @@ def get_data_from_data_service(
     response = post_to_data_service(payload)
     res = json.loads(response)
     if res["data"] is not None:
-        return res["data"]
-
+        if len(res["data"]):
+            return res["data"]
+        else:
+            return []
     return []
 
 
@@ -91,7 +94,7 @@ def get_links_object_by_process_id(process_id):
 
 def get_link_object(unique_hash):
     return get_data_from_data_service(
-        *QR_ID_CONNECTION_LIST, {"unique_hash": str(unique_hash)}, "find"
+        *QR_ID_CONNECTION_LIST, "find", {"unique_hash": str(unique_hash)}
     )
 
 
@@ -214,7 +217,7 @@ def get_process_list(company_id, data_type):
 
 def get_process_link_list(company_id):
     return get_data_from_data_service(
-        *LINK_CONNECTION_LIST,  "fetch", {"company_id": str(company_id)}
+        *LINK_CONNECTION_LIST, "fetch", {"company_id": str(company_id)}
     )
 
 

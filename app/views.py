@@ -59,8 +59,8 @@ def webhook(request):
     if request.method == "POST":
         repo = git.Repo("/home/100094/100094.pythonanywhere.com")
         origin = repo.remotes.origin
-
         origin.pull()
+        #TODO: Setup so that am always notified about this
         return Response("Updated PA successfully", status.HTTP_200_OK)
 
     return Response("Wrong event Type!", status.HTTP_400_BAD_REQUEST)
