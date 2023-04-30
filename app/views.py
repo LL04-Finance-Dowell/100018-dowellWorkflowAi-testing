@@ -55,6 +55,7 @@ from .constants import EDITOR_API
 
 @api_view(["POST"])
 def webhook(request):
+    """Pick an event from GH and update our PA-server code"""
     if request.method == "POST":
         repo = git.Repo("/home/100094/100094.pythonanywhere.com")
         origin = repo.remotes.origin
