@@ -259,7 +259,7 @@ def document_processing(request):
 def get_process_link(request, process_id):
     """get a link process for person having notifications"""
 
-    links_info = get_links_object_by_process_id(process_id)
+    links_info = get_links_object_by_process_id(process_id)[0]
     user = request.data["user_name"]
     if not links_info:
         return Response(
