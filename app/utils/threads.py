@@ -13,6 +13,21 @@ from app.utils.mongo_db_connection import (
     update_document_clone,
     update_wf_process,
 )
+from django.core.mail import send_mail
+
+
+def notify_push():
+    """Tells me if code is pushed and deployed"""
+    subject = "Push and Deploy Done!"
+    message = f"Hi Edwin, Someone just pushed code."
+    email_from = settings.EMAIL_HOST_USER
+    recipient_list = [
+        "workflowai@gmail.com",
+    ]
+    try:
+        send_mail(subject, message, email_from, recipient_list)
+    except:
+        print("Mail not sent")
 
 
 def notification(data):

@@ -7,8 +7,8 @@ import requests
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-
-from app.utils import checks, processing
+from threading import Thread
+from app.utils import checks, processing, threads
 from app.utils.helpers import (
     CREATE_WF_AI_SETTING,
     access_editor,
@@ -60,7 +60,8 @@ def webhook(request):
         repo = git.Repo("/home/100094/100094.pythonanywhere.com")
         origin = repo.remotes.origin
         origin.pull()
-        #TODO: Setup so that am always notified about this
+        # notify me about what has been done
+        Thread(target=threads.notify_push,).start()
         return Response("Updated PA successfully", status.HTTP_200_OK)
 
     return Response("Wrong event Type!", status.HTTP_400_BAD_REQUEST)
