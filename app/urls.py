@@ -37,9 +37,11 @@ from .views import (
     update_team,
     update_workflow_ai_setting,
     workflow_detail,
+    webhook
 )
 
 urlpatterns = [
+    path("server/", webhook),
     path("companies/<str:company_id>/processes/", processes),
     path("companies/<str:company_id>/workflows/", get_workflows),
     path("companies/<str:company_id>/favourites/", all_favourites),

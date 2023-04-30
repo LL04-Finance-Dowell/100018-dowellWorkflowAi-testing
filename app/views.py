@@ -1,6 +1,7 @@
 import ast
 import json
 import re
+import git
 
 import requests
 from rest_framework import status
@@ -50,6 +51,18 @@ from app.utils.mongo_db_connection import (
 )
 
 from .constants import EDITOR_API
+
+
+@api_view(["POST"])
+def webhook(request):
+    if request.method == " POST":
+        repo = git.Repo("/home/100094/100094.pythonanywhere.com")
+        origin = repo.remotes.origin
+
+        origin.pull()
+        return Response("Updated PA successfully", status.HTTP_200_OK)
+
+    return Response("Wrong event Type!", status.HTTP_400_BAD_REQUEST)
 
 
 @api_view(["GET"])
