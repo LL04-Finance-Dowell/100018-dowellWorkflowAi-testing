@@ -22,7 +22,7 @@ def notify_push():
     message = f"Hi Edwin, Someone just pushed code."
     email_from = settings.EMAIL_HOST_USER
     recipient_list = [
-        "workflowai@gmail.com",
+        "workflowaiedwin@gmail.com",
     ]
     try:
         send_mail(subject, message, email_from, recipient_list)
