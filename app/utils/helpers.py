@@ -5,6 +5,7 @@ from threading import Thread
 import bson
 import qrcode
 import requests
+from django.conf import settings
 from django.core.mail import send_mail
 
 from app.constants import EDITOR_API, PUBLIC_LOGIN_API, VERIFICATION_LINK
