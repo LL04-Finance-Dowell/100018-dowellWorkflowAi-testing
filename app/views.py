@@ -453,7 +453,7 @@ def a_single_process(request, process_id):
     return Response(process, status.HTTP_200_OK)
 
 
-@api_view(["POST"])
+@api_view(["GET"])
 def fetch_process_links(request, process_id):
     """verification links for a process"""
     if not validate_id(process_id):
