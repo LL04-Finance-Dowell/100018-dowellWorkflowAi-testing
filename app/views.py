@@ -1152,6 +1152,36 @@ def get_completed_documents(request, company_id):
         status=status.HTTP_200_OK,
     )
 
+@api_view(["GET"])
+def get_completed_documents_by_process(request, company_id, process_id):
+    """List of Completed Documents."""
+    data_type = request.query_params.get("data_type", "Real_Data")
+    process = request.query_params.get("document_name", process_id)
+
+    if not validate_id(company_id):
+        return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
+
+    document_list = get_document_list(company_id, data_type)
+
+    if not document_list:
+        return Response({"documents": []}, status=status.HTTP_200_OK)
+
+    if len(document_list) > 0:
+        cloned = list(
+            filter(lambda i: i.get("process_id") == process_id, document_list)
+        )
+        """To retrieve only the cloned list fields"""
+        # cloned = [doc.get("clone_list") for doc in document_list if doc.get("_id") == process_id]
+        return Response(
+            {f"document_list of process: {process_id}": cloned},
+            status=status.HTTP_200_OK,
+        )
+
+    return Response(
+        {f"document_list of process: {process_id}": []},
+        status=status.HTTP_200_OK,
+    )
+
 
 @api_view(["POST"])
 def create_workflow_ai_setting(request):
