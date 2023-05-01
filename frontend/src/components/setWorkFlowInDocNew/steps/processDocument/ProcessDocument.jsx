@@ -25,7 +25,7 @@ const ProcessDocument = ({ savedProcess }) => {
     setCurrentProcess(processDocument[0]);
 
     if (!savedProcess) return
-    console.log(savedProcess);
+    // console.log(savedProcess);
     setProcessObjectToSaveTitle(savedProcess.process_title);
   }, []);
 
