@@ -284,28 +284,52 @@ const ProcessDocument = ({ savedProcess }) => {
 
     // saving to local storage
     const savedProcessesInLocalStorage = JSON.parse(localStorage.getItem('user-saved-processes'));
-    if (!savedProcessesInLocalStorage) { // user has not saved any processes locally yet
+    
+    // user has never saved any processes locally before
+    if (!savedProcessesInLocalStorage) {
       localStorage.setItem('user-saved-processes', JSON.stringify(
         [processObjToSaveCopy]
       ));
-    } else { // user has saved processes locally
-      if (savedProcess) {   // user is making an update to a previously saved process
-        const foundProcessIndex = savedProcessesInLocalStorage.findIndex(process => process._id === processObjToSaveCopy._id);
-        if (foundProcessIndex !== -1) {
-          savedProcessesInLocalStorage[foundProcessIndex] = processObjToSaveCopy;
-          localStorage.setItem('user-saved-processes', JSON.stringify(savedProcessesInLocalStorage)); 
-        }
-      } else {
-        savedProcessesInLocalStorage.push(processObjToSaveCopy);
-        localStorage.setItem('user-saved-processes', JSON.stringify(savedProcessesInLocalStorage));  
-      }
+      updateUIAfterLocalProcessSave(processObjToSaveCopy);
+      return
+    } 
+
+    // user has saved processes locally before and is not making an update to a previously saved process
+    if (!savedProcess) {
+      savedProcessesInLocalStorage.push(processObjToSaveCopy);
+      localStorage.setItem('user-saved-processes', JSON.stringify(savedProcessesInLocalStorage));
+      updateUIAfterLocalProcessSave(processObjToSaveCopy);
+      return
     }
     
+    // user has saved processes locally before and is making an update to a previously saved process
+    const foundProcessIndex = savedProcessesInLocalStorage.findIndex(process => process._id === processObjToSaveCopy._id);
+
+    // (SHOULD REALLY NEVER HAPPEN BUT OH WELL) for some weird reason, the previously saved process is missing from the local storage
+    if (foundProcessIndex === -1) {
+      savedProcessesInLocalStorage.push(processObjToSaveCopy);
+      localStorage.setItem('user-saved-processes', JSON.stringify(savedProcessesInLocalStorage));
+      updateUIAfterLocalProcessSave(processObjToSaveCopy);
+      return
+    }
+
+    savedProcessesInLocalStorage[foundProcessIndex] = processObjToSaveCopy;
+    localStorage.setItem('user-saved-processes', JSON.stringify(savedProcessesInLocalStorage)); 
+    updateUIAfterLocalProcessSave(processObjToSaveCopy);
+  }
+
+  const updateUIAfterLocalProcessSave = (process) => {
+    /**
+     * Update the UI after a process is saved locally.
+     * 
+     * @returns null
+     */
+
     setProcessObjectToSave(null);
     setShowConfirmationModalForSaveLater(false);
     
     const copyOfProcesses = structuredClone(allProcesses);
-    copyOfProcesses.unshift(processObjToSaveCopy);
+    copyOfProcesses.unshift(process);
     
     dispatch(setAllProcesses(copyOfProcesses));
     toast.success('Successfully saved process')
