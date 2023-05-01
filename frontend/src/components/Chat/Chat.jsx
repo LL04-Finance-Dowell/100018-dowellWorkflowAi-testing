@@ -1,52 +1,48 @@
+
 import React, { useState } from "react";
 import { useEffect } from "react";
 import styles from './Chat.module.css'
-import { BiSend } from "react-icons/bi";
+import { BiSend, BiMinimize } from "react-icons/bi";
 import axios from 'axios'
 import { useTranslation } from "react-i18next";
+import { json } from "react-router-dom";
 
 const Chat = () => {
   const { t } = useTranslation();
-
+  const [isMinimized, setIsMinimized] = useState(false);
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const [isNestedPopupOpen, setIsNestedPopupOpen] = useState(false);
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState([]);
-  const [modals, setModals] = useState({ product: "", portfolio: "" });
+  const [modals, setModal] = useState([]);
 
-useEffect(() => {
-fetch('https://100096.pythonanywhere.com/d-chat/Workflow-AI/?session_id=36ht78fmzfzgovk1lq5rqeozkpees1qi')
-.then(res => res.json())
-.then(data => setModals(data))
-}, [])
+  useEffect(() => {
+    fetch("https://100096.pythonanywhere.com/d-chat/Workflow-AI/?session_id=36ht78fmzfzgovk1lq5rqeozkpees1qi")
+      .then((res) => res.json())
+      .then((data) => setModal(data));
+  }, []);
 
-const handleMessageSend = () => {
-if (message.trim() === "") {
-return;
-}
-axios.post('https://100096.pythonanywhere.com/send_message/1/',
-{
-message,
-product: modals.product,
-portfolio: modals.portfolio
-}
-)
-.then(res => {
-const newMessage = { text: message, sender: "" };
-const updatedMessages = [...messages, newMessage];
-setMessages(updatedMessages);
-setMessage("");
-})
-.catch(err => console.log(err));
-}
+  const handleMessageSend = () => {
+    if (message.trim() === "") {
+      return;
+    }
+    console.log(message);
+    console.log(modals.product, modals.user_id);
+    axios
+      .post("https://100096.pythonanywhere.com/send_message/692/", {
+        message,
+        user_id: modals.user_id
+      })
+      .then((res) => {
+        const newMessage = { text: message, sender: "" };
+        const updatedMessages = [...messages, newMessage];
+        setMessages(updatedMessages);
 
-useEffect(() => {
-// fetch messages from API and update messages state
-fetch('https://100096.pythonanywhere.com/messages/')
-.then(res => res.json())
-.then(data => setMessages(data))
-}, [])
-
+        // Clear the input field
+        setMessage("");
+      })
+      .catch((err) => console.log(err));
+  };
   const handleButtonClick = () => {
     setIsPopupOpen(true);
   };
@@ -60,20 +56,31 @@ fetch('https://100096.pythonanywhere.com/messages/')
     setIsPopupOpen(false);
   };
 
-  const handleNestedPopupClose = () => {
+  function handleMinimizePopup() {
+    const storemessages = [...messages];
+    console.log(storemessages)
+    localStorage.setItem('messages', JSON.stringify(storemessages));
     setIsNestedPopupOpen(false);
-  };
+  }
 
-
+  function handleNestedPopupClose() {
+    localStorage.removeItem('messages');
+    setMessages([]);
+    setIsNestedPopupOpen(false);
+  }
 
   useEffect(() => {
-    // fetch messages from API and update messages state
-    fetch('https://100096.pythonanywhere.com/send_message/1/')
-      .then(res => res.json())
-      .then(data => console.log(data))
-  }, [])
+    // const messages = localStorage.getItem('messages');
+    // if (messages) {
+    //   setMessages(JSON.parse(messages));
+    // }
+  }, []);
 
-
+  // useEffect(() => {
+  //   fetch('https://100096.pythonanywhere.com/send_message/692/')
+  //     .then(res => res.json())
+  //     .then(data => console.log(data))
+  // }, [])
 
 
 
@@ -112,6 +119,7 @@ fetch('https://100096.pythonanywhere.com/messages/')
                   <div className={styles.Second_popuo}>
                     <button onClick={handlePopupClose} className={styles.close_button}>×</button>
                   </div>
+
                   <h2 className={styles.my_element_text}>
                     {t("Chat with Customers Stories")}
                   </h2>
@@ -119,12 +127,12 @@ fetch('https://100096.pythonanywhere.com/messages/')
                     {t("Hi ! How Can I Help You !!!")}
                   </p>
 
-                  <div style={{ marginBottom: '1rem' }}>
+                  <div>
                     <button
                       className={styles.Chat_Now}
                       onClick={handleNestedButtonClick}
                     >
-                     {t("Chat Now")}
+                      {t("Chat Now")}
                     </button>
                   </div>
                   <h1 className={styles.Chat_h1}>
@@ -147,14 +155,17 @@ fetch('https://100096.pythonanywhere.com/messages/')
         {isNestedPopupOpen && (
           <div className={styles.Second_popuo_one}>
             <button onClick={handleNestedPopupClose} className={styles.close_button}>×</button>
+            <button onClick={handleMinimizePopup} className={styles.minimize_button}>-</button>
+
             <div className={styles.my_element}>
               <div >
                 <div style={{ height: "10%" }}>
                   <h2 className={styles.Text_Class}>{t("Chat with us")}</h2>
                   <h2 className={styles.Text_Class}>{t("Product Name")} : {modals.product}</h2>
-                  <h2 className={styles.Text_Class}>{t("Portfolio No")} : {modals.portfolio}</h2>
+                  {/* <h2 className={styles.Text_Class}>{t("Portfolio No")} : {modals.portfolio}</h2> */}
                   <div className={styles.chat - messages}>
                     {messages.map((msg, idx) => (
+
                       <div key={idx}>
                         <p
                           className={
@@ -163,7 +174,7 @@ fetch('https://100096.pythonanywhere.com/messages/')
                               : styles.Text
                           }
                         >
-                          {msg.text}
+                          {msg.text.substring(0, 35)}{msg.text.length > 35 && <br />}{msg.text.substring(35)}
                         </p>
                         <small className={styles.Large_Text}>
                           {msg.sender}
@@ -184,7 +195,7 @@ fetch('https://100096.pythonanywhere.com/messages/')
                         onClick={handleMessageSend}
                         className={styles.Last}
                       >
-                        <BiSend size={25}/>
+                        <BiSend size={25} />
                       </button>
                     </div>
                   </div>

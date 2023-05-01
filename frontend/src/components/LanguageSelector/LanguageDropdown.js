@@ -5,30 +5,60 @@ import { useTranslation } from "react-i18next";
 import i18next from "i18next";
 
 const LanguageDropdown = (props) => {
-    const [language, setLanguage] = useState(i18next.language);
+  const [language, setLanguage] = useState(localStorage.getItem('i18nextLng') || i18next.language);
 
-    useEffect(() => {
-        i18next.on("languageChanged", lng => {
-            setLanguage(lng);
-        });
-    }, []);
+  useEffect(() => {
+    i18next.on("languageChanged", lng => {
+      setLanguage(lng);
+      localStorage.setItem('i18nextLng', lng);
+    });
+  }, []);
 
-    const handleLanguageChange = (e) => {
-        if (e.target.value !== language) {
-            i18next.changeLanguage(e.target.value);
-        }
-    };
+  useEffect(() => {
+    i18next.changeLanguage(language);
+  }, []);  
 
-    return (
-        <div className={styles.main}>
-            <select style={{width:"150px"}} onChange={handleLanguageChange} value={language}>
-            <option>Select a language</option>
+  const handleLanguageChange = (lang) => {
+    if (lang !== language) {
+      i18next.changeLanguage(lang);
+    }
+  };
 
-                <option value="en">English</option>
-                <option value="chi">Chinese</option>
-                <option value="fr">French</option>
-            </select>
-        </div>
-    );
+  return (
+    <div  className={styles.container}>
+    <div className={styles.main}>
+      <div 
+        className={styles.languageDiv}
+        onClick={() => handleLanguageChange('en')}
+      >
+        English
+      </div>
+      <div 
+        className={styles.languageDiv}
+        onClick={() => handleLanguageChange('chi')}
+      >
+        Chinese
+      </div>  
+      <div 
+        className={styles.languageDiv}
+        onClick={() => handleLanguageChange('fr')}
+      >
+        French
+      </div>
+      <div 
+        className={styles.languageDiv}
+        onClick={() => handleLanguageChange('gr')}
+      >
+        German
+      </div>
+      <div 
+        className={styles.languageDiv}
+        onClick={() => handleLanguageChange('sp')}
+      >
+        Spanish
+      </div>
+    </div>
+    </div>
+  );
 }
 export default LanguageDropdown

@@ -66,6 +66,7 @@ const initialState = {
   column: [],
   proccess: [],
   userDetailPosition: null,
+  languageSelectPosition :null,
   teamsSelectedSelectedForProcess: [],
   teamMembersSelectedForProcess: [],
   userMembersSelectedForProcess: [],
@@ -416,6 +417,9 @@ export const appSlice = createSlice({
     setUserDetailPosition: (state, action) => {
       state.userDetailPosition = action.payload;
     },
+    setLanguageSelectPosition: (state, action) => {
+      state.languageSelectPosition = action.payload;
+    },
     setTeamsSelectedSelectedForProcess: (state, action) => {
       state.teamsSelectedSelectedForProcess = [
         ...state.teamsSelectedSelectedForProcess,
@@ -587,6 +591,9 @@ export const {
   setPortfoliosInWorkflowAITeams,
   setUpdateInWorkflowAITeams,
   setUserDetailPosition,
+
+  setLanguageSelectPosition,
+
   setUpdateProccessApi,
   setTeamsSelectedSelectedForProcess,
   setTeamMembersSelectedForProcess,

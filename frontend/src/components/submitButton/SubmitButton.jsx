@@ -1,5 +1,6 @@
 import { LoadingSpinner } from '../LoadingSpinner/LoadingSpinner';
 import styles from './submitButton.module.css';
+import { useTranslation } from "react-i18next";
 
 const SubmitButton = ({
   children,
@@ -9,6 +10,8 @@ const SubmitButton = ({
   onClick,
   disabled,
 }) => {
+  const { t } = useTranslation();
+
   return (
     <button
       onClick={!!type ? onClick : () => {}}
@@ -19,7 +22,7 @@ const SubmitButton = ({
         disabled ? { cursor: 'not-allowed', filter: 'brightness(0.7)' } : {}
       }
     >
-      {status === 'pending' ? <LoadingSpinner /> : <span>{children}</span>}
+      {status === 'pending' ? <LoadingSpinner /> : <span>{t(children)}</span>}
     </button>
   );
 };
