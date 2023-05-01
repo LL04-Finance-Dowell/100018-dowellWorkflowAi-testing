@@ -297,9 +297,9 @@ const InfoBox = ({
                         </>
                       </> : <>
                         <span style={{ fontWeight: 'bold' }}>
-                          {item.content.title}:
+                          {item.content.title ? `${item.content.title}:` : ''}
                         </span>{' '}
-                        <span>{item.content.content}</span> 
+                        <span>{item.content.content ? item.content.content : `${index + 1}. ${item.content}`}</span> 
                       </>
                     }
                   </InfoContentText>
