@@ -33,7 +33,7 @@ headers = {"Content-Type": "application/json"}
 def notify_push():
     """Tells me if code is pushed and deployed"""
     subject = "Push and Deploy Done!"
-    message = f"Hi Edwin, Someone just pushed code."
+    message = "Hi Edwin, Someone just pushed code and it is going to be deployed by your CI/CD pipeline."
     email_from = settings.EMAIL_HOST_USER
     recipient_list = [
         "workflowaiedwin@gmail.com",
