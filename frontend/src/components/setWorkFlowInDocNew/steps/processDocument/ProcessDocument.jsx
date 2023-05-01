@@ -284,17 +284,17 @@ const ProcessDocument = ({ savedProcess }) => {
 
     // saving to local storage
     const savedProcessesInLocalStorage = JSON.parse(localStorage.getItem('user-saved-processes'));
-    if (!savedProcessesInLocalStorage) {
+    if (!savedProcessesInLocalStorage) { // user has not saved any processes locally yet
       localStorage.setItem('user-saved-processes', JSON.stringify(
         [processObjToSaveCopy]
       ));
-    } else {
-      if (savedProcess) {
+    } else { // user has saved processes locally
+      if (savedProcess) {   // user is making an update to a previously saved process
         const foundProcessIndex = savedProcessesInLocalStorage.findIndex(process => process._id === processObjToSaveCopy._id);
-        if (foundProcessIndex === -1) return
-
-        savedProcessesInLocalStorage[foundProcessIndex] = processObjToSaveCopy;
-        localStorage.setItem('user-saved-processes', JSON.stringify(savedProcessesInLocalStorage));
+        if (foundProcessIndex !== -1) {
+          savedProcessesInLocalStorage[foundProcessIndex] = processObjToSaveCopy;
+          localStorage.setItem('user-saved-processes', JSON.stringify(savedProcessesInLocalStorage)); 
+        }
       } else {
         savedProcessesInLocalStorage.push(processObjToSaveCopy);
         localStorage.setItem('user-saved-processes', JSON.stringify(savedProcessesInLocalStorage));  
