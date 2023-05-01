@@ -1,26 +1,26 @@
-import styles from "./createWorkflow.module.css";
-import { useForm } from "react-hook-form";
-import { useEffect, useState, useRef } from "react";
-import { v4 as uuidv4 } from "uuid";
-import Overlay from "../../../overlay/Overlay";
-import { useUserContext } from "../../../../../contexts/UserContext";
-import overlayStyles from "../../../overlay/overlay.module.css";
-import { useDispatch, useSelector } from "react-redux";
+import styles from './createWorkflow.module.css';
+import { useForm } from 'react-hook-form';
+import { useEffect, useState, useRef } from 'react';
+import { v4 as uuidv4 } from 'uuid';
+import Overlay from '../../../overlay/Overlay';
+import { useUserContext } from '../../../../../contexts/UserContext';
+import overlayStyles from '../../../overlay/overlay.module.css';
+import { useDispatch, useSelector } from 'react-redux';
 import {
   createWorkflow,
   updateWorkflow,
-} from "../../../../../features/workflow/asyncTHunks";
-import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
-import { LoadingSpinner } from "../../../../LoadingSpinner/LoadingSpinner";
-import SubmitButton from "../../../../submitButton/SubmitButton";
-import { setToggleManageFileForm } from "../../../../../features/app/appSlice";
-import Spinner from "../../../../spinner/Spinner";
-import { TiTick } from "react-icons/ti";
-import { MdModeEditOutline } from "react-icons/md";
-import { RiDeleteBinLine } from "react-icons/ri";
-import StepTable from "./stepTable/StepTable";
-import { useTranslation } from "react-i18next";
+} from '../../../../../features/workflow/asyncTHunks';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { LoadingSpinner } from '../../../../LoadingSpinner/LoadingSpinner';
+import SubmitButton from '../../../../submitButton/SubmitButton';
+import { setToggleManageFileForm } from '../../../../../features/app/appSlice';
+import Spinner from '../../../../spinner/Spinner';
+import { TiTick } from 'react-icons/ti';
+import { MdModeEditOutline } from 'react-icons/md';
+import { RiDeleteBinLine } from 'react-icons/ri';
+import StepTable from './stepTable/StepTable';
+import { useTranslation } from 'react-i18next';
 
 const CreateWorkflows = ({ handleToggleOverlay }) => {
   const { t } = useTranslation();
@@ -36,53 +36,58 @@ const CreateWorkflows = ({ handleToggleOverlay }) => {
   );
   const { currentWorkflow } = useSelector((state) => state.app);
 
-  console.log("currentWorkflow", currentWorkflow);
+  console.log('currentWorkflow', currentWorkflow);
 
   const [internalWorkflows, setInternalWorkflows] = useState([]);
-  const [workflowTitle, setWorkflowTitle] = useState("");
+  const [workflowTitle, setWorkflowTitle] = useState('');
   const [currentTableCell, setCurrentTableCall] = useState(null);
 
   const { currentUser } = useUserContext();
 
   const { register, handleSubmit, reset, setValue, watch } = useForm();
   const { step_name, role } = watch();
-  const [ submitBtnDisabled, setSubmitBtnDisabled ] = useState(false);
+  const [submitBtnDisabled, setSubmitBtnDisabled] = useState(false);
 
   useEffect(() => {
-    
-    if (((step_name) && (role)) || (step_name && !role) || (!step_name && role)) return setSubmitBtnDisabled(true);
+    if ((step_name && role) || (step_name && !role) || (!step_name && role))
+      return setSubmitBtnDisabled(true);
 
     setSubmitBtnDisabled(false);
-
-  }, [step_name, role])
+  }, [step_name, role]);
 
   useEffect(() => {
-
-    if (workflowTitle.length < 1 || internalWorkflows.length < 1 || currentTableCell) return setSubmitBtnDisabled(true);
+    if (
+      workflowTitle.length < 1 ||
+      internalWorkflows.length < 1 ||
+      currentTableCell
+    )
+      return setSubmitBtnDisabled(true);
 
     setSubmitBtnDisabled(false);
-  
-  }, [workflowTitle, internalWorkflows, currentTableCell])
+  }, [workflowTitle, internalWorkflows, currentTableCell]);
 
   const onSubmit = (data) => {
-    console.log(data);
     const { role, step_name } = data;
-    if (currentTableCell) {
-      setInternalWorkflows((prev) =>
-        prev.map((item) =>
-          item._id === currentTableCell._id
-            ? { ...item, step_name, role }
-            : item
-        )
-      );
-      setCurrentTableCall(null);
-    } else {
-      const internalTemplate = { _id: uuidv4(), step_name, role };
+    if (internalWorkflows.find((item) => item.role === role))
+      toast.warn('Role name already in use');
+    else {
+      if (currentTableCell) {
+        setInternalWorkflows((prev) =>
+          prev.map((item) =>
+            item._id === currentTableCell._id
+              ? { ...item, step_name, role }
+              : item
+          )
+        );
+        setCurrentTableCall(null);
+      } else {
+        const internalTemplate = { _id: uuidv4(), step_name, role };
 
-      setInternalWorkflows((prev) => [...prev, internalTemplate]);
+        setInternalWorkflows((prev) => [...prev, internalTemplate]);
+      }
+
+      reset();
     }
-
-    reset();
   };
 
   const handleWorkflowChange = (e) => {
@@ -90,10 +95,9 @@ const CreateWorkflows = ({ handleToggleOverlay }) => {
   };
 
   const handleCreateWorkflow = () => {
-
     const handleAfterCreated = () => {
       reset();
-      setWorkflowTitle("");
+      setWorkflowTitle('');
       setInternalWorkflows([]);
       dispatch(setToggleManageFileForm(false));
     };
@@ -128,7 +132,7 @@ const CreateWorkflows = ({ handleToggleOverlay }) => {
   };
 
   useEffect(() => {
-    if (workflowDetailStatus === "error") {
+    if (workflowDetailStatus === 'error') {
       dispatch(setToggleManageFileForm(false));
     } else {
       if (currentWorkflow && currentWorkflow.workflows) {
@@ -146,21 +150,21 @@ const CreateWorkflows = ({ handleToggleOverlay }) => {
   return (
     <Overlay
       title={`${
-        workflowDetailStatus === "pending" || currentWorkflow
-          ? "Update"
-          : "Create"
+        workflowDetailStatus === 'pending' || currentWorkflow
+          ? 'Update'
+          : 'Create'
       } Workflow`}
       handleToggleOverlay={handleToggleOverlay}
     >
-      {workflowDetailStatus === "pending" ? (
+      {workflowDetailStatus === 'pending' ? (
         <Spinner />
-      ) : status === "pending" || updateWorkflowStatus === "pending" ? (
+      ) : status === 'pending' || updateWorkflowStatus === 'pending' ? (
         <Spinner />
       ) : (
         <div className={styles.form__container}>
           <div className={overlayStyles.input__box}>
             <label>
-              {t("Workflow Title")} <span>*</span>
+              {t('Workflow Title')} <span>*</span>
             </label>
             <input value={workflowTitle} onChange={handleWorkflowChange} />
           </div>
@@ -175,32 +179,32 @@ const CreateWorkflows = ({ handleToggleOverlay }) => {
           />
 
           <form onSubmit={handleSubmit(onSubmit)}>
-            <div className={styles.form__box} style={{ display: "flex" }}>
+            <div className={styles.form__box} style={{ display: 'flex' }}>
               <>
                 <div className={overlayStyles.input__box}>
-                  <label ref={stepNameRef} htmlFor="step_name">
-                    {t("Step Name")}
+                  <label ref={stepNameRef} htmlFor='step_name'>
+                    {t('Step Name')}
                   </label>
                   <input
                     required
-                    placeholder={t("Step Name")}
-                    id="step_name"
-                    {...register("step_name")}
+                    placeholder={t('Step Name')}
+                    id='step_name'
+                    {...register('step_name')}
                   />
                 </div>
                 <div className={overlayStyles.input__box}>
-                  <label htmlFor="role">{t("Role")}</label>
+                  <label htmlFor='role'>{t('Role')}</label>
                   <input
                     required
-                    placeholder={t("Role")}
-                    id="role"
-                    {...register("role")}
+                    placeholder={t('Role')}
+                    id='role'
+                    {...register('role')}
                   />
                 </div>
               </>
 
-              <button className={styles.add__table__button} type="submit">
-                {currentTableCell ? <TiTick /> : "+"}
+              <button className={styles.add__table__button} type='submit'>
+                {currentTableCell ? <TiTick /> : '+'}
               </button>
             </div>
           </form>
@@ -210,16 +214,16 @@ const CreateWorkflows = ({ handleToggleOverlay }) => {
               onClick={handleToggleOverlay}
               className={styles.cancel__button}
             >
-              {t("cancel")}
+              {t('cancel')}
             </button>
             <SubmitButton
               onClick={handleCreateWorkflow}
               status={currentWorkflow ? updateWorkflowStatus : status}
-              type="button"
+              type='button'
               className={styles.add__button}
               disabled={submitBtnDisabled}
             >
-              {currentWorkflow ? t("update") : t("save")}
+              {currentWorkflow ? t('update') : t('save')}
             </SubmitButton>
           </div>
         </div>
