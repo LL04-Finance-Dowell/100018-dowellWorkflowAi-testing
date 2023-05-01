@@ -23,11 +23,13 @@ const ProcessDocument = ({ savedProcess }) => {
 
   useEffect(() => {
     setCurrentProcess(processDocument[0]);
+  }, []);
 
-    if (!savedProcess) return
+  useEffect(() => {
+    if (!savedProcess) return;
     // console.log(savedProcess);
     setProcessObjectToSaveTitle(savedProcess.process_title);
-  }, []);
+  }, [savedProcess])
 
   const handleCurrentProcess = (item) => {
     setCurrentProcess(item);
@@ -315,10 +317,10 @@ const ProcessDocument = ({ savedProcess }) => {
 
     savedProcessesInLocalStorage[foundProcessIndex] = processObjToSaveCopy;
     localStorage.setItem('user-saved-processes', JSON.stringify(savedProcessesInLocalStorage)); 
-    updateUIAfterLocalProcessSave(processObjToSaveCopy);
+    updateUIAfterLocalProcessSave(processObjToSaveCopy, true);
   }
 
-  const updateUIAfterLocalProcessSave = (process) => {
+  const updateUIAfterLocalProcessSave = (process, previouslySavedProcess=false) => {
     /**
      * Update the UI after a process is saved locally.
      * 
@@ -329,7 +331,13 @@ const ProcessDocument = ({ savedProcess }) => {
     setShowConfirmationModalForSaveLater(false);
     
     const copyOfProcesses = structuredClone(allProcesses);
-    copyOfProcesses.unshift(process);
+    const foundProcessIndex = copyOfProcesses.findIndex(p => p._id === process._id);
+
+    if (previouslySavedProcess && foundProcessIndex !== -1) {
+      copyOfProcesses[foundProcessIndex] = process
+    } else {
+      copyOfProcesses.unshift(process);
+    }
     
     dispatch(setAllProcesses(copyOfProcesses));
     toast.success('Successfully saved process')
