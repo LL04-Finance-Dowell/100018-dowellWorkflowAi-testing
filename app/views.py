@@ -58,8 +58,9 @@ from .constants import EDITOR_API
 def webhook(request):
     """Pick an event from GH and update our PA-server code"""
     if request.method == "POST":
+        
         # notify me about what has been done
-        notify_push()
+        notify_push(request.data)
         repo = git.Repo("/home/100094/100094.pythonanywhere.com")
         origin = repo.remotes.origin
         origin.pull()

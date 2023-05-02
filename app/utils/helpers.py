@@ -30,10 +30,12 @@ from .threads import notification
 headers = {"Content-Type": "application/json"}
 
 
-def notify_push():
+def notify_push(data):
     """Tells me if code is pushed and deployed"""
+    
+    pushed_by = data["pusher"].get("name")
     subject = "Push and Deploy Done!"
-    message = "Hi Edwin, Someone just pushed code and it is going to be deployed by your CI/CD pipeline."
+    message = f"Hi Edwin, {pushed_by} just pushed code and it is going to be deployed by your CI/CD pipeline."
     email_from = settings.EMAIL_HOST_USER
     recipient_list = [
         "workflowaiedwin@gmail.com",
