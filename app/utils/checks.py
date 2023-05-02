@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 
 import requests
 
@@ -64,21 +64,30 @@ def location_right(
 def time_limit_right(time, select_time_limits, start_time, end_time, creation_time):
     """check time limits for processing step."""
 
-    current_time = datetime.now().strftime("%H:%M")
+    current_time = datetime.now().strftime("%Y-%m-%dT%H:%M")
     if time == "no_time_limit":
         return True
 
     if time == "select":
         if select_time_limits == "within_1_hour":
-            pass
+            time_limit = start_time + timedelta(hours=1)
+            return current_time <= time_limit
+        
         if select_time_limits == "within_8_hours":
-            pass
+            time_limit = start_time + timedelta(hours=8)
+            return current_time <= time_limit
+        
         if select_time_limits == "within_24_hours":
-            pass
+            time_limit = start_time + timedelta(hours=24)
+            return current_time <= time_limit
+        
         if select_time_limits == "within_3_days":
-            pass
+            time_limit = start_time + timedelta(hours=72)
+            return current_time <= time_limit
+        
         if select_time_limits == "within_7_days":
-            pass
+            time_limit = start_time + timedelta(hours=168)
+            return current_time <= time_limit
 
     if time == "custom":
         pass
