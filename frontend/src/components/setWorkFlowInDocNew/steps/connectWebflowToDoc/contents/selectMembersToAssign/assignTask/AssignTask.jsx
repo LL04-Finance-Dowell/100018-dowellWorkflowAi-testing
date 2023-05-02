@@ -195,10 +195,11 @@ export const limitTaskTo = [
     option: "Portfolios assigned on or before step start date & time",
     normalValue: "portfolios_assigned_on_or_before_step_start_date_and_time",
   },
-  // {
-  //   id: uuidv4(),
-  //   option: "Portfolios assigned on or before step end date & time",
-  // },
+  {
+    id: uuidv4(),
+    option: "Portfolios assigned on or before step end date & time",
+    normalValue: "portfolios_assigned_on_or_before_step_end_date_and_time",
+  },
 ];
 
 export const members = [
