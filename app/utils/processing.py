@@ -43,18 +43,20 @@ def new(
     process_kind = "original"
 
     # save to collection.
-    res = save_wf_process(
-        process_title,
-        process_steps,
-        created_by,
-        company_id,
-        data_type,
-        parent_item_id,
-        process_choice,
-        creator_portfolio,
-        workflows_ids,
-        process_type,
-        process_kind,
+    res = json.loads(
+        save_wf_process(
+            process_title,
+            process_steps,
+            created_by,
+            company_id,
+            data_type,
+            parent_item_id,
+            process_choice,
+            creator_portfolio,
+            workflows_ids,
+            process_type,
+            process_kind,
+        )
     )
 
     if res["isSuccess"]:
@@ -587,6 +589,7 @@ def background(process_id, item_id, item_type):
 
     # updating the document clone list
     clone_ids = [d["member"] for d in copies if "member" in d]
+    print(clone_ids)
     if clone_ids:
         document = get_document_object(document_id=process["parent_item_id"])
         data = document["clone_list"]

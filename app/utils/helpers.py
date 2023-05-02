@@ -90,15 +90,17 @@ def verification_data(
     hash = uuid.uuid4().hex
     link = f"{VERIFICATION_LINK}/{hash}/?auth_user={auth_name}&auth_portfolio={auth_portfolio}&auth_role={step_role}&user_type={user_type}"
     # save link
-    res = save_uuid_hash(
-        link,
-        process_id,
-        item_id,
-        step_role,
-        auth_name,
-        auth_portfolio,
-        hash,
-        item_type,
+    res = json.loads(
+        save_uuid_hash(
+            link,
+            process_id,
+            item_id,
+            step_role,
+            auth_name,
+            auth_portfolio,
+            hash,
+            item_type,
+        )
     )
 
     if res["isSuccess"]:
@@ -346,10 +348,10 @@ def generate_qrcode(verification_link):
 
     # In Prod -- this works
     # TODO: find out how to extract domain url
-    qr_path = f"100094.pythonanywhere.com/media/qrcodes/{uuid.uuid4().hex}.png"
+    # qr_path = f"100094.pythonanywhere.com/media/qrcodes/{uuid.uuid4().hex}.png"
 
     # On dev -- this works
-    # qr_path = f"media/qrcodes/{uuid.uuid4().hex}.png"
+    qr_path = f"media/qrcodes/{uuid.uuid4().hex}.png"
 
     qr_code = qrcode.QRCode(error_correction=qrcode.constants.ERROR_CORRECT_H)
     qr_code.add_data(verification_link)
