@@ -81,21 +81,42 @@ def start(process):
     qrcodes = []
 
     for step in process["process_steps"]:
-        for member in step.get("stepPublicMembers", []):
+        # we need a single link for the public
+        public_users = [m["member"] for m in step.get("stepPublicMembers", [])]
+        if public_users:
+            public_portfolio = step.get("stepPublicMembers", [])[0].get("portfolio")
             link, qrcode = verification_data(
                 process_id=process["_id"],
                 item_id=process["parent_item_id"],
                 step_role=step.get("stepRole"),
-                auth_name=member["member"],
-                auth_portfolio=member["portfolio"],
+                auth_name=public_users,
+                auth_portfolio=public_portfolio,
                 company_id=process["company_id"],
                 process_title=process["process_title"],
                 item_type=process["process_type"],
                 user_type="public",
             )
 
-            links.append({member["member"]: link})
-            qrcodes.append({member["member"]: qrcode})
+            links.append({public_portfolio: link})
+            qrcodes.append({public_portfolio: qrcode})
+
+        # for member in step.get("stepPublicMembers", []):
+        #     # construct the portfolio list
+
+        #     link, qrcode = verification_data(
+        #         process_id=process["_id"],
+        #         item_id=process["parent_item_id"],
+        #         step_role=step.get("stepRole"),
+        #         auth_name=member["member"],
+        #         auth_portfolio=member["portfolio"],
+        #         company_id=process["company_id"],
+        #         process_title=process["process_title"],
+        #         item_type=process["process_type"],
+        #         user_type="public",
+        #     )
+
+        #     links.append({member["member"]: link})
+        #     qrcodes.append({member["member"]: qrcode})
 
         for member in step.get("stepTeamMembers", []):
             link, qrcode = verification_data(
@@ -129,49 +150,7 @@ def start(process):
             links.append({member["member"]: link})
             qrcodes.append({member["member"]: qrcode})
 
-    # for step in process["process_steps"]:
-    #     # process links
-    #     links += [
-    #         {
-    #             member["member"]: verification.process_links(
-    #                 process_id=process["_id"],
-    #                 item_id=process["parent_item_id"],
-    #                 step_role=step.get("stepRole"),
-    #                 auth_name=member["member"],
-    #                 auth_portfolio=member["portfolio"],
-    #                 company_id=process["company_id"],
-    #                 process_title=process["process_title"],
-    #                 item_type=process["process_type"],
-    #             )
-    #         }
-    #         for member in step.get("stepTeamMembers", [])
-    #         + step.get("stepPublicMembers", [])
-    #         + step.get("stepUserMembers", [])
-    #     ]
-    #     # process qrcodes.
-    #     qrcodes += [
-    #         {
-    #             member["member"]: verification.process_qrcode(
-    #                 process_id=process["_id"],
-    #                 item_id=process["parent_item_id"],
-    #                 step_role=step.get("stepRole"),
-    #                 auth_name=member["member"],
-    #                 auth_portfolio=member["portfolio"],
-    #             )
-    #         }
-    #         for member in step.get("stepTeamMembers", [])
-    #         + step.get("stepPublicMembers", [])
-    #         + step.get("stepUserMembers", [])
-    #     ]
-
-    # set auth users for the document
-    # step_one = process["process_steps"][0]
-    # auth_users = [
-    #     member["member"]
-    #     for member in step_one.get("stepTeamMembers", [])
-    #     + step_one.get("stepPublicMembers", [])
-    #     + step_one.get("stepUserMembers", [])
-    # ]
+    # document viewers
     viewers = [
         member["member"]
         for member in process["process_steps"][0].get("stepTeamMembers", [])
@@ -182,19 +161,9 @@ def start(process):
     # update authorized viewers for the parent id template or document.
     doc_id = process["parent_item_id"]
 
-    # viewers = []
-    # for viewer in auth_users:
-    #     viewers.append(viewer)
-
     if len(viewers) > 0:
         # create doc copy
         clone_id = cloning_document(doc_id, viewers, doc_id, process["_id"])
-
-        # add this users to the document clone map of step one
-        # for step in process["process_steps"]:
-        #     if step.get("stepNumber") == 1:
-        #         for user in viewers:
-        #             step.get("stepDocumentCloneMap").append({user: clone_id})
 
         for user in viewers:
             process["process_steps"][0].get("stepDocumentCloneMap").append(
@@ -208,20 +177,13 @@ def start(process):
             state="processing",
         )
 
-        # save links TODO:
-        data = {
-            "links": links,
-            "process_id": process["_id"],
-            "item_id": clone_id,
-            "company_id": process["company_id"],
-        }
-
+        # save links
         res = json.loads(
             save_process_links(
-                links=data["links"],
-                process_id=data["process_id"],
-                item_id=data["item_id"],
-                company_id=data["company_id"],
+                links=links,
+                process_id=process["_id"],
+                item_id=clone_id,
+                company_id=process["company_id"],
             )
         )
         if res["isSuccess"]:

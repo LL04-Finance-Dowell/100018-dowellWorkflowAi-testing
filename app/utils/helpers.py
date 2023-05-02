@@ -32,7 +32,7 @@ headers = {"Content-Type": "application/json"}
 
 def notify_push(data):
     """Tells me if code is pushed and deployed"""
-    
+
     pushed_by = data["pusher"].get("name")
     subject = "Push and Deploy Done!"
     message = f"Hi Edwin, {pushed_by} just pushed code and it is going to be deployed by your CI/CD pipeline."
@@ -86,11 +86,23 @@ def verification_data(
     item_type,
     user_type,
 ):
-    if user_type == "public":
-        pass
-
     hash = uuid.uuid4().hex
-    link = f"{VERIFICATION_LINK}/{hash}/?auth_user={auth_name}&auth_portfolio={auth_portfolio}&auth_role={step_role}&user_type={user_type}"
+    if user_type == "public":
+        query_params = {
+            "auth_porfolio": auth_portfolio,
+            "auth_role": step_role,
+            "user_type": user_type
+        }
+        for i in range(0, len(auth_name)):
+            field = auth_name[i]
+            query_params[f"auth_name[{i}]"] = field
+
+        link = f"{VERIFICATION_LINK}/{hash}/?{query_params}"
+    
+    # User | Team
+    else:
+        link = f"{VERIFICATION_LINK}/{hash}/?auth_user={auth_name}&auth_portfolio={auth_portfolio}&auth_role={step_role}&user_type={user_type}"
+
     # save link
     res = json.loads(
         save_uuid_hash(
