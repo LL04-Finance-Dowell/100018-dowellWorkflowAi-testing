@@ -1,7 +1,7 @@
 import json
 import uuid
 from threading import Thread
-
+import urllib.parse
 import bson
 import qrcode
 import requests
@@ -89,7 +89,7 @@ def verification_data(
     hash = uuid.uuid4().hex
     if user_type == "public":
         query_params = {
-            "auth_porfolio": auth_portfolio,
+            "auth_portfolio": auth_portfolio,
             "auth_role": step_role,
             "user_type": user_type
         }
@@ -97,7 +97,9 @@ def verification_data(
             field = auth_name[i]
             query_params[f"auth_name[{i}]"] = field
 
-        link = f"{VERIFICATION_LINK}/{hash}/?{query_params}"
+        encoded_query_params = urllib.parse.urlencode(query_params)
+
+        link = f"{VERIFICATION_LINK}/{hash}/?{encoded_query_params}"
     
     # User | Team
     else:
