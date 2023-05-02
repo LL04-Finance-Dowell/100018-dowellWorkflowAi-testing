@@ -22,6 +22,7 @@ const Chat = () => {
       .then((data) => setModal(data));
   }, []);
 
+  var room_id = modals.room_pk
   const handleMessageSend = () => {
     if (message.trim() === "") {
       return;
@@ -29,7 +30,7 @@ const Chat = () => {
     console.log(message);
     console.log(modals.product, modals.user_id);
     axios
-      .post("https://100096.pythonanywhere.com/send_message/692/", {
+      .post(`https://100096.pythonanywhere.com/send_message/${room_id}/`, {
         message,
         user_id: modals.user_id
       })
@@ -106,41 +107,41 @@ const Chat = () => {
         </button>
 
         {isPopupOpen && (
-          <div className={styles.First_popuo}>
-            <div className={styles.First_inner} onClick={handlePopupClose}></div>
+          <div className={styles.First_popuopAuto_Close}>
+            <div className={styles.FirstAutoClose_inner} onClick={handlePopupClose}></div>
           </div>
         )}
 
         {isPopupOpen && (
           <div className={styles.Second_popuo}>
-            <div className={styles.my_element}>
-              <div className={styles.my_element_one}>
-                <div className={styles.my_element_two}>
-                  <div className={styles.Second_popuo}>
-                    <button onClick={handlePopupClose} className={styles.close_button}>×</button>
-                  </div>
 
-                  <h2 className={styles.my_element_text}>
-                    {t("Chat with Customers Stories")}
-                  </h2>
-                  <p className={styles.First_p}>
-                    {t("Hi ! How Can I Help You !!!")}
-                  </p>
-
-                  <div>
-                    <button
-                      className={styles.Chat_Now}
-                      onClick={handleNestedButtonClick}
-                    >
-                      {t("Chat Now")}
-                    </button>
-                  </div>
-                  <h1 className={styles.Chat_h1}>
-                    {t("Powered by Dowell")}
-                  </h1>
+            <div className={styles.my_element_one}>
+              <div className={styles.my_element_two}>
+                <div className={styles.Second_popuo}>
+                  <button onClick={handlePopupClose} className={styles.close_button}>×</button>
                 </div>
+
+                <h2 className={styles.my_element_text}>
+                  {t("Chat with Dowell")}{<img style={{marginLeft:"10px"}} height='30px' width='30px' src="https://i0.wp.com/workflowai.online/wp-content/uploads/2022/02/cropped-Playstore_logo_2.png?resize=100%2C100&ssl=1" alt="logo"/>}
+                </h2>
+                <p className={styles.First_p}>
+                  {t("Hi ! How Can I Help You !!!")}
+                </p>
+
+                <div>
+                  <button
+                    className={styles.Chat_Now}
+                    onClick={handleNestedButtonClick}
+                  >
+                    {t("Chat Now")}
+                  </button>
+                </div>
+                <h1 className={styles.Chat_h1}>
+                  {t("Powered by Dowell")}
+                </h1>
               </div>
             </div>
+
           </div>
         )}
 

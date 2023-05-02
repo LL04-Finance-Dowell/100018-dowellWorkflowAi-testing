@@ -29,8 +29,7 @@
 
 }
 
-.First_popuo {
-    z-index: 100 !important;
+.First_popuopAuto_Close {
     background-color: rgba(128, 128, 128, 0.5);
     opacity: 0;
     position: fixed;
@@ -41,7 +40,7 @@
 
 }
 
-.First_inner {
+.FirstAutoClose_inner {
     z-index: 100 !important;
     position: absolute;
     top: 0;
@@ -79,7 +78,6 @@
     display: flex;
     flex-direction: column;
     box-sizing: border-box;
-    /* height: 100%; */
 
 }
 
@@ -88,8 +86,7 @@
     z-index: 100 !important;
     display: flex;
     flex-direction: column;
-    /* flex-grow: 1;
-    padding: 1rem; */
+
     padding-top: 2rem;
 }
 
@@ -105,7 +102,7 @@
 .First_p {
     z-index: 100 !important;
     box-sizing: border-box;
-    width: 15rem;
+    width: 12rem;
     height: 2rem;
     font-size: 1rem;
     padding: 5px;
@@ -191,24 +188,19 @@
 .chat-messages {
     height: 220px;
     overflow-y: auto;
-    word-wrap: break-word;
-    max-width: 100%;
 
 }
 
 .Sender_sms {
     text-align: end;
     font-weight: bold;
-    word-wrap: break-word;
-    max-width: 100%;
+
 
 }
 
 .Text {
     z-index: 100;
     font-weight: bold;
-    word-wrap: break-word;
-    max-width: 100%;
 
 }
 
