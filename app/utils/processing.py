@@ -216,11 +216,13 @@ def start(process):
             "company_id": process["company_id"],
         }
 
-        res = save_process_links(
-            links=data["links"],
-            process_id=data["process_id"],
-            item_id=data["item_id"],
-            company_id=data["company_id"],
+        res = json.loads(
+            save_process_links(
+                links=data["links"],
+                process_id=data["process_id"],
+                item_id=data["item_id"],
+                company_id=data["company_id"],
+            )
         )
         if res["isSuccess"]:
             # save qrcodes
