@@ -17,8 +17,9 @@ from app.utils.helpers import (
     list_favourites,
     remove_favourite,
     validate_id,
-    notify_push
+    notify_push,
 )
+from django.core.cache import cache
 from app.utils.mongo_db_connection import (
     delete_document,
     delete_process,
@@ -293,7 +294,6 @@ def process_verification(request):
     auth_portfolio = request.data["auth_portfolio"]
     token = request.data["token"]
     org_name = request.data["org_name"]
-   
 
     # verify hash details.
     link_info = get_link_object(token)
@@ -310,7 +310,8 @@ def process_verification(request):
             or link_info["auth_portfolio"] != auth_portfolio
         ):
             return Response(
-                "User Logged in is not part of this process", status.HTTP_401_UNAUTHORIZED
+                "User Logged in is not part of this process",
+                status.HTTP_401_UNAUTHORIZED,
             )
 
     # get process
@@ -428,20 +429,22 @@ def trigger_process(request):
 def processes(request, company_id):
     """fetches workflow process `I` created."""
 
+    data_type = request.query_params.get("data_type", "Real_Data")
+
     if not validate_id(company_id):
         return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
 
-    data_type = request.query_params.get("data_type", "Real_Data")
+    cache_key = f"processes_{company_id}"
+    process_list = cache.get(cache_key)
 
-    try:
-        process_list = get_process_list(company_id, data_type)
-    except ConnectionError:
-        return Response(status.HTTP_500_INTERNAL_SERVER_ERROR)
+    if process_list is None:
+        try:
+            process_list = get_process_list(company_id, data_type)
+            cache.set(cache_key, process_list, timeout=60)
+        except ConnectionError:
+            return Response(status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-    if len(process_list) > 0:
-        return Response(process_list, status.HTTP_200_OK)
-
-    return Response([], status.HTTP_200_OK)
+    return Response(process_list, status.HTTP_200_OK)
 
 
 @api_view(["GET"])
@@ -662,18 +665,18 @@ def get_documents(request, company_id):
     if not validate_id(company_id):
         return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
 
-    document_list = get_document_list(company_id, data_type)
-    if not document_list:
-        return Response({"documents": []}, status.HTTP_500_INTERNAL_SERVER_ERROR)
+    cache_key = f"documents_{company_id}"
+    document_list = cache.get(cache_key)
 
-    if len(document_list) > 0:
-        return Response(
-            {"documents": document_list},
-            status.HTTP_200_OK,
-        )
+    if document_list is None:
+        try:
+            document_list = get_document_list(company_id, data_type)
+            cache.set(cache_key, document_list, timeout=60)
+        except:
+            return Response({"documents": []}, status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     return Response(
-        {"documents": []},
+        {"documents": document_list},
         status.HTTP_200_OK,
     )
 
@@ -1157,6 +1160,7 @@ def get_completed_documents(request, company_id):
         {"documents": []},
         status=status.HTTP_200_OK,
     )
+
 
 @api_view(["GET"])
 def get_completed_documents_by_process(request, company_id, process_id):
