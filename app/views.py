@@ -58,12 +58,13 @@ from .constants import EDITOR_API
 def webhook(request):
     """Pick an event from GH and update our PA-server code"""
     if request.method == "POST":
-        
-        # notify me about what has been done
-        notify_push(request.data)
+        # pull the code and update PA
         repo = git.Repo("/home/100094/100094.pythonanywhere.com")
         origin = repo.remotes.origin
         origin.pull()
+
+        # notify me about what has been done
+        notify_push(request.data)
         return Response("Updated PA successfully", status.HTTP_200_OK)
 
     return Response("Wrong event Type!", status.HTTP_400_BAD_REQUEST)
