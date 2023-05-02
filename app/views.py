@@ -287,12 +287,13 @@ def process_verification(request):
         return Response("You are missing something!", status.HTTP_400_BAD_REQUEST)
 
     # check user will be done on the frontend so I dont make an extra db query.
+    user_type = request.data["user_type"]
     auth_user = request.data["auth_username"]
     auth_role = request.data["auth_role"]
     auth_portfolio = request.data["auth_portfolio"]
     token = request.data["token"]
     org_name = request.data["org_name"]
-    user_type = request.data["user_type"]
+   
 
     # verify hash details.
     link_info = get_link_object(token)
@@ -301,16 +302,19 @@ def process_verification(request):
             "Could not verify user permissions", status.HTTP_500_INTERNAL_SERVER_ERROR
         )
 
-    process_id = link_info["process_id"]
-    if (
-        link_info["user_name"] != auth_user
-        or link_info["auth_portfolio"] != auth_portfolio
-    ):
-        return Response(
-            "User Logged in is not part of this process", status.HTTP_401_UNAUTHORIZED
-        )
+    # validate user_name and portfolio match
+    # Team | User
+    if user_type == "team" or user_type == "user":
+        if (
+            link_info["user_name"] != auth_user
+            or link_info["auth_portfolio"] != auth_portfolio
+        ):
+            return Response(
+                "User Logged in is not part of this process", status.HTTP_401_UNAUTHORIZED
+            )
 
     # get process
+    process_id = link_info["process_id"]
     process = get_process_object(process_id)
     if not process:
         return Response(
