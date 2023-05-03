@@ -29,8 +29,7 @@
 
 }
 
-.First_popuo {
-    z-index: 100 !important;
+.First_popuopAuto_Close {
     background-color: rgba(128, 128, 128, 0.5);
     opacity: 0;
     position: fixed;
@@ -41,8 +40,7 @@
 
 }
 
-.First_inner {
-    z-index: 100 !important;
+.FirstAutoClose_inner {
     position: absolute;
     top: 0;
     right: 0;
@@ -50,8 +48,7 @@
     left: 0;
 }
 
-.Second_popuo {
-    z-index: 100 !important;
+.First_popuop {
     position: fixed;
     bottom: 50px;
     right: 100px;
@@ -64,86 +61,70 @@
     box-sizing: border-box !important;
 }
 
-.my_element {
+/* .my_element {
     z-index: 100 !important;
     position: fixed;
     top: 10rem;
     height: 18rem;
     overflow: auto;
     box-sizing: border-box;
-}
+} */
 
-.my_element_one {
+/* .my_element_one {
     z-index: 100 !important;
     position: fixed;
     display: flex;
     flex-direction: column;
     box-sizing: border-box;
-    /* height: 100%; */
 
-}
+} */
 
-.my_element_two {
+.First_popuop_Parent {
     box-sizing: border-box;
-    z-index: 100 !important;
     display: flex;
     flex-direction: column;
-    /* flex-grow: 1;
-    padding: 1rem; */
-    padding-top: 2rem;
+    padding-top: 40px;
 }
 
-.my_element_text {
+.First_popuop_Stories {
     box-sizing: border-box;
-    padding-right: 3rem;
-    z-index: 100 !important;
     font-size: 14px;
     font-weight: bold;
-    margin-bottom: 1rem;
+    margin-bottom: 15px;
 }
 
-.First_p {
-    z-index: 100 !important;
-    box-sizing: border-box;
-    width: 15rem;
-    height: 2rem;
-    font-size: 1rem;
+.First_popuop_sms {
+   
+    font-size: 14px;
     padding: 5px;
-    margin-bottom: 1rem;
+    width: fit-content;
+    margin-bottom: 25px;
     background-color: #1e3bff;
     border-radius: 50px;
     color: #fff;
 }
 
-.Chat_Now {
-    position: fixed;
-    z-index: 100 !important;
-    padding-left: 2rem;
-    padding-right: 2rem;
-    padding-top: 0.75rem;
-    padding-bottom: 0.75rem;
+.Chat_Now_Button {
+    margin-top: 70px;
+    border-radius: 50px;
+    font-size: 20px;
+    padding: 5px;
     background-color: #1fb6ff;
     color: #fff;
-    text-align: center;
-    border-radius: 9999px;
-    width: 15rem;
-    margin: 3rem 1px 5px 10px;
 }
 
-.Chat_Now:hover {
+.Chat_Now_Button:hover {
     background-color: #1f42a6;
 }
 
-.Chat_h1 {
-    z-index: 100;
-    font-size: 0.875rem;
+.Powered_text {
+    margin-top: 90px;
+    font-size: 15px;
     text-align: center;
     font-weight: bold;
-    margin-top: 13rem;
 }
 
-.Second_div {
-    z-index: 100 !important;
+.Second_popupAutoClose {
     position: fixed;
     top: 0;
     bottom: 0;
@@ -153,8 +134,7 @@
     background-color: transparent;
 }
 
-.Second_popuo_one {
-    z-index: 100 !important;
+.Second_Popup {
     position: fixed;
     bottom: 50px;
     right: 100px;
@@ -166,16 +146,16 @@
     padding: 16px;
     box-sizing: border-box !important;
 }
-
+.Second_Popup_Parent{
+    margin-top: 40px;
+}
 .Text_Class {
-    z-index: 100000000001;
     font-size: 1.125rem;
     font-weight: bold;
     margin-bottom: 1rem;
 }
 
 .chat-box {
-    z-index: 100000000001;
     position: fixed;
     bottom: 0;
     right: 0;
@@ -188,85 +168,56 @@
 }
 
 
-.chat-messages {
-    height: 220px;
+.chat_messages {
+    /* background-color: light; */
+    height: 200px;
     overflow-y: auto;
-    word-wrap: break-word;
-    max-width: 100%;
 
 }
 
 .Sender_sms {
     text-align: end;
     font-weight: bold;
-    word-wrap: break-word;
-    max-width: 100%;
+
 
 }
 
 .Text {
-    z-index: 100;
     font-weight: bold;
-    word-wrap: break-word;
-    max-width: 100%;
 
 }
 
 .Large_Text {
-    z-index: 100;
-
     font-weight: bold;
     font-size: 1rem;
 }
 
-.Chat_Container {
-    z-index: 100;
-    height: 0rem;
-    position: absolute;
-    bottom: 0;
-    left: -25px;
-    width: 80% !important;
+
+.Input_Container {
+    display: flex;
+    padding: 10px;
+    justify-content: space-between;
 }
 
-.Another {
-    z-index: 100;
-    position: fixed;
-    display: flex;
-    padding: 1rem;
-}
-
-.Second_last {
-    z-index: 100;
-    /* position: fixed;
-    right: 2;
-    bottom: 5; */
-    display: flex;
-    flex-grow: 1;
+.Text_input {
     border-color: #cbd5e0;
     border-width: 1px;
     border-style: solid;
-    border-radius: 1rem;
-    padding-left: 0.75rem;
-    padding-right: 0.75rem;
-    padding-top: 0.5rem;
-    padding-bottom: 0.5rem;
-    margin-right: 0.5rem;
+    border-radius: 10px;
+    width: 190px;
+    padding: 10px;
 }
 
-.Last {
-    z-index: 100000000001;
+.Send_button {
     border-radius: 10px;
+    width: 45px;
     background-color: #1fb6ff;
     transition: background-color 0.2s ease-in-out;
     color: #fff;
     font-weight: bold;
-    padding-top: 0.5rem;
-    padding-bottom: 0.5rem;
-    padding-left: 1rem;
-    padding-right: 1rem;
 }
 
-.Last:hover {
+.Send_button:hover {
     background-color: #1e3bff;
     transition: background-color 0.2s ease-in-out;
 }
