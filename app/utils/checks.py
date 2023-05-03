@@ -70,27 +70,31 @@ def time_limit_right(time, select_time_limits, start_time, end_time, creation_ti
 
     if time == "select":
         if select_time_limits == "within_1_hour":
-            time_limit = start_time + timedelta(hours=1)
+            time_limit = creation_time + timedelta(hours=1)
             return current_time <= time_limit
         
         if select_time_limits == "within_8_hours":
-            time_limit = start_time + timedelta(hours=8)
+            time_limit = creation_time + timedelta(hours=8)
             return current_time <= time_limit
         
         if select_time_limits == "within_24_hours":
-            time_limit = start_time + timedelta(hours=24)
+            time_limit = creation_time + timedelta(hours=24)
             return current_time <= time_limit
         
         if select_time_limits == "within_3_days":
-            time_limit = start_time + timedelta(hours=72)
+            time_limit = creation_time + timedelta(hours=72)
             return current_time <= time_limit
         
         if select_time_limits == "within_7_days":
-            time_limit = start_time + timedelta(hours=168)
+            time_limit = creation_time + timedelta(hours=168)
             return current_time <= time_limit
 
     if time == "custom":
-        pass
+        if start_time and end_time:
+            return start_time <= current_time <= end_time
+        else:
+            return False
+
 
     return None
 
