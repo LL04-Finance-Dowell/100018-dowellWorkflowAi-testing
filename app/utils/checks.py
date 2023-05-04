@@ -69,25 +69,28 @@ def time_limit_right(time, select_time_limits, start_time, end_time, creation_ti
         return True
 
     if time == "select":
+        creation_time_object = datetime.strptime(creation_time, "%d:%m:%Y,%H:%M:%S") #first convert to datetime object
+        created_at = creation_time_object.strftime("%Y-%m-%dT%H:%M")
+
         if select_time_limits == "within_1_hour":
-            time_limit = creation_time + timedelta(hours=1)
-            return current_time <= time_limit
+            time_limit = created_at + timedelta(hours=1)
+            return created_at <= time_limit
         
         if select_time_limits == "within_8_hours":
-            time_limit = creation_time + timedelta(hours=8)
-            return current_time <= time_limit
+            time_limit = created_at + timedelta(hours=8)
+            return created_at <= time_limit
         
         if select_time_limits == "within_24_hours":
-            time_limit = creation_time + timedelta(hours=24)
-            return current_time <= time_limit
+            time_limit = created_at + timedelta(hours=24)
+            return created_at <= time_limit
         
         if select_time_limits == "within_3_days":
-            time_limit = creation_time + timedelta(hours=72)
-            return current_time <= time_limit
+            time_limit = created_at + timedelta(hours=72)
+            return created_at <= time_limit
         
         if select_time_limits == "within_7_days":
-            time_limit = creation_time + timedelta(hours=168)
-            return current_time <= time_limit
+            time_limit = created_at + timedelta(hours=168)
+            return created_at <= time_limit
 
     if time == "custom":
         if start_time and end_time:
