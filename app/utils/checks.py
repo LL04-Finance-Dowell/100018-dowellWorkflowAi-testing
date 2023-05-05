@@ -65,41 +65,48 @@ def time_limit_right(time, select_time_limits, start_time, end_time, creation_ti
     """check time limits for processing step."""
 
     current_time = datetime.now().strftime("%Y-%m-%dT%H:%M")
+    current_time_object = datetime.strptime(current_time, "%Y-%m-%dT%H:%M")
+    
     if time == "no_time_limit":
         return True
 
-    if time == "select":
+    elif time == "select":
         creation_time_object = datetime.strptime(creation_time, "%d:%m:%Y,%H:%M:%S") #first convert to datetime object
         created_at = creation_time_object.strftime("%Y-%m-%dT%H:%M")
 
         if select_time_limits == "within_1_hour":
-            time_limit = created_at + timedelta(hours=1)
-            return created_at <= time_limit
+            time_limit = creation_time_object + timedelta(hours=1)
+            return current_time_object <= time_limit
         
-        if select_time_limits == "within_8_hours":
-            time_limit = created_at + timedelta(hours=8)
-            return created_at <= time_limit
+        elif select_time_limits == "within_8_hours":
+            time_limit = creation_time_object + timedelta(hours=8)
+            return current_time_object <= time_limit
         
-        if select_time_limits == "within_24_hours":
-            time_limit = created_at + timedelta(hours=24)
-            return created_at <= time_limit
+        elif select_time_limits == "within_24_hours":
+            time_limit = creation_time_object + timedelta(hours=24)
+            return current_time_object <= time_limit
         
-        if select_time_limits == "within_3_days":
-            time_limit = created_at + timedelta(hours=72)
-            return created_at <= time_limit
+        elif select_time_limits == "within_3_days":
+            time_limit = creation_time_object + timedelta(hours=72)
+            return current_time_object <= time_limit
         
-        if select_time_limits == "within_7_days":
-            time_limit = created_at + timedelta(hours=168)
-            return created_at <= time_limit
+        elif select_time_limits == "within_7_days":
+            time_limit = creation_time_object + timedelta(hours=168)
+            return current_time_object <= time_limit
 
-    if time == "custom":
+    elif time == "custom":
         if start_time and end_time:
-            return start_time <= current_time <= end_time
+            start_time_object = datetime.strptime(start_time, "%Y-%m-%dT%H:%M")
+            end_time_object = datetime.strptime(end_time, "%Y-%m-%dT%H:%M")
+
+            time_limit = (end_time_object - start_time_object)
+            select_time_limits = f"within {time_limit.total_seconds() // 3600} hours"
+
+            return start_time_object <= end_time_object and current_time_object <= end_time_object
         else:
             return False
 
 
-    return None
 
 
 # def user_presence(token, user_name, portfolio):
