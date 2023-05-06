@@ -74,6 +74,10 @@ const initialState = {
   processesLoading: true,
   processesLoaded: false,
   allProcesses: [],
+  ArrayofLinks:[],
+  linksFetched:false,
+  showGeneratedLinksPopup:false,
+
   legalStatusLoading: true,
   showLegalStatusPopup: false,
   legalTermsAgreed: false,
@@ -512,6 +516,19 @@ export const appSlice = createSlice({
     setAllProcesses: (state, action) => {
       state.allProcesses = action.payload;
     },
+    SetArrayofLinks: (state, action) => {
+      state.ArrayofLinks = action.payload;
+    },
+
+
+    setShowGeneratedLinksPopup: (state, action) => {
+      state.showGeneratedLinksPopup = action.payload;
+    },
+    setLinksFetched: (state, action) => {
+      state.linksFetched = action.payload;
+    },
+
+
     setLegalStatusLoading: (state, action) => {
       state.legalStatusLoading = action.payload;
     },
@@ -606,6 +623,9 @@ export const {
   setProcessesLoading,
   setProcessesLoaded,
   setAllProcesses,
+  SetArrayofLinks,
+  setShowGeneratedLinksPopup,
+  setLinksFetched,
   setLegalStatusLoading,
   setShowLegalStatusPopup,
   setLegalTermsAgreed,

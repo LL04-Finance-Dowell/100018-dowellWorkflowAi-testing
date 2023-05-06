@@ -130,23 +130,6 @@ const Sidebar = () => {
 						onClick={(e)=>{HandleLanBtnClk(e)}}
 						
 					/>
-					{/* {isPopupOpen && (
-						<div className={styles.Second_popuo}>
-							<div >
-								<button onClick={handlePopupClose} className={styles.close_button}>×</button>
-								<div className={styles.Parent}>
-									<div style={{ width: '100%', height: '20px', backgroundColor: 'lightgray', }} >
-										Country
-									</div>
-									<div style={{ width: '100%', height: '20px', backgroundColor: 'lightgray', }} >
-										Country
-									</div>
-								</div>
-								<div>
-								</div>
-							</div>
-						</div>
-					)} */}
 				</div>
 			</div>
 			<div className={styles.icon__box}>

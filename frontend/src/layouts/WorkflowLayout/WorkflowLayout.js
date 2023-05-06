@@ -83,7 +83,7 @@ const WorkflowLayout = ({ children }) => {
   const handleMouseLeave = () => {
     dispatch(setUserDetailPosition(null));
   };
-  const HandleLanBtnClk = () =>{
+  const HandleLanBtnClk = () => {
     dispatch(setLanguageSelectPosition(languageSelectPosition));
   }
   const handleLanClose = () => {
@@ -206,11 +206,11 @@ const WorkflowLayout = ({ children }) => {
       <div className={styles.container}>
         {userDetail ? (
           !userDetail.portfolio_info ||
-          userDetail.portfolio_info?.length === 0 ||
-          (userDetail.portfolio_info?.length > 0 &&
-            !userDetail.portfolio_info.find(
-              (item) => item.product === 'Workflow AI'
-            )) ? (
+            userDetail.portfolio_info?.length === 0 ||
+            (userDetail.portfolio_info?.length > 0 &&
+              !userDetail.portfolio_info.find(
+                (item) => item.product === 'Workflow AI'
+              )) ? (
             <div className={styles.redirect__container}>
               <div className={styles.img__container}>
                 <img src={DowellLogo} />
@@ -241,9 +241,10 @@ const WorkflowLayout = ({ children }) => {
                   </p>
                   {children}
                 </div>
-                  <Chat/>
+                <Chat />
               </div>
               <Editor />
+          
             </>
           )
         ) : (

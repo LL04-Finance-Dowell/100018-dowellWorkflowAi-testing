@@ -239,7 +239,6 @@ const SectionBox = ({
     }
   };
 
-  console.log('slideCount', sliceCount);
 
   return (
     <div className={styles.container}>

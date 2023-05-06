@@ -244,10 +244,11 @@ const ProcessDocument = ({ savedProcess }) => {
 
     try {
       const response = await (await startNewProcessV2(processObjToPost)).data;
-      console.log("process response: ", response);
+      // console.log("process response: ", response);
       setNewProcessLoaded(true);
       setNewProcessLoading(false);
       if (processActionOptionsWithLinkReturned.includes(newProcessActionOptions[`${processOptionSelection}`])) {
+       console.log(response)
         setGeneratedLinks(response);
         setShowGeneratedLinksPopup(true);
         return

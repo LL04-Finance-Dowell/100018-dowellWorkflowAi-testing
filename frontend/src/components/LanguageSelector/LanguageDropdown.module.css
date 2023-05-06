@@ -37,15 +37,28 @@
     display: flex;
 }
 
-.languageDiv {
+.LanguageFlx {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
     width: 150px;
+}
+
+.LanguageFlx:hover {
+    background-color: aliceblue;
+    border-radius: 10px;
+
+}
+
+.FlagDiv {
     margin: 5px;
     cursor: pointer;
     padding: 2px;
 }
 
-.languageDiv:hover {
-    background-color: aliceblue;
-    border-radius: 10px;
+.languageDiv {
+
+    margin: 5px;
+    cursor: pointer;
     padding: 2px;
 }

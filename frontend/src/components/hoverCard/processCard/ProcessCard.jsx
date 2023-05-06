@@ -1,11 +1,14 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { RiDeleteBin6Line } from "react-icons/ri";
+import { BiLink } from "react-icons/bi";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { setAllProcesses } from "../../../features/app/appSlice";
 import { moveItemToArchive } from "../../../services/archiveServices";
 import HoverCard from "../HoverCard";
+import {setShowGeneratedLinksPopup,SetArrayofLinks,setLinksFetched  } from "../../../features/app/appSlice";
+import GeneratedLinksModal from "../../setWorkFlowInDocNew/steps/processDocument/components/GeneratedLinksModal/GeneratedLinksModal";
 import { Button } from "../styledComponents";
 
 const ProcessCard = ({ cardItem, title }) => {
@@ -13,11 +16,41 @@ const ProcessCard = ({ cardItem, title }) => {
   const { allProcesses } = useSelector(state => state.app);
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const [Process_id, setProcess_id] = useState();
+
 
   const handleProcessItemClick = async (item) => {
-    console.log(item)
     if (item.processing_state === "draft" && item.workflow_construct_ids) navigate(`/workflows/new-set-workflow?id=${item._id}&state=${item.processing_state}${item.isFromLocalStorage ? '&local=true' : ''}`)
   };
+
+
+
+ const handleGetLinksClick = async (item) => {
+  getProcessLinks(item._id);
+  dispatch(setShowGeneratedLinksPopup(true));
+};
+
+  
+
+
+
+useEffect(() => {
+  if (Process_id) {
+   dispatch( setLinksFetched(true));
+    getProcessLinks(Process_id);
+  }
+}, [Process_id]); // Added Process_id as dependency
+
+
+  function getProcessLinks(process_id) {
+    fetch(`https://100094.pythonanywhere.com/v1/processes/${process_id}/all-links/`)
+    .then(res => res.json())
+    .then(data => {
+      dispatch(SetArrayofLinks(data));
+      dispatch( setLinksFetched(true)); 
+    });
+  }
+
 
   const handleTrashProcess = async (cardItem) => {
     const copyOfAllProcesses = [...allProcesses];
@@ -49,14 +82,16 @@ const ProcessCard = ({ cardItem, title }) => {
   }
 
   const FrontSide = () => {
-    return (
+    return cardItem ? (
       <div>{cardItem.process_title ? cardItem.process_title : "no item"}</div>
+    ) : (
+      "Loading..."
     );
   };
 
   const BackSide = () => {
     return (
-      <div>
+      <>
         {cardItem._id ? (
           <Button onClick={() => handleProcessItemClick(cardItem)}>
             {"Open process"}
@@ -64,15 +99,31 @@ const ProcessCard = ({ cardItem, title }) => {
         ) : (
           "no item"
         )}
-        <div style={{ 
-          cursor: "pointer", 
-          position: "absolute", 
-          right: "0", 
+        <div style={{
+          cursor: "pointer",
+          position: "absolute",
+          right: "0",
+          top: "0"
+        }}
+          onClick={() => handleGetLinksClick(cardItem)}>
+          <BiLink color="green" />
+        </div>
+
+
+
+        <div style={{
+          cursor: "pointer",
+          position: "absolute",
+          right: "0",
           bottom: "0"
         }} onClick={() => handleTrashProcess(cardItem)}>
           <RiDeleteBin6Line color="red" />
         </div>
-      </div>
+
+       
+      </>
+      
+      
     );
   };
   return <HoverCard Front={FrontSide} Back={BackSide} />;
