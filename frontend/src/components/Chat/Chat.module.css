@@ -147,7 +147,7 @@
     box-sizing: border-box !important;
 }
 .Second_Popup_Parent{
-    margin-top: 40px;
+    margin-top: 5px;
 }
 .Text_Class {
     font-size: 1.125rem;
@@ -170,7 +170,8 @@
 
 .chat_messages {
     /* background-color: light; */
-    height: 200px;
+    height: 270px;
+    margin-top: 10px;
     overflow-y: auto;
 
 }

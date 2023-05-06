@@ -1,37 +1,43 @@
 
 import React, { useState } from "react";
 import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import styles from './Chat.module.css'
 import { BiSend, BiMinimize } from "react-icons/bi";
 import axios from 'axios'
 import { useTranslation } from "react-i18next";
 
 const Chat = () => {
+  const { session_id } = useSelector((state) => state.auth);
+
   const { t } = useTranslation();
-  const [isMinimized, setIsMinimized] = useState(false);
+  const [apiMessages, setapiMessages] = useState([]);
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const [isNestedPopupOpen, setIsNestedPopupOpen] = useState(false);
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState([]);
   const [modals, setModal] = useState([]);
+  const [hasChatStarted, setHasChatStarted] = useState(false);
 
   useEffect(() => {
-    fetch("https://100096.pythonanywhere.com/d-chat/Workflow-AI/?session_id=36ht78fmzfzgovk1lq5rqeozkpees1qi")
+    IntilizingRoom(session_id)
+  }, [session_id]);
+
+  const IntilizingRoom = (session_id) => {
+    fetch(`https://100096.pythonanywhere.com/d-chat/Workflow-AI/?session_id=${session_id}`)
       .then((res) => res.json())
       .then((data) => setModal(data));
-  }, []);
-
-var room_id = modals.room_pk
-
-const handleMessageSend = () => {
-  if (message.trim() === "") {
-    return;
+      console.log('Room intilized',modals)
   }
-  console.log(room_id)
-    console.log(message);
-    console.log(modals.product, modals.user_id);
+
+  var roomId = modals.room_pk
+
+  const handleMessageSend = () => {
+    if (message.trim() === "") {
+      return;
+    }
     axios
-      .post(`https://100096.pythonanywhere.com/send_message/${room_id}/`, {
+      .post(`https://100096.pythonanywhere.com/send_message/${roomId}/`, {
         message,
         user_id: modals.user_id
       })
@@ -44,14 +50,48 @@ const handleMessageSend = () => {
         setMessage("");
       })
       .catch((err) => console.log(err));
+
+    setHasChatStarted(true)
+
   };
+
+  useEffect(() => {
+    fetchMessages(roomId);
+  }, []);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      fetchMessages(roomId);
+    }, 2000); // Repeat every 20 seconds
+
+    return () => clearInterval(interval); // This is important, it clears the interval on unmount
+  }, [roomId]);
+
+  async function fetchMessages(roomId) {
+    const response = await fetch(`https://100096.pythonanywhere.com/send_message/${roomId}/`);
+    const data = await response.json();
+    setapiMessages(data.messages);
+  }
+
+
+
+
+
   const handleButtonClick = () => {
-    setIsPopupOpen(true);
+
+    if (hasChatStarted) {
+      setIsNestedPopupOpen(true);
+    }
+    else {
+      setIsPopupOpen(true);
+
+    }
   };
 
   const handleNestedButtonClick = () => {
 
     setIsNestedPopupOpen(true);
+    IntilizingRoom(session_id)
   };
 
   const handlePopupClose = () => {
@@ -59,30 +99,24 @@ const handleMessageSend = () => {
   };
 
   function handleMinimizePopup() {
-    const storemessages = [...messages];
-    console.log(storemessages)
-    localStorage.setItem('messages', JSON.stringify(storemessages));
-    setIsNestedPopupOpen(false);
+    // const storemessages = [...messages];
+    // console.log(storemessages)
+    // localStorage.setItem('messages', JSON.stringify(storemessages));
+    // setIsNestedPopupOpen(false);
   }
+
+
 
   function handleNestedPopupClose() {
-    localStorage.removeItem('messages');
-    setMessages([]);
-    setIsNestedPopupOpen(false);
+    if (hasChatStarted) {
+      setIsPopupOpen(false);
+      setIsNestedPopupOpen(false);
+      setapiMessages([]); // Clear the apiMessages state
+    } else {
+      setIsNestedPopupOpen(false);
+      setapiMessages([]); // Clear the apiMessages state
+    }
   }
-
-  useEffect(() => {
-    // const messages = localStorage.getItem('messages');
-    // if (messages) {
-    //   setMessages(JSON.parse(messages));
-    // }
-  }, []);
-
-  // useEffect(() => {
-  //   fetch('https://100096.pythonanywhere.com/send_message/692/')
-  //     .then(res => res.json())
-  //     .then(data => console.log(data))
-  // }, [])
 
 
 
@@ -123,7 +157,8 @@ const handleMessageSend = () => {
 
 
               <h2 className={styles.First_popuop_Stories}>
-                {t("Chat with Dowell")} {<img style={{marginLeft:"10px"}} height='20px' width='20px' src="https://i0.wp.com/workflowai.online/wp-content/uploads/2022/02/cropped-Playstore_logo_2.png?resize=100%2C100&ssl=1"/>}
+                {t("Chat with Dowell")}
+                {<img style={{ marginLeft: "10px" }} height='20px' width='20px' src="https://i0.wp.com/workflowai.online/wp-content/uploads/2022/02/cropped-Playstore_logo_2.png?resize=100%2C100&ssl=1" />}
               </h2>
               <p className={styles.First_popuop_sms}>
                 {t("Hi ! How Can I Help You !!!")}
@@ -159,28 +194,32 @@ const handleMessageSend = () => {
             <button onClick={handleNestedPopupClose} className={styles.close_button}>×</button>
             <button onClick={handleMinimizePopup} className={styles.minimize_button}>-</button>
             <div className={styles.Second_Popup_Parent}>
-              <h2 className={styles.Text_Class}>{t("Chat with us")}</h2>
-              <h2 className={styles.Text_Class}>{t("Product Name")} : {modals.product}</h2>
+              <img style={{ marginLeft: "10px" }} height='20px' width='20px' src="https://i0.wp.com/workflowai.online/wp-content/uploads/2022/02/cropped-Playstore_logo_2.png?resize=100%2C100&ssl=1" />
+              {/* <h2 className={styles.Text_Class}>{t("Chat with us")}</h2>
+              <h2 className={styles.Text_Class}>{t("Product Name")} : {modals.product}</h2> */}
             </div>
             {/* <h2 className={styles.Text_Class}>{t("Portfolio No")} : {modals.portfolio}</h2> */}
             <div className={styles.chat_messages}>
-              {messages.map((msg, idx) => (
+              {apiMessages.map((msg, idx) => {
+                // console.log("apiMessage in map:", msg); // Add this line
+                return (
+                  <div key={idx}>
+                    <p
+                      className={
+                        msg.side === true
+                          ? styles.Text
+                          : styles.Sender_sms
+                      }
+                    >
+                      {msg.message}
+                    </p>
+                    <small className={styles.Large_Text}>
+                      {msg.sender}
+                    </small>
+                  </div>
+                );
+              })}
 
-                <div key={idx}>
-                  <p
-                    className={
-                      msg.sender === ""
-                        ? styles.Sender_sms
-                        : styles.Text
-                    }
-                  >
-                    {msg.text.substring(0, 35)}{msg.text.length > 35 && <br />}{msg.text.substring(35)}
-                  </p>
-                  <small className={styles.Large_Text}>
-                    {msg.sender}
-                  </small>
-                </div>
-              ))}
             </div>
 
             <div className={styles.Input_Container}>
