@@ -1247,9 +1247,9 @@ def create_workflow_ai_setting(request):
 
 
 @api_view(["GET"])
-def all_workflow_ai_setting(request, company_id):
+def all_workflow_ai_setting(request, company_id,data_type="Real_data"):
     """Get All WF AI"""
-    all_setting = get_wfai_setting_list(company_id)
+    all_setting = get_wfai_setting_list(company_id,data_type)
     try:
         return Response(
             all_setting,

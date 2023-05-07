@@ -118,9 +118,9 @@ def get_wf_setting_object(wf_setting_id):
     )
 
 
-def get_wfai_setting_list(company_id):
+def get_wfai_setting_list(company_id,data_type):
     return get_data_from_data_service(
-        *WF_AI_SETTING_LIST, "fetch", {"company_id": str(company_id)}
+        *WF_AI_SETTING_LIST, "fetch", {"company_id": str(company_id),"data_type":data_type}
     )
 
 
