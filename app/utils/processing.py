@@ -8,7 +8,7 @@ from rest_framework.response import Response
 from app.constants import NOTIFICATION_API
 
 from . import checks, threads
-from .helpers import cloning_document, link_to_editor, verification_data
+from .helpers import cloning_document, verification_data
 from .mongo_db_connection import (
     authorize,
     get_document_object,
@@ -100,24 +100,6 @@ def start(process):
             links.append({public_portfolio: link})
             qrcodes.append({public_portfolio: qrcode})
 
-        # for member in step.get("stepPublicMembers", []):
-        #     # construct the portfolio list
-
-        #     link, qrcode = verification_data(
-        #         process_id=process["_id"],
-        #         item_id=process["parent_item_id"],
-        #         step_role=step.get("stepRole"),
-        #         auth_name=member["member"],
-        #         auth_portfolio=member["portfolio"],
-        #         company_id=process["company_id"],
-        #         process_title=process["process_title"],
-        #         item_type=process["process_type"],
-        #         user_type="public",
-        #     )
-
-        #     links.append({member["member"]: link})
-        #     qrcodes.append({member["member"]: qrcode})
-
         for member in step.get("stepTeamMembers", []):
             link, qrcode = verification_data(
                 process_id=process["_id"],
@@ -201,7 +183,7 @@ def start(process):
             # return generated links
             return Response({"links": links, "qrcodes": qrcodes}, status.HTTP_200_OK)
 
-    return Response("failed to start processing", status.HTTP_500_INTERNAL_SERVER_ERROR)
+    return Response("failed to start processing!", status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 def verify(
@@ -282,7 +264,7 @@ def verify(
             status.HTTP_500_INTERNAL_SERVER_ERROR,
         )
 
-    # is everything right,
+    # is everything right?
     if not clone_id:
         return Response(
             "No document to provide access to!", status.HTTP_500_INTERNAL_SERVER_ERROR
@@ -305,17 +287,64 @@ def verify(
             status.HTTP_500_INTERNAL_SERVER_ERROR,
         )
 
-        #  generate document link.
-    doc_link = link_to_editor(
-        item_id=clone_id,
-        item_map=doc_map,
-        item_rights=right,
-        user=user,
-        process_id=process["_id"],
-        user_role=role,
-        item_type=process["process_type"],
-    )
-    return Response(doc_link, status.HTTP_200_OK)
+    item_type = process["process_type"]
+
+    # set document
+    if item_type == "document":
+        collection = "DocumentReports"
+        document = "documentreports"
+        action = "document"
+        field = "document_name"
+        team_member_id = "11689044433"
+
+        # get ready to check document states
+        document_item = get_document_object(clone_id)
+
+        if document_item["document_state"] == "finalized":
+            item_flag = "finalized"
+
+        if document_item["document_state"] == "processing":
+            item_flag = "processing"
+
+    # set template
+    if item_type == "template":
+        collection = "TemplateReports"
+        document = "templatereports"
+        action = "template"
+        field = "template_name"
+        team_member_id = "22689044433"
+
+    payload = {
+        "product_name": "workflowai",
+        "details": {
+            "field": field,
+            "cluster": "Documents",
+            "database": "Documentation",
+            "collection": collection,
+            "document": document,
+            "team_member_ID": team_member_id,
+            "function_ID": "ABCDE",
+            "command": "update",
+            "_id": clone_id,
+            "flag": "signing",
+            "action": item_type,
+            "authorized": user,
+            "document_map": doc_map,
+            "document_right": right,
+            "document_flag": item_flag,
+            "role": role,
+            "process_id": process["_id"],
+            "update_field": {"document_name": "", "content": "", "page": ""},
+        },
+    }
+    try:
+        link = requests.post(EDITOR_API, data=json.dumps(payload), headers=headers)
+    except ConnectionError:
+        return Response(
+            "Error, processing editor link", status.HTTP_500_INTERNAL_SERVER_ERROR
+        )
+
+    return Response(link.json(), status.HTTP_200_OK)
 
 
 def background(process_id, item_id, item_type):

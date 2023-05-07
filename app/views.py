@@ -379,6 +379,7 @@ def finalize_or_reject(request, process_id):
             return Response("document processed successfully", status.HTTP_200_OK)
 
         else:
+            # Revert the document state to processing.
             finalize(item_id, "processing", item_type)
 
     return Response(
@@ -389,6 +390,7 @@ def finalize_or_reject(request, process_id):
 @api_view(["POST"])
 def trigger_process(request):
     """Get process and begin processing it."""
+    
     if not validate_id(request.data["process_id"]):
         return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
 
