@@ -476,7 +476,8 @@ def fetch_process_links(request, process_id):
         return Response("Could not fetch links at this time", status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     if process_info:
-        return Response(process_info["links"][0], status.HTTP_200_OK)
+        process = process_info[0]
+        return Response(process["links"], status.HTTP_200_OK)
 
     return Response(process_info,  status.HTTP_200_OK)
 
