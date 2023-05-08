@@ -29,9 +29,10 @@ export const AppContextProvider = ({ children }) => {
   const [publicUserConfigured, setPublicUserConfigured] = useState(false);
 
   const [filter, setFilter] = useState('team_member');
-  const [isFetchingTeams, setIsFetchingTeams] = useState(true);
+  // const [isFetchingTeams, setIsFetchingTeams] = useState(true);
   const [isNoPointerEvents, setIsNoPointerEvents] = useState(false);
   const [workflowTeamsLoaded, setWorkflowTeamsLoaded] = useState(false);
+  const [workflowSettings, setWorkflowSettings] = useState();
 
   const { userDetail } = useSelector((state) => state.auth);
 
@@ -80,6 +81,15 @@ export const AppContextProvider = ({ children }) => {
       .split(', ');
   };
 
+  const fetchSettings = async () => {
+    const res = await new WorkflowSettingServices().fetchWorkflowSettings(
+      userDetail?.portfolio_info[0].org_id
+    );
+
+    console.log('set data: ', res.data);
+    // return res.data;
+  };
+
   useEffect(() => {
     if (!publicUserConfigured) return;
     if (userDetail && !isPublicUser) {
@@ -104,10 +114,9 @@ export const AppContextProvider = ({ children }) => {
     }
   }, [userDetail, isPublicUser, publicUserConfigured]);
 
-  // useEffect(() => {
-  //   console.log('context: ', workflowTeams);
-  //   console.log('context: ', workflowTeamsLoaded);
-  // }, [workflowTeams, workflowTeamsLoaded]);
+  useEffect(() => {
+    fetchSettings();
+  }, [userDetail]);
 
   return (
     <AppContext.Provider

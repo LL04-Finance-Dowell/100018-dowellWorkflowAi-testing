@@ -96,6 +96,7 @@ export const appSlice = createSlice({
     setEditorLink: (state, action) => {
       state.editorLink = action.payload;
     },
+
     setWfToDocument: (state, action) => {
       state.wfToDocument = {
         ...state.wfToDocument,
@@ -203,14 +204,14 @@ export const appSlice = createSlice({
       const currentProcessSteps = [...state.processSteps];
 
       if (!action.payload.workflow)
-        return void(state.processSteps = currentProcessSteps);
+        return void (state.processSteps = currentProcessSteps);
 
       const foundStepIndex = currentProcessSteps.findIndex(
         (step) => step.workflow === action.payload.workflow
       );
 
       if (foundStepIndex === -1)
-        return void(state.processSteps = currentProcessSteps);
+        return void (state.processSteps = currentProcessSteps);
 
       const currentStepToUpdate = currentProcessSteps[foundStepIndex];
       const updatedStepObj = {

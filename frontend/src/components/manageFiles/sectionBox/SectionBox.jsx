@@ -19,7 +19,8 @@ import {
 import { setAllDocuments } from '../../../features/document/documentSlice';
 import { setAllTemplates } from '../../../features/template/templateSlice';
 import { setAllWorkflows } from '../../../features/workflow/workflowsSlice';
-import { useTranslation } from "react-i18next";
+import { useTranslation } from 'react-i18next';
+import Spinner from '../../spinner/Spinner';
 
 const SectionBox = ({
   cardItems,

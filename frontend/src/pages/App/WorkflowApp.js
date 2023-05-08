@@ -30,8 +30,8 @@ import { useAppContext } from '../../contexts/AppContext';
 import { getFavoritesForUser } from '../../services/favoritesServices';
 import React from 'react';
 import DocumentCard from '../../components/hoverCard/documentCard/DocumentCard';
-import { useTranslation } from "react-i18next";
-import i18next from "i18next"
+import { useTranslation } from 'react-i18next';
+import i18next from 'i18next';
 
 const WorkflowApp = () => {
   const { userDetail } = useSelector((state) => state.auth);
@@ -227,166 +227,169 @@ const WorkflowApp = () => {
     // console.log('uct: ', uncompletedTasks);
   }, [uncompletedTasks, completedTasks]);
 
-
-
-  const handleClick=(e)=>{
-    i18next.changeLanguage(e.target.value)
-    console.log(e.target.value)
-}
+  const handleClick = (e) => {
+    i18next.changeLanguage(e.target.value);
+    console.log(e.target.value);
+  };
 
   return (
-    <WorkflowLayout>
-      <div className={styles.container}>
-        <CustomerSupport />
-        <LanguageDropdown  onChange={(e)=> handleClick(e)}/>
-        <FlipMenu />
-        {isVisible && (
-          <div className={styles.section__container}>
-            {notificationsLoading ? (
-              <div>
-                <Spinner />
-                <div style={{ margin: '0 auto 0 1.5%', textAlign: 'center' }}>
-                  <p>Notifications loading...</p>
-                  <ProgressBar
-                    durationInMS={8000}
-                    finalWidth={notificationFinalStatus}
-                    style={{ height: '2rem' }}
-                  />
+    <>
+      <WorkflowLayout>
+        <div className={styles.container}>
+          <CustomerSupport />
+          <LanguageDropdown onChange={(e) => handleClick(e)} />
+          <FlipMenu />
+          {isVisible && (
+            <div className={styles.section__container}>
+              {notificationsLoading ? (
+                <div>
+                  <Spinner />
+                  <div style={{ margin: '0 auto 0 1.5%', textAlign: 'center' }}>
+                    <p>Notifications loading...</p>
+                    <ProgressBar
+                      durationInMS={8000}
+                      finalWidth={notificationFinalStatus}
+                      style={{ height: '2rem' }}
+                    />
+                  </div>
                 </div>
-              </div>
-            ) : (
-              notificationsForUser.map((item) => (
-                <div key={item._id} id={item.title}>
-                  <SectionBox
-                    Card={item.card}
-                    title={`notifications - ${item.title}`}
-                    cardItems={item.items}
-                    cardBgColor={item.cardBgColor}
-                    idKey={item.id ? item.id : null}
-                    hideFavoriteIcon={true}
-                    itemType={'notifications'}
-                    hideDeleteIcon={true}
-                  />
-                </div>
-              ))
-            )}
-            <div className={styles.tasks__container}>
-              {isShowUncompletedTasks && (
-                <HandleTasks feature='incomplete' tasks={uncompletedTasks} />
+              ) : (
+                notificationsForUser.map((item) => (
+                  <div key={item._id} id={item.title}>
+                    <SectionBox
+                      Card={item.card}
+                      title={`notifications - ${item.title}`}
+                      cardItems={item.items}
+                      cardBgColor={item.cardBgColor}
+                      idKey={item.id ? item.id : null}
+                      hideFavoriteIcon={true}
+                      itemType={'notifications'}
+                      hideDeleteIcon={true}
+                    />
+                  </div>
+                ))
               )}
-              {isShowCompletedTasks && (
-                <HandleTasks feature='completed' tasks={completedTasks} />
-              )}
-            </div>
-          </div>
-        )}
-        {!isVisible && (
-          <>
-            <div style={{ marginBottom: '45px' }}>
-              <>
-                {!favoriteItemsLoaded ? (
-                  <p style={{ textAlign: 'center' }}> {t("loading")} {t("bookmarks")}...</p>
-                ) : (
-                  <>
-                    {React.Children.toArray(
-                      Object.keys(favoriteItems).map((key) => {
-                        if (
-                          key === 'documents' &&
-                          favoriteItems[key].filter(
-                            (item) =>
-                              item.favourited_by ===
-                              userDetail?.userinfo?.username
-                          ).length > 0
-                        )
-                          return (
-                            <div>
-                              <SectionBox
-                                cardBgColor='#1ABC9C'
-                                title='bookmarked documents'
-                                Card={DocumentCard}
-                                cardItems={favoriteItems[key].filter(
-                                  (item) =>
-                                    item.favourited_by ===
-                                    userDetail?.userinfo?.username
-                                )}
-                                status={favoriteItemsLoaded}
-                              />
-                            </div>
-                          );
-                        if (
-                          key === 'templates' &&
-                          favoriteItems[key].filter(
-                            (item) =>
-                              item.favourited_by ===
-                              userDetail?.userinfo?.username
-                          ).length > 0
-                        )
-                          return (
-                            <div>
-                              <SectionBox
-                                cardBgColor='#1ABC9C'
-                                title='bookmarked templates'
-                                Card={TemplateCard}
-                                cardItems={favoriteItems[key].filter(
-                                  (item) =>
-                                    item.favourited_by ===
-                                    userDetail?.userinfo?.username
-                                )}
-                                status={favoriteItemsLoaded}
-                              />
-                            </div>
-                          );
-                        if (
-                          key === 'workflows' &&
-                          favoriteItems[key].filter(
-                            (item) =>
-                              item.favourited_by ===
-                              userDetail?.userinfo?.username
-                          ).length > 0
-                        )
-                          return (
-                            <div>
-                              <SectionBox
-                                cardBgColor='#1ABC9C'
-                                title='bookmarked workflows'
-                                Card={WorkflowCard}
-                                cardItems={favoriteItems[key].filter(
-                                  (item) =>
-                                    item.favourited_by ===
-                                    userDetail?.userinfo?.username
-                                )}
-                                status={favoriteItemsLoaded}
-                              />
-                            </div>
-                          );
-                        return <></>;
-                      })
-                    )}
-                  </>
+              <div className={styles.tasks__container}>
+                {isShowUncompletedTasks && (
+                  <HandleTasks feature='incomplete' tasks={uncompletedTasks} />
                 )}
-              </>
+                {isShowCompletedTasks && (
+                  <HandleTasks feature='completed' tasks={completedTasks} />
+                )}
+              </div>
             </div>
-            <div className={styles.dowell__Advert__Container}>
-              {introVideos.map((item) => (
-                <div key={item.id} className={styles.skeleton__box}>
-                  <span className={styles.iframe__Title}>
-                  <b>{t(item.title)}</b> 
-                  </span>
-                  <Iframe
-                    Skeleton={Skeleton}
-                    src={item.src}
-                    title='YouTube video player'
-                    frameBorder='0'
-                    allow='accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share'
-                    allowFullScreen
-                  />
-                </div>
-              ))}
-            </div>
-          </>
-        )}
-      </div>
-    </WorkflowLayout>
+          )}
+          {!isVisible && (
+            <>
+              <div style={{ marginBottom: '45px' }}>
+                <>
+                  {!favoriteItemsLoaded ? (
+                    <p style={{ textAlign: 'center' }}>
+                      {' '}
+                      {t('loading')} {t('bookmarks')}...
+                    </p>
+                  ) : (
+                    <>
+                      {React.Children.toArray(
+                        Object.keys(favoriteItems).map((key) => {
+                          if (
+                            key === 'documents' &&
+                            favoriteItems[key].filter(
+                              (item) =>
+                                item.favourited_by ===
+                                userDetail?.userinfo?.username
+                            ).length > 0
+                          )
+                            return (
+                              <div>
+                                <SectionBox
+                                  cardBgColor='#1ABC9C'
+                                  title='bookmarked documents'
+                                  Card={DocumentCard}
+                                  cardItems={favoriteItems[key].filter(
+                                    (item) =>
+                                      item.favourited_by ===
+                                      userDetail?.userinfo?.username
+                                  )}
+                                  status={favoriteItemsLoaded}
+                                />
+                              </div>
+                            );
+                          if (
+                            key === 'templates' &&
+                            favoriteItems[key].filter(
+                              (item) =>
+                                item.favourited_by ===
+                                userDetail?.userinfo?.username
+                            ).length > 0
+                          )
+                            return (
+                              <div>
+                                <SectionBox
+                                  cardBgColor='#1ABC9C'
+                                  title='bookmarked templates'
+                                  Card={TemplateCard}
+                                  cardItems={favoriteItems[key].filter(
+                                    (item) =>
+                                      item.favourited_by ===
+                                      userDetail?.userinfo?.username
+                                  )}
+                                  status={favoriteItemsLoaded}
+                                />
+                              </div>
+                            );
+                          if (
+                            key === 'workflows' &&
+                            favoriteItems[key].filter(
+                              (item) =>
+                                item.favourited_by ===
+                                userDetail?.userinfo?.username
+                            ).length > 0
+                          )
+                            return (
+                              <div>
+                                <SectionBox
+                                  cardBgColor='#1ABC9C'
+                                  title='bookmarked workflows'
+                                  Card={WorkflowCard}
+                                  cardItems={favoriteItems[key].filter(
+                                    (item) =>
+                                      item.favourited_by ===
+                                      userDetail?.userinfo?.username
+                                  )}
+                                  status={favoriteItemsLoaded}
+                                />
+                              </div>
+                            );
+                          return <></>;
+                        })
+                      )}
+                    </>
+                  )}
+                </>
+              </div>
+              <div className={styles.dowell__Advert__Container}>
+                {introVideos.map((item) => (
+                  <div key={item.id} className={styles.skeleton__box}>
+                    <span className={styles.iframe__Title}>
+                      <b>{t(item.title)}</b>
+                    </span>
+                    <Iframe
+                      Skeleton={Skeleton}
+                      src={item.src}
+                      title='YouTube video player'
+                      frameBorder='0'
+                      allow='accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share'
+                      allowFullScreen
+                    />
+                  </div>
+                ))}
+              </div>
+            </>
+          )}
+        </div>
+      </WorkflowLayout>
+    </>
   );
 };
 

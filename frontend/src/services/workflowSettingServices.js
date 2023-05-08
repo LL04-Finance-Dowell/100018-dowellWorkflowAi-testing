@@ -28,4 +28,8 @@ export class WorkflowSettingServices {
   getAllTeams = (companyId) => {
     return httpApiUrl.get(`companies/${companyId}/teams/`);
   };
+
+  fetchWorkflowSettings = (companyId) => {
+    return httpApiUrl.get(`companies/${companyId}/settings/`);
+  };
 }
