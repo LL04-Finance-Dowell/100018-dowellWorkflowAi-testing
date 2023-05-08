@@ -396,7 +396,7 @@ def trigger_process(request):
 
     try:
         process = get_process_object(request.data["process_id"])
-    except ConnectionError:
+    except:
         return Response(
             "Could not start processing!", status.HTTP_500_INTERNAL_SERVER_ERROR
         )
@@ -443,7 +443,7 @@ def processes(request, company_id):
         try:
             process_list = get_process_list(company_id, data_type)
             cache.set(cache_key, process_list, timeout=60)
-        except ConnectionError:
+        except:
             return Response(status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     return Response(process_list, status.HTTP_200_OK)
@@ -458,7 +458,7 @@ def a_single_process(request, process_id):
 
     try:
         process = get_process_object(process_id)
-    except ConnectionError:
+    except:
         return Response("Failed fetch process", status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     return Response(process, status.HTTP_200_OK)
@@ -471,11 +471,14 @@ def fetch_process_links(request, process_id):
         return Response("something went wrong!", status.HTTP_400_BAD_REQUEST)
 
     try:
-        process_info = get_links_object_by_process_id(process_id)[0]
-    except ConnectionError:
-        return Response("Could not fetch links", status.HTTP_500_INTERNAL_SERVER_ERROR)
+        process_info = get_links_object_by_process_id(process_id)
+    except:
+        return Response("Could not fetch links at this time", status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-    return Response(process_info["links"], status.HTTP_200_OK)
+    if process_info:
+        return Response(process_info["links"][0], status.HTTP_200_OK)
+
+    return Response("this process has no verification links",  status.HTTP_200_OK)
 
 
 @api_view(["POST"])
@@ -646,7 +649,7 @@ def get_workflows(request, company_id):
 
     try:
         workflow_list = get_wf_list(company_id, data_type)
-    except ConnectionError:
+    except:
         return Response({"workflows": []}, status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     if len(workflow_list) > 0:
@@ -972,7 +975,7 @@ def create_template(request):
                 EDITOR_API,
                 data=json.dumps(payload),
             )
-        except ConnectionError:
+        except:
             return Response(
                 {"message": "Template Creation Failed"},
                 status.HTTP_500_INTERNAL_SERVER_ERROR,
