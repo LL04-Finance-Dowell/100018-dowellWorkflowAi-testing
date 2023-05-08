@@ -169,26 +169,57 @@
 
 
 .chat_messages {
-    /* background-color: light; */
+    
     height: 270px;
     margin-top: 10px;
+    display: flex;
+    flex-direction: column;
     overflow-y: auto;
 
 }
+.chat_messages::-webkit-scrollbar {
+    width: 5px;
+  }
+  
+  .chat_messages::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  
+  .chat_messages::-webkit-scrollbar-thumb {
+    background-color: #b0a7a7;
+    border-radius: 5px;
+  }
+  
+  .chat_messages::-webkit-scrollbar-thumb:hover {
+    background-color: #555;
+  }
 
 .Sender_sms {
-    text-align: end;
+    float: right;
     font-weight: bold;
+    background-color: blue;
+    color: white;
+    padding: 13px;
+    border-radius: 20px 20px 0px 20px;
+    margin-right: 5px;
+    font-size: 15px;
 
 
 }
 
 .Text {
+    font-size: 15px;
+    
     font-weight: bold;
+    background-color: #eeeaea;
+    width: fit-content;
+    padding: 13px;
+    border-radius: 20px 20px 20px 0;
 
 }
 
 .Large_Text {
+    margin-top: 10px;
     font-weight: bold;
     font-size: 1rem;
 }
@@ -207,6 +238,7 @@
     border-radius: 10px;
     width: 190px;
     padding: 10px;
+    font-size: 15px;
 }
 
 .Send_button {
