@@ -478,7 +478,7 @@ def fetch_process_links(request, process_id):
     if process_info:
         return Response(process_info["links"][0], status.HTTP_200_OK)
 
-    return Response("this process has no verification links",  status.HTTP_200_OK)
+    return Response(process_info,  status.HTTP_200_OK)
 
 
 @api_view(["POST"])
