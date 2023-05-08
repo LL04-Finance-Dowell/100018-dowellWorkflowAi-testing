@@ -479,7 +479,7 @@ def fetch_process_links(request, process_id):
         process = process_info[0]
         return Response(process["links"], status.HTTP_200_OK)
 
-    return Response(process_info,  status.HTTP_200_OK)
+    return Response([],  status.HTTP_200_OK)
 
 
 @api_view(["POST"])
