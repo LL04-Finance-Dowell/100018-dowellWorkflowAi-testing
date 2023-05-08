@@ -18,6 +18,7 @@ import {
   setProcessesLoading,
   setShowLegalStatusPopup,
   setUserDetailPosition,
+  setLanguageSelectPosition
 } from '../../features/app/appSlice';
 import { AiOutlineClose } from 'react-icons/ai';
 import { LoadingSpinner } from '../../components/LoadingSpinner/LoadingSpinner';
@@ -30,6 +31,7 @@ import { useAppContext } from '../../contexts/AppContext';
 import { WorkflowSettingServices } from '../../services/workflowSettingServices';
 import { useTranslation } from "react-i18next";
 import i18next from "i18next"
+import LanguageDropdown from '../../components/LanguageSelector/LanguageDropdown';
 
 const WorkflowLayout = ({ children }) => {
   const dispatch = useDispatch();
@@ -38,6 +40,7 @@ const WorkflowLayout = ({ children }) => {
   const { userDetail, session_id, id } = useSelector((state) => state.auth);
   const {
     userDetailPosition,
+    languageSelectPosition,
     legalStatusLoading,
     showLegalStatusPopup,
     legalTermsAgreed,
@@ -46,6 +49,7 @@ const WorkflowLayout = ({ children }) => {
     adminUserPortfolioLoaded,
     processesLoaded,
   } = useSelector((state) => state.app);
+
   const [createNewPortfolioLoading, setCreateNewPortfolioLoading] =
     useState(false);
   const { allDocuments } = useSelector((state) => state.document);
@@ -78,6 +82,12 @@ const WorkflowLayout = ({ children }) => {
 
   const handleMouseLeave = () => {
     dispatch(setUserDetailPosition(null));
+  };
+  const HandleLanBtnClk = () => {
+    dispatch(setLanguageSelectPosition(languageSelectPosition));
+  }
+  const handleLanClose = () => {
+    dispatch(setLanguageSelectPosition(null));
   };
 
   const handleAgreeCheckBoxClick = (e) => {
@@ -196,11 +206,11 @@ const WorkflowLayout = ({ children }) => {
       <div className={styles.container}>
         {userDetail ? (
           !userDetail.portfolio_info ||
-          userDetail.portfolio_info?.length === 0 ||
-          (userDetail.portfolio_info?.length > 0 &&
-            !userDetail.portfolio_info.find(
-              (item) => item.product === 'Workflow AI'
-            )) ? (
+            userDetail.portfolio_info?.length === 0 ||
+            (userDetail.portfolio_info?.length > 0 &&
+              !userDetail.portfolio_info.find(
+                (item) => item.product === 'Workflow AI'
+              )) ? (
             <div className={styles.redirect__container}>
               <div className={styles.img__container}>
                 <img src={DowellLogo} />
@@ -231,9 +241,10 @@ const WorkflowLayout = ({ children }) => {
                   </p>
                   {children}
                 </div>
-                  <Chat/>
+                <Chat />
               </div>
               <Editor />
+          
             </>
           )
         ) : (
@@ -241,6 +252,24 @@ const WorkflowLayout = ({ children }) => {
             <Spinner />
           </div>
         )}
+
+
+        {/* ////////// */}
+        {languageSelectPosition && (
+          <div
+            onClick={HandleLanBtnClk}
+            onMouseLeave={handleLanClose}
+            style={{
+              position: 'fixed',
+              zIndex: '10000000',
+              top: `${languageSelectPosition.top}px`,
+              left: `${languageSelectPosition.left}px`,
+            }}
+          >
+            <LanguageDropdown />
+          </div>
+        )}
+        {/* /////////// */}
         {userDetailPosition && (
           <div
             onMouseEnter={handleMouseEnter}

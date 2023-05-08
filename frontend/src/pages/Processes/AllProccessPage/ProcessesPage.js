@@ -4,19 +4,21 @@ import WorkflowLayout from "../../../layouts/WorkflowLayout/WorkflowLayout";
 import ManageFiles from "../../../components/manageFiles/ManageFiles";
 import { useDispatch, useSelector } from "react-redux";
 import ProcessCard from "../../../components/hoverCard/processCard/ProcessCard";
+import GeneratedLinksModal from "../../../components/setWorkFlowInDocNew/steps/processDocument/components/GeneratedLinksModal/GeneratedLinksModal";
 import { useEffect } from "react";
 import { getAllProcessesV2 } from "../../../services/processServices";
-import { setAllProcesses, setProcessesLoaded, setProcessesLoading } from "../../../features/app/appSlice";
+
+import { setAllProcesses, setProcessesLoaded, setProcessesLoading, setShowGeneratedLinksPopup } from "../../../features/app/appSlice";
 import { useNavigate } from "react-router-dom";
 
 const ProcessesPage = ({ home, showOnlySaved, showOnlyPaused, showOnlyCancelled, showOnlyTrashed, showOnlyTests, showOnlyCompleted }) => {
-  const { processesLoading, allProcesses, processesLoaded } = useSelector((state) => state.app);
+  const { processesLoading, allProcesses, processesLoaded, ArrayofLinks, showGeneratedLinksPopup, linksFetched } = useSelector((state) => state.app);
   const { userDetail } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
   useEffect(() => {
-    
+
     if (showOnlySaved) navigate("#saved-processes");
     if (showOnlyPaused) navigate("#paused-processes");
     if (showOnlyCancelled) navigate("#cancelled-processes");
@@ -69,11 +71,11 @@ const ProcessesPage = ({ home, showOnlySaved, showOnlyPaused, showOnlyCancelled,
                 Card={ProcessCard}
                 cardItems={
                   allProcesses.filter(process => process.processing_state === "draft")
-                  .filter(process => process.data_type === userDetail?.portfolio_info[0]?.data_type)
-                  .filter(process => process.created_by === userDetail?.userinfo?.username)
-                  .filter(process => process.workflow_construct_ids)
+                    .filter(process => process.data_type === userDetail?.portfolio_info[0]?.data_type)
+                    .filter(process => process.created_by === userDetail?.userinfo?.username)
+                    .filter(process => process.workflow_construct_ids)
                 }
-                status={processesLoading ? "pending" :"success"}
+                status={processesLoading ? "pending" : "success"}
                 itemType={"processes"}
               />
             </div> : <></>
@@ -90,6 +92,11 @@ const ProcessesPage = ({ home, showOnlySaved, showOnlyPaused, showOnlyCancelled,
               />
             </div> : <></>
           }
+          {showGeneratedLinksPopup && linksFetched && Array.isArray(ArrayofLinks) &&
+            <GeneratedLinksModal />
+          }
+
+
           {
             showOnlyPaused ? <div id="paused-processes">
               <SectionBox
@@ -103,7 +110,7 @@ const ProcessesPage = ({ home, showOnlySaved, showOnlyPaused, showOnlyCancelled,
             </div> : <></>
           }
           {
-            showOnlyCancelled ?<div id="cancelled-processes">
+            showOnlyCancelled ? <div id="cancelled-processes">
               <SectionBox
                 cardBgColor="#1ABC9C"
                 title="cancelled proccess"
@@ -115,7 +122,7 @@ const ProcessesPage = ({ home, showOnlySaved, showOnlyPaused, showOnlyCancelled,
             </div> : <></>
           }
           {
-            showOnlyTrashed ?<div id="trashed-processes">
+            showOnlyTrashed ? <div id="trashed-processes">
               <SectionBox
                 cardBgColor="#1ABC9C"
                 title="trashed proccess"
@@ -127,7 +134,7 @@ const ProcessesPage = ({ home, showOnlySaved, showOnlyPaused, showOnlyCancelled,
             </div> : <></>
           }
           {
-            showOnlyTests ?<div id="test-processes">
+            showOnlyTests ? <div id="test-processes">
               <SectionBox
                 cardBgColor="#1ABC9C"
                 title="test proccess"
@@ -139,7 +146,7 @@ const ProcessesPage = ({ home, showOnlySaved, showOnlyPaused, showOnlyCancelled,
             </div> : <></>
           }
           {
-            showOnlyCompleted ?<div id="completed-processes">
+            showOnlyCompleted ? <div id="completed-processes">
               <SectionBox
                 cardBgColor="#1ABC9C"
                 title="completed proccess"

@@ -53,7 +53,7 @@ const Editor = () => {
                   {t('Do you want to close?')}
                   <br />
                   <span className={styles.decision__mini__text}>
-                    Save your work before closing
+                    {t("Save your work before closing")}
                   </span>
                 </h2>
                 <div className={styles.button__container}>

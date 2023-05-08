@@ -44,6 +44,7 @@ const VerificationPage = () => {
             const auth_portfolio = paramsPassed.get('auth_portfolio');
             const auth_role = paramsPassed.get('auth_role');
             const user_type = paramsPassed.get('user_type');
+            const auth_users = paramsPassed.getAll('auth_name');
     
             if ((!isPublicUser) && (userDetail) && (auth_username !== userDetail?.userinfo?.username || auth_portfolio !== userDetail?.portfolio_info[0]?.portfolio_name)) {
                 toast.info("You are not authorized to view this");
@@ -52,7 +53,7 @@ const VerificationPage = () => {
                 return;
             }
     
-            sanitizedDataToPost.auth_username = auth_username;
+            sanitizedDataToPost.auth_username = isPublicUser ? auth_users : auth_username;
             sanitizedDataToPost.auth_portfolio = auth_portfolio;      
             sanitizedDataToPost.auth_role = auth_role;
             sanitizedDataToPost.user_type = user_type;

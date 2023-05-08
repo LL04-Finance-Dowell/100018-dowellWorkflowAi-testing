@@ -240,7 +240,6 @@ const SectionBox = ({
     }
   };
 
-  console.log('slideCount', sliceCount);
 
   return (
     <div className={styles.container}>
@@ -250,7 +249,7 @@ const SectionBox = ({
             className={maneFilesStyles.header}
             id={idKey ? title.replaceAll(' ', '') + '-' + idKey : ''}
           >
-            {title}
+            {t(title)}
             {itemType ? (
               itemType === 'documents' ? (
                 allDocumentsStatus !== 'pending' ? (
@@ -267,7 +266,7 @@ const SectionBox = ({
                     ) : (
                       <IoIosRefresh />
                     )}
-                    <span>Refresh</span>
+                    <span>{t("Refresh")}</span>
                   </button>
                 ) : (
                   <></>
@@ -307,7 +306,7 @@ const SectionBox = ({
                     ) : (
                       <IoIosRefresh />
                     )}
-                    <span>Refresh</span>
+                    <span>{t("Refresh")}</span>
                   </button>
                 ) : (
                   <></>
@@ -347,7 +346,7 @@ const SectionBox = ({
                     ) : (
                       <IoIosRefresh />
                     )}
-                    <span>Refresh</span>
+                    <span>{t("Refresh")}</span>
                   </button>
                 ) : (
                   <></>

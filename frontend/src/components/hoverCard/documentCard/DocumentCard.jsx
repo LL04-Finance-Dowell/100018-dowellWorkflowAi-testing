@@ -282,7 +282,7 @@ const DocumentCard = ({
             ) : cardItem.type === 'sign-document' ? (
               'Sign Here'
             ) : (
-              'Open Document'
+              t("Open Document")
             )}
           </Button>
         ) : (
