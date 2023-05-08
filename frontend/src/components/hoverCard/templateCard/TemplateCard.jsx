@@ -1,26 +1,30 @@
-import React from "react";
-import { AiFillStar, AiOutlineHeart, AiOutlineStar } from "react-icons/ai";
-import { BsBookmark, BsFillBookmarkFill } from "react-icons/bs";
-import { MdFavorite } from "react-icons/md";
-import { RiDeleteBin6Line } from "react-icons/ri";
-import { useDispatch, useSelector } from "react-redux";
-import { toast } from "react-toastify";
-import { useAppContext } from "../../../contexts/AppContext";
-import { detailTemplate } from "../../../features/template/asyncThunks";
-import { setAllTemplates } from "../../../features/template/templateSlice";
-import { moveItemToArchive } from "../../../services/archiveServices";
-import { addNewFavoriteForUser, deleteFavoriteForUser } from "../../../services/favoritesServices";
-import HoverCard from "../HoverCard";
-import { Button } from "../styledComponents";
-import { useTranslation } from "react-i18next";
+import React from 'react';
+import { AiFillStar, AiOutlineHeart, AiOutlineStar } from 'react-icons/ai';
+import { BsBookmark, BsFillBookmarkFill } from 'react-icons/bs';
+import { MdFavorite } from 'react-icons/md';
+import { RiDeleteBin6Line } from 'react-icons/ri';
+import { useDispatch, useSelector } from 'react-redux';
+import { toast } from 'react-toastify';
+import { useAppContext } from '../../../contexts/AppContext';
+import { detailTemplate } from '../../../features/template/asyncThunks';
+import { setAllTemplates } from '../../../features/template/templateSlice';
+import { moveItemToArchive } from '../../../services/archiveServices';
+import {
+  addNewFavoriteForUser,
+  deleteFavoriteForUser,
+} from '../../../services/favoritesServices';
+import HoverCard from '../HoverCard';
+import { Button } from '../styledComponents';
+import { useTranslation } from 'react-i18next';
 
 const TemplateCard = ({ cardItem }) => {
   const dispatch = useDispatch();
   const { t } = useTranslation();
 
-  const { favoriteItems, addToFavoritesState, removeFromFavoritesState } = useAppContext();
+  const { favoriteItems, addToFavoritesState, removeFromFavoritesState } =
+    useAppContext();
   const { userDetail } = useSelector((state) => state.auth);
-  const { allTemplates } = useSelector(state => state.template);
+  const { allTemplates } = useSelector((state) => state.template);
 
   const handleTemplateDetail = (item) => {
     const data = {
@@ -32,8 +36,11 @@ const TemplateCard = ({ cardItem }) => {
   };
 
   const handleFavoritess = async (item, actionType) => {
-    if (actionType === "add") {
-      addToFavoritesState("templates", {...item, 'favourited_by': userDetail?.userinfo?.username})
+    if (actionType === 'add') {
+      addToFavoritesState('templates', {
+        ...item,
+        favourited_by: userDetail?.userinfo?.username,
+      });
       try {
         const data = {
           item: {
@@ -41,25 +48,34 @@ const TemplateCard = ({ cardItem }) => {
             company_id: item.company_id,
             template_name: item.template_name,
           },
-          item_type: "template",
+          item_type: 'template',
           username: userDetail?.userinfo?.username,
-        }
+        };
         const response = await (await addNewFavoriteForUser(data)).data;
-        toast.success(response)
+        toast.success(response);
       } catch (error) {
-        toast.info("Failed to add template to bookmarks")
-        removeFromFavoritesState("templates", item._id)
+        toast.info('Failed to add template to bookmarks');
+        removeFromFavoritesState('templates', item._id);
       }
     }
 
-    if (actionType === "remove") {
-      removeFromFavoritesState("templates", item._id)
+    if (actionType === 'remove') {
+      removeFromFavoritesState('templates', item._id);
       try {
-        const response = await (await deleteFavoriteForUser(item._id, 'template', userDetail?.userinfo?.username)).data;
-        toast.success('Item removed from bookmarks')
+        const response = await (
+          await deleteFavoriteForUser(
+            item._id,
+            'template',
+            userDetail?.userinfo?.username
+          )
+        ).data;
+        toast.success('Item removed from bookmarks');
       } catch (error) {
-        toast.info("Failed to remove template from bookmarks")
-        addToFavoritesState("templates", {...item, 'favourited_by': userDetail?.userinfo?.username})
+        toast.info('Failed to remove template from bookmarks');
+        addToFavoritesState('templates', {
+          ...item,
+          favourited_by: userDetail?.userinfo?.username,
+        });
       }
     }
     // console.log(favoriteItems)
@@ -67,61 +83,80 @@ const TemplateCard = ({ cardItem }) => {
 
   const handleTrashTemplate = async (cardItem) => {
     const copyOfAllTemplates = [...allTemplates];
-    const foundTemplateIndex = copyOfAllTemplates.findIndex(item => item._id === cardItem._id);
-    if (foundTemplateIndex === -1) return
+    const foundTemplateIndex = copyOfAllTemplates.findIndex(
+      (item) => item._id === cardItem._id
+    );
+    if (foundTemplateIndex === -1) return;
 
-    const copyOfTemplateToUpdate = { ...copyOfAllTemplates[foundTemplateIndex] };
-    copyOfTemplateToUpdate.data_type = "Archive_Data";
+    const copyOfTemplateToUpdate = {
+      ...copyOfAllTemplates[foundTemplateIndex],
+    };
+    copyOfTemplateToUpdate.data_type = 'Archive_Data';
     copyOfAllTemplates[foundTemplateIndex] = copyOfTemplateToUpdate;
     dispatch(setAllTemplates(copyOfAllTemplates));
 
     try {
-      const response = await (await moveItemToArchive(cardItem._id, 'template')).data;
-      toast.success(response)
+      const response = await (
+        await moveItemToArchive(cardItem._id, 'template')
+      ).data;
+      toast.success(response);
     } catch (error) {
       console.log(error.response ? error.response.data : error.message);
       toast.info(error.response ? error.response.data : error.message);
-      copyOfTemplateToUpdate.data_type = "Real_Data";
+      copyOfTemplateToUpdate.data_type = 'Real_Data';
       copyOfAllTemplates[foundTemplateIndex] = copyOfTemplateToUpdate;
       dispatch(setAllTemplates(copyOfAllTemplates));
     }
-  }
+  };
 
   const FrontSide = () => {
     return (
-      <div>{cardItem.template_name ? cardItem.template_name : "no item"}</div>
+      <div>{cardItem.template_name ? cardItem.template_name : 'no item'}</div>
     );
   };
 
   const BackSide = () => {
     return (
       <div>
-        <div style={{ 
-          cursor: "pointer", 
-          position: "absolute", 
-          right: "0", 
-          top: "0"
-        }} onClick={() => handleFavoritess(cardItem, favoriteItems.templates.find(item => item._id === cardItem._id) ? "remove" : "add")}>
-          {
-            favoriteItems.templates.find(item => item._id === cardItem._id) ?
-            <BsFillBookmarkFill /> :
-            <BsBookmark />
+        <div
+          style={{
+            cursor: 'pointer',
+            position: 'absolute',
+            right: '0',
+            top: '0',
+          }}
+          onClick={() =>
+            handleFavoritess(
+              cardItem,
+              favoriteItems.templates.find((item) => item._id === cardItem._id)
+                ? 'remove'
+                : 'add'
+            )
           }
+        >
+          {favoriteItems.templates.find((item) => item._id === cardItem._id) ? (
+            <BsFillBookmarkFill />
+          ) : (
+            <BsBookmark />
+          )}
         </div>
         {cardItem.template_name ? (
           <Button onClick={() => handleTemplateDetail(cardItem)}>
-            {t("Open Template")}
+            {t('Open Template')}
           </Button>
         ) : (
-          "no item"
+          'no item'
         )}
-        <div style={{ 
-          cursor: "pointer", 
-          position: "absolute", 
-          right: "0", 
-          bottom: "0"
-        }} onClick={() => handleTrashTemplate(cardItem)}>
-          <RiDeleteBin6Line color="red" />
+        <div
+          style={{
+            cursor: 'pointer',
+            position: 'absolute',
+            right: '0',
+            bottom: '0',
+          }}
+          onClick={() => handleTrashTemplate(cardItem)}
+        >
+          <RiDeleteBin6Line color='red' />
         </div>
       </div>
     );

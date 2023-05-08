@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { setEditorLink } from '../../features/app/appSlice';
+import { setEditorLink, setEditorFetching } from '../../features/app/appSlice';
 import { LoadingSpinner } from '../LoadingSpinner/LoadingSpinner';
 import { AiOutlineClose } from 'react-icons/ai';
 import styles from './editor.module.css';
 import Spinner from '../spinner/Spinner';
 import { TiTick } from 'react-icons/ti';
 import { MdClose } from 'react-icons/md';
-import { useTranslation } from "react-i18next";
+import { useTranslation } from 'react-i18next';
 
 const Editor = () => {
   const dispatch = useDispatch();
@@ -16,6 +16,7 @@ const Editor = () => {
   const { editorStatus: docStatus } = useSelector((state) => state.document);
   const { editorStatus: tempStatus } = useSelector((state) => state.template);
   const [toggleDecision, setToggleDecision] = useState(false);
+  const [childWinOpen, setChildWinOpen] = useState(false);
 
   const handleFrameClose = () => {
     setToggleDecision(true);
@@ -38,7 +39,7 @@ const Editor = () => {
           ) : (
             editorLink && (
               <div className={styles.framer__box}>
-                <iframe src={editorLink}>{t("inside editoerr")}</iframe>
+                <iframe src={editorLink}>{t('inside editoerr')}</iframe>
                 <i onClick={handleFrameClose}>
                   <AiOutlineClose size={30} />
                 </i>
@@ -49,7 +50,7 @@ const Editor = () => {
             <div className={styles.decision__container}>
               <div className={styles.decision__box}>
                 <h2>
-                  {t("Do you want to close?")}
+                  {t('Do you want to close?')}
                   <br />
                   <span className={styles.decision__mini__text}>
                     {t("Save your work before closing")}

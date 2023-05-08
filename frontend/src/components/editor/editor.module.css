@@ -4,7 +4,6 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  /*  background-color: #c3d7be; */
 }
 
 .framer__container {
@@ -30,7 +29,8 @@
 }
 
 .framer__box {
-  height: 80%;
+  /* height: 80%; */
+  height: 100vh;
   width: 90%;
 }
 
@@ -68,12 +68,10 @@
 .button__container {
   display: flex;
   gap: 15px;
-  /*  justify-content: space-between; */
 }
 
 .button__container button {
   padding: 5px;
-  /* width: 75px; */
   border-radius: 10px;
   color: #fff;
   font-weight: 600;

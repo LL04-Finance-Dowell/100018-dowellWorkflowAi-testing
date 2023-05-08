@@ -26,7 +26,7 @@ import { moveItemToArchive } from '../../../services/archiveServices';
 import { setAllDocuments } from '../../../features/document/documentSlice';
 import { BsBookmark, BsFillBookmarkFill } from 'react-icons/bs';
 import { updateVerificationDataWithTimezone } from '../../../utils/helpers';
-import { useTranslation } from "react-i18next";
+import { useTranslation } from 'react-i18next';
 
 const DocumentCard = ({
   cardItem,
@@ -165,7 +165,6 @@ const DocumentCard = ({
       document_name: item.document_name,
       document_id: item._id,
     };
-
     dispatch(detailDocument(data.document_id));
   };
 

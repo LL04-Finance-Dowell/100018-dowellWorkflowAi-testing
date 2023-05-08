@@ -1,6 +1,10 @@
-import { createAsyncThunk } from "@reduxjs/toolkit";
-import { TemplateServices } from "../../services/templateServices";
-import { setToggleEditor, setEditorLink } from "../app/appSlice";
+import { createAsyncThunk } from '@reduxjs/toolkit';
+import { TemplateServices } from '../../services/templateServices';
+import {
+  setToggleEditor,
+  setEditorLink,
+  setEditorFetching,
+} from '../app/appSlice';
 
 const filterTemplates = (templates, thunkAPI) => {
   let filteredTemplates = [];
@@ -22,7 +26,7 @@ const filterTemplates = (templates, thunkAPI) => {
 const templateServices = new TemplateServices();
 
 export const createTemplate = createAsyncThunk(
-  "template/create",
+  'template/create',
   async (data, thunkAPI) => {
     try {
       const res = await templateServices.createTemplate(data);
@@ -37,12 +41,12 @@ export const createTemplate = createAsyncThunk(
 );
 
 export const detailTemplate = createAsyncThunk(
-  "template/detail",
+  'template/detail',
   async (data, thunkAPI) => {
     try {
       const res = await templateServices.detailTemplate(data);
 
-      console.log("template data detail", res.data);
+      console.log('template data detail', res.data);
 
       thunkAPI.dispatch(setEditorLink(res.data));
 
@@ -54,12 +58,12 @@ export const detailTemplate = createAsyncThunk(
 );
 
 export const mineTemplates = createAsyncThunk(
-  "template/mine",
+  'template/mine',
   async (data, thunkAPI) => {
     try {
       const res = await templateServices.mineTemplates(data);
 
-      console.log("mine teplatessssssssss", res.data);
+      console.log('mine teplatessssssssss', res.data);
 
       const templates = filterTemplates(res.data, thunkAPI);
 
@@ -71,7 +75,7 @@ export const mineTemplates = createAsyncThunk(
 );
 
 export const savedTemplates = createAsyncThunk(
-  "template/saved",
+  'template/saved',
   async (data, thunkAPI) => {
     try {
       const res = await templateServices.savedTemplates(data);
@@ -86,7 +90,7 @@ export const savedTemplates = createAsyncThunk(
 );
 
 export const allTemplates = createAsyncThunk(
-  "template/all",
+  'template/all',
   async (data, thunkAPI) => {
     try {
       const res = await templateServices.allTemplates(data);

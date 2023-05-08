@@ -1,16 +1,22 @@
-import { useState } from "react";
-import styles from "./manageFiles.module.css";
-import { BsPlusLg } from "react-icons/bs";
-import { useDispatch, useSelector } from "react-redux";
-import { createTemplate } from "../../features/template/asyncThunks";
+import { useState } from 'react';
+import styles from './manageFiles.module.css';
+import { BsPlusLg } from 'react-icons/bs';
+import { useDispatch, useSelector } from 'react-redux';
+import { createTemplate } from '../../features/template/asyncThunks';
 import {
   setCurrentWorkflow,
   setToggleManageFileForm,
-} from "../../features/app/appSlice";
-import { useNavigate } from "react-router-dom";
-import { useTranslation } from "react-i18next";
+} from '../../features/app/appSlice';
+import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
-const ManageFiles = ({ title, children, OverlayComp, contentBoxClassName, removePageSuffix }) => {
+const ManageFiles = ({
+  title,
+  children,
+  OverlayComp,
+  contentBoxClassName,
+  removePageSuffix,
+}) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { t } = useTranslation();
@@ -23,7 +29,7 @@ const ManageFiles = ({ title, children, OverlayComp, contentBoxClassName, remove
       dispatch(setToggleManageFileForm(!toggleManageFileForm));
       dispatch(setCurrentWorkflow(null));
     } else {
-      if (title.toLowerCase() === "template") {
+      if (title.toLowerCase() === 'template') {
         const data = {
           created_by: userDetail?.userinfo.username,
           company_id: userDetail?.portfolio_info[0].org_id,
@@ -31,8 +37,8 @@ const ManageFiles = ({ title, children, OverlayComp, contentBoxClassName, remove
         };
         dispatch(createTemplate(data));
       }
-      if (title.toLowerCase() === "proccess") {
-        navigate("/workflows/new-set-workflow");
+      if (title.toLowerCase() === 'proccess') {
+        navigate('/workflows/new-set-workflow');
       }
     }
   };
@@ -42,8 +48,15 @@ const ManageFiles = ({ title, children, OverlayComp, contentBoxClassName, remove
       {OverlayComp && toggleManageFileForm && (
         <OverlayComp handleToggleOverlay={handleToggleOverlay} />
       )}
-      <h2 className={styles.page__header}> {t(title)} {removePageSuffix ? '' : t('Page')} </h2>
-      <div className={`${styles.content__box} ${contentBoxClassName ? contentBoxClassName : ''}`}>
+      <h2 className={styles.page__header}>
+        {' '}
+        {t(title)} {removePageSuffix ? '' : t('Page')}{' '}
+      </h2>
+      <div
+        className={`${styles.content__box} ${
+          contentBoxClassName ? contentBoxClassName : ''
+        }`}
+      >
         {/*   <div>
           <h2 className={styles.header}>New {title}</h2>
           <div

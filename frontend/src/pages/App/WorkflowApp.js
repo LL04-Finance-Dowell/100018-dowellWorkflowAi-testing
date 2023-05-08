@@ -29,8 +29,8 @@ import { useAppContext } from '../../contexts/AppContext';
 import { getFavoritesForUser } from '../../services/favoritesServices';
 import React from 'react';
 import DocumentCard from '../../components/hoverCard/documentCard/DocumentCard';
-import { useTranslation } from "react-i18next";
-import i18next from "i18next"
+import { useTranslation } from 'react-i18next';
+import i18next from 'i18next';
 
 const WorkflowApp = () => {
   const { userDetail } = useSelector((state) => state.auth);
@@ -226,14 +226,11 @@ const WorkflowApp = () => {
     // console.log('uct: ', uncompletedTasks);
   }, [uncompletedTasks, completedTasks]);
 
-
-
-
   return (
     <WorkflowLayout>
       <div className={styles.container}>
         <CustomerSupport />
-        
+
         <FlipMenu />
         {isVisible && (
           <div className={styles.section__container}>
@@ -280,7 +277,10 @@ const WorkflowApp = () => {
             <div style={{ marginBottom: '45px' }}>
               <>
                 {!favoriteItemsLoaded ? (
-                  <p style={{ textAlign: 'center' }}> {t("loading")} {t("bookmarks")}...</p>
+                  <p style={{ textAlign: 'center' }}>
+                    {' '}
+                    {t('loading')} {t('bookmarks')}...
+                  </p>
                 ) : (
                   <>
                     {React.Children.toArray(
@@ -365,7 +365,7 @@ const WorkflowApp = () => {
               {introVideos.map((item) => (
                 <div key={item.id} className={styles.skeleton__box}>
                   <span className={styles.iframe__Title}>
-                  <b>{t(item.title)}</b> 
+                    <b>{t(item.title)}</b>
                   </span>
                   <Iframe
                     Skeleton={Skeleton}
