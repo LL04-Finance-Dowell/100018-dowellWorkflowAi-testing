@@ -10,6 +10,7 @@ import HoverCard from "../HoverCard";
 import {setShowGeneratedLinksPopup,SetArrayofLinks,setLinksFetched  } from "../../../features/app/appSlice";
 import GeneratedLinksModal from "../../setWorkFlowInDocNew/steps/processDocument/components/GeneratedLinksModal/GeneratedLinksModal";
 import { Button } from "../styledComponents";
+import { LoadingSpinner } from "../../LoadingSpinner/LoadingSpinner";
 
 const ProcessCard = ({ cardItem, title }) => {
   const { userDetail } = useSelector((state) => state.auth);
@@ -17,29 +18,26 @@ const ProcessCard = ({ cardItem, title }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [Process_id, setProcess_id] = useState();
-
+  const [ processLinkLoading, setProcessLinkLoading ] = useState(false);
 
   const handleProcessItemClick = async (item) => {
     if (item.processing_state === "draft" && item.workflow_construct_ids) navigate(`/workflows/new-set-workflow?id=${item._id}&state=${item.processing_state}${item.isFromLocalStorage ? '&local=true' : ''}`)
   };
 
 
-
- const handleGetLinksClick = async (item) => {
-  getProcessLinks(item._id);
-  dispatch(setShowGeneratedLinksPopup(true));
-};
-
-  
+  const handleGetLinksClick = async (item) => {
+    getProcessLinks(item._id);
+    dispatch(setShowGeneratedLinksPopup(true));
+    setProcessLinkLoading(true);
+  };
 
 
-
-useEffect(() => {
-  if (Process_id) {
-   dispatch( setLinksFetched(true));
-    getProcessLinks(Process_id);
-  }
-}, [Process_id]); // Added Process_id as dependency
+  useEffect(() => {
+    if (Process_id) {
+    dispatch( setLinksFetched(true));
+      getProcessLinks(Process_id);
+    }
+  }, [Process_id]); // Added Process_id as dependency
 
 
   function getProcessLinks(process_id) {
@@ -48,6 +46,11 @@ useEffect(() => {
     .then(data => {
       dispatch(SetArrayofLinks(data));
       dispatch( setLinksFetched(true)); 
+      setProcessLinkLoading(false)
+    }).catch(err => {
+      console.log(err);
+      setProcessLinkLoading(false);
+      toast.info('Link fetching for process failed');
     });
   }
 
@@ -99,17 +102,29 @@ useEffect(() => {
         ) : (
           "no item"
         )}
-        <div style={{
-          cursor: "pointer",
-          position: "absolute",
-          right: "0",
-          top: "0"
-        }}
-          onClick={() => handleGetLinksClick(cardItem)}>
-          <BiLink color="green" />
-        </div>
 
-
+        {
+          !cardItem.isFromLocalStorage && cardItem.processing_state !== "draft" && <>
+            {
+              !processLinkLoading ? <div style={{
+                cursor: "pointer",
+                position: "absolute",
+                right: "0",
+                top: "0"
+              }}
+                onClick={() => handleGetLinksClick(cardItem)}>
+                <BiLink color="green" />
+              </div> :
+              <div style={{
+                position: "absolute",
+                right: "1%",
+                top: "0"
+              }}>
+                <LoadingSpinner width={"1rem"} height={'1rem'} />
+              </div>
+            }
+          </>
+        }
 
         <div style={{
           cursor: "pointer",
@@ -126,7 +141,7 @@ useEffect(() => {
       
     );
   };
-  return <HoverCard Front={FrontSide} Back={BackSide} />;
+  return <HoverCard Front={FrontSide} Back={BackSide} loading={processLinkLoading} />;
 };
 
 export default ProcessCard;

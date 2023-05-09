@@ -43,10 +43,28 @@ const SelectWorkflow = ({ savedDoc }) => {
 				<SelectWorkflowBoxes savedDoc={savedDoc} />
 				<SelectedWorkflows savedDoc={savedDoc} />
 				<div className={styles.button__container}>
-					<PrimaryButton onClick={handleConnectWfToDoc} hoverBg={savedDoc ? "" : "success"} disabled={savedDoc ? true : false} style={{ cursor: savedDoc ? "not-allowed" : "pointer" }}>
+					<PrimaryButton 
+						onClick={handleConnectWfToDoc} 
+						hoverBg={savedDoc ? "" : "success"} 
+						disabled={savedDoc ? true : false} 
+						style={{ 
+							backgroundColor: "var(--e-global-color-accent)",  
+							color: "white", 
+							cursor: savedDoc ? "not-allowed" : "pointer", 
+						}}
+						darkBgOnHover={true}
+					>
 						{t("Add Selected Workflows to document")}
 					</PrimaryButton>
-					<PrimaryButton onClick={handleRemove} hoverBg={savedDoc ? "" : "error"} disabled={savedDoc ? true : false} style={{ cursor: savedDoc ? "not-allowed" : "pointer" }}>
+					<PrimaryButton 
+						onClick={handleRemove} 
+						hoverBg={savedDoc ? "" : "error"} 
+						disabled={savedDoc ? true : false} 
+						style={{ 
+							cursor: savedDoc ? "not-allowed" : "pointer",
+							width: "70%"
+						}}
+					>
 						{t("Remove Selected Workflows from document")}
 					</PrimaryButton>
 				</div>

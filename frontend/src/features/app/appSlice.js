@@ -86,6 +86,7 @@ const initialState = {
   adminUser: false,
   adminUserPortfolioLoaded: false,
   selectedPortfolioTypeForWorkflowSettings: null,
+  savedProcessConfigured: false,
 };
 
 export const appSlice = createSlice({
@@ -190,6 +191,7 @@ export const appSlice = createSlice({
       state.userMembersSelectedForProcess = [];
       state.publicMembersSelectedForProcess = [];
       state.teamsSelectedSelectedForProcess = [];
+      state.savedProcessConfigured = false;
     },
     setProcessSteps: (state, action) => {
       state.processSteps = action.payload;
@@ -554,6 +556,21 @@ export const appSlice = createSlice({
     setSelectedPortfolioTypeForWorkflowSettings: (state, action) => {
       state.selectedPortfolioTypeForWorkflowSettings = action.payload;
     },
+    updateSingleTableOfContentRequiredStatus: (state, action) => {
+      const currentTableOfContents = state.tableOfContentForStep;
+      if (!action.payload || !action.payload.hasOwnProperty('workflow') || !action.payload.hasOwnProperty('stepIndex') || !action.payload.hasOwnProperty('id')) return void (state.tableOfContentForStep = currentTableOfContents);
+      
+      const foundContentIndex = currentTableOfContents.findIndex((content) => content.stepIndex === action.payload.stepIndex && content.workflow === action.payload.workflow && content.id === action.payload.id);
+      if (foundContentIndex === -1) return void(state.tableOfContentForStep = currentTableOfContents);
+
+      const updatedContent = { ...currentTableOfContents[foundContentIndex], required: action.payload.value };
+      currentTableOfContents[foundContentIndex] = updatedContent;
+
+      state.tableOfContentForStep = currentTableOfContents;
+    },
+    setSavedProcessConfigured: (state, action) => {
+      state.savedProcessConfigured = action.payload
+    },
   },
   extraReducers: (builder) => {
     //getItemsCount
@@ -635,6 +652,8 @@ export const {
   setAdminUser,
   setAdminUserPortfolioLoaded,
   setSelectedPortfolioTypeForWorkflowSettings,
+  updateSingleTableOfContentRequiredStatus,
+  setSavedProcessConfigured,
 } = appSlice.actions;
 
 export default appSlice.reducer;

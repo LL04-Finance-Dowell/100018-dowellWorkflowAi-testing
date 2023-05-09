@@ -10,7 +10,7 @@ import Contents from "../../../../contents/Contents";
 import { LoadingSpinner } from "../../../../../LoadingSpinner/LoadingSpinner";
 import { removeFromTableOfContentForStep, setTableOfContentForStep } from "../../../../../../features/app/appSlice";
 
-const AssignDocumentMap = ({ currentStepIndex }) => {
+const AssignDocumentMap = ({ currentStepIndex, stepsPopulated }) => {
   const {
     register,
     handleSubmit,
@@ -102,6 +102,7 @@ const AssignDocumentMap = ({ currentStepIndex }) => {
         contents={contentOfDocument}
         toggleContent={true}
         currentStepIndex={currentStepIndex}
+        stepsPopulated={stepsPopulated}
       /> : 
       <LoadingSpinner />
     }

@@ -10,6 +10,7 @@ export const PrimaryButton = styled.button`
   border-radius: 2px;
   cursor: pointer;
   text-transform: capitalize;
+  transition: 0.3s ease-in-out;
   &:hover {
     background-color: ${(props) =>
       props.hoverBg === "success"
@@ -18,6 +19,12 @@ export const PrimaryButton = styled.button`
         ? "var(--e-global-color-1342d1f )"
         : "var(--e-global-color-9d2ac19)"};
     color: white;
+    filter: ${(props) => 
+      props.darkBgOnHover ? 
+      "brightness(0.9)" 
+      : 
+      "brightness(1)"
+    };
   }
   &:focus {
     border: solid 2px black;
