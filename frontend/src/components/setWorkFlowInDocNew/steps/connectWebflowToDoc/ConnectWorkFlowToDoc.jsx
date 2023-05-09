@@ -65,7 +65,7 @@ const ConnectWorkFlowToDoc = ({ stepsPopulated, savedProcessSteps }) => {
         workflow: savedProcessSteps[0].workflow,
         steps: processStepsToSet,
       }]
-      
+
       dispatch(setProcessSteps(savedProcessStepsToSet));
       
       // this will also be updated in the nearest future to capture multiple workflows
@@ -328,7 +328,7 @@ const ConnectWorkFlowToDoc = ({ stepsPopulated, savedProcessSteps }) => {
                       <div className={styles.diveder}></div>
                       <CopiesOfDoc currentStepIndex={index} stepsPopulated={stepsPopulated} />
                       <div className={styles.diveder}></div>
-                      <AssignDocumentMap currentStepIndex={index} />
+                      <AssignDocumentMap currentStepIndex={index} stepsPopulated={stepsPopulated} />
                       <div className={styles.diveder}></div>
                       <SelectMembersToAssign currentStepIndex={index} stepsPopulated={stepsPopulated} currentEnabledSteps={enabledSteps} />
                       <div className={styles.diveder}></div>

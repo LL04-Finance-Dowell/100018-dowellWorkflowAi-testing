@@ -191,7 +191,7 @@ export const appSlice = createSlice({
       state.userMembersSelectedForProcess = [];
       state.publicMembersSelectedForProcess = [];
       state.teamsSelectedSelectedForProcess = [];
-      state.savedProcessConfigured = [];
+      state.savedProcessConfigured = false;
     },
     setProcessSteps: (state, action) => {
       state.processSteps = action.payload;

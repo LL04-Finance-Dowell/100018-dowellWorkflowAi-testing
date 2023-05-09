@@ -16,6 +16,7 @@ const Contents = ({
   feature,
   currentStepIndex,
   showCheckBoxForContent,
+  stepsPopulated,
 }) => {
   const contentRef = useRef(null);
   const [currentTableItem, setCurrentTableItem] = useState(null);
@@ -25,6 +26,8 @@ const Contents = ({
   );
   const [contentsPageWise, setContentsPageWise] = useState([]);
   const [showContent, setShowContent] = useState([]);
+  const [ pagesEnabled, setPagesEnabled ] = useState([]);
+  const [ pagesEnabledFromDraftSet, setPagesEnabledForDraftsSet ] = useState(false);
 
   /*  const handleAddContent = (content) => {
     console.log(content);
@@ -75,6 +78,28 @@ const Contents = ({
     );
   }, [contents]);
 
+  useEffect(() => {
+    if (!stepsPopulated || pagesEnabledFromDraftSet || contentsPageWise.length < 1 || tableOfContentForStep.length < 1) return
+
+    const currentPagesEnabled = pagesEnabled.slice();
+
+    Object.keys(contentsPageWise).forEach(page => {
+      if (
+        !pagesEnabled.find(enabledPage => enabledPage.stepIndex === currentStepIndex && enabledPage.pageNumber === page) &&
+        contentsPageWise[page].find(item => tableOfContentForStep.find(step => step.id === item.id && step.stepIndex === currentStepIndex))
+      ) {
+        currentPagesEnabled.push({
+          stepIndex: currentStepIndex,
+          pageNumber: page,
+        })
+        setPagesEnabled(currentPagesEnabled);
+      }
+    });
+
+    setPagesEnabledForDraftsSet(true);
+    
+  }, [stepsPopulated, contentsPageWise, pagesEnabledFromDraftSet, tableOfContentForStep])
+
   const handleShowContent = (value, id) => {
     const currentContents = showContent.slice();
     const contentToUpdate = currentContents.find(
@@ -107,6 +132,18 @@ const Contents = ({
         value: checkboxElem.checked
       })
     )
+  }
+
+  const handleAddPageToSelection = (elem, pageNum) => {
+    const currentPagesEnabled = pagesEnabled.slice();
+
+    if (!elem.checked) return setPagesEnabled(currentPagesEnabled.filter(page => page.stepIndex !== currentStepIndex && page.pageNumber !== pageNum));
+
+    currentPagesEnabled.push({
+      stepIndex: currentStepIndex,
+      pageNumber: pageNum,
+    })
+    setPagesEnabled(currentPagesEnabled);
   }
 
   // console.log("contentscontents", contentsPageWise);
@@ -167,105 +204,144 @@ const Contents = ({
           ) : (
             <>
             <ol>
-              {React.Children.toArray(contents.map((item) => {
-                return <li
-                  /*   className={selectedContents.map(
-                    (selectedItem) =>
-                      selectedItem._id === item._id &&
-                      styles.current__table__item
-                  )} */
-                  /*  onClick={() => handleAddContent(item)} */
-                  // key={item._id}
-                  style={feature && feature === "table-of-contents" ? { width: "100%" } : {}}
-                >
-                  <span 
-                    style={
-                      // tableOfContentForStep.find(
-                      //   (step) =>
-                      //     step.workflow === docCurrentWorkflow._id &&
-                      //     step.id === item.id &&
-                      //     step.stepIndex === currentStepIndex
-                      // ) && 
-                      feature && feature === "table-of-contents" ? 
-                      { 
-                        width: "100%" 
-                      } : 
-                      { }
-                    }
-                  >
-                    {/* { showCheckBoxForContent && <input type={"checkbox"} value={JSON.stringify(item)} onChange={handleCheckboxSelection} /> } */}
-                    {showContent.find((content) => content.id === item.id)
-                      ?.show ? (
-                      <>
-                        <p>{item.data}</p>
-                        <AiOutlineCloseCircle
-                          className="content__Icon"
-                          onClick={() => handleShowContent(false, item.id)}
-                        />
-                      </>
-                    ) : (
-                      <div style={{
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "space-between",
-                        gap: "1rem",
+              {React.Children.toArray(Object.keys(contentsPageWise || {})).map(
+                (page) => {
+                  return (
+                    <>
+                      <label style={{ 
+                        width: "100%", 
+                        marginBottom: "10px", 
+                        display: "flex", 
+                        alignItems: "center", 
+                        gap: "10px" 
                       }}>
-                        <a
-                          style={
-                            tableOfContentForStep.find(
-                              (step) =>
-                                step.workflow === docCurrentWorkflow._id &&
-                                step.id === item.id &&
-                                step.stepIndex === currentStepIndex
-                            )
-                              ? {
-                                  backgroundColor: "#0048ff",
-                                  color: "#fff",
-                                  padding: "1%",
-                                  borderRadius: "5px",
-                                  display: "block",
-                                  width: "100%",
-                                  margin: "1% 0",
-                                }
+                        <input 
+                          type="checkbox" 
+                          onChange={({ target }) => handleAddPageToSelection(target, page)} 
+                          checked={
+                            pagesEnabled.find(enabledPage => enabledPage.stepIndex === currentStepIndex && enabledPage.pageNumber === page) ?
+                              true
+                            :
+                              false
+                          }
+                        />
+                        <span>Page: {page}</span>
+                      </label>
+                      <>
+                        {React.Children.toArray(contentsPageWise[page].map((item) => (
+                          <li
+                            style={
+                              feature && feature === "table-of-contents" ? { 
+                                width: "100%", padding: "0 5px",
+                                pointerEvents: pagesEnabled.find(enabledPage => enabledPage.stepIndex === currentStepIndex && enabledPage.pageNumber === page) ? 
+                                  "all" 
+                                  : 
+                                  "none"
+                                ,
+                                opacity: pagesEnabled.find(enabledPage => enabledPage.stepIndex === currentStepIndex && enabledPage.pageNumber === page) ? 
+                                  1
+                                  :
+                                  0.5
+                                ,
+                              } 
                               : {
-                                display: "block",
-                                margin: "1% 0",
+
                               }
-                          }
-                          onClick={
-                            () => handleContentSelection(item)
-                          }
-                          id={item._id + currentStepIndex}
-                        >
-                          {item.id}
-                        </a>
-                        {/* <AiOutlineInfoCircle
-                          className="content__Icon"
-                          onClick={() => handleShowContent(true, item.id)}
-                        /> */}
-                        {
-                          feature && feature === "table-of-contents" ? <>
-                            <input 
-                              id={item._id + currentStepIndex + item._id} 
-                              type="checkbox" 
-                              onChange={({ target}) => handleContentCheckboxChange(target, item.id)} 
-                              checked={tableOfContentForStep.find(
-                                (step) =>
-                                  step.workflow === docCurrentWorkflow._id &&
-                                  step.id === item.id &&
-                                  step.stepIndex === currentStepIndex
-                              )?.required}
-                            />
-                            <Tooltip anchorId={item._id + currentStepIndex} content={item.data ? item.data : "No data"} place="top" />  
-                            <Tooltip anchorId={item._id + currentStepIndex + item._id} content={"Required or not required"} place="top" />  
-                          </> : 
-                          <></>
-                        }
-                      </div>
-                    )}
-                  </span>
-                </li>
-              }))}
+                            }
+                          >
+                            <span 
+                              style={
+                                // tableOfContentForStep.find(
+                                //   (step) =>
+                                //     step.workflow === docCurrentWorkflow._id &&
+                                //     step.id === item.id &&
+                                //     step.stepIndex === currentStepIndex
+                                // ) && 
+                                feature && feature === "table-of-contents" ? 
+                                { 
+                                  width: "100%" 
+                                } : 
+                                { }
+                              }
+                            >
+                              {/* { showCheckBoxForContent && <input type={"checkbox"} value={JSON.stringify(item)} onChange={handleCheckboxSelection} /> } */}
+                              {showContent.find((content) => content.id === item.id)
+                                ?.show ? (
+                                <>
+                                  <p>{item.data}</p>
+                                  <AiOutlineCloseCircle
+                                    className="content__Icon"
+                                    onClick={() => handleShowContent(false, item.id)}
+                                  />
+                                </>
+                              ) : (
+                                <div style={{
+                                  display: "flex",
+                                  alignItems: "center",
+                                  justifyContent: "space-between",
+                                  gap: "1rem",
+                                }}>
+                                  <a
+                                    style={
+                                      tableOfContentForStep.find(
+                                        (step) =>
+                                          step.workflow === docCurrentWorkflow._id &&
+                                          step.id === item.id &&
+                                          step.stepIndex === currentStepIndex
+                                      )
+                                        ? {
+                                            backgroundColor: "#0048ff",
+                                            color: "#fff",
+                                            padding: "1%",
+                                            borderRadius: "5px",
+                                            display: "block",
+                                            width: "100%",
+                                            margin: "1% 0",
+                                          }
+                                        : {
+                                          display: "block",
+                                          margin: "1% 0",
+                                        }
+                                    }
+                                    onClick={
+                                      () => handleContentSelection(item)
+                                    }
+                                    id={item._id + currentStepIndex}
+                                  >
+                                    {item.id}
+                                  </a>
+                                  {/* <AiOutlineInfoCircle
+                                    className="content__Icon"
+                                    onClick={() => handleShowContent(true, item.id)}
+                                  /> */}
+                                  {
+                                    feature && feature === "table-of-contents" ? <>
+                                      <input 
+                                        id={item._id + currentStepIndex + item._id} 
+                                        type="checkbox" 
+                                        onChange={({ target}) => handleContentCheckboxChange(target, item.id)} 
+                                        checked={tableOfContentForStep.find(
+                                          (step) =>
+                                            step.workflow === docCurrentWorkflow._id &&
+                                            step.id === item.id &&
+                                            step.stepIndex === currentStepIndex
+                                        )?.required}
+                                      />
+                                      <Tooltip anchorId={item._id + currentStepIndex} content={item.data ? item.data : "No data"} place="top" />  
+                                      <Tooltip anchorId={item._id + currentStepIndex + item._id} content={"Required or not required"} place="top" />  
+                                    </> : 
+                                    <></>
+                                  }
+                                </div>
+                              )}
+                            </span>
+                          </li>
+                        )))}
+                      </>
+                    </>
+                  );
+                }
+              )}
             </ol>
             </>
           )
