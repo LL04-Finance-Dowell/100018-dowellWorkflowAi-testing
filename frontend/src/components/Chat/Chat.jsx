@@ -27,7 +27,6 @@ const Chat = () => {
     fetch(`https://100096.pythonanywhere.com/d-chat/Workflow-AI/?session_id=${session_id}`)
       .then((res) => res.json())
       .then((data) => setModal(data));
-      console.log('Room intilized',modals)
   }
 
   var roomId = modals.room_pk
@@ -57,7 +56,7 @@ const Chat = () => {
 
   useEffect(() => {
     fetchMessages(roomId);
-  }, []);
+  }, [roomId]);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -70,6 +69,7 @@ const Chat = () => {
   async function fetchMessages(roomId) {
     const response = await fetch(`https://100096.pythonanywhere.com/send_message/${roomId}/`);
     const data = await response.json();
+    // console.log(typeof data.messages)
     setapiMessages(data.messages);
   }
 

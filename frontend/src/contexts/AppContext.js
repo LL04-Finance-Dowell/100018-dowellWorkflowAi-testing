@@ -86,7 +86,6 @@ export const AppContextProvider = ({ children }) => {
       userDetail?.portfolio_info[0].org_id
     );
 
-    console.log('set data: ', res.data);
     // return res.data;
   };
 

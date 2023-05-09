@@ -54,7 +54,6 @@ export const detailDocument = createAsyncThunk(
 export const signDocument = createAsyncThunk("document/sign", async (data) => {
   try {
     const res = await documentServices.signDocument(data);
-    console.log("inseideeee");
 
     console.log("document", res.data);
 
@@ -134,7 +133,6 @@ export const allDocuments = createAsyncThunk(
   async (data, thunkAPI) => {
     try {
       const res = await documentServices.allDocuments(data);
-      console.log("inseideeee");
 
       const documents = filterDocuments(res.data.documents.reverse().filter(document => document.document_state !== "trash"), thunkAPI);
 

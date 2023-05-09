@@ -1,5 +1,6 @@
 import SectionBox from "../../../components/manageFiles/sectionBox/SectionBox";
 import { v4 as uuidv4 } from "uuid";
+import { useState } from "react";
 import WorkflowLayout from "../../../layouts/WorkflowLayout/WorkflowLayout";
 import ManageFiles from "../../../components/manageFiles/ManageFiles";
 import { useDispatch, useSelector } from "react-redux";
@@ -14,6 +15,7 @@ import { useNavigate } from "react-router-dom";
 const ProcessesPage = ({ home, showOnlySaved, showOnlyPaused, showOnlyCancelled, showOnlyTrashed, showOnlyTests, showOnlyCompleted }) => {
   const { processesLoading, allProcesses, processesLoaded, ArrayofLinks, showGeneratedLinksPopup, linksFetched } = useSelector((state) => state.app);
   const { userDetail } = useSelector((state) => state.auth);
+  const [copiedLinks, setCopiedLinks] = useState([]);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -58,6 +60,8 @@ const ProcessesPage = ({ home, showOnlySaved, showOnlyPaused, showOnlyCancelled,
     })
 
   }, [processesLoaded, userDetail])
+
+
 
   return (
     <WorkflowLayout>
