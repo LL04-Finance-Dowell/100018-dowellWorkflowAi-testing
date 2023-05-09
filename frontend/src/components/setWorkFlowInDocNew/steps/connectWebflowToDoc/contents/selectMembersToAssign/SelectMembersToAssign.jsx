@@ -134,13 +134,12 @@ const SelectMembersToAssign = ({ currentStepIndex, stepsPopulated, currentEnable
   useEffect(() => {
     if (!stepsPopulated || featuresUpdatedFromDraft) return
 
-    const stepDetails = processSteps.find(
-      process => process.workflow === docCurrentWorkflow?._id
-    )?.steps[currentStepIndex]
+    // const stepDetails = processSteps.find(
+    //   process => process.workflow === docCurrentWorkflow?._id
+    // )?.steps[currentStepIndex]
 
     const [currentSelectedOptions, currentEnabledRadioOptionsFromStepPopulation ] = [ userTypeOptionsEnabled.slice(), { ...enableRadioOptionsFromStepPopulation } ];
-
-    if (stepDetails?.stepTeamMembers?.length > 0) {
+    if (teamMembersSelectedForProcess.length > 0) {
       if (currentSelectedOptions.find(item => item.name === 'Team' && item.stepIndex === currentStepIndex)) return
 
       const newUserOptionToAdd = {
@@ -160,7 +159,7 @@ const SelectMembersToAssign = ({ currentStepIndex, stepsPopulated, currentEnable
       setEnableOptionsFromStepPopulation(currentEnabledRadioOptionsFromStepPopulation);
     }
 
-    if (stepDetails?.stepPublicMembers?.length > 0) {
+    if (publicMembersSelectedForProcess.length > 0) {
       if (currentSelectedOptions.find(item => item.name === 'Public' && item.stepIndex === currentStepIndex)) return
 
       const newUserOptionToAdd = {
@@ -180,7 +179,7 @@ const SelectMembersToAssign = ({ currentStepIndex, stepsPopulated, currentEnable
       setEnableOptionsFromStepPopulation(currentEnabledRadioOptionsFromStepPopulation);
     }
 
-    if (stepDetails?.stepUserMembers?.length > 0) {
+    if (userMembersSelectedForProcess.length > 0) {
       if (currentSelectedOptions.find(item => item.name === 'Users' && item.stepIndex === currentStepIndex)) return
 
       const newUserOptionToAdd = {
@@ -200,7 +199,8 @@ const SelectMembersToAssign = ({ currentStepIndex, stepsPopulated, currentEnable
       setEnableOptionsFromStepPopulation(currentEnabledRadioOptionsFromStepPopulation);
     }
 
-    if (stepDetails?.stepPublicMembers || stepDetails?.stepTeamMembers || stepDetails?.stepUserMembers) setFeaturesUpdatedFromDraft(true);
+    setFeaturesUpdatedFromDraft(true);
+    // if (stepDetails?.stepPublicMembers || stepDetails?.stepTeamMembers || stepDetails?.stepUserMembers) setFeaturesUpdatedFromDraft(true);
 
   }, [stepsPopulated, processSteps])
 

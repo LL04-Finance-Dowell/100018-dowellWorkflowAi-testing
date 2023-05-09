@@ -4,9 +4,11 @@ import { useDispatch, useSelector } from "react-redux";
 import {
   removeFromTableOfContentForStep,
   setTableOfContentForStep,
+  updateSingleTableOfContentRequiredStatus,
 } from "../../../features/app/appSlice";
 import styles from "./contents.module.css";
 import { Tooltip } from 'react-tooltip'
+import { toast } from "react-toastify";
 
 const Contents = ({
   contents,
@@ -51,6 +53,7 @@ const Contents = ({
       ...valueAsJSON,
       workflow: docCurrentWorkflow._id,
       stepIndex: currentStepIndex,
+      required: false,
     };
 
     dispatch(setTableOfContentForStep(newTableOfContentObj));
@@ -81,6 +84,30 @@ const Contents = ({
     contentToUpdate.show = value;
     setShowContent(currentContents);
   };
+
+  const handleContentCheckboxChange = (checkboxElem, itemId) => {
+    // checking if the item has been selected
+    const contentStepSelected = tableOfContentForStep.find(
+      (step) =>
+        step.workflow === docCurrentWorkflow._id &&
+        step.id === itemId &&
+        step.stepIndex === currentStepIndex
+    );
+
+    if (!contentStepSelected) {
+      checkboxElem.checked = false;
+      return toast.info(`Please select ${itemId} first`)
+    }
+    
+    dispatch(
+      updateSingleTableOfContentRequiredStatus({
+        stepIndex: currentStepIndex,
+        workflow: docCurrentWorkflow._id,
+        id: itemId,
+        value: checkboxElem.checked
+      })
+    )
+  }
 
   // console.log("contentscontents", contentsPageWise);
 
@@ -153,12 +180,12 @@ const Contents = ({
                 >
                   <span 
                     style={
-                      tableOfContentForStep.find(
-                        (step) =>
-                          step.workflow === docCurrentWorkflow._id &&
-                          step.id === item.id &&
-                          step.stepIndex === currentStepIndex
-                      ) && 
+                      // tableOfContentForStep.find(
+                      //   (step) =>
+                      //     step.workflow === docCurrentWorkflow._id &&
+                      //     step.id === item.id &&
+                      //     step.stepIndex === currentStepIndex
+                      // ) && 
                       feature && feature === "table-of-contents" ? 
                       { 
                         width: "100%" 
@@ -177,7 +204,12 @@ const Contents = ({
                         />
                       </>
                     ) : (
-                      <>
+                      <div style={{
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "space-between",
+                        gap: "1rem",
+                      }}>
                         <a
                           style={
                             tableOfContentForStep.find(
@@ -212,11 +244,24 @@ const Contents = ({
                           onClick={() => handleShowContent(true, item.id)}
                         /> */}
                         {
-                          feature && feature === "table-of-contents" ?
-                          <Tooltip anchorId={item._id + currentStepIndex} content={item.data ? item.data : "No data"} place="top" /> : 
+                          feature && feature === "table-of-contents" ? <>
+                            <input 
+                              id={item._id + currentStepIndex + item._id} 
+                              type="checkbox" 
+                              onChange={({ target}) => handleContentCheckboxChange(target, item.id)} 
+                              checked={tableOfContentForStep.find(
+                                (step) =>
+                                  step.workflow === docCurrentWorkflow._id &&
+                                  step.id === item.id &&
+                                  step.stepIndex === currentStepIndex
+                              )?.required}
+                            />
+                            <Tooltip anchorId={item._id + currentStepIndex} content={item.data ? item.data : "No data"} place="top" />  
+                            <Tooltip anchorId={item._id + currentStepIndex + item._id} content={"Required or not required"} place="top" />  
+                          </> : 
                           <></>
                         }
-                      </>
+                      </div>
                     )}
                   </span>
                 </li>

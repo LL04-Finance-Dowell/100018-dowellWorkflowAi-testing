@@ -5,7 +5,7 @@ import Contents from "../../contents/Contents";
 import { v4 as uuidv4 } from "uuid";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { setDocCurrentWorkflow, setProcessSteps, updateSingleProcessStep } from "../../../../features/app/appSlice";
+import { setDocCurrentWorkflow, setProcessSteps, setSavedProcessConfigured, updateSingleProcessStep } from "../../../../features/app/appSlice";
 import Collapse from "../../../../layouts/collapse/Collapse";
 import { FaArrowDown, FaRegistered } from "react-icons/fa";
 import { FaArrowUp } from "react-icons/fa";
@@ -25,6 +25,7 @@ const ConnectWorkFlowToDoc = ({ stepsPopulated, savedProcessSteps }) => {
   const { register } = useForm();
   const dispatch = useDispatch();
   const { t } = useTranslation();
+  const { savedProcessConfigured } = useSelector((state) => state.app);
 
   const { contentOfDocument, contentOfDocumentStatus } = useSelector(
     (state) => state.document
@@ -48,8 +49,24 @@ const ConnectWorkFlowToDoc = ({ stepsPopulated, savedProcessSteps }) => {
   // console.log("sssssssssssssssssss", wfToDocument);
 
   useEffect(() => {
-    if (stepsPopulated) {
-      dispatch(setProcessSteps(savedProcessSteps));
+    if (stepsPopulated && !savedProcessConfigured) {
+      const processStepsToSet = savedProcessSteps[0].steps.map(step => {
+        const copyOfStep = {...step};
+        const tt = Object.keys(copyOfStep)
+        .filter(key => key !== 'stepPublicMembers' && key !== 'stepTeamMembers' && key !== 'stepUserMembers' && key !== 'stepDocumentMap')
+        .reduce((obj, key) => {
+          obj[key] = copyOfStep[key];
+          return obj;
+        }, {});
+        return tt
+      })
+      
+      const savedProcessStepsToSet = [{
+        workflow: savedProcessSteps[0].workflow,
+        steps: processStepsToSet,
+      }]
+      
+      dispatch(setProcessSteps(savedProcessStepsToSet));
       
       // this will also be updated in the nearest future to capture multiple workflows
       const enabledSavedSteps = savedProcessSteps[0]?.steps?.map((step, index) => {
@@ -63,6 +80,7 @@ const ConnectWorkFlowToDoc = ({ stepsPopulated, savedProcessSteps }) => {
         return null
       }).filter(step => step);
       setEnabledSteps(enabledSavedSteps);
+      dispatch(setSavedProcessConfigured(true));
       return
     }
     setCurrentSteps(
