@@ -29,14 +29,12 @@ const Chat = () => {
       .then((data) => setModal(data));
   }
 
-  var roomId = modals.room_pk
-
   const handleMessageSend = () => {
     if (message.trim() === "") {
       return;
     }
     axios
-      .post(`https://100096.pythonanywhere.com/send_message/${roomId}/`, {
+      .post(`https://100096.pythonanywhere.com/send_message/${modals.room_pk}/`, {
         message,
         user_id: modals.user_id
       })
@@ -55,21 +53,28 @@ const Chat = () => {
   };
 
   useEffect(() => {
-    fetchMessages(roomId);
-  }, [roomId]);
+    if (!modals.room_pk) return
+
+    fetchMessages(modals.room_pk);
+  }, [modals]);
 
   useEffect(() => {
+    if (!modals.room_pk) return
     const interval = setInterval(() => {
-      fetchMessages(roomId);
-    }, 2000); // Repeat every 20 seconds
+      fetchMessages(modals.room_pk);
+    }, 2000); // Repeat every 2 seconds
 
     return () => clearInterval(interval); // This is important, it clears the interval on unmount
-  }, [roomId]);
+  }, [modals]);
 
   async function fetchMessages(roomId) {
     const response = await fetch(`https://100096.pythonanywhere.com/send_message/${roomId}/`);
+
+    if (!response.ok) {
+      throw new Error(`Failed to fetch messages for room ${roomId}: ${response.statusText}`);
+    }
+
     const data = await response.json();
-    // console.log(typeof data.messages)
     setapiMessages(data.messages);
   }
 
@@ -89,9 +94,10 @@ const Chat = () => {
   };
 
   const handleNestedButtonClick = () => {
-
-    setIsNestedPopupOpen(true);
-    IntilizingRoom(session_id)
+    if (!isNestedPopupOpen) {
+      setIsNestedPopupOpen(true);
+      IntilizingRoom(session_id)
+    }
   };
 
   const handlePopupClose = () => {
@@ -132,7 +138,7 @@ const Chat = () => {
           <svg
             xmlns="http://www.w3.org/2000/svg"
             fill="currentColor"
-            class={styles.SVG_class}
+            className={styles.SVG_class}
             viewBox="0 -2 52 52"
           >
             {" "}
