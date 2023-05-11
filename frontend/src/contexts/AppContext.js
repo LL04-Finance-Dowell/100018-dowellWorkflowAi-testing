@@ -35,6 +35,7 @@ export const AppContextProvider = ({ children }) => {
   const [workflowSettings, setWorkflowSettings] = useState();
 
   const { userDetail } = useSelector((state) => state.auth);
+  const [rerender, setRerender] = useState('rand');
 
   // const [createdNewTeam, setCreatedNewTeam] = useState();
 
@@ -151,6 +152,8 @@ export const AppContextProvider = ({ children }) => {
         isNoPointerEvents,
         setIsNoPointerEvents,
         workflowTeamsLoaded,
+        rerender,
+        setRerender,
       }}
     >
       {children}
