@@ -88,3 +88,18 @@
 .content__box li span a {
   cursor: pointer;
 }
+
+.table__Of__Content__List {
+  max-height: calc(8rem + 12px);
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-width: thin;
+}
+
+.table__Of__Content__List li:first-child {
+  margin-top: 6px;
+}
+
+.table__Of__Content__List li:last-child {
+  margin-bottom: 6px;
+}
