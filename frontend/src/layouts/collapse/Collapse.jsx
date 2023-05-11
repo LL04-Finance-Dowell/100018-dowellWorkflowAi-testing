@@ -1,17 +1,34 @@
-import React, { useRef } from "react";
+import React, { useRef } from 'react';
+import { useAppContext } from '../../contexts/AppContext';
 
 const Collapse = ({ children, open }) => {
-  const ref = useRef();
+  const childRef = useRef();
+  const parentRef = useRef();
+  const { rerender } = useAppContext();
+
+  React.useEffect(() => {
+    if (open) {
+      parentRef.current.style.height = open
+        ? `${childRef.current?.getBoundingClientRect().height}px`
+        : 0;
+
+      parentRef.current.style.overflow = 'hidden';
+      parentRef.current.style.transition = '0.5s all ease';
+    }
+  }, [rerender]);
 
   return (
     <div
       style={{
-        overflow: "hidden",
-        height: open ? `${ref.current?.getBoundingClientRect().height}px` : 0,
-        transition: "0.5s all ease",
+        overflow: 'hidden',
+        height: open
+          ? `${childRef.current?.getBoundingClientRect().height}px`
+          : 0,
+        transition: '0.5s all ease',
       }}
+      ref={parentRef}
     >
-      <div ref={ref}>{children}</div>
+      <div ref={childRef}>{children}</div>
     </div>
   );
 };
