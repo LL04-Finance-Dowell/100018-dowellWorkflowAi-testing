@@ -5,7 +5,7 @@ import requests
 from rest_framework import status
 from rest_framework.response import Response
 
-from app.constants import NOTIFICATION_API
+from app.constants import NOTIFICATION_API, EDITOR_API
 
 from . import checks, threads
 from .helpers import cloning_document, verification_data
