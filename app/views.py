@@ -1209,12 +1209,13 @@ def create_workflow_ai_setting(request):
     if not validate_id(company_id):
         return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
 
-    is_exists = checks.is_wf_setting_exist(company_id, request.data["created_by"])
+    is_exists = checks.is_wf_setting_exist(company_id, request.data["created_by"],request.data['data_type'])
     if is_exists:
         return Response({"WF SETTING EXISTS": is_exists}, status.HTTP_200_OK)
     else:
         try:
-            res = save_wf_setting(
+            res = json.loads(
+            save_wf_setting(
                 company_id=company_id,
                 created_by=request.data["created_by"],
                 data_type=request.data["data_type"],
@@ -1233,12 +1234,13 @@ def create_workflow_ai_setting(request):
                 portfolio=request.data["Portfolio_Choice"],
                 theme_color=request.data["theme_color"],
             )
+            )
         except Exception as e:
             print(e)
             return Response(
                 "Failed to Save Workflow Setting", status.HTTP_500_INTERNAL_SERVER_ERROR
             )
-
+        
         if res["isSuccess"]:
             return Response(
                 "You added WorkflowAI settings for your organization",
