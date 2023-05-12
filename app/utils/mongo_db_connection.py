@@ -810,7 +810,7 @@ def wf_setting_update(wf_setting_id, data):
                 "Evaluation_Process": data["Evaluation_Process"],
                 "Reports": data["Reports"],
                 "Management": data["Management"],
-                "Portflio": data["Portflio"],
+                "Portfolio_Choice": data["Portfolio_Choice"],
                 "theme_color": data["theme_color"],
                 "data_type": "Real_data",
                 "created_at": time,
