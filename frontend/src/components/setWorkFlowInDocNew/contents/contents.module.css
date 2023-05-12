@@ -90,6 +90,7 @@
 }
 
 .table__Of__Content__List {
+  min-height: calc(4rem + 12px);
   max-height: calc(8rem + 12px);
   overflow-y: auto;
   overflow-x: hidden;

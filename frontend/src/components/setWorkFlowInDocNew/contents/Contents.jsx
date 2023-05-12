@@ -40,7 +40,7 @@ const Contents = ({
     console.log(selectedContents);
   }; */
 
-  const handleContentSelection = (valueAsJSON) => {
+  const handleContentSelection = (valueAsJSON, contentPage) => {
     const contentStepAlreadyAdded = tableOfContentForStep.find(
       (step) =>
         step.workflow === docCurrentWorkflow._id &&
@@ -57,6 +57,7 @@ const Contents = ({
       workflow: docCurrentWorkflow._id,
       stepIndex: currentStepIndex,
       required: false,
+      page: contentPage,
     };
 
     dispatch(setTableOfContentForStep(newTableOfContentObj));
@@ -245,7 +246,7 @@ const Contents = ({
                               }
                           }
                           onClick={
-                            () => handleContentSelection(item)
+                            () => handleContentSelection(item, currentPage)
                           }
                           id={item._id + currentStepIndex}
                         >

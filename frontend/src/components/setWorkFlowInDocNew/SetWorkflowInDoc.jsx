@@ -77,6 +77,7 @@ const SetWorkflowInDoc = () => {
       setDraftProcess(null);
       setDraftProcessDoc(null);
       setIsDraftProcess(false);
+      setDraftProcessLoaded(false);
       return
     }
     
