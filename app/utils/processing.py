@@ -246,6 +246,10 @@ def verify(
                     return Response(
                         "Missing display rights!", status.HTTP_401_UNAUTHORIZED
                     )
+                
+            # processing order check
+            if step.get("stepProcessingOrder") != "no_order":
+                pass
 
             # time limit check
             if step.get("stepTimeLimit"):

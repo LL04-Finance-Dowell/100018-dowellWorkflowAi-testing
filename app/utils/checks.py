@@ -107,6 +107,11 @@ def time_limit_right(time, select_time_limits, start_time, end_time, creation_ti
             return False
 
 
+def processing_order(order, public_members, team_members, user_members):
+    if order == "no_order":
+        pass
+    
+
 
 
 # def user_presence(token, user_name, portfolio):
