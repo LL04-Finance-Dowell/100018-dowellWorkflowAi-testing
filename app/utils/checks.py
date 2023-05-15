@@ -139,6 +139,6 @@ def is_public_person_valid(qrid, org_name):
     return valid
 
 
-def is_wf_setting_exist(comp_id, org_name):
-    valid = org_wfai_setting(comp_id, org_name)
+def is_wf_setting_exist(comp_id, org_name,data_type):
+    valid = org_wfai_setting(comp_id, org_name,data_type)
     return valid

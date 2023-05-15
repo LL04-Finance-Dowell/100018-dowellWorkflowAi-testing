@@ -91,7 +91,7 @@ def verification_data(
         query_params = {
             "auth_portfolio": auth_portfolio,
             "auth_role": step_role,
-            "user_type": user_type
+            "user_type": user_type,
         }
         for i in range(0, len(auth_name)):
             field = auth_name[i]
@@ -100,7 +100,7 @@ def verification_data(
         encoded_query_params = urllib.parse.urlencode(query_params)
 
         link = f"{VERIFICATION_LINK}/{hash}/?{encoded_query_params}"
-    
+
     # User | Team
     else:
         link = f"{VERIFICATION_LINK}/{hash}/?auth_user={auth_name}&auth_portfolio={auth_portfolio}&auth_role={step_role}&user_type={user_type}"
@@ -198,6 +198,7 @@ def cloning_process(process_id, created_by, creator_portfolio):
     return save_res["inserted_id"]
 
 
+# Access to document/template
 def access_editor(item_id, item_type):
     if item_type == "document":
         collection = "DocumentReports"
@@ -239,62 +240,62 @@ def access_editor(item_id, item_type):
     return response.json()
 
 
-def link_to_editor(
-    item_id, item_map, item_rights, user, process_id, user_role, item_type
-):
-    """navigate user to editor for signing"""
+# def link_to_editor(
+#     item_id, item_map, item_rights, user, process_id, user_role, item_type
+# ):
+#     """navigate user to editor for signing"""
 
-    # set document
-    if item_type == "document":
-        collection = "DocumentReports"
-        document = "documentreports"
-        action = "document"
-        field = "document_name"
-        team_member_id = "11689044433"
-        document_item = get_document_object(item_id)
+#     # set document
+#     if item_type == "document":
+#         collection = "DocumentReports"
+#         document = "documentreports"
+#         action = "document"
+#         field = "document_name"
+#         team_member_id = "11689044433"
+#         document_item = get_document_object(item_id)
 
-        if document_item["document_state"] == "finalized":
-            item_flag = "finalized"
+#         if document_item["document_state"] == "finalized":
+#             item_flag = "finalized"
 
-        if document_item["document_state"] == "processing":
-            item_flag = "processing"
+#         if document_item["document_state"] == "processing":
+#             item_flag = "processing"
 
-    if item_type == "template":
-        collection = "TemplateReports"
-        document = "templatereports"
-        action = "template"
-        field = "template_name"
-        team_member_id = "22689044433"
+#     if item_type == "template":
+#         collection = "TemplateReports"
+#         document = "templatereports"
+#         action = "template"
+#         field = "template_name"
+#         team_member_id = "22689044433"
 
-    payload = {
-        "product_name": "workflowai",
-        "details": {
-            "field": field,
-            "cluster": "Documents",
-            "database": "Documentation",
-            "collection": collection,
-            "document": document,
-            "team_member_ID": team_member_id,
-            "function_ID": "ABCDE",
-            "command": "update",
-            "_id": item_id,
-            "flag": "signing",
-            "action": item_type,
-            "authorized": user,
-            "document_map": item_map,
-            "document_right": item_rights,
-            "document_flag": item_flag,
-            "role": user_role,
-            "process_id": process_id,
-            "update_field": {"document_name": "", "content": "", "page": ""},
-        },
-    }
-    try:
-        link = requests.post(EDITOR_API, data=json.dumps(payload), headers=headers)
-    except ConnectionError:
-        return
+#     payload = {
+#         "product_name": "workflowai",
+#         "details": {
+#             "field": field,
+#             "cluster": "Documents",
+#             "database": "Documentation",
+#             "collection": collection,
+#             "document": document,
+#             "team_member_ID": team_member_id,
+#             "function_ID": "ABCDE",
+#             "command": "update",
+#             "_id": item_id,
+#             "flag": "signing",
+#             "action": item_type,
+#             "authorized": user,
+#             "document_map": item_map,
+#             "document_right": item_rights,
+#             "document_flag": item_flag,
+#             "role": user_role,
+#             "process_id": process_id,
+#             "update_field": {"document_name": "", "content": "", "page": ""},
+#         },
+#     }
+#     try:
+#         link = requests.post(EDITOR_API, data=json.dumps(payload), headers=headers)
+#     except ConnectionError:
+#         return
 
-    return link.json()
+#     return link.json()
 
 
 # complete document and mark as complete

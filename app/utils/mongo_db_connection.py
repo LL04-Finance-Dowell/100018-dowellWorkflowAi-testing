@@ -118,9 +118,9 @@ def get_wf_setting_object(wf_setting_id):
     )
 
 
-def get_wfai_setting_list(company_id):
+def get_wfai_setting_list(company_id,data_type):
     return get_data_from_data_service(
-        *WF_AI_SETTING_LIST, "fetch", {"company_id": str(company_id)}
+        *WF_AI_SETTING_LIST, "fetch", {"company_id": str(company_id),"data_type":data_type}
     )
 
 
@@ -778,14 +778,15 @@ def update_document_clone(document_id, clone_list):
     return post_to_data_service(payload)
 
 
-def org_wfai_setting(company_id, org_name):
-    fields = {"company_id": str(company_id), "created_by": org_name}
-    response_obj = dowellconnection(*WF_AI_SETTING_LIST, "fetch", fields, "nil")
-    res_obj = json.loads(response_obj)
-    if len(res_obj["data"]) > 0:
-        return res_obj["data"]
-    else:
-        return []
+def org_wfai_setting(company_id, org_name,data_type="Real_data"):
+    fields = {"company_id": str(company_id), "created_by": org_name,"data_type":data_type}
+    response_obj = get_data_from_data_service(*WF_AI_SETTING_LIST, "fetch", fields)
+    # res_obj = json.loads(response_obj)
+    # if len(res_obj["data"]) > 0:
+    #     return res_obj["data"]
+    # else:
+    #     return []
+    return response_obj
 
 
 def wf_setting_update(wf_setting_id, data):
@@ -809,7 +810,7 @@ def wf_setting_update(wf_setting_id, data):
                 "Evaluation_Process": data["Evaluation_Process"],
                 "Reports": data["Reports"],
                 "Management": data["Management"],
-                "Portflio": data["Portflio"],
+                "Portfolio_Choice": data["Portfolio_Choice"],
                 "theme_color": data["theme_color"],
                 "data_type": "Real_data",
                 "created_at": time,

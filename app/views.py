@@ -379,6 +379,7 @@ def finalize_or_reject(request, process_id):
             return Response("document processed successfully", status.HTTP_200_OK)
 
         else:
+            # Revert the document state to processing.
             finalize(item_id, "processing", item_type)
 
     return Response(
@@ -389,12 +390,13 @@ def finalize_or_reject(request, process_id):
 @api_view(["POST"])
 def trigger_process(request):
     """Get process and begin processing it."""
+    
     if not validate_id(request.data["process_id"]):
         return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
 
     try:
         process = get_process_object(request.data["process_id"])
-    except ConnectionError:
+    except:
         return Response(
             "Could not start processing!", status.HTTP_500_INTERNAL_SERVER_ERROR
         )
@@ -441,7 +443,7 @@ def processes(request, company_id):
         try:
             process_list = get_process_list(company_id, data_type)
             cache.set(cache_key, process_list, timeout=60)
-        except ConnectionError:
+        except:
             return Response(status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     return Response(process_list, status.HTTP_200_OK)
@@ -456,7 +458,7 @@ def a_single_process(request, process_id):
 
     try:
         process = get_process_object(process_id)
-    except ConnectionError:
+    except:
         return Response("Failed fetch process", status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     return Response(process, status.HTTP_200_OK)
@@ -469,11 +471,15 @@ def fetch_process_links(request, process_id):
         return Response("something went wrong!", status.HTTP_400_BAD_REQUEST)
 
     try:
-        process_info = get_links_object_by_process_id(process_id)[0]
-    except ConnectionError:
-        return Response("Could not fetch links", status.HTTP_500_INTERNAL_SERVER_ERROR)
+        process_info = get_links_object_by_process_id(process_id)
+    except:
+        return Response("Could not fetch links at this time", status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-    return Response(process_info["links"], status.HTTP_200_OK)
+    if process_info:
+        process = process_info[0]
+        return Response(process["links"], status.HTTP_200_OK)
+
+    return Response([],  status.HTTP_200_OK)
 
 
 @api_view(["POST"])
@@ -644,7 +650,7 @@ def get_workflows(request, company_id):
 
     try:
         workflow_list = get_wf_list(company_id, data_type)
-    except ConnectionError:
+    except:
         return Response({"workflows": []}, status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     if len(workflow_list) > 0:
@@ -970,7 +976,7 @@ def create_template(request):
                 EDITOR_API,
                 data=json.dumps(payload),
             )
-        except ConnectionError:
+        except:
             return Response(
                 {"message": "Template Creation Failed"},
                 status.HTTP_500_INTERNAL_SERVER_ERROR,
@@ -1203,12 +1209,13 @@ def create_workflow_ai_setting(request):
     if not validate_id(company_id):
         return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
 
-    is_exists = checks.is_wf_setting_exist(company_id, request.data["created_by"])
+    is_exists = checks.is_wf_setting_exist(company_id, request.data["created_by"],request.data['data_type'])
     if is_exists:
         return Response({"WF SETTING EXISTS": is_exists}, status.HTTP_200_OK)
     else:
         try:
-            res = save_wf_setting(
+            res = json.loads(
+            save_wf_setting(
                 company_id=company_id,
                 created_by=request.data["created_by"],
                 data_type=request.data["data_type"],
@@ -1227,12 +1234,13 @@ def create_workflow_ai_setting(request):
                 portfolio=request.data["Portfolio_Choice"],
                 theme_color=request.data["theme_color"],
             )
+            )
         except Exception as e:
             print(e)
             return Response(
                 "Failed to Save Workflow Setting", status.HTTP_500_INTERNAL_SERVER_ERROR
             )
-
+        
         if res["isSuccess"]:
             return Response(
                 "You added WorkflowAI settings for your organization",
@@ -1245,9 +1253,9 @@ def create_workflow_ai_setting(request):
 
 
 @api_view(["GET"])
-def all_workflow_ai_setting(request, company_id):
+def all_workflow_ai_setting(request, company_id,data_type="Real_data"):
     """Get All WF AI"""
-    all_setting = get_wfai_setting_list(company_id)
+    all_setting = get_wfai_setting_list(company_id,data_type)
     try:
         return Response(
             all_setting,
