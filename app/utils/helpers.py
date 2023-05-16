@@ -95,7 +95,7 @@ def verification_data(
         }
         for i in range(0, len(auth_name)):
             field = auth_name[i]
-            query_params[f"auth_name[{i}]"] = field
+            query_params[f"auth_name"] = field
 
         encoded_query_params = urllib.parse.urlencode(query_params)
 

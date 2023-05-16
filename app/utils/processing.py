@@ -338,7 +338,7 @@ def verify(
         },
     }
     try:
-        link = requests.post(EDITOR_API, data=json.dumps(payload), headers=headers)
+        link = requests.post(EDITOR_API, data=json.dumps(payload), headers={"Content-Type": "application/json"})
     except ConnectionError:
         return Response(
             "Error, processing editor link", status.HTTP_500_INTERNAL_SERVER_ERROR
