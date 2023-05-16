@@ -103,7 +103,7 @@ export const FlipBack = (props) => {
     if (role === 'viewNotifications') {
       navigate('/#documents', {
         state: {
-          elementIdToScrollTo: `notifications-documents-${notificationsForUser[0].id}`,
+          elementIdToScrollTo: `notifications-documents-${notificationsForUser[0]?.id}`,
         },
       });
     }
