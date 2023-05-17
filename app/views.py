@@ -467,6 +467,7 @@ def a_single_process(request, process_id):
 @api_view(["GET"])
 def fetch_process_links(request, process_id):
     """verification links for a process"""
+    
     if not validate_id(process_id):
         return Response("something went wrong!", status.HTTP_400_BAD_REQUEST)
 

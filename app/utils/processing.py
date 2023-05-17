@@ -244,7 +244,10 @@ def verify(
                     )
 
             # find the clone id
-            if any(user_name in d_map for d_map in step["stepDocumentCloneMap"]):
+            if user_type == "public":
+                user_name = user_name[0]
+
+            if any(user_name in d_map for d_map in step.get("stepDocumentCloneMap")):
                 for d_map in step["stepDocumentCloneMap"]:
                     if d_map.get(user_name) is not None:
                         clone_id = d_map.get(user_name)
