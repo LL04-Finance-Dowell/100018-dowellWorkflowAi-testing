@@ -42,7 +42,7 @@ const SelectDoc = ({ savedDoc }) => {
       data_type: userDetail?.portfolio_info[0].data_type,
     };
 
-    dispatch(allDocuments(data.company_id, data.data_type));
+    dispatch(allDocuments(data));
   }, []);
 
   const handleAddSelectedDocuments = (document) => {
