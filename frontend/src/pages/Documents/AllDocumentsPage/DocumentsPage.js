@@ -30,12 +30,13 @@ const DocumentsPage = ({ home, showOnlySaved, showOnlyTrashed }) => {
   useEffect(() => {
     const data = {
       company_id: userDetail?.portfolio_info[0].org_id,
+      data_type: userDetail?.portfolio_info[0].data_type,
     };
     /*     if (savedDocumentsStatus !== "succeeded")
       dispatch(savedDocuments(draftData));
     if (mineStatus !== "succeeded") dispatch(mineDocuments(data)); */
 
-    if (allDocumentsStatus === "idle") dispatch(allDocuments(data.company_id));
+    if (allDocumentsStatus === "idle") dispatch(allDocuments(data));
   }, [userDetail]);
 
   useEffect(() => {

@@ -39,9 +39,10 @@ const SelectDoc = ({ savedDoc }) => {
     if (savedDoc) return
     const data = {
       company_id: userDetail?.portfolio_info[0].org_id,
+      data_type: userDetail?.portfolio_info[0].data_type,
     };
 
-    dispatch(allDocuments(data.company_id));
+    dispatch(allDocuments(data.company_id, data.data_type));
   }, []);
 
   const handleAddSelectedDocuments = (document) => {

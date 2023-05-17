@@ -139,7 +139,7 @@ export const allWorkflows = createAsyncThunk(
   "workflow/all",
   async (data, thunkAPI) => {
     try {
-      const res = await workflowServices.allWorkflows(data);
+      const res = await workflowServices.allWorkflows(data.company_id, data.data_type);
 
       const workflows = filterWorkflows(res.data.workflows, thunkAPI);
 

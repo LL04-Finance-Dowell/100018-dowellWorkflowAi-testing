@@ -107,7 +107,7 @@ const WorkflowLayout = ({ children }) => {
 
     if (!processesLoaded) {
       // Fetching processes
-      getAllProcessesV2(userDetail?.portfolio_info[0]?.org_id)
+      getAllProcessesV2(userDetail?.portfolio_info[0]?.org_id, userDetail?.portfolio_info[0]?.data_type)
         .then((res) => {
           const savedProcessesInLocalStorage = JSON.parse(localStorage.getItem('user-saved-processes'));
           if (savedProcessesInLocalStorage) {

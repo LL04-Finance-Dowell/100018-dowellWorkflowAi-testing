@@ -29,7 +29,7 @@ export class TemplateServices {
     return httpTemplate.post("/saved/", data);
   };
 
-  allTemplates = (companyId) => {
-    return httpApiUrl.get(`/companies/${companyId}/templates/`);
+  allTemplates = (companyId, dataType) => {
+    return httpApiUrl.get(`/companies/${companyId}/templates/?data_type=${dataType}`);
   };
 }

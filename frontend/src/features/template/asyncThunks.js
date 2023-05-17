@@ -93,7 +93,7 @@ export const allTemplates = createAsyncThunk(
   'template/all',
   async (data, thunkAPI) => {
     try {
-      const res = await templateServices.allTemplates(data);
+      const res = await templateServices.allTemplates(data.company_id, data.data_type);
 
       const templates = filterTemplates(res.data.templates.reverse(), thunkAPI);
 
