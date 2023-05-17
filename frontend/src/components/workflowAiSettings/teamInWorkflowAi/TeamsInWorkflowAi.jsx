@@ -16,7 +16,7 @@ import { WorkflowSettingServices } from '../../../services/workflowSettingServic
 import { toast } from 'react-toastify';
 import { useAppContext } from '../../../contexts/AppContext';
 import Spinner from '../../spinner/Spinner';
-import { useTranslation } from "react-i18next";
+import { useTranslation } from 'react-i18next';
 
 // TODO FIX ADDITION OF NEW TEAM TO 'workflowTeams' 132.
 const TeamsInWorkflowAi = () => {

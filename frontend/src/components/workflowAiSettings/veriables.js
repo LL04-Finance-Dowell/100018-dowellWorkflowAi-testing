@@ -282,16 +282,16 @@ export const processesInWorkflowAIArray = [
           { _id: uuidv4(), items: portfolios, proccess_title: 'portfolios' },
         ],
       },
-      /*  {
-			  _id: uuidv4(),
-			  column: [
-				{
-				  _id: uuidv4(),
-				  items: portfolioTeamRoles,
-				  proccess_title: "Portfolio/Team Roles",
-				},
-			  ],
-			}, */
+      {
+        _id: uuidv4(),
+        column: [
+          {
+            _id: uuidv4(),
+            items: portfolioTeamRoles,
+            proccess_title: 'Portfolio/Team Roles',
+          },
+        ],
+      },
       {
         _id: uuidv4(),
         column: [
@@ -799,7 +799,7 @@ export const permissionArray = [
           {
             _id: uuidv4(),
             items: permissionRoles,
-            proccess_title: 'Portflio/Team Roles',
+            proccess_title: 'Portfolio/Team Roles',
             order: 4,
           },
         ],

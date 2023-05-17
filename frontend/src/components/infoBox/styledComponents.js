@@ -62,10 +62,10 @@ export const InfoSearchbar = styled.input`
   background-color: transparent;
   outline: none;
   border-bottom: 1px solid var(--e-global-color-text);
+  padding-left: 10px;
+  padding-block: 6px;
 `;
 // *Removed the below properties from the above style
-// padding-left: 10px;
-// padding-block: 6px;
 // margin-inline: auto;
 // margin: 0 20px;
 

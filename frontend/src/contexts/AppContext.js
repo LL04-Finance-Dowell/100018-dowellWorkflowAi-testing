@@ -87,6 +87,9 @@ export const AppContextProvider = ({ children }) => {
       userDetail?.portfolio_info[0].org_id
     );
 
+    setWorkflowSettings(res.data);
+    // console.log('Testing fetch: ', res.data);
+    // console.log('Cpany Id: ', userDetail?.portfolio_info[0].org_id);
     // return res.data;
   };
 
@@ -154,6 +157,7 @@ export const AppContextProvider = ({ children }) => {
         workflowTeamsLoaded,
         rerender,
         setRerender,
+        workflowSettings,
       }}
     >
       {children}
