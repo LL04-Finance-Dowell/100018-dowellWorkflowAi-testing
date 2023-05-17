@@ -126,19 +126,6 @@ const WorkflowLayout = ({ children }) => {
         });
     }
 
-    // ! Fetching workflow teams should be handled in AppContext.js
-    // if (!workflowTeamsLoaded) {
-    //   // Fetching workflow teams
-    //   const settingService = new WorkflowSettingServices();
-    //   settingService.getAllTeams(userDetail?.portfolio_info[0]?.org_id).then(res => {
-    //     setWorkflowTeams(res.data);
-    //     setWorkflowTeamsLoaded(true);
-    //   }).catch(err => {
-    //     console.log("Failed to fetch teams: ", err.response? err.response.data : err.message);
-    //     setWorkflowTeamsLoaded(true);
-    //   })
-    // }
-
     const workflowProduct = userDetail?.portfolio_info?.find(
       (item) => item.product === 'Workflow AI'
     );

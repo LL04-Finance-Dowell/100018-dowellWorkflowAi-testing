@@ -672,7 +672,6 @@ const CheckErrors = () => {
                               item.workflows.steps.map((step, stepIndex) => {
                                 return <div className={styles.box}>
                                   <p>{item.workflows.workflow_title}, {step?.stepName}</p>
-                                  <>{console.log(teamMembersSelectedForProcess)}</>
                                   <>
                                     {
                                       React.Children.toArray(

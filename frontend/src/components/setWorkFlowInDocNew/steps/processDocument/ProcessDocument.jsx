@@ -138,7 +138,15 @@ const ProcessDocument = ({ savedProcess }) => {
       copyOfCurrentStep.stepDocumentCloneMap = []
 
       copyOfCurrentStep.stepNumber = currentIndex + 1;
-      copyOfCurrentStep.stepDocumentMap = tableOfContents.filter(content => content.stepIndex === currentIndex).map(content => ({ content: content.id, required: content.required }));
+      copyOfCurrentStep.stepDocumentMap = tableOfContents.filter(
+        content => content.stepIndex === currentIndex
+      ).map(
+        content => ({ 
+          content: content.id, 
+          required: content.required, 
+          page: content.page 
+        })
+      );
 
       if (!copyOfCurrentStep.permitInternalWorkflow) copyOfCurrentStep.permitInternalWorkflow = false
       if (!copyOfCurrentStep.skipStep) copyOfCurrentStep.skipStep = false

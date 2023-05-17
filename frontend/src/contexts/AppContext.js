@@ -84,7 +84,7 @@ export const AppContextProvider = ({ children }) => {
 
   const fetchSettings = async () => {
     const res = await new WorkflowSettingServices().fetchWorkflowSettings(
-      userDetail?.portfolio_info[0].org_id
+      userDetail?.portfolio_info[0]?.org_id
     );
 
     setWorkflowSettings(res.data);
