@@ -22,56 +22,57 @@ export const setIsSelected = ({ items, item, boxId, title, type }) => {
   //   type
   // );
   let isSelectedItems = [];
-  // const mainSetter = (modItems = items) => {
-  //   return modItems.map((child) =>
-  //     boxId === child._id
-  //       ? {
-  //           ...child,
-  //           column: child.column.map((col) =>
-  //             col.proccess_title === title
-  //               ? {
-  //                   ...col,
-  //                   items: col.items.map((colItem) =>
-  //                     colItem._id === item._id
-  //                       ? {
-  //                           ...colItem,
-  //                           isSelected: !colItem.isSelected,
-  //                         }
-  //                       : colItem
-  //                   ),
-  //                 }
-  //               : col
-  //           ),
-  //         }
-  //       : child
-  //   );
-  // };
-
   const mainSetter = (modItems = items) => {
-    return modItems.map((child) => {
-      return boxId === child._id
+    return modItems.map((child) =>
+      boxId === child._id
         ? {
             ...child,
-            column: child.column.map((col) => {
-              return col.proccess_title === title
+            column: child.column.map((col) =>
+              col.proccess_title === title
                 ? {
                     ...col,
-                    items: col.items.map((colItem) => {
-                      console.log('c item: ', colItem);
-                      return colItem._id === item._id
+                    items: col.items.map((colItem) =>
+                      colItem._id === item._id
                         ? {
                             ...colItem,
                             isSelected: !colItem.isSelected,
                           }
-                        : colItem;
-                    }),
+                        : colItem
+                    ),
                   }
-                : col;
-            }),
+                : col
+            ),
           }
-        : child;
-    });
+        : child
+    );
   };
+
+  // * The below function is same as the one above, it just has more console.logs for debugging.
+  // const mainSetter = (modItems = items) => {
+  //   return modItems.map((child) => {
+  //     return boxId === child._id
+  //       ? {
+  //           ...child,
+  //           column: child.column.map((col) => {
+  //             return col.proccess_title === title
+  //               ? {
+  //                   ...col,
+  //                   items: col.items.map((colItem) => {
+  //                     console.log('c item: ', colItem);
+  //                     return colItem._id === item._id
+  //                       ? {
+  //                           ...colItem,
+  //                           isSelected: !colItem.isSelected,
+  //                         }
+  //                       : colItem;
+  //                   }),
+  //                 }
+  //               : col;
+  //           }),
+  //         }
+  //       : child;
+  //   });
+  // };
 
   if (type === 'checkbox') {
     isSelectedItems = mainSetter();

@@ -190,8 +190,8 @@ const EnabledDisabkedProcess = () => {
       setIsUpdating(false);
     }
 
-    // // console.log('cplımnnnnnnnnn', column);
-    dispatch(setSettingProccess({ _id: uuidv4(), column }));
+    // console.log('cplımnnnnnnnnn', column);
+    // dispatch(setSettingProccess({ _id: uuidv4(), column }));
   };
 
   const handleOnChange = ({ item, title, boxId, type }) => {
@@ -308,7 +308,7 @@ const EnabledDisabkedProcess = () => {
         });
       });
 
-      console.log('rawItems: ', rawItems);
+      // console.log('rawItems: ', rawItems);
 
       dispatch(setFetchedPermissionArray(rawItems));
     }

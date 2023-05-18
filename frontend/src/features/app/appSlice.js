@@ -290,6 +290,16 @@ export const appSlice = createSlice({
               ),
       }));
     },
+    setSettingProccessTeams: (state, action) => {
+      state.settingProccess[0].children[0].column[0].items = [
+        ...action.payload,
+      ];
+    },
+    setSettingProccessPortfolios: (state, action) => {
+      state.settingProccess[0].children[0].column[1].items = [
+        ...action.payload,
+      ];
+    },
     setUpdateProccess: (state, action) => {
       state.settingProccess = state.settingProccess.map((item) => ({
         ...item,
@@ -654,6 +664,8 @@ export const {
   setContinentsLoaded,
   setThemeColor,
   setSettingProccess,
+  setSettingProccessTeams,
+  setSettingProccessPortfolios,
   setColumn,
   setProccess,
   setUpdateProccess,

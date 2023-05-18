@@ -91,4 +91,5 @@ export const InfoContentFormText = styled.li`
   padding-left: 5px;
   gap: 10px;
   align-items: center;
+  margin-bottom: 5px;
 `;
