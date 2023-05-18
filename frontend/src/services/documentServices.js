@@ -29,7 +29,7 @@ export class DocumentServices {
     return httpDocument.get(`/${documentId}/content/`);
   };
 
-  allDocuments = (companyId) => {
-    return httpApiUrl.get(`/companies/${companyId}/documents/`);
+  allDocuments = (companyId, dataType) => {
+    return httpApiUrl.get(`/companies/${companyId}/documents/?data_type=${dataType}`);
   };
 }

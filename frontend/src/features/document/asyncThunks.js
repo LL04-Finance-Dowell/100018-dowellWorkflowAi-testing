@@ -132,7 +132,7 @@ export const allDocuments = createAsyncThunk(
   "document/all",
   async (data, thunkAPI) => {
     try {
-      const res = await documentServices.allDocuments(data);
+      const res = await documentServices.allDocuments(data.company_id, data.data_type);
 
       const documents = filterDocuments(res.data.documents.reverse().filter(document => document.document_state !== "trash"), thunkAPI);
 

@@ -118,7 +118,7 @@ export const AppContextProvider = ({ children }) => {
   }, [userDetail, isPublicUser, publicUserConfigured]);
 
   useEffect(() => {
-    fetchSettings();
+    if (userDetail) fetchSettings();
   }, [userDetail]);
 
   return (

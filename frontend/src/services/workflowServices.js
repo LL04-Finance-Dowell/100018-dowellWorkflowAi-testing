@@ -18,7 +18,7 @@ export class WorkflowServices {
   savedWorkflows = (data) => {
     return httpWorkflow.post('/saved/', data);
   };
-  allWorkflows = (companyId) => {
-    return httpApiUrl.get(`/companies/${companyId}/workflows/`);
+  allWorkflows = (companyId, dataType) => {
+    return httpApiUrl.get(`/companies/${companyId}/workflows/?data_type=${dataType}`);
   };
 }
