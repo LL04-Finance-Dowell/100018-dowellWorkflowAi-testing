@@ -297,6 +297,7 @@ const InfoBoxes = ({ savedDoc }) => {
               <InfoSearchbar
                 placeholder="Search"
                 {...register(`${infoBox.title}`)}
+                fullWidth={true}
               />
 
               <InfoContentBox className={styles.content__box}>

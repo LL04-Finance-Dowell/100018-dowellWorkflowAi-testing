@@ -158,7 +158,7 @@ const Contents = ({
                               >
                                 <th className={styles.table__id}>{item.id}</th>
                                 <th className={styles.table__content}>
-                                  {item.data}
+                                  {Array.isArray(item.data) ? item.data.find(i => i.data.length > 1)?.data : item.data}
                                 </th>
                               </tr>
                             )))}
@@ -210,7 +210,7 @@ const Contents = ({
                     {showContent.find((content) => content.id === item.id)
                       ?.show ? (
                       <>
-                        <p>{item.data}</p>
+                        <p>{Array.isArray(item.data) ? item.data.find(i => i.data.length > 1)?.data : item.data}</p>
                         <AiOutlineCloseCircle
                           className="content__Icon"
                           onClick={() => handleShowContent(false, item.id)}
@@ -269,7 +269,7 @@ const Contents = ({
                                   step.stepIndex === currentStepIndex
                               )?.required}
                             />
-                            <Tooltip anchorId={item._id + currentStepIndex} content={item.data ? item.data : "No data"} place="top" />  
+                            <Tooltip anchorId={item._id + currentStepIndex} content={item.data ? Array.isArray(item.data) ? item.data.find(i => i.data.length > 1)?.data : item.data : "No data"} place="top" />  
                             <Tooltip anchorId={item._id + currentStepIndex + item._id} content={"Required or not required"} place="top" />  
                           </> : 
                           <></>
