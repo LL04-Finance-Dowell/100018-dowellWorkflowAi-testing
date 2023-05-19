@@ -113,7 +113,7 @@ const ItemsDisplay = ({ items, colorClass }) => {
   // }, [itemsToDisplay]);
   return (
     <>
-      {itemsToDisplay.length &&
+      {itemsToDisplay.length > 0 &&
         itemsToDisplay.map((item) => (
           <li key={item.id} className={colorClass}>
             {item.child}
