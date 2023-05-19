@@ -3,7 +3,6 @@ import styles from "./sidebar.module.css";
 import { v4 as uuidv4 } from "uuid";
 import CollapseItem from "./collapseItem/CollapseItem";
 import Notifications from "./notifications/Notifications";
-import Chat from "../Chat/Chat";
 import New from "./new/New";
 import Search from "./search/Search";
 import { AiOutlineClose, AiOutlineMenuFold } from "react-icons/ai";
@@ -22,8 +21,8 @@ import { FaShieldAlt } from "react-icons/fa";
 import { AiTwotoneSetting } from "react-icons/ai";
 import { dowellLogoutUrl } from "../../services/axios";
 import ManageFile from "./manageFile/ManageFile";
+import Reports from "./reports/Reports";
 import UserDetail from "./userDetail/UserDetail";
-import LanguageDropdown from '../LanguageSelector/LanguageDropdown'
 import {
 	getAgreeStatus,
 } from "../../services/legalService";
@@ -36,7 +35,6 @@ import { useTranslation } from "react-i18next";
 const Sidebar = () => {
 	const dispatch = useDispatch();
 	const { t } = useTranslation();
-	const [isPopupOpen, setIsPopupOpen] = useState(false);
 	const { userDetail, currentUser, session_id, id } = useSelector(
 		(state) => state.auth
 	);
@@ -175,10 +173,11 @@ const Sidebar = () => {
 			<div className={styles.gap}></div>
 			<ManageFile />
 			<div className={styles.gap}></div>
-			<div className={styles.feature__box}>
+			<Reports/>
+			{/* <div className={styles.feature__box}>
 				<h2 className={styles.feature__title}>{t("Reports")}</h2>
 				<CollapseItem items={manageFileItems} />
-			</div>
+			</div> */}
 			<div className={styles.gap}></div>
 			<div className={styles.feature__box}>
 				<h2
@@ -248,7 +247,7 @@ export const manageFileItems = [
 	},
 	{
 		id: uuidv4(),
-		parent: "My Processes",
+		parent: "My Processes (02)",
 		children: [
 			{ id: uuidv4(), child: "Cancelled Processes", href: "/processes/cancelled" },
 			{ id: uuidv4(), child: "Test Processes", href: "/processes/tests" },

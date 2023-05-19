@@ -53,6 +53,7 @@ const SectionBox = ({
     if (itemType === 'documents') {
       setRefreshLoading(true);
 
+      
       const data = {
         company_id: userDetail?.portfolio_info[0].org_id,
       };
@@ -103,6 +104,7 @@ const SectionBox = ({
                 .reverse()
                 .filter(
                   (template) =>
+                  console.log(template) &&
                     template.data_type &&
                     template.data_type ===
                       userDetail?.portfolio_info[0]?.data_type
@@ -374,13 +376,19 @@ const SectionBox = ({
                     cardItems
                       .slice(0, sliceCount * 10)
                       .map((item) => (
+                        
                         <Card
                           key={item.id}
                           cardItem={item}
                           hideFavoriteIcon={hideFavoriteIcon}
                           hideDeleteIcon={hideDeleteIcon}
                         />
-                      ))}
+                        )
+
+                        )
+
+                        }
+                        
                   {cardItems && cardItems.length > 10 && (
                     <PrimaryButton
                       style={{

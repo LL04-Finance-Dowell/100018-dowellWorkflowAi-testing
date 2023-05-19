@@ -97,9 +97,8 @@ const CollapseItem = ({ items, listType }) => {
           <HashLink
             to={item.href && item.href}
             // key={item.id}
-            className={`${styles.parent__item__box} ${
-              item.isOpen && styles.active
-            }`}
+            className={`${styles.parent__item__box} ${item.isOpen && styles.active
+              }`}
             onClick={() => handleParentClick(item.id)}
           >
             <i>
@@ -112,25 +111,29 @@ const CollapseItem = ({ items, listType }) => {
                 : `(${item.count?.toString().padStart(3, "0")})`
               : ""}
           </HashLink>
-          <div className={styles.children__item__container}>
-            <Collapse open={item.isOpen}>
-              <div className={styles.children__item__box}>
-                {listType && listType === "ol" ? (
-                  <ol>
-                    {React.Children.toArray(item.children.map((item) => (
-                      <ListItem item={(item)} />
-                    )))}
-                  </ol>
-                ) : (
-                  <ul>
-                    {React.Children.toArray(item.children.map((item) => (
-                      <ListItem item={item} />
-                    )))}
-                  </ul>
-                )}
-              </div>
-            </Collapse>
-          </div>
+          {
+            item.children ?
+              <div className={styles.children__item__container}>
+                <Collapse open={item.isOpen}>
+                  <div className={styles.children__item__box}>
+                    {listType && listType === "ol" ? (
+                      <ol>
+                        {React.Children.toArray(item.children.map((item) => (
+                          <ListItem item={(item)} />
+                        )))}
+                      </ol>
+                    ) : (
+                      <ul>
+                        {React.Children.toArray(item.children.map((item) => (
+                          <ListItem item={item} />
+                        )))}
+                      </ul>
+                    )}
+                  </div>
+                </Collapse>
+              </div> : ""
+          }
+
         </>
       )))}
     </div>

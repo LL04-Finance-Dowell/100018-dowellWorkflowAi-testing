@@ -27,8 +27,8 @@ const TemplatesPage = ({ home, showOnlySaved, showOnlyTrashed }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  console.log("mining templateeeeeeeeeeeeeeeeeee", minedTemplates);
 
+// console.log('templ arrat',allTemplatesArray)
   useEffect(() => {
     const data = {
       company_id: userDetail?.portfolio_info[0].org_id,
@@ -47,7 +47,7 @@ const TemplatesPage = ({ home, showOnlySaved, showOnlyTrashed }) => {
     if (home) navigate('#drafts')
   }, [showOnlySaved, showOnlyTrashed, home])
 
-  console.log("allTemplatesArrayallTemplatesArray", allTemplatesArray);
+  
 
   return (
     <WorkflowLayout>
@@ -57,7 +57,7 @@ const TemplatesPage = ({ home, showOnlySaved, showOnlyTrashed }) => {
             home ? <div id="drafts">
               <SectionBox
                 cardBgColor="#1ABC9C"
-                title="drafts"
+                title="My Templates"
                 Card={TemplateCard}
                 cardItems={
                   allTemplatesArray &&

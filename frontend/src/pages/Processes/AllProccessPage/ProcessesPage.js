@@ -170,3 +170,5 @@ const ProcessesPage = ({ home, showOnlySaved, showOnlyPaused, showOnlyCancelled,
 export default ProcessesPage;
 
 export const createDocumentsByMe = [{ id: uuidv4() }];
+export const drafts = [{ id: uuidv4() }];
+

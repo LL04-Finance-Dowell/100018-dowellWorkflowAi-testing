@@ -44,7 +44,6 @@ const DocumentsPage = ({ home, showOnlySaved, showOnlyTrashed }) => {
     if (home) navigate('#drafts')
   }, [showOnlySaved, showOnlyTrashed, home])
 
-  console.log("aaaaaaaaaaa", allDocumentsArray);
 
   return (
     <WorkflowLayout>
@@ -54,7 +53,7 @@ const DocumentsPage = ({ home, showOnlySaved, showOnlyTrashed }) => {
             home ? <div id="drafts">
               <SectionBox
                 cardBgColor="#1ABC9C"
-                title="drafts"
+                title="My Documents"
                 Card={DocumentCard}
                 cardItems={
                   allDocumentsArray &&
