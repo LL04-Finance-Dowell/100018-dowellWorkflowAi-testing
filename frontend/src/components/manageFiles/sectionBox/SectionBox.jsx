@@ -56,12 +56,13 @@ const SectionBox = ({
       
       const data = {
         company_id: userDetail?.portfolio_info[0].org_id,
+        data_type: userDetail?.portfolio_info[0].data_type,
       };
 
       const documentServices = new DocumentServices();
 
       documentServices
-        .allDocuments(data.company_id)
+        .allDocuments(data.company_id, data.data_type)
         .then((res) => {
           dispatch(
             setAllDocuments(
@@ -91,12 +92,13 @@ const SectionBox = ({
 
       const data = {
         company_id: userDetail?.portfolio_info[0].org_id,
+        data_type: userDetail?.portfolio_info[0].data_type,
       };
 
       const templatesServices = new TemplateServices();
 
       templatesServices
-        .allTemplates(data.company_id)
+        .allTemplates(data.company_id, data.data_type)
         .then((res) => {
           dispatch(
             setAllTemplates(
@@ -126,12 +128,13 @@ const SectionBox = ({
 
       const data = {
         company_id: userDetail?.portfolio_info[0].org_id,
+        data_type: userDetail?.portfolio_info[0].data_type,
       };
 
       const workflowServices = new WorkflowServices();
 
       workflowServices
-        .allWorkflows(data.company_id)
+        .allWorkflows(data.company_id, data.data_type)
         .then((res) => {
           dispatch(
             setAllWorkflows(
@@ -161,9 +164,10 @@ const SectionBox = ({
 
       const data = {
         company_id: userDetail?.portfolio_info[0].org_id,
+        data_type: userDetail?.portfolio_info[0].data_type,
       };
 
-      getAllProcessesV2(data.company_id)
+      getAllProcessesV2(data.company_id, data.data_type)
         .then((res) => {
           const savedProcessesInLocalStorage = JSON.parse(
             localStorage.getItem('user-saved-processes')
@@ -197,7 +201,7 @@ const SectionBox = ({
       const documentService = new DocumentServices();
 
       documentService
-        .allDocuments(userDetail?.portfolio_info[0]?.org_id)
+        .allDocuments(userDetail?.portfolio_info[0]?.org_id, userDetail?.portfolio_info[0]?.data_type)
         .then((res) => {
           const documentsToSign = res.data.documents
             .reverse()

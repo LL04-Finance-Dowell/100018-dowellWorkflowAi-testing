@@ -57,48 +57,49 @@ const WorkflowApp = () => {
   const { allDocuments } = useSelector((state) => state.document);
   const { allTemplates } = useSelector((state) => state.template);
   const { allWorkflows } = useSelector((state) => state.workflow);
-  // TODO Remove dummy data for 'templates' and 'workflows' when it is dynamically  available
+  const [docs, setDocs] = useState(null);
+  const [temps, setTemps] = useState(null);
+  const [wrkfs, setWrkfs] = useState(null);
   const [uncompletedTasks, setUncompletedTasks] = useState([
     {
       id: uuidv4(),
+      parent: 'documents',
+      children: [],
+      isOpen: false,
+    },
+    {
+      id: uuidv4(),
       parent: 'templates',
-      children: [
-        { id: uuidv4(), child: 'templates name' },
-        { id: uuidv4(), child: 'templates name' },
-      ],
+      children: [],
+      isOpen: false,
     },
     {
       id: uuidv4(),
       parent: 'workflows',
-      children: [
-        { id: uuidv4(), child: 'workflows name' },
-        { id: uuidv4(), child: 'workflows name' },
-      ],
+      children: [],
+      isOpen: false,
     },
   ]);
   const [completedTasks, setCompletedTasks] = useState([
     {
       id: uuidv4(),
+      parent: 'documents',
+      children: [],
+      isOpen: false,
+    },
+    {
+      id: uuidv4(),
       parent: 'templates',
-      children: [
-        { id: uuidv4(), child: 'templates name' },
-        { id: uuidv4(), child: 'templates name' },
-      ],
+      children: [],
+      isOpen: false,
     },
     {
       id: uuidv4(),
       parent: 'workflows',
-      children: [
-        { id: uuidv4(), child: 'workflows name' },
-        { id: uuidv4(), child: 'workflows name' },
-      ],
+      children: [],
+      isOpen: false,
     },
   ]);
-
-  // TODO 1. 'isShowUncompletedTasks' and 'isShowCompletedTasks' are just placeholding condtions
-  // TODO 2. Once 'templates' and 'workflows' are dynamic, ensure to delete them and replace with 'completedTasks.length' or 'unCompletedTasks.length' respectively
-  const [isShowUncompletedTasks, setIsShowUncompletedTasks] = useState(false);
-  const [isShowCompletedTasks, setIsShowCompletedTasks] = useState(false);
 
   useEffect(() => {
     if (!notificationsLoaded) {
@@ -185,46 +186,53 @@ const WorkflowApp = () => {
   }, [location]);
 
   useEffect(() => {
-    if (allDocuments && allDocuments.length) {
-      const allUncompletedDocs = allDocuments.filter(
-        (doc) => doc.document_state === 'processing'
-      );
-      const allCompletedDocs = allDocuments.filter(
+    if (allDocuments.length) {
+      const completedDocs = allDocuments.filter(
         (doc) => doc.document_state === 'finalized'
       );
 
-      const modUncompleted = {
-        id: uuidv4(),
-        parent: 'documents',
-        isOpen: false,
-        children: allUncompletedDocs.map((doc) => ({
+      const unCompletedDocs = allDocuments.filter(
+        (doc) => doc.document_state === 'processing'
+      );
+
+      setDocs({
+        completed: completedDocs.map((doc) => ({
           id: doc._id,
           child: doc.document_name,
         })),
-      };
 
-      const modCompleted = {
-        id: uuidv4(),
-        parent: 'documents',
-        isOpen: false,
-        children: allCompletedDocs.map((doc) => ({
+        unCompleted: unCompletedDocs.map((doc) => ({
           id: doc._id,
           child: doc.document_name,
         })),
-      };
-      setUncompletedTasks([modUncompleted, ...uncompletedTasks]);
-      setCompletedTasks([modCompleted, ...completedTasks]);
-      setIsShowCompletedTasks(true);
-      setIsShowUncompletedTasks(true);
-    }
-
-    // TODO Do same for 'templates' and 'workflows' when they are dynamically available
-  }, [allDocuments, allTemplates, allWorkflows]);
+      });
+    } else setDocs({ completed: [], unCompleted: [] });
+  }, [allDocuments]);
 
   useEffect(() => {
-    // console.log('ct: ', completedTasks);
-    // console.log('uct: ', uncompletedTasks);
-  }, [uncompletedTasks, completedTasks]);
+    if (docs) {
+      setUncompletedTasks(
+        uncompletedTasks.map((task) =>
+          task.parent === 'documents'
+            ? { ...task, children: [...docs.unCompleted] }
+            : task
+        )
+      );
+
+      setCompletedTasks(
+        completedTasks.map((task) =>
+          task.parent === 'documents'
+            ? { ...task, children: [...docs.completed] }
+            : task
+        )
+      );
+    }
+  }, [docs]);
+
+  // useEffect(() => {
+  //   console.log('ct: ', completedTasks);
+  //   console.log('uct: ', uncompletedTasks);
+  // }, [uncompletedTasks, completedTasks]);
 
   return (
     <WorkflowLayout>
@@ -263,11 +271,16 @@ const WorkflowApp = () => {
               ))
             )}
             <div className={styles.tasks__container}>
-              {isShowUncompletedTasks && (
+              {uncompletedTasks[0].children.length ? (
                 <HandleTasks feature='incomplete' tasks={uncompletedTasks} />
+              ) : (
+                ''
               )}
-              {isShowCompletedTasks && (
+
+              {completedTasks[0].children.length ? (
                 <HandleTasks feature='completed' tasks={completedTasks} />
+              ) : (
+                ''
               )}
             </div>
           </div>

@@ -39,9 +39,10 @@ const SelectDoc = ({ savedDoc }) => {
     if (savedDoc) return
     const data = {
       company_id: userDetail?.portfolio_info[0].org_id,
+      data_type: userDetail?.portfolio_info[0].data_type,
     };
 
-    dispatch(allDocuments(data.company_id));
+    dispatch(allDocuments(data));
   }, []);
 
   const handleAddSelectedDocuments = (document) => {
@@ -91,6 +92,15 @@ const SelectDoc = ({ savedDoc }) => {
               modules={[Navigation, Pagination]}
               className="select-doc"
               enabled={savedDoc ? false : true}
+              initialSlide={
+                savedDoc && allDocumentsArray && allDocumentsArray.length && allDocumentsArray.length > 0 && selectedDocuments.length > 0 ? 
+                  allDocumentsArray.findIndex(doc => doc._id === selectedDocuments[0]._id) !== -1 ?
+                    allDocumentsArray.findIndex(doc => doc._id === selectedDocuments[0]._id)
+                  :
+                    0
+                :
+                0
+              }
             >
               {allDocumentsArray &&
                 allDocumentsArray.length &&

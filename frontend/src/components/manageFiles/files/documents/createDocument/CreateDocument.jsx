@@ -70,9 +70,10 @@ const CreateDocument = ({ handleToggleOverlay }) => {
   useEffect(() => {
     const data = {
       company_id: userDetail?.portfolio_info[0].org_id,
+      data_type: userDetail?.portfolio_info[0].data_type,
     };
 
-    dispatch(allTemplates(data.company_id));
+    dispatch(allTemplates(data));
   }, []);
 
   return (

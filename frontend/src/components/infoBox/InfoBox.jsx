@@ -29,7 +29,7 @@ import {
 
 import { v4 } from 'uuid';
 import { useAppContext } from '../../contexts/AppContext';
-import { useTranslation } from "react-i18next";
+import { useTranslation } from 'react-i18next';
 
 const InfoBox = ({
   boxId,
@@ -44,6 +44,7 @@ const InfoBox = ({
   handleItemClick,
   isTeams,
   handleUpdateTeam,
+  modPort,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [showModal, setShowModal] = useState(false);
@@ -195,31 +196,31 @@ const InfoBox = ({
               position: 'relative',
             }}
           >
-            {title !== 'portfolios' ? (
-              showSearch && (
-                <InfoSearchbar
-                  placeholder='Search'
-                  value={searchValue}
-                  onChange={(e) => setSearchValue(e.target.value)}
-                />
-              )
-            ) : isTeams ? (
-              showSearch && (
-                <>
+            {title !== 'portfolios'
+              ? showSearch && (
                   <InfoSearchbar
                     placeholder='Search'
                     value={searchValue}
                     onChange={(e) => setSearchValue(e.target.value)}
                   />
-                  <TypeFilter />
-                </>
-              )
-            ) : (
-              <span>{t("Create and select Team")}</span>
-            )}
+                )
+              : isTeams
+              ? showSearch && (
+                  <>
+                    <InfoSearchbar
+                      placeholder='Search'
+                      value={searchValue}
+                      onChange={(e) => setSearchValue(e.target.value)}
+                    />
+                    <TypeFilter />
+                  </>
+                )
+              : !modPort && <span>{t('Create and select Team')}</span>}
 
             {!itemsToDisplay.length ? (
-              <span style={{ textTransform: 'capitalize' }}>{t("no")} {t(title)}</span>
+              <span style={{ textTransform: 'capitalize' }}>
+                {t('no')} {t(title)}
+              </span>
             ) : (
               ''
             )}
@@ -282,26 +283,44 @@ const InfoBox = ({
                     key={item._id}
                   >
                     {/* {index + 1}. {item.content} */}
-                    {
-                      item.contentDisplay ? <>
+                    {item.contentDisplay ? (
+                      <>
                         <>
-                          {
-                            !item.displayNoContent && item.contentsToDisplay && Array.isArray(item.contentsToDisplay) ?
-                            React.Children.toArray(item.contentsToDisplay.map((itemContent, itemIndex) => {
-                              return <>
-                                <span>{itemIndex + 1}. {itemContent.header} - {itemContent.content}</span>
-                                <br />
-                              </>
-                            })) : <></>
-                          }
+                          {!item.displayNoContent &&
+                          item.contentsToDisplay &&
+                          Array.isArray(item.contentsToDisplay) ? (
+                            React.Children.toArray(
+                              item.contentsToDisplay.map(
+                                (itemContent, itemIndex) => {
+                                  return (
+                                    <>
+                                      <span>
+                                        {itemIndex + 1}. {itemContent.header} -{' '}
+                                        {itemContent.content}
+                                      </span>
+                                      <br />
+                                    </>
+                                  );
+                                }
+                              )
+                            )
+                          ) : (
+                            <></>
+                          )}
                         </>
-                      </> : <>
+                      </>
+                    ) : (
+                      <>
                         <span style={{ fontWeight: 'bold' }}>
                           {item.content.title ? `${item.content.title}:` : ''}
                         </span>{' '}
-                        <span>{item.content.content ? item.content.content : `${index + 1}. ${item.content}`}</span> 
+                        <span>
+                          {item.content.content
+                            ? item.content.content
+                            : `${index + 1}. ${item.content}`}
+                        </span>
                       </>
-                    }
+                    )}
                   </InfoContentText>
                 ))}
               </InfoContentBox>

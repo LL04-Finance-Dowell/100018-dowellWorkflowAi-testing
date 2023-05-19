@@ -31,12 +31,13 @@ const WorkflowsPage = ({ home, showOnlySaved, showOnlyTrashed }) => {
 	useEffect(() => {
 		const data = {
 			company_id: userDetail?.portfolio_info[0].org_id,
+			data_type: userDetail?.portfolio_info[0].data_type,
 		};
 
 		/*   if (savedWorkflowStatus === "idle") dispatch(savedWorkflows(saveddata));
 		if (mineStatus === "idle") dispatch(mineWorkflows(data)); */
 
-		if (allWorkflowsStatus === "idle") dispatch(allWorkflows(data.company_id));
+		if (allWorkflowsStatus === "idle") dispatch(allWorkflows(data));
 	}, [userDetail]);
 
 	useEffect(() => {

@@ -107,7 +107,7 @@ const WorkflowLayout = ({ children }) => {
 
     if (!processesLoaded) {
       // Fetching processes
-      getAllProcessesV2(userDetail?.portfolio_info[0]?.org_id)
+      getAllProcessesV2(userDetail?.portfolio_info[0]?.org_id, userDetail?.portfolio_info[0]?.data_type)
         .then((res) => {
           const savedProcessesInLocalStorage = JSON.parse(localStorage.getItem('user-saved-processes'));
           if (savedProcessesInLocalStorage) {
@@ -125,19 +125,6 @@ const WorkflowLayout = ({ children }) => {
           console.log('did not fetch processes');
         });
     }
-
-    // ! Fetching workflow teams should be handled in AppContext.js
-    // if (!workflowTeamsLoaded) {
-    //   // Fetching workflow teams
-    //   const settingService = new WorkflowSettingServices();
-    //   settingService.getAllTeams(userDetail?.portfolio_info[0]?.org_id).then(res => {
-    //     setWorkflowTeams(res.data);
-    //     setWorkflowTeamsLoaded(true);
-    //   }).catch(err => {
-    //     console.log("Failed to fetch teams: ", err.response? err.response.data : err.message);
-    //     setWorkflowTeamsLoaded(true);
-    //   })
-    // }
 
     const workflowProduct = userDetail?.portfolio_info?.find(
       (item) => item.product === 'Workflow AI'

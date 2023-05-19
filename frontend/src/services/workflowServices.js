@@ -1,12 +1,12 @@
-import { httpApiUrl, httpWorkflow } from "../httpCommon/httpCommon";
+import { httpApiUrl, httpWorkflow } from '../httpCommon/httpCommon';
 
 export class WorkflowServices {
   createWorkflow = (data) => {
-    return httpWorkflow.post("/", data);
+    return httpWorkflow.post('/', data);
   };
 
   mineWorkflows = (data) => {
-    return httpWorkflow.post("/mine/", data);
+    return httpWorkflow.post('/mine/', data);
   };
 
   detailWorkflow = (workflowId) => {
@@ -16,9 +16,9 @@ export class WorkflowServices {
     return httpWorkflow.put(`/${workflowId}/`, data);
   };
   savedWorkflows = (data) => {
-    return httpWorkflow.post("/saved/", data);
+    return httpWorkflow.post('/saved/', data);
   };
-  allWorkflows = (companyId) => {
-    return httpApiUrl.get(`/companies/${companyId}/workflows/`);
+  allWorkflows = (companyId, dataType) => {
+    return httpApiUrl.get(`/companies/${companyId}/workflows/?data_type=${dataType}`);
   };
 }

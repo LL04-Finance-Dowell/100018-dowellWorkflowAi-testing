@@ -45,19 +45,23 @@ const HandleTasks = ({ feature, tasks }) => {
                 <IoMdArrowDropright size={25} />
               )}
             </i>
-            <a>{t(item.parent)}</a>
+            <span>{t(item.parent)}</span>
           </div>
           <div className={styles.item__children__container}>
             <Collapse open={item.isOpen}>
               <div className={styles.item__children__box}>
-                <ol>
-                  <ItemsDisplay items={item.children} colorClass={colorClass} />
-                  {/* {item.children.map((item) => (
-                    <li key={item.id} className={colorClass}>
-                      {item.child}
-                    </li>
-                  ))} */}
-                </ol>
+                {item.children.length ? (
+                  <ol>
+                    <ItemsDisplay
+                      items={item.children}
+                      colorClass={colorClass}
+                    />
+                  </ol>
+                ) : (
+                  <p>
+                    No {feature} {item.parent}
+                  </p>
+                )}
               </div>
             </Collapse>
           </div>
@@ -109,7 +113,7 @@ const ItemsDisplay = ({ items, colorClass }) => {
   // }, [itemsToDisplay]);
   return (
     <>
-      {itemsToDisplay.length &&
+      {itemsToDisplay.length > 0 &&
         itemsToDisplay.map((item) => (
           <li key={item.id} className={colorClass}>
             {item.child}

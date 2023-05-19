@@ -41,6 +41,7 @@ const SelectMembersToAssign = ({ currentStepIndex, stepsPopulated, currentEnable
   const [ radioOptionsEnabledInStep, setRadioOptionsEnabledInStep ] = useState([]);
   const { workflowTeams, workflowTeamsLoaded } = useAppContext();
   const selectTeamRef = useRef();
+  const selectMemberOptionRef = useRef();
   
   const dispatch = useDispatch();
 
@@ -54,6 +55,7 @@ const SelectMembersToAssign = ({ currentStepIndex, stepsPopulated, currentEnable
   })
 
   useClickInside(selectMembersRef, () => {
+    if (featuresUpdatedFromDraft && enableRadioOptionsFromStepPopulation[current.header].find(item => item.memberOptionEnabled === true && item.stepIndex === currentStepIndex)) return
     if (!currentRadioOptionSelection) return toast.info("Please check the option above")
     console.log("enabled select member options")
   })
@@ -217,11 +219,11 @@ const SelectMembersToAssign = ({ currentStepIndex, stepsPopulated, currentEnable
     updateTeamAndPortfoliosInTeamForProcess('add', parsedSelectedJsonValue, current.header);
   }
 
-  const handleAddNewMember = (e) => {
+  const handleAddNewMember = (parsedSelectedJsonValue) => {
     if (!current || !current.header) return
-
-    const parsedSelectedJsonValue = JSON.parse(e.target.value);
     
+    selectMemberOptionRef.current.value = '';
+
     switch (current.header) {
       case "Team":
         const teamUserAlreadyAdded = teamMembersSelectedForProcess.find(user => user.member === parsedSelectedJsonValue.member && user.portfolio === parsedSelectedJsonValue.portfolio && user.stepIndex === currentStepIndex);
@@ -457,7 +459,7 @@ const SelectMembersToAssign = ({ currentStepIndex, stepsPopulated, currentEnable
                   <select
                     required
                     {...register("teams")}
-                    size={current.teams.length === 1 ? current.teams.length + 1 : current.teams.length}
+                    size={current.teams.length === 1 ? current.teams.length + 1 : current.teams.length > 5 ? 5 : current.teams.length}
                     className={styles.open__select}
                     onChange={({ target }) => handleSelectTeam(JSON.parse(target.value))}
                     style={{ 
@@ -530,9 +532,9 @@ const SelectMembersToAssign = ({ currentStepIndex, stepsPopulated, currentEnable
                     <select
                       required
                       {...register("members")}
-                      size={current.portfolios.length}
+                      size={current.portfolios.length > 10 ? 10 : current.portfolios.length}
                       className={styles.open__select}
-                      onChange={handleAddNewMember}
+                      onChange={({ target }) => handleAddNewMember(JSON.parse(target.value))}
                       style={{ 
                         pointerEvents: 
                           userTypeOptionsEnabled.find(option => option.name === current.header && option.stepIndex === currentStepIndex) && 
@@ -547,7 +549,9 @@ const SelectMembersToAssign = ({ currentStepIndex, stepsPopulated, currentEnable
                         "all" :
                         "none" 
                       }}
+                      ref={selectMemberOptionRef}
                     >
+                      <option value={''} disabled hidden selected></option>
                       {React.Children.toArray(current.portfolios.map((item) => (
                         <option 
                           className={

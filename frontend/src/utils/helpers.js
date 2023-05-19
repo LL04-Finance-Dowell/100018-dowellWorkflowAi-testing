@@ -47,6 +47,33 @@ export const setIsSelected = ({ items, item, boxId, title, type }) => {
     );
   };
 
+  // * The below function is same as the one above, it just has more console.logs for debugging.
+  // const mainSetter = (modItems = items) => {
+  //   return modItems.map((child) => {
+  //     return boxId === child._id
+  //       ? {
+  //           ...child,
+  //           column: child.column.map((col) => {
+  //             return col.proccess_title === title
+  //               ? {
+  //                   ...col,
+  //                   items: col.items.map((colItem) => {
+  //                     console.log('c item: ', colItem);
+  //                     return colItem._id === item._id
+  //                       ? {
+  //                           ...colItem,
+  //                           isSelected: !colItem.isSelected,
+  //                         }
+  //                       : colItem;
+  //                   }),
+  //                 }
+  //               : col;
+  //           }),
+  //         }
+  //       : child;
+  //   });
+  // };
+
   if (type === 'checkbox') {
     isSelectedItems = mainSetter();
   } else if (type === 'radio' || type === 'unselect_all') {

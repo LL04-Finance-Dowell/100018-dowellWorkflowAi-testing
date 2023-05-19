@@ -1,24 +1,26 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import workflowAiSettingsStyles from '../workflowAiSettings.module.css';
 import { useForm } from 'react-hook-form';
 import SubmitButton from '../../submitButton/SubmitButton';
 import InfoBox from '../../infoBox/InfoBox';
-
 import { useDispatch, useSelector } from 'react-redux';
 import {
   setColumn,
   setPermissionArray,
   setSettingProccess,
+  setFetchedPermissionArray,
 } from '../../../features/app/appSlice';
 import { v4 as uuidv4 } from 'uuid';
 import { setIsSelected } from '../../../utils/helpers';
 import { WorkflowSettingServices } from '../../../services/workflowSettingServices';
 import { toast } from 'react-toastify';
-import { useTranslation } from "react-i18next";
+import { useTranslation } from 'react-i18next';
+import { useAppContext } from '../../../contexts/AppContext';
 
 const EnabledDisabkedProcess = () => {
   const dispatch = useDispatch();
   const { t } = useTranslation();
+  const [fetchedItems, setFetchedItems] = useState([]);
 
   const { column, permissionArray, themeColor } = useSelector(
     (state) => state.app
@@ -27,6 +29,7 @@ const EnabledDisabkedProcess = () => {
   const { userDetail } = useSelector((state) => state.auth);
   const workflowSettingServices = new WorkflowSettingServices();
   const [isUpdating, setIsUpdating] = useState(false);
+  const { workflowSettings } = useAppContext();
 
   const sortData = (childId, colId, title) => {
     const selectedItems = permissionArray[0].children
@@ -35,40 +38,44 @@ const EnabledDisabkedProcess = () => {
       .items.filter((item) => item.isSelected);
     let finalItems = [];
 
-    switch (title) {
-      case 'process':
-        finalItems = selectedItems.map(({ content }) => {
-          const modContent = content
-            .split(' (')
-            .splice(0, 1)
-            .join('')
-            .split(' ');
-          return modContent[0] === 'Portfolio/Team'
-            ? 'Portfolio_or_Team_Roles'
-            : modContent.join('_');
-        });
-        break;
+    // switch (title) {
+    //   case 'process':
+    //     finalItems = selectedItems.map(({ content }) => {
+    //       const modContent = content
+    //         .split(' (')
+    //         .splice(0, 1)
+    //         .join('')
+    //         .split(' ');
+    //       return modContent[0] === 'Portfolio/Team'
+    //         ? 'Portfolio_or_Team_Roles'
+    //         : modContent.join(' ');
+    //     });
+    //     break;
 
-      case 'reports':
-        finalItems = selectedItems
-          .map(({ content }) => content.split(' '))
-          .map((items) => items.filter((item) => item !== '/').join('_'));
-        break;
+    //   case 'reports':
+    //     finalItems = selectedItems
+    //       .map(({ content }) => content.split(' '))
+    //       .map((items) => items.filter((item) => item !== '/').join(' '));
+    //     break;
 
-      case 'references':
-        finalItems = selectedItems
-          .map(({ content }) => content.split(' '))
-          .map((items) => items.find((item) => item === items[4]))
-          .map((item) => `Show_${item}_ID`);
-        break;
+    //   // ! Only delete if it is utterly useless
+    //   // case 'references':
+    //   //   finalItems = selectedItems
+    //   //     .map(({ content }) => content.split(' '))
+    //   //     .map((items) => items.find((item) => item === items[4]))
+    //   //     .map((item) => `Show ${item} ID`);
+    //   //   break;
 
-      default:
-        finalItems = selectedItems.map(({ content }) =>
-          content.split(' ').join('_')
-        );
-    }
-
-    return finalItems.map((item) => item.replace('/', 'or'));
+    //   default:
+    //     finalItems = selectedItems.map(({ content }) =>
+    //       content.split(' ').join(' ')
+    //     );
+    // }
+    finalItems = selectedItems.map(({ content }) =>
+      content.split(' ').join(' ')
+    );
+    // return finalItems.map((item) => item.replace('/', 'or'));
+    return finalItems;
   };
 
   const onSubmit = async () => {
@@ -168,12 +175,13 @@ const EnabledDisabkedProcess = () => {
       Management,
       Portfolio_Choice,
       theme_color: themeColor,
+      wf_setting_id: workflowSettings[0]._id,
     };
 
     // console.log('payload: ', data);
     try {
       setIsUpdating(true);
-      await workflowSettingServices.updateEnableDisableProcesses(data);
+      await workflowSettingServices.updateWorkflowAISettings(data);
       toast.success('Updated successfully');
     } catch (e) {
       console.log(e);
@@ -183,7 +191,7 @@ const EnabledDisabkedProcess = () => {
     }
 
     // console.log('cplımnnnnnnnnn', column);
-    dispatch(setSettingProccess({ _id: uuidv4(), column }));
+    // dispatch(setSettingProccess({ _id: uuidv4(), column }));
   };
 
   const handleOnChange = ({ item, title, boxId, type }) => {
@@ -246,6 +254,72 @@ const EnabledDisabkedProcess = () => {
       );
     }
   };
+
+  useEffect(() => {
+    if (workflowSettings) {
+      let tempItems = [];
+      for (let key in workflowSettings[0]) {
+        if (
+          typeof workflowSettings[0][key] !== 'string' &&
+          workflowSettings[0][key].length
+        ) {
+          tempItems.push({
+            title: key.replace('_', ' '),
+            content: workflowSettings[0][key],
+          });
+        } else if (key === 'theme_color') {
+          tempItems.push({ title: key, content: workflowSettings[0][key] });
+        }
+      }
+      setFetchedItems(tempItems);
+    }
+  }, [workflowSettings]);
+
+  useEffect(() => {
+    if (fetchedItems.length) {
+      let rawItems = [];
+      permissionArray[0].children.forEach((child) => {
+        child.column.forEach((col) => {
+          fetchedItems.forEach(({ title, content }) => {
+            if (
+              title === col.proccess_title ||
+              (title === 'Process' && col.proccess_title === 'Processes') ||
+              (title === 'Portfolio Choice' &&
+                col.proccess_title === 'Portfolio/Team Roles')
+            ) {
+              col.items.forEach((item) => {
+                content.forEach((fItem) => {
+                  if (fItem === item.content)
+                    rawItems.push({
+                      _id: item._id,
+                      content: item.content,
+                      title:
+                        title === 'Process'
+                          ? 'Processes'
+                          : title === 'Portfolio Choice'
+                          ? 'Portfolio/Team Roles'
+                          : title,
+                      boxId: child._id,
+                    });
+                });
+              });
+            }
+          });
+        });
+      });
+
+      // console.log('rawItems: ', rawItems);
+
+      dispatch(setFetchedPermissionArray(rawItems));
+    }
+  }, [fetchedItems]);
+
+  // useEffect(
+  //   () => {
+  //     console.log('perm arr: ', permissionArray);
+  //     console.log('wrkf settings: ', workflowSettings);
+  //   }
+  // );
 
   return (
     <form

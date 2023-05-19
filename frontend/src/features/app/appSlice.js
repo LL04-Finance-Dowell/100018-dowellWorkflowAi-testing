@@ -66,7 +66,7 @@ const initialState = {
   column: [],
   proccess: [],
   userDetailPosition: null,
-  languageSelectPosition :null,
+  languageSelectPosition: null,
   teamsSelectedSelectedForProcess: [],
   teamMembersSelectedForProcess: [],
   userMembersSelectedForProcess: [],
@@ -74,9 +74,9 @@ const initialState = {
   processesLoading: true,
   processesLoaded: false,
   allProcesses: [],
-  ArrayofLinks:[],
-  linksFetched:false,
-  showGeneratedLinksPopup:false,
+  ArrayofLinks: [],
+  linksFetched: false,
+  showGeneratedLinksPopup: false,
 
   legalStatusLoading: true,
   showLegalStatusPopup: false,
@@ -290,6 +290,16 @@ export const appSlice = createSlice({
               ),
       }));
     },
+    setSettingProccessTeams: (state, action) => {
+      state.settingProccess[0].children[0].column[0].items = [
+        ...action.payload,
+      ];
+    },
+    setSettingProccessPortfolios: (state, action) => {
+      state.settingProccess[0].children[0].column[1].items = [
+        ...action.payload,
+      ];
+    },
     setUpdateProccess: (state, action) => {
       state.settingProccess = state.settingProccess.map((item) => ({
         ...item,
@@ -314,6 +324,31 @@ export const appSlice = createSlice({
         ...item,
         children: action.payload,
       }));
+    },
+    setFetchedPermissionArray: (state, action) => {
+      action.payload.forEach((item) => {
+        state.permissionArray[0].children =
+          state.permissionArray[0].children.map((child) =>
+            child._id === item.boxId
+              ? {
+                  ...child,
+                  column: child.column.map((col) =>
+                    col.proccess_title === item.title
+                      ? {
+                          ...col,
+                          items: col.items.map((cItem) =>
+                            cItem._id === item._id
+                              ? { ...cItem, isSelected: true }
+                              : cItem
+                          ),
+                        }
+                      : col
+                  ),
+                }
+              : child
+          );
+      });
+      return state;
     },
     setTeamsInWorkflowAI: (state, action) => {
       state.teamsInWorkflowAI = state.teamsInWorkflowAI.map((item) => ({
@@ -523,14 +558,12 @@ export const appSlice = createSlice({
       state.ArrayofLinks = action.payload;
     },
 
-
     setShowGeneratedLinksPopup: (state, action) => {
       state.showGeneratedLinksPopup = action.payload;
     },
     setLinksFetched: (state, action) => {
       state.linksFetched = action.payload;
     },
-
 
     setLegalStatusLoading: (state, action) => {
       state.legalStatusLoading = action.payload;
@@ -558,18 +591,33 @@ export const appSlice = createSlice({
     },
     updateSingleTableOfContentRequiredStatus: (state, action) => {
       const currentTableOfContents = state.tableOfContentForStep;
-      if (!action.payload || !action.payload.hasOwnProperty('workflow') || !action.payload.hasOwnProperty('stepIndex') || !action.payload.hasOwnProperty('id')) return void (state.tableOfContentForStep = currentTableOfContents);
-      
-      const foundContentIndex = currentTableOfContents.findIndex((content) => content.stepIndex === action.payload.stepIndex && content.workflow === action.payload.workflow && content.id === action.payload.id);
-      if (foundContentIndex === -1) return void(state.tableOfContentForStep = currentTableOfContents);
+      if (
+        !action.payload ||
+        !action.payload.hasOwnProperty('workflow') ||
+        !action.payload.hasOwnProperty('stepIndex') ||
+        !action.payload.hasOwnProperty('id')
+      )
+        return void (state.tableOfContentForStep = currentTableOfContents);
 
-      const updatedContent = { ...currentTableOfContents[foundContentIndex], required: action.payload.value };
+      const foundContentIndex = currentTableOfContents.findIndex(
+        (content) =>
+          content.stepIndex === action.payload.stepIndex &&
+          content.workflow === action.payload.workflow &&
+          content.id === action.payload.id
+      );
+      if (foundContentIndex === -1)
+        return void (state.tableOfContentForStep = currentTableOfContents);
+
+      const updatedContent = {
+        ...currentTableOfContents[foundContentIndex],
+        required: action.payload.value,
+      };
       currentTableOfContents[foundContentIndex] = updatedContent;
 
       state.tableOfContentForStep = currentTableOfContents;
     },
     setSavedProcessConfigured: (state, action) => {
-      state.savedProcessConfigured = action.payload
+      state.savedProcessConfigured = action.payload;
     },
   },
   extraReducers: (builder) => {
@@ -616,10 +664,13 @@ export const {
   setContinentsLoaded,
   setThemeColor,
   setSettingProccess,
+  setSettingProccessTeams,
+  setSettingProccessPortfolios,
   setColumn,
   setProccess,
   setUpdateProccess,
   setPermissionArray,
+  setFetchedPermissionArray,
   setTeamsInWorkflowAI,
   setTeamInWorkflowAITeams,
   setTeamsInWorkflowAITeams,

@@ -1,21 +1,21 @@
 import { v4 as uuidv4 } from 'uuid';
 
 export const teams = [
-  { _id: uuidv4(), content: 'team 1', isSelected: false },
-  { _id: uuidv4(), content: 'team 1', isSelected: false },
-  { _id: uuidv4(), content: 'team 1', isSelected: false },
-  { _id: uuidv4(), content: 'team 1', isSelected: false },
-  { _id: uuidv4(), content: 'team 1', isSelected: false },
-  { _id: uuidv4(), content: 'team 1', isSelected: false },
+  // { _id: uuidv4(), content: 'team 1', isSelected: false },
+  // { _id: uuidv4(), content: 'team 1', isSelected: false },
+  // { _id: uuidv4(), content: 'team 1', isSelected: false },
+  // { _id: uuidv4(), content: 'team 1', isSelected: false },
+  // { _id: uuidv4(), content: 'team 1', isSelected: false },
+  // { _id: uuidv4(), content: 'team 1', isSelected: false },
 ];
 
 export const portfolios = [
-  { _id: uuidv4(), content: 'portfolio 1', isSelected: false },
-  { _id: uuidv4(), content: 'portfolio 1', isSelected: false },
-  { _id: uuidv4(), content: 'portfolio 1', isSelected: false },
-  { _id: uuidv4(), content: 'portfolio 1', isSelected: false },
-  { _id: uuidv4(), content: 'portfolio 1', isSelected: false },
-  { _id: uuidv4(), content: 'portfolio 1', isSelected: false },
+  // { _id: uuidv4(), content: 'portfolio 1', isSelected: false },
+  // { _id: uuidv4(), content: 'portfolio 1', isSelected: false },
+  // { _id: uuidv4(), content: 'portfolio 1', isSelected: false },
+  // { _id: uuidv4(), content: 'portfolio 1', isSelected: false },
+  // { _id: uuidv4(), content: 'portfolio 1', isSelected: false },
+  // { _id: uuidv4(), content: 'portfolio 1', isSelected: false },
 ];
 
 export const rights = [
@@ -282,16 +282,16 @@ export const processesInWorkflowAIArray = [
           { _id: uuidv4(), items: portfolios, proccess_title: 'portfolios' },
         ],
       },
-      /*  {
-			  _id: uuidv4(),
-			  column: [
-				{
-				  _id: uuidv4(),
-				  items: portfolioTeamRoles,
-				  proccess_title: "Portfolio/Team Roles",
-				},
-			  ],
-			}, */
+      {
+        _id: uuidv4(),
+        column: [
+          {
+            _id: uuidv4(),
+            items: portfolioTeamRoles,
+            proccess_title: 'Portfolio/Team Roles',
+          },
+        ],
+      },
       {
         _id: uuidv4(),
         column: [
@@ -332,51 +332,51 @@ export const processesInWorkflowAIArray = [
           },
         ],
       },
-      /*     {
-			  _id: uuidv4(),
-			  column: [
-				{
-				  _id: uuidv4(),
-				  items: enabledProcessDocuments,
-				  proccess_title: "Documents",
-				},
-				{
-				  _id: uuidv4(),
-				  items: enabledProcessTemplates,
-				  proccess_title: "Tempaltes",
-				},
-				{
-				  _id: uuidv4(),
-				  items: enabledProcessWorkflows,
-				  proccess_title: "Workflows",
-				},
-				{
-				  _id: uuidv4(),
-				  items: enabledProcessNotarisation,
-				  proccess_title: "Notarisation",
-				},
-				{
-				  _id: uuidv4(),
-				  items: enabledProcessRecords,
-				  proccess_title: "Records",
-				},
-				{
-				  _id: uuidv4(),
-				  items: enabledProcessApprovel,
-				  proccess_title: "Approval Process",
-				},
-				{
-				  _id: uuidv4(),
-				  items: enabledProcessEvaluation,
-				  proccess_title: "Evaluation Process",
-				},
-				{
-				  _id: uuidv4(),
-				  items: enabledProcessReports,
-				  proccess_title: "Reports",
-				},
-			  ],
-			}, */
+      {
+        _id: uuidv4(),
+        column: [
+          {
+            _id: uuidv4(),
+            items: enabledProcessDocuments,
+            proccess_title: 'Documents',
+          },
+          {
+            _id: uuidv4(),
+            items: enabledProcessTemplates,
+            proccess_title: 'Tempaltes',
+          },
+          {
+            _id: uuidv4(),
+            items: enabledProcessWorkflows,
+            proccess_title: 'Workflows',
+          },
+          {
+            _id: uuidv4(),
+            items: enabledProcessNotarisation,
+            proccess_title: 'Notarisation',
+          },
+          {
+            _id: uuidv4(),
+            items: enabledProcessRecords,
+            proccess_title: 'Records',
+          },
+          {
+            _id: uuidv4(),
+            items: enabledProcessApprovel,
+            proccess_title: 'Approval Process',
+          },
+          {
+            _id: uuidv4(),
+            items: enabledProcessEvaluation,
+            proccess_title: 'Evaluation Process',
+          },
+          {
+            _id: uuidv4(),
+            items: enabledProcessReports,
+            proccess_title: 'Reports',
+          },
+        ],
+      },
     ],
   },
 ];
@@ -799,7 +799,7 @@ export const permissionArray = [
           {
             _id: uuidv4(),
             items: permissionRoles,
-            proccess_title: 'Portflio/Team Roles',
+            proccess_title: 'Portfolio/Team Roles',
             order: 4,
           },
         ],
