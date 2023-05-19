@@ -23,11 +23,22 @@ const Chat = () => {
     IntilizingRoom(session_id)
   }, [session_id]);
 
-  const IntilizingRoom = (session_id) => {
-    fetch(`https://100096.pythonanywhere.com/d-chat/Workflow-AI/?session_id=${session_id}`)
-      .then((res) => res.json())
-      .then((data) => setModal(data));
-  }
+  const IntilizingRoom = async (session_id) => {
+    try {
+      const response = await fetch(`https://100096.pythonanywhere.com/d-chat/Workflow-AI/?session_id=${session_id}`);
+      if (response.ok) {
+        const data = await response.json();
+        setModal(data);
+      } else {
+        throw new Error('Network response was not OK');
+      }
+    } catch (error) {
+      // Perform any necessary error handling logic without logging the error
+      // For example, you can show a user-friendly error message
+      // or perform an alternative action.
+      console.log('Initialising room failed: ', error)
+    }
+  };
 
   const handleMessageSend = () => {
     if (message.trim() === "") {
