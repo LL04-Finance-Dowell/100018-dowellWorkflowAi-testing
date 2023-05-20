@@ -193,8 +193,8 @@ const DocumentCard = ({
 
       // console.log(paramsPassed);
 
-      const auth_username = paramsPassed.get('auth_user');
-      const auth_portfolio = paramsPassed.get('auth_portfolio');
+      const auth_username = paramsPassed.get('username');
+      const auth_portfolio = paramsPassed.get('portfolio');
       const auth_role = paramsPassed.get('auth_role');
       const user_type = paramsPassed.get('user_type');
 
