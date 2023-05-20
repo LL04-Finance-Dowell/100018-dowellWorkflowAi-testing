@@ -39,10 +39,8 @@ def new(
     process_title = " - ".join(
         [workflow["workflows"]["workflow_title"] for workflow in workflows]
     )
-
     process_kind = "original"
 
-    # save to collection.
     res = json.loads(
         save_wf_process(
             process_title,
@@ -58,7 +56,6 @@ def new(
             process_kind,
         )
     )
-
     if res["isSuccess"]:
         process = {
             "process_title": process_title,
@@ -81,7 +78,6 @@ def start(process):
     qrcodes = []
 
     for step in process["process_steps"]:
-        # we need a single link for the public
         public_users = [m["member"] for m in step.get("stepPublicMembers", [])]
         if public_users:
             public_portfolio = step.get("stepPublicMembers", [])[0].get("portfolio")
@@ -96,10 +92,8 @@ def start(process):
                 item_type=process["process_type"],
                 user_type="public",
             )
-
             links.append({public_portfolio: link})
             qrcodes.append({public_portfolio: qrcode})
-
         for member in step.get("stepTeamMembers", []):
             link, qrcode = verification_data(
                 process_id=process["_id"],
@@ -112,10 +106,8 @@ def start(process):
                 item_type=process["process_type"],
                 user_type="team",
             )
-
             links.append({member["member"]: link})
             qrcodes.append({member["member"]: qrcode})
-
         for member in step.get("stepUserMembers", []):
             link, qrcode = verification_data(
                 process_id=process["_id"],
@@ -128,38 +120,27 @@ def start(process):
                 item_type=process["process_type"],
                 user_type="user",
             )
-
             links.append({member["member"]: link})
             qrcodes.append({member["member"]: qrcode})
 
-    # document viewers
     viewers = [
         member["member"]
         for member in process["process_steps"][0].get("stepTeamMembers", [])
         + process["process_steps"][0].get("stepPublicMembers", [])
         + process["process_steps"][0].get("stepUserMembers", [])
     ]
-
-    # update authorized viewers for the parent id template or document.
     doc_id = process["parent_item_id"]
-
     if len(viewers) > 0:
-        # create doc copy
         clone_id = cloning_document(doc_id, viewers, doc_id, process["_id"])
-
         for user in viewers:
             process["process_steps"][0].get("stepDocumentCloneMap").append(
                 {user: clone_id}
             )
-
-        # now update the process
         update_wf_process(
             process_id=process["_id"],
             steps=process["process_steps"],
             state="processing",
         )
-
-        # save links
         res = json.loads(
             save_process_links(
                 links=links,
@@ -169,7 +150,6 @@ def start(process):
             )
         )
         if res["isSuccess"]:
-            # save qrcodes
             code_data = {
                 "qrcodes": qrcodes,
                 "process_id": process["_id"],
@@ -179,8 +159,6 @@ def start(process):
                 "process_title": process["process_title"],
             }
             Thread(target=threads.save_qrcodes, args=(code_data,)).start()
-
-            # return generated links
             return Response({"links": links, "qrcodes": qrcodes}, status.HTTP_200_OK)
 
     return Response("failed to start processing!", status.HTTP_500_INTERNAL_SERVER_ERROR)
@@ -203,10 +181,8 @@ def verify(
     #             "You have already accessed this document", status.HTTP_200_OK
     #         )
     clone_id = None
-    # find step the user belongs
     for step in process["process_steps"]:
         if step.get("stepRole") == auth_step_role:
-            # location check
             if step.get("stepLocation"):
                 if not checks.location_right(
                     location=step.get("stepLocation"),
@@ -221,15 +197,11 @@ def verify(
                         "Signing not permitted from your current location!",
                         status.HTTP_401_UNAUTHORIZED,
                     )
-
-            # display check
             if step.get("stepDisplay"):
                 if not checks.display_right(step.get("stepDisplay")):
                     return Response(
                         "Missing display rights!", status.HTTP_401_UNAUTHORIZED
                     )
-
-            # time limit check
             if step.get("stepTimeLimit"):
                 if not checks.time_limit_right(
                     time=step.get("stepTime"),
@@ -242,8 +214,6 @@ def verify(
                         "Time limit for processing document has elapsed!",
                         status.HTTP_403_FORBIDDEN,
                     )
-
-            # find the clone id
             if user_type == "public":
                 user_name = user_name[0]
 
@@ -252,7 +222,6 @@ def verify(
                     if d_map.get(user_name) is not None:
                         clone_id = d_map.get(user_name)
 
-            # set access.
             doc_map = step["stepDocumentMap"]
             right = step["stepRights"]
             role = step["stepRole"]
@@ -260,30 +229,24 @@ def verify(
             match = True
             # break
 
-    # do we have access?
     if not match:
         return Response(
             "Access could not be set for this user",
             status.HTTP_500_INTERNAL_SERVER_ERROR,
         )
-
-    # is everything right?
     if not clone_id:
         return Response(
             "No document to provide access to!", status.HTTP_500_INTERNAL_SERVER_ERROR
         )
-
     if not right:
         return Response(
             "Missing step access rights!", status.HTTP_500_INTERNAL_SERVER_ERROR
         )
-
     if not role:
         return Response(
             "Authorized role for this step not found!",
             status.HTTP_500_INTERNAL_SERVER_ERROR,
         )
-
     if not doc_map:
         return Response(
             "Document access map for this user not found!",
@@ -291,8 +254,6 @@ def verify(
         )
 
     item_type = process["process_type"]
-
-    # set document
     if item_type == "document":
         collection = "DocumentReports"
         document = "documentreports"
@@ -300,9 +261,8 @@ def verify(
         field = "document_name"
         team_member_id = "11689044433"
 
-        # get ready to check document states
-        document_item = get_document_object(clone_id)
 
+        document_item = get_document_object(clone_id)
         if document_item["document_state"] == "finalized":
             item_flag = "finalized"
 
@@ -717,6 +677,7 @@ def background2(process_id, item_id, item_type):
     # mark process as finalized
     step_doc_states = [check_step_done(i, process) for i in num_process_steps]
     if all(step_doc_states):
+        new_processing_state = "completed"
         print("All Done \n")
         pass
 
@@ -725,7 +686,7 @@ def background2(process_id, item_id, item_type):
         update_wf_process(
             process_id=process["_id"],
             steps=process["process_steps"],
-            state=process["processing_state"],
+            state=new_processing_state,
         )
     )
 
