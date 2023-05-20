@@ -8,7 +8,7 @@ from rest_framework.response import Response
 from app.constants import NOTIFICATION_API, EDITOR_API
 
 from . import checks, threads
-from .helpers import cloning_document, verification_data
+from .helpers import cloning_document, verification_data, register_user_access
 from .mongo_db_connection import (
     authorize,
     get_document_object,
@@ -161,7 +161,7 @@ def start(process):
             Thread(target=threads.save_qrcodes, args=(code_data,)).start()
             return Response({"links": links, "qrcodes": qrcodes}, status.HTTP_200_OK)
 
-    return Response("failed to start processing!", status.HTTP_500_INTERNAL_SERVER_ERROR)
+    return Response("processing failed!", status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 def verify(
@@ -231,26 +231,19 @@ def verify(
 
     if not match:
         return Response(
-            "Access could not be set for this user",
-            status.HTTP_403_FORBIDDEN
+            "Access could not be set for this user", status.HTTP_403_FORBIDDEN
         )
     if not clone_id:
-        return Response(
-            "No document to provide access to!", status.HTTP_403_FORBIDDEN
-        )
+        return Response("No document to provide access to!", status.HTTP_403_FORBIDDEN)
     if not right:
-        return Response(
-            "Missing step access rights!", status.HTTP_403_FORBIDDEN
-        )
+        return Response("Missing step access rights!", status.HTTP_403_FORBIDDEN)
     if not role:
         return Response(
-            "Authorized role for this step not found!",
-            status.HTTP_403_FORBIDDEN
+            "Authorized role for this step not found!", status.HTTP_403_FORBIDDEN
         )
     if not doc_map:
         return Response(
-            "Document access map for this user not found!",
-            status.HTTP_403_FORBIDDEN
+            "Document access map for this user not found!", status.HTTP_403_FORBIDDEN
         )
 
     item_type = process["process_type"]
@@ -260,7 +253,6 @@ def verify(
         action = "document"
         field = "document_name"
         team_member_id = "11689044433"
-
 
         document_item = get_document_object(clone_id)
         if document_item["document_state"] == "finalized":
@@ -301,7 +293,11 @@ def verify(
         },
     }
     try:
-        link = requests.post(EDITOR_API, data=json.dumps(payload), headers={"Content-Type": "application/json"})
+        link = requests.post(
+            EDITOR_API,
+            data=json.dumps(payload),
+            headers={"Content-Type": "application/json"},
+        )
     except ConnectionError:
         return Response(
             "Error, processing editor link", status.HTTP_500_INTERNAL_SERVER_ERROR
@@ -310,7 +306,7 @@ def verify(
     return Response(link.json(), status.HTTP_200_OK)
 
 
-def background(process_id, item_id, item_type):
+def background(process_id, item_id, item_type, authorized_role, user):
     if item_type == "template":
         # TODO: when template
         return
@@ -321,6 +317,11 @@ def background(process_id, item_id, item_type):
 
     # get process
     process = get_process_object(process_id)
+    Thread(
+        target=lambda: register_user_access(
+            process["process_steps"], authorized_role, user
+        )
+    ).start()
 
     copies = []
     step_1_complete = False
@@ -562,8 +563,8 @@ def background(process_id, item_id, item_type):
     return True
 
 
-# Determine whether a given step's documents are all finalized?
 def check_step_done(step_index, process):
+    """Determine whether a given step's documents are all finalized"""
     step = process["process_steps"][step_index - 1]
     step_users = [
         member["member"]
@@ -591,8 +592,8 @@ def check_step_done(step_index, process):
     return False
 
 
-# Now Authorize users with te current document
 def authorize_next_step_users(step_index, process):
+    """Now Authorize users with the current document"""
     prev_step = step_index - 1
     for doc_map in process["process_steps"][prev_step]:
         docs = list(doc_map.values())
@@ -678,8 +679,6 @@ def background2(process_id, item_id, item_type):
     step_doc_states = [check_step_done(i, process) for i in num_process_steps]
     if all(step_doc_states):
         new_processing_state = "completed"
-        print("All Done \n")
-        pass
 
     # update the process
     res = json.loads(

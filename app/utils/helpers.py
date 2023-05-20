@@ -8,7 +8,12 @@ import requests
 from django.conf import settings
 from django.core.mail import send_mail
 
-from app.constants import EDITOR_API, PUBLIC_LOGIN_API, VERIFICATION_LINK
+from app.constants import (
+    EDITOR_API,
+    PUBLIC_LOGIN_API,
+    VERIFICATION_LINK,
+    NOTIFICATION_API,
+)
 from app.models import FavoriteDocument, FavoriteTemplate, FavoriteWorkflow
 from app.serializers import (
     FavouriteDocumentSerializer,
@@ -30,9 +35,23 @@ from .threads import notification
 headers = {"Content-Type": "application/json"}
 
 
+def register_user_access(process_steps, authorized_role, user):
+    """Once someone has made changes to their docs"""
+    for step in process_steps:
+        if step["stepRole"] == authorized_role:
+            for clone_map in step["stepDocumentCloneMap"]:
+                if user in clone_map:
+                    clone_map["accessed"] = True
+                    break
+
+
+def delete_notification(notify_id):
+    """remove notifications in external products"""
+    return requests.delete(f"{NOTIFICATION_API}/{notify_id}")
+
+
 def notify_push(data):
     """Tells me if code is pushed and deployed"""
-
     pushed_by = data["pusher"].get("name")
     subject = "Push and Deploy Done!"
     message = f"Hi Edwin, {pushed_by} just pushed code and it is going to be deployed by your CI/CD pipeline."
@@ -48,7 +67,6 @@ def notify_push(data):
 
 def get_domain_host():
     """Grab the current domain host"""
-
     current_site = Site.objects.get_current()
     domain_host = current_site.domain
     return domain_host
@@ -56,7 +74,6 @@ def get_domain_host():
 
 def public_login(qrid, org_name):
     """Find out if a public link has been used or not"""
-
     res = requests.post(
         url=PUBLIC_LOGIN_API,
         data=json.dumps(

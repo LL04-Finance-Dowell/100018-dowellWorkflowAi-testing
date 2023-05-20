@@ -18,6 +18,7 @@ from app.utils.helpers import (
     remove_favourite,
     validate_id,
     notify_push,
+    delete_notification
 )
 from django.core.cache import cache
 from app.utils.mongo_db_connection import (
@@ -358,39 +359,34 @@ def finalize_or_reject(request, process_id):
 
     item_id = request.data["item_id"]
     item_type = request.data["item_type"]
+    authorized_role = request.data["role"]
+    user = request.data["authorized"]
+    Thread(target=lambda: delete_notification(item_id)).start()
 
-    # Check document current state.
     check, current_state = checks.is_finalized(item_id, item_type)
     if not check:
         return Response(f"Already processed as {current_state}!", status.HTTP_200_OK)
 
-    # set the right state
     if request.data["action"] == "finalize":
         state = "finalized"
 
     elif request.data["action"] == "reject":
         state = "rejected"
 
-    # mark item as finalized or rejected.
     res = finalize(item_id, state, item_type)
     if res["isSuccess"]:
-        # Signal for further processing.
-        if processing.background(process_id, item_id, item_type):
+        if processing.background(process_id, item_id, item_type, authorized_role, user):
             return Response("document processed successfully", status.HTTP_200_OK)
 
         else:
-            # Revert the document state to processing.
             finalize(item_id, "processing", item_type)
 
-    return Response(
-        "Error processing the document", status.HTTP_500_INTERNAL_SERVER_ERROR
-    )
+    return Response("Error processing", status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 @api_view(["POST"])
 def trigger_process(request):
     """Get process and begin processing it."""
-    
     if not validate_id(request.data["process_id"]):
         return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
 
@@ -430,7 +426,6 @@ def trigger_process(request):
 @api_view(["GET"])
 def processes(request, company_id):
     """fetches workflow process `I` created."""
-
     data_type = request.query_params.get("data_type", "Real_Data")
 
     if not validate_id(company_id):
@@ -467,20 +462,22 @@ def a_single_process(request, process_id):
 @api_view(["GET"])
 def fetch_process_links(request, process_id):
     """verification links for a process"""
-    
+
     if not validate_id(process_id):
         return Response("something went wrong!", status.HTTP_400_BAD_REQUEST)
 
     try:
         process_info = get_links_object_by_process_id(process_id)
     except:
-        return Response("Could not fetch links at this time", status.HTTP_500_INTERNAL_SERVER_ERROR)
+        return Response(
+            "Could not fetch links at this time", status.HTTP_500_INTERNAL_SERVER_ERROR
+        )
 
     if process_info:
         process = process_info[0]
         return Response(process["links"], status.HTTP_200_OK)
 
-    return Response([],  status.HTTP_200_OK)
+    return Response([], status.HTTP_200_OK)
 
 
 @api_view(["POST"])
@@ -1210,38 +1207,40 @@ def create_workflow_ai_setting(request):
     if not validate_id(company_id):
         return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
 
-    is_exists = checks.is_wf_setting_exist(company_id, request.data["created_by"],request.data['data_type'])
+    is_exists = checks.is_wf_setting_exist(
+        company_id, request.data["created_by"], request.data["data_type"]
+    )
     if is_exists:
         return Response({"WF SETTING EXISTS": is_exists}, status.HTTP_200_OK)
     else:
         try:
             res = json.loads(
-            save_wf_setting(
-                company_id=company_id,
-                created_by=request.data["created_by"],
-                data_type=request.data["data_type"],
-                process=request.data["Process"],
-                documents=request.data["Documents"],
-                templates=request.data["Templates"],
-                workflows=request.data["Workflows"],
-                notarisation=request.data["Notarisation"],
-                folders=request.data["Folders"],
-                records=request.data["Records"],
-                references=request.data["References"],
-                approval=request.data["Approval_Process"],
-                evaluation=request.data["Evaluation_Process"],
-                reports=request.data["Reports"],
-                management=request.data["Management"],
-                portfolio=request.data["Portfolio_Choice"],
-                theme_color=request.data["theme_color"],
-            )
+                save_wf_setting(
+                    company_id=company_id,
+                    created_by=request.data["created_by"],
+                    data_type=request.data["data_type"],
+                    process=request.data["Process"],
+                    documents=request.data["Documents"],
+                    templates=request.data["Templates"],
+                    workflows=request.data["Workflows"],
+                    notarisation=request.data["Notarisation"],
+                    folders=request.data["Folders"],
+                    records=request.data["Records"],
+                    references=request.data["References"],
+                    approval=request.data["Approval_Process"],
+                    evaluation=request.data["Evaluation_Process"],
+                    reports=request.data["Reports"],
+                    management=request.data["Management"],
+                    portfolio=request.data["Portfolio_Choice"],
+                    theme_color=request.data["theme_color"],
+                )
             )
         except Exception as e:
             print(e)
             return Response(
                 "Failed to Save Workflow Setting", status.HTTP_500_INTERNAL_SERVER_ERROR
             )
-        
+
         if res["isSuccess"]:
             return Response(
                 "You added WorkflowAI settings for your organization",
@@ -1254,9 +1253,9 @@ def create_workflow_ai_setting(request):
 
 
 @api_view(["GET"])
-def all_workflow_ai_setting(request, company_id,data_type="Real_data"):
+def all_workflow_ai_setting(request, company_id, data_type="Real_data"):
     """Get All WF AI"""
-    all_setting = get_wfai_setting_list(company_id,data_type)
+    all_setting = get_wfai_setting_list(company_id, data_type)
     try:
         return Response(
             all_setting,
