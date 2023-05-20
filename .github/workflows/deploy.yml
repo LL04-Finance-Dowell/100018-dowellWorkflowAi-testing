@@ -1,11 +1,11 @@
-name: Deploy To GH pages
+name: Build & Deploy
 
 on:
   push:
     branches: [frontend]
 
 jobs:
-  deploy:
+  build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -14,10 +14,21 @@ jobs:
           node-version: "14.x"
       - run: npm ci
       - run: npm run build
-      - name: Deploy
-        uses: crazy-maz/ghaction-github-pages@v1
+      - uses: actions/upload-artifact@v2
         with:
-          target_branch: gh-pages
-          build_dir: build
+          name: production
+          path: ./build
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/frontend'
+
+    steps:
+      - name: Download Artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: production
+          path: ./build
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
