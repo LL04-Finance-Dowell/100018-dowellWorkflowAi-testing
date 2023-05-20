@@ -232,25 +232,25 @@ def verify(
     if not match:
         return Response(
             "Access could not be set for this user",
-            status.HTTP_500_INTERNAL_SERVER_ERROR,
+            status.HTTP_403_FORBIDDEN
         )
     if not clone_id:
         return Response(
-            "No document to provide access to!", status.HTTP_500_INTERNAL_SERVER_ERROR
+            "No document to provide access to!", status.HTTP_403_FORBIDDEN
         )
     if not right:
         return Response(
-            "Missing step access rights!", status.HTTP_500_INTERNAL_SERVER_ERROR
+            "Missing step access rights!", status.HTTP_403_FORBIDDEN
         )
     if not role:
         return Response(
             "Authorized role for this step not found!",
-            status.HTTP_500_INTERNAL_SERVER_ERROR,
+            status.HTTP_403_FORBIDDEN
         )
     if not doc_map:
         return Response(
             "Document access map for this user not found!",
-            status.HTTP_500_INTERNAL_SERVER_ERROR,
+            status.HTTP_403_FORBIDDEN
         )
 
     item_type = process["process_type"]
