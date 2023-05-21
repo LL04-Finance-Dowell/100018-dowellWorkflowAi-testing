@@ -118,9 +118,11 @@ def get_wf_setting_object(wf_setting_id):
     )
 
 
-def get_wfai_setting_list(company_id,data_type):
+def get_wfai_setting_list(company_id, data_type):
     return get_data_from_data_service(
-        *WF_AI_SETTING_LIST, "fetch", {"company_id": str(company_id),"data_type":data_type}
+        *WF_AI_SETTING_LIST,
+        "fetch",
+        {"company_id": str(company_id), "data_type": data_type},
     )
 
 
@@ -778,8 +780,12 @@ def update_document_clone(document_id, clone_list):
     return post_to_data_service(payload)
 
 
-def org_wfai_setting(company_id, org_name,data_type="Real_data"):
-    fields = {"company_id": str(company_id), "created_by": org_name,"data_type":data_type}
+def org_wfai_setting(company_id, org_name, data_type="Real_data"):
+    fields = {
+        "company_id": str(company_id),
+        "created_by": org_name,
+        "data_type": data_type,
+    }
     response_obj = get_data_from_data_service(*WF_AI_SETTING_LIST, "fetch", fields)
     # res_obj = json.loads(response_obj)
     # if len(res_obj["data"]) > 0:
@@ -926,3 +932,81 @@ def update_team_data(team_id, team_data):
         }
     )
     return post_to_data_service(payload)
+
+
+def set_hourly_reminder():
+    data = get_data_from_data_service(
+        *PROCESS_CONNECTION_LIST,
+        "fetch",
+        {
+            "data_type": "Real_Data",
+            "processing_state": {"$ne": "completed"},
+            "process_steps.stepReminder": "send_reminder_every_hour",
+            "process_steps.stepTeamMembers": {"$exists": True},
+        },
+    )
+    daily_reminder = [
+        reminders[0]
+        for reminders in list(
+            [
+                [
+                    {
+                        "process_id": x["_id"],
+                        "processing_state": x["processing_state"],
+                        "member": [
+                            item["member"]
+                            for item in st["stepTeamMembers"]
+                            if "member" in item
+                        ],
+                        "reminder": st["stepReminder"],
+                        "step_state" : st["stepState"],
+                    }
+                    for st in x["process_steps"]
+                    if "stepState" and "stepTeamMembers" and "stepReminder" in st
+                ]
+                for x in data
+            ],
+        )
+    ]
+
+    return daily_reminder
+
+
+def set_daily_reminder():
+    data = get_data_from_data_service(
+        *PROCESS_CONNECTION_LIST,
+        "fetch",
+        {
+            "data_type": "Real_Data",
+            "processing_state": {"$ne": "completed"},
+            "process_steps.stepReminder": "send_reminder_every_day",
+            "process_steps.stepTeamMembers": {"$exists": True},
+        },
+    )
+    hourly_reminder = [
+        reminders[0]
+        for reminders in list(
+            [
+                [
+                    {
+                        "process_id": x["_id"],
+                        "processing_state": x["processing_state"],
+                        "member": [
+                            item["member"]
+                            for item in st["stepTeamMembers"]
+                            if "member" in item
+                        ],
+                        "reminder": st["stepReminder"],
+                        "step_state" : st["stepState"],
+                    }
+                    for st in x["process_steps"]
+                    if "stepState" and "stepTeamMembers" and "stepReminder" in st
+                ]
+                for x in data
+            ],
+        )
+    ]
+
+    return hourly_reminder
+
+

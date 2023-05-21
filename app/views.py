@@ -1305,3 +1305,16 @@ def update_workflow_ai_setting(request):
             return Response("Workflow Setting Updated", status.HTTP_201_CREATED)
 
         return Response("Failed to Update Workflow", status.HTTP_200_OK)
+
+
+@api_view(["GET"])
+def read_reminder(user,remider_desc):
+    try:
+        return Response(
+            remider_desc,
+            status.HTTP_200_OK,
+        )
+    except:
+        return Response(
+            "Failed to Get Reminder", status.HTTP_500_INTERNAL_SERVER_ERROR
+        )
