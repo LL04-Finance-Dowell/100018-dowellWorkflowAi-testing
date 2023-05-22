@@ -50,7 +50,7 @@ function App() {
   useEffect(() => {
     const interval = setInterval(() => {
       checkstatus();
-    }, 6000); // 60 seconds
+    }, 60000); // 60 seconds
 
     return () => clearInterval(interval); // Clean up the interval on unmount
   }, []);

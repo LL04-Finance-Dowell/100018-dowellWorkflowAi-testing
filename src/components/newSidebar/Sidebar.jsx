@@ -31,6 +31,8 @@ import { BsThreeDotsVertical } from "react-icons/bs";
 import { setDateAgreedToLegalStatus, setLegalAgreePageLoading, setLegalStatusLoading, setLegalTermsAgreed, setShowLegalStatusPopup, setUserDetailPosition, setLanguageSelectPosition } from "../../features/app/appSlice";
 import { Tooltip } from "react-tooltip";
 import { useTranslation } from "react-i18next";
+import { GrStatusGoodSmall } from "react-icons/gr";
+
 
 const Sidebar = () => {
 	const dispatch = useDispatch();
@@ -38,6 +40,7 @@ const Sidebar = () => {
 	const { userDetail, currentUser, session_id, id } = useSelector(
 		(state) => state.auth
 	);
+	const { IconColor } = useSelector((state) => state.app);
 	const navigate = useNavigate();
 
 	useCloseElementOnEscapekeyClick(() => dispatch(setLegalAgreePageLoading(false)));
@@ -129,6 +132,12 @@ const Sidebar = () => {
 
 					/>
 				</div>
+				<div >
+					<GrStatusGoodSmall
+						color={IconColor}
+
+					/>
+				</div>
 			</div>
 			<div className={styles.icon__box}>
 				{iconBoxItems.map((item) => (
@@ -167,10 +176,11 @@ const Sidebar = () => {
 						? userDetail.portfolio_info[0].org_name
 						: "My Organization"}
 				</h2>
-				<img
-					src="https://i0.wp.com/workflowai.online/wp-content/uploads/2022/10/artistic-logo.png?fit=916%2C640&ssl=1"
-					alt="org-logo"
-				/>
+				{userDetail?.userinfo?.org_img ?
+					<img src={userDetail?.userinfo?.org_img} />
+					:
+					<img src="https://i0.wp.com/workflowai.online/wp-content/uploads/2022/10/artistic-logo.png?fit=916%2C640&ssl=1" />
+				}
 			</div>
 			<Notifications />
 			<New />
