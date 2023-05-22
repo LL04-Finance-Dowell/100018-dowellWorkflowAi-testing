@@ -65,6 +65,8 @@ const initialState = {
   teamsInWorkflowAI,
   column: [],
   proccess: [],
+  IconColor:"",
+
   userDetailPosition: null,
   languageSelectPosition: null,
   teamsSelectedSelectedForProcess: [],
@@ -462,6 +464,9 @@ export const appSlice = createSlice({
     setLanguageSelectPosition: (state, action) => {
       state.languageSelectPosition = action.payload;
     },
+    setIconColor: (state, action) => {
+      state.IconColor = action.payload;
+    },
     setTeamsSelectedSelectedForProcess: (state, action) => {
       state.teamsSelectedSelectedForProcess = [
         ...state.teamsSelectedSelectedForProcess,
@@ -679,7 +684,7 @@ export const {
   setUserDetailPosition,
 
   setLanguageSelectPosition,
-
+  setIconColor,
   setUpdateProccessApi,
   setTeamsSelectedSelectedForProcess,
   setTeamMembersSelectedForProcess,

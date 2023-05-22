@@ -30,7 +30,7 @@ import { getFavoritesForUser } from '../../services/favoritesServices';
 import React from 'react';
 import DocumentCard from '../../components/hoverCard/documentCard/DocumentCard';
 import { useTranslation } from 'react-i18next';
-import i18next from 'i18next';
+import { GrStatusGoodSmall } from "react-icons/gr";
 
 const WorkflowApp = () => {
   const { userDetail } = useSelector((state) => state.auth);
@@ -41,6 +41,8 @@ const WorkflowApp = () => {
     notificationsLoaded,
     processesLoaded,
     processesLoading,
+    IconColor
+
   } = useSelector((state) => state.app);
   const dispatch = useDispatch();
 
@@ -238,7 +240,12 @@ const WorkflowApp = () => {
     <WorkflowLayout>
       <div className={styles.container}>
         <CustomerSupport />
+        <div style={{ position: "fixed", top: "20px", right: "5px" }}>
+          <GrStatusGoodSmall
+            color={IconColor}
 
+          />
+        </div>
         <FlipMenu />
         {isVisible && (
           <div className={styles.section__container}>

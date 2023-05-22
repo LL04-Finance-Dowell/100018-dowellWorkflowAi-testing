@@ -28,7 +28,7 @@ import {
 } from "../../services/legalService";
 import useCloseElementOnEscapekeyClick from "../../hooks/useCloseElementOnEscapeKeyClick";
 import { BsThreeDotsVertical } from "react-icons/bs";
-import { setDateAgreedToLegalStatus, setLegalAgreePageLoading, setLegalStatusLoading, setLegalTermsAgreed, setShowLegalStatusPopup, setUserDetailPosition,setLanguageSelectPosition } from "../../features/app/appSlice";
+import { setDateAgreedToLegalStatus, setLegalAgreePageLoading, setLegalStatusLoading, setLegalTermsAgreed, setShowLegalStatusPopup, setUserDetailPosition, setLanguageSelectPosition } from "../../features/app/appSlice";
 import { Tooltip } from "react-tooltip";
 import { useTranslation } from "react-i18next";
 
@@ -125,8 +125,8 @@ const Sidebar = () => {
 						src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAEsElEQVR4Ac2X1XrjRgBGi9f7AOX2KXq3zBQsMzN3mdkOLjMzhpk5ZmbmoOU4W27/akYZq47i0qK+7xiuzhkQPXBfHN8cjT+VVZQ055XeRF6JQC5PzgTZxSJZRQLLCuOlty0gqyRhInICEROomMHkPMuLBJbsGP5p48bWR25LgFQuDcgSA7BsgqzNvudvSwCRZpZnDliyY/DkbQlgUkbm0YsBlIKRX99/X/XobQ3I/jejJxQKLF5tn3XLAdlSsShnFEkDlvJ8fGgYOr0NwWAE0WiMJ0qJRCIIh8NphEIhitfrdej1zsfFACqTsu1GEipHAsMjcYramcCWa0kqZwGEujYDbDY3L40iFosRWARDEhQIBCxTBrARX+pKIB6PY5TH7ONg9nL0fzAWxxsHxlPyJQU3UXzZBZXKCI/H968DCKkAJmVsvZ6kMmeQw+cnx1PT/uXpcXxynP8vyikfHRhAX78eRqMFfn+AyDMHiMshBrDdzVDYhdF+cyYp2XQEcfSMcdS36qDTmWC12uDz+W4tYGiYgyfMpcn5qU+jSZeg8sUTlFxxQa02wmKxwW63o1uhQWNXX7o8UwATMQb5AG+ESxu1xslRDG5hdhQ2joopcrIMUXR2qaDWGGAwmnDg/FWsLD4Enz9A8fr8FH8gIA1gEka/TZB8e1Zcb8a6S8L+KO8fY3LKItkYXvm2CG+s3Im31uzA22t3Ud7dWID3NxfjvU3FeHdTEQ5eKifyvw/YdFWQuEIcvjiZTK33h8fG4QiIcSn5BBuOqHG1ogkV9S2oaelAbUs76lo78cnWUuw+ew1N3QqoDCZpABFM5lzHGBURrD4Ch9GJ/xc6ExI54ZODUVytbEF1UwfsdgccDgfq27rw9joZelVatv4ZA8go09hwOYleK4eBIZ5hDkp7AttvJKeUL5TxMyJLouRYOd5ctQudfUrYbHasKDqAzftOwOVykYsPEUsDBKGUxZORM9LFjAU8pZdt+HLrHqyQH8L+c9fw3no5epVqGkDw+/1UHgwGxQCJ6F+IpXKBTw5GUF3fgXfWyOlmvFBRB6fTmQpwu900QhoglUnFIhIxZRe/DLsS2HOqEq+v4M+GtTsgO3qOXBdoBAvwer3kYiUG/EspE2eUE+bzZK24ipLjl1HT3In3NsghO3KWbMq0AI/HIwZIRBmlmcVMTnhZZkdfvw4mkxV1bZ14f0MBdvIRDoeTBFB5esCuuCmzUCqWjlpk3s5xLNqZQHO7BlqtkZ4J9e3ddCau1TWxWUgPWLAx9Pi8bYOWhTsTmMyCqdghMn8Hl2LedoG5PPuuWqFWG0gAvR70qTRkBsheEANu9VizteP7mTlVmJH9F7KqsPDlSpRVKaAzWGC30wDG7Q14f8XlabPyapAitwaz82tx7lIPlCo9jCYLkZIIQloA4bY8Ub/7XX10dl4tKLm12He0EwqlDnq9CWazMAM2m40FsNPx9gWs29n5NZGT0W+Wt0Kh0PGbzwCj0QyLxULkaQGE2xrw/orGaUT+xZomdHeroVKR0Rv50UsDCCzAYLCYb9u75YotNY6ODiV6+1TQaMijmR4mkykVwbBarTRGpzNaZbKLz90Xb+Z/Apo8pHRw0e17AAAAAElFTkSuQmCC"
 						style={{ height: 20, width: 20, cursor: 'pointer' }}
 						alt=""
-						onClick={(e)=>{HandleLanBtnClk(e)}}
-						
+						onClick={(e) => { HandleLanBtnClk(e) }}
+
 					/>
 				</div>
 			</div>
@@ -145,9 +145,14 @@ const Sidebar = () => {
 				/>
 			</div>
 			<div className={styles.user__box}>
-				<i>
-					<CgProfile size={100} />
-				</i>
+				{userDetail?.userinfo?.profile_img ?
+					<img className={styles.Profile_img} src={userDetail?.userinfo?.profile_img} />
+					:
+					<i>
+						<CgProfile size={100} />
+					</i>
+				}
+
 
 				<h2 className={styles.user__box__text}>
 					{t('Welcome', { username: userDetail?.userinfo?.username })}
@@ -173,7 +178,7 @@ const Sidebar = () => {
 			<div className={styles.gap}></div>
 			<ManageFile />
 			<div className={styles.gap}></div>
-			<Reports/>
+			<Reports />
 			{/* <div className={styles.feature__box}>
 				<h2 className={styles.feature__title}>{t("Reports")}</h2>
 				<CollapseItem items={manageFileItems} />

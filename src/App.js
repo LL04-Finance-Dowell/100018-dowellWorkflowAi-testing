@@ -1,6 +1,9 @@
 import { useEffect, useState, Suspense } from 'react';
 import { Routes, Route, useNavigate, useSearchParams } from 'react-router-dom';
+import { setIconColor } from './features/app/appSlice'
+
 import { useUserContext } from './contexts/UserContext';
+import { useDispatch, useSelector } from 'react-redux';
 import useDowellLogin from './hooks/useDowellLogin';
 import WorkflowApp from './pages/App/WorkflowApp';
 import LandingPage from './pages/Landing/Home';
@@ -35,11 +38,62 @@ import SearchPage from './pages/Search/SearchPage';
 import ConstructionPage from './pages/ConstructionPage/ConstructionPage';
 import { useAppContext } from './contexts/AppContext';
 import Spinner from './components/spinner/Spinner';
+import axios from 'axios';
 
 function App() {
+  const dispatch = useDispatch();
+  const { session_id } = useSelector((state) => state.auth);
   const { isPublicUser } = useAppContext();
   useDowellLogin();
 
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      checkstatus();
+    }, 6000); // 60 seconds
+
+    return () => clearInterval(interval); // Clean up the interval on unmount
+  }, []);
+
+
+  function checkstatus() {
+
+    // AJAX GET request
+
+    axios.get("https://100014.pythonanywhere.com/api/live_users/g")
+      .then((response) => {
+        // console.log("getdata", response);
+        dispatch(setIconColor("green"));
+      })
+      .catch((error) => {
+        // console.log(error);
+        dispatch(setIconColor("red"));
+      });
+
+
+    // AJAX POST request
+
+    axios.post("https://100014.pythonanywhere.com/en/live_status", {
+      data: {
+        session_id: session_id,
+        product: "Workflow AI",
+
+      },
+    }, {
+      headers: {
+        "Content-Type": "application/json"
+      }
+    })
+      .then((response) => {
+        console.log("postdata", response);
+      })
+      .catch((error) => {
+        console.log(error)
+        // Empty catch block 
+      });
+
+
+  }
   // // USE ONLY WHEN APP IS BROKEN OR UNDERGOING MAJOR CHANGES
   // return (
   //   <Routes>

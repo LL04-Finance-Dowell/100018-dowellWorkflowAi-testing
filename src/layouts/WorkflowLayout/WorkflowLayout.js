@@ -228,7 +228,7 @@ const WorkflowLayout = ({ children }) => {
                   </p>
                   {children}
                 </div>
-                <Chat />
+                {/* <Chat /> */}
               </div>
               <Editor />
           
