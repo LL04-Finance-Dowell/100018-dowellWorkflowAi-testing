@@ -53,7 +53,6 @@ const SectionBox = ({
     if (itemType === 'documents') {
       setRefreshLoading(true);
 
-      
       const data = {
         company_id: userDetail?.portfolio_info[0].org_id,
         data_type: userDetail?.portfolio_info[0].data_type,
@@ -102,15 +101,13 @@ const SectionBox = ({
         .then((res) => {
           dispatch(
             setAllTemplates(
-              res.data.templates
-                .reverse()
-                .filter(
-                  (template) =>
-                  console.log(template) &&
-                    template.data_type &&
-                    template.data_type ===
-                      userDetail?.portfolio_info[0]?.data_type
-                )
+              res.data.templates.reverse().filter(
+                (template) =>
+                  // console.log(template) &&
+                  template.data_type &&
+                  template.data_type ===
+                    userDetail?.portfolio_info[0]?.data_type
+              )
             )
           );
           toast.success('Successfully refreshed templates');
@@ -201,7 +198,10 @@ const SectionBox = ({
       const documentService = new DocumentServices();
 
       documentService
-        .allDocuments(userDetail?.portfolio_info[0]?.org_id, userDetail?.portfolio_info[0]?.data_type)
+        .allDocuments(
+          userDetail?.portfolio_info[0]?.org_id,
+          userDetail?.portfolio_info[0]?.data_type
+        )
         .then((res) => {
           const documentsToSign = res.data.documents
             .reverse()
@@ -246,7 +246,6 @@ const SectionBox = ({
     }
   };
 
-
   return (
     <div className={styles.container}>
       <div className={styles.content__container}>
@@ -272,7 +271,7 @@ const SectionBox = ({
                     ) : (
                       <IoIosRefresh />
                     )}
-                    <span>{t("Refresh")}</span>
+                    <span>{t('Refresh')}</span>
                   </button>
                 ) : (
                   <></>
@@ -312,7 +311,7 @@ const SectionBox = ({
                     ) : (
                       <IoIosRefresh />
                     )}
-                    <span>{t("Refresh")}</span>
+                    <span>{t('Refresh')}</span>
                   </button>
                 ) : (
                   <></>
@@ -352,7 +351,7 @@ const SectionBox = ({
                     ) : (
                       <IoIosRefresh />
                     )}
-                    <span>{t("Refresh")}</span>
+                    <span>{t('Refresh')}</span>
                   </button>
                 ) : (
                   <></>
@@ -380,19 +379,14 @@ const SectionBox = ({
                     cardItems
                       .slice(0, sliceCount * 10)
                       .map((item) => (
-                        
                         <Card
                           key={item.id}
                           cardItem={item}
                           hideFavoriteIcon={hideFavoriteIcon}
                           hideDeleteIcon={hideDeleteIcon}
                         />
-                        )
+                      ))}
 
-                        )
-
-                        }
-                        
                   {cardItems && cardItems.length > 10 && (
                     <PrimaryButton
                       style={{
