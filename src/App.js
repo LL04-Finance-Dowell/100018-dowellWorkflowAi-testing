@@ -60,7 +60,7 @@ function App() {
 
     // AJAX GET request
 
-    axios.get("https://100014.pythonanywhere.com/api/live_users/g")
+    axios.get("https://100014.pythonanywhere.com/api/live_users")
       .then((response) => {
         // console.log("getdata", response);
         dispatch(setIconColor("green"));
@@ -85,7 +85,7 @@ function App() {
       }
     })
       .then((response) => {
-        console.log("postdata", response);
+        // console.log("postdata", response);
       })
       .catch((error) => {
         console.log(error)
