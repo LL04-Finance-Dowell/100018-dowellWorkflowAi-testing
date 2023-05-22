@@ -18,7 +18,7 @@ from app.utils.helpers import (
     remove_favourite,
     validate_id,
     notify_push,
-    delete_notification
+    delete_notification,
 )
 from django.core.cache import cache
 from app.utils.mongo_db_connection import (
@@ -1307,13 +1307,11 @@ def update_workflow_ai_setting(request):
 
 
 @api_view(["GET"])
-def read_reminder(user,remider_desc):
+def read_reminder(user, remider_desc=[]):
     try:
         return Response(
             remider_desc,
             status.HTTP_200_OK,
         )
     except:
-        return Response(
-            "Failed to Get Reminder", status.HTTP_500_INTERNAL_SERVER_ERROR
-        )
+        return Response("Failed to Get Reminder", status.HTTP_500_INTERNAL_SERVER_ERROR)
