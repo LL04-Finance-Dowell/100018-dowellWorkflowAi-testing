@@ -490,7 +490,7 @@ def process_copies(request, process_id):
             return Response("something went wrong!", status.HTTP_400_BAD_REQUEST)
 
         process_id = cloning_process(
-            process_id, request.data["created_by"], request.data["created_portfolio"]
+            process_id, request.data["created_by"], request.data["portfolio"]
         )
         if process_id is None:
             return Response(

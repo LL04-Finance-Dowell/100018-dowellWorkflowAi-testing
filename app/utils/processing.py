@@ -32,7 +32,6 @@ def new(
     process_type,
 ):
     """Structures a process entry to persistent storage"""
-
     process_steps = [
         step for workflow in workflows for step in workflow["workflows"]["steps"]
     ]
@@ -239,13 +238,9 @@ def verify(
     if not right:
         return Response("Missing step access rights!", status.HTTP_403_FORBIDDEN)
     if not role:
-        return Response(
-            "Authorized role for this step not found!", status.HTTP_403_FORBIDDEN
-        )
+        return Response("Authorized role not found!", status.HTTP_403_FORBIDDEN)
     if not doc_map:
-        return Response(
-            "Document access map for this user not found!", status.HTTP_403_FORBIDDEN
-        )
+        return Response("Document access map  not found!", status.HTTP_403_FORBIDDEN)
 
     item_type = process["process_type"]
     if item_type == "document":
