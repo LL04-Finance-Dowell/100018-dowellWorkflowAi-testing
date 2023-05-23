@@ -214,6 +214,7 @@ def verify(
                         "Time limit for processing document has elapsed!",
                         status.HTTP_403_FORBIDDEN,
                     )
+
             if user_type == "public":
                 user_name = user_name[0]
 
