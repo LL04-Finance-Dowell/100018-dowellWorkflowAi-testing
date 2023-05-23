@@ -27,7 +27,7 @@ export default function useDowellLogin() {
 
     if (session_id) {
       // remove session_id and/or id from url
-      window.history.replaceState({}, document.title, "/100018-dowellWorkflowAi-testing/");
+      // window.history.replaceState({}, document.title, "/100018-dowellWorkflowAi-testing/");
 
       sessionStorage.clear();
       
