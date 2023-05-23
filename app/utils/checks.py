@@ -7,9 +7,10 @@ from app.utils.mongo_db_connection import (
     get_link_object,
     get_template_object,
     org_wfai_setting,
+    get_process_object,
 )
 
-from .helpers import public_login
+from .helpers import public_login, register_user_access
 
 
 def is_finalized(item_id, item_type):
@@ -24,7 +25,7 @@ def is_finalized(item_id, item_type):
             return True, document["document_state"]
 
     if item_type == "template":
-        template == get_template_object(item_id)
+        template = get_template_object(item_id)
         if template["template_state"] == "finalized":
             return True, template["template_state"]
 
@@ -107,10 +108,97 @@ def time_limit_right(time, select_time_limits, start_time, end_time, creation_ti
             return False
 
 
-def processing_order(order, public_members, team_members, user_members):
+def processing_order(order, process_id):
+    """Check member processing sequence"""
+    
+    process = get_process_object(process_id)
+
+    process_steps = process['process_steps']
+    role = process['stepRole']
+    public_members = process_steps['stepPublicMembers']
+    team_members = process_steps['stepTeamMembers']
+    user_members = process_steps['stepUserMembers']
+
+
     if order == "no_order":
         pass
+    elif order == 'team_user_public':
+        try:
+            for member in team_members:
+                register_user_access(process_steps, role, member)
+            
+            for member in user_members:
+                register_user_access(process_steps, role, member)
+            
+            for member in public_members:
+                register_user_access(process_steps, role, member)
+        except ValueError:
+            raise ValueError('Sorry! You cannot access this document just yet!')
+
+    elif order == 'team_public_user':
+        try:
+            for member in team_members:
+                register_user_access(process_steps, role, member)
+            
+            for member in public_members:
+                register_user_access(process_steps, role, member)
+            
+            for member in user_members:
+                register_user_access(process_steps, role, member)
+        except ValueError:
+            raise ValueError('Sorry! You cannot access this document just yet!')
     
+    elif order == 'user_team_public':
+        try:
+            for member in user_members:
+                register_user_access(process_steps, role, member)
+            
+            for member in team_members:
+                register_user_access(process_steps, role, member)
+            
+            for member in public_members:
+                register_user_access(process_steps, role, member)
+        except ValueError:
+            raise ValueError('Sorry! You cannot access this document just yet!')
+
+    elif order == 'user_public_team':
+        try:
+            for member in user_members:
+                register_user_access(process_steps, role, member)
+            
+            for member in public_members:
+                register_user_access(process_steps, role, member)
+            
+            for member in team_members:
+                register_user_access(process_steps, role, member)
+        except ValueError:
+            raise ValueError('Sorry! You cannot access this document just yet!')
+    
+    elif order == 'public_user_team':
+        try:
+            for member in public_members:
+                register_user_access(process_steps, role, member)
+            
+            for member in user_members:
+                register_user_access(process_steps, role, member)
+            
+            for member in team_members:
+                register_user_access(process_steps, role, member)
+        except ValueError:
+            raise ValueError('Sorry! You cannot access this document just yet!')
+
+    elif order == 'public_team_user':
+        try:
+            for member in public_members:
+                register_user_access(process_steps, role, member)
+            
+            for member in team_members:
+                register_user_access(process_steps, role, member)
+            
+            for member in user_members:
+                register_user_access(process_steps, role, member)
+        except ValueError:
+            raise ValueError('Sorry! You cannot access this document just yet!')
 
 
 

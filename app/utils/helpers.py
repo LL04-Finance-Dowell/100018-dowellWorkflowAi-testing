@@ -8,7 +8,12 @@ import requests
 from django.conf import settings
 from django.core.mail import send_mail
 
-from app.constants import EDITOR_API, PUBLIC_LOGIN_API, VERIFICATION_LINK
+from app.constants import (
+    EDITOR_API,
+    PUBLIC_LOGIN_API,
+    VERIFICATION_LINK,
+    NOTIFICATION_API,
+)
 from app.models import FavoriteDocument, FavoriteTemplate, FavoriteWorkflow
 from app.serializers import (
     FavouriteDocumentSerializer,
@@ -30,9 +35,23 @@ from .threads import notification
 headers = {"Content-Type": "application/json"}
 
 
+def register_user_access(process_steps, authorized_role, user):
+    """Once someone has made changes to their docs"""
+    for step in process_steps:
+        if step["stepRole"] == authorized_role:
+            for clone_map in step["stepDocumentCloneMap"]:
+                if user in clone_map:
+                    clone_map["accessed"] = True
+                    break
+
+
+def delete_notification(notify_id):
+    """remove notifications in external products"""
+    return requests.delete(f"{NOTIFICATION_API}/{notify_id}")
+
+
 def notify_push(data):
     """Tells me if code is pushed and deployed"""
-
     pushed_by = data["pusher"].get("name")
     subject = "Push and Deploy Done!"
     message = f"Hi Edwin, {pushed_by} just pushed code and it is going to be deployed by your CI/CD pipeline."
@@ -48,7 +67,6 @@ def notify_push(data):
 
 def get_domain_host():
     """Grab the current domain host"""
-
     current_site = Site.objects.get_current()
     domain_host = current_site.domain
     return domain_host
@@ -56,7 +74,6 @@ def get_domain_host():
 
 def public_login(qrid, org_name):
     """Find out if a public link has been used or not"""
-
     res = requests.post(
         url=PUBLIC_LOGIN_API,
         data=json.dumps(
@@ -89,21 +106,20 @@ def verification_data(
     hash = uuid.uuid4().hex
     if user_type == "public":
         query_params = {
-            "auth_portfolio": auth_portfolio,
+            "portfolio": auth_portfolio,
             "auth_role": step_role,
             "user_type": user_type,
         }
         for i in range(0, len(auth_name)):
             field = auth_name[i]
-            query_params[f"auth_name[{i}]"] = field
+            query_params[f"username"] = field
 
         encoded_query_params = urllib.parse.urlencode(query_params)
-
-        link = f"{VERIFICATION_LINK}/{hash}/?{encoded_query_params}"
+        link = f"{VERIFICATION_LINK}/{hash}/?product=Workflow AI&org=WorkflowAi&{encoded_query_params}"
 
     # User | Team
     else:
-        link = f"{VERIFICATION_LINK}/{hash}/?auth_user={auth_name}&auth_portfolio={auth_portfolio}&auth_role={step_role}&user_type={user_type}"
+        link = f"{VERIFICATION_LINK}/{hash}/?product=Workflow AI&org=WorkflowAi&username={auth_name}&portfolio={auth_portfolio}&auth_role={step_role}&user_type={user_type}"
 
     # save link
     res = json.loads(
@@ -118,7 +134,6 @@ def verification_data(
             item_type,
         )
     )
-
     if res["isSuccess"]:
         ddata = {
             "username": auth_name,
@@ -132,13 +147,11 @@ def verification_data(
         }
         # setup notification
         Thread(target=notification, args=(ddata,)).start()
-
     return link, generate_qrcode(link)
 
 
 def cloning_document(document_id, auth_viewers, parent_id, process_id):
     """creating a document copy"""
-
     try:
         viewers = []
         viewers = (
@@ -168,7 +181,6 @@ def cloning_document(document_id, auth_viewers, parent_id, process_id):
         )
     except RuntimeError:
         return
-
     return save_res["inserted_id"]
 
 
@@ -194,7 +206,6 @@ def cloning_process(process_id, created_by, creator_portfolio):
         )
     except:
         return
-
     return save_res["inserted_id"]
 
 
@@ -236,75 +247,14 @@ def access_editor(item_id, item_type):
         response = requests.post(EDITOR_API, data=json.dumps(payload), headers=headers)
     except ConnectionError():
         return
-
     return response.json()
-
-
-# def link_to_editor(
-#     item_id, item_map, item_rights, user, process_id, user_role, item_type
-# ):
-#     """navigate user to editor for signing"""
-
-#     # set document
-#     if item_type == "document":
-#         collection = "DocumentReports"
-#         document = "documentreports"
-#         action = "document"
-#         field = "document_name"
-#         team_member_id = "11689044433"
-#         document_item = get_document_object(item_id)
-
-#         if document_item["document_state"] == "finalized":
-#             item_flag = "finalized"
-
-#         if document_item["document_state"] == "processing":
-#             item_flag = "processing"
-
-#     if item_type == "template":
-#         collection = "TemplateReports"
-#         document = "templatereports"
-#         action = "template"
-#         field = "template_name"
-#         team_member_id = "22689044433"
-
-#     payload = {
-#         "product_name": "workflowai",
-#         "details": {
-#             "field": field,
-#             "cluster": "Documents",
-#             "database": "Documentation",
-#             "collection": collection,
-#             "document": document,
-#             "team_member_ID": team_member_id,
-#             "function_ID": "ABCDE",
-#             "command": "update",
-#             "_id": item_id,
-#             "flag": "signing",
-#             "action": item_type,
-#             "authorized": user,
-#             "document_map": item_map,
-#             "document_right": item_rights,
-#             "document_flag": item_flag,
-#             "role": user_role,
-#             "process_id": process_id,
-#             "update_field": {"document_name": "", "content": "", "page": ""},
-#         },
-#     }
-#     try:
-#         link = requests.post(EDITOR_API, data=json.dumps(payload), headers=headers)
-#     except ConnectionError:
-#         return
-
-#     return link.json()
 
 
 # complete document and mark as complete
 def processing_complete(process):
-    # check if all process steps are marked finalized
-    complete = False
-    if process["isSuccess"]:
-        complete = process["isSuccess"]
-    return complete
+    if process["processing_state"] == "completed":
+        return True
+    return
 
 
 # Get WF Step
@@ -385,14 +335,11 @@ def list_favourites(company_id):
 
     try:
         documents = FavoriteDocument.objects.filter(company_id=company_id)
-        doc_serializer = FavouriteDocumentSerializer(documents, many=True)
-
         templates = FavoriteTemplate.objects.filter(company_id=company_id)
-        template_serializer = FavouriteTemplateSerializer(templates, many=True)
-
         workflows = FavoriteWorkflow.objects.filter(company_id=company_id)
+        doc_serializer = FavouriteDocumentSerializer(documents, many=True)
+        template_serializer = FavouriteTemplateSerializer(templates, many=True)
         workflow_serializer = FavouriteWorkflowSerializer(workflows, many=True)
-
     except RuntimeError:
         return None
 
