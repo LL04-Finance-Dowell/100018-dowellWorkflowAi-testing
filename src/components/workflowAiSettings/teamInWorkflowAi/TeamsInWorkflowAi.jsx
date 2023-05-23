@@ -8,7 +8,7 @@ import {
 } from '../../../features/app/appSlice';
 import { setIsSelected } from '../../../utils/helpers';
 import InfoBox from '../../infoBox/InfoBox';
-import SubmitButton from '../../submitButton/SubmitButton';
+
 // import { teamsInWorkflowAI } from '../veriables';
 import workflowAiSettingsStyles from '../workflowAiSettings.module.css';
 import { v4 } from 'uuid';
@@ -24,7 +24,7 @@ const TeamsInWorkflowAi = () => {
   const dispatch = useDispatch();
   const { t } = useTranslation();
 
-  const { register, handleSubmit } = useForm();
+  const { register } = useForm();
 
   const workflowSettingServices = new WorkflowSettingServices();
 

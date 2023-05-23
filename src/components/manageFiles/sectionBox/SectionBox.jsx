@@ -2,7 +2,7 @@ import styles from './sectionBox.module.css';
 import maneFilesStyles from '../manageFiles.module.css';
 import BookSpinner from '../../bookSpinner/BookSpinner';
 import { useState } from 'react';
-import { Box } from '../../hoverCard/styledComponents';
+
 import { PrimaryButton } from '../../styledComponents/styledComponents';
 import { IoIosRefresh } from 'react-icons/io';
 import { LoadingSpinner } from '../../LoadingSpinner/LoadingSpinner';
@@ -20,7 +20,6 @@ import { setAllDocuments } from '../../../features/document/documentSlice';
 import { setAllTemplates } from '../../../features/template/templateSlice';
 import { setAllWorkflows } from '../../../features/workflow/workflowsSlice';
 import { useTranslation } from 'react-i18next';
-import Spinner from '../../spinner/Spinner';
 
 const SectionBox = ({
   cardItems,

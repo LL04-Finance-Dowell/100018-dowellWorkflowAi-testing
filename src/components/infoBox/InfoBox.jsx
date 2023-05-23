@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 /* import Collapse from "../../layouts/collapse/Collapse"; */
-import styles from './infoBox.module.css';
+
 import {
   InfoBoxContainer,
   InfoContentBox,
@@ -182,7 +182,9 @@ const InfoBox = ({
               <input type='checkbox' checked={isOpen} onChange={(e) => {}} />
             )}
           </div>{' '}
-          <a>{t(title)}</a>
+          <a href='#' onClick={(e) => e.preventDefault()}>
+            {t(title)}
+          </a>
         </InfoTitleBox>
       </div>
       <Collapse in={isOpen}>

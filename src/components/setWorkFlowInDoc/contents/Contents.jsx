@@ -1,11 +1,11 @@
-import React, { useState, useRef, useEffect } from "react";
-import { AiOutlineCloseCircle, AiOutlineInfoCircle } from "react-icons/ai";
-import { useDispatch, useSelector } from "react-redux";
+import React, { useState, useRef, useEffect } from 'react';
+import { AiOutlineCloseCircle, AiOutlineInfoCircle } from 'react-icons/ai';
+import { useDispatch, useSelector } from 'react-redux';
 import {
   removeFromTableOfContentForStep,
   setTableOfContentForStep,
-} from "../../../features/app/appSlice";
-import styles from "./contents.module.css";
+} from '../../../features/app/appSlice';
+import styles from './contents.module.css';
 
 const Contents = ({
   contents,
@@ -43,7 +43,12 @@ const Contents = ({
     );
 
     if (contentStepAlreadyAdded) {
-      return dispatch(removeFromTableOfContentForStep({ id: valueAsJSON._id, stepIndex: currentStepIndex }));
+      return dispatch(
+        removeFromTableOfContentForStep({
+          id: valueAsJSON._id,
+          stepIndex: currentStepIndex,
+        })
+      );
     }
 
     const newTableOfContentObj = {
@@ -88,20 +93,20 @@ const Contents = ({
       style={{
         maxHeight: toggleContent
           ? `${contentRef.current?.getBoundingClientRect().height}px`
-          : "0px",
+          : '0px',
       }}
       className={styles.content__container}
     >
       <div ref={contentRef} className={styles.content__box}>
         {contents.length > 0 ? (
-          feature === "doc" ? (
+          feature === 'doc' ? (
             <>
               {React.Children.toArray(Object.keys(contentsPageWise || {})).map(
                 (page) => {
                   return (
                     <>
                       <p>Page: {page}</p>
-                      <table style={{ marginBottom: "22px" }}>
+                      <table style={{ marginBottom: '22px' }}>
                         <thead>
                           <tr>
                             <th className={styles.table__id}>ID</th>
@@ -151,13 +156,14 @@ const Contents = ({
                       <>
                         <p>{item.data}</p>
                         <AiOutlineCloseCircle
-                          className="content__Icon"
+                          className='content__Icon'
                           onClick={() => handleShowContent(false, item.id)}
                         />
                       </>
                     ) : (
                       <>
                         <a
+                          href='#'
                           style={
                             tableOfContentForStep.find(
                               (step) =>
@@ -166,20 +172,23 @@ const Contents = ({
                                 step.stepIndex === currentStepIndex
                             )
                               ? {
-                                  backgroundColor: "#0048ff",
-                                  color: "#fff",
-                                  padding: "2% 30%",
-                                  borderRadius: "5px",
-                                  width: "100%",
+                                  backgroundColor: '#0048ff',
+                                  color: '#fff',
+                                  padding: '2% 30%',
+                                  borderRadius: '5px',
+                                  width: '100%',
                                 }
                               : {}
                           }
-                          onClick={() => handleContentSelection(item)}
+                          onClick={(e) => {
+                            e.preventDefault();
+                            handleContentSelection(item);
+                          }}
                         >
                           {item.id}
                         </a>
                         <AiOutlineInfoCircle
-                          className="content__Icon"
+                          className='content__Icon'
                           onClick={() => handleShowContent(true, item.id)}
                         />
                       </>

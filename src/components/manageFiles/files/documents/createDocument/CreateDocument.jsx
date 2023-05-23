@@ -1,20 +1,17 @@
-import styles from "./createDocument.module.css";
-import { v4 as uuidv4 } from "uuid";
-import { useRef, useState } from "react";
-import { useForm } from "react-hook-form";
-import Overlay from "../../../overlay/Overlay";
-import { BsArrowRightShort } from "react-icons/bs";
-import Collapse from "../../../../../layouts/collapse/Collapse";
-import { useDispatch, useSelector } from "react-redux";
-import {
-  allTemplates,
-  savedTemplates,
-} from "../../../../../features/template/asyncThunks";
-import { useEffect } from "react";
-import { createDocument } from "../../../../../features/document/asyncThunks";
-import { setToggleManageFileForm } from "../../../../../features/app/appSlice";
-import Spinner from "../../../../spinner/Spinner";
-import { useTranslation } from "react-i18next";
+import styles from './createDocument.module.css';
+import { v4 as uuidv4 } from 'uuid';
+import { useRef, useState } from 'react';
+import { useForm } from 'react-hook-form';
+import Overlay from '../../../overlay/Overlay';
+import { BsArrowRightShort } from 'react-icons/bs';
+import Collapse from '../../../../../layouts/collapse/Collapse';
+import { useDispatch, useSelector } from 'react-redux';
+import { allTemplates } from '../../../../../features/template/asyncThunks';
+import { useEffect } from 'react';
+import { createDocument } from '../../../../../features/document/asyncThunks';
+import { setToggleManageFileForm } from '../../../../../features/app/appSlice';
+import Spinner from '../../../../spinner/Spinner';
+import { useTranslation } from 'react-i18next';
 
 const CreateDocument = ({ handleToggleOverlay }) => {
   const { userDetail } = useSelector((state) => state.auth);
@@ -29,15 +26,17 @@ const CreateDocument = ({ handleToggleOverlay }) => {
   const [toggleDropdown, setToggleDropdown] = useState(false);
   const ref = useRef(null);
 
-  const { register, handleSubmit, setValue, watch } = useForm();
+  const { register, handleSubmit, setValue } = useForm();
 
   const onSubmit = (data) => {
     const { template } = data;
 
     dispatch(setToggleManageFileForm(false));
 
-    const foundTemplateObj = allTemplatesArray.find(singleTemplate => singleTemplate._id === template);
-    if (!foundTemplateObj) return
+    const foundTemplateObj = allTemplatesArray.find(
+      (singleTemplate) => singleTemplate._id === template
+    );
+    if (!foundTemplateObj) return;
 
     const createDocumentData = {
       company_id: userDetail?.portfolio_info[0].org_id,
@@ -59,7 +58,7 @@ const CreateDocument = ({ handleToggleOverlay }) => {
   const handleOptionClick = (item) => {
     setToggleDropdown(false);
     setCurrentOption(item.template_name);
-    setValue("template", item._id);
+    setValue('template', item._id);
     ref.current?.focus();
   };
 
@@ -77,21 +76,21 @@ const CreateDocument = ({ handleToggleOverlay }) => {
   }, []);
 
   return (
-    <Overlay title="Create Document" handleToggleOverlay={handleToggleOverlay}>
-      {allTemplatesStatus === "pending" ? (
+    <Overlay title='Create Document' handleToggleOverlay={handleToggleOverlay}>
+      {allTemplatesStatus === 'pending' ? (
         <Spinner />
       ) : allTemplatesArray ? (
         <form onSubmit={handleSubmit(onSubmit)}>
-          <div id="template" className={styles.dropdown__container}>
-            <label onClick={handleClickLabel} htmlFor="template">
-              {t("Select Template")} <span>*</span>
+          <div id='template' className={styles.dropdown__container}>
+            <label onClick={handleClickLabel} htmlFor='template'>
+              {t('Select Template')} <span>*</span>
             </label>
-            <div style={{ position: "relative" }}>
+            <div style={{ position: 'relative' }}>
               <select
                 required
                 className={styles.ghost__input}
                 tabIndex={-98}
-                {...register("template")}
+                {...register('template')}
               >
                 {allTemplatesArray.map((item) => (
                   <option key={item._id} value={item._id}>
@@ -102,16 +101,16 @@ const CreateDocument = ({ handleToggleOverlay }) => {
             </div>
             <button
               ref={ref}
-              type="button"
+              type='button'
               onClick={handleDropdown}
               className={`${styles.dropdown__current__option} `}
             >
               {/* {currentOption ? currentOption : "__Template Name__"} */}
-              {currentOption ? currentOption : t("__Template Name__")}
+              {currentOption ? currentOption : t('__Template Name__')}
             </button>
             <div className={styles.dropdown__option__container}>
               <Collapse open={toggleDropdown}>
-                <div role="listbox" className={styles.dropdown__option__box}>
+                <div role='listbox' className={styles.dropdown__option__box}>
                   {allTemplatesArray.map((item) => (
                     <div
                       onClick={() => handleOptionClick(item)}
@@ -124,15 +123,15 @@ const CreateDocument = ({ handleToggleOverlay }) => {
               </Collapse>
             </div>
           </div>
-          <button type="submit" className={styles.create__button}>
-            <span>{t("Go to Editor")}</span>
+          <button type='submit' className={styles.create__button}>
+            <span>{t('Go to Editor')}</span>
             <i>
               <BsArrowRightShort size={25} />
             </i>
           </button>
         </form>
       ) : (
-        <h4>{t("No Template")}</h4>
+        <h4>{t('No Template')}</h4>
       )}
     </Overlay>
   );
@@ -141,8 +140,8 @@ const CreateDocument = ({ handleToggleOverlay }) => {
 export default CreateDocument;
 
 export const templates = [
-  { id: uuidv4(), option: "__template batu__" },
-  { id: uuidv4(), option: "__template batu__" },
-  { id: uuidv4(), option: "__template batu__" },
-  { id: uuidv4(), option: "__template batu__" },
+  { id: uuidv4(), option: '__template batu__' },
+  { id: uuidv4(), option: '__template batu__' },
+  { id: uuidv4(), option: '__template batu__' },
+  { id: uuidv4(), option: '__template batu__' },
 ];

@@ -10,15 +10,14 @@ import {
   createWorkflow,
   updateWorkflow,
 } from '../../../../../features/workflow/asyncTHunks';
-import { ToastContainer, toast } from 'react-toastify';
+import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { LoadingSpinner } from '../../../../LoadingSpinner/LoadingSpinner';
+
 import SubmitButton from '../../../../submitButton/SubmitButton';
 import { setToggleManageFileForm } from '../../../../../features/app/appSlice';
 import Spinner from '../../../../spinner/Spinner';
 import { TiTick } from 'react-icons/ti';
-import { MdModeEditOutline } from 'react-icons/md';
-import { RiDeleteBinLine } from 'react-icons/ri';
+
 import StepTable from './stepTable/StepTable';
 import { useTranslation } from 'react-i18next';
 
@@ -41,8 +40,6 @@ const CreateWorkflows = ({ handleToggleOverlay }) => {
   const [internalWorkflows, setInternalWorkflows] = useState([]);
   const [workflowTitle, setWorkflowTitle] = useState('');
   const [currentTableCell, setCurrentTableCall] = useState(null);
-
-  const { currentUser } = useUserContext();
 
   const { register, handleSubmit, reset, setValue, watch } = useForm();
   const { step_name, role } = watch();

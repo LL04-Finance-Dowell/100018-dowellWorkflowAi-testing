@@ -1,19 +1,19 @@
-import React, { useState, useEffect, useRef, memo, useCallback } from "react";
-import styles from "./infoBoxes.module.css";
-import { v4 as uuidv4 } from "uuid";
-import { GrAdd } from "react-icons/gr";
-import { MdOutlineRemove } from "react-icons/md";
-import { useScroll, useTransform } from "framer-motion";
-import { useSelector, useDispatch } from "react-redux";
+import React, { useState, useEffect, useRef, memo, useCallback } from 'react';
+import styles from './infoBoxes.module.css';
+import { v4 as uuidv4 } from 'uuid';
+import { GrAdd } from 'react-icons/gr';
+import { MdOutlineRemove } from 'react-icons/md';
+import { useScroll, useTransform } from 'framer-motion';
+import { useSelector, useDispatch } from 'react-redux';
 import {
   removeFromSelectedMembersForProcess,
   setMembersSetForProcess,
   setSelectedMembersForProcess,
   setSelectedWorkflowsToDoc,
-} from "../../../../../features/app/appSlice";
-import Collapse from "../../../../../layouts/collapse/Collapse";
-import { LoadingSpinner } from "../../../../LoadingSpinner/LoadingSpinner";
-import { useForm } from "react-hook-form";
+} from '../../../../../features/app/appSlice';
+import Collapse from '../../../../../layouts/collapse/Collapse';
+import { LoadingSpinner } from '../../../../LoadingSpinner/LoadingSpinner';
+import { useForm } from 'react-hook-form';
 import {
   InfoBoxContainer,
   InfoContentBox,
@@ -21,11 +21,8 @@ import {
   InfoContentText,
   InfoSearchbar,
   InfoTitleBox,
-} from "../../../../infoBox/styledComponents";
-import {
-  allWorkflows,
-  savedWorkflows,
-} from "../../../../../features/workflow/asyncTHunks";
+} from '../../../../infoBox/styledComponents';
+import { allWorkflows } from '../../../../../features/workflow/asyncTHunks';
 
 const InfoBoxes = () => {
   const { register, watch } = useForm();
@@ -39,15 +36,13 @@ const InfoBoxes = () => {
     currentDocToWfs,
     selectedWorkflowsToDoc,
     selectedMembersForProcess,
-    docCurrentWorkflow,
+
     membersSetForProcess,
   } = useSelector((state) => state.app);
   const { allWorkflows: allWorkflowsArray, allWorkflowsStatus } = useSelector(
     (state) => state.workflow
   );
-  const { contentOfDocument, savedDocumentsItems } = useSelector(
-    (state) => state.document
-  );
+
   const [compInfoBoxes, setCompInfoBoxes] = useState(infoBoxes);
 
   useEffect(() => {
@@ -62,7 +57,7 @@ const InfoBoxes = () => {
   const memorizedInfoBox = useCallback(() => {
     setCompInfoBoxes((prev) =>
       prev.map((item) =>
-        item.title === "workflow"
+        item.title === 'workflow'
           ? {
               ...item,
               contents:
@@ -79,14 +74,14 @@ const InfoBoxes = () => {
                     ),
               status: allWorkflowsStatus,
             }
-          : item.title === "team"
+          : item.title === 'team'
           ? {
               ...item,
               contents:
                 team?.length > 1
                   ? userDetail?.selected_product?.userportfolio
-                      .filter((user) => user.member_type === "team_member")
-                      .filter((user) => user.status && user.status === "enable")
+                      .filter((user) => user.member_type === 'team_member')
+                      .filter((user) => user.status && user.status === 'enable')
                       .filter((user) =>
                         Array.isArray(user.username) && user.username.length > 0
                           ? user.username[0]
@@ -97,19 +92,19 @@ const InfoBoxes = () => {
                               .includes(team.toLocaleLowerCase())
                       )
                   : userDetail?.selected_product?.userportfolio
-                      .filter((user) => user.member_type === "team_member")
+                      .filter((user) => user.member_type === 'team_member')
                       .filter(
-                        (user) => user.status && user.status === "enable"
+                        (user) => user.status && user.status === 'enable'
                       ),
-              status: "done",
+              status: 'done',
             }
-          : item.title === "user"
+          : item.title === 'user'
           ? {
               ...item,
               contents: userDetail?.selected_product?.userportfolio
-                .filter((user) => user.member_type === "public")
-                .filter((user) => user.status && user.status === "enable"),
-              status: "done",
+                .filter((user) => user.member_type === 'public')
+                .filter((user) => user.status && user.status === 'enable'),
+              status: 'done',
             }
           : item
       )
@@ -124,7 +119,7 @@ const InfoBoxes = () => {
     if (membersSetForProcess) return;
 
     userDetail.selected_product?.userportfolio?.forEach((user) => {
-      if (user.status && user.status !== "enable") return;
+      if (user.status && user.status !== 'enable') return;
       if (Array.isArray(user.username) && user.username.length > 0) {
         user.username.forEach((arrUsername) => {
           const copyOfUser = { ...user };
@@ -167,10 +162,10 @@ const InfoBoxes = () => {
 
   const { scrollYProgress } = useScroll({
     target: ref,
-    offset: ["end end", "start start"],
+    offset: ['end end', 'start start'],
   });
 
-  const y = useTransform(scrollYProgress, [0, 1], ["200px", "-200px"]);
+  const y = useTransform(scrollYProgress, [0, 1], ['200px', '-200px']);
 
   const handleTogleBox = (id) => {
     const updatedInfoBoxes = compInfoBoxes.map((item) =>
@@ -195,7 +190,7 @@ const InfoBoxes = () => {
         dispatch(setSelectedWorkflowsToDoc(selectedWorkFlow));
       }
     } else {
-      alert("u have to pick document first");
+      alert('u have to pick document first');
     }
   };
 
@@ -204,23 +199,25 @@ const InfoBoxes = () => {
       {compInfoBoxes?.map((infoBox) => (
         <InfoBoxContainer key={infoBox.id} className={styles.box}>
           <InfoTitleBox
-            style={{ pointerEvents: infoBox?.status === "pending" && "none" }}
+            style={{ pointerEvents: infoBox?.status === 'pending' && 'none' }}
             onClick={() => handleTogleBox(infoBox.id)}
             /*  className={styles.title__box} */
           >
-            {infoBox.status && infoBox.status === "pending" ? (
+            {infoBox.status && infoBox.status === 'pending' ? (
               <LoadingSpinner />
             ) : (
               <>
                 <div
                   style={{
-                    marginRight: "8px",
-                    fontSize: "14px",
+                    marginRight: '8px',
+                    fontSize: '14px',
                   }}
                 >
                   {infoBox.isOpen ? <MdOutlineRemove /> : <GrAdd />}
                 </div>
-                <a>{infoBox.title}</a>
+                <a href='#' onClick={(e) => e.preventDefault()}>
+                  {infoBox.title}
+                </a>
               </>
             )}
           </InfoTitleBox>
@@ -228,7 +225,7 @@ const InfoBoxes = () => {
           <Collapse open={!infoBox.isOpen}>
             <InfoContentContainer>
               <InfoSearchbar
-                placeholder="Search"
+                placeholder='Search'
                 {...register(`${infoBox.title}`)}
               />
 
@@ -275,11 +272,11 @@ const InfoBoxes = () => {
                                     addedWorkflow._id === item._id
                                 )
                                 ? {
-                                    backgroundColor: "#0048ff",
-                                    color: "#fff",
-                                    padding: "2% 3%",
-                                    borderRadius: "5px",
-                                    width: "100%",
+                                    backgroundColor: '#0048ff',
+                                    color: '#fff',
+                                    padding: '2% 3%',
+                                    borderRadius: '5px',
+                                    width: '100%',
                                   }
                                 : {}
                               : {}
@@ -309,13 +306,13 @@ export default memo(InfoBoxes);
 export const infoBoxes = [
   {
     id: uuidv4(),
-    title: "workflow",
+    title: 'workflow',
     contents: [],
     isOpen: true,
   },
   {
     id: uuidv4(),
-    title: "team",
+    title: 'team',
     contents: [
       /*  { _id: uuidv4(), content: "member 1" },
       { _id: uuidv4(), content: "member 1" },
@@ -326,7 +323,7 @@ export const infoBoxes = [
   },
   {
     id: uuidv4(),
-    title: "user",
+    title: 'user',
     contents: [
       /*   { _id: uuidv4(), content: "guest 1" },
       { _id: uuidv4(), content: "guest 1" },

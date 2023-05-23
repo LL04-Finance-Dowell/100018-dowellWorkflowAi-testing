@@ -1,12 +1,11 @@
-import { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch, useSelector } from 'react-redux';
 import {
   setDocCurrentWorkflow,
   setDropdowndToggle,
-} from "../../../../../features/app/appSlice";
-import Collapse from "../../../../../layouts/collapse/Collapse";
-import styles from "./dropdown.module.css";
-import { TiArrowSortedDown, TiArrowSortedUp } from "react-icons/ti";
+} from '../../../../../features/app/appSlice';
+import Collapse from '../../../../../layouts/collapse/Collapse';
+import styles from './dropdown.module.css';
+import { TiArrowSortedDown, TiArrowSortedUp } from 'react-icons/ti';
 
 const Dropdown = () => {
   const dispatch = useDispatch();
@@ -21,11 +20,11 @@ const Dropdown = () => {
 
   const handleCurrentWorkflow = (item) => {
     dispatch(setDocCurrentWorkflow(item));
-    console.log("itemmmmmm", item);
+    console.log('itemmmmmm', item);
     dispatch(setDropdowndToggle(false));
   };
 
-  console.log(wfToDocument, docCurrentWorkflow, "aaaaaaaaaaaaaaaaa");
+  console.log(wfToDocument, docCurrentWorkflow, 'aaaaaaaaaaaaaaaaa');
 
   return (
     <>
@@ -38,7 +37,7 @@ const Dropdown = () => {
             <span>
               {docCurrentWorkflow
                 ? docCurrentWorkflow?.workflows.workflow_title
-                : "Select a Workflow"}
+                : 'Select a Workflow'}
             </span>
             <i>
               {dropdownToggle ? (
@@ -49,7 +48,7 @@ const Dropdown = () => {
             </i>
           </button>
 
-          <div style={{ marginBottom: "20px" }}>
+          <div style={{ marginBottom: '20px' }}>
             <Collapse open={dropdownToggle}>
               <div className={styles.options__container}>
                 {wfToDocument.workflows?.map((item) => (

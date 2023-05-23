@@ -3,21 +3,17 @@ import { useForm } from 'react-hook-form';
 import { useSelector } from 'react-redux';
 import styled from 'styled-components';
 import InfoBox from '../infoBox/InfoBox';
-import SubmitButton from '../submitButton/SubmitButton';
+
 import EnabledDisabkedProcess from './enabledDisabkedProcess/EnabledDisabkedProcess';
 import EnabledProcess from './enabledProcess/EnabledProcess';
 import TeamsInWorkflowAi from './teamInWorkflowAi/TeamsInWorkflowAi';
 import Themes from './themes/Themes';
-import {
-  permissionArray,
-  processesInWorkflowAIArray,
-  workflowAiSettingsArray,
-} from './veriables';
+import { workflowAiSettingsArray } from './veriables';
 import styles from './workflowAiSettings.module.css';
 import { ImHome3 } from 'react-icons/im';
 import { Link } from 'react-router-dom';
 import { useAppContext } from '../../contexts/AppContext';
-import { useTranslation } from "react-i18next";
+import { useTranslation } from 'react-i18next';
 
 const Container = styled.div`
   & button:not(.edit_modal_sect button) {
@@ -30,13 +26,8 @@ const WorkflowAiSettings = () => {
 
   const { themeColor } = useSelector((state) => state.app);
 
-  const { handleSubmit, register } = useForm();
   const { userDetail } = useSelector((state) => state.auth);
   // console.log(userDetail);
-
-  const onSubmit = (data) => {
-    console.log('dataaaaaaaaaa', data);
-  };
 
   // #7a7a7a
   // --e-global-color-text;

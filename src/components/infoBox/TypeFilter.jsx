@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { AiFillCheckSquare, AiOutlineDown, AiOutlineUp } from 'react-icons/ai';
 import './typefilter.css';
-import { v4 } from 'uuid';
+
 import {
   setPortfoliosInWorkflowAITeams,
   setSelectedPortfolioTypeForWorkflowSettings,
@@ -22,7 +22,7 @@ const TypeFilter = ({ edit }) => {
   const { userDetail } = useSelector((state) => state.auth);
   const [userPortfolios, setUserPortfolios] = useState();
   const [filteredPortfolios, setFilteredPortfolios] = useState([]);
-  const { teamsInWorkflowAI } = useSelector((state) => state.app);
+
   const { filter, setFilter } = useAppContext();
 
   const dispatch = useDispatch();

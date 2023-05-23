@@ -11,7 +11,6 @@ import {
 } from '../../features/app/appSlice';
 import { useDispatch } from 'react-redux';
 import { toast } from 'react-toastify';
-import { LoadingSpinner } from '../LoadingSpinner/LoadingSpinner';
 
 const EditTeamModal = ({ show, setShow, handleUpdateTeam, items }) => {
   const [name, setName] = useState('');
@@ -23,14 +22,12 @@ const EditTeamModal = ({ show, setShow, handleUpdateTeam, items }) => {
   const [selectedTeam, setSelectedTeam] = useState();
   const [isPortfolios, setIsPortfolios] = useState(false);
   const {
-    extractTeamContent,
     workflowTeams,
     setWorkflowTeams,
     setRerun,
     sync,
     setSync,
     isFetchingTeams,
-    setIsFetchingTeams,
   } = useAppContext();
   const [portfolios, setPortfolios] = useState([]);
   const dispatch = useDispatch();

@@ -7,7 +7,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import {
   setColumn,
   setPermissionArray,
-  setSettingProccess,
   setFetchedPermissionArray,
 } from '../../../features/app/appSlice';
 import { v4 as uuidv4 } from 'uuid';
