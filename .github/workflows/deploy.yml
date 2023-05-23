@@ -12,8 +12,8 @@ jobs:
       - uses: actions/setup-node@v1
         with:
           node-version: "14.x"
-      - run: CI=false npm ci
-      - run: npm run build
+      - run: npm ci
+      - run: CI=false npm run build
       - uses: actions/upload-artifact@v2
         with:
           name: production
