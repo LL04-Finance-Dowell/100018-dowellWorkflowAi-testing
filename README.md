@@ -1031,6 +1031,16 @@ Response-200
 }
 
 ```
+### Reminder
+_POST_ `v1/reminder/<str:username>`
+
+Response-200
+```
+{
+    lists of reminders
+}
+
+```
 
 ### Technologies Used
 
