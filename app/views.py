@@ -490,7 +490,7 @@ def process_copies(request, process_id):
             return Response("something went wrong!", status.HTTP_400_BAD_REQUEST)
 
         process_id = cloning_process(
-            process_id, request.data["created_by"], request.data["created_portfolio"]
+            process_id, request.data["created_by"], request.data["portfolio"]
         )
         if process_id is None:
             return Response(
@@ -858,8 +858,6 @@ def favorites(request):
     if not request.data:
         return Response("You are missing something", status.HTTP_400_BAD_REQUEST)
 
-        # create a fav
-
     msg = create_favourite(
         item=request.data["item"],
         type=request.data["item_type"],
@@ -914,14 +912,12 @@ def trash_favourites(request, item_id, item_type, username):
 @api_view(["GET"])
 def get_templates(request, company_id):
     """List of Created Templates."""
-
     data_type = request.query_params.get("data_type", "Real_Data")
     if not validate_id(company_id):
         return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
 
     templates = get_template_list(company_id, data_type)
-    if not templates:
-        return Response({"templates": []}, status.HTTP_500_INTERNAL_SERVER_ERROR)
+   
     if len(templates) > 0:
         return Response(
             {"templates": templates},
@@ -1272,38 +1268,31 @@ def get_workflow_ai_setting(request, wf_setting_id):
     """Get All WF AI"""
     setting = get_wf_setting_object(wf_setting_id)
     try:
-        return Response(
-            setting,
-            status.HTTP_200_OK,
-        )
+        return Response(setting, status.HTTP_200_OK )
     except:
         return Response(
-            "Failed to Get WF AI Data", status.HTTP_500_INTERNAL_SERVER_ERROR
+            "Error getting settings", status.HTTP_500_INTERNAL_SERVER_ERROR
         )
 
 
 @api_view(["POST"])
 def update_workflow_ai_setting(request):
-    """Retrive a Wf setting"""
+    """Update workflow Setting"""
+    form = request.data
+    if not form:
+        return Response("Workflow Data is Required", status.HTTP_400_BAD_REQUEST)
 
-    if request.method == "POST":
-        """Update workflow Setting"""
+    old_wf_setting = get_wf_setting_object(form["wf_setting_id"])
+    for key, new_value in form.items():
+        if key in old_wf_setting:
+            old_wf_setting[key] = new_value
 
-        form = request.data
-        if not form:
-            return Response("Workflow Data is Required", status.HTTP_400_BAD_REQUEST)
+    updt_wf = json.loads(wf_setting_update(form["wf_setting_id"], old_wf_setting))
 
-        old_wf_setting = get_wf_setting_object(form["wf_setting_id"])
-        for key, new_value in form.items():
-            if key in old_wf_setting:
-                old_wf_setting[key] = new_value
+    if updt_wf["isSuccess"]:
+        return Response("Workflow Setting Updated", status.HTTP_201_CREATED)
 
-        updt_wf = json.loads(wf_setting_update(form["wf_setting_id"], old_wf_setting))
-
-        if updt_wf["isSuccess"]:
-            return Response("Workflow Setting Updated", status.HTTP_201_CREATED)
-
-        return Response("Failed to Update Workflow", status.HTTP_200_OK)
+    return Response("Failed to Update Workflow", status.HTTP_200_OK)
 
 
 @api_view(["GET"])

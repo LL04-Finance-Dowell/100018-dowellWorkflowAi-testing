@@ -188,7 +188,6 @@ def cloning_process(process_id, created_by, creator_portfolio):
     """creating a process copy"""
     try:
         process = get_process_object(process_id)
-        process_kind = "clone"
         save_res = json.loads(
             save_wf_process(
                 process["process_title"],
@@ -196,14 +195,15 @@ def cloning_process(process_id, created_by, creator_portfolio):
                 created_by,
                 process["company_id"],
                 process["data_type"],
-                None,
+                "no_parent_id",
                 process["processing_action"],
                 creator_portfolio,
                 process["workflow_construct_ids"],
                 process["process_type"],
-                process_kind,
+                "clone",
             )
         )
+
     except:
         return
     return save_res["inserted_id"]
