@@ -115,10 +115,12 @@ export const AppContextProvider = ({ children }) => {
           });
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userDetail, isPublicUser, publicUserConfigured]);
 
   useEffect(() => {
     if (userDetail) fetchSettings();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userDetail]);
 
   return (

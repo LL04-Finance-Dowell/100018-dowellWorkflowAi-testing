@@ -1,15 +1,15 @@
-import { httpAuth, httpAuthOther, httpLogout } from "../httpCommon/httpCommon";
+import { httpAuth, httpAuthOther } from '../httpCommon/httpCommon';
 
 export class AuthServices {
   getUserDetail = (data) => {
-    return httpAuth.post("/userinfo/", data);
+    return httpAuth.post('/userinfo/', data);
   };
 
   getUserDetailOther = (data) => {
-    return httpAuthOther.post("/userinfo/", data);
+    return httpAuthOther.post('/userinfo/', data);
   };
 
   getCurrentUser = (data) => {
-    return httpAuth.post("/profile/", data);
+    return httpAuth.post('/profile/', data);
   };
 }

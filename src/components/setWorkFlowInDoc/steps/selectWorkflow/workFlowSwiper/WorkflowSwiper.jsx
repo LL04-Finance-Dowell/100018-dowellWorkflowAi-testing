@@ -1,3 +1,4 @@
+// ? Ln 62 <span> used instead of <button>
 import styles from './workFlowSwiper.module.css';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation } from 'swiper';
@@ -58,13 +59,13 @@ const WorkflowSwiper = ({ loop, perSlide }) => {
         ))}
       </Swiper>
       {selectedWorkflowsToDoc.length > 0 && (
-        <a
-          href='#'
+        <span
+          style={{ cursor: 'pointer' }}
           onClick={handleConnectWfToDoc}
           className={styles.add__button}
         >
           Add Selected Workflow to document
-        </a>
+        </span>
       )}
     </div>
   );

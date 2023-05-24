@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import CollapseItem from '../collapseItem/CollapseItem';
 import { v4 as uuidv4 } from 'uuid';
 import sidebarStyles from '../sidebar.module.css';
@@ -108,6 +108,7 @@ const Reports = () => {
       });
       // console.log('processing', countOfProcesses)
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [allDocumentsArray, allTemplatesArray, allWorkflowsArray, allProcesses]);
 
   useEffect(() => {

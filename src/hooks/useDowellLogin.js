@@ -1,10 +1,10 @@
-import { useEffect } from "react";
-import { useSearchParams } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
-import { dowellLoginUrl } from "../httpCommon/httpCommon";
-import { setId, setSessionId } from "../features/auth/authSlice";
-import { getUserInfoOther, getUserInfo } from "../features/auth/asyncThunks";
-import { useAppContext } from "../contexts/AppContext";
+import { useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { dowellLoginUrl } from '../httpCommon/httpCommon';
+import { setId, setSessionId } from '../features/auth/authSlice';
+import { getUserInfoOther, getUserInfo } from '../features/auth/asyncThunks';
+import { useAppContext } from '../contexts/AppContext';
 
 export default function useDowellLogin() {
   const dispatch = useDispatch();
@@ -15,13 +15,13 @@ export default function useDowellLogin() {
   const { setIsPublicUser, setPublicUserConfigured } = useAppContext();
 
   useEffect(() => {
-    const session_id = searchParams.get("session_id");
-    const id = searchParams.get("id");
-    const userType = searchParams.get("user_type");
+    const session_id = searchParams.get('session_id');
+    const id = searchParams.get('id');
+    const userType = searchParams.get('user_type');
 
-    if (userType && userType === "public") {
+    if (userType && userType === 'public') {
       setIsPublicUser(true);
-      return setPublicUserConfigured(true)
+      return setPublicUserConfigured(true);
     }
     setPublicUserConfigured(true);
 
@@ -30,8 +30,8 @@ export default function useDowellLogin() {
       // window.history.replaceState({}, document.title, "/100018-dowellWorkflowAi-testing/");
 
       sessionStorage.clear();
-      
-      sessionStorage.setItem("session_id", session_id);
+
+      sessionStorage.setItem('session_id', session_id);
       dispatch(setSessionId(session_id));
       if (id || localId) {
         dispatch(setId(id));
@@ -43,5 +43,6 @@ export default function useDowellLogin() {
     if (!localSession && !session_id) {
       window.location.replace(dowellLoginUrl);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 }

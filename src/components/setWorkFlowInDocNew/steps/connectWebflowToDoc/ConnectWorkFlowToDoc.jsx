@@ -1,6 +1,5 @@
 import styles from './connectWorkFlowToDoc.module.css';
 
-import { v4 as uuidv4 } from 'uuid';
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
@@ -134,6 +133,7 @@ const ConnectWorkFlowToDoc = ({ stepsPopulated, savedProcessSteps }) => {
     stepsForWorkflow.push(stepsObj);
 
     dispatch(setProcessSteps(stepsForWorkflow));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [docCurrentWorkflow, stepsPopulated, savedProcessSteps]);
 
   // console.log("currrrr", contentOfDocument);

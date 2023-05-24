@@ -46,6 +46,7 @@ const FlipMenu = () => {
     });
 
     setFlipItemsToDisplay(updatedFlipItems);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [notificationsForUser]);
 
   return (

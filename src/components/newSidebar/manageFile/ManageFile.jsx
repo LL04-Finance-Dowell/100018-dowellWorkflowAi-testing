@@ -47,6 +47,7 @@ const ManageFile = () => {
     if (allDocumentsStatus === 'idle') dispatch(allDocuments(data));
     if (allTemplatesStatus === 'idle') dispatch(allTemplates(data));
     if (allWorkflowsStatus === 'idle') dispatch(allWorkflows(data));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -175,6 +176,7 @@ const ManageFile = () => {
         };
       });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [allDocumentsArray, allTemplatesArray, allWorkflowsArray, allProcesses]);
 
   useEffect(() => {

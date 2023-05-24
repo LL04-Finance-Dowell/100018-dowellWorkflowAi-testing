@@ -1,3 +1,4 @@
+// ? Ln 257 <span> used instead of <button> (style conflict) and <a> (ESLint prompts)
 import React, { useState, useRef, useEffect } from 'react';
 import { AiOutlineCloseCircle } from 'react-icons/ai';
 import { useDispatch, useSelector } from 'react-redux';
@@ -252,7 +253,7 @@ const Contents = ({
                               gap: '1rem',
                             }}
                           >
-                            <a
+                            <span
                               style={
                                 tableOfContentForStep.find(
                                   (step) =>
@@ -268,21 +269,21 @@ const Contents = ({
                                       display: 'block',
                                       width: '100%',
                                       margin: '1% 0',
+                                      cursor: 'pointer',
                                     }
                                   : {
                                       display: 'block',
                                       margin: '1% 0',
+                                      cursor: 'pointer',
                                     }
                               }
-                              href='#'
-                              onClick={(e) => {
-                                e.preventDefault();
+                              onClick={() => {
                                 handleContentSelection(item, currentPage);
                               }}
                               id={item._id + currentStepIndex}
                             >
                               {item.id}
-                            </a>
+                            </span>
                             {/* <AiOutlineInfoCircle
                           className="content__Icon"
                           onClick={() => handleShowContent(true, item.id)}

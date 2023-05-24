@@ -14,17 +14,14 @@ import Spinner from '../../components/spinner/Spinner';
 import ProgressBar from '../../components/progressBar/ProgressBar';
 import { useLocation } from 'react-router-dom';
 import {
-  setAllProcesses,
   setNotificationFinalStatus,
   setNotificationsForUser,
   setNotificationsLoaded,
   setNotificationsLoading,
-  setProcessesLoaded,
-  setProcessesLoading,
 } from '../../features/app/appSlice';
 import Iframe from '../../components/iFrame/Iframe';
 import Skeleton from '../../components/skeloton/Skeleton';
-import { getAllProcessesV2 } from '../../services/processServices';
+
 import { useAppContext } from '../../contexts/AppContext';
 import { getFavoritesForUser } from '../../services/favoritesServices';
 import React from 'react';
@@ -38,10 +35,6 @@ const WorkflowApp = () => {
     notificationsForUser,
     notificationFinalStatus,
     notificationsLoaded,
-    processesLoaded,
-    processesLoading,
-    
-
   } = useSelector((state) => state.app);
   const dispatch = useDispatch();
 
@@ -56,11 +49,11 @@ const WorkflowApp = () => {
     setFavoriteitemsLoaded,
   } = useAppContext();
   const { allDocuments } = useSelector((state) => state.document);
-  const { allTemplates } = useSelector((state) => state.template);
-  const { allWorkflows } = useSelector((state) => state.workflow);
+  // const { allTemplates } = useSelector((state) => state.template);
+  // const { allWorkflows } = useSelector((state) => state.workflow);
   const [docs, setDocs] = useState(null);
-  const [temps, setTemps] = useState(null);
-  const [wrkfs, setWrkfs] = useState(null);
+  // const [temps, setTemps] = useState(null);
+  // const [wrkfs, setWrkfs] = useState(null);
   const [uncompletedTasks, setUncompletedTasks] = useState([
     {
       id: uuidv4(),
@@ -162,6 +155,7 @@ const WorkflowApp = () => {
           // setFavoriteitemsLoaded(true)
         });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userDetail, allDocuments, favoriteItemsLoaded, notificationsLoaded]);
 
   useEffect(() => {
@@ -176,6 +170,7 @@ const WorkflowApp = () => {
         behavior: 'smooth',
       });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [location]);
 
   useEffect(() => {

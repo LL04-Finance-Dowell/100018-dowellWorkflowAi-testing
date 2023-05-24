@@ -205,6 +205,7 @@ const SelectMembersToAssign = ({
       );
       return;
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentRadioOptionSelection, currentGroupSelectionItem]);
 
   useEffect(() => {
@@ -311,6 +312,7 @@ const SelectMembersToAssign = ({
 
     setFeaturesUpdatedFromDraft(true);
     // if (stepDetails?.stepPublicMembers || stepDetails?.stepTeamMembers || stepDetails?.stepUserMembers) setFeaturesUpdatedFromDraft(true);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [stepsPopulated, processSteps]);
 
   const handleSelectTeam = (parsedSelectedJsonValue) => {

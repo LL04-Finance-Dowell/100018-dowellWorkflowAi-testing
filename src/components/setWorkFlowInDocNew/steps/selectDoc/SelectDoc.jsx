@@ -1,5 +1,5 @@
 import styles from './selectDoc.module.css';
-import { v4 as uuidv4 } from 'uuid';
+
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation } from 'swiper';
 
@@ -38,6 +38,7 @@ const SelectDoc = ({ savedDoc }) => {
     };
 
     dispatch(allDocuments(data));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleAddSelectedDocuments = (document) => {

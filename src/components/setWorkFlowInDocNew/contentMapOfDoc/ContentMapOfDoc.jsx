@@ -15,7 +15,7 @@ const ContentMapOfDoc = () => {
   const { contentOfDocumentStatus, contentOfDocument } = useSelector(
     (state) => state.document
   );
-  const { wfToDocument, currentDocToWfs } = useSelector((state) => state.app);
+  const { currentDocToWfs } = useSelector((state) => state.app);
 
   const [toggleContent, setToggleContent] = useState(false);
   const [isFixed, setIsFixed] = useState(false);

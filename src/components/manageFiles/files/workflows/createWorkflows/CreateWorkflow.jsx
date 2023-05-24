@@ -3,7 +3,6 @@ import { useForm } from 'react-hook-form';
 import { useEffect, useState, useRef } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import Overlay from '../../../overlay/Overlay';
-import { useUserContext } from '../../../../../contexts/UserContext';
 import overlayStyles from '../../../overlay/overlay.module.css';
 import { useDispatch, useSelector } from 'react-redux';
 import {
@@ -142,6 +141,7 @@ const CreateWorkflows = ({ handleToggleOverlay }) => {
         );
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [workflowDetailStatus]);
 
   return (

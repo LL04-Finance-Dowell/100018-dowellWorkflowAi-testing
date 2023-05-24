@@ -9,7 +9,6 @@ import {
   teamsInWorkflowAI,
 } from '../../components/workflowAiSettings/veriables';
 import { getItemsCounts } from './asyncThunks';
-import { act } from '@testing-library/react';
 
 const initialState = {
   itemsCount: null,
@@ -65,7 +64,7 @@ const initialState = {
   teamsInWorkflowAI,
   column: [],
   proccess: [],
-  IconColor:"",
+  IconColor: '',
 
   userDetailPosition: null,
   languageSelectPosition: null,

@@ -1,72 +1,87 @@
-import styles from "./infoTable.module.css";
-import { v4 as uuidv4 } from "uuid";
-import { useSelector } from "react-redux";
-import { useState } from "react";
-import { useEffect } from "react";
+import styles from './infoTable.module.css';
+import { v4 as uuidv4 } from 'uuid';
+import { useSelector } from 'react-redux';
+import { useState } from 'react';
+import { useEffect } from 'react';
 
 const InfoTable = () => {
-  const { processSteps, docCurrentWorkflow } = useSelector((state) => state.app);
-  const [ tableInfoToDisplay, setTableInfoToDisplay ] = useState([]);
+  const { processSteps, docCurrentWorkflow } = useSelector(
+    (state) => state.app
+  );
+  const [tableInfoToDisplay, setTableInfoToDisplay] = useState([]);
 
   useEffect(() => {
     if (!docCurrentWorkflow) return setTableInfoToDisplay([]);
 
-    const skippedStepObj = { id: uuidv4(), content: "Step skipped" };
+    const skippedStepObj = { id: uuidv4(), content: 'Step skipped' };
     let infoDataToDisplay = [];
-    const currentWorkflowDataToFormat = processSteps.find(step => step.workflow === docCurrentWorkflow._id);
+    const currentWorkflowDataToFormat = processSteps.find(
+      (step) => step.workflow === docCurrentWorkflow._id
+    );
 
     if (!currentWorkflowDataToFormat) return setTableInfoToDisplay([]);
 
-    currentWorkflowDataToFormat.steps.forEach(step => {
-      let [ newTableDataObj, currentDataObj ] = [ 
-        {}, 
-        { 
-          id: uuidv4(), 
-          content: `${step.member ? step.member + ", " : ""} ${step.location ? step.location + ", " : ""} ${step.start_time ? step.start_time + ", " : ""} ${step.end_time ? step.end_time + ", " : ""} ${step.step_name ? step.step_name + ", ": ""}`,
-        } 
+    currentWorkflowDataToFormat.steps.forEach((step) => {
+      let [newTableDataObj, currentDataObj] = [
+        {},
+        {
+          id: uuidv4(),
+          content: `${step.member ? step.member + ', ' : ''} ${
+            step.location ? step.location + ', ' : ''
+          } ${step.start_time ? step.start_time + ', ' : ''} ${
+            step.end_time ? step.end_time + ', ' : ''
+          } ${step.step_name ? step.step_name + ', ' : ''}`,
+        },
       ];
 
       if (step.skip) {
         newTableDataObj = {
           id: uuidv4(),
-          content: `Step skipped, ${step.start_time ? step.start_time + ", " : ""} ${step.end_time ? step.end_time + ", " : ""} ${step.step_name ? step.step_name + ", ": ""}`,
+          content: `Step skipped, ${
+            step.start_time ? step.start_time + ', ' : ''
+          } ${step.end_time ? step.end_time + ', ' : ''} ${
+            step.step_name ? step.step_name + ', ' : ''
+          }`,
           addEdits: [skippedStepObj],
           approves: [skippedStepObj],
           comments: [skippedStepObj],
           views: [skippedStepObj],
-        }
-        return infoDataToDisplay.push(newTableDataObj)
+        };
+        return infoDataToDisplay.push(newTableDataObj);
       }
 
-      const existingTableObj = infoDataToDisplay.find(elem => elem.content === step.display_before);
-      
+      const existingTableObj = infoDataToDisplay.find(
+        (elem) => elem.content === step.display_before
+      );
+
       if (existingTableObj) {
-
-        if (step.rights === "ADD/EDIT") return existingTableObj.addEdits.push(currentDataObj)
-        if (step.rights === "APPROVE") return existingTableObj.approves.push(currentDataObj)
-        if (step.rights === "COMMENT") return existingTableObj.comments.push(currentDataObj)
-        if (step.rights === "VIEW") return existingTableObj.views.push(currentDataObj)
-
+        if (step.rights === 'ADD/EDIT')
+          return existingTableObj.addEdits.push(currentDataObj);
+        if (step.rights === 'APPROVE')
+          return existingTableObj.approves.push(currentDataObj);
+        if (step.rights === 'COMMENT')
+          return existingTableObj.comments.push(currentDataObj);
+        if (step.rights === 'VIEW')
+          return existingTableObj.views.push(currentDataObj);
       }
-      
+
       newTableDataObj = {
         id: uuidv4(),
-        content: step.display_before ? step.display_before : "",
-        addEdits: step.rights === "ADD/EDIT" ? [currentDataObj] : [],
-        approves: step.rights === "APPROVE" ? [currentDataObj] : [],
-        comments: step.rights === "COMMENT" ? [currentDataObj] : [],
-        views: step.rights === "VIEW" ? [currentDataObj] : [],
-      }
-      
+        content: step.display_before ? step.display_before : '',
+        addEdits: step.rights === 'ADD/EDIT' ? [currentDataObj] : [],
+        approves: step.rights === 'APPROVE' ? [currentDataObj] : [],
+        comments: step.rights === 'COMMENT' ? [currentDataObj] : [],
+        views: step.rights === 'VIEW' ? [currentDataObj] : [],
+      };
+
       infoDataToDisplay.push(newTableDataObj);
-
     });
-    
+
     setTableInfoToDisplay(infoDataToDisplay);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [processSteps]);
 
-  }, [processSteps])
-
-  if (tableInfoToDisplay.length === 0) return <></>
+  if (tableInfoToDisplay.length === 0) return <></>;
 
   return (
     <div>
@@ -125,124 +140,124 @@ export default InfoTable;
 export const infoTable = [
   {
     id: uuidv4(),
-    content: "date",
+    content: 'date',
     addEdits: [
       {
         id: uuidv4(),
-        content: "Member Name, Location, Start date, End date, Workflow, Step",
+        content: 'Member Name, Location, Start date, End date, Workflow, Step',
       },
       {
         id: uuidv4(),
-        content: "Member Name, Location, Start date, End date, Workflow, Step",
+        content: 'Member Name, Location, Start date, End date, Workflow, Step',
       },
       {
         id: uuidv4(),
-        content: "Member Name, Location, Start date, End date, Workflow, Step",
+        content: 'Member Name, Location, Start date, End date, Workflow, Step',
       },
     ],
     approves: [
       {
         id: uuidv4(),
-        content: "Member Name, Location, Start date, End date, Workflow, Step",
+        content: 'Member Name, Location, Start date, End date, Workflow, Step',
       },
       {
         id: uuidv4(),
-        content: "Member Name, Location, Start date, End date, Workflow, Step",
+        content: 'Member Name, Location, Start date, End date, Workflow, Step',
       },
     ],
     comments: [
       {
         id: uuidv4(),
-        content: "Member Name, Location, Start date, End date, Workflow, Step",
+        content: 'Member Name, Location, Start date, End date, Workflow, Step',
       },
       {
         id: uuidv4(),
-        content: "Member Name, Location, Start date, End date, Workflow, Step",
+        content: 'Member Name, Location, Start date, End date, Workflow, Step',
       },
     ],
     views: [
       {
         id: uuidv4(),
-        content: "Member Name, Location, Start date, End date, Workflow, Step",
+        content: 'Member Name, Location, Start date, End date, Workflow, Step',
       },
     ],
   },
   {
     id: uuidv4(),
-    content: "details",
+    content: 'details',
     addEdits: [
       {
         id: uuidv4(),
-        content: "Member Name, Location, Start date, End date, Workflow, Step",
+        content: 'Member Name, Location, Start date, End date, Workflow, Step',
       },
       {
         id: uuidv4(),
-        content: "Member Name, Location, Start date, End date, Workflow, Step",
+        content: 'Member Name, Location, Start date, End date, Workflow, Step',
       },
       {
         id: uuidv4(),
-        content: "Member Name, Location, Start date, End date, Workflow, Step",
+        content: 'Member Name, Location, Start date, End date, Workflow, Step',
       },
     ],
     approves: [
       {
         id: uuidv4(),
-        content: "Member Name, Location, Start date, End date, Workflow, Step",
+        content: 'Member Name, Location, Start date, End date, Workflow, Step',
       },
       {
         id: uuidv4(),
-        content: "Member Name, Location, Start date, End date, Workflow, Step",
+        content: 'Member Name, Location, Start date, End date, Workflow, Step',
       },
     ],
     comments: [
       {
         id: uuidv4(),
-        content: "Member Name, Location, Start date, End date, Workflow, Step",
+        content: 'Member Name, Location, Start date, End date, Workflow, Step',
       },
       {
         id: uuidv4(),
-        content: "Member Name, Location, Start date, End date, Workflow, Step",
+        content: 'Member Name, Location, Start date, End date, Workflow, Step',
       },
     ],
     views: [
       {
         id: uuidv4(),
-        content: "Member Name, Location, Start date, End date, Workflow, Step",
+        content: 'Member Name, Location, Start date, End date, Workflow, Step',
       },
     ],
   },
   {
     id: uuidv4(),
-    content: "sign",
+    content: 'sign',
     addEdits: [
       {
         id: uuidv4(),
-        content: "Member Name, Location, Start date, End date, Workflow, Step",
+        content: 'Member Name, Location, Start date, End date, Workflow, Step',
       },
       {
         id: uuidv4(),
-        content: "Member Name, Location, Start date, End date, Workflow, Step",
+        content: 'Member Name, Location, Start date, End date, Workflow, Step',
       },
       {
         id: uuidv4(),
-        content: "Member Name, Location, Start date, End date, Workflow, Step",
+        content: 'Member Name, Location, Start date, End date, Workflow, Step',
       },
     ],
     approves: [],
     comments: [
       {
         id: uuidv4(),
-        content: "Member Name, Location, Start date, End date, Workflow, Step",
+        content: 'Member Name, Location, Start date, End date, Workflow, Step',
       },
       {
         id: uuidv4(),
-        content: "Member Name, Location, Start date, End date, Workflow, Step",
+        content: 'Member Name, Location, Start date, End date, Workflow, Step',
       },
     ],
     views: [
       {
         id: uuidv4(),
-        content: "Member Name, Location, Start date, End date, Workflow, Step",
+        content: 'Member Name, Location, Start date, End date, Workflow, Step',
       },
     ],
   },

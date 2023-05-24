@@ -1,3 +1,4 @@
+// ? Ln 237 and 245 <span> used instead of <button> (style conflicts) and <a> (ESLints prompts)
 import styles from './processDocument.module.css';
 import { v4 as uuidv4 } from 'uuid';
 import { useState, useEffect } from 'react';
@@ -232,21 +233,21 @@ const ProcessDocument = () => {
               ) : saveWorkflowsLoading ? (
                 <LoadingSpinner />
               ) : (
-                <a
-                  href='#'
+                <span
+                  style={{ cursor: 'pointer' }}
                   className={styles.save__workflows__button}
                   onClick={handleSaveWorkflowToDocument}
                 >
                   Save Workflows to document
-                </a>
+                </span>
               )}
-              <a
-                href='#'
+              <span
+                style={{ cursor: 'pointer' }}
                 onClick={(e) => e.preventDefault}
                 className={styles.close__button}
               >
                 Close
-              </a>
+              </span>
             </div>
           </div>
           <div className={styles.right__container}>

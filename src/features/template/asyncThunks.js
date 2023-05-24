@@ -1,10 +1,6 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { TemplateServices } from '../../services/templateServices';
-import {
-  setToggleEditor,
-  setEditorLink,
-  setEditorFetching,
-} from '../app/appSlice';
+import { setEditorLink } from '../app/appSlice';
 
 const filterTemplates = (templates, thunkAPI) => {
   let filteredTemplates = [];
@@ -93,7 +89,10 @@ export const allTemplates = createAsyncThunk(
   'template/all',
   async (data, thunkAPI) => {
     try {
-      const res = await templateServices.allTemplates(data.company_id, data.data_type);
+      const res = await templateServices.allTemplates(
+        data.company_id,
+        data.data_type
+      );
 
       const templates = filterTemplates(res.data.templates.reverse(), thunkAPI);
 

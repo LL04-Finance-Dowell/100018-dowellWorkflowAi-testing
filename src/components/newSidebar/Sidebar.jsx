@@ -66,6 +66,7 @@ const Sidebar = () => {
         console.log(error.response ? error.response.data : error.message);
         dispatch(setLegalStatusLoading(false));
       });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleLogout = () => {

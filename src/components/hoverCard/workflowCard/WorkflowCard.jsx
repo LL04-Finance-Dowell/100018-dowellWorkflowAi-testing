@@ -1,3 +1,4 @@
+// ? Ln 160, 170, 230, 240, used <span> instead of <button> (style conflicts) and <a> (ESLint prompts)
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { setToggleManageFileForm } from '../../../features/app/appSlice';
@@ -156,20 +157,18 @@ const WorkflowCard = ({ cardItem }) => {
               </div>
             </>
             <div className={styles.button__group}>
-              <a
-                href='#'
+              <span
+                style={{ cursor: 'pointer' }}
                 className={styles.delete}
-                onClick={(e) => {
-                  e.preventDefault();
+                onClick={() => {
                   handleTrashWorkflow(cardItem);
                 }}
               >
                 <RiDeleteBin6Line color='red' />
-              </a>
-              <a
-                href='#'
-                onClick={(e) => {
-                  e.preventDefault();
+              </span>
+              <span
+                style={{ cursor: 'pointer' }}
+                onClick={() => {
                   handleUpdateWorkflow(cardItem);
                 }}
                 className={styles.update}
@@ -177,7 +176,7 @@ const WorkflowCard = ({ cardItem }) => {
                 <i>
                   <RxUpdate color='green' />
                 </i>
-              </a>
+              </span>
               <div
                 style={{
                   cursor: 'pointer',
@@ -226,20 +225,18 @@ const WorkflowCard = ({ cardItem }) => {
               </div>
             </>
             <div className={styles.button__group}>
-              <a
-                href='#'
+              <span
+                style={{ cursor: 'pointer' }}
                 className={styles.delete}
-                onClick={(e) => {
-                  e.preventDefault();
+                onClick={() => {
                   handleTrashWorkflow(cardItem);
                 }}
               >
                 <RiDeleteBin6Line color='red' />
-              </a>
-              <a
-                href='#'
-                onClick={(e) => {
-                  e.preventDefault();
+              </span>
+              <span
+                style={{ cursor: 'pointer' }}
+                onClick={() => {
                   handleUpdateWorkflow(cardItem);
                 }}
                 className={styles.update}
@@ -247,7 +244,7 @@ const WorkflowCard = ({ cardItem }) => {
                 <i>
                   <RxUpdate color='green' />
                 </i>
-              </a>
+              </span>
               <div
                 style={{
                   cursor: 'pointer',

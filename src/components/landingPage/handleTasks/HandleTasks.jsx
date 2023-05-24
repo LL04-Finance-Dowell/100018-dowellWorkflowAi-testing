@@ -103,6 +103,7 @@ const ItemsDisplay = ({ items, colorClass }) => {
 
   useEffect(() => {
     itemsPusher();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // useEffect(() => {

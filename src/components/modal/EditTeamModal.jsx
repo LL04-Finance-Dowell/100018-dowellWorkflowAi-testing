@@ -19,7 +19,7 @@ const EditTeamModal = ({ show, setShow, handleUpdateTeam, items }) => {
   const [details, setDetails] = useState('');
   const [uniCode, setUniCode] = useState('');
   const { teamsInWorkflowAI } = useSelector((state) => state.app);
-  const [selectedTeam, setSelectedTeam] = useState();
+  // const [selectedTeam, setSelectedTeam] = useState();
   const [isPortfolios, setIsPortfolios] = useState(false);
   const {
     workflowTeams,
@@ -76,11 +76,11 @@ const EditTeamModal = ({ show, setShow, handleUpdateTeam, items }) => {
   };
 
   useEffect(() => {
-    setSelectedTeam(
-      teamsInWorkflowAI[0].children[0].column[0].items.find(
-        (item) => item.isSelected
-      )
-    );
+    //   setSelectedTeam(
+    //     teamsInWorkflowAI[0].children[0].column[0].items.find(
+    //       (item) => item.isSelected
+    //     )
+    //   );
 
     setPortfolios(teamsInWorkflowAI[0].children[1].column[0].items);
   }, [teamsInWorkflowAI]);
@@ -131,6 +131,7 @@ const EditTeamModal = ({ show, setShow, handleUpdateTeam, items }) => {
         setSync(false);
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [show, teamsInWorkflowAI]);
 
   useEffect(() => {
@@ -158,6 +159,7 @@ const EditTeamModal = ({ show, setShow, handleUpdateTeam, items }) => {
       setWorkflowTeams([]);
       dispatch(setUpdateInWorkflowAITeams());
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [show]);
 
   return (

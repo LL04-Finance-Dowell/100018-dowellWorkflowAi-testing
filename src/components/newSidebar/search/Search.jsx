@@ -7,7 +7,7 @@ import { useForm } from 'react-hook-form';
 
 import { LoadingSpinner } from '../../LoadingSpinner/LoadingSpinner';
 
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 
 import { useNavigate } from 'react-router-dom';
 
@@ -176,6 +176,7 @@ const Search = () => {
       console.log(error);
       setSearchLoading(false);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     search,
     searchLoading,

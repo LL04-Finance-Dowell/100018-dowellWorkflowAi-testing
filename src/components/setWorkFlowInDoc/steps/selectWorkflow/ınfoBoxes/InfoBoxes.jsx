@@ -1,3 +1,4 @@
+// ? Ln 222 <span> used instead of <button> (style conflicts) and <a> (ESLint prompts)
 import React, { useState, useEffect, useRef, memo, useCallback } from 'react';
 import styles from './infoBoxes.module.css';
 import { v4 as uuidv4 } from 'uuid';
@@ -52,6 +53,7 @@ const InfoBoxes = () => {
     };
 
     dispatch(allWorkflows(data));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const memorizedInfoBox = useCallback(() => {
@@ -109,6 +111,7 @@ const InfoBoxes = () => {
           : item
       )
     );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [allWorkflowsStatus, workflow, team, userDetail]);
 
   useEffect(() => {
@@ -158,6 +161,7 @@ const InfoBoxes = () => {
     });
 
     dispatch(setMembersSetForProcess(true));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userDetail, currentDocToWfs, membersSetForProcess]);
 
   const { scrollYProgress } = useScroll({
@@ -215,9 +219,12 @@ const InfoBoxes = () => {
                 >
                   {infoBox.isOpen ? <MdOutlineRemove /> : <GrAdd />}
                 </div>
-                <a href='#' onClick={(e) => e.preventDefault()}>
+                <span
+                  style={{ cursor: 'pointer' }}
+                  onClick={(e) => e.preventDefault()}
+                >
                   {infoBox.title}
-                </a>
+                </span>
               </>
             )}
           </InfoTitleBox>

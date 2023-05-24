@@ -18,13 +18,11 @@ import {
   setCurrentDocToWfs,
   setDocCurrentWorkflow,
   setPublicMembersSelectedForProcess,
-  setSelectedMembersForProcess,
   setSelectedWorkflowsToDoc,
   setTableOfContentForStep,
   setTeamMembersSelectedForProcess,
   setUserMembersSelectedForProcess,
   setWfToDocument,
-  updateSingleProcessStep,
 } from '../../features/app/appSlice';
 import { setContentOfDocument } from '../../features/document/documentSlice';
 import { getContinents } from '../../services/locationServices';
@@ -79,6 +77,7 @@ const SetWorkflowInDoc = () => {
         console.log('Failed to fetch continents');
         dispatch(setContinentsLoaded(true));
       });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -138,6 +137,7 @@ const SetWorkflowInDoc = () => {
         setDraftProcessLoading(false);
         setDraftProcessLoaded(true);
       });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     searchParams,
     allProcesses,

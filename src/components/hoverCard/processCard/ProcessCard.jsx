@@ -20,7 +20,7 @@ const ProcessCard = ({ cardItem, title }) => {
   const { allProcesses } = useSelector((state) => state.app);
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const [Process_id, setProcess_id] = useState();
+  // const [Process_id, setProcess_id] = useState();
   const [processLinkLoading, setProcessLinkLoading] = useState(false);
 
   const handleProcessItemClick = async (item) => {
@@ -38,12 +38,12 @@ const ProcessCard = ({ cardItem, title }) => {
     setProcessLinkLoading(true);
   };
 
-  useEffect(() => {
-    if (Process_id) {
-      dispatch(setLinksFetched(true));
-      getProcessLinks(Process_id);
-    }
-  }, [Process_id]); // Added Process_id as dependency
+  // useEffect(() => {
+  //   if (Process_id) {
+  //     dispatch(setLinksFetched(true));
+  //     getProcessLinks(Process_id);
+  //   }
+  // }, [Process_id]); // Added Process_id as dependency
 
   function getProcessLinks(process_id) {
     fetch(

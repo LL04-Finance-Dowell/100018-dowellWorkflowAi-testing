@@ -311,6 +311,7 @@ const EnabledDisabkedProcess = () => {
 
       dispatch(setFetchedPermissionArray(rawItems));
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [fetchedItems]);
 
   // useEffect(

@@ -2,7 +2,7 @@ import styles from './contentMapOfDoc.module.css';
 import { IoIosArrowDown } from 'react-icons/io';
 import { IoIosArrowUp } from 'react-icons/io';
 import { useState, useRef } from 'react';
-import { v4 as uuidv4 } from 'uuid';
+
 import Contents from '../contents/Contents';
 import { useEffect } from 'react';
 

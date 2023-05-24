@@ -131,10 +131,12 @@ const EnabledProcess = () => {
         )
       );
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [workflowTeams, teamsInWorkflowAI]);
 
   useEffect(() => {
     dispatch(setSettingProccessPortfolios(userPortfolios));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userPortfolios]);
 
   useEffect(() => {

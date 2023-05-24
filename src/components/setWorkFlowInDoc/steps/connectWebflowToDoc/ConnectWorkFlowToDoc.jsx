@@ -62,6 +62,7 @@ const ConnectWorkFlowToDoc = () => {
     stepsForWorkflow.push(stepsObj);
 
     dispatch(setProcessSteps(stepsForWorkflow));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [docCurrentWorkflow]);
 
   const handleToggleContent = (id) => {

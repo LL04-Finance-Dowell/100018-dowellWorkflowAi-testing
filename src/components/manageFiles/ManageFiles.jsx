@@ -1,6 +1,4 @@
-import { useState } from 'react';
 import styles from './manageFiles.module.css';
-import { BsPlusLg } from 'react-icons/bs';
 import { useDispatch, useSelector } from 'react-redux';
 import { createTemplate } from '../../features/template/asyncThunks';
 import {
