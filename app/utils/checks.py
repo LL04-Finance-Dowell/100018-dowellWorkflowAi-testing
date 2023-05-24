@@ -108,13 +108,12 @@ def time_limit_right(time, select_time_limits, start_time, end_time, creation_ti
             return False
 
 
-def processing_order(order, process_id):
-    """Check member processing sequence"""
+def step_processing_order(order, process_id, role):
+    """Check members step processing sequence"""
     
     process = get_process_object(process_id)
 
     process_steps = process['process_steps']
-    role = process['stepRole']
     public_members = process_steps['stepPublicMembers']
     team_members = process_steps['stepTeamMembers']
     user_members = process_steps['stepUserMembers']

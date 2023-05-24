@@ -15,6 +15,10 @@ Including another URLconf
 """
 from django.conf import settings
 
+# API docs generation
+from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
+from drf_spectacular.generators import SchemaGenerator
+
 # from django.conf.urls import url
 from django.conf.urls.static import static
 from django.urls import path, re_path, include
@@ -22,8 +26,21 @@ from django.conf import settings
 from django.conf.urls.static import static
 from drf_yasg import openapi
 from drf_yasg.views import get_schema_view
+from drf_yasg.generators import OpenAPISchemaGenerator
 from rest_framework import permissions
 from app.views import home
+
+
+class CustomSchemaGenerator(SchemaGenerator):
+    def get_schema(self, request=None, public=False):
+        with open('schema.yml', 'r') as file:
+            custom_schema = file.read()
+        return custom_schema
+
+class CustomSpectacularAPIView(SpectacularAPIView):
+    def get_schema_generator(self, request=None):
+        return CustomSchemaGenerator.get_schema()
+
 
 schema_view = get_schema_view(
     openapi.Info(
@@ -41,6 +58,10 @@ schema_view = get_schema_view(
 urlpatterns = [
     path("", home, name="Home"),
     path("v1/", include("app.urls")),
+
+    path('api/v1', CustomSpectacularAPIView.as_view(), name='schema'),
+    path('api/v1/docs/', SpectacularSwaggerView.as_view(url_name='schema')),
+
     # api doc
     re_path(
         r"^swagger(?P<format>\.json|\.yaml)$",

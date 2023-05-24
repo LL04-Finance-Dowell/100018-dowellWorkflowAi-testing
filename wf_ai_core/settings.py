@@ -30,6 +30,7 @@ ALLOWED_HOSTS = ["*"]
 
 INSTALLED_APPS = [
     "drf_yasg",
+    "drf_spectacular",
     "app",
     "corsheaders",
     "django.contrib.admin",
@@ -149,4 +150,18 @@ CACHES = {
         'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
         'LOCATION': 'unique-snowflake',
     }
+}
+
+
+REST_FRAMEWORK = {
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema'
+}
+
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'WorkflowAI'
+}
+
+
+SWAGGER_SETTINGS = {
+    'DEFAULT_INFO': 'drf_yasg.openapi.AutoSchema'
 }

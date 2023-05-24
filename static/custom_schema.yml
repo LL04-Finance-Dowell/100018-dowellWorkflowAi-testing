@@ -1,0 +1,902 @@
+openapi: 3.0.3
+info:
+  title: WorkflowAI
+  version: 0.0.0
+paths:
+  /:
+    get:
+      operationId: root_retrieve
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+  /api/v1:
+    get:
+      operationId: api_v1_retrieve
+      description: |-
+        OpenApi3 schema for this API. Format can be selected via content negotiation.
+
+        - YAML: application/vnd.oai.openapi
+        - JSON: application/vnd.oai.openapi+json
+      parameters:
+      - in: query
+        name: format
+        schema:
+          type: string
+          enum:
+          - json
+          - yaml
+      - in: query
+        name: lang
+        schema:
+          type: string
+          enum:
+          - af
+          - ar
+          - ar-dz
+          - ast
+          - az
+          - be
+          - bg
+          - bn
+          - br
+          - bs
+          - ca
+          - cs
+          - cy
+          - da
+          - de
+          - dsb
+          - el
+          - en
+          - en-au
+          - en-gb
+          - eo
+          - es
+          - es-ar
+          - es-co
+          - es-mx
+          - es-ni
+          - es-ve
+          - et
+          - eu
+          - fa
+          - fi
+          - fr
+          - fy
+          - ga
+          - gd
+          - gl
+          - he
+          - hi
+          - hr
+          - hsb
+          - hu
+          - hy
+          - ia
+          - id
+          - ig
+          - io
+          - is
+          - it
+          - ja
+          - ka
+          - kab
+          - kk
+          - km
+          - kn
+          - ko
+          - ky
+          - lb
+          - lt
+          - lv
+          - mk
+          - ml
+          - mn
+          - mr
+          - ms
+          - my
+          - nb
+          - ne
+          - nl
+          - nn
+          - os
+          - pa
+          - pl
+          - pt
+          - pt-br
+          - ro
+          - ru
+          - sk
+          - sl
+          - sq
+          - sr
+          - sr-latn
+          - sv
+          - sw
+          - ta
+          - te
+          - tg
+          - th
+          - tk
+          - tr
+          - tt
+          - udm
+          - uk
+          - ur
+          - uz
+          - vi
+          - zh-hans
+          - zh-hant
+      tags:
+      - api
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/vnd.oai.openapi:
+              schema:
+                type: object
+                additionalProperties: {}
+            application/yaml:
+              schema:
+                type: object
+                additionalProperties: {}
+            application/vnd.oai.openapi+json:
+              schema:
+                type: object
+                additionalProperties: {}
+            application/json:
+              schema:
+                type: object
+                additionalProperties: {}
+          description: ''
+  /v1/archives/:
+    post:
+      operationId: v1_archives_create
+      description: Archiving  (Template | Workflow | Document)
+      tags:
+      - v1
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+  /v1/archives/{item_id}/{item_type}/restore/:
+    post:
+      operationId: v1_archives_restore_create
+      description: Restore  (Template | Workflow | Document)
+      parameters:
+      - in: path
+        name: item_id
+        schema:
+          type: string
+        required: true
+      - in: path
+        name: item_type
+        schema:
+          type: string
+        required: true
+      tags:
+      - v1
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+  /v1/companies/{company_id}/documents/:
+    get:
+      operationId: v1_companies_documents_retrieve
+      description: List of Created Documents.
+      parameters:
+      - in: path
+        name: company_id
+        schema:
+          type: string
+        required: true
+      tags:
+      - v1
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+  /v1/companies/{company_id}/documents/completed/:
+    get:
+      operationId: v1_companies_documents_completed_retrieve
+      description: List of Completed Documents.
+      parameters:
+      - in: path
+        name: company_id
+        schema:
+          type: string
+        required: true
+      tags:
+      - v1
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+  /v1/companies/{company_id}/favourites/:
+    get:
+      operationId: v1_companies_favourites_retrieve
+      description: List favs
+      parameters:
+      - in: path
+        name: company_id
+        schema:
+          type: string
+        required: true
+      tags:
+      - v1
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+  /v1/companies/{company_id}/processes/:
+    get:
+      operationId: v1_companies_processes_retrieve
+      description: fetches workflow process `I` created.
+      parameters:
+      - in: path
+        name: company_id
+        schema:
+          type: string
+        required: true
+      tags:
+      - v1
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+  /v1/companies/{company_id}/processes/{process_id}/:
+    get:
+      operationId: v1_companies_processes_retrieve_2
+      description: List of Completed Documents.
+      parameters:
+      - in: path
+        name: company_id
+        schema:
+          type: string
+        required: true
+      - in: path
+        name: process_id
+        schema:
+          type: string
+        required: true
+      tags:
+      - v1
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+  /v1/companies/{company_id}/settings/:
+    get:
+      operationId: v1_companies_settings_retrieve
+      description: Get All WF AI
+      parameters:
+      - in: path
+        name: company_id
+        schema:
+          type: string
+        required: true
+      tags:
+      - v1
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+  /v1/companies/{company_id}/teams/:
+    get:
+      operationId: v1_companies_teams_retrieve
+      description: Get All Team
+      parameters:
+      - in: path
+        name: company_id
+        schema:
+          type: string
+        required: true
+      tags:
+      - v1
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+    post:
+      operationId: v1_companies_teams_create
+      description: Get All Team
+      parameters:
+      - in: path
+        name: company_id
+        schema:
+          type: string
+        required: true
+      tags:
+      - v1
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+  /v1/companies/{company_id}/templates/:
+    get:
+      operationId: v1_companies_templates_retrieve
+      description: List of Created Templates.
+      parameters:
+      - in: path
+        name: company_id
+        schema:
+          type: string
+        required: true
+      tags:
+      - v1
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+  /v1/companies/{company_id}/workflows/:
+    get:
+      operationId: v1_companies_workflows_retrieve
+      description: List all workflows
+      parameters:
+      - in: path
+        name: company_id
+        schema:
+          type: string
+        required: true
+      tags:
+      - v1
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+  /v1/documents/:
+    post:
+      operationId: v1_documents_create
+      description: Document Creation.
+      tags:
+      - v1
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+  /v1/documents/{document_id}/:
+    get:
+      operationId: v1_documents_retrieve
+      description: editor link for a document
+      parameters:
+      - in: path
+        name: document_id
+        schema:
+          type: string
+        required: true
+      tags:
+      - v1
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+  /v1/documents/{document_id}/content/:
+    get:
+      operationId: v1_documents_content_retrieve
+      description: Content map of a given document
+      parameters:
+      - in: path
+        name: document_id
+        schema:
+          type: string
+        required: true
+      tags:
+      - v1
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+  /v1/favourites/:
+    post:
+      operationId: v1_favourites_create
+      description: '`Favourite` an Item( workflow | template | document) or List favourites'
+      tags:
+      - v1
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+  /v1/favourites/{item_id}/{item_type}/{username}/:
+    delete:
+      operationId: v1_favourites_destroy
+      description: Trash Favourites
+      parameters:
+      - in: path
+        name: item_id
+        schema:
+          type: string
+        required: true
+      - in: path
+        name: item_type
+        schema:
+          type: string
+        required: true
+      - in: path
+        name: username
+        schema:
+          type: string
+        required: true
+      tags:
+      - v1
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '204':
+          description: No response body
+  /v1/processes/:
+    post:
+      operationId: v1_processes_create
+      description: processing is determined by action picked by user.
+      tags:
+      - v1
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+  /v1/processes/{process_id}/:
+    get:
+      operationId: v1_processes_retrieve
+      description: get process by process id
+      parameters:
+      - in: path
+        name: process_id
+        schema:
+          type: string
+        required: true
+      tags:
+      - v1
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+  /v1/processes/{process_id}/all-links/:
+    get:
+      operationId: v1_processes_all_links_retrieve
+      description: verification links for a process
+      parameters:
+      - in: path
+        name: process_id
+        schema:
+          type: string
+        required: true
+      tags:
+      - v1
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+  /v1/processes/{process_id}/copies/:
+    post:
+      operationId: v1_processes_copies_create
+      parameters:
+      - in: path
+        name: process_id
+        schema:
+          type: string
+        required: true
+      tags:
+      - v1
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+  /v1/processes/{process_id}/finalize-or-reject/:
+    post:
+      operationId: v1_processes_finalize_or_reject_create
+      description: After access is granted and the user has made changes on a document.
+      parameters:
+      - in: path
+        name: process_id
+        schema:
+          type: string
+        required: true
+      tags:
+      - v1
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+  /v1/processes/{process_id}/trigger/:
+    post:
+      operationId: v1_processes_trigger_create
+      description: Get process and begin processing it.
+      parameters:
+      - in: path
+        name: process_id
+        schema:
+          type: string
+        required: true
+      tags:
+      - v1
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+  /v1/processes/{process_id}/user-link/:
+    post:
+      operationId: v1_processes_user_link_create
+      description: get a link process for person having notifications
+      parameters:
+      - in: path
+        name: process_id
+        schema:
+          type: string
+        required: true
+      tags:
+      - v1
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+  /v1/processes/verify/:
+    post:
+      operationId: v1_processes_verify_create
+      description: verification of a process step access and checks that duplicate
+        document based on a step.
+      tags:
+      - v1
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+  /v1/server/:
+    post:
+      operationId: v1_server_create
+      description: Pick an event from GH and update our PA-server code
+      tags:
+      - v1
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+  /v1/settings/:
+    post:
+      operationId: v1_settings_create
+      tags:
+      - v1
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+  /v1/settings/{wf_setting_id}:
+    get:
+      operationId: v1_settings_retrieve
+      description: Get All WF AI
+      parameters:
+      - in: path
+        name: wf_setting_id
+        schema:
+          type: string
+        required: true
+      tags:
+      - v1
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+  /v1/teams/:
+    post:
+      operationId: v1_teams_create
+      description: Create a new Team
+      tags:
+      - v1
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+  /v1/teams/{team_id}/:
+    get:
+      operationId: v1_teams_retrieve
+      description: Get specific Team
+      parameters:
+      - in: path
+        name: team_id
+        schema:
+          type: string
+        required: true
+      tags:
+      - v1
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+  /v1/templates/:
+    post:
+      operationId: v1_templates_create
+      tags:
+      - v1
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+  /v1/templates/{template_id}/:
+    get:
+      operationId: v1_templates_retrieve
+      description: editor link for a document
+      parameters:
+      - in: path
+        name: template_id
+        schema:
+          type: string
+        required: true
+      tags:
+      - v1
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+  /v1/templates/{template_id}/approval/:
+    put:
+      operationId: v1_templates_approval_update
+      description: Approve a given template
+      parameters:
+      - in: path
+        name: template_id
+        schema:
+          type: string
+        required: true
+      tags:
+      - v1
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+  /v1/update-settings/:
+    post:
+      operationId: v1_update_settings_create
+      description: Retrive a Wf setting
+      tags:
+      - v1
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+  /v1/update-to-teams/:
+    post:
+      operationId: v1_update_to_teams_create
+      description: Update Team
+      tags:
+      - v1
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+  /v1/workflow-settings/:
+    post:
+      operationId: v1_workflow_settings_create
+      description: Create a new workflow setting
+      tags:
+      - v1
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+  /v1/workflow-settings/{wf_setting_id}/:
+    get:
+      operationId: v1_workflow_settings_retrieve
+      description: Retrive a Wf setting
+      parameters:
+      - in: path
+        name: wf_setting_id
+        schema:
+          type: string
+        required: true
+      tags:
+      - v1
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+    put:
+      operationId: v1_workflow_settings_update
+      description: Retrive a Wf setting
+      parameters:
+      - in: path
+        name: wf_setting_id
+        schema:
+          type: string
+        required: true
+      tags:
+      - v1
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+  /v1/workflows/:
+    post:
+      operationId: v1_workflows_create
+      description: Creates a new workflow
+      tags:
+      - v1
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+  /v1/workflows/{workflow_id}/:
+    get:
+      operationId: v1_workflows_retrieve
+      description: Retrieve a single workflow
+      parameters:
+      - in: path
+        name: workflow_id
+        schema:
+          type: string
+        required: true
+      tags:
+      - v1
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+    put:
+      operationId: v1_workflows_update
+      description: Single workflows
+      parameters:
+      - in: path
+        name: workflow_id
+        schema:
+          type: string
+        required: true
+
+      requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            # Define your request body schema here
+            type: object
+            properties:
+              workflow_title:
+                type: string
+              workflow_id:
+                type: string
+              data_type:
+                type: string
+              steps:
+                type: string
+
+      tags:
+      - v1
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+components:
+  securitySchemes:
+    basicAuth:
+      type: http
+      scheme: basic
+    cookieAuth:
+      type: apiKey
+      in: cookie
+      name: sessionid
