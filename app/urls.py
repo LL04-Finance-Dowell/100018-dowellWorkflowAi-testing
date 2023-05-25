@@ -39,6 +39,8 @@ from .views import (
     update_workflow_ai_setting,
     workflow_detail,
     webhook,
+    read_reminder,
+
 )
 
 urlpatterns = [
@@ -83,4 +85,6 @@ urlpatterns = [
     path("settings/", create_workflow_ai_setting),
     path("update-settings/", update_workflow_ai_setting),
     path("settings/<str:wf_setting_id>", get_workflow_ai_setting),
+    path("reminder/<str:username>",read_reminder),
+
 ]

@@ -1,6 +1,7 @@
 import json
 import time
 from datetime import datetime
+from django.core.cache import cache
 
 import requests
 
@@ -963,17 +964,17 @@ def set_hourly_reminder():
                         ],
                         "reminder": st["stepReminder"],
                         "step_state": st["stepState"],
-                        "message": f"You have incomplete step in {x['_id']} Process. Please Complete it as Soon as Possible!",
+                        "message": f"You have incomplete step in Process {x['_id']} . Please Complete it as Soon as Possible!",
                     }
                     for st in x["process_steps"]
-                    if "stepState" and "stepTeamMembers" and "stepReminder" in st
+                    if  "stepTeamMembers" and "stepReminder" in st
                 ]
                 for x in data
             ],
         )
     ]
 
-    return hourly_reminder
+    cache.set("hourly_reminder_data",hourly_reminder, timeout=3600)
 
 
 def set_daily_reminder():
@@ -983,9 +984,9 @@ def set_daily_reminder():
         {
             "data_type": "Real_Data",
             "processing_state": {"$ne": "completed"},
-            "process_steps.stepReminder": "send_reminder_every_day",
+            "process_steps.stepReminder": "no_reminder",
             "process_steps.stepTeamMembers": {"$exists": True},
-            "process_steps.stepState": {"$exists": True, "$ne": "completed"},
+            # "process_steps.stepState": {"$exists": True, "$ne": "completed"},
         },
     )
     daily_reminder = [
@@ -1002,15 +1003,15 @@ def set_daily_reminder():
                             if "member" in item
                         ],
                         "reminder": st["stepReminder"],
-                        "step_state": st["stepState"],
-                        "message": f"You have incomplete step in {x['_id']} Process. Please Complete it as Soon as Possible!",
+                        # "step_state": st["stepState"],
+                        "message": f"You have incomplete step in  Process {x['_id']}. Please Complete it as Soon as Possible!",
                     }
                     for st in x["process_steps"]
-                    if "stepState" and "stepTeamMembers" and "stepReminder" in st
+                    if  "stepTeamMembers" and "stepReminder" in st
                 ]
                 for x in data
             ],
         )
     ]
 
-    return daily_reminder
+    cache.set("daily_reminder_data",daily_reminder, timeout=86400)

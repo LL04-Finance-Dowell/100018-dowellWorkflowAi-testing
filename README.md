@@ -63,6 +63,7 @@ This backend service serves as the WorkflowAI application Backend.
 | POST       | settings/                                   | To Create New Workflow AI Setting                |
 | POST       | update-settings/                            | To Update Existing Workflow AI Setting           |
 | GET        | settings/:wf_setting_id/                    | To get a single wf ai settings                   |
+| GET        | settings/:username/                         | To get reminders if there is any                 |
 
 ---
 
@@ -1028,6 +1029,16 @@ Response-200
 ```
 {
     get wf setting with the id
+}
+
+```
+### Reminder
+_POST_ `v1/reminder/<str:username>`
+
+Response-200
+```
+{
+    lists of reminders
 }
 
 ```
