@@ -120,7 +120,8 @@ def step_processing_order(order, process_id, role):
 
 
     if order == "no_order":
-        pass
+        return True
+    
     elif order == 'team_user_public':
         try:
             if len(team_members) > 0:
