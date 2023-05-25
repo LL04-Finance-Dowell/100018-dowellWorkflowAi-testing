@@ -22,9 +22,9 @@ const ProcessesPage = ({ home, showOnlySaved, showOnlyPaused, showOnlyCancelled,
 
   {
     const cloneProcesses =
-      allProcesses.filter(process => process.process_kind == "clone").length
-      &&
-      allProcesses.filter(process => process.processing_state === "processing").filter(process => process.data_type === userDetail?.portfolio_info[0]?.data_type).length
+      allProcesses.filter(process => process.process_kind == "clone")
+      // &&
+      // allProcesses.filter(process => process.processing_state === "processing").filter(process => process.data_type === userDetail?.portfolio_info[0]?.data_type).length
     console.log(cloneProcesses);
 
   }
