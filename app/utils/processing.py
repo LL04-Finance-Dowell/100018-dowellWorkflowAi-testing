@@ -222,7 +222,7 @@ def verify(
                 ):
                     return Response(
                         "You do not have permission to process this document just yet!",
-                        status.HTTP_403_FORBIDDEN,
+                        status.HTTP_401_UNAUTHORIZED,
                     )
             
 
