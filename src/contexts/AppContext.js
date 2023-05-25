@@ -95,7 +95,7 @@ export const AppContextProvider = ({ children }) => {
 
   useEffect(() => {
     if (!publicUserConfigured) return;
-    if (userDetail && !isPublicUser) {
+    if (userDetail && userDetail.portfolio_info && !isPublicUser) {
       if (!workflowTeamsLoaded) {
         //* Fetching workflow teams
         const settingService = new WorkflowSettingServices();
