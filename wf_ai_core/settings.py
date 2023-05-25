@@ -141,8 +141,8 @@ EMAIL_HOST_USER = "docs@dowellresearch.sg"
 EMAIL_HOST_PASSWORD = "jpcjzsnzarucochh"
 
 CRONJOBS = [
-    ('0 */1 * * *', 'app.utils.mongo_db_connection.set_hourly_reminder'),
-    ('0 *0 */0 * *', 'app.utils.mongo_db_connection.set_daily_reminder')
+    ('0 * * * *', 'app.utils.mongo_db_connection.set_hourly_reminder'),
+    ('0 0 * *', 'app.utils.mongo_db_connection.set_daily_reminder')
 
     
 
