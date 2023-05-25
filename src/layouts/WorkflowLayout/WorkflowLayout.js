@@ -208,7 +208,7 @@ const WorkflowLayout = ({ children }) => {
           userDetail.portfolio_info?.length === 0 ||
           (userDetail.portfolio_info?.length > 0 &&
             !userDetail.portfolio_info.find(
-              (item) => item.product === 'Workflow AI' && item.member_type === 'owner'
+              (item) => item.product === 'Workflow AI'
             )) ? (
             <div className={styles.redirect__container}>
               <div className={styles.img__container}>
