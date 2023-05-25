@@ -214,7 +214,7 @@ def verify(
                         status.HTTP_403_FORBIDDEN,
                     )
 
-            if step.get('stepProcessingOrder')  :
+            if step.get('stepProcessingOrder'):
                 if not checks.step_processing_order(
                     order=step.get('stepProcessingOrder'),
                     process_id=process.get('_id'),
