@@ -1,16 +1,17 @@
 import React, { useState, useEffect } from "react";
 import { RiDeleteBin6Line } from "react-icons/ri";
-import { BiLink } from "react-icons/bi";
+import { BiLink, BiCopy } from "react-icons/bi";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { setAllProcesses } from "../../../features/app/appSlice";
 import { moveItemToArchive } from "../../../services/archiveServices";
 import HoverCard from "../HoverCard";
-import {setShowGeneratedLinksPopup,SetArrayofLinks,setLinksFetched  } from "../../../features/app/appSlice";
+import { setShowGeneratedLinksPopup, SetArrayofLinks, setLinksFetched } from "../../../features/app/appSlice";
 import GeneratedLinksModal from "../../setWorkFlowInDocNew/steps/processDocument/components/GeneratedLinksModal/GeneratedLinksModal";
 import { Button } from "../styledComponents";
 import { LoadingSpinner } from "../../LoadingSpinner/LoadingSpinner";
+import axios from 'axios';
 
 const ProcessCard = ({ cardItem, title }) => {
   const { userDetail } = useSelector((state) => state.auth);
@@ -18,11 +19,43 @@ const ProcessCard = ({ cardItem, title }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [Process_id, setProcess_id] = useState();
-  const [ processLinkLoading, setProcessLinkLoading ] = useState(false);
+  const [processLinkLoading, setProcessLinkLoading] = useState(false);
+
+
 
   const handleProcessItemClick = async (item) => {
     if (item.processing_state === "draft" && item.workflow_construct_ids) navigate(`/workflows/new-set-workflow?id=${item._id}&state=${item.processing_state}${item.isFromLocalStorage ? '&local=true' : ''}`)
   };
+
+
+
+
+  const handleCopyProcess = async (item) => {
+    console.log(item)
+    getCopyProcess(item._id)
+  };
+
+  async function getCopyProcess(process_id) {
+    try {
+      const response = await axios.post(`https://100094.pythonanywhere.com/v1/processes/${process_id}/copies/`, {
+        created_by: "usernamemakingcopy",
+        portfolio: "portfolioofuser"
+      });
+
+      if (response.status === 201) {
+        console.log("Copy process created successfully.");
+        toast.info(response.data);
+        console.log(response.data);
+      } else {
+        console.log("Post request failed. Status code:", response.status);
+      }
+    } catch (error) {
+      console.error("An error occurred:", error);
+    }
+  }
+
+
+
 
 
   const handleGetLinksClick = async (item) => {
@@ -34,7 +67,7 @@ const ProcessCard = ({ cardItem, title }) => {
 
   useEffect(() => {
     if (Process_id) {
-    dispatch( setLinksFetched(true));
+      dispatch(setLinksFetched(true));
       getProcessLinks(Process_id);
     }
   }, [Process_id]); // Added Process_id as dependency
@@ -42,16 +75,16 @@ const ProcessCard = ({ cardItem, title }) => {
 
   function getProcessLinks(process_id) {
     fetch(`https://100094.pythonanywhere.com/v1/processes/${process_id}/all-links/`)
-    .then(res => res.json())
-    .then(data => {
-      dispatch(SetArrayofLinks(data));
-      dispatch( setLinksFetched(true)); 
-      setProcessLinkLoading(false)
-    }).catch(err => {
-      console.log(err);
-      setProcessLinkLoading(false);
-      toast.info('Link fetching for process failed');
-    });
+      .then(res => res.json())
+      .then(data => {
+        dispatch(SetArrayofLinks(data));
+        dispatch(setLinksFetched(true));
+        setProcessLinkLoading(false)
+      }).catch(err => {
+        console.log(err);
+        setProcessLinkLoading(false);
+        toast.info('Link fetching for process failed');
+      });
   }
 
 
@@ -84,9 +117,19 @@ const ProcessCard = ({ cardItem, title }) => {
     }
   }
 
+  function callfunction(cardItem) {
+    console.log(cardItem.process_kind
+      )
+  }
+
   const FrontSide = () => {
     return cardItem ? (
-      <div>{cardItem.process_title ? cardItem.process_title : "no item"}</div>
+      <div onClick={() => callfunction(cardItem)}>
+        {cardItem.process_title ? cardItem.process_title : "no item"}
+
+
+      </div>
+
     ) : (
       "Loading..."
     );
@@ -115,13 +158,13 @@ const ProcessCard = ({ cardItem, title }) => {
                 onClick={() => handleGetLinksClick(cardItem)}>
                 <BiLink color="green" />
               </div> :
-              <div style={{
-                position: "absolute",
-                right: "1%",
-                top: "0"
-              }}>
-                <LoadingSpinner width={"1rem"} height={'1rem'} />
-              </div>
+                <div style={{
+                  position: "absolute",
+                  right: "1%",
+                  top: "0"
+                }}>
+                  <LoadingSpinner width={"1rem"} height={'1rem'} />
+                </div>
             }
           </>
         }
@@ -135,10 +178,19 @@ const ProcessCard = ({ cardItem, title }) => {
           <RiDeleteBin6Line color="red" />
         </div>
 
-       
+        <div style={{
+          cursor: "pointer",
+          position: "absolute",
+          left: "0",
+          top: "0"
+        }} onClick={() => handleCopyProcess(cardItem)}>
+          <BiCopy color="black" />
+        </div>
+
+
       </>
-      
-      
+
+
     );
   };
   return <HoverCard Front={FrontSide} Back={BackSide} loading={processLinkLoading} />;

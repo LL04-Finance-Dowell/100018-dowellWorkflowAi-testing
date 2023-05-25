@@ -14,9 +14,10 @@ const HoverCard = ({ Front, Back, loading }) => {
         <Front />
       </Box>
       <Box
-        className={`${styles.box} ${styles.hover__box} ${
-          loading === true && styles.hover
-        }`}
+        // className={`${styles.box} ${styles.hover__box} 
+        // ${
+        //   loading === true && styles.hover
+        // }`}
       >
         <Back />
       </Box>

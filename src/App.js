@@ -50,7 +50,7 @@ function App() {
   useEffect(() => {
     const interval = setInterval(() => {
       checkstatus();
-    }, 60000); // 60 seconds
+    }, 6000); // 60 seconds
 
     return () => clearInterval(interval); // Clean up the interval on unmount
   }, []);
@@ -88,7 +88,7 @@ function App() {
         // console.log("postdata", response);
       })
       .catch((error) => {
-        console.log(error)
+        // console.log(error)
         // Empty catch block 
       });
 

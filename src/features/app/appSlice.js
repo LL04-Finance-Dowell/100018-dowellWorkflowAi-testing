@@ -77,6 +77,9 @@ const initialState = {
   processesLoaded: false,
   allProcesses: [],
   ArrayofLinks: [],
+
+CopyProcess:[],
+
   linksFetched: false,
   showGeneratedLinksPopup: false,
 
@@ -562,6 +565,9 @@ export const appSlice = createSlice({
     SetArrayofLinks: (state, action) => {
       state.ArrayofLinks = action.payload;
     },
+    SetCopyProcess: (state, action) => {
+      state.CopyProcess = action.payload;
+    },
 
     setShowGeneratedLinksPopup: (state, action) => {
       state.showGeneratedLinksPopup = action.payload;
@@ -698,6 +704,7 @@ export const {
   setProcessesLoaded,
   setAllProcesses,
   SetArrayofLinks,
+  SetCopyProcess,
   setShowGeneratedLinksPopup,
   setLinksFetched,
   setLegalStatusLoading,

@@ -19,6 +19,16 @@ const ProcessesPage = ({ home, showOnlySaved, showOnlyPaused, showOnlyCancelled,
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
+
+  {
+    const cloneProcesses =
+      allProcesses.filter(process => process.process_kind == "clone").length
+      &&
+      allProcesses.filter(process => process.processing_state === "processing").filter(process => process.data_type === userDetail?.portfolio_info[0]?.data_type).length
+    console.log(cloneProcesses);
+
+  }
+
   useEffect(() => {
 
     if (showOnlySaved) navigate("#saved-processes");
@@ -42,6 +52,9 @@ const ProcessesPage = ({ home, showOnlySaved, showOnlyPaused, showOnlyCancelled,
     ) {
       return;
     }
+
+
+
 
     getAllProcessesV2(userDetail?.portfolio_info[0]?.org_id, userDetail?.portfolio_info[0]?.data_type).then(res => {
       const savedProcessesInLocalStorage = JSON.parse(localStorage.getItem('user-saved-processes'));
@@ -90,12 +103,13 @@ const ProcessesPage = ({ home, showOnlySaved, showOnlyPaused, showOnlyCancelled,
                 cardBgColor="#1ABC9C"
                 title="saved proccess"
                 Card={ProcessCard}
-                cardItems={allProcesses.filter(process => process.processing_state === "processing").filter(process => process.data_type === userDetail?.portfolio_info[0]?.data_type)}
+                cardItems={allProcesses.filter(process => process.process_kind == "clone") && allProcesses.filter(process => process.processing_state === "processing").filter(process => process.data_type === userDetail?.portfolio_info[0]?.data_type)}
                 status={processesLoading ? "pending" : "success"}
                 itemType={"processes"}
               />
             </div> : <></>
           }
+
           {showGeneratedLinksPopup && linksFetched && Array.isArray(ArrayofLinks) &&
             <GeneratedLinksModal />
           }
