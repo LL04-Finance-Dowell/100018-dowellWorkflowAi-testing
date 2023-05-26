@@ -64,7 +64,10 @@ const CreateWorkflows = ({ handleToggleOverlay }) => {
 
   const onSubmit = (data) => {
     const { role, step_name } = data;
-    if (internalWorkflows.find((item) => item.role === role))
+    if (
+      internalWorkflows.find((item) => item.role === role) &&
+      !currentTableCell
+    )
       toast.warn('Role name already in use');
     else {
       if (currentTableCell) {

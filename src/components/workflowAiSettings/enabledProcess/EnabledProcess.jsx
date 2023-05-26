@@ -194,28 +194,33 @@ const EnabledProcess = () => {
                     </div>
                   ))}
 
-                  <div className='container'>
-                    <h5>Enabled Processes</h5>
+                  {!!item.children
+                    .slice(4)[0]
+                    .column.find((col) => col.items.length) && (
+                    <div className='container'>
+                      <h5>Enabled Processes</h5>
 
-                    {item.children?.slice(4)?.map((childItem) => (
-                      <div
-                        key={childItem._id}
-                        className={workflowAiSettingsStyles.section__box}
-                      >
-                        {childItem.column.map((colItem) => (
-                          <InfoBox
-                            key={colItem._id}
-                            boxId={childItem._id}
-                            register={register}
-                            items={colItem.items}
-                            title={colItem.proccess_title}
-                            onChange={handleOnChange}
-                            type='checkbox'
-                          />
-                        ))}
-                      </div>
-                    ))}
-                  </div>
+                      {item.children?.slice(4)?.map((childItem) => (
+                        <div
+                          key={childItem._id}
+                          className={workflowAiSettingsStyles.section__box}
+                        >
+                          {childItem.column.map((colItem) => (
+                            <InfoBox
+                              key={colItem._id}
+                              boxId={childItem._id}
+                              register={register}
+                              items={colItem.items}
+                              title={colItem.proccess_title}
+                              onChange={handleOnChange}
+                              type='checkbox'
+                              specials='ep'
+                            />
+                          ))}
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </>
               )}
             </div>

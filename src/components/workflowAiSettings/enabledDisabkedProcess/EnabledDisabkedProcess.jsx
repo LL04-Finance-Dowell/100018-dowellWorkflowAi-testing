@@ -8,6 +8,8 @@ import {
   setColumn,
   setPermissionArray,
   setFetchedPermissionArray,
+  setProccess,
+  setSettingProccess,
 } from '../../../features/app/appSlice';
 import { v4 as uuidv4 } from 'uuid';
 import { setIsSelected } from '../../../utils/helpers';
@@ -28,7 +30,16 @@ const EnabledDisabkedProcess = () => {
   const { userDetail } = useSelector((state) => state.auth);
   const workflowSettingServices = new WorkflowSettingServices();
   const [isUpdating, setIsUpdating] = useState(false);
-  const { workflowSettings } = useAppContext();
+  const {
+    workflowSettings,
+    processDisplayName,
+    setOpenNameChangeModal,
+    setNameChangeTitle,
+    setProcessDisplayName,
+  } = useAppContext();
+  const [itemId, setItemId] = useState('');
+  const [childId, setChildId] = useState('');
+  const [colTitle, setColTitle] = useState('');
 
   const sortData = (childId, colId, title) => {
     const selectedItems = permissionArray[0].children
@@ -37,43 +48,9 @@ const EnabledDisabkedProcess = () => {
       .items.filter((item) => item.isSelected);
     let finalItems = [];
 
-    // switch (title) {
-    //   case 'process':
-    //     finalItems = selectedItems.map(({ content }) => {
-    //       const modContent = content
-    //         .split(' (')
-    //         .splice(0, 1)
-    //         .join('')
-    //         .split(' ');
-    //       return modContent[0] === 'Portfolio/Team'
-    //         ? 'Portfolio_or_Team_Roles'
-    //         : modContent.join(' ');
-    //     });
-    //     break;
-
-    //   case 'reports':
-    //     finalItems = selectedItems
-    //       .map(({ content }) => content.split(' '))
-    //       .map((items) => items.filter((item) => item !== '/').join(' '));
-    //     break;
-
-    //   // ! Only delete if it is utterly useless
-    //   // case 'references':
-    //   //   finalItems = selectedItems
-    //   //     .map(({ content }) => content.split(' '))
-    //   //     .map((items) => items.find((item) => item === items[4]))
-    //   //     .map((item) => `Show ${item} ID`);
-    //   //   break;
-
-    //   default:
-    //     finalItems = selectedItems.map(({ content }) =>
-    //       content.split(' ').join(' ')
-    //     );
-    // }
     finalItems = selectedItems.map(({ content }) =>
       content.split(' ').join(' ')
     );
-    // return finalItems.map((item) => item.replace('/', 'or'));
     return finalItems;
   };
 
@@ -188,12 +165,9 @@ const EnabledDisabkedProcess = () => {
     } finally {
       setIsUpdating(false);
     }
-
-    // console.log('cplımnnnnnnnnn', column);
-    // dispatch(setSettingProccess({ _id: uuidv4(), column }));
   };
 
-  const handleOnChange = ({ item, title, boxId, type }) => {
+  const handleOnChange = ({ item, title, boxId, type, checker }) => {
     const isSelectedItems = setIsSelected({
       items: permissionArray[0].children,
       item,
@@ -202,10 +176,13 @@ const EnabledDisabkedProcess = () => {
       type,
     });
 
-    // console.log('selected Items: ', isSelectedItems);
-    // console.log('item: ', item);
-    // console.log('title: ', title);
-    // console.log('bId: ', boxId);
+    if (checker && !item.isSelected) {
+      setItemId(item._id);
+      setChildId(boxId);
+      setColTitle(title);
+      setOpenNameChangeModal(true);
+      setNameChangeTitle(item.content.split('(')[0].trim());
+    }
 
     dispatch(setPermissionArray(isSelectedItems));
 
@@ -255,6 +232,122 @@ const EnabledDisabkedProcess = () => {
   };
 
   useEffect(() => {
+    if (processDisplayName && itemId && childId && colTitle) {
+      const modPermArr = permissionArray[0].children.map((child) =>
+        childId === child._id
+          ? {
+              ...child,
+              column: child.column.map((col) =>
+                col.proccess_title === colTitle
+                  ? {
+                      ...col,
+                      items: col.items.map((colItem) =>
+                        colItem._id === itemId
+                          ? {
+                              ...colItem,
+                              content: colItem.content.replace(
+                                colItem.content.split(' (')[1].slice(0, -1),
+                                processDisplayName
+                              ),
+                            }
+                          : colItem
+                      ),
+                    }
+                  : col
+              ),
+            }
+          : child
+      );
+      dispatch(setPermissionArray(modPermArr));
+      setProcessDisplayName('');
+      setItemId('');
+      setChildId('');
+      setColTitle('');
+    }
+  }, [processDisplayName, itemId, childId, colTitle]);
+
+  useEffect(() => {
+    dispatch(
+      setSettingProccess({
+        payload: permissionArray[0].children[0].column[0].items,
+        type: 'p_title',
+      })
+    );
+
+    dispatch(
+      setSettingProccess({
+        type: 'docs',
+        payload: permissionArray[0].children[1].column[0].items.filter(
+          (item) => item.isSelected
+        ),
+      })
+    );
+
+    dispatch(
+      setSettingProccess({
+        type: 'temps',
+        payload: permissionArray[0].children[1].column[1].items.filter(
+          (item) => item.isSelected
+        ),
+      })
+    );
+
+    dispatch(
+      setSettingProccess({
+        type: 'wrkfs',
+        payload: permissionArray[0].children[1].column[2].items.filter(
+          (item) => item.isSelected
+        ),
+      })
+    );
+
+    dispatch(
+      setSettingProccess({
+        type: 'nota',
+        payload: permissionArray[0].children[2].column[0].items.filter(
+          (item) => item.isSelected
+        ),
+      })
+    );
+
+    dispatch(
+      setSettingProccess({
+        type: 'recs',
+        payload: permissionArray[0].children[2].column[2].items.filter(
+          (item) => item.isSelected
+        ),
+      })
+    );
+
+    dispatch(
+      setSettingProccess({
+        type: 'app',
+        payload: permissionArray[0].children[4].column[0].items.filter(
+          (item) => item.isSelected
+        ),
+      })
+    );
+
+    dispatch(
+      setSettingProccess({
+        type: 'eval',
+        payload: permissionArray[0].children[5].column[0].items.filter(
+          (item) => item.isSelected
+        ),
+      })
+    );
+
+    dispatch(
+      setSettingProccess({
+        type: 'reps',
+        payload: permissionArray[0].children[5].column[1].items.filter(
+          (item) => item.isSelected
+        ),
+      })
+    );
+  }, [permissionArray]);
+
+  useEffect(() => {
     if (workflowSettings) {
       let tempItems = [];
       for (let key in workflowSettings[0]) {
@@ -288,10 +381,13 @@ const EnabledDisabkedProcess = () => {
             ) {
               col.items.forEach((item) => {
                 content.forEach((fItem) => {
-                  if (fItem === item.content)
+                  if (
+                    fItem === item.content ||
+                    item.content.includes(fItem.split(' (')[0])
+                  )
                     rawItems.push({
                       _id: item._id,
-                      content: item.content,
+                      content: fItem,
                       title:
                         title === 'Process'
                           ? 'Processes'
@@ -314,12 +410,10 @@ const EnabledDisabkedProcess = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [fetchedItems]);
 
-  // useEffect(
-  //   () => {
-  //     console.log('perm arr: ', permissionArray);
-  //     console.log('wrkf settings: ', workflowSettings);
-  //   }
-  // );
+  useEffect(() => {
+    console.log('perm arr: ', permissionArray);
+    // console.log('wrkf settings: ', workflowSettings);
+  });
 
   return (
     <form
@@ -348,6 +442,8 @@ const EnabledDisabkedProcess = () => {
                     title={colItem.proccess_title}
                     onChange={handleOnChange}
                     type='checkbox'
+                    checker={colItem.proccess_title === 'Processes'}
+                    specials='edp'
                   />
                 ))}
               </div>

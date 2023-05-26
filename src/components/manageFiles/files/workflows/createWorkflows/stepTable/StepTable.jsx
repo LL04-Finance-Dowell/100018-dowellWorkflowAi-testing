@@ -1,7 +1,7 @@
-import styles from "./stepTable.module.css";
-import { MdModeEditOutline } from "react-icons/md";
-import { RiDeleteBinLine } from "react-icons/ri";
-import { useTranslation } from "react-i18next";
+import styles from './stepTable.module.css';
+import { MdModeEditOutline } from 'react-icons/md';
+import { RiDeleteBinLine } from 'react-icons/ri';
+import { useTranslation } from 'react-i18next';
 
 const StepTable = ({
   currentTableCell,
@@ -13,10 +13,9 @@ const StepTable = ({
 }) => {
   const handleEditInternalTemplate = (currentİtem) => {
     setCurrentTableCall(currentİtem);
-
     stepNameRef.current?.click();
-    setValue("step_name", currentİtem.step_name);
-    setValue("role", currentİtem.role);
+    setValue('step_name', currentİtem.step_name);
+    setValue('role', currentİtem.role);
   };
 
   const handleRemoveInternalTemplate = (id) => {
@@ -29,8 +28,8 @@ const StepTable = ({
       <table>
         <thead>
           <tr>
-            <th>{t("step name")}</th>
-            <th>{t("role")}</th>
+            <th>{t('step name')}</th>
+            <th>{t('role')}</th>
           </tr>
         </thead>
         <tbody>
@@ -50,7 +49,7 @@ const StepTable = ({
                     className={styles.edit__item__button}
                   >
                     <i>
-                      <MdModeEditOutline color="green" size={16} />
+                      <MdModeEditOutline color='green' size={16} />
                     </i>
                   </span>
                   <span
@@ -58,7 +57,7 @@ const StepTable = ({
                     className={styles.remove__item__button}
                   >
                     <i>
-                      <RiDeleteBinLine color="red" size={16} />
+                      <RiDeleteBinLine color='red' size={16} />
                     </i>
                   </span>
                 </div>
