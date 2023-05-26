@@ -937,59 +937,19 @@ def update_team_data(team_id, team_data):
     return post_to_data_service(payload)
 
 
-def set_hourly_reminder():
+def reminder_func(reminder):
     data = get_data_from_data_service(
         *PROCESS_CONNECTION_LIST,
         "fetch",
         {
             "data_type": "Real_Data",
             "processing_state": {"$ne": "completed"},
-            "process_steps.stepReminder": "send_reminder_every_hour",
-            "process_steps.stepTeamMembers": {"$exists": True},
-            "process_steps.stepState": {"$exists": True, "$ne": "completed"},
-        },
-    )
-    hourly_reminder = [
-        reminders[0]
-        for reminders in list(
-            [
-                [
-                    {
-                        "process_id": x["_id"],
-                        "processing_state": x["processing_state"],
-                        "member": [
-                            item["member"]
-                            for item in st["stepTeamMembers"]
-                            if "member" in item
-                        ],
-                        "reminder": st["stepReminder"],
-                        "step_state": st["stepState"],
-                        "message": f"You have incomplete step in Process {x['_id']} . Please Complete it as Soon as Possible!",
-                    }
-                    for st in x["process_steps"]
-                    if  "stepTeamMembers" and "stepReminder" in st
-                ]
-                for x in data
-            ],
-        )
-    ]
-
-    cache.set("hourly_reminder_data",hourly_reminder, timeout=3600)
-
-
-def set_daily_reminder():
-    data = get_data_from_data_service(
-        *PROCESS_CONNECTION_LIST,
-        "fetch",
-        {
-            "data_type": "Real_Data",
-            "processing_state": {"$ne": "completed"},
-            "process_steps.stepReminder": "no_reminder",
+            "process_steps.stepReminder": reminder,
             "process_steps.stepTeamMembers": {"$exists": True},
             # "process_steps.stepState": {"$exists": True, "$ne": "completed"},
         },
     )
-    daily_reminder = [
+    reminder_list = [
         reminders[0]
         for reminders in list(
             [
@@ -997,22 +957,36 @@ def set_daily_reminder():
                     {
                         "process_id": x["_id"],
                         "processing_state": x["processing_state"],
-                        "member": [
+                        "item_id":x["parent_document_id"],
+                        "productName": "Workflow AI",
+                        "companyId": x["company_id"],
+                        "title": x["process_title"],
+                        "orgName": "WorkflowAi",
+                        "message": "You have a document to sign.",
+                        "link": "",
+                        "duration": "no limit",  # TODO: pass reminder time here
+                        "username": [
                             item["member"]
                             for item in st["stepTeamMembers"]
                             if "member" in item
                         ],
+                        'portfolio': [
+                            item["portfolio"]
+                            for item in st["stepTeamMembers"]
+                            if "portfolio" in item
+                        ],
                         "reminder": st["stepReminder"],
                         # "step_state": st["stepState"],
+                        
                         "message": f"You have incomplete step in  Process {x['_id']}. Please Complete it as Soon as Possible!",
                     }
                     for st in x["process_steps"]
                     if  "stepTeamMembers" and "stepReminder" in st
                 ]
                 for x in data
+                if "parent_document_id" in x
             ],
         )
     ]
 
-    return data
-print(set_daily_reminder())
+    return reminder_list
