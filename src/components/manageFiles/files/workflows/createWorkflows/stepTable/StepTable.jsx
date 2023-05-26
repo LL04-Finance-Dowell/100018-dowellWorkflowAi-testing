@@ -2,6 +2,7 @@ import styles from './stepTable.module.css';
 import { MdModeEditOutline } from 'react-icons/md';
 import { RiDeleteBinLine } from 'react-icons/ri';
 import { useTranslation } from 'react-i18next';
+import { useEffect } from 'react';
 
 const StepTable = ({
   currentTableCell,

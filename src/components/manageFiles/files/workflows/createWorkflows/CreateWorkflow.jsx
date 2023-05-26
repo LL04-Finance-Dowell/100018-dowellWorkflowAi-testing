@@ -65,7 +65,9 @@ const CreateWorkflows = ({ handleToggleOverlay }) => {
   const onSubmit = (data) => {
     const { role, step_name } = data;
     if (
-      internalWorkflows.find((item) => item.role === role) &&
+      internalWorkflows.find(
+        (item) => item.role.toLowerCase().trim() === role.toLowerCase().trim()
+      ) &&
       !currentTableCell
     )
       toast.warn('Role name already in use');
@@ -146,6 +148,10 @@ const CreateWorkflows = ({ handleToggleOverlay }) => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [workflowDetailStatus]);
+
+  useEffect(() => {
+    console.log('inter: ', internalWorkflows);
+  }, [internalWorkflows]);
 
   return (
     <Overlay
