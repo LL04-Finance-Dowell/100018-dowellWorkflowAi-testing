@@ -114,88 +114,125 @@ def step_processing_order(order, process_id, role):
     process = get_process_object(process_id)
 
     process_steps = process['process_steps']
-    public_members = process_steps['stepPublicMembers']
-    team_members = process_steps['stepTeamMembers']
-    user_members = process_steps['stepUserMembers']
+    public_members = process_steps[0].get("stepPublicMembers")
+    team_members = process_steps[0].get("stepTeamMembers")
+    user_members = process_steps[0].get("stepUserMembers")
 
 
     if order == "no_order":
-        pass
+        return True
+    
     elif order == 'team_user_public':
         try:
-            for member in team_members:
-                register_user_access(process_steps, role, member)
+            if len(team_members) > 0:
+                for member_obj in team_members:
+                    member = member_obj["member"]
+                    register_user_access(process_steps, role, member)
             
-            for member in user_members:
-                register_user_access(process_steps, role, member)
+            if len(user_members) > 0:
+                for member_obj in user_members:
+                    member = member_obj["member"]
+                    register_user_access(process_steps, role, member)
             
-            for member in public_members:
-                register_user_access(process_steps, role, member)
+            if len(public_members) > 0:
+                for member_obj in public_members:
+                    member = member_obj["member"]
+                    register_user_access(process_steps, role, member)
         except ValueError:
             raise ValueError('Sorry! You cannot access this document just yet!')
 
     elif order == 'team_public_user':
         try:
-            for member in team_members:
-                register_user_access(process_steps, role, member)
+            if len(team_members) > 0:
+                for member_obj in team_members:
+                    member = member_obj["member"]
+                    register_user_access(process_steps, role, member)
             
-            for member in public_members:
-                register_user_access(process_steps, role, member)
+            if len(public_members) > 0:
+                for member_obj in public_members:
+                    member = member_obj["member"]
+                    register_user_access(process_steps, role, member)
             
-            for member in user_members:
-                register_user_access(process_steps, role, member)
+            if len(user_members) > 0:
+                for member_obj in user_members:
+                    member = member_obj["member"]
+                    register_user_access(process_steps, role, member)
         except ValueError:
             raise ValueError('Sorry! You cannot access this document just yet!')
     
     elif order == 'user_team_public':
         try:
-            for member in user_members:
-                register_user_access(process_steps, role, member)
+            if len(user_members) > 0:
+                for member_obj in user_members:
+                    member = member_obj["member"]
+                    register_user_access(process_steps, role, member)
             
-            for member in team_members:
-                register_user_access(process_steps, role, member)
+            if len(team_members) > 0:
+                for member_obj in team_members:
+                    member = member_obj["member"]
+                    register_user_access(process_steps, role, member)
             
-            for member in public_members:
-                register_user_access(process_steps, role, member)
+            if len(public_members) > 0:
+                for member_obj in public_members:
+                    member = member_obj["member"]
+                    register_user_access(process_steps, role, member)
         except ValueError:
             raise ValueError('Sorry! You cannot access this document just yet!')
 
     elif order == 'user_public_team':
         try:
-            for member in user_members:
-                register_user_access(process_steps, role, member)
+            if len(user_members) > 0:
+                for member_obj in user_members:
+                    member = member_obj["member"]
+                    register_user_access(process_steps, role, member)
             
-            for member in public_members:
-                register_user_access(process_steps, role, member)
+            if len(public_members) > 0:
+                for member_obj in public_members:
+                    member = member_obj["member"]
+                    register_user_access(process_steps, role, member)
             
-            for member in team_members:
-                register_user_access(process_steps, role, member)
+            if len(team_members) > 0:
+                for member_obj in team_members:
+                    member = member_obj["member"]
+                    register_user_access(process_steps, role, member)
         except ValueError:
             raise ValueError('Sorry! You cannot access this document just yet!')
     
     elif order == 'public_user_team':
         try:
-            for member in public_members:
-                register_user_access(process_steps, role, member)
+            if len(public_members) > 0:
+                for member_obj in public_members:
+                    member = member_obj["member"]
+                    register_user_access(process_steps, role, member)
             
-            for member in user_members:
-                register_user_access(process_steps, role, member)
+            if len(user_members) > 0:
+                for member_obj in user_members:
+                    member = member_obj["member"]
+                    register_user_access(process_steps, role, member)
             
-            for member in team_members:
-                register_user_access(process_steps, role, member)
+            if len(team_members) > 0:
+                for member_obj in team_members:
+                    member = member_obj["member"]
+                    register_user_access(process_steps, role, member)
         except ValueError:
             raise ValueError('Sorry! You cannot access this document just yet!')
 
     elif order == 'public_team_user':
         try:
-            for member in public_members:
-                register_user_access(process_steps, role, member)
+            if len(public_members) > 0:
+                for member_obj in public_members:
+                    member = member_obj["member"]
+                    register_user_access(process_steps, role, member)
             
-            for member in team_members:
-                register_user_access(process_steps, role, member)
+            if len(team_members) > 0:
+                for member_obj in team_members:
+                    member = member_obj["member"]
+                    register_user_access(process_steps, role, member)
             
-            for member in user_members:
-                register_user_access(process_steps, role, member)
+            if len(user_members) > 0:
+                for member_obj in user_members:
+                    member = member_obj["member"]
+                    register_user_access(process_steps, role, member)
         except ValueError:
             raise ValueError('Sorry! You cannot access this document just yet!')
 
