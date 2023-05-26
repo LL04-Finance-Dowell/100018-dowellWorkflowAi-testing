@@ -41,7 +41,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "rest_framework",
-    # "django_crontab",
+    "django_crontab",
 
 ]
 
@@ -140,13 +140,13 @@ EMAIL_USE_TLS = True
 EMAIL_HOST_USER = "docs@dowellresearch.sg"
 EMAIL_HOST_PASSWORD = "jpcjzsnzarucochh"
 
-# CRONJOBS = [
-#     ('0 * * * *', 'app.utils.mongo_db_connection.set_hourly_reminder'),
-#     ('0 0 * *', 'app.utils.mongo_db_connection.set_daily_reminder')
+CRONJOBS = [
+    ('*/1 * * * *', 'app.utils.mongo_db_connection.set_hourly_reminder'),
+    ('0 0 * *', 'app.utils.mongo_db_connection.set_daily_reminder')
 
     
 
-# ]
+]
 # Media files
 
 MEDIA_ROOT = BASE_DIR / "media"

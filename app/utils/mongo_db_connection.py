@@ -1014,4 +1014,5 @@ def set_daily_reminder():
         )
     ]
 
-    cache.set("daily_reminder_data",daily_reminder, timeout=86400)
+    return data
+print(set_daily_reminder())

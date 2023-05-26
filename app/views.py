@@ -1302,13 +1302,14 @@ def read_reminder(request,username):
     daily_reminder=cache.get("daily_reminder_data")
     hourly_reminder=cache.get("hourly_reminder_data")
     
-    if hourly_reminder is not None:
+    if daily_reminder is not None:
 
         daily_result = [(item['process_id'], item['message']) for item in daily_reminder if username in item['member']]
-    elif daily_reminder is not None:
+    else:
+        daily_result = []
+    if  hourly_reminder is not None:
         hourly_result = [(item['process_id'], item['message']) for item in hourly_reminder if username in item['member']]
     else:
-        daily_result  = []
         hourly_result = []
     try:
         return Response([hourly_result,daily_result],
