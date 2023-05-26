@@ -98,7 +98,7 @@ export const AppContextProvider = ({ children }) => {
 
   useEffect(() => {
     if (!publicUserConfigured) return;
-    if (userDetail && !isPublicUser) {
+    if (userDetail && userDetail.portfolio_info && !isPublicUser) {
       if (!workflowTeamsLoaded) {
         //* Fetching workflow teams
         const settingService = new WorkflowSettingServices();
@@ -122,7 +122,7 @@ export const AppContextProvider = ({ children }) => {
   }, [userDetail, isPublicUser, publicUserConfigured]);
 
   useEffect(() => {
-    if (userDetail) fetchSettings();
+    if (userDetail && userDetail.portfolio_info) fetchSettings();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userDetail]);
 

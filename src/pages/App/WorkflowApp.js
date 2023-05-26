@@ -182,7 +182,7 @@ const WorkflowApp = () => {
   }, [location]);
 
   useEffect(() => {
-    if (allDocuments.length) {
+    if (allDocuments && Array.isArray(allDocuments)) {
       const completedDocs = allDocuments.filter(
         (doc) => doc.document_state === 'finalized'
       );
