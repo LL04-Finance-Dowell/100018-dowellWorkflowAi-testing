@@ -7,7 +7,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import {
   setColumn,
   setPermissionArray,
-  setSettingProccess,
   setFetchedPermissionArray,
 } from '../../../features/app/appSlice';
 import { v4 as uuidv4 } from 'uuid';
@@ -312,6 +311,7 @@ const EnabledDisabkedProcess = () => {
 
       dispatch(setFetchedPermissionArray(rawItems));
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [fetchedItems]);
 
   // useEffect(

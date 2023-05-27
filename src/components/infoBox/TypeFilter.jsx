@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { AiFillCheckSquare, AiOutlineDown, AiOutlineUp } from 'react-icons/ai';
 import './typefilter.css';
-import { v4 } from 'uuid';
+
 import {
   setPortfoliosInWorkflowAITeams,
   setSelectedPortfolioTypeForWorkflowSettings,
@@ -13,16 +13,12 @@ import { toast } from 'react-toastify';
 import { setIsSelected } from '../../utils/helpers';
 
 const TypeFilter = ({ edit }) => {
-  const [filterOpts, setFilterOpts] = useState([
-    'user',
-    'team_member',
-    'public',
-  ]);
+  const filterOpts = ['user', 'team_member', 'public'];
   const [isDropdown, setIsDropdown] = useState(false);
   const { userDetail } = useSelector((state) => state.auth);
   const [userPortfolios, setUserPortfolios] = useState();
   const [filteredPortfolios, setFilteredPortfolios] = useState([]);
-  const { teamsInWorkflowAI } = useSelector((state) => state.app);
+
   const { filter, setFilter } = useAppContext();
 
   const dispatch = useDispatch();
@@ -56,7 +52,8 @@ const TypeFilter = ({ edit }) => {
           })
         );
     }
-  }, [filteredPortfolios]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [filteredPortfolios, filter]);
 
   return (
     <section
@@ -159,6 +156,7 @@ const DropOpt = ({ setFilter, filter, filterOpts, edit }) => {
 
   useEffect(() => {
     dispatch(setSelectedPortfolioTypeForWorkflowSettings(filter));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (

@@ -5,7 +5,7 @@ import styles from './notification.module.css';
 import { useSelector } from 'react-redux';
 import { useEffect } from 'react';
 import { useState } from 'react';
-import { useTranslation } from "react-i18next";
+import { useTranslation } from 'react-i18next';
 
 const Notifications = () => {
   const { t } = useTranslation();
@@ -62,11 +62,12 @@ const Notifications = () => {
     });
 
     setNotificationItems(updatedItems);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [notificationsForUser]);
 
   return (
     <div className={styles.container}>
-      <h2 className={styles.header}>{t("Notifications")}</h2>
+      <h2 className={styles.header}>{t('Notifications')}</h2>
       <div className={styles.line}></div>
       <div className={styles.collapse__box}>
         <CollapseItem listType='ol' items={notificationItems} />

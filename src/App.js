@@ -1,43 +1,29 @@
-import { useEffect, useState, Suspense } from 'react';
-import { Routes, Route, useNavigate, useSearchParams } from 'react-router-dom';
-import { setIconColor } from './features/app/appSlice'
+import { useEffect, Suspense } from 'react';
+import { Routes, Route } from 'react-router-dom';
+import { setIconColor } from './features/app/appSlice';
 
-import { useUserContext } from './contexts/UserContext';
 import { useDispatch, useSelector } from 'react-redux';
 import useDowellLogin from './hooks/useDowellLogin';
 import WorkflowApp from './pages/App/WorkflowApp';
-import LandingPage from './pages/Landing/Home';
+
 import './App.css';
 import DocumentsPage from './pages/Documents/AllDocumentsPage/DocumentsPage';
-import CreateNewDocumentPage from './pages/Documents/NewDocumentPage/CreateNewDocumentPage';
-import ProcessDocumentsPage from './pages/Documents/ProcessDocumentsPage/ProcessDocumentsPage';
-import SignDocumentsPage from './pages/Documents/SignDocumentPage/SignDocumentsPage';
-import RejectedDocumentsPage from './pages/Documents/RejectedDocuments/RejectedDocumentsPage';
+
 import NotificationsPage from './pages/Notifications/NotificationsPage';
-import RejectedTemplatesPage from './pages/Templates/RejectedTemplatesPage/RejectedTemplatesPage';
-import CreateNewTemplatePage from './pages/Templates/CreateTemplatePage/CreateNewTemplatePage';
-import ApproveTemplatesPage from './pages/Templates/ApproveTemplatesPage/ApproveTemplatesPage';
+
 import TemplatesPage from './pages/Templates/AllTemplatesPage/TemplatesPage';
 import WorkflowsPage from './pages/Workflows/AllWorkflowsPage/WorkflowsPage';
-import CreateNewWorkflowPage from './pages/Workflows/CreateNewWorkflowPage/CreateNewWorkflowPage';
-import ApproveWorkflowPage from './pages/Workflows/ApproveWorkflowPage/ApproveWorkflowPage';
-import RejectedWorkflowsPage from './pages/Workflows/RejectedWorkflowsPage/RejectedWorkflowsPage';
+
 import SetWorkflowInDoc from './components/setWorkFlowInDoc/SetWorkflowInDoc';
 import SetWorkflowInDocNew from './components/setWorkFlowInDocNew/SetWorkflowInDoc';
-import Documents from './pages/Documents/Documents/Documents';
-import TempDraft from './pages/Templates/TempDraft/TempDraft';
-import DraftsDoc from './pages/Documents/DraftsDoc/DraftsDoc';
-import NewTemplate from './pages/Templates/NewTemplate/NewTemplate';
-import NewWorkFlow from './pages/Workflows/NewWorkflow/NewWorkFlow';
-import DraftF from './pages/Workflows/DraftF/DraftF';
-import { dowellLoginUrl } from './httpCommon/httpCommon';
+
 import WorkflowAiSettings from './components/workflowAiSettings/WorkflowAiSettings';
 import VerificationPage from './pages/Verification/VerificationPage';
 import ProccessPage from './pages/Processes/AllProccessPage/ProcessesPage';
 import SearchPage from './pages/Search/SearchPage';
-import ConstructionPage from './pages/ConstructionPage/ConstructionPage';
+
 import { useAppContext } from './contexts/AppContext';
-import Spinner from './components/spinner/Spinner';
+
 import axios from 'axios';
 
 function App() {
@@ -46,53 +32,53 @@ function App() {
   const { isPublicUser } = useAppContext();
   useDowellLogin();
 
-
   useEffect(() => {
     const interval = setInterval(() => {
       checkstatus();
     }, 6000); // 60 seconds
 
     return () => clearInterval(interval); // Clean up the interval on unmount
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-
   function checkstatus() {
-
     // AJAX GET request
 
-    axios.get("https://100014.pythonanywhere.com/api/live_users")
+    axios
+      .get('https://100014.pythonanywhere.com/api/live_users')
       .then((response) => {
         // console.log("getdata", response);
-        dispatch(setIconColor("green"));
+        dispatch(setIconColor('green'));
       })
       .catch((error) => {
         // console.log(error);
-        dispatch(setIconColor("red"));
+        dispatch(setIconColor('red'));
       });
-
 
     // AJAX POST request
 
-    axios.post("https://100014.pythonanywhere.com/en/live_status", {
-      data: {
-        session_id: session_id,
-        product: "Workflow AI",
-
-      },
-    }, {
-      headers: {
-        "Content-Type": "application/json"
-      }
-    })
+    axios
+      .post(
+        'https://100014.pythonanywhere.com/en/live_status',
+        {
+          data: {
+            session_id: session_id,
+            product: 'Workflow AI',
+          },
+        },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        }
+      )
       .then((response) => {
         // console.log("postdata", response);
       })
       .catch((error) => {
-        // console.log(error)
-        // Empty catch block 
+        console.log(error);
+        // Empty catch block
       });
-
-
   }
   // // USE ONLY WHEN APP IS BROKEN OR UNDERGOING MAJOR CHANGES
   // return (

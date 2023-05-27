@@ -21,7 +21,7 @@
   gap: 3px;
 }
 
-.grid__box button {
+.grid__box button:not(button.btn_exempt) {
   font-size: 16px;
   margin-top: 15px;
   background-color: var(--e-global-color-secondary);

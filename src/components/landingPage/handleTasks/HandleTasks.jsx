@@ -76,7 +76,6 @@ export default HandleTasks;
 const ItemsDisplay = ({ items, colorClass }) => {
   const [itemsToDisplay, setItemsToDisplay] = useState([]);
   const [startIndex, setStartIndex] = useState(0);
-  const [adjustHeight, setAdjustHeight] = useState(false);
   const { setRerender } = useAppContext();
 
   const itemsPusher = () => {
@@ -91,7 +90,6 @@ const ItemsDisplay = ({ items, colorClass }) => {
     }
     setItemsToDisplay([...itemsToDisplay, ...cutItems]);
     setStartIndex(count + 1);
-    setAdjustHeight(true);
   };
 
   const itemsRemover = () => {
@@ -100,12 +98,12 @@ const ItemsDisplay = ({ items, colorClass }) => {
     if (!rem) modItems.splice(-5, 5);
     else modItems.splice(-rem, rem);
     setItemsToDisplay(modItems);
-    setAdjustHeight(true);
     setRerender(v4());
   };
 
   useEffect(() => {
     itemsPusher();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // useEffect(() => {

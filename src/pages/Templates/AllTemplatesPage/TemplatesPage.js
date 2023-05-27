@@ -1,34 +1,24 @@
-import ManageFiles from "../../../components/manageFiles/ManageFiles";
-import SectionBox from "../../../components/manageFiles/sectionBox/SectionBox";
-import WorkflowLayout from "../../../layouts/WorkflowLayout/WorkflowLayout";
-import "./style.css";
-import { v4 as uuidv4 } from "uuid";
-import { useDispatch, useSelector } from "react-redux";
-import { useEffect } from "react";
-import {
-  allTemplates,
-  mineTemplates,
-  savedTemplates,
-} from "../../../features/template/asyncThunks";
-import TemplateCard from "../../../components/hoverCard/templateCard/TemplateCard";
-import { useNavigate } from "react-router-dom";
+import ManageFiles from '../../../components/manageFiles/ManageFiles';
+import SectionBox from '../../../components/manageFiles/sectionBox/SectionBox';
+import WorkflowLayout from '../../../layouts/WorkflowLayout/WorkflowLayout';
+import './style.css';
+import { v4 as uuidv4 } from 'uuid';
+import { useDispatch, useSelector } from 'react-redux';
+import { useEffect } from 'react';
+import { allTemplates } from '../../../features/template/asyncThunks';
+import TemplateCard from '../../../components/hoverCard/templateCard/TemplateCard';
+import { useNavigate } from 'react-router-dom';
 
 const TemplatesPage = ({ home, showOnlySaved, showOnlyTrashed }) => {
   const { userDetail } = useSelector((state) => state.auth);
 
-  const {
-    minedTemplates,
-    mineStatus,
-    allTemplates: allTemplatesArray,
-    savedTemplatesItemsStatus,
-    savedTemplatesItems,
-    allTemplatesStatus,
-  } = useSelector((state) => state.template);
+  const { allTemplates: allTemplatesArray, allTemplatesStatus } = useSelector(
+    (state) => state.template
+  );
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-
-// console.log('templ arrat',allTemplatesArray)
+  // console.log('templ arrat',allTemplatesArray)
   useEffect(() => {
     const data = {
       company_id: userDetail?.portfolio_info[0].org_id,
@@ -39,64 +29,80 @@ const TemplatesPage = ({ home, showOnlySaved, showOnlyTrashed }) => {
     if (savedTemplatesItemsStatus === "idle")
       dispatch(savedTemplates(savedTemplatesData)); */
 
-    if (allTemplatesStatus === "idle") dispatch(allTemplates(data));
+    if (allTemplatesStatus === 'idle') dispatch(allTemplates(data));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userDetail]);
 
   useEffect(() => {
-    if (showOnlySaved) navigate("#saved-templates")
-    if (showOnlyTrashed) navigate("#trashed-templates")
-    if (home) navigate('#drafts')
-  }, [showOnlySaved, showOnlyTrashed, home])
-
-  
+    if (showOnlySaved) navigate('#saved-templates');
+    if (showOnlyTrashed) navigate('#trashed-templates');
+    if (home) navigate('#drafts');
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [showOnlySaved, showOnlyTrashed, home]);
 
   return (
     <WorkflowLayout>
-      <div id="new-template">
-        <ManageFiles title="Templates" removePageSuffix={true}>
-          {
-            home ? <div id="drafts">
+      <div id='new-template'>
+        <ManageFiles title='Templates' removePageSuffix={true}>
+          {home ? (
+            <div id='drafts'>
               <SectionBox
-                cardBgColor="#1ABC9C"
-                title="My Templates"
+                cardBgColor='#1ABC9C'
+                title='My Templates'
                 Card={TemplateCard}
                 cardItems={
                   allTemplatesArray &&
                   allTemplatesArray.length &&
-                  allTemplatesArray.filter(
-                    (item) =>
-                      item.created_by === userDetail?.portfolio_info[0].username
-                  ).filter(item => item.data_type === userDetail?.portfolio_info[0]?.data_type)
+                  allTemplatesArray
+                    .filter(
+                      (item) =>
+                        item.created_by ===
+                        userDetail?.portfolio_info[0].username
+                    )
+                    .filter(
+                      (item) =>
+                        item.data_type ===
+                        userDetail?.portfolio_info[0]?.data_type
+                    )
                 }
                 status={allTemplatesStatus}
-                itemType={"templates"}
+                itemType={'templates'}
               />
-            </div> : <></>
-          }
-          {
-            showOnlySaved ? <div id="saved-templates">
+            </div>
+          ) : (
+            <></>
+          )}
+          {showOnlySaved ? (
+            <div id='saved-templates'>
               <SectionBox
-                cardBgColor="#1ABC9C"
-                title="saved templates"
+                cardBgColor='#1ABC9C'
+                title='saved templates'
                 Card={TemplateCard}
-                cardItems={allTemplatesArray.filter(item => item.data_type === userDetail?.portfolio_info[0]?.data_type)}
+                cardItems={allTemplatesArray.filter(
+                  (item) =>
+                    item.data_type === userDetail?.portfolio_info[0]?.data_type
+                )}
                 status={allTemplatesStatus}
-                itemType={"templates"}
+                itemType={'templates'}
               />
-            </div> : <></>
-          }
-          {
-            showOnlyTrashed ? <div id="trashed-templates">
+            </div>
+          ) : (
+            <></>
+          )}
+          {showOnlyTrashed ? (
+            <div id='trashed-templates'>
               <SectionBox
-                cardBgColor="#1ABC9C"
-                title="trashed templates"
+                cardBgColor='#1ABC9C'
+                title='trashed templates'
                 Card={TemplateCard}
                 cardItems={[]}
                 status={allTemplatesStatus}
-                itemType={"templates"}
+                itemType={'templates'}
               />
-            </div> : <></>
-          }
+            </div>
+          ) : (
+            <></>
+          )}
         </ManageFiles>
       </div>
     </WorkflowLayout>

@@ -3,22 +3,20 @@ import { useForm } from 'react-hook-form';
 import { useEffect, useState, useRef } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import Overlay from '../../../overlay/Overlay';
-import { useUserContext } from '../../../../../contexts/UserContext';
 import overlayStyles from '../../../overlay/overlay.module.css';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   createWorkflow,
   updateWorkflow,
 } from '../../../../../features/workflow/asyncTHunks';
-import { ToastContainer, toast } from 'react-toastify';
+import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { LoadingSpinner } from '../../../../LoadingSpinner/LoadingSpinner';
+
 import SubmitButton from '../../../../submitButton/SubmitButton';
 import { setToggleManageFileForm } from '../../../../../features/app/appSlice';
 import Spinner from '../../../../spinner/Spinner';
 import { TiTick } from 'react-icons/ti';
-import { MdModeEditOutline } from 'react-icons/md';
-import { RiDeleteBinLine } from 'react-icons/ri';
+
 import StepTable from './stepTable/StepTable';
 import { useTranslation } from 'react-i18next';
 
@@ -41,8 +39,6 @@ const CreateWorkflows = ({ handleToggleOverlay }) => {
   const [internalWorkflows, setInternalWorkflows] = useState([]);
   const [workflowTitle, setWorkflowTitle] = useState('');
   const [currentTableCell, setCurrentTableCall] = useState(null);
-
-  const { currentUser } = useUserContext();
 
   const { register, handleSubmit, reset, setValue, watch } = useForm();
   const { step_name, role } = watch();
@@ -145,6 +141,7 @@ const CreateWorkflows = ({ handleToggleOverlay }) => {
         );
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [workflowDetailStatus]);
 
   return (

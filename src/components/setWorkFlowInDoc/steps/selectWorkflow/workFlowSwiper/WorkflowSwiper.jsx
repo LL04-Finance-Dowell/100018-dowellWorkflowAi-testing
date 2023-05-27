@@ -1,29 +1,28 @@
-import styles from "./workFlowSwiper.module.css";
-import { Swiper, SwiperSlide } from "swiper/react";
-import { Navigation } from "swiper";
-import { Pagination } from "swiper";
-import "swiper/css";
-import "swiper/css/navigation";
-import swiper from "./swiper.css";
-import { useDispatch, useSelector } from "react-redux";
+// ? Ln 62 <span> used instead of <button>
+import styles from './workFlowSwiper.module.css';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { Navigation } from 'swiper';
+import { Pagination } from 'swiper';
+import 'swiper/css';
+import 'swiper/css/navigation';
+
+import { useDispatch, useSelector } from 'react-redux';
 import {
   removeFromSelectedWorkflowsToDoc,
-  setSelectedWorkflowsToDoc,
   setWfToDocument,
-} from "../../../../../features/app/appSlice";
-import { contentDocument } from "../../../../../features/document/asyncThunks";
-import { IoIosRemoveCircleOutline } from "react-icons/io";
+} from '../../../../../features/app/appSlice';
+
+import { IoIosRemoveCircleOutline } from 'react-icons/io';
 
 const WorkflowSwiper = ({ loop, perSlide }) => {
   const dispatch = useDispatch();
 
-  const { selectedWorkflowsToDoc, currentDocToWfs } = useSelector(
-    (state) => state.app
-  );
+  const { selectedWorkflowsToDoc } = useSelector((state) => state.app);
 
-  console.log("selescscsc", selectedWorkflowsToDoc);
+  console.log('selescscsc', selectedWorkflowsToDoc);
 
-  const handleConnectWfToDoc = () => {
+  const handleConnectWfToDoc = (e) => {
+    e.preventDefault();
     dispatch(setWfToDocument());
     /*   if (currentDocToWfs) {
       const data = { document_id: currentDocToWfs._id };
@@ -33,7 +32,7 @@ const WorkflowSwiper = ({ loop, perSlide }) => {
   };
 
   const handleRemoveWorflow = (id) => {
-    console.log("iddddddd", id);
+    console.log('iddddddd', id);
     dispatch(removeFromSelectedWorkflowsToDoc(id));
   };
 
@@ -48,7 +47,7 @@ const WorkflowSwiper = ({ loop, perSlide }) => {
         }}
         navigation={loop}
         modules={[Pagination, Navigation]}
-        className="select-workflow"
+        className='select-workflow'
       >
         {selectedWorkflowsToDoc.map((selectedWorkflow) => (
           <SwiperSlide key={selectedWorkflow._id}>
@@ -60,9 +59,13 @@ const WorkflowSwiper = ({ loop, perSlide }) => {
         ))}
       </Swiper>
       {selectedWorkflowsToDoc.length > 0 && (
-        <a onClick={handleConnectWfToDoc} className={styles.add__button}>
+        <span
+          style={{ cursor: 'pointer' }}
+          onClick={handleConnectWfToDoc}
+          className={styles.add__button}
+        >
           Add Selected Workflow to document
-        </a>
+        </span>
       )}
     </div>
   );

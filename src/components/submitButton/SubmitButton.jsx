@@ -1,6 +1,6 @@
 import { LoadingSpinner } from '../LoadingSpinner/LoadingSpinner';
-import styles from './submitButton.module.css';
-import { useTranslation } from "react-i18next";
+
+import { useTranslation } from 'react-i18next';
 
 const SubmitButton = ({
   children,

@@ -1,19 +1,20 @@
-import React, { useState, useEffect, useRef, memo, useCallback } from "react";
-import styles from "./infoBoxes.module.css";
-import { v4 as uuidv4 } from "uuid";
-import { GrAdd } from "react-icons/gr";
-import { MdOutlineRemove } from "react-icons/md";
-import { useScroll, useTransform } from "framer-motion";
-import { useSelector, useDispatch } from "react-redux";
+// ? <span> used instead of <button> (style conflicts) or <a> (ESLint prompts)
+import React, { useState, useEffect, useRef, memo, useCallback } from 'react';
+import styles from './infoBoxes.module.css';
+import { v4 as uuidv4 } from 'uuid';
+import { GrAdd } from 'react-icons/gr';
+import { MdOutlineRemove } from 'react-icons/md';
+import { useScroll, useTransform } from 'framer-motion';
+import { useSelector, useDispatch } from 'react-redux';
 import {
   removeFromSelectedMembersForProcess,
   setMembersSetForProcess,
   setSelectedMembersForProcess,
   setSelectedWorkflowsToDoc,
-} from "../../../../../features/app/appSlice";
-import Collapse from "../../../../../layouts/collapse/Collapse";
-import { LoadingSpinner } from "../../../../LoadingSpinner/LoadingSpinner";
-import { useForm } from "react-hook-form";
+} from '../../../../../features/app/appSlice';
+import Collapse from '../../../../../layouts/collapse/Collapse';
+import { LoadingSpinner } from '../../../../LoadingSpinner/LoadingSpinner';
+import { useForm } from 'react-hook-form';
 import {
   InfoBoxContainer,
   InfoContentBox,
@@ -21,13 +22,10 @@ import {
   InfoContentText,
   InfoSearchbar,
   InfoTitleBox,
-} from "../../../../infoBox/styledComponents";
-import {
-  allWorkflows,
-  savedWorkflows,
-} from "../../../../../features/workflow/asyncTHunks";
-import { toast } from "react-toastify";
-import { useTranslation } from "react-i18next";
+} from '../../../../infoBox/styledComponents';
+import { allWorkflows } from '../../../../../features/workflow/asyncTHunks';
+import { toast } from 'react-toastify';
+import { useTranslation } from 'react-i18next';
 
 const InfoBoxes = ({ savedDoc }) => {
   const { register, watch } = useForm();
@@ -35,22 +33,20 @@ const InfoBoxes = ({ savedDoc }) => {
 
   const ref = useRef(null);
   const dispatch = useDispatch();
-	const { t } = useTranslation();
+  const { t } = useTranslation();
 
   const { userDetail } = useSelector((state) => state.auth);
   const {
     currentDocToWfs,
     selectedWorkflowsToDoc,
     selectedMembersForProcess,
-    docCurrentWorkflow,
+
     membersSetForProcess,
   } = useSelector((state) => state.app);
   const { allWorkflows: allWorkflowsArray, allWorkflowsStatus } = useSelector(
     (state) => state.workflow
   );
-  const { contentOfDocument, savedDocumentsItems } = useSelector(
-    (state) => state.document
-  );
+
   const [compInfoBoxes, setCompInfoBoxes] = useState(infoBoxes);
 
   useEffect(() => {
@@ -60,12 +56,13 @@ const InfoBoxes = ({ savedDoc }) => {
     };
 
     dispatch(allWorkflows(data));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const memorizedInfoBox = useCallback(() => {
     setCompInfoBoxes((prev) =>
       prev.map((item) =>
-        item.title === "workflow"
+        item.title === 'workflow'
           ? {
               ...item,
               contents:
@@ -82,62 +79,61 @@ const InfoBoxes = ({ savedDoc }) => {
                     ),
               status: allWorkflowsStatus,
             }
-          : item.title === "team"
+          : item.title === 'team'
           ? {
               ...item,
               contents:
                 team?.length > 1
-                  ? userDetail?.userportfolio ?
-                    userDetail?.userportfolio
-                      .filter((user) => user.member_type === "team_member")
-                      .filter((user) =>
-                        Array.isArray(user.username) && user.username.length > 0
-                          ? user.username[0]
-                              .toLocaleLowerCase()
-                              .includes(team.toLocaleLowerCase())
-                          : user.username
-                              .toLocaleLowerCase()
-                              .includes(team.toLocaleLowerCase())
-                      )
-                    :
-                    userDetail?.selected_product?.userportfolio
-                      .filter((user) => user.member_type === "team_member")
-                      .filter((user) =>
-                        Array.isArray(user.username) && user.username.length > 0
-                          ? user.username[0]
-                              .toLocaleLowerCase()
-                              .includes(team.toLocaleLowerCase())
-                          : user.username
-                              .toLocaleLowerCase()
-                              .includes(team.toLocaleLowerCase())
-                      )
-                  : userDetail?.userportfolio ?
-                    userDetail?.userportfolio.filter(
-                      (user) => user.member_type === "team_member"
+                  ? userDetail?.userportfolio
+                    ? userDetail?.userportfolio
+                        .filter((user) => user.member_type === 'team_member')
+                        .filter((user) =>
+                          Array.isArray(user.username) &&
+                          user.username.length > 0
+                            ? user.username[0]
+                                .toLocaleLowerCase()
+                                .includes(team.toLocaleLowerCase())
+                            : user.username
+                                .toLocaleLowerCase()
+                                .includes(team.toLocaleLowerCase())
+                        )
+                    : userDetail?.selected_product?.userportfolio
+                        .filter((user) => user.member_type === 'team_member')
+                        .filter((user) =>
+                          Array.isArray(user.username) &&
+                          user.username.length > 0
+                            ? user.username[0]
+                                .toLocaleLowerCase()
+                                .includes(team.toLocaleLowerCase())
+                            : user.username
+                                .toLocaleLowerCase()
+                                .includes(team.toLocaleLowerCase())
+                        )
+                  : userDetail?.userportfolio
+                  ? userDetail?.userportfolio.filter(
+                      (user) => user.member_type === 'team_member'
                     )
-                    :
-                    userDetail?.selected_product?.userportfolio.filter(
-                      (user) => user.member_type === "team_member"
+                  : userDetail?.selected_product?.userportfolio.filter(
+                      (user) => user.member_type === 'team_member'
                     ),
-              status: "done",
+              status: 'done',
             }
-          : item.title === "user"
+          : item.title === 'user'
           ? {
               ...item,
-              contents: userDetail?.userportfolio ?
-                userDetail?.userportfolio.filter(
-                  (user) => user.member_type === "public"
-                ) 
-                :  
-                userDetail?.selected_product?.userportfolio.filter(
-                  (user) => user.member_type === "public"
-                )
-              ,
-              status: "done",
+              contents: userDetail?.userportfolio
+                ? userDetail?.userportfolio.filter(
+                    (user) => user.member_type === 'public'
+                  )
+                : userDetail?.selected_product?.userportfolio.filter(
+                    (user) => user.member_type === 'public'
+                  ),
+              status: 'done',
             }
           : item
       )
     );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [allWorkflowsStatus, workflow, team, userDetail]);
 
   useEffect(() => {
@@ -153,7 +149,7 @@ const InfoBoxes = ({ savedDoc }) => {
           user.username.forEach((arrUsername) => {
             const copyOfUser = { ...user };
             copyOfUser.username = arrUsername;
-  
+
             if (
               selectedMembersForProcess.find(
                 (member) => member.username === copyOfUser.username
@@ -164,10 +160,10 @@ const InfoBoxes = ({ savedDoc }) => {
               );
             dispatch(setSelectedMembersForProcess(copyOfUser));
           });
-  
+
           return;
         }
-  
+
         if (
           selectedMembersForProcess.find((member) =>
             member.username === Array.isArray(user.username) &&
@@ -187,7 +183,7 @@ const InfoBoxes = ({ savedDoc }) => {
       });
 
       dispatch(setMembersSetForProcess(true));
-      return
+      return;
     }
 
     userDetail.selected_product?.userportfolio?.forEach((user) => {
@@ -229,14 +225,15 @@ const InfoBoxes = ({ savedDoc }) => {
     });
 
     dispatch(setMembersSetForProcess(true));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userDetail, currentDocToWfs, membersSetForProcess]);
 
   const { scrollYProgress } = useScroll({
     target: ref,
-    offset: ["end end", "start start"],
+    offset: ['end end', 'start start'],
   });
 
-  const y = useTransform(scrollYProgress, [0, 1], ["200px", "-200px"]);
+  const y = useTransform(scrollYProgress, [0, 1], ['200px', '-200px']);
 
   const handleTogleBox = (id) => {
     const updatedInfoBoxes = compInfoBoxes.map((item) =>
@@ -261,116 +258,137 @@ const InfoBoxes = ({ savedDoc }) => {
         dispatch(setSelectedWorkflowsToDoc(selectedWorkFlow));
       }
     } else {
-      toast.info("Please pick a document first.")
+      toast.info('Please pick a document first.');
       // alert("u have to pick document first");
     }
   };
 
   return (
     <div ref={ref} style={{ y: y }} className={styles.container}>
-      {React.Children.toArray(compInfoBoxes?.map((infoBox) => (
-        <InfoBoxContainer className={styles.box}>
-          <InfoTitleBox
-            style={{ pointerEvents: infoBox?.status === "pending" && "none", cursor: savedDoc ? "not-allowed" : "initial" }}
-            onClick={currentDocToWfs ? savedDoc ? () => {} : () => handleTogleBox(infoBox.id) : () => toast.info("Please select a document first.")}
-            /*  className={styles.title__box} */
-          >
-            {infoBox.status && infoBox.status === "pending" ? (
-              <LoadingSpinner />
-            ) : (
-              <>
-                <div
-                  style={{
-                    marginRight: "8px",
-                    fontSize: "14px",
-                  }}
-                >
-                  {infoBox.isOpen ? <MdOutlineRemove /> : <GrAdd />}
-                </div>
-                <a>{t(infoBox.title)}</a>
-              </>
-            )}
-          </InfoTitleBox>
+      {React.Children.toArray(
+        compInfoBoxes?.map((infoBox) => (
+          <InfoBoxContainer className={styles.box}>
+            <InfoTitleBox
+              style={{
+                pointerEvents: infoBox?.status === 'pending' && 'none',
+                cursor: savedDoc ? 'not-allowed' : 'initial',
+              }}
+              onClick={
+                currentDocToWfs
+                  ? savedDoc
+                    ? () => {}
+                    : () => handleTogleBox(infoBox.id)
+                  : () => toast.info('Please select a document first.')
+              }
+              /*  className={styles.title__box} */
+            >
+              {infoBox.status && infoBox.status === 'pending' ? (
+                <LoadingSpinner />
+              ) : (
+                <>
+                  <div
+                    style={{
+                      marginRight: '8px',
+                      fontSize: '14px',
+                    }}
+                  >
+                    {infoBox.isOpen ? <MdOutlineRemove /> : <GrAdd />}
+                  </div>
+                  <span style={{ cursor: 'pointer' }}>{t(infoBox.title)}</span>
+                </>
+              )}
+            </InfoTitleBox>
 
-          <Collapse open={infoBox.isOpen}>
-            <InfoContentContainer>
-              <InfoSearchbar
-                placeholder="Search"
-                {...register(`${infoBox.title}`)}
-                fullWidth={true}
-              />
+            <Collapse open={infoBox.isOpen}>
+              <InfoContentContainer>
+                <InfoSearchbar
+                  placeholder='Search'
+                  {...register(`${infoBox.title}`)}
+                  fullWidth={true}
+                />
 
-              <InfoContentBox className={styles.content__box}>
-                {/* <>{console.log(infoBox)}</> */}
-                {infoBox && infoBox.contents && infoBox.contents.length > 0 ? (
-                  [...infoBox?.contents].reverse().map((item, index) =>
-                    item.username ? (
-                      Array.isArray(item.username) ? (
-                        <>
-                          {React.Children.toArray(
-                            item.username.map((user, userIndex) => {
-                              return (
-                                <InfoContentText
-                                  key={user + crypto.randomUUID()}
-                                  /* className={styles.content} */
-                                >
-                                  <span>{userIndex + 1 === 1 ? index + 1 : userIndex + 1}. {user}</span>
-                                </InfoContentText>
-                              );
-                            })
-                          )}
-                        </>
+                <InfoContentBox className={styles.content__box}>
+                  {/* <>{console.log(infoBox)}</> */}
+                  {infoBox &&
+                  infoBox.contents &&
+                  infoBox.contents.length > 0 ? (
+                    [...infoBox?.contents].reverse().map((item, index) =>
+                      item.username ? (
+                        Array.isArray(item.username) ? (
+                          <>
+                            {React.Children.toArray(
+                              item.username.map((user, userIndex) => {
+                                return (
+                                  <InfoContentText
+                                    key={user + crypto.randomUUID()}
+                                    /* className={styles.content} */
+                                  >
+                                    <span>
+                                      {userIndex + 1 === 1
+                                        ? index + 1
+                                        : userIndex + 1}
+                                      . {user}
+                                    </span>
+                                  </InfoContentText>
+                                );
+                              })
+                            )}
+                          </>
+                        ) : (
+                          <InfoContentText
+                            key={item.username + crypto.randomUUID()}
+                            /* className={styles.content} */
+                          >
+                            <span>
+                              {index + 1}. {item.username}
+                            </span>
+                          </InfoContentText>
+                        )
                       ) : (
                         <InfoContentText
-                          key={item.username + crypto.randomUUID()}
-                          /* className={styles.content} */
+                          onClick={() => addToSelectedWorkFlows(item)}
+                          key={item._id}
+                          className={styles.content__text}
                         >
-                          <span>{index + 1}. {item.username}</span>
+                          <div
+                            style={
+                              // item.username ? selectedMembersForProcess.find(member => member.username === item.username) ? { color: "#0048ff"} : {} :
+                              item.workflows && item._id
+                                ? selectedWorkflowsToDoc.find(
+                                    (addedWorkflow) =>
+                                      addedWorkflow._id === item._id
+                                  )
+                                  ? {
+                                      backgroundColor: '#0048ff',
+                                      color: '#fff',
+                                      padding: '2% 3%',
+                                      borderRadius: '5px',
+                                      width: '100%',
+                                      cursor: 'pointer',
+                                    }
+                                  : {
+                                      cursor: 'pointer',
+                                    }
+                                : {}
+                            }
+                          >
+                            {index + 1}.{' '}
+                            {item.workflows &&
+                              item.workflows.workflow_title &&
+                              item.workflows.workflow_title}
+                          </div>
                         </InfoContentText>
                       )
-                    ) : (
-                      <InfoContentText
-                        onClick={() => addToSelectedWorkFlows(item)}
-                        key={item._id}
-                        className={styles.content__text}
-                      >
-                        <div
-                          style={
-                            // item.username ? selectedMembersForProcess.find(member => member.username === item.username) ? { color: "#0048ff"} : {} :
-                            item.workflows && item._id
-                              ? selectedWorkflowsToDoc.find(
-                                  (addedWorkflow) =>
-                                    addedWorkflow._id === item._id
-                                )
-                                ? {
-                                    backgroundColor: "#0048ff",
-                                    color: "#fff",
-                                    padding: "2% 3%",
-                                    borderRadius: "5px",
-                                    width: "100%",
-                                    cursor: "pointer",
-                                  }
-                                : {
-                                    cursor: "pointer",
-                                  }
-                              : {}
-                          }
-                        >
-                          {index + 1}. {item.workflows &&
-                            item.workflows.workflow_title &&
-                            item.workflows.workflow_title}
-                        </div>
-                      </InfoContentText>
                     )
-                  )
-                ) : (
-                  <></>
-                )}
-              </InfoContentBox>
-            </InfoContentContainer>
-          </Collapse>
-        </InfoBoxContainer>
-      )))}
+                  ) : (
+                    <></>
+                  )}
+                </InfoContentBox>
+              </InfoContentContainer>
+            </Collapse>
+          </InfoBoxContainer>
+        ))
+      )}
     </div>
   );
 };
@@ -380,19 +398,19 @@ export default memo(InfoBoxes);
 export const infoBoxes = [
   {
     id: uuidv4(),
-    title: "workflow",
+    title: 'workflow',
     contents: [],
     isOpen: false,
   },
   {
     id: uuidv4(),
-    title: "team",
+    title: 'team',
     contents: [],
     isOpen: false,
   },
   {
     id: uuidv4(),
-    title: "user",
+    title: 'user',
     contents: [],
     isOpen: false,
   },

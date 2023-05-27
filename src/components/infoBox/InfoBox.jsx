@@ -1,6 +1,7 @@
+// ? Ln 188, used <span> instead of <button> (style conflicts) and <a> (ESLints prompts)
 import React, { useEffect, useState } from 'react';
 /* import Collapse from "../../layouts/collapse/Collapse"; */
-import styles from './infoBox.module.css';
+
 import {
   InfoBoxContainer,
   InfoContentBox,
@@ -89,7 +90,7 @@ const InfoBox = ({
       );
       setItemsToDisplay(itemsMatchingSearchValue);
     }
-  }, [searchValue]);
+  }, [searchValue, showSearch, items]);
 
   const setupTeamInfo = (
     name,
@@ -124,6 +125,7 @@ const InfoBox = ({
       dispatch(setTeamInWorkflowAITeams(newTeam));
       setTeam({});
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [team]);
 
   // *Populate teamsInWorkflowAITeams with fetched teams
@@ -152,6 +154,7 @@ const InfoBox = ({
       });
       dispatch(setTeamsInWorkflowAITeams(teams));
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [workflowTeams]);
 
   return (
@@ -182,7 +185,12 @@ const InfoBox = ({
               <input type='checkbox' checked={isOpen} onChange={(e) => {}} />
             )}
           </div>{' '}
-          <a>{t(title)}</a>
+          <span
+            style={{ cursor: 'pointer' }}
+            onClick={(e) => e.preventDefault()}
+          >
+            {t(title)}
+          </span>
         </InfoTitleBox>
       </div>
       <Collapse in={isOpen}>

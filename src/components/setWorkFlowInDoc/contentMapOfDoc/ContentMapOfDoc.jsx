@@ -1,22 +1,21 @@
-import styles from "./contentMapOfDoc.module.css";
-import { IoIosArrowDown } from "react-icons/io";
-import { IoIosArrowUp } from "react-icons/io";
-import { useState, useRef } from "react";
-import { v4 as uuidv4 } from "uuid";
-import Contents from "../contents/Contents";
-import { useEffect } from "react";
-import useScrollPosition from "../../../hooks/useScrollPosition";
-import { useCallback } from "react";
-import { useSelector } from "react-redux";
-import { LoadingSpinner } from "../../LoadingSpinner/LoadingSpinner";
-import { ImPencil2 } from "react-icons/im";
-import { animate, motion } from "framer-motion";
+import styles from './contentMapOfDoc.module.css';
+import { IoIosArrowDown } from 'react-icons/io';
+import { IoIosArrowUp } from 'react-icons/io';
+import { useState, useRef } from 'react';
+
+import Contents from '../contents/Contents';
+import { useEffect } from 'react';
+
+import { useSelector } from 'react-redux';
+
+import { ImPencil2 } from 'react-icons/im';
+import { motion } from 'framer-motion';
 
 const ContentMapOfDoc = () => {
   const { contentOfDocumentStatus, contentOfDocument } = useSelector(
     (state) => state.document
   );
-  const { wfToDocument, currentDocToWfs } = useSelector((state) => state.app);
+  const { currentDocToWfs } = useSelector((state) => state.app);
 
   const [toggleContent, setToggleContent] = useState(false);
   const [isFixed, setIsFixed] = useState(false);
@@ -45,26 +44,26 @@ const ContentMapOfDoc = () => {
 
   const variants = {
     initial: {
-      x: "-100%",
+      x: '-100%',
     },
     animate: {
-      x: "0%",
+      x: '0%',
     },
   };
 
-  console.log("contentOfDocumentcontentOfDocument", contentOfDocument);
+  console.log('contentOfDocumentcontentOfDocument', contentOfDocument);
 
   return (
     <div ref={ref} className={styles.container}>
       <div className={`${styles.box} ${isFixed && styles.is__fixed}`}>
         <div
           style={{
-            pointerEvents: contentOfDocumentStatus === "pending" && "none",
+            pointerEvents: contentOfDocumentStatus === 'pending' && 'none',
           }}
           className={styles.header__box}
           onClick={handleToggleContent}
         >
-          {contentOfDocument && contentOfDocumentStatus !== "pending" ? (
+          {contentOfDocument && contentOfDocumentStatus !== 'pending' ? (
             <>
               <h4 className={styles.header}>
                 Content Map of {currentDocToWfs?.document_name}
@@ -75,13 +74,13 @@ const ContentMapOfDoc = () => {
             <div className={styles.line__box}>
               <motion.div
                 variants={variants}
-                initial="initial"
-                animate={contentOfDocumentStatus === "pending" && "animate"}
+                initial='initial'
+                animate={contentOfDocumentStatus === 'pending' && 'animate'}
                 transition={{ duration: 2, repeat: Infinity }}
                 className={styles.line}
               >
                 <i>
-                  <ImPencil2 color="black" size={25} />
+                  <ImPencil2 color='black' size={25} />
                 </i>
               </motion.div>
             </div>
@@ -89,7 +88,7 @@ const ContentMapOfDoc = () => {
         </div>
         {contentOfDocument && (
           <Contents
-            feature="doc"
+            feature='doc'
             toggleContent={toggleContent}
             contents={contentOfDocument}
           />
@@ -101,28 +100,28 @@ const ContentMapOfDoc = () => {
 
 export default ContentMapOfDoc;
 
-const mapDocuments = [
-  { id: uuidv4(), content: "Workflow A1" },
-  { id: uuidv4(), content: "Workflow A1" },
-  { id: uuidv4(), content: "Workflow A1" },
-  { id: uuidv4(), content: "Workflow A1" },
-  { id: uuidv4(), content: "Workflow A1" },
-  { id: uuidv4(), content: "Workflow A1" },
-  { id: uuidv4(), content: "Workflow A1" },
-  { id: uuidv4(), content: "Workflow A1" },
-  { id: uuidv4(), content: "Workflow A1" },
-  { id: uuidv4(), content: "Workflow A1" },
-  { id: uuidv4(), content: "Workflow A1" },
-  { id: uuidv4(), content: "Workflow A1" },
-  { id: uuidv4(), content: "Workflow A1" },
-  { id: uuidv4(), content: "Workflow A1" },
-  { id: uuidv4(), content: "Workflow A1" },
-  { id: uuidv4(), content: "Workflow A1" },
-  { id: uuidv4(), content: "Workflow A1" },
-  { id: uuidv4(), content: "Workflow A1" },
-  { id: uuidv4(), content: "Workflow A1" },
-  { id: uuidv4(), content: "Workflow A1" },
-  { id: uuidv4(), content: "Workflow A1" },
-  { id: uuidv4(), content: "Workflow A1" },
-  { id: uuidv4(), content: "Workflow A1" },
-];
+// const mapDocuments = [
+//   { id: uuidv4(), content: "Workflow A1" },
+//   { id: uuidv4(), content: "Workflow A1" },
+//   { id: uuidv4(), content: "Workflow A1" },
+//   { id: uuidv4(), content: "Workflow A1" },
+//   { id: uuidv4(), content: "Workflow A1" },
+//   { id: uuidv4(), content: "Workflow A1" },
+//   { id: uuidv4(), content: "Workflow A1" },
+//   { id: uuidv4(), content: "Workflow A1" },
+//   { id: uuidv4(), content: "Workflow A1" },
+//   { id: uuidv4(), content: "Workflow A1" },
+//   { id: uuidv4(), content: "Workflow A1" },
+//   { id: uuidv4(), content: "Workflow A1" },
+//   { id: uuidv4(), content: "Workflow A1" },
+//   { id: uuidv4(), content: "Workflow A1" },
+//   { id: uuidv4(), content: "Workflow A1" },
+//   { id: uuidv4(), content: "Workflow A1" },
+//   { id: uuidv4(), content: "Workflow A1" },
+//   { id: uuidv4(), content: "Workflow A1" },
+//   { id: uuidv4(), content: "Workflow A1" },
+//   { id: uuidv4(), content: "Workflow A1" },
+//   { id: uuidv4(), content: "Workflow A1" },
+//   { id: uuidv4(), content: "Workflow A1" },
+//   { id: uuidv4(), content: "Workflow A1" },
+// ];

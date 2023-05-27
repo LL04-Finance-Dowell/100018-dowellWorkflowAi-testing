@@ -1,22 +1,19 @@
-import styles from "./selectDoc.module.css";
-import { v4 as uuidv4 } from "uuid";
-import { Swiper, SwiperSlide } from "swiper/react";
-import { Navigation, Pagination } from "swiper";
-import "swiper/css";
-import "swiper/css/navigation";
-import "swiper/css/pagination";
-import "./swiper.css";
-import { useEffect } from "react";
-import { useSelector, useDispatch } from "react-redux";
+import styles from './selectDoc.module.css';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { Navigation, Pagination } from 'swiper';
+import 'swiper/css';
+import 'swiper/css/navigation';
+import 'swiper/css/pagination';
+import './swiper.css';
+import { useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import {
   allDocuments,
   contentDocument,
-  mineDocuments,
-  savedDocuments,
-} from "../../../../features/document/asyncThunks";
-import { setCurrentDocToWfs } from "../../../../features/app/appSlice";
-import { LoadingSpinner } from "../../../LoadingSpinner/LoadingSpinner";
-import { setContentOfDocument } from "../../../../features/document/documentSlice";
+} from '../../../../features/document/asyncThunks';
+import { setCurrentDocToWfs } from '../../../../features/app/appSlice';
+import { LoadingSpinner } from '../../../LoadingSpinner/LoadingSpinner';
+import { setContentOfDocument } from '../../../../features/document/documentSlice';
 
 const SelectDoc = () => {
   const dispatch = useDispatch();
@@ -33,6 +30,7 @@ const SelectDoc = () => {
     };
 
     dispatch(allDocuments(data.company_id, data.data_type));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleAddDocument = (document) => {
@@ -48,14 +46,14 @@ const SelectDoc = () => {
 
   return (
     <div className={styles.container}>
-      {allDocumentsStatus === "pending" ? (
+      {allDocumentsStatus === 'pending' ? (
         <div
           style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
           }}
-          className="select-doc"
+          className='select-doc'
         >
           <LoadingSpinner />
         </div>
@@ -65,7 +63,7 @@ const SelectDoc = () => {
           navigation={true}
           pagination={true}
           modules={[Navigation, Pagination]}
-          className="select-doc"
+          className='select-doc'
         >
           {allDocumentsArray &&
             allDocumentsArray.length > 0 &&
@@ -83,8 +81,8 @@ const SelectDoc = () => {
                       }`}
                     >
                       {item._id === currentDocToWfs?._id
-                        ? "selected"
-                        : "click here"}
+                        ? 'selected'
+                        : 'click here'}
                     </button>
                   </div>
                 </div>
@@ -93,7 +91,7 @@ const SelectDoc = () => {
         </Swiper>
       )}
 
-      <h2 className="h2-small step-title">
+      <h2 className='h2-small step-title'>
         1. Select a Document to add Workflows
       </h2>
     </div>
@@ -102,8 +100,8 @@ const SelectDoc = () => {
 
 export default SelectDoc;
 
-const sliderItems = [
-  { id: uuidv4(), img: "" },
-  { id: uuidv4(), img: "" },
-  { id: uuidv4(), img: "" },
-];
+// const sliderItems = [
+//   { id: uuidv4(), img: "" },
+//   { id: uuidv4(), img: "" },
+//   { id: uuidv4(), img: "" },
+// ];

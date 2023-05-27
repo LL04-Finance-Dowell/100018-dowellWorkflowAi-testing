@@ -6,7 +6,6 @@ import Editor from '../../components/editor/Editor';
 import { useEffect, useState } from 'react';
 import DowellLogo from '../../assets/dowell.png';
 import Spinner from '../../components/spinner/Spinner';
-import Chat from '../../components/Chat/Chat';
 import useCloseElementOnEscapekeyClick from '../../../src/hooks/useCloseElementOnEscapeKeyClick';
 import UserDetail from '../../components/newSidebar/userDetail/UserDetail';
 import {
@@ -18,7 +17,7 @@ import {
   setProcessesLoading,
   setShowLegalStatusPopup,
   setUserDetailPosition,
-  setLanguageSelectPosition
+  setLanguageSelectPosition,
 } from '../../features/app/appSlice';
 import { AiOutlineClose } from 'react-icons/ai';
 import { LoadingSpinner } from '../../components/LoadingSpinner/LoadingSpinner';
@@ -28,9 +27,9 @@ import { AuthServices } from '../../services/authServices';
 import { updateUserDetail } from '../../features/auth/authSlice';
 import { getAllProcessesV2 } from '../../services/processServices';
 import { useAppContext } from '../../contexts/AppContext';
-import { WorkflowSettingServices } from '../../services/workflowSettingServices';
-import { useTranslation } from "react-i18next";
-import i18next from "i18next"
+
+import { useTranslation } from 'react-i18next';
+
 import LanguageDropdown from '../../components/LanguageSelector/LanguageDropdown';
 
 const WorkflowLayout = ({ children }) => {
@@ -55,14 +54,8 @@ const WorkflowLayout = ({ children }) => {
   const { allDocuments } = useSelector((state) => state.document);
   const { allTemplates } = useSelector((state) => state.template);
   const { allWorkflows } = useSelector((state) => state.workflow);
-  const {
-    searchItemsStatus,
-    setSearchItems,
-    updateSearchItemStatus,
-    workflowTeamsLoaded,
-    setWorkflowTeamsLoaded,
-    setWorkflowTeams,
-  } = useAppContext();
+  const { searchItemsStatus, setSearchItems, updateSearchItemStatus } =
+    useAppContext();
 
   const handleClick = () => {
     if (session_id) {
@@ -85,7 +78,7 @@ const WorkflowLayout = ({ children }) => {
   };
   const HandleLanBtnClk = () => {
     dispatch(setLanguageSelectPosition(languageSelectPosition));
-  }
+  };
   const handleLanClose = () => {
     dispatch(setLanguageSelectPosition(null));
   };
@@ -107,14 +100,26 @@ const WorkflowLayout = ({ children }) => {
 
     if (!processesLoaded) {
       // Fetching processes
-      getAllProcessesV2(userDetail?.portfolio_info[0]?.org_id, userDetail?.portfolio_info[0]?.data_type)
+      getAllProcessesV2(
+        userDetail?.portfolio_info[0]?.org_id,
+        userDetail?.portfolio_info[0]?.data_type
+      )
         .then((res) => {
-          const savedProcessesInLocalStorage = JSON.parse(localStorage.getItem('user-saved-processes'));
+          const savedProcessesInLocalStorage = JSON.parse(
+            localStorage.getItem('user-saved-processes')
+          );
           if (savedProcessesInLocalStorage) {
-            const processes = [...savedProcessesInLocalStorage, ...res.data.filter(process => process.processing_state)].sort((a, b) => new Date(b?.created_at) - new Date(a?.created_at));
+            const processes = [
+              ...savedProcessesInLocalStorage,
+              ...res.data.filter((process) => process.processing_state),
+            ].sort((a, b) => new Date(b?.created_at) - new Date(a?.created_at));
             dispatch(setAllProcesses(processes));
           } else {
-            dispatch(setAllProcesses(res.data.filter(process => process.processing_state).reverse()));
+            dispatch(
+              setAllProcesses(
+                res.data.filter((process) => process.processing_state).reverse()
+              )
+            );
           }
           dispatch(setProcessesLoading(false));
           dispatch(setProcessesLoaded(true));
@@ -129,7 +134,12 @@ const WorkflowLayout = ({ children }) => {
     const workflowProduct = userDetail?.portfolio_info?.find(
       (item) => item.product === 'Workflow AI'
     );
-    if (!workflowProduct || workflowProduct.member_type !== 'owner' || adminUserPortfolioLoaded) return;
+    if (
+      !workflowProduct ||
+      workflowProduct.member_type !== 'owner' ||
+      adminUserPortfolioLoaded
+    )
+      return;
 
     // admin user
     dispatch(setAdminUser(true));
@@ -153,6 +163,7 @@ const WorkflowLayout = ({ children }) => {
         );
         dispatch(setAdminUserPortfolioLoaded(true));
       });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [session_id, userDetail]);
 
   useEffect(() => {
@@ -186,6 +197,7 @@ const WorkflowLayout = ({ children }) => {
       });
       updateSearchItemStatus('workflowsAdded', true);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [allDocuments, allTemplates, allWorkflows, searchItemsStatus]);
 
   return (
@@ -193,14 +205,14 @@ const WorkflowLayout = ({ children }) => {
       <div className={styles.container}>
         {userDetail ? (
           !userDetail.portfolio_info ||
-            userDetail.portfolio_info?.length === 0 ||
-            (userDetail.portfolio_info?.length > 0 &&
-              !userDetail.portfolio_info.find(
-                (item) => item.product === 'Workflow AI'
-              )) ? (
+          userDetail.portfolio_info?.length === 0 ||
+          (userDetail.portfolio_info?.length > 0 &&
+            !userDetail.portfolio_info.find(
+              (item) => item.product === 'Workflow AI'
+            )) ? (
             <div className={styles.redirect__container}>
               <div className={styles.img__container}>
-                <img src={DowellLogo} />
+                <img alt='' src={DowellLogo} />
               </div>
               <div className={styles.typewriter}>
                 <h1>
@@ -224,14 +236,13 @@ const WorkflowLayout = ({ children }) => {
                 </div>
                 <div className={styles.children__box}>
                   <p className={styles.beta__Info__Text}>
-                    {t("You are on the beta version of workflow.ai")}
+                    {t('You are on the beta version of workflow.ai')}
                   </p>
                   {children}
                 </div>
                 {/* <Chat /> */}
               </div>
               <Editor />
-          
             </>
           )
         ) : (
@@ -239,7 +250,6 @@ const WorkflowLayout = ({ children }) => {
             <Spinner />
           </div>
         )}
-
 
         {/* ////////// */}
         {languageSelectPosition && (
@@ -280,7 +290,7 @@ const WorkflowLayout = ({ children }) => {
               >
                 <AiOutlineClose />
               </div>
-              <h3>{t("Agree to terms")}</h3>
+              <h3>{t('Agree to terms')}</h3>
               {legalStatusLoading ? (
                 <LoadingSpinner />
               ) : (
@@ -288,7 +298,7 @@ const WorkflowLayout = ({ children }) => {
                   {dateAgreedToLegalStatus &&
                     dateAgreedToLegalStatus.length > 1 && (
                       <span className={styles.date__Agreed}>
-                        {t("You agreed on")}:{' '}
+                        {t('You agreed on')}:{' '}
                         {formatDateAndTime(dateAgreedToLegalStatus)}
                       </span>
                     )}
@@ -298,14 +308,16 @@ const WorkflowLayout = ({ children }) => {
                       type='checkbox'
                       onChange={handleAgreeCheckBoxClick}
                     />
-                    {t("I agree with the privacy policy and terms and conditions")}
+                    {t(
+                      'I agree with the privacy policy and terms and conditions'
+                    )}
                   </label>
                   <button
                     disabled={!legalTermsAgreed}
                     className={`${styles.legal__Register__Btn} ${styles.continue__Btn}`}
                     onClick={() => dispatch(setShowLegalStatusPopup(false))}
                   >
-                    {t("Continue")}
+                    {t('Continue')}
                   </button>
                   {legalArgeePageLoading ? (
                     <div className='loading__Spinner__New__Portfolio abs__Pos'>

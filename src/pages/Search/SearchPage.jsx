@@ -1,9 +1,9 @@
-import React, { useEffect, useState, useRef } from 'react';
-import { useForm } from 'react-hook-form';
+import React, { useEffect, useState } from 'react';
+
 import { FaSearch } from 'react-icons/fa';
 import { useDispatch, useSelector } from 'react-redux';
 import { useLocation } from 'react-router-dom';
-import { toast } from 'react-toastify';
+
 import { Tooltip } from 'react-tooltip';
 import { LoadingSpinner } from '../../components/LoadingSpinner/LoadingSpinner';
 import { setToggleManageFileForm } from '../../features/app/appSlice';
@@ -23,8 +23,7 @@ import { WorkflowServices } from '../../services/workflowServices';
 import { setAllDocuments } from '../../features/document/documentSlice';
 import { setAllTemplates } from '../../features/template/templateSlice';
 import { setAllWorkflows } from '../../features/workflow/workflowsSlice';
-import { current } from '@reduxjs/toolkit';
-import { AiOutlineDown, AiOutlineUp } from 'react-icons/ai';
+
 import { MdFilterList } from 'react-icons/md';
 
 const searchCategories = {

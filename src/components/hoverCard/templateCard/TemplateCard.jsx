@@ -1,7 +1,7 @@
 import React from 'react';
-import { AiFillStar, AiOutlineHeart, AiOutlineStar } from 'react-icons/ai';
+
 import { BsBookmark, BsFillBookmarkFill } from 'react-icons/bs';
-import { MdFavorite } from 'react-icons/md';
+
 import { RiDeleteBin6Line } from 'react-icons/ri';
 import { useDispatch, useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
@@ -62,7 +62,7 @@ const TemplateCard = ({ cardItem }) => {
     if (actionType === 'remove') {
       removeFromFavoritesState('templates', item._id);
       try {
-        const response = await (
+        await (
           await deleteFavoriteForUser(
             item._id,
             'template',

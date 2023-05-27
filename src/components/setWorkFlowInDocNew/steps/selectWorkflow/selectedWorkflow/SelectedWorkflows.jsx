@@ -1,22 +1,20 @@
-import React from "react";
-import styles from "./selectedWorkflows.module.css";
-import { v4 as uuidv4 } from "uuid";
-import InfoBox from "../../../../infoBox/InfoBox";
-import { useDispatch, useSelector } from "react-redux";
-import { setSelectedWorkflowsToDoc } from "../../../../../features/app/appSlice";
+import React from 'react';
+import styles from './selectedWorkflows.module.css';
+import { v4 as uuidv4 } from 'uuid';
+import InfoBox from '../../../../infoBox/InfoBox';
+import { useDispatch, useSelector } from 'react-redux';
+import { setSelectedWorkflowsToDoc } from '../../../../../features/app/appSlice';
 
 const SelectedWorkflows = ({ savedDoc }) => {
   const dispatch = useDispatch();
 
-  const { selectedWorkflowsToDoc, currentDocToWfs } = useSelector(
-    (state) => state.app
-  );
+  const { selectedWorkflowsToDoc } = useSelector((state) => state.app);
 
   // console.log("selectedWorkflowsToDoc", selectedWorkflowsToDoc);
 
   const handleRemove = (elem, workflow) => {
     if (savedDoc) {
-      return elem.target.checked = false
+      return (elem.target.checked = false);
     }
     dispatch(setSelectedWorkflowsToDoc(workflow));
   };
@@ -27,21 +25,21 @@ const SelectedWorkflows = ({ savedDoc }) => {
         selectedWorkflowsToDoc?.map((workflow, index) => (
           <div key={workflow._id} className={styles.box__container}>
             <InfoBox
-              boxType="dark"
+              boxType='dark'
               items={workflow.workflows.steps.map((step) => ({
                 _id: step._id,
                 content: step.step_name,
               }))}
               title={workflow.workflows.workflow_title}
-              type="list"
+              type='list'
             />
             <div className={styles.selected__box}>
-              <span>{(index + 1).toString().padStart(2, "0")}.</span>
+              <span>{(index + 1).toString().padStart(2, '0')}.</span>
               <input
                 onClick={(e) => handleRemove(e, workflow)}
                 checked={workflow.isSelected}
-                type="checkbox"
-                style={{ cursor: savedDoc ? "not-allowed" : "initial" }}
+                type='checkbox'
+                style={{ cursor: savedDoc ? 'not-allowed' : 'initial' }}
               />
               <span>Select to remove</span>
             </div>
@@ -56,38 +54,38 @@ export default SelectedWorkflows;
 export const selectedWorkdlows = [
   {
     _id: uuidv4(),
-    title: "workflow",
+    title: 'workflow',
     items: [
-      { _id: uuidv4(), content: "portfolio 1", isSelected: false },
-      { _id: uuidv4(), content: "portfolio 1", isSelected: false },
-      { _id: uuidv4(), content: "portfolio 1", isSelected: false },
-      { _id: uuidv4(), content: "portfolio 1", isSelected: false },
-      { _id: uuidv4(), content: "portfolio 1", isSelected: false },
-      { _id: uuidv4(), content: "portfolio 1", isSelected: false },
+      { _id: uuidv4(), content: 'portfolio 1', isSelected: false },
+      { _id: uuidv4(), content: 'portfolio 1', isSelected: false },
+      { _id: uuidv4(), content: 'portfolio 1', isSelected: false },
+      { _id: uuidv4(), content: 'portfolio 1', isSelected: false },
+      { _id: uuidv4(), content: 'portfolio 1', isSelected: false },
+      { _id: uuidv4(), content: 'portfolio 1', isSelected: false },
     ],
   },
   {
     _id: uuidv4(),
-    title: "workflow",
+    title: 'workflow',
     items: [
-      { _id: uuidv4(), content: "portfolio 1", isSelected: false },
-      { _id: uuidv4(), content: "portfolio 1", isSelected: false },
-      { _id: uuidv4(), content: "portfolio 1", isSelected: false },
-      { _id: uuidv4(), content: "portfolio 1", isSelected: false },
-      { _id: uuidv4(), content: "portfolio 1", isSelected: false },
-      { _id: uuidv4(), content: "portfolio 1", isSelected: false },
+      { _id: uuidv4(), content: 'portfolio 1', isSelected: false },
+      { _id: uuidv4(), content: 'portfolio 1', isSelected: false },
+      { _id: uuidv4(), content: 'portfolio 1', isSelected: false },
+      { _id: uuidv4(), content: 'portfolio 1', isSelected: false },
+      { _id: uuidv4(), content: 'portfolio 1', isSelected: false },
+      { _id: uuidv4(), content: 'portfolio 1', isSelected: false },
     ],
   },
   {
     _id: uuidv4(),
-    title: "workflow",
+    title: 'workflow',
     items: [
-      { _id: uuidv4(), content: "portfolio 1", isSelected: false },
-      { _id: uuidv4(), content: "portfolio 1", isSelected: false },
-      { _id: uuidv4(), content: "portfolio 1", isSelected: false },
-      { _id: uuidv4(), content: "portfolio 1", isSelected: false },
-      { _id: uuidv4(), content: "portfolio 1", isSelected: false },
-      { _id: uuidv4(), content: "portfolio 1", isSelected: false },
+      { _id: uuidv4(), content: 'portfolio 1', isSelected: false },
+      { _id: uuidv4(), content: 'portfolio 1', isSelected: false },
+      { _id: uuidv4(), content: 'portfolio 1', isSelected: false },
+      { _id: uuidv4(), content: 'portfolio 1', isSelected: false },
+      { _id: uuidv4(), content: 'portfolio 1', isSelected: false },
+      { _id: uuidv4(), content: 'portfolio 1', isSelected: false },
     ],
   },
 ];

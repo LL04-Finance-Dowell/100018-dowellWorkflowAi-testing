@@ -20,14 +20,6 @@ const ProcessesPage = ({ home, showOnlySaved, showOnlyPaused, showOnlyCancelled,
   const navigate = useNavigate();
 
 
-  {
-    const cloneProcesses =
-      allProcesses.filter(process => process.process_kind == "clone")
-      // &&
-      // allProcesses.filter(process => process.processing_state === "processing").filter(process => process.data_type === userDetail?.portfolio_info[0]?.data_type).length
-    console.log(cloneProcesses);
-
-  }
 
   useEffect(() => {
 
@@ -103,7 +95,7 @@ const ProcessesPage = ({ home, showOnlySaved, showOnlyPaused, showOnlyCancelled,
                 cardBgColor="#1ABC9C"
                 title="saved proccess"
                 Card={ProcessCard}
-                cardItems={allProcesses.filter(process => process.process_kind == "clone") && allProcesses.filter(process => process.processing_state === "processing").filter(process => process.data_type === userDetail?.portfolio_info[0]?.data_type)}
+                cardItems={allProcesses.filter(process => process.processing_state === "processing").filter(process => process.data_type === userDetail?.portfolio_info[0]?.data_type) }
                 status={processesLoading ? "pending" : "success"}
                 itemType={"processes"}
               />

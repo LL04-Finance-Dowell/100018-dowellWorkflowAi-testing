@@ -1,5 +1,5 @@
 import Flip from '../flip/Flip';
-import Chat from '../Chat/Chat';
+
 import styles from './flipMenu.module.css';
 import {
   FaFileContract,
@@ -17,11 +17,9 @@ import { useEffect, useState } from 'react';
 import React from 'react';
 import { createTemplate } from '../../features/template/asyncThunks';
 import { Tooltip } from 'react-tooltip';
-import { useTranslation } from "react-i18next";
+import { useTranslation } from 'react-i18next';
 
 const FlipMenu = () => {
-  const { t } = useTranslation();
-
   const [filpItemsToDisplay, setFlipItemsToDisplay] = useState(flipItems);
   const { notificationsForUser } = useSelector((state) => state.app);
 
@@ -48,6 +46,7 @@ const FlipMenu = () => {
     });
 
     setFlipItemsToDisplay(updatedFlipItems);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [notificationsForUser]);
 
   return (
@@ -103,7 +102,11 @@ export const FlipBack = (props) => {
     if (role === 'viewNotifications') {
       navigate('/#documents', {
         state: {
-          elementIdToScrollTo: Array.isArray(notificationsForUser) && notificationsForUser.length > 0 ? `notifications-documents-${notificationsForUser[0]?.id}` : '',
+          elementIdToScrollTo:
+            Array.isArray(notificationsForUser) &&
+            notificationsForUser.length > 0
+              ? `notifications-documents-${notificationsForUser[0]?.id}`
+              : '',
         },
       });
     }

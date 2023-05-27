@@ -8,7 +8,7 @@ import {
 } from '../../../features/app/appSlice';
 import { setIsSelected } from '../../../utils/helpers';
 import InfoBox from '../../infoBox/InfoBox';
-import SubmitButton from '../../submitButton/SubmitButton';
+
 // import { teamsInWorkflowAI } from '../veriables';
 import workflowAiSettingsStyles from '../workflowAiSettings.module.css';
 import { v4 } from 'uuid';
@@ -24,7 +24,7 @@ const TeamsInWorkflowAi = () => {
   const dispatch = useDispatch();
   const { t } = useTranslation();
 
-  const { register, handleSubmit } = useForm();
+  const { register } = useForm();
 
   const workflowSettingServices = new WorkflowSettingServices();
 
@@ -63,7 +63,7 @@ const TeamsInWorkflowAi = () => {
   } = useAppContext();
   const [handleChangeParams, setHandleChangeParams] = useState([]);
   const [selectedTeamId, setSelectedTeamId] = useState('');
-  const [items, setItems] = useState([]);
+
   const [unselectAllPortfolios, setUnselectAllPortfolios] = useState(false);
   const [updateData, setUpdateData] = useState({});
 
@@ -135,7 +135,7 @@ const TeamsInWorkflowAi = () => {
       };
       try {
         setIsCreatingTeam(true);
-        const res = await workflowSettingServices.createWorkflowTeam(data);
+        await workflowSettingServices.createWorkflowTeam(data);
         toast.success('Team created');
         setIsCreatingTeam(false);
         setWorkflowTeams((prevTeams) => {
@@ -163,6 +163,7 @@ const TeamsInWorkflowAi = () => {
               )
             )
               return item;
+            return null;
           });
 
         portfolioItems.forEach((pItem) => {
@@ -312,9 +313,10 @@ const TeamsInWorkflowAi = () => {
         if (_id === clone[i]._id) clone.splice(i, 1, { ...teamData, _id });
       }
       setWorkflowTeams(clone);
-    } else {
-      const clone = [...workflowTeams];
     }
+    // else {
+    //   const clone = [...workflowTeams];
+    // }
   };
 
   // *Populate teamsInWorkflowAIPortfolios
@@ -325,6 +327,7 @@ const TeamsInWorkflowAi = () => {
         payload: userPortfolios,
       })
     );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userPortfolios]);
 
   useEffect(() => {
@@ -371,12 +374,14 @@ const TeamsInWorkflowAi = () => {
         dispatchSelectedItems({ item, title, boxId, type });
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedTeamId, handleChangeParams, workflowTeams]);
 
   useEffect(() => {
     if (selectedTeamId) {
       selectPortfolios();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedTeamId]);
 
   // *This returns portfolios to what it was if editting is canceled
@@ -385,6 +390,7 @@ const TeamsInWorkflowAi = () => {
       selectPortfolios();
       setRerun(false);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [rerun]);
 
   // *This unselects all portfolios after selecting the new team radio option
@@ -397,6 +403,7 @@ const TeamsInWorkflowAi = () => {
         type: 'unselect_all',
       });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [unselectAllPortfolios]);
 
   // useEffect(() => {

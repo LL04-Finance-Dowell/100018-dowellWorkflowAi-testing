@@ -15,6 +15,7 @@ const Collapse = ({ children, open }) => {
       parentRef.current.style.overflow = 'hidden';
       parentRef.current.style.transition = '0.5s all ease';
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [rerender]);
 
   return (

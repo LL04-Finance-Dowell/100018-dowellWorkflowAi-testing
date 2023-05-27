@@ -1,13 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import workflowAiSettingsStyles from '../workflowAiSettings.module.css';
 import { useForm } from 'react-hook-form';
-import { processesInWorkflowAIArray } from '../veriables';
-import SubmitButton from '../../submitButton/SubmitButton';
+
 import InfoBox from '../../infoBox/InfoBox';
 import { v4 } from 'uuid';
 import { useSelector, useDispatch } from 'react-redux';
 import {
-  setSettingProccess,
   setSettingProccessTeams,
   setSettingProccessPortfolios,
   setUpdateProccess,
@@ -21,14 +19,14 @@ const EnabledProcess = () => {
   const dispatch = useDispatch();
   const { t } = useTranslation();
 
-  const { settingProccess, proccess } = useSelector((state) => state.app);
+  const { settingProccess } = useSelector((state) => state.app);
   const { createWorkflowSettings: createWorkflowSettingsItems, createStatus } =
     useSelector((state) => state.settings);
   const { userDetail } = useSelector((state) => state.auth);
   const { teamsInWorkflowAI } = useSelector((state) => state.app);
-  const [currentPortfolio, setCurrentPortfolio] = useState(null);
+
   const { workflowTeams } = useAppContext();
-  const [userPortfolios, setUserPortfolios] = useState(
+  const [userPortfolios] = useState(
     userDetail?.portfolio_info?.find((item) => item.product === 'Workflow AI')
       ?.member_type === 'owner'
       ? userDetail?.userportfolio.map((port) => ({
@@ -133,10 +131,12 @@ const EnabledProcess = () => {
         )
       );
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [workflowTeams, teamsInWorkflowAI]);
 
   useEffect(() => {
     dispatch(setSettingProccessPortfolios(userPortfolios));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userPortfolios]);
 
   useEffect(() => {

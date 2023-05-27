@@ -1,12 +1,11 @@
-import { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch, useSelector } from 'react-redux';
 import {
   setDocCurrentWorkflow,
   setDropdowndToggle,
-} from "../../../../../features/app/appSlice";
-import Collapse from "../../../../../layouts/collapse/Collapse";
-import styles from "./dropdown.module.css";
-import { TiArrowSortedDown, TiArrowSortedUp } from "react-icons/ti";
+} from '../../../../../features/app/appSlice';
+import Collapse from '../../../../../layouts/collapse/Collapse';
+import styles from './dropdown.module.css';
+import { TiArrowSortedDown, TiArrowSortedUp } from 'react-icons/ti';
 
 const Dropdown = ({ disableClick }) => {
   const dispatch = useDispatch();
@@ -16,13 +15,13 @@ const Dropdown = ({ disableClick }) => {
   /*  const [toggle, setToggle] = useState(false); */
 
   const handleToggle = () => {
-    if (disableClick) return
+    if (disableClick) return;
     dispatch(setDropdowndToggle(!dropdownToggle));
   };
 
   const handleCurrentWorkflow = (item) => {
     dispatch(setDocCurrentWorkflow(item));
-    console.log("itemmmmmm", item);
+    console.log('itemmmmmm', item);
     dispatch(setDropdowndToggle(false));
   };
 
@@ -35,12 +34,12 @@ const Dropdown = ({ disableClick }) => {
           <button
             onClick={handleToggle}
             className={`${styles.current__item__box} ${styles.box}`}
-            style={{ cursor: disableClick ? "not-allowed" : "initial" }}
+            style={{ cursor: disableClick ? 'not-allowed' : 'initial' }}
           >
             <span>
               {docCurrentWorkflow
                 ? docCurrentWorkflow?.workflows.workflow_title
-                : "Select a Workflow"}
+                : 'Select a Workflow'}
             </span>
             <i>
               {dropdownToggle ? (
@@ -51,7 +50,7 @@ const Dropdown = ({ disableClick }) => {
             </i>
           </button>
 
-          <div style={{ marginBottom: "20px" }}>
+          <div style={{ marginBottom: '20px' }}>
             <Collapse open={dropdownToggle}>
               <div className={styles.options__container}>
                 {wfToDocument.workflows?.map((item) => (

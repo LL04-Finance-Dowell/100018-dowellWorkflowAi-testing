@@ -11,12 +11,9 @@ import {
   getVerifiedProcessLink,
 } from '../../../services/processServices';
 import { setEditorLink } from '../../../features/app/appSlice';
-import { timeZoneToCountryObj } from '../../../utils/timezonesObj';
 
-import { AiFillStar, AiOutlineHeart, AiOutlineStar } from 'react-icons/ai';
-import { handleFavorites } from '../../../features/favorites/asyncThunks';
 import { useAppContext } from '../../../contexts/AppContext';
-import { MdFavorite } from 'react-icons/md';
+
 import {
   addNewFavoriteForUser,
   deleteFavoriteForUser,
@@ -39,7 +36,7 @@ const DocumentCard = ({
 
   const [dataLoading, setDataLoading] = useState(false);
   const { userDetail } = useSelector((state) => state.auth);
-  const { singleFavorite } = useSelector((state) => state.favorites);
+
   const {
     favoriteItems,
     addToFavoritesState,
@@ -81,7 +78,7 @@ const DocumentCard = ({
     if (actionType === 'remove') {
       removeFromFavoritesState('documents', item._id);
       try {
-        const response = await (
+        await (
           await deleteFavoriteForUser(
             item._id,
             'document',
@@ -282,7 +279,7 @@ const DocumentCard = ({
             ) : cardItem.type === 'sign-document' ? (
               'Sign Here'
             ) : (
-              t("Open Document")
+              t('Open Document')
             )}
           </Button>
         ) : (

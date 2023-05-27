@@ -1,31 +1,29 @@
-import styles from "./connectWorkFlowToDoc.module.css";
-import { BsChevronDown } from "react-icons/bs";
-import { BsChevronUp } from "react-icons/bs";
-import AssignDocumentMap from "./assignForms/forms/assignDocumentMap/AssignDocumentMap";
-import AsignTask from "./assignForms/forms/assignTask/AssignTask";
-import AssignLocation from "./assignForms/forms/assignLocation/AssignLocation";
-import AssignTime from "./assignForms/forms/assignTime/AssignTimes";
-import Contents from "../../contents/Contents";
-import { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import styles from './connectWorkFlowToDoc.module.css';
+import { BsChevronDown } from 'react-icons/bs';
+import { BsChevronUp } from 'react-icons/bs';
+import AssignDocumentMap from './assignForms/forms/assignDocumentMap/AssignDocumentMap';
+import AsignTask from './assignForms/forms/assignTask/AssignTask';
+import AssignLocation from './assignForms/forms/assignLocation/AssignLocation';
+import AssignTime from './assignForms/forms/assignTime/AssignTimes';
+import Contents from '../../contents/Contents';
+import { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import {
   setProcessSteps,
   updateSingleProcessStep,
-} from "../../../../features/app/appSlice";
-import Dropdown from "./dropdown/Dropdown";
-import BookSpinner from "../../../bookSpinner/BookSpinner";
+} from '../../../../features/app/appSlice';
+import Dropdown from './dropdown/Dropdown';
+import BookSpinner from '../../../bookSpinner/BookSpinner';
 
 const ConnectWorkFlowToDoc = () => {
   const dispatch = useDispatch();
 
-  const { contentOfDocument, contentOfDocumentStatus } = useSelector(
-    (state) => state.document
-  );
+  const { contentOfDocument } = useSelector((state) => state.document);
   const { wfToDocument, docCurrentWorkflow } = useSelector(
     (state) => state.app
   );
 
-  console.log("wftooooooooooo", wfToDocument);
+  console.log('wftooooooooooo', wfToDocument);
 
   const [currentSteps, setCurrentSteps] = useState([]);
 
@@ -36,7 +34,7 @@ const ConnectWorkFlowToDoc = () => {
   const [setContentToggle] = useState(false);
   const [showSteps, setShowSteps] = useState([]);
 
-  console.log("sssssssssssssssssss", wfToDocument);
+  console.log('sssssssssssssssssss', wfToDocument);
 
   useEffect(() => {
     setCurrentSteps(
@@ -64,6 +62,7 @@ const ConnectWorkFlowToDoc = () => {
     stepsForWorkflow.push(stepsObj);
 
     dispatch(setProcessSteps(stepsForWorkflow));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [docCurrentWorkflow]);
 
   const handleToggleContent = (id) => {
@@ -74,7 +73,7 @@ const ConnectWorkFlowToDoc = () => {
     );
   };
 
-  console.log("currrrr", contentOfDocument);
+  console.log('currrrr', contentOfDocument);
 
   const handleSkipSelection = (
     e,
@@ -96,10 +95,10 @@ const ConnectWorkFlowToDoc = () => {
           skip: true,
           workflow: workflowId,
           indexToUpdate: stepIndexToUpdate,
-          member_type: "",
-          member_portfolio: "",
-          rights: "",
-          display_before: "",
+          member_type: '',
+          member_portfolio: '',
+          rights: '',
+          display_before: '',
         })
       );
       return setShowSteps(currentShowSteps);
@@ -120,13 +119,13 @@ const ConnectWorkFlowToDoc = () => {
     <>
       <div className={styles.container}>
         <div className={styles.step__title__box}>
-          <h2 className="h2-small step-title">
+          <h2 className='h2-small step-title'>
             3. Connect Selected Workflows to the selected Document
           </h2>
         </div>
 
-        {"contentOfDocumentStatus" === "pending" ? (
-          <div style={{ marginBottom: "15px" }}>
+        {'contentOfDocumentStatus' === 'pending' ? (
+          <div style={{ marginBottom: '15px' }}>
             <BookSpinner />
           </div>
         ) : (
@@ -164,7 +163,7 @@ const ConnectWorkFlowToDoc = () => {
                       </div>
                       <div className={styles.skip}>
                         <input
-                          type="checkbox"
+                          type='checkbox'
                           onChange={(e) =>
                             handleSkipSelection(
                               e,
@@ -213,7 +212,7 @@ const ConnectWorkFlowToDoc = () => {
           </>
         )}
 
-        <div className="bottom-line">
+        <div className='bottom-line'>
           <span></span>
         </div>
       </div>
