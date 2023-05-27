@@ -30,7 +30,6 @@ ALLOWED_HOSTS = ["*"]
 
 INSTALLED_APPS = [
     "drf_yasg",
-    "drf_spectacular",
     "app",
     "corsheaders",
     "django.contrib.admin",
@@ -42,11 +41,10 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "rest_framework",
     # "django_crontab",
-
 ]
 
 MIDDLEWARE = [
-    'django.middleware.gzip.GZipMiddleware',
+    "django.middleware.gzip.GZipMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
@@ -144,7 +142,6 @@ EMAIL_HOST_PASSWORD = "jpcjzsnzarucochh"
 #     ('0 * * * *', 'app.utils.mongo_db_connection.set_hourly_reminder'),
 #     ('0 0 * *', 'app.utils.mongo_db_connection.set_daily_reminder')
 
-    
 
 # ]
 # Media files
@@ -154,22 +151,8 @@ MEDIA_URL = "/media/"
 
 # Cache
 CACHES = {
-    'default': {
-        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
-        'LOCATION': 'unique-snowflake',
+    "default": {
+        "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
+        "LOCATION": "unique-snowflake",
     }
-}
-
-
-REST_FRAMEWORK = {
-    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema'
-}
-
-SPECTACULAR_SETTINGS = {
-    'TITLE': 'WorkflowAI'
-}
-
-
-SWAGGER_SETTINGS = {
-    'DEFAULT_INFO': 'drf_yasg.openapi.AutoSchema'
 }
