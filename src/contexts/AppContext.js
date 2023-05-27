@@ -36,6 +36,9 @@ export const AppContextProvider = ({ children }) => {
 
   const { userDetail } = useSelector((state) => state.auth);
   const [rerender, setRerender] = useState('rand');
+  const [processDisplayName, setProcessDisplayName] = useState('');
+  const [openNameChangeModal, setOpenNameChangeModal] = useState(false);
+  const [nameChangeTitle, setNameChangeTitle] = useState('');
 
   // const [createdNewTeam, setCreatedNewTeam] = useState();
 
@@ -160,6 +163,12 @@ export const AppContextProvider = ({ children }) => {
         rerender,
         setRerender,
         workflowSettings,
+        processDisplayName,
+        setProcessDisplayName,
+        openNameChangeModal,
+        setOpenNameChangeModal,
+        nameChangeTitle,
+        setNameChangeTitle,
       }}
     >
       {children}

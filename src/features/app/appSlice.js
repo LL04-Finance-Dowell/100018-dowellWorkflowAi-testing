@@ -283,16 +283,60 @@ export const appSlice = createSlice({
     setThemeColor: (state, action) => {
       state.themeColor = action.payload;
     },
-    setSettingProccess: (state, action) => {
-      state.settingProccess = state.settingProccess.map((item) => ({
-        ...item,
-        children:
-          item.children.length === 3
-            ? [...item.children, action.payload]
-            : item.children.map((child, index) =>
-                index === 3 ? action.payload : child
-              ),
-      }));
+    setSettingProccess: (state, { payload: { payload, type } }) => {
+      console.log('payL: ', payload);
+      switch (type) {
+        case 'p_title':
+          state.settingProccess[0].children[4].column =
+            state.settingProccess[0].children[4].column.map((col) => {
+              const pItem = payload.find(
+                (item) =>
+                  item.content.includes(col.proccess_title) ||
+                  item._id === col.pItemId
+              );
+
+              console.log('pItem: ', pItem);
+              return pItem.content.includes('set display name')
+                ? {
+                    ...col,
+                    pItemId: pItem._id,
+                  }
+                : {
+                    ...col,
+                    former_title: pItem.content.split(' (')[0],
+                    proccess_title: pItem.content.split(' (')[1].slice(0, -1),
+                    pItemId: pItem._id,
+                  };
+              // return col;
+            });
+          break;
+        case 'docs':
+          state.settingProccess[0].children[4].column[0].items = [...payload];
+          break;
+        case 'temps':
+          state.settingProccess[0].children[4].column[1].items = [...payload];
+          break;
+        case 'wrkfs':
+          state.settingProccess[0].children[4].column[2].items = [...payload];
+          break;
+        case 'nota':
+          state.settingProccess[0].children[4].column[3].items = [...payload];
+          break;
+        case 'recs':
+          state.settingProccess[0].children[4].column[4].items = [...payload];
+          break;
+        case 'app':
+          state.settingProccess[0].children[4].column[5].items = [...payload];
+          break;
+        case 'eval':
+          state.settingProccess[0].children[4].column[6].items = [...payload];
+          break;
+        case 'reps':
+          state.settingProccess[0].children[4].column[7].items = [...payload];
+          break;
+        default:
+          return state;
+      }
     },
     setSettingProccessTeams: (state, action) => {
       state.settingProccess[0].children[0].column[0].items = [
@@ -342,7 +386,11 @@ export const appSlice = createSlice({
                           ...col,
                           items: col.items.map((cItem) =>
                             cItem._id === item._id
-                              ? { ...cItem, isSelected: true }
+                              ? {
+                                  ...cItem,
+                                  isSelected: true,
+                                  content: item.content,
+                                }
                               : cItem
                           ),
                         }

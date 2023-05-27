@@ -14,9 +14,10 @@ import { ImHome3 } from 'react-icons/im';
 import { Link } from 'react-router-dom';
 import { useAppContext } from '../../contexts/AppContext';
 import { useTranslation } from 'react-i18next';
+import NameChangeModal from '../modal/NameChangeModal';
 
 const Container = styled.div`
-  & button:not(.edit_modal_sect button) {
+  & button:not(.edit_modal_sect button, .name_change_sect button) {
     background-color: ${(props) => props.bgColor} !important;
   }
 `;
@@ -31,7 +32,7 @@ const WorkflowAiSettings = () => {
 
   // #7a7a7a
   // --e-global-color-text;
-  const { workflowTeams } = useAppContext();
+  const { workflowTeams, openNameChangeModal } = useAppContext();
   const [
     workflowAiSettingsArrayToDisplay,
     setWorkflowAiSettingsArrayToDisplay,
@@ -95,6 +96,7 @@ const WorkflowAiSettings = () => {
                   type='list'
                   items={childItem.items}
                   title={childItem.proccess_title}
+                  modPort={true}
                 />
               </div>
             ))}
@@ -107,6 +109,7 @@ const WorkflowAiSettings = () => {
       <TeamsInWorkflowAi />
       <div className={styles.bottom__line}></div>
       <EnabledDisabkedProcess />
+      {openNameChangeModal && <NameChangeModal />}
       <div className={styles.bottom__line}></div>
       <Themes />
     </Container>

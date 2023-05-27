@@ -46,13 +46,17 @@ const InfoBox = ({
   isTeams,
   handleUpdateTeam,
   modPort,
+  checker,
+  specials,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
 
   const [team, setTeam] = useState({});
-  const { teamsInWorkflowAI } = useSelector((state) => state.app);
+  const { teamsInWorkflowAI, permissionArray } = useSelector(
+    (state) => state.app
+  );
   const { userDetail } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
   const { t } = useTranslation();
@@ -60,6 +64,7 @@ const InfoBox = ({
   const { workflowTeams } = useAppContext();
   const [searchValue, setSearchValue] = useState('');
   const [itemsToDisplay, setItemsToDisplay] = useState([]);
+  const [modTitle, setModTitle] = useState('');
 
   const handleAddTeam = (team) => {
     setTeam(team);
@@ -77,21 +82,6 @@ const InfoBox = ({
     setIsOpen((prev) => !prev);
   };
 
-  useEffect(() => {
-    setItemsToDisplay(items);
-  }, [items]);
-
-  useEffect(() => {
-    if (showSearch) {
-      const itemsMatchingSearchValue = items.filter((item) =>
-        item.content
-          .toLocaleLowerCase()
-          .includes(searchValue.toLocaleLowerCase())
-      );
-      setItemsToDisplay(itemsMatchingSearchValue);
-    }
-  }, [searchValue, showSearch, items]);
-
   const setupTeamInfo = (
     name,
     code,
@@ -108,6 +98,21 @@ const InfoBox = ({
       content: `Team ${count} (${name}, ${code}, ${spec}, ${details}, ${universalCode})`,
     };
   };
+
+  useEffect(() => {
+    setItemsToDisplay(items);
+  }, [items]);
+
+  useEffect(() => {
+    if (showSearch) {
+      const itemsMatchingSearchValue = items.filter((item) =>
+        item.content
+          .toLocaleLowerCase()
+          .includes(searchValue.toLocaleLowerCase())
+      );
+      setItemsToDisplay(itemsMatchingSearchValue);
+    }
+  }, [searchValue, showSearch, items]);
 
   // *Adds new team to app
   useEffect(() => {
@@ -157,7 +162,163 @@ const InfoBox = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [workflowTeams]);
 
-  return (
+  useEffect(() => {
+    if (specials === 'edp') {
+      if (title !== 'Processes') {
+        let mod = permissionArray[0].children[0].column[0].items.find((item) =>
+          item.content.includes(title)
+        ).content;
+
+        if (mod.includes('set display name')) {
+          mod = title;
+        } else {
+          mod = mod.split(' (')[1];
+          mod = mod.slice(0, mod.length - 1);
+        }
+
+        setModTitle(mod);
+      }
+    }
+  }, [specials, permissionArray]);
+
+  return specials === 'ep' ? (
+    !!itemsToDisplay.length && (
+      <InfoBoxContainer
+        boxType={boxType}
+        className='info-box-container'
+        style={{ overflow: 'unset' }}
+      >
+        <div className='flex'>
+          <InfoTitleBox
+            boxType={boxType}
+            className='info-title-box'
+            onClick={handleToggle}
+          >
+            <div
+              style={{
+                marginRight: '8px',
+                fontSize: '14px',
+              }}
+            >
+              {type === 'list' ? (
+                isOpen ? (
+                  <MdOutlineRemove />
+                ) : (
+                  <MdOutlineAdd />
+                )
+              ) : (
+                <input type='checkbox' checked={isOpen} onChange={(e) => {}} />
+              )}
+            </div>{' '}
+            <span
+              style={{ cursor: 'pointer' }}
+              onClick={(e) => e.preventDefault()}
+            >
+              {t(
+                specials === 'edp'
+                  ? title !== 'Processes'
+                    ? modTitle
+                    : title
+                  : title
+              )}
+            </span>
+          </InfoTitleBox>
+        </div>
+        <Collapse in={isOpen}>
+          <InfoContentContainer boxType={boxType} className='info-content-cont'>
+            {itemsToDisplay.length ? (
+              type === 'list' ? (
+                <InfoContentBox boxType={boxType}>
+                  {itemsToDisplay.map((item, index) => (
+                    <InfoContentText
+                      onClick={() => handleItemClick(item)}
+                      key={item._id}
+                    >
+                      {/* {index + 1}. {item.content} */}
+                      {item.contentDisplay ? (
+                        <>
+                          <>
+                            {!item.displayNoContent &&
+                            item.contentsToDisplay &&
+                            Array.isArray(item.contentsToDisplay) ? (
+                              React.Children.toArray(
+                                item.contentsToDisplay.map(
+                                  (itemContent, itemIndex) => {
+                                    return (
+                                      <>
+                                        <span>
+                                          {itemIndex + 1}. {itemContent.header}{' '}
+                                          - {itemContent.content}
+                                        </span>
+                                        <br />
+                                      </>
+                                    );
+                                  }
+                                )
+                              )
+                            ) : (
+                              <></>
+                            )}
+                          </>
+                        </>
+                      ) : (
+                        <>
+                          <span style={{ fontWeight: 'bold' }}>
+                            {item.content.title ? `${item.content.title}:` : ''}
+                          </span>{' '}
+                          <span>
+                            {item.content.content
+                              ? item.content.content
+                              : `${index + 1}. ${item.content}`}
+                          </span>
+                        </>
+                      )}
+                    </InfoContentText>
+                  ))}
+                </InfoContentBox>
+              ) : type === 'radio' ? (
+                <InfoContentBox>
+                  {itemsToDisplay.map((item) => (
+                    <InfoContentFormText key={item._id}>
+                      <input
+                        type='radio'
+                        id={item.content}
+                        name={title}
+                        value={item._id}
+                        onChange={(e) =>
+                          onChange({ item, title, boxId, type }, e)
+                        }
+                      />
+                      <label htmlFor='javascript'>{t(item.content)}</label>
+                    </InfoContentFormText>
+                  ))}
+                </InfoContentBox>
+              ) : (
+                <InfoContentBox>
+                  {itemsToDisplay.map((item) => (
+                    <InfoContentFormText key={item._id}>
+                      <input
+                        onChange={(e) =>
+                          onChange({ item, title, boxId, type, checker }, e)
+                        }
+                        /* {...register(item.content)} */
+                        checked={item.isSelected ? true : false}
+                        type='checkbox'
+                        name={title}
+                      />
+                      <span key={item._id}>{t(item.content)}</span>
+                    </InfoContentFormText>
+                  ))}
+                </InfoContentBox>
+              )
+            ) : (
+              ''
+            )}
+          </InfoContentContainer>
+        </Collapse>
+      </InfoBoxContainer>
+    )
+  ) : (
     <InfoBoxContainer
       boxType={boxType}
       className='info-box-container'
@@ -189,7 +350,13 @@ const InfoBox = ({
             style={{ cursor: 'pointer' }}
             onClick={(e) => e.preventDefault()}
           >
-            {t(title)}
+            {t(
+              specials === 'edp'
+                ? title !== 'Processes'
+                  ? modTitle
+                  : title
+                : title
+            )}
           </span>
         </InfoTitleBox>
       </div>
@@ -356,7 +523,7 @@ const InfoBox = ({
                       <InfoContentFormText key={item._id}>
                         <input
                           onChange={(e) =>
-                            onChange({ item, title, boxId, type }, e)
+                            onChange({ item, title, boxId, type, checker }, e)
                           }
                           /* {...register(item.content)} */
                           checked={item.isSelected ? true : false}

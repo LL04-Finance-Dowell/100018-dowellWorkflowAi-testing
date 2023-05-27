@@ -186,87 +186,87 @@ export const ownershipsFolders = [
 ];
 
 export const enabledProcessDocuments = [
-  { _id: uuidv4(), content: 'Save to Drafts', isSelected: false },
-  { _id: uuidv4(), content: 'Generate QR code', isSelected: false },
-  { _id: uuidv4(), content: 'OCR to Text', isSelected: false },
-  { _id: uuidv4(), content: 'Version Control', isSelected: false },
-  { _id: uuidv4(), content: 'Protect with Password', isSelected: false },
+  // { _id: uuidv4(), content: 'Save to Drafts', isSelected: false },
+  // { _id: uuidv4(), content: 'Generate QR code', isSelected: false },
+  // { _id: uuidv4(), content: 'OCR to Text', isSelected: false },
+  // { _id: uuidv4(), content: 'Version Control', isSelected: false },
+  // { _id: uuidv4(), content: 'Protect with Password', isSelected: false },
 ];
 
 export const enabledProcessTemplates = [
-  { _id: uuidv4(), content: 'Save to Drafts', isSelected: false },
-  { _id: uuidv4(), content: 'Generate QR code', isSelected: false },
-  { _id: uuidv4(), content: 'OCR to Text', isSelected: false },
-  { _id: uuidv4(), content: 'Version Control', isSelected: false },
-  { _id: uuidv4(), content: 'Protect with Password', isSelected: false },
+  // { _id: uuidv4(), content: 'Save to Drafts', isSelected: false },
+  // { _id: uuidv4(), content: 'Generate QR code', isSelected: false },
+  // { _id: uuidv4(), content: 'OCR to Text', isSelected: false },
+  // { _id: uuidv4(), content: 'Version Control', isSelected: false },
+  // { _id: uuidv4(), content: 'Protect with Password', isSelected: false },
 ];
 
 export const enabledProcessWorkflows = [
-  { _id: uuidv4(), content: 'Secondary Workflows', isSelected: false },
-  {
-    _id: uuidv4(),
-    content: 'Reject if next step is Rejected',
-    isSelected: false,
-  },
-  { _id: uuidv4(), content: 'History of interaction', isSelected: false },
-  { _id: uuidv4(), content: 'Set timer for each steps', isSelected: false },
+  // { _id: uuidv4(), content: 'Secondary Workflows', isSelected: false },
+  // {
+  //   _id: uuidv4(),
+  //   content: 'Reject if next step is Rejected',
+  //   isSelected: false,
+  // },
+  // { _id: uuidv4(), content: 'History of interaction', isSelected: false },
+  // { _id: uuidv4(), content: 'Set timer for each steps', isSelected: false },
 ];
 
 export const enabledProcessNotarisation = [
-  { _id: uuidv4(), content: 'Sign with Seal', isSelected: false },
-  { _id: uuidv4(), content: 'Digital Signature', isSelected: false },
-  { _id: uuidv4(), content: 'Sign before me/witness', isSelected: false },
-  { _id: uuidv4(), content: 'Sign with Identity', isSelected: false },
-  { _id: uuidv4(), content: 'Invisible Signature', isSelected: false },
+  // { _id: uuidv4(), content: 'Sign with Seal', isSelected: false },
+  // { _id: uuidv4(), content: 'Digital Signature', isSelected: false },
+  // { _id: uuidv4(), content: 'Sign before me/witness', isSelected: false },
+  // { _id: uuidv4(), content: 'Sign with Identity', isSelected: false },
+  // { _id: uuidv4(), content: 'Invisible Signature', isSelected: false },
 ];
 
 export const enabledProcessRecords = [
-  { _id: uuidv4(), content: 'Refer in another Document', isSelected: false },
-  { _id: uuidv4(), content: 'Refer in another Template', isSelected: false },
-  { _id: uuidv4(), content: 'View using workflow', isSelected: false },
-  { _id: uuidv4(), content: 'Set Validity', isSelected: false },
-  { _id: uuidv4(), content: 'Audits', isSelected: false },
+  // { _id: uuidv4(), content: 'Refer in another Document', isSelected: false },
+  // { _id: uuidv4(), content: 'Refer in another Template', isSelected: false },
+  // { _id: uuidv4(), content: 'View using workflow', isSelected: false },
+  // { _id: uuidv4(), content: 'Set Validity', isSelected: false },
+  // { _id: uuidv4(), content: 'Audits', isSelected: false },
 ];
 
 export const enabledProcessApprovel = [
-  { _id: uuidv4(), content: 'Preview workflow Process', isSelected: false },
-  { _id: uuidv4(), content: 'Start Processing', isSelected: false },
-  { _id: uuidv4(), content: 'End Processing', isSelected: false },
-  { _id: uuidv4(), content: 'Workflow wise', isSelected: false },
-  { _id: uuidv4(), content: 'Workflow step wise', isSelected: false },
-  { _id: uuidv4(), content: 'Document Content wise', isSelected: false },
-  { _id: uuidv4(), content: 'Signing Location wise', isSelected: false },
-  { _id: uuidv4(), content: 'Time limit wise', isSelected: false },
-  { _id: uuidv4(), content: 'Member type wise', isSelected: false },
+  // { _id: uuidv4(), content: 'Preview workflow Process', isSelected: false },
+  // { _id: uuidv4(), content: 'Start Processing', isSelected: false },
+  // { _id: uuidv4(), content: 'End Processing', isSelected: false },
+  // { _id: uuidv4(), content: 'Workflow wise', isSelected: false },
+  // { _id: uuidv4(), content: 'Workflow step wise', isSelected: false },
+  // { _id: uuidv4(), content: 'Document Content wise', isSelected: false },
+  // { _id: uuidv4(), content: 'Signing Location wise', isSelected: false },
+  // { _id: uuidv4(), content: 'Time limit wise', isSelected: false },
+  // { _id: uuidv4(), content: 'Member type wise', isSelected: false },
 ];
 
 export const enabledProcessEvaluation = [
-  { _id: uuidv4(), content: 'Edit history', isSelected: false },
-  { _id: uuidv4(), content: 'Number of words', isSelected: false },
-  { _id: uuidv4(), content: 'Language used', isSelected: false },
-  {
-    _id: uuidv4(),
-    content: 'Number of characters including space/excluding space',
-    isSelected: false,
-  },
-  {
-    _id: uuidv4(),
-    content: 'Nouns, verbs, proverbs, adjectives',
-    isSelected: false,
-  },
-  { _id: uuidv4(), content: 'Spelling', isSelected: false },
-  { _id: uuidv4(), content: 'Grammar', isSelected: false },
-  { _id: uuidv4(), content: 'Meaning', isSelected: false },
-  { _id: uuidv4(), content: 'Measurements / Scale', isSelected: false },
+  // { _id: uuidv4(), content: 'Edit history', isSelected: false },
+  // { _id: uuidv4(), content: 'Number of words', isSelected: false },
+  // { _id: uuidv4(), content: 'Language used', isSelected: false },
+  // {
+  //   _id: uuidv4(),
+  //   content: 'Number of characters including space/excluding space',
+  //   isSelected: false,
+  // },
+  // {
+  //   _id: uuidv4(),
+  //   content: 'Nouns, verbs, proverbs, adjectives',
+  //   isSelected: false,
+  // },
+  // { _id: uuidv4(), content: 'Spelling', isSelected: false },
+  // { _id: uuidv4(), content: 'Grammar', isSelected: false },
+  // { _id: uuidv4(), content: 'Meaning', isSelected: false },
+  // { _id: uuidv4(), content: 'Measurements / Scale', isSelected: false },
 ];
 
 export const enabledProcessReports = [
-  { _id: uuidv4(), content: 'Templates', isSelected: false },
-  { _id: uuidv4(), content: 'Workflows', isSelected: false },
-  { _id: uuidv4(), content: 'Documents', isSelected: false },
-  { _id: uuidv4(), content: 'Processes', isSelected: false },
-  { _id: uuidv4(), content: 'Folders', isSelected: false },
-  { _id: uuidv4(), content: 'Records / Completed', isSelected: false },
+  // { _id: uuidv4(), content: 'Templates', isSelected: false },
+  // { _id: uuidv4(), content: 'Workflows', isSelected: false },
+  // { _id: uuidv4(), content: 'Documents', isSelected: false },
+  // { _id: uuidv4(), content: 'Processes', isSelected: false },
+  // { _id: uuidv4(), content: 'Folders', isSelected: false },
+  // { _id: uuidv4(), content: 'Records / Completed', isSelected: false },
 ];
 
 export const processesInWorkflowAIArray = [
@@ -343,7 +343,7 @@ export const processesInWorkflowAIArray = [
           {
             _id: uuidv4(),
             items: enabledProcessTemplates,
-            proccess_title: 'Tempaltes',
+            proccess_title: 'Templates',
           },
           {
             _id: uuidv4(),
@@ -474,7 +474,11 @@ const permissionProcesses = [
     content: 'Approval Process (set display name)',
     isSelected: false,
   },
-  { _id: uuidv4(), content: 'Evaluation Process', isSelected: false },
+  {
+    _id: uuidv4(),
+    content: 'Evaluation Process (set display name)',
+    isSelected: false,
+  },
   {
     _id: uuidv4(),
     content: 'Notarisation (set display name)',
