@@ -12,6 +12,7 @@ from app.utils.mongo_db_connection import (
     update_document,
     update_document_clone,
     update_wf_process,
+    reminder_func,
 )
 
 
@@ -145,3 +146,19 @@ def process_update(data):
 
     print("Thread: Process Update! \n")
     return
+
+
+def hourly_reminder(reminder_status="send_reminder_every_hour"):
+    daily_reminder_list = reminder_func(reminder_status)
+
+    for reminder in daily_reminder_list:
+        notification(reminder)
+
+
+def daily_reminder(reminder_status="send_reminder_every_day"):
+    daily_reminder_list = reminder_func(reminder_status)
+
+    for reminder in daily_reminder_list:
+        notification(reminder)
+
+
