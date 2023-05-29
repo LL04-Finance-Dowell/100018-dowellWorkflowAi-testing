@@ -9,6 +9,7 @@ import {
   setSettingProccessTeams,
   setSettingProccessPortfolios,
   setUpdateProccess,
+  setSettingProccess,
 } from '../../../features/app/appSlice';
 import { setIsSelected } from '../../../utils/helpers';
 import { createWorkflowSettings } from '../../../features/settings/asyncThunks';
@@ -43,6 +44,15 @@ const EnabledProcess = () => {
         })
   );
 
+  const [portfolios] = useState(
+    userDetail?.portfolio_info?.find((item) => item.product === 'Workflow AI')
+      ?.member_type === 'owner'
+      ? [...userDetail?.userportfolio]
+      : [...userDetail?.selected_product?.userportfolio]
+  );
+
+  const [portfolioRights, setPortfolioRights] = useState('');
+
   const { handleSubmit, register } = useForm();
 
   const onSubmit = (data) => {
@@ -65,7 +75,7 @@ const EnabledProcess = () => {
       column: item.column.filter((col) => col.items.length !== 0),
     }));
 
-    console.log('payload', JSON.stringify(purePayload));
+    // console.log('payload', JSON.stringify(purePayload));
 
     const createData = {
       company_id: userDetail?.portfolio_info[0]?.org_id,
@@ -78,13 +88,13 @@ const EnabledProcess = () => {
     dispatch(createWorkflowSettings(createData));
   };
 
-  console.log(
-    'createWorkflowSettingsItems?.workflow_setting.processes.process',
-    createWorkflowSettingsItems?.workflow_setting.processes[0].process,
-    settingProccess
-  );
+  // console.log(
+  //   'createWorkflowSettingsItems?.workflow_setting.processes.process',
+  //   createWorkflowSettingsItems?.workflow_setting.processes[0].process,
+  //   settingProccess
+  // );
 
-  const handleOnChange = ({ item, title, boxId, type }) => {
+  const handleOnChange = ({ item, title, boxId, type }, e, checkFunc) => {
     const isSelectedItems = setIsSelected({
       items: settingProccess[0].children,
       item,
@@ -93,6 +103,13 @@ const EnabledProcess = () => {
       type,
     });
     dispatch(setUpdateProccess(isSelectedItems));
+
+    // if (checkFunc) {
+    //   const selectedPort = settingProccess[0].children[0].column[1].items.find(
+    //     (item) => item.isSelected
+    //   );
+    //   console.log('sele Port: ', selectedPort);
+    // }
 
     // const lowerCaseTitle = title.toLowerCase();
     // if (lowerCaseTitle === 'portfolios') {
@@ -112,13 +129,31 @@ const EnabledProcess = () => {
     // }
   };
 
-  createWorkflowSettingsItems &&
-    createWorkflowSettingsItems.length > 0 &&
-    console.log('createWorkflowSettingsItems', [
-      settingProccess[0].children[0],
-      ...createWorkflowSettingsItems,
-    ]);
-  console.log('createWorkflowSettingsItemsstatus', createStatus);
+  // createWorkflowSettingsItems &&
+  //   createWorkflowSettingsItems.length > 0 &&
+  //   console.log('createWorkflowSettingsItems', [
+  //     settingProccess[0].children[0],
+  //     ...createWorkflowSettingsItems,
+  //   ]);
+  // console.log('createWorkflowSettingsItemsstatus', createStatus);
+
+  useEffect(() => {
+    const selectedPort = settingProccess[0].children[0].column[1].items.find(
+      (item) => item.isSelected
+    );
+    if (selectedPort)
+      setPortfolioRights(
+        portfolios.find((port) => port.portfolio_name === selectedPort.content)
+          .operations_right
+      );
+  }, [settingProccess]);
+
+  useEffect(() => {
+    if (portfolioRights)
+      dispatch(
+        setSettingProccess({ payload: portfolioRights, type: 'rights' })
+      );
+  }, [portfolioRights]);
 
   useEffect(() => {
     if (
@@ -139,10 +174,10 @@ const EnabledProcess = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userPortfolios]);
 
-  useEffect(() => {
-    console.log('teams: ', teamsInWorkflowAI);
-    console.log('settingPr: ', settingProccess);
-  });
+  // useEffect(() => {
+  //   console.log('teams: ', teamsInWorkflowAI);
+  //   console.log('settingPr: ', settingProccess);
+  // });
 
   return (
     <>
@@ -171,6 +206,7 @@ const EnabledProcess = () => {
                         title={colItem.proccess_title}
                         onChange={handleOnChange}
                         modPort={true}
+                        specials={'ep_port'}
                       />
                     ))}
                   </div>
