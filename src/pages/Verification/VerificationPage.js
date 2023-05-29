@@ -50,7 +50,7 @@ const VerificationPage = () => {
       const auth_portfolio = paramsPassed.get('portfolio');
       const auth_role = paramsPassed.get('auth_role');
       const user_type = paramsPassed.get('user_type');
-      const auth_users = paramsPassed.getAll('auth_name');
+      const auth_users = paramsPassed.getAll('username');
 
       if (
         !isPublicUser &&
