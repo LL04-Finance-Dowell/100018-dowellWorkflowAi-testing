@@ -362,20 +362,18 @@ def finalize_or_reject(request, process_id):
     item_type = request.data["item_type"]
     authorized_role = request.data["role"]
     user = request.data["authorized"]
-    Thread(target=lambda: delete_notification(item_id)).start()
+    state = request.data["action"]
+    
+    if request.data["action"] == "finalize" or request.data["action"] == "reject":
+        return Response("Invalid processing action", status.HTTP_400_BAD_REQUEST)
 
     check, current_state = checks.is_finalized(item_id, item_type)
-    if not check:
+    if check and current_state != "processing":
         return Response(f"Already processed as {current_state}!", status.HTTP_200_OK)
 
-    if request.data["action"] == "finalize":
-        state = "finalized"
-
-    elif request.data["action"] == "reject":
-        state = "rejected"
-
-    res = finalize(item_id, state, item_type)
+    res = json.loads(finalize(item_id, state, item_type))
     if res["isSuccess"]:
+        Thread(target=lambda: delete_notification(item_id)).start()
         if processing.background(process_id, item_id, item_type, authorized_role, user):
             return Response("document processed successfully", status.HTTP_200_OK)
 

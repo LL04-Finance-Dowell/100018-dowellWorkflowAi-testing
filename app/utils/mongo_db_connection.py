@@ -957,7 +957,7 @@ def reminder_func(reminder):
                     {
                         "process_id": x["_id"],
                         "processing_state": x["processing_state"],
-                        "item_id":x["parent_document_id"],
+                        "item_id": x["parent_document_id"],
                         "productName": "Workflow AI",
                         "companyId": x["company_id"],
                         "title": x["process_title"],
@@ -970,18 +970,17 @@ def reminder_func(reminder):
                             for item in st["stepTeamMembers"]
                             if "member" in item
                         ],
-                        'portfolio': [
+                        "portfolio": [
                             item["portfolio"]
                             for item in st["stepTeamMembers"]
                             if "portfolio" in item
                         ],
                         "reminder": st["stepReminder"],
                         # "step_state": st["stepState"],
-                        
                         "message": f"You have incomplete step in  Process {x['_id']}. Please Complete it as Soon as Possible!",
                     }
                     for st in x["process_steps"]
-                    if  "stepTeamMembers" and "stepReminder" in st
+                    if "stepTeamMembers" and "stepReminder" in st
                 ]
                 for x in data
                 if "parent_document_id" in x

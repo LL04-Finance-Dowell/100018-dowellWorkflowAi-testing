@@ -555,7 +555,6 @@ def background(process_id, item_id, item_type, authorized_role, user):
 
     # updating the document clone list
     clone_ids = [d["member"] for d in copies if "member" in d]
-    print(clone_ids)
     if clone_ids:
         document = get_document_object(document_id=process["parent_item_id"])
         data = document["clone_list"]

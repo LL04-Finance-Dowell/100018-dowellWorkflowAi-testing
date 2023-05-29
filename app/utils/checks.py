@@ -29,10 +29,10 @@ def is_finalized(item_id, item_type):
         if template["template_state"] == "finalized":
             return True, template["template_state"]
 
-        if template["template_state"] == "finalized":
+        if template["template_state"] == "rejected":
             return True, template["template_state"]
 
-    return None, "processing"
+    return False, "processing"
 
 
 def display_right(display):
