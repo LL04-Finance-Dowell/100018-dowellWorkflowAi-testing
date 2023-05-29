@@ -51,7 +51,7 @@ const ProcessCard = ({ cardItem, title }) => {
     try {
       const response = await axios.post(`https://100094.pythonanywhere.com/v1/processes/${process_id}/copies/`, {
         created_by: userDetail?.userinfo?.username,
-        portfolio: "portfolioofuser"
+        portfolio: userDetail?.portfolio_info[0]?.portfolio_name,
       });
 
       if (response.status === 201) {
@@ -69,9 +69,11 @@ const ProcessCard = ({ cardItem, title }) => {
 
       } else {
         console.log("Post request failed. Status code:", response.status);
+        setcopyprocessLoading(false);
       }
     } catch (error) {
       console.error("An error occurred:", error);
+      setcopyprocessLoading(false);
     }
   }
 
