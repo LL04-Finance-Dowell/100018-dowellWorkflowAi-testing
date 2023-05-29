@@ -36,6 +36,7 @@ const WorkflowApp = () => {
     notificationFinalStatus,
     notificationsLoaded,
   } = useSelector((state) => state.app);
+  console.log(userDetail)
   const dispatch = useDispatch();
 
   const { t } = useTranslation();

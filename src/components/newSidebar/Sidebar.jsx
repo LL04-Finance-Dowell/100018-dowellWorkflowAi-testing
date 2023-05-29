@@ -44,7 +44,7 @@ const Sidebar = () => {
   const { userDetail, session_id } = useSelector((state) => state.auth);
   const { IconColor } = useSelector((state) => state.app);
   const navigate = useNavigate();
-
+// console.log(userDetail)
   useCloseElementOnEscapekeyClick(() =>
     dispatch(setLegalAgreePageLoading(false))
   );
@@ -183,9 +183,9 @@ const Sidebar = () => {
       <div className={styles.organization__box}>
         <h2 className={styles.organization__text}>
           {userDetail &&
-          userDetail.portfolio_info &&
-          userDetail.portfolio_info.length > 0 &&
-          userDetail.portfolio_info[0].org_name
+            userDetail.portfolio_info &&
+            userDetail.portfolio_info.length > 0 &&
+            userDetail.portfolio_info[0].org_name
             ? userDetail.portfolio_info[0].org_name
             : 'My Organization'}
         </h2>

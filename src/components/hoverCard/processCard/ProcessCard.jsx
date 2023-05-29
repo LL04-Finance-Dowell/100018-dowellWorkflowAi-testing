@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { RiDeleteBin6Line } from 'react-icons/ri';
-import { BiLink } from 'react-icons/bi';
+import { BiLink, BiCopy } from 'react-icons/bi';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
@@ -15,22 +15,71 @@ import {
 
 import { Button } from '../styledComponents';
 import { LoadingSpinner } from '../../LoadingSpinner/LoadingSpinner';
+import axios from 'axios';
 
 const ProcessCard = ({ cardItem, title }) => {
   const { allProcesses } = useSelector((state) => state.app);
+  const { userDetail } = useSelector((state) => state.auth);
+
   const dispatch = useDispatch();
   const navigate = useNavigate();
   // const [Process_id, setProcess_id] = useState();
   const [processLinkLoading, setProcessLinkLoading] = useState(false);
+  const [copyprocessLoading, setcopyprocessLoading] = useState(false);
+
 
   const handleProcessItemClick = async (item) => {
     if (item.processing_state === 'draft' && item.workflow_construct_ids)
       navigate(
-        `/workflows/new-set-workflow?id=${item._id}&state=${
-          item.processing_state
+        `/workflows/new-set-workflow?id=${item._id}&state=${item.processing_state
         }${item.isFromLocalStorage ? '&local=true' : ''}`
       );
   };
+
+ 
+
+
+  const handleCopyProcess = async (item) => {
+    console.log(item)
+    getCopyProcess(item._id)
+    setcopyprocessLoading(true);
+
+  };
+
+  async function getCopyProcess(process_id) {
+    // const copyOfAllProcesses = [...allProcesses];
+    try {
+      const response = await axios.post(`https://100094.pythonanywhere.com/v1/processes/${process_id}/copies/`, {
+        created_by: userDetail?.userinfo?.username,
+        portfolio: userDetail?.portfolio_info[0]?.portfolio_name,
+      });
+
+      if (response.status === 201) {
+        console.log("Copy process created successfully.");
+        toast.info(response.data);
+        console.log(response.data);
+
+        setcopyprocessLoading(false);
+
+        // dispatch(
+        //   setAllProcesses(
+        //     [...allProcesses], allProcesses.filter(process => process.process_kind == "clone")
+        //   )
+        // );
+
+      } else {
+        console.log("Post request failed. Status code:", response.status);
+        setcopyprocessLoading(false);
+      }
+    } catch (error) {
+      console.error("An error occurred:", error);
+      setcopyprocessLoading(false);
+    }
+  }
+
+
+
+
 
   const handleGetLinksClick = async (item) => {
     getProcessLinks(item._id);
@@ -110,9 +159,29 @@ const ProcessCard = ({ cardItem, title }) => {
 
   const FrontSide = () => {
     return cardItem ? (
-      <div>{cardItem.process_title ? cardItem.process_title : 'no item'}</div>
+      <div >
+        {cardItem.process_kind === "clone" && <div style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          width: '14px',
+          height: 'calc(50% + 30px)',
+          backgroundColor: 'rgb(54, 109, 172)',
+          transform: 'rotate(37deg) translate(-26px, -28px)'
+        }}>
+          <span style={{
+            position: 'absolute',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-51%, -145%) rotate(268deg)',
+            color: '#fff',
+            fontSize: '10px'
+          }}>Copied</span>
+        </div>}
+        {cardItem.process_title ? cardItem.process_title : "no item"}
+      </div>
     ) : (
-      'Loading...'
+      "Loading..."
     );
   };
 
@@ -167,7 +236,37 @@ const ProcessCard = ({ cardItem, title }) => {
         >
           <RiDeleteBin6Line color='red' />
         </div>
+
+        {!cardItem.isFromLocalStorage &&
+          cardItem.processing_state !== "processing" && (
+            <>
+              {!copyprocessLoading ? (
+                <div style={{
+                  cursor: "pointer",
+                  position: "absolute",
+                  left: "0",
+                  top: "0"
+                }} onClick={() => handleCopyProcess(cardItem)}>
+                  <BiCopy color="black" />
+                </div>
+              ) : (
+                <div
+                  style={{
+                    position: 'absolute',
+                    left: '1%',
+                    top: '0',
+                  }}
+                >
+                  <LoadingSpinner width={'1rem'} height={'1rem'} />
+                </div>
+              )}
+            </>
+          )}
+
+
       </>
+
+
     );
   };
   return (
