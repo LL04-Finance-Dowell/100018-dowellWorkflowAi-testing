@@ -179,6 +179,10 @@ def verify(
     #         return Response(
     #             "You have already accessed this document", status.HTTP_200_OK
     #         )
+    if user_type == "public":
+        if not isinstance(user_name, list):
+            return Response("Error with the public link", status.HTTP_400_BAD_REQUEST)
+
     clone_id = None
     for step in process["process_steps"]:
         if step.get("stepRole") == auth_step_role:
@@ -214,17 +218,16 @@ def verify(
                         status.HTTP_403_FORBIDDEN,
                     )
 
-            if step.get('stepProcessingOrder'):
+            if step.get("stepProcessingOrder"):
                 if not checks.step_processing_order(
-                    order=step.get('stepProcessingOrder'),
-                    process_id=process.get('_id'),
-                    role=step.get('stepRole')
+                    order=step.get("stepProcessingOrder"),
+                    process_id=process.get("_id"),
+                    role=step.get("stepRole"),
                 ):
                     return Response(
                         "You do not have permission to process this document just yet!",
                         status.HTTP_401_UNAUTHORIZED,
                     )
-            
 
             if user_type == "public":
                 user_name = user_name[0]
@@ -242,9 +245,7 @@ def verify(
             # break
 
     if not match:
-        return Response(
-            "Access could not be set for this user", status.HTTP_403_FORBIDDEN
-        )
+        return Response("Access could not be set for user", status.HTTP_403_FORBIDDEN)
     if not clone_id:
         return Response("No document to provide access to!", status.HTTP_403_FORBIDDEN)
     if not right:

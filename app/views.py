@@ -500,14 +500,6 @@ def process_copies(request, process_id):
 
         return Response("success created a process clone", status.HTTP_201_CREATED)
 
-    # if request.method == "GET":
-    #     data_type = request.query_params.get("data_type", "Real_Data")
-    #     try:
-    #         copies = get_process_list(company_id, data_type)
-    #     except:
-    #         return Response([], status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-    #     return Response(copies, status.HTTP_200_OK)
 
 
 @api_view(["POST"])

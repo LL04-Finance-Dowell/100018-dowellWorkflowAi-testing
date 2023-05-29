@@ -109,17 +109,18 @@ def verification_data(
             "portfolio": auth_portfolio,
             "auth_role": step_role,
             "user_type": user_type,
+            "username": auth_name
         }
         for i in range(0, len(auth_name)):
             field = auth_name[i]
-            query_params[f"username"] = field
+            query_params[f"username[{i}]"] = field
 
         encoded_query_params = urllib.parse.urlencode(query_params)
-        link = f"{VERIFICATION_LINK}/{hash}/?product=Workflow AI&org=WorkflowAi&{encoded_query_params}"
+        link = f"{VERIFICATION_LINK}/{hash}/?product=WorkflowAI&org=WorkflowAi&{encoded_query_params}"
 
     # User | Team
     else:
-        link = f"{VERIFICATION_LINK}/{hash}/?product=Workflow AI&org=WorkflowAi&username={auth_name}&portfolio={auth_portfolio}&auth_role={step_role}&user_type={user_type}"
+        link = f"{VERIFICATION_LINK}/{hash}/?product=WorkflowAI&org=WorkflowAi&username={auth_name}&portfolio={auth_portfolio}&auth_role={step_role}&user_type={user_type}"
 
     # save link
     res = json.loads(
@@ -315,10 +316,10 @@ def generate_qrcode(verification_link):
 
     # In Prod -- this works
     # TODO: find out how to extract domain url
-    qr_path = f"100094.pythonanywhere.com/media/qrcodes/{uuid.uuid4().hex}.png"
+    # qr_path = f"100094.pythonanywhere.com/media/qrcodes/{uuid.uuid4().hex}.png"
 
     # On dev -- this works
-    # qr_path = f"media/qrcodes/{uuid.uuid4().hex}.png"
+    qr_path = f"media/qrcodes/{uuid.uuid4().hex}.png"
 
     qr_code = qrcode.QRCode(error_correction=qrcode.constants.ERROR_CORRECT_H)
     qr_code.add_data(verification_link)

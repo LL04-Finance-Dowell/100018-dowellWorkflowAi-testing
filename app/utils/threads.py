@@ -51,7 +51,6 @@ def notification(data):
 
 def save_link_hashes(data):
     """Save single link"""
-
     try:
         save_uuid_hash(
             link=data["link"],
@@ -70,7 +69,6 @@ def save_link_hashes(data):
 
 def save_links_v2(data):
     """Saving process links"""
-
     try:
         save_process_links(
             links=data["links"],
@@ -86,7 +84,6 @@ def save_links_v2(data):
 
 def save_qrcodes(data):
     """saving process qrcodes"""
-
     try:
         save_process_qrcodes(
             qrcodes=data["qrcodes"],
@@ -104,7 +101,6 @@ def save_qrcodes(data):
 
 def document_update(doc_data):
     """Updating document with new state"""
-
     try:
         update_document(
             document_id=doc_data["document_id"],
