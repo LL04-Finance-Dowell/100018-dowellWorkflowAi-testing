@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styles from './sidebar.module.css';
 import { v4 as uuidv4 } from 'uuid';
 import CollapseItem from './collapseItem/CollapseItem';
@@ -23,6 +23,7 @@ import ManageFile from './manageFile/ManageFile';
 import Reports from './reports/Reports';
 
 import { getAgreeStatus } from '../../services/legalService';
+import Spinner from '../spinner/Spinner';
 import useCloseElementOnEscapekeyClick from '../../hooks/useCloseElementOnEscapeKeyClick';
 import { BsThreeDotsVertical } from 'react-icons/bs';
 import {
@@ -32,6 +33,7 @@ import {
   setLegalTermsAgreed,
   setShowLegalStatusPopup,
   setUserDetailPosition,
+  setShowProfileSpinner,
   setLanguageSelectPosition,
 } from '../../features/app/appSlice';
 import { Tooltip } from 'react-tooltip';
@@ -39,12 +41,12 @@ import { useTranslation } from 'react-i18next';
 import { GrStatusGoodSmall } from 'react-icons/gr';
 
 const Sidebar = () => {
+  // const [ShowProfileSpinner, setShowProfileSpinner] = useState(false)
   const dispatch = useDispatch();
   const { t } = useTranslation();
   const { userDetail, session_id } = useSelector((state) => state.auth);
-  const { IconColor } = useSelector((state) => state.app);
+  const { IconColor, ShowProfileSpinner } = useSelector((state) => state.app);
   const navigate = useNavigate();
-// console.log(userDetail)
   useCloseElementOnEscapekeyClick(() =>
     dispatch(setLegalAgreePageLoading(false))
   );
@@ -70,16 +72,32 @@ const Sidebar = () => {
   }, []);
 
   const handleLogout = () => {
+
     sessionStorage.clear();
     window.location.replace(dowellLogoutUrl);
   };
 
   const handleClick = (feature) => {
     feature === 'logout' && handleLogout();
-    feature === 'profile' &&
+
+// 
+    if (feature === 'profile') {
+      dispatch(setShowProfileSpinner(true)) // Show spinner
+      sessionStorage.clear();
+
+
+
       window.location.replace(
         `https://100093.pythonanywhere.com/?session_id=${session_id}`
       );
+
+     // Hide spinner after 2 seconds
+    }
+
+
+
+
+
     feature === 'home' && navigate(`/`);
     feature === 'shield' && dispatch(setShowLegalStatusPopup(true));
     /*  feature === "shield" && ; */
@@ -156,6 +174,8 @@ const Sidebar = () => {
             />
           </i>
         ))}
+
+
         <BsThreeDotsVertical
           cursor='pointer'
           size={25}

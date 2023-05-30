@@ -21,6 +21,7 @@ import {
 } from '../../features/app/appSlice';
 import { AiOutlineClose } from 'react-icons/ai';
 import { LoadingSpinner } from '../../components/LoadingSpinner/LoadingSpinner';
+import Chat from '../../components/Chat/Chat'
 import { formatDateAndTime } from '../../utils/helpers';
 import { workflowRegistrationEventId } from '../../services/legalService';
 import { AuthServices } from '../../services/authServices';
@@ -47,6 +48,7 @@ const WorkflowLayout = ({ children }) => {
     legalArgeePageLoading,
     adminUserPortfolioLoaded,
     processesLoaded,
+    ShowProfileSpinner
   } = useSelector((state) => state.app);
 
   const [createNewPortfolioLoading, setCreateNewPortfolioLoading] =
@@ -205,11 +207,11 @@ const WorkflowLayout = ({ children }) => {
       <div className={styles.container}>
         {userDetail ? (
           !userDetail.portfolio_info ||
-          userDetail.portfolio_info?.length === 0 ||
-          (userDetail.portfolio_info?.length > 0 &&
-            !userDetail.portfolio_info.find(
-              (item) => item.product === 'Workflow AI'
-            )) ? (
+            userDetail.portfolio_info?.length === 0 ||
+            (userDetail.portfolio_info?.length > 0 &&
+              !userDetail.portfolio_info.find(
+                (item) => item.product === 'Workflow AI'
+              )) ? (
             <div className={styles.redirect__container}>
               <div className={styles.img__container}>
                 <img alt='' src={DowellLogo} />
@@ -233,6 +235,7 @@ const WorkflowLayout = ({ children }) => {
               <div className={styles.content__box}>
                 <div className={`${styles.sidebar__box} hide-scrollbar`}>
                   <SideBar />
+                  
                 </div>
                 <div className={styles.children__box}>
                   <p className={styles.beta__Info__Text}>
@@ -240,7 +243,8 @@ const WorkflowLayout = ({ children }) => {
                   </p>
                   {children}
                 </div>
-                {/* <Chat /> */}
+
+                <Chat />
               </div>
               <Editor />
             </>

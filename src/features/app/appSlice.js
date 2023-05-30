@@ -76,8 +76,8 @@ const initialState = {
   processesLoaded: false,
   allProcesses: [],
   ArrayofLinks: [],
-
-CopyProcess:[],
+  ShowProfileSpinner: false,
+  CopyProcess: [],
 
   linksFetched: false,
   showGeneratedLinksPopup: false,
@@ -153,9 +153,9 @@ export const appSlice = createSlice({
           (item) =>
             item._id === action.payload._id
               ? {
-                  ...item,
-                  isSelected: item.isSelected ? !item.isSelected : true,
-                }
+                ...item,
+                isSelected: item.isSelected ? !item.isSelected : true,
+              }
               : item
         );
       } else {
@@ -298,15 +298,15 @@ export const appSlice = createSlice({
               console.log('pItem: ', pItem);
               return pItem.content.includes('set display name')
                 ? {
-                    ...col,
-                    pItemId: pItem._id,
-                  }
+                  ...col,
+                  pItemId: pItem._id,
+                }
                 : {
-                    ...col,
-                    former_title: pItem.content.split(' (')[0],
-                    proccess_title: pItem.content.split(' (')[1].slice(0, -1),
-                    pItemId: pItem._id,
-                  };
+                  ...col,
+                  former_title: pItem.content.split(' (')[0],
+                  proccess_title: pItem.content.split(' (')[1].slice(0, -1),
+                  pItemId: pItem._id,
+                };
               // return col;
             });
           break;
@@ -379,24 +379,24 @@ export const appSlice = createSlice({
           state.permissionArray[0].children.map((child) =>
             child._id === item.boxId
               ? {
-                  ...child,
-                  column: child.column.map((col) =>
-                    col.proccess_title === item.title
-                      ? {
-                          ...col,
-                          items: col.items.map((cItem) =>
-                            cItem._id === item._id
-                              ? {
-                                  ...cItem,
-                                  isSelected: true,
-                                  content: item.content,
-                                }
-                              : cItem
-                          ),
-                        }
-                      : col
-                  ),
-                }
+                ...child,
+                column: child.column.map((col) =>
+                  col.proccess_title === item.title
+                    ? {
+                      ...col,
+                      items: col.items.map((cItem) =>
+                        cItem._id === item._id
+                          ? {
+                            ...cItem,
+                            isSelected: true,
+                            content: item.content,
+                          }
+                          : cItem
+                      ),
+                    }
+                    : col
+                ),
+              }
               : child
           );
       });
@@ -483,14 +483,14 @@ export const appSlice = createSlice({
             i === 0
               ? 'Name'
               : i === 1
-              ? 'Code'
-              : i === 2
-              ? 'Specification'
-              : i === 3
-              ? 'Details'
-              : i === 4
-              ? 'Universal code'
-              : '';
+                ? 'Code'
+                : i === 2
+                  ? 'Specification'
+                  : i === 3
+                    ? 'Details'
+                    : i === 4
+                      ? 'Universal code'
+                      : '';
           modItem.push({
             _id,
             _mId,
@@ -615,6 +615,9 @@ export const appSlice = createSlice({
     SetCopyProcess: (state, action) => {
       state.CopyProcess = action.payload;
     },
+    setShowProfileSpinner: (state, action) => {
+      state.ShowProfileSpinner = action.payload;
+    },
 
     setShowGeneratedLinksPopup: (state, action) => {
       state.showGeneratedLinksPopup = action.payload;
@@ -735,7 +738,7 @@ export const {
   setPortfoliosInWorkflowAITeams,
   setUpdateInWorkflowAITeams,
   setUserDetailPosition,
-
+  setShowProfileSpinner,
   setLanguageSelectPosition,
   setIconColor,
   setUpdateProccessApi,
