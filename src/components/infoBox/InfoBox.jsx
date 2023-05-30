@@ -394,7 +394,9 @@ const InfoBox = ({
 
             {!itemsToDisplay.length ? (
               <span style={{ textTransform: 'capitalize' }}>
-                {t('no')} {t(title)}
+                {title === 'rights'
+                  ? t('select portfolio to see rights')
+                  : t(`no ${title}`)}
               </span>
             ) : (
               ''
@@ -509,7 +511,11 @@ const InfoBox = ({
                       name={title}
                       value={item._id}
                       onChange={(e) =>
-                        onChange({ item, title, boxId, type }, e)
+                        onChange(
+                          { item, title, boxId, type },
+                          e,
+                          specials === 'ep_port' && title === 'portfolios'
+                        )
                       }
                     />
                     <label htmlFor='javascript'>{t(item.content)}</label>

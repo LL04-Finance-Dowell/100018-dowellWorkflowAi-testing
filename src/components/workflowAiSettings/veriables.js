@@ -297,7 +297,7 @@ export const processesInWorkflowAIArray = [
         column: [
           {
             _id: uuidv4(),
-            items: rights,
+            items: [],
             proccess_title: 'rights',
             type: 'hardcode',
           },
