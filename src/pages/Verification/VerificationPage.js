@@ -60,6 +60,7 @@ const VerificationPage = () => {
       const auth_portfolio = paramsPassed.get('portfolio');
       const auth_role = paramsPassed.get('auth_role');
       const user_type = paramsPassed.get('user_type');
+      const org_name = paramsPassed.get('org');
       let auth_users;
 
       try {
@@ -89,7 +90,7 @@ const VerificationPage = () => {
       sanitizedDataToPost.user_type = user_type;
       sanitizedDataToPost.org_name = isPublicUser
         ? 'public'
-        : userDetail?.selected_product?.product_name;
+        : org_name;
 
       delete sanitizedDataToPost.user_name;
       delete sanitizedDataToPost.portfolio;

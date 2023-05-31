@@ -19,12 +19,13 @@ export default function useDowellLogin() {
   const extractTokenFromURLAndNavigateToVerificationPage = (url) => {
     dispatch(setShowProfileSpinner(true));
 
-    const [ token, role, userType, username, portfolio ] = [
+    const [ token, role, userType, username, portfolio, orgName ] = [
       url.split('token~')[1]?.split('~')[0],
       url.split('role~')[1]?.split('~')[0],
       url.split('userType~')[1]?.split('~')[0],
       url.split('username~')[1]?.split('~')[0],
       url.split('portfolio~')[1]?.split('~')[0],
+      url.split('org~')[1]?.split('~')[0],
     ]
 
     if (!token) {
@@ -35,7 +36,7 @@ export default function useDowellLogin() {
 
     window.history.replaceState({}, document.title, "/100018-dowellWorkflowAi-testing/");
     navigate(
-      `/verify/${token}/?auth_role=${role}&user_type=${userType}&portfolio=${portfolio}&username=${username}`, 
+      `/verify/${token}/?auth_role=${role}&user_type=${userType}&portfolio=${portfolio}&username=${username}&org=${orgName}`, 
       { 
         state: { 
           routedInternally: true 
