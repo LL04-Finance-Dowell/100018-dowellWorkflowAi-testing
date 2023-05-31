@@ -116,11 +116,11 @@ def verification_data(
             query_params[f"username[{i}]"] = field
 
         encoded_query_params = urllib.parse.urlencode(query_params)
-        link = f"{VERIFICATION_LINK}/{hash}/?product=WorkflowAI&org=WorkflowAi&{encoded_query_params}"
+        link = f"{VERIFICATION_LINK}/{hash}/?product=Workflow AI&org=WorkflowAi&{encoded_query_params}"
 
     # User | Team
     else:
-        link = f"{VERIFICATION_LINK}/{hash}/?product=WorkflowAI&org=WorkflowAi&username={auth_name}&portfolio={auth_portfolio}&auth_role={step_role}&user_type={user_type}"
+        link = f"{VERIFICATION_LINK}/{hash}/?product=Workflow AI&org=WorkflowAi&username={auth_name}&portfolio={auth_portfolio}&auth_role={step_role}&user_type={user_type}"
 
     # save link
     res = json.loads(
