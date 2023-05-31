@@ -8,7 +8,7 @@ const new_process_api_url = "https://100094.pythonanywhere.com/v0.2/";
 
 export const dowellLoginUrl =
   `https://100014.pythonanywhere.com/?redirect_url=${
-    window.location.href.includes("verify") ?
+    window.location.href.includes("verify/") ?
       window.location.origin +
     `/100018-dowellWorkflowAi-testing/%23token~${extractTokenFromVerificationURL(window.location.href)}~${extractAuthQueryParamsFromVerificationURL(window.location.href)}~`
     :
