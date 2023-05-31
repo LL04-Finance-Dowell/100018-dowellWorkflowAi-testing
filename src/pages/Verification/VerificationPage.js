@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Link, useLocation } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import Spinner from '../../components/spinner/Spinner';
@@ -18,7 +18,6 @@ const VerificationPage = () => {
   const { userDetail } = useSelector((state) => state.auth);
   const [verificationFailed, setVerificationFailed] = useState(false);
   const { isPublicUser, publicUserConfigured } = useAppContext();
-  const { state } = useLocation();
   const [ dataIsPosting, setDataIsPosting ] = useState(false);
   const dispatch = useDispatch();
 
@@ -73,8 +72,7 @@ const VerificationPage = () => {
         !isPublicUser &&
         userDetail &&
         (auth_username !== userDetail?.userinfo?.username ||
-          auth_portfolio !== userDetail?.portfolio_info[0]?.portfolio_name) &&
-        !state?.routedInternally
+          auth_portfolio !== userDetail?.portfolio_info[0]?.portfolio_name)
       ) {
         toast.info('You are not authorized to view this');
         setLoading(false);
@@ -121,7 +119,7 @@ const VerificationPage = () => {
             : 'Process verification failed'
         );
       });
-  }, [token, isPublicUser, userDetail, publicUserConfigured, state, verificationFailed, dataIsPosting]);
+  }, [token, isPublicUser, userDetail, publicUserConfigured, verificationFailed, dataIsPosting]);
 
   const handleLoginLinkClick = (e) => {
     e.preventDefault();

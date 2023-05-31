@@ -36,12 +36,7 @@ export default function useDowellLogin() {
 
     window.history.replaceState({}, document.title, "/100018-dowellWorkflowAi-testing/");
     navigate(
-      `/verify/${token}/?auth_role=${role}&user_type=${userType}&portfolio=${portfolio}&username=${username}&org=${orgName}`, 
-      { 
-        state: { 
-          routedInternally: true 
-        }
-      }
+      `/verify/${token}/?auth_role=${role}&user_type=${userType}&portfolio=${portfolio}&username=${username}&org=${orgName}`
     )
   }
 
