@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { Link, useLocation } from 'react-router-dom';
 import { useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
@@ -10,6 +10,7 @@ import dowellLogo from '../../assets/dowell.png';
 import { updateVerificationDataWithTimezone } from '../../utils/helpers';
 import { useAppContext } from '../../contexts/AppContext';
 import { dowellLoginUrl } from '../../httpCommon/httpCommon';
+import { setShowProfileSpinner } from '../../features/app/appSlice';
 
 const VerificationPage = () => {
   const { token } = useParams();
@@ -19,6 +20,14 @@ const VerificationPage = () => {
   const { isPublicUser, publicUserConfigured } = useAppContext();
   const { state } = useLocation();
   const [ dataIsPosting, setDataIsPosting ] = useState(false);
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+
+    dispatch(setShowProfileSpinner(false));
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   useEffect(() => {
     if (!publicUserConfigured || verificationFailed || (!isPublicUser && !userDetail)) return;
