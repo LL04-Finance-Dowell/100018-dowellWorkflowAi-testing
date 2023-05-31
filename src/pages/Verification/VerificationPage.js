@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import Spinner from '../../components/spinner/Spinner';
@@ -17,10 +17,11 @@ const VerificationPage = () => {
   const { userDetail } = useSelector((state) => state.auth);
   const [verificationFailed, setVerificationFailed] = useState(false);
   const { isPublicUser, publicUserConfigured } = useAppContext();
+  const { state } = useLocation();
+  const [ dataIsPosting, setDataIsPosting ] = useState(false);
 
   useEffect(() => {
-    if (!publicUserConfigured) return;
-
+    if (!publicUserConfigured || verificationFailed || (!isPublicUser && !userDetail)) return;
     const dataToPost = {
       token: token,
       user_name: userDetail?.userinfo?.username,
@@ -50,13 +51,20 @@ const VerificationPage = () => {
       const auth_portfolio = paramsPassed.get('portfolio');
       const auth_role = paramsPassed.get('auth_role');
       const user_type = paramsPassed.get('user_type');
-      const auth_users = paramsPassed.getAll('username').length > 0 ? JSON.parse(paramsPassed.getAll('username')[0].replaceAll("'", '"')) : [];
+      let auth_users;
+
+      try {
+        auth_users = JSON.parse(paramsPassed.getAll('username')[0].replaceAll("'", '"'));        
+      } catch (error) {
+        auth_users = []
+      }
 
       if (
         !isPublicUser &&
         userDetail &&
         (auth_username !== userDetail?.userinfo?.username ||
-          auth_portfolio !== userDetail?.portfolio_info[0]?.portfolio_name)
+          auth_portfolio !== userDetail?.portfolio_info[0]?.portfolio_name) &&
+        !state?.routedInternally
       ) {
         toast.info('You are not authorized to view this');
         setLoading(false);
@@ -81,6 +89,10 @@ const VerificationPage = () => {
       // return setDataLoading(false);
     }
 
+    if (dataIsPosting) return
+
+    setDataIsPosting(true);
+
     verifyProcessForUser(sanitizedDataToPost)
       .then((res) => {
         setLoading(false);
@@ -99,7 +111,7 @@ const VerificationPage = () => {
             : 'Process verification failed'
         );
       });
-  }, [token, isPublicUser, userDetail, publicUserConfigured]);
+  }, [token, isPublicUser, userDetail, publicUserConfigured, state, verificationFailed, dataIsPosting]);
 
   const handleLoginLinkClick = (e) => {
     e.preventDefault();

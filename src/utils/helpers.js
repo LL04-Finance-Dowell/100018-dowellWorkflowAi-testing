@@ -132,3 +132,25 @@ export const updateVerificationDataWithTimezone = (dataObj) => {
 
   return outputDataObj;
 };
+
+
+export const extractAuthQueryParamsFromVerificationURL = (inputUrl) => {
+  if (typeof inputUrl !== 'string') return ''
+
+  try {
+    const validUrl = new URL(inputUrl);
+    const shortenedVerificationURL = validUrl.origin + inputUrl.split('verify/')[1]?.split('/')[1];
+    const paramsPassed = new URLSearchParams(shortenedVerificationURL);
+
+    return `role~${paramsPassed.get('auth_role')}~userType~${paramsPassed.get('user_type')}~portfolio~${paramsPassed.get('portfolio')}~username~${paramsPassed.get('username')}`
+
+  } catch (error) {
+    return ''
+  }
+}
+
+export const extractTokenFromVerificationURL = (inputUrl) => {
+  if (typeof inputUrl !== 'string') return ''
+
+  return inputUrl.split('verify/')[1]?.split('/')[0]
+}
