@@ -37,6 +37,8 @@ const EnabledDisabkedProcess = () => {
     setOpenNameChangeModal,
     setNameChangeTitle,
     setProcessDisplayName,
+    isDesktop,
+    nonDesktopStyles,
   } = useAppContext();
   const [itemId, setItemId] = useState('');
   const [childId, setChildId] = useState('');
@@ -421,46 +423,76 @@ const EnabledDisabkedProcess = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [fetchedItems]);
 
-  // useEffect(() => {
-  //   console.log('perm arr: ', permissionArray);
-  //   // console.log('user detail: ', userDetail);
-  //   // console.log('wrkf settings: ', workflowSettings);
-  // });
+  useEffect(() => {
+    console.log('perm arr: ', permissionArray);
+    // console.log('user detail: ', userDetail);
+    // console.log('wrkf settings: ', workflowSettings);
+  });
 
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
       className={workflowAiSettingsStyles.form__cont}
     >
-      {permissionArray.map((item) => (
+      {permissionArray.map((item, ind) => (
         <div key={item._id} className={workflowAiSettingsStyles.box}>
           <h2
             className={`${workflowAiSettingsStyles.title} ${workflowAiSettingsStyles.title__m}`}
           >
             {t(item.title)}
           </h2>
-          <div className={workflowAiSettingsStyles.section__container}>
-            {item.children?.map((childItem) => (
-              <div
-                key={childItem._id}
-                className={workflowAiSettingsStyles.section__box}
-              >
-                {childItem.column.map((colItem) => (
-                  <InfoBox
-                    key={colItem._id}
-                    boxId={childItem._id}
-                    register={register}
-                    items={colItem.items}
-                    title={colItem.proccess_title}
-                    onChange={handleOnChange}
-                    type='checkbox'
-                    checker={colItem.proccess_title === 'Processes'}
-                    specials='edp'
-                  />
-                ))}
-              </div>
-            ))}
-          </div>
+          {isDesktop ? (
+            <div className={workflowAiSettingsStyles.section__container}>
+              {item.children?.map((childItem) => (
+                <div
+                  key={childItem._id}
+                  className={workflowAiSettingsStyles.section__box}
+                >
+                  {childItem.column.map((colItem) => (
+                    <InfoBox
+                      key={colItem._id}
+                      boxId={childItem._id}
+                      register={register}
+                      items={colItem.items}
+                      title={colItem.proccess_title}
+                      onChange={handleOnChange}
+                      type='checkbox'
+                      checker={colItem.proccess_title === 'Processes'}
+                      specials='edp'
+                    />
+                  ))}
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div
+              className={workflowAiSettingsStyles.section__container}
+              style={!isDesktop ? nonDesktopStyles : {}}
+            >
+              {item.children?.map((childItem) => (
+                <>
+                  {childItem.column.map((colItem) => (
+                    <div
+                      key={colItem._id}
+                      className={workflowAiSettingsStyles.section__box}
+                    >
+                      <InfoBox
+                        key={colItem._id}
+                        boxId={childItem._id}
+                        register={register}
+                        items={colItem.items}
+                        title={colItem.proccess_title}
+                        onChange={handleOnChange}
+                        type='checkbox'
+                        checker={colItem.proccess_title === 'Processes'}
+                        specials='edp'
+                      />
+                    </div>
+                  ))}
+                </>
+              ))}
+            </div>
+          )}
         </div>
       ))}
 

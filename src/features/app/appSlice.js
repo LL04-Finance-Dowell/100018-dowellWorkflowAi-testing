@@ -77,7 +77,7 @@ const initialState = {
   allProcesses: [],
   ArrayofLinks: [],
 
-CopyProcess:[],
+  CopyProcess: [],
 
   linksFetched: false,
   showGeneratedLinksPopup: false,
@@ -297,10 +297,12 @@ export const appSlice = createSlice({
 
               // console.log('pItem: ', pItem);
               return pItem.content.includes('set display name')
-                ? {
-                    ...col,
-                    pItemId: pItem._id,
-                  }
+                ? col.former_title
+                  ? { ...col, proccess_title: col.former_title }
+                  : {
+                      ...col,
+                      pItemId: pItem._id,
+                    }
                 : {
                     ...col,
                     former_title: pItem.content.split(' (')[0],

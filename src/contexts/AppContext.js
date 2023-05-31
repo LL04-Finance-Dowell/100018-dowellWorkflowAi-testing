@@ -1,12 +1,22 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { WorkflowSettingServices } from '../services/workflowSettingServices';
+import { useMediaQuery } from 'react-responsive';
 
 const AppContext = createContext({});
 
 export const useAppContext = () => useContext(AppContext);
 
 export const AppContextProvider = ({ children }) => {
+  const isDesktop = useMediaQuery({
+    query: '(min-width: 1050px)',
+  });
+  const [nonDesktopStyles] = useState({
+    gap: '0',
+    display: 'grid',
+    gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+    gridGap: '10px',
+  });
   const [toggleNewFileForm, setToggleNewFileForm] = useState(null);
   const [favoriteItems, setFavoriteitems] = useState({
     documents: [],
@@ -39,6 +49,9 @@ export const AppContextProvider = ({ children }) => {
   const [processDisplayName, setProcessDisplayName] = useState('');
   const [openNameChangeModal, setOpenNameChangeModal] = useState(false);
   const [nameChangeTitle, setNameChangeTitle] = useState('');
+  const [customDocName, setCustomDocName] = useState('');
+  const [customTempName, setCustomTempName] = useState('');
+  const [customWrkfName, setCustomWrkfName] = useState('');
 
   // const [createdNewTeam, setCreatedNewTeam] = useState();
 
@@ -91,9 +104,6 @@ export const AppContextProvider = ({ children }) => {
     );
 
     setWorkflowSettings(res.data);
-    // console.log('Testing fetch: ', res.data);
-    // console.log('Cpany Id: ', userDetail?.portfolio_info[0].org_id);
-    // return res.data;
   };
 
   useEffect(() => {
@@ -125,6 +135,10 @@ export const AppContextProvider = ({ children }) => {
     if (userDetail && userDetail.portfolio_info) fetchSettings();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userDetail]);
+
+  useEffect(() => {
+    console.log('wrkf settings: ', workflowSettings);
+  }, [workflowSettings]);
 
   return (
     <AppContext.Provider
@@ -169,6 +183,14 @@ export const AppContextProvider = ({ children }) => {
         setOpenNameChangeModal,
         nameChangeTitle,
         setNameChangeTitle,
+        isDesktop,
+        nonDesktopStyles,
+        customDocName,
+        customTempName,
+        customWrkfName,
+        setCustomDocName,
+        setCustomTempName,
+        setCustomWrkfName,
       }}
     >
       {children}

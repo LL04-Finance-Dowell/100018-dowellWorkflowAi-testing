@@ -60,6 +60,8 @@ const TeamsInWorkflowAi = () => {
     setRerun,
     setSync,
     isFetchingTeams,
+    isDesktop,
+    nonDesktopStyles,
   } = useAppContext();
   const [handleChangeParams, setHandleChangeParams] = useState([]);
   const [selectedTeamId, setSelectedTeamId] = useState('');
@@ -439,7 +441,10 @@ const TeamsInWorkflowAi = () => {
       >
         {t(teamsInWorkflowAI[0].title)}
       </h2>
-      <div className={workflowAiSettingsStyles.section__container}>
+      <div
+        className={workflowAiSettingsStyles.section__container}
+        style={!isDesktop ? nonDesktopStyles : {}}
+      >
         <form style={{ width: '100%' }}>
           <div className={workflowAiSettingsStyles.section__box}>
             {teamsInWorkflowAI[0].children[0].column.map((colItem, ind) => (

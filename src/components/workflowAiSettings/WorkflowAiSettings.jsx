@@ -32,7 +32,8 @@ const WorkflowAiSettings = () => {
 
   // #7a7a7a
   // --e-global-color-text;
-  const { workflowTeams, openNameChangeModal } = useAppContext();
+  const { workflowTeams, openNameChangeModal, isDesktop, nonDesktopStyles } =
+    useAppContext();
   const [
     workflowAiSettingsArrayToDisplay,
     setWorkflowAiSettingsArrayToDisplay,
@@ -89,7 +90,10 @@ const WorkflowAiSettings = () => {
             </Link>
             {t(item.title)}
           </h2>
-          <div className={styles.section__container}>
+          <div
+            className={styles.section__container}
+            style={!isDesktop ? nonDesktopStyles : {}}
+          >
             {item.children.map((childItem) => (
               <div key={childItem._id} className={styles.section__box}>
                 <InfoBox
