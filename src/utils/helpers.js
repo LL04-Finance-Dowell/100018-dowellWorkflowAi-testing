@@ -142,7 +142,7 @@ export const extractAuthQueryParamsFromVerificationURL = (inputUrl) => {
     const shortenedVerificationURL = validUrl.origin + inputUrl.split('verify/')[1]?.split('/')[1];
     const paramsPassed = new URLSearchParams(shortenedVerificationURL);
 
-    return `role~${paramsPassed.get('auth_role')}~userType~${paramsPassed.get('user_type')}~portfolio~${paramsPassed.get('portfolio')}~username~${paramsPassed.get('username')}~org~${paramsPassed.get('org')}`
+    return `role~${paramsPassed.get('auth_role')}~userType~${paramsPassed.get('user_type')}~portfolio~${paramsPassed.get('portfolio')}~username~${paramsPassed.get('username')}~org~${paramsPassed.get('org')}~product~${paramsPassed.get('product') ? paramsPassed.get('product') : paramsPassed.get(`${validUrl.origin}?product`)}`
 
   } catch (error) {
     return ''

@@ -5,6 +5,7 @@ const api_url = "https://100094.pythonanywhere.com/v1/";
 const auth_url = "https://100014.pythonanywhere.com/api/";
 const auth_url_other = "https://100093.pythonanywhere.com/api/";
 const new_process_api_url = "https://100094.pythonanywhere.com/v0.2/";
+export const auth_expo_url = "https://100093.pythonanywhere.com";
 
 export const dowellLoginUrl =
   `https://100014.pythonanywhere.com/?redirect_url=${
