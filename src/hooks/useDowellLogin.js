@@ -17,15 +17,21 @@ export default function useDowellLogin() {
   const navigate = useNavigate();
 
   const extractTokenFromURLAndNavigateToVerificationPage = (url) => {
+    dispatch(setShowProfileSpinner(true));
+
     const [ token, role, userType, username, portfolio ] = [
-      url.split('token~')[1].split('~')[0],
-      url.split('role~')[1].split('~')[0],
-      url.split('userType~')[1].split('~')[0],
-      url.split('username~')[1].split('~')[0],
-      url.split('portfolio~')[1].split('~')[0],
+      url.split('token~')[1]?.split('~')[0],
+      url.split('role~')[1]?.split('~')[0],
+      url.split('userType~')[1]?.split('~')[0],
+      url.split('username~')[1]?.split('~')[0],
+      url.split('portfolio~')[1]?.split('~')[0],
     ]
 
-    if (!token) return dispatch(setShowProfileSpinner(false));
+    if (!token) {
+      navigate('/100018-dowellWorkflowAi-testing/');
+      dispatch(setShowProfileSpinner(false));
+      return;
+    }
 
     window.history.replaceState({}, document.title, "/100018-dowellWorkflowAi-testing/");
     navigate(
@@ -58,7 +64,6 @@ export default function useDowellLogin() {
       sessionStorage.clear();
 
       sessionStorage.setItem('session_id', session_id);
-      dispatch(setShowProfileSpinner(true));
       dispatch(setSessionId(session_id));
       if (id || localId) {
         dispatch(setId(id));

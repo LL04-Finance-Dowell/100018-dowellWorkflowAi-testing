@@ -10,7 +10,7 @@ export const dowellLoginUrl =
   `https://100014.pythonanywhere.com/?redirect_url=${
     window.location.href.includes("verify") ?
       window.location.origin +
-    `/100018-dowellWorkflowAi-testing/token~${extractTokenFromVerificationURL(window.location.href)}~${extractAuthQueryParamsFromVerificationURL(window.location.href)}~/%23`
+    `/100018-dowellWorkflowAi-testing/%23token~${extractTokenFromVerificationURL(window.location.href)}~${extractAuthQueryParamsFromVerificationURL(window.location.href)}~`
     :
     window.location.origin +
     "/100018-dowellWorkflowAi-testing/%23"
