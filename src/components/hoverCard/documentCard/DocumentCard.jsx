@@ -22,7 +22,7 @@ import { RiDeleteBin6Line } from 'react-icons/ri';
 import { moveItemToArchive } from '../../../services/archiveServices';
 import { setAllDocuments } from '../../../features/document/documentSlice';
 import { BsBookmark, BsFillBookmarkFill } from 'react-icons/bs';
-import { updateVerificationDataWithTimezone } from '../../../utils/helpers';
+import { extractTokenFromVerificationURL, updateVerificationDataWithTimezone } from '../../../utils/helpers';
 import { useTranslation } from 'react-i18next';
 
 const DocumentCard = ({
@@ -167,7 +167,7 @@ const DocumentCard = ({
 
   const handleGoToEditor = async (link) => {
     if (!link) return;
-    const token = link.split('verify/')[1]?.split('/')[0];
+    const token = extractTokenFromVerificationURL(link);
     if (!token) return;
 
     const dataToPost = {
@@ -194,6 +194,7 @@ const DocumentCard = ({
       const auth_portfolio = paramsPassed.get('portfolio');
       const auth_role = paramsPassed.get('auth_role');
       const user_type = paramsPassed.get('user_type');
+      const org_name = paramsPassed.get('org');
 
       if (
         auth_username !== userDetail?.userinfo?.username ||
@@ -207,7 +208,7 @@ const DocumentCard = ({
       sanitizedDataToPost.auth_portfolio = auth_portfolio;
       sanitizedDataToPost.auth_role = auth_role;
       sanitizedDataToPost.user_type = user_type;
-      sanitizedDataToPost.org_name = userDetail?.selected_product?.product_name;
+      sanitizedDataToPost.org_name = org_name;
 
       delete sanitizedDataToPost.user_name;
       delete sanitizedDataToPost.portfolio;

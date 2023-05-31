@@ -76,7 +76,7 @@ const initialState = {
   processesLoaded: false,
   allProcesses: [],
   ArrayofLinks: [],
-
+  ShowProfileSpinner: false,
   CopyProcess: [],
 
   linksFetched: false,
@@ -296,13 +296,13 @@ export const appSlice = createSlice({
               );
 
               // console.log('pItem: ', pItem);
+
               return pItem.content.includes('set display name')
-                ? col.former_title
-                  ? { ...col, proccess_title: col.former_title }
-                  : {
-                      ...col,
-                      pItemId: pItem._id,
-                    }
+                ? {
+                    // todo fix this up
+                    ...col,
+                    pItemId: pItem._id,
+                  }
                 : {
                     ...col,
                     former_title: pItem.content.split(' (')[0],
@@ -657,6 +657,9 @@ export const appSlice = createSlice({
     SetCopyProcess: (state, action) => {
       state.CopyProcess = action.payload;
     },
+    setShowProfileSpinner: (state, action) => {
+      state.ShowProfileSpinner = action.payload;
+    },
 
     setShowGeneratedLinksPopup: (state, action) => {
       state.showGeneratedLinksPopup = action.payload;
@@ -777,7 +780,7 @@ export const {
   setPortfoliosInWorkflowAITeams,
   setUpdateInWorkflowAITeams,
   setUserDetailPosition,
-
+  setShowProfileSpinner,
   setLanguageSelectPosition,
   setIconColor,
   setUpdateProccessApi,

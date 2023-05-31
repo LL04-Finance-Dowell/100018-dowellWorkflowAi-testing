@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
@@ -10,6 +10,8 @@ import dowellLogo from '../../assets/dowell.png';
 import { updateVerificationDataWithTimezone } from '../../utils/helpers';
 import { useAppContext } from '../../contexts/AppContext';
 import { dowellLoginUrl } from '../../httpCommon/httpCommon';
+import { setShowProfileSpinner } from '../../features/app/appSlice';
+import { resetUserDetail } from '../../features/auth/authSlice';
 
 const VerificationPage = () => {
   const { token } = useParams();
@@ -17,10 +19,18 @@ const VerificationPage = () => {
   const { userDetail } = useSelector((state) => state.auth);
   const [verificationFailed, setVerificationFailed] = useState(false);
   const { isPublicUser, publicUserConfigured } = useAppContext();
+  const [ dataIsPosting, setDataIsPosting ] = useState(false);
+  const dispatch = useDispatch();
 
   useEffect(() => {
-    if (!publicUserConfigured) return;
 
+    dispatch(setShowProfileSpinner(false));
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  useEffect(() => {
+    if (!publicUserConfigured || verificationFailed || (!isPublicUser && !userDetail)) return;
     const dataToPost = {
       token: token,
       user_name: userDetail?.userinfo?.username,
@@ -50,7 +60,14 @@ const VerificationPage = () => {
       const auth_portfolio = paramsPassed.get('portfolio');
       const auth_role = paramsPassed.get('auth_role');
       const user_type = paramsPassed.get('user_type');
-      const auth_users = paramsPassed.getAll('username').length > 0 ? JSON.parse(paramsPassed.getAll('username')[0].replaceAll("'", '"')) : [];
+      const org_name = paramsPassed.get('org');
+      let auth_users;
+
+      try {
+        auth_users = JSON.parse(paramsPassed.getAll('username')[0].replaceAll("'", '"'));        
+      } catch (error) {
+        auth_users = []
+      }
 
       if (
         !isPublicUser &&
@@ -72,7 +89,7 @@ const VerificationPage = () => {
       sanitizedDataToPost.user_type = user_type;
       sanitizedDataToPost.org_name = isPublicUser
         ? 'public'
-        : userDetail?.selected_product?.product_name;
+        : org_name;
 
       delete sanitizedDataToPost.user_name;
       delete sanitizedDataToPost.portfolio;
@@ -80,6 +97,10 @@ const VerificationPage = () => {
       // console.log(sanitizedDataToPost)
       // return setDataLoading(false);
     }
+
+    if (dataIsPosting) return
+
+    setDataIsPosting(true);
 
     verifyProcessForUser(sanitizedDataToPost)
       .then((res) => {
@@ -99,12 +120,23 @@ const VerificationPage = () => {
             : 'Process verification failed'
         );
       });
-  }, [token, isPublicUser, userDetail, publicUserConfigured]);
+  }, [token, isPublicUser, userDetail, publicUserConfigured, verificationFailed, dataIsPosting]);
 
   const handleLoginLinkClick = (e) => {
     e.preventDefault();
     window.location.replace(dowellLoginUrl);
   };
+
+  const handleHomeLinkClick = (e) => {
+    e.preventDefault();
+
+    setLoading(true);
+    dispatch(resetUserDetail());
+
+    window.location.replace(
+      `https://100014.pythonanywhere.com/?redirect_url=${window.location.origin}/100018-dowellWorkflowAi-testing/%23`
+    )
+  }
 
   if (loading)
     return (
@@ -134,7 +166,7 @@ const VerificationPage = () => {
                   Go to WorkflowAI
                 </Link>
               ) : (
-                <Link to={'/'}>Go back home</Link>
+                <Link to={'/'} onClick={handleHomeLinkClick}>Go back home</Link>
               )}
             </>
           </>

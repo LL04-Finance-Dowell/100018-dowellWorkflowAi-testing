@@ -7,7 +7,7 @@ import axios from 'axios';
 import { useTranslation } from 'react-i18next';
 
 const Chat = () => {
-  const { session_id } = useSelector((state) => state.auth);
+  const { session_id,userDetail } = useSelector((state) => state.auth);
 
   const { t } = useTranslation();
   const [apiMessages, setapiMessages] = useState([]);
@@ -18,9 +18,9 @@ const Chat = () => {
   const [modals, setModal] = useState([]);
   const [hasChatStarted, setHasChatStarted] = useState(false);
 
-  useEffect(() => {
-    IntilizingRoom(session_id);
-  }, [session_id]);
+  // useEffect(() => {
+  //   IntilizingRoom(session_id);
+  // }, [session_id]);
 
   const IntilizingRoom = async (session_id) => {
     try {
@@ -29,6 +29,7 @@ const Chat = () => {
       );
       if (response.ok) {
         const data = await response.json();
+        console.log(data)
         setModal(data);
       } else {
         throw new Error('Network response was not OK');
@@ -50,10 +51,13 @@ const Chat = () => {
         `https://100096.pythonanywhere.com/send_message/${modals.room_pk}/`,
         {
           message,
+          message_type: "text/Image",
           user_id: modals.user_id,
+          org_id: userDetail?.portfolio_info[0].org_id
         }
       )
       .then((res) => {
+        console.log('post',res)
         const newMessage = { text: message, sender: '' };
         const updatedMessages = [...messages, newMessage];
         setMessages(updatedMessages);
@@ -76,7 +80,7 @@ const Chat = () => {
     if (!modals.room_pk) return;
     const interval = setInterval(() => {
       fetchMessages(modals.room_pk);
-    }, 2000); // Repeat every 2 seconds
+    }, 5000); // Repeat every 2 seconds
 
     return () => clearInterval(interval); // This is important, it clears the interval on unmount
   }, [modals]);
@@ -93,6 +97,7 @@ const Chat = () => {
     }
 
     const data = await response.json();
+    // console.log('get',data)
     setapiMessages(data.messages);
   }
 
