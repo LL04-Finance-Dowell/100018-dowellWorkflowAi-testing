@@ -11,6 +11,7 @@ import { updateVerificationDataWithTimezone } from '../../utils/helpers';
 import { useAppContext } from '../../contexts/AppContext';
 import { dowellLoginUrl } from '../../httpCommon/httpCommon';
 import { setShowProfileSpinner } from '../../features/app/appSlice';
+import { resetUserDetail } from '../../features/auth/authSlice';
 
 const VerificationPage = () => {
   const { token } = useParams();
@@ -126,6 +127,17 @@ const VerificationPage = () => {
     window.location.replace(dowellLoginUrl);
   };
 
+  const handleHomeLinkClick = (e) => {
+    e.preventDefault();
+
+    setLoading(true);
+    dispatch(resetUserDetail());
+
+    window.location.replace(
+      `https://100014.pythonanywhere.com/?redirect_url=${window.location.origin}/100018-dowellWorkflowAi-testing/%23`
+    )
+  }
+
   if (loading)
     return (
       <div className='workflow__Verification__Page__Container__Spinner'>
@@ -154,7 +166,7 @@ const VerificationPage = () => {
                   Go to WorkflowAI
                 </Link>
               ) : (
-                <Link to={'/'}>Go back home</Link>
+                <Link to={'/'} onClick={handleHomeLinkClick}>Go back home</Link>
               )}
             </>
           </>

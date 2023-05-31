@@ -23,6 +23,13 @@ export const appSlice = createSlice({
     updateUserDetail: (state, action) => {
       state.userDetail = action.payload
     },
+    resetUserDetail: (state, action) => {
+      sessionStorage.clear();
+
+      state.id = null;
+      state.session_id = null;
+      state.userDetail = null;
+    }
   },
   extraReducers: (builder) => {
     //getUserInfo
@@ -65,6 +72,6 @@ export const appSlice = createSlice({
 });
 
 // Action creators are generated for each case reducer function
-export const { setSessionId, setId, updateUserDetail } = appSlice.actions;
+export const { setSessionId, setId, updateUserDetail, resetUserDetail } = appSlice.actions;
 
 export default appSlice.reducer;
