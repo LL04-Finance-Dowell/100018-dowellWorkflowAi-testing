@@ -61,10 +61,9 @@ function App() {
       .post(
         'https://100014.pythonanywhere.com/en/live_status',
         {
-          data: {
-            session_id: session_id,
-            product: 'Workflow AI',
-          },
+          session_id: session_id,
+          product: 'Workflow AI',
+
         },
         {
           headers: {
@@ -73,7 +72,7 @@ function App() {
         }
       )
       .then((response) => {
-        // console.log("postdata", response);
+        console.log("postdata", response);
       })
       .catch((error) => {
         console.log(error);
