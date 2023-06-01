@@ -361,3 +361,64 @@
 
    
 }
+
+@media (max-width: 350px) {
+    .Chat_Now_Button {
+        margin-top: 70px;
+        border-radius: 50px;
+        font-size: 20px;
+        padding: 5px;
+        background-color: #1fb6ff;
+        color: #fff;
+        width: 95% !important;
+    }
+    .First_popuop {
+        position: fixed;
+        bottom: 50px;
+        right: 40px;
+        background-color: white;
+        width: 205px;
+        height: 400px;
+        border-radius: 12px;
+        box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.3);
+        padding: 16px !important;
+        box-sizing: border-box !important;
+    }
+    .Second_Popup {
+        position: fixed;
+        bottom: 50px;
+        right: 40px;
+        background-color: white;
+        width: 205px;
+        height: 400px;
+        border-radius: 12px;
+        box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.3);
+        padding: 16px;
+        box-sizing: border-box !important;
+    }
+    .Input_Container {
+        display: flex;
+        padding: 10px;
+        justify-content: center;
+    }
+    .Text_input {
+        border-color: #cbd5e0;
+        border-width: 1px;
+        border-style: solid;
+        border-radius: 10px;
+        width: 150px;
+        margin: 2px;
+        padding: 10px;
+        font-size: 15px;
+    }
+
+    .Send_button {
+        size: 30px;
+        border-radius: 10px;
+        width: 45px;
+        background-color: #1fb6ff;
+        transition: background-color 0.2s ease-in-out;
+        color: #fff;
+        font-weight: bold;
+    }
+}

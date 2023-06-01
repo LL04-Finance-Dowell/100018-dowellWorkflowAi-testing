@@ -11,6 +11,9 @@ export const AppContextProvider = ({ children }) => {
   const isDesktop = useMediaQuery({
     query: '(min-width: 1050px)',
   });
+  const isMobile = useMediaQuery({
+    query: '(max-width: 767px)',
+  });
   const [nonDesktopStyles] = useState({
     gap: '0',
     display: 'grid',
@@ -184,6 +187,7 @@ export const AppContextProvider = ({ children }) => {
         nameChangeTitle,
         setNameChangeTitle,
         isDesktop,
+        isMobile,
         nonDesktopStyles,
         customDocName,
         customTempName,

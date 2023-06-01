@@ -89,4 +89,37 @@
   .is__fixed {
     max-width: calc(100% - 20px);
   }
+  .header {
+    font-size: 15px !important;
+    line-height: 21.6px !important;
+    font-weight: 600;
+    margin-bottom: 0;
+    color: var(--e-global-color-secondary);
+    white-space: nowrap;
+  }
+}
+@media (max-width: 290px) {
+  
+  .header__box {
+    padding-inline: 20px;
+    height: 64px;
+    border: solid 1px #a4afb7;
+    background-color: var(--e-global-color-9d2ac19);
+    font-size: 18px !important;
+    line-height: 21.6px !important;
+    font-weight: 600;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    white-space: break-spaces;
+    position: relative;
+  }
+  .header {
+    font-size: 15px !important;
+    line-height: 21.6px !important;
+    font-weight: 600;
+    margin-bottom: 0;
+    color: var(--e-global-color-secondary);
+    white-space: break-spaces;
+  }
 }

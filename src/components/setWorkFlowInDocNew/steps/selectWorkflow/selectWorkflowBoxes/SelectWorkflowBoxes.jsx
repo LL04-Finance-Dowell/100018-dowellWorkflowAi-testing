@@ -12,6 +12,7 @@ import {
   setSelectedMembersForProcess,
   setSelectedWorkflowsToDoc,
 } from '../../../../../features/app/appSlice';
+import { useAppContext } from '../../../../../contexts/AppContext';
 import Collapse from '../../../../../layouts/collapse/Collapse';
 import { LoadingSpinner } from '../../../../LoadingSpinner/LoadingSpinner';
 import { useForm } from 'react-hook-form';
@@ -46,7 +47,7 @@ const InfoBoxes = ({ savedDoc }) => {
   const { allWorkflows: allWorkflowsArray, allWorkflowsStatus } = useSelector(
     (state) => state.workflow
   );
-
+  const {  isMobile } =useAppContext();
   const [compInfoBoxes, setCompInfoBoxes] = useState(infoBoxes);
 
   useEffect(() => {

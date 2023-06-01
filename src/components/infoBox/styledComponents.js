@@ -38,6 +38,10 @@ export const InfoTitleBox = styled.div`
   flex-wrap: wrap;
   text-transform: capitalize;
   color: ${(props) => (props.boxType ? 'white' : 'var(--e-global-color-text)')};
+  @media (max-width: 375px) {
+    padding: 15px 2px;
+    font-size: 13px;
+  }
 `;
 
 export const InfoContentContainer = styled.div`
@@ -80,6 +84,10 @@ export const InfoContentBox = styled.ol`
   list-style: none;
   padding-inline: 20px;
   gap: 2px;
+
+  @media (max-width: 375px) {
+    padding-inline: 5px;
+  }
 `;
 
 export const InfoContentText = styled.li`

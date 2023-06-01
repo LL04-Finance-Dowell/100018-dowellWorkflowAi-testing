@@ -20,6 +20,8 @@ import {
   setLanguageSelectPosition,
 } from '../../features/app/appSlice';
 import { AiOutlineClose } from 'react-icons/ai';
+import { RxHamburgerMenu } from "react-icons/rx";
+import { IoIosCloseCircle } from "react-icons/io";
 import { LoadingSpinner } from '../../components/LoadingSpinner/LoadingSpinner';
 import Chat from '../../components/Chat/Chat'
 import { formatDateAndTime } from '../../utils/helpers';
@@ -36,7 +38,8 @@ import LanguageDropdown from '../../components/LanguageSelector/LanguageDropdown
 const WorkflowLayout = ({ children }) => {
   const dispatch = useDispatch();
   const { t } = useTranslation();
-  // console.log({t})
+  const { workflowTeams, isDesktop, nonDesktopStyles, isMobile } = useAppContext();
+
   const { userDetail, session_id, id } = useSelector((state) => state.auth);
   const {
     userDetailPosition,
@@ -53,6 +56,7 @@ const WorkflowLayout = ({ children }) => {
 
   const [createNewPortfolioLoading, setCreateNewPortfolioLoading] =
     useState(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const { allDocuments } = useSelector((state) => state.document);
   const { allTemplates } = useSelector((state) => state.template);
   const { allWorkflows } = useSelector((state) => state.workflow);
@@ -202,6 +206,10 @@ const WorkflowLayout = ({ children }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [allDocuments, allTemplates, allWorkflows, searchItemsStatus]);
 
+  function toggleSidebar() {
+    setIsSidebarOpen(!isSidebarOpen);
+  }
+
   return (
     <>
       <div className={styles.container}>
@@ -233,10 +241,25 @@ const WorkflowLayout = ({ children }) => {
           ) : (
             <>
               <div className={styles.content__box}>
-                <div className={`${styles.sidebar__box} hide-scrollbar`}>
-                  <SideBar />
-                  
-                </div>
+                {isMobile ? (
+                  <>
+                    <div className={`${styles.sidebar__box} hide-scrollbar`} style={{ display: isSidebarOpen ? 'block' : 'none' }}>
+                      <SideBar />
+                    </div>
+                    <div style={{ position: 'fixed', top: 2, left: 0 }}>
+                      {isSidebarOpen ? (
+                        <IoIosCloseCircle size={40} onClick={toggleSidebar} />
+                      ) : (
+                        <RxHamburgerMenu color='black' size={30} onClick={toggleSidebar} />
+                      )}
+                    </div>
+                  </>
+                ) : (
+                  <div className={`${styles.sidebar__box} hide-scrollbar`}>
+                    <SideBar />
+                  </div>
+                )}
+
                 <div className={styles.children__box}>
                   <p className={styles.beta__Info__Text}>
                     {t('You are on the beta version of workflow.ai')}
@@ -273,7 +296,7 @@ const WorkflowLayout = ({ children }) => {
         {/* /////////// */}
         {userDetailPosition && (
           <div
-            onMouseEnter={handleMouseEnter}
+            onClick={handleMouseEnter}
             onMouseLeave={handleMouseLeave}
             style={{
               position: 'fixed',

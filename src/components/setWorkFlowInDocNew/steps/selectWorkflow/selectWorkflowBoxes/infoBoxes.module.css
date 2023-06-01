@@ -75,4 +75,11 @@
   .box {
     width: 28.15vw;
   }
+  .container {
+    display: flex;
+    flex-direction: column;
+    transition: 0.1s transform ease;
+    gap: 20px;
+  }
+  
 }

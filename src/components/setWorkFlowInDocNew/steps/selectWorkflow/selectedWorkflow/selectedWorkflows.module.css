@@ -6,7 +6,7 @@
 
 .box__container {
   background-color: var(--e-global-color-9d2ac19);
-  padding: 10px;
+ 
   border: 1px solid var(--e-global-color-text);
   width: 33%;
   flex-shrink: 0;
@@ -18,4 +18,12 @@
   font-size: 12px;
   line-height: 18px;
   gap: 5px;
+}
+@media (max-width: 375px) {
+  .selected__box {
+    display: flex;
+    font-size: 10px;
+    line-height: 18px;
+    gap: 0px;
+  }
 }
