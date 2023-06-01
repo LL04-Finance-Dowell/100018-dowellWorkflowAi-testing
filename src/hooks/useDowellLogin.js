@@ -33,10 +33,12 @@ export default function useDowellLogin() {
     
     if (passedId) {
       navigate(`/?session_id=${passedSessionId}&id=${passedId}`)
+      // window.history.replaceState({}, document.title, "/100018-dowellWorkflowAi-testing/");
       return
     }
 
     navigate(`/?session_id=${passedSessionId}`);
+    // window.history.replaceState({}, document.title, "/100018-dowellWorkflowAi-testing/");
   }
 
   const extractTokenFromURLAndNavigateToVerificationPage = (url, session_id, id=null, detailsConfigured=false) => {
@@ -66,6 +68,7 @@ export default function useDowellLogin() {
     if (!token) {
       dispatch(setShowProfileSpinner(false));
       navigate(`/?session_id=${session_id}`)
+      // window.history.replaceState({}, document.title, "/100018-dowellWorkflowAi-testing/");
       return;
     }
 
@@ -123,6 +126,7 @@ export default function useDowellLogin() {
     const session_id = searchParams.get('session_id');
     const id = searchParams.get('id');
     const userType = searchParams.get('user_type');
+    const currentLocation = window.location.href;
 
     if (userType && userType === 'public') {
       setIsPublicUser(true);
@@ -142,10 +146,10 @@ export default function useDowellLogin() {
       dispatch(setSessionId(session_id));
       if (id || localId) {
         dispatch(setId(id));
-        if (window.location.href.includes('token~') && window.location.href.includes('userDetailsConfigured~')) return extractTokenFromURLAndNavigateToVerificationPage(window.location.href, session_id, id, true)
+        if (currentLocation.includes('token~') && currentLocation.includes('userDetailsConfigured~')) return extractTokenFromURLAndNavigateToVerificationPage(currentLocation, session_id, id, true)
         dispatch(getUserInfoOther({ session_id }));
       } else {
-        if (window.location.href.includes('token~') && !window.location.href.includes('userDetailsConfigured~')) return extractTokenFromURLAndNavigateToVerificationPage(window.location.href, session_id)
+        if (currentLocation.includes('token~') && !currentLocation.includes('userDetailsConfigured~')) return extractTokenFromURLAndNavigateToVerificationPage(currentLocation, session_id)
         dispatch(getUserInfo({ session_id }));
       }
     }

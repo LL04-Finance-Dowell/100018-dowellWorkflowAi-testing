@@ -72,7 +72,6 @@ const Sidebar = () => {
   }, []);
 
   const handleLogout = () => {
-
     sessionStorage.clear();
     window.location.replace(dowellLogoutUrl);
   };
@@ -80,23 +79,17 @@ const Sidebar = () => {
   const handleClick = (feature) => {
     feature === 'logout' && handleLogout();
 
-// 
+    //
     if (feature === 'profile') {
-      dispatch(setShowProfileSpinner(true)) // Show spinner
+      dispatch(setShowProfileSpinner(true)); // Show spinner
       sessionStorage.clear();
-
-
 
       window.location.replace(
         `https://100093.pythonanywhere.com/?session_id=${session_id}`
       );
 
-     // Hide spinner after 2 seconds
+      // Hide spinner after 2 seconds
     }
-
-
-
-
 
     feature === 'home' && navigate(`/`);
     feature === 'shield' && dispatch(setShowLegalStatusPopup(true));
@@ -175,7 +168,6 @@ const Sidebar = () => {
           </i>
         ))}
 
-
         <BsThreeDotsVertical
           cursor='pointer'
           size={25}
@@ -203,9 +195,9 @@ const Sidebar = () => {
       <div className={styles.organization__box}>
         <h2 className={styles.organization__text}>
           {userDetail &&
-            userDetail.portfolio_info &&
-            userDetail.portfolio_info.length > 0 &&
-            userDetail.portfolio_info[0].org_name
+          userDetail.portfolio_info &&
+          userDetail.portfolio_info.length > 0 &&
+          userDetail.portfolio_info[0].org_name
             ? userDetail.portfolio_info[0].org_name
             : 'My Organization'}
         </h2>
