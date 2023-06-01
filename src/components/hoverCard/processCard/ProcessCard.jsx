@@ -16,6 +16,7 @@ import {
 import { Button } from '../styledComponents';
 import { LoadingSpinner } from '../../LoadingSpinner/LoadingSpinner';
 import axios from 'axios';
+import { api_url } from '../../../httpCommon/httpCommon';
 
 const ProcessCard = ({ cardItem, title }) => {
   const { allProcesses } = useSelector((state) => state.app);
@@ -49,7 +50,7 @@ const ProcessCard = ({ cardItem, title }) => {
   async function getCopyProcess(process_id) {
 
     try {
-      const response = await axios.post(`https://100094.pythonanywhere.com/v1/processes/${process_id}/copies/`, {
+      const response = await axios.post(`${api_url}processes/${process_id}/copies/`, {
         created_by: userDetail?.userinfo?.username,
         portfolio: userDetail?.portfolio_info[0]?.portfolio_name,
       });
@@ -90,7 +91,7 @@ const ProcessCard = ({ cardItem, title }) => {
 
   function getProcessLinks(process_id) {
     fetch(
-      `https://100094.pythonanywhere.com/v1/processes/${process_id}/all-links/`
+      `${api_url}processes/${process_id}/all-links/`
     )
       .then((res) => res.json())
       .then((data) => {
