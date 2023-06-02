@@ -7,7 +7,7 @@ import Spinner from '../../components/spinner/Spinner';
 import { verifyProcessForUser } from '../../services/processServices';
 import './style.css';
 import dowellLogo from '../../assets/dowell.png';
-import { updateVerificationDataWithTimezone } from '../../utils/helpers';
+import { productName, updateVerificationDataWithTimezone } from '../../utils/helpers';
 import { useAppContext } from '../../contexts/AppContext';
 import { dowellLoginUrl } from '../../httpCommon/httpCommon';
 import { setShowProfileSpinner } from '../../features/app/appSlice';
@@ -61,6 +61,10 @@ const VerificationPage = () => {
       const auth_role = paramsPassed.get('auth_role');
       const user_type = paramsPassed.get('user_type');
       const org_name = paramsPassed.get('org');
+      const currentUserPortfolioName = userDetail?.portfolio_info?.length > 1 ? 
+        userDetail?.portfolio_info.find(portfolio => portfolio.product === productName)?.portfolio_name
+        :
+      userDetail?.portfolio_info[0]?.portfolio_name;
       let auth_users;
 
       try {
@@ -73,7 +77,7 @@ const VerificationPage = () => {
         !isPublicUser &&
         userDetail &&
         (auth_username !== userDetail?.userinfo?.username ||
-          auth_portfolio !== userDetail?.portfolio_info[0]?.portfolio_name)
+          auth_portfolio !== currentUserPortfolioName)
       ) {
         toast.info('You are not authorized to view this');
         setLoading(false);

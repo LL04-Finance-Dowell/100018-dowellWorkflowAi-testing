@@ -20,6 +20,7 @@ import GeneratedLinksModal from './components/GeneratedLinksModal/GeneratedLinks
 import SaveConfimationModal from './components/SaveConfirmationModal/SaveConfirmationModal';
 import { setAllProcesses } from '../../../../features/app/appSlice';
 import { useTranslation } from 'react-i18next';
+import { productName } from '../../../../utils/helpers';
 
 const ProcessDocument = ({ savedProcess }) => {
   // const [currentProcess, setCurrentProcess] = useState();
@@ -72,10 +73,10 @@ const ProcessDocument = ({ savedProcess }) => {
 
   const extractProcessObj = (actionVal, skipDataChecks = false) => {
     const processObj = {
-      company_id: userDetail?.portfolio_info[0]?.org_id,
+      company_id: userDetail?.portfolio_info?.length > 1 ? userDetail?.portfolio_info.find(portfolio => portfolio.product === productName)?.org_id : userDetail?.portfolio_info[0]?.org_id,
       created_by: userDetail?.userinfo?.username,
-      creator_portfolio: userDetail?.portfolio_info[0]?.portfolio_name,
-      data_type: userDetail?.portfolio_info[0].data_type,
+      creator_portfolio: userDetail?.portfolio_info?.length > 1 ? userDetail?.portfolio_info.find(portfolio => portfolio.product === productName)?.portfolio_name : userDetail?.portfolio_info[0]?.portfolio_name,
+      data_type: userDetail?.portfolio_info?.length > 1 ? userDetail?.portfolio_info.find(portfolio => portfolio.product === productName)?.data_type : userDetail?.portfolio_info[0]?.data_type,
       parent_id: currentDocToWfs?._id,
       action: actionVal,
       workflows: [
@@ -88,6 +89,7 @@ const ProcessDocument = ({ savedProcess }) => {
       ],
       workflows_ids: [docCurrentWorkflow._id], // this will be updated later to capture multiple workflows
       process_type: 'document',
+      org_name: userDetail?.portfolio_info?.length > 1 ? userDetail?.portfolio_info.find(portfolio => portfolio.product === productName)?.org_name : userDetail?.portfolio_info[0]?.org_name,
     };
 
     const foundProcessSteps = processSteps.find(

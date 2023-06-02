@@ -3,7 +3,7 @@ import { WorkflowServices } from "../../services/workflowServices";
 import { setCurrentWorkflow, setToggleManageFileForm } from "../app/appSlice";
 import { removeFromMinedWf } from "./workflowsSlice";
 import { v4 as uuidv4 } from "uuid";
-import { changeToTitleCase } from "../../utils/helpers";
+import { changeToTitleCase, productName } from "../../utils/helpers";
 
 const workflowServices = new WorkflowServices();
 
@@ -11,18 +11,23 @@ const filterWorkflows = (workflows, thunkAPI) => {
   let filteredWorkflows = [];
 
   if (workflows && workflows.length && workflows?.length > 0) {
+    const userThunkPortfolioDataTypeState = thunkAPI.getState().auth?.userDetail?.portfolio_info?.length > 1 ?
+      thunkAPI.getState().auth?.userDetail?.portfolio_info.find(portfolio => portfolio.product === productName)?.data_type
+    :
+    thunkAPI.getState().auth?.userDetail?.portfolio_info[0]?.data_type;
+
     filteredWorkflows = workflows
       .filter(
         (item) =>
           (
             item?.data_type &&
               item?.data_type ===
-                thunkAPI.getState().auth?.userDetail?.portfolio_info[0]?.data_type  
+                userThunkPortfolioDataTypeState 
           ) || 
           (
             item.workflows.data_type &&
               item.workflows.data_type ===
-                thunkAPI.getState().auth?.userDetail?.portfolio_info[0]?.data_type
+                userThunkPortfolioDataTypeState
           )
       )
       .map((item) => ({

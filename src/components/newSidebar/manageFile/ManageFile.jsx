@@ -9,6 +9,7 @@ import { allTemplates } from '../../../features/template/asyncThunks';
 import { allWorkflows } from '../../../features/workflow/asyncTHunks';
 
 import { useTranslation } from 'react-i18next';
+import { productName } from '../../../utils/helpers';
 
 const ManageFile = () => {
   const dispatch = useDispatch();
@@ -36,8 +37,8 @@ const ManageFile = () => {
 
   useEffect(() => {
     const data = {
-      company_id: userDetail?.portfolio_info[0].org_id,
-      data_type: userDetail?.portfolio_info[0].data_type,
+      company_id: userDetail?.portfolio_info?.length > 1 ? userDetail?.portfolio_info.find(portfolio => portfolio.product === productName)?.org_id: userDetail?.portfolio_info[0].org_id,
+      data_type: userDetail?.portfolio_info?.length > 1 ? userDetail?.portfolio_info.find(portfolio => portfolio.product === productName)?.data_type : userDetail?.portfolio_info[0].data_type,
     };
     // console.log(allWorkflowsArray)
     /*  if (savedDocumentsStatus === "idle") dispatch(savedDocuments(data));
@@ -51,6 +52,11 @@ const ManageFile = () => {
   }, []);
 
   useEffect(() => {
+    const currentUserportfolioDataType = userDetail?.portfolio_info?.length > 1 ? 
+      userDetail?.portfolio_info.find(portfolio => portfolio.product === productName)?.data_type
+      :
+      userDetail?.portfolio_info[0]?.data_type;
+
     // THIS UPDATES AN INDIVIDUAL ITEM COUNT FOR EITHER DOCUMENT/TEMPLATE/WORKFLOW/PROCESS
     if (
       allDocumentsArray &&
@@ -61,18 +67,18 @@ const ManageFile = () => {
         allDocumentsArray
           .filter(
             (item) =>
-              item.created_by === userDetail?.portfolio_info[0].username &&
+              item.created_by === userDetail?.userinfo?.username &&
               item.document_type === 'original'
           )
           .filter(
             (item) =>
-              item.data_type === userDetail?.portfolio_info[0]?.data_type
+              item.data_type === currentUserportfolioDataType
           ).length +
         allDocumentsArray
           .filter((document) => document.document_type === 'original')
           .filter(
             (item) =>
-              item.data_type === userDetail?.portfolio_info[0]?.data_type
+              item.data_type === currentUserportfolioDataType
           ).length;
       setItemsCountToDisplay((prevItems) => {
         return {
@@ -90,14 +96,14 @@ const ManageFile = () => {
       const countOfTemplates =
         allTemplatesArray
           .filter(
-            (item) => item.created_by === userDetail?.portfolio_info[0].username
+            (item) => item.created_by === userDetail?.userinfo?.username
           )
           .filter(
             (item) =>
-              item.data_type === userDetail?.portfolio_info[0]?.data_type
+              item.data_type === currentUserportfolioDataType
           ).length +
         allTemplatesArray.filter(
-          (item) => item.data_type === userDetail?.portfolio_info[0]?.data_type
+          (item) => item.data_type === currentUserportfolioDataType
         ).length;
       setItemsCountToDisplay((prevItems) => {
         return {
@@ -115,21 +121,21 @@ const ManageFile = () => {
       const countOfWorkflows =
         allWorkflowsArray
           .filter(
-            (item) => item.created_by === userDetail?.portfolio_info[0].username
+            (item) => item.created_by === userDetail?.userinfo?.username
           )
           .filter(
             (item) =>
               item.workflows &&
-              (item?.data_type === userDetail?.portfolio_info[0]?.data_type ||
+              (item?.data_type === currentUserportfolioDataType ||
                 item.workflows?.data_type ===
-                  userDetail?.portfolio_info[0]?.data_type)
+                  currentUserportfolioDataType)
           ).length +
         allWorkflowsArray.filter(
           (item) =>
             item.workflows &&
-            (item?.data_type === userDetail?.portfolio_info[0]?.data_type ||
+            (item?.data_type === currentUserportfolioDataType ||
               item.workflows?.data_type ===
-                userDetail?.portfolio_info[0]?.data_type)
+                currentUserportfolioDataType)
         ).length;
       setItemsCountToDisplay((prevItems) => {
         return {
@@ -145,7 +151,7 @@ const ManageFile = () => {
           .filter((process) => process.processing_state === 'draft')
           .filter(
             (process) =>
-              process.data_type === userDetail?.portfolio_info[0]?.data_type
+              process.data_type === currentUserportfolioDataType
           )
           .filter(
             (process) => process.created_by === userDetail?.userinfo?.username
@@ -155,19 +161,19 @@ const ManageFile = () => {
           .filter((process) => process.processing_state === 'processing')
           .filter(
             (process) =>
-              process.data_type === userDetail?.portfolio_info[0]?.data_type
+              process.data_type === currentUserportfolioDataType
           ).length +
         allProcesses
           .filter((process) => process.processing_state === 'paused')
           .filter(
             (process) =>
-              process.data_type === userDetail?.portfolio_info[0]?.data_type
+              process.data_type === currentUserportfolioDataType
           ).length +
         allProcesses
           .filter((process) => process.processing_state === 'cancelled')
           .filter(
             (process) =>
-              process.data_type === userDetail?.portfolio_info[0]?.data_type
+              process.data_type === currentUserportfolioDataType
           ).length;
       setItemsCountToDisplay((prevItems) => {
         return {

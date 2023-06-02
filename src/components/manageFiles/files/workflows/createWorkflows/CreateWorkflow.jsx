@@ -19,6 +19,7 @@ import { TiTick } from 'react-icons/ti';
 
 import StepTable from './stepTable/StepTable';
 import { useTranslation } from 'react-i18next';
+import { productName } from '../../../../../utils/helpers';
 
 const CreateWorkflows = ({ handleToggleOverlay }) => {
   const { t } = useTranslation();
@@ -110,11 +111,11 @@ const CreateWorkflows = ({ handleToggleOverlay }) => {
 
     if (currentWorkflow) {
       const updateData = {
-        created_by: userDetail?.portfolio_info[0].username,
-        company_id: userDetail?.portfolio_info[0].org_id,
+        created_by: userDetail?.userinfo?.username,
+        company_id: userDetail?.portfolio_info?.length > 1 ? userDetail?.portfolio_info.find(portfolio => portfolio.product === productName)?.org_id : userDetail?.portfolio_info[0].org_id,
         wf_title: workflowTitle,
         workflow_id: currentWorkflow._id,
-        data_type: userDetail?.portfolio_info[0].data_type,
+        data_type: userDetail?.portfolio_info?.length > 1 ? userDetail?.portfolio_info.find(portfolio => portfolio.product === productName)?.data_type : userDetail?.portfolio_info[0].data_type,
         steps,
       };
 
@@ -123,8 +124,8 @@ const CreateWorkflows = ({ handleToggleOverlay }) => {
       const data = {
         created_by: userDetail?.userinfo.username,
         wf_title: workflowTitle,
-        company_id: userDetail?.portfolio_info[0].org_id,
-        data_type: userDetail?.portfolio_info[0].data_type,
+        company_id: userDetail?.portfolio_info?.length > 1 ? userDetail?.portfolio_info.find(portfolio => portfolio.product === productName)?.org_id : userDetail?.portfolio_info[0].org_id,
+        data_type: userDetail?.portfolio_info?.length > 1 ? userDetail?.portfolio_info.find(portfolio => portfolio.product === productName)?.data_type : userDetail?.portfolio_info[0].data_type,
         steps,
       };
 

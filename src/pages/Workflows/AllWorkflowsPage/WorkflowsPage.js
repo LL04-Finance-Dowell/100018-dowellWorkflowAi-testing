@@ -4,25 +4,27 @@ import WorkflowLayout from '../../../layouts/WorkflowLayout/WorkflowLayout';
 import { v4 as uuidv4 } from 'uuid';
 import './style.css';
 import CreateWorkflows from '../../../components/manageFiles/files/workflows/createWorkflows/CreateWorkflow';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { allWorkflows } from '../../../features/workflow/asyncTHunks';
 import WorkflowCard from '../../../components/hoverCard/workflowCard/WorkflowCard';
 import { useNavigate } from 'react-router-dom';
+import { productName } from '../../../utils/helpers';
 
 const WorkflowsPage = ({ home, showOnlySaved, showOnlyTrashed }) => {
   const { userDetail } = useSelector((state) => state.auth);
   const { allWorkflows: allWorkflowsArray, allWorkflowsStatus } = useSelector(
     (state) => state.workflow
   );
+  const [ currentUserPortfolioDataType, setCurrentUserPortfolioDataType ] = useState('');
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
   useEffect(() => {
     const data = {
-      company_id: userDetail?.portfolio_info[0].org_id,
-      data_type: userDetail?.portfolio_info[0].data_type,
+      company_id: userDetail?.portfolio_info?.length > 1 ? userDetail?.portfolio_info.find(portfolio => portfolio.product === productName)?.org_id : userDetail?.portfolio_info[0].org_id,
+      data_type: userDetail?.portfolio_info?.length > 1 ? userDetail?.portfolio_info.find(portfolio => portfolio.product === productName)?.data_type : userDetail?.portfolio_info[0].data_type,
     };
 
     /*   if (savedWorkflowStatus === "idle") dispatch(savedWorkflows(saveddata));
@@ -38,6 +40,13 @@ const WorkflowsPage = ({ home, showOnlySaved, showOnlyTrashed }) => {
     if (home) navigate('#drafts');
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [showOnlySaved, showOnlyTrashed, home]);
+
+  useEffect(() => {
+
+    const portfolioDataType = userDetail?.portfolio_info?.length > 1 ? userDetail?.portfolio_info.find(portfolio => portfolio.product === productName)?.data_type : userDetail?.portfolio_info[0]?.data_type;
+    setCurrentUserPortfolioDataType(portfolioDataType);
+
+  }, [userDetail])
 
   // console.log("all", allWorkflowsArray);
 
@@ -61,15 +70,15 @@ const WorkflowsPage = ({ home, showOnlySaved, showOnlyTrashed }) => {
                     .filter(
                       (item) =>
                         item.created_by ===
-                        userDetail?.portfolio_info[0].username
+                        userDetail?.userinfo?.username
                     )
                     .filter(
                       (item) =>
                         item.workflows &&
                         (item?.data_type ===
-                          userDetail?.portfolio_info[0]?.data_type ||
+                          currentUserPortfolioDataType ||
                           item.workflows?.data_type ===
-                            userDetail?.portfolio_info[0]?.data_type)
+                            currentUserPortfolioDataType)
                     )
                     .reverse()
                 }
@@ -92,9 +101,9 @@ const WorkflowsPage = ({ home, showOnlySaved, showOnlyTrashed }) => {
                   (item) =>
                     item.workflows &&
                     (item?.data_type ===
-                      userDetail?.portfolio_info[0]?.data_type ||
+                      currentUserPortfolioDataType ||
                       item.workflows?.data_type ===
-                        userDetail?.portfolio_info[0]?.data_type)
+                        currentUserPortfolioDataType)
                 )}
                 itemType={'workflows'}
               />

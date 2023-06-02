@@ -12,6 +12,7 @@ import { createDocument } from '../../../../../features/document/asyncThunks';
 import { setToggleManageFileForm } from '../../../../../features/app/appSlice';
 import Spinner from '../../../../spinner/Spinner';
 import { useTranslation } from 'react-i18next';
+import { productName } from '../../../../../utils/helpers';
 
 const CreateDocument = ({ handleToggleOverlay }) => {
   const { userDetail } = useSelector((state) => state.auth);
@@ -39,10 +40,10 @@ const CreateDocument = ({ handleToggleOverlay }) => {
     if (!foundTemplateObj) return;
 
     const createDocumentData = {
-      company_id: userDetail?.portfolio_info[0].org_id,
+      company_id: userDetail?.portfolio_info?.length > 1 ? userDetail?.portfolio_info.find(portfolio => portfolio.product === productName)?.org_id : userDetail?.portfolio_info[0].org_id,
       // template_id: template,
       created_by: userDetail?.userinfo.username,
-      data_type: userDetail?.portfolio_info[0].data_type,
+      data_type: userDetail?.portfolio_info?.length > 1 ? userDetail?.portfolio_info.find(portfolio => portfolio.product === productName)?.data_type : userDetail?.portfolio_info[0].data_type,
       page: foundTemplateObj?.page,
       content: foundTemplateObj?.content,
     };
@@ -68,8 +69,8 @@ const CreateDocument = ({ handleToggleOverlay }) => {
 
   useEffect(() => {
     const data = {
-      company_id: userDetail?.portfolio_info[0].org_id,
-      data_type: userDetail?.portfolio_info[0].data_type,
+      company_id: userDetail?.portfolio_info?.length > 1 ? userDetail?.portfolio_info.find(portfolio => portfolio.product === productName)?.org_id : userDetail?.portfolio_info[0].org_id,
+      data_type: userDetail?.portfolio_info?.length > 1 ? userDetail?.portfolio_info.find(portfolio => portfolio.product === productName)?.data_type : userDetail?.portfolio_info[0].data_type,
     };
 
     dispatch(allTemplates(data));

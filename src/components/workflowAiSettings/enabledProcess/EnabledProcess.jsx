@@ -11,7 +11,7 @@ import {
   setUpdateProccess,
   setSettingProccess,
 } from '../../../features/app/appSlice';
-import { setIsSelected } from '../../../utils/helpers';
+import { productName, setIsSelected } from '../../../utils/helpers';
 import { createWorkflowSettings } from '../../../features/settings/asyncThunks';
 import { useTranslation } from 'react-i18next';
 import { useAppContext } from '../../../contexts/AppContext';
@@ -78,9 +78,9 @@ const EnabledProcess = () => {
     // console.log('payload', JSON.stringify(purePayload));
 
     const createData = {
-      company_id: userDetail?.portfolio_info[0]?.org_id,
-      owner_name: userDetail?.portfolio_info[0]?.owner_name,
-      username: userDetail?.portfolio_info[0]?.username,
+      company_id: userDetail?.portfolio_info?.length > 1 ? userDetail?.portfolio_info.find(portfolio => portfolio.product === productName)?.org_id : userDetail?.portfolio_info[0]?.org_id,
+      owner_name: userDetail?.portfolio_info?.length > 1 ? userDetail?.portfolio_info.find(portfolio => portfolio.product === productName)?.owner_name : userDetail?.portfolio_info[0]?.owner_name,
+      username: userDetail?.userinfo?.username,
       portfolio_name: 'the portfolio name second',
       proccess: purePayload,
     };

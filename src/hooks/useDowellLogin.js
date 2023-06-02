@@ -8,6 +8,7 @@ import { useAppContext } from '../contexts/AppContext';
 import { setShowProfileSpinner } from '../features/app/appSlice';
 import { AuthServices } from '../services/authServices';
 import { toast } from 'react-toastify';
+import { productName } from '../utils/helpers';
 
 export default function useDowellLogin() {
   const dispatch = useDispatch();
@@ -81,8 +82,13 @@ export default function useDowellLogin() {
         window.sessionStorage.setItem("userDetail", JSON.stringify(fetchedUserDetails));
         dispatch(updateUserDetail(fetchedUserDetails));
 
+        const userPortfolioName = fetchedUserDetails?.portfolio_info?.length > 1 ? 
+          fetchedUserDetails?.portfolio_info.find(portfolio => portfolio.product === productName)?.portfolio_name
+          :
+        fetchedUserDetails?.portfolio_info[0]?.portfolio_name;
+
         // confirming the user's portfolio matches
-        if (portfolio !== fetchedUserDetails?.portfolio_info[0]?.portfolio_name) {
+        if (portfolio !== userPortfolioName) {
           handleUnauthorizedVerificationAccess(fetchedUserDetails, session_id, id);
           return
         }

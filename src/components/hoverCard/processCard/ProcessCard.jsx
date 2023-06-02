@@ -17,6 +17,7 @@ import { Button } from '../styledComponents';
 import { LoadingSpinner } from '../../LoadingSpinner/LoadingSpinner';
 import axios from 'axios';
 import { api_url } from '../../../httpCommon/httpCommon';
+import { productName } from '../../../utils/helpers';
 
 const ProcessCard = ({ cardItem, title }) => {
   const { allProcesses } = useSelector((state) => state.app);
@@ -52,7 +53,7 @@ const ProcessCard = ({ cardItem, title }) => {
     try {
       const response = await axios.post(`${api_url}processes/${process_id}/copies/`, {
         created_by: userDetail?.userinfo?.username,
-        portfolio: userDetail?.portfolio_info[0]?.portfolio_name,
+        portfolio: userDetail?.portfolio_info?.length > 1 ? userDetail?.portfolio_info.find(portfolio => portfolio.product === productName)?.portfolio_name : userDetail?.portfolio_info[0]?.portfolio_name,
       });
 
       if (response.status === 201) {

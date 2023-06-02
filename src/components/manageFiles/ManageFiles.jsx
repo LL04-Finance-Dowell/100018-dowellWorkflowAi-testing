@@ -7,6 +7,7 @@ import {
 } from '../../features/app/appSlice';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { productName } from '../../utils/helpers';
 
 const ManageFiles = ({
   title,
@@ -30,8 +31,8 @@ const ManageFiles = ({
       if (title.toLowerCase() === 'template') {
         const data = {
           created_by: userDetail?.userinfo.username,
-          company_id: userDetail?.portfolio_info[0].org_id,
-          data_type: userDetail?.portfolio_info[0].data_type,
+          company_id: userDetail?.portfolio_info?.length > 1 ? userDetail?.portfolio_info.find(portfolio => portfolio.product === productName)?.org_id : userDetail?.portfolio_info[0].org_id,
+          data_type: userDetail?.portfolio_info?.length > 1 ? userDetail?.portfolio_info.find(portfolio => portfolio.product === productName)?.data_type : userDetail?.portfolio_info[0].data_type,
         };
         dispatch(createTemplate(data));
       }

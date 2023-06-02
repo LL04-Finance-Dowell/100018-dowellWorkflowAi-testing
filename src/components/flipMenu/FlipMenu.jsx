@@ -18,6 +18,7 @@ import React from 'react';
 import { createTemplate } from '../../features/template/asyncThunks';
 import { Tooltip } from 'react-tooltip';
 import { useTranslation } from 'react-i18next';
+import { productName } from '../../utils/helpers';
 
 const FlipMenu = () => {
   const [filpItemsToDisplay, setFlipItemsToDisplay] = useState(flipItems);
@@ -113,8 +114,8 @@ export const FlipBack = (props) => {
     if (role === 'newTemp') {
       const data = {
         created_by: userDetail?.userinfo.username,
-        company_id: userDetail?.portfolio_info[0].org_id,
-        data_type: userDetail?.portfolio_info[0].data_type,
+        company_id: userDetail?.portfolio_info?.length > 1 ? userDetail?.portfolio_info.find(portfolio => portfolio.product === productName)?.org_id : userDetail?.portfolio_info[0].org_id,
+        data_type: userDetail?.portfolio_info?.length > 1 ? userDetail?.portfolio_info.find(portfolio => portfolio.product === productName)?.data_type : userDetail?.portfolio_info[0].data_type,
       };
       dispatch(createTemplate(data));
     }

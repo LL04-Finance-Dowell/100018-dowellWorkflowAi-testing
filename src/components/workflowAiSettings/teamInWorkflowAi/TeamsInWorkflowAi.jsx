@@ -6,7 +6,7 @@ import {
   setPortfoliosInWorkflowAITeams,
   setUpdateInWorkflowAITeams,
 } from '../../../features/app/appSlice';
-import { setIsSelected } from '../../../utils/helpers';
+import { productName, setIsSelected } from '../../../utils/helpers';
 import InfoBox from '../../infoBox/InfoBox';
 
 // import { teamsInWorkflowAI } from '../veriables';
@@ -127,9 +127,9 @@ const TeamsInWorkflowAi = () => {
         universal_code,
         details,
         portfolio_list,
-        company_id: userDetail.portfolio_info[0].org_id,
+        company_id: userDetail?.portfolio_info?.length > 1 ? userDetail?.portfolio_info.find(portfolio => portfolio.product === productName)?.org_id : userDetail.portfolio_info[0].org_id,
         created_by: userDetail.userinfo.username,
-        data_type: userDetail.portfolio_info[0].data_type,
+        data_type: userDetail?.portfolio_info?.length > 1 ? userDetail?.portfolio_info.find(portfolio => portfolio.product === productName)?.data_type : userDetail.portfolio_info[0].data_type,
         team_type:
           selectedPortfolioTypeForWorkflowSettings === 'team_member'
             ? 'team'
@@ -226,9 +226,9 @@ const TeamsInWorkflowAi = () => {
       universal_code,
       details,
       portfolio_list,
-      company_id: userDetail.portfolio_info[0].org_id,
+      company_id: userDetail?.portfolio_info?.length > 1 ? userDetail?.portfolio_info.find(portfolio => portfolio.product === productName)?.org_id : userDetail.portfolio_info[0].org_id,
       created_by: userDetail.userinfo.username,
-      data_type: userDetail.portfolio_info[0].data_type,
+      data_type: userDetail?.portfolio_info?.length > 1 ? userDetail?.portfolio_info.find(portfolio => portfolio.product === productName)?.data_type : userDetail.portfolio_info[0].data_type,
       team_type:
         selectedPortfolioTypeForWorkflowSettings === 'team_member'
           ? 'team'

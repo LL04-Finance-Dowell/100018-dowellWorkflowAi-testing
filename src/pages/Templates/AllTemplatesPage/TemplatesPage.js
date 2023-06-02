@@ -4,10 +4,11 @@ import WorkflowLayout from '../../../layouts/WorkflowLayout/WorkflowLayout';
 import './style.css';
 import { v4 as uuidv4 } from 'uuid';
 import { useDispatch, useSelector } from 'react-redux';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { allTemplates } from '../../../features/template/asyncThunks';
 import TemplateCard from '../../../components/hoverCard/templateCard/TemplateCard';
 import { useNavigate } from 'react-router-dom';
+import { productName } from '../../../utils/helpers';
 
 const TemplatesPage = ({ home, showOnlySaved, showOnlyTrashed }) => {
   const { userDetail } = useSelector((state) => state.auth);
@@ -17,12 +18,13 @@ const TemplatesPage = ({ home, showOnlySaved, showOnlyTrashed }) => {
   );
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const [ currentUserPortfolioDataType, setCurrentUserPortfolioDataType ] = useState('');
 
   // console.log('templ arrat',allTemplatesArray)
   useEffect(() => {
     const data = {
-      company_id: userDetail?.portfolio_info[0].org_id,
-      data_type: userDetail?.portfolio_info[0].data_type,
+      company_id: userDetail?.portfolio_info?.length > 1 ? userDetail?.portfolio_info.find(portfolio => portfolio.product === productName)?.org_id : userDetail?.portfolio_info[0].org_id,
+      data_type: userDetail?.portfolio_info?.length > 1 ? userDetail?.portfolio_info.find(portfolio => portfolio.product === productName)?.data_type : userDetail?.portfolio_info[0].data_type,
     };
 
     /*  if (mineStatus === "idle") dispatch(mineTemplates(mineData));
@@ -39,6 +41,17 @@ const TemplatesPage = ({ home, showOnlySaved, showOnlyTrashed }) => {
     if (home) navigate('#drafts');
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [showOnlySaved, showOnlyTrashed, home]);
+
+  useEffect(() => {
+
+    const userPortfolioDataType = userDetail?.portfolio_info?.length > 1 ? 
+      userDetail?.portfolio_info.find(portfolio => portfolio.product === productName)?.data_type 
+      :
+    userDetail?.portfolio_info[0]?.data_type;
+
+    setCurrentUserPortfolioDataType(userPortfolioDataType);
+
+  }, [userDetail])
 
   return (
     <WorkflowLayout>
@@ -57,12 +70,12 @@ const TemplatesPage = ({ home, showOnlySaved, showOnlyTrashed }) => {
                     .filter(
                       (item) =>
                         item.created_by ===
-                        userDetail?.portfolio_info[0].username
+                        userDetail?.userinfo?.username
                     )
                     .filter(
                       (item) =>
                         item.data_type ===
-                        userDetail?.portfolio_info[0]?.data_type
+                        currentUserPortfolioDataType
                     )
                 }
                 status={allTemplatesStatus}
@@ -80,7 +93,7 @@ const TemplatesPage = ({ home, showOnlySaved, showOnlyTrashed }) => {
                 Card={TemplateCard}
                 cardItems={allTemplatesArray.filter(
                   (item) =>
-                    item.data_type === userDetail?.portfolio_info[0]?.data_type
+                    item.data_type === currentUserPortfolioDataType
                 )}
                 status={allTemplatesStatus}
                 itemType={'templates'}

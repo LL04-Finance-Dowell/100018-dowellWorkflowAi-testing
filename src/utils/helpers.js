@@ -154,3 +154,5 @@ export const extractTokenFromVerificationURL = (inputUrl) => {
 
   return inputUrl.split('verify/')[1]?.split('/')[0]
 }
+
+export const productName = "Workflow AI";
