@@ -189,7 +189,7 @@ def get_wf_object(workflow_id):
 
 def get_all_wf_list():  # TODO: Check where it is used
     fields = {}
-    response_obj = dowellconnection(*WF_CONNECTION_LIST, "fetch", fields, "nil")
+    response_obj = get_data_from_data_service(*WF_CONNECTION_LIST, "fetch", fields, "nil")
     res_obj = json.loads(response_obj)
     wf_list = []
     for wf in res_obj["data"]:

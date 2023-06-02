@@ -93,6 +93,28 @@ def public_login(qrid, org_name):
         return None
 
 
+def notification(username, item_id, portfolio, company_id, link):
+    """post notifications for Notification API."""
+    payload = json.dumps(
+        {
+            "username": username,
+            "documentId": item_id,
+            "portfolio": portfolio,
+            "companyId": company_id,
+            "link": link,
+            "productName": "Workflow AI",
+            "title": "Document to Sign",
+            "orgName": "WorkflowAi",
+            "message": "You have a document to sign.",
+            "duration": "no limit",
+        }
+    )
+    try:
+        requests.post(NOTIFICATION_API, payload, headers)
+    except ConnectionError:
+        return
+
+
 def verification_data(
     process_id,
     item_id,
@@ -100,7 +122,6 @@ def verification_data(
     auth_name,
     auth_portfolio,
     company_id,
-    process_title,
     item_type,
     user_type,
     org_name,
@@ -134,17 +155,11 @@ def verification_data(
         )
     )
     if res["isSuccess"]:
-        ddata = {
-            "username": auth_name,
-            "portfolio": auth_portfolio,
-            "process_id": process_id,
-            "step_role": step_role,
-            "item_id": item_id,
-            "company_id": company_id,
-            "process_title": process_title,
-            "link": link,
-        }
-        Thread(target=notification, args=(ddata,)).start()
+        Thread(
+            target=lambda: notification(
+                auth_name, item_id, auth_portfolio, company_id, link
+            )
+        ).start()
     return link, generate_qrcode(link)
 
 
@@ -424,35 +439,6 @@ def remove_favourite(identifier, type, username):
 
 
 def CREATE_WF_AI_SETTING(data):
-    """
-    Save Workflow Setting
-
-    Args:
-        data(dict): the details of the setting
-
-
-    Returns:
-        msg(str): response success
-    """
-    msg = "WF_Setting Saved"
-
-    # wf_setting = {
-
-    #     "company_id": data["company_id"],
-    #     "created_by": data["created_by"],
-    #     "Process" : data["Process"],
-    #     "Documents" : data["Documents"],
-    #     "Templates" : data["Templates"],
-    #     "Workflows" : data["Workflows"],
-    #     "Notarisation" : data["Notarisation"],
-    #     "Folders" : data["Folders"],
-    #     "Records" : data["Records"],
-    #     "References" : data["References"],
-    #     "Approval_Process" : data["Approval_Process"],
-    #     "Evaluation_Process" : data["Evaluation_Process"],
-    #     "Reports" : data["Reports"],
-    #     "Management" : data["Management"],
-    # }
     serializer = WorkflowAiSettingSerializer(data=data)
     if serializer.is_valid():
         serializer.save()

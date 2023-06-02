@@ -5,9 +5,9 @@ import requests
 from rest_framework import status
 from rest_framework.response import Response
 
-from app.constants import NOTIFICATION_API, EDITOR_API
+from app.constants import EDITOR_API
 
-from . import checks, threads
+from . import checks
 from .helpers import cloning_document, verification_data, register_user_access
 from .mongo_db_connection import (
     authorize,
@@ -17,6 +17,7 @@ from .mongo_db_connection import (
     save_wf_process,
     update_document_clone,
     update_wf_process,
+    save_process_qrcodes,
 )
 
 
@@ -76,7 +77,7 @@ def new(
 def start(process):
     """Start the processing cycle."""
     links = []
-    public_links=[]
+    public_links = []
     qrcodes = []
 
     for step in process["process_steps"]:
@@ -90,7 +91,6 @@ def start(process):
                 auth_name=public_users,
                 auth_portfolio=public_portfolio,
                 company_id=process["company_id"],
-                process_title=process["process_title"],
                 item_type=process["process_type"],
                 user_type="public",
                 org_name=process["org_name"],
@@ -105,7 +105,6 @@ def start(process):
                     auth_name=member["member"],
                     auth_portfolio=public_portfolio,
                     company_id=process["company_id"],
-                    process_title=process["process_title"],
                     item_type=process["process_type"],
                     user_type="public",
                     org_name=process["org_name"],
@@ -120,7 +119,6 @@ def start(process):
                 auth_name=member["member"],
                 auth_portfolio=member["portfolio"],
                 company_id=process["company_id"],
-                process_title=process["process_title"],
                 item_type=process["process_type"],
                 user_type="team",
                 org_name=process["org_name"],
@@ -135,7 +133,6 @@ def start(process):
                 auth_name=member["member"],
                 auth_portfolio=member["portfolio"],
                 company_id=process["company_id"],
-                process_title=process["process_title"],
                 item_type=process["process_type"],
                 user_type="user",
                 org_name=process["org_name"],
@@ -170,16 +167,20 @@ def start(process):
             )
         )
         if res["isSuccess"]:
-            code_data = {
-                "qrcodes": qrcodes,
-                "process_id": process["_id"],
-                "item_id": clone_id,
-                "process_choice": process["processing_action"],
-                "company_id": process["company_id"],
-                "process_title": process["process_title"],
-            }
-            Thread(target=threads.save_qrcodes, args=(code_data,)).start()
-            return Response({"links": links, "qrcodes": qrcodes, "public_links": public_links}, status.HTTP_200_OK)
+            Thread(
+                target=lambda: save_process_qrcodes(
+                    qrcodes,
+                    process["_id"],
+                    clone_id,
+                    process["processing_action"],
+                    process["process_title"],
+                    process["company_id"],
+                )
+            ).start()
+            return Response(
+                {"links": links, "qrcodes": qrcodes, "public_links": public_links},
+                status.HTTP_200_OK,
+            )
 
     return Response("processing failed!", status.HTTP_500_INTERNAL_SERVER_ERROR)
 
@@ -284,7 +285,7 @@ def verify(process, auth_step_role, location_data, user_name, user_type):
         team_member_id = "22689044433"
 
     payload = {
-        "product_name": "workflowai",
+        "product_name": "Workflow AI",
         "details": {
             "field": field,
             "cluster": "Documents",
