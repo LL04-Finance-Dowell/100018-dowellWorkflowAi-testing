@@ -80,3 +80,32 @@
   width: 20%;
   flex-grow: 0;
 }
+.primarybttn {
+  width: 50% !important;
+  height: 2.2rem;
+}
+
+
+
+@media (max-width: 768px) {
+
+  .proccess__box {
+    display: flex;
+    overflow-x: auto;
+    flex-direction: column;
+    scrollbar-width: thin;
+  }
+  .first__box {
+    padding: 15px;
+    border: solid 1px var(--e-global-color-text);
+    width: 100%;
+    flex-grow: 0;
+  }
+}
+@media (max-width: 290px) {
+
+  .primarybttn {
+    width: 50% !important;
+    height: 3.2rem;
+  }
+}

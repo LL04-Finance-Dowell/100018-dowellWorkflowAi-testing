@@ -41,7 +41,7 @@ import { useTranslation } from 'react-i18next';
 import { GrStatusGoodSmall } from 'react-icons/gr';
 
 const Sidebar = () => {
-  // const [ShowProfileSpinner, setShowProfileSpinner] = useState(false)
+ 
   const dispatch = useDispatch();
   const { t } = useTranslation();
   const { userDetail, session_id } = useSelector((state) => state.auth);

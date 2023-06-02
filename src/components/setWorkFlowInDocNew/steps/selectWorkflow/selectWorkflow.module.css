@@ -16,3 +16,20 @@
   gap: 20px;
   width: 100%;
 }
+
+.btnsuces {
+  width: 70% !important;
+}
+
+@media (max-width: 767px) {
+  .button__container {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    width: 100%;
+  }
+
+  .btnsuces {
+    width: 100% !important;
+  }
+}

@@ -181,9 +181,9 @@ const CheckErrors = () => {
           style={{ alignItems: 'center' }}
         >
           <PrimaryButton
+          className={styles.primarybttn}
             hoverBg='success'
             onClick={handleSortProcess}
-            style={{ width: '50%', height: '2.2rem' }}
           >
             Show Process
           </PrimaryButton>

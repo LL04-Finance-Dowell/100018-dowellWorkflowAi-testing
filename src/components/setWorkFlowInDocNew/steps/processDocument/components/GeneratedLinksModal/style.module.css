@@ -16,7 +16,7 @@
 
 .process__Generated__Links__Container__Close__Icon {
   position: absolute;
-  top: 4%;
+  top: 1%;
   right: 2%;
   cursor: pointer;
 }
@@ -25,7 +25,7 @@
   background-color: var(--white);
   width: 73%;
   border-radius: 10px;
-  padding: 4% 2%;
+  padding: 5% 2%;
   max-height: 30rem;
   position: relative;
 }
@@ -118,5 +118,16 @@
       opacity: 0;
   } to {
       opacity: 1;
+  }
+}
+
+@media (max-width: 320px) {
+  .process__Generated__Links__Container {
+    background-color: var(--white);
+    width: 73%;
+    border-radius: 10px;
+    padding: 6% 2%;
+    max-height: 30rem;
+    position: relative;
   }
 }

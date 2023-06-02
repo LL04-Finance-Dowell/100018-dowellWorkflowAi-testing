@@ -62,3 +62,10 @@
     cursor: pointer;
     padding: 2px;
 }
+
+@media (max-width: 770px) {
+    .main {
+        left: -160px;
+        top: 20px;
+    }
+}
