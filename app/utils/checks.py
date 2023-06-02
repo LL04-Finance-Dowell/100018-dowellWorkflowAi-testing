@@ -1,7 +1,4 @@
 from datetime import datetime, timedelta
-
-import requests
-
 from app.utils.mongo_db_connection import (
     get_document_object,
     get_link_object,

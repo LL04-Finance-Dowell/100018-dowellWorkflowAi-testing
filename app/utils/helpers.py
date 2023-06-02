@@ -64,6 +64,7 @@ def notify_push(data):
     except:
         print("Mail not sent")
 
+
 def public_login(qrid, org_name):
     """Find out if a public link has been used or not"""
     res = requests.post(
@@ -118,19 +119,18 @@ def verification_data(
     org_name,
 ):
     hash = uuid.uuid4().hex
-    if user_type == "public":
-        if isinstance(auth_name, list):
-            query_params = {
-                "portfolio": auth_portfolio,
-                "auth_role": step_role,
-                "user_type": user_type,
-                "username": auth_name,
-            }
-            for i in range(0, len(auth_name)):
-                field = auth_name[i]
-                query_params[f"username[{i}]"] = field
-            encoded_query_params = urllib.parse.urlencode(query_params)
-            link = f"{VERIFICATION_LINK}/{hash}/?product=Workflow AI&org={org_name}&{encoded_query_params}"
+    if user_type == "public" and isinstance(auth_name, list):
+        query_params = {
+            "portfolio": auth_portfolio,
+            "auth_role": step_role,
+            "user_type": user_type,
+            "username": auth_name,
+        }
+        for i in range(0, len(auth_name)):
+            field = auth_name[i]
+            query_params[f"username[{i}]"] = field
+        encoded_query_params = urllib.parse.urlencode(query_params)
+        link = f"{VERIFICATION_LINK}/{hash}/?product=Workflow AI&org={org_name}&{encoded_query_params}"
     else:
         link = f"{VERIFICATION_LINK}/{hash}/?product=Workflow AI&org={org_name}&username={auth_name}&portfolio={auth_portfolio}&auth_role={step_role}&user_type={user_type}"
     res = json.loads(
