@@ -85,7 +85,9 @@
   height: 2.2rem;
 }
 
-
+.h2__Doc__Title {
+  font-size: 1.125rem;
+}
 
 @media (max-width: 768px) {
 

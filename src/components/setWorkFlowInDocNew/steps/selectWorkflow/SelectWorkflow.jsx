@@ -36,7 +36,7 @@ const SelectWorkflow = ({ savedDoc }) => {
 
   return (
     <div className={styles.container}>
-      <h2 className={`${styles.title} h2-small step-title align-left`}>
+      <h2 className={`${styles.title} ${styles.h2__Doc__Title} h2-small step-title align-left`}>
         2. {t('Select a Workflow to add to the selected documents')}
       </h2>
       <div className={styles.content__box}>

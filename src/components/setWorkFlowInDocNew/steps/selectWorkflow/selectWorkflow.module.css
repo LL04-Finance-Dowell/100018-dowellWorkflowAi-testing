@@ -18,7 +18,11 @@
 }
 
 .btnsuces {
-  width: 70% !important;
+  width: 60% !important;
+}
+
+.h2__Doc__Title {
+  font-size: 1.125rem;
 }
 
 @media (max-width: 767px) {

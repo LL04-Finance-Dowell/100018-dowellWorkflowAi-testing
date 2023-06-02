@@ -30,6 +30,9 @@ const GeneratedLinksModal = ({
     const currentCopiedLinks = structuredClone(copiedLinks);
     currentCopiedLinks.push(link);
     updateCopiedLinks(currentCopiedLinks);
+    setTimeout(() => {
+      updateCopiedLinks([]);
+    }, 3000)
   };
 
   function handleProcessCopyLink(index, link) {

@@ -74,7 +74,7 @@ const SelectDoc = ({ savedDoc }) => {
       className={styles.container}
       style={{ cursor: savedDoc ? 'not-allowed' : 'default' }}
     >
-      <h2 className='h2-small step-title align-left'>
+      <h2 className={styles.h2__Doc__Title}>
         1. {t('Select a Document to add Workflows')}
       </h2>
       {isMobile && (
