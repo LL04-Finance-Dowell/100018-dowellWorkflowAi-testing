@@ -423,11 +423,11 @@ const EnabledDisabkedProcess = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [fetchedItems]);
 
-  useEffect(() => {
-    console.log('perm arr: ', permissionArray);
-    // console.log('user detail: ', userDetail);
-    // console.log('wrkf settings: ', workflowSettings);
-  });
+  // useEffect(() => {
+  //   // console.log('perm arr: ', permissionArray);
+  //   // console.log('user detail: ', userDetail);
+  //   // console.log('wrkf settings: ', workflowSettings);
+  // });
 
   return (
     <form

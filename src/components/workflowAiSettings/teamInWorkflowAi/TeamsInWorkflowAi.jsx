@@ -31,7 +31,7 @@ const TeamsInWorkflowAi = () => {
   const { teamsInWorkflowAI, selectedPortfolioTypeForWorkflowSettings } =
     useSelector((state) => state.app);
   const { userDetail } = useSelector((state) => state.auth);
-  const [userPortfolios, setUserPortfolios] = useState(
+  const [userPortfolios] = useState(
     userDetail?.portfolio_info?.find((item) => item.product === 'Workflow AI')
       ?.member_type === 'owner'
       ? userDetail?.userportfolio.map((port) => ({
@@ -409,8 +409,8 @@ const TeamsInWorkflowAi = () => {
   }, [unselectAllPortfolios]);
 
   // useEffect(() => {
-  //   console.log('teamin: ', teamsInWorkflowAI[0]);
-  //   console.log('wft: ', workflowTeams);
+  //   // console.log('teamin: ', teamsInWorkflowAI[0]);
+  //   // console.log('wft: ', workflowTeams);
   // }, [teamsInWorkflowAI, workflowTeams]);
 
   return (

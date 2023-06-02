@@ -136,9 +136,9 @@ export const AppContextProvider = ({ children }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userDetail]);
 
-  useEffect(() => {
-    console.log('wrkf settings: ', workflowSettings);
-  }, [workflowSettings]);
+  // useEffect(() => {
+  //   console.log('wrkf settings: ', workflowSettings);
+  // }, [workflowSettings]);
 
   return (
     <AppContext.Provider

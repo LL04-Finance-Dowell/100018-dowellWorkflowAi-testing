@@ -11,31 +11,31 @@ import {
 import { useAppContext } from '../../contexts/AppContext';
 import { toast } from 'react-toastify';
 import { setIsSelected } from '../../utils/helpers';
+import { v4 } from 'uuid';
 
 const TypeFilter = ({ edit }) => {
   const filterOpts = ['user', 'team_member', 'public'];
   const [isDropdown, setIsDropdown] = useState(false);
   const { userDetail } = useSelector((state) => state.auth);
-  const [userPortfolios, setUserPortfolios] = useState();
-  const [filteredPortfolios, setFilteredPortfolios] = useState([]);
+  const [userPortfolios] = useState(
+    userDetail?.portfolio_info?.find((item) => item.product === 'Workflow AI')
+      ?.member_type === 'owner'
+      ? userDetail?.userportfolio
+      : userDetail?.selected_product?.userportfolio
+  );
 
   const { filter, setFilter } = useAppContext();
 
   const dispatch = useDispatch();
 
   useEffect(() => {
-    setUserPortfolios(userDetail?.selected_product?.userportfolio);
-  }, [userDetail]);
-
-  useEffect(() => {
+    let filteredPortfolios;
     if (filter && userPortfolios)
-      setFilteredPortfolios(
-        userPortfolios.filter((item) => item.member_type === filter)
+      filteredPortfolios = userPortfolios.filter(
+        (item) => item.member_type === filter
       );
-    else if (userPortfolios) setFilteredPortfolios(userPortfolios);
-  }, [filter, userPortfolios]);
+    else if (userPortfolios) filteredPortfolios = userPortfolios;
 
-  useEffect(() => {
     if (filteredPortfolios.length || filter) {
       if (filteredPortfolios.length)
         dispatch(
@@ -53,7 +53,7 @@ const TypeFilter = ({ edit }) => {
         );
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [filteredPortfolios, filter]);
+  }, [filter]);
 
   return (
     <section
