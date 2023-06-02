@@ -1,6 +1,7 @@
 .container {
   height: 200px;
-  width: 145px;
+  /* width: 145px; */
+  width: 100%;
   overflow: hidden;
   position: relative;
   text-align: center;
