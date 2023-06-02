@@ -29,6 +29,7 @@ import axios from 'axios';
 function App() {
   const dispatch = useDispatch();
   const { session_id } = useSelector((state) => state.auth);
+  console.log(session_id)
   const { isPublicUser } = useAppContext();
   useDowellLogin();
 
@@ -57,11 +58,11 @@ function App() {
 
     // AJAX POST request
 
-    axios
-      .post(
+    session_id &&
+      axios.post(
         'https://100014.pythonanywhere.com/en/live_status',
         {
-          session_id: session_id,
+          session_id: session_id && session_id,
           product: 'Workflow AI',
 
         },
@@ -71,13 +72,13 @@ function App() {
           },
         }
       )
-      .then((response) => {
-        console.log("postdata", response);
-      })
-      .catch((error) => {
-        console.log(error);
-        // Empty catch block
-      });
+        .then((response) => {
+          console.log("postdata", response);
+        })
+        .catch((error) => {
+          console.log(error);
+          // Empty catch block
+        })
   }
   // // USE ONLY WHEN APP IS BROKEN OR UNDERGOING MAJOR CHANGES
   // return (
