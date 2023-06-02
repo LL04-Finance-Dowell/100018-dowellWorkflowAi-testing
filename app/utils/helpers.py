@@ -60,7 +60,8 @@ def notify_push(data):
         "workflowaiedwin@gmail.com",
     ]
     try:
-        send_mail(subject, message, email_from, recipient_list)
+        if data["ref"] == "refs/heads/backend":
+            send_mail(subject, message, email_from, recipient_list)
     except:
         print("Mail not sent")
 
@@ -80,7 +81,7 @@ def public_login(qrid, org_name):
             {
                 "qrid": qrid,
                 "org_name": org_name,
-                "product": "WorkflowAI",
+                "product": "Workflow AI",
             }
         ),
         headers=headers,
