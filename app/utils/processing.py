@@ -30,6 +30,7 @@ def new(
     creator_portfolio,
     workflows_ids,
     process_type,
+    org_name
 ):
     """Structures a process entry to persistent storage"""
     process_steps = [
@@ -67,6 +68,7 @@ def new(
             "_id": res["inserted_id"],
             "process_type": process_type,
             "process_kind": process_kind,
+            "org_name": org_name
         }
         return process
 
@@ -90,6 +92,7 @@ def start(process):
                 process_title=process["process_title"],
                 item_type=process["process_type"],
                 user_type="public",
+                org_name=process["org_name"]
             )
             links.append({public_portfolio: link})
             qrcodes.append({public_portfolio: qrcode})
@@ -104,6 +107,7 @@ def start(process):
                 process_title=process["process_title"],
                 item_type=process["process_type"],
                 user_type="team",
+                org_name=process["org_name"]
             )
             links.append({member["member"]: link})
             qrcodes.append({member["member"]: qrcode})
@@ -118,6 +122,7 @@ def start(process):
                 process_title=process["process_title"],
                 item_type=process["process_type"],
                 user_type="user",
+                org_name=process["org_name"]
             )
             links.append({member["member"]: link})
             qrcodes.append({member["member"]: qrcode})
@@ -441,7 +446,7 @@ def background(process_id, item_id, item_type, authorized_role, user):
             # check if all docs for respective users are complete
             if step_three["stepDocumentCloneMap"] != []:
                 clones = []
-                for usr in step_3_users:
+                for usr in step_three_users:
                     for dmap in step_three["stepDocumentCloneMap"]:
                         if dmap.get(usr) is not None:
                             clones.append(dmap.get(usr))
@@ -618,7 +623,7 @@ def authorize_next_step_users(step_index, process):
     for docid in docs:
         for usr in step_users:
             viewers.append(usr)
-            authorize(docid, viewers, process["_id"], item_type)
+            authorize(docid, viewers, process["_id"], process["process_type"])
 
             # update to clone map
             process["process_steps"][step_index]["stepDocumentCloneMap"].append(
@@ -649,7 +654,7 @@ def derive_document_copies_for_step_users(step_index, process, item_id):
     return copies
 
 
-def background2(process_id, item_id, item_type):
+def background2(process_id, item_id):
     try:
         process = get_process_object(process_id)
         num_process_steps = sum(
@@ -659,13 +664,12 @@ def background2(process_id, item_id, item_type):
             if check_step_done(num_process_steps, process):
                 return True
 
-        if num_process_steps >= 2:
+        if num_process_steps == 2:
             if check_step_done(num_process_steps, process):
                 if check_step_done(num_process_steps, process):
                     return True
 
                 else:
-                    print("got here")
                     if step["stepTaskType"] == "assign_task":
                         authorize_next_step_users(num_process_steps, process)
 

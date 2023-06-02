@@ -97,6 +97,7 @@ def document_processing(request):
             creator_portfolio=request.data["creator_portfolio"],
             workflows_ids=request.data["workflows_ids"],
             process_type=request.data["process_type"],
+            org_name=request.data["org_name"]
         )
         return Response("Process Saved in drafts.", status.HTTP_201_CREATED)
 
@@ -115,6 +116,7 @@ def document_processing(request):
                 creator_portfolio=request.data["creator_portfolio"],
                 workflows_ids=request.data["workflows_ids"],
                 process_type=request.data["process_type"],
+                  org_name=request.data["org_name"]
             )
 
         return processing.start(process)
@@ -134,6 +136,7 @@ def document_processing(request):
                 creator_portfolio=request.data["creator_portfolio"],
                 workflows_ids=request.data["workflows_ids"],
                 process_type=request.data["process_type"],
+                  org_name=request.data["org_name"]
             )
 
         return processing.start(process)
@@ -153,6 +156,7 @@ def document_processing(request):
                 creator_portfolio=request.data["creator_portfolio"],
                 workflows_ids=request.data["workflows_ids"],
                 process_type=request.data["process_type"],
+                  org_name=request.data["org_name"]
             )
 
         return processing.start(process)
@@ -172,6 +176,7 @@ def document_processing(request):
                 creator_portfolio=request.data["creator_portfolio"],
                 workflows_ids=request.data["workflows_ids"],
                 process_type=request.data["process_type"],
+                  org_name=request.data["org_name"]
             )
 
         return processing.start(process)
@@ -191,6 +196,7 @@ def document_processing(request):
                 creator_portfolio=request.data["creator_portfolio"],
                 workflows_ids=request.data["workflows_ids"],
                 process_type=request.data["process_type"],
+                  org_name=request.data["org_name"]
             )
 
         return processing.start(process)
@@ -210,6 +216,7 @@ def document_processing(request):
                 creator_portfolio=request.data["creator_portfolio"],
                 workflows_ids=request.data["workflows_ids"],
                 process_type=request.data["process_type"],
+                  org_name=request.data["org_name"]
             )
 
         return processing.start(process)
