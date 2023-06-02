@@ -103,28 +103,24 @@ def verification_data(
     process_title,
     item_type,
     user_type,
-    org_name
+    org_name,
 ):
     hash = uuid.uuid4().hex
     if user_type == "public":
-        query_params = {
-            "portfolio": auth_portfolio,
-            "auth_role": step_role,
-            "user_type": user_type,
-            "username": auth_name
-        }
-        for i in range(0, len(auth_name)):
-            field = auth_name[i]
-            query_params[f"username[{i}]"] = field
-
-        encoded_query_params = urllib.parse.urlencode(query_params)
-        link = f"{VERIFICATION_LINK}/{hash}/?product=Workflow AI&org={org_name}&{encoded_query_params}"
-
-    # User | Team
+        if isinstance(auth_name, list):
+            query_params = {
+                "portfolio": auth_portfolio,
+                "auth_role": step_role,
+                "user_type": user_type,
+                "username": auth_name,
+            }
+            for i in range(0, len(auth_name)):
+                field = auth_name[i]
+                query_params[f"username[{i}]"] = field
+            encoded_query_params = urllib.parse.urlencode(query_params)
+            link = f"{VERIFICATION_LINK}/{hash}/?product=Workflow AI&org={org_name}&{encoded_query_params}"
     else:
         link = f"{VERIFICATION_LINK}/{hash}/?product=Workflow AI&org={org_name}&username={auth_name}&portfolio={auth_portfolio}&auth_role={step_role}&user_type={user_type}"
-
-    # save link
     res = json.loads(
         save_uuid_hash(
             link,
@@ -148,7 +144,6 @@ def verification_data(
             "process_title": process_title,
             "link": link,
         }
-        # setup notification
         Thread(target=notification, args=(ddata,)).start()
     return link, generate_qrcode(link)
 
@@ -162,11 +157,8 @@ def cloning_document(document_id, auth_viewers, parent_id, process_id):
             if auth_viewers is not None and isinstance(auth_viewers, list)
             else []
         )
-
         document = get_document_object(document_id)
         document_name = document["document_name"] + " |-"
-
-        # create new doc
         save_res = json.loads(
             save_document(
                 name=document_name,
@@ -206,7 +198,6 @@ def cloning_process(process_id, created_by, creator_portfolio):
                 "clone",
             )
         )
-
     except:
         return
     return save_res["inserted_id"]
