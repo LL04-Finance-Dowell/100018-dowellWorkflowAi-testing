@@ -30,7 +30,6 @@ from .mongo_db_connection import (
     save_uuid_hash,
     save_wf_process,
 )
-from .threads import notification
 
 headers = {"Content-Type": "application/json"}
 
@@ -64,14 +63,6 @@ def notify_push(data):
             send_mail(subject, message, email_from, recipient_list)
     except:
         print("Mail not sent")
-
-
-def get_domain_host():
-    """Grab the current domain host"""
-    current_site = Site.objects.get_current()
-    domain_host = current_site.domain
-    return domain_host
-
 
 def public_login(qrid, org_name):
     """Find out if a public link has been used or not"""
