@@ -385,23 +385,22 @@ const SectionBox = ({
                           hideDeleteIcon={hideDeleteIcon}
                         />
                       ))}
-
-                  {cardItems && cardItems.length > 10 && (
-                    <PrimaryButton
-                      style={{
-                        pointerEvents: `${
-                          cardItems.length / 10 < sliceCount && 'none'
-                        }`,
-                      }}
-                      hoverBg='success'
-                      onClick={handleLoadMore}
-                    >
-                      {cardItems.length / 10 < sliceCount
-                        ? 'no more load'
-                        : 'load more'}
-                    </PrimaryButton>
-                  )}
                 </div>
+                {cardItems && cardItems.length > 10 && (
+                  <PrimaryButton
+                    style={{
+                      pointerEvents: `${
+                        cardItems.length / 10 < sliceCount && 'none'
+                      }`,
+                    }}
+                    hoverBg='success'
+                    onClick={handleLoadMore}
+                  >
+                    {cardItems.length / 10 < sliceCount
+                      ? 'no more load'
+                      : 'load more'}
+                  </PrimaryButton>
+                )}
               </>
             )
           )}

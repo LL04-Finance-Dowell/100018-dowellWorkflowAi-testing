@@ -22,7 +22,10 @@ import { RiDeleteBin6Line } from 'react-icons/ri';
 import { moveItemToArchive } from '../../../services/archiveServices';
 import { setAllDocuments } from '../../../features/document/documentSlice';
 import { BsBookmark, BsFillBookmarkFill } from 'react-icons/bs';
-import { extractTokenFromVerificationURL, updateVerificationDataWithTimezone } from '../../../utils/helpers';
+import {
+  extractTokenFromVerificationURL,
+  updateVerificationDataWithTimezone,
+} from '../../../utils/helpers';
 import { useTranslation } from 'react-i18next';
 
 const DocumentCard = ({
