@@ -98,7 +98,7 @@ const VerificationPage = () => {
       delete sanitizedDataToPost.user_name;
       delete sanitizedDataToPost.portfolio;
 
-      console.log(sanitizedDataToPost)
+      // console.log(sanitizedDataToPost)
       // return setDataLoading(false);
     }
     
