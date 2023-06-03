@@ -107,6 +107,10 @@ def notification(username, item_id, portfolio, company_id, link):
         return
 
 
+def parse_url(params):
+    return urllib.parse.urlencode(params)
+
+
 def verification_data(
     process_id,
     item_id,
@@ -118,21 +122,32 @@ def verification_data(
     user_type,
     org_name,
 ):
+    product = "Workflow AI"
     hash = uuid.uuid4().hex
     if user_type == "public" and isinstance(auth_name, list):
         query_params = {
             "portfolio": auth_portfolio,
             "auth_role": step_role,
             "user_type": user_type,
-            "username": auth_name,
+            "org": org_name,
+            "product": product,
         }
         for i in range(0, len(auth_name)):
             field = auth_name[i]
             query_params[f"username[{i}]"] = field
         encoded_query_params = urllib.parse.urlencode(query_params)
-        link = f"{VERIFICATION_LINK}/{hash}/?product=Workflow AI&org={org_name}&{encoded_query_params}"
+        link = f"{VERIFICATION_LINK}/{hash}/?{encoded_query_params}"
     else:
-        link = f"{VERIFICATION_LINK}/{hash}/?product=Workflow AI&org={org_name}&username={auth_name}&portfolio={auth_portfolio}&auth_role={step_role}&user_type={user_type}"
+        query_params = {
+            "product": product,
+            "org": org_name,
+            "username": auth_name,
+            "portfolio": auth_portfolio,
+            "auth_role": step_role,
+            "user_type": user_type,
+        }
+        encoded_query_params = parse_url(query_params)
+        link = f"{VERIFICATION_LINK}/{hash}/?{encoded_query_params}"
     res = json.loads(
         save_uuid_hash(
             link,

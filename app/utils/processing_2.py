@@ -1,0 +1,610 @@
+import json
+from threading import Thread
+
+import requests
+from rest_framework import status
+from rest_framework.response import Response
+
+from app.constants import EDITOR_API
+
+from . import checks
+from .helpers import cloning_document, register_user_access
+
+from .verification import Verification
+from .mongo_db_connection import (
+    authorize,
+    get_document_object,
+    get_process_object,
+    save_process_links,
+    save_wf_process,
+    update_document_clone,
+    update_wf_process,
+    save_process_qrcodes,
+)
+
+
+def new(
+    workflows,
+    created_by,
+    company_id,
+    data_type,
+    parent_item_id,
+    process_choice,
+    creator_portfolio,
+    workflows_ids,
+    process_type,
+    org_name,
+):
+    """Structures a process entry to persistent storage"""
+    process_steps = [
+        step for workflow in workflows for step in workflow["workflows"]["steps"]
+    ]
+    process_title = " - ".join(
+        [workflow["workflows"]["workflow_title"] for workflow in workflows]
+    )
+    process_kind = "original"
+
+    res = json.loads(
+        save_wf_process(
+            process_title,
+            process_steps,
+            created_by,
+            company_id,
+            data_type,
+            parent_item_id,
+            process_choice,
+            creator_portfolio,
+            workflows_ids,
+            process_type,
+            process_kind,
+        )
+    )
+    if res["isSuccess"]:
+        process = {
+            "process_title": process_title,
+            "process_steps": process_steps,
+            "processing_action": process_choice,
+            "created_by": created_by,
+            "company_id": company_id,
+            "data_type": data_type,
+            "parent_item_id": parent_item_id,
+            "_id": res["inserted_id"],
+            "process_type": process_type,
+            "process_kind": process_kind,
+            "org_name": org_name,
+        }
+        return process
+
+
+def start(process):
+    """Start the processing cycle."""
+    verification = Verification(
+        process["_id"],
+        process["parent_item_id"],
+        process["company_id"],
+        process["process_type"],
+        process["org_name"],
+    )
+    links = []
+    public_links = []
+    qrcodes = []
+
+    for step in process["process_steps"]:
+        public_users = [m["member"] for m in step.get("stepPublicMembers", [])]
+        if public_users:
+            # public_portfolio = step.get("stepPublicMembers", [])[0].get("portfolio")
+            # link, qrcode = verification.public_bulk_data(
+            #     public_users,
+            #     step.get("stepRole"),
+            #     public_portfolio,
+            #     "bulk_public",
+            # )
+            # public_links.append({public_portfolio: link})
+
+            for member in step.get("stepPublicMembers", []):
+                link, qrcode = verification.user_team_public_data(
+                    member["member"],
+                    step.get("stepRole"),
+                    member["portfolio"],
+                    "public",
+                )
+                links.append({member["member"]: link})
+                qrcodes.append({member["member"]: qrcode})
+
+        for member in step.get("stepTeamMembers", []):
+            link, qrcode = verification.user_team_public_data(
+                member["member"],
+                step.get("stepRole"),
+                member["portfolio"],
+                "team",
+            )
+            links.append({member["member"]: link})
+            qrcodes.append({member["member"]: qrcode})
+
+        for member in step.get("stepUserMembers", []):
+            link, qrcode = verification.user_team_public_data(
+                member["member"],
+                step.get("stepRole"),
+                member["portfolio"],
+                "user",
+            )
+            links.append({member["member"]: link})
+            qrcodes.append({member["member"]: qrcode})
+
+    viewers = [
+        member["member"]
+        for member in process["process_steps"][0].get("stepTeamMembers", [])
+        + process["process_steps"][0].get("stepPublicMembers", [])
+        + process["process_steps"][0].get("stepUserMembers", [])
+    ]
+    doc_id = process["parent_item_id"]
+    if len(viewers) > 0:
+        clone_id = cloning_document(doc_id, viewers, doc_id, process["_id"])
+        for user in viewers:
+            process["process_steps"][0].get("stepDocumentCloneMap").append(
+                {user: clone_id}
+            )
+        # Thread(
+        #     target=lambda: update_wf_process(
+        #         process_id=process["_id"],
+        #         steps=process["process_steps"],
+        #         state="processing",
+        #     )
+        # ).start()
+
+        # Thread(
+        #     target=lambda: save_process_links(
+        #         links=links,
+        #         process_id=process["_id"],
+        #         item_id=clone_id,
+        #         company_id=process["company_id"],
+        #     )
+        # ).start()
+
+        # Thread(
+        #     target=lambda: save_process_qrcodes(
+        #         qrcodes,
+        #         process["_id"],
+        #         clone_id,
+        #         process["processing_action"],
+        #         process["process_title"],
+        #         process["company_id"],
+        #     )
+        # ).start()
+
+        return Response(
+            {"links": links, "qrcodes": qrcodes, "public_links": public_links},
+            status.HTTP_200_OK,
+        )
+
+    return Response("processing failed!", status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+def verify(process, auth_step_role, location_data, user_name, user_type):
+    # check if the prev step is done or not
+    # is public valid
+    # if user_type == "public":
+    #     if not checks.is_public_person_valid(user_portfolio, org_name):
+    #         return Response(
+    #             "You have already accessed this document", status.HTTP_200_OK
+    #         )
+    # if user_type == "public":
+    #     if not isinstance(user_name, list):
+    #         return Response("This public link is invalid!", status.HTTP_400_BAD_REQUEST)
+
+    clone_id = None
+    for step in process["process_steps"]:
+        if step.get("stepRole") == auth_step_role:
+            if step.get("stepLocation"):
+                if not checks.location_right(
+                    location=step.get("stepLocation"),
+                    continent=step.get("stepContinent"),
+                    my_continent=location_data["continent"],
+                    country=step.get("stepCountry"),
+                    my_country=location_data["country"],
+                    city=step.get("stepCity"),
+                    my_city=location_data["city"],
+                ):
+                    return Response(
+                        "Signing not permitted from your current location!",
+                        status.HTTP_401_UNAUTHORIZED,
+                    )
+            if step.get("stepDisplay"):
+                if not checks.display_right(step.get("stepDisplay")):
+                    return Response(
+                        "Missing display rights!", status.HTTP_401_UNAUTHORIZED
+                    )
+            if step.get("stepTimeLimit"):
+                if not checks.time_limit_right(
+                    time=step.get("stepTime"),
+                    select_time_limits=step.get("stepTimeLimit"),
+                    start_time=step.get("stepStartTime"),
+                    end_time=step.get("stepEndTime"),
+                    creation_time=process["created_at"],
+                ):
+                    return Response(
+                        "Time limit for processing document has elapsed!",
+                        status.HTTP_403_FORBIDDEN,
+                    )
+            if step.get("stepProcessingOrder"):
+                if not checks.step_processing_order(
+                    order=step.get("stepProcessingOrder"),
+                    process_id=process.get("_id"),
+                    role=step.get("stepRole"),
+                ):
+                    return Response(
+                        "You do not have permission to process this document just yet!",
+                        status.HTTP_401_UNAUTHORIZED,
+                    )
+            # if user_type == "public":
+            #     user_name = user_name[0]
+            if any(user_name in d_map for d_map in step.get("stepDocumentCloneMap")):
+                for d_map in step["stepDocumentCloneMap"]:
+                    if d_map.get(user_name) is not None:
+                        clone_id = d_map.get(user_name)
+            doc_map = step["stepDocumentMap"]
+            right = step["stepRights"]
+            role = step["stepRole"]
+            user = user_name
+            match = True
+
+    if not match:
+        return Response("Access could not be set for user", status.HTTP_403_FORBIDDEN)
+    if not clone_id:
+        return Response("No document to provide access to!", status.HTTP_403_FORBIDDEN)
+    if not right:
+        return Response("Missing step access rights!", status.HTTP_403_FORBIDDEN)
+    if not role:
+        return Response("Authorized role not found!", status.HTTP_403_FORBIDDEN)
+    if not doc_map:
+        return Response("Document access map  not found!", status.HTTP_403_FORBIDDEN)
+
+    item_type = process["process_type"]
+    if item_type == "document":
+        collection = "DocumentReports"
+        document = "documentreports"
+        field = "document_name"
+        team_member_id = "11689044433"
+        document_item = get_document_object(clone_id)
+        if document_item["document_state"] == "finalized":
+            item_flag = "finalized"
+
+        if document_item["document_state"] == "processing":
+            item_flag = "processing"
+
+    # set template
+    if item_type == "template":
+        collection = "TemplateReports"
+        document = "templatereports"
+        field = "template_name"
+        team_member_id = "22689044433"
+
+    payload = {
+        "product_name": "Workflow AI",
+        "details": {
+            "field": field,
+            "cluster": "Documents",
+            "database": "Documentation",
+            "collection": collection,
+            "document": document,
+            "team_member_ID": team_member_id,
+            "function_ID": "ABCDE",
+            "command": "update",
+            "_id": clone_id,
+            "flag": "signing",
+            "action": item_type,
+            "authorized": user,
+            "document_map": doc_map,
+            "document_right": right,
+            "document_flag": item_flag,
+            "role": role,
+            "process_id": process["_id"],
+            "update_field": {"document_name": "", "content": "", "page": ""},
+        },
+    }
+    try:
+        link = requests.post(
+            EDITOR_API,
+            data=json.dumps(payload),
+            headers={"Content-Type": "application/json"},
+        )
+    except ConnectionError:
+        return Response(
+            "Error, processing editor link", status.HTTP_500_INTERNAL_SERVER_ERROR
+        )
+    return Response(link.json(), status.HTTP_200_OK)
+
+
+def background(process_id, item_id, item_type, authorized_role, user):
+    process = get_process_object(process_id)
+    Thread(
+        target=lambda: register_user_access(
+            process["process_steps"], authorized_role, user
+        )
+    ).start()
+    copies = []
+    step_1_complete = False
+    step_2_complete = False
+    step_3_complete = False
+    step_one = process["process_steps"][0]
+    step_one_users = [
+        member["member"]
+        for member in step_one.get("stepTeamMembers", [])
+        + step_one.get("stepPublicMembers", [])
+        + step_one.get("stepUserMembers", [])
+    ]
+    clones = []
+    for usr in step_one_users:
+        for dmap in step_one["stepDocumentCloneMap"]:
+            if dmap.get(usr) is not None:
+                clones.append(dmap.get(usr))
+    d_states = [
+        get_document_object(c_id)["document_state"] == "finalized" for c_id in clones
+    ]
+    if all(d_states):
+        step_1_complete = True
+    if step_1_complete:
+        if len(process["process_steps"]) > 1:
+            step_two = process["process_steps"][1]
+            step_two_users = [
+                member["member"]
+                for member in step_two.get("stepTeamMembers", [])
+                + step_two.get("stepPublicMembers", [])
+                + step_two.get("stepUserMembers", [])
+            ]
+            if step_two["stepDocumentCloneMap"] != []:
+                clones = []
+                for usr in step_two_users:
+                    for dmap in step_two["stepDocumentCloneMap"]:
+                        if dmap.get(usr) is not None:
+                            clones.append(dmap.get(usr))
+                d_states = [
+                    get_document_object(c_id)["document_state"] == "finalized"
+                    for c_id in clones
+                ]
+                if all(d_states):
+                    step_2_complete = True
+            else:
+                if step_two["stepTaskType"] == "assign_task":
+                    for d_m in step_one["stepDocumentCloneMap"]:
+                        docs = list(d_m.values())
+                    viewers = []
+                    for docid in docs:
+                        for usr in step_two_users:
+                            viewers.append(usr)
+                            authorize(docid, viewers, process["_id"], item_type)
+                            step_two["stepDocumentCloneMap"].append({usr: docid})
+                if step_two["stepTaskType"] == "request_for_task":
+                    copies += [
+                        {
+                            member["member"]: cloning_document(
+                                item_id,
+                                member["member"],
+                                process["parent_item_id"],
+                                process["_id"],
+                            )
+                        }
+                        for member in step_two.get("stepTeamMembers", [])
+                        + step_two.get("stepPublicMembers", [])
+                        + step_two.get("stepUserMembers", [])
+                    ]
+                    for cp in copies:
+                        step_two["stepDocumentCloneMap"].append(cp)
+
+    if step_2_complete:
+        if len(process["process_steps"]) > 2:
+            step_three = process["process_steps"][2]
+            step_two = process["process_steps"][1]
+            step_three_users = [
+                member["member"]
+                for member in step_three.get("stepTeamMembers", [])
+                + step_three.get("stepPublicMembers", [])
+                + step_three.get("stepUserMembers", [])
+            ]
+            if step_three["stepDocumentCloneMap"] != []:
+                clones = []
+                for usr in step_three_users:
+                    for dmap in step_three["stepDocumentCloneMap"]:
+                        if dmap.get(usr) is not None:
+                            clones.append(dmap.get(usr))
+                d_states = [
+                    get_document_object(c_id)["document_state"] == "finalized"
+                    for c_id in clones
+                ]
+                if all(d_states):
+                    step_3_complete = True
+            else:
+                for d_m in step_two["stepDocumentCloneMap"]:
+                    docs = list(d_m.values())
+                if step_three["stepTaskType"] == "assign_task":
+                    viewers = []
+                    for docid in docs:
+                        for usr in step_three_users:
+                            viewers.append(usr)
+                            authorize(docid, viewers, process["_id"], item_type)
+
+                            step_three["stepDocumentCloneMap"].append({usr: docid})
+                if step_three["stepTaskType"] == "request_for_task":
+                    copies = []
+                    for doc in docs:
+                        for usr in step_three_users:
+                            entry = {
+                                usr: cloning_document(
+                                    doc,
+                                    usr,
+                                    process["parent_item_id"],
+                                    process["_id"],
+                                )
+                            }
+                            copies.append(entry)
+                    for cp in copies:
+                        step_three["stepDocumentCloneMap"].append(cp)
+    if step_3_complete:
+        if len(process["process_steps"]) > 3:
+            step_four = process["process_steps"][3]
+            step_four_users = [
+                member["member"]
+                for member in step_four.get("stepTeamMembers", [])
+                + step_four.get("stepPublicMembers", [])
+                + step_four.get("stepUserMembers", [])
+            ]
+            if step_four["stepDocumentCloneMap"] != []:
+                clones = []
+                for usr in step_four_users:
+                    for dmap in step_four["stepDocumentCloneMap"]:
+                        if dmap.get(usr) is not None:
+                            clones.append(dmap.get(usr))
+                document_states = [
+                    get_document_object(c_id)["document_state"] == "finalized"
+                    for c_id in clones
+                ]
+                if all(document_states):
+                    step_4_complete = True
+            else:
+                for d_m in step_three["stepDocumentCloneMap"]:
+                    docs = list(d_m.values())
+                if step_four["stepTaskType"] == "assign_task":
+                    viewers = []
+                    for docid in docs:
+                        for usr in step_four_users:
+                            viewers.append(usr)
+                            authorize(docid, viewers, process["_id"], item_type)
+                            step_four["stepDocumentCloneMap"].append({usr: docid})
+                if step_four["stepTaskType"] == "request_for_task":
+                    copies = []
+                    for doc in docs:
+                        for usr in step_three_users:
+                            entry = {
+                                usr: cloning_document(
+                                    doc,
+                                    usr,
+                                    process["parent_item_id"],
+                                    process["_id"],
+                                )
+                            }
+                            copies.append(entry)
+                    for cp in copies:
+                        step_four["stepDocumentCloneMap"].append(cp)
+    clone_ids = [d["member"] for d in copies if "member" in d]
+    if clone_ids:
+        document = get_document_object(document_id=process["parent_item_id"])
+        data = document["clone_list"]
+        for cid in clone_ids:
+            data.append(cid)
+        update_document_clone(document_id=process["parent_item_id"], clone_list=data)
+    update_wf_process(
+        process_id=process["_id"],
+        steps=process["process_steps"],
+        state=process["processing_state"],
+    )
+    return True
+
+
+def check_step_done(step_index, process):
+    """Determine whether a given step's documents are all finalized"""
+    step = process["process_steps"][step_index - 1]
+    step_users = [
+        member["member"]
+        for member in step.get("stepTeamMembers", [])
+        + step.get("stepPublicMembers", [])
+        + step.get("stepUserMembers", [])
+    ]
+
+    clones = []
+    for usr in step_users:
+        for dmap in step["stepDocumentCloneMap"]:
+            if dmap.get(usr) is not None:
+                clones.append(dmap.get(usr))
+        d_states = [
+            get_document_object(c_id)["document_state"] == "finalized"
+            for c_id in clones
+        ]
+        if all(d_states):
+            step["stepState"] = "complete"
+            return True
+    return False
+
+
+def authorize_next_step_users(step_index, process):
+    """Now Authorize users with the current document"""
+    prev_step = step_index - 1
+    for doc_map in process["process_steps"][prev_step]:
+        docs = list(doc_map.values())
+    step = process["process_steps"][step_index]
+    step_users = [
+        member["member"]
+        for member in step.get("stepTeamMembers", [])
+        + step.get("stepPublicMembers", [])
+        + step.get("stepUserMembers", [])
+    ]
+    viewers = []
+    for docid in docs:
+        for usr in step_users:
+            viewers.append(usr)
+            authorize(docid, viewers, process["_id"], process["process_type"])
+            process["process_steps"][step_index]["stepDocumentCloneMap"].append(
+                {usr: docid}
+            )
+
+
+def derive_document_copies_for_step_users(step_index, process, item_id):
+    step = process["process_steps"][step_index]
+    copies = [
+        {
+            member["member"]: cloning_document(
+                item_id,
+                member["member"],
+                process["parent_item_id"],
+                process["_id"],
+            )
+        }
+        for member in step.get("stepTeamMembers", [])
+        + step.get("stepPublicMembers", [])
+        + step.get("stepUserMembers", [])
+    ]
+    for cp in copies:
+        step["stepDocumentCloneMap"].append(cp)
+    return copies
+
+
+def background2(process_id, item_id):
+    try:
+        process = get_process_object(process_id)
+        num_process_steps = sum(
+            isinstance(element, dict) for element in process["process_steps"]
+        )
+        if num_process_steps == 1:
+            if check_step_done(num_process_steps, process):
+                return True
+        if num_process_steps == 2:
+            if check_step_done(num_process_steps, process):
+                if check_step_done(num_process_steps, process):
+                    return True
+                else:
+                    if step["stepTaskType"] == "assign_task":
+                        authorize_next_step_users(num_process_steps, process)
+
+                    if step["stepTaskType"] == "request_for_task":
+                        document_copies = derive_document_copies_for_step_users(
+                            num_process_steps, process, item_id
+                        )
+    except:
+        return False
+    clone_ids = [d["member"] for d in document_copies if "member" in d]
+    if clone_ids:
+        document = get_document_object(document_id=process["parent_item_id"])
+        data = [cid for cid in document["clone_list"]]
+        update_document_clone(document_id=process["parent_item_id"], clone_list=data)
+    step_doc_states = [check_step_done(i, process) for i in num_process_steps]
+    if all(step_doc_states):
+        new_processing_state = "completed"
+    res = json.loads(
+        update_wf_process(
+            process_id=process["_id"],
+            steps=process["process_steps"],
+            state=new_processing_state,
+        )
+    )
+    if res["isSuccess"]:
+        return True
+    return False
