@@ -12,10 +12,8 @@ from app.utils.mongo_db_connection import (
     update_wf_process,
 )
 
-from .verification import Verification
 
-
-class Process(Verification):
+class Process:
     process_kind = "original"
 
     def __init__(
