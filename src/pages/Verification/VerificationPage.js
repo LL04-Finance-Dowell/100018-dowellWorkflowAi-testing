@@ -101,7 +101,7 @@ const VerificationPage = () => {
       console.log(sanitizedDataToPost)
       // return setDataLoading(false);
     }
-return
+    
     if (dataIsPosting) return
 
     setDataIsPosting(true);
