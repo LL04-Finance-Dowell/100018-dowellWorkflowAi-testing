@@ -236,8 +236,8 @@ def verify(process, auth_step_role, location_data, user_name, user_type):
                         "You do not have permission to process this document just yet!",
                         status.HTTP_401_UNAUTHORIZED,
                     )
-            # if user_type == "public":
-            #     user_name = user_name[0]
+            if user_type == "public":
+                user_name = user_name[0]
             if any(user_name in d_map for d_map in step.get("stepDocumentCloneMap")):
                 for d_map in step["stepDocumentCloneMap"]:
                     if d_map.get(user_name) is not None:
