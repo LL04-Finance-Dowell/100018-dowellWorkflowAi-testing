@@ -31,11 +31,11 @@ class Verification:
         }
 
     @staticmethod
-    def parse_url(params: dict):
+    def parse_url(params):
         return urllib.parse.urlencode(params)
 
     @staticmethod
-    def generate_qrcode(link: str):
+    def generate_qrcode(link):
         qr_path = f"100094.pythonanywhere.com/media/qrcodes/{uuid.uuid4().hex}.png"
         # qr_path = f"media/qrcodes/{uuid.uuid4().hex}.png"  # On dev
         qr_code = qrcode.QRCode(error_correction=qrcode.constants.ERROR_CORRECT_H)
@@ -47,9 +47,7 @@ class Verification:
         return f"https://{qr_path}"
 
     @staticmethod
-    def notify(
-        auth_name: str | list, doc_id: str, portfolio: str, company_id: str, link: str
-    ):
+    def notify(auth_name, doc_id, portfolio, company_id, link):
         requests.post(
             NOTIFICATION_API,
             json.dumps(
