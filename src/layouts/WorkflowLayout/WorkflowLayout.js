@@ -105,16 +105,16 @@ const WorkflowLayout = ({ children }) => {
       return;
 
     if (!processesLoaded) {
-      const [ userCompanyId, userPortfolioDataType ] = [
-        userDetail?.portfolio_info?.length > 1 ? 
+      const [userCompanyId, userPortfolioDataType] = [
+        userDetail?.portfolio_info?.length > 1 ?
           userDetail?.portfolio_info.find(portfolio => portfolio.product === productName)?.org_id
           :
-        userDetail?.portfolio_info[0]?.org_id
+          userDetail?.portfolio_info[0]?.org_id
         ,
-        userDetail?.portfolio_info?.length > 1 ? 
+        userDetail?.portfolio_info?.length > 1 ?
           userDetail?.portfolio_info.find(portfolio => portfolio.product === productName)?.data_type
           :
-        userDetail?.portfolio_info[0]?.data_type
+          userDetail?.portfolio_info[0]?.data_type
       ];
       // Fetching processes
       getAllProcessesV2(
@@ -257,7 +257,7 @@ const WorkflowLayout = ({ children }) => {
                     <div className={`${styles.sidebar__box} hide-scrollbar`} style={{ display: isSidebarOpen ? 'block' : 'none' }}>
                       <SideBar />
                     </div>
-                    <div style={{ position: 'fixed', top: 2, left: 0 }}>
+                    <div style={{ position: 'fixed', top: 2, left: 0, zIndex: 2 }}>
                       {isSidebarOpen ? (
                         <IoIosCloseCircle size={40} onClick={toggleSidebar} />
                       ) : (
