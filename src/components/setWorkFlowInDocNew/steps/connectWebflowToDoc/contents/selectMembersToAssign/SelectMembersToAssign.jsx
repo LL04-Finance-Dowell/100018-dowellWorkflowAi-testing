@@ -934,7 +934,9 @@ const SelectMembersToAssign = ({
                       required
                       {...register('members')}
                       size={
-                        current.portfolios.length > 10
+                        current.portfolios.length === 1
+                          ? current.portfolios.length + 1
+                          : current.portfolios.length > 10
                           ? 10
                           : current.portfolios.length
                       }
