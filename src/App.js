@@ -29,7 +29,6 @@ import axios from 'axios';
 function App() {
   const dispatch = useDispatch();
   const { session_id } = useSelector((state) => state.auth);
-  console.log(session_id)
   const { isPublicUser } = useAppContext();
   useDowellLogin();
 
@@ -73,7 +72,7 @@ function App() {
         }
       )
         .then((response) => {
-          console.log("postdata", response);
+          // console.log("postdata", response);
         })
         .catch((error) => {
           console.log(error);

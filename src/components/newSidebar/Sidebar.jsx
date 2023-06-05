@@ -14,7 +14,7 @@ import Footer from './footer/Footer';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { useEffect } from 'react';
-
+import axios from 'axios';
 import { CgProfile } from 'react-icons/cg';
 import { FaShieldAlt } from 'react-icons/fa';
 import { AiTwotoneSetting } from 'react-icons/ai';
@@ -41,9 +41,73 @@ import { useTranslation } from 'react-i18next';
 import { GrStatusGoodSmall } from 'react-icons/gr';
 
 const Sidebar = () => {
- 
+
   const dispatch = useDispatch();
   const { t } = useTranslation();
+  const [knowledge, Setknowledge] = useState([
+    {
+      id: uuidv4(),
+      parent: 'Templates',
+      children: [
+        { id: uuidv4(), child: 'Proposal' },
+        { id: uuidv4(), child: 'Student Progress reports' },
+        { id: uuidv4(), child: 'Resume' },
+        { id: uuidv4(), child: 'Christmas cards' },
+        { id: uuidv4(), child: 'Birthday cards' },
+      ],
+    },
+    {
+      id: uuidv4(),
+      parent: 'Landing Supports',
+      children: [
+        { id: uuidv4(), child: 'FAQ' },
+        { id: uuidv4(), child: 'Feature videos' },
+        { id: uuidv4(), child: 'Failed scenarios' },
+        { id: uuidv4(), child: '1-1 couching' },
+        {
+          id: uuidv4(),
+          child: 'White papers',
+          children: [
+            { id: uuidv4(), child: 'Products' },
+            { id: uuidv4(), child: 'Events' },
+            { id: uuidv4(), child: 'Conferences' },
+            { id: uuidv4(), child: 'Tradeshows' },
+          ],
+        },
+      ],
+    },
+    {
+      id: uuidv4(),
+      parent: 'Case Studies',
+      children: [{ id: uuidv4(), child: 'Customer Stories', asParent: true }],
+    },
+    {
+      id: uuidv4(),
+      parent: 'New Trends',
+      children: [
+        { id: uuidv4(), child: 'New features we are working on' },
+        { id: uuidv4(), child: 'Trends in technology' },
+      ],
+    },
+    {
+      id: uuidv4(),
+      parent: 'Legal Compliances',
+      children: [
+        {
+          id: uuidv4(),
+          child: 'Legal compliance of e signatures and e documents',
+          asParent: true,
+          children: [
+            { id: uuidv4(), child: 'USA' },
+            { id: uuidv4(), child: 'UK' },
+            { id: uuidv4(), child: 'Australia' },
+            { id: uuidv4(), child: 'India' },
+            { id: uuidv4(), child: 'Germany' },
+          ],
+        },
+      ],
+    },
+  ])
   const { userDetail, session_id } = useSelector((state) => state.auth);
   const { IconColor, ShowProfileSpinner } = useSelector((state) => state.app);
   const navigate = useNavigate();
@@ -125,6 +189,37 @@ const Sidebar = () => {
     // setIsPopupOpen(true);
   };
 
+  /////////////////////
+  useEffect(() => {
+
+
+    axios.get('https://100094.pythonanywhere.com/v1/companies/6385c0f38eca0fb652c9457e/templates/?=')
+      .then((response) => {
+        const templateNames = response.data.templates.map((template) => template.template_name);
+        const updatedKnowledge = knowledge.map((item) => {
+          if (item.parent === 'Templates') {
+            const updatedChildren = item.children.map((child, index) => {
+              // Map each template child to the corresponding template name from the response
+              if (index < templateNames.length) {
+                return { id: uuidv4(), child: templateNames[index] };
+              }
+              return child;
+            });
+            console.log(updatedChildren)
+            return { ...item, children: updatedChildren };
+
+          }
+          return item;
+        });
+        Setknowledge(updatedKnowledge);
+
+      })
+      .catch((error) => {
+        // Handle any errors
+
+      });
+  }, [])
+
   return (
     <div className={styles.container}>
       <div className={styles.header__box}>
@@ -195,9 +290,9 @@ const Sidebar = () => {
       <div className={styles.organization__box}>
         <h2 className={styles.organization__text}>
           {userDetail &&
-          userDetail.portfolio_info &&
-          userDetail.portfolio_info.length > 0 &&
-          userDetail.portfolio_info[0].org_name
+            userDetail.portfolio_info &&
+            userDetail.portfolio_info.length > 0 &&
+            userDetail.portfolio_info[0].org_name
             ? userDetail.portfolio_info[0].org_name
             : 'My Organization'}
         </h2>
@@ -343,67 +438,4 @@ export const reports = [
   },
 ];
 
-export const knowledge = [
-  {
-    id: uuidv4(),
-    parent: 'Templates',
-    children: [
-      { id: uuidv4(), child: 'Proposal' },
-      { id: uuidv4(), child: 'Student Progress reports' },
-      { id: uuidv4(), child: 'Resume' },
-      { id: uuidv4(), child: 'Christmas cards' },
-      { id: uuidv4(), child: 'Birthday cards' },
-    ],
-  },
-  {
-    id: uuidv4(),
-    parent: 'Landing Supports',
-    children: [
-      { id: uuidv4(), child: 'FAQ' },
-      { id: uuidv4(), child: 'Feature videos' },
-      { id: uuidv4(), child: 'Failed scenarios' },
-      { id: uuidv4(), child: '1-1 couching' },
-      {
-        id: uuidv4(),
-        child: 'White papers',
-        children: [
-          { id: uuidv4(), child: 'Products' },
-          { id: uuidv4(), child: 'Events' },
-          { id: uuidv4(), child: 'Conferences' },
-          { id: uuidv4(), child: 'Tradeshows' },
-        ],
-      },
-    ],
-  },
-  {
-    id: uuidv4(),
-    parent: 'Case Studies',
-    children: [{ id: uuidv4(), child: 'Customer Stories', asParent: true }],
-  },
-  {
-    id: uuidv4(),
-    parent: 'New Trends',
-    children: [
-      { id: uuidv4(), child: 'New features we are working on' },
-      { id: uuidv4(), child: 'Trends in technology' },
-    ],
-  },
-  {
-    id: uuidv4(),
-    parent: 'Legal Compliances',
-    children: [
-      {
-        id: uuidv4(),
-        child: 'Legal compliance of e signatures and e documents',
-        asParent: true,
-        children: [
-          { id: uuidv4(), child: 'USA' },
-          { id: uuidv4(), child: 'UK' },
-          { id: uuidv4(), child: 'Australia' },
-          { id: uuidv4(), child: 'India' },
-          { id: uuidv4(), child: 'Germany' },
-        ],
-      },
-    ],
-  },
-];
+
