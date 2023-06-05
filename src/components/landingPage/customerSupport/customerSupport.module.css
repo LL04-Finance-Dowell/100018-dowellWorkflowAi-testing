@@ -135,7 +135,16 @@
   transform: rotateX(180deg);
 }
 
-@media (max-width: 767px) {
+/* @media screen and (max-width: 1300px) {
+  .support__box__content {
+    font-size: 12px;
+  }
+  .support__box__header {
+    font-size: 19px;
+  }
+} */
+
+@media (max-width: 950px) {
   .container {
     flex-direction: column;
   }
@@ -150,4 +159,10 @@
     /* width: min(64.4vw, 494px); */
     width: 100%;
   }
+  /* .support__box__header {
+    font-size: 21px;
+  }
+  .support__box__content {
+    font-size: 14px;
+  } */
 }
