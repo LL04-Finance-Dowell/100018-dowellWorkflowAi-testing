@@ -11,6 +11,7 @@ from app.utils.mongo_db_connection import (
     save_wf_process,
     update_wf_process,
 )
+from app.utils.verification import Verification
 
 
 class Process:
