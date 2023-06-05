@@ -198,11 +198,12 @@
 
   .sidebar__box {
     width: 100%;
-    /* display: none; */
+   z-index: 1;
   }
 
   .children__box {
     width: 100%;
+    position: absolute;
   }
   .beta__Info__Text {
     color: var(--e-global-color-1342d1f);
@@ -212,6 +213,9 @@
     position: fixed;
     background: linear-gradient(to top, rgba(0, 0, 0, 0.08), transparent);
     z-index: 100000000000;
+  }
+  .content__box {
+    position: absolute;
   }
 }
 
