@@ -24,7 +24,7 @@ import { RxHamburgerMenu } from "react-icons/rx";
 import { IoIosCloseCircle } from "react-icons/io";
 import { LoadingSpinner } from '../../components/LoadingSpinner/LoadingSpinner';
 import Chat from '../../components/Chat/Chat'
-import { formatDateAndTime } from '../../utils/helpers';
+import { formatDateAndTime, productName } from '../../utils/helpers';
 import { workflowRegistrationEventId } from '../../services/legalService';
 import { AuthServices } from '../../services/authServices';
 import { updateUserDetail } from '../../features/auth/authSlice';
@@ -105,10 +105,21 @@ const WorkflowLayout = ({ children }) => {
       return;
 
     if (!processesLoaded) {
+      const [ userCompanyId, userPortfolioDataType ] = [
+        userDetail?.portfolio_info?.length > 1 ? 
+          userDetail?.portfolio_info.find(portfolio => portfolio.product === productName)?.org_id
+          :
+        userDetail?.portfolio_info[0]?.org_id
+        ,
+        userDetail?.portfolio_info?.length > 1 ? 
+          userDetail?.portfolio_info.find(portfolio => portfolio.product === productName)?.data_type
+          :
+        userDetail?.portfolio_info[0]?.data_type
+      ];
       // Fetching processes
       getAllProcessesV2(
-        userDetail?.portfolio_info[0]?.org_id,
-        userDetail?.portfolio_info[0]?.data_type
+        userCompanyId,
+        userPortfolioDataType
       )
         .then((res) => {
           const savedProcessesInLocalStorage = JSON.parse(

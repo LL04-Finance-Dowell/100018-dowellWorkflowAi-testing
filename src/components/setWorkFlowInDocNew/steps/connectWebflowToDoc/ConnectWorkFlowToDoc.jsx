@@ -239,7 +239,7 @@ const ConnectWorkFlowToDoc = ({ stepsPopulated, savedProcessSteps }) => {
   return (
     <>
       <div className={styles.container}>
-        <h2 className='h2-small step-title align-left'>
+        <h2 className={styles.h2__Doc__Title}>
           3. {t('Connect Selected Workflows to the selected Document')}
         </h2>
 

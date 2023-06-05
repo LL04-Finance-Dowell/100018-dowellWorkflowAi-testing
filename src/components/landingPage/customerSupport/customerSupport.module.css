@@ -1,9 +1,11 @@
 .container {
   display: flex;
-  width: var(--primary-section-width);
+  /* width: var(--primary-section-width); */
+  width: 100%;
   transition: 1s transform ease;
   justify-content: space-between;
   padding: 10px;
+  /* background-color: red; */
 }
 
 .swiper__container {
@@ -74,7 +76,7 @@
 }
 
 .knowledge__box {
-  background-image: url("https://workflowai.online/wp-content/uploads/2022/10/artistic-logo.png");
+  background-image: url('https://workflowai.online/wp-content/uploads/2022/10/artistic-logo.png');
   background-position: top center;
   background-repeat: no-repeat;
   background-size: 50% auto;
@@ -133,7 +135,7 @@
   transform: rotateX(180deg);
 }
 
-@media (max-width: 768px) {
+@media (max-width: 767px) {
   .container {
     flex-direction: column;
   }
@@ -142,8 +144,10 @@
   }
   .card__container {
     width: 100%;
+    padding: 0;
   }
   .flip__container {
-    width: min(64.4vw, 494px);
+    /* width: min(64.4vw, 494px); */
+    width: 100%;
   }
 }

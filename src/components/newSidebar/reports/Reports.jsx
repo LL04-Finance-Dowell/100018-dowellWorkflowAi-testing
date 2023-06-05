@@ -39,7 +39,7 @@ const Reports = () => {
       const countOfDocuments = allDocumentsArray.filter(
         (item) =>
           item.document_state === 'draft' &&
-          item.created_by === userDetail?.portfolio_info[0].username
+          item.created_by === userDetail?.userinfo?.username
       ).length;
       setItemsCountToDisplay((prevItems) => {
         return {
@@ -56,7 +56,7 @@ const Reports = () => {
     ) {
       const countOfTemplates = allTemplatesArray.filter(
         (item) => item.template_state === 'draft'
-        // && item.created_by === userDetail?.portfolio_info[0].username
+        // && item.created_by === userDetail?.userinfo.username
       ).length;
       setItemsCountToDisplay((prevItems) => {
         return {
@@ -72,7 +72,7 @@ const Reports = () => {
       !itemsCountToDisplay.workflows.countSet
     ) {
       const countOfWorkflows = allWorkflowsArray.filter(
-        (item) => item.created_by === userDetail?.portfolio_info[0].username
+        (item) => item.created_by === userDetail?.userinfo.username
         // item.template_state === 'draft'
       ).length;
       setItemsCountToDisplay((prevItems) => {
@@ -91,12 +91,12 @@ const Reports = () => {
       const countOfProcesses =
         allProcesses.filter(
           (item) =>
-            // item.created_by === userDetail?.portfolio_info[0].username
+            // item.created_by === userDetail?.userinfo.username
             item.processing_state === 'cancelled'
         ).length +
         allProcesses.filter(
           (item) =>
-            // item.created_by === userDetail?.portfolio_info[0].username
+            // item.created_by === userDetail?.userinfo.username
             item.processing_state === 'completed'
         ).length;
 

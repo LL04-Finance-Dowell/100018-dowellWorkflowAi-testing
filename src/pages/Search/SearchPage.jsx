@@ -27,6 +27,7 @@ import { useMediaQuery } from 'react-responsive';
 
 import { MdFilterList } from 'react-icons/md';
 import DisplaySearch from './DisplaySearch';
+import { productName } from '../../utils/helpers';
 
 const searchCategories = {
   documents: 'documents',
@@ -193,9 +194,21 @@ const SearchPage = () => {
 
     setRefreshLoading(true);
 
+    const [ currentUserportfolioDataType, currentUserCompanyId ] = [
+      userDetail?.portfolio_info?.length > 1 ? 
+        userDetail?.portfolio_info.find(portfolio => portfolio.product === productName)?.data_type
+        :
+      userDetail?.portfolio_info[0]?.data_type,
+        
+      userDetail?.portfolio_info?.length > 1 ? 
+        userDetail?.portfolio_info.find(portfolio => portfolio.product === productName)?.org_id
+        :
+      userDetail?.portfolio_info[0].org_id
+    ]
+
     const data = {
-      company_id: userDetail?.portfolio_info[0].org_id,
-      data_type: userDetail?.portfolio_info[0].data_type,
+      company_id: currentUserCompanyId,
+      data_type: currentUserportfolioDataType,
     };
 
     const documentServices = new DocumentServices();
@@ -217,7 +230,7 @@ const SearchPage = () => {
               (document) =>
                 document.document_state !== 'trash' &&
                 document.data_type &&
-                document.data_type === userDetail?.portfolio_info[0]?.data_type
+                document.data_type === currentUserportfolioDataType
             )
         )
       );
@@ -229,7 +242,7 @@ const SearchPage = () => {
             .filter(
               (template) =>
                 template.data_type &&
-                template.data_type === userDetail?.portfolio_info[0]?.data_type
+                template.data_type === currentUserportfolioDataType
             )
         )
       );
@@ -240,10 +253,10 @@ const SearchPage = () => {
             (workflow) =>
               (workflow?.data_type &&
                 workflow?.data_type ===
-                  userDetail?.portfolio_info[0]?.data_type) ||
+                  currentUserportfolioDataType) ||
               (workflow.workflows.data_type &&
                 workflow.workflows.data_type ===
-                  userDetail?.portfolio_info[0]?.data_type)
+                  currentUserportfolioDataType)
           )
         )
       );

@@ -3,6 +3,7 @@ import { footerIcons } from "../Sidebar";
 import { useSelector } from "react-redux";
 import { Tooltip } from "react-tooltip";
 import { useTranslation } from "react-i18next";
+import { productName } from "../../../utils/helpers";
 
 const Footer = ({ handleIconClick }) => {
   const { t } = useTranslation();
@@ -13,7 +14,7 @@ const Footer = ({ handleIconClick }) => {
     <div className={styles.container}>
       <div className={styles.mode__box}>
         <h1>6</h1>
-        <h2>{t(userDetail?.portfolio_info[0].data_type)}</h2>
+        <h2>{t(userDetail?.portfolio_info?.length > 1 ? userDetail?.portfolio_info.find(portfolio => portfolio.product === productName)?.data_type : userDetail?.portfolio_info[0].data_type)}</h2>
       </div>
       <div className={styles.icon__box}>
         {footerIcons.map((item) => (

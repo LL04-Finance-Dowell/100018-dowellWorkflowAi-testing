@@ -39,6 +39,7 @@ import {
 import { Tooltip } from 'react-tooltip';
 import { useTranslation } from 'react-i18next';
 import { GrStatusGoodSmall } from 'react-icons/gr';
+import { productName } from '../../utils/helpers';
 
 const Sidebar = () => {
 
@@ -289,12 +290,17 @@ const Sidebar = () => {
       </div>
       <div className={styles.organization__box}>
         <h2 className={styles.organization__text}>
-          {userDetail &&
-            userDetail.portfolio_info &&
-            userDetail.portfolio_info.length > 0 &&
-            userDetail.portfolio_info[0].org_name
-            ? userDetail.portfolio_info[0].org_name
-            : 'My Organization'}
+          {
+            userDetail?.portfolio_info?.length > 1 ? 
+              userDetail?.portfolio_info?.find(portfolio => portfolio.product === productName)?.org_name ?
+                userDetail?.portfolio_info?.find(portfolio => portfolio.product === productName)?.org_name
+              :
+              "My Organization"
+            :
+            userDetail.portfolio_info[0].org_name ? 
+              userDetail.portfolio_info[0].org_name :
+            'My Organization'
+          }
         </h2>
         {userDetail?.userinfo?.org_img ? (
           <img alt='' src={userDetail?.userinfo?.org_img} />

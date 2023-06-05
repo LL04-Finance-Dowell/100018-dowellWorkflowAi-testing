@@ -1,16 +1,22 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { TemplateServices } from '../../services/templateServices';
 import { setEditorLink } from '../app/appSlice';
+import { productName } from '../../utils/helpers';
 
 const filterTemplates = (templates, thunkAPI) => {
   let filteredTemplates = [];
+
+  const userThunkPortfolioDataTypeState = thunkAPI.getState().auth?.userDetail?.portfolio_info?.length > 1 ?
+      thunkAPI.getState().auth?.userDetail?.portfolio_info.find(portfolio => portfolio.product === productName)?.data_type
+    :
+  thunkAPI.getState().auth?.userDetail?.portfolio_info[0]?.data_type;
 
   if (templates && templates.length && templates.length > 0) {
     filteredTemplates = templates.filter(
       (item) =>
         item.data_type &&
         item.data_type ===
-          thunkAPI.getState().auth?.userDetail?.portfolio_info[0]?.data_type
+          userThunkPortfolioDataTypeState
     );
   } else {
     filteredTemplates = [];

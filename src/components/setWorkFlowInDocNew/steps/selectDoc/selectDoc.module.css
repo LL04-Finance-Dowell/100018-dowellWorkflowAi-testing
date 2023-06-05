@@ -68,6 +68,10 @@
   color: white;
 }
 
+.h2__Doc__Title {
+  font-size: 1.125rem;
+}
+
 
 @media (max-width: 767px) {
   .swiper__slide__box {

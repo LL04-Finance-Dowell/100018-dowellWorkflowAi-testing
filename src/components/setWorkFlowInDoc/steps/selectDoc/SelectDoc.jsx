@@ -14,6 +14,7 @@ import {
 import { setCurrentDocToWfs } from '../../../../features/app/appSlice';
 import { LoadingSpinner } from '../../../LoadingSpinner/LoadingSpinner';
 import { setContentOfDocument } from '../../../../features/document/documentSlice';
+import { productName } from '../../../../utils/helpers';
 
 const SelectDoc = () => {
   const dispatch = useDispatch();
@@ -25,8 +26,8 @@ const SelectDoc = () => {
 
   useEffect(() => {
     const data = {
-      company_id: userDetail?.portfolio_info[0].org_id,
-      data_type: userDetail?.portfolio_info[0].data_type,
+      company_id: userDetail?.portfolio_info?.length > 1 ? userDetail?.portfolio_info.find(portfolio => portfolio.product === productName)?.org_id : userDetail?.portfolio_info[0].org_id,
+      data_type: userDetail?.portfolio_info?.length > 1 ? userDetail?.portfolio_info.find(portfolio => portfolio.product === productName)?.data_type : userDetail?.portfolio_info[0].data_type,
     };
 
     dispatch(allDocuments(data.company_id, data.data_type));

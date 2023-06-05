@@ -56,23 +56,23 @@ export const buttons = [
   },
   {
     id: uuidv4(),
-    color: '#61CE70',
+    color: '#003f1b',
   },
   {
     id: uuidv4(),
-    color: '#E1E1E1',
+    color: '#69727d',
   },
   {
     id: uuidv4(),
-    color: '#FF0000',
+    color: '#69727d',
   },
   {
     id: uuidv4(),
-    color: '#0048FF',
+    color: '#20d3e8',
   },
   {
     id: uuidv4(),
-    color: '#FFF300',
+    color: '#fdf144',
   },
   {
     id: uuidv4(),

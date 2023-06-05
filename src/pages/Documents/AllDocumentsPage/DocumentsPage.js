@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import CreateDocument from '../../../components/manageFiles/files/documents/createDocument/CreateDocument';
 
 import SectionBox from '../../../components/manageFiles/sectionBox/SectionBox';
@@ -9,6 +9,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { allDocuments } from '../../../features/document/asyncThunks';
 import DocumentCard from '../../../components/hoverCard/documentCard/DocumentCard';
 import { useNavigate } from 'react-router-dom';
+import { productName } from '../../../utils/helpers';
 
 const DocumentsPage = ({ home, showOnlySaved, showOnlyTrashed }) => {
   const { userDetail } = useSelector((state) => state.auth);
@@ -17,17 +18,24 @@ const DocumentsPage = ({ home, showOnlySaved, showOnlyTrashed }) => {
   );
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const [ currentUserPortfolioDataType, setCurrentUserPortfolioDataType ] = useState('');
 
   useEffect(() => {
+    const userPortfolioDataType = userDetail?.portfolio_info?.length > 1 ? 
+      userDetail?.portfolio_info.find(portfolio => portfolio.product === productName)?.data_type
+      :
+    userDetail?.portfolio_info[0]?.data_type;
+
     const data = {
-      company_id: userDetail?.portfolio_info[0].org_id,
-      data_type: userDetail?.portfolio_info[0].data_type,
+      company_id: userDetail?.portfolio_info?.length > 1 ? userDetail?.portfolio_info.find(portfolio => portfolio.product === productName)?.org_id : userDetail?.portfolio_info[0].org_id,
+      data_type: userPortfolioDataType,
     };
     /*     if (savedDocumentsStatus !== "succeeded")
       dispatch(savedDocuments(draftData));
     if (mineStatus !== "succeeded") dispatch(mineDocuments(data)); */
 
     if (allDocumentsStatus === 'idle') dispatch(allDocuments(data));
+    setCurrentUserPortfolioDataType(userPortfolioDataType)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userDetail]);
 
@@ -59,13 +67,13 @@ const DocumentsPage = ({ home, showOnlySaved, showOnlyTrashed }) => {
                     .filter(
                       (item) =>
                         item.created_by ===
-                          userDetail?.portfolio_info[0].username &&
+                          userDetail?.userinfo?.username &&
                         item.document_type === 'original'
                     )
                     .filter(
                       (item) =>
                         item.data_type ===
-                        userDetail?.portfolio_info[0]?.data_type
+                        currentUserPortfolioDataType
                     )
                 }
                 status={allDocumentsStatus}
@@ -86,7 +94,7 @@ const DocumentsPage = ({ home, showOnlySaved, showOnlyTrashed }) => {
                   .filter(
                     (item) =>
                       item.data_type ===
-                      userDetail?.portfolio_info[0]?.data_type
+                      currentUserPortfolioDataType
                   )}
                 status={allDocumentsStatus}
                 itemType={'documents'}

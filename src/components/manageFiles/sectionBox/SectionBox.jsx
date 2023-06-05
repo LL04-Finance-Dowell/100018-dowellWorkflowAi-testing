@@ -20,6 +20,7 @@ import { setAllDocuments } from '../../../features/document/documentSlice';
 import { setAllTemplates } from '../../../features/template/templateSlice';
 import { setAllWorkflows } from '../../../features/workflow/workflowsSlice';
 import { useTranslation } from 'react-i18next';
+import { productName } from '../../../utils/helpers';
 
 const SectionBox = ({
   cardItems,
@@ -49,12 +50,17 @@ const SectionBox = ({
   const handleRefresh = () => {
     if (refreshLoading) return;
 
+    const [currentUserCompanyId, currentUserportfolioDataType] = [
+      userDetail?.portfolio_info?.length > 1 ? userDetail?.portfolio_info.find(portfolio => portfolio.product === productName)?.data_type : userDetail?.portfolio_info[0]?.data_type,
+      userDetail?.portfolio_info?.length > 1 ? userDetail?.portfolio_info.find(portfolio => portfolio.product === productName)?.org_id : userDetail?.portfolio_info[0]?.org_id
+    ];
+
     if (itemType === 'documents') {
       setRefreshLoading(true);
 
       const data = {
-        company_id: userDetail?.portfolio_info[0].org_id,
-        data_type: userDetail?.portfolio_info[0].data_type,
+        company_id: currentUserCompanyId,
+        data_type: currentUserportfolioDataType,
       };
 
       const documentServices = new DocumentServices();
@@ -71,7 +77,7 @@ const SectionBox = ({
                     document.document_state !== 'trash' &&
                     document.data_type &&
                     document.data_type ===
-                      userDetail?.portfolio_info[0]?.data_type
+                      currentUserportfolioDataType
                 )
             )
           );
@@ -89,8 +95,8 @@ const SectionBox = ({
       setRefreshLoading(true);
 
       const data = {
-        company_id: userDetail?.portfolio_info[0].org_id,
-        data_type: userDetail?.portfolio_info[0].data_type,
+        company_id: currentUserCompanyId,
+        data_type: currentUserportfolioDataType,
       };
 
       const templatesServices = new TemplateServices();
@@ -105,7 +111,7 @@ const SectionBox = ({
                   // console.log(template) &&
                   template.data_type &&
                   template.data_type ===
-                    userDetail?.portfolio_info[0]?.data_type
+                    currentUserportfolioDataType
               )
             )
           );
@@ -123,8 +129,8 @@ const SectionBox = ({
       setRefreshLoading(true);
 
       const data = {
-        company_id: userDetail?.portfolio_info[0].org_id,
-        data_type: userDetail?.portfolio_info[0].data_type,
+        company_id: currentUserCompanyId,
+        data_type: currentUserportfolioDataType,
       };
 
       const workflowServices = new WorkflowServices();
@@ -138,10 +144,10 @@ const SectionBox = ({
                 (workflow) =>
                   (workflow?.data_type &&
                     workflow?.data_type ===
-                      userDetail?.portfolio_info[0]?.data_type) ||
+                      currentUserportfolioDataType) ||
                   (workflow.workflows.data_type &&
                     workflow.workflows.data_type ===
-                      userDetail?.portfolio_info[0]?.data_type)
+                      currentUserportfolioDataType)
               )
             )
           );
@@ -159,8 +165,8 @@ const SectionBox = ({
       setRefreshLoading(true);
 
       const data = {
-        company_id: userDetail?.portfolio_info[0].org_id,
-        data_type: userDetail?.portfolio_info[0].data_type,
+        company_id: currentUserCompanyId,
+        data_type: currentUserportfolioDataType,
       };
 
       getAllProcessesV2(data.company_id, data.data_type)
@@ -198,17 +204,17 @@ const SectionBox = ({
 
       documentService
         .allDocuments(
-          userDetail?.portfolio_info[0]?.org_id,
-          userDetail?.portfolio_info[0]?.data_type
+          currentUserCompanyId,
+          currentUserportfolioDataType
         )
         .then((res) => {
           const documentsToSign = res.data.documents
             .reverse()
             .filter(
               (document) =>
-                document.company_id === userDetail?.portfolio_info[0]?.org_id &&
+                document.company_id === currentUserCompanyId &&
                 document.data_type ===
-                  userDetail?.portfolio_info[0]?.data_type &&
+                  currentUserportfolioDataType &&
                 (document.state === 'processing' ||
                   document.document_state === 'processing') &&
                 document.auth_viewers &&
@@ -385,23 +391,22 @@ const SectionBox = ({
                           hideDeleteIcon={hideDeleteIcon}
                         />
                       ))}
-
-                  {cardItems && cardItems.length > 10 && (
-                    <PrimaryButton
-                      style={{
-                        pointerEvents: `${
-                          cardItems.length / 10 < sliceCount && 'none'
-                        }`,
-                      }}
-                      hoverBg='success'
-                      onClick={handleLoadMore}
-                    >
-                      {cardItems.length / 10 < sliceCount
-                        ? 'no more load'
-                        : 'load more'}
-                    </PrimaryButton>
-                  )}
                 </div>
+                {cardItems && cardItems.length > 10 && (
+                  <PrimaryButton
+                    style={{
+                      pointerEvents: `${
+                        cardItems.length / 10 < sliceCount && 'none'
+                      }`,
+                    }}
+                    hoverBg='success'
+                    onClick={handleLoadMore}
+                  >
+                    {cardItems.length / 10 < sliceCount
+                      ? 'no more load'
+                      : 'load more'}
+                  </PrimaryButton>
+                )}
               </>
             )
           )}

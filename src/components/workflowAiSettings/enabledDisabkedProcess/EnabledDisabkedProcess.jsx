@@ -13,7 +13,7 @@ import {
   setThemeColor,
 } from '../../../features/app/appSlice';
 import { v4 as uuidv4 } from 'uuid';
-import { setIsSelected } from '../../../utils/helpers';
+import { productName, setIsSelected } from '../../../utils/helpers';
 import { WorkflowSettingServices } from '../../../services/workflowSettingServices';
 import { toast } from 'react-toastify';
 import { useTranslation } from 'react-i18next';
@@ -137,9 +137,9 @@ const EnabledDisabkedProcess = () => {
     );
 
     const data = {
-      company_id: userDetail?.portfolio_info[0].org_id,
+      company_id: userDetail?.portfolio_info?.length > 1 ? userDetail?.portfolio_info.find(portfolio => portfolio.product === productName)?.org_id : userDetail?.portfolio_info[0].org_id,
       created_by: userDetail?.userinfo.username,
-      data_type: userDetail?.portfolio_info[0].data_type,
+      data_type: userDetail?.portfolio_info?.length > 1 ? userDetail?.portfolio_info.find(portfolio => portfolio.product === productName)?.data_type : userDetail?.portfolio_info[0].data_type,
       Process,
       Documents,
       Templates,
@@ -423,11 +423,11 @@ const EnabledDisabkedProcess = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [fetchedItems]);
 
-  useEffect(() => {
-    console.log('perm arr: ', permissionArray);
-    // console.log('user detail: ', userDetail);
-    // console.log('wrkf settings: ', workflowSettings);
-  });
+  // useEffect(() => {
+  //   // console.log('perm arr: ', permissionArray);
+  //   // console.log('user detail: ', userDetail);
+  //   // console.log('wrkf settings: ', workflowSettings);
+  // });
 
   return (
     <form

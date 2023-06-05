@@ -91,6 +91,9 @@ const initialState = {
   adminUserPortfolioLoaded: false,
   selectedPortfolioTypeForWorkflowSettings: null,
   savedProcessConfigured: false,
+  allowErrorChecksStatusUpdateForNewProcess: false,
+  newProcessErrorMessage: null,
+  errorsCheckedInNewProcess: false,
 };
 
 export const appSlice = createSlice({
@@ -196,6 +199,9 @@ export const appSlice = createSlice({
       state.publicMembersSelectedForProcess = [];
       state.teamsSelectedSelectedForProcess = [];
       state.savedProcessConfigured = false;
+      state.allowErrorChecksStatusUpdateForNewProcess = false;
+      state.newProcessErrorMessage = null;
+      state.errorsCheckedInNewProcess = false;
     },
     setProcessSteps: (state, action) => {
       state.processSteps = action.payload;
@@ -722,6 +728,15 @@ export const appSlice = createSlice({
     setSavedProcessConfigured: (state, action) => {
       state.savedProcessConfigured = action.payload;
     },
+    setAllowErrorChecksStatusUpdateForNewProcess: (state, action) => {
+      state.allowErrorChecksStatusUpdateForNewProcess = action.payload;
+    },
+    setNewProcessErrorMessage: (state, action) => {
+      state.newProcessErrorMessage = action.payload;
+    },
+    setErrorsCheckedInNewProcess: (state, action) => {
+      state.errorsCheckedInNewProcess = action.payload;
+    },
   },
   extraReducers: (builder) => {
     //getItemsCount
@@ -809,6 +824,9 @@ export const {
   setSelectedPortfolioTypeForWorkflowSettings,
   updateSingleTableOfContentRequiredStatus,
   setSavedProcessConfigured,
+  setAllowErrorChecksStatusUpdateForNewProcess,
+  setNewProcessErrorMessage,
+  setErrorsCheckedInNewProcess,
 } = appSlice.actions;
 
 export default appSlice.reducer;

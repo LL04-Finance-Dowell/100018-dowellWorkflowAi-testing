@@ -18,6 +18,7 @@ import { LoadingSpinner } from '../../../LoadingSpinner/LoadingSpinner';
 import { AiOutlineClose } from 'react-icons/ai';
 import React from 'react';
 import ProgressBar from '../../../progressBar/ProgressBar';
+import { productName } from '../../../../utils/helpers';
 
 const ProcessDocument = () => {
   const [currentProcess, setCurrentProcess] = useState();
@@ -82,9 +83,9 @@ const ProcessDocument = () => {
       action: actionVal,
       criteria: currentProcessValue,
       document_id: currentDocToWfs?._id,
-      company_id: userDetail?.portfolio_info[0]?.org_id,
+      company_id: userDetail?.portfolio_info?.length > 1 ? userDetail?.portfolio_info.find(portfolio => portfolio.product === productName)?.org_id : userDetail?.portfolio_info[0]?.org_id,
       created_by: userDetail?.userinfo?.username,
-      data_type: userDetail?.portfolio_info[0].data_type,
+      data_type: userDetail?.portfolio_info?.length > 1 ? userDetail?.portfolio_info.find(portfolio => portfolio.product === productName)?.data_type : userDetail?.portfolio_info[0].data_type,
       workflows: [
         {
           workflows: {

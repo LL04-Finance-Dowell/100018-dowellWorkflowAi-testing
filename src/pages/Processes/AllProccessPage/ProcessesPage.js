@@ -11,6 +11,7 @@ import { getAllProcessesV2 } from "../../../services/processServices";
 
 import { setAllProcesses, setProcessesLoaded, setProcessesLoading, setShowGeneratedLinksPopup } from "../../../features/app/appSlice";
 import { useNavigate } from "react-router-dom";
+import { productName } from "../../../utils/helpers";
 
 const ProcessesPage = ({ home, showOnlySaved, showOnlyPaused, showOnlyCancelled, showOnlyTrashed, showOnlyTests, showOnlyCompleted }) => {
   const { processesLoading, allProcesses, processesLoaded, ArrayofLinks, showGeneratedLinksPopup, linksFetched } = useSelector((state) => state.app);
@@ -18,7 +19,7 @@ const ProcessesPage = ({ home, showOnlySaved, showOnlyPaused, showOnlyCancelled,
   const [copiedLinks, setCopiedLinks] = useState([]);
   const dispatch = useDispatch();
   const navigate = useNavigate();
-
+  const [ currentUserPortfolioDataType, setCurrentUserPortfolioDataType ] = useState('');
 
 
   useEffect(() => {
@@ -46,9 +47,19 @@ const ProcessesPage = ({ home, showOnlySaved, showOnlyPaused, showOnlyCancelled,
     }
 
 
+    const [userCompanyId, userPortfolioDataType] = [
+      userDetail?.portfolio_info?.length > 1 ? 
+        userDetail?.portfolio_info.find(portfolio => portfolio.product === productName)?.org_id
+      :
+      userDetail?.portfolio_info[0]?.org_id
+      ,
+      userDetail?.portfolio_info?.length > 1 ? 
+        userDetail?.portfolio_info.find(portfolio => portfolio.product === productName)?.data_type
+        :
+      userDetail?.portfolio_info[0]?.data_type
+    ];
 
-
-    getAllProcessesV2(userDetail?.portfolio_info[0]?.org_id, userDetail?.portfolio_info[0]?.data_type).then(res => {
+    getAllProcessesV2(userCompanyId, userPortfolioDataType).then(res => {
       const savedProcessesInLocalStorage = JSON.parse(localStorage.getItem('user-saved-processes'));
       if (savedProcessesInLocalStorage) {
         const processes = [...savedProcessesInLocalStorage, ...res.data.filter(process => process.processing_state)].sort((a, b) => new Date(b?.created_at) - new Date(a?.created_at));
@@ -66,6 +77,15 @@ const ProcessesPage = ({ home, showOnlySaved, showOnlyPaused, showOnlyCancelled,
 
   }, [processesLoaded, userDetail])
 
+  useEffect(() => {
+    const userPortfolioDataType = userDetail?.portfolio_info?.length > 1 ? 
+      userDetail?.portfolio_info.find(portfolio => portfolio.product === productName)?.data_type
+    :
+    userDetail?.portfolio_info[0].data_type;
+
+    setCurrentUserPortfolioDataType(userPortfolioDataType)
+  }, [userDetail])
+
 
 
   return (
@@ -80,7 +100,7 @@ const ProcessesPage = ({ home, showOnlySaved, showOnlyPaused, showOnlyCancelled,
                 Card={ProcessCard}
                 cardItems={
                   allProcesses.filter(process => process.processing_state === "draft")
-                    .filter(process => process.data_type === userDetail?.portfolio_info[0]?.data_type)
+                    .filter(process => process.data_type === currentUserPortfolioDataType)
                     .filter(process => process.created_by === userDetail?.userinfo?.username)
                     .filter(process => process.workflow_construct_ids)
                 }
@@ -95,7 +115,7 @@ const ProcessesPage = ({ home, showOnlySaved, showOnlyPaused, showOnlyCancelled,
                 cardBgColor="#1ABC9C"
                 title="saved proccess"
                 Card={ProcessCard}
-                cardItems={allProcesses.filter(process => process.processing_state === "processing").filter(process => process.data_type === userDetail?.portfolio_info[0]?.data_type) }
+                cardItems={allProcesses.filter(process => process.processing_state === "processing").filter(process => process.data_type === currentUserPortfolioDataType) }
                 status={processesLoading ? "pending" : "success"}
                 itemType={"processes"}
               />
@@ -113,7 +133,7 @@ const ProcessesPage = ({ home, showOnlySaved, showOnlyPaused, showOnlyCancelled,
                 cardBgColor="#1ABC9C"
                 title="paused proccess"
                 Card={ProcessCard}
-                cardItems={allProcesses.filter(process => process.processing_state === "paused").filter(process => process.data_type === userDetail?.portfolio_info[0]?.data_type)}
+                cardItems={allProcesses.filter(process => process.processing_state === "paused").filter(process => process.data_type === currentUserPortfolioDataType)}
                 status={processesLoading ? "pending" : "success"}
                 itemType={"processes"}
               />
@@ -125,7 +145,7 @@ const ProcessesPage = ({ home, showOnlySaved, showOnlyPaused, showOnlyCancelled,
                 cardBgColor="#1ABC9C"
                 title="cancelled proccess"
                 Card={ProcessCard}
-                cardItems={allProcesses.filter(process => process.processing_state === "cancelled").filter(process => process.data_type === userDetail?.portfolio_info[0]?.data_type)}
+                cardItems={allProcesses.filter(process => process.processing_state === "cancelled").filter(process => process.data_type === currentUserPortfolioDataType)}
                 status={processesLoading ? "pending" : "success"}
                 itemType={"processes"}
               />
@@ -149,7 +169,7 @@ const ProcessesPage = ({ home, showOnlySaved, showOnlyPaused, showOnlyCancelled,
                 cardBgColor="#1ABC9C"
                 title="test proccess"
                 Card={ProcessCard}
-                cardItems={allProcesses.filter(process => process.processing_state === "test").filter(process => process.data_type === userDetail?.portfolio_info[0]?.data_type)}
+                cardItems={allProcesses.filter(process => process.processing_state === "test").filter(process => process.data_type === currentUserPortfolioDataType)}
                 status={processesLoading ? "pending" : "success"}
                 itemType={"processes"}
               />
@@ -161,7 +181,7 @@ const ProcessesPage = ({ home, showOnlySaved, showOnlyPaused, showOnlyCancelled,
                 cardBgColor="#1ABC9C"
                 title="completed proccess"
                 Card={ProcessCard}
-                cardItems={allProcesses.filter(process => process.processing_state === "completed").filter(process => process.data_type === userDetail?.portfolio_info[0]?.data_type)}
+                cardItems={allProcesses.filter(process => process.processing_state === "completed").filter(process => process.data_type === currentUserPortfolioDataType)}
                 status={processesLoading ? "pending" : "success"}
                 itemType={"processes"}
               />

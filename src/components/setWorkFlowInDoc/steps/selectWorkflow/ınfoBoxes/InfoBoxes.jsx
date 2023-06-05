@@ -24,6 +24,7 @@ import {
   InfoTitleBox,
 } from '../../../../infoBox/styledComponents';
 import { allWorkflows } from '../../../../../features/workflow/asyncTHunks';
+import { productName } from '../../../../../utils/helpers';
 
 const InfoBoxes = () => {
   const { register, watch } = useForm();
@@ -48,8 +49,8 @@ const InfoBoxes = () => {
 
   useEffect(() => {
     const data = {
-      company_id: userDetail?.portfolio_info[0].org_id,
-      data_type: userDetail?.portfolio_info[0].data_type,
+      company_id: userDetail?.portfolio_info?.length > 1 ? userDetail?.portfolio_info.find(portfolio => portfolio.product === productName)?.org_id : userDetail?.portfolio_info[0].org_id,
+      data_type: userDetail?.portfolio_info?.length > 1 ? userDetail?.portfolio_info.find(portfolio => portfolio.product === productName)?.data_type : userDetail?.portfolio_info[0].data_type,
     };
 
     dispatch(allWorkflows(data));

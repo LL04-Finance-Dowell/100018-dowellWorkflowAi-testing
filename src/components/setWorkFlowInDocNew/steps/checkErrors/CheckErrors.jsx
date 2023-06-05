@@ -5,7 +5,7 @@ import { useForm } from 'react-hook-form';
 import { useEffect, useState } from 'react';
 import { PrimaryButton } from '../../../styledComponents/styledComponents';
 import InfoBox from '../../../infoBox/InfoBox';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import ProgressBar from '../../../progressBar/ProgressBar';
 import { toast } from 'react-toastify';
 import React from 'react';
@@ -15,6 +15,7 @@ import {
   taskType,
 } from '../connectWebflowToDoc/contents/selectMembersToAssign/assignTask/AssignTask';
 import { useTranslation } from 'react-i18next';
+import { setErrorsCheckedInNewProcess } from '../../../../features/app/appSlice';
 
 const CheckErrors = () => {
   const { t } = useTranslation();
@@ -29,11 +30,14 @@ const CheckErrors = () => {
     userMembersSelectedForProcess,
     publicMembersSelectedForProcess,
     tableOfContentForStep,
+    allowErrorChecksStatusUpdateForNewProcess,
+    newProcessErrorMessage,
   } = useSelector((state) => state.app);
   const [workflowItemsToDisplay, setWorkflowItemsToDisplay] = useState([]);
   const [sortItemActive, setSortItemActive] = useState(null);
   const [sortLoading, setSortLoading] = useState(false);
   const { processOption } = watch();
+  const dispatch = useDispatch();
 
   // console.log("sssssssssss");
 
@@ -155,6 +159,9 @@ const CheckErrors = () => {
     if (selectedWorkflowsToDoc.length < 1)
       return toast.info('Please select at least one workflow first.');
 
+    if (!allowErrorChecksStatusUpdateForNewProcess && newProcessErrorMessage) return toast.info(newProcessErrorMessage);
+
+    dispatch(setErrorsCheckedInNewProcess(true));
     setSortLoading(true);
 
     setTimeout(() => {
@@ -165,7 +172,7 @@ const CheckErrors = () => {
 
   return (
     <div className={styles.container}>
-      <h2 className={`h2-small step-title align-left`}>
+      <h2 className={styles.h2__Doc__Title}>
         4. {t('Check errors before processing')}
       </h2>
       <div className={styles.content__box}>

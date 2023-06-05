@@ -5,6 +5,7 @@ import styles from './Chat.module.css';
 import { BiSend } from 'react-icons/bi';
 import axios from 'axios';
 import { useTranslation } from 'react-i18next';
+import { productName } from '../../utils/helpers';
 
 const Chat = () => {
   const { session_id,userDetail } = useSelector((state) => state.auth);
@@ -53,7 +54,7 @@ const Chat = () => {
           message,
           message_type: "text/Image",
           user_id: modals.user_id,
-          org_id: userDetail?.portfolio_info[0].org_id
+          org_id: userDetail?.portfolio_info?.length > 1 ? userDetail?.portfolio_info.find(portfolio => portfolio.product === productName)?.org_id : userDetail?.portfolio_info[0].org_id
         }
       )
       .then((res) => {

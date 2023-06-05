@@ -22,7 +22,11 @@ import { RiDeleteBin6Line } from 'react-icons/ri';
 import { moveItemToArchive } from '../../../services/archiveServices';
 import { setAllDocuments } from '../../../features/document/documentSlice';
 import { BsBookmark, BsFillBookmarkFill } from 'react-icons/bs';
-import { extractTokenFromVerificationURL, updateVerificationDataWithTimezone } from '../../../utils/helpers';
+import { 
+  extractTokenFromVerificationURL, 
+  productName, 
+  updateVerificationDataWithTimezone 
+} from '../../../utils/helpers';
 import { useTranslation } from 'react-i18next';
 
 const DocumentCard = ({
@@ -173,7 +177,7 @@ const DocumentCard = ({
     const dataToPost = {
       token: token,
       user_name: userDetail?.userinfo?.username,
-      portfolio: userDetail?.portfolio_info[0]?.portfolio_name,
+      portfolio: userDetail?.portfolio_info?.length > 1 ? userDetail?.portfolio_info.find(portfolio => portfolio.product === productName)?.portfolio_name : userDetail?.portfolio_info[0]?.portfolio_name,
       city: userDetail?.userinfo?.city,
       country: userDetail?.userinfo?.country,
       continent: userDetail?.userinfo?.timezone?.split('/')[0],
@@ -196,9 +200,14 @@ const DocumentCard = ({
       const user_type = paramsPassed.get('user_type');
       const org_name = paramsPassed.get('org');
 
+      const currentUserPortfolioName = userDetail?.portfolio_info?.length > 1 ? 
+        userDetail?.portfolio_info.find(portfolio => portfolio.product === productName)?.portfolio_name
+        :
+        userDetail?.portfolio_info[0]?.portfolio_name;
+
       if (
         auth_username !== userDetail?.userinfo?.username ||
-        auth_portfolio !== userDetail?.portfolio_info[0]?.portfolio_name
+        auth_portfolio !== currentUserPortfolioName
       ) {
         toast.info('You are not authorized to view this');
         return setDataLoading(false);

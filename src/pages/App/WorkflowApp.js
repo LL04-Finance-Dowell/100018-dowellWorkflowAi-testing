@@ -27,6 +27,7 @@ import { getFavoritesForUser } from '../../services/favoritesServices';
 import React from 'react';
 import DocumentCard from '../../components/hoverCard/documentCard/DocumentCard';
 import { useTranslation } from 'react-i18next';
+import { productName } from '../../utils/helpers';
 
 const WorkflowApp = () => {
   const { userDetail } = useSelector((state) => state.auth);
@@ -97,6 +98,17 @@ const WorkflowApp = () => {
   ]);
 
   useEffect(() => {
+    const [ userCompanyId, userPortfolioDataType ] = [
+      userDetail?.portfolio_info?.length > 1 ? 
+        userDetail?.portfolio_info.find(portfolio => portfolio.product === productName)?.org_id
+        :
+      userDetail?.portfolio_info[0]?.org_id
+      ,
+      userDetail?.portfolio_info?.length > 1 ? 
+        userDetail?.portfolio_info.find(portfolio => portfolio.product === productName)?.data_type
+        :
+      userDetail?.portfolio_info[0]?.data_type
+    ]
     if (!notificationsLoaded) {
       dispatch(setNotificationsLoading(true));
 
@@ -107,8 +119,8 @@ const WorkflowApp = () => {
       const documentsToSign = allDocuments
         .filter(
           (document) =>
-            document.company_id === userDetail?.portfolio_info[0]?.org_id &&
-            document.data_type === userDetail?.portfolio_info[0]?.data_type &&
+            document.company_id === userCompanyId &&
+            document.data_type === userPortfolioDataType &&
             (document.state === 'processing' ||
               document.document_state === 'processing') &&
             document.auth_viewers &&
@@ -140,7 +152,7 @@ const WorkflowApp = () => {
 
     if (!favoriteItemsLoaded) {
       const dataToPost = {
-        company_id: userDetail?.portfolio_info[0]?.org_id,
+        company_id: userCompanyId,
         username: userDetail?.userinfo?.username,
       };
 
@@ -234,25 +246,26 @@ const WorkflowApp = () => {
   return (
     <WorkflowLayout>
       {ShowProfileSpinner && (
-        <div style={{
-          background: 'rgba(0, 0, 0, 0.12)',
-          backdropFilter: 'blur(5px)',
-          animation: 'fadeIn 0.2s ease-in-out',
-          zIndex: 99999,
-          overflow: 'hidden',
-          display: 'flex',
-          height: "100%",
-          width: "100%",
-          alignItems: 'center',
-          justifyContent: 'center',
-          color: '#000',
-          position: 'fixed',
-          top: '0%',
-          left: '0%',
-        }}>
+        <div
+          style={{
+            background: 'rgba(0, 0, 0, 0.12)',
+            backdropFilter: 'blur(5px)',
+            animation: 'fadeIn 0.2s ease-in-out',
+            zIndex: 99999,
+            overflow: 'hidden',
+            display: 'flex',
+            height: '100%',
+            width: '100%',
+            alignItems: 'center',
+            justifyContent: 'center',
+            color: '#000',
+            position: 'fixed',
+            top: '0%',
+            left: '0%',
+          }}
+        >
           <Spinner />
         </div>
-
       )}
       <div className={styles.container}>
         <CustomerSupport />

@@ -18,6 +18,7 @@ import { LoadingSpinner } from '../../../LoadingSpinner/LoadingSpinner';
 
 import SelectedDocuments from './selectedDocuments/SelectedDocuments';
 import { useTranslation } from 'react-i18next';
+import { productName } from '../../../../utils/helpers';
 
 const SelectDoc = ({ savedDoc }) => {
   const dispatch = useDispatch();
@@ -35,8 +36,8 @@ const SelectDoc = ({ savedDoc }) => {
   useEffect(() => {
     if (savedDoc) return;
     const data = {
-      company_id: userDetail?.portfolio_info[0].org_id,
-      data_type: userDetail?.portfolio_info[0].data_type,
+      company_id: userDetail?.portfolio_info?.length > 1 ? userDetail?.portfolio_info.find(portfolio => portfolio.product === productName)?.org_id : userDetail?.portfolio_info[0].org_id,
+      data_type: userDetail?.portfolio_info?.length > 1 ? userDetail?.portfolio_info.find(portfolio => portfolio.product === productName)?.data_type : userDetail?.portfolio_info[0].data_type,
     };
 
     dispatch(allDocuments(data));
@@ -73,7 +74,7 @@ const SelectDoc = ({ savedDoc }) => {
       className={styles.container}
       style={{ cursor: savedDoc ? 'not-allowed' : 'default' }}
     >
-      <h2 className='h2-small step-title align-left'>
+      <h2 className={styles.h2__Doc__Title}>
         1. {t('Select a Document to add Workflows')}
       </h2>
       {isMobile && (

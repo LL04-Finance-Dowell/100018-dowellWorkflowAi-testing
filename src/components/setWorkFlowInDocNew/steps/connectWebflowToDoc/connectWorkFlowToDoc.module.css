@@ -179,6 +179,10 @@
   gap: 7px;
 }
 
+.h2__Doc__Title {
+  font-size: 1.125rem;
+}
+
 @media (max-width: 768px) {
   .step__box {
     width: 100%;
