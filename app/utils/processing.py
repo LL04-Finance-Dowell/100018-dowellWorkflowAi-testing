@@ -193,13 +193,6 @@ def start_process(process):
             process["process_steps"][0].get("stepDocumentCloneMap").append(
                 {user: clone_id}
             )
-        Thread(
-            target=lambda: update_wf_process(
-                process_id=process["_id"],
-                steps=process["process_steps"],
-                state="processing",
-            )
-        ).start()
 
         Thread(
             target=lambda: save_process_links(
@@ -207,6 +200,14 @@ def start_process(process):
                 process_id=process["_id"],
                 item_id=clone_id,
                 company_id=process["company_id"],
+            )
+        ).start()
+
+        Thread(
+            target=lambda: update_wf_process(
+                process_id=process["_id"],
+                steps=process["process_steps"],
+                state="processing",
             )
         ).start()
 
