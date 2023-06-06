@@ -47,7 +47,7 @@ class Verification:
         return f"https://{qr_path}"
 
     @staticmethod
-    def notify(auth_name, doc_id, portfolio, company_id, link):
+    def notify(auth_name, doc_id, portfolio, company_id, link, org_name):
         requests.post(
             NOTIFICATION_API,
             json.dumps(
@@ -57,9 +57,9 @@ class Verification:
                     "portfolio": portfolio,
                     "companyId": company_id,
                     "link": link,
+                    "orgName": org_name,
                     "productName": "Workflow AI",
                     "title": "Document to Sign",
-                    "orgName": "WorkflowAi",
                     "message": "You have a document to sign.",
                     "duration": "no limit",
                 }
@@ -90,7 +90,7 @@ class Verification:
             self.item_type,
         )
         Verification.notify(
-            auth_name, self.item_id, portfolio, self.company_id, new_link
+            auth_name, self.item_id, portfolio, self.company_id, new_link, self.org_name
         )
         return new_link, Verification.generate_qrcode(new_link)
 
@@ -115,6 +115,6 @@ class Verification:
             self.item_type,
         )
         Verification.notify(
-            auth_name, self.item_id, portfolio, self.company_id, utp_link
+            auth_name, self.item_id, portfolio, self.company_id, utp_link, self.org_name
         )
         return utp_link, Verification.generate_qrcode(utp_link)
