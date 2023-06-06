@@ -11,13 +11,15 @@ import {
 } from '../../../../features/app/appSlice';
 
 import { useTranslation } from 'react-i18next';
+import { toast } from 'react-toastify';
 
 const SelectWorkflow = ({ savedDoc }) => {
   const dispatch = useDispatch();
   const { t } = useTranslation();
   const { isMobile } = useAppContext();
 
-  const { currentDocToWfs } = useSelector((state) => state.app);
+  const { currentDocToWfs, selectedWorkflowsToDoc  } = useSelector((state) => state.app);
+  const { contentOfDocument } = useSelector((state) => state.document);
 
   const handleRemove = () => {
     if (savedDoc) return;
@@ -25,7 +27,16 @@ const SelectWorkflow = ({ savedDoc }) => {
   };
 
   const handleConnectWfToDoc = () => {
-    if (savedDoc) return;
+    if (savedDoc || selectedWorkflowsToDoc?.length < 1) return;
+
+    const contentPageWise = contentOfDocument.reduce((r, a) => {
+      r[a.pageNum] = r[a.pageNum] || [];
+      r[a.pageNum].push(a);
+      return r;
+    }, Object.create(null))
+    
+    if (Object.keys(contentPageWise || {}).length < 1) return toast.info("The document selected for processing cannot be empty.");
+    
     dispatch(setWfToDocument());
     if (currentDocToWfs) {
       // const data = { document_id: currentDocToWfs._id };
