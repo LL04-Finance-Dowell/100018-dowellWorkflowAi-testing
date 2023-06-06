@@ -85,89 +85,6 @@ def public_login(qrid, org_name):
         return None
 
 
-def notification(username, item_id, portfolio, company_id, link):
-    """post notifications for Notification API."""
-    payload = json.dumps(
-        {
-            "username": username,
-            "documentId": item_id,
-            "portfolio": portfolio,
-            "companyId": company_id,
-            "link": link,
-            "productName": "Workflow AI",
-            "title": "Document to Sign",
-            "orgName": "WorkflowAi",
-            "message": "You have a document to sign.",
-            "duration": "no limit",
-        }
-    )
-    try:
-        requests.post(NOTIFICATION_API, payload, headers)
-    except ConnectionError:
-        return
-
-
-def parse_url(params):
-    return urllib.parse.urlencode(params)
-
-
-def verification_data(
-    process_id,
-    item_id,
-    step_role,
-    auth_name,
-    auth_portfolio,
-    company_id,
-    item_type,
-    user_type,
-    org_name,
-):
-    product = "Workflow AI"
-    hash = uuid.uuid4().hex
-    if user_type == "public" and isinstance(auth_name, list):
-        query_params = {
-            "portfolio": auth_portfolio,
-            "auth_role": step_role,
-            "user_type": user_type,
-            "org": org_name,
-            "product": product,
-        }
-        for i in range(0, len(auth_name)):
-            field = auth_name[i]
-            query_params[f"username[{i}]"] = field
-        encoded_query_params = urllib.parse.urlencode(query_params)
-        link = f"{VERIFICATION_LINK}/{hash}/?{encoded_query_params}"
-    else:
-        query_params = {
-            "product": product,
-            "org": org_name,
-            "username": auth_name,
-            "portfolio": auth_portfolio,
-            "auth_role": step_role,
-            "user_type": user_type,
-        }
-        encoded_query_params = parse_url(query_params)
-        link = f"{VERIFICATION_LINK}/{hash}/?{encoded_query_params}"
-    res = json.loads(
-        save_uuid_hash(
-            link,
-            process_id,
-            item_id,
-            step_role,
-            auth_name,
-            auth_portfolio,
-            hash,
-            item_type,
-        )
-    )
-    if res["isSuccess"]:
-        Thread(
-            target=lambda: notification(
-                auth_name, item_id, auth_portfolio, company_id, link
-            )
-        ).start()
-    return link, generate_qrcode(link)
-
 
 def cloning_document(document_id, auth_viewers, parent_id, process_id):
     """creating a document copy"""
@@ -323,26 +240,6 @@ def version_control(version):
         version[0] = str(int(version[0]) + 1)
     latest = ".".join(version)
     return latest
-
-
-def generate_qrcode(verification_link):
-    """Generates a qrcode for the data provided and stores the qrcodes"""
-
-    # In Prod -- this works
-    # TODO: find out how to extract domain url
-    qr_path = f"100094.pythonanywhere.com/media/qrcodes/{uuid.uuid4().hex}.png"
-
-    # On dev -- this works
-    # qr_path = f"media/qrcodes/{uuid.uuid4().hex}.png"
-
-    qr_code = qrcode.QRCode(error_correction=qrcode.constants.ERROR_CORRECT_H)
-    qr_code.add_data(verification_link)
-    qr_code.make()
-    qr_color = "black"
-    qr_img = qr_code.make_image(fill_color=qr_color, back_color="#DCDCDC")
-    qr_img.save(qr_path)
-
-    return f"https://{qr_path}"
 
 
 def list_favourites(company_id):

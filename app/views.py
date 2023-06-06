@@ -442,7 +442,14 @@ def create_workflow(request):
         "steps": form["steps"],
     }
     res = json.loads(
-        save_wf(data, form["company_id"], form["created_by"], form["data_type"])
+        save_wf(
+            data,
+            form["company_id"],
+            form["created_by"],
+            form["portfolio"],
+            form["data_type"],
+            "original",
+        )
     )
     if res["isSuccess"]:
         return Response("Workflow Created", status.HTTP_201_CREATED)
@@ -744,6 +751,7 @@ def create_template(request):
             request.data["created_by"],
             request.data["company_id"],
             request.data["data_type"],
+            "original",
         )
     )
     if res["isSuccess"]:
