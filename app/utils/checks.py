@@ -234,17 +234,6 @@ def step_processing_order(order, process_id, role):
             raise ValueError('Sorry! You cannot access this document just yet!')
 
 
-
-# def user_presence(token, user_name, portfolio):
-#     """Checking user presence in process links map"""
-#     # decode token
-#     decoded = jwt.decode(token, "secret", algorithms="HS256")
-#     user_allowed = False
-#     if decoded["auth_name"] == user_name and decoded["auth_portfolio"] == portfolio:
-#         user_allowed = True
-#     return user_allowed, decoded["process_id"], decoded["step_role"]
-
-
 def user_presence(token, user_name, portfolio):
     """Checking user presence in process links map"""
 
