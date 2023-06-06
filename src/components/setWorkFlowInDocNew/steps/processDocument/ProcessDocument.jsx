@@ -18,7 +18,11 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import GeneratedLinksModal from './components/GeneratedLinksModal/GeneratedLinksModal';
 import SaveConfimationModal from './components/SaveConfirmationModal/SaveConfirmationModal';
-import { setAllProcesses, setAllowErrorChecksStatusUpdateForNewProcess, setNewProcessErrorMessage } from '../../../../features/app/appSlice';
+import {
+  setAllProcesses,
+  setAllowErrorChecksStatusUpdateForNewProcess,
+  setNewProcessErrorMessage,
+} from '../../../../features/app/appSlice';
 import { useTranslation } from 'react-i18next';
 import { extractProcessObj } from './utils/utils';
 
@@ -81,19 +85,22 @@ const ProcessDocument = ({ savedProcess }) => {
       return toast.info('You have not selected any workflow');
     if (processSteps.length < 1)
       return toast.info('You have not configured steps for any workflow');
-    if (!errorsCheckedInNewProcess) return toast.info('Please click the "Show process" button above to make sure there are no errors before processing.');
+    if (!errorsCheckedInNewProcess)
+      return toast.info(
+        'Please click the "Show process" button above to make sure there are no errors before processing.'
+      );
 
     if (processOptionSelection === 'saveAndContinueLater') {
       const processObjToSave = extractProcessObj(
-        processOptionSelection, 
-        userDetail, 
-        currentDocToWfs, 
-        docCurrentWorkflow, 
-        processSteps, 
-        tableOfContentForStep, 
-        teamMembersSelectedForProcess, 
-        publicMembersSelectedForProcess, 
-        userMembersSelectedForProcess, 
+        processOptionSelection,
+        userDetail,
+        currentDocToWfs,
+        docCurrentWorkflow,
+        processSteps,
+        tableOfContentForStep,
+        teamMembersSelectedForProcess,
+        publicMembersSelectedForProcess,
+        userMembersSelectedForProcess,
         true
       );
       setProcessObjectToSave(processObjToSave);
@@ -103,13 +110,13 @@ const ProcessDocument = ({ savedProcess }) => {
 
     const processObjToPost = extractProcessObj(
       newProcessActionOptions[`${processOptionSelection}`],
-      userDetail, 
-      currentDocToWfs, 
-      docCurrentWorkflow, 
-      processSteps, 
-      tableOfContentForStep, 
-      teamMembersSelectedForProcess, 
-      publicMembersSelectedForProcess, 
+      userDetail,
+      currentDocToWfs,
+      docCurrentWorkflow,
+      processSteps,
+      tableOfContentForStep,
+      teamMembersSelectedForProcess,
+      publicMembersSelectedForProcess,
       userMembersSelectedForProcess
     );
 
@@ -121,7 +128,10 @@ const ProcessDocument = ({ savedProcess }) => {
     dispatch(setAllowErrorChecksStatusUpdateForNewProcess(true));
     dispatch(setNewProcessErrorMessage(null));
 
-    if (!errorsCheckedInNewProcess) return toast.info('Please click the "Show process" button above to make sure there are no errors before processing.');
+    if (!errorsCheckedInNewProcess)
+      return toast.info(
+        'Please click the "Show process" button above to make sure there are no errors before processing.'
+      );
 
     console.log('New process obj to post: ', processObjToPost);
     setNewProcessLoading(true);
@@ -271,9 +281,7 @@ const ProcessDocument = ({ savedProcess }) => {
   return (
     <>
       <div className={styles.container}>
-        <h2 className={styles.h2__Doc__Title}>
-          5. {t('Process Document')}
-        </h2>
+        <h2 className={styles.h2__Doc__Title}>5. {t('Process Document')}</h2>
         <div className={styles.box}>
           <div className={styles.box__inner}>
             <h3 className={styles.box__header}>
@@ -293,7 +301,7 @@ const ProcessDocument = ({ savedProcess }) => {
               />
             ) : (
               <button hoverBg='success' onClick={handleProcessBtnClick}>
-                {t('Save / Start Proccess')}
+                {t('Save / Start Process')}
               </button>
             )}
           </div>
