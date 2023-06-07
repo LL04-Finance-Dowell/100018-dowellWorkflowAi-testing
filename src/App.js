@@ -25,6 +25,7 @@ import SearchPage from './pages/Search/SearchPage';
 import { useAppContext } from './contexts/AppContext';
 
 import axios from 'axios';
+import ConstructionPage from './pages/ConstructionPage/ConstructionPage';
 
 function App() {
   const dispatch = useDispatch();
