@@ -452,7 +452,18 @@ def create_workflow(request):
         )
     )
     if res["isSuccess"]:
-        return Response("Workflow Created", status.HTTP_201_CREATED)
+        return Response(
+            {
+                "_id": res["inserted_id"],
+                "workflows": data,
+                "created_by": form["created_by"],
+                "company_id": form["company_id"],
+                "creator_portfolio": form["portfolio"],
+                "workflow_type": "original",
+                "data_type": form["data_type"],
+            },
+            status.HTTP_201_CREATED,
+        )
     return Response("Failed to Save Workflow", status.HTTP_200_OK)
 
 
@@ -559,7 +570,10 @@ def create_document(request):
                     "Could not open document editor.",
                     status.HTTP_500_INTERNAL_SERVER_ERROR,
                 )
-            return Response(editor_link, status.HTTP_201_CREATED)
+            return Response(
+                {"editor_link": editor_link, "_id": res["inserted_id"]},
+                status.HTTP_201_CREATED,
+            )
         return Response(
             {"message": "Unable to Create Document"},
             status.HTTP_200_OK,
@@ -783,7 +797,7 @@ def create_template(request):
                 status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
         return Response(
-            editor_link.json(),
+            {"editor_link": editor_link.json(), "_id": res["inserted_id"]},
             status.HTTP_201_CREATED,
         )
     return Response(
