@@ -76,12 +76,12 @@ function App() {
           // Empty catch block
         })
   }
-  // // USE ONLY WHEN APP IS BROKEN OR UNDERGOING MAJOR CHANGES
-  // return (
-  //   <Routes>
-  //     <Route path="*" element={<ConstructionPage />} />
-  //   </Routes>
-  // )
+  // USE ONLY WHEN APP IS BROKEN OR UNDERGOING MAJOR CHANGES
+  return (
+    <Routes>
+      <Route path="*" element={<ConstructionPage />} />
+    </Routes>
+  )
 
   if (isPublicUser)
     return (
