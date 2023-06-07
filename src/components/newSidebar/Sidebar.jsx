@@ -119,7 +119,7 @@ const Sidebar = () => {
   useEffect(() => {
     getAgreeStatus(session_id)
       .then((res) => {
-        // console.log(res.data);
+        
         const legalStatus = res.data.data[0]?.i_agree;
 
         dispatch(setLegalStatusLoading(false));
@@ -206,7 +206,6 @@ const Sidebar = () => {
               }
               return child;
             });
-            console.log(updatedChildren)
             return { ...item, children: updatedChildren };
 
           }

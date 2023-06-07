@@ -11,8 +11,6 @@ const SelectWorkflow = () => {
 	/*   const [selectedWorkFlows, setSelectedWorkFlows] = useState([]); */
 	const { selectedWorkflowsToDoc } = useSelector((state) => state.app);
 
-	console.log("wwwwwwwww", selectedWorkflowsToDoc);
-
 	const [largeLoop, setLargeLoop] = useState(false);
 	const [smallLoop, setSmallLoop] = useState(false);
 

@@ -38,7 +38,6 @@ const SelectDoc = () => {
     const data = { document_id: document._id };
     /*   const data = { document_id: currentDocToWfs._id }; */
 
-    console.log(document);
 
     dispatch(contentDocument(data.document_id));
     dispatch(setCurrentDocToWfs(document));

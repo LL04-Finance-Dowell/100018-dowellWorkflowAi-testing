@@ -75,7 +75,7 @@ const EnabledProcess = () => {
       column: item.column.filter((col) => col.items.length !== 0),
     }));
 
-    // console.log('payload', JSON.stringify(purePayload));
+    
 
     const createData = {
       company_id: userDetail?.portfolio_info?.length > 1 ? userDetail?.portfolio_info.find(portfolio => portfolio.product === productName)?.org_id : userDetail?.portfolio_info[0]?.org_id,
@@ -88,11 +88,6 @@ const EnabledProcess = () => {
     dispatch(createWorkflowSettings(createData));
   };
 
-  // console.log(
-  //   'createWorkflowSettingsItems?.workflow_setting.processes.process',
-  //   createWorkflowSettingsItems?.workflow_setting.processes[0].process,
-  //   settingProccess
-  // );
 
   const handleOnChange = ({ item, title, boxId, type }, e, checkFunc) => {
     const isSelectedItems = setIsSelected({
@@ -108,15 +103,14 @@ const EnabledProcess = () => {
     //   const selectedPort = settingProccess[0].children[0].column[1].items.find(
     //     (item) => item.isSelected
     //   );
-    //   console.log('sele Port: ', selectedPort);
+    
     // }
 
     // const lowerCaseTitle = title.toLowerCase();
-    // if (lowerCaseTitle === 'portfolios') {
-    //   console.log('item', title, item);
+    // if (lowerCaseTitle === 'portfolios') {   
     //   setCurrentPortfolio(item._id);
     // } else if (lowerCaseTitle === 'teams') {
-    //   console.log('teams', title);
+    
     // } else {
     //   const isSelectedItems = setIsSelected({
     //     items: settingProccess[0].children,
@@ -135,7 +129,7 @@ const EnabledProcess = () => {
   //     settingProccess[0].children[0],
   //     ...createWorkflowSettingsItems,
   //   ]);
-  // console.log('createWorkflowSettingsItemsstatus', createStatus);
+
 
   useEffect(() => {
     const selectedPort = settingProccess[0].children[0].column[1].items.find(
@@ -175,8 +169,7 @@ const EnabledProcess = () => {
   }, [userPortfolios]);
 
   // useEffect(() => {
-  //   console.log('teams: ', teamsInWorkflowAI);
-  //   console.log('settingPr: ', settingProccess);
+  
   // });
 
   return (

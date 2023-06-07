@@ -11,16 +11,6 @@ export const formatDateAndTime = (dateTime) => {
 };
 
 export const setIsSelected = ({ items, item, boxId, title, type }) => {
-  // console.log(
-  //   'item: ',
-  //   item,
-  //   'bx id: ',
-  //   boxId,
-  //   'title: ',
-  //   title,
-  //   'type: ',
-  //   type
-  // );
   let isSelectedItems = [];
   const mainSetter = (modItems = items) => {
     return modItems.map((child) =>
@@ -58,7 +48,7 @@ export const setIsSelected = ({ items, item, boxId, title, type }) => {
   //               ? {
   //                   ...col,
   //                   items: col.items.map((colItem) => {
-  //                     console.log('c item: ', colItem);
+  //                   
   //                     return colItem._id === item._id
   //                       ? {
   //                           ...colItem,

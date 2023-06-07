@@ -127,7 +127,7 @@ const WorkflowApp = () => {
             document.auth_viewers.includes(userDetail?.userinfo?.username)
         )
         .filter((document) => document.process_id);
-      // console.log(documentsToSign)
+    
       dispatch(setNotificationFinalStatus(100));
 
       const currentNotifications = notificationsForUser.slice();
@@ -158,13 +158,12 @@ const WorkflowApp = () => {
 
       getFavoritesForUser(dataToPost.company_id)
         .then((res) => {
-          // console.log(res.data)
+         
           setFavoriteitems(res.data);
           setFavoriteitemsLoaded(true);
         })
         .catch((err) => {
           console.log(err.response ? err.response.data : err.message);
-          console.log('Failed to fetch favorites');
           // setFavoriteitemsLoaded(true)
         });
     }
@@ -239,8 +238,6 @@ const WorkflowApp = () => {
   }, [docs]);
 
   // useEffect(() => {
-  //   console.log('ct: ', completedTasks);
-  //   console.log('uct: ', uncompletedTasks);
   // }, [uncompletedTasks, completedTasks]);
 
   return (

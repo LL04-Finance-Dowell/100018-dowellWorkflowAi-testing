@@ -29,7 +29,6 @@ const Reports = () => {
   );
   const { allProcesses } = useSelector((state) => state.app);
 
-  // console.log(userDetail)
   useEffect(() => {
     if (
       allDocumentsArray &&
@@ -47,7 +46,6 @@ const Reports = () => {
           documents: { count: countOfDocuments, countSet: true },
         };
       });
-      // console.log(countOfDocuments)
     }
     if (
       allTemplatesArray &&
@@ -64,7 +62,6 @@ const Reports = () => {
           templates: { count: countOfTemplates, countSet: true },
         };
       });
-      // console.log(countOfTemplates)
     }
     if (
       allWorkflowsArray &&
@@ -81,7 +78,6 @@ const Reports = () => {
           workflows: { count: countOfWorkflows, countSet: true },
         };
       });
-      // console.log(countOfWorkflows)
     }
     if (
       allProcesses &&
@@ -106,7 +102,6 @@ const Reports = () => {
           processes: { count: countOfProcesses, countSet: true },
         };
       });
-      // console.log('processing', countOfProcesses)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [allDocumentsArray, allTemplatesArray, allWorkflowsArray, allProcesses]);

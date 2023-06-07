@@ -37,7 +37,7 @@ const WorkflowCard = ({ cardItem }) => {
   };
 
   const handleTrashWorkflow = async (cardItem) => {
-    // console.log(item)
+    
     const copyOfAllWorkflows = [...allWorkflows];
     const foundWorkflowIndex = copyOfAllWorkflows.findIndex(
       (item) => item._id === cardItem._id
@@ -114,7 +114,6 @@ const WorkflowCard = ({ cardItem }) => {
         );
       }
     }
-    // console.log(favoriteItems)
   };
 
   const FrontSide = () => {

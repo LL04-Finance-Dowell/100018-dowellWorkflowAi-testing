@@ -54,7 +54,7 @@ export const createWorkflow = createAsyncThunk(
     try {
       const res = await workflowServices.createWorkflow(data);
 
-      console.log("resssssss1", res.data);
+    
 
       typeof res.data === 'string' && notify(changeToTitleCase(res.data));
 
@@ -73,10 +73,6 @@ export const mineWorkflows = createAsyncThunk(
     try {
       const res = await workflowServices.mineWorkflows(data);
 
-      console.log(
-        "mine workflowwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww",
-        res.data
-      );
 
       const workflows = filterWorkflows(res.data.workflow, thunkAPI);
 
@@ -108,7 +104,7 @@ export const detailWorkflow = createAsyncThunk(
     try {
       const res = await workflowServices.detailWorkflow(data);
 
-      console.log("detailWorkflow", res.data);
+      
 
       asyncTHunks.dispatch(setCurrentWorkflow(res.data));
 
@@ -126,7 +122,7 @@ export const updateWorkflow = createAsyncThunk(
     try {
       const res = await workflowServices.updateWorkflow(updateData._id, updateData);
 
-      console.log("updateWorkflow", res.data);
+      
       typeof res.data === 'string' && notify(changeToTitleCase(res.data));
 
       thunkAPI.dispatch(removeFromMinedWf(updateData.workflow_id));

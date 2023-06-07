@@ -30,7 +30,7 @@ const ConnectWorkFlowToDoc = ({ stepsPopulated, savedProcessSteps }) => {
     (state) => state.app
   );
 
-  // console.log("wftooooooooooo", wfToDocument);
+  
 
   const [currentSteps, setCurrentSteps] = useState([]);
   const [enabledSteps, setEnabledSteps] = useState([]);
@@ -42,7 +42,7 @@ const ConnectWorkFlowToDoc = ({ stepsPopulated, savedProcessSteps }) => {
 
   const [setContentToggle] = useState(false);
 
-  // console.log("sssssssssssssssssss", wfToDocument);
+  
 
   useEffect(() => {
     if (stepsPopulated && !savedProcessConfigured) {
@@ -136,7 +136,7 @@ const ConnectWorkFlowToDoc = ({ stepsPopulated, savedProcessSteps }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [docCurrentWorkflow, stepsPopulated, savedProcessSteps]);
 
-  // console.log("currrrr", contentOfDocument);
+  
 
   const handleSkipSelection = (
     e,
@@ -239,7 +239,7 @@ const ConnectWorkFlowToDoc = ({ stepsPopulated, savedProcessSteps }) => {
   return (
     <>
       <div className={styles.container}>
-        <h2 className={styles.h2__Doc__Title}>
+        <h2 className='h2__Doc__Title'>
           3. {t('Connect Selected Workflows to the selected Document')}
         </h2>
 

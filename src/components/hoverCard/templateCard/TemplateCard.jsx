@@ -78,7 +78,7 @@ const TemplateCard = ({ cardItem }) => {
         });
       }
     }
-    // console.log(favoriteItems)
+   
   };
 
   const handleTrashTemplate = async (cardItem) => {

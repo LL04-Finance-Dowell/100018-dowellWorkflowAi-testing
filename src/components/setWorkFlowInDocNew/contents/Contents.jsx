@@ -31,14 +31,14 @@ const Contents = ({
   const [currentPage, setCurrentPage] = useState(1);
 
   /*  const handleAddContent = (content) => {
-    console.log(content);
+    
     const isInclude = selectedContents.map((item) => item._id === content._id);
 
     setSelectedContents((prev) =>
       prev.map((item) => (item._id === content._id ? prev : [...prev, content]))
     );
 
-    console.log(selectedContents);
+    
   }; */
 
   const handleContentSelection = (valueAsJSON, contentPage) => {
@@ -121,7 +121,7 @@ const Contents = ({
     );
   };
 
-  // console.log("contentscontents", contentsPageWise);
+ 
 
   return (
     <div

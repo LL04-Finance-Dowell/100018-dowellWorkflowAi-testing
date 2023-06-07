@@ -61,7 +61,7 @@ export const signDocument = createAsyncThunk("document/sign", async (data) => {
   try {
     const res = await documentServices.signDocument(data);
 
-    console.log("document", res.data);
+  
 
     return res.data;
   } catch (error) {
@@ -74,9 +74,6 @@ export const mineDocuments = createAsyncThunk(
   async (data, thunkAPI) => {
     try {
       const res = await documentServices.mineDocuments(data);
-      console.log("inseideeee");
-
-      console.log("mine document", res.data);
 
       const documents = filterDocuments(res.data.documents, thunkAPI);
 
@@ -92,9 +89,7 @@ export const rejectedDocuments = createAsyncThunk(
   async (data) => {
     try {
       const res = await documentServices.rejectedDocuments(data);
-      console.log("inseideeee");
-
-      console.log("document", res.data);
+     
 
       return res.data;
     } catch (error) {
@@ -108,7 +103,7 @@ export const savedDocuments = createAsyncThunk(
   async (data, thunkAPI) => {
     try {
       const res = await documentServices.savedDocuments(data);
-      console.log("inseideeee");
+      
 
       const documents = filterDocuments(res.data.documents, thunkAPI);
 
@@ -125,7 +120,7 @@ export const contentDocument = createAsyncThunk(
     try {
       const res = await documentServices.contentDocument(data);
 
-      console.log("contentdocument", res.data);
+      
 
       return res.data;
     } catch (error) {

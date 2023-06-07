@@ -72,7 +72,6 @@ const ProcessesPage = ({ home, showOnlySaved, showOnlyPaused, showOnlyCancelled,
     }).catch(err => {
       console.log("Failed: ", err.response);
       dispatch(setProcessesLoading(false));
-      console.log("did not fetch processes");
     })
 
   }, [processesLoaded, userDetail])

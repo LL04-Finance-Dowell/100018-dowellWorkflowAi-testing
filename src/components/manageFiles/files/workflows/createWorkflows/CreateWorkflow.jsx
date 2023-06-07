@@ -35,7 +35,7 @@ const CreateWorkflows = ({ handleToggleOverlay }) => {
   );
   const { currentWorkflow } = useSelector((state) => state.app);
 
-  console.log('currentWorkflow', currentWorkflow);
+  
 
   const [internalWorkflows, setInternalWorkflows] = useState([]);
   const [workflowTitle, setWorkflowTitle] = useState('');
@@ -151,7 +151,7 @@ const CreateWorkflows = ({ handleToggleOverlay }) => {
   }, [workflowDetailStatus]);
 
   useEffect(() => {
-    console.log('inter: ', internalWorkflows);
+    
   }, [internalWorkflows]);
 
   return (

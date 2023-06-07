@@ -147,13 +147,11 @@ const SetWorkflowInDoc = () => {
   ]);
 
   const populateProcessDetails = (process) => {
-    // console.log(process);
     const foundOriginalDoc = allDocuments.find(
       (document) =>
         document._id === process.parent_item_id &&
         document.document_type === 'original'
     );
-    // console.log(foundOriginalDoc);
     if (!foundOriginalDoc) return;
 
     // setDraftProcess(process);
@@ -168,7 +166,7 @@ const SetWorkflowInDoc = () => {
 
     dispatch(setSelectedWorkflowsToDoc(foundWorkflow));
     dispatch(setWfToDocument());
-    // console.log(foundWorkflow)
+   
     dispatch(setDocCurrentWorkflow(foundWorkflow));
 
     process?.process_steps.forEach((step, currentStepIndex) => {
@@ -178,7 +176,6 @@ const SetWorkflowInDoc = () => {
         if (keysProcessed.includes(key)) return;
         if (key === 'stepPublicMembers') {
           step[key].forEach((user) => {
-            // console.log(user)
             dispatch(
               setPublicMembersSelectedForProcess({
                 member: user.member,
@@ -191,7 +188,7 @@ const SetWorkflowInDoc = () => {
 
         if (key === 'stepTeamMembers') {
           step[key].forEach((user) => {
-            // console.log(user)
+          
             dispatch(
               setTeamMembersSelectedForProcess({
                 member: user.member,

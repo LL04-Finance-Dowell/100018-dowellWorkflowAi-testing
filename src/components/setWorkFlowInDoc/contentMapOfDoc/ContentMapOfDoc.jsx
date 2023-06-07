@@ -51,7 +51,7 @@ const ContentMapOfDoc = () => {
     },
   };
 
-  console.log('contentOfDocumentcontentOfDocument', contentOfDocument);
+ 
 
   return (
     <div ref={ref} className={styles.container}>

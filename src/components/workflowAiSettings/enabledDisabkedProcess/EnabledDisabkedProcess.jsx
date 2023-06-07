@@ -157,7 +157,7 @@ const EnabledDisabkedProcess = () => {
       wf_setting_id: workflowSettings[0]._id,
     };
 
-    // console.log('payload: ', data);
+    
     try {
       setIsUpdating(true);
       await workflowSettingServices.updateWorkflowAISettings(data);
@@ -406,7 +406,7 @@ const EnabledDisabkedProcess = () => {
         });
       });
 
-      // console.log('rawItems: ', rawItems);
+      
 
       dispatch(setFetchedPermissionArray(rawItems));
       dispatch(
@@ -415,18 +415,11 @@ const EnabledDisabkedProcess = () => {
         )
       );
 
-      // console.log(
-      //   'fItems: ',
-      //   fetchedItems.find((item) => item.title === 'theme_color').content
-      // );
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [fetchedItems]);
 
   // useEffect(() => {
-  //   // console.log('perm arr: ', permissionArray);
-  //   // console.log('user detail: ', userDetail);
-  //   // console.log('wrkf settings: ', workflowSettings);
   // });
 
   return (

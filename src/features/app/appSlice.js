@@ -290,7 +290,7 @@ export const appSlice = createSlice({
       state.themeColor = action.payload;
     },
     setSettingProccess: (state, { payload: { payload, type } }) => {
-      // console.log('payL: ', payload);
+      
       switch (type) {
         case 'p_title':
           state.settingProccess[0].children[4].column =
@@ -301,7 +301,7 @@ export const appSlice = createSlice({
                   item._id === col.pItemId
               );
 
-              // console.log('pItem: ', pItem);
+             
 
               return pItem.content.includes('set display name')
                 ? {
@@ -403,7 +403,7 @@ export const appSlice = createSlice({
       }));
     },
     setUpdateProccessApi: (state, action) => {
-      console.log('settingProccesssettingProccess', action.payload);
+      
       state.settingProccess = state.settingProccess.map((item) => ({
         ...item,
         children: [item.children[0], ...action.payload],

@@ -21,11 +21,11 @@ const Dropdown = ({ disableClick }) => {
 
   const handleCurrentWorkflow = (item) => {
     dispatch(setDocCurrentWorkflow(item));
-    console.log('itemmmmmm', item);
+   
     dispatch(setDropdowndToggle(false));
   };
 
-  // console.log(wfToDocument, docCurrentWorkflow, "aaaaaaaaaaaaaaaaa");
+  
 
   return (
     <>

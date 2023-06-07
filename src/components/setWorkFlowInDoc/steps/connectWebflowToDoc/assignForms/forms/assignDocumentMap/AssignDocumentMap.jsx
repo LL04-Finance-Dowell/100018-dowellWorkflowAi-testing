@@ -20,7 +20,7 @@ const AssignDocumentMap = ({ currentStepIndex }) => {
 
   const onSubmit = (data) => {
     setLoading(true);
-    console.log("docement", data);
+    
     dispatch(
       updateSingleProcessStep({
         ...data,

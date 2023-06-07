@@ -23,7 +23,7 @@ const AssignDocumentMap = ({ currentStepIndex, stepsPopulated }) => {
 
   const onSubmit = (data) => {
     setLoading(true);
-    console.log("docement", data);
+   
     // setTimeout(() => setLoading(false), 2000);
 
     if (data.document) {
@@ -41,7 +41,7 @@ const AssignDocumentMap = ({ currentStepIndex, stepsPopulated }) => {
 
       switch (data.document) {
         case "Current Selection": 
-          console.log("Preserving current selection")
+          
           return setLoading(false);
         case "All Document":
           contentOfDocument.forEach(content => {
@@ -83,7 +83,7 @@ const AssignDocumentMap = ({ currentStepIndex, stepsPopulated }) => {
           })
           return setLoading(false);
         default:
-          console.log("Invalid option passed");
+         
           setTimeout(() => setLoading(false), 1000);
       }
     }

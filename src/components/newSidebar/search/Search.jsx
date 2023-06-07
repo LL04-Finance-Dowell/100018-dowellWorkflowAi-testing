@@ -107,7 +107,7 @@ const Search = () => {
       return;
 
     try {
-      console.log(search);
+     
       const results = searchItemByKeyAndGroupResults(search, searchItems);
 
       setSearchResultLoaded(true);

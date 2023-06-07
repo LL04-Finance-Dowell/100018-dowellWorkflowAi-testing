@@ -23,7 +23,6 @@ const HandleTasks = ({ feature, tasks }) => {
     feature === 'completed' ? styles.completed : styles.incomplete;
 
   // useEffect(() => {
-  //   console.log(feature + ' tasks: ', compTasks);
   // });
   return (
     <div className={styles.container}>
@@ -107,7 +106,7 @@ const ItemsDisplay = ({ items, colorClass }) => {
   }, []);
 
   // useEffect(() => {
-  //   console.log('items Display: ', itemsToDisplay);
+  
   // }, [itemsToDisplay]);
   return (
     <>

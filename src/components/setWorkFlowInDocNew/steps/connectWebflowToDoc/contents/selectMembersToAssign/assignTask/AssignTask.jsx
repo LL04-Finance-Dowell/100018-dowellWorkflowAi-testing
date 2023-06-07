@@ -20,7 +20,7 @@ const AssignTask = ({ currentStepIndex, stepsPopulated }) => {
 
   const onSubmit = (data) => {
     setLoading(true);
-    console.log("task", data);
+    
     
     const initialProcessStepObj = {
       workflow: docCurrentWorkflow._id,

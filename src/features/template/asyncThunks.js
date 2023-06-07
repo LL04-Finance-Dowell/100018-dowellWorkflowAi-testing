@@ -32,7 +32,7 @@ export const createTemplate = createAsyncThunk(
   async (data, thunkAPI) => {
     try {
       const res = await templateServices.createTemplate(data);
-      console.log('template created: ', res.data);
+      
       thunkAPI.dispatch(setEditorLink(res.data));
 
       return res.data;
@@ -48,7 +48,7 @@ export const detailTemplate = createAsyncThunk(
     try {
       const res = await templateServices.detailTemplate(data);
 
-      console.log('template data detail', res.data);
+      
 
       thunkAPI.dispatch(setEditorLink(res.data));
 
@@ -65,7 +65,7 @@ export const mineTemplates = createAsyncThunk(
     try {
       const res = await templateServices.mineTemplates(data);
 
-      console.log('mine teplatessssssssss', res.data);
+    
 
       const templates = filterTemplates(res.data, thunkAPI);
 

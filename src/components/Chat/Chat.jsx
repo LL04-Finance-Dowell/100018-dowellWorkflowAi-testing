@@ -30,7 +30,7 @@ const Chat = () => {
       );
       if (response.ok) {
         const data = await response.json();
-        console.log(data)
+        // console.log(data)
         setModal(data);
       } else {
         throw new Error('Network response was not OK');
@@ -39,7 +39,7 @@ const Chat = () => {
       // Perform any necessary error handling logic without logging the error
       // For example, you can show a user-friendly error message
       // or perform an alternative action.
-      console.log('Initialising room failed: ', error);
+      // console.log('Initialising room failed: ', error);
     }
   };
 
@@ -58,7 +58,7 @@ const Chat = () => {
         }
       )
       .then((res) => {
-        console.log('post',res)
+        // console.log('post',res)
         const newMessage = { text: message, sender: '' };
         const updatedMessages = [...messages, newMessage];
         setMessages(updatedMessages);
