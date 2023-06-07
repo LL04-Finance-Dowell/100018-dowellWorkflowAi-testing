@@ -18,7 +18,6 @@ from app.utils.helpers import (
     list_favourites,
     remove_favourite,
     validate_id,
-    notify_push,
     delete_notification,
 )
 from django.core.cache import cache
@@ -64,9 +63,6 @@ def webhook(request):
         repo = git.Repo("/home/100094/100094.pythonanywhere.com")
         origin = repo.remotes.origin
         origin.pull()
-
-        # notify me about what has been done
-        notify_push(request.data)
         return Response("Updated PA successfully", status.HTTP_200_OK)
     return Response("Wrong event Type!", status.HTTP_400_BAD_REQUEST)
 

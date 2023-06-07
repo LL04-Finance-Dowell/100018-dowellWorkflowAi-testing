@@ -1,17 +1,11 @@
 import json
-import uuid
-from threading import Thread
-import urllib.parse
 import bson
-import qrcode
 import requests
 from django.conf import settings
-from django.core.mail import send_mail
 
 from app.constants import (
     EDITOR_API,
     PUBLIC_LOGIN_API,
-    VERIFICATION_LINK,
     NOTIFICATION_API,
 )
 from app.models import FavoriteDocument, FavoriteTemplate, FavoriteWorkflow
@@ -27,7 +21,6 @@ from .mongo_db_connection import (
     get_process_object,
     get_wf_object,
     save_document,
-    save_uuid_hash,
     save_wf_process,
 )
 
@@ -47,22 +40,6 @@ def register_user_access(process_steps, authorized_role, user):
 def delete_notification(notify_id):
     """remove notifications in external products"""
     return requests.delete(f"{NOTIFICATION_API}/{notify_id}")
-
-
-def notify_push(data):
-    """Tells me if code is pushed and deployed"""
-    pushed_by = data["pusher"].get("name")
-    subject = "Push and Deploy Done!"
-    message = f"Hi Edwin, {pushed_by} just pushed code and it is going to be deployed by your CI/CD pipeline."
-    email_from = settings.EMAIL_HOST_USER
-    recipient_list = [
-        "workflowaiedwin@gmail.com",
-    ]
-    try:
-        if data["ref"] == "refs/heads/backend":
-            send_mail(subject, message, email_from, recipient_list)
-    except:
-        print("Mail not sent")
 
 
 def public_login(qrid, org_name):
