@@ -28,10 +28,9 @@ import axios from 'axios';
 
 function App() {
   const dispatch = useDispatch();
-  const { session_id } = useSelector((state) => state.auth);
+  const { session_id,userDetail } = useSelector((state) => state.auth);
   const { isPublicUser } = useAppContext();
   useDowellLogin();
-
   useEffect(() => {
     const interval = setInterval(() => {
       checkstatus();
@@ -47,7 +46,6 @@ function App() {
     axios
       .get('https://100014.pythonanywhere.com/api/live_users')
       .then((response) => {
-        // console.log("getdata", response);
         dispatch(setIconColor('green'));
       })
       .catch((error) => {
@@ -72,7 +70,6 @@ function App() {
         }
       )
         .then((response) => {
-          // console.log("postdata", response);
         })
         .catch((error) => {
           console.log(error);
