@@ -18,7 +18,11 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import GeneratedLinksModal from './components/GeneratedLinksModal/GeneratedLinksModal';
 import SaveConfimationModal from './components/SaveConfirmationModal/SaveConfirmationModal';
-import { setAllProcesses, setAllowErrorChecksStatusUpdateForNewProcess, setNewProcessErrorMessage } from '../../../../features/app/appSlice';
+import {
+  setAllProcesses,
+  setAllowErrorChecksStatusUpdateForNewProcess,
+  setNewProcessErrorMessage,
+} from '../../../../features/app/appSlice';
 import { useTranslation } from 'react-i18next';
 import { extractProcessObj } from './utils/utils';
 
@@ -31,7 +35,7 @@ const ProcessDocument = ({ savedProcess }) => {
 
   useEffect(() => {
     if (!savedProcess) return;
-    
+
     setProcessObjectToSaveTitle(savedProcess.process_title);
   }, [savedProcess]);
 
@@ -95,6 +99,7 @@ const ProcessDocument = ({ savedProcess }) => {
     }
 
 
+
     if (processOptionSelection === 'saveAndContinueLater') {
       const processObjToSave = extractProcessObj(
         processOptionSelection,
@@ -128,16 +133,17 @@ const ProcessDocument = ({ savedProcess }) => {
     if (processObjToPost.error) {
       dispatch(setNewProcessErrorMessage(processObjToPost.error));
       document.querySelector('.h2__Doc__Title').scrollIntoView({ block: 'center' })
-      
+
       return toast.info(processObjToPost.error);
     }
 
     dispatch(setAllowErrorChecksStatusUpdateForNewProcess(true));
     dispatch(setNewProcessErrorMessage(null));
 
-    if (!errorsCheckedInNewProcess) {
-      return toast.info('Please click the "Show process" button above to make sure there are no errors before processing.');
-    }
+    if (!errorsCheckedInNewProcess)
+      return toast.info(
+        'Please click the "Show process" button above to make sure there are no errors before processing.'
+      );
 
     setNewProcessLoading(true);
 
@@ -174,7 +180,7 @@ const ProcessDocument = ({ savedProcess }) => {
   };
 
   const handleSaveForLaterBtnClick = () => {
-   
+
     const processObjToSaveCopy = structuredClone(processObjToSave);
 
     processObjToSaveCopy._id = savedProcess
@@ -198,7 +204,7 @@ const ProcessDocument = ({ savedProcess }) => {
     delete processObjToSaveCopy.parent_id;
     delete processObjToSaveCopy.workflows_ids;
 
-   
+
 
     // saving to local storage
     const savedProcessesInLocalStorage = JSON.parse(
@@ -283,9 +289,7 @@ const ProcessDocument = ({ savedProcess }) => {
   return (
     <>
       <div className={styles.container}>
-        <h2 className={styles.h2__Doc__Title}>
-          5. {t('Process Document')}
-        </h2>
+        <h2 className={styles.h2__Doc__Title}>5. {t('Process Document')}</h2>
         <div className={styles.box}>
           <div className={styles.box__inner}>
             <h3 className={styles.box__header}>
@@ -305,7 +309,7 @@ const ProcessDocument = ({ savedProcess }) => {
               />
             ) : (
               <button hoverBg='success' onClick={handleProcessBtnClick}>
-                {t('Save / Start Proccess')}
+                {t('Save / Start Process')}
               </button>
             )}
           </div>

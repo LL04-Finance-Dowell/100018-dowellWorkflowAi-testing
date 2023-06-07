@@ -1,23 +1,23 @@
-import styles from "./customerSupport.module.css";
-import { v4 as uuidv4 } from "uuid";
-import { motion, useTransform, useScroll } from "framer-motion";
-import { Swiper, SwiperSlide } from "swiper/react";
-import { Navigation, Pagination, Autoplay } from "swiper";
+import styles from './customerSupport.module.css';
+import { v4 as uuidv4 } from 'uuid';
+import { motion, useTransform, useScroll } from 'framer-motion';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { Navigation, Pagination, Autoplay } from 'swiper';
 
-import "swiper/css";
-import "swiper/css/navigation";
-import "swiper/css/pagination";
+import 'swiper/css';
+import 'swiper/css/navigation';
+import 'swiper/css/pagination';
 
-import "./swiper.css";
-import { useRef } from "react";
+import './swiper.css';
+import { useRef } from 'react';
 
 const CustomerSupport = () => {
   const ref = useRef(null);
   const { scrollYProgress } = useScroll({
     target: ref,
-    offset: ["end end", "start start"],
+    offset: ['end end', 'start start'],
   });
-  const y = useTransform(scrollYProgress, [0, 1], ["200px", "-200px"]);
+  const y = useTransform(scrollYProgress, [0, 1], ['200px', '-200px']);
 
   return (
     <motion.div ref={ref} style={{ y }} className={styles.container}>
@@ -28,7 +28,7 @@ const CustomerSupport = () => {
           navigation={true}
           pagination={true}
           modules={[Navigation, Pagination, Autoplay]}
-          className="customer-support-swiper"
+          className='customer-support-swiper'
         >
           {swiperItems.map((item, index) => (
             <SwiperSlide key={item.id}>
@@ -79,7 +79,7 @@ const CustomerSupport = () => {
 export default CustomerSupport;
 
 export const swiperItems = [
-  { id: uuidv4(), image: "" },
-  { id: uuidv4(), image: "" },
-  { id: uuidv4(), image: "" },
+  { id: uuidv4(), image: '' },
+  { id: uuidv4(), image: '' },
+  { id: uuidv4(), image: '' },
 ];
