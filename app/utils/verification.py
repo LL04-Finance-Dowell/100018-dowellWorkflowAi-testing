@@ -52,16 +52,17 @@ class Verification:
             NOTIFICATION_API,
             json.dumps(
                 {
-                    "username": auth_name,
+                    "created_by": auth_name,
                     "documentId": doc_id,
                     "portfolio": portfolio,
-                    "companyId": company_id,
+                    "company_id": company_id,
                     "link": link,
-                    "orgName": org_name,
-                    "productName": "Workflow AI",
+                    "org_name": org_name,
+                    "product_ame": "Workflow AI",
                     "title": "Document to Sign",
                     "message": "You have a document to sign.",
                     "duration": "no limit",
+                    "button_status": ""
                 }
             ),
             {"Content-Type": "application/json"},
