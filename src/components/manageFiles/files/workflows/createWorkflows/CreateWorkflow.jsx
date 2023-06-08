@@ -112,10 +112,20 @@ const CreateWorkflows = ({ handleToggleOverlay }) => {
     if (currentWorkflow) {
       const updateData = {
         created_by: userDetail?.userinfo?.username,
-        company_id: userDetail?.portfolio_info?.length > 1 ? userDetail?.portfolio_info.find(portfolio => portfolio.product === productName)?.org_id : userDetail?.portfolio_info[0].org_id,
+        company_id:
+          userDetail?.portfolio_info?.length > 1
+            ? userDetail?.portfolio_info.find(
+                (portfolio) => portfolio.product === productName
+              )?.org_id
+            : userDetail?.portfolio_info[0].org_id,
         wf_title: workflowTitle,
         workflow_id: currentWorkflow._id,
-        data_type: userDetail?.portfolio_info?.length > 1 ? userDetail?.portfolio_info.find(portfolio => portfolio.product === productName)?.data_type : userDetail?.portfolio_info[0].data_type,
+        data_type:
+          userDetail?.portfolio_info?.length > 1
+            ? userDetail?.portfolio_info.find(
+                (portfolio) => portfolio.product === productName
+              )?.data_type
+            : userDetail?.portfolio_info[0].data_type,
         steps,
       };
 
@@ -124,9 +134,25 @@ const CreateWorkflows = ({ handleToggleOverlay }) => {
       const data = {
         created_by: userDetail?.userinfo.username,
         wf_title: workflowTitle,
-        company_id: userDetail?.portfolio_info?.length > 1 ? userDetail?.portfolio_info.find(portfolio => portfolio.product === productName)?.org_id : userDetail?.portfolio_info[0].org_id,
-        data_type: userDetail?.portfolio_info?.length > 1 ? userDetail?.portfolio_info.find(portfolio => portfolio.product === productName)?.data_type : userDetail?.portfolio_info[0].data_type,
+        company_id:
+          userDetail?.portfolio_info?.length > 1
+            ? userDetail?.portfolio_info.find(
+                (portfolio) => portfolio.product === productName
+              )?.org_id
+            : userDetail?.portfolio_info[0].org_id,
+        data_type:
+          userDetail?.portfolio_info?.length > 1
+            ? userDetail?.portfolio_info.find(
+                (portfolio) => portfolio.product === productName
+              )?.data_type
+            : userDetail?.portfolio_info[0].data_type,
         steps,
+        portfolio:
+          userDetail?.portfolio_info?.find(
+            (item) => item.product === 'Workflow AI'
+          )?.member_type === 'owner'
+            ? userDetail.userportfolio
+            : userDetail?.selected_product?.userportfolio,
       };
 
       dispatch(createWorkflow({ data, notify, handleAfterCreated }));
@@ -150,9 +176,9 @@ const CreateWorkflows = ({ handleToggleOverlay }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [workflowDetailStatus]);
 
-  useEffect(() => {
-    console.log('inter: ', internalWorkflows);
-  }, [internalWorkflows]);
+  // useEffect(() => {
+  //   console.log('inter: ', internalWorkflows);
+  // }, [internalWorkflows]);
 
   return (
     <Overlay
