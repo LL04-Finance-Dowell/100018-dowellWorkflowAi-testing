@@ -10,7 +10,7 @@ from django.core.cache import cache
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from threading import Thread
-from app.utils.processing import Process, start_process
+from app.utils.processing import Process, start_process, Background
 from app.utils import checks, processing_2
 from app.utils.helpers import (
     access_editor,
@@ -248,28 +248,30 @@ def finalize_or_reject(request, process_id):
     """After access is granted and the user has made changes on a document."""
     if not request.data:
         return Response("You are missing something", status.HTTP_400_BAD_REQUEST)
+
     item_id = request.data["item_id"]
     item_type = request.data["item_type"]
-    authorized_role = request.data["role"]
+    role = request.data["role"]
     user = request.data["authorized"]
     state = request.data["action"]
 
     if request.data["action"] == "finalize" or request.data["action"] == "reject":
         return Response("Invalid processing action", status.HTTP_400_BAD_REQUEST)
+    
     check, current_state = checks.is_finalized(item_id, item_type)
     if check and current_state != "processing":
         return Response(f"Already processed as {current_state}!", status.HTTP_200_OK)
 
     res = json.loads(finalize(item_id, state, item_type))
+    process = get_process_object(process_id)
+    background = Background(process, item_type, item_id, role, user)
+
     if res["isSuccess"]:
         Thread(target=lambda: delete_notification(item_id)).start()
-        if processing_2.background(
-            process_id, item_id, item_type, authorized_role, user
-        ):
-            return Response("document processed successfully", status.HTTP_200_OK)
-        else:
-            finalize(item_id, "processing", item_type)
-    return Response("Error processing", status.HTTP_500_INTERNAL_SERVER_ERROR)
+        background.processing()
+        return Response("document processed successfully", status.HTTP_200_OK)
+
+    return Response(status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 @api_view(["POST"])
@@ -333,7 +335,7 @@ def a_single_process(request, process_id):
     try:
         process = get_process_object(process_id)
     except:
-        return Response("Failed fetch process", status.HTTP_500_INTERNAL_SERVER_ERROR)
+        return Response(status.HTTP_500_INTERNAL_SERVER_ERROR)
     return Response(process, status.HTTP_200_OK)
 
 
@@ -345,9 +347,7 @@ def fetch_process_links(request, process_id):
     try:
         process_info = get_links_object_by_process_id(process_id)
     except:
-        return Response(
-            "Could not fetch links at this time", status.HTTP_500_INTERNAL_SERVER_ERROR
-        )
+        return Response(status.HTTP_500_INTERNAL_SERVER_ERROR)
     if process_info:
         process = process_info[0]
         return Response(process["links"], status.HTTP_200_OK)
@@ -365,9 +365,7 @@ def process_copies(request, process_id):
             process_id, request.data["created_by"], request.data["portfolio"]
         )
         if process_id is None:
-            return Response(
-                "failed to create process clone", status.HTTP_500_INTERNAL_SERVER_ERROR
-            )
+            return Response(status.HTTP_500_INTERNAL_SERVER_ERROR)
         return Response("success created a process clone", status.HTTP_201_CREATED)
 
 
@@ -392,9 +390,7 @@ def create_workflow_setting(request):
             },
             status.HTTP_201_CREATED,
         )
-    return Response(
-        "Failed to Save Workflow setting", status.HTTP_500_INTERNAL_SERVER_ERROR
-    )
+    return Response(status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 @api_view(["GET", "PUT"])
@@ -406,9 +402,7 @@ def get_wf_ai_setting(request, wf_setting_id):
         try:
             setting = get_wf_setting_object(wf_setting_id)
         except:
-            return Response(
-                "failed to get setting", status.HTTP_500_INTERNAL_SERVER_ERROR
-            )
+            return Response(status.HTTP_500_INTERNAL_SERVER_ERROR)
         return Response(setting, status.HTTP_200_OK)
 
     if request.method == "PUT":
@@ -428,7 +422,7 @@ def get_wf_ai_setting(request, wf_setting_id):
 
         if updt_wf["isSuccess"]:
             return Response("Workflow Setting Updated", status.HTTP_201_CREATED)
-        return Response("Failed to Update Workflow", status.HTTP_200_OK)
+        return Response(status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 @api_view(["POST"])
@@ -465,7 +459,7 @@ def create_workflow(request):
             },
             status.HTTP_201_CREATED,
         )
-    return Response("Failed to Save Workflow", status.HTTP_200_OK)
+    return Response(status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 @api_view(["GET", "PUT"])
@@ -493,9 +487,7 @@ def workflow_detail(request, workflow_id):
         updt_wf = json.loads(update_wf(form["workflow_id"], old_workflow))
         if updt_wf["isSuccess"]:
             return Response("workflow Updated", status.HTTP_201_CREATED)
-        return Response(
-            "Failed to Update Workflow", status.HTTP_500_INTERNAL_SERVER_ERROR
-        )
+        return Response(status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 @api_view(["GET"])
@@ -507,7 +499,7 @@ def get_workflows(request, company_id):
     try:
         workflow_list = get_wf_list(company_id, data_type)
     except:
-        return Response({"workflows": []}, status.HTTP_500_INTERNAL_SERVER_ERROR)
+        return Response(status.HTTP_500_INTERNAL_SERVER_ERROR)
     if len(workflow_list) > 0:
         return Response(
             {"workflows": workflow_list},
@@ -525,6 +517,7 @@ def get_documents(request, company_id):
     data_type = request.query_params.get("data_type", "Real_Data")
     if not validate_id(company_id):
         return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
+
     cache_key = f"documents_{company_id}"
     document_list = cache.get(cache_key)
     if document_list is None:
@@ -532,7 +525,7 @@ def get_documents(request, company_id):
             document_list = get_document_list(company_id, data_type)
             cache.set(cache_key, document_list, timeout=60)
         except:
-            return Response({"documents": []}, status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response(status.HTTP_500_INTERNAL_SERVER_ERROR)
     return Response(
         {"documents": document_list},
         status.HTTP_200_OK,
@@ -575,10 +568,7 @@ def create_document(request):
                 {"editor_link": editor_link, "_id": res["inserted_id"]},
                 status.HTTP_201_CREATED,
             )
-        return Response(
-            {"message": "Unable to Create Document"},
-            status.HTTP_200_OK,
-        )
+        return Response(status.HTTP_200_OK)
 
 
 @api_view(["GET"])
@@ -625,9 +615,7 @@ def document_detail(request, document_id):
         return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
     editor_link = access_editor(document_id, "document")
     if not editor_link:
-        return Response(
-            "Could not open document editor.", status.HTTP_500_INTERNAL_SERVER_ERROR
-        )
+        return Response(status.HTTP_500_INTERNAL_SERVER_ERROR)
     return Response(editor_link, status.HTTP_201_CREATED)
 
 
@@ -635,11 +623,11 @@ def document_detail(request, document_id):
 def document_object(request, document_id):
     """Retrieves the document object for a specific document"""
     if not validate_id(document_id):
-         return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
+        return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
 
     document = get_document_object(document_id)
     if not document:
-        return Response("Could not retrieve document object", status.HTTP_500_INTERNAL_SERVER_ERROR)
+        return Response(status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     return Response(document, status.HTTP_200_OK)
 
@@ -668,9 +656,7 @@ def archives(request):
         res = delete_process(id, "Archive_Data")
         if res["isSuccess"]:
             return Response("Process moved to archives", status.HTTP_200_OK)
-    return Response(
-        "Item could not be moved to archives", status.HTTP_500_INTERNAL_SERVER_ERROR
-    )
+    return Response(status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 @api_view(["POST"])
@@ -697,10 +683,7 @@ def archive_restore(request):
         res = delete_process(id, "Real_Data")
         if res["isSuccess"]:
             return Response("Process restored from archives", status.HTTP_200_OK)
-    return Response(
-        "Item could not be restored from archives",
-        status.HTTP_500_INTERNAL_SERVER_ERROR,
-    )
+    return Response(status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 @api_view(["POST"])
@@ -714,10 +697,7 @@ def favorites(request):
         username=request.data["username"],
     )
     if not msg:
-        return Response(
-            "Item could not be added to bookmarks",
-            status.HTTP_500_INTERNAL_SERVER_ERROR,
-        )
+        return Response(status.HTTP_500_INTERNAL_SERVER_ERROR)
     return Response(msg, status.HTTP_201_CREATED)
 
 
@@ -728,10 +708,7 @@ def all_favourites(request, company_id):
         return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
     data = list_favourites(company_id)
     if not data:
-        return Response(
-            "failed to get bookmarks",
-            status.HTTP_500_INTERNAL_SERVER_ERROR,
-        )
+        return Response(status.HTTP_500_INTERNAL_SERVER_ERROR)
     return Response(data, status.HTTP_200_OK)
 
 
@@ -746,9 +723,7 @@ def trash_favourites(request, item_id, item_type, username):
         username=username,
     )
     if not msg:
-        return Response(
-            "failed to remove from bookmarks", status.HTTP_500_INTERNAL_SERVER_ERROR
-        )
+        return Response(status.HTTP_500_INTERNAL_SERVER_ERROR)
     return Response(msg, status.HTTP_204_NO_CONTENT)
 
 
@@ -758,6 +733,7 @@ def get_templates(request, company_id):
     data_type = request.query_params.get("data_type", "Real_Data")
     if not validate_id(company_id):
         return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
+
     templates = get_template_list(company_id, data_type)
     if len(templates) > 0:
         return Response(
@@ -812,18 +788,12 @@ def create_template(request):
                 data=json.dumps(payload),
             )
         except:
-            return Response(
-                {"message": "Template Creation Failed"},
-                status.HTTP_500_INTERNAL_SERVER_ERROR,
-            )
+            return Response(status.HTTP_500_INTERNAL_SERVER_ERROR)
         return Response(
             {"editor_link": editor_link.json(), "_id": res["inserted_id"]},
             status.HTTP_201_CREATED,
         )
-    return Response(
-        {"message": "Template creation failed."},
-        status.HTTP_500_INTERNAL_SERVER_ERROR,
-    )
+    return Response(status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 @api_view(["GET"])
@@ -833,9 +803,7 @@ def template_detail(request, template_id):
         return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
     editor_link = access_editor(template_id, "template")
     if not editor_link:
-        return Response(
-            "Could not open template editor.", status.HTTP_500_INTERNAL_SERVER_ERROR
-        )
+        return Response(status.HTTP_500_INTERNAL_SERVER_ERROR)
     return Response(editor_link, status.HTTP_201_CREATED)
 
 
@@ -847,10 +815,9 @@ def template_object(request, template_id):
 
     template = get_template_object(template_id)
     if not template:
-        return Response("Could not display template details", status.HTTP_500_INTERNAL_SERVER_ERROR)
+        return Response(status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     return Response(template, status.HTTP_200_OK)
-
 
 
 @api_view(["PUT"])
@@ -860,11 +827,8 @@ def approve(request, template_id):
         return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
     response = json.loads(update_template_approval(template_id, approval=True))
     if not response["isSuccess"]:
-        return Response(
-            "Template Could not be Approved.",
-            status.HTTP_500_INTERNAL_SERVER_ERROR,
-        )
-    return Response({"message": "Template Approved."}, status.HTTP_200_OK)
+        return Response(status.HTTP_500_INTERNAL_SERVER_ERROR)
+    return Response("Template Approved", status.HTTP_200_OK)
 
 
 @api_view(["POST"])
@@ -1139,7 +1103,11 @@ def read_reminder(request, process_id, username):
             for step in process_steps:
                 for mem in step["stepTeamMembers"]:
                     if mem["member"] == username:
-                        if not register_user_access(process_steps=process_steps, authorized_role=step["stepRole"], user=username):
+                        if not register_user_access(
+                            process_steps=process_steps,
+                            authorized_role=step["stepRole"],
+                            user=username,
+                        ):
                             data = {
                                 "username": username,
                                 "portfolio": mem["portfolio"],
@@ -1156,17 +1124,24 @@ def read_reminder(request, process_id, username):
                             if step["stepReminder"] == "every_hour":
                                 # Schedule cron job to run notification_cron.py every hour
                                 command = f"0 * * * * python ./utils/notification_cron.py '{data}'"
-                                os.system(f"crontab -l | {{ cat; echo '{command}'; }} | crontab -")
+                                os.system(
+                                    f"crontab -l | {{ cat; echo '{command}'; }} | crontab -"
+                                )
                                 return Response({"command": command})
 
                             elif step["stepReminder"] == "every_day":
                                 # Schedule cron job to run notification_cron.py every day
                                 command = f"0 0 * * * python ./utils/notification_cron.py '{data}'"
-                                os.system(f"crontab -l | {{ cat; echo '{command}'; }} | crontab -")
+                                os.system(
+                                    f"crontab -l | {{ cat; echo '{command}'; }} | crontab -"
+                                )
                                 return Response({"command": command})
 
                             else:
-                                return Response(f"Invalid step reminder value: {step['stepReminder']}", status.HTTP_400_BAD_REQUEST)
+                                return Response(
+                                    f"Invalid step reminder value: {step['stepReminder']}",
+                                    status.HTTP_400_BAD_REQUEST,
+                                )
 
                             # return Response(f"User hasnt accessed process: {step['stepReminder']}")
         except:
@@ -1178,26 +1153,26 @@ def read_reminder(request, process_id, username):
 @api_view(["POST"])
 def send_notif(request):
     data = {
-            "created_by": request.data["created_by"],
-            "portfolio": request.data["portfolio"],
-            "product_name": request.data["product_name"],
-            "company_id": request.data["company_id"],
-            "org_name": request.data["org_name"],
-            "org_id": request.data["org_id"],
-            "title": "Document to Sign",
-            "message": "You have a document to sign.",
-            "link": request.data["link"],
-            "duration": "5",
-            "button_status": ""
-        }
+        "created_by": request.data["created_by"],
+        "portfolio": request.data["portfolio"],
+        "product_name": request.data["product_name"],
+        "company_id": request.data["company_id"],
+        "org_name": request.data["org_name"],
+        "org_id": request.data["org_id"],
+        "title": "Document to Sign",
+        "message": "You have a document to sign.",
+        "link": request.data["link"],
+        "duration": "5",
+        "button_status": "",
+    }
     try:
         send_notification(data)
         return Response("Notification sent", status.HTTP_201_CREATED)
 
     except Exception as err:
-        return Response(f"Something went wrong: {err}", status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-
+        return Response(
+            f"Something went wrong: {err}", status.HTTP_500_INTERNAL_SERVER_ERROR
+        )
 
     # daily_reminder=cache.get("daily_reminder_data")
     # hourly_reminder=cache.get("hourly_reminder_data")
