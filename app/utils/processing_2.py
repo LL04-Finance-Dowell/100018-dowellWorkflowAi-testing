@@ -104,8 +104,7 @@ def verify(process, auth_step_role, location_data, user_name, user_type):
         document = "documentreports"
         field = "document_name"
         team_member_id = "11689044433"
-        document_item = get_document_object(clone_id)
-        item_flag = document_item["document_state"]
+        item_flag = get_document_object(clone_id)["document_state"]
 
     # set template
     if item_type == "template":

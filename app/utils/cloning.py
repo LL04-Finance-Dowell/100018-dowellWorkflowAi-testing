@@ -68,11 +68,11 @@ class Clone:
         )
         return save_res["inserted_id"]
 
-    def document(self, document_id, authorized_viewers, parent_id, process_id):
+    def document(self, document_id, viewers, parent_id, process_id):
         viewers = []
         viewers = (
-            [item for item in set(authorized_viewers)]
-            if authorized_viewers is not None and isinstance(authorized_viewers, list)
+            [i for i in set(viewers)]
+            if viewers is not None and isinstance(viewers, list)
             else []
         )
         document = get_document_object(document_id)

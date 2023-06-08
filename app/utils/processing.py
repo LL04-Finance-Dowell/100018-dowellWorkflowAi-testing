@@ -4,7 +4,7 @@ from threading import Thread
 from rest_framework import status
 from rest_framework.response import Response
 
-from app.utils.helpers import cloning_document, register_user_access
+from app.utils.helpers import register_user_access
 from app.utils.mongo_db_connection import (
     authorize,
     finalize,
@@ -16,7 +16,7 @@ from app.utils.mongo_db_connection import (
     update_wf_process,
 )
 from app.utils.verification import Verification
-
+from app.utils.cloning import Clone
 
 class Process:
     process_kind = "original"
@@ -197,7 +197,7 @@ def start_process(process):
    
     doc_id = process["parent_item_id"]
     if len(viewers) or len(public_viewers) > 0:
-        clone_id = cloning_document(doc_id, viewers, doc_id, process["_id"])
+        clone_id = verification.document(doc_id, viewers, doc_id, process["_id"])
         clone_ids = [clone_id]
 
         for user in viewers:
@@ -207,7 +207,7 @@ def start_process(process):
         public_clone_ids = []
 
         for public_user in public_viewers:
-            public_clone_ids.append({public_user: cloning_document(
+            public_clone_ids.append({public_user: verification.document(
                 doc_id, public_user, doc_id, process["_id"])})
 
         process["process_steps"][0].get(
@@ -247,7 +247,7 @@ def start_process(process):
     return Response("processing failed!", status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
-class Background:
+class Background(Clone):
     viewers = []
     copies = []
     clones = []
@@ -280,7 +280,7 @@ class Background:
     def request_task(cls, item_id, parent_item_id, process_id, users, clone_map):
         cls.copies += [
             {
-                u["member"]: cloning_document(
+                u["member"]: cls.document(
                     item_id,
                     u["member"],
                     parent_item_id,
