@@ -145,7 +145,11 @@ const CreateWorkflows = ({ handleToggleOverlay }) => {
               )?.data_type
             : userDetail?.portfolio_info[0].data_type,
         steps,
-        portfolio: userDetail?.portfolio_info?.portfolio_name,
+        portfolio: userDetail?.portfolio_info?.length > 1 ? 
+          userDetail?.portfolio_info.find(portfolio => portfolio.product === productName)?.portfolio_name
+          :
+          userDetail?.portfolio_info[0]?.portfolio_name
+        ,
       };
 
       dispatch(createWorkflow({ data, notify, handleAfterCreated }));
