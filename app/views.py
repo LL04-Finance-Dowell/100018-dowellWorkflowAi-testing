@@ -38,6 +38,7 @@ from app.utils.mongo_db_connection import (
     get_team,
     get_team_list,
     get_template_list,
+    get_template_object,
     get_wf_list,
     get_wf_object,
     get_wf_setting_object,
@@ -55,7 +56,6 @@ from app.utils.mongo_db_connection import (
 )
 
 from .constants import EDITOR_API
-
 
 
 @api_view(["POST"])
@@ -1023,7 +1023,6 @@ def get_completed_documents_by_process(request, company_id, process_id):
 
 @api_view(["POST"])
 def create_workflow_ai_setting(request):
-    # TODO: check if the organization has a setting already if yes, they can only have one so return and tell them that
     if not request.data:
         return Response("You are missing something", status.HTTP_400_BAD_REQUEST)
 
