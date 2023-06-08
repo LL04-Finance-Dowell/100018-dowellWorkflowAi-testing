@@ -105,11 +105,7 @@ def verify(process, auth_step_role, location_data, user_name, user_type):
         field = "document_name"
         team_member_id = "11689044433"
         document_item = get_document_object(clone_id)
-        if document_item["document_state"] == "finalized":
-            item_flag = "finalized"
-
-        if document_item["document_state"] == "processing":
-            item_flag = "processing"
+        item_flag = document_item["document_state"]
 
     # set template
     if item_type == "template":
