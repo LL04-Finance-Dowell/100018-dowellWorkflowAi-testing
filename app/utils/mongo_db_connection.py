@@ -15,14 +15,10 @@ from app.constants import (
     MANAGEMENT_REPORTS_LIST,
     PROCESS_CONNECTION_LIST,
     QR_CONNECTION_DICT,
-    QR_CONNECTION_LIST,
     QR_ID_CONNECTION_DICT,
     QR_ID_CONNECTION_LIST,
-    REGISTRATION_ARGS,
-    TARGETED_POPULATION_URL,
     TEMPLATE_CONNECTION_DICT,
     TEMPLATE_CONNECTION_LIST,
-    USER_CONNECTION_LIST,
     WF_AI_SETTING_DICT,
     WF_AI_SETTING_LIST,
     WF_CONNECTION_DICT,
@@ -189,7 +185,9 @@ def get_wf_object(workflow_id):
 
 def get_all_wf_list():  # TODO: Check where it is used
     fields = {}
-    response_obj = dowellconnection(*WF_CONNECTION_LIST, "fetch", fields, "nil")
+    response_obj = get_data_from_data_service(
+        *WF_CONNECTION_LIST, "fetch", fields, "nil"
+    )
     res_obj = json.loads(response_obj)
     wf_list = []
     for wf in res_obj["data"]:
@@ -343,7 +341,7 @@ def save_wf_process(
     return post_to_data_service(payload)
 
 
-def save_wf(workflows, company_id, created_by, data_type):
+def save_wf(workflows, company_id, created_by, portfolio, data_type, workflow_type):
     payload = json.dumps(
         {
             **WF_CONNECTION_DICT,
@@ -352,13 +350,14 @@ def save_wf(workflows, company_id, created_by, data_type):
                 "eventId": get_event_id()["event_id"],
                 "workflows": workflows,
                 "created_by": created_by,
+                "creator_portfolio": portfolio,
                 "company_id": company_id,
+                "workflow_type": workflow_type,
+                "data_type": data_type,
                 "approved": False,
                 "rejected": False,
                 "rejected_by": "",
                 "rejected_message": "",
-                "workflow_type": "original",
-                "data_type": data_type,
                 "auth_viewers": [],
                 "created_on": time,
             },
@@ -369,7 +368,7 @@ def save_wf(workflows, company_id, created_by, data_type):
     return post_to_data_service(payload)
 
 
-def save_template(name, data, page, created_by, company_id, data_type):
+def save_template(name, data, page, created_by, company_id, data_type, template_type):
     payload = json.dumps(
         {
             **TEMPLATE_CONNECTION_DICT,
@@ -381,13 +380,13 @@ def save_template(name, data, page, created_by, company_id, data_type):
                 "page": page,
                 "company_id": company_id,
                 "created_by": created_by,
+                "template_type": template_type,
+                "data_type": data_type,
                 "approved": False,
                 "rejected": False,
                 "rejected_by": "",
                 "rejected_message": "",
-                "data_type": data_type,
                 "auth_viewers": [],
-                "template_type": "original",
                 "template_state": "draft",
                 "created_on": time,
             },

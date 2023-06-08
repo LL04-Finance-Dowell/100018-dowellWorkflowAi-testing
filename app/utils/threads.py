@@ -16,38 +16,6 @@ from app.utils.mongo_db_connection import (
 )
 
 
-def notification(data):
-    """post notifications for extension."""
-
-    payload = json.dumps(
-        {
-            "username": data["username"],
-            "documentId": data["item_id"],
-            "portfolio": data["portfolio"],
-            "productName": "Workflow AI",
-            "companyId": data["company_id"],
-            "title": "Document to Sign",
-            "orgName": "WorkflowAi",
-            "message": "You have a document to sign.",
-            "link": data["link"],
-            "duration": "no limit",  # TODO: pass reminder time here
-        }
-    )
-    try:
-        res = requests.post(
-            url=NOTIFICATION_API,
-            data=payload,
-            headers={"Content-Type": "application/json"},
-        )
-        if res.status_code == 201:
-            print("Thread: Sent Notification \n")
-        else:
-            print("something went wrong on notification:", res.status_code)
-
-    except ConnectionError:
-        print("Fail: notification  thread! \n")
-        return
-
 
 def save_link_hashes(data):
     """Save single link"""
@@ -144,17 +112,15 @@ def process_update(data):
     return
 
 
-def hourly_reminder(reminder_status="send_reminder_every_hour"):
-    daily_reminder_list = reminder_func(reminder_status)
+# def hourly_reminder(reminder_status="send_reminder_every_hour"):
+#     daily_reminder_list = reminder_func(reminder_status)
 
-    for reminder in daily_reminder_list:
-        notification(reminder)
-
-
-def daily_reminder(reminder_status="send_reminder_every_day"):
-    daily_reminder_list = reminder_func(reminder_status)
-
-    for reminder in daily_reminder_list:
-        notification(reminder)
+#     for reminder in daily_reminder_list:
+#         notification(reminder)
 
 
+# def daily_reminder(reminder_status="send_reminder_every_day"):
+#     daily_reminder_list = reminder_func(reminder_status)
+
+#     for reminder in daily_reminder_list:
+#         notification(reminder)

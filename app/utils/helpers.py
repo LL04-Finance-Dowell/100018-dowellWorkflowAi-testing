@@ -1,17 +1,11 @@
 import json
-import uuid
-from threading import Thread
-import urllib.parse
 import bson
-import qrcode
 import requests
 from django.conf import settings
-from django.core.mail import send_mail
 
 from app.constants import (
     EDITOR_API,
     PUBLIC_LOGIN_API,
-    VERIFICATION_LINK,
     NOTIFICATION_API,
 )
 from app.models import FavoriteDocument, FavoriteTemplate, FavoriteWorkflow
@@ -27,10 +21,8 @@ from .mongo_db_connection import (
     get_process_object,
     get_wf_object,
     save_document,
-    save_uuid_hash,
     save_wf_process,
 )
-from .threads import notification
 
 headers = {"Content-Type": "application/json"}
 
@@ -48,29 +40,6 @@ def register_user_access(process_steps, authorized_role, user):
 def delete_notification(notify_id):
     """remove notifications in external products"""
     return requests.delete(f"{NOTIFICATION_API}/{notify_id}")
-
-
-def notify_push(data):
-    """Tells me if code is pushed and deployed"""
-    pushed_by = data["pusher"].get("name")
-    subject = "Push and Deploy Done!"
-    message = f"Hi Edwin, {pushed_by} just pushed code and it is going to be deployed by your CI/CD pipeline."
-    email_from = settings.EMAIL_HOST_USER
-    recipient_list = [
-        "workflowaiedwin@gmail.com",
-    ]
-    try:
-        if data["ref"] == "refs/heads/backend":
-            send_mail(subject, message, email_from, recipient_list)
-    except:
-        print("Mail not sent")
-
-
-def get_domain_host():
-    """Grab the current domain host"""
-    current_site = Site.objects.get_current()
-    domain_host = current_site.domain
-    return domain_host
 
 
 def public_login(qrid, org_name):
@@ -93,64 +62,6 @@ def public_login(qrid, org_name):
         return None
 
 
-def verification_data(
-    process_id,
-    item_id,
-    step_role,
-    auth_name,
-    auth_portfolio,
-    company_id,
-    process_title,
-    item_type,
-    user_type,
-):
-    hash = uuid.uuid4().hex
-    if user_type == "public":
-        query_params = {
-            "portfolio": auth_portfolio,
-            "auth_role": step_role,
-            "user_type": user_type,
-            "username": auth_name
-        }
-        for i in range(0, len(auth_name)):
-            field = auth_name[i]
-            query_params[f"username[{i}]"] = field
-
-        encoded_query_params = urllib.parse.urlencode(query_params)
-        link = f"{VERIFICATION_LINK}/{hash}/?product=Workflow AI&org=WorkflowAi&{encoded_query_params}"
-
-    # User | Team
-    else:
-        link = f"{VERIFICATION_LINK}/{hash}/?product=Workflow AI&org=WorkflowAi&username={auth_name}&portfolio={auth_portfolio}&auth_role={step_role}&user_type={user_type}"
-
-    # save link
-    res = json.loads(
-        save_uuid_hash(
-            link,
-            process_id,
-            item_id,
-            step_role,
-            auth_name,
-            auth_portfolio,
-            hash,
-            item_type,
-        )
-    )
-    if res["isSuccess"]:
-        ddata = {
-            "username": auth_name,
-            "portfolio": auth_portfolio,
-            "process_id": process_id,
-            "step_role": step_role,
-            "item_id": item_id,
-            "company_id": company_id,
-            "process_title": process_title,
-            "link": link,
-        }
-        # setup notification
-        Thread(target=notification, args=(ddata,)).start()
-    return link, generate_qrcode(link)
-
 
 def cloning_document(document_id, auth_viewers, parent_id, process_id):
     """creating a document copy"""
@@ -161,11 +72,8 @@ def cloning_document(document_id, auth_viewers, parent_id, process_id):
             if auth_viewers is not None and isinstance(auth_viewers, list)
             else []
         )
-
         document = get_document_object(document_id)
         document_name = document["document_name"] + " |-"
-
-        # create new doc
         save_res = json.loads(
             save_document(
                 name=document_name,
@@ -205,7 +113,6 @@ def cloning_process(process_id, created_by, creator_portfolio):
                 "clone",
             )
         )
-
     except:
         return
     return save_res["inserted_id"]
@@ -312,26 +219,6 @@ def version_control(version):
     return latest
 
 
-def generate_qrcode(verification_link):
-    """Generates a qrcode for the data provided and stores the qrcodes"""
-
-    # In Prod -- this works
-    # TODO: find out how to extract domain url
-    qr_path = f"100094.pythonanywhere.com/media/qrcodes/{uuid.uuid4().hex}.png"
-
-    # On dev -- this works
-    # qr_path = f"media/qrcodes/{uuid.uuid4().hex}.png"
-
-    qr_code = qrcode.QRCode(error_correction=qrcode.constants.ERROR_CORRECT_H)
-    qr_code.add_data(verification_link)
-    qr_code.make()
-    qr_color = "black"
-    qr_img = qr_code.make_image(fill_color=qr_color, back_color="#DCDCDC")
-    qr_img.save(qr_path)
-
-    return f"https://{qr_path}"
-
-
 def list_favourites(company_id):
     """A List of bookmarks/favourites"""
 
@@ -432,35 +319,6 @@ def remove_favourite(identifier, type, username):
 
 
 def CREATE_WF_AI_SETTING(data):
-    """
-    Save Workflow Setting
-
-    Args:
-        data(dict): the details of the setting
-
-
-    Returns:
-        msg(str): response success
-    """
-    msg = "WF_Setting Saved"
-
-    # wf_setting = {
-
-    #     "company_id": data["company_id"],
-    #     "created_by": data["created_by"],
-    #     "Process" : data["Process"],
-    #     "Documents" : data["Documents"],
-    #     "Templates" : data["Templates"],
-    #     "Workflows" : data["Workflows"],
-    #     "Notarisation" : data["Notarisation"],
-    #     "Folders" : data["Folders"],
-    #     "Records" : data["Records"],
-    #     "References" : data["References"],
-    #     "Approval_Process" : data["Approval_Process"],
-    #     "Evaluation_Process" : data["Evaluation_Process"],
-    #     "Reports" : data["Reports"],
-    #     "Management" : data["Management"],
-    # }
     serializer = WorkflowAiSettingSerializer(data=data)
     if serializer.is_valid():
         serializer.save()
