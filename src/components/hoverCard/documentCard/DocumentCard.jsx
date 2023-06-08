@@ -135,6 +135,7 @@ const DocumentCard = ({
 
   const handleDetailDocumnet = async (item) => {
     if (dataLoading) return;
+    if (documentLoading) return toast.info("Please wait for this document to be refreshed first");
     if (item.type === 'sign-document') {
       setDataLoading(true);
       try {
@@ -252,6 +253,7 @@ const DocumentCard = ({
 
   const handleFetchNewDocumentDetail = async (documentId) => {
     if (documentLoading) return;
+    if (dataLoading) return toast.info("Please wait for this document to open first");
 
     const copyOfAllDocuments = [...allDocuments];
     const foundDocumentIndex = copyOfAllDocuments.findIndex(
@@ -407,7 +409,7 @@ const DocumentCard = ({
       </div>
     );
   };
-  return <HoverCard Front={FrontSide} Back={BackSide} loading={dataLoading} />;
+  return <HoverCard Front={FrontSide} Back={BackSide} loading={documentLoading ? documentLoading : dataLoading} />;
 };
 
 export default DocumentCard;

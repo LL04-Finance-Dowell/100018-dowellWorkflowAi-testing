@@ -44,6 +44,8 @@ export const createDocument = createAsyncThunk(
           :
         thunkAPI.getState().auth?.userDetail?.portfolio_info[0]?.data_type,
         created_on: new Date().toString(),
+        document_type: 'original',
+        document_state: 'draft',
       }
 
       const existingDocuments = [...thunkAPI.getState().document?.allDocuments];
