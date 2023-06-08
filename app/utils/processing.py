@@ -175,7 +175,8 @@ def start_process(process):
 
         public_users = [m["member"] for m in step.get("stepPublicMembers", [])]
         if public_users:
-            public_portfolio = step.get("stepPublicMembers", [])[0].get("portfolio")
+            public_portfolio = step.get("stepPublicMembers", [])[
+                0].get("portfolio")
             link, qrcode = verification.public_bulk_data(
                 public_users,
                 step.get("stepRole"),
@@ -187,22 +188,36 @@ def start_process(process):
     viewers = [
         member["member"]
         for member in process["process_steps"][0].get("stepTeamMembers", [])
-        + process["process_steps"][0].get("stepPublicMembers", [])
         + process["process_steps"][0].get("stepUserMembers", [])
+
+
     ]
+    public_viewers = [member["member"]
+                      for member in process["process_steps"][0].get("stepPublicMembers", [])]
+    # print(public_viewers)
     doc_id = process["parent_item_id"]
-    if len(viewers) > 0:
+    if len(viewers) or len(public_viewers) > 0:
         clone_id = cloning_document(doc_id, viewers, doc_id, process["_id"])
+        clone_ids = [clone_id]
+
         for user in viewers:
             process["process_steps"][0].get("stepDocumentCloneMap").append(
                 {user: clone_id}
             )
+        public_clone_ids = []
 
+        for public_user in public_viewers:
+            public_clone_ids.append({public_user: cloning_document(
+                doc_id, public_user, doc_id, process["_id"])})
+
+        process["process_steps"][0].get(
+            "stepDocumentCloneMap").extend(public_clone_ids)
+        clone_ids.extend(public_clone_ids)
         Thread(
             target=lambda: save_process_links(
                 links=links,
                 process_id=process["_id"],
-                item_id=clone_id,
+                item_id=clone_ids,
                 company_id=process["company_id"],
             )
         ).start()
@@ -219,14 +234,14 @@ def start_process(process):
             target=lambda: save_process_qrcodes(
                 qrcodes,
                 process["_id"],
-                clone_id,
+                clone_ids,
                 process["processing_action"],
                 process["process_title"],
                 process["company_id"],
             )
         ).start()
         return Response(
-            {"links": links, "qrcodes": qrcodes, "public_links": public_links},
+            {"links": links, "qrcodes": qrcodes,  "public_links": public_links},
             status.HTTP_200_OK,
         )
     return Response("processing failed!", status.HTTP_500_INTERNAL_SERVER_ERROR)
