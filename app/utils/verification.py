@@ -6,11 +6,10 @@ import qrcode
 import requests
 
 from app.constants import NOTIFICATION_API, VERIFICATION_LINK
-from app.utils.cloning import Clone
 from app.utils.mongo_db_connection import save_uuid_hash
 
 
-class Verification(Clone):
+class Verification:
     product = "Workflow AI"
 
     def __init__(
