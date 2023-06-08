@@ -74,7 +74,6 @@ const ProcessDocument = () => {
   const onSubmit = (data) => {
     setLoading(true);
     dispatch(removeFromSelectedWorkflowsToDoc(data.workflows));
-    console.log('workflow', data);
     setTimeout(() => setLoading(false), 2000);
   };
 
@@ -101,7 +100,6 @@ const ProcessDocument = () => {
     const tableOfContents = tableOfContentForStep.filter(
       (content) => content.workflow === docCurrentWorkflow._id
     );
-    console.log('Table of contents for current workflow: ', tableOfContents);
     processObj.workflows[0].workflows.steps = foundProcessSteps
       ? foundProcessSteps.steps.map((step, currentIndex) => {
           let copyOfCurrentStep = { ...step };
@@ -145,20 +143,17 @@ const ProcessDocument = () => {
     );
     if (newProcessObj.error) return toast.info(newProcessObj.error);
 
-    console.log('Saving workflows process obj to post: ', newProcessObj);
 
     setSaveWorkflowsLoading(true);
 
     try {
       const response = await (await startNewProcess(newProcessObj)).data;
-      console.log('save workflows response: ', response);
       toast.success('Successfully saved workflows to document!');
       setSaveWorkflowsLoading(false);
       setNewWorkflowSavedToDoc({ saveSuccess: true });
       setTimeout(() => setNewWorkflowSavedToDoc(null), 1500);
     } catch (error) {
       setSaveWorkflowsLoading(false);
-      console.log(error.response ? error.response.data : error.message);
       toast.error(
         'An error occured while trying to save your workflows to your document'
       );
@@ -176,19 +171,16 @@ const ProcessDocument = () => {
     );
     if (startProcessObj.error) return toast.info(startProcessObj.error);
 
-    console.log('Starting process obj to post: ', startProcessObj);
 
     setNewProcessLoading(true);
 
     try {
       const response = await (await startNewProcess(startProcessObj)).data;
-      console.log('process response: ', response);
       setNewProcessLoading(false);
       setGeneratedLinks(response);
       setShowGeneratedLinksPopup(true);
     } catch (error) {
       setNewProcessLoading(false);
-      console.log(error.response ? error.response.data : error.message);
       toast.error('An error occured while trying to start a new process');
     }
   };

@@ -35,8 +35,6 @@ const CreateWorkflows = ({ handleToggleOverlay }) => {
   );
   const { currentWorkflow } = useSelector((state) => state.app);
 
-  console.log('currentWorkflow', currentWorkflow);
-
   const [internalWorkflows, setInternalWorkflows] = useState([]);
   const [workflowTitle, setWorkflowTitle] = useState('');
   const [currentTableCell, setCurrentTableCall] = useState(null);
@@ -176,9 +174,7 @@ const CreateWorkflows = ({ handleToggleOverlay }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [workflowDetailStatus]);
 
-  // useEffect(() => {
-  //   console.log('inter: ', internalWorkflows);
-  // }, [internalWorkflows]);
+  useEffect(() => {}, [internalWorkflows]);
 
   return (
     <Overlay

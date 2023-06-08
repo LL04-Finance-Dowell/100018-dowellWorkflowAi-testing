@@ -42,7 +42,7 @@ const ProcessCard = ({ cardItem, title }) => {
 
 
   const handleCopyProcess = async (item) => {
-    console.log(item)
+    
     getCopyProcess(item._id)
     setcopyprocessLoading(true);
 
@@ -58,7 +58,7 @@ const ProcessCard = ({ cardItem, title }) => {
 
       if (response.status === 201) {
         toast.info(response.data);
-        console.log(response.data);
+       
 
         setcopyprocessLoading(false);
 

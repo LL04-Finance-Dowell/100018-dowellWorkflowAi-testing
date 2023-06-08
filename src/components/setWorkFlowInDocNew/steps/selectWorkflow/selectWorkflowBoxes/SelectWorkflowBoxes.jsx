@@ -310,7 +310,7 @@ const InfoBoxes = ({ savedDoc }) => {
                 />
 
                 <InfoContentBox className={styles.content__box}>
-                  {/* <>{console.log(infoBox)}</> */}
+                  
                   {infoBox &&
                   infoBox.contents &&
                   infoBox.contents.length > 0 ? (

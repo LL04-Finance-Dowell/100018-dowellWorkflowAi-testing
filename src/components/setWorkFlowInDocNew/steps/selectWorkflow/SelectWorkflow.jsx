@@ -40,7 +40,7 @@ const SelectWorkflow = ({ savedDoc }) => {
     dispatch(setWfToDocument());
     if (currentDocToWfs) {
       // const data = { document_id: currentDocToWfs._id };
-      // console.log(data, "dataaaaaaaaaaaaaaaaaa");
+      
       // dispatch(contentDocument(data));
     }
   };

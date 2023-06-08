@@ -17,7 +17,6 @@ const CheckErrors = () => {
 
   const onSubmit = (data) => {
     setLoading(true);
-    console.log("process", data);
     setTimeout(() => setLoading(false), 2000);
   };
 

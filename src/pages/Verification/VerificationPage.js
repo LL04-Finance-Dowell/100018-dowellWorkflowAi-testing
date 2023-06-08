@@ -54,7 +54,7 @@ const VerificationPage = () => {
       const paramsPassed = new URL(shortenedLinkToExtractParamsFrom)
         .searchParams;
 
-      // console.log(paramsPassed);
+      
 
       const auth_username = paramsPassed.get('username');
       const auth_portfolio = paramsPassed.get('portfolio');
@@ -98,7 +98,7 @@ const VerificationPage = () => {
       delete sanitizedDataToPost.user_name;
       delete sanitizedDataToPost.portfolio;
 
-      // console.log(sanitizedDataToPost)
+      
       // return setDataLoading(false);
     }
     

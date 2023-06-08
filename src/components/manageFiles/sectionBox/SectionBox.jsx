@@ -77,7 +77,7 @@ const SectionBox = ({
                     document.document_state !== 'trash' &&
                     document.data_type &&
                     document.data_type ===
-                      currentUserportfolioDataType
+                    currentUserportfolioDataType
                 )
             )
           );
@@ -85,7 +85,7 @@ const SectionBox = ({
           setRefreshLoading(false);
         })
         .catch((err) => {
-          console.log('Refresh for documents failed');
+          console.log(err, 'Refresh for documents failed');
           toast.info('Refresh for documents failed');
           setRefreshLoading(false);
         });
@@ -108,10 +108,9 @@ const SectionBox = ({
             setAllTemplates(
               res.data.templates.reverse().filter(
                 (template) =>
-                  // console.log(template) &&
                   template.data_type &&
                   template.data_type ===
-                    currentUserportfolioDataType
+                  currentUserportfolioDataType
               )
             )
           );
@@ -119,7 +118,7 @@ const SectionBox = ({
           setRefreshLoading(false);
         })
         .catch((err) => {
-          console.log('Refresh for templates failed');
+          console.log(err, 'Refresh for templates failed');
           toast.info('Refresh for templates failed');
           setRefreshLoading(false);
         });
@@ -144,10 +143,10 @@ const SectionBox = ({
                 (workflow) =>
                   (workflow?.data_type &&
                     workflow?.data_type ===
-                      currentUserportfolioDataType) ||
+                    currentUserportfolioDataType) ||
                   (workflow.workflows.data_type &&
                     workflow.workflows.data_type ===
-                      currentUserportfolioDataType)
+                    currentUserportfolioDataType)
               )
             )
           );
@@ -155,7 +154,7 @@ const SectionBox = ({
           setRefreshLoading(false);
         })
         .catch((err) => {
-          console.log('Refresh for workflows failed');
+          console.log(err, 'Refresh for workflows failed');
           toast.info('Refresh for workflows failed');
           setRefreshLoading(false);
         });
@@ -191,7 +190,7 @@ const SectionBox = ({
           setRefreshLoading(false);
         })
         .catch((err) => {
-          console.log('Refresh for processes failed');
+          console.log(err, 'Refresh for processes failed');
           toast.info('Refresh for processes failed');
           setRefreshLoading(false);
         });
@@ -214,7 +213,7 @@ const SectionBox = ({
               (document) =>
                 document.company_id === currentUserCompanyId &&
                 document.data_type ===
-                  currentUserportfolioDataType &&
+                currentUserportfolioDataType &&
                 (document.state === 'processing' ||
                   document.document_state === 'processing') &&
                 document.auth_viewers &&
@@ -244,7 +243,7 @@ const SectionBox = ({
           setRefreshLoading(false);
         })
         .catch((err) => {
-          console.log('Refresh for notifications failed');
+          console.log(err, 'Refresh for notifications failed');
           toast.info('Refresh for notifications failed');
           setRefreshLoading(false);
         });
@@ -395,9 +394,8 @@ const SectionBox = ({
                 {cardItems && cardItems.length > 10 && (
                   <PrimaryButton
                     style={{
-                      pointerEvents: `${
-                        cardItems.length / 10 < sliceCount && 'none'
-                      }`,
+                      pointerEvents: `${cardItems.length / 10 < sliceCount && 'none'
+                        }`,
                     }}
                     hoverBg='success'
                     onClick={handleLoadMore}

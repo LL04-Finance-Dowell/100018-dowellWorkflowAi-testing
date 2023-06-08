@@ -27,7 +27,6 @@ const AssignTask = ({ currentStepIndex, stepSkipped }) => {
     setLoading(true);
     if (data.member === "" && membersForCurrentUser[0]) data.member = membersForCurrentUser[0].option
     if (data.member_portfolio === "" && memberPortfolios[0]) data.member_portfolio = memberPortfolios[0].option
-    console.log("task", data);
     dispatch(updateSingleProcessStep({ ...data, "indexToUpdate": currentStepIndex , "workflow": docCurrentWorkflow._id }))
     setTimeout(() => setLoading(false), 2000);
   };

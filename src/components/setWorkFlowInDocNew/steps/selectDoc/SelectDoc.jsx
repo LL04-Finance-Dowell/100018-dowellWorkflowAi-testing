@@ -20,7 +20,7 @@ import SelectedDocuments from './selectedDocuments/SelectedDocuments';
 import { useTranslation } from 'react-i18next';
 import { productName } from '../../../../utils/helpers';
 
-const SelectDoc = ({ savedDoc }) => {
+const  SelectDoc = ({ savedDoc }) => {
   const dispatch = useDispatch();
   const { t } = useTranslation();
   const { isMobile } = useAppContext();

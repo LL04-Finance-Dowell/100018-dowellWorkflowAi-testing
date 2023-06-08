@@ -25,7 +25,6 @@ const AssignTime = ({ currentStepIndex }) => {
 
   const onSubmit = (data) => {
     setLoading(true);
-    console.log('location', data);
     dispatch(
       updateSingleProcessStep({
         ...data,

@@ -409,8 +409,6 @@ const TeamsInWorkflowAi = () => {
   }, [unselectAllPortfolios]);
 
   // useEffect(() => {
-  //   // console.log('teamin: ', teamsInWorkflowAI[0]);
-  //   // console.log('wft: ', workflowTeams);
   // }, [teamsInWorkflowAI, workflowTeams]);
 
   return (

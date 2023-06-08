@@ -63,7 +63,7 @@ const AssignLocation = ({ currentStepIndex }) => {
         setRegionsLoading(false);
       })
       .catch((err) => {
-        console.log('Failed to fetch regions in ', country);
+       
         setRegionsLoading(false);
       });
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -71,7 +71,7 @@ const AssignLocation = ({ currentStepIndex }) => {
 
   const onSubmit = (data) => {
     setLoading(true);
-    console.log('location', data);
+   
     dispatch(
       updateSingleProcessStep({
         ...data,

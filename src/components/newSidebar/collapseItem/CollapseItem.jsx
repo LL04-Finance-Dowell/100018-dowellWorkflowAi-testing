@@ -20,7 +20,7 @@ function ListItem({ item }) {
   const { t } = useTranslation();
 
   if (item.children && item.children.length) {
-    // console.log(item);
+    
     children = (
       <ul>
         {item.children.map((i) => (

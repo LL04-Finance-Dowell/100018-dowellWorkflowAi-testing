@@ -28,7 +28,7 @@ const WorkflowAiSettings = () => {
   const { themeColor } = useSelector((state) => state.app);
 
   const { userDetail } = useSelector((state) => state.auth);
-  // console.log(userDetail);
+  
 
   // #7a7a7a
   // --e-global-color-text;

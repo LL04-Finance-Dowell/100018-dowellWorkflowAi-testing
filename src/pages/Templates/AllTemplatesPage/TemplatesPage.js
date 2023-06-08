@@ -20,7 +20,7 @@ const TemplatesPage = ({ home, showOnlySaved, showOnlyTrashed }) => {
   const navigate = useNavigate();
   const [ currentUserPortfolioDataType, setCurrentUserPortfolioDataType ] = useState('');
 
-  // console.log('templ arrat',allTemplatesArray)
+ 
   useEffect(() => {
     const data = {
       company_id: userDetail?.portfolio_info?.length > 1 ? userDetail?.portfolio_info.find(portfolio => portfolio.product === productName)?.org_id : userDetail?.portfolio_info[0].org_id,

@@ -128,7 +128,7 @@ const CopiesOfDoc = ({ currentStepIndex, stepsPopulated }) => {
 
   const onSubmit = (data) => {
     setLoading(true);
-    console.log('documentCopies', data);
+    
     dispatch(
       updateSingleProcessStep({
         stepCloneCount: copiesSelected.length,

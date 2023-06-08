@@ -122,7 +122,7 @@ const SearchPage = () => {
         currentSearch,
         searchItems
       );
-      // console.log('Search results: ', results)
+      
       setSearchLoading(false);
       setSearchResults(results);
     } catch (error) {
@@ -138,7 +138,6 @@ const SearchPage = () => {
     // 	setSearchLoading(false);
     // 	setSearchResults(res.data.search_result);
     // }).catch(error => {
-    // 	console.log(error.response ? error.response.data : error.message);
     // 	setSearchLoading(false);
     // 	toast.error(error.response ? error.response.data : error.message)
     // })
@@ -184,7 +183,6 @@ const SearchPage = () => {
         break;
 
       default:
-        console.log('Invalid search option');
         break;
     }
   }, [currentSearchOption, searchResults]);

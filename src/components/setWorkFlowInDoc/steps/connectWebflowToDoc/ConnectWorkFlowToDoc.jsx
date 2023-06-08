@@ -23,7 +23,6 @@ const ConnectWorkFlowToDoc = () => {
     (state) => state.app
   );
 
-  console.log('wftooooooooooo', wfToDocument);
 
   const [currentSteps, setCurrentSteps] = useState([]);
 
@@ -34,7 +33,7 @@ const ConnectWorkFlowToDoc = () => {
   const [setContentToggle] = useState(false);
   const [showSteps, setShowSteps] = useState([]);
 
-  console.log('sssssssssssssssssss', wfToDocument);
+ 
 
   useEffect(() => {
     setCurrentSteps(
@@ -73,7 +72,7 @@ const ConnectWorkFlowToDoc = () => {
     );
   };
 
-  console.log('currrrr', contentOfDocument);
+
 
   const handleSkipSelection = (
     e,

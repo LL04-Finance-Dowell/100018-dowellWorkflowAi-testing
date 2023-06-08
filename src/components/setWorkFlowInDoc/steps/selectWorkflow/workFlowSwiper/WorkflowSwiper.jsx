@@ -19,20 +19,17 @@ const WorkflowSwiper = ({ loop, perSlide }) => {
 
   const { selectedWorkflowsToDoc } = useSelector((state) => state.app);
 
-  console.log('selescscsc', selectedWorkflowsToDoc);
 
   const handleConnectWfToDoc = (e) => {
     e.preventDefault();
     dispatch(setWfToDocument());
     /*   if (currentDocToWfs) {
       const data = { document_id: currentDocToWfs._id };
-      console.log(data, "dataaaaaaaaaaaaaaaaaa");
       dispatch(contentDocument(data));
     } */
   };
 
   const handleRemoveWorflow = (id) => {
-    console.log('iddddddd', id);
     dispatch(removeFromSelectedWorkflowsToDoc(id));
   };
 

@@ -24,16 +24,16 @@ const SelectedDocuments = ({
   const onSubmit = (data) => {
     if (!selectedDocument) return;
 
-    // console.log("submitsadsadasd");
+   
 
-    // console.log("first document", document);
+    
     // const currentDocument = selectedDocuments.find(
     // (item) => item._id === document
     // );
 
     // const fetchData = { document_id: currentDocument?._id };
 
-    // console.log("second document", document);
+    
     dispatch(contentDocument(selectedDocument._id));
     dispatch(setCurrentDocToWfs(selectedDocument));
     dispatch(setContentOfDocument(null));

@@ -96,7 +96,7 @@ export const FlipBack = (props) => {
 
   const handleClick = (role) => {
     if (role === 'newDoc') {
-      console.log('wwwwwwwwwwwwwwwwwwwwwwwwwww', role);
+   
       navigate('/documents/#newDocument');
       dispatch(setToggleManageFileForm(true));
     }

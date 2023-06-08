@@ -48,7 +48,7 @@ const WorkflowsPage = ({ home, showOnlySaved, showOnlyTrashed }) => {
 
   }, [userDetail])
 
-  // console.log("all", allWorkflowsArray);
+  
 
   return (
     <WorkflowLayout>

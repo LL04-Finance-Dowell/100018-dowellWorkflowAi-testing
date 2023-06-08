@@ -98,7 +98,7 @@ const DocumentCard = ({
         });
       }
     }
-    // console.log(favoriteItems)
+   
   };
 
   const handleTrashDocument = async (cardItem) => {
@@ -121,7 +121,7 @@ const DocumentCard = ({
       ).data;
       toast.success(response);
     } catch (error) {
-      console.log(error.response ? error.response.data : error.message);
+    
       copyOfDocumentToUpdate.data_type = 'Real_Data';
       copyOfAllDocuments[foundDocumentIndex] = copyOfDocumentToUpdate;
       dispatch(setAllDocuments(copyOfAllDocuments));
@@ -143,7 +143,7 @@ const DocumentCard = ({
         ).data;
 
         /*  dispatch(setEditorLink(response)); */
-        console.log('responseee', response);
+       
         // setDataLoading(false);
         handleGoToEditor(response);
       } catch (error) {
@@ -192,7 +192,7 @@ const DocumentCard = ({
       const paramsPassed = new URL(shortenedLinkToExtractParamsFrom)
         .searchParams;
 
-      // console.log(paramsPassed);
+      
 
       const auth_username = paramsPassed.get('username');
       const auth_portfolio = paramsPassed.get('portfolio');
@@ -222,7 +222,7 @@ const DocumentCard = ({
       delete sanitizedDataToPost.user_name;
       delete sanitizedDataToPost.portfolio;
 
-      // console.log(sanitizedDataToPost)
+      
       // return setDataLoading(false);
     }
 

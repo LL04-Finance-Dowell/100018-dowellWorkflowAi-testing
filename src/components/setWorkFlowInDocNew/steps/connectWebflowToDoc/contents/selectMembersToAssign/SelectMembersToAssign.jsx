@@ -73,7 +73,7 @@ const SelectMembersToAssign = ({
   useClickInside(teamMembersRef, () => {
     if (!currentRadioOptionSelection)
       return toast.info('Please check either option above');
-    console.log('enabled team options');
+    
   });
 
   useClickInside(selectMembersRef, () => {
@@ -88,7 +88,7 @@ const SelectMembersToAssign = ({
       return;
     if (!currentRadioOptionSelection)
       return toast.info('Please check the option above');
-    console.log('enabled select member options');
+    
   });
 
   useEffect(() => {
@@ -316,8 +316,7 @@ const SelectMembersToAssign = ({
   }, [stepsPopulated, processSteps]);
 
   const handleSelectTeam = (parsedSelectedJsonValue) => {
-    console.log('Current team selected: ', parsedSelectedJsonValue);
-    console.log('Current header: ', current.header);
+    
 
     selectTeamRef.current.value = '';
 
@@ -424,7 +423,7 @@ const SelectMembersToAssign = ({
         );
         return;
       default:
-        console.log('Current header item not available');
+        
     }
   };
 
@@ -435,7 +434,7 @@ const SelectMembersToAssign = ({
     name,
     radioValue
   ) => {
-    console.log('updating');
+    
     setCurrentGroupSelectionItem(newGroupValue);
     setCurrentRadioOptionSelection(newRadioSelection);
 

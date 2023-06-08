@@ -10,7 +10,7 @@ const SelectedWorkflows = ({ savedDoc }) => {
 
   const { selectedWorkflowsToDoc } = useSelector((state) => state.app);
 
-  // console.log("selectedWorkflowsToDoc", selectedWorkflowsToDoc);
+ 
 
   const handleRemove = (elem, workflow) => {
     if (savedDoc) {

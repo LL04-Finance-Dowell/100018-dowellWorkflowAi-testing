@@ -20,7 +20,7 @@ const AssignCollapse = ({ currentStepIndex, stepsPopulated }) => {
   );
 
   const handleCollapse = useCallback((id) => {
-    // console.log("aaaaaaaaaaaaaaa", id);
+    
     setAssignCollapses((prev) =>
       prev.map((item) =>
         item.id === id ? { ...item, isOpen: !item.isOpen } : item

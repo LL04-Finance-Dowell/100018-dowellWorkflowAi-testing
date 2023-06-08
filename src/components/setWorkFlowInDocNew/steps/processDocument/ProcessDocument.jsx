@@ -13,7 +13,7 @@ import {
   startNewProcessV2,
 } from '../../../../services/processServices';
 import ProgressBar from '../../../progressBar/ProgressBar';
-
+import SelectDoc from '../selectDoc/SelectDoc';
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import GeneratedLinksModal from './components/GeneratedLinksModal/GeneratedLinksModal';
@@ -27,7 +27,7 @@ import { useTranslation } from 'react-i18next';
 import { extractProcessObj } from './utils/utils';
 
 const ProcessDocument = ({ savedProcess }) => {
-  // const [currentProcess, setCurrentProcess] = useState();
+  // const [ScrollView , SetScrollView] = useState();
 
   // useEffect(() => {
   //   setCurrentProcess(processDocument[0]);
@@ -35,7 +35,7 @@ const ProcessDocument = ({ savedProcess }) => {
 
   useEffect(() => {
     if (!savedProcess) return;
-    // console.log(savedProcess);
+
     setProcessObjectToSaveTitle(savedProcess.process_title);
   }, [savedProcess]);
 
@@ -80,15 +80,25 @@ const ProcessDocument = ({ savedProcess }) => {
     if (!processOptionSelection || processOptionSelection === 'Select') return;
 
     if (!userDetail) return;
-    if (!currentDocToWfs) return toast.info('You have not selected a document');
-    if (!docCurrentWorkflow)
+    if (!currentDocToWfs) {
+      document.querySelector('.select-doc').scrollIntoView({ block: 'center' })
+      return toast.info('You have not selected a document');
+
+    };
+    if (!docCurrentWorkflow) {
+      document.querySelector('.step-title').scrollIntoView({ block: 'center' });
       return toast.info('You have not selected any workflow');
-    if (processSteps.length < 1)
-      return toast.info('You have not configured steps for any workflow');
-    if (!errorsCheckedInNewProcess)
-      return toast.info(
-        'Please click the "Show process" button above to make sure there are no errors before processing.'
-      );
+    }
+    if (processSteps.length < 1) {
+
+      return toast.info('You have not configured steps for any workflow')
+    }
+    if (!errorsCheckedInNewProcess) {
+      document.querySelector('.h2__Doc__Title').scrollIntoView({ block: 'center' })
+      return toast.info('Please click the "Show process" button above to make sure there are no errors before processing.');
+    }
+
+
 
     if (processOptionSelection === 'saveAndContinueLater') {
       const processObjToSave = extractProcessObj(
@@ -122,6 +132,8 @@ const ProcessDocument = ({ savedProcess }) => {
 
     if (processObjToPost.error) {
       dispatch(setNewProcessErrorMessage(processObjToPost.error));
+      document.querySelector('.h2__Doc__Title').scrollIntoView({ block: 'center' })
+
       return toast.info(processObjToPost.error);
     }
 
@@ -133,12 +145,10 @@ const ProcessDocument = ({ savedProcess }) => {
         'Please click the "Show process" button above to make sure there are no errors before processing.'
       );
 
-    console.log('New process obj to post: ', processObjToPost);
     setNewProcessLoading(true);
 
     try {
       const response = await (await startNewProcessV2(processObjToPost)).data;
-      // console.log("process response: ", response);
       setNewProcessLoaded(true);
       setNewProcessLoading(false);
       if (
@@ -146,7 +156,6 @@ const ProcessDocument = ({ savedProcess }) => {
           newProcessActionOptions[`${processOptionSelection}`]
         )
       ) {
-        console.log(response);
         setGeneratedLinks(response);
         setShowGeneratedLinksPopup(true);
         setNewProcessLoaded(false);
@@ -159,7 +168,6 @@ const ProcessDocument = ({ savedProcess }) => {
       );
       setNewProcessLoaded(false);
     } catch (err) {
-      console.log(err.response ? err.response.data : err.message);
       setNewProcessLoading(false);
       toast.info(
         err.response
@@ -172,7 +180,7 @@ const ProcessDocument = ({ savedProcess }) => {
   };
 
   const handleSaveForLaterBtnClick = () => {
-    console.log('Process obj: ', processObjToSave);
+
     const processObjToSaveCopy = structuredClone(processObjToSave);
 
     processObjToSaveCopy._id = savedProcess
@@ -196,7 +204,7 @@ const ProcessDocument = ({ savedProcess }) => {
     delete processObjToSaveCopy.parent_id;
     delete processObjToSaveCopy.workflows_ids;
 
-    console.log('New process obj to save: ', processObjToSaveCopy);
+
 
     // saving to local storage
     const savedProcessesInLocalStorage = JSON.parse(

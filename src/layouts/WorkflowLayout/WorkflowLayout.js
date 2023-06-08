@@ -144,7 +144,7 @@ const WorkflowLayout = ({ children }) => {
         .catch((err) => {
           console.log('Failed: ', err.response);
           dispatch(setProcessesLoading(false));
-          console.log('did not fetch processes');
+          
         });
     }
 
@@ -169,7 +169,7 @@ const WorkflowLayout = ({ children }) => {
         product: workflowProduct.product,
       })
       .then((res) => {
-        // console.log(res.data);
+       
         dispatch(updateUserDetail(res.data));
         dispatch(setAdminUserPortfolioLoaded(true));
       })
