@@ -636,11 +636,11 @@ def document_object(request, document_id):
     """Retrieves the document object for a specific document"""
     if not validate_id(document_id):
          return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
-    
+
     document = get_document_object(document_id)
     if not document:
         return Response("Could not retrieve document object", status.HTTP_500_INTERNAL_SERVER_ERROR)
-    
+
     return Response(document, status.HTTP_200_OK)
 
 
@@ -844,11 +844,11 @@ def template_object(request, template_id):
     """Gets the JSON object for a template id"""
     if not validate_id(template_id):
         return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
-    
+
     template = get_template_object(template_id)
     if not template:
         return Response("Could not display template details", status.HTTP_500_INTERNAL_SERVER_ERROR)
-    
+
     return Response(template, status.HTTP_200_OK)
 
 
@@ -1143,7 +1143,7 @@ def read_reminder(request, process_id, username):
                             data = {
                                 "username": username,
                                 "portfolio": mem["portfolio"],
-                                "productName": "Workflow AI",
+                                "product_name": "Workflow AI",
                                 "company_id": process_detail["company_id"],
                                 "org_name": "WorkflowAi",
                                 "org_id": process_detail["company_id"],
@@ -1158,7 +1158,7 @@ def read_reminder(request, process_id, username):
                                 command = f"0 * * * * python ./utils/notification_cron.py '{data}'"
                                 os.system(f"crontab -l | {{ cat; echo '{command}'; }} | crontab -")
                                 return Response({"command": command})
-                            
+
                             elif step["stepReminder"] == "every_day":
                                 # Schedule cron job to run notification_cron.py every day
                                 command = f"0 0 * * * python ./utils/notification_cron.py '{data}'"
@@ -1167,7 +1167,7 @@ def read_reminder(request, process_id, username):
 
                             else:
                                 return Response(f"Invalid step reminder value: {step['stepReminder']}", status.HTTP_400_BAD_REQUEST)
-                            
+
                             # return Response(f"User hasnt accessed process: {step['stepReminder']}")
         except:
             return Response(status.HTTP_500_INTERNAL_SERVER_ERROR)
@@ -1201,7 +1201,7 @@ def send_notif(request):
 
     # daily_reminder=cache.get("daily_reminder_data")
     # hourly_reminder=cache.get("hourly_reminder_data")
-    
+
     # if daily_reminder is not None:
 
     #     daily_result = [(item['process_id'], item['message']) for item in daily_reminder if username in item['member']]
@@ -1213,7 +1213,7 @@ def send_notif(request):
     #     hourly_result = []
     # try:
     #     return Response([hourly_result,daily_result],
-    #         status.HTTP_200_OK 
+    #         status.HTTP_200_OK
     #     )
     # except:
     #     return Response("Failed to Get Reminder", status.HTTP_500_INTERNAL_SERVER_ERROR)
