@@ -119,7 +119,7 @@ const Sidebar = () => {
   useEffect(() => {
     getAgreeStatus(session_id)
       .then((res) => {
-        
+
         const legalStatus = res.data.data[0]?.i_agree;
 
         dispatch(setLegalStatusLoading(false));
@@ -290,15 +290,15 @@ const Sidebar = () => {
       <div className={styles.organization__box}>
         <h2 className={styles.organization__text}>
           {
-            userDetail?.portfolio_info?.length > 1 ? 
+            userDetail?.portfolio_info?.length > 1 ?
               userDetail?.portfolio_info?.find(portfolio => portfolio.product === productName)?.org_name ?
                 userDetail?.portfolio_info?.find(portfolio => portfolio.product === productName)?.org_name
+                :
+                "My Organization"
               :
-              "My Organization"
-            :
-            userDetail.portfolio_info[0].org_name ? 
-              userDetail.portfolio_info[0].org_name :
-            'My Organization'
+              userDetail.portfolio_info[0].org_name ?
+                userDetail.portfolio_info[0].org_name :
+                'My Organization'
           }
         </h2>
         {userDetail?.userinfo?.org_img ? (
