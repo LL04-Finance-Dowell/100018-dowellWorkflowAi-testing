@@ -56,7 +56,7 @@ from app.utils.mongo_db_connection import (
 
 from .constants import EDITOR_API
 
-from app.utils.threads import notification
+# from app.utils.threads import notification
 
 
 @api_view(["POST"])
