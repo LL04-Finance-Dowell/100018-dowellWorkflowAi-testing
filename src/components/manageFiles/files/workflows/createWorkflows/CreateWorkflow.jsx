@@ -145,12 +145,7 @@ const CreateWorkflows = ({ handleToggleOverlay }) => {
               )?.data_type
             : userDetail?.portfolio_info[0].data_type,
         steps,
-        portfolio:
-          userDetail?.portfolio_info?.find(
-            (item) => item.product === 'Workflow AI'
-          )?.member_type === 'owner'
-            ? userDetail.userportfolio
-            : userDetail?.selected_product?.userportfolio,
+        portfolio: userDetail?.portfolio_info?.portfolio_name,
       };
 
       dispatch(createWorkflow({ data, notify, handleAfterCreated }));
