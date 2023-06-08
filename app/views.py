@@ -1,3 +1,4 @@
+import os
 import ast
 import json
 import re
@@ -20,6 +21,7 @@ from app.utils.helpers import (
     validate_id,
     notify_push,
     delete_notification,
+    register_user_access,
 )
 from django.core.cache import cache
 from app.utils.mongo_db_connection import (
@@ -55,6 +57,8 @@ from app.utils.mongo_db_connection import (
 )
 
 from .constants import EDITOR_API
+
+from app.utils.threads import notification
 
 
 @api_view(["POST"])
@@ -731,8 +735,14 @@ def get_document_content(request, document_id):
 
     for i in all_keys:
         temp_list = []
-        for j in range(0, len(my_dict[i])):
-            temp_list.append({"id": my_dict[i][j]["id"], "data": my_dict[i][j]["data"]})
+        for j in my_dict[i]:
+            if j["type"] == "CONTAINER_INPUT":
+                container_list = []
+                for item in j["data"]:
+                    container_list.append({"id": item["id"], "data": item["data"]})
+                temp_list.append({"id": j["id"], "data": container_list})
+            else:
+                temp_list.append({"id": j["id"], "data": j["data"]})
         content.append(
             {
                 i: temp_list,
@@ -767,6 +777,19 @@ def document_detail(request, document_id):
         )
 
     return Response(editor_link, status.HTTP_201_CREATED)
+
+
+@api_view(["GET"])
+def document_object(request, document_id):
+    """Retrieves the document object for a specific document"""
+    if not validate_id(document_id):
+         return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
+    
+    document = get_document_object(document_id)
+    if not document:
+        return Response("Could not retrieve document object", status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
+    return Response(document, status.HTTP_200_OK)
 
 
 @api_view(["POST"])
@@ -990,6 +1013,20 @@ def template_detail(request, template_id):
         )
 
     return Response(editor_link, status.HTTP_201_CREATED)
+
+
+@api_view(["GET"])
+def template_object(request, template_id):
+    """Gets the JSON object for a template id"""
+    if not validate_id(template_id):
+        return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
+    
+    template = get_template_object(template_id)
+    if not template:
+        return Response("Could not display template details", status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
+    return Response(template, status.HTTP_200_OK)
+
 
 
 @api_view(["PUT"])
@@ -1287,23 +1324,71 @@ def update_workflow_ai_setting(request):
 
 
 @api_view(["GET"])
-def read_reminder(request,username):
+def read_reminder(request, process_id, username):
+    if not validate_id(process_id):
+        return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
 
-    daily_reminder=cache.get("daily_reminder_data")
-    hourly_reminder=cache.get("hourly_reminder_data")
+    cache_key = f"processes_{process_id}"
+    process_detail = cache.get(cache_key)
+
+    if process_detail is None:
+        try:
+            process_detail = get_process_object(process_id)
+            cache.set(cache_key, process_detail, timeout=60)
+            process_steps = process_detail["process_steps"]
+
+            for step in process_steps:
+                for mem in step["stepTeamMembers"]:
+                    if mem["member"] == username:
+                        if not register_user_access(process_steps=process_steps, authorized_role=step["stepRole"], user=username):
+                            data = {
+                                "username": username,
+                                "documentId": process_detail["parent_item_id"],
+                                "portfolio": mem["portfolio"],
+                                "productName": "Workflow AI",
+                                "companyId": process_detail["company_id"],
+                                "title": "Document to Sign",
+                                "orgName": "WorkflowAi",
+                                "message": "You have a document to sign.",
+                                "link": process_detail["_id"],
+                                "duration": "no limit",  # TODO: pass reminder time here
+                            }
+                            if step["stepReminder"] == "every_hour":
+                                # Schedule cron job to run notification_cron.py every hour
+                                command = f"0 * * * * python /path/to/notification_cron.py '{data}'"
+                                os.system(f"crontab -l | {{ cat; echo '{command}'; }} | crontab -")
+                                return Response({"command": command})
+                            
+                            elif step["stepReminder"] == "every_day":
+                                # Schedule cron job to run notification_cron.py every day
+                                command = f"0 0 * * * python /path/to/notification_cron.py '{data}'"
+                                os.system(f"crontab -l | {{ cat; echo '{command}'; }} | crontab -")
+                                return Response({"command": command})
+
+                            else:
+                                return Response(f"Invalid step reminder value: {step['stepReminder']}", status.HTTP_400_BAD_REQUEST)
+                            
+                            # return Response(f"User hasnt accessed process: {step['stepReminder']}")
+        except:
+            return Response(status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    return Response(process_detail, status.HTTP_200_OK)
+
+    # daily_reminder=cache.get("daily_reminder_data")
+    # hourly_reminder=cache.get("hourly_reminder_data")
     
-    if daily_reminder is not None:
+    # if daily_reminder is not None:
 
-        daily_result = [(item['process_id'], item['message']) for item in daily_reminder if username in item['member']]
-    else:
-        daily_result = []
-    if  hourly_reminder is not None:
-        hourly_result = [(item['process_id'], item['message']) for item in hourly_reminder if username in item['member']]
-    else:
-        hourly_result = []
-    try:
-        return Response([hourly_result,daily_result],
-            status.HTTP_200_OK 
-        )
-    except:
-        return Response("Failed to Get Reminder", status.HTTP_500_INTERNAL_SERVER_ERROR)
+    #     daily_result = [(item['process_id'], item['message']) for item in daily_reminder if username in item['member']]
+    # else:
+    #     daily_result = []
+    # if  hourly_reminder is not None:
+    #     hourly_result = [(item['process_id'], item['message']) for item in hourly_reminder if username in item['member']]
+    # else:
+    #     hourly_result = []
+    # try:
+    #     return Response([hourly_result,daily_result],
+    #         status.HTTP_200_OK 
+    #     )
+    # except:
+    #     return Response("Failed to Get Reminder", status.HTTP_500_INTERNAL_SERVER_ERROR)
