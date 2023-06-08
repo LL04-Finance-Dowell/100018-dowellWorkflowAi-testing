@@ -194,7 +194,7 @@ def start_process(process):
     ]
     public_viewers = [member["member"]
                       for member in process["process_steps"][0].get("stepPublicMembers", [])]
-    # print(public_viewers)
+   
     doc_id = process["parent_item_id"]
     if len(viewers) or len(public_viewers) > 0:
         clone_id = cloning_document(doc_id, viewers, doc_id, process["_id"])
