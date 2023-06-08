@@ -1,5 +1,5 @@
 EDITOR_API = "https://100058.pythonanywhere.com/api/generate-editor-link/"
-NOTIFICATION_API = "https://100092.pythonanywhere.com/notification/products/"
+NOTIFICATION_API = "https://100092.pythonanywhere.com/api/v1/notifications/products/"
 VERIFICATION_LINK = (
     "https://ll04-finance-dowell.github.io/100018-dowellWorkflowAi-testing/#/verify"
 )

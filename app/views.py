@@ -57,7 +57,7 @@ from app.utils.mongo_db_connection import (
 
 from .constants import EDITOR_API
 
-# from app.utils.threads import notification
+from app.utils.notification_cron import send_notification
 
 
 @api_view(["POST"])
@@ -1142,25 +1142,26 @@ def read_reminder(request, process_id, username):
                         if not register_user_access(process_steps=process_steps, authorized_role=step["stepRole"], user=username):
                             data = {
                                 "username": username,
-                                "documentId": process_detail["parent_item_id"],
                                 "portfolio": mem["portfolio"],
                                 "productName": "Workflow AI",
-                                "companyId": process_detail["company_id"],
+                                "company_id": process_detail["company_id"],
+                                "org_name": "WorkflowAi",
+                                "org_id": process_detail["company_id"],
                                 "title": "Document to Sign",
-                                "orgName": "WorkflowAi",
                                 "message": "You have a document to sign.",
                                 "link": process_detail["_id"],
-                                "duration": "no limit",  # TODO: pass reminder time here
+                                "duration": "5",  # TODO: pass reminder time here
+                                "button_status": "",
                             }
                             if step["stepReminder"] == "every_hour":
                                 # Schedule cron job to run notification_cron.py every hour
-                                command = f"0 * * * * python /path/to/notification_cron.py '{data}'"
+                                command = f"0 * * * * python ./utils/notification_cron.py '{data}'"
                                 os.system(f"crontab -l | {{ cat; echo '{command}'; }} | crontab -")
                                 return Response({"command": command})
                             
                             elif step["stepReminder"] == "every_day":
                                 # Schedule cron job to run notification_cron.py every day
-                                command = f"0 0 * * * python /path/to/notification_cron.py '{data}'"
+                                command = f"0 0 * * * python ./utils/notification_cron.py '{data}'"
                                 os.system(f"crontab -l | {{ cat; echo '{command}'; }} | crontab -")
                                 return Response({"command": command})
 
@@ -1172,6 +1173,31 @@ def read_reminder(request, process_id, username):
             return Response(status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     return Response(process_detail, status.HTTP_200_OK)
+
+
+@api_view(["POST"])
+def send_notif(request):
+    data = {
+            "created_by": request.data["created_by"],
+            "portfolio": request.data["portfolio"],
+            "product_name": request.data["product_name"],
+            "company_id": request.data["company_id"],
+            "org_name": request.data["org_name"],
+            "org_id": request.data["org_id"],
+            "title": "Document to Sign",
+            "message": "You have a document to sign.",
+            "link": request.data["link"],
+            "duration": "5",
+            "button_status": ""
+        }
+    try:
+        send_notification(data)
+        return Response("Notification sent", status.HTTP_201_CREATED)
+
+    except Exception as err:
+        return Response(f"Something went wrong: {err}", status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
 
     # daily_reminder=cache.get("daily_reminder_data")
     # hourly_reminder=cache.get("hourly_reminder_data")
