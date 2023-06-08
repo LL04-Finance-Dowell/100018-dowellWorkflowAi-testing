@@ -25,6 +25,7 @@ import SearchPage from './pages/Search/SearchPage';
 import { useAppContext } from './contexts/AppContext';
 
 import axios from 'axios';
+import ConstructionPage from './pages/ConstructionPage/ConstructionPage';
 
 function App() {
   const dispatch = useDispatch();
@@ -76,12 +77,12 @@ function App() {
           // Empty catch block
         })
   }
-  // // USE ONLY WHEN APP IS BROKEN OR UNDERGOING MAJOR CHANGES
-  // return (
-  //   <Routes>
-  //     <Route path="*" element={<ConstructionPage />} />
-  //   </Routes>
-  // )
+  // USE ONLY WHEN APP IS BROKEN OR UNDERGOING MAJOR CHANGES
+  return (
+    <Routes>
+      <Route path="*" element={<ConstructionPage />} />
+    </Routes>
+  )
 
   if (isPublicUser)
     return (
