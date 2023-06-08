@@ -32,4 +32,8 @@ export class DocumentServices {
   allDocuments = (companyId, dataType) => {
     return httpApiUrl.get(`/companies/${companyId}/documents/?data_type=${dataType}`);
   };
+
+  singleDocumentDetail = async (documentId) => {
+    return await httpDocument.get(`/${documentId}/object/`);
+  }
 }

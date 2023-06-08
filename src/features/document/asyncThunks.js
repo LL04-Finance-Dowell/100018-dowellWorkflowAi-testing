@@ -2,6 +2,7 @@ import { createAsyncThunk } from "@reduxjs/toolkit";
 import { DocumentServices } from "../../services/documentServices";
 import { setEditorLink } from "../app/appSlice";
 import { productName } from "../../utils/helpers";
+import { setAllDocuments } from "./documentSlice";
 
 const filterDocuments = (documents, thunkAPI) => {
   let filteredDocuments = [];
@@ -33,7 +34,23 @@ export const createDocument = createAsyncThunk(
     try {
       const res = await documentServices.createDocument(data);
 
-      thunkAPI.dispatch(setEditorLink(res.data));
+      const newDocument = {
+        document_name: "New Document",
+        newly_created: true,
+        _id: res.data._id,
+        created_by: thunkAPI.getState().auth?.userDetail?.userinfo?.username,
+        data_type: thunkAPI.getState().auth?.userDetail?.portfolio_info?.length > 1 ?
+          thunkAPI.getState().auth?.userDetail?.portfolio_info.find(portfolio => portfolio.product === productName)?.data_type
+          :
+        thunkAPI.getState().auth?.userDetail?.portfolio_info[0]?.data_type,
+        created_on: new Date().toString(),
+      }
+
+      const existingDocuments = [...thunkAPI.getState().document?.allDocuments];
+      existingDocuments.unshift(newDocument);
+      thunkAPI.dispatch(setAllDocuments(existingDocuments));
+
+      thunkAPI.dispatch(setEditorLink(res.data.editor_link));
 
       return res.data;
     } catch (error) {

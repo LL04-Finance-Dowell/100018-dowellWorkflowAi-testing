@@ -2,6 +2,7 @@ import { createAsyncThunk } from '@reduxjs/toolkit';
 import { TemplateServices } from '../../services/templateServices';
 import { setEditorLink } from '../app/appSlice';
 import { productName } from '../../utils/helpers';
+import { setAllTemplates } from './templateSlice';
 
 const filterTemplates = (templates, thunkAPI) => {
   let filteredTemplates = [];
@@ -33,7 +34,23 @@ export const createTemplate = createAsyncThunk(
     try {
       const res = await templateServices.createTemplate(data);
       
-      thunkAPI.dispatch(setEditorLink(res.data));
+      const newTemplate = {
+        template_name: "New Template",
+        newly_created: true,
+        _id: res.data._id,
+        created_by: thunkAPI.getState().auth?.userDetail?.userinfo?.username,
+        data_type: thunkAPI.getState().auth?.userDetail?.portfolio_info?.length > 1 ?
+          thunkAPI.getState().auth?.userDetail?.portfolio_info.find(portfolio => portfolio.product === productName)?.data_type
+          :
+        thunkAPI.getState().auth?.userDetail?.portfolio_info[0]?.data_type,
+        created_on: new Date().toString(),
+      }
+
+      const existingTemplates = [...thunkAPI.getState().template?.allTemplates];
+      existingTemplates.unshift(newTemplate);
+      thunkAPI.dispatch(setAllTemplates(existingTemplates));
+      
+      thunkAPI.dispatch(setEditorLink(res.data.editor_link));
 
       return res.data;
     } catch (error) {

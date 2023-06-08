@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 import { BsBookmark, BsFillBookmarkFill } from 'react-icons/bs';
 
@@ -16,6 +16,11 @@ import {
 import HoverCard from '../HoverCard';
 import { Button } from '../styledComponents';
 import { useTranslation } from 'react-i18next';
+import { MdOutlineFiberNew } from 'react-icons/md';
+import { Tooltip } from 'react-tooltip';
+import { IoIosRefresh } from 'react-icons/io';
+import { LoadingSpinner } from '../../LoadingSpinner/LoadingSpinner';
+import { TemplateServices } from '../../../services/templateServices';
 
 const TemplateCard = ({ cardItem }) => {
   const dispatch = useDispatch();
@@ -25,6 +30,7 @@ const TemplateCard = ({ cardItem }) => {
     useAppContext();
   const { userDetail } = useSelector((state) => state.auth);
   const { allTemplates } = useSelector((state) => state.template);
+  const [ templateLoading, setTemplateLoading ] = useState(false);
 
   const handleTemplateDetail = (item) => {
     const data = {
@@ -109,9 +115,55 @@ const TemplateCard = ({ cardItem }) => {
     }
   };
 
+  const handleFetchNewTemplateDetail = async (templateId) => {
+    if (templateLoading) return;
+
+    const copyOfAllTemplates = [...allTemplates];
+    const foundTemplateIndex = copyOfAllTemplates.findIndex(
+      (item) => item._id === templateId
+    );
+
+    if (foundTemplateIndex === -1) return;
+
+    setTemplateLoading(true);
+
+    try {
+      const templateService = new TemplateServices();
+      const response = (await templateService.singleTemplateDetail(templateId)).data;
+      
+      copyOfAllTemplates[foundTemplateIndex] = response;
+      dispatch(setAllTemplates(copyOfAllTemplates));
+      
+      setTemplateLoading(false);
+    } catch (error) {
+      console.log(error.response ? error.response.data : error.message);
+      toast.info('Refresh for template failed');
+      setTemplateLoading(false);
+    }
+  }
+
   const FrontSide = () => {
     return (
-      <div>{cardItem.template_name ? cardItem.template_name : 'no item'}</div>
+      <div>
+        { 
+          cardItem.newly_created && 
+          <div
+            style={{
+              position: 'absolute',
+              left: '10px',
+              top: '0',
+              fontSize: '1.5rem',
+              color: '#ff0000'
+            }}
+          >
+            <MdOutlineFiberNew />
+          </div>
+        }
+        {
+          cardItem.template_name ? cardItem.template_name : 
+          'no item'
+        }
+      </div>
     );
   };
 
@@ -158,10 +210,55 @@ const TemplateCard = ({ cardItem }) => {
         >
           <RiDeleteBin6Line color='red' />
         </div>
+        { 
+          cardItem.newly_created && 
+          <div
+            style={{
+              position: 'absolute',
+              left: '10px',
+              top: '0',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.5rem',
+            }}
+          >
+            <div 
+              id={cardItem._id}
+              style={{
+                color: '#ff0000',
+                fontSize: '1.5rem',
+              }}
+            >
+              <MdOutlineFiberNew />
+              <Tooltip 
+                anchorId={cardItem._id} 
+                content={'This is a new template. Refresh right here to see its actual title'} 
+                style={{ 
+                  fontStyle: "normal",
+                  fontSize: '0.7rem',
+                  width: '8rem',
+                  wordWrap: 'break-word'
+                }} 
+              />
+            </div>
+            <div
+              style={{
+                fontSize: '0.7rem',
+                cursor: 'pointer',
+              }}  
+              onClick={() => handleFetchNewTemplateDetail(cardItem._id)}
+            >
+              {
+                !templateLoading ? <IoIosRefresh /> :
+                <LoadingSpinner color={'#000'} width={'0.7rem'} height={'0.7rem'} />
+              }
+            </div>
+          </div>
+        }
       </div>
     );
   };
-  return <HoverCard Front={FrontSide} Back={BackSide} />;
+  return <HoverCard Front={FrontSide} Back={BackSide} loading={templateLoading} />;
 };
 
 export default TemplateCard;
