@@ -73,7 +73,7 @@ def cloning_document(document_id, auth_viewers, parent_id, process_id):
             else []
         )
         document = get_document_object(document_id)
-        document_name = document["document_name"] + " |-"
+        document_name = "~" + document["document_name"] + "~"
         save_res = json.loads(
             save_document(
                 name=document_name,
