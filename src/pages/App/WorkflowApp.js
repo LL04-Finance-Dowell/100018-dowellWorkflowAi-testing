@@ -49,6 +49,9 @@ const WorkflowApp = () => {
     setFavoriteitems,
     favoriteItemsLoaded,
     setFavoriteitemsLoaded,
+    customDocName,
+    customTempName,
+    customWrkfName,
   } = useAppContext();
   const { allDocuments } = useSelector((state) => state.document);
   // const { allTemplates } = useSelector((state) => state.template);
@@ -128,7 +131,7 @@ const WorkflowApp = () => {
             document.auth_viewers.includes(userDetail?.userinfo?.username)
         )
         .filter((document) => document.process_id);
-    
+
       dispatch(setNotificationFinalStatus(100));
 
       const currentNotifications = notificationsForUser.slice();
@@ -159,7 +162,6 @@ const WorkflowApp = () => {
 
       getFavoritesForUser(dataToPost.company_id)
         .then((res) => {
-         
           setFavoriteitems(res.data);
           setFavoriteitemsLoaded(true);
         })
@@ -288,7 +290,18 @@ const WorkflowApp = () => {
                 <div key={item._id} id={item.title}>
                   <SectionBox
                     Card={item.card}
-                    title={`notifications - ${item.title}`}
+                    title={`notifications - ${
+                      item.title.toLowerCase().includes('documents') &&
+                      customDocName
+                        ? customDocName
+                        : item.title.toLowerCase().includes('templates') &&
+                          customTempName
+                        ? customTempName
+                        : item.title.toLowerCase().includes('workflows') &&
+                          customWrkfName
+                        ? customWrkfName
+                        : item.title
+                    }`}
                     cardItems={item.items}
                     cardBgColor={item.cardBgColor}
                     idKey={item.id ? item.id : null}

@@ -10,6 +10,7 @@ import { allDocuments } from '../../../features/document/asyncThunks';
 import DocumentCard from '../../../components/hoverCard/documentCard/DocumentCard';
 import { useNavigate } from 'react-router-dom';
 import { productName } from '../../../utils/helpers';
+import { useAppContext } from '../../../contexts/AppContext';
 
 const DocumentsPage = ({ home, showOnlySaved, showOnlyTrashed }) => {
   const { userDetail } = useSelector((state) => state.auth);
@@ -18,16 +19,25 @@ const DocumentsPage = ({ home, showOnlySaved, showOnlyTrashed }) => {
   );
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const [ currentUserPortfolioDataType, setCurrentUserPortfolioDataType ] = useState('');
+  const [currentUserPortfolioDataType, setCurrentUserPortfolioDataType] =
+    useState('');
+  const { customDocName } = useAppContext();
 
   useEffect(() => {
-    const userPortfolioDataType = userDetail?.portfolio_info?.length > 1 ? 
-      userDetail?.portfolio_info.find(portfolio => portfolio.product === productName)?.data_type
-      :
-    userDetail?.portfolio_info[0]?.data_type;
+    const userPortfolioDataType =
+      userDetail?.portfolio_info?.length > 1
+        ? userDetail?.portfolio_info.find(
+            (portfolio) => portfolio.product === productName
+          )?.data_type
+        : userDetail?.portfolio_info[0]?.data_type;
 
     const data = {
-      company_id: userDetail?.portfolio_info?.length > 1 ? userDetail?.portfolio_info.find(portfolio => portfolio.product === productName)?.org_id : userDetail?.portfolio_info[0].org_id,
+      company_id:
+        userDetail?.portfolio_info?.length > 1
+          ? userDetail?.portfolio_info.find(
+              (portfolio) => portfolio.product === productName
+            )?.org_id
+          : userDetail?.portfolio_info[0].org_id,
       data_type: userPortfolioDataType,
     };
     /*     if (savedDocumentsStatus !== "succeeded")
@@ -35,7 +45,7 @@ const DocumentsPage = ({ home, showOnlySaved, showOnlyTrashed }) => {
     if (mineStatus !== "succeeded") dispatch(mineDocuments(data)); */
 
     if (allDocumentsStatus === 'idle') dispatch(allDocuments(data));
-    setCurrentUserPortfolioDataType(userPortfolioDataType)
+    setCurrentUserPortfolioDataType(userPortfolioDataType);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userDetail]);
 
@@ -50,7 +60,7 @@ const DocumentsPage = ({ home, showOnlySaved, showOnlyTrashed }) => {
     <WorkflowLayout>
       <div id='new-document'>
         <ManageFiles
-          title='Documents'
+          title={customDocName ? customDocName : 'Documents'}
           OverlayComp={CreateDocument}
           removePageSuffix={true}
         >
@@ -58,7 +68,7 @@ const DocumentsPage = ({ home, showOnlySaved, showOnlyTrashed }) => {
             <div id='drafts'>
               <SectionBox
                 cardBgColor='#1ABC9C'
-                title='My Documents'
+                title={customDocName ? `My ${customDocName}` : 'My Documents'}
                 Card={DocumentCard}
                 cardItems={
                   allDocumentsArray &&
@@ -66,14 +76,11 @@ const DocumentsPage = ({ home, showOnlySaved, showOnlyTrashed }) => {
                   allDocumentsArray
                     .filter(
                       (item) =>
-                        item.created_by ===
-                          userDetail?.userinfo?.username &&
+                        item.created_by === userDetail?.userinfo?.username &&
                         item.document_type === 'original'
                     )
                     .filter(
-                      (item) =>
-                        item.data_type ===
-                        currentUserPortfolioDataType
+                      (item) => item.data_type === currentUserPortfolioDataType
                     )
                 }
                 status={allDocumentsStatus}
@@ -92,9 +99,7 @@ const DocumentsPage = ({ home, showOnlySaved, showOnlyTrashed }) => {
                 cardItems={allDocumentsArray
                   .filter((document) => document.document_type === 'original')
                   .filter(
-                    (item) =>
-                      item.data_type ===
-                      currentUserPortfolioDataType
+                    (item) => item.data_type === currentUserPortfolioDataType
                   )}
                 status={allDocumentsStatus}
                 itemType={'documents'}

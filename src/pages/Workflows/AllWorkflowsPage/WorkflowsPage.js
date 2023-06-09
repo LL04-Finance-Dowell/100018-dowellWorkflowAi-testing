@@ -10,21 +10,35 @@ import { allWorkflows } from '../../../features/workflow/asyncTHunks';
 import WorkflowCard from '../../../components/hoverCard/workflowCard/WorkflowCard';
 import { useNavigate } from 'react-router-dom';
 import { productName } from '../../../utils/helpers';
+import { useAppContext } from '../../../contexts/AppContext';
 
 const WorkflowsPage = ({ home, showOnlySaved, showOnlyTrashed }) => {
   const { userDetail } = useSelector((state) => state.auth);
   const { allWorkflows: allWorkflowsArray, allWorkflowsStatus } = useSelector(
     (state) => state.workflow
   );
-  const [ currentUserPortfolioDataType, setCurrentUserPortfolioDataType ] = useState('');
+  const { customWrkfName } = useAppContext();
+
+  const [currentUserPortfolioDataType, setCurrentUserPortfolioDataType] =
+    useState('');
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
   useEffect(() => {
     const data = {
-      company_id: userDetail?.portfolio_info?.length > 1 ? userDetail?.portfolio_info.find(portfolio => portfolio.product === productName)?.org_id : userDetail?.portfolio_info[0].org_id,
-      data_type: userDetail?.portfolio_info?.length > 1 ? userDetail?.portfolio_info.find(portfolio => portfolio.product === productName)?.data_type : userDetail?.portfolio_info[0].data_type,
+      company_id:
+        userDetail?.portfolio_info?.length > 1
+          ? userDetail?.portfolio_info.find(
+              (portfolio) => portfolio.product === productName
+            )?.org_id
+          : userDetail?.portfolio_info[0].org_id,
+      data_type:
+        userDetail?.portfolio_info?.length > 1
+          ? userDetail?.portfolio_info.find(
+              (portfolio) => portfolio.product === productName
+            )?.data_type
+          : userDetail?.portfolio_info[0].data_type,
     };
 
     /*   if (savedWorkflowStatus === "idle") dispatch(savedWorkflows(saveddata));
@@ -42,19 +56,20 @@ const WorkflowsPage = ({ home, showOnlySaved, showOnlyTrashed }) => {
   }, [showOnlySaved, showOnlyTrashed, home]);
 
   useEffect(() => {
-
-    const portfolioDataType = userDetail?.portfolio_info?.length > 1 ? userDetail?.portfolio_info.find(portfolio => portfolio.product === productName)?.data_type : userDetail?.portfolio_info[0]?.data_type;
+    const portfolioDataType =
+      userDetail?.portfolio_info?.length > 1
+        ? userDetail?.portfolio_info.find(
+            (portfolio) => portfolio.product === productName
+          )?.data_type
+        : userDetail?.portfolio_info[0]?.data_type;
     setCurrentUserPortfolioDataType(portfolioDataType);
-
-  }, [userDetail])
-
-  
+  }, [userDetail]);
 
   return (
     <WorkflowLayout>
       <div id='new-workflow'>
         <ManageFiles
-          title='Workflows'
+          title={customWrkfName ? customWrkfName : 'Workflows'}
           OverlayComp={CreateWorkflows}
           removePageSuffix={true}
         >
@@ -62,21 +77,19 @@ const WorkflowsPage = ({ home, showOnlySaved, showOnlyTrashed }) => {
             <div id='drafts'>
               <SectionBox
                 cardBgColor='#1ABC9C'
-                title='My Workflows'
+                title={customWrkfName ? `My ${customWrkfName}` : 'My Workflows'}
                 cardItems={
                   allWorkflowsArray &&
                   allWorkflowsArray.length &&
                   allWorkflowsArray
                     .filter(
                       (item) =>
-                        item.created_by ===
-                        userDetail?.userinfo?.username
+                        item.created_by === userDetail?.userinfo?.username
                     )
                     .filter(
                       (item) =>
                         item.workflows &&
-                        (item?.data_type ===
-                          currentUserPortfolioDataType ||
+                        (item?.data_type === currentUserPortfolioDataType ||
                           item.workflows?.data_type ===
                             currentUserPortfolioDataType)
                     )
@@ -100,8 +113,7 @@ const WorkflowsPage = ({ home, showOnlySaved, showOnlyTrashed }) => {
                 cardItems={allWorkflowsArray.filter(
                   (item) =>
                     item.workflows &&
-                    (item?.data_type ===
-                      currentUserPortfolioDataType ||
+                    (item?.data_type === currentUserPortfolioDataType ||
                       item.workflows?.data_type ===
                         currentUserPortfolioDataType)
                 )}

@@ -326,7 +326,7 @@ const Sidebar = () => {
         >
           {t('DoWell')} {t('Knowledge Center')}
         </h2>
-        <CollapseItem items={knowledge} />
+        <CollapseItem items={knowledge} exception={true} />
 
         <span className={styles.knowledge__Extra__Info}>
           {t('DoWell')} {t('True moments user experience lab')}

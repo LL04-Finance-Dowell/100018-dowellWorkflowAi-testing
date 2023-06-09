@@ -12,6 +12,7 @@ import { detailWorkflow } from '../../../features/workflow/asyncTHunks';
 import { useDispatch } from 'react-redux';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
+import { useAppContext } from '../../../contexts/AppContext';
 
 function ListItem({ item }) {
   let children = null;
@@ -72,8 +73,9 @@ function ListItem({ item }) {
   );
 }
 
-const CollapseItem = ({ items, listType }) => {
+const CollapseItem = ({ items, listType, exception }) => {
   const { t } = useTranslation();
+  const { customDocName, customTempName, customWrkfName } = useAppContext();
 
   const [menuItems, setMenuItems] = useState(items);
   const handleParentClick = (id) => {
@@ -87,6 +89,10 @@ const CollapseItem = ({ items, listType }) => {
   useEffect(() => {
     setMenuItems(items);
   }, [items]);
+
+  // useEffect(() => {
+  //   console.log('menuItems: ', menuItems);
+  // }, [menuItems]);
 
   return (
     <div className={styles.container}>
@@ -104,7 +110,26 @@ const CollapseItem = ({ items, listType }) => {
               <i>
                 <IoMdArrowDropright size={25} />
               </i>
-              {t(item.parent)}{' '}
+              {t(
+                exception
+                  ? item.parent
+                  : item.parent.toLowerCase().includes('documents') &&
+                    customDocName
+                  ? item.parent
+                      .toLowerCase()
+                      .replace('documents', customDocName)
+                  : item.parent.toLowerCase().includes('templates') &&
+                    customTempName
+                  ? item.parent
+                      .toLowerCase()
+                      .replace('templates', customTempName)
+                  : item.parent.toLowerCase().includes('workflows') &&
+                    customWrkfName
+                  ? item.parent
+                      .toLowerCase()
+                      .replace('workflows', customWrkfName)
+                  : item.parent
+              )}{' '}
               {item.count
                 ? item.count === '000'
                   ? `(${item.count})`

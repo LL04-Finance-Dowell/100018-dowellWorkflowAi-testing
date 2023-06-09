@@ -9,22 +9,34 @@ import { allTemplates } from '../../../features/template/asyncThunks';
 import TemplateCard from '../../../components/hoverCard/templateCard/TemplateCard';
 import { useNavigate } from 'react-router-dom';
 import { productName } from '../../../utils/helpers';
+import { useAppContext } from '../../../contexts/AppContext';
 
 const TemplatesPage = ({ home, showOnlySaved, showOnlyTrashed }) => {
   const { userDetail } = useSelector((state) => state.auth);
+  const { customTempName } = useAppContext();
 
   const { allTemplates: allTemplatesArray, allTemplatesStatus } = useSelector(
     (state) => state.template
   );
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const [ currentUserPortfolioDataType, setCurrentUserPortfolioDataType ] = useState('');
+  const [currentUserPortfolioDataType, setCurrentUserPortfolioDataType] =
+    useState('');
 
- 
   useEffect(() => {
     const data = {
-      company_id: userDetail?.portfolio_info?.length > 1 ? userDetail?.portfolio_info.find(portfolio => portfolio.product === productName)?.org_id : userDetail?.portfolio_info[0].org_id,
-      data_type: userDetail?.portfolio_info?.length > 1 ? userDetail?.portfolio_info.find(portfolio => portfolio.product === productName)?.data_type : userDetail?.portfolio_info[0].data_type,
+      company_id:
+        userDetail?.portfolio_info?.length > 1
+          ? userDetail?.portfolio_info.find(
+              (portfolio) => portfolio.product === productName
+            )?.org_id
+          : userDetail?.portfolio_info[0].org_id,
+      data_type:
+        userDetail?.portfolio_info?.length > 1
+          ? userDetail?.portfolio_info.find(
+              (portfolio) => portfolio.product === productName
+            )?.data_type
+          : userDetail?.portfolio_info[0].data_type,
     };
 
     /*  if (mineStatus === "idle") dispatch(mineTemplates(mineData));
@@ -43,25 +55,28 @@ const TemplatesPage = ({ home, showOnlySaved, showOnlyTrashed }) => {
   }, [showOnlySaved, showOnlyTrashed, home]);
 
   useEffect(() => {
-
-    const userPortfolioDataType = userDetail?.portfolio_info?.length > 1 ? 
-      userDetail?.portfolio_info.find(portfolio => portfolio.product === productName)?.data_type 
-      :
-    userDetail?.portfolio_info[0]?.data_type;
+    const userPortfolioDataType =
+      userDetail?.portfolio_info?.length > 1
+        ? userDetail?.portfolio_info.find(
+            (portfolio) => portfolio.product === productName
+          )?.data_type
+        : userDetail?.portfolio_info[0]?.data_type;
 
     setCurrentUserPortfolioDataType(userPortfolioDataType);
-
-  }, [userDetail])
+  }, [userDetail]);
 
   return (
     <WorkflowLayout>
       <div id='new-template'>
-        <ManageFiles title='Templates' removePageSuffix={true}>
+        <ManageFiles
+          title={customTempName ? customTempName : 'Templates'}
+          removePageSuffix={true}
+        >
           {home ? (
             <div id='drafts'>
               <SectionBox
                 cardBgColor='#1ABC9C'
-                title='My Templates'
+                title={customTempName ? `My ${customTempName}` : 'My Templates'}
                 Card={TemplateCard}
                 cardItems={
                   allTemplatesArray &&
@@ -69,13 +84,10 @@ const TemplatesPage = ({ home, showOnlySaved, showOnlyTrashed }) => {
                   allTemplatesArray
                     .filter(
                       (item) =>
-                        item.created_by ===
-                        userDetail?.userinfo?.username
+                        item.created_by === userDetail?.userinfo?.username
                     )
                     .filter(
-                      (item) =>
-                        item.data_type ===
-                        currentUserPortfolioDataType
+                      (item) => item.data_type === currentUserPortfolioDataType
                     )
                 }
                 status={allTemplatesStatus}
@@ -92,8 +104,7 @@ const TemplatesPage = ({ home, showOnlySaved, showOnlyTrashed }) => {
                 title='saved templates'
                 Card={TemplateCard}
                 cardItems={allTemplatesArray.filter(
-                  (item) =>
-                    item.data_type === currentUserPortfolioDataType
+                  (item) => item.data_type === currentUserPortfolioDataType
                 )}
                 status={allTemplatesStatus}
                 itemType={'templates'}

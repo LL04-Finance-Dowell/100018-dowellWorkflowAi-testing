@@ -1,8 +1,12 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { WorkflowSettingServices } from '../services/workflowSettingServices';
 import { useMediaQuery } from 'react-responsive';
 import { productName } from '../utils/helpers';
+import {
+  setFetchedPermissionArray,
+  setThemeColor,
+} from '../features/app/appSlice';
 
 const AppContext = createContext({});
 
@@ -47,6 +51,7 @@ export const AppContextProvider = ({ children }) => {
   const [isNoPointerEvents, setIsNoPointerEvents] = useState(false);
   const [workflowTeamsLoaded, setWorkflowTeamsLoaded] = useState(false);
   const [workflowSettings, setWorkflowSettings] = useState();
+  const [fetchedItems, setFetchedItems] = useState([]);
 
   const { userDetail } = useSelector((state) => state.auth);
   const [rerender, setRerender] = useState('rand');
@@ -56,6 +61,8 @@ export const AppContextProvider = ({ children }) => {
   const [customDocName, setCustomDocName] = useState('');
   const [customTempName, setCustomTempName] = useState('');
   const [customWrkfName, setCustomWrkfName] = useState('');
+  const { permissionArray } = useSelector((state) => state.app);
+  const dispatch = useDispatch();
 
   // const [createdNewTeam, setCreatedNewTeam] = useState();
 
@@ -67,7 +74,7 @@ export const AppContextProvider = ({ children }) => {
     setFavoriteitems(currentFavorites);
   };
   // const handleDropdownChange = () => {
-  
+
   //   }
 
   const removeFromFavoritesState = (category, itemId) => {
@@ -103,10 +110,12 @@ export const AppContextProvider = ({ children }) => {
   };
 
   const fetchSettings = async () => {
-    const userCompanyId = userDetail?.portfolio_info?.length > 1 ? 
-      userDetail?.portfolio_info?.find(portfolio => portfolio.product === productName)?.org_id
-    :
-    userDetail?.portfolio_info[0]?.org_id;
+    const userCompanyId =
+      userDetail?.portfolio_info?.length > 1
+        ? userDetail?.portfolio_info?.find(
+            (portfolio) => portfolio.product === productName
+          )?.org_id
+        : userDetail?.portfolio_info[0]?.org_id;
 
     const res = await new WorkflowSettingServices().fetchWorkflowSettings(
       userCompanyId
@@ -115,23 +124,27 @@ export const AppContextProvider = ({ children }) => {
     setWorkflowSettings(res.data);
   };
 
+  const extractCustomName = (str) =>
+    str ? str.slice(str.indexOf('(') + 1, str.indexOf(')')) : str;
+
   useEffect(() => {
     if (!publicUserConfigured) return;
     if (userDetail && userDetail.portfolio_info && !isPublicUser) {
       if (!workflowTeamsLoaded) {
         //* Fetching workflow teams
         const settingService = new WorkflowSettingServices();
-        const userCompanyId = userDetail?.portfolio_info?.length > 1 ? 
-          userDetail?.portfolio_info?.find(portfolio => portfolio.product === productName)?.org_id
-        :
-        userDetail?.portfolio_info[0]?.org_id;
+        const userCompanyId =
+          userDetail?.portfolio_info?.length > 1
+            ? userDetail?.portfolio_info?.find(
+                (portfolio) => portfolio.product === productName
+              )?.org_id
+            : userDetail?.portfolio_info[0]?.org_id;
 
         settingService
           .getAllTeams(userCompanyId)
           .then((res) => {
             setWorkflowTeams(res.data);
             setWorkflowTeamsLoaded(true);
-           
           })
           .catch((err) => {
             console.log(
@@ -150,9 +163,102 @@ export const AppContextProvider = ({ children }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userDetail]);
 
-  // useEffect(() => {
-  
-  // }, [workflowSettings]);
+  useEffect(() => {
+    if (workflowSettings) {
+      let tempItems = [];
+      for (let key in workflowSettings[0]) {
+        if (
+          typeof workflowSettings[0][key] !== 'string' &&
+          workflowSettings[0][key].length
+        ) {
+          tempItems.push({
+            title: key.replace('_', ' '),
+            content: workflowSettings[0][key],
+          });
+        } else if (key === 'theme_color') {
+          tempItems.push({ title: key, content: workflowSettings[0][key] });
+        }
+      }
+      setFetchedItems(tempItems);
+    }
+  }, [workflowSettings]);
+
+  useEffect(() => {
+    if (fetchedItems.length) {
+      let rawItems = [];
+      permissionArray[0].children.forEach((child) => {
+        child.column.forEach((col) => {
+          fetchedItems.forEach(({ title, content }) => {
+            if (
+              title === col.proccess_title ||
+              (title === 'Process' && col.proccess_title === 'Processes') ||
+              (title === 'Portfolio Choice' &&
+                col.proccess_title === 'Portfolio/Team Roles')
+            ) {
+              col.items.forEach((item) => {
+                content.forEach((fItem) => {
+                  if (
+                    fItem === item.content ||
+                    item.content.includes(fItem.split(' (')[0])
+                  )
+                    rawItems.push({
+                      _id: item._id,
+                      content: fItem,
+                      title:
+                        title === 'Process'
+                          ? 'Processes'
+                          : title === 'Portfolio Choice'
+                          ? 'Portfolio/Team Roles'
+                          : title,
+                      boxId: child._id,
+                    });
+                });
+              });
+            }
+          });
+        });
+      });
+
+      dispatch(setFetchedPermissionArray(rawItems));
+      dispatch(
+        setThemeColor(
+          fetchedItems.find((item) => item.title === 'theme_color').content
+        )
+      );
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [fetchedItems]);
+
+  useEffect(() => {
+    // ! If user unselects option in the process, the custom name is lost
+    if (permissionArray) {
+      const customArr = permissionArray[0].children[0].column[0].items.map(
+        (item) =>
+          (item.content.includes('Documents') ||
+            item.content.includes('Templates') ||
+            item.content.includes('Workflows')) &&
+          !item.content.includes('set display name')
+            ? item.content
+            : null
+      );
+
+      const iniDocs = customArr.find((item) =>
+        item && item.includes('Documents') ? item : null
+      );
+
+      const iniTemps = customArr.find((item) =>
+        item && item.includes('Templates') ? item : null
+      );
+
+      const iniWorks = customArr.find((item) =>
+        item && item.includes('Workflows') ? item : null
+      );
+
+      setCustomDocName(extractCustomName(iniDocs));
+      setCustomTempName(extractCustomName(iniTemps));
+      setCustomWrkfName(extractCustomName(iniWorks));
+    }
+  }, [permissionArray]);
 
   return (
     <AppContext.Provider
@@ -203,9 +309,9 @@ export const AppContextProvider = ({ children }) => {
         customDocName,
         customTempName,
         customWrkfName,
-        setCustomDocName,
-        setCustomTempName,
-        setCustomWrkfName,
+        // setCustomDocName,
+        // setCustomTempName,
+        // setCustomWrkfName,
       }}
     >
       {children}

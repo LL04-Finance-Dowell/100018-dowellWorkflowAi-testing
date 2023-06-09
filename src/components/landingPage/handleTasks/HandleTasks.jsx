@@ -10,6 +10,7 @@ import { v4 } from 'uuid';
 const HandleTasks = ({ feature, tasks }) => {
   const { t } = useTranslation();
   const [compTasks, setCompTask] = useState(tasks);
+  const { customDocName, customTempName, customWrkfName } = useAppContext();
 
   const handleToggle = (id) => {
     setCompTask((prev) =>
@@ -22,8 +23,6 @@ const HandleTasks = ({ feature, tasks }) => {
   const colorClass =
     feature === 'completed' ? styles.completed : styles.incomplete;
 
-  // useEffect(() => {
-  // });
   return (
     <div className={styles.container}>
       <h2 className={`${styles.item__box__title} ${colorClass}`}>
@@ -44,7 +43,19 @@ const HandleTasks = ({ feature, tasks }) => {
                 <IoMdArrowDropright size={25} />
               )}
             </i>
-            <span>{t(item.parent)}</span>
+            <span>
+              {t(
+                item.parent.toLowerCase().includes('documents') && customDocName
+                  ? customDocName
+                  : item.parent.toLowerCase().includes('templates') &&
+                    customTempName
+                  ? customTempName
+                  : item.parent.toLowerCase().includes('workflows') &&
+                    customWrkfName
+                  ? customWrkfName
+                  : item.parent
+              )}
+            </span>
           </div>
           <div className={styles.item__children__container}>
             <Collapse open={item.isOpen}>
@@ -58,7 +69,17 @@ const HandleTasks = ({ feature, tasks }) => {
                   </ol>
                 ) : (
                   <p>
-                    No {feature} {item.parent}
+                    No {feature}{' '}
+                    {item.parent.toLowerCase().includes('documents') &&
+                    customDocName
+                      ? customDocName
+                      : item.parent.toLowerCase().includes('templates') &&
+                        customTempName
+                      ? customTempName
+                      : item.parent.toLowerCase().includes('workflows') &&
+                        customWrkfName
+                      ? customWrkfName
+                      : item.parent}
                   </p>
                 )}
               </div>
@@ -106,7 +127,7 @@ const ItemsDisplay = ({ items, colorClass }) => {
   }, []);
 
   // useEffect(() => {
-  
+
   // }, [itemsToDisplay]);
   return (
     <>

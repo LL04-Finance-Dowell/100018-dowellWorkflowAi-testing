@@ -7,10 +7,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import {
   setColumn,
   setPermissionArray,
-  setFetchedPermissionArray,
   setProccess,
   setSettingProccess,
-  setThemeColor,
 } from '../../../features/app/appSlice';
 import { v4 as uuidv4 } from 'uuid';
 import { productName, setIsSelected } from '../../../utils/helpers';
@@ -137,9 +135,19 @@ const EnabledDisabkedProcess = () => {
     );
 
     const data = {
-      company_id: userDetail?.portfolio_info?.length > 1 ? userDetail?.portfolio_info.find(portfolio => portfolio.product === productName)?.org_id : userDetail?.portfolio_info[0].org_id,
+      company_id:
+        userDetail?.portfolio_info?.length > 1
+          ? userDetail?.portfolio_info.find(
+              (portfolio) => portfolio.product === productName
+            )?.org_id
+          : userDetail?.portfolio_info[0].org_id,
       created_by: userDetail?.userinfo.username,
-      data_type: userDetail?.portfolio_info?.length > 1 ? userDetail?.portfolio_info.find(portfolio => portfolio.product === productName)?.data_type : userDetail?.portfolio_info[0].data_type,
+      data_type:
+        userDetail?.portfolio_info?.length > 1
+          ? userDetail?.portfolio_info.find(
+              (portfolio) => portfolio.product === productName
+            )?.data_type
+          : userDetail?.portfolio_info[0].data_type,
       Process,
       Documents,
       Templates,
@@ -157,7 +165,6 @@ const EnabledDisabkedProcess = () => {
       wf_setting_id: workflowSettings[0]._id,
     };
 
-    
     try {
       setIsUpdating(true);
       await workflowSettingServices.updateWorkflowAISettings(data);
@@ -350,77 +357,9 @@ const EnabledDisabkedProcess = () => {
     );
   }, [permissionArray]);
 
-  useEffect(() => {
-    if (workflowSettings) {
-      let tempItems = [];
-      for (let key in workflowSettings[0]) {
-        if (
-          typeof workflowSettings[0][key] !== 'string' &&
-          workflowSettings[0][key].length
-        ) {
-          tempItems.push({
-            title: key.replace('_', ' '),
-            content: workflowSettings[0][key],
-          });
-        } else if (key === 'theme_color') {
-          tempItems.push({ title: key, content: workflowSettings[0][key] });
-        }
-      }
-      setFetchedItems(tempItems);
-    }
-  }, [workflowSettings]);
-
-  useEffect(() => {
-    if (fetchedItems.length) {
-      let rawItems = [];
-      permissionArray[0].children.forEach((child) => {
-        child.column.forEach((col) => {
-          fetchedItems.forEach(({ title, content }) => {
-            if (
-              title === col.proccess_title ||
-              (title === 'Process' && col.proccess_title === 'Processes') ||
-              (title === 'Portfolio Choice' &&
-                col.proccess_title === 'Portfolio/Team Roles')
-            ) {
-              col.items.forEach((item) => {
-                content.forEach((fItem) => {
-                  if (
-                    fItem === item.content ||
-                    item.content.includes(fItem.split(' (')[0])
-                  )
-                    rawItems.push({
-                      _id: item._id,
-                      content: fItem,
-                      title:
-                        title === 'Process'
-                          ? 'Processes'
-                          : title === 'Portfolio Choice'
-                          ? 'Portfolio/Team Roles'
-                          : title,
-                      boxId: child._id,
-                    });
-                });
-              });
-            }
-          });
-        });
-      });
-
-      
-
-      dispatch(setFetchedPermissionArray(rawItems));
-      dispatch(
-        setThemeColor(
-          fetchedItems.find((item) => item.title === 'theme_color').content
-        )
-      );
-
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [fetchedItems]);
-
   // useEffect(() => {
-  // });
+  //   console.log('perm Arr: ', permissionArray);
+  // }, [permissionArray]);
 
   return (
     <form

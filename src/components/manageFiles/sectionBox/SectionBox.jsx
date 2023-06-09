@@ -51,8 +51,16 @@ const SectionBox = ({
     if (refreshLoading) return;
 
     const [currentUserCompanyId, currentUserportfolioDataType] = [
-      userDetail?.portfolio_info?.length > 1 ? userDetail?.portfolio_info.find(portfolio => portfolio.product === productName)?.org_id : userDetail?.portfolio_info[0]?.org_id,
-      userDetail?.portfolio_info?.length > 1 ? userDetail?.portfolio_info.find(portfolio => portfolio.product === productName)?.data_type : userDetail?.portfolio_info[0]?.data_type
+      userDetail?.portfolio_info?.length > 1
+        ? userDetail?.portfolio_info.find(
+            (portfolio) => portfolio.product === productName
+          )?.org_id
+        : userDetail?.portfolio_info[0]?.org_id,
+      userDetail?.portfolio_info?.length > 1
+        ? userDetail?.portfolio_info.find(
+            (portfolio) => portfolio.product === productName
+          )?.data_type
+        : userDetail?.portfolio_info[0]?.data_type,
     ];
 
     if (itemType === 'documents') {
@@ -76,8 +84,7 @@ const SectionBox = ({
                   (document) =>
                     document.document_state !== 'trash' &&
                     document.data_type &&
-                    document.data_type ===
-                    currentUserportfolioDataType
+                    document.data_type === currentUserportfolioDataType
                 )
             )
           );
@@ -106,12 +113,13 @@ const SectionBox = ({
         .then((res) => {
           dispatch(
             setAllTemplates(
-              res.data.templates.reverse().filter(
-                (template) =>
-                  template.data_type &&
-                  template.data_type ===
-                  currentUserportfolioDataType
-              )
+              res.data.templates
+                .reverse()
+                .filter(
+                  (template) =>
+                    template.data_type &&
+                    template.data_type === currentUserportfolioDataType
+                )
             )
           );
           toast.success('Successfully refreshed templates');
@@ -142,11 +150,10 @@ const SectionBox = ({
               res.data.workflows.filter(
                 (workflow) =>
                   (workflow?.data_type &&
-                    workflow?.data_type ===
-                    currentUserportfolioDataType) ||
+                    workflow?.data_type === currentUserportfolioDataType) ||
                   (workflow.workflows.data_type &&
                     workflow.workflows.data_type ===
-                    currentUserportfolioDataType)
+                      currentUserportfolioDataType)
               )
             )
           );
@@ -202,18 +209,14 @@ const SectionBox = ({
       const documentService = new DocumentServices();
 
       documentService
-        .allDocuments(
-          currentUserCompanyId,
-          currentUserportfolioDataType
-        )
+        .allDocuments(currentUserCompanyId, currentUserportfolioDataType)
         .then((res) => {
           const documentsToSign = res.data.documents
             .reverse()
             .filter(
               (document) =>
                 document.company_id === currentUserCompanyId &&
-                document.data_type ===
-                currentUserportfolioDataType &&
+                document.data_type === currentUserportfolioDataType &&
                 (document.state === 'processing' ||
                   document.document_state === 'processing') &&
                 document.auth_viewers &&
@@ -394,8 +397,9 @@ const SectionBox = ({
                 {cardItems && cardItems.length > 10 && (
                   <PrimaryButton
                     style={{
-                      pointerEvents: `${cardItems.length / 10 < sliceCount && 'none'
-                        }`,
+                      pointerEvents: `${
+                        cardItems.length / 10 < sliceCount && 'none'
+                      }`,
                     }}
                     hoverBg='success'
                     onClick={handleLoadMore}
