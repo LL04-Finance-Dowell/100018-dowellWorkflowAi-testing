@@ -27,7 +27,7 @@ const Search = () => {
   const [searchLoading, setSearchLoading] = useState(false);
   const [searchResults, setSearchResults] = useState([]);
   const [searchResultItems, setSearchResultItems] = useState([]);
-  const [setSearchResultLoaded] = useState(false);
+  const [searchResultLoaded, setSearchResultLoaded] = useState(false);
 
   const navigate = useNavigate();
 
@@ -107,7 +107,6 @@ const Search = () => {
       return;
 
     try {
-     
       const results = searchItemByKeyAndGroupResults(search, searchItems);
 
       setSearchResultLoaded(true);

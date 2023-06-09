@@ -42,7 +42,6 @@ import { GrStatusGoodSmall } from 'react-icons/gr';
 import { productName } from '../../utils/helpers';
 
 const Sidebar = () => {
-
   const dispatch = useDispatch();
   const { t } = useTranslation();
   const [knowledge, Setknowledge] = useState([
@@ -108,7 +107,7 @@ const Sidebar = () => {
         },
       ],
     },
-  ])
+  ]);
   const { userDetail, session_id } = useSelector((state) => state.auth);
   const { IconColor, ShowProfileSpinner } = useSelector((state) => state.app);
   const navigate = useNavigate();
@@ -119,7 +118,6 @@ const Sidebar = () => {
   useEffect(() => {
     getAgreeStatus(session_id)
       .then((res) => {
-
         const legalStatus = res.data.data[0]?.i_agree;
 
         dispatch(setLegalStatusLoading(false));
@@ -192,11 +190,14 @@ const Sidebar = () => {
 
   /////////////////////
   useEffect(() => {
-
-
-    axios.get('https://100094.pythonanywhere.com/v1/companies/6385c0f38eca0fb652c9457e/templates/?=')
+    axios
+      .get(
+        'https://100094.pythonanywhere.com/v1/companies/6385c0f38eca0fb652c9457e/templates/?='
+      )
       .then((response) => {
-        const templateNames = response.data.templates.map((template) => template.template_name);
+        const templateNames = response.data.templates.map(
+          (template) => template.template_name
+        );
         const updatedKnowledge = knowledge.map((item) => {
           if (item.parent === 'Templates') {
             const updatedChildren = item.children.map((child, index) => {
@@ -207,18 +208,15 @@ const Sidebar = () => {
               return child;
             });
             return { ...item, children: updatedChildren };
-
           }
           return item;
         });
         Setknowledge(updatedKnowledge);
-
       })
       .catch((error) => {
         // Handle any errors
-
       });
-  }, [])
+  }, []);
 
   return (
     <div className={styles.container}>
@@ -289,17 +287,17 @@ const Sidebar = () => {
       </div>
       <div className={styles.organization__box}>
         <h2 className={styles.organization__text}>
-          {
-            userDetail?.portfolio_info?.length > 1 ?
-              userDetail?.portfolio_info?.find(portfolio => portfolio.product === productName)?.org_name ?
-                userDetail?.portfolio_info?.find(portfolio => portfolio.product === productName)?.org_name
-                :
-                "My Organization"
-              :
-              userDetail.portfolio_info[0].org_name ?
-                userDetail.portfolio_info[0].org_name :
-                'My Organization'
-          }
+          {userDetail?.portfolio_info?.length > 1
+            ? userDetail?.portfolio_info?.find(
+                (portfolio) => portfolio.product === productName
+              )?.org_name
+              ? userDetail?.portfolio_info?.find(
+                  (portfolio) => portfolio.product === productName
+                )?.org_name
+              : 'My Organization'
+            : userDetail.portfolio_info[0].org_name
+            ? userDetail.portfolio_info[0].org_name
+            : 'My Organization'}
         </h2>
         {userDetail?.userinfo?.org_img ? (
           <img alt='' src={userDetail?.userinfo?.org_img} />
@@ -442,5 +440,3 @@ export const reports = [
     ],
   },
 ];
-
-

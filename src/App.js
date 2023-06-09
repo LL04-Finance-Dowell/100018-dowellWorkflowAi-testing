@@ -25,11 +25,11 @@ import SearchPage from './pages/Search/SearchPage';
 import { useAppContext } from './contexts/AppContext';
 
 import axios from 'axios';
-import ConstructionPage from './pages/ConstructionPage/ConstructionPage';
+// import ConstructionPage from './pages/ConstructionPage/ConstructionPage';
 
 function App() {
   const dispatch = useDispatch();
-  const { session_id,userDetail } = useSelector((state) => state.auth);
+  const { session_id, userDetail } = useSelector((state) => state.auth);
   const { isPublicUser } = useAppContext();
   useDowellLogin();
   useEffect(() => {
@@ -57,32 +57,31 @@ function App() {
     // AJAX POST request
 
     session_id &&
-      axios.post(
-        'https://100014.pythonanywhere.com/en/live_status',
-        {
-          session_id: session_id && session_id,
-          product: 'Workflow AI',
-
-        },
-        {
-          headers: {
-            'Content-Type': 'application/json',
+      axios
+        .post(
+          'https://100014.pythonanywhere.com/en/live_status',
+          {
+            session_id: session_id && session_id,
+            product: 'Workflow AI',
           },
-        }
-      )
-        .then((response) => {
-        })
+          {
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          }
+        )
+        .then((response) => {})
         .catch((error) => {
           console.log(error);
           // Empty catch block
-        })
+        });
   }
-  // USE ONLY WHEN APP IS BROKEN OR UNDERGOING MAJOR CHANGES
+  // // USE ONLY WHEN APP IS BROKEN OR UNDERGOING MAJOR CHANGES
   // return (
   //   <Routes>
-  //     <Route path="*" element={<ConstructionPage />} />
+  //     <Route path='*' element={<ConstructionPage />} />
   //   </Routes>
-  // )
+  // );
 
   if (isPublicUser)
     return (

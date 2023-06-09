@@ -32,4 +32,8 @@ export class TemplateServices {
   allTemplates = (companyId, dataType) => {
     return httpApiUrl.get(`/companies/${companyId}/templates/?data_type=${dataType}`);
   };
+
+  singleTemplateDetail = async (templateId) => {
+    return await httpTemplate.get(`/${templateId}/object/`);
+  }
 }
