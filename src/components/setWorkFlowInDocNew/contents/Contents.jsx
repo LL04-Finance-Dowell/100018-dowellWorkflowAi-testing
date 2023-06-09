@@ -121,7 +121,7 @@ const Contents = ({
     );
   };
 
- 
+
 
   return (
     <div
@@ -130,8 +130,8 @@ const Contents = ({
           feature === 'table-of-contents'
             ? '13rem'
             : toggleContent
-            ? `${contentRef.current?.getBoundingClientRect().height}px`
-            : '0px',
+              ? `${contentRef.current?.getBoundingClientRect().height}px`
+              : '0px',
         padding: feature && feature === 'table-of-contents' ? '0' : '',
         overflow: feature === 'table-of-contents' ? '' : '',
       }}
@@ -170,17 +170,19 @@ const Contents = ({
                                     item._id === currentTableItem &&
                                     styles.current__table__item
                                   }
-                                  // key={item._id}
+                                // key={item._id}
                                 >
                                   <th className={styles.table__id}>
                                     {item.id}
                                   </th>
                                   <th className={styles.table__content}>
-                                    {Array.isArray(item.data)
-                                      ? item.data.find((i) => i.data.length > 1)
-                                          ?.data
-                                      : item.data}
+                                    {Array.isArray(item.data) ? (
+                                      item.data.map(i => <div>{i.data}</div>)
+                                    ) : (
+                                      item.data
+                                    )}
                                   </th>
+
                                 </tr>
                               ))
                             )}
@@ -209,9 +211,9 @@ const Contents = ({
                       style={
                         feature && feature === 'table-of-contents'
                           ? {
-                              width: '100%',
-                              padding: '2px 5px 2px 0',
-                            }
+                            width: '100%',
+                            padding: '2px 5px 2px 0',
+                          }
                           : {}
                       }
                     >
@@ -225,8 +227,8 @@ const Contents = ({
                           // ) &&
                           feature && feature === 'table-of-contents'
                             ? {
-                                width: '100%',
-                              }
+                              width: '100%',
+                            }
                             : {}
                         }
                       >
@@ -262,20 +264,20 @@ const Contents = ({
                                     step.stepIndex === currentStepIndex
                                 )
                                   ? {
-                                      backgroundColor: '#0048ff',
-                                      color: '#fff',
-                                      padding: '1%',
-                                      borderRadius: '5px',
-                                      display: 'block',
-                                      width: '100%',
-                                      margin: '1% 0',
-                                      cursor: 'pointer',
-                                    }
+                                    backgroundColor: '#0048ff',
+                                    color: '#fff',
+                                    padding: '1%',
+                                    borderRadius: '5px',
+                                    display: 'block',
+                                    width: '100%',
+                                    margin: '1% 0',
+                                    cursor: 'pointer',
+                                  }
                                   : {
-                                      display: 'block',
-                                      margin: '1% 0',
-                                      cursor: 'pointer',
-                                    }
+                                    display: 'block',
+                                    margin: '1% 0',
+                                    cursor: 'pointer',
+                                  }
                               }
                               onClick={() => {
                                 handleContentSelection(item, currentPage);
@@ -300,7 +302,7 @@ const Contents = ({
                                     tableOfContentForStep.find(
                                       (step) =>
                                         step.workflow ===
-                                          docCurrentWorkflow._id &&
+                                        docCurrentWorkflow._id &&
                                         step.id === item.id &&
                                         step.stepIndex === currentStepIndex
                                     )?.required
@@ -312,8 +314,8 @@ const Contents = ({
                                     item.data
                                       ? Array.isArray(item.data)
                                         ? item.data.find(
-                                            (i) => i.data.length > 1
-                                          )?.data
+                                          (i) => i.data.length > 1
+                                        )?.data
                                         : item.data
                                       : 'No data'
                                   }
