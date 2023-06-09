@@ -1,3 +1,4 @@
+import { AiOutlineConsoleSql } from "react-icons/ai";
 import { httpApiUrl, httpDocument } from "../httpCommon/httpCommon";
 
 export class DocumentServices {
@@ -26,6 +27,7 @@ export class DocumentServices {
   };
 
   contentDocument = (documentId) => {
+    // console.log(documentId)
     return httpDocument.get(`/${documentId}/content/`);
   };
 

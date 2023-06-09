@@ -57,7 +57,7 @@ const Contents = ({
       workflow: docCurrentWorkflow._id,
       stepIndex: currentStepIndex,
     };
-
+    // console.log(newTableOfContentObj)
     dispatch(setTableOfContentForStep(newTableOfContentObj));
   };
 
@@ -67,7 +67,7 @@ const Contents = ({
       r[a.pageNum].push(a);
       return r;
     }, Object.create(null));
-
+    // console.log(contentsGroupedByPageNum)
     setContentsPageWise(contentsGroupedByPageNum);
 
     setShowContent(
@@ -87,7 +87,7 @@ const Contents = ({
     setShowContent(currentContents);
   };
 
-  
+
 
   return (
     <div
@@ -172,13 +172,13 @@ const Contents = ({
                                 step.stepIndex === currentStepIndex
                             )
                               ? {
-                                  backgroundColor: '#0048ff',
-                                  color: '#fff',
-                                  padding: '2% 30%',
-                                  borderRadius: '5px',
-                                  width: '100%',
-                                  cursor: 'pointer',
-                                }
+                                backgroundColor: '#0048ff',
+                                color: '#fff',
+                                padding: '2% 30%',
+                                borderRadius: '5px',
+                                width: '100%',
+                                cursor: 'pointer',
+                              }
                               : { cursor: 'pointer' }
                           }
                           onClick={(e) => {

@@ -78,11 +78,11 @@ function App() {
         })
   }
   // USE ONLY WHEN APP IS BROKEN OR UNDERGOING MAJOR CHANGES
-  return (
-    <Routes>
-      <Route path="*" element={<ConstructionPage />} />
-    </Routes>
-  )
+  // return (
+  //   <Routes>
+  //     <Route path="*" element={<ConstructionPage />} />
+  //   </Routes>
+  // )
 
   if (isPublicUser)
     return (
