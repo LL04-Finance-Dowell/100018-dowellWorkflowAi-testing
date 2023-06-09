@@ -21,7 +21,7 @@ from .mongo_db_connection import (
     get_process_object,
     get_wf_object,
     save_document,
-    save_wf_process,
+    save_process,
 )
 
 headers = {"Content-Type": "application/json"}
@@ -99,7 +99,7 @@ def cloning_process(process_id, created_by, creator_portfolio):
     try:
         process = get_process_object(process_id)
         save_res = json.loads(
-            save_wf_process(
+            save_process(
                 process["process_title"],
                 process["process_steps"],
                 created_by,

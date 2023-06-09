@@ -28,7 +28,7 @@ from app.utils.mongo_db_connection import (
     delete_process,
     delete_template,
     delete_workflow,
-    finalize,
+    finalize_item,
     get_document_list,
     get_document_object,
     get_link_object,
@@ -41,18 +41,18 @@ from app.utils.mongo_db_connection import (
     get_template_object,
     get_wf_list,
     get_wf_object,
-    get_wf_setting_object,
+    get_workflow_setting_object,
     get_wfai_setting_list,
     save_document,
     save_team,
     save_template,
-    save_wf,
-    save_wf_setting,
+    save_workflow,
+    save_workflow_setting,
     update_team_data,
     update_template_approval,
     update_wf,
-    update_wf_process,
-    wf_setting_update,
+    update_process,
+    update_workflow_setting,
 )
 
 from .constants import EDITOR_API
@@ -64,7 +64,6 @@ from app.utils.notification_cron import send_notification
 def webhook(request):
     """Pick an event from GH and update our PA-server code"""
     if request.method == "POST":
-        # pull the code and update PA
         repo = git.Repo("/home/100094/100094.pythonanywhere.com")
         origin = repo.remotes.origin
         origin.pull()
@@ -143,7 +142,7 @@ def document_processing(request):
                 "This Workflow process is already complete", status.HTTP_200_OK
             )
         res = json.loads(
-            update_wf_process(
+            update_process(
                 process_id=process["process_id"],
                 steps=process["processing_steps"],
                 state="completed",
@@ -163,7 +162,7 @@ def document_processing(request):
         if process["processing_state"] == "cancelled":
             return Response("This Workflow process is Cancelled!", status.HTTP_200_OK)
         res = json.loads(
-            update_wf_process(
+            update_process(
                 process_id=process["process_id"],
                 steps=process["processing_steps"],
                 state="cancelled",
@@ -205,34 +204,34 @@ def process_verification(request):
     """verification of a process step access and checks that duplicate document based on a step."""
     if not request.data:
         return Response("You are missing something!", status.HTTP_400_BAD_REQUEST)
+    
     user_type = request.data["user_type"]
     auth_user = request.data["auth_username"]
     auth_role = request.data["auth_role"]
     auth_portfolio = request.data["auth_portfolio"]
     token = request.data["token"]
-    link_info = get_link_object(token)
-    if not link_info:
-        return Response(
-            "Could not verify user permissions", status.HTTP_500_INTERNAL_SERVER_ERROR
-        )
+    link_object = get_link_object(token)
+    if not link_object:
+        return Response(status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
     if user_type == "team" or user_type == "user":
         if (
-            link_info["user_name"] != auth_user
-            or link_info["auth_portfolio"] != auth_portfolio
+            link_object["user_name"] != auth_user
+            or link_object["auth_portfolio"] != auth_portfolio
         ):
             return Response(
                 "User Logged in is not part of this process",
                 status.HTTP_401_UNAUTHORIZED,
             )
-    process_id = link_info["process_id"]
+    process_id = link_object["process_id"]
     process = get_process_object(process_id)
     if not process:
-        return Response(
-            "Something went wrong!, Retry", status.HTTP_500_INTERNAL_SERVER_ERROR
-        )
+        return Response( status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
     if process["processing_state"]:
         if process["processing_state"] == "paused":
             return Response("this workflow process is paused!", status.HTTP_200_OK)
+        
         if process["processing_state"] == "save":
             return Response("this workflow process is not active!", status.HTTP_200_OK)
     location_data = {
@@ -254,21 +253,18 @@ def finalize_or_reject(request, process_id):
     role = request.data["role"]
     user = request.data["authorized"]
     state = request.data["action"]
-
-    if request.data["action"] == "finalize" or request.data["action"] == "reject":
-        return Response("Invalid processing action", status.HTTP_400_BAD_REQUEST)
     
     check, current_state = checks.is_finalized(item_id, item_type)
     if check and current_state != "processing":
         return Response(f"Already processed as {current_state}!", status.HTTP_200_OK)
 
-    res = json.loads(finalize(item_id, state, item_type))
+    res = json.loads(finalize_item(item_id, state, item_type))
     process = get_process_object(process_id)
     background = Background(process, item_type, item_id, role, user)
 
     if res["isSuccess"]:
+        Thread(target= lambda: background.processing()).start()
         Thread(target=lambda: delete_notification(item_id)).start()
-        background.processing()
         return Response("document processed successfully", status.HTTP_200_OK)
 
     return Response(status.HTTP_500_INTERNAL_SERVER_ERROR)
@@ -279,21 +275,18 @@ def trigger_process(request):
     """Get process and begin processing it."""
     if not validate_id(request.data["process_id"]):
         return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
-    try:
-        process = get_process_object(request.data["process_id"])
-    except:
-        return Response(
-            "Could not start processing!", status.HTTP_500_INTERNAL_SERVER_ERROR
-        )
-
+   
+    process = get_process_object(request.data["process_id"])
+ 
     action = request.data["action"]
     state = process["processing_state"]
 
     if request.data["user_name"] != process["created_by"]:
         return Response("User Unauthorized", status.HTTP_403_FORBIDDEN)
+    
     if action == "halt_process" and state != "paused":
         res = json.loads(
-            update_wf_process(
+            update_process(
                 process_id=request.data["process_id"],
                 steps=process["process_steps"],
                 state="paused",
@@ -332,10 +325,9 @@ def a_single_process(request, process_id):
     """get process by process id"""
     if not validate_id(process_id):
         return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
-    try:
-        process = get_process_object(process_id)
-    except:
-        return Response(status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
+    process = get_process_object(process_id)
+    
     return Response(process, status.HTTP_200_OK)
 
 
@@ -344,13 +336,13 @@ def fetch_process_links(request, process_id):
     """verification links for a process"""
     if not validate_id(process_id):
         return Response("something went wrong!", status.HTTP_400_BAD_REQUEST)
-    try:
-        process_info = get_links_object_by_process_id(process_id)
-    except:
-        return Response(status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
+    process_info = get_links_object_by_process_id(process_id)
+    
     if process_info:
         process = process_info[0]
         return Response(process["links"], status.HTTP_200_OK)
+    
     return Response([], status.HTTP_200_OK)
 
 
@@ -381,44 +373,40 @@ def create_workflow_setting(request):
     portfolio_name = form["portfolio_name"]
     processes = [{"version": "1.0.0", "flag": "enable", "process": form["proccess"]}]
     wf_set = json.loads(
-        save_wf_setting(company_id, owner_name, username, portfolio_name, processes)
+        save_workflow_setting(company_id, owner_name, username, portfolio_name, processes)
     )
     if wf_set["isSuccess"]:
         return Response(
             {
-                "workflow_setting": get_wf_setting_object(wf_set["inserted_id"]),
+                "workflow_setting": get_workflow_setting_object(wf_set["inserted_id"]),
             },
             status.HTTP_201_CREATED,
         )
-    return Response(status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 @api_view(["GET", "PUT"])
-def get_wf_ai_setting(request, wf_setting_id):
+def application_settings(request, wf_setting_id):
     """Retrive a Wf setting"""
     if not validate_id(wf_setting_id):
         return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
+    
     if request.method == "GET":
-        try:
-            setting = get_wf_setting_object(wf_setting_id)
-        except:
-            return Response(status.HTTP_500_INTERNAL_SERVER_ERROR)
+        setting = get_workflow_setting_object(wf_setting_id)
         return Response(setting, status.HTTP_200_OK)
 
     if request.method == "PUT":
-        """Update workflow Setting"""
         form = request.data
         if not form:
             return Response("Workflow Data is Required", status.HTTP_400_BAD_REQUEST)
 
-        old_wf_setting = get_wf_setting_object(wf_setting_id)
+        old_wf_setting = get_workflow_setting_object(wf_setting_id)
         version = setting.version_control(old_wf_setting["processes"][-1]["version"])
         old_wf_setting["processes"][-1]["flag"] = "disable"
 
         old_wf_setting["processes"].append(
             {"version": version, "flag": "enable", "process": form["proccess"]}
         )
-        updt_wf = json.loads(wf_setting_update(wf_setting_id, old_wf_setting))
+        updt_wf = json.loads(update_workflow_setting(wf_setting_id, old_wf_setting))
 
         if updt_wf["isSuccess"]:
             return Response("Workflow Setting Updated", status.HTTP_201_CREATED)
@@ -437,7 +425,7 @@ def create_workflow(request):
         "steps": form["steps"],
     }
     res = json.loads(
-        save_wf(
+        save_workflow(
             data,
             form["company_id"],
             form["created_by"],
@@ -469,14 +457,10 @@ def workflow_detail(request, workflow_id):
         return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
     if request.method == "GET":
         data = get_wf_object(workflow_id)
-        if not data:
-            return Response("Failed to Load Workflow", status.HTTP_204_NO_CONTENT)
-        else:
-            return Response(data, status.HTTP_200_OK)
+        
+        return Response(data, status.HTTP_200_OK)
 
     if request.method == "PUT":
-        """Update content of a workflow"""
-
         form = request.data
         if not form:
             return Response("Workflow Data is required", status.HTTP_400_BAD_REQUEST)
@@ -496,10 +480,8 @@ def get_workflows(request, company_id):
     data_type = request.query_params.get("data_type", "Real_Data")
     if not validate_id(company_id):
         return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
-    try:
-        workflow_list = get_wf_list(company_id, data_type)
-    except:
-        return Response(status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
+    workflow_list = get_wf_list(company_id, data_type)
     if len(workflow_list) > 0:
         return Response(
             {"workflows": workflow_list},
@@ -521,11 +503,9 @@ def get_documents(request, company_id):
     cache_key = f"documents_{company_id}"
     document_list = cache.get(cache_key)
     if document_list is None:
-        try:
-            document_list = get_document_list(company_id, data_type)
-            cache.set(cache_key, document_list, timeout=60)
-        except:
-            return Response(status.HTTP_500_INTERNAL_SERVER_ERROR)
+        document_list = get_document_list(company_id, data_type)
+        cache.set(cache_key, document_list, timeout=60)
+        
     return Response(
         {"documents": document_list},
         status.HTTP_200_OK,
@@ -540,9 +520,9 @@ def create_document(request):
             {"message": "Failed to process document creation."},
             status.HTTP_200_OK,
         )
-    else:
-        viewers = [request.data["created_by"]]
-        res = json.loads(
+    
+    viewers = [request.data["created_by"]]
+    res = json.loads(
             save_document(
                 name="Untitled Document",
                 data=request.data["content"],
@@ -556,8 +536,8 @@ def create_document(request):
                 parent_id=None,
                 process_id="",
             )
-        )
-        if res["isSuccess"]:
+    )
+    if res["isSuccess"]:
             editor_link = access_editor(res["inserted_id"], "document")
             if not editor_link:
                 return Response(
@@ -568,7 +548,7 @@ def create_document(request):
                 {"editor_link": editor_link, "_id": res["inserted_id"]},
                 status.HTTP_201_CREATED,
             )
-        return Response(status.HTTP_200_OK)
+    
 
 
 @api_view(["GET"])
@@ -576,6 +556,7 @@ def get_document_content(request, document_id):
     """Content map of a given document"""
     if not validate_id(document_id):
         return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
+    
     content = []
     my_dict = ast.literal_eval(get_document_object(document_id)["content"])[0][0]
     all_keys = [i for i in my_dict.keys()]
@@ -613,6 +594,7 @@ def document_detail(request, document_id):
     """editor link for a document"""
     if not validate_id(document_id):
         return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
+    
     editor_link = access_editor(document_id, "document")
     if not editor_link:
         return Response(status.HTTP_500_INTERNAL_SERVER_ERROR)
@@ -626,9 +608,6 @@ def document_object(request, document_id):
         return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
 
     document = get_document_object(document_id)
-    if not document:
-        return Response(status.HTTP_500_INTERNAL_SERVER_ERROR)
-
     return Response(document, status.HTTP_200_OK)
 
 
@@ -637,25 +616,31 @@ def archives(request):
     """Archiving  (Template | Workflow | Document)"""
     if not request.data:
         return Response("You are missing something", status.HTTP_400_BAD_REQUEST)
+    
     id = request.data["item_id"]
     if not validate_id(id):
         return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
+    
     if request.data["item_type"] == "workflow":
         res = delete_workflow(id, "Archive_Data")
         if res["isSuccess"]:
             return Response("Workflow moved to archives", status.HTTP_200_OK)
+        
     if request.data["item_type"] == "document":
         res = delete_document(id, "Archive_Data")
         if res["isSuccess"]:
             return Response("Document moved to archives", status.HTTP_200_OK)
+        
     if request.data["item_type"] == "template":
         res = delete_template(id, "Archive_Data")
         if res["isSuccess"]:
             return Response("Template moved to archives", status.HTTP_200_OK)
+        
     if request.data["item_type"] == "process":
         res = delete_process(id, "Archive_Data")
         if res["isSuccess"]:
             return Response("Process moved to archives", status.HTTP_200_OK)
+        
     return Response(status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
@@ -664,25 +649,31 @@ def archive_restore(request):
     """Restore  (Template | Workflow | Document)"""
     if not request.data:
         return Response("You are missing something", status.HTTP_400_BAD_REQUEST)
+    
     id = request.data["item_id"]
     if not validate_id(id):
         return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
+    
     if request.data["item_type"] == "workflow":
         res = delete_workflow(id, "Real_Data")
         if res["isSuccess"]:
             return Response("Workflow restored from archives", status.HTTP_200_OK)
+        
     if request.data["item_type"] == "document":
         res = delete_document(id, "Real_Data")
         if res["isSuccess"]:
             return Response("Document restored from archives", status.HTTP_200_OK)
+        
     if request.data["item_type"] == "template":
         res = delete_template(id, "Real_Data")
         if res["isSuccess"]:
             return Response("Template restored from archives", status.HTTP_200_OK)
+        
     if request.data["item_type"] == "process":
         res = delete_process(id, "Real_Data")
         if res["isSuccess"]:
             return Response("Process restored from archives", status.HTTP_200_OK)
+        
     return Response(status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
@@ -691,13 +682,13 @@ def favorites(request):
     """`Favourite` an Item( workflow | template | document) or List favourites"""
     if not request.data:
         return Response("You are missing something", status.HTTP_400_BAD_REQUEST)
+    
     msg = create_favourite(
         item=request.data["item"],
         type=request.data["item_type"],
         username=request.data["username"],
     )
-    if not msg:
-        return Response(status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
     return Response(msg, status.HTTP_201_CREATED)
 
 
@@ -707,8 +698,7 @@ def all_favourites(request, company_id):
     if not validate_id(company_id):
         return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
     data = list_favourites(company_id)
-    if not data:
-        return Response(status.HTTP_500_INTERNAL_SERVER_ERROR)
+  
     return Response(data, status.HTTP_200_OK)
 
 
@@ -717,13 +707,13 @@ def trash_favourites(request, item_id, item_type, username):
     """Trash Favourites"""
     if not validate_id(item_id):
         return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
+    
     msg = remove_favourite(
         identifier=item_id,
         type=item_type,
         username=username,
     )
-    if not msg:
-        return Response(status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
     return Response(msg, status.HTTP_204_NO_CONTENT)
 
 
@@ -735,15 +725,12 @@ def get_templates(request, company_id):
         return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
 
     templates = get_template_list(company_id, data_type)
-    if len(templates) > 0:
-        return Response(
+    
+    return Response(
             {"templates": templates},
             status.HTTP_200_OK,
         )
-    return Response(
-        {"templates": []},
-        status.HTTP_200_OK,
-    )
+ 
 
 
 @api_view(["POST"])
@@ -753,6 +740,7 @@ def create_template(request):
     template_name = "Untitled Template"
     if not validate_id(request.data["company_id"]):
         return Response("Invalid company details", status.HTTP_400_BAD_REQUEST)
+    
     res = json.loads(
         save_template(
             template_name,
@@ -782,17 +770,17 @@ def create_template(request):
                 "update_field": {"template_name": "", "content": "", "page": ""},
             },
         }
-        try:
-            editor_link = requests.post(
+        
+        editor_link = requests.post(
                 EDITOR_API,
                 data=json.dumps(payload),
-            )
-        except:
-            return Response(status.HTTP_500_INTERNAL_SERVER_ERROR)
+        )
+       
         return Response(
             {"editor_link": editor_link.json(), "_id": res["inserted_id"]},
             status.HTTP_201_CREATED,
         )
+    
     return Response(status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
@@ -801,9 +789,11 @@ def template_detail(request, template_id):
     """editor link for a document"""
     if not validate_id(template_id):
         return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
+    
     editor_link = access_editor(template_id, "template")
     if not editor_link:
         return Response(status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
     return Response(editor_link, status.HTTP_201_CREATED)
 
 
@@ -814,8 +804,6 @@ def template_object(request, template_id):
         return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
 
     template = get_template_object(template_id)
-    if not template:
-        return Response(status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     return Response(template, status.HTTP_200_OK)
 
@@ -825,10 +813,10 @@ def approve(request, template_id):
     """Approve a given template"""
     if not validate_id(template_id):
         return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
-    response = json.loads(update_template_approval(template_id, approval=True))
-    if not response["isSuccess"]:
-        return Response(status.HTTP_500_INTERNAL_SERVER_ERROR)
-    return Response("Template Approved", status.HTTP_200_OK)
+    
+    res = json.loads(update_template_approval(template_id, approval=True))
+    if res["isSuccess"]:
+        return Response("Template Approved", status.HTTP_200_OK)
 
 
 @api_view(["POST"])
@@ -838,6 +826,7 @@ def create_team(request):
     form = request.data
     if not form:
         return Response("Team Data required", status.HTTP_400_BAD_REQUEST)
+    
     company_id = form["company_id"]
     created_by = form["created_by"]
     team_type = form["team_type"]
@@ -869,7 +858,7 @@ def create_team(request):
             },
             status.HTTP_201_CREATED,
         )
-    return Response("Failed to Save Team Data", status.HTTP_500_INTERNAL_SERVER_ERROR)
+    return Response(status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 @api_view(["POST"])
@@ -878,6 +867,7 @@ def update_team(request):
     form = request.data
     if not form:
         return Response("Team Data required", status.HTTP_400_BAD_REQUEST)
+    
     team_data = get_team(form["team_id"])
     team_data["company_id"] = form["company_id"]
     team_data["created_by"] = form["created_by"]
@@ -898,18 +888,14 @@ def update_team(request):
             },
             status.HTTP_201_CREATED,
         )
-    return Response("Failed to Update Team Data", status.HTTP_500_INTERNAL_SERVER_ERROR)
+    return Response(status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 @api_view(["GET"])
 def get_team_data(request, team_id):
     """Get specific Team"""
-    try:
-        teams = get_team(team_id)
-    except:
-        return Response(
-            "Failed to Load Team Data", status.HTTP_500_INTERNAL_SERVER_ERROR
-        )
+    
+    teams = get_team(team_id)
     return Response(teams, status.HTTP_200_OK)
 
 
@@ -944,9 +930,9 @@ def get_completed_documents(request, company_id):
     data_type = request.query_params.get("data_type", "Real_Data")
     if not validate_id(company_id):
         return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
+    
     document_list = get_document_list(company_id, data_type)
-    if not document_list:
-        return Response({"documents": []}, status=status.HTTP_200_OK)
+   
     if len(document_list) > 0:
         completed = list(
             filter(lambda i: i.get("document_state") == "finalized", document_list)
@@ -955,6 +941,7 @@ def get_completed_documents(request, company_id):
             {"documents": completed},
             status=status.HTTP_200_OK,
         )
+    
     return Response(
         {"documents": []},
         status=status.HTTP_200_OK,
@@ -970,9 +957,6 @@ def get_completed_documents_by_process(request, company_id, process_id):
 
     document_list = get_document_list(company_id, data_type)
 
-    if not document_list:
-        return Response({"documents": []}, status=status.HTTP_200_OK)
-
     if len(document_list) > 0:
         cloned = list(
             filter(lambda i: i.get("process_id") == process_id, document_list)
@@ -981,6 +965,7 @@ def get_completed_documents_by_process(request, company_id, process_id):
             {f"document_list of process: {process_id}": cloned},
             status=status.HTTP_200_OK,
         )
+    
     return Response(
         {f"document_list of process: {process_id}": []},
         status=status.HTTP_200_OK,
@@ -988,7 +973,7 @@ def get_completed_documents_by_process(request, company_id, process_id):
 
 
 @api_view(["POST"])
-def create_workflow_ai_setting(request):
+def create_application_settings(request):
     if not request.data:
         return Response("You are missing something", status.HTTP_400_BAD_REQUEST)
 
@@ -1001,10 +986,10 @@ def create_workflow_ai_setting(request):
     )
     if is_exists:
         return Response({"WF SETTING EXISTS": is_exists}, status.HTTP_200_OK)
-    else:
-        try:
-            res = json.loads(
-                save_wf_setting(
+    
+    try:
+        res = json.loads(
+                save_workflow_setting(
                     company_id=company_id,
                     created_by=request.data["created_by"],
                     data_type=request.data["data_type"],
@@ -1023,67 +1008,56 @@ def create_workflow_ai_setting(request):
                     portfolio=request.data["Portfolio_Choice"],
                     theme_color=request.data["theme_color"],
                 )
-            )
-        except Exception as e:
-            print(e)
-            return Response(
-                "Failed to Save Workflow Setting", status.HTTP_500_INTERNAL_SERVER_ERROR
-            )
-
+        )
         if res["isSuccess"]:
-            return Response(
+                return Response(
                 "You added WorkflowAI settings for your organization",
                 status.HTTP_201_CREATED,
             )
+    except Exception as e:
+            return Response(
+                 status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
 
-        return Response(
-            "Failed to Save Workflow Setting", status.HTTP_500_INTERNAL_SERVER_ERROR
-        )
+
 
 
 @api_view(["GET"])
 def all_workflow_ai_setting(request, company_id, data_type="Real_data"):
     """Get All WF AI"""
     all_setting = get_wfai_setting_list(company_id, data_type)
-    try:
-        return Response(
+    return Response(
             all_setting,
             status.HTTP_200_OK,
         )
-    except:
-        return Response(
-            "Failed to Get WF AI Data", status.HTTP_500_INTERNAL_SERVER_ERROR
-        )
+    
 
 
 @api_view(["GET"])
 def get_workflow_ai_setting(request, wf_setting_id):
     """Get All WF AI"""
-    setting = get_wf_setting_object(wf_setting_id)
-    try:
-        return Response(setting, status.HTTP_200_OK)
-    except:
-        return Response("Error getting settings", status.HTTP_500_INTERNAL_SERVER_ERROR)
-
+    setting = get_workflow_setting_object(wf_setting_id)
+    return Response(setting, status.HTTP_200_OK)
+   
 
 @api_view(["POST"])
-def update_workflow_ai_setting(request):
+def update_application_settings(request):
     """Update workflow Setting"""
     form = request.data
     if not form:
         return Response("Workflow Data is Required", status.HTTP_400_BAD_REQUEST)
 
-    old_wf_setting = get_wf_setting_object(form["wf_setting_id"])
+    old_wf_setting = get_workflow_setting_object(form["wf_setting_id"])
     for key, new_value in form.items():
         if key in old_wf_setting:
             old_wf_setting[key] = new_value
 
-    updt_wf = json.loads(wf_setting_update(form["wf_setting_id"], old_wf_setting))
+    updt_wf = json.loads(update_workflow_setting(form["wf_setting_id"], old_wf_setting))
 
     if updt_wf["isSuccess"]:
-        return Response("Workflow Setting Updated", status.HTTP_201_CREATED)
+        return Response("Workflow Setting Updated", status.HTTP_200_OK)
 
-    return Response("Failed to Update Workflow", status.HTTP_200_OK)
+    return Response(status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 @api_view(["GET"])
