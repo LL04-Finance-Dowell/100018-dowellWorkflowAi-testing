@@ -152,10 +152,7 @@ def document_processing(request):
             return Response(
                 "Process closed and marked as complete!", status.HTTP_200_OK
             )
-        return Response(
-            "Failed to mark process and completed!",
-            status.HTTP_500_INTERNAL_SERVER_ERROR,
-        )
+        return Response(status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     if action == "cancel_process_before_completion":
         process = get_process_object(request.data["process_id"])
@@ -170,7 +167,7 @@ def document_processing(request):
         )
         if res["isSuccess"]:
             return Response("Process has been cancelled!", status.HTTP_200_OK)
-        return Response("Failed cancel process!", status.HTTP_500_INTERNAL_SERVER_ERROR)
+        return Response(status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     if action == "pause_processing_after_completing_ongoing_step":
         return Response(
@@ -189,10 +186,7 @@ def get_process_link(request, process_id):
     links_info = get_links_object_by_process_id(process_id)[0]
     user = request.data["user_name"]
     if not links_info:
-        return Response(
-            "Could not fetch process info at this time",
-            status.HTTP_500_INTERNAL_SERVER_ERROR,
-        )
+        return Response(status.HTTP_500_INTERNAL_SERVER_ERROR)
     for link in links_info["links"]:
         if user in link:
             return Response(link[user], status.HTTP_200_OK)
