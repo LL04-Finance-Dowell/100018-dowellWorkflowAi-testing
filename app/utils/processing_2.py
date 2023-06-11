@@ -89,15 +89,15 @@ def verify(process, auth_step_role, location_data, user_name, user_type):
             match = True
 
     if not match:
-        return Response("Access could not be set for user", status.HTTP_403_FORBIDDEN)
+        return Response("access could not be set for user", status.HTTP_403_FORBIDDEN)
     if not clone_id:
-        return Response("Document not ready for access", status.HTTP_403_FORBIDDEN)
+        return Response("document not ready for access!", status.HTTP_403_FORBIDDEN)
     if not right:
-        return Response("Missing step access rights!", status.HTTP_403_FORBIDDEN)
+        return Response("missing step access rights!", status.HTTP_403_FORBIDDEN)
     if not role:
-        return Response("Authorized role not found!", status.HTTP_403_FORBIDDEN)
+        return Response("authorized role not found!", status.HTTP_403_FORBIDDEN)
     if not doc_map:
-        return Response("Document access map  not found!", status.HTTP_403_FORBIDDEN)
+        return Response("document access map not found!", status.HTTP_403_FORBIDDEN)
 
     item_type = process["process_type"]
     item_flag = None

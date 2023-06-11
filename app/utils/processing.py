@@ -250,6 +250,7 @@ class Background:
     viewers = []
     copies = []
     clones = []
+    d_states = False
 
     def __init__(self, process, item_type, item_id, role, username):
         self.process = process
@@ -276,22 +277,25 @@ class Background:
         return
 
     @classmethod
-    def request_task_for_users(cls, item_id, parent_item_id, process_id, users, clone_map):
-        cls.copies += [
-            {
-                u["member"]: cloning_document(
-                    item_id,
-                    u["member"],
-                    parent_item_id,
-                    process_id,
-                )
-            }
-            for u in users
-        ]
-        for cp in cls.copies:
-            clone_map["stepDocumentCloneMap"].append(cp)
-
-        return cls.copies
+    def request_task_for_users(cls, item_id, parent_item_id, process_id, users, clonemap):
+        try:
+            cls.copies += [
+                {
+                    u: cloning_document(
+                        item_id,
+                        u,
+                        parent_item_id,
+                        process_id,
+                    )
+                }
+                for u in users
+            ]
+            for cp in cls.copies:
+                clonemap.append(cp)
+            return cls.copies
+        except Exception as e:
+            print(e)
+            return
 
     @classmethod
     def check_first_step_state(cls, process):
@@ -308,7 +312,7 @@ class Background:
                     if dmap.get(usr) is not None:
                         cls.clones.append(dmap.get(usr))
 
-            d_states = all(cls.check_state(cls.clones))
+            Background.d_states = all(cls.check_items_state(cls.clones))
 
         if public and users == []:
             for usr in public:
@@ -316,10 +320,11 @@ class Background:
                     if dmap.get(usr) is not None:
                         cls.clones.append(dmap.get(usr))
 
-            d_states = all(cls.check_state(cls.clones))
+            Background.d_states = all(cls.check_items_state(cls.clones))
 
-        return d_states
+        return Background.d_states
 
+    @staticmethod
     def update_parent_item_clone_list(parent_item_id, clone_ids):
         document = get_document_object(parent_item_id)
         clone_list = document["clone_list"]
@@ -344,6 +349,7 @@ class Background:
 
             else:
                 if no_of_steps == 2:
+                    print("second step")
                     step = self.process["process_steps"][1]
                     users = [
                         m["member"]
@@ -358,7 +364,7 @@ class Background:
                                 if dmap.get(usr) is not None:
                                     Background.clones.append(dmap.get(usr))
 
-                        d_states = all(Background.check_items_state(Background.clones))
+                        Background.d_states = all(Background.check_items_state(Background.clones))
 
                     else:
                         if step["stepTaskType"] == "assign_task":
@@ -374,9 +380,9 @@ class Background:
                                 self.item_id,
                                 self.process["parent_item_id"],
                                 self.process["_id"],
+                                users,
                                 step["stepDocumentCloneMap"],
                             )
-
                             Background.update_parent_item_clone_list(
                                 self.process["parent_item_id"],
                                 [d["member"] for d in copies if "member" in d],
@@ -388,7 +394,7 @@ class Background:
                         state=self.process["processing_state"],
                     )
 
-                    if not d_states:
+                    if not Background.d_states:
                         if no_of_steps == 3:
                             step = self.process["process_steps"][2]
                             users = [
@@ -404,7 +410,7 @@ class Background:
                                         if dmap.get(usr) is not None:
                                             Background.clones.append(dmap.get(usr))
 
-                                d_states = all(
+                                Background.d_states = all(
                                     Background.check_items_state(Background.clones)
                                 )
 
@@ -435,7 +441,8 @@ class Background:
                                 steps=self.process["process_steps"],
                                 state=self.process["processing_state"],
                             )
-        except:
+        except Exception as e:
+            print("got error", e)
             finalize_item(self.item_id, "processing", self.item_type)
             return
 
