@@ -483,7 +483,6 @@ class Background:
 
             else:
                 if no_of_steps == 2:
-                    print("second step")
                     step = self.process["process_steps"][1]
                     users = [
                         m["member"]
