@@ -187,7 +187,9 @@ def document_processing(request):
 @api_view(["POST"])
 def get_process_link(request, process_id):
     """get a link process for person having notifications"""
-    links_info = get_links_object_by_process_id(process_id)[0]
+
+    links_info = get_links_object_by_process_id(process_id)
+
     user = request.data["user_name"]
     if not links_info:
         return Response(
@@ -257,7 +259,7 @@ def finalize_or_reject(request, process_id):
 
     if request.data["action"] == "finalize" or request.data["action"] == "reject":
         return Response("Invalid processing action", status.HTTP_400_BAD_REQUEST)
-    
+
     check, current_state = checks.is_finalized(item_id, item_type)
     if check and current_state != "processing":
         return Response(f"Already processed as {current_state}!", status.HTTP_200_OK)
@@ -379,9 +381,11 @@ def create_workflow_setting(request):
     owner_name = form["owner_name"]
     username = form["username"]
     portfolio_name = form["portfolio_name"]
-    processes = [{"version": "1.0.0", "flag": "enable", "process": form["proccess"]}]
+    processes = [{"version": "1.0.0",
+                  "flag": "enable", "process": form["proccess"]}]
     wf_set = json.loads(
-        save_wf_setting(company_id, owner_name, username, portfolio_name, processes)
+        save_wf_setting(company_id, owner_name, username,
+                        portfolio_name, processes)
     )
     if wf_set["isSuccess"]:
         return Response(
@@ -412,7 +416,8 @@ def get_wf_ai_setting(request, wf_setting_id):
             return Response("Workflow Data is Required", status.HTTP_400_BAD_REQUEST)
 
         old_wf_setting = get_wf_setting_object(wf_setting_id)
-        version = setting.version_control(old_wf_setting["processes"][-1]["version"])
+        version = setting.version_control(
+            old_wf_setting["processes"][-1]["version"])
         old_wf_setting["processes"][-1]["flag"] = "disable"
 
         old_wf_setting["processes"].append(
@@ -577,7 +582,8 @@ def get_document_content(request, document_id):
     if not validate_id(document_id):
         return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
     content = []
-    my_dict = ast.literal_eval(get_document_object(document_id)["content"])[0][0]
+    my_dict = ast.literal_eval(
+        get_document_object(document_id)["content"])[0][0]
     all_keys = [i for i in my_dict.keys()]
     for i in all_keys:
         temp_list = []
@@ -585,7 +591,8 @@ def get_document_content(request, document_id):
             if j["type"] == "CONTAINER_INPUT":
                 container_list = []
                 for item in j["data"]:
-                    container_list.append({"id": item["id"], "data": item["data"]})
+                    container_list.append(
+                        {"id": item["id"], "data": item["data"]})
                 temp_list.append({"id": j["id"], "data": container_list})
             else:
                 temp_list.append({"id": j["id"], "data": j["data"]})
@@ -601,7 +608,8 @@ def get_document_content(request, document_id):
                 {
                     key: sorted(
                         dicts[key],
-                        key=lambda x: int([a for a in re.findall("\d+", x["id"])][-1]),
+                        key=lambda x: int(
+                            [a for a in re.findall("\d+", x["id"])][-1]),
                     )
                 }
             )
@@ -949,7 +957,8 @@ def get_completed_documents(request, company_id):
         return Response({"documents": []}, status=status.HTTP_200_OK)
     if len(document_list) > 0:
         completed = list(
-            filter(lambda i: i.get("document_state") == "finalized", document_list)
+            filter(lambda i: i.get("document_state")
+                   == "finalized", document_list)
         )
         return Response(
             {"documents": completed},
@@ -1078,7 +1087,8 @@ def update_workflow_ai_setting(request):
         if key in old_wf_setting:
             old_wf_setting[key] = new_value
 
-    updt_wf = json.loads(wf_setting_update(form["wf_setting_id"], old_wf_setting))
+    updt_wf = json.loads(wf_setting_update(
+        form["wf_setting_id"], old_wf_setting))
 
     if updt_wf["isSuccess"]:
         return Response("Workflow Setting Updated", status.HTTP_201_CREATED)
