@@ -10,7 +10,7 @@ from django.core.cache import cache
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from threading import Thread
-from app.utils.processing import Process, start_process, Background
+from app.processing import HandleProcess, Process, Background
 from app.utils import checks, processing_2
 from app.utils.helpers import (
     access_editor,
@@ -176,7 +176,10 @@ def document_processing(request):
         )
 
     if data:
-        return start_process(data)
+        verification_links = HandleProcess(data).start()
+        if verification_links:
+            return Response(verification_links, status.HTTP_200_OK)
+
     return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
 
 
@@ -207,6 +210,7 @@ def process_verification(request):
     auth_role = request.data["auth_role"]
     auth_portfolio = request.data["auth_portfolio"]
     token = request.data["token"]
+    org_name = request.data["org_name"]
     link_object = get_link_object(token)
     if not link_object:
         return Response(status.HTTP_500_INTERNAL_SERVER_ERROR)
@@ -236,7 +240,14 @@ def process_verification(request):
         "country": request.data["country"],
         "continent": request.data["continent"],
     }
-    return processing_2.verify(process, auth_role, location_data, auth_user, user_type)
+    handler = HandleProcess(process)
+    editor_link = handler.verify(
+        auth_role, location_data, auth_user, user_type, org_name
+    )
+    if editor_link:
+        return Response(editor_link, status.HTTP_200_OK)
+
+    return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
 
 
 @api_view(["POST"])
@@ -371,8 +382,14 @@ def create_workflow_setting(request):
     processes = [{"version": "1.0.0",
                   "flag": "enable", "process": form["proccess"]}]
     wf_set = json.loads(
+<<<<<<< HEAD
         save_workflow_setting(company_id, owner_name,
                               username, portfolio_name, processes)
+=======
+        save_workflow_setting(
+            company_id, owner_name, username, portfolio_name, processes
+        )
+>>>>>>> d564f8ab66449f07c74c49442ee7aca97bd9d631
     )
     if wf_set["isSuccess"]:
         return Response(
@@ -1018,9 +1035,13 @@ def create_application_settings(request):
                 status.HTTP_201_CREATED,
             )
     except Exception as e:
+<<<<<<< HEAD
         return Response(
             status.HTTP_500_INTERNAL_SERVER_ERROR
         )
+=======
+        return Response(status.HTTP_500_INTERNAL_SERVER_ERROR)
+>>>>>>> d564f8ab66449f07c74c49442ee7aca97bd9d631
 
 
 @api_view(["GET"])

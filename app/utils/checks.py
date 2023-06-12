@@ -7,7 +7,7 @@ from app.utils.mongo_db_connection import (
     get_process_object,
 )
 
-from .helpers import public_login, register_user_access
+from .helpers import register_user_access
 
 
 def is_finalized(item_id, item_type):
@@ -244,9 +244,9 @@ def user_presence(token, user_name, portfolio):
     return None, link_info["process_id"], link_info["auth_role"]
 
 
-def is_public_person_valid(qrid, org_name):
-    valid = public_login(qrid, org_name)
-    return valid
+# def is_public_person_valid(qrid, org_name):
+#     valid = public_login(qrid, org_name)
+#     return valid
 
 
 def is_wf_setting_exist(comp_id, org_name,data_type):

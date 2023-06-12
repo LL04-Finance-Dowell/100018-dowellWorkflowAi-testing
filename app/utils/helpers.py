@@ -1,7 +1,6 @@
 import json
 import bson
 import requests
-from django.conf import settings
 
 from app.constants import (
     EDITOR_API,
@@ -42,8 +41,8 @@ def delete_notification(notify_id):
     return requests.delete(f"{NOTIFICATION_API}/{notify_id}")
 
 
-def public_login(qrid, org_name):
-    """Find out if a public link has been used or not"""
+def register_public_login(qrid, org_name):
+    """Register a public QRID as used"""
     res = requests.post(
         url=PUBLIC_LOGIN_API,
         data=json.dumps(
