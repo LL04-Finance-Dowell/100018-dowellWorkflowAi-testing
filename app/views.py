@@ -243,6 +243,7 @@ def process_verification(request):
         "country": request.data["country"],
         "continent": request.data["continent"],
     }
+    process["org_name"] = org_name
     handler = HandleProcess(process)
     editor_link = handler.verify(
         auth_role, location_data, auth_user, user_type, org_name
