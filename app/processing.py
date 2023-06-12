@@ -1,21 +1,33 @@
 import json
 from threading import Thread
 
-from rest_framework import status
-from rest_framework.response import Response
+import requests
 
-from app.utils.helpers import cloning_document, register_user_access
+from app.constants import EDITOR_API
+from app.utils.checks import (
+    display_right,
+    location_right,
+    step_processing_order,
+    time_limit_right,
+)
+from app.utils.helpers import (
+    cloning_document,
+    register_public_login,
+    register_user_access,
+)
 from app.utils.mongo_db_connection import (
     authorize,
     finalize_item,
     get_document_object,
+    get_template_object,
+    save_process,
     save_process_links,
     save_process_qrcodes,
-    save_process,
     update_document_clone,
     update_process,
 )
 from app.utils.verification import Verification
+
 
 class Process:
     process_kind = "original"
@@ -128,122 +140,242 @@ class Process:
         return
 
 
-def start_process(process):
-    """Start the processing cycle."""
-    verification = Verification(
-        process["_id"],
-        process["parent_item_id"],
-        process["company_id"],
-        process["process_type"],
-        process["org_name"],
-    )
+class HandleProcess(Verification):
     links = []
     public_links = []
     qrcodes = []
 
-    for step in process["process_steps"]:
-        for member in step.get("stepPublicMembers", []):
-            link, qrcode = verification.user_team_public_data(
-                member["member"],
-                step.get("stepRole"),
-                member["portfolio"],
-                "public",
-            )
-            links.append({member["member"]: link})
-            qrcodes.append({member["member"]: qrcode})
-
-        for member in step.get("stepTeamMembers", []):
-            link, qrcode = verification.user_team_public_data(
-                member["member"],
-                step.get("stepRole"),
-                member["portfolio"],
-                "team",
-            )
-            links.append({member["member"]: link})
-            qrcodes.append({member["member"]: qrcode})
-
-        for member in step.get("stepUserMembers", []):
-            link, qrcode = verification.user_team_public_data(
-                member["member"],
-                step.get("stepRole"),
-                member["portfolio"],
-                "user",
-            )
-            links.append({member["member"]: link})
-            qrcodes.append({member["member"]: qrcode})
-
-        public_users = [m["member"] for m in step.get("stepPublicMembers", [])]
-        if public_users:
-            public_portfolio = step.get("stepPublicMembers", [])[
-                0].get("portfolio")
-            link, qrcode = verification.public_bulk_data(
-                public_users,
-                step.get("stepRole"),
-                public_portfolio,
-                "bulk_public",
-            )
-            public_links.append({public_portfolio: link})
-
-    viewers = [
-        member["member"]
-        for member in process["process_steps"][0].get("stepTeamMembers", [])
-        + process["process_steps"][0].get("stepUserMembers", [])
-
-
-    ]
-    public_viewers = [m["member"]
-                      for m in process["process_steps"][0].get("stepPublicMembers", [])]
-   
-    doc_id = process["parent_item_id"]
-    if len(viewers) or len(public_viewers) > 0:
-        clone_id = cloning_document(doc_id, viewers, doc_id, process["_id"])
-        clone_ids = [clone_id]
-
-        for user in viewers:
-            process["process_steps"][0].get("stepDocumentCloneMap").append(
-                {user: clone_id}
-            )
-        public_clone_ids = []
-
-        for public_user in public_viewers:
-            public_clone_ids.append({public_user: cloning_document(
-                doc_id, public_user, doc_id, process["_id"])})
-
-        process["process_steps"][0].get(
-            "stepDocumentCloneMap").extend(public_clone_ids)
-        clone_ids.extend(public_clone_ids)
-        Thread(
-            target=lambda: save_process_links(
-                links=links,
-                process_id=process["_id"],
-                item_id=clone_ids,
-                company_id=process["company_id"],
-            )
-        ).start()
-
-        Thread(
-            target=lambda: update_process(
-                process_id=process["_id"],
-                steps=process["process_steps"],
-                state="processing",
-            )
-        ).start()
-
-        Thread(
-            target=lambda: save_process_qrcodes(
-                qrcodes,
-                process["_id"],
-                clone_ids,
-                process["processing_action"],
-                process["process_title"],
-                process["company_id"],
-            )
-        ).start()
-        return Response(
-            {"links": links, "qrcodes": qrcodes,  "public_links": public_links},
-            status.HTTP_200_OK,
+    def __init__(self, process):
+        self.process = process
+        Verification.__init__(
+            process["_id"],
+            process["parent_item_id"],
+            process["company_id"],
+            process["process_type"],
+            process["org_name"],
         )
-    return Response("processing failed!", status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    @staticmethod
+    def get_editor_link(payload):
+        link = requests.post(
+            EDITOR_API,
+            data=json.dumps(payload),
+            headers={"Content-Type": "application/json"},
+        )
+        return link.json()
+
+    @staticmethod
+    def prepare_document_for_step_one_users(step, parent_item_id, process_id):
+        users = [
+            m["member"]
+            for m in step.get("stepTeamMembers", []) + step.get("stepUserMembers", [])
+        ]
+        public = [m["member"] for m in step.get("stepPublicMembers", [])]
+        if users:
+            clone_id = cloning_document(
+                parent_item_id, users, parent_item_id, process_id
+            )
+            clone_ids = [clone_id]
+
+            for u in users:
+                step.get("stepDocumentCloneMap").append({u: clone_id})
+
+        if public:
+            public_clone_ids = []
+            for u in public:
+                public_clone_ids.append(
+                    {u: cloning_document(parent_item_id, u, parent_item_id, process_id)}
+                )
+
+            step.get("stepDocumentCloneMap").extend(public_clone_ids)
+            clone_ids.extend(public_clone_ids)
+
+        return clone_ids
+
+    def start(self):
+        process_id = self.process["_id"]
+        company_id = self.process["company_id"]
+        steps = self.process["process_steps"]
+        for step in steps:
+            for member in step.get("stepPublicMembers", []):
+                link, qrcode = HandleProcess.user_team_public_data(
+                    member["member"],
+                    step.get("stepRole"),
+                    member["portfolio"],
+                    "public",
+                )
+                HandleProcess.links.append({member["member"]: link})
+                HandleProcess.qrcodes.append({member["member"]: qrcode})
+
+            for member in step.get("stepTeamMembers", []):
+                link, qrcode = HandleProcess.user_team_public_data(
+                    member["member"],
+                    step.get("stepRole"),
+                    member["portfolio"],
+                    "team",
+                )
+                HandleProcess.links.append({member["member"]: link})
+                HandleProcess.qrcodes.append({member["member"]: qrcode})
+
+            for member in step.get("stepUserMembers", []):
+                link, qrcode = HandleProcess.user_team_public_data(
+                    member["member"],
+                    step.get("stepRole"),
+                    member["portfolio"],
+                    "user",
+                )
+                HandleProcess.links.append({member["member"]: link})
+                HandleProcess.qrcodes.append({member["member"]: qrcode})
+
+            public_users = [m["member"] for m in step.get("stepPublicMembers", [])]
+            if public_users:
+                public_portfolio = step.get("stepPublicMembers", [])[0].get("portfolio")
+                link, qrcode = HandleProcess.public_bulk_data(
+                    public_users,
+                    step.get("stepRole"),
+                    public_portfolio,
+                    "bulk_public",
+                )
+                HandleProcess.public_links.append({public_portfolio: link})
+
+            clone_ids = HandleProcess.prepare_document_for_step_one_users(
+                steps[0], self.process["parent_item_id"], process_id
+            )
+            Thread(
+                target=lambda: save_process_links(
+                    HandleProcess.links,
+                    process_id,
+                    clone_ids,
+                    company_id,
+                )
+            ).start()
+
+            Thread(
+                target=lambda: update_process(
+                    process_id,
+                    steps,
+                    "processing",
+                )
+            ).start()
+
+            Thread(
+                target=lambda: save_process_qrcodes(
+                    HandleProcess.qrcodes,
+                    self.process["_id"],
+                    clone_ids,
+                    self.process["processing_action"],
+                    self.process["process_title"],
+                    self.process["company_id"],
+                )
+            ).start()
+
+            return (
+                {
+                    "links": HandleProcess.links,
+                    "qrcodes": HandleProcess.qrcodes,
+                    "public_links": HandleProcess.public_links,
+                },
+            )
+
+        return
+
+    def verify(self, auth_step_role, location_data, user_name, user_type, org_name):
+        clone_id = None
+        process_id = self.process["_id"]
+        for step in self.process["process_steps"]:
+            if step.get("stepRole") == auth_step_role:
+                if step.get("stepLocation"):
+                    if not location_right(
+                        step.get("stepLocation"),
+                        step.get("stepContinent"),
+                        location_data["continent"],
+                        step.get("stepCountry"),
+                        location_data["country"],
+                        step.get("stepCity"),
+                        location_data["city"],
+                    ):
+                        return
+                if step.get("stepDisplay"):
+                    if not display_right(step.get("stepDisplay")):
+                        return
+                if step.get("stepTimeLimit"):
+                    if not time_limit_right(
+                        step.get("stepTime"),
+                        step.get("stepTimeLimit"),
+                        step.get("stepStartTime"),
+                        step.get("stepEndTime"),
+                        self.process["created_at"],
+                    ):
+                        return
+                if step.get("stepProcessingOrder"):
+                    if not step_processing_order(
+                        step.get("stepProcessingOrder"),
+                        process_id,
+                        step.get("stepRole"),
+                    ):
+                        return
+                if user_type == "public":
+                    user_name = user_name[0]
+                if any(
+                    user_name in d_map for d_map in step.get("stepDocumentCloneMap")
+                ):
+                    for d_map in step["stepDocumentCloneMap"]:
+                        if d_map.get(user_name) is not None:
+                            clone_id = d_map.get(user_name)
+
+                doc_map = step["stepDocumentMap"]
+                right = step["stepRights"]
+                role = step["stepRole"]
+                user = user_name
+                match = True
+
+        if not match:
+            return
+        item_type = self.process["process_type"]
+        item_flag = None
+        if item_type == "document":
+            collection = "DocumentReports"
+            document = "documentreports"
+            field = "document_name"
+            team_member_id = "11689044433"
+            item_flag = get_document_object(clone_id)["document_state"]
+
+        if item_type == "template":
+            collection = "TemplateReports"
+            document = "templatereports"
+            field = "template_name"
+            team_member_id = "22689044433"
+            item_flag = get_template_object(clone_id)["document_state"]
+
+        editor_link = HandleProcess.get_editor_link(
+            {
+                "product_name": "Workflow AI",
+                "details": {
+                    "field": field,
+                    "cluster": "Documents",
+                    "database": "Documentation",
+                    "collection": collection,
+                    "document": document,
+                    "team_member_ID": team_member_id,
+                    "function_ID": "ABCDE",
+                    "command": "update",
+                    "flag": "signing",
+                    "_id": clone_id,
+                    "action": item_type,
+                    "authorized": user,
+                    "document_map": doc_map,
+                    "document_right": right,
+                    "document_flag": item_flag,
+                    "role": role,
+                    "process_id": process_id,
+                    "update_field": {"document_name": "", "content": "", "page": ""},
+                },
+            }
+        )
+        if user_type == "public" and editor_link:
+            Thread(target=lambda: register_public_login(user_name[0], org_name))
+
+        return editor_link
 
 
 class Background:
@@ -277,7 +409,9 @@ class Background:
         return
 
     @classmethod
-    def request_task_for_users(cls, item_id, parent_item_id, process_id, users, clonemap):
+    def request_task_for_users(
+        cls, item_id, parent_item_id, process_id, users, clonemap
+    ):
         try:
             cls.copies += [
                 {
@@ -364,7 +498,9 @@ class Background:
                                 if dmap.get(usr) is not None:
                                     Background.clones.append(dmap.get(usr))
 
-                        Background.d_states = all(Background.check_items_state(Background.clones))
+                        Background.d_states = all(
+                            Background.check_items_state(Background.clones)
+                        )
 
                     else:
                         if step["stepTaskType"] == "assign_task":

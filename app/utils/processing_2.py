@@ -8,7 +8,7 @@ from rest_framework.response import Response
 from app.constants import EDITOR_API
 
 from . import checks
-from .helpers import cloning_document, register_user_access
+from .helpers import cloning_document, register_public_login, register_user_access
 
 from .mongo_db_connection import (
     authorize,
@@ -19,18 +19,7 @@ from .mongo_db_connection import (
     update_process,
 )
 
-def verify(process, auth_step_role, location_data, user_name, user_type):
-    # check if the prev step is done or not
-    # is public valid
-    # if user_type == "public":
-    #     if not checks.is_public_person_valid(user_portfolio, org_name):
-    #         return Response(
-    #             "You have already accessed this document", status.HTTP_200_OK
-    #         )
-    # if user_type == "public":
-    #     if not isinstance(user_name, list):
-    #         return Response("This public link is invalid!", status.HTTP_400_BAD_REQUEST)
-
+def verify(process, auth_step_role, location_data, user_name, user_type, org_name):
     clone_id = None
     for step in process["process_steps"]:
         if step.get("stepRole") == auth_step_role:
@@ -145,6 +134,9 @@ def verify(process, auth_step_role, location_data, user_name, user_type):
             data=json.dumps(payload),
             headers={"Content-Type": "application/json"},
         )
+        if user_type == "public":
+            Thread(target= lambda: register_public_login(user_name[0], org_name))
+            
         return Response(link.json(), status.HTTP_200_OK)
     
     except ConnectionError:
