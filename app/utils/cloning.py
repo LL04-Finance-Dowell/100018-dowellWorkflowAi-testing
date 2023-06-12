@@ -6,8 +6,8 @@ from app.utils.mongo_db_connection import (
     get_wf_object,
     save_document,
     save_template,
-    save_wf,
-    save_wf_process,
+    save_workflow,
+    save_process,
 )
 
 
@@ -23,7 +23,7 @@ class Clone:
     def workflow(self, workflow_id):
         workflow = get_wf_object(workflow_id)
         save_res = json.loads(
-            save_wf(
+            save_workflow(
                 workflow["workflows"],
                 self.company_id,
                 self.created_by,
@@ -52,7 +52,7 @@ class Clone:
     def process(self):
         process = get_process_object(self.process_id)
         save_res = json.loads(
-            save_wf_process(
+            save_process(
                 process["process_title"],
                 process["process_steps"],
                 self.created_by,

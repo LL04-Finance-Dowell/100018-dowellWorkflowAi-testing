@@ -21,7 +21,7 @@ from .mongo_db_connection import (
     get_process_object,
     get_wf_object,
     save_document,
-    save_wf_process,
+    save_process,
 )
 
 headers = {"Content-Type": "application/json"}
@@ -89,7 +89,8 @@ def cloning_document(document_id, auth_viewers, parent_id, process_id):
                 process_id=process_id,
             )
         )
-    except RuntimeError:
+    except Exception as e:
+        print(e)
         return
     return save_res["inserted_id"]
 
@@ -99,7 +100,7 @@ def cloning_process(process_id, created_by, creator_portfolio):
     try:
         process = get_process_object(process_id)
         save_res = json.loads(
-            save_wf_process(
+            save_process(
                 process["process_title"],
                 process["process_steps"],
                 created_by,
@@ -113,7 +114,8 @@ def cloning_process(process_id, created_by, creator_portfolio):
                 "clone",
             )
         )
-    except:
+    except Exception as e:
+        print(e)
         return
     return save_res["inserted_id"]
 
@@ -154,7 +156,8 @@ def access_editor(item_id, item_type):
     }
     try:
         response = requests.post(EDITOR_API, data=json.dumps(payload), headers=headers)
-    except ConnectionError():
+    except Exception as e:
+        print(e)
         return
     return response.json()
 

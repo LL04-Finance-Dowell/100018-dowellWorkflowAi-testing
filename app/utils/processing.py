@@ -7,13 +7,13 @@ from rest_framework.response import Response
 from app.utils.helpers import cloning_document, register_user_access
 from app.utils.mongo_db_connection import (
     authorize,
-    finalize,
+    finalize_item,
     get_document_object,
     save_process_links,
     save_process_qrcodes,
-    save_wf_process,
+    save_process,
     update_document_clone,
-    update_wf_process,
+    update_process,
 )
 from app.utils.verification import Verification
 
@@ -50,7 +50,7 @@ class Process:
 
     def normal_process(self, action):
         res = json.loads(
-            save_wf_process(
+            save_process(
                 self.process_title,
                 self.process_steps,
                 self.created_by,
@@ -82,7 +82,7 @@ class Process:
     def test_process(self, action):
         data_type = "Testing_Data"
         res = json.loads(
-            save_wf_process(
+            save_process(
                 self.process_title,
                 self.process_steps,
                 self.created_by,
@@ -222,7 +222,7 @@ def start_process(process):
         ).start()
 
         Thread(
-            target=lambda: update_wf_process(
+            target=lambda: update_process(
                 process_id=process["_id"],
                 steps=process["process_steps"],
                 state="processing",
@@ -250,6 +250,7 @@ class Background:
     viewers = []
     copies = []
     clones = []
+    d_states = False
 
     def __init__(self, process, item_type, item_id, role, username):
         self.process = process
@@ -259,11 +260,11 @@ class Background:
         self.username = username
 
     @staticmethod
-    def check_state(items):
+    def check_items_state(items):
         return [get_document_object(i)["document_state"] == "finalized" for i in items]
 
     @classmethod
-    def assign_task(cls, clone_map, users, process_id, item_type):
+    def assign_task_to_users(cls, clone_map, users, process_id, item_type):
         for cm in clone_map:
             docs = list(cm.values())
 
@@ -276,25 +277,28 @@ class Background:
         return
 
     @classmethod
-    def request_task(cls, item_id, parent_item_id, process_id, users, clone_map):
-        cls.copies += [
-            {
-                u["member"]: cloning_document(
-                    item_id,
-                    u["member"],
-                    parent_item_id,
-                    process_id,
-                )
-            }
-            for u in users
-        ]
-        for cp in cls.copies:
-            clone_map["stepDocumentCloneMap"].append(cp)
-
-        return cls.copies
+    def request_task_for_users(cls, item_id, parent_item_id, process_id, users, clonemap):
+        try:
+            cls.copies += [
+                {
+                    u: cloning_document(
+                        item_id,
+                        u,
+                        parent_item_id,
+                        process_id,
+                    )
+                }
+                for u in users
+            ]
+            for cp in cls.copies:
+                clonemap.append(cp)
+            return cls.copies
+        except Exception as e:
+            print(e)
+            return
 
     @classmethod
-    def first_step_state(cls, process):
+    def check_first_step_state(cls, process):
         step = process["process_steps"][0]
         public = [m["member"] for m in step.get("stepPublicMembers", [])]
         users = [
@@ -308,7 +312,7 @@ class Background:
                     if dmap.get(usr) is not None:
                         cls.clones.append(dmap.get(usr))
 
-            d_states = all(cls.check_state(cls.clones))
+            Background.d_states = all(cls.check_items_state(cls.clones))
 
         if public and users == []:
             for usr in public:
@@ -316,11 +320,12 @@ class Background:
                     if dmap.get(usr) is not None:
                         cls.clones.append(dmap.get(usr))
 
-            d_states = all(cls.check_state(cls.clones))
+            Background.d_states = all(cls.check_items_state(cls.clones))
 
-        return d_states
+        return Background.d_states
 
-    def update_clone_list(parent_item_id, clone_ids):
+    @staticmethod
+    def update_parent_item_clone_list(parent_item_id, clone_ids):
         document = get_document_object(parent_item_id)
         clone_list = document["clone_list"]
         for c in clone_ids:
@@ -339,11 +344,12 @@ class Background:
             no_of_steps = sum(
                 isinstance(e, dict) for e in self.process["process_steps"]
             )
-            if not Background.first_step_state(self.process):
+            if not Background.check_first_step_state(self.process):
                 return
 
             else:
                 if no_of_steps == 2:
+                    print("second step")
                     step = self.process["process_steps"][1]
                     users = [
                         m["member"]
@@ -358,11 +364,11 @@ class Background:
                                 if dmap.get(usr) is not None:
                                     Background.clones.append(dmap.get(usr))
 
-                        d_states = all(Background.check_state(Background.clones))
+                        Background.d_states = all(Background.check_items_state(Background.clones))
 
                     else:
                         if step["stepTaskType"] == "assign_task":
-                            Background.assign_task(
+                            Background.assign_task_to_users(
                                 step["stepDocumentCloneMap"],
                                 users,
                                 self.process["_id"],
@@ -370,25 +376,25 @@ class Background:
                             )
 
                         if step["stepTaskType"] == "request_for_task":
-                            copies = Background.request_task(
+                            copies = Background.request_task_for_users(
                                 self.item_id,
                                 self.process["parent_item_id"],
                                 self.process["_id"],
+                                users,
                                 step["stepDocumentCloneMap"],
                             )
-
-                            Background.update_clone_list(
+                            Background.update_parent_item_clone_list(
                                 self.process["parent_item_id"],
                                 [d["member"] for d in copies if "member" in d],
                             )
 
-                    update_wf_process(
+                    update_process(
                         process_id=self.process["_id"],
                         steps=self.process["process_steps"],
                         state=self.process["processing_state"],
                     )
 
-                    if not d_states:
+                    if not Background.d_states:
                         if no_of_steps == 3:
                             step = self.process["process_steps"][2]
                             users = [
@@ -404,13 +410,13 @@ class Background:
                                         if dmap.get(usr) is not None:
                                             Background.clones.append(dmap.get(usr))
 
-                                d_states = all(
-                                    Background.check_state(Background.clones)
+                                Background.d_states = all(
+                                    Background.check_items_state(Background.clones)
                                 )
 
                             else:
                                 if step["stepTaskType"] == "assign_task":
-                                    Background.assign_task(
+                                    Background.assign_task_to_users(
                                         step["stepDocumentCloneMap"],
                                         users,
                                         self.process["_id"],
@@ -418,25 +424,26 @@ class Background:
                                     )
 
                                 if step["stepTaskType"] == "request_for_task":
-                                    copies = Background.request_task(
+                                    copies = Background.request_task_for_users(
                                         self.item_id,
                                         self.process["parent_id"],
                                         self.process["_id"],
                                         step["stepDocumentCloneMap"],
                                     )
 
-                                Background.update_clone_list(
+                                Background.update_parent_item_clone_list(
                                     self.process["parent_item_id"],
                                     [d["member"] for d in copies if "member" in d],
                                 )
 
-                            update_wf_process(
+                            update_process(
                                 process_id=self.process["_id"],
                                 steps=self.process["process_steps"],
                                 state=self.process["processing_state"],
                             )
-        except:
-            finalize(self.item_id, "processing", self.item_type)
+        except Exception as e:
+            print("got error", e)
+            finalize_item(self.item_id, "processing", self.item_type)
             return
 
         return

@@ -14,8 +14,9 @@ from .mongo_db_connection import (
     authorize,
     get_document_object,
     get_process_object,
+    get_template_object,
     update_document_clone,
-    update_wf_process,
+    update_process,
 )
 
 def verify(process, auth_step_role, location_data, user_name, user_type):
@@ -80,6 +81,7 @@ def verify(process, auth_step_role, location_data, user_name, user_type):
                 for d_map in step["stepDocumentCloneMap"]:
                     if d_map.get(user_name) is not None:
                         clone_id = d_map.get(user_name)
+
             doc_map = step["stepDocumentMap"]
             right = step["stepRights"]
             role = step["stepRole"]
@@ -87,15 +89,15 @@ def verify(process, auth_step_role, location_data, user_name, user_type):
             match = True
 
     if not match:
-        return Response("Access could not be set for user", status.HTTP_403_FORBIDDEN)
+        return Response("access could not be set for user", status.HTTP_403_FORBIDDEN)
     if not clone_id:
-        return Response("No document to provide access to!", status.HTTP_403_FORBIDDEN)
+        return Response("document not ready for access!", status.HTTP_403_FORBIDDEN)
     if not right:
-        return Response("Missing step access rights!", status.HTTP_403_FORBIDDEN)
+        return Response("missing step access rights!", status.HTTP_403_FORBIDDEN)
     if not role:
-        return Response("Authorized role not found!", status.HTTP_403_FORBIDDEN)
+        return Response("authorized role not found!", status.HTTP_403_FORBIDDEN)
     if not doc_map:
-        return Response("Document access map  not found!", status.HTTP_403_FORBIDDEN)
+        return Response("document access map not found!", status.HTTP_403_FORBIDDEN)
 
     item_type = process["process_type"]
     item_flag = None
@@ -106,12 +108,13 @@ def verify(process, auth_step_role, location_data, user_name, user_type):
         team_member_id = "11689044433"
         item_flag = get_document_object(clone_id)["document_state"]
 
-    # set template
+
     if item_type == "template":
         collection = "TemplateReports"
         document = "templatereports"
         field = "template_name"
         team_member_id = "22689044433"
+        item_flag = get_template_object(clone_id)["document_state"]
 
     payload = {
         "product_name": "Workflow AI",
@@ -124,8 +127,8 @@ def verify(process, auth_step_role, location_data, user_name, user_type):
             "team_member_ID": team_member_id,
             "function_ID": "ABCDE",
             "command": "update",
-            "_id": clone_id,
             "flag": "signing",
+            "_id": clone_id,
             "action": item_type,
             "authorized": user,
             "document_map": doc_map,
@@ -142,9 +145,11 @@ def verify(process, auth_step_role, location_data, user_name, user_type):
             data=json.dumps(payload),
             headers={"Content-Type": "application/json"},
         )
+        return Response(link.json(), status.HTTP_200_OK)
+    
     except ConnectionError:
         return Response( status.HTTP_500_INTERNAL_SERVER_ERROR)
-    return Response(link.json(), status.HTTP_200_OK)
+    
 
 
 def background(process_id, item_id, item_type, authorized_role, user):
@@ -324,7 +329,7 @@ def background(process_id, item_id, item_type, authorized_role, user):
         for cid in clone_ids:
             data.append(cid)
         update_document_clone(document_id=process["parent_item_id"], clone_list=data)
-    update_wf_process(
+    update_process(
         process_id=process["_id"],
         steps=process["process_steps"],
         state=process["processing_state"],

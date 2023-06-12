@@ -11,7 +11,7 @@ from app.utils.mongo_db_connection import (
     save_uuid_hash,
     update_document,
     update_document_clone,
-    update_wf_process,
+    update_process,
     reminder_func,
 )
 
@@ -102,7 +102,7 @@ def process_update(data):
                 mp = [{user: doc_id}]
                 step.get("stepDocumentCloneMap").extend(mp)
 
-    update_wf_process(
+    update_process(
         process_id=process["_id"],
         steps=process["process_steps"],
         state=data["processing_state"],
