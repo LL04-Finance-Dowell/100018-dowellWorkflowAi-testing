@@ -60,7 +60,7 @@ from .constants import EDITOR_API
 
 # from app.utils.notification_cron import send_notification
 
-cron = CronTab(user='uchechukwu')
+cron = CronTab(user='root')
 
 
 @api_view(["POST"])
