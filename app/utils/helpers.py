@@ -1,7 +1,6 @@
 import json
 import bson
 import requests
-from django.conf import settings
 
 from app.constants import (
     EDITOR_API,
@@ -21,7 +20,7 @@ from .mongo_db_connection import (
     get_process_object,
     get_wf_object,
     save_document,
-    save_wf_process,
+    save_process,
 )
 
 headers = {"Content-Type": "application/json"}
@@ -42,8 +41,8 @@ def delete_notification(notify_id):
     return requests.delete(f"{NOTIFICATION_API}/{notify_id}")
 
 
-def public_login(qrid, org_name):
-    """Find out if a public link has been used or not"""
+def register_public_login(qrid, org_name):
+    """Register a public QRID as used"""
     res = requests.post(
         url=PUBLIC_LOGIN_API,
         data=json.dumps(
@@ -73,7 +72,7 @@ def cloning_document(document_id, auth_viewers, parent_id, process_id):
             else []
         )
         document = get_document_object(document_id)
-        document_name = document["document_name"] + " |-"
+        document_name = "~" + document["document_name"] + "~"
         save_res = json.loads(
             save_document(
                 name=document_name,
@@ -89,7 +88,8 @@ def cloning_document(document_id, auth_viewers, parent_id, process_id):
                 process_id=process_id,
             )
         )
-    except RuntimeError:
+    except Exception as e:
+        print(e)
         return
     return save_res["inserted_id"]
 
@@ -99,7 +99,7 @@ def cloning_process(process_id, created_by, creator_portfolio):
     try:
         process = get_process_object(process_id)
         save_res = json.loads(
-            save_wf_process(
+            save_process(
                 process["process_title"],
                 process["process_steps"],
                 created_by,
@@ -113,7 +113,8 @@ def cloning_process(process_id, created_by, creator_portfolio):
                 "clone",
             )
         )
-    except:
+    except Exception as e:
+        print(e)
         return
     return save_res["inserted_id"]
 
@@ -154,7 +155,8 @@ def access_editor(item_id, item_type):
     }
     try:
         response = requests.post(EDITOR_API, data=json.dumps(payload), headers=headers)
-    except ConnectionError():
+    except Exception as e:
+        print(e)
         return
     return response.json()
 

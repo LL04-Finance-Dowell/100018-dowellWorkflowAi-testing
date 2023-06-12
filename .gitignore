@@ -68,6 +68,9 @@ wheels/
 *.manifest 
 *.spec 
 
+#pipfile
+pipfile
+pipfile.lock
 # Installer logs 
 pip-log.txt 
 pip-delete-this-directory.txt 

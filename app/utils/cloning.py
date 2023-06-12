@@ -6,8 +6,8 @@ from app.utils.mongo_db_connection import (
     get_wf_object,
     save_document,
     save_template,
-    save_wf,
-    save_wf_process,
+    save_workflow,
+    save_process,
 )
 
 
@@ -23,7 +23,7 @@ class Clone:
     def workflow(self, workflow_id):
         workflow = get_wf_object(workflow_id)
         save_res = json.loads(
-            save_wf(
+            save_workflow(
                 workflow["workflows"],
                 self.company_id,
                 self.created_by,
@@ -52,7 +52,7 @@ class Clone:
     def process(self):
         process = get_process_object(self.process_id)
         save_res = json.loads(
-            save_wf_process(
+            save_process(
                 process["process_title"],
                 process["process_steps"],
                 self.created_by,
@@ -68,11 +68,11 @@ class Clone:
         )
         return save_res["inserted_id"]
 
-    def document(self, document_id, authorized_viewers, parent_id, process_id):
+    def document(self, document_id, viewers, parent_id, process_id):
         viewers = []
         viewers = (
-            [item for item in set(authorized_viewers)]
-            if authorized_viewers is not None and isinstance(authorized_viewers, list)
+            [i for i in set(viewers)]
+            if viewers is not None and isinstance(viewers, list)
             else []
         )
         document = get_document_object(document_id)

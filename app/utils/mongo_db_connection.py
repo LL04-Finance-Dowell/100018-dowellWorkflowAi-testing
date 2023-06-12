@@ -107,7 +107,7 @@ def get_links_list(company_id):
     )
 
 
-def get_wf_setting_object(wf_setting_id):
+def get_workflow_setting_object(wf_setting_id):
     return get_data_from_data_service(
         *WF_AI_SETTING_LIST,
         "find",
@@ -301,7 +301,7 @@ def save_process_qrcodes(
     return post_to_data_service(payload)
 
 
-def save_wf_process(
+def save_process(
     process_title,
     process_steps,
     created_by,
@@ -341,7 +341,7 @@ def save_wf_process(
     return post_to_data_service(payload)
 
 
-def save_wf(workflows, company_id, created_by, portfolio, data_type, workflow_type):
+def save_workflow(workflows, company_id, created_by, portfolio, data_type, workflow_type):
     payload = json.dumps(
         {
             **WF_CONNECTION_DICT,
@@ -440,7 +440,7 @@ def save_document(
     return post_to_data_service(payload)
 
 
-def save_wf_setting(
+def save_workflow_setting(
     company_id,
     created_by,
     data_type,
@@ -608,7 +608,7 @@ def authorize(document_id, viewers, process, item_type):
     return
 
 
-def finalize(item_id, state, item_type):
+def finalize_item(item_id, state, item_type):
     payload = None
 
     if item_type == "document":
@@ -662,7 +662,7 @@ def finalize(item_id, state, item_type):
     return
 
 
-def update_wf_process(process_id, steps, state):
+def update_process(process_id, steps, state):
     payload = json.dumps(
         {
             **WF_PROCESS_DICT,
@@ -797,7 +797,7 @@ def org_wfai_setting(company_id, org_name, data_type="Real_data"):
     return response_obj
 
 
-def wf_setting_update(wf_setting_id, data):
+def update_workflow_setting(wf_setting_id, data):
     payload = json.dumps(
         {
             **WF_AI_SETTING_DICT,

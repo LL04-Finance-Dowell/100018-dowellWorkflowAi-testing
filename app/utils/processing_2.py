@@ -8,28 +8,18 @@ from rest_framework.response import Response
 from app.constants import EDITOR_API
 
 from . import checks
-from .helpers import cloning_document, register_user_access
+from .helpers import cloning_document, register_public_login, register_user_access
 
 from .mongo_db_connection import (
     authorize,
     get_document_object,
     get_process_object,
+    get_template_object,
     update_document_clone,
-    update_wf_process,
+    update_process,
 )
 
-def verify(process, auth_step_role, location_data, user_name, user_type):
-    # check if the prev step is done or not
-    # is public valid
-    # if user_type == "public":
-    #     if not checks.is_public_person_valid(user_portfolio, org_name):
-    #         return Response(
-    #             "You have already accessed this document", status.HTTP_200_OK
-    #         )
-    # if user_type == "public":
-    #     if not isinstance(user_name, list):
-    #         return Response("This public link is invalid!", status.HTTP_400_BAD_REQUEST)
-
+def verify(process, auth_step_role, location_data, user_name, user_type, org_name):
     clone_id = None
     for step in process["process_steps"]:
         if step.get("stepRole") == auth_step_role:
@@ -80,6 +70,7 @@ def verify(process, auth_step_role, location_data, user_name, user_type):
                 for d_map in step["stepDocumentCloneMap"]:
                     if d_map.get(user_name) is not None:
                         clone_id = d_map.get(user_name)
+
             doc_map = step["stepDocumentMap"]
             right = step["stepRights"]
             role = step["stepRole"]
@@ -87,35 +78,32 @@ def verify(process, auth_step_role, location_data, user_name, user_type):
             match = True
 
     if not match:
-        return Response("Access could not be set for user", status.HTTP_403_FORBIDDEN)
+        return Response("access could not be set for user", status.HTTP_403_FORBIDDEN)
     if not clone_id:
-        return Response("No document to provide access to!", status.HTTP_403_FORBIDDEN)
+        return Response("document not ready for access!", status.HTTP_403_FORBIDDEN)
     if not right:
-        return Response("Missing step access rights!", status.HTTP_403_FORBIDDEN)
+        return Response("missing step access rights!", status.HTTP_403_FORBIDDEN)
     if not role:
-        return Response("Authorized role not found!", status.HTTP_403_FORBIDDEN)
+        return Response("authorized role not found!", status.HTTP_403_FORBIDDEN)
     if not doc_map:
-        return Response("Document access map  not found!", status.HTTP_403_FORBIDDEN)
+        return Response("document access map not found!", status.HTTP_403_FORBIDDEN)
 
     item_type = process["process_type"]
+    item_flag = None
     if item_type == "document":
         collection = "DocumentReports"
         document = "documentreports"
         field = "document_name"
         team_member_id = "11689044433"
-        document_item = get_document_object(clone_id)
-        if document_item["document_state"] == "finalized":
-            item_flag = "finalized"
+        item_flag = get_document_object(clone_id)["document_state"]
 
-        if document_item["document_state"] == "processing":
-            item_flag = "processing"
 
-    # set template
     if item_type == "template":
         collection = "TemplateReports"
         document = "templatereports"
         field = "template_name"
         team_member_id = "22689044433"
+        item_flag = get_template_object(clone_id)["document_state"]
 
     payload = {
         "product_name": "Workflow AI",
@@ -128,8 +116,8 @@ def verify(process, auth_step_role, location_data, user_name, user_type):
             "team_member_ID": team_member_id,
             "function_ID": "ABCDE",
             "command": "update",
-            "_id": clone_id,
             "flag": "signing",
+            "_id": clone_id,
             "action": item_type,
             "authorized": user,
             "document_map": doc_map,
@@ -146,11 +134,14 @@ def verify(process, auth_step_role, location_data, user_name, user_type):
             data=json.dumps(payload),
             headers={"Content-Type": "application/json"},
         )
+        if user_type == "public":
+            Thread(target= lambda: register_public_login(user_name[0], org_name))
+            
+        return Response(link.json(), status.HTTP_200_OK)
+    
     except ConnectionError:
-        return Response(
-            "Error, processing editor link", status.HTTP_500_INTERNAL_SERVER_ERROR
-        )
-    return Response(link.json(), status.HTTP_200_OK)
+        return Response( status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
 
 
 def background(process_id, item_id, item_type, authorized_role, user):
@@ -330,119 +321,10 @@ def background(process_id, item_id, item_type, authorized_role, user):
         for cid in clone_ids:
             data.append(cid)
         update_document_clone(document_id=process["parent_item_id"], clone_list=data)
-    update_wf_process(
+    update_process(
         process_id=process["_id"],
         steps=process["process_steps"],
         state=process["processing_state"],
     )
     return True
 
-
-def check_step_done(step_index, process):
-    """Determine whether a given step's documents are all finalized"""
-    step = process["process_steps"][step_index - 1]
-    step_users = [
-        member["member"]
-        for member in step.get("stepTeamMembers", [])
-        + step.get("stepPublicMembers", [])
-        + step.get("stepUserMembers", [])
-    ]
-
-    clones = []
-    for usr in step_users:
-        for dmap in step["stepDocumentCloneMap"]:
-            if dmap.get(usr) is not None:
-                clones.append(dmap.get(usr))
-        d_states = [
-            get_document_object(c_id)["document_state"] == "finalized"
-            for c_id in clones
-        ]
-        if all(d_states):
-            step["stepState"] = "complete"
-            return True
-    return False
-
-
-def authorize_next_step_users(step_index, process):
-    """Now Authorize users with the current document"""
-    prev_step = step_index - 1
-    for doc_map in process["process_steps"][prev_step]:
-        docs = list(doc_map.values())
-    step = process["process_steps"][step_index]
-    step_users = [
-        member["member"]
-        for member in step.get("stepTeamMembers", [])
-        + step.get("stepPublicMembers", [])
-        + step.get("stepUserMembers", [])
-    ]
-    viewers = []
-    for docid in docs:
-        for usr in step_users:
-            viewers.append(usr)
-            authorize(docid, viewers, process["_id"], process["process_type"])
-            process["process_steps"][step_index]["stepDocumentCloneMap"].append(
-                {usr: docid}
-            )
-
-
-def derive_document_copies_for_step_users(step_index, process, item_id):
-    step = process["process_steps"][step_index]
-    copies = [
-        {
-            member["member"]: cloning_document(
-                item_id,
-                member["member"],
-                process["parent_item_id"],
-                process["_id"],
-            )
-        }
-        for member in step.get("stepTeamMembers", [])
-        + step.get("stepPublicMembers", [])
-        + step.get("stepUserMembers", [])
-    ]
-    for cp in copies:
-        step["stepDocumentCloneMap"].append(cp)
-    return copies
-
-
-def background2(process_id, item_id):
-    try:
-        process = get_process_object(process_id)
-        num_process_steps = sum(
-            isinstance(element, dict) for element in process["process_steps"]
-        )
-        if num_process_steps == 1:
-            if check_step_done(num_process_steps, process):
-                return True
-        if num_process_steps == 2:
-            if check_step_done(num_process_steps, process):
-                if check_step_done(num_process_steps, process):
-                    return True
-                else:
-                    if step["stepTaskType"] == "assign_task":
-                        authorize_next_step_users(num_process_steps, process)
-
-                    if step["stepTaskType"] == "request_for_task":
-                        document_copies = derive_document_copies_for_step_users(
-                            num_process_steps, process, item_id
-                        )
-    except:
-        return False
-    clone_ids = [d["member"] for d in document_copies if "member" in d]
-    if clone_ids:
-        document = get_document_object(document_id=process["parent_item_id"])
-        data = [cid for cid in document["clone_list"]]
-        update_document_clone(document_id=process["parent_item_id"], clone_list=data)
-    step_doc_states = [check_step_done(i, process) for i in num_process_steps]
-    if all(step_doc_states):
-        new_processing_state = "completed"
-    res = json.loads(
-        update_wf_process(
-            process_id=process["_id"],
-            steps=process["process_steps"],
-            state=new_processing_state,
-        )
-    )
-    if res["isSuccess"]:
-        return True
-    return False
