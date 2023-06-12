@@ -147,7 +147,7 @@ class HandleProcess(Verification):
 
     def __init__(self, process):
         self.process = process
-        Verification.__init__(
+        super().__init__(
             process["_id"],
             process["parent_item_id"],
             process["company_id"],
@@ -198,7 +198,7 @@ class HandleProcess(Verification):
         steps = self.process["process_steps"]
         for step in steps:
             for member in step.get("stepPublicMembers", []):
-                link, qrcode = HandleProcess.user_team_public_data(
+                link, qrcode = super().user_team_public_data(
                     member["member"],
                     step.get("stepRole"),
                     member["portfolio"],
@@ -208,7 +208,7 @@ class HandleProcess(Verification):
                 HandleProcess.qrcodes.append({member["member"]: qrcode})
 
             for member in step.get("stepTeamMembers", []):
-                link, qrcode = HandleProcess.user_team_public_data(
+                link, qrcode = super().user_team_public_data(
                     member["member"],
                     step.get("stepRole"),
                     member["portfolio"],
@@ -218,7 +218,7 @@ class HandleProcess(Verification):
                 HandleProcess.qrcodes.append({member["member"]: qrcode})
 
             for member in step.get("stepUserMembers", []):
-                link, qrcode = HandleProcess.user_team_public_data(
+                link, qrcode = super().user_team_public_data(
                     member["member"],
                     step.get("stepRole"),
                     member["portfolio"],
@@ -230,7 +230,7 @@ class HandleProcess(Verification):
             public_users = [m["member"] for m in step.get("stepPublicMembers", [])]
             if public_users:
                 public_portfolio = step.get("stepPublicMembers", [])[0].get("portfolio")
-                link, qrcode = HandleProcess.public_bulk_data(
+                link, qrcode = super().public_bulk_data(
                     public_users,
                     step.get("stepRole"),
                     public_portfolio,
