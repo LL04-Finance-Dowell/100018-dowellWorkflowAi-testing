@@ -3,6 +3,7 @@ import ast
 import json
 import re
 import git
+from crontab import CronTab
 
 import requests
 from rest_framework import status
@@ -57,7 +58,9 @@ from app.utils.mongo_db_connection import (
 
 from .constants import EDITOR_API
 
-from app.utils.notification_cron import send_notification
+# from app.utils.notification_cron import send_notification
+
+cron = CronTab(user='uchechukwu')
 
 
 @api_view(["POST"])
@@ -273,7 +276,7 @@ def finalize_or_reject(request, process_id):
 
 
 @api_view(["POST"])
-def trigger_process(request):
+def trigger_process(request, process_id):
     """Get process and begin processing it."""
     if not validate_id(request.data["process_id"]):
         return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
@@ -303,7 +306,9 @@ def trigger_process(request):
                 status.HTTP_200_OK,
             )
     if action == "process_draft" and state != "processing":
-        return processing_2.start(process)
+        return start_process(process)
+    
+    return Response(start_process(process), status.HTTP_200_OK)
 
 
 @api_view(["GET"])
@@ -1063,12 +1068,12 @@ def create_workflow_ai_setting(request):
         except Exception as e:
             print(e)
             return Response(
-                "Failed to Save Workflow Setting", status.HTTP_500_INTERNAL_SERVER_ERROR
+                f"Failed to Save Workflow Setting: {e}", status.HTTP_500_INTERNAL_SERVER_ERROR
             )
 
         if res["isSuccess"]:
             return Response(
-                "You added WorkflowAI settings for your organization",
+                f"You added WorkflowAI settings for your organization: {res['_id']}",
                 status.HTTP_201_CREATED,
             )
 
@@ -1117,7 +1122,7 @@ def update_workflow_ai_setting(request):
     updt_wf = json.loads(wf_setting_update(form["wf_setting_id"], old_wf_setting))
 
     if updt_wf["isSuccess"]:
-        return Response("Workflow Setting Updated", status.HTTP_201_CREATED)
+        return Response({"body": "Workflow Setting Updated", "updated": updt_wf}, status.HTTP_201_CREATED)
 
     return Response("Failed to Update Workflow", status.HTTP_200_OK)
 
@@ -1153,49 +1158,65 @@ def read_reminder(request, process_id, username):
                                 "duration": "5",  # TODO: pass reminder time here
                                 "button_status": "",
                             }
+                            current_directory = os.getcwd()
                             if step["stepReminder"] == "every_hour":
                                 # Schedule cron job to run notification_cron.py every hour
-                                command = f"0 * * * * python ./utils/notification_cron.py '{data}'"
-                                os.system(f"crontab -l | {{ cat; echo '{command}'; }} | crontab -")
-                                return Response({"command": command})
+                                # command = f"0 * * * * python3 {current_directory}/utils/notification_cron.py '{data}'"
+                                # os.system(f"crontab -l | {{ cat; echo '{command}'; }} | crontab -")
+                                hourly_job = cron.new(command=f"python3 {current_directory}/utils/notification_cron.py '{data}'")
+                                hourly_job.minute.every(1)
+                                cron.write()
+                                print(hourly_job.command)
+                                response_data = {
+                                    "command": hourly_job.command,
+                                    # "next_run": hourly_job.next_run(),
+                                }
+                                return Response(response_data)
 
                             elif step["stepReminder"] == "every_day":
                                 # Schedule cron job to run notification_cron.py every day
-                                command = f"0 0 * * * python ./utils/notification_cron.py '{data}'"
-                                os.system(f"crontab -l | {{ cat; echo '{command}'; }} | crontab -")
-                                return Response({"command": command})
+                                # command = f"0 0 * * * python3 {current_directory}/utils/notification_cron.py '{data}'"
+                                # os.system(f"crontab -l | {{ cat; echo '{command}'; }} | crontab -")
+                                daily_job = cron.new(command=f"python3 {current_directory}/utils/notification_cron.py '{data}'")
+                                daily_job.day.every(1)
+                                cron.write()
+                                response_data = {
+                                    "command": hourly_job.command,
+                                    # "next_run": hourly_job.next_run(),
+                                }
+                                return Response(response_data)
 
                             else:
                                 return Response(f"Invalid step reminder value: {step['stepReminder']}", status.HTTP_400_BAD_REQUEST)
 
                             # return Response(f"User hasnt accessed process: {step['stepReminder']}")
-        except:
-            return Response(status.HTTP_500_INTERNAL_SERVER_ERROR)
+        except Exception as err:
+            return Response(f"An error occured: {err}", status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     return Response(process_detail, status.HTTP_200_OK)
 
 
-@api_view(["POST"])
-def send_notif(request):
-    data = {
-            "created_by": request.data["created_by"],
-            "portfolio": request.data["portfolio"],
-            "product_name": request.data["product_name"],
-            "company_id": request.data["company_id"],
-            "org_name": request.data["org_name"],
-            "org_id": request.data["org_id"],
-            "title": "Document to Sign",
-            "message": "You have a document to sign.",
-            "link": request.data["link"],
-            "duration": "5",
-            "button_status": ""
-        }
-    try:
-        send_notification(data)
-        return Response("Notification sent", status.HTTP_201_CREATED)
+# @api_view(["POST"])
+# def send_notif(request):
+#     data = {
+#             "created_by": request.data["created_by"],
+#             "portfolio": request.data["portfolio"],
+#             "product_name": request.data["product_name"],
+#             "company_id": request.data["company_id"],
+#             "org_name": request.data["org_name"],
+#             "org_id": request.data["org_id"],
+#             "title": "Document to Sign",
+#             "message": "You have a document to sign.",
+#             "link": request.data["link"],
+#             "duration": "5",
+#             "button_status": ""
+#         }
+#     try:
+#         send_notification(data)
+#         return Response("Notification sent", status.HTTP_201_CREATED)
 
-    except Exception as err:
-        return Response(f"Something went wrong: {err}", status.HTTP_500_INTERNAL_SERVER_ERROR)
+#     except Exception as err:
+#         return Response(f"Something went wrong: {err}", status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 
