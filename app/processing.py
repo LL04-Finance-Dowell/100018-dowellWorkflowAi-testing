@@ -272,7 +272,6 @@ class HandleProcess(Verification):
             return (
                 {
                     "links": HandleProcess.links,
-                    "qrcodes": HandleProcess.qrcodes,
                     "public_links": HandleProcess.public_links,
                 },
             )
@@ -317,7 +316,7 @@ class HandleProcess(Verification):
                 if user_type == "public":
                     user_name = user_name[0]
                 if any(
-                    user_name in d_map for d_map in step.get("stepDocumentCloneMap")
+                    user_name in map for map in step.get("stepDocumentCloneMap")
                 ):
                     for d_map in step["stepDocumentCloneMap"]:
                         if d_map.get(user_name) is not None:
