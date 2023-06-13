@@ -12,7 +12,7 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from threading import Thread
 from app.processing import HandleProcess, Process, Background
-from app.utils import checks, processing_2
+from app.utils import checks
 from app.utils.helpers import (
     access_editor,
     cloning_process,
@@ -58,9 +58,6 @@ from app.utils.mongo_db_connection import (
 
 from .constants import EDITOR_API
 
-# from app.utils.notification_cron import send_notification
-
-cron = CronTab(user='uchechukwu')
 
 
 @api_view(["POST"])
@@ -310,9 +307,11 @@ def trigger_process(request, process_id):
                 status.HTTP_200_OK,
             )
     if action == "process_draft" and state != "processing":
-        return start_process(process)
+        verification_links = HandleProcess(process).start()
+        if verification_links:
+            return Response(verification_links, status.HTTP_200_OK)
     
-    return Response(start_process(process), status.HTTP_200_OK)
+    return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
 
 
 @api_view(["GET"])
@@ -1071,6 +1070,7 @@ def update_application_settings(request):
 
 @api_view(["GET"])
 def read_reminder(request, process_id, username):
+    cron = CronTab('uchechukwu')
     if not validate_id(process_id):
         return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
 

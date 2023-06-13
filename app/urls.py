@@ -12,7 +12,6 @@ from .views import (
     create_template,
     create_workflow,
     create_application_settings,
-    create_workflow_setting,
     document_detail,
     document_object,
     document_processing,
@@ -27,7 +26,6 @@ from .views import (
     get_process_link,
     get_team_data,
     get_templates,
-    application_settings,
     get_workflow_ai_setting,
     get_workflows,
     process_copies,
@@ -42,7 +40,6 @@ from .views import (
     workflow_detail,
     webhook,
     read_reminder,
-    # send_notif,
 
 )
 
@@ -91,6 +88,5 @@ urlpatterns = [
     path("update-settings/", update_application_settings),
     path("settings/<str:wf_setting_id>", get_workflow_ai_setting),
     path("reminder/<str:process_id>/<str:username>", read_reminder),
-    # path("notify/", send_notif),
 
 ]
