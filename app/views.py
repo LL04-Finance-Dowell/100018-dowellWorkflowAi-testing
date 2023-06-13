@@ -1070,7 +1070,7 @@ def update_application_settings(request):
 
 @api_view(["GET"])
 def read_reminder(request, process_id, username):
-    cron = CronTab('uchechukwu')
+    cron = CronTab('root')
     if not validate_id(process_id):
         return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
 
