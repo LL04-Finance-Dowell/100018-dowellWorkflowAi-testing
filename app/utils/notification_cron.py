@@ -1,9 +1,9 @@
 import sys
 import json
 import requests
-import threading
-NOTIFICATION_API = "https://100092.pythonanywhere.com/api/v1/notifications/products/"
-# from .helpers import notification
+
+from app.constants import NOTIFICATION_API
+
 
 def send_notification(data):
     try:
