@@ -1,9 +1,9 @@
-import { createAsyncThunk } from "@reduxjs/toolkit";
-import { WorkflowServices } from "../../services/workflowServices";
-import { setCurrentWorkflow, setToggleManageFileForm } from "../app/appSlice";
-import { removeFromMinedWf, setAllWorkflows } from "./workflowsSlice";
-import { v4 as uuidv4 } from "uuid";
-import { changeToTitleCase, productName } from "../../utils/helpers";
+import { createAsyncThunk } from '@reduxjs/toolkit';
+import { WorkflowServices } from '../../services/workflowServices';
+import { setCurrentWorkflow, setToggleManageFileForm } from '../app/appSlice';
+import { removeFromMinedWf, setAllWorkflows } from './workflowsSlice';
+import { v4 as uuidv4 } from 'uuid';
+import { changeToTitleCase, productName } from '../../utils/helpers';
 
 const workflowServices = new WorkflowServices();
 
@@ -11,24 +11,22 @@ const filterWorkflows = (workflows, thunkAPI) => {
   let filteredWorkflows = [];
 
   if (workflows && workflows.length && workflows?.length > 0) {
-    const userThunkPortfolioDataTypeState = thunkAPI.getState().auth?.userDetail?.portfolio_info?.length > 1 ?
-      thunkAPI.getState().auth?.userDetail?.portfolio_info.find(portfolio => portfolio.product === productName)?.data_type
-    :
-    thunkAPI.getState().auth?.userDetail?.portfolio_info[0]?.data_type;
+    const userThunkPortfolioDataTypeState =
+      thunkAPI.getState().auth?.userDetail?.portfolio_info?.length > 1
+        ? thunkAPI
+            .getState()
+            .auth?.userDetail?.portfolio_info.find(
+              (portfolio) => portfolio.product === productName
+            )?.data_type
+        : thunkAPI.getState().auth?.userDetail?.portfolio_info[0]?.data_type;
 
     filteredWorkflows = workflows
       .filter(
         (item) =>
-          (
-            item?.data_type &&
-              item?.data_type ===
-                userThunkPortfolioDataTypeState 
-          ) || 
-          (
-            item.workflows.data_type &&
-              item.workflows.data_type ===
-                userThunkPortfolioDataTypeState
-          )
+          (item?.data_type &&
+            item?.data_type === userThunkPortfolioDataTypeState) ||
+          (item.workflows.data_type &&
+            item.workflows.data_type === userThunkPortfolioDataTypeState)
       )
       .map((item) => ({
         ...item,
@@ -49,7 +47,7 @@ const filterWorkflows = (workflows, thunkAPI) => {
 };
 
 export const createWorkflow = createAsyncThunk(
-  "workflow/create",
+  'workflow/create',
   async ({ data, notify, handleAfterCreated }, thunkAPI) => {
     try {
       const res = await workflowServices.createWorkflow(data);
@@ -70,11 +68,10 @@ export const createWorkflow = createAsyncThunk(
 );
 
 export const mineWorkflows = createAsyncThunk(
-  "workflow/mine",
+  'workflow/mine',
   async (data, thunkAPI) => {
     try {
       const res = await workflowServices.mineWorkflows(data);
-
 
       const workflows = filterWorkflows(res.data.workflow, thunkAPI);
 
@@ -86,7 +83,7 @@ export const mineWorkflows = createAsyncThunk(
 );
 
 export const savedWorkflows = createAsyncThunk(
-  "workflow/saved",
+  'workflow/saved',
   async (data, thunkAPI) => {
     try {
       const res = await workflowServices.savedWorkflows(data);
@@ -101,12 +98,10 @@ export const savedWorkflows = createAsyncThunk(
 );
 
 export const detailWorkflow = createAsyncThunk(
-  "workflow/detail",
+  'workflow/detail',
   async (data, asyncTHunks) => {
     try {
       const res = await workflowServices.detailWorkflow(data);
-
-      
 
       asyncTHunks.dispatch(setCurrentWorkflow(res.data));
 
@@ -119,12 +114,14 @@ export const detailWorkflow = createAsyncThunk(
 );
 
 export const updateWorkflow = createAsyncThunk(
-  "workflow/update",
+  'workflow/update',
   async ({ updateData, notify, handleAfterCreated }, thunkAPI) => {
     try {
-      const res = await workflowServices.updateWorkflow(updateData._id, updateData);
+      const res = await workflowServices.updateWorkflow(
+        updateData.workflow_id,
+        updateData
+      );
 
-      
       typeof res.data === 'string' && notify(changeToTitleCase(res.data));
 
       thunkAPI.dispatch(removeFromMinedWf(updateData.workflow_id));
@@ -139,10 +136,13 @@ export const updateWorkflow = createAsyncThunk(
 );
 
 export const allWorkflows = createAsyncThunk(
-  "workflow/all",
+  'workflow/all',
   async (data, thunkAPI) => {
     try {
-      const res = await workflowServices.allWorkflows(data.company_id, data.data_type);
+      const res = await workflowServices.allWorkflows(
+        data.company_id,
+        data.data_type
+      );
 
       const workflows = filterWorkflows(res.data.workflows, thunkAPI);
 
