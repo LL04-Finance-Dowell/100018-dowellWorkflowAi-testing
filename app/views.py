@@ -1114,7 +1114,7 @@ def read_reminder(request, process_id, username):
                             script_path = os.path.join(current_directory, "/utils/notification_cron.py")
                             command = f'python3 {script_path} "{data}"'
 
-                            cron = CronTab('uchechukwu')
+                            cron = CronTab('root')
                             job = cron.new(command=command)
 
                             if step["stepReminder"] == "every_hour":
