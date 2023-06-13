@@ -156,7 +156,7 @@ const ProcessDocument = ({ savedProcess }) => {
           newProcessActionOptions[`${processOptionSelection}`]
         )
       ) {
-        setGeneratedLinks(response);
+        setGeneratedLinks(Array.isArray(response) ? response[0] : response);
         setShowGeneratedLinksPopup(true);
         setNewProcessLoaded(false);
         return;
