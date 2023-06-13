@@ -703,9 +703,9 @@ def favorites(request):
         return Response("You are missing something", status.HTTP_400_BAD_REQUEST)
 
     msg = create_favourite(
-        item=request.data["item"],
-        type=request.data["item_type"],
-        username=request.data["username"],
+        request.data["item"],
+        request.data["item_type"],
+        request.data["username"],
     )
 
     return Response(msg, status.HTTP_201_CREATED)
@@ -912,7 +912,6 @@ def update_team(request):
 @api_view(["GET"])
 def get_team_data(request, team_id):
     """Get specific Team"""
-
     teams = get_team(team_id)
     return Response(teams, status.HTTP_200_OK)
 
@@ -951,7 +950,7 @@ def get_completed_documents(request, company_id):
 
     document_list = get_document_list(company_id, data_type)
 
-    if len(document_list) > 0:
+    if document_list:
         completed = list(
             filter(lambda i: i.get("document_state") == "finalized", document_list)
         )
