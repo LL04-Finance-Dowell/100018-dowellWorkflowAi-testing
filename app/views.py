@@ -12,7 +12,7 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from threading import Thread
 from app.processing import HandleProcess, Process, Background
-from app.utils import checks
+from app.utils import checks, notification_cron
 from app.utils.helpers import (
     access_editor,
     cloning_process,
@@ -341,6 +341,11 @@ def a_single_process(request, process_id):
 
     process = get_process_object(process_id)
 
+    document_id = process["parent_item_id"]
+    document = get_document_object(document_id)
+    document_name = document["document_name"]
+
+    process.update({"document_name": document_name})
     return Response(process, status.HTTP_200_OK)
 
 
@@ -1070,7 +1075,7 @@ def update_application_settings(request):
 
 @api_view(["GET"])
 def read_reminder(request, process_id, username):
-    cron = CronTab('root')
+    # cron = CronTab('root')
     if not validate_id(process_id):
         return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
 
@@ -1104,39 +1109,53 @@ def read_reminder(request, process_id, username):
                                 "duration": "5",  # TODO: pass reminder time here
                                 "button_status": "",
                             }
+                            
                             current_directory = os.getcwd()
+                            script_path = os.path.join(current_directory, "/utils/notification_cron.py")
+                            command = f'python3 {script_path} "{data}"'
+
+                            cron = CronTab('uchechukwu')
+                            job = cron.new(command=command)
+
                             if step["stepReminder"] == "every_hour":
-                                # Schedule cron job to run notification_cron.py every hour
-                                # command = f"0 * * * * python3 {current_directory}/utils/notification_cron.py '{data}'"
-                                # os.system(f"crontab -l | {{ cat; echo '{command}'; }} | crontab -")
-                                hourly_job = cron.new(command=f"python3 {current_directory}/utils/notification_cron.py '{data}'")
-                                hourly_job.minute.every(1)
-                                cron.write()
-                                print(hourly_job.command)
-                                response_data = {
-                                    "command": hourly_job.command,
-                                    # "next_run": hourly_job.next_run(),
-                                }
-                                return Response(response_data)
+                                # # Schedule cron job to run notification_cron.py every hour
+                                # # command = f"0 * * * * python3 {current_directory}/utils/notification_cron.py '{data}'"
+                                # # os.system(f"crontab -l | {{ cat; echo '{command}'; }} | crontab -")
+                                # hourly_job = cron.new(command=f"python3 {current_directory}/utils/notification_cron.py '{data}'")
+                                # hourly_job.minute.every(1)
+                                # cron.write()
+                                # print(hourly_job.command)
+                                # response_data = {
+                                #     "command": hourly_job.command,
+                                #     # "next_run": hourly_job.next_run(),
+                                # }
+                                # return Response(response_data)
+                                job.setall('* * * * *')
 
                             elif step["stepReminder"] == "every_day":
                                 # Schedule cron job to run notification_cron.py every day
                                 # command = f"0 0 * * * python3 {current_directory}/utils/notification_cron.py '{data}'"
                                 # os.system(f"crontab -l | {{ cat; echo '{command}'; }} | crontab -")
-                                daily_job = cron.new(command=f"python3 {current_directory}/utils/notification_cron.py '{data}'")
-                                daily_job.day.every(1)
-                                cron.write()
-                                response_data = {
-                                    "command": hourly_job.command,
-                                    # "next_run": hourly_job.next_run(),
-                                }
-                                return Response(response_data)
+                                # daily_job = cron.new(command=f"python3 {current_directory}/utils/notification_cron.py '{data}'")
+                                # daily_job.day.every(1)
+                                # cron.write()
+                                # response_data = {
+                                #     "command": hourly_job.command,
+                                #     # "next_run": hourly_job.next_run(),
+                                # }
+                                # return Response(response_data)
+                                job.setall('0 0 * * *')
 
                             else:
                                 return Response(
                                     f"Invalid step reminder value: {step['stepReminder']}",
                                     status.HTTP_400_BAD_REQUEST,
                                 )
+
+                            job.enable()
+                            cron.write()
+
+                            return Response("Cron job scheduled", status.HTTP_200_OK)
 
                             # return Response(f"User hasnt accessed process: {step['stepReminder']}")
         except Exception as err:
@@ -1145,27 +1164,27 @@ def read_reminder(request, process_id, username):
     return Response(process_detail, status.HTTP_200_OK)
 
 
-# @api_view(["POST"])
-# def send_notif(request):
-#     data = {
-#             "created_by": request.data["created_by"],
-#             "portfolio": request.data["portfolio"],
-#             "product_name": request.data["product_name"],
-#             "company_id": request.data["company_id"],
-#             "org_name": request.data["org_name"],
-#             "org_id": request.data["org_id"],
-#             "title": "Document to Sign",
-#             "message": "You have a document to sign.",
-#             "link": request.data["link"],
-#             "duration": "5",
-#             "button_status": ""
-#         }
-#     try:
-#         send_notification(data)
-#         return Response("Notification sent", status.HTTP_201_CREATED)
+@api_view(["POST"])
+def send_notif(request):
+    data = {
+            "created_by": request.data["created_by"],
+            "portfolio": request.data["portfolio"],
+            "product_name": request.data["product_name"],
+            "company_id": request.data["company_id"],
+            "org_name": request.data["org_name"],
+            "org_id": request.data["org_id"],
+            "title": "Document to Sign",
+            "message": "You have a document to sign.",
+            "link": request.data["link"],
+            "duration": "5",
+            "button_status": ""
+        }
+    try:
+        notification_cron.send_notification(data)
+        return Response("Notification sent", status.HTTP_201_CREATED)
 
-#     except Exception as err:
-#         return Response(f"Something went wrong: {err}", status.HTTP_500_INTERNAL_SERVER_ERROR)
+    except Exception as err:
+        return Response(f"Something went wrong: {err}", status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 
