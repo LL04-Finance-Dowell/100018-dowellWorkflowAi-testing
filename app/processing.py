@@ -412,7 +412,7 @@ class Background:
                 {
                     u: cloning_document(
                         item_id,
-                        u,
+                        ([u],),
                         parent_item_id,
                         process_id,
                     )
