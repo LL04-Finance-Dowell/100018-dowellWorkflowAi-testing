@@ -136,7 +136,7 @@ const GeneratedLinksModal = ({
                 <td>S/No.</td>
                 <td>Name</td>
                 <td>Link</td>
-                <td>QR Code</td>
+                {/* <td>QR Code</td> */}
                 <td>Copy</td>
               </tr>
             </thead>
@@ -155,7 +155,7 @@ const GeneratedLinksModal = ({
                       >
                         {typeof link === 'object' ? Object.values(link)[0] : ''}
                       </td>
-                      <td>
+                      {/* <td>
                         {linksObj?.qrcodes[index] &&
                           typeof linksObj?.qrcodes[index] === 'object' ? (
                           <img
@@ -165,7 +165,7 @@ const GeneratedLinksModal = ({
                         ) : (
                           <>Qr code</>
                         )}
-                      </td>
+                      </td> */}
                       <td>
                         <span
                           className={
