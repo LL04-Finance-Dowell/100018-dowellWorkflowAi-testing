@@ -54,71 +54,71 @@ const GeneratedLinksModal = ({
   }
 
 
-  if (ProcessDetail) {
-    return (
-      <div className={styles.process__Generated__Links__Overlay}>
-        <div className={styles.process__Generated__Links__Container}>
-          <div
-            className={styles.process__Generated__Links__Container__Close__Icon}
-            onClick={() => {
-              dispatch(setshowsProcessDetailPopup(false));
-              dispatch(SetProcessDetail([]));
-              dispatch(setDetailFetched(false));
-            }}
-          >
-            <AiOutlineClose />
-          </div>
-          <h5 className={styles.DetailHeading}>Process Detail</h5>
-          <table className={styles.DetailTable}>
-            <tbody>
-              <tr>
-                <td>Process Title</td>
-                <td>{ProcessDetail.process_title}</td>
-              </tr>
-              <tr>
-                <td >Document Name</td>
-                <td>{ProcessDetail.document_name}</td>
-              </tr>
-              <tr>
-                {ProcessDetail.stepRole && (
-                  <>
-                    <td >Step Role</td>
-                    <td>{ProcessDetail.stepRole}</td>
-                  </>
-                )}
-              </tr>
-              <tr>
-                {ProcessDetail.stepName && (
-                  <>
-                    <td>Step Name</td>
-                    <td>{ProcessDetail.stepName}</td>
-                  </>
-                )}
-              </tr>
-              <tr>
-                {ProcessDetail.processing_state && (
-                  <>
-                    <td>Processing State</td>
-                    <td
-                      className={
-                        ProcessDetail.processing_state === 'processing'
-                          ? styles.ProcessingState
-                          : styles.FinalizedState
-                      }
-                    >
-                      {ProcessDetail.processing_state === 'processing'
-                        ? 'Processing...'
-                        : 'Finalized'}
-                    </td>
-                  </>
-                )}
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-    );
-  }
+  // if (ProcessDetail) {
+  //   return (
+  //     <div className={styles.process__Generated__Links__Overlay}>
+  //       <div className={styles.process__Generated__Links__Container}>
+  //         <div
+  //           className={styles.process__Generated__Links__Container__Close__Icon}
+  //           onClick={() => {
+  //             dispatch(setshowsProcessDetailPopup(false));
+  //             dispatch(SetProcessDetail([]));
+  //             dispatch(setDetailFetched(false));
+  //           }}
+  //         >
+  //           <AiOutlineClose />
+  //         </div>
+  //         <h5 className={styles.DetailHeading}>Process Detail</h5>
+  //         <table className={styles.DetailTable}>
+  //           <tbody>
+  //             <tr>
+  //               <td>Process Title</td>
+  //               <td>{ProcessDetail.process_title}</td>
+  //             </tr>
+  //             <tr>
+  //               <td >Document Name</td>
+  //               <td>{ProcessDetail.document_name}</td>
+  //             </tr>
+  //             <tr>
+  //               {ProcessDetail.stepRole && (
+  //                 <>
+  //                   <td >Step Role</td>
+  //                   <td>{ProcessDetail.stepRole}</td>
+  //                 </>
+  //               )}
+  //             </tr>
+  //             <tr>
+  //               {ProcessDetail.stepName && (
+  //                 <>
+  //                   <td>Step Name</td>
+  //                   <td>{ProcessDetail.stepName}</td>
+  //                 </>
+  //               )}
+  //             </tr>
+  //             <tr>
+  //               {ProcessDetail.processing_state && (
+  //                 <>
+  //                   <td>Processing State</td>
+  //                   <td
+  //                     className={
+  //                       ProcessDetail.processing_state === 'processing'
+  //                         ? styles.ProcessingState
+  //                         : styles.FinalizedState
+  //                     }
+  //                   >
+  //                     {ProcessDetail.processing_state === 'processing'
+  //                       ? 'Processing...'
+  //                       : 'Finalized'}
+  //                   </td>
+  //                 </>
+  //               )}
+  //             </tr>
+  //           </tbody>
+  //         </table>
+  //       </div>
+  //     </div>
+  //   );
+  // }
   ///////////
   return linksObj && typeof linksObj === 'object' ? (
     <div className={styles.process__Generated__Links__Overlay}>
