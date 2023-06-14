@@ -26,7 +26,7 @@ from app.utils.mongo_db_connection import (
     update_document_clone,
     update_process,
 )
-from app.utils.verification import Verification
+from app.verification import Verification
 
 
 class Process:
@@ -238,45 +238,43 @@ class HandleProcess(Verification):
                 )
                 HandleProcess.public_links.append({public_portfolio: link})
 
-            clone_ids = HandleProcess.prepare_document_for_step_one_users(
-                steps[0], self.process["parent_item_id"], process_id
+        clone_ids = HandleProcess.prepare_document_for_step_one_users(
+            steps[0], self.process["parent_item_id"], process_id
+        )
+        Thread(
+            target=lambda: save_process_links(
+                HandleProcess.links,
+                process_id,
+                clone_ids,
+                company_id,
             )
-            Thread(
-                target=lambda: save_process_links(
-                    HandleProcess.links,
-                    process_id,
-                    clone_ids,
-                    company_id,
-                )
-            ).start()
+        ).start()
 
-            Thread(
-                target=lambda: update_process(
-                    process_id,
-                    steps,
-                    "processing",
-                )
-            ).start()
-
-            Thread(
-                target=lambda: save_process_qrcodes(
-                    HandleProcess.qrcodes,
-                    self.process["_id"],
-                    clone_ids,
-                    self.process["processing_action"],
-                    self.process["process_title"],
-                    self.process["company_id"],
-                )
-            ).start()
-
-            return (
-                {
-                    "links": HandleProcess.links,
-                    "public_links": HandleProcess.public_links,
-                },
+        Thread(
+            target=lambda: update_process(
+                process_id,
+                steps,
+                "processing",
             )
+        ).start()
 
-        return
+        Thread(
+            target=lambda: save_process_qrcodes(
+                HandleProcess.qrcodes,
+                self.process["_id"],
+                clone_ids,
+                self.process["processing_action"],
+                self.process["process_title"],
+                self.process["company_id"],
+            )
+        ).start()
+
+        return (
+            {
+                "links": HandleProcess.links,
+                "public_links": HandleProcess.public_links,
+            },
+        )
 
     def verify(self, auth_step_role, location_data, user_name, user_type, org_name):
         clone_id = None
@@ -315,9 +313,7 @@ class HandleProcess(Verification):
                         return
                 if user_type == "public":
                     user_name = user_name[0]
-                if any(
-                    user_name in map for map in step.get("stepDocumentCloneMap")
-                ):
+                if any(user_name in map for map in step.get("stepDocumentCloneMap")):
                     for d_map in step["stepDocumentCloneMap"]:
                         if d_map.get(user_name) is not None:
                             clone_id = d_map.get(user_name)
