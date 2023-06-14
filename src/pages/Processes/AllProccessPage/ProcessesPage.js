@@ -14,12 +14,12 @@ import { useNavigate } from "react-router-dom";
 import { productName } from "../../../utils/helpers";
 
 const ProcessesPage = ({ home, showOnlySaved, showOnlyPaused, showOnlyCancelled, showOnlyTrashed, showOnlyTests, showOnlyCompleted }) => {
-  const { processesLoading, allProcesses, processesLoaded, ArrayofLinks, showGeneratedLinksPopup, linksFetched } = useSelector((state) => state.app);
+  const { processesLoading, allProcesses, processesLoaded, ArrayofLinks, showGeneratedLinksPopup, linksFetched,showsProcessDetailPopup,DetailFetched } = useSelector((state) => state.app);
   const { userDetail } = useSelector((state) => state.auth);
   const [copiedLinks, setCopiedLinks] = useState([]);
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const [ currentUserPortfolioDataType, setCurrentUserPortfolioDataType ] = useState('');
+  const [currentUserPortfolioDataType, setCurrentUserPortfolioDataType] = useState('');
 
 
   useEffect(() => {
@@ -48,15 +48,15 @@ const ProcessesPage = ({ home, showOnlySaved, showOnlyPaused, showOnlyCancelled,
 
 
     const [userCompanyId, userPortfolioDataType] = [
-      userDetail?.portfolio_info?.length > 1 ? 
+      userDetail?.portfolio_info?.length > 1 ?
         userDetail?.portfolio_info.find(portfolio => portfolio.product === productName)?.org_id
-      :
-      userDetail?.portfolio_info[0]?.org_id
+        :
+        userDetail?.portfolio_info[0]?.org_id
       ,
-      userDetail?.portfolio_info?.length > 1 ? 
+      userDetail?.portfolio_info?.length > 1 ?
         userDetail?.portfolio_info.find(portfolio => portfolio.product === productName)?.data_type
         :
-      userDetail?.portfolio_info[0]?.data_type
+        userDetail?.portfolio_info[0]?.data_type
     ];
 
     getAllProcessesV2(userCompanyId, userPortfolioDataType).then(res => {
@@ -77,10 +77,10 @@ const ProcessesPage = ({ home, showOnlySaved, showOnlyPaused, showOnlyCancelled,
   }, [processesLoaded, userDetail])
 
   useEffect(() => {
-    const userPortfolioDataType = userDetail?.portfolio_info?.length > 1 ? 
+    const userPortfolioDataType = userDetail?.portfolio_info?.length > 1 ?
       userDetail?.portfolio_info.find(portfolio => portfolio.product === productName)?.data_type
-    :
-    userDetail?.portfolio_info[0].data_type;
+      :
+      userDetail?.portfolio_info[0].data_type;
 
     setCurrentUserPortfolioDataType(userPortfolioDataType)
   }, [userDetail])
@@ -114,7 +114,7 @@ const ProcessesPage = ({ home, showOnlySaved, showOnlyPaused, showOnlyCancelled,
                 cardBgColor="#1ABC9C"
                 title="saved proccess"
                 Card={ProcessCard}
-                cardItems={allProcesses.filter(process => process.processing_state === "processing").filter(process => process.data_type === currentUserPortfolioDataType) }
+                cardItems={allProcesses.filter(process => process.processing_state === "processing").filter(process => process.data_type === currentUserPortfolioDataType)}
                 status={processesLoading ? "pending" : "success"}
                 itemType={"processes"}
               />
@@ -124,7 +124,10 @@ const ProcessesPage = ({ home, showOnlySaved, showOnlyPaused, showOnlyCancelled,
           {showGeneratedLinksPopup && linksFetched && Array.isArray(ArrayofLinks) &&
             <GeneratedLinksModal />
           }
-
+ 
+          {showsProcessDetailPopup && DetailFetched &&
+            <GeneratedLinksModal />
+          }
 
           {
             showOnlyPaused ? <div id="paused-processes">

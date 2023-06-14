@@ -5,6 +5,9 @@ import { useDispatch, useSelector } from 'react-redux';
 import {
   SetArrayofLinks,
   setShowGeneratedLinksPopup,
+  setshowsProcessDetailPopup,
+  SetProcessDetail,
+  setDetailFetched,
   setLinksFetched,
 } from '../../../../../../features/app/appSlice';
 
@@ -16,13 +19,13 @@ const GeneratedLinksModal = ({
   updateCopiedLinks,
   handleCloseBtnClick,
 }) => {
-  const { ArrayofLinks } = useSelector((state) => state.app);
+  const { ArrayofLinks, ProcessDetail } = useSelector((state) => state.app);
   const dispatch = useDispatch();
+  const { process_title, process_steps } = ProcessDetail;
 
   const [copiedStatus, setCopiedStatus] = useState(
     ArrayofLinks.map(() => false)
   );
-
   const handleCopyLink = (link) => {
     if (!link) return;
 
@@ -45,6 +48,76 @@ const GeneratedLinksModal = ({
       newerCopiedStatus[index] = false;
       setCopiedStatus(newerCopiedStatus);
     }, 1000);
+  }
+  function handleCloseDetailBtnClick() {
+    dispatch(setshowsProcessDetailPopup(false));
+  }
+
+
+  if (ProcessDetail) {
+    return (
+      <div className={styles.process__Generated__Links__Overlay}>
+        <div className={styles.process__Generated__Links__Container}>
+          <div
+            className={styles.process__Generated__Links__Container__Close__Icon}
+            onClick={() => {
+              dispatch(setshowsProcessDetailPopup(false));
+              dispatch(SetProcessDetail([]));
+              dispatch(setDetailFetched(false));
+            }}
+          >
+            <AiOutlineClose />
+          </div>
+          <h5 className={styles.DetailHeading}>Process Detail</h5>
+          <table className={styles.DetailTable}>
+            <tbody>
+              <tr>
+                <td>Process Title</td>
+                <td>{ProcessDetail.process_title}</td>
+              </tr>
+              <tr>
+                <td >Document Name</td>
+                <td>{ProcessDetail.document_name}</td>
+              </tr>
+              <tr>
+                {ProcessDetail.stepRole && (
+                  <>
+                    <td >Step Role</td>
+                    <td>{ProcessDetail.stepRole}</td>
+                  </>
+                )}
+              </tr>
+              <tr>
+                {ProcessDetail.stepName && (
+                  <>
+                    <td>Step Name</td>
+                    <td>{ProcessDetail.stepName}</td>
+                  </>
+                )}
+              </tr>
+              <tr>
+                {ProcessDetail.processing_state && (
+                  <>
+                    <td>Processing State</td>
+                    <td
+                      className={
+                        ProcessDetail.processing_state === 'processing'
+                          ? styles.ProcessingState
+                          : styles.FinalizedState
+                      }
+                    >
+                      {ProcessDetail.processing_state === 'processing'
+                        ? 'Processing...'
+                        : 'Finalized'}
+                    </td>
+                  </>
+                )}
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    );
   }
   ///////////
   return linksObj && typeof linksObj === 'object' ? (
@@ -84,7 +157,7 @@ const GeneratedLinksModal = ({
                       </td>
                       <td>
                         {linksObj?.qrcodes[index] &&
-                        typeof linksObj?.qrcodes[index] === 'object' ? (
+                          typeof linksObj?.qrcodes[index] === 'object' ? (
                           <img
                             src={Object.values(linksObj?.qrcodes[index])[0]}
                             alt='qr code'
@@ -101,7 +174,7 @@ const GeneratedLinksModal = ({
                           onClick={() => handleCopyLink(Object.values(link)[0])}
                         >
                           {typeof link === 'object' &&
-                          copiedLinks.includes(Object.values(link)[0])
+                            copiedLinks.includes(Object.values(link)[0])
                             ? 'Copied'
                             : 'Copy'}
                         </span>

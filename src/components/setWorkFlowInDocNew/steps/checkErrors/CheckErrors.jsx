@@ -153,19 +153,20 @@ const CheckErrors = () => {
     teamMembersSelectedForProcess,
     userMembersSelectedForProcess,
     tableOfContentForStep,
+
   ]);
 
   const handleSortProcess = () => {
     if (!docCurrentWorkflow) {
-      document.querySelector('.select-doc').scrollIntoView({ block: 'center' })
+      document.querySelector('#select-doc').scrollIntoView({ block: 'center' })
       return toast.info('Please select a document')
     };
     if (selectedWorkflowsToDoc.length < 1) {
-      document.querySelector('.h2__Doc__Title').scrollIntoView({ block: 'center' })
+      document.querySelector('#h2__Doc__Title').scrollIntoView({ block: 'center' })
       return toast.info('Please select at least one workflow first.');
     }
     if (!allowErrorChecksStatusUpdateForNewProcess && newProcessErrorMessage) {
-      document.querySelector('.h2__Doc__Title').scrollIntoView({ block: 'center' })
+      document.querySelector('#h2__Doc__Title').scrollIntoView({ block: 'center' })
       return toast.info(newProcessErrorMessage);
     }
     dispatch(setErrorsCheckedInNewProcess(true));

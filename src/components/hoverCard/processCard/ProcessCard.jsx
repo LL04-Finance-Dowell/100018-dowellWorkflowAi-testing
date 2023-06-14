@@ -9,6 +9,9 @@ import { moveItemToArchive } from '../../../services/archiveServices';
 import HoverCard from '../HoverCard';
 import {
   setShowGeneratedLinksPopup,
+  SetProcessDetail,
+  setshowsProcessDetailPopup,
+  setDetailFetched,
   SetArrayofLinks,
   setLinksFetched,
 } from '../../../features/app/appSlice';
@@ -28,21 +31,42 @@ const ProcessCard = ({ cardItem, title }) => {
   // const [Process_id, setProcess_id] = useState();
   const [processLinkLoading, setProcessLinkLoading] = useState(false);
   const [copyprocessLoading, setcopyprocessLoading] = useState(false);
+  const [processDetailLoading, setProcessDetailLoading] = useState(false);
 
 
   const handleProcessItemClick = async (item) => {
+    getProcessDetail(item._id)
+    dispatch(setshowsProcessDetailPopup(true));
+    setProcessDetailLoading(true);
+
     if (item.processing_state === 'draft' && item.workflow_construct_ids)
       navigate(
         `/workflows/new-set-workflow?id=${item._id}&state=${item.processing_state
         }${item.isFromLocalStorage ? '&local=true' : ''}`
       );
   };
+  function getProcessDetail(process_id) {
+    axios
+      .get(`https://100094.pythonanywhere.com/v1/processes/${process_id}/`)
+      .then((response) => {
+        
+        
+        dispatch(SetProcessDetail(response.data));
+        setProcessDetailLoading(false);
+        dispatch(setDetailFetched(true));
+      })
+      .catch((error) => {
+        console.log(error);
+        setProcessDetailLoading(false);
+
+      });
+  }
 
 
 
 
   const handleCopyProcess = async (item) => {
-    
+
     getCopyProcess(item._id)
     setcopyprocessLoading(true);
 
@@ -58,7 +82,7 @@ const ProcessCard = ({ cardItem, title }) => {
 
       if (response.status === 201) {
         toast.info(response.data);
-       
+
 
         setcopyprocessLoading(false);
 
@@ -184,12 +208,20 @@ const ProcessCard = ({ cardItem, title }) => {
   const BackSide = () => {
     return (
       <>
-        {cardItem._id ? (
+        {cardItem._id && !processDetailLoading ? (
           <Button onClick={() => handleProcessItemClick(cardItem)}>
             {'Open process'}
           </Button>
         ) : (
-          'no item'
+          <div
+          // style={{
+          //   position: 'absolute',
+          //   right: '1%',
+          //   top: '0',
+          // }}
+          >
+            <LoadingSpinner width={'1rem'} height={'1rem'} />
+          </div>
         )}
 
         {!cardItem.isFromLocalStorage &&

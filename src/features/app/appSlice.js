@@ -78,9 +78,12 @@ const initialState = {
   ArrayofLinks: [],
   ShowProfileSpinner: false,
   CopyProcess: [],
+  ProcessDetail:[],
 
   linksFetched: false,
+  DetailFetched:false,
   showGeneratedLinksPopup: false,
+  showsProcessDetailPopup:false,
 
   legalStatusLoading: true,
   showLegalStatusPopup: false,
@@ -663,6 +666,9 @@ export const appSlice = createSlice({
     SetCopyProcess: (state, action) => {
       state.CopyProcess = action.payload;
     },
+    SetProcessDetail: (state, action) => {
+      state.ProcessDetail = action.payload;
+    },
     setShowProfileSpinner: (state, action) => {
       state.ShowProfileSpinner = action.payload;
     },
@@ -670,8 +676,14 @@ export const appSlice = createSlice({
     setShowGeneratedLinksPopup: (state, action) => {
       state.showGeneratedLinksPopup = action.payload;
     },
+    setshowsProcessDetailPopup: (state, action) => {
+      state.showsProcessDetailPopup = action.payload;
+    },
     setLinksFetched: (state, action) => {
       state.linksFetched = action.payload;
+    },
+    setDetailFetched: (state, action) => {
+      state.DetailFetched = action.payload;
     },
 
     setLegalStatusLoading: (state, action) => {
@@ -813,6 +825,9 @@ export const {
   SetArrayofLinks,
   SetCopyProcess,
   setShowGeneratedLinksPopup,
+  SetProcessDetail,
+  setDetailFetched,
+  setshowsProcessDetailPopup,
   setLinksFetched,
   setLegalStatusLoading,
   setShowLegalStatusPopup,

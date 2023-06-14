@@ -81,12 +81,12 @@ const ProcessDocument = ({ savedProcess }) => {
 
     if (!userDetail) return;
     if (!currentDocToWfs) {
-      document.querySelector('.select-doc').scrollIntoView({ block: 'center' })
+      document.querySelector('#select-doc').scrollIntoView({ block: 'center' })
       return toast.info('You have not selected a document');
 
     };
     if (!docCurrentWorkflow) {
-      document.querySelector('.step-title').scrollIntoView({ block: 'center' });
+      document.querySelector('#step-title').scrollIntoView({ block: 'center' });
       return toast.info('You have not selected any workflow');
     }
     if (processSteps.length < 1) {
@@ -94,7 +94,7 @@ const ProcessDocument = ({ savedProcess }) => {
       return toast.info('You have not configured steps for any workflow')
     }
     if (!errorsCheckedInNewProcess) {
-      document.querySelector('.h2__Doc__Title').scrollIntoView({ block: 'center' })
+      document.querySelector('#h2__Doc__Title').scrollIntoView({ block: 'center' })
       return toast.info('Please click the "Show process" button above to make sure there are no errors before processing.');
     }
 
@@ -132,7 +132,7 @@ const ProcessDocument = ({ savedProcess }) => {
 
     if (processObjToPost.error) {
       dispatch(setNewProcessErrorMessage(processObjToPost.error));
-      document.querySelector('.h2__Doc__Title').scrollIntoView({ block: 'center' })
+      document.querySelector('#h2__Doc__Title').scrollIntoView({ block: 'center' })
 
       return toast.info(processObjToPost.error);
     }
