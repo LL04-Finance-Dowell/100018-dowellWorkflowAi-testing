@@ -1063,7 +1063,6 @@ def update_application_settings(request):
     for key, new_value in form.items():
         if key in old_wf_setting:
             old_wf_setting[key] = new_value
-
     updt_wf = json.loads(update_workflow_setting(form["wf_setting_id"], old_wf_setting))
 
     if updt_wf["isSuccess"]:

@@ -76,7 +76,7 @@ def cloning_document(document_id, auth_viewers, parent_id, process_id):
         viewers = (
             [item for item in set(auth_viewers)]
             if auth_viewers is not None and isinstance(auth_viewers, list)
-            else []
+            else auth_viewers
         )
         print(viewers)
         document = get_document_object(document_id)

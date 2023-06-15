@@ -144,6 +144,7 @@ class HandleProcess(Verification):
     links = []
     public_links = []
     qrcodes = []
+    docs = []
 
     def __init__(self, process):
         self.process = process
@@ -176,7 +177,6 @@ class HandleProcess(Verification):
                 parent_item_id, users, parent_item_id, process_id
             )
             clone_ids = [clone_id]
-
             for u in users:
                 step.get("stepDocumentCloneMap").append({u: clone_id})
 
@@ -186,7 +186,6 @@ class HandleProcess(Verification):
                 public_clone_ids.append(
                     {u: cloning_document(parent_item_id, u, parent_item_id, process_id)}
                 )
-
             step.get("stepDocumentCloneMap").extend(public_clone_ids)
             clone_ids.extend(public_clone_ids)
 
@@ -249,7 +248,6 @@ class HandleProcess(Verification):
                 company_id,
             )
         ).start()
-
         Thread(
             target=lambda: update_process(
                 process_id,
@@ -257,7 +255,6 @@ class HandleProcess(Verification):
                 "processing",
             )
         ).start()
-
         Thread(
             target=lambda: save_process_qrcodes(
                 HandleProcess.qrcodes,
@@ -268,7 +265,6 @@ class HandleProcess(Verification):
                 self.process["company_id"],
             )
         ).start()
-
         return (
             {
                 "links": HandleProcess.links,
@@ -393,9 +389,9 @@ class Background:
     @classmethod
     def assign_task_to_users(cls, clone_map, users, process_id, item_type):
         for cm in clone_map:
-            docs = list(cm.values())
+            Background.docs = list(cm.values())
 
-        for docid in docs:
+        for docid in Background.docs:
             for usr in users:
                 cls.viewers.append(usr)
                 authorize(docid, cls.viewers, process_id, item_type)
@@ -411,7 +407,7 @@ class Background:
                 {
                     u: cloning_document(
                         item_id,
-                        ([u],),
+                        u,
                         parent_item_id,
                         process_id,
                     )
@@ -467,11 +463,12 @@ class Background:
             no_of_steps = sum(
                 isinstance(e, dict) for e in self.process["process_steps"]
             )
+            print(no_of_steps)
             if not Background.check_first_step_state(self.process):
                 return
 
             else:
-                if no_of_steps == 2:
+                if no_of_steps >= 2:
                     step = self.process["process_steps"][1]
                     users = [
                         m["member"]
@@ -514,7 +511,7 @@ class Background:
                         state=self.process["processing_state"],
                     )
                     if not Background.d_states:
-                        if no_of_steps == 3:
+                        if no_of_steps >= 3:
                             step = self.process["process_steps"][2]
                             users = [
                                 m["member"]
