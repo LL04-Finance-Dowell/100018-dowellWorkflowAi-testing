@@ -382,6 +382,7 @@ class Background:
     viewers = []
     copies = []
     clones = []
+    docs = []
     d_states = False
 
     def __init__(self, process, item_type, item_id, role, username):
