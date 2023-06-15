@@ -71,14 +71,12 @@ def has_tilde_characters(string):
 def cloning_document(document_id, auth_viewers, parent_id, process_id):
     """creating a document copy"""
     try:
-        print(auth_viewers)
         viewers = []
         viewers = (
             [item for item in set(auth_viewers)]
             if auth_viewers is not None and isinstance(auth_viewers, list)
-            else auth_viewers
+            else [auth_viewers]
         )
-        print(viewers)
         document = get_document_object(document_id)
         if has_tilde_characters(document["document_name"]):
             document_name = document["document_name"]
