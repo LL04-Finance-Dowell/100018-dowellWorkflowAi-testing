@@ -247,7 +247,7 @@ def process_verification(request):
     if editor_link:
         return Response(editor_link, status.HTTP_200_OK)
 
-    return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
+    return Response("access to this document is denied at this time!", status.HTTP_400_BAD_REQUEST)
 
 
 @api_view(["POST"])
