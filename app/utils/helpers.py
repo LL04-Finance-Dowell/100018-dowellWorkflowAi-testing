@@ -61,18 +61,29 @@ def register_public_login(qrid, org_name):
         return None
 
 
+def has_tilde_characters(string):
+    for char in string:
+        if char == '~':
+            return True
+    return False
+
 
 def cloning_document(document_id, auth_viewers, parent_id, process_id):
     """creating a document copy"""
     try:
+        print(auth_viewers)
         viewers = []
         viewers = (
             [item for item in set(auth_viewers)]
             if auth_viewers is not None and isinstance(auth_viewers, list)
             else []
         )
+        print(viewers)
         document = get_document_object(document_id)
-        document_name = "~" + document["document_name"] + "~"
+        if has_tilde_characters(document["document_name"]):
+            document_name = document["document_name"]
+        else:
+            document_name = "~" + document["document_name"] + "~"
         save_res = json.loads(
             save_document(
                 name=document_name,
