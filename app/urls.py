@@ -7,6 +7,8 @@ from .views import (
     approve,
     archive_restore,
     archives,
+    create_folder,
+    update_folder,
     create_document,
     create_team,
     create_template,
@@ -92,5 +94,10 @@ urlpatterns = [
     path("settings/<str:wf_setting_id>", get_workflow_ai_setting),
     path("reminder/<str:process_id>/<str:username>", read_reminder),
     path("notify/", send_notif),
+    
+    #folder
+    path("folders/", create_folder),
+    path("folders/<str:folder_id>", update_folder),
+    
 
 ]
