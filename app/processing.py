@@ -240,14 +240,12 @@ class HandleProcess(Verification):
         clone_ids = HandleProcess.prepare_document_for_step_one_users(
             steps[0], self.process["parent_item_id"], process_id
         )
-        Thread(
-            target=lambda: save_process_links(
-                HandleProcess.links,
-                process_id,
-                clone_ids,
-                company_id,
-            )
-        ).start()
+        save_process_links(
+            HandleProcess.links,
+            process_id,
+            clone_ids,
+            company_id,
+        )
         Thread(
             target=lambda: update_process(
                 process_id,
