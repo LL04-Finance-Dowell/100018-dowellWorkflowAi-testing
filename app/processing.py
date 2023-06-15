@@ -461,7 +461,6 @@ class Background:
             no_of_steps = sum(
                 isinstance(e, dict) for e in self.process["process_steps"]
             )
-            print(no_of_steps)
             if not Background.check_first_step_state(self.process):
                 return
 

@@ -59,7 +59,6 @@ from app.utils.mongo_db_connection import (
 from .constants import EDITOR_API
 
 
-
 @api_view(["POST"])
 def webhook(request):
     """Pick an event from GH and update our PA-server code"""
@@ -272,8 +271,8 @@ def finalize_or_reject(request, process_id):
     background = Background(process, item_type, item_id, role, user)
 
     if res["isSuccess"]:
-        Thread(target=lambda: background.processing()).start()
         Thread(target=lambda: delete_notification(item_id)).start()
+        background.processing()
         return Response("document processed successfully", status.HTTP_200_OK)
 
     return Response(status.HTTP_500_INTERNAL_SERVER_ERROR)
@@ -310,7 +309,7 @@ def trigger_process(request, process_id):
         verification_links = HandleProcess(process).start()
         if verification_links:
             return Response(verification_links, status.HTTP_200_OK)
-    
+
     return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
 
 
@@ -1032,7 +1031,10 @@ def create_application_settings(request):
                 status.HTTP_201_CREATED,
             )
     except Exception as e:
-        return Response(f"Failed to Save Workflow Setting: {e}", status.HTTP_500_INTERNAL_SERVER_ERROR)
+        return Response(
+            f"Failed to Save Workflow Setting: {e}",
+            status.HTTP_500_INTERNAL_SERVER_ERROR,
+        )
 
 
 @api_view(["GET"])
@@ -1066,7 +1068,10 @@ def update_application_settings(request):
     updt_wf = json.loads(update_workflow_setting(form["wf_setting_id"], old_wf_setting))
 
     if updt_wf["isSuccess"]:
-        return Response({"body": "Workflow Setting Updated", "updated": updt_wf}, status.HTTP_201_CREATED)
+        return Response(
+            {"body": "Workflow Setting Updated", "updated": updt_wf},
+            status.HTTP_201_CREATED,
+        )
 
     return Response(status.HTTP_500_INTERNAL_SERVER_ERROR)
 
@@ -1107,12 +1112,14 @@ def read_reminder(request, process_id, username):
                                 "duration": "5",  # TODO: pass reminder time here
                                 "button_status": "",
                             }
-                            
+
                             current_directory = os.getcwd()
-                            script_path = os.path.join(current_directory, "/utils/notification_cron.py")
+                            script_path = os.path.join(
+                                current_directory, "/utils/notification_cron.py"
+                            )
                             command = f'python3 {script_path} "{data}"'
 
-                            cron = CronTab('root')
+                            cron = CronTab("root")
                             job = cron.new(command=command)
 
                             if step["stepReminder"] == "every_hour":
@@ -1128,7 +1135,7 @@ def read_reminder(request, process_id, username):
                                 #     # "next_run": hourly_job.next_run(),
                                 # }
                                 # return Response(response_data)
-                                job.setall('* * * * *')
+                                job.setall("* * * * *")
 
                             elif step["stepReminder"] == "every_day":
                                 # Schedule cron job to run notification_cron.py every day
@@ -1142,7 +1149,7 @@ def read_reminder(request, process_id, username):
                                 #     # "next_run": hourly_job.next_run(),
                                 # }
                                 # return Response(response_data)
-                                job.setall('0 0 * * *')
+                                job.setall("0 0 * * *")
 
                             else:
                                 return Response(
@@ -1157,7 +1164,9 @@ def read_reminder(request, process_id, username):
 
                             # return Response(f"User hasnt accessed process: {step['stepReminder']}")
         except Exception as err:
-            return Response(f"An error occured: {err}", status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response(
+                f"An error occured: {err}", status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
 
     return Response(process_detail, status.HTTP_200_OK)
 
@@ -1165,26 +1174,26 @@ def read_reminder(request, process_id, username):
 @api_view(["POST"])
 def send_notif(request):
     data = {
-            "created_by": request.data["created_by"],
-            "portfolio": request.data["portfolio"],
-            "product_name": request.data["product_name"],
-            "company_id": request.data["company_id"],
-            "org_name": request.data["org_name"],
-            "org_id": request.data["org_id"],
-            "title": "Document to Sign",
-            "message": "You have a document to sign.",
-            "link": request.data["link"],
-            "duration": "5",
-            "button_status": ""
-        }
+        "created_by": request.data["created_by"],
+        "portfolio": request.data["portfolio"],
+        "product_name": request.data["product_name"],
+        "company_id": request.data["company_id"],
+        "org_name": request.data["org_name"],
+        "org_id": request.data["org_id"],
+        "title": "Document to Sign",
+        "message": "You have a document to sign.",
+        "link": request.data["link"],
+        "duration": "5",
+        "button_status": "",
+    }
     try:
         notification_cron.send_notification(data)
         return Response("Notification sent", status.HTTP_201_CREATED)
 
     except Exception as err:
-        return Response(f"Something went wrong: {err}", status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-
+        return Response(
+            f"Something went wrong: {err}", status.HTTP_500_INTERNAL_SERVER_ERROR
+        )
 
     # daily_reminder=cache.get("daily_reminder_data")
     # hourly_reminder=cache.get("hourly_reminder_data")
