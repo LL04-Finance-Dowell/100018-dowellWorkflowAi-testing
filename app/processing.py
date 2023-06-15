@@ -26,7 +26,7 @@ from app.utils.mongo_db_connection import (
     update_document_clone,
     update_process,
 )
-from app.utils.verification import Verification
+from app.verification import Verification
 
 
 class Process:
@@ -144,6 +144,8 @@ class HandleProcess(Verification):
     links = []
     public_links = []
     qrcodes = []
+    docs = []
+    clone_ids = []
 
     def __init__(self, process):
         self.process = process
@@ -175,8 +177,7 @@ class HandleProcess(Verification):
             clone_id = cloning_document(
                 parent_item_id, users, parent_item_id, process_id
             )
-            clone_ids = [clone_id]
-
+            Background.clone_ids = [clone_id]
             for u in users:
                 step.get("stepDocumentCloneMap").append({u: clone_id})
 
@@ -186,11 +187,10 @@ class HandleProcess(Verification):
                 public_clone_ids.append(
                     {u: cloning_document(parent_item_id, u, parent_item_id, process_id)}
                 )
-
             step.get("stepDocumentCloneMap").extend(public_clone_ids)
-            clone_ids.extend(public_clone_ids)
+            Background.clone_ids.extend(public_clone_ids)
 
-        return clone_ids
+        return Background.clone_ids
 
     def start(self):
         process_id = self.process["_id"]
@@ -238,149 +238,151 @@ class HandleProcess(Verification):
                 )
                 HandleProcess.public_links.append({public_portfolio: link})
 
-            clone_ids = HandleProcess.prepare_document_for_step_one_users(
-                steps[0], self.process["parent_item_id"], process_id
+        clone_ids = HandleProcess.prepare_document_for_step_one_users(
+            steps[0], self.process["parent_item_id"], process_id
+        )
+        save_process_links(
+            HandleProcess.links,
+            process_id,
+            clone_ids,
+            company_id,
+        )
+        Thread(
+            target=lambda: update_process(
+                process_id,
+                steps,
+                "processing",
             )
-            Thread(
-                target=lambda: save_process_links(
-                    HandleProcess.links,
-                    process_id,
-                    clone_ids,
-                    company_id,
-                )
-            ).start()
-
-            Thread(
-                target=lambda: update_process(
-                    process_id,
-                    steps,
-                    "processing",
-                )
-            ).start()
-
-            Thread(
-                target=lambda: save_process_qrcodes(
-                    HandleProcess.qrcodes,
-                    self.process["_id"],
-                    clone_ids,
-                    self.process["processing_action"],
-                    self.process["process_title"],
-                    self.process["company_id"],
-                )
-            ).start()
-
-            return (
-                {
-                    "links": HandleProcess.links,
-                    "public_links": HandleProcess.public_links,
-                },
+        ).start()
+        Thread(
+            target=lambda: save_process_qrcodes(
+                HandleProcess.qrcodes,
+                self.process["_id"],
+                clone_ids,
+                self.process["processing_action"],
+                self.process["process_title"],
+                self.process["company_id"],
             )
-
-        return
+        ).start()
+        return (
+            {
+                "links": HandleProcess.links,
+                "public_links": HandleProcess.public_links,
+            },
+        )
 
     def verify(self, auth_step_role, location_data, user_name, user_type, org_name):
-        clone_id = None
-        process_id = self.process["_id"]
-        for step in self.process["process_steps"]:
-            if step.get("stepRole") == auth_step_role:
-                if step.get("stepLocation"):
-                    if not location_right(
-                        step.get("stepLocation"),
-                        step.get("stepContinent"),
-                        location_data["continent"],
-                        step.get("stepCountry"),
-                        location_data["country"],
-                        step.get("stepCity"),
-                        location_data["city"],
+        try:
+            clone_id = None
+            process_id = self.process["_id"]
+            for step in self.process["process_steps"]:
+                if step.get("stepRole") == auth_step_role:
+                    if step.get("stepLocation"):
+                        if not location_right(
+                            step.get("stepLocation"),
+                            step.get("stepContinent"),
+                            location_data["continent"],
+                            step.get("stepCountry"),
+                            location_data["country"],
+                            step.get("stepCity"),
+                            location_data["city"],
+                        ):
+                            raise Exception("access to this document not allowed from this location")
+                    if step.get("stepDisplay"):
+                        if not display_right(step.get("stepDisplay")):
+                            raise Exception("display rights set do not allow access to this document")
+                    if step.get("stepTimeLimit"):
+                        if not time_limit_right(
+                            step.get("stepTime"),
+                            step.get("stepTimeLimit"),
+                            step.get("stepStartTime"),
+                            step.get("stepEndTime"),
+                            self.process["created_at"],
+                        ):
+                            raise Exception("time limit for access has elapsed")
+                    if step.get("stepProcessingOrder"):
+                        if not step_processing_order(
+                            step.get("stepProcessingOrder"),
+                            process_id,
+                            step.get("stepRole"),
+                        ):
+                            return "user not yet allowed to access document"
+                    if user_type == "public":
+                        user_name = user_name[0]
+                    if any(
+                        user_name in map for map in step.get("stepDocumentCloneMap")
                     ):
-                        return
-                if step.get("stepDisplay"):
-                    if not display_right(step.get("stepDisplay")):
-                        return
-                if step.get("stepTimeLimit"):
-                    if not time_limit_right(
-                        step.get("stepTime"),
-                        step.get("stepTimeLimit"),
-                        step.get("stepStartTime"),
-                        step.get("stepEndTime"),
-                        self.process["created_at"],
-                    ):
-                        return
-                if step.get("stepProcessingOrder"):
-                    if not step_processing_order(
-                        step.get("stepProcessingOrder"),
-                        process_id,
-                        step.get("stepRole"),
-                    ):
-                        return
-                if user_type == "public":
-                    user_name = user_name[0]
-                if any(
-                    user_name in map for map in step.get("stepDocumentCloneMap")
-                ):
-                    for d_map in step["stepDocumentCloneMap"]:
-                        if d_map.get(user_name) is not None:
-                            clone_id = d_map.get(user_name)
+                        for d_map in step["stepDocumentCloneMap"]:
+                            if d_map.get(user_name) is not None:
+                                clone_id = d_map.get(user_name)
 
-                doc_map = step["stepDocumentMap"]
-                right = step["stepRights"]
-                role = step["stepRole"]
-                user = user_name
-                match = True
+                    doc_map = step["stepDocumentMap"]
+                    right = step["stepRights"]
+                    role = step["stepRole"]
+                    user = user_name
+                    match = True
 
-        if not match:
-            return
-        item_type = self.process["process_type"]
-        item_flag = None
-        if item_type == "document":
-            collection = "DocumentReports"
-            document = "documentreports"
-            field = "document_name"
-            team_member_id = "11689044433"
-            item_flag = get_document_object(clone_id)["document_state"]
+            if not match:
+                raise Exception("access to this document couldn't be verified")
+            item_type = self.process["process_type"]
+            item_flag = None
+            if item_type == "document":
+                collection = "DocumentReports"
+                document = "documentreports"
+                field = "document_name"
+                team_member_id = "11689044433"
+                item_flag = get_document_object(clone_id)["document_state"]
 
-        if item_type == "template":
-            collection = "TemplateReports"
-            document = "templatereports"
-            field = "template_name"
-            team_member_id = "22689044433"
-            item_flag = get_template_object(clone_id)["document_state"]
+            if item_type == "template":
+                collection = "TemplateReports"
+                document = "templatereports"
+                field = "template_name"
+                team_member_id = "22689044433"
+                item_flag = get_template_object(clone_id)["document_state"]
 
-        editor_link = HandleProcess.get_editor_link(
-            {
-                "product_name": "Workflow AI",
-                "details": {
-                    "field": field,
-                    "cluster": "Documents",
-                    "database": "Documentation",
-                    "collection": collection,
-                    "document": document,
-                    "team_member_ID": team_member_id,
-                    "function_ID": "ABCDE",
-                    "command": "update",
-                    "flag": "signing",
-                    "_id": clone_id,
-                    "action": item_type,
-                    "authorized": user,
-                    "document_map": doc_map,
-                    "document_right": right,
-                    "document_flag": item_flag,
-                    "role": role,
-                    "process_id": process_id,
-                    "update_field": {"document_name": "", "content": "", "page": ""},
-                },
-            }
-        )
-        if user_type == "public" and editor_link:
-            Thread(target=lambda: register_public_login(user_name[0], org_name))
+            editor_link = HandleProcess.get_editor_link(
+                {
+                    "product_name": "Workflow AI",
+                    "details": {
+                        "field": field,
+                        "cluster": "Documents",
+                        "database": "Documentation",
+                        "collection": collection,
+                        "document": document,
+                        "team_member_ID": team_member_id,
+                        "function_ID": "ABCDE",
+                        "command": "update",
+                        "flag": "signing",
+                        "_id": clone_id,
+                        "action": item_type,
+                        "authorized": user,
+                        "document_map": doc_map,
+                        "document_right": right,
+                        "document_flag": item_flag,
+                        "role": role,
+                        "process_id": process_id,
+                        "update_field": {
+                            "document_name": "",
+                            "content": "",
+                            "page": "",
+                        },
+                    },
+                }
+            )
+            if user_type == "public" and editor_link:
+                Thread(target=lambda: register_public_login(user_name[0], org_name))
 
-        return editor_link
+            return editor_link
+        except Exception as e:
+            print(e)
+            return e
 
 
 class Background:
     viewers = []
     copies = []
     clones = []
+    docs = []
     d_states = False
 
     def __init__(self, process, item_type, item_id, role, username):
@@ -397,14 +399,13 @@ class Background:
     @classmethod
     def assign_task_to_users(cls, clone_map, users, process_id, item_type):
         for cm in clone_map:
-            docs = list(cm.values())
+            Background.docs = list(cm.values())
 
-        for docid in docs:
+        for docid in Background.docs:
             for usr in users:
                 cls.viewers.append(usr)
                 authorize(docid, cls.viewers, process_id, item_type)
                 clone_map.append({usr: docid})
-
         return
 
     @classmethod
@@ -438,13 +439,11 @@ class Background:
             m["member"]
             for m in step.get("stepTeamMembers", []) + step.get("stepUserMembers", [])
         ]
-
         if users:
             for usr in users:
                 for dmap in step["stepDocumentCloneMap"]:
                     if dmap.get(usr) is not None:
                         cls.clones.append(dmap.get(usr))
-
             Background.d_states = all(cls.check_items_state(cls.clones))
 
         if public and users == []:
@@ -452,9 +451,7 @@ class Background:
                 for dmap in step["stepDocumentCloneMap"]:
                     if dmap.get(usr) is not None:
                         cls.clones.append(dmap.get(usr))
-
             Background.d_states = all(cls.check_items_state(cls.clones))
-
         return Background.d_states
 
     @staticmethod
@@ -463,7 +460,6 @@ class Background:
         clone_list = document["clone_list"]
         for c in clone_ids:
             clone_list.append(c)
-
         update_document_clone(parent_item_id, clone_list)
         return
 
@@ -481,7 +477,7 @@ class Background:
                 return
 
             else:
-                if no_of_steps == 2:
+                if no_of_steps >= 2:
                     step = self.process["process_steps"][1]
                     users = [
                         m["member"]
@@ -489,7 +485,6 @@ class Background:
                         + step.get("stepPublicMembers", [])
                         + step.get("stepUserMembers", [])
                     ]
-
                     if step["stepDocumentCloneMap"]:
                         for usr in users:
                             for dmap in step["stepDocumentCloneMap"]:
@@ -499,7 +494,6 @@ class Background:
                         Background.d_states = all(
                             Background.check_items_state(Background.clones)
                         )
-
                     else:
                         if step["stepTaskType"] == "assign_task":
                             Background.assign_task_to_users(
@@ -508,7 +502,6 @@ class Background:
                                 self.process["_id"],
                                 self.item_type,
                             )
-
                         if step["stepTaskType"] == "request_for_task":
                             copies = Background.request_task_for_users(
                                 self.item_id,
@@ -521,15 +514,13 @@ class Background:
                                 self.process["parent_item_id"],
                                 [d["member"] for d in copies if "member" in d],
                             )
-
                     update_process(
                         process_id=self.process["_id"],
                         steps=self.process["process_steps"],
                         state=self.process["processing_state"],
                     )
-
                     if not Background.d_states:
-                        if no_of_steps == 3:
+                        if no_of_steps >= 3:
                             step = self.process["process_steps"][2]
                             users = [
                                 m["member"]
@@ -537,7 +528,6 @@ class Background:
                                 + step.get("stepPublicMembers", [])
                                 + step.get("stepUserMembers", [])
                             ]
-
                             if step["stepDocumentCloneMap"]:
                                 for usr in users:
                                     for dmap in step["stepDocumentCloneMap"]:
@@ -547,7 +537,6 @@ class Background:
                                 Background.d_states = all(
                                     Background.check_items_state(Background.clones)
                                 )
-
                             else:
                                 if step["stepTaskType"] == "assign_task":
                                     Background.assign_task_to_users(
@@ -556,7 +545,6 @@ class Background:
                                         self.process["_id"],
                                         self.item_type,
                                     )
-
                                 if step["stepTaskType"] == "request_for_task":
                                     copies = Background.request_task_for_users(
                                         self.item_id,
@@ -564,12 +552,10 @@ class Background:
                                         self.process["_id"],
                                         step["stepDocumentCloneMap"],
                                     )
-
                                 Background.update_parent_item_clone_list(
                                     self.process["parent_item_id"],
                                     [d["member"] for d in copies if "member" in d],
                                 )
-
                             update_process(
                                 process_id=self.process["_id"],
                                 steps=self.process["process_steps"],
