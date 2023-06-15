@@ -247,7 +247,7 @@ def process_verification(request):
     if editor_link:
         return Response(editor_link, status.HTTP_200_OK)
 
-    return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
+    return Response("access to this document is denied at this time!", status.HTTP_400_BAD_REQUEST)
 
 
 @api_view(["POST"])
@@ -330,6 +330,29 @@ def processes(request, company_id):
         except:
             return Response(status.HTTP_500_INTERNAL_SERVER_ERROR)
     return Response(process_list, status.HTTP_200_OK)
+
+@api_view(["GET"])
+def get_completed_processes(request, company_id):
+    """fetches workflow process `I` created."""
+    data_type = request.query_params.get("data_type", "Real_Data")
+    if not validate_id(company_id):
+        return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
+
+    cache_key = f"processes_{company_id}_completed"
+    process_list = cache.get(cache_key)
+
+    if process_list is None:
+        try:
+            process_list = get_process_list(company_id, data_type)
+            if len(process_list) > 0:
+                completed = list(
+                    filter(lambda x: x.get("processing_state") == "finalized", process_list)
+                )
+            cache.set(cache_key, completed, timeout=60)
+        except Exception as err:
+            return Response(err, status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
+    return Response(completed, status.HTTP_200_OK)
 
 
 @api_view(["GET"])

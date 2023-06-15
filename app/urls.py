@@ -31,6 +31,7 @@ from .views import (
     process_copies,
     process_verification,
     processes,
+    get_completed_processes,
     template_detail,
     template_object,
     trash_favourites,
@@ -47,6 +48,7 @@ from .views import (
 urlpatterns = [
     path("server/", webhook),
     path("companies/<str:company_id>/processes/", processes),
+    path("companies/<str:company_id>/processes/completed/", get_completed_processes),
     path("companies/<str:company_id>/workflows/", get_workflows),
     path("companies/<str:company_id>/favourites/", all_favourites),
     path("companies/<str:company_id>/templates/", get_templates),
