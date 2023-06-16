@@ -302,9 +302,9 @@ class HandleProcess(Verification):
                             raise Exception("time limit for access has elapsed")
                     if step.get("stepProcessingOrder"):
                         if not step_processing_order(
-                            step.get("stepProcessingOrder"),
-                            process_id,
-                            step.get("stepRole"),
+                            order=step.get("stepProcessingOrder"),
+                            process_id=process_id,
+                            role=step.get("stepRole"),
                         ):
                             return "user not yet allowed to access document"
                     if user_type == "public":
