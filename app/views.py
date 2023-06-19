@@ -25,6 +25,9 @@ from app.utils.helpers import (
 )
 from django.core.cache import cache
 from app.utils.mongo_db_connection import (
+    update_document,
+    document_in_folder,
+    template_in_folder,
     delete_document,
     delete_process,
     delete_template,
@@ -856,8 +859,6 @@ def template_detail(request, template_id):
     editor_link = access_editor(template_id, "template")
     if not editor_link:
         return Response(status.HTTP_500_INTERNAL_SERVER_ERROR)
-    folder=get_template_object(template_id)["Folder"]
-    #print(folder)
 
     return Response(editor_link, status.HTTP_201_CREATED)
 
@@ -1270,14 +1271,10 @@ def send_notif(request):
 @api_view(["POST"])
 def create_folder(request):
     data = []
+    folder_name = "Untitled Folder"
     if not validate_id(request.data["company_id"]):
-        return Response("Invalid company details", status.HTTP_400_BAD_REQUEST)
-    try: 
-        if request.data["folder_name"]:
-           folder_name=request.data["folder_name"]
-    except:
-        folder_name = "Untitled Folder"
-       
+        return Response("Invalid company details", status.HTTP_400_BAD_REQUEST)  
+    
     res = json.loads(
         save_folder(
             folder_name,
@@ -1288,10 +1285,12 @@ def create_folder(request):
             "original",
         )
     )
-    return Response(
-            {"_id": res["inserted_id"],"Message":folder_name +" created"},
-            status.HTTP_201_CREATED,
-        )
+    if res['isSuccess']:
+        
+        return Response(
+                {"_id": res["inserted_id"],"Message":folder_name +" created"},
+                status.HTTP_201_CREATED,
+            )
 
     return Response(status.HTTP_500_INTERNAL_SERVER_ERROR)
 
@@ -1303,14 +1302,12 @@ def update_folder(request, folder_id):
         return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
     if request.method == "GET":
         settings = get_folder_object(folder_id)
-        #print(settings)
         return Response(settings, status.HTTP_200_OK)
     if request.method == "PUT":
         form = request.data
         if not form:
             return Response("Folder Data is Required", status.HTTP_400_BAD_REQUEST)
-        old_folder = get_folder_object(folder_id)
-        
+        old_folder = get_folder_object(folder_id)  
         old_folder["folder_name"]=form["folder_name"]
         old_folder["data"].append({"template_id:":form["template_id"],"document_id":form["document_id"]})
         updt_folder = json.loads(update_folder_db(folder_id, old_folder))
@@ -1319,4 +1316,33 @@ def update_folder(request, folder_id):
             return Response("Folder Updated", status.HTTP_201_CREATED)
         
         return Response(status.HTTP_500_INTERNAL_SERVER_ERROR)
+ 
+#Still on this
+#update document or template folders  
+@api_view(["PUT"])
+def folder_update(request):
+    """Update  (Template | Document ) Details For folder"""
+    if request.method == "PUT":     
+        if not request.data:
+            return Response("You are missing something", status.HTTP_400_BAD_REQUEST)
+        id = request.data["item_id"]
+        folder=request.data["folder_details"]
+        if not validate_id(id):
+            return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
         
+        if request.data["item_type"] == "document":
+            old_document=get_document_object(id)
+            old_document['folders'].append(folder)
+            res = document_in_folder(id, old_document['folders'])
+            if res["isSuccess"]:
+                return Response("Document updated", status.HTTP_200_OK)
+
+        if request.data["item_type"] == "template":
+            
+            old_template=get_template_object(id)
+            old_template['folders'].append(folder)
+            res = template_in_folder(id, old_template["folders"])
+            return Response(res, status.HTTP_200_OK)
+            """ if res["isSuccess"]:
+                return Response("Template updated", status.HTTP_200_OK)"""
+    return Response(status.HTTP_500_INTERNAL_SERVER_ERROR)

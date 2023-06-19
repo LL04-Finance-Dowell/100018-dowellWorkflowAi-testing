@@ -398,7 +398,7 @@ def save_template(name, data, page,folders, created_by, company_id, data_type, t
                 "auth_viewers": [],
                 "template_state": "draft",
                 "created_on": time,
-                "Folders":folders,
+                "folders":folders,
             },
             "update_field": {"order_nos": 21},
             "platform": "bangalore",
@@ -937,6 +937,36 @@ def delete_document(document_id, data_type):
             },
             "update_field": {
                 "data_type": data_type,
+            },
+            "platform": "bangalore",
+        }
+    )
+    return post_to_data_service(payload)
+def document_in_folder(document_id, folder):
+    payload = json.dumps(
+        {
+            **DOCUMENT_CONNECTION_DICT,
+            "command": "update",
+            "field": {
+                "_id": document_id,
+            },
+            "update_field": {
+                "folders": folder,
+            },
+            "platform": "bangalore",
+        }
+    )
+    return post_to_data_service(payload)
+def template_in_folder(template_id, folder):
+    payload = json.dumps(
+        {
+            **TEMPLATE_CONNECTION_DICT,
+            "command": "update",
+            "field": {
+                "_id": template_id,
+            },
+            "update_field": {
+                "folders": folder,
             },
             "platform": "bangalore",
         }

@@ -9,6 +9,7 @@ from .views import (
     archives,
     create_folder,
     update_folder,
+    folder_update,
     create_document,
     create_team,
     create_template,
@@ -44,6 +45,7 @@ from .views import (
     webhook,
     read_reminder,
     send_notif,
+    
 
 )
 
@@ -98,6 +100,7 @@ urlpatterns = [
     #folder
     path("folders/", create_folder),
     path("folders/<str:folder_id>", update_folder),
+    path("folders/update-item/", folder_update),
     
 
 ]
