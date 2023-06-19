@@ -60,7 +60,7 @@ from app.utils.mongo_db_connection import (
     update_wf,
     update_process,
     update_workflow_setting,
-    update_folder_db
+    update_folder,
 )
 
 from .constants import EDITOR_API
@@ -254,7 +254,9 @@ def process_verification(request):
     if editor_link:
         return Response(editor_link, status.HTTP_200_OK)
 
-    return Response("access to this document is denied at this time!", status.HTTP_400_BAD_REQUEST)
+    return Response(
+        "access to this document is denied at this time!", status.HTTP_400_BAD_REQUEST
+    )
 
 
 @api_view(["POST"])
@@ -338,6 +340,7 @@ def processes(request, company_id):
             return Response(status.HTTP_500_INTERNAL_SERVER_ERROR)
     return Response(process_list, status.HTTP_200_OK)
 
+
 @api_view(["GET"])
 def get_completed_processes(request, company_id):
     """fetches workflow process `I` created."""
@@ -353,12 +356,14 @@ def get_completed_processes(request, company_id):
             process_list = get_process_list(company_id, data_type)
             if len(process_list) > 0:
                 completed = list(
-                    filter(lambda x: x.get("processing_state") == "finalized", process_list)
+                    filter(
+                        lambda x: x.get("processing_state") == "finalized", process_list
+                    )
                 )
             cache.set(cache_key, completed, timeout=60)
         except Exception as err:
             return Response(err, status.HTTP_500_INTERNAL_SERVER_ERROR)
-        
+
     return Response(completed, status.HTTP_200_OK)
 
 
@@ -418,8 +423,7 @@ def create_workflow_setting(request):
     owner_name = form["owner_name"]
     username = form["username"]
     portfolio_name = form["portfolio_name"]
-    processes = [{"version": "1.0.0",
-                  "flag": "enable", "process": form["proccess"]}]
+    processes = [{"version": "1.0.0", "flag": "enable", "process": form["proccess"]}]
     wf_set = json.loads(
         save_workflow_setting(
             company_id, owner_name, username, portfolio_name, processes
@@ -450,15 +454,13 @@ def application_settings(request, wf_setting_id):
             return Response("Workflow Data is Required", status.HTTP_400_BAD_REQUEST)
 
         old_wf_setting = get_workflow_setting_object(wf_setting_id)
-        version = setting.version_control(
-            old_wf_setting["processes"][-1]["version"])
+        version = setting.version_control(old_wf_setting["processes"][-1]["version"])
         old_wf_setting["processes"][-1]["flag"] = "disable"
 
         old_wf_setting["processes"].append(
             {"version": version, "flag": "enable", "process": form["proccess"]}
         )
-        updt_wf = json.loads(update_workflow_setting(
-            wf_setting_id, old_wf_setting))
+        updt_wf = json.loads(update_workflow_setting(wf_setting_id, old_wf_setting))
 
         if updt_wf["isSuccess"]:
             return Response("Workflow Setting Updated", status.HTTP_201_CREATED)
@@ -574,7 +576,7 @@ def create_document(request):
         )
 
     viewers = [request.data["created_by"]]
-    folder=[]
+    folder = []
     res = json.loads(
         save_document(
             name="Untitled Document",
@@ -588,7 +590,7 @@ def create_document(request):
             document_type="original",
             parent_id=None,
             process_id="",
-            folders=folder
+            folders=folder,
         )
     )
     if res["isSuccess"]:
@@ -611,8 +613,7 @@ def get_document_content(request, document_id):
         return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
 
     content = []
-    my_dict = ast.literal_eval(
-        get_document_object(document_id)["content"])[0][0]
+    my_dict = ast.literal_eval(get_document_object(document_id)["content"])[0][0]
     all_keys = [i for i in my_dict.keys()]
     for i in all_keys:
         temp_list = []
@@ -620,8 +621,7 @@ def get_document_content(request, document_id):
             if j["type"] == "CONTAINER_INPUT":
                 container_list = []
                 for item in j["data"]:
-                    container_list.append(
-                        {"id": item["id"], "data": item["data"]})
+                    container_list.append({"id": item["id"], "data": item["data"]})
                 temp_list.append({"id": j["id"], "data": container_list})
             else:
                 temp_list.append({"id": j["id"], "data": j["data"]})
@@ -637,8 +637,7 @@ def get_document_content(request, document_id):
                 {
                     key: sorted(
                         dicts[key],
-                        key=lambda x: int(
-                            [a for a in re.findall("\d+", x["id"])][-1]),
+                        key=lambda x: int([a for a in re.findall("\d+", x["id"])][-1]),
                     )
                 }
             )
@@ -696,7 +695,7 @@ def archives(request):
         res = delete_process(id, "Archive_Data")
         if res["isSuccess"]:
             return Response("Process moved to archives", status.HTTP_200_OK)
-    
+
     if request.data["item_type"] == "folder":
         res = delete_folder(id, "Archive_Data")
         if res["isSuccess"]:
@@ -704,7 +703,8 @@ def archives(request):
 
     return Response(status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-#added folder
+
+# added folder
 @api_view(["POST"])
 def archive_restore(request):
     """Restore  (Template | Workflow | Document | Folder)"""
@@ -801,7 +801,7 @@ def get_templates(request, company_id):
 def create_template(request):
     data = ""
     page = ""
-    folder=[]
+    folder = []
     template_name = "Untitled Template"
     if not validate_id(request.data["company_id"]):
         return Response("Invalid company details", status.HTTP_400_BAD_REQUEST)
@@ -1000,8 +1000,7 @@ def get_completed_documents(request, company_id):
 
     if document_list:
         completed = list(
-            filter(lambda i: i.get("document_state")
-                   == "finalized", document_list)
+            filter(lambda i: i.get("document_state") == "finalized", document_list)
         )
         return Response(
             {"documents": completed},
@@ -1265,16 +1264,14 @@ def send_notif(request):
     #     return Response("Failed to Get Reminder", status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
-
-#Folder Operations
-#Created New Folder with empty data that accepts templates and documents ID
+# Create New Folder with empty data that accepts templates and documents ID
 @api_view(["POST"])
 def create_folder(request):
     data = []
     folder_name = "Untitled Folder"
     if not validate_id(request.data["company_id"]):
-        return Response("Invalid company details", status.HTTP_400_BAD_REQUEST)  
-    
+        return Response("Invalid company details", status.HTTP_400_BAD_REQUEST)
+
     res = json.loads(
         save_folder(
             folder_name,
@@ -1285,64 +1282,51 @@ def create_folder(request):
             "original",
         )
     )
-    if res['isSuccess']:
-        
+    if res["isSuccess"]:
         return Response(
-                {"_id": res["inserted_id"],"Message":folder_name +" created"},
-                status.HTTP_201_CREATED,
-            )
+            {"_id": res["inserted_id"], "Message": folder_name + " created"},
+            status.HTTP_201_CREATED,
+        )
 
     return Response(status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
-#Accessing and Updating the folder to accept IDs In data field
-@api_view(["GET","PUT"])
-def update_folder(request, folder_id):
+# Accessing and Updating the folder to accept IDs In data field
+@api_view(["GET", "PUT"])
+def folder_update(request, folder_id):
     if not validate_id(folder_id):
         return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
     if request.method == "GET":
         settings = get_folder_object(folder_id)
         return Response(settings, status.HTTP_200_OK)
+
     if request.method == "PUT":
         form = request.data
+        id = request.data["item_id"]
         if not form:
             return Response("Folder Data is Required", status.HTTP_400_BAD_REQUEST)
-        old_folder = get_folder_object(folder_id)  
-        old_folder["folder_name"]=form["folder_name"]
-        old_folder["data"].append({"template_id:":form["template_id"],"document_id":form["document_id"]})
-        updt_folder = json.loads(update_folder_db(folder_id, old_folder))
-        
-        if updt_folder["isSuccess"]:
-            return Response("Folder Updated", status.HTTP_201_CREATED)
-        
-        return Response(status.HTTP_500_INTERNAL_SERVER_ERROR)
- 
-#Still on this
-#update document or template folders  
-@api_view(["PUT"])
-def folder_update(request):
-    """Update  (Template | Document ) Details For folder"""
-    if request.method == "PUT":     
-        if not request.data:
-            return Response("You are missing something", status.HTTP_400_BAD_REQUEST)
-        id = request.data["item_id"]
-        folder=request.data["folder_details"]
-        if not validate_id(id):
-            return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
-        
+        old_folder = get_folder_object(folder_id)
+        old_folder["folder_name"] = form["folder_name"]
+        old_folder["data"].append(
+            {"item_id:": form["item_id"], "item_type": form["item_type"]}
+        )
+        updt_folder = json.loads(update_folder(folder_id, old_folder))
+
         if request.data["item_type"] == "document":
-            old_document=get_document_object(id)
-            old_document['folders'].append(folder)
-            res = document_in_folder(id, old_document['folders'])
-            if res["isSuccess"]:
-                return Response("Document updated", status.HTTP_200_OK)
+            old_document = get_document_object(id)
+            old_document["folders"] = old_document.get("folders")
+            if old_document["folders"] is not None:
+                old_document["folders"].append(old_folder["folder_name"])
+                res = document_in_folder(id, old_document["folders"])
 
         if request.data["item_type"] == "template":
-            
-            old_template=get_template_object(id)
-            old_template['folders'].append(folder)
-            res = template_in_folder(id, old_template["folders"])
-            return Response(res, status.HTTP_200_OK)
-            """ if res["isSuccess"]:
-                return Response("Template updated", status.HTTP_200_OK)"""
-    return Response(status.HTTP_500_INTERNAL_SERVER_ERROR)
+            old_template = get_template_object(id)
+            old_template["folders"] = old_template.get("folders")
+            if old_template["folders"] is not None:
+                old_template["folders"].append(old_folder["folder_name"])
+                res = template_in_folder(id, old_template["folders"])
+
+        if updt_folder["isSuccess"]:
+            return Response("Folder Updated", status.HTTP_201_CREATED)
+
+        return Response(status.HTTP_500_INTERNAL_SERVER_ERROR)

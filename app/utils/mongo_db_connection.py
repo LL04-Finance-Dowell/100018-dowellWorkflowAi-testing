@@ -442,7 +442,7 @@ def save_document(
                 "document_type": document_type,
                 "parent_id": parent_id,
                 "process_id": process_id,
-                "folder":folders,
+                "folders":folders,
             },
             "update_field": {"order_nos": 21},
             "platform": "bangalore",
@@ -528,7 +528,7 @@ def save_folder(name, data, created_by, company_id, data_type, folder_type):
         }
     )
     return post_to_data_service(payload)
-def update_folder_db(folder_id, old_folder):
+def update_folder(folder_id, old_folder):
     payload = json.dumps(
         {
             **FOLDER_CONNECTION_DICT,
@@ -957,6 +957,7 @@ def document_in_folder(document_id, folder):
         }
     )
     return post_to_data_service(payload)
+
 def template_in_folder(template_id, folder):
     payload = json.dumps(
         {

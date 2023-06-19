@@ -8,7 +8,6 @@ from .views import (
     archive_restore,
     archives,
     create_folder,
-    update_folder,
     folder_update,
     create_document,
     create_team,
@@ -45,8 +44,6 @@ from .views import (
     webhook,
     read_reminder,
     send_notif,
-    
-
 )
 
 urlpatterns = [
@@ -58,7 +55,10 @@ urlpatterns = [
     path("companies/<str:company_id>/templates/", get_templates),
     path("companies/<str:company_id>/documents/", get_documents),
     path("companies/<str:company_id>/documents/completed/", get_completed_documents),
-    path("companies/<str:company_id>/processes/<str:process_id>/", get_completed_documents_by_process),
+    path(
+        "companies/<str:company_id>/processes/<str:process_id>/",
+        get_completed_documents_by_process,
+    ),
     path("companies/<str:company_id>/teams/", get_all_teams),
     path("companies/<str:company_id>/settings/", all_workflow_ai_setting),
     path("templates/", create_template),
@@ -96,11 +96,7 @@ urlpatterns = [
     path("settings/<str:wf_setting_id>", get_workflow_ai_setting),
     path("reminder/<str:process_id>/<str:username>", read_reminder),
     path("notify/", send_notif),
-    
-    #folder
+    # folder
     path("folders/", create_folder),
-    path("folders/<str:folder_id>", update_folder),
-    path("folders/update-item/", folder_update),
-    
-
+    path("folders/<str:folder_id>", folder_update),
 ]
