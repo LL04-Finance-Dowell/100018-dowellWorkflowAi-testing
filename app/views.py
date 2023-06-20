@@ -202,7 +202,7 @@ def get_process_link(request, process_id):
     for link in links_info["links"]:
         if user in link:
             return Response(link[user], status.HTTP_200_OK)
-    return Response("User is not part of this process", status.HTTP_401_UNAUTHORIZED)
+    return Response("user is not part of this process", status.HTTP_401_UNAUTHORIZED)
 
 
 @api_view(["POST"])

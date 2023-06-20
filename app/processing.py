@@ -287,10 +287,14 @@ class HandleProcess(Verification):
                             step.get("stepCity"),
                             location_data["city"],
                         ):
-                            raise Exception("access to this document not allowed from this location")
+                            raise Exception(
+                                "access to this document not allowed from this location"
+                            )
                     if step.get("stepDisplay"):
                         if not display_right(step.get("stepDisplay")):
-                            raise Exception("display rights set do not allow access to this document")
+                            raise Exception(
+                                "display rights set do not allow access to this document"
+                            )
                     if step.get("stepTimeLimit"):
                         if not time_limit_right(
                             step.get("stepTime"),
@@ -302,11 +306,11 @@ class HandleProcess(Verification):
                             raise Exception("time limit for access has elapsed")
                     if step.get("stepProcessingOrder"):
                         if not step_processing_order(
-                            step.get("stepProcessingOrder"),
-                            process_id,
-                            step.get("stepRole"),
+                            order=step.get("stepProcessingOrder"),
+                            process_id=process_id,
+                            role=step.get("stepRole"),
                         ):
-                            return "user not yet allowed to access document"
+                            raise Exception("user not yet allowed to access document")
                     if user_type == "public":
                         user_name = user_name[0]
                     if any(
@@ -375,7 +379,7 @@ class HandleProcess(Verification):
             return editor_link
         except Exception as e:
             print(e)
-            return e
+            return
 
 
 class Background:
