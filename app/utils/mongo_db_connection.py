@@ -955,7 +955,7 @@ def delete_document(document_id, data_type):
     return post_to_data_service(payload)
 
 
-def folder_in_document(document_id, folder):
+def add_document_to_folder(document_id, folder):
     payload = json.dumps(
         {
             **DOCUMENT_CONNECTION_DICT,
@@ -972,7 +972,7 @@ def folder_in_document(document_id, folder):
     return post_to_data_service(payload)
 
 
-def folder_in_template(template_id, folder):
+def add_template_to_folder(template_id, folder):
     payload = json.dumps(
         {
             **TEMPLATE_CONNECTION_DICT,

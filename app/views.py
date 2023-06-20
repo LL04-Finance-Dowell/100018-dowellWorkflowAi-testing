@@ -26,8 +26,8 @@ from app.utils.helpers import (
 from django.core.cache import cache
 from app.utils.mongo_db_connection import (
     update_document,
-    folder_in_document,
-    folder_in_template,
+    add_document_to_folder,
+    add_template_to_folder,
     delete_document,
     delete_process,
     delete_template,
@@ -1317,14 +1317,14 @@ def folder_update(request, folder_id):
             old_document["folders"] = old_document.get("folders")
             if old_document["folders"] is not None:
                 old_document["folders"].append(old_folder["folder_name"])
-                res = folder_in_document(id, folder_id)
+                res = add_document_to_folder(id, folder_id)
 
         if request.data["item_type"] == "template":
             old_template = get_template_object(id)
             old_template["folders"] = old_template.get("folders")
             if old_template["folders"] is not None:
                 old_template["folders"].append(old_folder["folder_name"])
-                res = folder_in_template(id, folder_id)
+                res = add_template_to_folder(id, folder_id)
 
         if updt_folder["isSuccess"]:
             return Response("Folder Updated", status.HTTP_201_CREATED)
