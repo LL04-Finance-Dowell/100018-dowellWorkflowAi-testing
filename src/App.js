@@ -103,7 +103,7 @@ function App() {
             path={'saved'}
             element={<DocumentsPage showOnlySaved={true} />}
           />
-          {/* <Route path={"trash"} element={<DocumentsPage showOnlyTrashed={true} />} /> */}
+          <Route path={"completed"} element={<DocumentsPage showOnlyCompleted={true} />} />
           {/*  <Route path={"new"} element={<CreateNewDocumentPage />} />
         <Route path={"to-sign"} element={<SignDocumentsPage />} />
         <Route path={"rejected"} element={<RejectedDocumentsPage />} />

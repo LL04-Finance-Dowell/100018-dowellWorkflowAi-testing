@@ -46,6 +46,7 @@ const ProcessCard = ({ cardItem, title }) => {
       );
   };
   function getProcessDetail(process_id) {
+
     axios
       .get(`https://100094.pythonanywhere.com/v1/processes/${process_id}/`)
       .then((response) => {
