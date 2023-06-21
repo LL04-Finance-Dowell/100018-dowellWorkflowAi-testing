@@ -176,8 +176,19 @@ def document_processing(request):
 
     if data:
         verification_links = HandleProcess(data).start()
+        related_links = {}
+
         if verification_links:
-            return Response(verification_links, status.HTTP_200_OK)
+            for wf in request.data["workflows"]:
+                for w in wf["workflows"]:
+                    for step in w["step"]:
+                        for mem in step["stepPublicMembers"] + step["stepTeamMembers"] + step["stepUserMembers"]:
+                            for item in verification_links:
+                                for link in item["links"]:
+                                    if mem["member"] in link:
+                                        related_links[mem["member"]] = link[mem["member"]]
+
+            return Response(related_links, status.HTTP_200_OK)
 
     return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
 
