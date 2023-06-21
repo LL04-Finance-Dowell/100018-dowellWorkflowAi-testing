@@ -20,7 +20,9 @@ const filterWorkflows = (workflows, thunkAPI) => {
             (portfolio) => portfolio.product === productName
           )?.data_type
         : thunkAPI.getState().auth?.userDetail?.portfolio_info[0]?.data_type;
-
+    
+    console.log('user thunk portfolio', userThunkPortfolioDataTypeState);
+    console.log(workflows);
     filteredWorkflows = workflows
       .filter(
         (item) =>
@@ -34,7 +36,7 @@ const filterWorkflows = (workflows, thunkAPI) => {
         workflows: {
           ...item.workflows,
           /* _id: uuidv4(), */
-          steps: item.workflows.steps.map((step) => ({
+          steps: item?.workflows?.steps?.map((step) => ({
             ...step,
             _id: uuidv4(),
           })),
