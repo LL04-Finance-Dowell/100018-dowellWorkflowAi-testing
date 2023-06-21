@@ -25,6 +25,7 @@ from app.utils.helpers import (
 )
 from django.core.cache import cache
 from app.utils.mongo_db_connection import (
+    get_folder_list,
     update_document,
     add_document_to_folder,
     add_template_to_folder,
@@ -1330,3 +1331,23 @@ def folder_update(request, folder_id):
             return Response("Folder Updated", status.HTTP_201_CREATED)
 
         return Response(status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+# To fetch all folders
+@api_view(["GET"])
+def all_folders(request, company_id):
+    """fetches Folders created."""
+    data_type = request.query_params.get("data_type", "Real_Data")
+    if not validate_id(company_id):
+        return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
+
+    cache_key = f"folders_{company_id}"
+    folders_list = cache.get(cache_key)
+
+    if folders_list is None:
+        try:
+            folders_list = get_folder_list(company_id, data_type)
+            cache.set(cache_key, folders_list, timeout=60)
+        except:
+            return Response(status.HTTP_500_INTERNAL_SERVER_ERROR)
+    return Response(folders_list, status.HTTP_200_OK)

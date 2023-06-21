@@ -139,6 +139,14 @@ def get_document_list(company_id, data_type):
     )
 
 
+def get_folder_list(company_id, data_type):
+    return get_data_from_data_service(
+        *FOLDER_CONNECTION_LIST,
+        "fetch",
+        {"company_id": str(company_id), "data_type": data_type},
+    )
+
+
 def get_uuid_object(uuid_hash):
     return get_data_from_data_service(
         *QR_ID_CONNECTION_LIST, "find", {"uuid_hash": uuid_hash}
