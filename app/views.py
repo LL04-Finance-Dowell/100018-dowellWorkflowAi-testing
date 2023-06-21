@@ -1347,7 +1347,6 @@ def all_folders(request, company_id):
     if folders_list is None:
         try:
             folders_list = get_folder_list(company_id, data_type)
-            print(folders_list)
             cache.set(cache_key, folders_list, timeout=60)
         except:
             return Response(status.HTTP_500_INTERNAL_SERVER_ERROR)
