@@ -17,6 +17,7 @@ const WorkflowsPage = ({ home, showOnlySaved, showOnlyTrashed }) => {
   const { allWorkflows: allWorkflowsArray, allWorkflowsStatus } = useSelector(
     (state) => state.workflow
   );
+
   const { customWrkfName } = useAppContext();
 
   const [currentUserPortfolioDataType, setCurrentUserPortfolioDataType] =
