@@ -1336,7 +1336,7 @@ def folder_update(request, folder_id):
 # To fetch all folders
 @api_view(["GET"])
 def all_folders(request, company_id):
-    """fetches workflow process `I` created."""
+    """fetches Folders created."""
     data_type = request.query_params.get("data_type", "Real_Data")
     if not validate_id(company_id):
         return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
