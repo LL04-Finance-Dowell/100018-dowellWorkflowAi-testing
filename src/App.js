@@ -31,7 +31,9 @@ function App() {
   const dispatch = useDispatch();
   const { session_id, userDetail } = useSelector((state) => state.auth);
   const { isPublicUser } = useAppContext();
+
   useDowellLogin();
+
   useEffect(() => {
     const interval = setInterval(() => {
       checkstatus();
