@@ -7,6 +7,7 @@ from .views import (
     approve,
     archive_restore,
     archives,
+    all_folders,
     create_folder,
     folder_update,
     create_document,
@@ -99,4 +100,5 @@ urlpatterns = [
     # folder
     path("folders/", create_folder),
     path("folders/<str:folder_id>", folder_update),
+    path("companies/<str:company_id>/folders/", all_folders),
 ]
