@@ -119,30 +119,6 @@
   }
 }
 
-.DetailContainer {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-around;
-  align-items: flex-start;
-}
-
-.DetailHeading {
-  text-align: center;
-}
-
-
-.ProcessingState {
-  color: red;
-}
-
-.FinalizedState {
-  color: green;
-}
-
-.AlignLeft {
-  text-align: justify;
-  text-justify: inter-word;
-}
 
 
 

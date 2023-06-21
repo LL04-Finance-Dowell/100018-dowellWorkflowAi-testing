@@ -5,21 +5,42 @@ import WorkflowLayout from "../../../layouts/WorkflowLayout/WorkflowLayout";
 import ManageFiles from "../../../components/manageFiles/ManageFiles";
 import { useDispatch, useSelector } from "react-redux";
 import ProcessCard from "../../../components/hoverCard/processCard/ProcessCard";
+import ProcessDetailModail from "../../../components/newSidebar/manageFile/ProcessDetailModal/ProcessDetailModail";
 import GeneratedLinksModal from "../../../components/setWorkFlowInDocNew/steps/processDocument/components/GeneratedLinksModal/GeneratedLinksModal";
 import { useEffect } from "react";
 import { getAllProcessesV2 } from "../../../services/processServices";
-
+import axios from "axios";
 import { setAllProcesses, setProcessesLoaded, setProcessesLoading, setShowGeneratedLinksPopup } from "../../../features/app/appSlice";
 import { useNavigate } from "react-router-dom";
 import { productName } from "../../../utils/helpers";
 
 const ProcessesPage = ({ home, showOnlySaved, showOnlyPaused, showOnlyCancelled, showOnlyTrashed, showOnlyTests, showOnlyCompleted }) => {
-  const { processesLoading, allProcesses, processesLoaded, ArrayofLinks, showGeneratedLinksPopup, linksFetched,showsProcessDetailPopup,DetailFetched } = useSelector((state) => state.app);
+  const { processesLoading, allProcesses, processesLoaded, ArrayofLinks, showGeneratedLinksPopup, linksFetched, showsProcessDetailPopup, DetailFetched } = useSelector((state) => state.app);
   const { userDetail } = useSelector((state) => state.auth);
-  const [copiedLinks, setCopiedLinks] = useState([]);
+  const [completedProcess, SetcompletedPcocess] = useState();
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [currentUserPortfolioDataType, setCurrentUserPortfolioDataType] = useState('');
+
+  const processing = allProcesses.filter(process => process.processing_state === "processing");
+  const draft = allProcesses.filter(process => process.processing_state === "draft");
+
+  // console.log('processing',processing)
+  // console.log(userDetail?.portfolio_info[0].org_id)
+  const company_id = userDetail?.portfolio_info[0].org_id
+  useEffect(() => {
+    axios
+      .get(`https://100094.pythonanywhere.com/v1/companies/${userDetail?.portfolio_info[0].org_id}/processes/completed/`)
+      .then((response) => {
+        // console.log(response)
+        SetcompletedPcocess(response.data)
+      })
+      .catch((error) => {
+        console.log(error);
+
+      });
+  }, [company_id])
+
 
 
   useEffect(() => {
@@ -124,9 +145,9 @@ const ProcessesPage = ({ home, showOnlySaved, showOnlyPaused, showOnlyCancelled,
           {showGeneratedLinksPopup && linksFetched && Array.isArray(ArrayofLinks) &&
             <GeneratedLinksModal />
           }
- 
+
           {showsProcessDetailPopup && DetailFetched &&
-            <GeneratedLinksModal />
+            <ProcessDetailModail />
           }
 
           {
@@ -183,7 +204,7 @@ const ProcessesPage = ({ home, showOnlySaved, showOnlyPaused, showOnlyCancelled,
                 cardBgColor="#1ABC9C"
                 title="completed proccess"
                 Card={ProcessCard}
-                cardItems={allProcesses.filter(process => process.processing_state === "completed").filter(process => process.data_type === currentUserPortfolioDataType)}
+                cardItems={completedProcess}
                 status={processesLoading ? "pending" : "success"}
                 itemType={"processes"}
               />
