@@ -56,9 +56,7 @@ def register_public_login(qrid, org_name):
     )
     if res.status_code == 200:
         return True
-
-    else:
-        return None
+    return 
 
 
 def has_tilde_characters(string):
