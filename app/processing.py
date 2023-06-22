@@ -410,7 +410,7 @@ class Background:
         return
 
     @staticmethod
-    def request_task_for_users(item_id, parent_item_id, process_id, users, clonemap) -> list | None:
+    def request_task_for_users(item_id, parent_item_id, process_id, users, clonemap) -> list:
         copies = []
         try:
             copies += [
@@ -428,8 +428,7 @@ class Background:
                 clonemap.append(cp)
             return copies
         except Exception as e:
-            print(e)
-            return
+            raise e
 
     @staticmethod
     def check_first_step_state(process):
