@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { RiDeleteBin6Line } from 'react-icons/ri';
 import { BiLink, BiCopy } from 'react-icons/bi';
 import { useDispatch, useSelector } from 'react-redux';
@@ -35,17 +35,20 @@ const ProcessCard = ({ cardItem, title }) => {
 
 
   const handleProcessItemClick = async (item) => {
-    getProcessDetail(item._id)
-    dispatch(setshowsProcessDetailPopup(true));
-    setProcessDetailLoading(true);
-
-    if (item.processing_state === 'draft' && item.workflow_construct_ids)
+    if (item.processing_state === 'draft' && item.workflow_construct_ids) {
       navigate(
         `/workflows/new-set-workflow?id=${item._id}&state=${item.processing_state
         }${item.isFromLocalStorage ? '&local=true' : ''}`
       );
+      return
+    }
+
+    getProcessDetail(item._id, item.process_title)
+    dispatch(setshowsProcessDetailPopup(true));
+    setProcessDetailLoading(true);
   };
-  function getProcessDetail(process_id) {
+
+  function getProcessDetail(process_id, process_title) {
 
     axios
       .get(`https://100094.pythonanywhere.com/v1/processes/${process_id}/`)
@@ -59,7 +62,11 @@ const ProcessCard = ({ cardItem, title }) => {
       .catch((error) => {
         console.log(error);
         setProcessDetailLoading(false);
-
+        toast.info(
+          process_title ? 
+            `Failed to fetch details for ${process_title}` : 
+            'Failed to fetch process details'
+        )
       });
   }
 
@@ -299,7 +306,7 @@ const ProcessCard = ({ cardItem, title }) => {
     );
   };
   return (
-    <HoverCard Front={FrontSide} Back={BackSide} loading={processLinkLoading} />
+    <HoverCard Front={FrontSide} Back={BackSide} loading={processLinkLoading || processDetailLoading} />
   );
 };
 

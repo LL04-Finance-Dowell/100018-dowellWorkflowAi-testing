@@ -2,7 +2,7 @@ import { createAsyncThunk } from '@reduxjs/toolkit';
 import { WorkflowServices } from '../../services/workflowServices';
 import { setCurrentWorkflow, setToggleManageFileForm } from '../app/appSlice';
 import { removeFromMinedWf, setAllWorkflows } from './workflowsSlice';
-import { v4 as uuidv4 } from 'uuid';
+// import { v4 as uuidv4 } from 'uuid';
 import { changeToTitleCase, productName } from '../../utils/helpers';
 
 const workflowServices = new WorkflowServices();
@@ -19,28 +19,21 @@ const filterWorkflows = (workflows, thunkAPI) => {
               (portfolio) => portfolio.product === productName
             )?.data_type
         : thunkAPI.getState().auth?.userDetail?.portfolio_info[0]?.data_type;
-    
-    console.log('user thunk portfolio', userThunkPortfolioDataTypeState);
-    console.log(workflows);
+
     filteredWorkflows = workflows
       .filter(
         (item) =>
-          (item?.data_type &&
-            item?.data_type === userThunkPortfolioDataTypeState) ||
-          (item.workflows.data_type &&
-            item.workflows.data_type === userThunkPortfolioDataTypeState)
+          (
+            (item?.data_type &&
+              item?.data_type === userThunkPortfolioDataTypeState) ||
+            (item.workflows.data_type &&
+              item.workflows.data_type === userThunkPortfolioDataTypeState)
+          ) &&
+          // extra conditions to prevent the app from crashing due to unregular workflow structure
+          item.workflows &&
+          item.workflows.steps &&
+          item.workflows.workflow_title
       )
-      .map((item) => ({
-        ...item,
-        workflows: {
-          ...item.workflows,
-          /* _id: uuidv4(), */
-          steps: item?.workflows?.steps?.map((step) => ({
-            ...step,
-            _id: uuidv4(),
-          })),
-        },
-      }));
   } else {
     filteredWorkflows = [];
   }
@@ -126,7 +119,7 @@ export const updateWorkflow = createAsyncThunk(
 
       typeof res.data === 'string' && notify(changeToTitleCase(res.data));
 
-      thunkAPI.dispatch(removeFromMinedWf(updateData.workflow_id));
+      // thunkAPI.dispatch(removeFromMinedWf(updateData.workflow_id));
 
       handleAfterCreated();
 
