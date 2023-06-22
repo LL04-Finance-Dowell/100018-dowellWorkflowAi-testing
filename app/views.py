@@ -184,7 +184,8 @@ def document_processing(request):
 
     if data:
         verification_links = HandleProcess(data).start()
-        related_links = {}
+        member_links = []
+        public_links = []
 
         if verification_links:
             for wf in request.data["workflows"]:
@@ -195,9 +196,18 @@ def document_processing(request):
                         for item in verification_links:
                             for link in item["links"]:
                                 if mem["member"] in link:
-                                    related_links[mem["member"]] = link[mem["member"]]
+                                    key = mem["member"]
+                                    value = link[mem["member"]]
 
-            return Response(related_links, status.HTTP_200_OK)
+                                    if mem in step["stepPublicMembers"]:
+                                        public_links.append({key: value})
+                                    elif mem in step["stepTeamMembers"] or mem in step["stepUserMembers"]:
+                                        member_links.append({key: value})
+
+            return Response({
+                "links": member_links,
+                "public_links": public_links
+            }, status.HTTP_200_OK)
 
     return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
 
