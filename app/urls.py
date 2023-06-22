@@ -88,7 +88,7 @@ urlpatterns = [
         trash_favourites,
     ),
     path("archives/", archives),
-    path("archives/<str:item_id>/<str:item_type>/restore/", archive_restore),
+    path("archives/restore/", archive_restore),
     path("teams/", create_team),
     path("teams/<str:team_id>/", get_team_data),
     path("update-to-teams/", update_team),
