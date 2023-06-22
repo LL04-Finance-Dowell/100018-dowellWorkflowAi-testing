@@ -75,7 +75,7 @@ const InfoBoxes = ({ savedDoc }) => {
                         .includes(team?.toLocaleLowerCase())
                     )
                   : allWorkflowsArray?.filter((item) =>
-                      item.workflows?.workflow_title
+                      item?.workflows?.workflow_title
                         .toLowerCase()
                         .includes(workflow?.toLowerCase())
                     ),
