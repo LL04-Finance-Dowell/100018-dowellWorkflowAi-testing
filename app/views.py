@@ -188,13 +188,14 @@ def document_processing(request):
 
         if verification_links:
             for wf in request.data["workflows"]:
-                for w in wf["workflows"]:
-                    for step in w["steps"]:
-                        for mem in step["stepPublicMembers"] + step["stepTeamMembers"] + step["stepUserMembers"]:
-                            for item in verification_links:
-                                for link in item["links"]:
-                                    if mem["member"] in link:
-                                        related_links[mem["member"]] = link[mem["member"]]
+                w = wf.get("workflows")
+                steps = w.get("steps")
+                for step in steps:
+                    for mem in step["stepPublicMembers"] + step["stepTeamMembers"] + step["stepUserMembers"]:
+                        for item in verification_links:
+                            for link in item["links"]:
+                                if mem["member"] in link:
+                                    related_links[mem["member"]] = link[mem["member"]]
 
             return Response(related_links, status.HTTP_200_OK)
 

@@ -36,7 +36,8 @@ class Verification:
 
     @staticmethod
     def generate_qrcode(link):
-        qr_path = f"100094.pythonanywhere.com/media/qrcodes/{uuid.uuid4().hex}.png"
+        """Revert back to prod qr_path before push"""
+        qr_path = f"100094.pythonanywhere.com/media/qrcodes/{uuid.uuid4().hex}.png" # Production
         # qr_path = f"media/qrcodes/{uuid.uuid4().hex}.png"  # On dev
         qr_code = qrcode.QRCode(
             error_correction=qrcode.constants.ERROR_CORRECT_H)
