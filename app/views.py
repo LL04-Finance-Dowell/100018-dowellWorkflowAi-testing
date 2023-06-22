@@ -423,13 +423,25 @@ def workflow_detail(request, workflow_id):
     if request.method == "PUT":
         form = request.data
         if not form:
-            return Response("Workflow Data is required", status.HTTP_400_BAD_REQUEST)
-        old_workflow = get_wf_object(form["workflow_id"])
-        old_workflow["workflows"]["data_type"] = "Archive Data"
-        updt_wf = json.loads(update_wf(form["workflow_id"], old_workflow))
-        if updt_wf["isSuccess"]:
-            return Response("workflow Updated", status.HTTP_201_CREATED)
-        return Response(status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response(
+                "Workflow Data is required", status=status.HTTP_400_BAD_REQUEST
+            )
+
+        old_workflow = get_wf_object(workflow_id)
+
+        old_workflow["workflows"]["workflow_title"] = form["wf_title"]
+        old_workflow["workflows"]["data_type"] = form["data_type"]
+
+        old_workflow["workflows"]["steps"][0]["step_name"] = form["steps"][0][
+            "step_name"
+        ]
+        old_workflow["workflows"]["steps"][0]["role"] = form["steps"][0]["role"]
+
+        updt_wf = update_wf(workflow_id, old_workflow)
+        updt_wf = json.loads(updt_wf)
+        if updt_wf.get("isSuccess"):
+            return Response("Workflow Updated", status=status.HTTP_201_CREATED)
+        return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 @api_view(["GET"])
@@ -564,7 +576,7 @@ def document_object(request, document_id):
 
 @api_view(["POST"])
 def archives(request):
-    """Archiving  (Template | Workflow | Document)"""
+    """Archiving  (Template | Workflow | Document | Folder)"""
     if not request.data:
         return Response("You are missing something", status.HTTP_400_BAD_REQUEST)
     id = request.data["item_id"]
@@ -576,36 +588,74 @@ def archives(request):
             res_dict = json.loads(res)
             if res_dict["isSuccess"]:
                 return Response("Workflow moved to archives", status.HTTP_200_OK)
-            return Response("Failed to move workflow to archives", status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response(
+                "Failed to move workflow to archives",
+                status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
         except json.JSONDecodeError:
-            return Response("Invalid response data", status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response(
+                "Invalid response data", status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+
     if request.data["item_type"] == "document":
         res = delete_document(id, "Archive_Data")
         try:
             res_dict = json.loads(res)
             if res_dict["isSuccess"]:
                 return Response("Document moved to archives", status.HTTP_200_OK)
-            return Response("Failed to move document to archives", status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response(
+                "Failed to move document to archives",
+                status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
         except json.JSONDecodeError:
-            return Response("Invalid response data", status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response(
+                "Invalid response data", status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+
     if request.data["item_type"] == "template":
         res = delete_template(id, "Archive_Data")
         try:
             res_dict = json.loads(res)
             if res_dict["isSuccess"]:
                 return Response("Template moved to archives", status.HTTP_200_OK)
-            return Response("Failed to move template to archives", status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response(
+                "Failed to move template to archives",
+                status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
         except json.JSONDecodeError:
-            return Response("Invalid response data", status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response(
+                "Invalid response data", status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+
     if request.data["item_type"] == "process":
         res = delete_process(id, "Archive_Data")
         try:
             res_dict = json.loads(res)
             if res_dict["isSuccess"]:
                 return Response("Process moved to archives", status.HTTP_200_OK)
-            return Response("Failed to move process to archives", status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response(
+                "Failed to move process to archives",
+                status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
         except json.JSONDecodeError:
-            return Response("Invalid response data", status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response(
+                "Invalid response data", status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+    if request.data["item_type"] == "folder":
+        res = delete_folder(id, "Archive_Data")
+        try:
+            res_dict = json.loads(res)
+            if res_dict["isSuccess"]:
+                return Response("Folder moved to archives", status.HTTP_200_OK)
+            return Response(
+                "Failed to move process to archives",
+                status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
+        except json.JSONDecodeError:
+            return Response(
+                "Invalid response data", status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+
     return Response(status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
@@ -623,36 +673,74 @@ def archive_restore(request):
             res_dict = json.loads(res)
             if res_dict["isSuccess"]:
                 return Response("Workflow restored from archives", status.HTTP_200_OK)
-            return Response("Failed to restore Workflow from archives", status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response(
+                "Failed to restore Workflow from archives",
+                status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
         except json.JSONDecodeError:
-            return Response("Invalid response data", status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response(
+                "Invalid response data", status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+
     if request.data["item_type"] == "document":
         res = delete_document(id, "Real_Data")
         try:
             res_dict = json.loads(res)
             if res_dict["isSuccess"]:
                 return Response("Document restored from archives", status.HTTP_200_OK)
-            return Response("Failed to restore document from archives", status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response(
+                "Failed to restore document from archives",
+                status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
         except json.JSONDecodeError:
-            return Response("Invalid response data", status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response(
+                "Invalid response data", status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+
     if request.data["item_type"] == "template":
         res = delete_template(id, "Real_Data")
         try:
             res_dict = json.loads(res)
             if res_dict["isSuccess"]:
                 return Response("Template restored from archives", status.HTTP_200_OK)
-            return Response("Failed to restore template from archives", status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response(
+                "Failed to restore template from archives",
+                status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
         except json.JSONDecodeError:
-            return Response("Invalid response data", status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response(
+                "Invalid response data", status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+
     if request.data["item_type"] == "process":
         res = delete_process(id, "Real_Data")
         try:
             res_dict = json.loads(res)
             if res_dict["isSuccess"]:
                 return Response("Process restored from archives", status.HTTP_200_OK)
-            return Response("Failed to restore process from archives", status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response(
+                "Failed to restore process from archives",
+                status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
         except json.JSONDecodeError:
-            return Response("Invalid response data", status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response(
+                "Invalid response data", status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+    if request.data["item_type"] == "Folder":
+        res = delete_folder(id, "Real_Data")
+        try:
+            res_dict = json.loads(res)
+            if res_dict["isSuccess"]:
+                return Response("Folder restored from archives", status.HTTP_200_OK)
+            return Response(
+                "Failed to restore folder from archives",
+                status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
+        except json.JSONDecodeError:
+            return Response(
+                "Invalid response data", status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+
     return Response(status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
