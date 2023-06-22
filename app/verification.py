@@ -35,9 +35,9 @@ class Verification:
         return urllib.parse.urlencode(params)
 
     @staticmethod
-    def generate_qrcode(link) -> str:  
+    def generate_qrcode(link) -> str:
         """Revert back to prod qr_path before push"""
-        qr_path = f"100094.pythonanywhere.com/media/qrcodes/{uuid.uuid4().hex}.png" # Production
+        qr_path = f"100094.pythonanywhere.com/media/qrcodes/{uuid.uuid4().hex}.png"  # Production
         # qr_path = f"media/qrcodes/{uuid.uuid4().hex}.png"  # On dev
         qr_code = qrcode.QRCode()
         qr_code.add_data(link)
@@ -63,7 +63,7 @@ class Verification:
                     "title": "Document to Sign",
                     "message": "You have a document to sign.",
                     "duration": "no limit",
-                    "button_status": ""
+                    "button_status": "",
                 }
             ),
             {"Content-Type": "application/json"},

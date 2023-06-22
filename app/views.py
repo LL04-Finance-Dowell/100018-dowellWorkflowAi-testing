@@ -114,27 +114,27 @@ def document_processing(request):
         if request.data.get("process_id") is not None:
             process = get_process_object(request.data["process_id"])
         else:
-            data = process.normal_process(action) # type: ignore
+            data = process.normal_process(action)  # type: ignore
     if action == "start_document_processing_wf_wise":
         if request.data.get("process_id") is not None:
             process = get_process_object(request.data["process_id"])
         else:
-            data = process.normal_process(action) # type: ignore
+            data = process.normal_process(action)  # type: ignore
     if action == "test_document_processing_content_wise":
         if request.data.get("process_id") is not None:
             process = get_process_object(request.data["process_id"])
         else:
-            data = process.test_process(action) # type: ignore
+            data = process.test_process(action)  # type: ignore
     if action == "test_document_processing_wf_steps_wise":
         if request.data.get("process_id") is not None:
             process = get_process_object(request.data["process_id"])
         else:
-            data = process.test_process(action) # type: ignore
+            data = process.test_process(action)  # type: ignore
     if action == "test_document_processing_wf_wise":
         if request.data.get("process_id") is not None:
             process = get_process_object(request.data["process_id"])
         else:
-            data = process.test_process(action) # type: ignore
+            data = process.test_process(action)  # type: ignore
     if action == "close_processing_and_mark_as_completed":
         process = get_process_object(request.data["process_id"])
         if process["processing_state"] == "completed":
@@ -516,7 +516,8 @@ def create_document(request):
             {"editor_link": editor_link, "_id": res["inserted_id"]},
             status.HTTP_201_CREATED,
         )
-    
+
+
 @api_view(["GET"])
 def get_document_content(request, document_id):
     """Content map of a given document"""
