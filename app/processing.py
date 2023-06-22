@@ -267,7 +267,7 @@ class HandleProcess(Verification):
             "public_links": public_links,
         }
 
-    def verify(self, auth_step_role, location_data, user_name, user_type, org_name) -> str | None:
+    def verify(self, auth_step_role, location_data, user_name, user_type, org_name) -> str:
         try:
             clone_id = None
             match = False
@@ -380,8 +380,7 @@ class HandleProcess(Verification):
 
             return editor_link
         except Exception as e:
-            print(e)
-            return
+            raise e
 
 
 class Background:
