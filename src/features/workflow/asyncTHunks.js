@@ -8,16 +8,17 @@ import { changeToTitleCase, productName } from '../../utils/helpers';
 const workflowServices = new WorkflowServices();
 
 const filterWorkflows = (workflows, thunkAPI) => {
+  console.log(workflows, thunkAPI)
   let filteredWorkflows = [];
 
   if (workflows && workflows.length && workflows?.length > 0) {
     const userThunkPortfolioDataTypeState =
       thunkAPI.getState().auth?.userDetail?.portfolio_info?.length > 1
         ? thunkAPI
-            .getState()
-            .auth?.userDetail?.portfolio_info.find(
-              (portfolio) => portfolio.product === productName
-            )?.data_type
+          .getState()
+          .auth?.userDetail?.portfolio_info.find(
+            (portfolio) => portfolio.product === productName
+          )?.data_type
         : thunkAPI.getState().auth?.userDetail?.portfolio_info[0]?.data_type;
 
     filteredWorkflows = workflows
