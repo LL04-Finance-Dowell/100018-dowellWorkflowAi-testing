@@ -72,8 +72,6 @@ urlpatterns = [
     path("documents/<str:document_id>/content/", get_document_content),
     path("workflows/", create_workflow),
     path("workflows/<str:workflow_id>/", workflow_detail),
-    # path("workflow-settings/", create_workflow_setting),
-    # path("workflow-settings/<str:wf_setting_id>/", get_wf_ai_setting),
     path("processes/", document_processing),
     path("processes/verify/", process_verification),
     path("processes/<str:process_id>/", a_single_process),
@@ -97,7 +95,6 @@ urlpatterns = [
     path("settings/<str:wf_setting_id>", get_workflow_ai_setting),
     path("reminder/<str:process_id>/<str:username>", read_reminder),
     path("notify/", send_notif),
-    # folder
     path("folders/", create_folder),
     path("folders/<str:folder_id>", folder_update),
     path("companies/<str:company_id>/folders/", all_folders),

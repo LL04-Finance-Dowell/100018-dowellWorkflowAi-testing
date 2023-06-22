@@ -76,10 +76,11 @@ def cloning_document(document_id, auth_viewers, parent_id, process_id):
             else [auth_viewers]
         )
         document = get_document_object(document_id)
-        if has_tilde_characters(document["document_name"]):
-            document_name = document["document_name"]
+        doc_name = document["document_name"]
+        if has_tilde_characters(doc_name):
+            document_name = doc_name
         else:
-            document_name = "~" + document["document_name"] + "~"
+            document_name = "~" + doc_name + "~"
         save_res = json.loads(
             save_document(
                 name=document_name,
@@ -129,20 +130,23 @@ def cloning_process(process_id, created_by, creator_portfolio):
 
 # Access to document/template
 def access_editor(item_id, item_type):
+    collection = None
+    document = None
+    team_member_id = None
+    field = None
+    action = None
     if item_type == "document":
         collection = "DocumentReports"
         document = "documentreports"
         action = "document"
         field = "document_name"
         team_member_id = "11689044433"
-
     if item_type == "template":
         collection = "TemplateReports"
         document = "templatereports"
         action = "template"
         field = "template_name"
         team_member_id = "22689044433"
-
     payload = {
         "product_name": "workflow_ai",
         "details": {
@@ -197,7 +201,6 @@ def validate_id(id):
 
 def versioning(version):
     """Version workflow settings"""
-
     if version.startswith("New"):
         version = version.removeprefix("New ")
     else:
@@ -207,7 +210,6 @@ def versioning(version):
 
 def version_control(version):
     """Version control for wf settings"""
-
     version = version.split(".")
     if version[-1] != "9":
         version[-1] = str(int(version[-1]) + 1)
@@ -217,12 +219,10 @@ def version_control(version):
     elif version[-1] == "9" and version[1] != "9":
         version[-1] = "0"
         version[1] = str(int(version[1]) + 1)
-
     elif version[1] == "9" and version[-1] == "9":
         version[0] = str(int(version[0]) + 1)
         version[1] = "0"
         version[-1] = "0"
-
     else:
         version[0] = str(int(version[0]) + 1)
     latest = ".".join(version)
@@ -231,7 +231,6 @@ def version_control(version):
 
 def list_favourites(company_id):
     """A List of bookmarks/favourites"""
-
     try:
         documents = FavoriteDocument.objects.filter(company_id=company_id)
         templates = FavoriteTemplate.objects.filter(company_id=company_id)
@@ -240,8 +239,7 @@ def list_favourites(company_id):
         template_serializer = FavouriteTemplateSerializer(templates, many=True)
         workflow_serializer = FavouriteWorkflowSerializer(workflows, many=True)
     except RuntimeError:
-        return None
-
+        return 
     return {
         "documents": doc_serializer.data,
         "templates": template_serializer.data,
@@ -251,7 +249,6 @@ def list_favourites(company_id):
 
 def create_favourite(item, item_type, username):
     """Add to favourites/Bookmarks"""
-
     msg = "Item added to bookmarks"
     if item_type == "workflow":
         data = {
@@ -260,12 +257,10 @@ def create_favourite(item, item_type, username):
             "company_id": item["company_id"],
             "favourited_by": username,
         }
-
-        serializer = FavouriteWorkflowSerializer(data=data)
+        serializer = FavouriteWorkflowSerializer(data)
         if serializer.is_valid():
             serializer.save()
             return msg
-
     if item_type == "document":
         data = {
             "_id": item["_id"],
@@ -273,12 +268,10 @@ def create_favourite(item, item_type, username):
             "company_id": item["company_id"],
             "favourited_by": username,
         }
-        serializer = FavouriteDocumentSerializer(data=data)
+        serializer = FavouriteDocumentSerializer(data)
         if serializer.is_valid():
             serializer.save()
             return msg
-
-    # Fav
     if item_type == "template":
         data = {
             "_id": item["_id"],
@@ -286,20 +279,16 @@ def create_favourite(item, item_type, username):
             "company_id": item["company_id"],
             "favourited_by": username,
         }
-
-        serializer = FavouriteTemplateSerializer(data=data)
+        serializer = FavouriteTemplateSerializer(data)
         if serializer.is_valid():
             serializer.save()
             return msg
-
-    return None
+    return 
 
 
 def remove_favourite(identifier, type, username):
     """Remove Item from favourites"""
-
     msg = "Item removed from bookmarks."
-
     if type == "workflow":
         try:
             FavoriteWorkflow.objects.filter(
@@ -307,8 +296,7 @@ def remove_favourite(identifier, type, username):
             ).delete()
             return msg
         except:
-            return None
-
+            return 
     if type == "document":
         try:
             FavoriteDocument.objects.filter(
@@ -316,8 +304,7 @@ def remove_favourite(identifier, type, username):
             ).delete()
             return msg
         except:
-            return None
-
+            return 
     if type == "template":
         try:
             FavoriteTemplate.objects.filter(
@@ -325,7 +312,7 @@ def remove_favourite(identifier, type, username):
             ).delete()
             return msg
         except:
-            return None
+            return 
 
 
 def CREATE_WF_AI_SETTING(data):
@@ -333,5 +320,4 @@ def CREATE_WF_AI_SETTING(data):
     if serializer.is_valid():
         serializer.save()
         return WorkflowAiSettingSerializer(serializer).data
-
-    return None
+    return 

@@ -41,6 +41,7 @@ class Clone:
                 template["template_name"],
                 template["content"],
                 template["page"],
+                [],
                 self.created_by,
                 self.company_id,
                 template["data_type"],
@@ -90,6 +91,7 @@ class Clone:
                 document_type=Clone.clone_type,
                 parent_id=parent_id,
                 process_id=process_id,
+                folders=[]
             )
         )
         return save_res["inserted_id"]
