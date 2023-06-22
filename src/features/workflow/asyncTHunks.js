@@ -8,7 +8,7 @@ import { changeToTitleCase, productName } from '../../utils/helpers';
 const workflowServices = new WorkflowServices();
 
 const filterWorkflows = (workflows, thunkAPI) => {
-  console.log(workflows, thunkAPI)
+  // console.log(workflows, thunkAPI)
   let filteredWorkflows = [];
 
   if (workflows && workflows.length && workflows?.length > 0) {
