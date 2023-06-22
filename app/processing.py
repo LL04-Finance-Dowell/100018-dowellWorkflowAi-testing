@@ -177,7 +177,7 @@ class HandleProcess(Verification):
             clone_id = cloning_document(
                 parent_item_id, users, parent_item_id, process_id
             )
-            Background.clone_ids = [clone_id]
+            Background.clones = [clone_id]
             for u in users:
                 step.get("stepDocumentCloneMap").append({u: clone_id})
 
@@ -188,9 +188,9 @@ class HandleProcess(Verification):
                     {u: cloning_document(parent_item_id, u, parent_item_id, process_id)}
                 )
             step.get("stepDocumentCloneMap").extend(public_clone_ids)
-            Background.clone_ids.extend(public_clone_ids)
+            Background.clones.extend(public_clone_ids)
 
-        return Background.clone_ids
+        return Background.clones
 
     def start(self):
         process_id = self.process["_id"]

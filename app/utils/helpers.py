@@ -61,7 +61,7 @@ def register_public_login(qrid, org_name):
 
 def has_tilde_characters(string):
     for char in string:
-        if char == '~':
+        if char == "~":
             return True
     return False
 
@@ -93,6 +93,7 @@ def cloning_document(document_id, auth_viewers, parent_id, process_id):
                 document_type="clone",
                 parent_id=parent_id,
                 process_id=process_id,
+                folders="untitled",
             )
         )
     except Exception as e:

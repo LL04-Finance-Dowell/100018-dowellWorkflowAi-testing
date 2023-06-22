@@ -94,13 +94,13 @@ TEMPLATE_CONNECTION_DICT = {
 }
 
 DOCUMENT_CONNECTION_DICT = {
-    "cluster": "Documents",
-    "database": "Documentation",
-    "collection": "DocumentReports",
-    "document": "documentreports",
-    "team_member_ID": "11689044433",
-    "function_ID": "ABCDE",
-}
+        "cluster": "Documents",
+        "database": "Documentation",
+        "collection": "DocumentReports",
+        "document": "documentreports",
+        "team_member_ID": "11689044433",
+        "function_ID": "ABCDE",
+    }
 
 QR_CONNECTION_LIST = [
     "Documents",
@@ -198,8 +198,23 @@ DOCUMENT_CONNECTION_LIST = [
     "11689044433",
     "ABCDE",
 ]
-
-
+FOLDER_CONNECTION_DICT = {
+    "cluster": "Documents",
+    "database": "Documentation",
+    "collection": "FolderReports",
+    "document": "FolderReports",
+    "team_member_ID": "1205001",
+    "function_ID": "ABCDE",
+}
+FOLDER_CONNECTION_LIST = [
+    "Documents",
+    "bangalore",
+    "Documentation", 
+    "FolderReports",
+    "FolderReports",
+    "1205001",
+    "ABCDE"
+]
 WF_AI_SETTING_DICT = {
     "cluster": "Documents",
     "database": "Documentation",

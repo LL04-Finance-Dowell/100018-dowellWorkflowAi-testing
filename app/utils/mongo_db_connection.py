@@ -6,6 +6,8 @@ from django.core.cache import cache
 import requests
 
 from app.constants import (
+    FOLDER_CONNECTION_DICT,
+    FOLDER_CONNECTION_LIST,
     DOCUMENT_CONNECTION_DICT,
     DOCUMENT_CONNECTION_LIST,
     DOWELLCONNECTION_URL,
@@ -137,6 +139,14 @@ def get_document_list(company_id, data_type):
     )
 
 
+def get_folder_list(company_id, data_type):
+    return get_data_from_data_service(
+        *FOLDER_CONNECTION_LIST,
+        "fetch",
+        {"company_id": str(company_id), "data_type": data_type},
+    )
+
+
 def get_uuid_object(uuid_hash):
     return get_data_from_data_service(
         *QR_ID_CONNECTION_LIST, "find", {"uuid_hash": uuid_hash}
@@ -166,6 +176,13 @@ def get_team_list(company_id):
 def get_template_object(template_id):
     return get_data_from_data_service(
         *TEMPLATE_CONNECTION_LIST, "find", {"_id": template_id}
+    )
+
+
+# New folder
+def get_folder_object(folder_id):
+    return get_data_from_data_service(
+        *FOLDER_CONNECTION_LIST, "find", field={"_id": folder_id}
     )
 
 
@@ -341,7 +358,9 @@ def save_process(
     return post_to_data_service(payload)
 
 
-def save_workflow(workflows, company_id, created_by, portfolio, data_type, workflow_type):
+def save_workflow(
+    workflows, company_id, created_by, portfolio, data_type, workflow_type
+):
     payload = json.dumps(
         {
             **WF_CONNECTION_DICT,
@@ -368,7 +387,9 @@ def save_workflow(workflows, company_id, created_by, portfolio, data_type, workf
     return post_to_data_service(payload)
 
 
-def save_template(name, data, page, created_by, company_id, data_type, template_type):
+def save_template(
+    name, data, page, folders, created_by, company_id, data_type, template_type
+):
     payload = json.dumps(
         {
             **TEMPLATE_CONNECTION_DICT,
@@ -389,6 +410,7 @@ def save_template(name, data, page, created_by, company_id, data_type, template_
                 "auth_viewers": [],
                 "template_state": "draft",
                 "created_on": time,
+                "folders": folders,
             },
             "update_field": {"order_nos": 21},
             "platform": "bangalore",
@@ -409,6 +431,7 @@ def save_document(
     document_type,
     parent_id,
     process_id,
+    folders,
 ):
     payload = json.dumps(
         {
@@ -431,6 +454,7 @@ def save_document(
                 "document_type": document_type,
                 "parent_id": parent_id,
                 "process_id": process_id,
+                "folders": folders,
             },
             "update_field": {"order_nos": 21},
             "platform": "bangalore",
@@ -491,6 +515,52 @@ def save_workflow_setting(
         }
     )
 
+    return post_to_data_service(payload)
+
+
+# New folder
+def save_folder(name, data, created_by, company_id, data_type, folder_type):
+    payload = json.dumps(
+        {
+            **FOLDER_CONNECTION_DICT,
+            "command": "insert",
+            "field": {
+                "eventId": get_event_id()["event_id"],
+                "folder_name": name,
+                "company_id": company_id,
+                "created_by": created_by,
+                "folder_type": folder_type,
+                "data_type": data_type,
+                "auth_viewers": [],
+                "folder_state": "draft",
+                "created_on": time,
+                "data": data,
+            },
+            "update_field": {"order_nos": 21},
+            "platform": "bangalore",
+        }
+    )
+    return post_to_data_service(payload)
+
+
+def update_folder(folder_id, old_folder):
+    payload = json.dumps(
+        {
+            **FOLDER_CONNECTION_DICT,
+            "command": "update",
+            "field": {
+                "_id": folder_id,
+            },
+            "update_field": {
+                "eventId": get_event_id()["event_id"],
+                "data": old_folder["data"],
+                "created_by": old_folder["created_by"],
+                "company_id": old_folder["company_id"],
+                "folder_name": old_folder["folder_name"],
+            },
+            "platform": "bangalore",
+        }
+    )
     return post_to_data_service(payload)
 
 
@@ -859,6 +929,23 @@ def delete_template(template_id, data_type):
     return post_to_data_service(payload)
 
 
+def delete_folder(folder_id, data_type):
+    payload = json.dumps(
+        {
+            **FOLDER_CONNECTION_DICT,
+            "command": "update",
+            "field": {
+                "_id": folder_id,
+            },
+            "update_field": {
+                "data_type": data_type,
+            },
+            "platform": "bangalore",
+        }
+    )
+    return post_to_data_service(payload)
+
+
 def delete_document(document_id, data_type):
     payload = json.dumps(
         {
@@ -869,6 +956,40 @@ def delete_document(document_id, data_type):
             },
             "update_field": {
                 "data_type": data_type,
+            },
+            "platform": "bangalore",
+        }
+    )
+    return post_to_data_service(payload)
+
+
+def add_document_to_folder(document_id, folder):
+    payload = json.dumps(
+        {
+            **DOCUMENT_CONNECTION_DICT,
+            "command": "update",
+            "field": {
+                "_id": document_id,
+            },
+            "update_field": {
+                "folders": folder,
+            },
+            "platform": "bangalore",
+        }
+    )
+    return post_to_data_service(payload)
+
+
+def add_template_to_folder(template_id, folder):
+    payload = json.dumps(
+        {
+            **TEMPLATE_CONNECTION_DICT,
+            "command": "update",
+            "field": {
+                "_id": template_id,
+            },
+            "update_field": {
+                "folders": folder,
             },
             "platform": "bangalore",
         }
