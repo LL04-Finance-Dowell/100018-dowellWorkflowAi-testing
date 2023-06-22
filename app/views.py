@@ -525,19 +525,26 @@ def workflow_detail(request, workflow_id):
         data = get_wf_object(workflow_id)
 
         return Response(data, status.HTTP_200_OK)
-
+    
+    
     if request.method == "PUT":
         form = request.data
         if not form:
-            return Response("Workflow Data is required", status.HTTP_400_BAD_REQUEST)
+            return Response("Workflow Data is required", status=status.HTTP_400_BAD_REQUEST)
 
-        old_workflow = get_wf_object(form["workflow_id"])
-        old_workflow["workflows"]["data_type"] = "Archive Data"
+        old_workflow = get_wf_object(workflow_id)
 
-        updt_wf = json.loads(update_wf(form["workflow_id"], old_workflow))
-        if updt_wf["isSuccess"]:
-            return Response("workflow Updated", status.HTTP_201_CREATED)
-        return Response(status.HTTP_500_INTERNAL_SERVER_ERROR)
+        old_workflow["workflows"]["wf_title"] = form["wf_title"]
+        old_workflow["workflows"]["data_type"] = form["data_type"]
+
+        old_workflow['workflows']['workflows']['steps'][0]['step_name'] = form["steps"][0]["step_name"]
+        old_workflow['workflows']['workflows']['steps'][0]['role'] = form["steps"][0]["role"]
+        
+        updt_wf = update_wf(workflow_id, old_workflow)
+        updt_wf = json.loads(updt_wf)
+        if updt_wf.get("isSuccess"):
+            return Response("Workflow Updated", status=status.HTTP_201_CREATED)
+        return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 @api_view(["GET"])
