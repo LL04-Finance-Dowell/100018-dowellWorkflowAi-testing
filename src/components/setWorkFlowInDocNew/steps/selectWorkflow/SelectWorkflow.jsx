@@ -24,6 +24,7 @@ const SelectWorkflow = ({ savedDoc }) => {
   const handleRemove = () => {
     if (savedDoc) return;
     dispatch(removeFromSelectedWorkflowsToDocGroup());
+    dispatch(setWfToDocument());
   };
 
   const handleConnectWfToDoc = () => {
