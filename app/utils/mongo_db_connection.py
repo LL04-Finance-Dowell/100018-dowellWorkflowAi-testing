@@ -1,7 +1,6 @@
 import json
 import time
 from datetime import datetime
-from django.core.cache import cache
 
 import requests
 
@@ -70,16 +69,14 @@ def get_data_from_data_service(
     if res["data"] is not None:
         if len(res["data"]):
             return res["data"]
-        else:
-            return
     return
 
 
 def get_template_list(company_id, data_type):
     templates = get_data_from_data_service(
         *TEMPLATE_CONNECTION_LIST,
-        command="fetch",
-        field={"company_id": company_id, "data_type": data_type},
+        "fetch",
+        {"company_id": company_id, "data_type": data_type},
     )
     return templates
 
@@ -87,29 +84,29 @@ def get_template_list(company_id, data_type):
 def get_links_object_by_process_id(process_id):
     links = get_data_from_data_service(
         *LINK_CONNECTION_LIST,
-        command="fetch",
-        field={"process_id": str(process_id)},
+        "fetch",
+        {"process_id": str(process_id)},
     )
     return links
 
 
 def get_link_object(unique_hash):
     link_ob = get_data_from_data_service(
-        *QR_ID_CONNECTION_LIST, command="find", field={"unique_hash": str(unique_hash)}
+        *QR_ID_CONNECTION_LIST, "find", {"unique_hash": str(unique_hash)}
     )
     return link_ob
 
 
 def get_links_object_by_document_id(document_id):
     links_ob = get_data_from_data_service(
-        *LINK_CONNECTION_LIST, command="fetch", field={"document_id": str(document_id)}
+        *LINK_CONNECTION_LIST, "fetch", {"document_id": str(document_id)}
     )
     return links_ob
 
 
 def get_links_list(company_id):
     links = get_data_from_data_service(
-        *LINK_CONNECTION_LIST, command="fetch", field={"company_id": str(company_id)}
+        *LINK_CONNECTION_LIST, "fetch", {"company_id": str(company_id)}
     )
     return links
 
@@ -117,8 +114,8 @@ def get_links_list(company_id):
 def get_workflow_setting_object(wf_setting_id):
     setting = get_data_from_data_service(
         *WF_AI_SETTING_LIST,
-        command="find",
-        field={"_id": wf_setting_id},
+        "find",
+        {"_id": wf_setting_id},
     )
     return setting
 
@@ -126,15 +123,15 @@ def get_workflow_setting_object(wf_setting_id):
 def get_wfai_setting_list(company_id, data_type):
     settings = get_data_from_data_service(
         *WF_AI_SETTING_LIST,
-        command="fetch",
-        field={"company_id": str(company_id), "data_type": data_type},
+        "fetch",
+        {"company_id": str(company_id), "data_type": data_type},
     )
     return settings
 
 
 def get_document_object(document_id):
     document = get_data_from_data_service(
-        *DOCUMENT_CONNECTION_LIST, command="find", field={"_id": document_id}
+        *DOCUMENT_CONNECTION_LIST, "find", {"_id": document_id}
     )
     return document
 
@@ -142,8 +139,8 @@ def get_document_object(document_id):
 def get_document_list(company_id, data_type):
     documents = get_data_from_data_service(
         *DOCUMENT_CONNECTION_LIST,
-        command="fetch",
-        field={"company_id": str(company_id), "data_type": data_type},
+        "fetch",
+        {"company_id": str(company_id), "data_type": data_type},
     )
     return documents
 
@@ -151,28 +148,28 @@ def get_document_list(company_id, data_type):
 def get_folder_list(company_id, data_type):
     folders = get_data_from_data_service(
         *FOLDER_CONNECTION_LIST,
-        command="fetch",
-        field={"company_id": str(company_id), "data_type": data_type},
+        "fetch",
+        {"company_id": str(company_id), "data_type": data_type},
     )
     return folders
 
 
 def get_uuid_object(uuid_hash):
     uuid = get_data_from_data_service(
-        *QR_ID_CONNECTION_LIST, command="find", field={"uuid_hash": uuid_hash}
+        *QR_ID_CONNECTION_LIST, "find", {"uuid_hash": uuid_hash}
     )
     return uuid
 
 
 def get_uuid(process_id):
     return get_data_from_data_service(
-        *QR_ID_CONNECTION_LIST, command="fetch", field={"process_id": process_id}
+        *QR_ID_CONNECTION_LIST, "fetch", {"process_id": process_id}
     )
 
 
 def get_team(team_id):
     team = get_data_from_data_service(
-        *MANAGEMENT_REPORTS_LIST, command="find", field={"_id": team_id}
+        *MANAGEMENT_REPORTS_LIST, "find", {"_id": team_id}
     )
     return team
 
@@ -180,22 +177,22 @@ def get_team(team_id):
 def get_team_list(company_id):
     teams = get_data_from_data_service(
         *MANAGEMENT_REPORTS_LIST,
-        command="fetch",
-        field={"company_id": str(company_id)},
+        "fetch",
+        {"company_id": str(company_id)},
     )
     return teams
 
 
 def get_template_object(template_id):
     template = get_data_from_data_service(
-        *TEMPLATE_CONNECTION_LIST, command="find", field={"_id": template_id}
+        *TEMPLATE_CONNECTION_LIST, "find", {"_id": template_id}
     )
     return template
 
 
 def get_folder_object(folder_id):
     folder = get_data_from_data_service(
-        *FOLDER_CONNECTION_LIST, command="find", field={"_id": folder_id}
+        *FOLDER_CONNECTION_LIST, "find", {"_id": folder_id}
     )
     return folder
 
@@ -203,15 +200,15 @@ def get_folder_object(folder_id):
 def get_wf_list(company_id, data_type):
     workflows = get_data_from_data_service(
         *WF_CONNECTION_LIST,
-        command="fetch",
-        field={"company_id": str(company_id), "data_type": data_type},
+        "fetch",
+        {"company_id": str(company_id), "data_type": data_type},
     )
     return workflows
 
 
 def get_wf_object(workflow_id):
     workflow =get_data_from_data_service(
-        *WF_CONNECTION_LIST, command="find", field={"_id": str(workflow_id)}
+        *WF_CONNECTION_LIST, "find", {"_id": str(workflow_id)}
     )
     return workflow
 
@@ -219,8 +216,8 @@ def get_wf_object(workflow_id):
 def get_process_object(workflow_process_id):
     process = get_data_from_data_service(
         *PROCESS_CONNECTION_LIST,
-        command="find",
-        field={"_id": str(workflow_process_id)},
+        "find",
+        {"_id": str(workflow_process_id)},
     )
     return process
 
@@ -228,8 +225,8 @@ def get_process_object(workflow_process_id):
 def get_process_list(company_id, data_type):
     processes = get_data_from_data_service(
         *PROCESS_CONNECTION_LIST,
-        command="fetch",
-        field={
+        "fetch",
+        {
             "company_id": str(company_id),
             "data_type": data_type,
         },
@@ -240,7 +237,7 @@ def get_process_list(company_id, data_type):
 
 def get_process_link_list(company_id):
     process_links = get_data_from_data_service(
-        *LINK_CONNECTION_LIST, command="fetch", field={"company_id": str(company_id)}
+        *LINK_CONNECTION_LIST, "fetch", {"company_id": str(company_id)}
     )
     return process_links
 
@@ -856,7 +853,7 @@ def org_wfai_setting(company_id, org_name, data_type="Real_data"):
         "data_type": data_type,
     }
     response_obj = get_data_from_data_service(
-        *WF_AI_SETTING_LIST, command="fetch", field=fields
+        *WF_AI_SETTING_LIST, "fetch", fields
     )
     # res_obj = json.loads(response_obj)
     # if len(res_obj["data"]) > 0:
@@ -1059,8 +1056,8 @@ def update_team_data(team_id, team_data):
 def reminder_func(reminder):
     data = get_data_from_data_service(
         *PROCESS_CONNECTION_LIST,
-        command="fetch",
-        field={
+        "fetch",
+        {
             "data_type": "Real_Data",
             "processing_state": {"$ne": "completed"},
             "process_steps.stepReminder": reminder,
