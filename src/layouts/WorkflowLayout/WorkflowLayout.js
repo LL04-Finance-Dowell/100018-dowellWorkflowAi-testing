@@ -20,16 +20,17 @@ import {
   setLanguageSelectPosition,
 } from '../../features/app/appSlice';
 import { AiOutlineClose } from 'react-icons/ai';
-import { RxHamburgerMenu } from "react-icons/rx";
-import { IoIosCloseCircle } from "react-icons/io";
+import { RxHamburgerMenu } from 'react-icons/rx';
+import { IoIosCloseCircle } from 'react-icons/io';
 import { LoadingSpinner } from '../../components/LoadingSpinner/LoadingSpinner';
-import Chat from '../../components/Chat/Chat'
+import Chat from '../../components/Chat/Chat';
 import { formatDateAndTime, productName } from '../../utils/helpers';
 import { workflowRegistrationEventId } from '../../services/legalService';
 import { AuthServices } from '../../services/authServices';
 import { updateUserDetail } from '../../features/auth/authSlice';
 import { getAllProcessesV2 } from '../../services/processServices';
 import { useAppContext } from '../../contexts/AppContext';
+import FoldersModal from '../../pages/Folders/modals/FoldersModal';
 
 import { useTranslation } from 'react-i18next';
 
@@ -38,7 +39,8 @@ import LanguageDropdown from '../../components/LanguageSelector/LanguageDropdown
 const WorkflowLayout = ({ children }) => {
   const dispatch = useDispatch();
   const { t } = useTranslation();
-  const { workflowTeams, isDesktop, nonDesktopStyles, isMobile } = useAppContext();
+  const { workflowTeams, isDesktop, nonDesktopStyles, isMobile } =
+    useAppContext();
 
   const { userDetail, session_id, id } = useSelector((state) => state.auth);
   const {
@@ -51,7 +53,7 @@ const WorkflowLayout = ({ children }) => {
     legalArgeePageLoading,
     adminUserPortfolioLoaded,
     processesLoaded,
-    ShowProfileSpinner
+    ShowProfileSpinner,
   } = useSelector((state) => state.app);
 
   const [createNewPortfolioLoading, setCreateNewPortfolioLoading] =
@@ -106,21 +108,19 @@ const WorkflowLayout = ({ children }) => {
 
     if (!processesLoaded) {
       const [userCompanyId, userPortfolioDataType] = [
-        userDetail?.portfolio_info?.length > 1 ?
-          userDetail?.portfolio_info.find(portfolio => portfolio.product === productName)?.org_id
-          :
-          userDetail?.portfolio_info[0]?.org_id
-        ,
-        userDetail?.portfolio_info?.length > 1 ?
-          userDetail?.portfolio_info.find(portfolio => portfolio.product === productName)?.data_type
-          :
-          userDetail?.portfolio_info[0]?.data_type
+        userDetail?.portfolio_info?.length > 1
+          ? userDetail?.portfolio_info.find(
+              (portfolio) => portfolio.product === productName
+            )?.org_id
+          : userDetail?.portfolio_info[0]?.org_id,
+        userDetail?.portfolio_info?.length > 1
+          ? userDetail?.portfolio_info.find(
+              (portfolio) => portfolio.product === productName
+            )?.data_type
+          : userDetail?.portfolio_info[0]?.data_type,
       ];
       // Fetching processes
-      getAllProcessesV2(
-        userCompanyId,
-        userPortfolioDataType
-      )
+      getAllProcessesV2(userCompanyId, userPortfolioDataType)
         .then((res) => {
           const savedProcessesInLocalStorage = JSON.parse(
             localStorage.getItem('user-saved-processes')
@@ -144,7 +144,6 @@ const WorkflowLayout = ({ children }) => {
         .catch((err) => {
           console.log('Failed: ', err.response);
           dispatch(setProcessesLoading(false));
-          
         });
     }
 
@@ -169,7 +168,6 @@ const WorkflowLayout = ({ children }) => {
         product: workflowProduct.product,
       })
       .then((res) => {
-       
         dispatch(updateUserDetail(res.data));
         dispatch(setAdminUserPortfolioLoaded(true));
       })
@@ -226,11 +224,11 @@ const WorkflowLayout = ({ children }) => {
       <div className={styles.container}>
         {userDetail ? (
           !userDetail.portfolio_info ||
-            userDetail.portfolio_info?.length === 0 ||
-            (userDetail.portfolio_info?.length > 0 &&
-              !userDetail.portfolio_info.find(
-                (item) => item.product === 'Workflow AI'
-              )) ? (
+          userDetail.portfolio_info?.length === 0 ||
+          (userDetail.portfolio_info?.length > 0 &&
+            !userDetail.portfolio_info.find(
+              (item) => item.product === 'Workflow AI'
+            )) ? (
             <div className={styles.redirect__container}>
               <div className={styles.img__container}>
                 <img alt='' src={DowellLogo} />
@@ -254,14 +252,23 @@ const WorkflowLayout = ({ children }) => {
               <div className={styles.content__box}>
                 {isMobile ? (
                   <>
-                    <div className={`${styles.sidebar__box} hide-scrollbar`} style={{ display: isSidebarOpen ? 'block' : 'none' }}>
+                    <div
+                      className={`${styles.sidebar__box} hide-scrollbar`}
+                      style={{ display: isSidebarOpen ? 'block' : 'none' }}
+                    >
                       <SideBar />
                     </div>
-                    <div style={{ position: 'fixed', top: 2, left: 0, zIndex: 2 }}>
+                    <div
+                      style={{ position: 'fixed', top: 2, left: 0, zIndex: 2 }}
+                    >
                       {isSidebarOpen ? (
                         <IoIosCloseCircle size={40} onClick={toggleSidebar} />
                       ) : (
-                        <RxHamburgerMenu color='black' size={30} onClick={toggleSidebar} />
+                        <RxHamburgerMenu
+                          color='black'
+                          size={30}
+                          onClick={toggleSidebar}
+                        />
                       )}
                     </div>
                   </>
@@ -370,6 +377,8 @@ const WorkflowLayout = ({ children }) => {
           </div>
         )}
       </div>
+
+      <FoldersModal />
     </>
   );
 };

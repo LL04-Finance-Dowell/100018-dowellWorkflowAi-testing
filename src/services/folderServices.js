@@ -1,0 +1,9 @@
+import { httpApiUrl } from '../httpCommon/httpCommon';
+
+export class FolderServices {
+  createFolder = (data) => httpApiUrl.post('folders/', data);
+  updateFolder = (data, id) => httpApiUrl.put(`folders/${id}`, data);
+  getFolder = (folderId) => httpApiUrl.get(`folders/${folderId}`);
+  getAllFolders = (companyId) =>
+    httpApiUrl.get(`companies/${companyId}/folders/`);
+}

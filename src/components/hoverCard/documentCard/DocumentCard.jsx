@@ -22,22 +22,24 @@ import { RiDeleteBin6Line } from 'react-icons/ri';
 import { moveItemToArchive } from '../../../services/archiveServices';
 import { setAllDocuments } from '../../../features/document/documentSlice';
 import { BsBookmark, BsFillBookmarkFill } from 'react-icons/bs';
-import { 
-  extractTokenFromVerificationURL, 
-  productName, 
-  updateVerificationDataWithTimezone 
+import {
+  extractTokenFromVerificationURL,
+  productName,
+  updateVerificationDataWithTimezone,
 } from '../../../utils/helpers';
 import { useTranslation } from 'react-i18next';
 import { DocumentServices } from '../../../services/documentServices';
 import { MdOutlineFiberNew } from 'react-icons/md';
 import { IoIosRefresh } from 'react-icons/io';
 import { Tooltip } from 'react-tooltip';
+import AddRemoveBtn from '../AddRemoveBtn';
 
 const DocumentCard = ({
   cardItem,
   title,
   hideFavoriteIcon,
   hideDeleteIcon,
+  isFolder,
 }) => {
   const dispatch = useDispatch();
   const { t } = useTranslation();
@@ -52,7 +54,9 @@ const DocumentCard = ({
     setIsNoPointerEvents,
   } = useAppContext();
   const { allDocuments } = useSelector((state) => state.document);
-  const [ documentLoading, setDocumentLoading ] = useState(false);
+  const [documentLoading, setDocumentLoading] = useState(false);
+
+  console.log('card item: ', cardItem, isFolder);
 
   const handleFavoritess = async (item, actionType) => {
     /*  const data = {
@@ -103,7 +107,6 @@ const DocumentCard = ({
         });
       }
     }
-   
   };
 
   const handleTrashDocument = async (cardItem) => {
@@ -126,7 +129,6 @@ const DocumentCard = ({
       ).data;
       toast.success(response);
     } catch (error) {
-    
       copyOfDocumentToUpdate.data_type = 'Real_Data';
       copyOfAllDocuments[foundDocumentIndex] = copyOfDocumentToUpdate;
       dispatch(setAllDocuments(copyOfAllDocuments));
@@ -135,7 +137,8 @@ const DocumentCard = ({
 
   const handleDetailDocumnet = async (item) => {
     if (dataLoading) return;
-    if (documentLoading) return toast.info("Please wait for this document to be refreshed first");
+    if (documentLoading)
+      return toast.info('Please wait for this document to be refreshed first');
     if (item.type === 'sign-document') {
       setDataLoading(true);
       try {
@@ -149,7 +152,7 @@ const DocumentCard = ({
         ).data;
 
         /*  dispatch(setEditorLink(response)); */
-       
+
         // setDataLoading(false);
         handleGoToEditor(response);
       } catch (error) {
@@ -170,7 +173,7 @@ const DocumentCard = ({
 
     const data = {
       document_name: item.document_name,
-      document_id: item._id,
+      document_id: item._id ?? item.item_id ? item.item_id : item['item_id:'],
     };
     dispatch(detailDocument(data.document_id));
   };
@@ -183,7 +186,12 @@ const DocumentCard = ({
     const dataToPost = {
       token: token,
       user_name: userDetail?.userinfo?.username,
-      portfolio: userDetail?.portfolio_info?.length > 1 ? userDetail?.portfolio_info.find(portfolio => portfolio.product === productName)?.portfolio_name : userDetail?.portfolio_info[0]?.portfolio_name,
+      portfolio:
+        userDetail?.portfolio_info?.length > 1
+          ? userDetail?.portfolio_info.find(
+              (portfolio) => portfolio.product === productName
+            )?.portfolio_name
+          : userDetail?.portfolio_info[0]?.portfolio_name,
       city: userDetail?.userinfo?.city,
       country: userDetail?.userinfo?.country,
       continent: userDetail?.userinfo?.timezone?.split('/')[0],
@@ -198,18 +206,18 @@ const DocumentCard = ({
       const paramsPassed = new URL(shortenedLinkToExtractParamsFrom)
         .searchParams;
 
-      
-
       const auth_username = paramsPassed.get('username');
       const auth_portfolio = paramsPassed.get('portfolio');
       const auth_role = paramsPassed.get('auth_role');
       const user_type = paramsPassed.get('user_type');
       const org_name = paramsPassed.get('org');
 
-      const currentUserPortfolioName = userDetail?.portfolio_info?.length > 1 ? 
-        userDetail?.portfolio_info.find(portfolio => portfolio.product === productName)?.portfolio_name
-        :
-        userDetail?.portfolio_info[0]?.portfolio_name;
+      const currentUserPortfolioName =
+        userDetail?.portfolio_info?.length > 1
+          ? userDetail?.portfolio_info.find(
+              (portfolio) => portfolio.product === productName
+            )?.portfolio_name
+          : userDetail?.portfolio_info[0]?.portfolio_name;
 
       if (
         auth_username !== userDetail?.userinfo?.username ||
@@ -228,7 +236,6 @@ const DocumentCard = ({
       delete sanitizedDataToPost.user_name;
       delete sanitizedDataToPost.portfolio;
 
-      
       // return setDataLoading(false);
     }
 
@@ -253,7 +260,8 @@ const DocumentCard = ({
 
   const handleFetchNewDocumentDetail = async (documentId) => {
     if (documentLoading) return;
-    if (dataLoading) return toast.info("Please wait for this document to open first");
+    if (dataLoading)
+      return toast.info('Please wait for this document to open first');
 
     const copyOfAllDocuments = [...allDocuments];
     const foundDocumentIndex = copyOfAllDocuments.findIndex(
@@ -266,8 +274,9 @@ const DocumentCard = ({
 
     try {
       const documentService = new DocumentServices();
-      const response = (await documentService.singleDocumentDetail(documentId)).data;
-      
+      const response = (await documentService.singleDocumentDetail(documentId))
+        .data;
+
       copyOfAllDocuments[foundDocumentIndex] = response;
       dispatch(setAllDocuments(copyOfAllDocuments));
 
@@ -277,29 +286,25 @@ const DocumentCard = ({
       toast.info('Refresh for document failed');
       setDocumentLoading(false);
     }
-  }
+  };
 
   const FrontSide = () => {
     return (
       <div>
-        { 
-          cardItem.newly_created && 
+        {cardItem.newly_created && (
           <div
             style={{
               position: 'absolute',
               left: '10px',
               top: '0',
               fontSize: '1.5rem',
-              color: '#ff0000'
+              color: '#ff0000',
             }}
           >
             <MdOutlineFiberNew />
           </div>
-        }
-        {
-          cardItem.document_name ? cardItem.document_name : 
-          'no item'
-        }
+        )}
+        {cardItem.document_name ? cardItem.document_name : 'no item'}
       </div>
     );
   };
@@ -335,7 +340,7 @@ const DocumentCard = ({
             )}
           </div>
         )}
-        {cardItem._id ? (
+        {cardItem._id || cardItem.item_id || cardItem['item_id:'] ? (
           <Button onClick={() => handleDetailDocumnet(cardItem)}>
             {dataLoading ? (
               <LoadingSpinner />
@@ -361,8 +366,7 @@ const DocumentCard = ({
             <RiDeleteBin6Line color='red' />
           </div>
         )}
-        { 
-          cardItem.newly_created && 
+        {cardItem.newly_created && (
           <div
             style={{
               position: 'absolute',
@@ -373,7 +377,7 @@ const DocumentCard = ({
               gap: '0.5rem',
             }}
           >
-            <div 
+            <div
               id={cardItem._id}
               style={{
                 color: '#ff0000',
@@ -381,35 +385,61 @@ const DocumentCard = ({
               }}
             >
               <MdOutlineFiberNew />
-              <Tooltip 
-                anchorId={cardItem._id} 
-                content={'This is a new document. Refresh right here to see its actual title'} 
-                style={{ 
-                  fontStyle: "normal",
+              <Tooltip
+                anchorId={cardItem._id}
+                content={
+                  'This is a new document. Refresh right here to see its actual title'
+                }
+                style={{
+                  fontStyle: 'normal',
                   fontSize: '0.7rem',
                   width: '8rem',
-                  wordWrap: 'break-word'
-                }} 
+                  wordWrap: 'break-word',
+                }}
               />
             </div>
             <div
               style={{
                 fontSize: '0.7rem',
                 cursor: 'pointer',
-              }}  
+              }}
               onClick={() => handleFetchNewDocumentDetail(cardItem._id)}
             >
-              {
-                !documentLoading ? <IoIosRefresh /> :
-                <LoadingSpinner color={'#000'} width={'0.7rem'} height={'0.7rem'} />
-              }
+              {!documentLoading ? (
+                <IoIosRefresh />
+              ) : (
+                <LoadingSpinner
+                  color={'#000'}
+                  width={'0.7rem'}
+                  height={'0.7rem'}
+                />
+              )}
             </div>
           </div>
-        }
+        )}
+
+        <div
+          style={{
+            position: 'absolute',
+            top: '0',
+            left: '0',
+            display: 'flex',
+            alignItems: 'center',
+          }}
+        >
+          <AddRemoveBtn type={'add'} item={{ ...cardItem, type: 'document' }} />
+          {isFolder && <AddRemoveBtn type={'remove'} item={cardItem} />}
+        </div>
       </div>
     );
   };
-  return <HoverCard Front={FrontSide} Back={BackSide} loading={documentLoading ? documentLoading : dataLoading} />;
+  return (
+    <HoverCard
+      Front={FrontSide}
+      Back={BackSide}
+      loading={documentLoading ? documentLoading : dataLoading}
+    />
+  );
 };
 
 export default DocumentCard;

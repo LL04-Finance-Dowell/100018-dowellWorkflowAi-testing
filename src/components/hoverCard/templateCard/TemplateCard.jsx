@@ -21,8 +21,9 @@ import { Tooltip } from 'react-tooltip';
 import { IoIosRefresh } from 'react-icons/io';
 import { LoadingSpinner } from '../../LoadingSpinner/LoadingSpinner';
 import { TemplateServices } from '../../../services/templateServices';
+import AddRemoveBtn from '../AddRemoveBtn';
 
-const TemplateCard = ({ cardItem }) => {
+const TemplateCard = ({ cardItem, isFolder }) => {
   const dispatch = useDispatch();
   const { t } = useTranslation();
 
@@ -30,11 +31,11 @@ const TemplateCard = ({ cardItem }) => {
     useAppContext();
   const { userDetail } = useSelector((state) => state.auth);
   const { allTemplates } = useSelector((state) => state.template);
-  const [ templateLoading, setTemplateLoading ] = useState(false);
+  const [templateLoading, setTemplateLoading] = useState(false);
 
   const handleTemplateDetail = (item) => {
     const data = {
-      template_id: item._id,
+      template_id: item._id ?? item.item_id ? item.item_id : item['item_id:'],
       template_name: item.template_name,
     };
 
@@ -84,7 +85,6 @@ const TemplateCard = ({ cardItem }) => {
         });
       }
     }
-   
   };
 
   const handleTrashTemplate = async (cardItem) => {
@@ -129,40 +129,37 @@ const TemplateCard = ({ cardItem }) => {
 
     try {
       const templateService = new TemplateServices();
-      const response = (await templateService.singleTemplateDetail(templateId)).data;
-      
+      const response = (await templateService.singleTemplateDetail(templateId))
+        .data;
+
       copyOfAllTemplates[foundTemplateIndex] = response;
       dispatch(setAllTemplates(copyOfAllTemplates));
-      
+
       setTemplateLoading(false);
     } catch (error) {
       console.log(error.response ? error.response.data : error.message);
       toast.info('Refresh for template failed');
       setTemplateLoading(false);
     }
-  }
+  };
 
   const FrontSide = () => {
     return (
       <div>
-        { 
-          cardItem.newly_created && 
+        {cardItem.newly_created && (
           <div
             style={{
               position: 'absolute',
               left: '10px',
               top: '0',
               fontSize: '1.5rem',
-              color: '#ff0000'
+              color: '#ff0000',
             }}
           >
             <MdOutlineFiberNew />
           </div>
-        }
-        {
-          cardItem.template_name ? cardItem.template_name : 
-          'no item'
-        }
+        )}
+        {cardItem.template_name ? cardItem.template_name : 'no item'}
       </div>
     );
   };
@@ -210,8 +207,7 @@ const TemplateCard = ({ cardItem }) => {
         >
           <RiDeleteBin6Line color='red' />
         </div>
-        { 
-          cardItem.newly_created && 
+        {cardItem.newly_created && (
           <div
             style={{
               position: 'absolute',
@@ -222,7 +218,7 @@ const TemplateCard = ({ cardItem }) => {
               gap: '0.5rem',
             }}
           >
-            <div 
+            <div
               id={cardItem._id}
               style={{
                 color: '#ff0000',
@@ -230,35 +226,57 @@ const TemplateCard = ({ cardItem }) => {
               }}
             >
               <MdOutlineFiberNew />
-              <Tooltip 
-                anchorId={cardItem._id} 
-                content={'This is a new template. Refresh right here to see its actual title'} 
-                style={{ 
-                  fontStyle: "normal",
+              <Tooltip
+                anchorId={cardItem._id}
+                content={
+                  'This is a new template. Refresh right here to see its actual title'
+                }
+                style={{
+                  fontStyle: 'normal',
                   fontSize: '0.7rem',
                   width: '8rem',
-                  wordWrap: 'break-word'
-                }} 
+                  wordWrap: 'break-word',
+                }}
               />
             </div>
             <div
               style={{
                 fontSize: '0.7rem',
                 cursor: 'pointer',
-              }}  
+              }}
               onClick={() => handleFetchNewTemplateDetail(cardItem._id)}
             >
-              {
-                !templateLoading ? <IoIosRefresh /> :
-                <LoadingSpinner color={'#000'} width={'0.7rem'} height={'0.7rem'} />
-              }
+              {!templateLoading ? (
+                <IoIosRefresh />
+              ) : (
+                <LoadingSpinner
+                  color={'#000'}
+                  width={'0.7rem'}
+                  height={'0.7rem'}
+                />
+              )}
             </div>
           </div>
-        }
+        )}
+
+        <div
+          style={{
+            position: 'absolute',
+            top: '0',
+            left: '0',
+            display: 'flex',
+            alignItems: 'center',
+          }}
+        >
+          <AddRemoveBtn type={'add'} item={{ ...cardItem, type: 'template' }} />
+          {isFolder && <AddRemoveBtn type={'remove'} item={cardItem} />}
+        </div>
       </div>
     );
   };
-  return <HoverCard Front={FrontSide} Back={BackSide} loading={templateLoading} />;
+  return (
+    <HoverCard Front={FrontSide} Back={BackSide} loading={templateLoading} />
+  );
 };
 
 export default TemplateCard;

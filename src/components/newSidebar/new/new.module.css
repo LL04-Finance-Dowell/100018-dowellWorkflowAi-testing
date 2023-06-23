@@ -39,7 +39,8 @@
   flex-direction: column;
 }
 
-.new__content a {
+.new__content a,
+.new__content button {
   text-transform: capitalize;
   font-weight: 600;
   font-size: 16px;
@@ -47,4 +48,9 @@
   margin-bottom: 14.5px;
   color: var(--e-global-color-text) !important;
   text-decoration: none;
+}
+
+.new__content button {
+  background-color: transparent;
+  text-align: left;
 }

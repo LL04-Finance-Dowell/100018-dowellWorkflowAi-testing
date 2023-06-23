@@ -9,6 +9,7 @@ import { createTemplate } from '../../../features/template/asyncThunks';
 import { setToggleManageFileForm } from '../../../features/app/appSlice';
 import { useTranslation } from 'react-i18next';
 import { productName } from '../../../utils/helpers';
+import { useAppContext } from '../../../contexts/AppContext';
 
 const New = () => {
   const { userDetail } = useSelector((state) => state.auth);
@@ -16,6 +17,7 @@ const New = () => {
   const { t } = useTranslation();
 
   const [isOpen, setIsOpen] = useState(false);
+  const { setShowFoldersActionModal } = useAppContext();
 
   const handleOpen = () => {
     setIsOpen((prev) => !prev);
@@ -66,6 +68,13 @@ const New = () => {
                 {t(item.content)}
               </HashLink>
             ))}
+            <button
+              onClick={() =>
+                setShowFoldersActionModal({ state: true, action: 'create' })
+              }
+            >
+              Folder
+            </button>
           </div>
         </Collapse>
       </div>

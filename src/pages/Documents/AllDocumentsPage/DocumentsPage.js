@@ -56,6 +56,10 @@ const DocumentsPage = ({ home, showOnlySaved, showOnlyTrashed }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [showOnlySaved, showOnlyTrashed, home]);
 
+  // useEffect(() => {
+  //   console.log('all Docs: ', allDocumentsArray);
+  // });
+
   return (
     <WorkflowLayout>
       <div id='new-document'>
