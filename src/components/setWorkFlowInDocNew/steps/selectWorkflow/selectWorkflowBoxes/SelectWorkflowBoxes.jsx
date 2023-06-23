@@ -48,6 +48,7 @@ const InfoBoxes = ({ savedDoc }) => {
   const { allWorkflows: allWorkflowsArray, allWorkflowsStatus } = useSelector(
     (state) => state.workflow
   );
+  console.log(allWorkflowsArray)
   const {  isMobile } =useAppContext();
   const [compInfoBoxes, setCompInfoBoxes] = useState(infoBoxes);
 
@@ -75,7 +76,7 @@ const InfoBoxes = ({ savedDoc }) => {
                         .includes(team?.toLocaleLowerCase())
                     )
                   : allWorkflowsArray?.filter((item) =>
-                      item.workflows?.workflow_title
+                      item?.workflows?.workflow_title
                         .toLowerCase()
                         .includes(workflow?.toLowerCase())
                     ),

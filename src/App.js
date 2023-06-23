@@ -34,7 +34,9 @@ function App() {
   const dispatch = useDispatch();
   const { session_id, userDetail } = useSelector((state) => state.auth);
   const { isPublicUser } = useAppContext();
+
   useDowellLogin();
+
   useEffect(() => {
     const interval = setInterval(() => {
       checkstatus();
@@ -73,7 +75,7 @@ function App() {
             },
           }
         )
-        .then((response) => {})
+        .then((response) => { })
         .catch((error) => {
           console.log(error);
           // Empty catch block
@@ -85,6 +87,7 @@ function App() {
   //     <Route path='*' element={<ConstructionPage />} />
   //   </Routes>
   // );
+
 
   if (isPublicUser)
     return (
@@ -105,7 +108,7 @@ function App() {
             path={'saved'}
             element={<DocumentsPage showOnlySaved={true} />}
           />
-          {/* <Route path={"trash"} element={<DocumentsPage showOnlyTrashed={true} />} /> */}
+          <Route path={"completed"} element={<DocumentsPage showOnlyCompleted={true} />} />
           {/*  <Route path={"new"} element={<CreateNewDocumentPage />} />
         <Route path={"to-sign"} element={<SignDocumentsPage />} />
         <Route path={"rejected"} element={<RejectedDocumentsPage />} />

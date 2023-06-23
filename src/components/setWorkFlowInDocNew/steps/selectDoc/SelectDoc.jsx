@@ -97,7 +97,7 @@ const  SelectDoc = ({ savedDoc }) => {
                 navigation={true}
                 pagination={true}
                 modules={[Navigation]}
-                className='select-doc'
+                id='select-doc'
                 enabled={savedDoc ? false : true}
                 initialSlide={
                   savedDoc &&

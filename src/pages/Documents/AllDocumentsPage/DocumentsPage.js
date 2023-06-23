@@ -12,11 +12,15 @@ import { useNavigate } from 'react-router-dom';
 import { productName } from '../../../utils/helpers';
 import { useAppContext } from '../../../contexts/AppContext';
 
-const DocumentsPage = ({ home, showOnlySaved, showOnlyTrashed }) => {
+const DocumentsPage = ({ home, showOnlySaved, showOnlyCompleted }) => {
   const { userDetail } = useSelector((state) => state.auth);
   const { allDocuments: allDocumentsArray, allDocumentsStatus } = useSelector(
     (state) => state.document
   );
+
+  console.log('documents', allDocumentsArray)
+  const finilized = allDocumentsArray.filter((document) => document.document_state === "finalized")
+  console.log('finilized', finilized)
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [currentUserPortfolioDataType, setCurrentUserPortfolioDataType] =
@@ -27,16 +31,16 @@ const DocumentsPage = ({ home, showOnlySaved, showOnlyTrashed }) => {
     const userPortfolioDataType =
       userDetail?.portfolio_info?.length > 1
         ? userDetail?.portfolio_info.find(
-            (portfolio) => portfolio.product === productName
-          )?.data_type
+          (portfolio) => portfolio.product === productName
+        )?.data_type
         : userDetail?.portfolio_info[0]?.data_type;
 
     const data = {
       company_id:
         userDetail?.portfolio_info?.length > 1
           ? userDetail?.portfolio_info.find(
-              (portfolio) => portfolio.product === productName
-            )?.org_id
+            (portfolio) => portfolio.product === productName
+          )?.org_id
           : userDetail?.portfolio_info[0].org_id,
       data_type: userPortfolioDataType,
     };
@@ -51,10 +55,10 @@ const DocumentsPage = ({ home, showOnlySaved, showOnlyTrashed }) => {
 
   useEffect(() => {
     if (showOnlySaved) navigate('#saved-documents');
-    if (showOnlyTrashed) navigate('#trashed-documents');
+    if (showOnlyCompleted) navigate('#completed-documents');
     if (home) navigate('#drafts');
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [showOnlySaved, showOnlyTrashed, home]);
+  }, [showOnlySaved, showOnlyCompleted, home]);
 
   // useEffect(() => {
   //   console.log('all Docs: ', allDocumentsArray);
@@ -100,11 +104,7 @@ const DocumentsPage = ({ home, showOnlySaved, showOnlyTrashed }) => {
                 cardBgColor='#1ABC9C'
                 title='saved documents'
                 Card={DocumentCard}
-                cardItems={allDocumentsArray
-                  .filter((document) => document.document_type === 'original')
-                  .filter(
-                    (item) => item.data_type === currentUserPortfolioDataType
-                  )}
+                cardItems={allDocumentsArray.filter((document) => document.document_state === "finalized")}
                 status={allDocumentsStatus}
                 itemType={'documents'}
               />
@@ -112,13 +112,13 @@ const DocumentsPage = ({ home, showOnlySaved, showOnlyTrashed }) => {
           ) : (
             <></>
           )}
-          {showOnlyTrashed ? (
-            <div id='trashed-documents'>
+          {showOnlyCompleted ? (
+            <div id='completed-documents'>
               <SectionBox
                 cardBgColor='#1ABC9C'
-                title='trashed documents'
+                title='completed documents'
                 Card={DocumentCard}
-                cardItems={[]}
+                cardItems={ allDocumentsArray.filter((document) => document.document_state === "finalized")}
                 status={allDocumentsStatus}
                 itemType={'documents'}
               />

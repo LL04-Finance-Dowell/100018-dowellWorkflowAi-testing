@@ -47,7 +47,7 @@ const AssignCollapse = ({ currentStepIndex, stepsPopulated }) => {
                 </i>
                 <span> {collapse.title}</span>
               </div>
-              <Collapse in={stepsPopulated ? stepsPopulated : collapse.isOpen}>
+              <Collapse in={collapse.isOpen}>
                 <div>
                   {
                     <collapse.component

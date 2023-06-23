@@ -111,37 +111,37 @@ const Reports = () => {
       prevItems.map((item) =>
         item.parent.includes('My documents')
           ? {
-              ...item,
-              count:
-                itemsCountToDisplay.documents.count > 0
-                  ? itemsCountToDisplay.documents.count
-                  : '00',
-            }
+            ...item,
+            count:
+              itemsCountToDisplay.documents.count > 0
+                ? itemsCountToDisplay.documents.count
+                : '00',
+          }
           : item.parent.includes('My Templates')
-          ? {
+            ? {
               ...item,
               count:
                 itemsCountToDisplay.templates.count > 0
                   ? itemsCountToDisplay.templates.count
                   : '00',
             }
-          : item.parent.includes('My Workflows')
-          ? {
-              ...item,
-              count:
-                itemsCountToDisplay.workflows.count > 0
-                  ? itemsCountToDisplay.workflows.count
-                  : '00',
-            }
-          : item.parent.includes('My Processes')
-          ? {
-              ...item,
-              count:
-                itemsCountToDisplay.processes.count > 0
-                  ? itemsCountToDisplay.processes.count
-                  : '00',
-            }
-          : item
+            : item.parent.includes('My Workflows')
+              ? {
+                ...item,
+                count:
+                  itemsCountToDisplay.workflows.count > 0
+                    ? itemsCountToDisplay.workflows.count
+                    : '00',
+              }
+              : item.parent.includes('My Processes')
+                ? {
+                  ...item,
+                  count:
+                    itemsCountToDisplay.processes.count > 0
+                      ? itemsCountToDisplay.processes.count
+                      : '00',
+                }
+                : item
       )
     );
   }, [itemsCountToDisplay]);
@@ -160,7 +160,12 @@ export const manageFileItems = [
   {
     id: uuidv4(),
     parent: 'My documents',
-    href: '/documents/#drafts',
+    children: [
+
+      { id: uuidv4(), child: 'All Documents', href: '/documents/#drafts' },
+      { id: uuidv4(), child: 'Completed Documents', href: '/documents/completed' },
+    ],
+    // href: '/documents/#drafts',
   },
   {
     id: uuidv4(),
