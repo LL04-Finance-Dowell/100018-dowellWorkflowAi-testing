@@ -2,7 +2,7 @@ import os
 import ast
 import json
 import re
-import git
+from git.repo import Repo
 from crontab import CronTab
 
 import requests
@@ -26,7 +26,6 @@ from app.utils.helpers import (
 from django.core.cache import cache
 from app.utils.mongo_db_connection import (
     get_folder_list,
-    update_document,
     add_document_to_folder,
     add_template_to_folder,
     delete_document,
@@ -71,7 +70,7 @@ from .constants import EDITOR_API
 def webhook(request):
     """Pick an event from GH and update our PA-server code"""
     if request.method == "POST":
-        repo = git.Repo("/home/100094/100094.pythonanywhere.com")
+        repo = Repo("/home/100094/100094.pythonanywhere.com")
         origin = repo.remotes.origin
         origin.pull()
         return Response("Updated PA successfully", status.HTTP_200_OK)
