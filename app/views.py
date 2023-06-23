@@ -186,7 +186,7 @@ def get_process_link(request, process_id):
     if not links_info:
         return Response("Verification link unavailable", status.HTTP_400_BAD_REQUEST)
     user = request.data["user_name"]
-    if not links_info:
+    if not links_info[0]:
         return Response(status.HTTP_500_INTERNAL_SERVER_ERROR)
     for link in links_info["links"]:
         if user in link:
@@ -450,7 +450,7 @@ def get_workflows(request, company_id):
     if not validate_id(company_id):
         return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
     workflow_list = get_wf_list(company_id, data_type)
-    if len(workflow_list) > 0:
+    if workflow_list:
         return Response(
             {"workflows": workflow_list},
             status.HTTP_200_OK,
@@ -523,7 +523,7 @@ def get_document_content(request, document_id):
     if not validate_id(document_id):
         return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
     content = []
-    my_dict = ast.literal_eval(get_document_object(document_id)["content"])[0][0]
+    my_dict = ast.literal_eval(get_document_object(document_id)["content"])[0]
     all_keys = [i for i in my_dict.keys()]
     for i in all_keys:
         temp_list = []
@@ -1000,7 +1000,7 @@ def get_completed_documents_by_process(request, company_id, process_id):
     if not validate_id(company_id):
         return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
     document_list = get_document_list(company_id, data_type)
-    if len(document_list) > 0:
+    if document_list:
         cloned = list(
             filter(lambda i: i.get("process_id") == process_id, document_list)
         )
