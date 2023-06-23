@@ -91,7 +91,7 @@ class Process:
                 "org_name": self.org_name,
             }
 
-    def test_process(self, action) -> dict:
+    def test_process(self, action):
         data_type = "Testing_Data"
         res = json.loads(
             save_process(
@@ -122,22 +122,6 @@ class Process:
                 "process_kind": Process.process_kind,
                 "org_name": self.org_name,
             }
-
-        if res["isSuccess"]:
-            return {
-                "process_title": self.process_title,
-                "process_steps": self.process_steps,
-                "processing_action": action,
-                "created_by": self.created_by,
-                "company_id": self.company_id,
-                "data_type": self.data_type,
-                "parent_item_id": self.parent_id,
-                "_id": res["inserted_id"],
-                "process_type": self.process_type,
-                "process_kind": Process.process_kind,
-                "org_name": self.org_name,
-            }
-        return {}
 
 
 class HandleProcess(Verification):
@@ -175,7 +159,6 @@ class HandleProcess(Verification):
             clones = [clone_id]
             for u in users:
                 step.get("stepDocumentCloneMap").append({u: clone_id})
-
         if public:
             public_clone_ids = []
             for u in public:
@@ -184,7 +167,6 @@ class HandleProcess(Verification):
                 )
             step.get("stepDocumentCloneMap").extend(public_clone_ids)
             clones.extend(public_clone_ids)
-
         return clones
 
     def start(self) -> dict:
@@ -204,7 +186,6 @@ class HandleProcess(Verification):
                 )
                 links.append({member["member"]: link})
                 qrcodes.append({member["member"]: qrcode})
-
             for member in step.get("stepTeamMembers", []):
                 link, qrcode = super().user_team_public_data(
                     member["member"],
@@ -214,7 +195,6 @@ class HandleProcess(Verification):
                 )
                 links.append({member["member"]: link})
                 qrcodes.append({member["member"]: qrcode})
-
             for member in step.get("stepUserMembers", []):
                 link, qrcode = super().user_team_public_data(
                     member["member"],
@@ -224,7 +204,6 @@ class HandleProcess(Verification):
                 )
                 links.append({member["member"]: link})
                 qrcodes.append({member["member"]: qrcode})
-
             public_users = [m["member"] for m in step.get("stepPublicMembers", [])]
             if public_users:
                 public_portfolio = step.get("stepPublicMembers", [])[0].get("portfolio")
@@ -235,7 +214,6 @@ class HandleProcess(Verification):
                     "bulk_public",
                 )
                 public_links.append({public_portfolio: link})
-
         clone_ids = HandleProcess.prepare_document_for_step_one_users(
             steps[0], self.process["parent_item_id"], process_id
         )
@@ -288,14 +266,16 @@ class HandleProcess(Verification):
                             step.get("stepCity"),
                             location_data["city"],
                         ):
-                            raise Exception(
-                                "access to this document not allowed from this location"
-                            )
+                            # raise Exception(
+                            #     "access to this document not allowed from this location"
+                            # )
+                            return
                     if step.get("stepDisplay"):
                         if not display_right(step.get("stepDisplay")):
-                            raise Exception(
-                                "display rights set do not allow access to this document"
-                            )
+                            # raise Exception(
+                            #     "display rights set do not allow access to this document"
+                            # )
+                            return
                     if step.get("stepTimeLimit"):
                         if not time_limit_right(
                             step.get("stepTime"),
@@ -304,14 +284,16 @@ class HandleProcess(Verification):
                             step.get("stepEndTime"),
                             self.process["created_at"],
                         ):
-                            raise Exception("time limit for access has elapsed")
+                            # raise Exception("time limit for access has elapsed")
+                            return
                     if step.get("stepProcessingOrder"):
                         if not step_processing_order(
                             order=step.get("stepProcessingOrder"),
                             process_id=process_id,
                             role=step.get("stepRole"),
                         ):
-                            raise Exception("user not yet allowed to access document")
+                            # raise Exception("user not yet allowed to access document")
+                            return
                     if user_type == "public":
                         user_name = user_name[0]
                     if any(
@@ -327,7 +309,8 @@ class HandleProcess(Verification):
                     user = user_name
                     match = True
             if not match:
-                raise Exception("access to this document couldn't be verified")
+                # raise Exception("access to this document couldn't be verified")
+                return
             item_type = self.process["process_type"]
             item_flag = None
             field = None
@@ -377,7 +360,6 @@ class HandleProcess(Verification):
             )
             if user_type == "public" and editor_link:
                 Thread(target=lambda: register_public_login(user_name[0], org_name))
-
             return editor_link
         except Exception as e:
             raise e
@@ -401,7 +383,6 @@ class Background:
         viewers = []
         for cm in clone_map:
             docs = list(cm.values())
-
         for docid in docs:
             for usr in users:
                 viewers.append(usr)
@@ -446,7 +427,6 @@ class Background:
                     if dmap.get(usr) is not None:
                         clones.append(dmap.get(usr))
             d_states = all(Background.check_items_state(clones))
-
         if public and users == []:
             for usr in public:
                 for dmap in step["stepDocumentCloneMap"]:
@@ -478,7 +458,6 @@ class Background:
             )
             if not Background.check_first_step_state(self.process):
                 return
-
             else:
                 if no_of_steps >= 2:
                     copies = []
