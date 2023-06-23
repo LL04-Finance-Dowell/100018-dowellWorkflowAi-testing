@@ -181,12 +181,10 @@ def document_processing(request):
 @api_view(["POST"])
 def get_process_link(request, process_id):
     """get a link process for person having notifications"""
-    links_info = get_links_object_by_process_id(process_id)
+    links_info = get_links_object_by_process_id(process_id)[0]
     if not links_info:
         return Response("Verification link unavailable", status.HTTP_400_BAD_REQUEST)
     user = request.data["user_name"]
-    if not links_info[0]:
-        return Response(status.HTTP_500_INTERNAL_SERVER_ERROR)
     for link in links_info["links"]:
         if user in link:
             return Response(link[user], status.HTTP_200_OK)
