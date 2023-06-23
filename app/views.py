@@ -3,6 +3,7 @@ import ast
 import json
 import re
 import git
+from git.repo import Repo
 from crontab import CronTab
 
 import requests
@@ -71,7 +72,7 @@ from .constants import EDITOR_API
 def webhook(request):
     """Pick an event from GH and update our PA-server code"""
     if request.method == "POST":
-        repo = git.Repo("/home/100094/100094.pythonanywhere.com")
+        repo = Repo("/home/100094/100094.pythonanywhere.com")
         origin = repo.remotes.origin
         origin.pull()
         return Response("Updated PA successfully", status.HTTP_200_OK)

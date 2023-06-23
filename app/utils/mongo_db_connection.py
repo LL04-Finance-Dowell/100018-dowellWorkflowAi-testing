@@ -69,7 +69,7 @@ def get_data_from_data_service(
     res = json.loads(response)
     if res["data"] is not None:
         if len(res["data"]):
-            return res["data"]
+            return [res["data"]]
         else:
             return []
     return []
