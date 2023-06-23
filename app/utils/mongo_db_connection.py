@@ -1,7 +1,6 @@
 import json
 import time
 from datetime import datetime
-from django.core.cache import cache
 
 import requests
 
@@ -49,7 +48,7 @@ def get_data_from_data_service(
     function_ID: str,
     command: str,
     field: dict,
-) -> list:
+):
     """Pass In DB info + look fields + DB query to get data"""
     payload = json.dumps(
         {
@@ -70,188 +69,164 @@ def get_data_from_data_service(
     if res["data"] is not None:
         if len(res["data"]):
             return res["data"]
-        else:
-            return []
-    return []
+    return
 
 
-def get_template_list(company_id, data_type) -> list:
+def get_template_list(company_id, data_type):
     templates = get_data_from_data_service(
         *TEMPLATE_CONNECTION_LIST,
-        command="fetch",
-        field={"company_id": company_id, "data_type": data_type},
+        "fetch",
+        {"company_id": company_id, "data_type": data_type},
     )
     return templates
 
 
-def get_links_object_by_process_id(process_id) -> dict:
+def get_links_object_by_process_id(process_id):
     links = get_data_from_data_service(
         *LINK_CONNECTION_LIST,
-        command="fetch",
-        field={"process_id": str(process_id)},
-    )
-    if links:
-        return links[0]
-    return {}
-
-
-def get_link_object(unique_hash) -> dict:
-    link_ob = get_data_from_data_service(
-        *QR_ID_CONNECTION_LIST, command="find", field={"unique_hash": str(unique_hash)}
-    )
-    if link_ob:
-        return link_ob[0]
-    return {}
-
-
-def get_links_object_by_document_id(document_id) -> dict:
-    links_ob = get_data_from_data_service(
-        *LINK_CONNECTION_LIST, command="fetch", field={"document_id": str(document_id)}
-    )
-    if links_ob:
-        return links_ob[0]
-    return {}
-
-
-def get_links_list(company_id) -> list:
-    links = get_data_from_data_service(
-        *LINK_CONNECTION_LIST, command="fetch", field={"company_id": str(company_id)}
+        "fetch",
+        {"process_id": str(process_id)},
     )
     return links
 
 
-def get_workflow_setting_object(wf_setting_id) -> dict:
+def get_link_object(unique_hash):
+    link_ob = get_data_from_data_service(
+        *QR_ID_CONNECTION_LIST, "find", {"unique_hash": str(unique_hash)}
+    )
+    return link_ob
+
+
+def get_links_object_by_document_id(document_id):
+    links_ob = get_data_from_data_service(
+        *LINK_CONNECTION_LIST, "fetch", {"document_id": str(document_id)}
+    )
+    return links_ob
+
+
+def get_links_list(company_id):
+    links = get_data_from_data_service(
+        *LINK_CONNECTION_LIST, "fetch", {"company_id": str(company_id)}
+    )
+    return links
+
+
+def get_workflow_setting_object(wf_setting_id):
     setting = get_data_from_data_service(
         *WF_AI_SETTING_LIST,
-        command="find",
-        field={"_id": wf_setting_id},
+        "find",
+        {"_id": wf_setting_id},
     )
-    if setting:
-        return setting[0]
-    return {}
+    return setting
 
 
-def get_wfai_setting_list(company_id, data_type) -> list:
+def get_wfai_setting_list(company_id, data_type):
     settings = get_data_from_data_service(
         *WF_AI_SETTING_LIST,
-        command="fetch",
-        field={"company_id": str(company_id), "data_type": data_type},
+        "fetch",
+        {"company_id": str(company_id), "data_type": data_type},
     )
     return settings
 
 
-def get_document_object(document_id) -> dict:
+def get_document_object(document_id):
     document = get_data_from_data_service(
-        *DOCUMENT_CONNECTION_LIST, command="find", field={"_id": document_id}
+        *DOCUMENT_CONNECTION_LIST, "find", {"_id": document_id}
     )
-    if document:
-        return document[0]
-    return {}
+    return document
 
 
-def get_document_list(company_id, data_type) -> list:
+def get_document_list(company_id, data_type):
     documents = get_data_from_data_service(
         *DOCUMENT_CONNECTION_LIST,
-        command="fetch",
-        field={"company_id": str(company_id), "data_type": data_type},
+        "fetch",
+        {"company_id": str(company_id), "data_type": data_type},
     )
     return documents
 
 
-def get_folder_list(company_id, data_type) -> list:
+def get_folder_list(company_id, data_type):
     folders = get_data_from_data_service(
         *FOLDER_CONNECTION_LIST,
-        command="fetch",
-        field={"company_id": str(company_id), "data_type": data_type},
-    
+        "fetch",
+        {"company_id": str(company_id), "data_type": data_type},
     )
     return folders
 
 
-def get_uuid_object(uuid_hash) -> dict:
+def get_uuid_object(uuid_hash):
     uuid = get_data_from_data_service(
-        *QR_ID_CONNECTION_LIST, command="find", field={"uuid_hash": uuid_hash}
+        *QR_ID_CONNECTION_LIST, "find", {"uuid_hash": uuid_hash}
     )
-    if uuid:
-        return uuid[0]
-    return {}
+    return uuid
 
 
 def get_uuid(process_id):
     return get_data_from_data_service(
-        *QR_ID_CONNECTION_LIST, command="fetch", field={"process_id": process_id}
+        *QR_ID_CONNECTION_LIST, "fetch", {"process_id": process_id}
     )
 
 
-def get_team(team_id) -> dict:
+def get_team(team_id):
     team = get_data_from_data_service(
-        *MANAGEMENT_REPORTS_LIST, command="find", field={"_id": team_id}
+        *MANAGEMENT_REPORTS_LIST, "find", {"_id": team_id}
     )
-    if team:
-        return team[0]
-    return {}
+    return team
 
 
-def get_team_list(company_id) -> list:
+def get_team_list(company_id):
     teams = get_data_from_data_service(
         *MANAGEMENT_REPORTS_LIST,
-        command="fetch",
-        field={"company_id": str(company_id)},
+        "fetch",
+        {"company_id": str(company_id)},
     )
     return teams
 
 
-def get_template_object(template_id) -> dict:
+def get_template_object(template_id):
     template = get_data_from_data_service(
-        *TEMPLATE_CONNECTION_LIST, command="find", field={"_id": template_id}
+        *TEMPLATE_CONNECTION_LIST, "find", {"_id": template_id}
     )
-    if template:
-        return template[0]
-    return {}
+    return template
 
 
-def get_folder_object(folder_id) -> list:
+def get_folder_object(folder_id):
     folder = get_data_from_data_service(
-        *FOLDER_CONNECTION_LIST, command="find", field={"_id": folder_id}
+        *FOLDER_CONNECTION_LIST, "find", {"_id": folder_id}
     )
-    print(folder)
-    return folder[0]
+    return folder
 
 
-def get_wf_list(company_id, data_type) -> list:
+def get_wf_list(company_id, data_type):
     workflows = get_data_from_data_service(
         *WF_CONNECTION_LIST,
-        command="fetch",
-        field={"company_id": str(company_id), "data_type": data_type},
+        "fetch",
+        {"company_id": str(company_id), "data_type": data_type},
     )
     return workflows
 
 
-def get_wf_object(workflow_id) -> dict:
-    workflow =get_data_from_data_service(
-        *WF_CONNECTION_LIST, command="find", field={"_id": str(workflow_id)}
+def get_wf_object(workflow_id):
+    workflow = get_data_from_data_service(
+        *WF_CONNECTION_LIST, "find", {"_id": str(workflow_id)}
     )
-    if workflow:
-        return workflow[0]
-    return {}
+    return workflow
 
 
-def get_process_object(workflow_process_id) -> dict:
+def get_process_object(workflow_process_id):
     process = get_data_from_data_service(
         *PROCESS_CONNECTION_LIST,
-        command="find",
-        field={"_id": str(workflow_process_id)},
+        "find",
+        {"_id": str(workflow_process_id)},
     )
-    if process:
-        return process[0]
-    return {}
+    return process
 
 
-def get_process_list(company_id, data_type) -> list:
+def get_process_list(company_id, data_type):
     processes = get_data_from_data_service(
         *PROCESS_CONNECTION_LIST,
-        command="fetch",
-        field={
+        "fetch",
+        {
             "company_id": str(company_id),
             "data_type": data_type,
         },
@@ -259,15 +234,14 @@ def get_process_list(company_id, data_type) -> list:
     return processes
 
 
-
-def get_process_link_list(company_id) -> list:
+def get_process_link_list(company_id):
     process_links = get_data_from_data_service(
-        *LINK_CONNECTION_LIST, command="fetch", field={"company_id": str(company_id)}
+        *LINK_CONNECTION_LIST, "fetch", {"company_id": str(company_id)}
     )
     return process_links
 
 
-def get_event_id() -> dict:
+def get_event_id():
     url = "https://uxlivinglab.pythonanywhere.com/create_event"
     data = {
         "platformcode": "FB",
@@ -701,7 +675,7 @@ def authorize(document_id, viewers, process, item_type):
     return
 
 
-def finalize_item(item_id, state, item_type) -> dict:
+def finalize_item(item_id, state, item_type):
     payload = None
     if item_type == "document":
         payload = json.dumps(
@@ -748,7 +722,7 @@ def finalize_item(item_id, state, item_type) -> dict:
 
     if payload is not None:
         return post_to_data_service(payload)
-    return {}
+    return
 
 
 def update_process(process_id, steps, state):
@@ -877,9 +851,7 @@ def org_wfai_setting(company_id, org_name, data_type="Real_data"):
         "created_by": org_name,
         "data_type": data_type,
     }
-    response_obj = get_data_from_data_service(
-        *WF_AI_SETTING_LIST, command="fetch", field=fields
-    )
+    response_obj = get_data_from_data_service(*WF_AI_SETTING_LIST, "fetch", fields)
     # res_obj = json.loads(response_obj)
     # if len(res_obj["data"]) > 0:
     #     return res_obj["data"]
@@ -1081,8 +1053,8 @@ def update_team_data(team_id, team_data):
 def reminder_func(reminder):
     data = get_data_from_data_service(
         *PROCESS_CONNECTION_LIST,
-        command="fetch",
-        field={
+        "fetch",
+        {
             "data_type": "Real_Data",
             "processing_state": {"$ne": "completed"},
             "process_steps.stepReminder": reminder,
