@@ -523,7 +523,7 @@ def get_document_content(request, document_id):
     if not validate_id(document_id):
         return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
     content = []
-    my_dict = ast.literal_eval(get_document_object(document_id)["content"])[0]
+    my_dict = ast.literal_eval(get_document_object(document_id)["content"])[0][0]
     all_keys = [i for i in my_dict.keys()]
     for i in all_keys:
         temp_list = []
