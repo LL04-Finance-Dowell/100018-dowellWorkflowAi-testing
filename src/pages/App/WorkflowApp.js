@@ -38,6 +38,9 @@ const WorkflowApp = () => {
     notificationsLoaded,
     ShowProfileSpinner,
   } = useSelector((state) => state.app);
+
+  // console.log('notification: ', notificationsForUser);
+
   const dispatch = useDispatch();
 
   const { t } = useTranslation();

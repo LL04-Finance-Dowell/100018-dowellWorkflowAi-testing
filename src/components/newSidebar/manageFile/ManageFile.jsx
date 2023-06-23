@@ -7,14 +7,18 @@ import sidebarStyles from '../sidebar.module.css';
 import { allDocuments } from '../../../features/document/asyncThunks';
 import { allTemplates } from '../../../features/template/asyncThunks';
 import { allWorkflows } from '../../../features/workflow/asyncTHunks';
+import styles from './manageFile.module.css';
 
 import { useTranslation } from 'react-i18next';
 import { productName } from '../../../utils/helpers';
+import { HashLink } from 'react-router-hash-link';
+import { useAppContext } from '../../../contexts/AppContext';
 
 const ManageFile = () => {
   const dispatch = useDispatch();
   const { t } = useTranslation();
   const { userDetail } = useSelector((state) => state.auth);
+  const { folders } = useAppContext();
 
   const { allWorkflows: allWorkflowsArray, allWorkflowsStatus } = useSelector(
     (state) => state.workflow
@@ -37,8 +41,18 @@ const ManageFile = () => {
 
   useEffect(() => {
     const data = {
-      company_id: userDetail?.portfolio_info?.length > 1 ? userDetail?.portfolio_info.find(portfolio => portfolio.product === productName)?.org_id: userDetail?.portfolio_info[0].org_id,
-      data_type: userDetail?.portfolio_info?.length > 1 ? userDetail?.portfolio_info.find(portfolio => portfolio.product === productName)?.data_type : userDetail?.portfolio_info[0].data_type,
+      company_id:
+        userDetail?.portfolio_info?.length > 1
+          ? userDetail?.portfolio_info.find(
+              (portfolio) => portfolio.product === productName
+            )?.org_id
+          : userDetail?.portfolio_info[0].org_id,
+      data_type:
+        userDetail?.portfolio_info?.length > 1
+          ? userDetail?.portfolio_info.find(
+              (portfolio) => portfolio.product === productName
+            )?.data_type
+          : userDetail?.portfolio_info[0].data_type,
     };
     /*  if (savedDocumentsStatus === "idle") dispatch(savedDocuments(data));
     if (savedTemplatesItemsStatus === "idle") dispatch(savedTemplates(data));
@@ -51,10 +65,12 @@ const ManageFile = () => {
   }, []);
 
   useEffect(() => {
-    const currentUserportfolioDataType = userDetail?.portfolio_info?.length > 1 ? 
-      userDetail?.portfolio_info.find(portfolio => portfolio.product === productName)?.data_type
-      :
-      userDetail?.portfolio_info[0]?.data_type;
+    const currentUserportfolioDataType =
+      userDetail?.portfolio_info?.length > 1
+        ? userDetail?.portfolio_info.find(
+            (portfolio) => portfolio.product === productName
+          )?.data_type
+        : userDetail?.portfolio_info[0]?.data_type;
 
     // THIS UPDATES AN INDIVIDUAL ITEM COUNT FOR EITHER DOCUMENT/TEMPLATE/WORKFLOW/PROCESS
     if (
@@ -69,16 +85,12 @@ const ManageFile = () => {
               item.created_by === userDetail?.userinfo?.username &&
               item.document_type === 'original'
           )
-          .filter(
-            (item) =>
-              item.data_type === currentUserportfolioDataType
-          ).length +
+          .filter((item) => item.data_type === currentUserportfolioDataType)
+          .length +
         allDocumentsArray
           .filter((document) => document.document_type === 'original')
-          .filter(
-            (item) =>
-              item.data_type === currentUserportfolioDataType
-          ).length;
+          .filter((item) => item.data_type === currentUserportfolioDataType)
+          .length;
       setItemsCountToDisplay((prevItems) => {
         return {
           ...prevItems,
@@ -94,13 +106,9 @@ const ManageFile = () => {
     ) {
       const countOfTemplates =
         allTemplatesArray
-          .filter(
-            (item) => item.created_by === userDetail?.userinfo?.username
-          )
-          .filter(
-            (item) =>
-              item.data_type === currentUserportfolioDataType
-          ).length +
+          .filter((item) => item.created_by === userDetail?.userinfo?.username)
+          .filter((item) => item.data_type === currentUserportfolioDataType)
+          .length +
         allTemplatesArray.filter(
           (item) => item.data_type === currentUserportfolioDataType
         ).length;
@@ -119,22 +127,18 @@ const ManageFile = () => {
     ) {
       const countOfWorkflows =
         allWorkflowsArray
-          .filter(
-            (item) => item.created_by === userDetail?.userinfo?.username
-          )
+          .filter((item) => item.created_by === userDetail?.userinfo?.username)
           .filter(
             (item) =>
               item.workflows &&
               (item?.data_type === currentUserportfolioDataType ||
-                item.workflows?.data_type ===
-                  currentUserportfolioDataType)
+                item.workflows?.data_type === currentUserportfolioDataType)
           ).length +
         allWorkflowsArray.filter(
           (item) =>
             item.workflows &&
             (item?.data_type === currentUserportfolioDataType ||
-              item.workflows?.data_type ===
-                currentUserportfolioDataType)
+              item.workflows?.data_type === currentUserportfolioDataType)
         ).length;
       setItemsCountToDisplay((prevItems) => {
         return {
@@ -149,8 +153,7 @@ const ManageFile = () => {
         allProcesses
           .filter((process) => process.processing_state === 'draft')
           .filter(
-            (process) =>
-              process.data_type === currentUserportfolioDataType
+            (process) => process.data_type === currentUserportfolioDataType
           )
           .filter(
             (process) => process.created_by === userDetail?.userinfo?.username
@@ -159,20 +162,17 @@ const ManageFile = () => {
         allProcesses
           .filter((process) => process.processing_state === 'processing')
           .filter(
-            (process) =>
-              process.data_type === currentUserportfolioDataType
+            (process) => process.data_type === currentUserportfolioDataType
           ).length +
         allProcesses
           .filter((process) => process.processing_state === 'paused')
           .filter(
-            (process) =>
-              process.data_type === currentUserportfolioDataType
+            (process) => process.data_type === currentUserportfolioDataType
           ).length +
         allProcesses
           .filter((process) => process.processing_state === 'cancelled')
           .filter(
-            (process) =>
-              process.data_type === currentUserportfolioDataType
+            (process) => process.data_type === currentUserportfolioDataType
           ).length;
       setItemsCountToDisplay((prevItems) => {
         return {
@@ -229,6 +229,9 @@ const ManageFile = () => {
     <div className={sidebarStyles.feature__box}>
       <h2 className={sidebarStyles.feature__title}>{t('Manage File')}</h2>
       <CollapseItem items={test} />
+      <HashLink to='/folders' className={styles.folder_href}>
+        Folders {folders.length ? `(${folders.length})` : ''}
+      </HashLink>
     </div>
   );
 };
@@ -325,4 +328,10 @@ export const manageFileItems = [
       // },
     ],
   },
+  // {
+  //   id: uuidv4(),
+  //   parent: 'Folders',
+  //   href: '/folders',
+  //   isFolder: true,
+  // },
 ];
