@@ -163,6 +163,7 @@ def get_folder_list(company_id, data_type) -> list:
         *FOLDER_CONNECTION_LIST,
         command="fetch",
         field={"company_id": str(company_id), "data_type": data_type},
+    
     )
     return folders
 
@@ -209,13 +210,12 @@ def get_template_object(template_id) -> dict:
     return {}
 
 
-def get_folder_object(folder_id) -> dict:
+def get_folder_object(folder_id) -> list:
     folder = get_data_from_data_service(
         *FOLDER_CONNECTION_LIST, command="find", field={"_id": folder_id}
     )
-    if folder:
-        return folder[0]
-    return {}
+    print(folder)
+    return folder[0]
 
 
 def get_wf_list(company_id, data_type) -> list:
