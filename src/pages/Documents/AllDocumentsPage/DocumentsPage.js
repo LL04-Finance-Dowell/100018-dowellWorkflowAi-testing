@@ -18,9 +18,7 @@ const DocumentsPage = ({ home, showOnlySaved, showOnlyCompleted }) => {
     (state) => state.document
   );
 
-  console.log('documents', allDocumentsArray)
   const finilized = allDocumentsArray.filter((document) => document.document_state === "finalized")
-  console.log('finilized', finilized)
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [currentUserPortfolioDataType, setCurrentUserPortfolioDataType] =
