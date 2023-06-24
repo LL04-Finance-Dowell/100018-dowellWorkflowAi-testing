@@ -2,7 +2,7 @@ import os
 import ast
 import json
 import re
-import git
+from git.repo import Repo
 from crontab import CronTab
 
 import requests
@@ -28,7 +28,6 @@ from django.core.cache import cache
 from app.utils.mongo_db_connection import (
     process_folders_to_item,
     get_folder_list,
-    update_document,
     add_document_to_folder,
     add_template_to_folder,
     delete_document,
@@ -73,7 +72,7 @@ from .constants import EDITOR_API
 def webhook(request):
     """Pick an event from GH and update our PA-server code"""
     if request.method == "POST":
-        repo = git.Repo("/home/100094/100094.pythonanywhere.com")
+        repo = Repo("/home/100094/100094.pythonanywhere.com")
         origin = repo.remotes.origin
         origin.pull()
         return Response("Updated PA successfully", status.HTTP_200_OK)
@@ -184,12 +183,13 @@ def document_processing(request):
 @api_view(["POST"])
 def get_process_link(request, process_id):
     """get a link process for person having notifications"""
-    links_info = get_links_object_by_process_id(process_id)
+    links_info = get_links_object_by_process_id(process_id)[0]
     if not links_info:
         return Response("Verification link unavailable", status.HTTP_400_BAD_REQUEST)
     user = request.data["user_name"]
     if not links_info:
         return Response(status.HTTP_500_INTERNAL_SERVER_ERROR)
+
     for link in links_info["links"]:
         if user in link:
             return Response(link[user], status.HTTP_200_OK)
@@ -199,50 +199,57 @@ def get_process_link(request, process_id):
 @api_view(["POST"])
 def process_verification(request):
     """verification of a process step access and checks that duplicate document based on a step."""
-    if not request.data:
-        return Response("You are missing something!", status.HTTP_400_BAD_REQUEST)
-    user_type = request.data["user_type"]
-    auth_user = request.data["auth_username"]
-    auth_role = request.data["auth_role"]
-    auth_portfolio = request.data["auth_portfolio"]
-    token = request.data["token"]
-    org_name = request.data["org_name"]
-    link_object = get_link_object(token)
-    if not link_object:
-        return Response(status.HTTP_500_INTERNAL_SERVER_ERROR)
-    if user_type == "team" or user_type == "user":
-        if (
-            link_object["user_name"] != auth_user
-            or link_object["auth_portfolio"] != auth_portfolio
+    try:
+        user_type = request.data["user_type"]
+        auth_user = request.data["auth_username"]
+        auth_role = request.data["auth_role"]
+        auth_portfolio = request.data["auth_portfolio"]
+        token = request.data["token"]
+        org_name = request.data["org_name"]
+        link_object = get_link_object(token)
+        if user_type == "team" or user_type == "user":
+            if (
+                link_object["user_name"] != auth_user
+                or link_object["auth_portfolio"] != auth_portfolio
+            ):
+                return Response(
+                    "User Logged in is not part of this process",
+                    status.HTTP_401_UNAUTHORIZED,
+                )
+        process = get_process_object(link_object["process_id"])
+        process["org_name"] = org_name
+        handler = HandleProcess(process)
+        if not handler.verify_location(
+            auth_role,
+            {
+                "city": request.data["city"],
+                "country": request.data["country"],
+                "continent": request.data["continent"],
+            },
         ):
             return Response(
-                "User Logged in is not part of this process",
-                status.HTTP_401_UNAUTHORIZED,
+                "access to this document not allowed from this location",
+                status.HTTP_400_BAD_REQUEST,
             )
-    process_id = link_object["process_id"]
-    process = get_process_object(process_id)
-    if not process:
-        return Response(status.HTTP_500_INTERNAL_SERVER_ERROR)
-    if process["processing_state"]:
-        if process["processing_state"] == "paused":
-            return Response("this workflow process is paused!", status.HTTP_200_OK)
-        if process["processing_state"] == "save":
-            return Response("this workflow process is not active!", status.HTTP_200_OK)
-    location_data = {
-        "city": request.data["city"],
-        "country": request.data["country"],
-        "continent": request.data["continent"],
-    }
-    process["org_name"] = org_name
-    handler = HandleProcess(process)
-    editor_link = handler.verify(
-        auth_role, location_data, auth_user, user_type, org_name
-    )
-    if editor_link:
-        return Response(editor_link, status.HTTP_200_OK)
-    return Response(
-        "access to this document is denied at this time!", status.HTTP_400_BAD_REQUEST
-    )
+        if not handler.verify_display(auth_role):
+            return Response(
+                "display rights set do not allow access to this document",
+                status.HTTP_400_BAD_REQUEST,
+            )
+        # if not handler.verify_time(auth_role):
+        #     return Response(
+        #         "time limit for access to this document has elapsed",
+        #         status.HTTP_400_BAD_REQUEST,
+        #     )
+        editor_link = handler.verify_access(auth_role, auth_user, user_type)
+        if editor_link:
+            return Response(editor_link, status.HTTP_200_OK)
+    except Exception as e:
+        print(e)
+        return Response(
+            "access to this document is denied at this time!",
+            status.HTTP_400_BAD_REQUEST,
+        )
 
 
 @api_view(["POST"])
@@ -1295,4 +1302,6 @@ def all_folders(request, company_id):
             cache.set(cache_key, folders_list, timeout=60)
         except:
             return Response(status.HTTP_500_INTERNAL_SERVER_ERROR)
+    if request.method == "PUT":
+        form = request.data
     return Response(folders_list, status.HTTP_200_OK)
