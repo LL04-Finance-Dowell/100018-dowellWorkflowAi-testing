@@ -3,24 +3,26 @@ import { Box } from './styledComponents';
 import styles from './hoverCard.module.css';
 import { useAppContext } from '../../contexts/AppContext';
 
-const HoverCard = ({ Front, Back, loading }) => {
+const HoverCard = ({ Front, Back, loading, isFolder }) => {
   const { isNoPointerEvents } = useAppContext();
   return (
     <div
-      className={styles.container}
-      style={isNoPointerEvents ? { pointerEvents: 'none' } : {}}
+    // className={isFolder ? styles.folder_shape : ''}
     >
-      <Box className={`${styles.box}`}>
-        <Front />
-      </Box>
-      <Box
-        className={`${styles.box} ${styles.hover__box} 
-        ${
-          loading === true && styles.hover
-        }`}
+      <div
+        className={`${styles.container} ${isFolder ? styles.folder_shape : ''}`}
+        style={isNoPointerEvents ? { pointerEvents: 'none' } : {}}
       >
-        <Back />
-      </Box>
+        <Box className={`${styles.box}`}>
+          <Front />
+        </Box>
+        <Box
+          className={`${styles.box} ${styles.hover__box} 
+        ${loading === true && styles.hover}`}
+        >
+          <Back />
+        </Box>
+      </div>
     </div>
   );
 };

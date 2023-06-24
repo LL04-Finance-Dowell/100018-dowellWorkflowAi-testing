@@ -41,3 +41,20 @@
 .hover {
   transform: translateY(0) !important;
 }
+
+.folder_shape {
+  position: relative;
+}
+
+.folder_shape:after {
+  content: '';
+  width: 100px;
+  height: 40px;
+  background-color: black;
+  position: absolute;
+  top: 0;
+  right: 0;
+  z-index: 100;
+  border-radius: 0 0 0 10px;
+  background-color: var(--bs-body-bg);
+}

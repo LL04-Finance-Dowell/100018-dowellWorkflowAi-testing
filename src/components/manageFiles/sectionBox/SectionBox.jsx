@@ -43,6 +43,11 @@ const SectionBox = ({
   const dispatch = useDispatch();
   const { t } = useTranslation();
 
+  const [foldersLoading] = useState(false); //! THIS IS A DUMMY
+  const [folderLoading] = useState(false); //! THIS IS A DUMMY
+
+  // console.log('card Items: ', cardItems, title, card);
+
   const handleLoadMore = () => {
     setSliceCount((prev) => prev + 1);
   };
@@ -363,6 +368,46 @@ const SectionBox = ({
                 ) : (
                   <></>
                 )
+              ) : itemType === 'folders' ? (
+                !foldersLoading ? (
+                  <button
+                    className={styles.refresh__btn}
+                    // onClick={handleRefresh}
+                  >
+                    {refreshLoading ? (
+                      <LoadingSpinner
+                        color={'white'}
+                        width={'1rem'}
+                        height={'1rem'}
+                      />
+                    ) : (
+                      <IoIosRefresh />
+                    )}
+                    <span>{t('Refresh')}</span>
+                  </button>
+                ) : (
+                  <></>
+                )
+              ) : itemType === 'folder' ? (
+                !folderLoading ? (
+                  <button
+                    className={styles.refresh__btn}
+                    // onClick={handleRefresh}
+                  >
+                    {refreshLoading ? (
+                      <LoadingSpinner
+                        color={'white'}
+                        width={'1rem'}
+                        height={'1rem'}
+                      />
+                    ) : (
+                      <IoIosRefresh />
+                    )}
+                    <span>{t('Refresh')}</span>
+                  </button>
+                ) : (
+                  <></>
+                )
               ) : (
                 <></>
               )
@@ -370,6 +415,7 @@ const SectionBox = ({
               <></>
             )}
           </h2>
+
           {status === 'pending' ? (
             <div style={{ marginTop: '15px' }}>
               <BookSpinner />
@@ -391,6 +437,7 @@ const SectionBox = ({
                           cardItem={item}
                           hideFavoriteIcon={hideFavoriteIcon}
                           hideDeleteIcon={hideDeleteIcon}
+                          isFolder={itemType === 'folder' ? true : false}
                         />
                       ))}
                 </div>

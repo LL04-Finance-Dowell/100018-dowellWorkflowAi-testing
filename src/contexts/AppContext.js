@@ -7,6 +7,8 @@ import {
   setFetchedPermissionArray,
   setThemeColor,
 } from '../features/app/appSlice';
+import { v4 } from 'uuid';
+import { FolderServices } from '../services/folderServices';
 
 const AppContext = createContext({});
 
@@ -63,6 +65,14 @@ export const AppContextProvider = ({ children }) => {
   const [customWrkfName, setCustomWrkfName] = useState('');
   const { permissionArray } = useSelector((state) => state.app);
   const dispatch = useDispatch();
+
+  const [folders, setFolders] = useState([]);
+  const [folderActionId, setFolderActionId] = useState('');
+
+  const [showFoldersActionModal, setShowFoldersActionModal] = useState({
+    state: false,
+    action: '',
+  });
 
   // const [createdNewTeam, setCreatedNewTeam] = useState();
 
@@ -124,8 +134,41 @@ export const AppContextProvider = ({ children }) => {
     setWorkflowSettings(res.data);
   };
 
+  const fetchFolders = async () => {
+    const folderServices = new FolderServices();
+    const userCompanyId =
+      userDetail?.portfolio_info?.length > 1
+        ? userDetail?.portfolio_info?.find(
+            (portfolio) => portfolio.product === productName
+          )?.org_id
+        : userDetail?.portfolio_info[0]?.org_id;
+    try {
+      const res = await folderServices.getAllFolders(userCompanyId);
+      setFolders(res.data);
+      // rearrangeFolderData(res.data)
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  // const rearrangeFolderData=(data)=>{
+  //   const modData =  data.map(item=>(
+  //     item.data.length?
+  //     item.data.map(dItem=>(
+  //       dItem.item_type === 'list'?
+  //       dItem.item._id.map(mITem=>)
+  //       :dItem
+  //     ))
+  //     :item
+  //   ))
+  // }
+
   const extractCustomName = (str) =>
     str ? str.slice(str.indexOf('(') + 1, str.indexOf(')')) : str;
+
+  useEffect(() => {
+    console.log('folders: ', folders);
+  }, [folders]);
 
   useEffect(() => {
     if (!publicUserConfigured) return;
@@ -159,7 +202,10 @@ export const AppContextProvider = ({ children }) => {
   }, [userDetail, isPublicUser, publicUserConfigured]);
 
   useEffect(() => {
-    if (userDetail && userDetail.portfolio_info) fetchSettings();
+    if (userDetail && userDetail.portfolio_info) {
+      fetchFolders();
+      fetchSettings();
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userDetail]);
 
@@ -309,9 +355,12 @@ export const AppContextProvider = ({ children }) => {
         customDocName,
         customTempName,
         customWrkfName,
-        // setCustomDocName,
-        // setCustomTempName,
-        // setCustomWrkfName,
+        folders,
+        setFolders,
+        showFoldersActionModal,
+        setShowFoldersActionModal,
+        folderActionId,
+        setFolderActionId,
       }}
     >
       {children}
