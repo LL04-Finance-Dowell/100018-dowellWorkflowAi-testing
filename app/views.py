@@ -231,11 +231,11 @@ def process_verification(request):
                 "display rights set do not allow access to this document",
                 status.HTTP_400_BAD_REQUEST,
             )
-        if not handler.verify_time(auth_role):
-            return Response(
-                "time limit for access to this document has elapsed",
-                status.HTTP_400_BAD_REQUEST,
-            )
+        # if not handler.verify_time(auth_role):
+        #     return Response(
+        #         "time limit for access to this document has elapsed",
+        #         status.HTTP_400_BAD_REQUEST,
+        #     )
         editor_link = handler.verify_access(auth_role, auth_user, user_type)
         if editor_link:
             return Response(editor_link, status.HTTP_200_OK)
