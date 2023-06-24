@@ -112,8 +112,8 @@ const FoldersModal = () => {
           ...modData,
         };
 
-        console.log('data: ', data);
-        console.log('folderId: ', addFolderId);
+        // console.log('data: ', data);
+        // console.log('folderId: ', addFolderId);
 
         try {
           setIsAdding(true);
@@ -475,7 +475,7 @@ const SelectInput = ({
                       : type === 'temps'
                       ? handleTempsChange
                       : () => {
-                          console.log('Change not handled');
+                          // console.log('Change not handled');
                         }
                   }
                 />

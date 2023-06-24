@@ -167,7 +167,7 @@ export const AppContextProvider = ({ children }) => {
     str ? str.slice(str.indexOf('(') + 1, str.indexOf(')')) : str;
 
   useEffect(() => {
-    console.log('folders: ', folders);
+    // console.log('folders: ', folders);
   }, [folders]);
 
   useEffect(() => {

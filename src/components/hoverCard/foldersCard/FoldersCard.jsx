@@ -13,7 +13,7 @@ const FoldersCard = ({ cardItem }) => {
   const { setShowFoldersActionModal, setFolderActionId } = useAppContext();
 
   const handleDelete = (e) => {
-    console.log('DELETE THIS FOLDER!!!: ');
+    // console.log('DELETE THIS FOLDER!!!: ');
   };
 
   const handleEdit = (e) => {
