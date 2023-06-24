@@ -3,6 +3,7 @@ import time
 from datetime import datetime
 
 import requests
+import multiprocessing
 
 from app.constants import (
     FOLDER_CONNECTION_DICT,
@@ -133,6 +134,7 @@ def get_document_object(document_id):
     document = get_data_from_data_service(
         *DOCUMENT_CONNECTION_LIST, "find", {"_id": document_id}
     )
+
     return document
 
 
@@ -957,6 +959,15 @@ def delete_document(document_id, data_type):
 
 
 def add_document_to_folder(document_id, folder):
+    old_document = get_document_object(document_id)
+    old_document["folders"] = old_document.get("folders")
+    if old_document["folders"] is not None:
+        try:
+            if document_id not in old_document["folders"]:
+                old_document["folders"].append(folder)
+        except:
+            old_document["folders"] = folder
+    new_folder = old_document["folders"]
     payload = json.dumps(
         {
             **DOCUMENT_CONNECTION_DICT,
@@ -965,7 +976,7 @@ def add_document_to_folder(document_id, folder):
                 "_id": document_id,
             },
             "update_field": {
-                "folders": folder,
+                "folders": new_folder,
             },
             "platform": "bangalore",
         }
@@ -974,6 +985,15 @@ def add_document_to_folder(document_id, folder):
 
 
 def add_template_to_folder(template_id, folder):
+    old_template = get_template_object(template_id)
+    old_template["folders"] = old_template.get("folders")
+    if old_template["folders"] is not None:
+        try:
+            if template_id not in old_template["folders"]:
+                old_template["folders"].append(folder)
+        except:
+            old_template["folders"] = folder
+    new_folder = old_template["folders"]
     payload = json.dumps(
         {
             **TEMPLATE_CONNECTION_DICT,
@@ -982,7 +1002,7 @@ def add_template_to_folder(template_id, folder):
                 "_id": template_id,
             },
             "update_field": {
-                "folders": folder,
+                "folders": new_folder,
             },
             "platform": "bangalore",
         }
@@ -1101,3 +1121,17 @@ def reminder_func(reminder):
         )
     ]
     return reminder_list
+
+
+def process_folders_to_item(ids, folder_id, add_item_to_folder):
+    processes = []
+
+    for id in ids:
+        process = multiprocessing.Process(
+            target=add_item_to_folder, args=(id, folder_id)
+        )
+        process.start()
+        processes.append(process)
+
+    for process in processes:
+        process.join()
