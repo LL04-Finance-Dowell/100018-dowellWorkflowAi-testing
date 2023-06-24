@@ -169,7 +169,7 @@ class HandleProcess(Verification):
             clones.extend(public_clone_ids)
         return clones
 
-    def start(self) -> dict:
+    def start(self):
         links = []
         public_links = []
         qrcodes = []
@@ -245,7 +245,110 @@ class HandleProcess(Verification):
             "public_links": public_links,
         }
 
-    def verify(self, auth_step_role, location_data, user_name, user_type, org_name) -> str:
+    def verify_location(self, auth_role, location_data):
+        for step in self.process["process_steps"]:
+            if step.get("stepRole") == auth_role:
+                if step.get("stepLocation"):
+                    return location_right(
+                        step.get("stepLocation"),
+                        step.get("stepContinent"),
+                        location_data["continent"],
+                        step.get("stepCountry"),
+                        location_data["country"],
+                        step.get("stepCity"),
+                        location_data["city"],
+                    )
+
+    def verify_display(self, auth_role):
+        for step in self.process["process_steps"]:
+            if step.get("stepRole") == auth_role:
+                if step.get("stepDisplay"):
+                    return display_right(step.get("stepDisplay"))
+
+    def verify_time(self, auth_role):
+        for step in self.process["process_steps"]:
+            if step.get("stepRole") == auth_role:
+                if step.get("stepTimeLimit"):
+                    return time_limit_right(
+                        step.get("stepTime"),
+                        step.get("stepTimeLimit"),
+                        step.get("stepStartTime"),
+                        step.get("stepEndTime"),
+                        self.process["created_at"],
+                    )
+
+    def verify_access(self, auth_role, user_name, user_type):
+        clone_id = None
+        doc_map = None
+        right = None
+        role = None
+        item_flag = None
+        field = None
+        collection = None
+        document = None
+        team_member_id = None
+        item_type = self.process["process_type"]
+        for step in self.process["process_steps"]:
+            if step.get("stepRole") == auth_role:
+                if user_type == "public":
+                    user_name = user_name[0]
+                if any(user_name in map for map in step.get("stepDocumentCloneMap")):
+                    for d_map in step["stepDocumentCloneMap"]:
+                        if d_map.get(user_name) is not None:
+                            clone_id = d_map.get(user_name)
+                    doc_map = step["stepDocumentMap"]
+                    right = step["stepRights"]
+                    role = step["stepRole"]
+        if item_type == "document":
+            collection = "DocumentReports"
+            document = "documentreports"
+            field = "document_name"
+            team_member_id = "11689044433"
+            item_flag = get_document_object(clone_id)["document_state"]
+        if item_type == "template":
+            collection = "TemplateReports"
+            document = "templatereports"
+            field = "template_name"
+            team_member_id = "22689044433"
+            item_flag = get_template_object(clone_id)["document_state"]
+        editor_link = HandleProcess.get_editor_link(
+            {
+                "product_name": "Workflow AI",
+                "details": {
+                    "field": field,
+                    "cluster": "Documents",
+                    "database": "Documentation",
+                    "collection": collection,
+                    "document": document,
+                    "team_member_ID": team_member_id,
+                    "function_ID": "ABCDE",
+                    "command": "update",
+                    "flag": "signing",
+                    "_id": clone_id,
+                    "action": item_type,
+                    "authorized": user_name,
+                    "document_map": doc_map,
+                    "document_right": right,
+                    "document_flag": item_flag,
+                    "role": role,
+                    "process_id": self.process["_id"],
+                    "update_field": {
+                        "document_name": "",
+                        "content": "",
+                        "page": "",
+                    },
+                },
+            }
+        )
+        if user_type == "public" and editor_link:
+            Thread(
+                target=lambda: register_public_login(
+                    user_name[0], self.process["org_name"]
+                )
+            )
+        return editor_link
+
+    def verify(self, auth_step_role, location_data, user_name, user_type, org_name):
         try:
             clone_id = None
             match = False
@@ -391,7 +494,9 @@ class Background:
         return
 
     @staticmethod
-    def request_task_for_users(item_id, parent_item_id, process_id, users, clonemap) -> list:
+    def request_task_for_users(
+        item_id, parent_item_id, process_id, users, clonemap
+    ) -> list:
         copies = []
         try:
             copies += [
