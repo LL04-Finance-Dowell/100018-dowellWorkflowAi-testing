@@ -19,7 +19,7 @@ export default function useDowellLogin() {
   const { setIsPublicUser, setPublicUserConfigured } = useAppContext();
   const navigate = useNavigate();
 
-  const handleUnauthorizedVerificationAccess = (passedUserDetail, passedSessionId, passedId=null) => {
+  const handleUnauthorizedVerificationAccess = (passedUserDetail, passedSessionId, passedId=null, authorizedPortfolioName=null) => {
     /**
      * Handles unauthorized access to a document verification link.
      * 
@@ -28,7 +28,11 @@ export default function useDowellLogin() {
      * @param passedId The organization id for the current logged-in user.
      * 
      */
-    toast.info('You are not authorized to view this');
+    toast.info(
+      authorizedPortfolioName ? 
+      `Please log in with ${authorizedPortfolioName} to access this document` : 
+      'You are not authorized to view this'
+    );
     dispatch(setShowProfileSpinner(false));
     dispatch(updateUserDetail(passedUserDetail));
     
@@ -89,7 +93,7 @@ export default function useDowellLogin() {
 
         // confirming the user's portfolio matches
         if (portfolio !== userPortfolioName) {
-          handleUnauthorizedVerificationAccess(fetchedUserDetails, session_id, id);
+          handleUnauthorizedVerificationAccess(fetchedUserDetails, session_id, id, portfolio);
           return
         }
 

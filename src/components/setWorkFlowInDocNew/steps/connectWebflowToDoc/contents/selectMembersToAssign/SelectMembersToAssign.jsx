@@ -139,7 +139,7 @@ const SelectMembersToAssign = ({
         if (member.header === 'Team') {
           member.portfolios =
             extractAndFormatPortfoliosForMembers('team_member');
-          member.teams = workflowTeams.filter(
+          member.teams = workflowTeams?.filter(
             (team) => team.team_type === 'team'
           );
           return member;
