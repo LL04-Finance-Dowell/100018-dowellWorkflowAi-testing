@@ -48,7 +48,6 @@ const InfoBoxes = ({ savedDoc }) => {
   const { allWorkflows: allWorkflowsArray, allWorkflowsStatus } = useSelector(
     (state) => state.workflow
   );
-  console.log(allWorkflowsArray)
   const {  isMobile } =useAppContext();
   const [compInfoBoxes, setCompInfoBoxes] = useState(infoBoxes);
 

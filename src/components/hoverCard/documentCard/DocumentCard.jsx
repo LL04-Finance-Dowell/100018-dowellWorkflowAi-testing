@@ -56,7 +56,6 @@ const DocumentCard = ({
   const { allDocuments } = useSelector((state) => state.document);
   const [documentLoading, setDocumentLoading] = useState(false);
 
-  console.log('card item: ', cardItem, isFolder);
 
   const handleFavoritess = async (item, actionType) => {
     /*  const data = {
