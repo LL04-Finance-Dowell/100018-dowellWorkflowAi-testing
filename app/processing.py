@@ -582,30 +582,40 @@ class Background:
                         d_states = all(Background.check_items_state(clones))
                     else:
                         if step["stepTaskType"] == "assign_task":
-                            Background.assign_task_to_users(
-                                step["stepDocumentCloneMap"],
-                                users,
-                                self.process["_id"],
-                                self.item_type,
-                            )
+                            docs = []
+                            viewers = []
+                            for cm in step["stepDocumentCloneMap"]:
+                                docs = list(cm.values())
+                            for docid in docs:
+                                for usr in users:
+                                    viewers.append(usr)
+                                    authorize(
+                                        docid,
+                                        viewers,
+                                        self.process["_id"],
+                                        self.item_type,
+                                    )
+                                    step["stepDocumentCloneMap"].append({usr: docid})
                         if step["stepTaskType"] == "request_for_task":
-                            copies = Background.request_task_for_users(
-                                self.item_id,
-                                self.process["parent_item_id"],
-                                self.process["_id"],
-                                users,
-                                step["stepDocumentCloneMap"],
-                            )
-                        if copies is not None:
-                            Background.update_parent_item_clone_list(
-                                self.process["parent_item_id"],
-                                [d["member"] for d in copies if "member" in d],
-                            )
-                    update_process(
-                        process_id=self.process["_id"],
-                        steps=self.process["process_steps"],
-                        state=self.process["processing_state"],
-                    )
+                            copies = []
+                            copies += [
+                                {
+                                    u: cloning_document(
+                                        self.item_id,
+                                        u,
+                                        self.process["parent_item_id"],
+                                        self.process["process_id"],
+                                    )
+                                }
+                                for u in users
+                            ]
+                            for cp in copies:
+                                step["stepDocumentCloneMap"].append(cp)
+                            if copies is not None:
+                                Background.update_parent_item_clone_list(
+                                    self.process["parent_item_id"],
+                                    [d["member"] for d in copies if "member" in d],
+                                )
                     if not d_states:
                         if no_of_steps >= 3:
                             copies = []
@@ -625,33 +635,53 @@ class Background:
                                 d_states = all(Background.check_items_state(clones))
                             else:
                                 if step["stepTaskType"] == "assign_task":
-                                    Background.assign_task_to_users(
-                                        step["stepDocumentCloneMap"],
-                                        users,
-                                        self.process["_id"],
-                                        self.item_type,
-                                    )
+                                    docs = []
+                                    viewers = []
+                                    for cm in step["stepDocumentCloneMap"]:
+                                        docs = list(cm.values())
+                                    for docid in docs:
+                                        for usr in users:
+                                            viewers.append(usr)
+                                            authorize(
+                                                docid,
+                                                viewers,
+                                                self.process["_id"],
+                                                self.item_type,
+                                            )
+                                            step["stepDocumentCloneMap"].append(
+                                                {usr: docid}
+                                            )
                                 if step["stepTaskType"] == "request_for_task":
-                                    copies = Background.request_task_for_users(
-                                        self.item_id,
-                                        self.process["parent_id"],
-                                        self.process["_id"],
-                                        users,
-                                        step["stepDocumentCloneMap"],
-                                    )
-                                if copies is not None:
-                                    Background.update_parent_item_clone_list(
-                                        self.process["parent_item_id"],
-                                        [d["member"] for d in copies if "member" in d],
-                                    )
-                            update_process(
-                                process_id=self.process["_id"],
-                                steps=self.process["process_steps"],
-                                state=self.process["processing_state"],
-                            )
+                                    copies = []
+                                    copies += [
+                                        {
+                                            u: cloning_document(
+                                                self.item_id,
+                                                u,
+                                                self.process["parent_item_id"],
+                                                self.process["process_id"],
+                                            )
+                                        }
+                                        for u in users
+                                    ]
+                                    for cp in copies:
+                                        step["stepDocumentCloneMap"].append(cp)
+                                    if copies is not None:
+                                        Background.update_parent_item_clone_list(
+                                            self.process["parent_item_id"],
+                                            [
+                                                d["member"]
+                                                for d in copies
+                                                if "member" in d
+                                            ],
+                                        )
+            update_process(
+                process_id=self.process["_id"],
+                steps=self.process["process_steps"],
+                state=self.process["processing_state"],
+            )
         except Exception as e:
             print("got error", e)
             finalize_item(self.item_id, "processing", self.item_type)
             return
 
-        return
