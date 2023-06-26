@@ -186,7 +186,7 @@ export const AppContextProvider = ({ children }) => {
         settingService
           .getAllTeams(userCompanyId)
           .then((res) => {
-            setWorkflowTeams(res.data);
+            setWorkflowTeams(Array.isArray(res.data) ? res.data : []);
             setWorkflowTeamsLoaded(true);
           })
           .catch((err) => {
