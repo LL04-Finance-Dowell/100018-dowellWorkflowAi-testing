@@ -63,7 +63,6 @@ const DocumentCard = ({
       type: "document",
     };
     dispatch(handleFavorites(data)); */
-
     if (actionType === 'add') {
       addToFavoritesState('documents', {
         ...item,
@@ -149,13 +148,12 @@ const DocumentCard = ({
         const response = await (
           await getVerifiedProcessLink(item.process_id, dataToPost)
         ).data;
-
         /*  dispatch(setEditorLink(response)); */
 
         // setDataLoading(false);
         handleGoToEditor(response);
       } catch (error) {
-        console.log(error.response ? error.response.data : error.message);
+        console.log(error)
         setDataLoading(false);
         toast.info(
           error.response.status !== 500
@@ -172,7 +170,7 @@ const DocumentCard = ({
 
     const data = {
       document_name: item.document_name,
-      document_id: item._id ?? item.item_id ? item.item_id : item['item_id:'],
+      document_id: item._id ?? item.item_id ,
     };
     dispatch(detailDocument(data.document_id));
   };
@@ -188,8 +186,8 @@ const DocumentCard = ({
       portfolio:
         userDetail?.portfolio_info?.length > 1
           ? userDetail?.portfolio_info.find(
-              (portfolio) => portfolio.product === productName
-            )?.portfolio_name
+            (portfolio) => portfolio.product === productName
+          )?.portfolio_name
           : userDetail?.portfolio_info[0]?.portfolio_name,
       city: userDetail?.userinfo?.city,
       country: userDetail?.userinfo?.country,
@@ -214,8 +212,8 @@ const DocumentCard = ({
       const currentUserPortfolioName =
         userDetail?.portfolio_info?.length > 1
           ? userDetail?.portfolio_info.find(
-              (portfolio) => portfolio.product === productName
-            )?.portfolio_name
+            (portfolio) => portfolio.product === productName
+          )?.portfolio_name
           : userDetail?.portfolio_info[0]?.portfolio_name;
 
       if (

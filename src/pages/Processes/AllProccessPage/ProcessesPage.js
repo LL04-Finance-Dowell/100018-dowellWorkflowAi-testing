@@ -22,17 +22,21 @@ const ProcessesPage = ({ home, showOnlySaved, showOnlyPaused, showOnlyCancelled,
   const navigate = useNavigate();
   const [currentUserPortfolioDataType, setCurrentUserPortfolioDataType] = useState('');
 
-  const processing = allProcesses.filter(process => process.processing_state === "processing");
+  const processing = allProcesses.filter(process => process.processing_state === "processing")
   const draft = allProcesses.filter(process => process.processing_state === "draft");
 
-  // console.log('processing',processing)
+
+  console.log('all process',allProcesses)
+  console.log('processing',processing)
+  console.log('draft',draft)
+
   // console.log(userDetail?.portfolio_info[0].org_id)
   const company_id = userDetail?.portfolio_info[0].org_id
   useEffect(() => {
     axios
       .get(`https://100094.pythonanywhere.com/v1/companies/${userDetail?.portfolio_info[0].org_id}/processes/completed/`)
       .then((response) => {
-        // console.log(response)
+        console.log(response)
         SetcompletedPcocess(response.data)
       })
       .catch((error) => {

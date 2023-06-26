@@ -42,8 +42,8 @@ function App() {
       checkstatus();
     }, 60000); // 60 seconds
 
-    return () => clearInterval(interval); // Clean up the interval on unmount
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    return () => clearInterval(interval); 
+    
   }, []);
 
   function checkstatus() {
