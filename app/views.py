@@ -459,7 +459,7 @@ def get_workflows(request, company_id):
     if not validate_id(company_id):
         return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
     workflow_list = get_wf_list(company_id, data_type)
-    if len(workflow_list) > 0:
+    if workflow_list:
         return Response(
             {"workflows": workflow_list},
             status.HTTP_200_OK,
@@ -601,7 +601,7 @@ def archives(request):
                 "Failed to move workflow to archives",
                 status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
-        except json.JSONDecodeError:
+        except Exception  as e:
             return Response(
                 "Invalid response data", status.HTTP_500_INTERNAL_SERVER_ERROR
             )
@@ -610,13 +610,14 @@ def archives(request):
         res = delete_document(id, "Archive_Data")
         try:
             res_dict = json.loads(res)
+            print(res_dict)
             if res_dict["isSuccess"]:
                 return Response("Document moved to archives", status.HTTP_200_OK)
             return Response(
                 "Failed to move document to archives",
                 status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
-        except json.JSONDecodeError:
+        except Exception  as e:
             return Response(
                 "Invalid response data", status.HTTP_500_INTERNAL_SERVER_ERROR
             )
@@ -631,7 +632,7 @@ def archives(request):
                 "Failed to move template to archives",
                 status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
-        except json.JSONDecodeError:
+        except Exception  as e:
             return Response(
                 "Invalid response data", status.HTTP_500_INTERNAL_SERVER_ERROR
             )
@@ -646,7 +647,7 @@ def archives(request):
                 "Failed to move process to archives",
                 status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
-        except json.JSONDecodeError:
+        except Exception  as e:
             return Response(
                 "Invalid response data", status.HTTP_500_INTERNAL_SERVER_ERROR
             )
@@ -660,7 +661,8 @@ def archives(request):
                 "Failed to move process to archives",
                 status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
-        except json.JSONDecodeError:
+        except Exception  as e:
+            print(e)
             return Response(
                 "Invalid response data", status.HTTP_500_INTERNAL_SERVER_ERROR
             )

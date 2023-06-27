@@ -564,6 +564,13 @@ class Background:
             if not Background.check_first_step_state(self.process):
                 return
             else:
+                if no_of_steps == 1:
+                    print("finalized")
+                    update_process(
+                        process_id=self.process["_id"],
+                        steps=self.process["process_steps"],
+                        state="finalized",
+                    )
                 if no_of_steps >= 2:
                     copies = []
                     step = self.process["process_steps"][1]

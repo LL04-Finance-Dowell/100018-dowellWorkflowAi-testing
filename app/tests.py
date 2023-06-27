@@ -4,12 +4,37 @@ import sys
 from app.utils.checks import time_limit_right
 from django.test import TestCase
 from rest_framework.test import APIClient
+from rest_framework import status
 from django.urls import reverse
+from rest_framework.test import APITestCase
+
+class ProcessTest(APITestCase):
+    """Test module for the Process"""
+
+    def test_create_a_valid_process(self):
+        pass
+
+    def test_create_an_ivalid_process(self):
+        pass
+
+    def test_verify_a_valid_process(self):
+        pass
+
+    def test_verify_an_invalid_process(self):
+        pass
+
+    def test_finalize_a_valid_document_processing(self):
+        pass
+
+    def test_reject_a_valid_document_processing(self):
+        pass
+
+    def test_reject_an_ivalid_document_processing(self):
+        pass
 
 
-"""
 class TestTimeLimitRight(unittest.TestCase):
-     Before running the tests, modify the variale "start"
+     #Before running the tests, modify the variale "start"
     #to a relevant, relative time because current_time is
     #computed based on your current time in your timezone
     
@@ -92,10 +117,9 @@ class TestTimeLimitRight(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
-"""
 
 # Still writing tests, this doesn't run
-"""class ExampleModelTestCase(TestCase):
+class ExampleModelTestCase(TestCase):
     def setUp(self):
         self.client = APIClient()
         self.example_data = {
@@ -110,4 +134,3 @@ if __name__ == "__main__":
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.data["folder_name"], "Untitled folder")
-"""
