@@ -676,13 +676,14 @@ class Background:
                                             ],
                                         )
                         else:
-    
+                            print("finalized")
                             update_process(
                                 process_id=self.process["_id"],
                                 steps=self.process["process_steps"],
                                 state="finalized",
                             )
                 else:
+                    print("finalized")
                     update_process(
                         process_id=self.process["_id"],
                         steps=self.process["process_steps"],

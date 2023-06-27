@@ -1233,7 +1233,6 @@ def send_notif(request):
     #     return Response("Failed to Get Reminder", status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
-# Create New Folder with empty data that accepts templates and documents ID
 @api_view(["POST"])
 def create_folder(request):
     data = []
@@ -1258,7 +1257,6 @@ def create_folder(request):
     return Response(status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
-# Accessing and Updating the folder to accept IDs In data field
 @api_view(["GET", "PUT"])
 def folder_update(request, folder_id):
     if not validate_id(folder_id):
@@ -1288,7 +1286,6 @@ def folder_update(request, folder_id):
         return Response(status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
-# To fetch all folders and update the folders
 @api_view(["GET", "PUT"])
 def all_folders(request, company_id):
     """fetches Folders created."""
