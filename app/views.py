@@ -89,6 +89,7 @@ def document_processing(request):
     """processing is determined by action picked by user."""
     if not request.data:
         return Response("You are missing something!", status.HTTP_400_BAD_REQUEST)
+
     process = Process(
         request.data["workflows"],
         request.data["created_by"],
@@ -256,26 +257,20 @@ def finalize_or_reject(request, process_id):
     """After access is granted and the user has made changes on a document."""
     if not request.data:
         return Response("You are missing something", status.HTTP_400_BAD_REQUEST)
-    try:
-        item_id = request.data["item_id"]
-        item_type = request.data["item_type"]
-        role = request.data["role"]
-        user = request.data["authorized"]
-        state = request.data["action"]
-        check, current_state = checks.is_finalized(item_id, item_type)
-        if check and current_state != "processing":
-            return Response(
-                f"Already processed as {current_state}!", status.HTTP_200_OK
-            )
-        finalize_item(item_id, state, item_type)
-        process = get_process_object(process_id)
-        background = Background(process, item_type, item_id, role, user)
-        Thread(target=lambda: delete_notification(item_id)).start()
-        background.processing()
-        return Response("document processed successfully", status.HTTP_200_OK)
-    except Exception as e:
-        print(e)
-        return Response("error processing", status.HTTP_500_INTERNAL_SERVER_ERROR)
+    item_id = request.data["item_id"]
+    item_type = request.data["item_type"]
+    role = request.data["role"]
+    user = request.data["authorized"]
+    state = request.data["action"]
+    check, current_state = checks.is_finalized(item_id, item_type)
+    if check and current_state != "processing":
+        return Response(f"Already processed as {current_state}!", status.HTTP_200_OK)
+    finalize_item(item_id, state, item_type)
+    process = get_process_object(process_id)
+    background = Background(process, item_type, item_id, role, user)
+    Thread(target=lambda: delete_notification(item_id)).start()
+    background.processing()
+    return Response("document processed successfully", status.HTTP_200_OK)
 
 
 @api_view(["POST"])
@@ -1269,8 +1264,9 @@ def folder_update(request, folder_id):
     if not validate_id(folder_id):
         return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
     if request.method == "GET":
-        settings = get_folder_object(folder_id)
-        return Response(settings, status.HTTP_200_OK)
+        folder_details = get_folder_object(folder_id)
+        return Response(folder_details, status.HTTP_200_OK)
+    
     if request.method == "PUT":
         form = request.data
         if not form:
@@ -1307,6 +1303,4 @@ def all_folders(request, company_id):
             cache.set(cache_key, folders_list, timeout=60)
         except:
             return Response(status.HTTP_500_INTERNAL_SERVER_ERROR)
-    if request.method == "PUT":
-        form = request.data
     return Response(folders_list, status.HTTP_200_OK)

@@ -963,8 +963,7 @@ def add_document_to_folder(document_id, folder):
     old_document["folders"] = old_document.get("folders")
     if old_document["folders"] is not None:
         try:
-            if document_id not in old_document["folders"]:
-                old_document["folders"].append(folder)
+            old_document["folders"].append(folder)
         except:
             old_document["folders"] = folder
     new_folder = old_document["folders"]
@@ -989,8 +988,7 @@ def add_template_to_folder(template_id, folder):
     old_template["folders"] = old_template.get("folders")
     if old_template["folders"] is not None:
         try:
-            if template_id not in old_template["folders"]:
-                old_template["folders"].append(folder)
+            old_template["folders"].append(folder)
         except:
             old_template["folders"] = folder
     new_folder = old_template["folders"]
@@ -1125,7 +1123,6 @@ def reminder_func(reminder):
 
 def process_folders_to_item(ids, folder_id, add_item_to_folder):
     processes = []
-
     for id in ids:
         process = multiprocessing.Process(
             target=add_item_to_folder, args=(id, folder_id)

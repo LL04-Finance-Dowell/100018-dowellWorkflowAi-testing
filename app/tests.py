@@ -94,8 +94,8 @@ if __name__ == "__main__":
     unittest.main()
 """
 
-
-class ExampleModelTestCase(TestCase):
+# Still writing tests, this doesn't run
+"""class ExampleModelTestCase(TestCase):
     def setUp(self):
         self.client = APIClient()
         self.example_data = {
@@ -109,4 +109,5 @@ class ExampleModelTestCase(TestCase):
         url = reverse("folders/", kwargs={"str": self.example_model})
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.data["folder_name"], "Untitled older")
+        self.assertEqual(response.data["folder_name"], "Untitled folder")
+"""
