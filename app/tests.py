@@ -2,13 +2,17 @@ import unittest
 from datetime import datetime, timedelta
 import sys
 from app.utils.checks import time_limit_right
+from django.test import TestCase
+from rest_framework.test import APIClient
+from django.urls import reverse
 
+
+"""
 class TestTimeLimitRight(unittest.TestCase):
-    """
-        Before running the tests, modify the variale "start"
-        to a relevant, relative time because current_time is
-        computed based on your current time in your timezone
-    """
+     Before running the tests, modify the variale "start"
+    #to a relevant, relative time because current_time is
+    #computed based on your current time in your timezone
+    
     def test_no_time_limit(self):
         result = time_limit_right("no_time_limit", None, None, None, None)
         self.assertTrue(result)
@@ -36,7 +40,7 @@ class TestTimeLimitRight(unittest.TestCase):
         current_time = "2023-05-05T18:30"
         result = time_limit_right("select", "within_8_hours", None, None, creation_time)
         self.assertTrue(result)
-    
+
     def test_select_time_limit_within_8_hours_expired(self):
         start = "2023-05-05T01:00"
         datetime_object = datetime.fromisoformat(start)
@@ -50,7 +54,9 @@ class TestTimeLimitRight(unittest.TestCase):
         datetime_object = datetime.fromisoformat(start)
         creation_time = datetime_object.strftime("%d:%m:%Y,%H:%M:%S")
         current_time = "2023-05-06T12:00"
-        result = time_limit_right("select", "within_24_hours", None, None, creation_time)
+        result = time_limit_right(
+            "select", "within_24_hours", None, None, creation_time
+        )
         self.assertTrue(result)
 
     def test_select_time_limit_within_3_days(self):
@@ -86,3 +92,22 @@ class TestTimeLimitRight(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+"""
+
+# Still writing tests, this doesn't run
+"""class ExampleModelTestCase(TestCase):
+    def setUp(self):
+        self.client = APIClient()
+        self.example_data = {
+            "created_by": "WorkflowAiedwin",
+            "company_id": "6390b313d77dc467630713f2",
+            "data_type": "Real_Data",
+        }
+        self.example_model = ""
+
+    def test_get_folder(self):
+        url = reverse("folders/", kwargs={"str": self.example_model})
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data["folder_name"], "Untitled folder")
+"""

@@ -6,6 +6,7 @@ from git.repo import Repo
 from crontab import CronTab
 
 import requests
+import multiprocessing
 from rest_framework import status
 from django.core.cache import cache
 from rest_framework.decorators import api_view
@@ -25,6 +26,7 @@ from app.utils.helpers import (
 )
 from django.core.cache import cache
 from app.utils.mongo_db_connection import (
+    process_folders_to_item,
     get_folder_list,
     add_document_to_folder,
     add_template_to_folder,
@@ -87,6 +89,7 @@ def document_processing(request):
     """processing is determined by action picked by user."""
     if not request.data:
         return Response("You are missing something!", status.HTTP_400_BAD_REQUEST)
+
     process = Process(
         request.data["workflows"],
         request.data["created_by"],
@@ -184,6 +187,9 @@ def get_process_link(request, process_id):
     if not links_info:
         return Response("Verification link unavailable", status.HTTP_400_BAD_REQUEST)
     user = request.data["user_name"]
+    if not links_info:
+        return Response(status.HTTP_500_INTERNAL_SERVER_ERROR)
+
     for link in links_info["links"]:
         if user in link:
             return Response(link[user], status.HTTP_200_OK)
@@ -251,26 +257,20 @@ def finalize_or_reject(request, process_id):
     """After access is granted and the user has made changes on a document."""
     if not request.data:
         return Response("You are missing something", status.HTTP_400_BAD_REQUEST)
-    try:
-        item_id = request.data["item_id"]
-        item_type = request.data["item_type"]
-        role = request.data["role"]
-        user = request.data["authorized"]
-        state = request.data["action"]
-        check, current_state = checks.is_finalized(item_id, item_type)
-        if check and current_state != "processing":
-            return Response(
-                f"Already processed as {current_state}!", status.HTTP_200_OK
-            )
-        finalize_item(item_id, state, item_type)
-        process = get_process_object(process_id)
-        background = Background(process, item_type, item_id, role, user)
-        Thread(target=lambda: delete_notification(item_id)).start()
-        background.processing()
-        return Response("document processed successfully", status.HTTP_200_OK)
-    except Exception as e:
-        print(e)
-        return Response("error processing", status.HTTP_500_INTERNAL_SERVER_ERROR)
+    item_id = request.data["item_id"]
+    item_type = request.data["item_type"]
+    role = request.data["role"]
+    user = request.data["authorized"]
+    state = request.data["action"]
+    check, current_state = checks.is_finalized(item_id, item_type)
+    if check and current_state != "processing":
+        return Response(f"Already processed as {current_state}!", status.HTTP_200_OK)
+    finalize_item(item_id, state, item_type)
+    process = get_process_object(process_id)
+    background = Background(process, item_type, item_id, role, user)
+    Thread(target=lambda: delete_notification(item_id)).start()
+    background.processing()
+    return Response("document processed successfully", status.HTTP_200_OK)
 
 
 @api_view(["POST"])
@@ -459,7 +459,7 @@ def get_workflows(request, company_id):
     if not validate_id(company_id):
         return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
     workflow_list = get_wf_list(company_id, data_type)
-    if workflow_list:
+    if len(workflow_list) > 0:
         return Response(
             {"workflows": workflow_list},
             status.HTTP_200_OK,
@@ -1009,7 +1009,7 @@ def get_completed_documents_by_process(request, company_id, process_id):
     if not validate_id(company_id):
         return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
     document_list = get_document_list(company_id, data_type)
-    if document_list:
+    if len(document_list) > 0:
         cloned = list(
             filter(lambda i: i.get("process_id") == process_id, document_list)
         )
@@ -1264,38 +1264,32 @@ def folder_update(request, folder_id):
     if not validate_id(folder_id):
         return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
     if request.method == "GET":
-        settings = get_folder_object(folder_id)
-        return Response(settings, status.HTTP_200_OK)
+        folder_details = get_folder_object(folder_id)
+        return Response(folder_details, status.HTTP_200_OK)
+    
     if request.method == "PUT":
         form = request.data
-        id = request.data["item_id"]
         if not form:
             return Response("Folder Data is Required", status.HTTP_400_BAD_REQUEST)
+        items = form["items"]
         old_folder = get_folder_object(folder_id)
         old_folder["folder_name"] = form["folder_name"]
-        old_folder["data"].append(
-            {"item_id:": form["item_id"], "item_type": form["item_type"]}
-        )
+        old_folder["data"].extend(items)
         updt_folder = json.loads(update_folder(folder_id, old_folder))
-        if request.data["item_type"] == "document":
-            old_document = get_document_object(id)
-            old_document["folders"] = old_document.get("folders")
-            if old_document["folders"] is not None:
-                old_document["folders"].append(old_folder["folder_name"])
-                res = add_document_to_folder(id, folder_id)
-        if request.data["item_type"] == "template":
-            old_template = get_template_object(id)
-            old_template["folders"] = old_template.get("folders")
-            if old_template["folders"] is not None:
-                old_template["folders"].append(old_folder["folder_name"])
-                res = add_template_to_folder(id, folder_id)
+        document_ids = [item["document_id"] for item in items if "document_id" in item]
+        template_ids = [item["template_id"] for item in items if "template_id" in item]
+
+        # process all ids
+        process_folders_to_item(document_ids, folder_id, add_document_to_folder)
+        process_folders_to_item(template_ids, folder_id, add_template_to_folder)
+
         if updt_folder["isSuccess"]:
             return Response("Folder Updated", status.HTTP_201_CREATED)
         return Response(status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
-# To fetch all folders
-@api_view(["GET"])
+# To fetch all folders and update the folders
+@api_view(["GET", "PUT"])
 def all_folders(request, company_id):
     """fetches Folders created."""
     data_type = request.query_params.get("data_type", "Real_Data")
