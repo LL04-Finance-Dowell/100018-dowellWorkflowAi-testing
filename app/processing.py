@@ -675,6 +675,19 @@ class Background:
                                                 if "member" in d
                                             ],
                                         )
+                        else:
+    
+                            update_process(
+                                process_id=self.process["_id"],
+                                steps=self.process["process_steps"],
+                                state="finalized",
+                            )
+                else:
+                    update_process(
+                        process_id=self.process["_id"],
+                        steps=self.process["process_steps"],
+                        state="finalized",
+                    )
             update_process(
                 process_id=self.process["_id"],
                 steps=self.process["process_steps"],
@@ -684,4 +697,3 @@ class Background:
             print("got error", e)
             finalize_item(self.item_id, "processing", self.item_type)
             return
-
