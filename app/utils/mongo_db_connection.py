@@ -1132,3 +1132,33 @@ def process_folders_to_item(ids, folder_id, add_item_to_folder):
 
     for process in processes:
         process.join()
+
+
+def delete_items_in_folder(item_id, folder_id, item_type):
+    old_folder = get_folder_object(folder_id)
+    old_data = old_folder.get("data")
+    if item_type == "template":
+        new_data = [item for item in old_data if item.get("template_id") != item_id]
+        print(new_data)
+    if item_type == "document":
+        new_data = [item for item in old_data if item.get("document_id") != item_id]
+        print(new_data)
+
+    """payload = json.dumps(
+        {
+            **FOLDER_CONNECTION_DICT,
+            "command": "update",
+            "field": {
+                "_id": folder_id,
+            },
+            "update_field": {
+                "eventId": get_event_id()["event_id"],
+                "data": new_data,
+                "created_by": old_folder["created_by"],
+                "company_id": old_folder["company_id"],
+                "folder_name": old_folder["folder_name"],
+            },
+            "platform": "bangalore",
+        }
+    )
+    return post_to_data_service(payload)"""
