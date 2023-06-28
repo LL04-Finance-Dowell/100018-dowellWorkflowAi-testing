@@ -11,8 +11,6 @@ const FoldersCard = ({ cardItem }) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { setShowFoldersActionModal, setFolderActionId } = useAppContext();
-  const targetTime = new Date();
-  const createdTime = new Date();
   const [isFolderNew, setIsFolderNew] = useState(true);
 
   const handleDelete = (e) => {
@@ -27,19 +25,28 @@ const FoldersCard = ({ cardItem }) => {
 
   useEffect(() => {
     const [hh, mm, ss] = cardItem.created_on.split(',')[1].split(':');
-    createdTime.setHours(Number(hh));
-    createdTime.setMinutes(Number(mm));
-    createdTime.setSeconds(Number(ss));
-    targetTime.setTime(createdTime.getTime() + 3600000 * 5);
-  }, [cardItem]);
+    const [day, month, year] = cardItem.created_on.split(',')[0].split(':');
+    const createdDate = new Date(
+      Number(year),
+      Number(month) - 1,
+      Number(day),
+      Number(hh),
+      Number(mm),
+      Number(ss)
+    );
 
-  useEffect(() => {
     const durationInterval = setInterval(() => {
-      targetTime.getTime < new Date().getTime() && setIsFolderNew(false);
+      const currentDate = new Date();
+      if (currentDate.getTime() - createdDate.getTime() > 18000000) {
+        setIsFolderNew(false);
+        clearInterval(durationInterval);
+      }
     }, 1000);
 
-    return () => clearInterval(durationInterval);
-  }, [targetTime]);
+    return () => {
+      clearInterval(durationInterval);
+    };
+  }, [cardItem]);
 
   const FrontSide = () => {
     return (
