@@ -460,7 +460,7 @@ def get_workflows(request, company_id):
     if not validate_id(company_id):
         return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
     workflow_list = get_wf_list(company_id, data_type)
-    if len(workflow_list) > 0:
+    if workflow_list:
         return Response(
             {"workflows": workflow_list},
             status.HTTP_200_OK,
@@ -602,7 +602,7 @@ def archives(request):
                 "Failed to move workflow to archives",
                 status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
-        except json.JSONDecodeError:
+        except Exception  as e:
             return Response(
                 "Invalid response data", status.HTTP_500_INTERNAL_SERVER_ERROR
             )
@@ -611,13 +611,14 @@ def archives(request):
         res = delete_document(id, "Archive_Data")
         try:
             res_dict = json.loads(res)
+            print(res_dict)
             if res_dict["isSuccess"]:
                 return Response("Document moved to archives", status.HTTP_200_OK)
             return Response(
                 "Failed to move document to archives",
                 status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
-        except json.JSONDecodeError:
+        except Exception  as e:
             return Response(
                 "Invalid response data", status.HTTP_500_INTERNAL_SERVER_ERROR
             )
@@ -632,7 +633,7 @@ def archives(request):
                 "Failed to move template to archives",
                 status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
-        except json.JSONDecodeError:
+        except Exception  as e:
             return Response(
                 "Invalid response data", status.HTTP_500_INTERNAL_SERVER_ERROR
             )
@@ -647,7 +648,7 @@ def archives(request):
                 "Failed to move process to archives",
                 status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
-        except json.JSONDecodeError:
+        except Exception  as e:
             return Response(
                 "Invalid response data", status.HTTP_500_INTERNAL_SERVER_ERROR
             )
@@ -661,7 +662,8 @@ def archives(request):
                 "Failed to move process to archives",
                 status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
-        except json.JSONDecodeError:
+        except Exception  as e:
+            print(e)
             return Response(
                 "Invalid response data", status.HTTP_500_INTERNAL_SERVER_ERROR
             )
@@ -1234,7 +1236,6 @@ def send_notif(request):
     #     return Response("Failed to Get Reminder", status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
-# Create New Folder with empty data that accepts templates and documents ID
 @api_view(["POST"])
 def create_folder(request):
     data = []
@@ -1259,7 +1260,6 @@ def create_folder(request):
     return Response(status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
-# Accessing and Updating the folder to accept IDs In data field
 @api_view(["GET", "PUT"])
 def folder_update(request, folder_id):
     if not validate_id(folder_id):
@@ -1288,7 +1288,6 @@ def folder_update(request, folder_id):
     return Response(status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
-# To fetch all folders and update the folders
 @api_view(["GET", "PUT"])
 def all_folders(request, company_id):
     """fetches Folders created."""
