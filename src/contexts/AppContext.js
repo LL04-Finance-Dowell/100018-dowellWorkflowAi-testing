@@ -68,6 +68,7 @@ export const AppContextProvider = ({ children }) => {
 
   const [folders, setFolders] = useState([]);
   const [folderActionId, setFolderActionId] = useState('');
+  const [isFetchingFolders, setIsFetchingFolders] = useState(false);
 
   const [showFoldersActionModal, setShowFoldersActionModal] = useState({
     state: false,
@@ -142,33 +143,23 @@ export const AppContextProvider = ({ children }) => {
             (portfolio) => portfolio.product === productName
           )?.org_id
         : userDetail?.portfolio_info[0]?.org_id;
+    setIsFetchingFolders(true);
     try {
       const res = await folderServices.getAllFolders(userCompanyId);
-      setFolders(res.data);
-      // rearrangeFolderData(res.data)
+      setFolders(res.data ? res.data.reverse() : []);
     } catch (err) {
       console.log(err);
+    } finally {
+      setIsFetchingFolders(false);
     }
   };
-
-  // const rearrangeFolderData=(data)=>{
-  //   const modData =  data.map(item=>(
-  //     item.data.length?
-  //     item.data.map(dItem=>(
-  //       dItem.item_type === 'list'?
-  //       dItem.item._id.map(mITem=>)
-  //       :dItem
-  //     ))
-  //     :item
-  //   ))
-  // }
 
   const extractCustomName = (str) =>
     str ? str.slice(str.indexOf('(') + 1, str.indexOf(')')) : str;
 
-  useEffect(() => {
-    // console.log('folders: ', folders);
-  }, [folders]);
+  // useEffect(() => {
+  //   console.log('folders: ', folders);
+  // }, [folders]);
 
   useEffect(() => {
     if (!publicUserConfigured) return;
@@ -361,6 +352,9 @@ export const AppContextProvider = ({ children }) => {
         setShowFoldersActionModal,
         folderActionId,
         setFolderActionId,
+        userDetail,
+        isFetchingFolders,
+        fetchFolders,
       }}
     >
       {children}

@@ -19,19 +19,37 @@ const FoldersModal = () => {
     folderActionId,
     setFolders,
     setFolderActionId,
+    userDetail,
   } = useAppContext();
   const [isCreating, setIsCreating] = useState(false);
   const navigate = useNavigate();
-  const [folder, setFolder] = useState();
+  const [folder, setFolder] = useState({});
   const [isEditing, setIsEditing] = useState(false);
   const [isAdding, setIsAdding] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [folderName, setFolderName] = useState('');
+  const [delFolderName, setDelFolderName] = useState('');
   const [docsList, setDocsList] = useState([]);
   const [tempsList, setTempsList] = useState([]);
   const [selectedDocs, setSelectedDocs] = useState([]);
   const [selectedTemps, setSelectedTemps] = useState([]);
   const [addFolderId, setAddFolderId] = useState();
+  const [addFolder, setAddFolder] = useState({});
+  const [foldersContainingItem, setFoldersContainingItem] = useState([]);
+  const [userCompanyId] = useState(
+    userDetail?.portfolio_info?.length > 1
+      ? userDetail?.portfolio_info?.find(
+          (portfolio) => portfolio.product === productName
+        )?.org_id
+      : userDetail?.portfolio_info[0]?.org_id
+  );
+  const [userDataType] = useState(
+    userDetail?.portfolio_info?.length > 1
+      ? userDetail?.portfolio_info.find(
+          (portfolio) => portfolio.product === productName
+        )?.data_type
+      : userDetail?.portfolio_info[0].data_type
+  );
 
   const {
     allDocuments,
@@ -45,38 +63,24 @@ const FoldersModal = () => {
     // : allTemplatesArray, allTemplatesStatus
   } = useSelector((state) => state.template);
 
-  const { userDetail } = useSelector((state) => state.auth);
-
   const handleCreateFolder = async () => {
     const data = {
-      company_id:
-        userDetail?.portfolio_info?.length > 1
-          ? userDetail?.portfolio_info.find(
-              (portfolio) => portfolio.product === productName
-            )?.org_id
-          : userDetail?.portfolio_info[0].org_id,
+      company_id: userCompanyId,
       created_by: userDetail?.userinfo.username,
-      data_type:
-        userDetail?.portfolio_info?.length > 1
-          ? userDetail?.portfolio_info.find(
-              (portfolio) => portfolio.product === productName
-            )?.data_type
-          : userDetail?.portfolio_info[0].data_type,
+      data_type: userDataType,
     };
     const folderServices = new FolderServices();
     try {
       setIsCreating(true);
       await folderServices.createFolder(data);
-      setFolders([
-        { ...data, folder_name: 'Untitled Folder', _id: v4() },
-        ...folders,
-      ]);
+      const res = await folderServices.getAllFolders(userCompanyId);
+      setFolders(res.data ? res.data.reverse() : []);
       toast.success('Folder created');
       navigate('/folders');
       setIsCreating(false);
       setShowFoldersActionModal(false);
     } catch (err) {
-      console.log(err);
+      // console.log(err);
       toast.error('Folder creating failed!');
       setIsCreating(false);
     }
@@ -89,31 +93,17 @@ const FoldersModal = () => {
     if (action === 'add') {
       if (addFolderId) {
         const selFolder = folders.find((folder) => folder._id === addFolderId);
-        const modData = {
-          item_id: item._id,
-          item_type: item.type,
-        };
+        const key = `${item.type}_id`;
+        const value = item._id;
+        setAddFolder(selFolder);
 
         const data = {
-          company_id:
-            userDetail?.portfolio_info?.length > 1
-              ? userDetail?.portfolio_info.find(
-                  (portfolio) => portfolio.product === productName
-                )?.org_id
-              : userDetail?.portfolio_info[0].org_id,
+          company_id: userCompanyId,
           created_by: userDetail?.userinfo.username,
-          data_type:
-            userDetail?.portfolio_info?.length > 1
-              ? userDetail?.portfolio_info.find(
-                  (portfolio) => portfolio.product === productName
-                )?.data_type
-              : userDetail?.portfolio_info[0].data_type,
+          data_type: userDataType,
           folder_name: selFolder.folder_name,
-          ...modData,
+          items: [{ [key]: value }],
         };
-
-        // console.log('data: ', data);
-        // console.log('folderId: ', addFolderId);
 
         try {
           setIsAdding(true);
@@ -121,88 +111,83 @@ const FoldersModal = () => {
           setFolders(
             folders.map((folder) =>
               folder._id === addFolderId
-                ? { ...folder, data: [modData, ...folder.data] }
+                ? { ...folder, data: [{ [key]: value }, ...folder.data] }
                 : folder
             )
           );
           toast.success('Added successfully');
         } catch (err) {
+          // console.log(err);
           toast.error('Failed to add!');
-          console.log(err);
         } finally {
           setShowFoldersActionModal(false);
           setAddFolderId('');
           setIsAdding(false);
         }
-      } else {
-        toast.warn('Select a folder');
-      }
+      } else toast.warn('Select a folder');
     } else if (action === 'edit') {
       if (folderName) {
-        // ...selectedDocs.map((doc) => ({
-        //   item_id: doc._id,
-        //   item_type: doc.type,
-        // })),
-        // ...selectedTemps.map((temp) => ({
-        //   item_id: temp._id,
-        //   item_type: temp.type,
-        // })),
-        const ids = [
-          ...selectedDocs.map((doc) => `${doc.id}|${doc.type}`),
-          ...selectedTemps.map((temp) => `${temp.id}|${temp.type}`),
+        const items = [
+          ...selectedDocs.map((doc) => ({ [`${doc.category}_id`]: doc.id })),
+          ...selectedTemps.map((temp) => ({
+            [`${temp.category}_id`]: temp.id,
+          })),
         ];
-
-        // console.log('ids: ', JSON.stringify(ids));
-        // console.log('ids: ', ids.toString());
 
         const data = {
-          company_id:
-            userDetail?.portfolio_info?.length > 1
-              ? userDetail?.portfolio_info.find(
-                  (portfolio) => portfolio.product === productName
-                )?.org_id
-              : userDetail?.portfolio_info[0].org_id,
+          company_id: userCompanyId,
           created_by: userDetail?.userinfo.username,
-          data_type:
-            userDetail?.portfolio_info?.length > 1
-              ? userDetail?.portfolio_info.find(
-                  (portfolio) => portfolio.product === productName
-                )?.data_type
-              : userDetail?.portfolio_info[0].data_type,
+          data_type: userDataType,
           folder_name: folderName,
-          item_id: ids.toString(),
-          item_type: 'list',
+          items,
         };
 
-        const dataForLocal = [
-          ...selectedDocs.map((doc) => ({ type: doc.type, _id: doc.id })),
-          ...selectedTemps.map((temp) => ({ type: temp.type, _id: temp.id })),
-        ];
         try {
           setIsEditing(true);
-          // await folderServices.updateFolder(data, folder._id);
-          // setFolders(
-          //   folders.map((fol) =>
-          //     fol._id === folder._id
-          //       ? { ...fol, data: dataForLocal, folder_name: folderName }
-          //       : fol
-          //   )
-          // );
-          // toast.success('Folder Edited');
+          await folderServices.updateFolder(data, folder._id);
+          setFolders((prev) =>
+            prev.map((item) =>
+              item._id === folder._id
+                ? {
+                    ...item,
+                    folder_name: folderName,
+                    data: [...items, ...item.data],
+                  }
+                : item
+            )
+          );
+          toast.success('Folder edited');
         } catch (err) {
-          console.log(err);
-          toast.error('Editting failed!');
+          // console.log(err);
+          toast.error('Editing failed!');
         } finally {
           setIsEditing(false);
           setShowFoldersActionModal({ state: false, action: '' });
         }
       } else toast.warn('Enter Folder name');
+    } else if (action === 'delete') {
+      if (delFolderName.trim() === folder.folder_name) {
+        setIsDeleting(true);
+        try {
+          const data = { item_id: folder._id, item_type: 'folder' };
+          await folderServices.deleteFolder(data);
+          setFolders((prev) => prev.filter((fld) => fld._id !== folder._id));
+          toast.success('Folder deleted');
+        } catch (err) {
+          // console.log(err);
+          toast.error('Deleting failed!');
+        } finally {
+          setIsDeleting(false);
+          setShowFoldersActionModal({ state: false, action: '' });
+        }
+      } else toast.error('Incorrect folder name!');
     }
   };
 
   useEffect(() => {
     if (folderActionId)
       setFolder(folders.find((folder) => folder._id === folderActionId));
+    else setFolder({});
   }, [folderActionId]);
 
   useEffect(() => {
@@ -212,12 +197,24 @@ const FoldersModal = () => {
   }, [folder]);
 
   useEffect(() => {
+    if (action === 'add') {
+      setFoldersContainingItem(
+        folders.filter((folder) =>
+          folder.data.find((itm) => itm[`${item.type}_id`] === item._id)
+        )
+      );
+    } else {
+      setFoldersContainingItem([]);
+    }
+  }, [action]);
+
+  useEffect(() => {
     if (allDocuments)
       setDocsList(
         allDocuments.map((doc) => ({
           name: doc.document_name,
           id: doc._id,
-          type: 'document',
+          category: 'document',
         }))
       );
 
@@ -226,13 +223,18 @@ const FoldersModal = () => {
         allTemplates.map((temp) => ({
           name: temp.template_name,
           id: temp._id,
-          type: 'template',
+          category: 'template',
         }))
       );
   }, [allDocuments, allTemplates]);
 
   useEffect(() => {
-    setFolderActionId('');
+    if (!state) {
+      setFolderActionId('');
+      setSelectedDocs([]);
+      setSelectedTemps([]);
+      setDelFolderName('');
+    }
   }, [state]);
 
   //  TODO TRY TO SEE IF YOU CAN USE A SPINNER IN FOLDERS PAGE, UNTIL ALL NEEDED VARIABLES ARE AVAILABLE
@@ -308,6 +310,7 @@ const FoldersModal = () => {
                     type='docs'
                     selDocs={selectedDocs}
                     setSelDocs={setSelectedDocs}
+                    folder={folder}
                   />
                 </div>
 
@@ -317,6 +320,7 @@ const FoldersModal = () => {
                     type='temps'
                     selTemps={selectedTemps}
                     setSelTemps={setSelectedTemps}
+                    folder={folder}
                   />
                 </div>
 
@@ -330,11 +334,58 @@ const FoldersModal = () => {
               </form>
             </>
           ) : action === 'delete' ? (
-            ''
+            <>
+              <h3 style={{ color: 'red' }}>
+                {isDeleting
+                  ? `Deleting ${folder && folder.folder_name} folder`
+                  : `Delete ${folder && folder.folder_name} folder?`}
+
+                {!isDeleting && (
+                  <button
+                    className={styles.close_btn}
+                    onClick={() =>
+                      setShowFoldersActionModal({ state: false, action: '' })
+                    }
+                  >
+                    <FaTimes />
+                  </button>
+                )}
+              </h3>
+
+              <form className={styles.folder_form} onSubmit={handleSubmit}>
+                <div className={styles.form_opt}>
+                  <label htmlFor='folder_name'>Name</label>
+                  <input
+                    type='text'
+                    placeholder={`Enter folder name (${folder.folder_name}) to remove`}
+                    id='folder_name'
+                    value={delFolderName}
+                    onChange={(e) => setDelFolderName(e.target.value)}
+                  />
+                </div>
+              </form>
+
+              <div className={styles.btns_wrapper}>
+                {isDeleting ? (
+                  <LoadingSpinner />
+                ) : (
+                  <>
+                    <button
+                      className={`${styles.opt_btn} ${styles.cancel_btn}`}
+                      onClick={handleSubmit}
+                    >
+                      Delete
+                    </button>
+                  </>
+                )}
+              </div>
+            </>
           ) : action === 'add' ? (
             <>
               <h3>
-                {isAdding ? `Adding to folder` : `Select folder`}
+                {isAdding
+                  ? `Adding to ${addFolder.folder_name}`
+                  : `Select folder`}
 
                 {!isAdding && (
                   <button
@@ -361,7 +412,13 @@ const FoldersModal = () => {
                       Select Folder
                     </option>
                     {folders.map((folder) => (
-                      <option value={folder._id} key={folder._id}>
+                      <option
+                        value={folder._id}
+                        key={folder._id}
+                        disabled={foldersContainingItem.find(
+                          (conFolder) => conFolder._id === folder._id
+                        )}
+                      >
                         {folder.folder_name}
                       </option>
                     ))}
@@ -395,6 +452,7 @@ const SelectInput = ({
   selDocs,
   setSelTemps,
   setSelDocs,
+  folder,
 }) => {
   const [isDocDrop, setIsDocDrop] = useState(false);
   const [isTempDrop, setIsTempDrop] = useState(false);
@@ -462,8 +520,17 @@ const SelectInput = ({
           data-id={type === 'docs' ? type : type === 'temps' ? type : ''}
         >
           {list.length ? (
-            list.map(({ name, id }) => (
-              <div className={styles.drop_opt} key={id}>
+            list.map(({ name, id, category }) => (
+              <div
+                className={styles.drop_opt}
+                key={id}
+                style={
+                  folder.data &&
+                  folder.data.find((itm) => itm[`${category}_id`] === id)
+                    ? { pointerEvents: 'none' }
+                    : {}
+                }
+              >
                 <input
                   id={id}
                   type='checkbox'
@@ -477,6 +544,14 @@ const SelectInput = ({
                       : () => {
                           // console.log('Change not handled');
                         }
+                  }
+                  disabled={
+                    folder.data &&
+                    folder.data.find((itm) => itm[`${category}_id`] === id)
+                  }
+                  checked={
+                    folder.data &&
+                    folder.data.find((itm) => itm[`${category}_id`] === id)
                   }
                 />
                 <label htmlFor={id}>{name}</label>

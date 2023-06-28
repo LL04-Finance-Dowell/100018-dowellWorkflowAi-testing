@@ -4,9 +4,13 @@ import SectionBox from '../../components/manageFiles/sectionBox/SectionBox';
 import ManageFiles from '../../components/manageFiles/ManageFiles';
 import FoldersCard from '../../components/hoverCard/foldersCard/FoldersCard';
 import { useAppContext } from '../../contexts/AppContext';
+import { useSelector } from 'react-redux';
 
 const FoldersPage = () => {
-  const { folders } = useAppContext();
+  const { allDocumentsStatus } = useSelector((state) => state.document);
+  const { allTemplatesStatus } = useSelector((state) => state.template);
+
+  const { folders, isFetchingFolders } = useAppContext();
   return (
     <WorkflowLayout>
       <section id='folders_sect'>
@@ -17,7 +21,13 @@ const FoldersPage = () => {
               title={'My Folders'}
               Card={FoldersCard}
               cardItems={folders}
-              status={'finished'} //! Status is to be dynamic
+              status={
+                allDocumentsStatus === 'pending' ||
+                allTemplatesStatus === 'pending' ||
+                isFetchingFolders
+                  ? 'pending'
+                  : 'finished'
+              }
               itemType={'folders'}
             />
           </div>

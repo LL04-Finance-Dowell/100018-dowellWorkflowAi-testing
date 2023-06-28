@@ -2,13 +2,12 @@ import React from 'react';
 import { Box } from './styledComponents';
 import styles from './hoverCard.module.css';
 import { useAppContext } from '../../contexts/AppContext';
+import { v4 } from 'uuid';
 
-const HoverCard = ({ Front, Back, loading, isFolder }) => {
+const HoverCard = ({ Front, Back, loading, isFolder, id }) => {
   const { isNoPointerEvents } = useAppContext();
   return (
-    <div
-    // className={isFolder ? styles.folder_shape : ''}
-    >
+    <div key={id}>
       <div
         className={`${styles.container} ${isFolder ? styles.folder_shape : ''}`}
         style={isNoPointerEvents ? { pointerEvents: 'none' } : {}}

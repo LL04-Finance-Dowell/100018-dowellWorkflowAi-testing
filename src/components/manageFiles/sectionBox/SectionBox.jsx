@@ -97,7 +97,7 @@ const SectionBox = ({
           setRefreshLoading(false);
         })
         .catch((err) => {
-          console.log(err, 'Refresh for documents failed');
+          // console.log(err, 'Refresh for documents failed');
           toast.info('Refresh for documents failed');
           setRefreshLoading(false);
         });
@@ -131,7 +131,7 @@ const SectionBox = ({
           setRefreshLoading(false);
         })
         .catch((err) => {
-          console.log(err, 'Refresh for templates failed');
+          // console.log(err, 'Refresh for templates failed');
           toast.info('Refresh for templates failed');
           setRefreshLoading(false);
         });
@@ -166,7 +166,7 @@ const SectionBox = ({
           setRefreshLoading(false);
         })
         .catch((err) => {
-          console.log(err, 'Refresh for workflows failed');
+          // console.log(err, 'Refresh for workflows failed');
           toast.info('Refresh for workflows failed');
           setRefreshLoading(false);
         });
@@ -202,7 +202,7 @@ const SectionBox = ({
           setRefreshLoading(false);
         })
         .catch((err) => {
-          console.log(err, 'Refresh for processes failed');
+          // console.log(err, 'Refresh for processes failed');
           toast.info('Refresh for processes failed');
           setRefreshLoading(false);
         });
@@ -251,7 +251,7 @@ const SectionBox = ({
           setRefreshLoading(false);
         })
         .catch((err) => {
-          console.log(err, 'Refresh for notifications failed');
+          // console.log(err, 'Refresh for notifications failed');
           toast.info('Refresh for notifications failed');
           setRefreshLoading(false);
         });
@@ -369,45 +369,47 @@ const SectionBox = ({
                   <></>
                 )
               ) : itemType === 'folders' ? (
-                !foldersLoading ? (
-                  <button
-                    className={styles.refresh__btn}
-                    // onClick={handleRefresh}
-                  >
-                    {refreshLoading ? (
-                      <LoadingSpinner
-                        color={'white'}
-                        width={'1rem'}
-                        height={'1rem'}
-                      />
-                    ) : (
-                      <IoIosRefresh />
-                    )}
-                    <span>{t('Refresh')}</span>
-                  </button>
-                ) : (
-                  <></>
-                )
+                // !foldersLoading ? (
+                //   <button
+                //     className={styles.refresh__btn}
+                //     // onClick={handleRefresh}
+                //   >
+                //     {refreshLoading ? (
+                //       <LoadingSpinner
+                //         color={'white'}
+                //         width={'1rem'}
+                //         height={'1rem'}
+                //       />
+                //     ) : (
+                //       <IoIosRefresh />
+                //     )}
+                //     <span>{t('Refresh')}</span>
+                //   </button>
+                // ) : (
+                //   <></>
+                // )
+                ''
               ) : itemType === 'folder' ? (
-                !folderLoading ? (
-                  <button
-                    className={styles.refresh__btn}
-                    // onClick={handleRefresh}
-                  >
-                    {refreshLoading ? (
-                      <LoadingSpinner
-                        color={'white'}
-                        width={'1rem'}
-                        height={'1rem'}
-                      />
-                    ) : (
-                      <IoIosRefresh />
-                    )}
-                    <span>{t('Refresh')}</span>
-                  </button>
-                ) : (
-                  <></>
-                )
+                // !folderLoading ? (
+                //   <button
+                //     className={styles.refresh__btn}
+                //     // onClick={handleRefresh}
+                //   >
+                //     {refreshLoading ? (
+                //       <LoadingSpinner
+                //         color={'white'}
+                //         width={'1rem'}
+                //         height={'1rem'}
+                //       />
+                //     ) : (
+                //       <IoIosRefresh />
+                //     )}
+                //     <span>{t('Refresh')}</span>
+                //   </button>
+                // ) : (
+                //   <></>
+                // )
+                ''
               ) : (
                 <></>
               )
@@ -433,7 +435,7 @@ const SectionBox = ({
                       .slice(0, sliceCount * 10)
                       .map((item) => (
                         <Card
-                          key={item.id}
+                          key={item._id}
                           cardItem={item}
                           hideFavoriteIcon={hideFavoriteIcon}
                           hideDeleteIcon={hideDeleteIcon}

@@ -29,6 +29,11 @@
 .folders_modal_sect button {
   background-color: transparent;
   display: block;
+  transition: all 0.3s ease;
+}
+
+.folders_modal_sect button:not(.select_drop_btn, .close_btn):active {
+  transform: scale(0.9);
 }
 
 .folders_modal_wrapper {

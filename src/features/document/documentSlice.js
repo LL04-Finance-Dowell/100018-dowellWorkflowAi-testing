@@ -1,4 +1,4 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice } from '@reduxjs/toolkit';
 import {
   createDocument,
   detailDocument,
@@ -8,8 +8,8 @@ import {
   signDocument,
   contentDocument,
   allDocuments,
-} from "./asyncThunks";
-import { v4 as uuidv4 } from "uuid";
+} from './asyncThunks';
+import { v4 as uuidv4 } from 'uuid';
 
 const initialState = {
   createdDocument: null,
@@ -20,110 +20,110 @@ const initialState = {
   contentOfDocument: null,
   savedDocumentsItems: [],
   allDocuments: [],
-  status: "idle",
-  editorStatus: "idle",
-  createDocumentStatus: "idle",
-  mineStatus: "idle",
-  savedDocumentsStatus: "idle",
-  contentOfDocumentStatus: "idle",
-  allDocumentsStatus: "idle",
+  status: 'idle',
+  editorStatus: 'idle',
+  createDocumentStatus: 'idle',
+  mineStatus: 'idle',
+  savedDocumentsStatus: 'idle',
+  contentOfDocumentStatus: 'idle',
+  allDocumentsStatus: 'idle',
   errorMessage: null,
 };
 
 export const documentSlice = createSlice({
-  name: "document",
+  name: 'document',
   initialState,
   reducers: {
     setContentOfDocument: (state, action) => {
       state.contentOfDocument = action.payload;
     },
     setAllDocuments: (state, action) => {
-      state.allDocuments = action.payload
+      state.allDocuments = action.payload;
     },
   },
   extraReducers: (builder) => {
     //createDocument
     builder.addCase(createDocument.pending, (state) => {
-      state.editorStatus = "pending";
+      state.editorStatus = 'pending';
     });
     builder.addCase(createDocument.fulfilled, (state, action) => {
-      state.editorStatus = "succeeded";
+      state.editorStatus = 'succeeded';
       state.createdDocument = action.payload;
     });
     builder.addCase(createDocument.rejected, (state, action) => {
-      state.editorStatus = "failed";
+      state.editorStatus = 'failed';
       state.errorMessage = action.payload;
     });
     //detailDocument
     builder.addCase(detailDocument.pending, (state) => {
-      state.editorStatus = "pending";
+      state.editorStatus = 'pending';
     });
     builder.addCase(detailDocument.fulfilled, (state, action) => {
-      state.editorStatus = "succeeded";
+      state.editorStatus = 'succeeded';
       state.detailDocument = action.payload;
     });
     builder.addCase(detailDocument.rejected, (state, action) => {
-      state.editorStatus = "failed";
+      state.editorStatus = 'failed';
       state.errorMessage = action.payload;
     });
     //signDocument
     builder.addCase(signDocument.pending, (state) => {
-      state.status = "pending";
+      state.status = 'pending';
     });
     builder.addCase(signDocument.fulfilled, (state, action) => {
-      state.status = "succeeded";
+      state.status = 'succeeded';
       state.signedDocument = action.payload;
     });
     builder.addCase(signDocument.rejected, (state, action) => {
-      state.status = "failed";
+      state.status = 'failed';
       state.errorMessage = action.payload;
     });
     //mineDocuments
     builder.addCase(mineDocuments.pending, (state) => {
-      state.mineStatus = "pending";
+      state.mineStatus = 'pending';
     });
     builder.addCase(mineDocuments.fulfilled, (state, action) => {
-      state.mineStatus = "succeeded";
+      state.mineStatus = 'succeeded';
       state.minedDocuments = action.payload;
     });
     builder.addCase(mineDocuments.rejected, (state, action) => {
-      state.mineStatus = "failed";
+      state.mineStatus = 'failed';
       state.errorMessage = action.payload;
     });
     //rejectedDocuments
     builder.addCase(rejectedDocuments.pending, (state) => {
-      state.status = "pending";
+      state.status = 'pending';
     });
     builder.addCase(rejectedDocuments.fulfilled, (state, action) => {
-      state.status = "succeeded";
+      state.status = 'succeeded';
       state.rejectedDocuments = action.payload;
     });
     builder.addCase(rejectedDocuments.rejected, (state, action) => {
-      state.status = "failed";
+      state.status = 'failed';
       state.errorMessage = action.payload;
     });
     //savedDocuments
     builder.addCase(savedDocuments.pending, (state) => {
-      state.savedDocumentsStatus = "pending";
+      state.savedDocumentsStatus = 'pending';
     });
     builder.addCase(savedDocuments.fulfilled, (state, action) => {
-      state.savedDocumentsStatus = "succeeded";
+      state.savedDocumentsStatus = 'succeeded';
       state.savedDocumentsItems = action.payload;
     });
     builder.addCase(savedDocuments.rejected, (state, action) => {
-      state.savedDocumentsStatus = "failed";
+      state.savedDocumentsStatus = 'failed';
       state.errorMessage = action.payload;
     });
     //contentDocumetn
     builder.addCase(contentDocument.pending, (state) => {
-      state.contentOfDocumentStatus = "pending";
+      state.contentOfDocumentStatus = 'pending';
     });
     builder.addCase(contentDocument.fulfilled, (state, action) => {
-      state.contentOfDocumentStatus = "succeeded";
+      state.contentOfDocumentStatus = 'succeeded';
       state.contentOfDocument = action.payload
         ? action.payload
             .map((item) =>
-              typeof item !== "object"
+              typeof item !== 'object'
                 ? null
                 : Object.values(item)[0].map((content) => ({
                     ...content,
@@ -136,19 +136,19 @@ export const documentSlice = createSlice({
         : [];
     });
     builder.addCase(contentDocument.rejected, (state, action) => {
-      state.contentOfDocumentStatus = "failed";
+      state.contentOfDocumentStatus = 'failed';
       state.errorMessage = action.payload;
     });
     //allDocuments
     builder.addCase(allDocuments.pending, (state) => {
-      state.allDocumentsStatus = "pending";
+      state.allDocumentsStatus = 'pending';
     });
     builder.addCase(allDocuments.fulfilled, (state, action) => {
-      state.allDocumentsStatus = "succeeded";
+      state.allDocumentsStatus = 'succeeded';
       state.allDocuments = action.payload;
     });
     builder.addCase(allDocuments.rejected, (state, action) => {
-      state.allDocuments = "failed";
+      state.allDocuments = 'failed';
       state.errorMessage = action.payload;
     });
   },
