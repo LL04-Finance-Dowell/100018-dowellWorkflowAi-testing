@@ -169,7 +169,7 @@ const DocumentCard = ({
 
     const data = {
       document_name: item.document_name,
-      document_id: item._id ?? item.item_id,
+      document_id: item._id,
     };
     dispatch(detailDocument(data.document_id));
   };

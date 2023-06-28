@@ -76,10 +76,16 @@ const VerificationPage = () => {
       if (
         !isPublicUser &&
         userDetail &&
-        (auth_username !== userDetail?.userinfo?.username ||
-          auth_portfolio !== currentUserPortfolioName)
+        (auth_username !== userDetail?.userinfo?.username)
       ) {
         toast.info('You are not authorized to view this');
+        setLoading(false);
+        setVerificationFailed(true);
+        return;
+      }
+
+      if ((auth_username === userDetail?.userinfo?.username) && (auth_portfolio !== currentUserPortfolioName)) {
+        toast.info(`Please login with ${auth_portfolio} to view this document`);
         setLoading(false);
         setVerificationFailed(true);
         return;
