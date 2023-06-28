@@ -45,7 +45,7 @@ function App() {
     return () => clearInterval(interval); 
     
   }, []);
-
+// console.log('chk')
   function checkstatus() {
     // AJAX GET request
 
