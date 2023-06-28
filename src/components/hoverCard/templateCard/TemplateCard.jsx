@@ -35,7 +35,7 @@ const TemplateCard = ({ cardItem, isFolder }) => {
 
   const handleTemplateDetail = (item) => {
     const data = {
-      template_id: item._id ?? item.item_id ? item.item_id : item['item_id:'],
+      template_id: item._id,
       template_name: item.template_name,
     };
 
