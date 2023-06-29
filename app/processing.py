@@ -785,26 +785,22 @@ def begin_process(process):
     return {"links": links}
 
 
-def give_access(process_id, role, username, user_type):
-    process = get_process_object(process_id)
-    if not any(username in link for link in process["links"]):
-        return
-
+def give_access(process, role, username, user_type):
     for step in process["process_steps"]:
         if step.get("stepRole") == role:
             if user_type == "public":
                 username = username[0]
-            if any(
-                username in document_map
-                for document_map in step.get("stepDocumentCloneMap")
-            ):
-                for document_map in step.get("stepDocumentCloneMap"):
-                    document_id = document_map.get(username)
+            if any(username in dmap for dmap in step.get("stepDocumentCloneMap")):
+                for dmap in step.get("stepDocumentCloneMap"):
+                    document_id = dmap.get(username)
     editor_link = access_editor(document_id, "document")
     return editor_link
 
 
 def multistep(document_id, process):
+    steps = process["process_steps"]
+    parent_id = process["parent_item_id"]
+    process_id = process["_id"]
     no_of_steps = sum(isinstance(e, dict) for e in process["process_steps"])
     for document_map in process["process_steps"][0].get("stepDocumentCloneMap"):
         for _, v in document_map.items():
@@ -820,7 +816,7 @@ def multistep(document_id, process):
             if process["process_steps"][1].get("stepTaskType") == "request_for_task":
                 for user in process["process_steps"][1].get("stepTeamMembers"):
                     clone_id = cloning_document(
-                        document_id, user, process["parent_item_id"], process["_id"]
+                        document_id, user, parent_id, process_id
                     )
                     process["process_steps"].get("stepDocumentCloneMap").append(
                         {user: clone_id}
@@ -829,15 +825,15 @@ def multistep(document_id, process):
                     clone_id = (
                         document_id,
                         user,
-                        process["parent_item_id"],
-                        process["_id"],
+                        parent_id,
+                        process_id,
                     )
                     process["process_steps"].get("stepDocumentCloneMap").append(
                         {user: clone_id}
                     )
                 for user in process["process_steps"][1].get("stepUserMembers"):
                     clone_id = cloning_document(
-                        document_id, user, process["parent_item_id"], process["_id"]
+                        document_id, user, parent_id, process_id
                     )
                     process["process_steps"].get("stepDocumentCloneMap").append(
                         {user: clone_id}
@@ -849,36 +845,35 @@ def multistep(document_id, process):
 
                 for document in step1_documents:
                     for user in process["process_steps"][1].get("stepTeamMembers"):
-                        authorize(
-                            document, user, process["_id"], process["process_type"]
-                        )
+                        authorize(document, user, process_id, process["process_type"])
                         process["process_steps"][1].get("stepDocumentCloneMap").append(
                             {user: document}
                         )
                     for user in process["process_steps"][1].get("stepPublicMembers"):
-                        authorize(
-                            document, user, process["_id"], process["process_type"]
-                        )
+                        authorize(document, user, process_id, process["process_type"])
                         process["process_steps"][1].get("stepDocumentCloneMap").append(
                             {user: document}
                         )
                     for user in process["process_steps"][1].get("stepUserMembers"):
-                        authorize(
-                            document, user, process["_id"], process["process_type"]
-                        )
+                        authorize(document, user, process_id, process["process_type"])
                         process["process_steps"][1].get("stepDocumentCloneMap").append(
                             {user: document}
                         )
             if process["process_steps"][2]:
                 print("3")
-                for document_map in process["process_steps"][2].get("stepDocumentCloneMap"):
+                for document_map in process["process_steps"][2].get(
+                    "stepDocumentCloneMap"
+                ):
                     for _, v in document_map.items():
                         if get_document_object(v).get("document_state") != "finalized":
                             return
-                if process["process_steps"][2].get("stepTaskType") == "request_for_task":
+                if (
+                    process["process_steps"][2].get("stepTaskType")
+                    == "request_for_task"
+                ):
                     for user in process["process_steps"][2].get("stepTeamMembers"):
                         clone_id = cloning_document(
-                            document_id, user, process["parent_item_id"], process["_id"]
+                            document_id, user, parent_id, process_id
                         )
                         process["process_steps"].get("stepDocumentCloneMap").append(
                             {user: clone_id}
@@ -887,15 +882,15 @@ def multistep(document_id, process):
                         clone_id = (
                             document_id,
                             user,
-                            process["parent_item_id"],
-                            process["_id"],
+                            parent_id,
+                            process_id,
                         )
                         process["process_steps"].get("stepDocumentCloneMap").append(
                             {user: clone_id}
                         )
                     for user in process["process_steps"][2].get("stepUserMembers"):
                         clone_id = cloning_document(
-                            document_id, user, process["parent_item_id"], process["_id"]
+                            document_id, user, parent_id, process_id
                         )
                         process["process_steps"].get("stepDocumentCloneMap").append(
                             {user: clone_id}
@@ -907,20 +902,26 @@ def multistep(document_id, process):
 
                     for document in step2_documents:
                         for user in process["process_steps"][2].get("stepTeamMembers"):
-                            authorize(document, user, process["_id"], process["process_type"])
-                            process["process_steps"][2].get("stepDocumentCloneMap").append(
-                                {user: document}
+                            authorize(
+                                document, user, process_id, process["process_type"]
                             )
-                        for user in process["process_steps"][2].get("stepPublicMembers"):
-                            authorize(document, user, process["_id"], process["process_type"])
-                            process["process_steps"][2].get("stepDocumentCloneMap").append(
-                                {user: document}
+                            process["process_steps"][2].get(
+                                "stepDocumentCloneMap"
+                            ).append({user: document})
+                        for user in process["process_steps"][2].get(
+                            "stepPublicMembers"
+                        ):
+                            authorize(
+                                document, user, process_id, process["process_type"]
                             )
+                            process["process_steps"][2].get(
+                                "stepDocumentCloneMap"
+                            ).append({user: document})
                         for user in process["process_steps"][2].get("stepUserMembers"):
-                            authorize(document, user, process["_id"], process["process_type"])
-                            process["process_steps"][2].get("stepDocumentCloneMap").append(
-                                {user: document}
+                            authorize(
+                                document, user, process_id, process["process_type"]
                             )
-    update_process(
-        process["_id"], process["process_steps"], process["processing_state"]
-    )
+                            process["process_steps"][2].get(
+                                "stepDocumentCloneMap"
+                            ).append({user: document})
+    update_process(process_id, process["process_steps"], process["processing_state"])

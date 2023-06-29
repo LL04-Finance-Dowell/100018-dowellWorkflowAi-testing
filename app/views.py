@@ -12,7 +12,14 @@ from django.core.cache import cache
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from threading import Thread
-from app.processing import HandleProcess, Process, Background, begin_process, give_access, multistep
+from app.processing import (
+    HandleProcess,
+    Process,
+    Background,
+    begin_process,
+    give_access,
+    multistep,
+)
 from app.utils import checks, notification_cron
 from app.utils.helpers import (
     access_editor,
@@ -196,76 +203,80 @@ def get_process_link(request, process_id):
             return Response(link[user], status.HTTP_200_OK)
     return Response("user is not part of this process", status.HTTP_401_UNAUTHORIZED)
 
+
 @api_view(["POST"])
 def process_verification(request):
     process_id = request.data["process_id"]
-    role = request.data["role"]
     username = request.data["username"]
     user_type = request.data["user_type"]
-    editor_link = give_access(process_id, role, username, user_type)
-    if editor_link:
-        return Response(editor_link, status.HTTP_200_OK)
-    else:
-        return Response(
-            "access to this document is denied at this time!",
-            status.HTTP_400_BAD_REQUEST,
-        )
+    role = request.data["role"]
+    process = get_process_object(process_id)
+    if any(username in link for link in process["links"]):
+        editor_link = give_access(process, role, username, user_type)
+        if editor_link:
+            return Response(editor_link, status.HTTP_200_OK)
+    return Response(
+        "access to this document is denied at this time!",
+        status.HTTP_400_BAD_REQUEST,
+    )
+
+
 # @api_view(["POST"])
 # def process_verification(request):
 #     """verification of a process step access and checks that duplicate document based on a step."""
 #     user_type = request.data["user_type"]
-    # auth_user = request.data["auth_username"]
-    # auth_role = request.data["auth_role"]
-    # auth_portfolio = request.data["auth_portfolio"]
-    # token = request.data["token"]
-    # org_name = request.data["org_name"]
-    # link_object = get_link_object(token)
-    # if user_type == "team" or user_type == "user":
-    #     if (
-    #         link_object["user_name"] != auth_user
-    #         or link_object["auth_portfolio"] != auth_portfolio
-    #     ):
-    #         return Response(
-    #             "User Logged in is not part of this process",
-    #             status.HTTP_401_UNAUTHORIZED,
-    #         )
-    # process = get_process_object(link_object["process_id"])
-    # process["org_name"] = org_name
-    # handler = HandleProcess(process)
-    # if not handler.verify_location(
-    #     auth_role,
-    #     {
-    #         "city": request.data["city"],
-    #         "country": request.data["country"],
-    #         "continent": request.data["continent"],
-    #     },
-    # ):
-    #     return Response(
-    #         "access to this document not allowed from this location",
-    #         status.HTTP_400_BAD_REQUEST,
-    #     )
-    # if not handler.verify_display(auth_role):
-    #     return Response(
-    #         "display rights set do not allow access to this document",
-    #         status.HTTP_400_BAD_REQUEST,
-        # )
-    # if not handler.verify_time(auth_role):
-    #     return Response(
-    #         "time limit for access to this document has elapsed",
-    #         status.HTTP_400_BAD_REQUEST,
-    #     )
-    # editor_link = handler.verify_access(auth_role, auth_user, user_type)
-    # process_id = request.data["process_id"]
-    # role = request.data["role"]
-    # username = request.data["username"]
-    # editor_link = give_access(process_id, role, username, user_type)
-    # if editor_link:
-    #     return Response(editor_link, status.HTTP_200_OK)
-    # else:
-    #     return Response(
-    #         "access to this document is denied at this time!",
-    #         status.HTTP_400_BAD_REQUEST,
-    #     )
+# auth_user = request.data["auth_username"]
+# auth_role = request.data["auth_role"]
+# auth_portfolio = request.data["auth_portfolio"]
+# token = request.data["token"]
+# org_name = request.data["org_name"]
+# link_object = get_link_object(token)
+# if user_type == "team" or user_type == "user":
+#     if (
+#         link_object["user_name"] != auth_user
+#         or link_object["auth_portfolio"] != auth_portfolio
+#     ):
+#         return Response(
+#             "User Logged in is not part of this process",
+#             status.HTTP_401_UNAUTHORIZED,
+#         )
+# process = get_process_object(link_object["process_id"])
+# process["org_name"] = org_name
+# handler = HandleProcess(process)
+# if not handler.verify_location(
+#     auth_role,
+#     {
+#         "city": request.data["city"],
+#         "country": request.data["country"],
+#         "continent": request.data["continent"],
+#     },
+# ):
+#     return Response(
+#         "access to this document not allowed from this location",
+#         status.HTTP_400_BAD_REQUEST,
+#     )
+# if not handler.verify_display(auth_role):
+#     return Response(
+#         "display rights set do not allow access to this document",
+#         status.HTTP_400_BAD_REQUEST,
+# )
+# if not handler.verify_time(auth_role):
+#     return Response(
+#         "time limit for access to this document has elapsed",
+#         status.HTTP_400_BAD_REQUEST,
+#     )
+# editor_link = handler.verify_access(auth_role, auth_user, user_type)
+# process_id = request.data["process_id"]
+# role = request.data["role"]
+# username = request.data["username"]
+# editor_link = give_access(process_id, role, username, user_type)
+# if editor_link:
+#     return Response(editor_link, status.HTTP_200_OK)
+# else:
+#     return Response(
+#         "access to this document is denied at this time!",
+#         status.HTTP_400_BAD_REQUEST,
+#     )
 
 
 # @api_view(["POST"])
@@ -286,13 +297,15 @@ def process_verification(request):
 #     # background = Background(process, item_type, item_id, role, user)
 #     # Thread(target=lambda: delete_notification(item_id)).start()
 #     # background.processing()
-  
+
 
 #     return Response("document processed successfully", status.HTTP_200_OK)
 @api_view(["POST"])
 def finalize_or_reject(request, process_id):
     process = get_process_object(process_id)
     document_id = request.data["item_id"]
+    if get_document_object(document_id)["document_state"] == "finalized" or "rejected":
+        return Response("Already processed!", status.HTTP_200_OK)
     finalize_item(document_id, "finalized", "document")
     try:
         multistep(document_id, process)
