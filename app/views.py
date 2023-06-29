@@ -12,7 +12,7 @@ from django.core.cache import cache
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from threading import Thread
-from app.processing import HandleProcess, Process, Background
+from app.processing import HandleProcess, Process, Background, begin_process, give_access, multistep
 from app.utils import checks, notification_cron
 from app.utils.helpers import (
     access_editor,
@@ -175,7 +175,8 @@ def document_processing(request):
             status.HTTP_501_NOT_IMPLEMENTED,
         )
     if data:
-        verification_links = HandleProcess(data).start()
+        # verification_links = HandleProcess(data).start()
+        verification_links = begin_process(data)
         return Response(verification_links, status.HTTP_200_OK)
     return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
 
@@ -195,82 +196,110 @@ def get_process_link(request, process_id):
             return Response(link[user], status.HTTP_200_OK)
     return Response("user is not part of this process", status.HTTP_401_UNAUTHORIZED)
 
-
 @api_view(["POST"])
 def process_verification(request):
-    """verification of a process step access and checks that duplicate document based on a step."""
-    try:
-        user_type = request.data["user_type"]
-        auth_user = request.data["auth_username"]
-        auth_role = request.data["auth_role"]
-        auth_portfolio = request.data["auth_portfolio"]
-        token = request.data["token"]
-        org_name = request.data["org_name"]
-        link_object = get_link_object(token)
-        if user_type == "team" or user_type == "user":
-            if (
-                link_object["user_name"] != auth_user
-                or link_object["auth_portfolio"] != auth_portfolio
-            ):
-                return Response(
-                    "User Logged in is not part of this process",
-                    status.HTTP_401_UNAUTHORIZED,
-                )
-        process = get_process_object(link_object["process_id"])
-        process["org_name"] = org_name
-        handler = HandleProcess(process)
-        if not handler.verify_location(
-            auth_role,
-            {
-                "city": request.data["city"],
-                "country": request.data["country"],
-                "continent": request.data["continent"],
-            },
-        ):
-            return Response(
-                "access to this document not allowed from this location",
-                status.HTTP_400_BAD_REQUEST,
-            )
-        if not handler.verify_display(auth_role):
-            return Response(
-                "display rights set do not allow access to this document",
-                status.HTTP_400_BAD_REQUEST,
-            )
-        # if not handler.verify_time(auth_role):
-        #     return Response(
-        #         "time limit for access to this document has elapsed",
-        #         status.HTTP_400_BAD_REQUEST,
-        #     )
-        editor_link = handler.verify_access(auth_role, auth_user, user_type)
-        if editor_link:
-            return Response(editor_link, status.HTTP_200_OK)
-    except Exception as e:
-        print(e)
+    process_id = request.data["process_id"]
+    role = request.data["role"]
+    username = request.data["username"]
+    user_type = request.data["user_type"]
+    editor_link = give_access(process_id, role, username, user_type)
+    if editor_link:
+        return Response(editor_link, status.HTTP_200_OK)
+    else:
         return Response(
             "access to this document is denied at this time!",
             status.HTTP_400_BAD_REQUEST,
         )
+# @api_view(["POST"])
+# def process_verification(request):
+#     """verification of a process step access and checks that duplicate document based on a step."""
+#     user_type = request.data["user_type"]
+    # auth_user = request.data["auth_username"]
+    # auth_role = request.data["auth_role"]
+    # auth_portfolio = request.data["auth_portfolio"]
+    # token = request.data["token"]
+    # org_name = request.data["org_name"]
+    # link_object = get_link_object(token)
+    # if user_type == "team" or user_type == "user":
+    #     if (
+    #         link_object["user_name"] != auth_user
+    #         or link_object["auth_portfolio"] != auth_portfolio
+    #     ):
+    #         return Response(
+    #             "User Logged in is not part of this process",
+    #             status.HTTP_401_UNAUTHORIZED,
+    #         )
+    # process = get_process_object(link_object["process_id"])
+    # process["org_name"] = org_name
+    # handler = HandleProcess(process)
+    # if not handler.verify_location(
+    #     auth_role,
+    #     {
+    #         "city": request.data["city"],
+    #         "country": request.data["country"],
+    #         "continent": request.data["continent"],
+    #     },
+    # ):
+    #     return Response(
+    #         "access to this document not allowed from this location",
+    #         status.HTTP_400_BAD_REQUEST,
+    #     )
+    # if not handler.verify_display(auth_role):
+    #     return Response(
+    #         "display rights set do not allow access to this document",
+    #         status.HTTP_400_BAD_REQUEST,
+        # )
+    # if not handler.verify_time(auth_role):
+    #     return Response(
+    #         "time limit for access to this document has elapsed",
+    #         status.HTTP_400_BAD_REQUEST,
+    #     )
+    # editor_link = handler.verify_access(auth_role, auth_user, user_type)
+    # process_id = request.data["process_id"]
+    # role = request.data["role"]
+    # username = request.data["username"]
+    # editor_link = give_access(process_id, role, username, user_type)
+    # if editor_link:
+    #     return Response(editor_link, status.HTTP_200_OK)
+    # else:
+    #     return Response(
+    #         "access to this document is denied at this time!",
+    #         status.HTTP_400_BAD_REQUEST,
+    #     )
 
 
+# @api_view(["POST"])
+# def finalize_or_reject(request, process_id):
+#     """After access is granted and the user has made changes on a document."""
+#     if not request.data:
+#         return Response("You are missing something", status.HTTP_400_BAD_REQUEST)
+#     # item_id = request.data["item_id"]
+#     # item_type = request.data["item_type"]
+#     # role = request.data["role"]
+#     # user = request.data["authorized"]
+#     # state = request.data["action"]
+#     # check, current_state = checks.is_finalized(item_id, item_type)
+#     # if check and current_state != "processing":
+#     #     return Response(f"Already processed as {current_state}!", status.HTTP_200_OK)
+#     # finalize_item(item_id, state, item_type)
+#     # process = get_process_object(process_id)
+#     # background = Background(process, item_type, item_id, role, user)
+#     # Thread(target=lambda: delete_notification(item_id)).start()
+#     # background.processing()
+  
+
+#     return Response("document processed successfully", status.HTTP_200_OK)
 @api_view(["POST"])
 def finalize_or_reject(request, process_id):
-    """After access is granted and the user has made changes on a document."""
-    if not request.data:
-        return Response("You are missing something", status.HTTP_400_BAD_REQUEST)
-    item_id = request.data["item_id"]
-    item_type = request.data["item_type"]
-    role = request.data["role"]
-    user = request.data["authorized"]
-    state = request.data["action"]
-    check, current_state = checks.is_finalized(item_id, item_type)
-    if check and current_state != "processing":
-        return Response(f"Already processed as {current_state}!", status.HTTP_200_OK)
-    finalize_item(item_id, state, item_type)
     process = get_process_object(process_id)
-    background = Background(process, item_type, item_id, role, user)
-    Thread(target=lambda: delete_notification(item_id)).start()
-    background.processing()
-    return Response("document processed successfully", status.HTTP_200_OK)
+    document_id = request.data["item_id"]
+    finalize_item(document_id, "finalized", "document")
+    try:
+        multistep(document_id, process)
+        return Response("processed successfully", status.HTTP_200_OK)
+    except:
+        finalize_item(document_id, "processing", "document")
+        return Response(status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 @api_view(["POST"])
@@ -601,7 +630,7 @@ def archives(request):
                 "Failed to move workflow to archives",
                 status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
-        except Exception  as e:
+        except Exception as e:
             return Response(
                 "Invalid response data", status.HTTP_500_INTERNAL_SERVER_ERROR
             )
@@ -617,7 +646,7 @@ def archives(request):
                 "Failed to move document to archives",
                 status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
-        except Exception  as e:
+        except Exception as e:
             return Response(
                 "Invalid response data", status.HTTP_500_INTERNAL_SERVER_ERROR
             )
@@ -632,7 +661,7 @@ def archives(request):
                 "Failed to move template to archives",
                 status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
-        except Exception  as e:
+        except Exception as e:
             return Response(
                 "Invalid response data", status.HTTP_500_INTERNAL_SERVER_ERROR
             )
@@ -647,7 +676,7 @@ def archives(request):
                 "Failed to move process to archives",
                 status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
-        except Exception  as e:
+        except Exception as e:
             return Response(
                 "Invalid response data", status.HTTP_500_INTERNAL_SERVER_ERROR
             )
@@ -661,7 +690,7 @@ def archives(request):
                 "Failed to move process to archives",
                 status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
-        except Exception  as e:
+        except Exception as e:
             print(e)
             return Response(
                 "Invalid response data", status.HTTP_500_INTERNAL_SERVER_ERROR
@@ -1266,7 +1295,7 @@ def folder_update(request, folder_id):
     if request.method == "GET":
         folder_details = get_folder_object(folder_id)
         return Response(folder_details, status.HTTP_200_OK)
-    
+
     if request.method == "PUT":
         form = request.data
         if not form:
