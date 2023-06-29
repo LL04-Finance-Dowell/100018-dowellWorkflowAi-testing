@@ -571,7 +571,7 @@ def document_detail(request, document_id):
     editor_link = access_editor(document_id, "document")
     if not editor_link:
         return Response(status.HTTP_500_INTERNAL_SERVER_ERROR)
-    return Response(editor_link, status.HTTP_201_CREATED)
+    return Response(editor_link, status.HTTP_200_OK)
 
 
 @api_view(["GET"])
