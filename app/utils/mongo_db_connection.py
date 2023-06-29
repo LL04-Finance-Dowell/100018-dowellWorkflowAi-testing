@@ -1138,13 +1138,59 @@ def delete_items_in_folder(item_id, folder_id, item_type):
     old_folder = get_folder_object(folder_id)
     old_data = old_folder.get("data")
     if item_type == "template":
-        new_data = [item for item in old_data if item.get("template_id") != item_id]
-        print(new_data)
+        new_data = [
+            {k: v for k, v in item.items() if not (k == "template_id" and v == item_id)}
+            for item in old_data
+            if item
+        ]
+        old_template = get_template_object(item_id)
+        old_template["folders"] = old_template.get("folders")
+        if old_template["folders"] is not None:
+            old_template["folders"].remove(folder_id)
+        new_folder = old_template["folders"]
+        payload = json.dumps(
+            {
+                **TEMPLATE_CONNECTION_DICT,
+                "command": "update",
+                "field": {
+                    "_id": item_id,
+                },
+                "update_field": {
+                    "folders": new_folder,
+                },
+                "platform": "bangalore",
+            }
+        )
+        post_to_data_service(payload)
     if item_type == "document":
-        new_data = [item for item in old_data if item.get("document_id") != item_id]
-        print(new_data)
+        new_data = [
+            {k: v for k, v in item.items() if not (k == "document_id" and v == item_id)}
+            for item in old_data
+            if item
+        ]
+        old_document = get_document_object(item_id)
+        old_document["folders"] = old_document.get("folders")
+        if old_document["folders"] is not None:
+            old_document["folders"].remove(folder_id)
+        new_folder = old_document["folders"]
+        payload = json.dumps(
+            {
+                **DOCUMENT_CONNECTION_DICT,
+                "command": "update",
+                "field": {
+                    "_id": item_id,
+                },
+                "update_field": {
+                    "folders": new_folder,
+                },
+                "platform": "bangalore",
+            }
+        )
+        post_to_data_service(payload)
 
-    """payload = json.dumps(
+    new_data = [d for d in new_data if d]
+
+    payload = json.dumps(
         {
             **FOLDER_CONNECTION_DICT,
             "command": "update",
@@ -1161,4 +1207,4 @@ def delete_items_in_folder(item_id, folder_id, item_type):
             "platform": "bangalore",
         }
     )
-    return post_to_data_service(payload)"""
+    return post_to_data_service(payload)

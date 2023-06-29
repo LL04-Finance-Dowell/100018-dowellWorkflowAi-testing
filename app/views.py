@@ -602,7 +602,7 @@ def archives(request):
                 "Failed to move workflow to archives",
                 status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
-        except Exception  as e:
+        except Exception as e:
             return Response(
                 "Invalid response data", status.HTTP_500_INTERNAL_SERVER_ERROR
             )
@@ -618,7 +618,7 @@ def archives(request):
                 "Failed to move document to archives",
                 status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
-        except Exception  as e:
+        except Exception as e:
             return Response(
                 "Invalid response data", status.HTTP_500_INTERNAL_SERVER_ERROR
             )
@@ -633,7 +633,7 @@ def archives(request):
                 "Failed to move template to archives",
                 status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
-        except Exception  as e:
+        except Exception as e:
             return Response(
                 "Invalid response data", status.HTTP_500_INTERNAL_SERVER_ERROR
             )
@@ -648,7 +648,7 @@ def archives(request):
                 "Failed to move process to archives",
                 status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
-        except Exception  as e:
+        except Exception as e:
             return Response(
                 "Invalid response data", status.HTTP_500_INTERNAL_SERVER_ERROR
             )
@@ -662,7 +662,7 @@ def archives(request):
                 "Failed to move process to archives",
                 status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
-        except Exception  as e:
+        except Exception as e:
             print(e)
             return Response(
                 "Invalid response data", status.HTTP_500_INTERNAL_SERVER_ERROR
@@ -1310,5 +1310,5 @@ def delete_item_from_folder(request, folder_id, item_id):
     item_type = request.data["item_type"]
     if request.method == "PUT":
         res = delete_items_in_folder(item_id, folder_id, item_type)
-        return Response(res, status.HTTP_202_ACCEPTED)
+        return Response(res + " Item Deleted in Folder", status.HTTP_202_ACCEPTED)
     return Response(status.HTTP_500_INTERNAL_SERVER_ERROR)

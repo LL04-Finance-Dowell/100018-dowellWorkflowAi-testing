@@ -2,11 +2,14 @@ import unittest
 from datetime import datetime, timedelta
 import sys
 from app.utils.checks import time_limit_right
-from django.test import TestCase
-from rest_framework.test import APIClient
+from django.test import TestCase, RequestFactory, client
 from rest_framework import status
 from django.urls import reverse
-from rest_framework.test import APITestCase
+from rest_framework.test import APITestCase, APIClient, APIRequestFactory
+from unittest.mock import patch
+
+from app.views import create_folder
+
 
 class ProcessTest(APITestCase):
     """Test module for the Process"""
@@ -34,10 +37,10 @@ class ProcessTest(APITestCase):
 
 
 class TestTimeLimitRight(unittest.TestCase):
-     #Before running the tests, modify the variale "start"
-    #to a relevant, relative time because current_time is
-    #computed based on your current time in your timezone
-    
+    # Before running the tests, modify the variale "start"
+    # to a relevant, relative time because current_time is
+    # computed based on your current time in your timezone
+
     def test_no_time_limit(self):
         result = time_limit_right("no_time_limit", None, None, None, None)
         self.assertTrue(result)
@@ -118,19 +121,36 @@ class TestTimeLimitRight(unittest.TestCase):
 if __name__ == "__main__":
     unittest.main()
 
+
 # Still writing tests, this doesn't run
-class ExampleModelTestCase(TestCase):
+class FolderTestCase(TestCase):
     def setUp(self):
-        self.client = APIClient()
-        self.example_data = {
+        self.client = RequestFactory()
+
+    def create_folder_test(self):
+        url = reverse("create_folder")
+
+        data = {
             "created_by": "WorkflowAiedwin",
             "company_id": "6390b313d77dc467630713f2",
             "data_type": "Real_Data",
         }
-        self.example_model = ""
+        request = self.factory.post(url, data)
 
-    def test_get_folder(self):
-        url = reverse("folders/", kwargs={"str": self.example_model})
+        with patch("app.views.create_folder") as mock_create_folder:
+            mock_create_folder.return_value = {
+                "_id": "6497329d32ce85526e1d2fb3",
+                "message": "Untitled Folder Created",
+            }
+
+            response = create_folder(request)
+
+            self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+            self.assertIn("message", response.data)
+            self.assertIn("_id", response.data)
+
+    def get_folder_test(self):
+        url = reverse("folders/", kwargs={"str": "6497329d32ce85526e1d2fb3"})
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.data["folder_name"], "Untitled folder")
