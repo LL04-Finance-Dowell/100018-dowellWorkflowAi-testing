@@ -741,6 +741,7 @@ def update_process(process_id, steps, state):
     )
     return post_to_data_service(payload)
 
+
 def update_process_with_links(process_id, steps, state, links):
     payload = json.dumps(
         {
@@ -749,12 +750,15 @@ def update_process_with_links(process_id, steps, state, links):
             "field": {
                 "_id": process_id,
             },
-            "update_field": {"process_steps": steps, "processing_state": state, "links": links},
+            "update_field": {
+                "process_steps": steps,
+                "processing_state": state,
+                "links": links,
+            },
             "platform": "bangalore",
         }
     )
     return post_to_data_service(payload)
-
 
 
 def update_wf(workflow_id, old_workflow):
