@@ -3,6 +3,8 @@ import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import CollapseItem from '../collapseItem/CollapseItem';
 import { v4 as uuidv4 } from 'uuid';
+import { IoMdArrowDropright } from 'react-icons/io';
+
 import sidebarStyles from '../sidebar.module.css';
 import { allDocuments } from '../../../features/document/asyncThunks';
 import { allTemplates } from '../../../features/template/asyncThunks';
@@ -44,14 +46,14 @@ const ManageFile = () => {
       company_id:
         userDetail?.portfolio_info?.length > 1
           ? userDetail?.portfolio_info.find(
-              (portfolio) => portfolio.product === productName
-            )?.org_id
+            (portfolio) => portfolio.product === productName
+          )?.org_id
           : userDetail?.portfolio_info[0].org_id,
       data_type:
         userDetail?.portfolio_info?.length > 1
           ? userDetail?.portfolio_info.find(
-              (portfolio) => portfolio.product === productName
-            )?.data_type
+            (portfolio) => portfolio.product === productName
+          )?.data_type
           : userDetail?.portfolio_info[0].data_type,
     };
     /*  if (savedDocumentsStatus === "idle") dispatch(savedDocuments(data));
@@ -68,8 +70,8 @@ const ManageFile = () => {
     const currentUserportfolioDataType =
       userDetail?.portfolio_info?.length > 1
         ? userDetail?.portfolio_info.find(
-            (portfolio) => portfolio.product === productName
-          )?.data_type
+          (portfolio) => portfolio.product === productName
+        )?.data_type
         : userDetail?.portfolio_info[0]?.data_type;
 
     // THIS UPDATES AN INDIVIDUAL ITEM COUNT FOR EITHER DOCUMENT/TEMPLATE/WORKFLOW/PROCESS
@@ -190,37 +192,37 @@ const ManageFile = () => {
       prev.map((item) =>
         item.parent.includes('Documents')
           ? {
-              ...item,
-              count:
-                itemsCountToDisplay.documents.count > 0
-                  ? itemsCountToDisplay.documents.count
-                  : '000',
-            }
+            ...item,
+            count:
+              itemsCountToDisplay.documents.count > 0
+                ? itemsCountToDisplay.documents.count
+                : '000',
+          }
           : item.parent.includes('Templates')
-          ? {
+            ? {
               ...item,
               count:
                 itemsCountToDisplay.templates.count > 0
                   ? itemsCountToDisplay.templates.count
                   : '000',
             }
-          : item.parent.includes('Workflows')
-          ? {
-              ...item,
-              count:
-                itemsCountToDisplay.workflows.count > 0
-                  ? itemsCountToDisplay.workflows.count
-                  : '000',
-            }
-          : item.parent.includes('Processes')
-          ? {
-              ...item,
-              count:
-                itemsCountToDisplay.processes.count > 0
-                  ? itemsCountToDisplay.processes.count
-                  : '000',
-            }
-          : item
+            : item.parent.includes('Workflows')
+              ? {
+                ...item,
+                count:
+                  itemsCountToDisplay.workflows.count > 0
+                    ? itemsCountToDisplay.workflows.count
+                    : '000',
+              }
+              : item.parent.includes('Processes')
+                ? {
+                  ...item,
+                  count:
+                    itemsCountToDisplay.processes.count > 0
+                      ? itemsCountToDisplay.processes.count
+                      : '000',
+                }
+                : item
       )
     );
   }, [itemsCountToDisplay]);
@@ -229,9 +231,15 @@ const ManageFile = () => {
     <div className={sidebarStyles.feature__box}>
       <h2 className={sidebarStyles.feature__title}>{t('Manage File')}</h2>
       <CollapseItem items={test} />
-      <HashLink to='/folders' className={styles.folder_href}>
+
+      <HashLink to="/folders" className={`${styles.folder_href} ${styles.parent__item__box}`}>
+
+        <i>
+          <IoMdArrowDropright size={25} />
+        </i>
         Folders {folders.length ? `(${folders.length})` : ''}
       </HashLink>
+
     </div>
   );
 };
