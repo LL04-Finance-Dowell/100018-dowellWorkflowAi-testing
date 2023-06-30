@@ -36,13 +36,12 @@ class Clone:
 
     def template(self, template_id):
         template = get_template_object(template_id)
-        folders = "Untitled"
         save_res = json.loads(
             save_template(
                 template["template_name"],
                 template["content"],
                 template["page"],
-                folders,
+                [],
                 self.created_by,
                 self.company_id,
                 template["data_type"],
@@ -92,7 +91,7 @@ class Clone:
                 document_type=Clone.clone_type,
                 parent_id=parent_id,
                 process_id=process_id,
-                folders="Untitled",
+                folders=[],
             )
         )
         return save_res["inserted_id"]
