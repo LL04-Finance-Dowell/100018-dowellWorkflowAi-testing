@@ -1330,7 +1330,7 @@ def folder_update(request, folder_id):
     return Response(status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
-@api_view(["GET", "PUT"])
+@api_view(["GET"])
 def all_folders(request, company_id):
     """fetches Folders created."""
     data_type = request.query_params.get("data_type", "Real_Data")
