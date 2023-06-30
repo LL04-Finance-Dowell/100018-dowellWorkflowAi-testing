@@ -637,7 +637,7 @@ def save_team(
     return post_to_data_service(payload)
 
 
-def authorize(document_id, viewers, process, item_type):
+def authorize(document_id, viewers, process_id, item_type):
     payload = None
     if item_type == "document":
         payload = json.dumps(
@@ -650,7 +650,7 @@ def authorize(document_id, viewers, process, item_type):
                 "update_field": {
                     "auth_viewers": viewers,
                     "document_state": "processing",
-                    "process_id": process,
+                    "process_id": process_id,
                 },
                 "platform": "bangalore",
             }
@@ -666,7 +666,7 @@ def authorize(document_id, viewers, process, item_type):
                 "update_field": {
                     "auth_viewers": viewers,
                     "document_state": "processing",
-                    "process_id": process,
+                    "process_id": process_id,
                 },
                 "platform": "bangalore",
             }
@@ -740,6 +740,21 @@ def update_process(process_id, steps, state):
         }
     )
     return post_to_data_service(payload)
+
+def update_process_with_links(process_id, steps, state, links):
+    payload = json.dumps(
+        {
+            **WF_PROCESS_DICT,
+            "command": "update",
+            "field": {
+                "_id": process_id,
+            },
+            "update_field": {"process_steps": steps, "processing_state": state, "links": links},
+            "platform": "bangalore",
+        }
+    )
+    return post_to_data_service(payload)
+
 
 
 def update_wf(workflow_id, old_workflow):
