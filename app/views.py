@@ -245,10 +245,6 @@ def process_verification(request):
             status.HTTP_400_BAD_REQUEST,
         )
     editor_link = handler.verify_access(auth_role, auth_user, user_type)
-    process_id = request.data["process_id"]
-    role = request.data["role"]
-    username = request.data["username"]
-    editor_link = give_access(process_id, role, username, user_type)
     if editor_link:
         return Response(editor_link, status.HTTP_200_OK)
     else:
