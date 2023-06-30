@@ -9,6 +9,7 @@ from .views import (
     archives,
     all_folders,
     create_folder,
+    delete_item_from_folder,
     folder_update,
     create_document,
     create_team,
@@ -95,7 +96,8 @@ urlpatterns = [
     path("settings/<str:wf_setting_id>", get_workflow_ai_setting),
     path("reminder/<str:process_id>/<str:username>", read_reminder),
     path("notify/", send_notif),
-    path("folders/", create_folder),
+    path("folders/", create_folder, name="create_folder"),
     path("folders/<str:folder_id>", folder_update),
+    path("folders/<str:folder_id>/<str:item_id>", delete_item_from_folder),
     path("companies/<str:company_id>/folders/", all_folders),
 ]

@@ -34,6 +34,7 @@ from app.utils.mongo_db_connection import (
     get_folder_list,
     add_document_to_folder,
     add_template_to_folder,
+    delete_items_in_folder,
     delete_document,
     delete_process,
     delete_template,
@@ -1277,20 +1278,19 @@ def folder_update(request, folder_id):
         old_folder = get_folder_object(folder_id)
         old_folder["folder_name"] = form["folder_name"]
         old_folder["data"].extend(items)
-        updt_folder = json.loads(update_folder(folder_id, old_folder))
         document_ids = [item["document_id"] for item in items if "document_id" in item]
         template_ids = [item["template_id"] for item in items if "template_id" in item]
-
         # process all ids
         process_folders_to_item(document_ids, folder_id, add_document_to_folder)
         process_folders_to_item(template_ids, folder_id, add_template_to_folder)
+        updt_folder = json.loads(update_folder(folder_id, old_folder))
 
         if updt_folder["isSuccess"]:
             return Response("Folder Updated", status.HTTP_201_CREATED)
-        return Response(status.HTTP_500_INTERNAL_SERVER_ERROR)
+    return Response(status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
-@api_view(["GET", "PUT"])
+@api_view(["GET"])
 def all_folders(request, company_id):
     """fetches Folders created."""
     data_type = request.query_params.get("data_type", "Real_Data")
@@ -1305,3 +1305,12 @@ def all_folders(request, company_id):
         except:
             return Response(status.HTTP_500_INTERNAL_SERVER_ERROR)
     return Response(folders_list, status.HTTP_200_OK)
+
+
+@api_view(["PUT"])
+def delete_item_from_folder(request, folder_id, item_id):
+    item_type = request.data["item_type"]
+    if request.method == "PUT":
+        res = delete_items_in_folder(item_id, folder_id, item_type)
+        return Response(res + " Item Deleted in Folder", status.HTTP_202_ACCEPTED)
+    return Response(status.HTTP_500_INTERNAL_SERVER_ERROR)
