@@ -308,162 +308,42 @@ class HandleProcess(Verification):
                 field = "document_name"
                 team_member_id = "11689044433"
                 item_flag = get_document_object(clone_id)["document_state"]
-
-        editor_link = HandleProcess.get_editor_link(
-            {
-                "product_name": "Workflow AI",
-                "details": {
-                    "field": field,
-                    "cluster": "Documents",
-                    "database": "Documentation",
-                    "collection": collection,
-                    "document": document,
-                    "team_member_ID": team_member_id,
-                    "function_ID": "ABCDE",
-                    "command": "update",
-                    "flag": "signing",
-                    "_id": clone_id,
-                    "action": item_type,
-                    "authorized": user_name,
-                    "document_map": doc_map,
-                    "document_right": right,
-                    "document_flag": item_flag,
-                    "role": role,
-                    "process_id": self.process["_id"],
-                    "update_field": {
-                        "document_name": "",
-                        "content": "",
-                        "page": "",
-                    },
-                },
-            }
-        )
-        if user_type == "public" and editor_link:
-            Thread(
-                target=lambda: register_public_login(
-                    user_name[0], self.process["org_name"]
-                )
-            )
-        return editor_link
-
-    def verify(self, auth_step_role, location_data, user_name, user_type, org_name):
-        try:
-            clone_id = None
-            match = False
-            doc_map = None
-            user = None
-            right = None
-            role = None
-            process_id = self.process["_id"]
-            for step in self.process["process_steps"]:
-                if step.get("stepRole") == auth_step_role:
-                    if step.get("stepLocation"):
-                        if not location_right(
-                            step.get("stepLocation"),
-                            step.get("stepContinent"),
-                            location_data["continent"],
-                            step.get("stepCountry"),
-                            location_data["country"],
-                            step.get("stepCity"),
-                            location_data["city"],
-                        ):
-                            # raise Exception(
-                            #     "access to this document not allowed from this location"
-                            # )
-                            return
-                    if step.get("stepDisplay"):
-                        if not display_right(step.get("stepDisplay")):
-                            # raise Exception(
-                            #     "display rights set do not allow access to this document"
-                            # )
-                            return
-                    if step.get("stepTimeLimit"):
-                        if not time_limit_right(
-                            step.get("stepTime"),
-                            step.get("stepTimeLimit"),
-                            step.get("stepStartTime"),
-                            step.get("stepEndTime"),
-                            self.process["created_at"],
-                        ):
-                            # raise Exception("time limit for access has elapsed")
-                            return
-                    if step.get("stepProcessingOrder"):
-                        if not step_processing_order(
-                            order=step.get("stepProcessingOrder"),
-                            process_id=process_id,
-                            role=step.get("stepRole"),
-                        ):
-                            # raise Exception("user not yet allowed to access document")
-                            return
-                    if user_type == "public":
-                        user_name = user_name[0]
-                    if any(
-                        user_name in map for map in step.get("stepDocumentCloneMap")
-                    ):
-                        for d_map in step["stepDocumentCloneMap"]:
-                            if d_map.get(user_name) is not None:
-                                clone_id = d_map.get(user_name)
-
-                    doc_map = step["stepDocumentMap"]
-                    right = step["stepRights"]
-                    role = step["stepRole"]
-                    user = user_name
-                    match = True
-            if not match:
-                # raise Exception("access to this document couldn't be verified")
-                return
-            item_type = self.process["process_type"]
-            item_flag = None
-            field = None
-            collection = None
-            document = None
-            team_member_id = None
-            if item_type == "document":
-                collection = "DocumentReports"
-                document = "documentreports"
-                field = "document_name"
-                team_member_id = "11689044433"
-                item_flag = get_document_object(clone_id)["document_state"]
-            if item_type == "template":
-                collection = "TemplateReports"
-                document = "templatereports"
-                field = "template_name"
-                team_member_id = "22689044433"
-                item_flag = get_template_object(clone_id)["document_state"]
-            editor_link = HandleProcess.get_editor_link(
-                {
-                    "product_name": "Workflow AI",
-                    "details": {
-                        "field": field,
-                        "cluster": "Documents",
-                        "database": "Documentation",
-                        "collection": collection,
-                        "document": document,
-                        "team_member_ID": team_member_id,
-                        "function_ID": "ABCDE",
-                        "command": "update",
-                        "flag": "signing",
-                        "_id": clone_id,
-                        "action": item_type,
-                        "authorized": user,
-                        "document_map": doc_map,
-                        "document_right": right,
-                        "document_flag": item_flag,
-                        "role": role,
-                        "process_id": process_id,
-                        "update_field": {
-                            "document_name": "",
-                            "content": "",
-                            "page": "",
+                editor_link = HandleProcess.get_editor_link(
+                    {
+                        "product_name": "Workflow AI",
+                        "details": {
+                            "field": field,
+                            "cluster": "Documents",
+                            "database": "Documentation",
+                            "collection": collection,
+                            "document": document,
+                            "team_member_ID": team_member_id,
+                            "function_ID": "ABCDE",
+                            "command": "update",
+                            "flag": "signing",
+                            "_id": clone_id,
+                            "action": item_type,
+                            "authorized": user_name,
+                            "document_map": doc_map,
+                            "document_right": right,
+                            "document_flag": item_flag,
+                            "role": role,
+                            "process_id": self.process["_id"],
+                            "update_field": {
+                                "document_name": "",
+                                "content": "",
+                                "page": "",
+                            },
                         },
-                    },
-                }
-            )
-            if user_type == "public" and editor_link:
-                Thread(target=lambda: register_public_login(user_name[0], org_name))
-            return editor_link
-        except Exception as e:
-            raise e
+                    }
+                )
+                if user_type == "public" and editor_link:
+                    Thread(
+                        target=lambda: register_public_login(
+                            user_name[0], self.process["org_name"]
+                        )
+                    )
+        return editor_link
 
 
 class Background:
