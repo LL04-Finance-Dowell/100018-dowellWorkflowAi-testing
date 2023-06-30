@@ -257,7 +257,7 @@ def create_favourite(item, item_type, username):
             "company_id": item["company_id"],
             "favourited_by": username,
         }
-        serializer = FavouriteWorkflowSerializer(data)
+        serializer = FavouriteWorkflowSerializer(data=data)
         if serializer.is_valid():
             serializer.save()
             return msg
@@ -268,7 +268,7 @@ def create_favourite(item, item_type, username):
             "company_id": item["company_id"],
             "favourited_by": username,
         }
-        serializer = FavouriteDocumentSerializer(data)
+        serializer = FavouriteDocumentSerializer(data=data)
         if serializer.is_valid():
             serializer.save()
             return msg
@@ -279,7 +279,7 @@ def create_favourite(item, item_type, username):
             "company_id": item["company_id"],
             "favourited_by": username,
         }
-        serializer = FavouriteTemplateSerializer(data)
+        serializer = FavouriteTemplateSerializer(data=data)
         if serializer.is_valid():
             serializer.save()
             return msg
