@@ -12,7 +12,6 @@ from app.utils.checks import (
     time_limit_right,
 )
 from app.utils.helpers import (
-    access_editor,
     cloning_document,
     register_public_login,
     register_user_access,
@@ -21,14 +20,11 @@ from app.utils.mongo_db_connection import (
     authorize,
     finalize_item,
     get_document_object,
-    get_process_object,
     get_template_object,
     save_process,
     save_process_links,
     save_process_qrcodes,
-    update_document_clone,
     update_process,
-    update_process_with_links,
 )
 from app.verification import Verification
 
