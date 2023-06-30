@@ -7,6 +7,7 @@ TARGETED_POPULATION_URL = "https://100032.pythonanywhere.com/api/targeted_popula
 DOWELLCONNECTION_URL = "https://uxlivinglab.pythonanywhere.com"
 OLD_DOWELLCONNECTION_URL = "https://100002.pythonanywhere.com/"
 PUBLIC_LOGIN_API = "https://100093.pythonanywhere.com/api/public/"
+QRCODE_URL="https://100099.pythonanywhere.com/api/v3/qr-code/"
 USER_CONNECTION_LIST = [
     "login",
     "bangalore",

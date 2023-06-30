@@ -240,11 +240,11 @@ def process_verification(request):
             "display rights set do not allow access to this document",
             status.HTTP_400_BAD_REQUEST,
     )
-    # if not handler.verify_time(auth_role):
-    #     return Response(
-    #         "time limit for access to this document has elapsed",
-    #         status.HTTP_400_BAD_REQUEST,
-    #     )
+    if not handler.verify_time(auth_role):
+        return Response(
+            "time limit for access to this document has elapsed",
+            status.HTTP_400_BAD_REQUEST,
+        )
     editor_link = handler.verify_access(auth_role, auth_user, user_type)
     if editor_link:
         return Response(editor_link, status.HTTP_200_OK)
@@ -276,7 +276,7 @@ def finalize_or_reject(request, process_id):
 
 
 @api_view(["POST"])
-def trigger_process(request, process_id):
+def trigger_process(request):
     """Get process and begin processing it."""
     if not validate_id(request.data["process_id"]):
         return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
