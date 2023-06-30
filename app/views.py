@@ -271,7 +271,6 @@ def finalize_or_reject(request, process_id):
     finalize_item(item_id, state, item_type)
     process = get_process_object(process_id)
     background = Background(process, item_type, item_id, role, user)
-    Thread(target=lambda: delete_notification(item_id)).start()
     background.processing()
     return Response("document processed successfully", status.HTTP_200_OK)
 

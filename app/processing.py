@@ -13,6 +13,7 @@ from app.utils.checks import (
 )
 from app.utils.helpers import (
     cloning_document,
+    delete_notification,
     register_public_login,
     register_user_access,
 )
@@ -343,7 +344,7 @@ class HandleProcess(Verification):
                             user_name[0], self.process["org_name"]
                         )
                     )
-        return editor_link
+                return editor_link
 
 
 class Background:
@@ -355,6 +356,7 @@ class Background:
         self.username = username
 
     def processing(self):
+        Thread(target=lambda: delete_notification(self.item_id)).start()
         steps = self.process["process_steps"]
         parent_id = self.process["parent_item_id"]
         process_id = self.process["_id"]
