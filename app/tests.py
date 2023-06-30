@@ -2,11 +2,15 @@ import unittest
 from datetime import datetime, timedelta
 import sys
 from app.utils.checks import time_limit_right
-from django.test import TestCase, RequestFactory
 from rest_framework.test import APIClient
+from django.test import TestCase, RequestFactory, client
 from rest_framework import status
 from django.urls import reverse
-from rest_framework.test import APITestCase
+from rest_framework.test import APITestCase, APIClient, APIRequestFactory
+from unittest.mock import patch
+
+from app.views import archives, create_folder, delete_item_from_folder, folder_update
+
 
 
 class ProcessTest(APITestCase):
@@ -35,10 +39,10 @@ class ProcessTest(APITestCase):
 
 
 class TestTimeLimitRight(unittest.TestCase):
-     #Before running the tests, modify the variale "start"
-    #to a relevant, relative time because current_time is
-    #computed based on your current time in your timezone
-    
+    # Before running the tests, modify the variale "start"
+    # to a relevant, relative time because current_time is
+    # computed based on your current time in your timezone
+
     def test_no_time_limit(self):
         result = time_limit_right("no_time_limit", None, None, None, None)
         self.assertTrue(result)
@@ -119,21 +123,101 @@ class TestTimeLimitRight(unittest.TestCase):
 if __name__ == "__main__":
     unittest.main()
 
-# Still writing tests, this doesn't run
-class ExampleModelTestCase(TestCase):
+
+class CreateFolderTestCase(TestCase):
     def setUp(self):
-        self.client = APIClient()
-        self.example_data = {
+        self.client = RequestFactory()
+
+    def create_folder_test(self):
+        url = reverse("create_folder")
+
+        data = {
             "created_by": "WorkflowAiedwin",
             "company_id": "6390b313d77dc467630713f2",
             "data_type": "Real_Data",
         }
-        self.example_model = ""
+        request = self.factory.post(url, data)
 
-    def test_get_folder(self):
-        url = reverse("folders/", kwargs={"str": self.example_model})
+        with patch("app.views.create_folder") as mock_create_folder:
+            mock_create_folder.return_value = {
+                "_id": "6497329d32ce85526e1d2fb3",
+                "message": "Untitled Folder Created",
+            }
+
+            response = create_folder(request)
+
+            self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+            self.assertIn("message", response.data)
+            self.assertIn("_id", response.data)
+
+    def get_folder_test(self):
+        folder_id = self.folder_id
+        url = reverse("folders/", kwargs={"str": folder_id})
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.data["folder_name"], "Untitled folder")
 
+class UpdateFolderTestCase(TestCase):
+    def update_folder_test_success(self):
+        url = reverse(folder_update)
+
+        data = {
+            "created_by": "WorkflowAiedwin",
+            "company_id": "6390b313d77dc467630713f2",
+            "data_type": "Real_data",
+            "folder_name": "multiple_files",
+            "items": [
+                {
+                    "template_id": "649d87b12fb7f6ddf0caf5c4",
+                    "document_id": "649d88e2f15c3cbf7c533ea3",
+                }
+            ],
+        }
+        request = self.factory.put(url, data)
+        response = folder_update(request)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(response.data, "Folder Updated")
+
+    def update_folder_test_failure(self):
+        url = reverse(folder_update)
+        pass
+
+
+class DeleteItemInFolderTestCase(TestCase):
+    def delete_template_from_folder_test_success(self):
+        url = reverse(delete_item_from_folder)
+        data = {"item_type": "template"}
+        request = self.factory.put(url, data)
+        response = delete_item_from_folder(request)
+        self.assertEqual(response.status_code, status.HTTP_202_ACCEPTED)
+        self.assertEqual(response.data, "Item Deleted In Folder")
+
+    def delete_document_from_folder_test_success(self):
+        url = reverse(delete_item_from_folder)
+        data = {"item_type": "document"}
+        request = self.factory.put(url, data)
+        response = delete_item_from_folder(request)
+        self.assertEqual(response.status_code, status.HTTP_202_ACCEPTED)
+        self.assertEqual(response.data, "Item Deleted In Folder")
+
+    def delete_template_from_folder_test_fail(self):
+        pass
+
+    def delete_document_from_folder_test_fail(self):
+        pass
+
+
+class ArchiveFolderTestCase(TestCase):
+    def send_folder_to_archive_test(self):
+        """Send document to archive (Archive_Data)"""
+        folder_id = self.folder_id
+
+        url = reverse(archives)
+        data = {"item_id": folder_id, "item_type": "folder"}
+        request = self.factory.post(url, data)
+
+        response = archives(request)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data, "folder moved to archives")
 

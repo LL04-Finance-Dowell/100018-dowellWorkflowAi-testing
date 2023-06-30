@@ -91,7 +91,7 @@ class Clone:
                 document_type=Clone.clone_type,
                 parent_id=parent_id,
                 process_id=process_id,
-                folders=[]
+                folders=[],
             )
         )
         return save_res["inserted_id"]
