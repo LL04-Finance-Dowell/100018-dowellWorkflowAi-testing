@@ -276,6 +276,8 @@ class HandleProcess(Verification):
                         step.get("stepEndTime"),
                         self.process["created_at"],
                     )
+                else:
+                    return True # If the steptimeLimit key does not exist
 
     def verify_access(self, auth_role, user_name, user_type):
         clone_id = None

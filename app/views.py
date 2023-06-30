@@ -539,13 +539,16 @@ def get_document_content(request, document_id):
     for i in all_keys:
         temp_list = []
         for j in my_dict[i]:
-            if j["type"] == "CONTAINER_INPUT":
-                container_list = []
-                for item in j["data"]:
-                    container_list.append({"id": item["id"], "data": item["data"]})
-                temp_list.append({"id": j["id"], "data": container_list})
+            if "data" in j:
+                if j["type"] == "CONTAINER_INPUT":
+                    container_list = []
+                    for item in j["data"]:
+                        container_list.append({"id": item["id"], "data": item["data"]})
+                    temp_list.append({"id": j["id"], "data": container_list})
+                else:
+                    temp_list.append({"id": j["id"], "data": j["data"]})
             else:
-                temp_list.append({"id": j["id"], "data": j["data"]})
+                temp_list.append({"id": j["id"], "data": ""})
         content.append(
             {
                 i: temp_list,
