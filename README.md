@@ -17,6 +17,11 @@ This backend service serves as the WorkflowAI application Backend.
 - The `backend` branch is the most stable branch at any given time, ensure you're working from it.
 - Run `pip install -r requirements.txt` to install dependencies.
 
+### Testing
+
+- Run `python manage.py test app.tests` to run all unit and integration tests inside the `tests` folder.
+- All tests should always pass before opening a Pull Request.
+
 ### Usage
 
 - Run `python manage.py runserver 8001` to start the application.

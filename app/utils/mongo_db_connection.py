@@ -637,7 +637,7 @@ def save_team(
     return post_to_data_service(payload)
 
 
-def authorize(document_id, viewers, process, item_type):
+def authorize(document_id, viewers, process_id, item_type):
     payload = None
     if item_type == "document":
         payload = json.dumps(
@@ -650,7 +650,7 @@ def authorize(document_id, viewers, process, item_type):
                 "update_field": {
                     "auth_viewers": viewers,
                     "document_state": "processing",
-                    "process_id": process,
+                    "process_id": process_id,
                 },
                 "platform": "bangalore",
             }
@@ -666,7 +666,7 @@ def authorize(document_id, viewers, process, item_type):
                 "update_field": {
                     "auth_viewers": viewers,
                     "document_state": "processing",
-                    "process_id": process,
+                    "process_id": process_id,
                 },
                 "platform": "bangalore",
             }
@@ -736,6 +736,25 @@ def update_process(process_id, steps, state):
                 "_id": process_id,
             },
             "update_field": {"process_steps": steps, "processing_state": state},
+            "platform": "bangalore",
+        }
+    )
+    return post_to_data_service(payload)
+
+
+def update_process_with_links(process_id, steps, state, links):
+    payload = json.dumps(
+        {
+            **WF_PROCESS_DICT,
+            "command": "update",
+            "field": {
+                "_id": process_id,
+            },
+            "update_field": {
+                "process_steps": steps,
+                "processing_state": state,
+                "links": links,
+            },
             "platform": "bangalore",
         }
     )
@@ -1132,3 +1151,79 @@ def process_folders_to_item(ids, folder_id, add_item_to_folder):
 
     for process in processes:
         process.join()
+
+
+def delete_items_in_folder(item_id, folder_id, item_type):
+    old_folder = get_folder_object(folder_id)
+    old_data = old_folder.get("data")
+    if item_type == "template":
+        new_data = [
+            {k: v for k, v in item.items() if not (k == "template_id" and v == item_id)}
+            for item in old_data
+            if item
+        ]
+        old_template = get_template_object(item_id)
+        old_template["folders"] = old_template.get("folders")
+        if old_template["folders"] is not None:
+            old_template["folders"].remove(folder_id)
+        new_folder = old_template["folders"]
+        payload = json.dumps(
+            {
+                **TEMPLATE_CONNECTION_DICT,
+                "command": "update",
+                "field": {
+                    "_id": item_id,
+                },
+                "update_field": {
+                    "folders": new_folder,
+                },
+                "platform": "bangalore",
+            }
+        )
+        post_to_data_service(payload)
+    if item_type == "document":
+        new_data = [
+            {k: v for k, v in item.items() if not (k == "document_id" and v == item_id)}
+            for item in old_data
+            if item
+        ]
+        old_document = get_document_object(item_id)
+        old_document["folders"] = old_document.get("folders")
+        if old_document["folders"] is not None:
+            old_document["folders"].remove(folder_id)
+        new_folder = old_document["folders"]
+        payload = json.dumps(
+            {
+                **DOCUMENT_CONNECTION_DICT,
+                "command": "update",
+                "field": {
+                    "_id": item_id,
+                },
+                "update_field": {
+                    "folders": new_folder,
+                },
+                "platform": "bangalore",
+            }
+        )
+        post_to_data_service(payload)
+
+    new_data = [d for d in new_data if d]
+
+    payload = json.dumps(
+        {
+            **FOLDER_CONNECTION_DICT,
+            "command": "update",
+            "field": {
+                "_id": folder_id,
+            },
+            "update_field": {
+                "eventId": get_event_id()["event_id"],
+                "data": new_data,
+                "created_by": old_folder["created_by"],
+                "company_id": old_folder["company_id"],
+                "folder_name": old_folder["folder_name"],
+            },
+            "platform": "bangalore",
+        }
+    )
+    return post_to_data_service(payload)

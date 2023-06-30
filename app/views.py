@@ -12,7 +12,11 @@ from django.core.cache import cache
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from threading import Thread
-from app.processing import HandleProcess, Process, Background
+from app.processing import (
+    HandleProcess,
+    Process,
+    Background,
+)
 from app.utils import checks, notification_cron
 from app.utils.helpers import (
     access_editor,
@@ -30,6 +34,7 @@ from app.utils.mongo_db_connection import (
     get_folder_list,
     add_document_to_folder,
     add_template_to_folder,
+    delete_items_in_folder,
     delete_document,
     delete_process,
     delete_template,
@@ -199,53 +204,51 @@ def get_process_link(request, process_id):
 @api_view(["POST"])
 def process_verification(request):
     """verification of a process step access and checks that duplicate document based on a step."""
-    try:
-        user_type = request.data["user_type"]
-        auth_user = request.data["auth_username"]
-        auth_role = request.data["auth_role"]
-        auth_portfolio = request.data["auth_portfolio"]
-        token = request.data["token"]
-        org_name = request.data["org_name"]
-        link_object = get_link_object(token)
-        if user_type == "team" or user_type == "user":
-            if (
-                link_object["user_name"] != auth_user
-                or link_object["auth_portfolio"] != auth_portfolio
-            ):
-                return Response(
-                    "User Logged in is not part of this process",
-                    status.HTTP_401_UNAUTHORIZED,
-                )
-        process = get_process_object(link_object["process_id"])
-        process["org_name"] = org_name
-        handler = HandleProcess(process)
-        if not handler.verify_location(
-            auth_role,
-            {
-                "city": request.data["city"],
-                "country": request.data["country"],
-                "continent": request.data["continent"],
-            },
+    user_type = request.data["user_type"]
+    auth_user = request.data["auth_username"]
+    auth_role = request.data["auth_role"]
+    auth_portfolio = request.data["auth_portfolio"]
+    token = request.data["token"]
+    org_name = request.data["org_name"]
+    link_object = get_link_object(token)
+    if user_type == "team" or user_type == "user":
+        if (
+            link_object["user_name"] != auth_user
+            or link_object["auth_portfolio"] != auth_portfolio
         ):
             return Response(
-                "access to this document not allowed from this location",
-                status.HTTP_400_BAD_REQUEST,
+                "User Logged in is not part of this process",
+                status.HTTP_401_UNAUTHORIZED,
             )
-        if not handler.verify_display(auth_role):
-            return Response(
-                "display rights set do not allow access to this document",
-                status.HTTP_400_BAD_REQUEST,
-            )
-        # if not handler.verify_time(auth_role):
-        #     return Response(
-        #         "time limit for access to this document has elapsed",
-        #         status.HTTP_400_BAD_REQUEST,
-        #     )
-        editor_link = handler.verify_access(auth_role, auth_user, user_type)
-        if editor_link:
-            return Response(editor_link, status.HTTP_200_OK)
-    except Exception as e:
-        print(e)
+    process = get_process_object(link_object["process_id"])
+    process["org_name"] = org_name
+    handler = HandleProcess(process)
+    if not handler.verify_location(
+        auth_role,
+        {
+            "city": request.data["city"],
+            "country": request.data["country"],
+            "continent": request.data["continent"],
+        },
+    ):
+        return Response(
+            "access to this document not allowed from this location",
+            status.HTTP_400_BAD_REQUEST,
+        )
+    if not handler.verify_display(auth_role):
+        return Response(
+            "display rights set do not allow access to this document",
+            status.HTTP_400_BAD_REQUEST,
+    )
+    if not handler.verify_time(auth_role):
+        return Response(
+            "time limit for access to this document has elapsed",
+            status.HTTP_400_BAD_REQUEST,
+        )
+    editor_link = handler.verify_access(auth_role, auth_user, user_type)
+    if editor_link:
+        return Response(editor_link, status.HTTP_200_OK)
+    else:
         return Response(
             "access to this document is denied at this time!",
             status.HTTP_400_BAD_REQUEST,
@@ -537,13 +540,16 @@ def get_document_content(request, document_id):
     for i in all_keys:
         temp_list = []
         for j in my_dict[i]:
-            if j["type"] == "CONTAINER_INPUT":
-                container_list = []
-                for item in j["data"]:
-                    container_list.append({"id": item["id"], "data": item["data"]})
-                temp_list.append({"id": j["id"], "data": container_list})
+            if "data" in j:
+                if j["type"] == "CONTAINER_INPUT":
+                    container_list = []
+                    for item in j["data"]:
+                        container_list.append({"id": item["id"], "data": item["data"]})
+                    temp_list.append({"id": j["id"], "data": container_list})
+                else:
+                    temp_list.append({"id": j["id"], "data": j["data"]})
             else:
-                temp_list.append({"id": j["id"], "data": j["data"]})
+                temp_list.append({"id": j["id"], "data": ""})
         content.append(
             {
                 i: temp_list,
@@ -571,7 +577,7 @@ def document_detail(request, document_id):
     editor_link = access_editor(document_id, "document")
     if not editor_link:
         return Response(status.HTTP_500_INTERNAL_SERVER_ERROR)
-    return Response(editor_link, status.HTTP_201_CREATED)
+    return Response(editor_link, status.HTTP_200_OK)
 
 
 @api_view(["GET"])
@@ -601,7 +607,7 @@ def archives(request):
                 "Failed to move workflow to archives",
                 status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
-        except Exception  as e:
+        except Exception as e:
             return Response(
                 "Invalid response data", status.HTTP_500_INTERNAL_SERVER_ERROR
             )
@@ -617,7 +623,7 @@ def archives(request):
                 "Failed to move document to archives",
                 status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
-        except Exception  as e:
+        except Exception as e:
             return Response(
                 "Invalid response data", status.HTTP_500_INTERNAL_SERVER_ERROR
             )
@@ -632,7 +638,7 @@ def archives(request):
                 "Failed to move template to archives",
                 status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
-        except Exception  as e:
+        except Exception as e:
             return Response(
                 "Invalid response data", status.HTTP_500_INTERNAL_SERVER_ERROR
             )
@@ -647,7 +653,7 @@ def archives(request):
                 "Failed to move process to archives",
                 status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
-        except Exception  as e:
+        except Exception as e:
             return Response(
                 "Invalid response data", status.HTTP_500_INTERNAL_SERVER_ERROR
             )
@@ -661,7 +667,7 @@ def archives(request):
                 "Failed to move process to archives",
                 status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
-        except Exception  as e:
+        except Exception as e:
             print(e)
             return Response(
                 "Invalid response data", status.HTTP_500_INTERNAL_SERVER_ERROR
@@ -1266,7 +1272,7 @@ def folder_update(request, folder_id):
     if request.method == "GET":
         folder_details = get_folder_object(folder_id)
         return Response(folder_details, status.HTTP_200_OK)
-    
+
     if request.method == "PUT":
         form = request.data
         if not form:
@@ -1275,20 +1281,19 @@ def folder_update(request, folder_id):
         old_folder = get_folder_object(folder_id)
         old_folder["folder_name"] = form["folder_name"]
         old_folder["data"].extend(items)
-        updt_folder = json.loads(update_folder(folder_id, old_folder))
         document_ids = [item["document_id"] for item in items if "document_id" in item]
         template_ids = [item["template_id"] for item in items if "template_id" in item]
-
         # process all ids
         process_folders_to_item(document_ids, folder_id, add_document_to_folder)
         process_folders_to_item(template_ids, folder_id, add_template_to_folder)
+        updt_folder = json.loads(update_folder(folder_id, old_folder))
 
         if updt_folder["isSuccess"]:
             return Response("Folder Updated", status.HTTP_201_CREATED)
-        return Response(status.HTTP_500_INTERNAL_SERVER_ERROR)
+    return Response(status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
-@api_view(["GET", "PUT"])
+@api_view(["GET"])
 def all_folders(request, company_id):
     """fetches Folders created."""
     data_type = request.query_params.get("data_type", "Real_Data")
@@ -1303,3 +1308,12 @@ def all_folders(request, company_id):
         except:
             return Response(status.HTTP_500_INTERNAL_SERVER_ERROR)
     return Response(folders_list, status.HTTP_200_OK)
+
+
+@api_view(["PUT"])
+def delete_item_from_folder(request, folder_id, item_id):
+    item_type = request.data["item_type"]
+    if request.method == "PUT":
+        res = delete_items_in_folder(item_id, folder_id, item_type)
+        return Response(res + " Item Deleted in Folder", status.HTTP_202_ACCEPTED)
+    return Response(status.HTTP_500_INTERNAL_SERVER_ERROR)
