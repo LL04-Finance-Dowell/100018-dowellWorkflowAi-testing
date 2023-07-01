@@ -180,6 +180,7 @@ class HandleProcess(Verification):
         response = requests.post(
             QRCODE_URL, payload, {"Content-Type": "application/json"}
         )
+        response.json()
         master_link = response["masterlink"]
         master_qrcode = response["qrcode_image_url"]
         return master_link, master_qrcode
