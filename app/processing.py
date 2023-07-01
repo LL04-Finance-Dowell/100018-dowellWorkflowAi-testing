@@ -126,11 +126,9 @@ class HandleProcess:
             "product": "Workflow AI",
         }
 
-    
     def parse_url(params):
         return urllib.parse.urlencode(params)
 
-    
     def generate_qrcode(link):
         """Revert back to prod qr_path before push"""
         qr_path = f"100094.pythonanywhere.com/media/qrcodes/{uuid.uuid4().hex}.png"  # Production
@@ -231,7 +229,6 @@ class HandleProcess:
         utp_code = HandleProcess.generate_qrcode(utp_link)
         return utp_link, utp_code
 
-    
     def get_editor_link(payload):
         link = requests.post(
             EDITOR_API,
@@ -264,7 +261,6 @@ class HandleProcess:
             clones.extend(public_clone_ids)
         return clones
 
-    
     def generate_public_qrcode(links, company_id):
         master_link = None
         master_qrcode = None
@@ -294,6 +290,8 @@ class HandleProcess:
         steps = self.process["process_steps"]
         process_data = self.process
         process_data["params"] = self.params
+        m_code = None
+        m_link = None
         for step in steps:
             for member in step.get("stepPublicMembers", []):
                 link, qrcode = HandleProcess.user_team_public_data(
@@ -360,9 +358,10 @@ class HandleProcess:
                 self.process["company_id"],
             )
         ).start()
-        m_link, m_code = HandleProcess.generate_public_qrcode(
-            public_links, self.process["company_id"]
-        )
+        if public_links:
+            m_link, m_code = HandleProcess.generate_public_qrcode(
+                public_links, self.process["company_id"]
+            )
         return {"links": links, "master_link": m_link, "master_code": m_code}
 
     def verify_location(self, auth_role, location_data):
