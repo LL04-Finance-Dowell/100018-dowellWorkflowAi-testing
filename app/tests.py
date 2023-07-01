@@ -1,23 +1,17 @@
+import sys
 import unittest
 from datetime import datetime, timedelta
-import sys
-from app.utils.checks import time_limit_right
+from unittest.mock import patch
 
+from django.test import Client, RequestFactory, TestCase, client
+from django.urls import reverse
+from rest_framework import status
 from rest_framework.test import APIClient, APIRequestFactory, APITestCase
-from django.test import TestCase, RequestFactory
-from django.urls import reverse
-from rest_framework import status
-from django.test import Client
-from unittest.mock import patch
-from . views import *
-from rest_framework.test import APIClient
-from django.test import TestCase, RequestFactory, client
-from rest_framework import status
-from django.urls import reverse
-from rest_framework.test import APITestCase, APIClient, APIRequestFactory
-from unittest.mock import patch
 
+from app.checks import time_limit_right
 from app.views import archives, create_folder, delete_item_from_folder, folder_update
+
+from .views import *
 
 
 class ProcessTest(APITestCase):
@@ -45,14 +39,6 @@ class ProcessTest(APITestCase):
         pass
 
 
-
-class CreateTemplateTestCase(TestCase):
-    def setUp(self):
-        self.factory = RequestFactory()
-
-    def test_create_template_success(self):
-        url = reverse('create_template')
-        
 class TestTimeLimitRight(unittest.TestCase):
     # Before running the tests, modify the variale "start"
     # to a relevant, relative time because current_time is
@@ -135,69 +121,49 @@ class TestTimeLimitRight(unittest.TestCase):
         self.assertFalse(result)
 
 
-if __name__ == "__main__":
-    unittest.main()
-
-
 class CreateFolderTestCase(TestCase):
     def setUp(self):
         self.client = RequestFactory()
 
     def create_folder_test(self):
         url = reverse("create_folder")
-
         data = {
             "created_by": "WorkflowAiedwin",
             "company_id": "6390b313d77dc467630713f2",
-            "data_type": "Real_Data"
+            "data_type": "Real_Data",
         }
         request = self.factory.post(url, data)
-
-
-        with patch('app.views.create_template') as mock_create_template:
-            mock_create_template.return_value = {"editor_link": "example_link", "_id": "example_id"}
-
+        with patch("app.views.create_template") as mock_create_template:
+            mock_create_template.return_value = {
+                "editor_link": "example_link",
+                "_id": "example_id",
+            }
             response = create_template(request)
-
             self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-            self.assertIn('editor_link', response.data)
-            self.assertIn('_id', response.data)
+            self.assertIn("editor_link", response.data)
+            self.assertIn("_id", response.data)
 
     def test_create_template_invalid_company(self):
-        url = reverse('create_template')
-
+        url = reverse("create_template")
         data = {
             "created_by": "WorkflowAiedwin",
             "company_id": "",
-            "data_type": "Real_Data"
+            "data_type": "Real_Data",
         }
         request = self.factory.post(url, data)
-
-
-        with patch('app.views.create_template') as mock_create_template:
+        with patch("app.views.create_template") as mock_create_template:
             mock_create_template.return_value = {"error": "Invalid company ID"}
-
             response = create_template(request)
-
             self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-    
+
     def test_create_template_failure(self):
-        url = reverse('create_template')
-        data = {
-            "created_by": "",
-            "company_id": "",
-            "data_type": "Real_Data"
-        }
+        url = reverse("create_template")
+        data = {"created_by": "", "company_id": "", "data_type": "Real_Data"}
         request = self.factory.post(url, data)
-
-        with patch('app.views.create_template') as mock_create_template:
+        with patch("app.views.create_template") as mock_create_template:
             mock_create_template.return_value = {"error": "Invalid data"}
-
             response = create_template(request)
-
             self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-
-
 
 
 class TemplateDetailTest(unittest.TestCase):
@@ -206,27 +172,18 @@ class TemplateDetailTest(unittest.TestCase):
 
     def test_template_detail(self):
         template_id = "64101d8cd41764723cc8bda8"
-
-        url = reverse('template_detail', args=[template_id])
-
-
-        with patch('app.views.template_detail') as mock_template_detail:
+        url = reverse("template_detail", args=[template_id])
+        with patch("app.views.template_detail") as mock_template_detail:
             mock_template_detail.return_value = {"example_data": "example"}
-
             response = self.client.get(url)
-
             self.assertEqual(response.status_code, 201)
 
     def test_template_invalid_template_id(self):
         template_id = "64101d8cd417647"
-
-        url = reverse('template_detail', args=[template_id])
-
-        with patch('app.views.template_detail') as mock_template_detail:
+        url = reverse("template_detail", args=[template_id])
+        with patch("app.views.template_detail") as mock_template_detail:
             mock_template_detail.return_value = {"error": "Invalid template ID"}
-
             response = self.client.get(url)
-
             self.assertEqual(response.status_code, 400)
 
 
@@ -236,29 +193,24 @@ class TemplateObjectTestCase(TestCase):
 
     def test_template_object_success(self):
         template_id = "64101d8cd41764723cc8bda8"
-        url = reverse('template_object', args=[template_id])
+        url = reverse("template_object", args=[template_id])
         request = self.factory.get(url)
-
-        with patch('app.views.validate_id') as mock_validate_id, \
-                patch('app.views.get_template_object') as mock_get_template_object:
+        with patch("app.views.validate_id") as mock_validate_id, patch(
+            "app.views.get_template_object"
+        ) as mock_get_template_object:
             mock_validate_id.return_value = True
             mock_get_template_object.return_value = {"template_data": "example"}
-
             response = template_object(request, template_id)
-
             self.assertEqual(response.status_code, status.HTTP_200_OK)
             self.assertEqual(response.data, {"template_data": "example"})
 
     def test_template_object_invalid_id(self):
         template_id = "64101d8cd417"
-        url = reverse('template_object', args=[template_id])
+        url = reverse("template_object", args=[template_id])
         request = self.factory.get(url)
-
-        with patch('app.views.validate_id') as mock_validate_id:
+        with patch("app.views.validate_id") as mock_validate_id:
             mock_validate_id.return_value = False
-
             response = template_object(request, template_id)
-
             self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
             self.assertEqual(response.data, "Something went wrong!")
 
@@ -269,16 +221,14 @@ class ApproveTestCase(TestCase):
 
     def test_approve_success(self):
         template_id = "64101d8cd41764723cc8bda8"
-        url = reverse('approve', args=[template_id])
+        url = reverse("approve", args=[template_id])
         request = self.factory.put(url)
-
-        with patch('app.utils.helpers.validate_id') as mock_validate_id, \
-                patch('app.utils.mongo_db_connection.update_template_approval') as mock_update_template_approval:
+        with patch("app.utils.helpers.validate_id") as mock_validate_id, patch(
+            "app.utils.mongo_db_connection.update_template_approval"
+        ) as mock_update_template_approval:
             mock_validate_id.return_value = True
             mock_update_template_approval.return_value = '{"isSuccess": true}'
-
             response = approve(request, template_id)
-
             print(f"here is rhe tesdjwdw {response}")
 
             self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -286,41 +236,33 @@ class ApproveTestCase(TestCase):
 
     def test_approve_invalid_id(self):
         template_id = "64101d8"
-        url = reverse('approve', args=[template_id])
+        url = reverse("approve", args=[template_id])
         request = self.factory.put(url)
-
-        with patch('app.views.validate_id') as mock_validate_id:
+        with patch("app.views.validate_id") as mock_validate_id:
             mock_validate_id.return_value = False
-
             response = approve(request, template_id)
-
             self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
             self.assertEqual(response.data, "Something went wrong!")
 
     def test_approve_failure(self):
         template_id = "64101d8cd41764"
-        url = reverse('approve', args=[template_id])
+        url = reverse("approve", args=[template_id])
         request = self.factory.put(url)
-
-        with patch('app.utils.helpers.validate_id') as mock_validate_id, \
-                patch('app.utils.mongo_db_connection.update_template_approval') as mock_update_template_approval:
+        with patch("app.utils.helpers.validate_id") as mock_validate_id, patch(
+            "app.utils.mongo_db_connection.update_template_approval"
+        ) as mock_update_template_approval:
             mock_validate_id.return_value = True
             mock_update_template_approval.return_value = '{"isSuccess": false}'
-
             response = approve(request, template_id)
-
             self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
             self.assertEqual(response.data, "Something went wrong!")
-
 
         with patch("app.views.create_folder") as mock_create_folder:
             mock_create_folder.return_value = {
                 "_id": "6497329d32ce85526e1d2fb3",
                 "message": "Untitled Folder Created",
             }
-
             response = create_folder(request)
-
             self.assertEqual(response.status_code, status.HTTP_201_CREATED)
             self.assertIn("message", response.data)
             self.assertIn("_id", response.data)
@@ -332,10 +274,10 @@ class ApproveTestCase(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.data["folder_name"], "Untitled folder")
 
+
 class UpdateFolderTestCase(TestCase):
     def update_folder_test_success(self):
         url = reverse(folder_update)
-
         data = {
             "created_by": "WorkflowAiedwin",
             "company_id": "6390b313d77dc467630713f2",
@@ -386,13 +328,9 @@ class ArchiveFolderTestCase(TestCase):
     def send_folder_to_archive_test(self):
         """Send document to archive (Archive_Data)"""
         folder_id = self.folder_id
-
         url = reverse(archives)
         data = {"item_id": folder_id, "item_type": "folder"}
         request = self.factory.post(url, data)
-
         response = archives(request)
-
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data, "folder moved to archives")
-

@@ -17,15 +17,15 @@ from app.constants import (
     MANAGEMENT_REPORTS_LIST,
     PROCESS_CONNECTION_LIST,
     QR_CONNECTION_DICT,
-    QR_ID_CONNECTION_DICT,
-    QR_ID_CONNECTION_LIST,
+    QR_CONNECTION_DICT,
+    QR_CONNECTION_LIST,
     TEMPLATE_CONNECTION_DICT,
     TEMPLATE_CONNECTION_LIST,
     WF_AI_SETTING_DICT,
     WF_AI_SETTING_LIST,
     WF_CONNECTION_DICT,
     WF_CONNECTION_LIST,
-    WF_PROCESS_DICT,
+    PROCESS_CONNECTION_DICT,
 )
 
 dd = datetime.now()
@@ -93,7 +93,7 @@ def get_links_object_by_process_id(process_id):
 
 def get_link_object(unique_hash):
     link_ob = get_data_from_data_service(
-        *QR_ID_CONNECTION_LIST, "find", {"unique_hash": str(unique_hash)}
+        *QR_CONNECTION_LIST, "find", {"unique_hash": str(unique_hash)}
     )
     return link_ob
 
@@ -158,14 +158,14 @@ def get_folder_list(company_id, data_type):
 
 def get_uuid_object(uuid_hash):
     uuid = get_data_from_data_service(
-        *QR_ID_CONNECTION_LIST, "find", {"uuid_hash": uuid_hash}
+        *QR_CONNECTION_LIST, "find", {"uuid_hash": uuid_hash}
     )
     return uuid
 
 
 def get_uuid(process_id):
     return get_data_from_data_service(
-        *QR_ID_CONNECTION_LIST, "fetch", {"process_id": process_id}
+        *QR_CONNECTION_LIST, "fetch", {"process_id": process_id}
     )
 
 
@@ -337,7 +337,7 @@ def save_process(
 ):
     payload = json.dumps(
         {
-            **WF_PROCESS_DICT,
+            **PROCESS_CONNECTION_DICT,
             "command": "insert",
             "field": {
                 "eventId": get_event_id()["event_id"],
@@ -579,7 +579,7 @@ def save_uuid_hash(
 ):
     payload = json.dumps(
         {
-            **QR_ID_CONNECTION_DICT,
+            **QR_CONNECTION_DICT,
             "command": "insert",
             "field": {
                 "eventId": get_event_id()["event_id"],
@@ -730,7 +730,7 @@ def finalize_item(item_id, state, item_type):
 def update_process(process_id, steps, state):
     payload = json.dumps(
         {
-            **WF_PROCESS_DICT,
+            **PROCESS_CONNECTION_DICT,
             "command": "update",
             "field": {
                 "_id": process_id,
@@ -745,7 +745,7 @@ def update_process(process_id, steps, state):
 def update_process_with_links(process_id, steps, state, links):
     payload = json.dumps(
         {
-            **WF_PROCESS_DICT,
+            **PROCESS_CONNECTION_DICT,
             "command": "update",
             "field": {
                 "_id": process_id,
@@ -916,7 +916,7 @@ def update_workflow_setting(wf_setting_id, data):
 def update_uuid_object(uuid_hash):
     payload = json.dumps(
         {
-            **QR_ID_CONNECTION_DICT,
+            **QR_CONNECTION_DICT,
             "command": "update",
             "field": {"uuid_hash": uuid_hash},
             "update_field": {"status": False},
@@ -1047,7 +1047,7 @@ def delete_workflow(workflow_id, data_type):
 def delete_process(process_id, data_type):
     payload = json.dumps(
         {
-            **WF_PROCESS_DICT,
+            **PROCESS_CONNECTION_DICT,
             "command": "update",
             "field": {
                 "_id": process_id,

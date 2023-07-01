@@ -1,48 +1,42 @@
-import os
 import ast
 import json
+import os
 import re
-from git.repo import Repo
-from crontab import CronTab
 
 import requests
-import multiprocessing
-from rest_framework import status
+from crontab import CronTab
 from django.core.cache import cache
+from git.repo import Repo
+from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from threading import Thread
-from app.processing import (
-    HandleProcess,
-    Process,
-    Background,
-)
-from app.utils import checks, notification_cron
-from app.utils.helpers import (
+from app import checks
+
+from app.processing import Background, HandleProcess, Process
+from app.utils import notification_cron
+from app.helpers import (
     access_editor,
     cloning_process,
     create_favourite,
     list_favourites,
+    register_user_access,
     remove_favourite,
     validate_id,
-    delete_notification,
-    register_user_access,
 )
-from django.core.cache import cache
-from app.utils.mongo_db_connection import (
-    process_folders_to_item,
-    get_folder_list,
+from app.mongo_db_connection import (
     add_document_to_folder,
     add_template_to_folder,
-    delete_items_in_folder,
     delete_document,
+    delete_folder,
+    delete_items_in_folder,
     delete_process,
     delete_template,
     delete_workflow,
-    delete_folder,
     finalize_item,
     get_document_list,
     get_document_object,
+    get_folder_list,
+    get_folder_object,
     get_link_object,
     get_links_object_by_process_id,
     get_process_list,
@@ -53,21 +47,21 @@ from app.utils.mongo_db_connection import (
     get_template_object,
     get_wf_list,
     get_wf_object,
-    get_workflow_setting_object,
     get_wfai_setting_list,
-    get_folder_object,
+    get_workflow_setting_object,
+    process_folders_to_item,
     save_document,
     save_folder,
     save_team,
     save_template,
     save_workflow,
     save_workflow_setting,
+    update_folder,
+    update_process,
     update_team_data,
     update_template_approval,
     update_wf,
-    update_process,
     update_workflow_setting,
-    update_folder,
 )
 
 from .constants import EDITOR_API
@@ -86,7 +80,8 @@ def webhook(request):
 
 @api_view(["GET"])
 def home(request):
-    return Response("WorkflowAI Service is running...", status.HTTP_200_OK)
+    "Is server down? I though not!"
+    return Response("If you are seeing this :), the server is !down.", status.HTTP_200_OK)
 
 
 @api_view(["POST"])
@@ -94,7 +89,6 @@ def document_processing(request):
     """processing is determined by action picked by user."""
     if not request.data:
         return Response("You are missing something!", status.HTTP_400_BAD_REQUEST)
-
     process = Process(
         request.data["workflows"],
         request.data["created_by"],
@@ -173,7 +167,6 @@ def document_processing(request):
         if res["isSuccess"]:
             return Response("Process has been cancelled!", status.HTTP_200_OK)
         return Response(status.HTTP_500_INTERNAL_SERVER_ERROR)
-
     if action == "pause_processing_after_completing_ongoing_step":
         return Response(
             "This Option is currently in development",
@@ -188,14 +181,11 @@ def document_processing(request):
 @api_view(["POST"])
 def get_process_link(request, process_id):
     """get a link process for person having notifications"""
-    links_info = get_links_object_by_process_id(process_id)[0]
+    links_info = get_links_object_by_process_id(process_id)
     if not links_info:
         return Response("Verification link unavailable", status.HTTP_400_BAD_REQUEST)
     user = request.data["user_name"]
-    if not links_info:
-        return Response(status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-    for link in links_info["links"]:
+    for link in links_info[0]["links"]:
         if user in link:
             return Response(link[user], status.HTTP_200_OK)
     return Response("user is not part of this process", status.HTTP_401_UNAUTHORIZED)
@@ -239,7 +229,7 @@ def process_verification(request):
         return Response(
             "display rights set do not allow access to this document",
             status.HTTP_400_BAD_REQUEST,
-    )
+        )
     if not handler.verify_time(auth_role):
         return Response(
             "time limit for access to this document has elapsed",
@@ -259,7 +249,7 @@ def process_verification(request):
 def finalize_or_reject(request, process_id):
     """After access is granted and the user has made changes on a document."""
     if not request.data:
-        return Response("You are missing something", status.HTTP_400_BAD_REQUEST)
+        return Response("you are missing something", status.HTTP_400_BAD_REQUEST)
     item_id = request.data["item_id"]
     item_type = request.data["item_type"]
     role = request.data["role"]
@@ -267,19 +257,21 @@ def finalize_or_reject(request, process_id):
     state = request.data["action"]
     check, current_state = checks.is_finalized(item_id, item_type)
     if check and current_state != "processing":
-        return Response(f"Already processed as {current_state}!", status.HTTP_200_OK)
-    finalize_item(item_id, state, item_type)
-    process = get_process_object(process_id)
-    background = Background(process, item_type, item_id, role, user)
-    background.processing()
-    return Response("document processed successfully", status.HTTP_200_OK)
+        return Response(f"already processed as {current_state}!", status.HTTP_200_OK)
+    res = finalize_item(item_id, state, item_type)
+    if res["isSuccess"]:
+        process = get_process_object(process_id)
+        Background(process, item_type, item_id, role, user).processing()
+        return Response("document processed successfully", status.HTTP_200_OK)
+    else:
+        return Response("an error occurred during processing", status.HTTP_400_BAD_REQUEST)
 
 
 @api_view(["POST"])
 def trigger_process(request):
     """Get process and begin processing it."""
     if not validate_id(request.data["process_id"]):
-        return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
+        return Response("something went wrong!", status.HTTP_400_BAD_REQUEST)
     process = get_process_object(request.data["process_id"])
     action = request.data["action"]
     state = process["processing_state"]

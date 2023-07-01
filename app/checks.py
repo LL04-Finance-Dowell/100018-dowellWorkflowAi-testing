@@ -1,5 +1,5 @@
 from datetime import datetime, timedelta
-from app.utils.mongo_db_connection import (
+from app.mongo_db_connection import (
     get_document_object,
     get_link_object,
     get_template_object,
@@ -111,8 +111,9 @@ def step_processing_order(order, process_id, role):
                     for member_obj in public_members:
                         member = member_obj["member"]
                         register_user_access(process_steps, role, member)
-            except ValueError:
-                raise ValueError('Sorry! You cannot access this document just yet!')
+            except Exception as e:
+                print(e)
+                return
         elif order == 'team_public_user':
             try:
                 if len(team_members) > 0:
@@ -127,8 +128,9 @@ def step_processing_order(order, process_id, role):
                     for member_obj in user_members:
                         member = member_obj["member"]
                         register_user_access(process_steps, role, member)
-            except ValueError:
-                raise ValueError('Sorry! You cannot access this document just yet!')
+            except Exception as e:
+                print(e)
+                return
         elif order == 'user_team_public':
             try:
                 if len(user_members) > 0:
@@ -143,8 +145,9 @@ def step_processing_order(order, process_id, role):
                     for member_obj in public_members:
                         member = member_obj["member"]
                         register_user_access(process_steps, role, member)
-            except ValueError:
-                raise ValueError('Sorry! You cannot access this document just yet!')
+            except Exception as e:
+                print(e)
+                return
         elif order == 'user_public_team':
             try:
                 if len(user_members) > 0:
@@ -159,8 +162,9 @@ def step_processing_order(order, process_id, role):
                     for member_obj in team_members:
                         member = member_obj["member"]
                         register_user_access(process_steps, role, member)
-            except ValueError:
-                raise ValueError('Sorry! You cannot access this document just yet!')
+            except Exception as e:
+                print(e)
+                return
         elif order == 'public_user_team':
             try:
                 if len(public_members) > 0:
@@ -175,8 +179,9 @@ def step_processing_order(order, process_id, role):
                     for member_obj in team_members:
                         member = member_obj["member"]
                         register_user_access(process_steps, role, member)
-            except ValueError:
-                raise ValueError('Sorry! You cannot access this document just yet!')
+            except Exception as e:
+                print(e)
+                return
         elif order == 'public_team_user':
             try:
                 if len(public_members) > 0:
@@ -191,22 +196,18 @@ def step_processing_order(order, process_id, role):
                     for member_obj in user_members:
                         member = member_obj["member"]
                         register_user_access(process_steps, role, member)
-            except ValueError:
-                raise ValueError('Sorry! You cannot access this document just yet!')
+            except Exception as e:
+                print(e)
+                return
 
 
 def user_presence(token, user_name, portfolio):
     """Checking user presence in process links map"""
-
     link_info = get_link_object(unique_hash=token)
     if link_info["user_name"] == user_name and link_info["auth_portfolio"] == portfolio:
         return True
     return None, link_info["process_id"], link_info["auth_role"]
 
-
-# def is_public_person_valid(qrid, org_name):
-#     valid = public_login(qrid, org_name)
-#     return valid
 
 
 def is_wf_setting_exist(comp_id, org_name,data_type):

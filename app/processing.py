@@ -1,23 +1,19 @@
 import json
-from threading import Thread
-import uuid
 import urllib.parse
+import uuid
+from threading import Thread
+
 import qrcode
 import requests
 
 from app.constants import EDITOR_API, NOTIFICATION_API, QRCODE_URL, VERIFICATION_LINK
-from app.utils.checks import (
-    display_right,
-    location_right,
-    time_limit_right,
-)
-from app.utils.helpers import (
+from app.checks import display_right, location_right, time_limit_right
+from app.helpers import (
     cloning_document,
-    delete_notification,
     register_public_login,
     register_user_access,
 )
-from app.utils.mongo_db_connection import (
+from app.mongo_db_connection import (
     authorize,
     finalize_item,
     get_document_object,
@@ -27,12 +23,9 @@ from app.utils.mongo_db_connection import (
     save_uuid_hash,
     update_process,
 )
-from app.verification import Verification
 
 
 class Process:
-    process_kind = "original"
-
     def __init__(
         self,
         workflows,
@@ -74,7 +67,7 @@ class Process:
                 self.portfolio,
                 self.workflow_ids,
                 self.process_type,
-                Process.process_kind,
+                "original",
             )
         )
         if res["isSuccess"]:
@@ -88,7 +81,7 @@ class Process:
                 "parent_item_id": self.parent_id,
                 "_id": res["inserted_id"],
                 "process_type": self.process_type,
-                "process_kind": Process.process_kind,
+                "process_kind": "original",
                 "org_name": self.org_name,
             }
 
@@ -106,7 +99,7 @@ class Process:
                 self.portfolio,
                 self.workflow_ids,
                 self.process_type,
-                Process.process_kind,
+                "original",
             )
         )
         if res["isSuccess"]:
@@ -120,7 +113,7 @@ class Process:
                 "parent_item_id": self.parent_id,
                 "_id": res["inserted_id"],
                 "process_type": self.process_type,
-                "process_kind": Process.process_kind,
+                "process_kind": "original",
                 "org_name": self.org_name,
             }
 
@@ -133,15 +126,15 @@ class HandleProcess:
             "product": "Workflow AI",
         }
 
-    @staticmethod
-    def parse_url(params) -> str:
+    
+    def parse_url(params):
         return urllib.parse.urlencode(params)
 
-    @staticmethod
-    def generate_qrcode(link) -> str:
+    
+    def generate_qrcode(link):
         """Revert back to prod qr_path before push"""
-        # qr_path = f"100094.pythonanywhere.com/media/qrcodes/{uuid.uuid4().hex}.png"  # Production
-        qr_path = f"media/qrcodes/{uuid.uuid4().hex}.png"  # On dev
+        qr_path = f"100094.pythonanywhere.com/media/qrcodes/{uuid.uuid4().hex}.png"  # Production
+        # qr_path = f"media/qrcodes/{uuid.uuid4().hex}.png"  # On dev
         qr_code = qrcode.QRCode()
         qr_code.add_data(link)
         qr_code.make()
@@ -150,8 +143,7 @@ class HandleProcess:
         qr_img.save(qr_path)
         return f"https://{qr_path}"
 
-    @staticmethod
-    def notify(auth_name, doc_id, portfolio, company_id, link, org_name) -> None:
+    def notify(auth_name, doc_id, portfolio, company_id, link, org_name):
         response = requests.post(
             NOTIFICATION_API,
             json.dumps(
@@ -162,7 +154,7 @@ class HandleProcess:
                     "company_id": company_id,
                     "link": link,
                     "org_name": org_name,
-                    "product_ame": "Workflow AI",
+                    "product_name": "Workflow AI",
                     "title": "Document to Sign",
                     "message": "You have a document to sign.",
                     "duration": "no limit",
@@ -171,7 +163,8 @@ class HandleProcess:
             ),
             {"Content-Type": "application/json"},
         )
-        print(response.status_code)
+        if response.status_code == 201:
+            print("notification sent")
         return
 
     def public_bulk_data(process_data, auth_name, step_role, portfolio, user_type):
@@ -204,7 +197,8 @@ class HandleProcess:
         HandleProcess.notify(
             auth_name, item_id, portfolio, company_id, new_link, org_name
         )
-        return new_link, HandleProcess.generate_qrcode(new_link)
+        new_code = HandleProcess.generate_qrcode(new_link)
+        return new_link, new_code
 
     def user_team_public_data(process_data, auth_name, step_role, portfolio, user_type):
         hash = uuid.uuid4().hex
@@ -234,10 +228,11 @@ class HandleProcess:
         HandleProcess.notify(
             auth_name, item_id, portfolio, company_id, utp_link, org_name
         )
-        return utp_link, HandleProcess.generate_qrcode(utp_link)
+        utp_code = HandleProcess.generate_qrcode(utp_link)
+        return utp_link, utp_code
 
-    @staticmethod
-    def get_editor_link(payload) -> str:
+    
+    def get_editor_link(payload):
         link = requests.post(
             EDITOR_API,
             data=json.dumps(payload),
@@ -245,7 +240,6 @@ class HandleProcess:
         )
         return link.json()
 
-    @staticmethod
     def prepare_document_for_step_one_users(step, parent_item_id, process_id):
         clones = []
         users = [
@@ -270,7 +264,7 @@ class HandleProcess:
             clones.extend(public_clone_ids)
         return clones
 
-    @staticmethod
+    
     def generate_public_qrcode(links, company_id):
         master_link = None
         master_qrcode = None
@@ -283,7 +277,7 @@ class HandleProcess:
             }
         )
         response = requests.post(
-            QRCODE_URL, payload, {"Content-Type": "application/json"}
+            QRCODE_URL, data=payload, headers={"Content-Type": "application/json"}
         )
         if response.status_code == 201:
             response = json.loads(response.text)
@@ -384,12 +378,16 @@ class HandleProcess:
                         step.get("stepCity"),
                         location_data["city"],
                     )
+                else:
+                    return True
 
     def verify_display(self, auth_role):
         for step in self.process["process_steps"]:
             if step.get("stepRole") == auth_role:
                 if step.get("stepDisplay"):
                     return display_right(step.get("stepDisplay"))
+                else:
+                    return True
 
     def verify_time(self, auth_role):
         for step in self.process["process_steps"]:
@@ -481,7 +479,6 @@ class Background:
         self.username = username
 
     def processing(self):
-        Thread(target=lambda: delete_notification(self.item_id)).start()
         steps = self.process["process_steps"]
         parent_id = self.process["parent_item_id"]
         process_id = self.process["_id"]

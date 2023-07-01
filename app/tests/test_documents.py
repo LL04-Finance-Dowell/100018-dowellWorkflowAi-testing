@@ -2,7 +2,7 @@ import unittest
 from unittest.mock import patch
 # from datetime import datetime, timedelta
 # import sys
-from app.utils.checks import time_limit_right
+from app.checks import time_limit_right
 from django.test import TestCase, RequestFactory
 from rest_framework.test import APIClient
 from rest_framework import status
