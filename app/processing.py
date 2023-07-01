@@ -1,9 +1,11 @@
 import json
 from threading import Thread
-
+import uuid
+import urllib.parse
+import qrcode
 import requests
 
-from app.constants import EDITOR_API, QRCODE_URL, VERIFICATION_LINK
+from app.constants import EDITOR_API, NOTIFICATION_API, QRCODE_URL, VERIFICATION_LINK
 from app.utils.checks import (
     display_right,
     location_right,
@@ -22,6 +24,7 @@ from app.utils.mongo_db_connection import (
     save_process,
     save_process_links,
     save_process_qrcodes,
+    save_uuid_hash,
     update_process,
 )
 from app.verification import Verification
@@ -122,16 +125,116 @@ class Process:
             }
 
 
-class HandleProcess(Verification):
+class HandleProcess:
     def __init__(self, process):
         self.process = process
-        super().__init__(
-            process["_id"],
-            process["parent_item_id"],
-            process["company_id"],
-            process["process_type"],
-            process["org_name"],
+        self.params = {
+            "org": process["org_name"],
+            "product": "Workflow AI",
+        }
+
+    @staticmethod
+    def parse_url(params) -> str:
+        return urllib.parse.urlencode(params)
+
+    @staticmethod
+    def generate_qrcode(link) -> str:
+        """Revert back to prod qr_path before push"""
+        # qr_path = f"100094.pythonanywhere.com/media/qrcodes/{uuid.uuid4().hex}.png"  # Production
+        qr_path = f"media/qrcodes/{uuid.uuid4().hex}.png"  # On dev
+        qr_code = qrcode.QRCode()
+        qr_code.add_data(link)
+        qr_code.make()
+        qr_color = "black"
+        qr_img = qr_code.make_image(fill_color=qr_color, back_color="#DCDCDC")
+        qr_img.save(qr_path)
+        return f"https://{qr_path}"
+
+    @staticmethod
+    def notify(auth_name, doc_id, portfolio, company_id, link, org_name) -> None:
+        response = requests.post(
+            NOTIFICATION_API,
+            json.dumps(
+                {
+                    "created_by": auth_name,
+                    "documentId": doc_id,
+                    "portfolio": portfolio,
+                    "company_id": company_id,
+                    "link": link,
+                    "org_name": org_name,
+                    "product_ame": "Workflow AI",
+                    "title": "Document to Sign",
+                    "message": "You have a document to sign.",
+                    "duration": "no limit",
+                    "button_status": "",
+                }
+            ),
+            {"Content-Type": "application/json"},
         )
+        print(response.status_code)
+        return
+
+    def public_bulk_data(process_data, auth_name, step_role, portfolio, user_type):
+        hash = uuid.uuid4().hex
+        params = process_data["params"]
+        process_id = process_data["_id"]
+        item_id = process_data["parent_item_id"]
+        org_name = process_data["org_name"]
+        item_type = process_data["process_kind"]
+        company_id = process_data["company_id"]
+        link = f"{VERIFICATION_LINK}/{hash}/"
+        for i in range(0, len(auth_name)):
+            field = auth_name[i]
+            params[f"username[{i}]"] = field
+        params["auth_role"] = step_role
+        params["user_type"] = user_type
+        params["portfolio"] = portfolio
+        encoded_params = HandleProcess.parse_url(params)
+        new_link = f"{link}?{encoded_params}"
+        save_uuid_hash(
+            new_link,
+            process_id,
+            item_id,
+            step_role,
+            auth_name,
+            portfolio,
+            hash,
+            item_type,
+        )
+        HandleProcess.notify(
+            auth_name, item_id, portfolio, company_id, new_link, org_name
+        )
+        return new_link, HandleProcess.generate_qrcode(new_link)
+
+    def user_team_public_data(process_data, auth_name, step_role, portfolio, user_type):
+        hash = uuid.uuid4().hex
+        link = f"{VERIFICATION_LINK}/{hash}/"
+        params = process_data["params"]
+        process_id = process_data["_id"]
+        item_id = process_data["parent_item_id"]
+        org_name = process_data["org_name"]
+        item_type = process_data["process_kind"]
+        company_id = process_data["company_id"]
+        params["username"] = auth_name
+        params["auth_role"] = step_role
+        params["user_type"] = user_type
+        params["portfolio"] = portfolio
+        encoded_param = HandleProcess.parse_url(params)
+        utp_link = f"{link}?{encoded_param}"
+        save_uuid_hash(
+            utp_link,
+            process_id,
+            item_id,
+            step_role,
+            auth_name,
+            portfolio,
+            hash,
+            item_type,
+        )
+        HandleProcess.notify(
+            auth_name, item_id, portfolio, company_id, utp_link, org_name
+        )
+        return utp_link, HandleProcess.generate_qrcode(utp_link)
 
     @staticmethod
     def get_editor_link(payload) -> str:
@@ -169,6 +272,8 @@ class HandleProcess(Verification):
 
     @staticmethod
     def generate_public_qrcode(links, company_id):
+        master_link = None
+        master_qrcode = None
         payload = json.dumps(
             {
                 "qrcode_type": "Link",
@@ -180,9 +285,10 @@ class HandleProcess(Verification):
         response = requests.post(
             QRCODE_URL, payload, {"Content-Type": "application/json"}
         )
-        response = json.loads(response.text)
-        master_link = response["masterlink"]
-        master_qrcode = response["qrcode_image_url"]
+        if response.status_code == 201:
+            response = json.loads(response.text)
+            master_link = response["masterlink"]
+            master_qrcode = response["qrcode_image_url"]
         return master_link, master_qrcode
 
     def start(self):
@@ -192,9 +298,12 @@ class HandleProcess(Verification):
         process_id = self.process["_id"]
         company_id = self.process["company_id"]
         steps = self.process["process_steps"]
+        process_data = self.process
+        process_data["params"] = self.params
         for step in steps:
             for member in step.get("stepPublicMembers", []):
-                link, qrcode = super().user_team_public_data(
+                link, qrcode = HandleProcess.user_team_public_data(
+                    self.process,
                     member["member"],
                     step.get("stepRole"),
                     member["portfolio"],
@@ -203,7 +312,8 @@ class HandleProcess(Verification):
                 links.append({member["member"]: link})
                 qrcodes.append({member["member"]: qrcode})
             for member in step.get("stepTeamMembers", []):
-                link, qrcode = super().user_team_public_data(
+                link, qrcode = HandleProcess.user_team_public_data(
+                    self.process,
                     member["member"],
                     step.get("stepRole"),
                     member["portfolio"],
@@ -212,7 +322,8 @@ class HandleProcess(Verification):
                 links.append({member["member"]: link})
                 qrcodes.append({member["member"]: qrcode})
             for member in step.get("stepUserMembers", []):
-                link, qrcode = super().user_team_public_data(
+                link, qrcode = HandleProcess.user_team_public_data(
+                    self.process,
                     member["member"],
                     step.get("stepRole"),
                     member["portfolio"],
@@ -223,7 +334,8 @@ class HandleProcess(Verification):
             public_users = [m["member"] for m in step.get("stepPublicMembers", [])]
             if public_users:
                 public_portfolio = step.get("stepPublicMembers", [])[0].get("portfolio")
-                link, qrcode = super().public_bulk_data(
+                link, qrcode = HandleProcess.public_bulk_data(
+                    self.process,
                     public_users,
                     step.get("stepRole"),
                     public_portfolio,
