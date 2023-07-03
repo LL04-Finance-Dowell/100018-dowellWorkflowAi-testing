@@ -253,24 +253,19 @@ def finalize_or_reject(request, process_id):
     item_id = request.data["item_id"]
     item_type = request.data["item_type"]
     role = request.data["role"]
-    link_id = request.data["link_id"]
     user = request.data["authorized"]
     user_type = request.data["user_type"]
     state = request.data["action"]
     check, current_state = checks.is_finalized(item_id, item_type)
-    print(check, current_state)
     if check and current_state != "processing":
         return Response(f"document already processed as `{current_state}`!", status.HTTP_200_OK)
-    try:
-        res = finalize_item(item_id, state, item_type)
-        print(res)
-    except Exception as err:
-        print(err)
+    res = finalize_item(item_id, state, item_type)
     if "isSuccess" in res:
         process = get_process_object(process_id)
         background = Background(process, item_type, item_id, role, user)
         background.processing()
-        if link_id and user_type == "public":
+        if user_type == "public":
+            link_id = request.data["link_id"]
             background.register_finalized(link_id)
         return Response("document processed successfully", status.HTTP_200_OK)
     else:

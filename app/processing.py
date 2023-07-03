@@ -8,7 +8,7 @@ import requests
 
 from app.checks import display_right, location_right, time_limit_right
 from app.constants import EDITOR_API, NOTIFICATION_API, QRCODE_URL, VERIFICATION_LINK
-from app.helpers import cloning_document, register_public_login
+from app.helpers import cloning_document, register_public_login, check_items_state
 from app.mongo_db_connection import (
     authorize,
     finalize_item,
@@ -504,26 +504,25 @@ class Background:
         Background.register_user_access(
             self.process["process_steps"], self.role, self.username
         )
+        finalized = []
         try:
             no_of_steps = sum(isinstance(e, dict) for e in steps)
-            for document_map in steps[0].get("stepDocumentCloneMap"):
-                for _, v in document_map.items():
-                    if get_document_object(v).get("document_state") != "finalized":
-                        return
-            if no_of_steps > 1:
+  
+            if no_of_steps > 0:
+                print(f"process_id: {process_id}")
                 for index, step in enumerate(steps):
-                    print(step["stepCloneCount"], f"index: {index}")
-                # if steps[1]:
-                #     print("2")
                     if step["stepDocumentCloneMap"]:
                         for document_map in step.get("stepDocumentCloneMap"):
+                            print(document_map)
                             for _, v in document_map.items():
                                 if (
                                     get_document_object(v).get("document_state")
-                                    != "finalized"
+                                    == "processing"
                                 ):
-                                    print("not finalized")
-                                    return
+                                    continue
+                                    
+                                else:
+                                    finalized.append(v)          
                     else:
                         if step.get("stepTaskType") == "request_for_task":
                             for user in step.get("stepTeamMembers"):
@@ -570,64 +569,11 @@ class Background:
                                     step.get("stepDocumentCloneMap").append(
                                         {user["member"]: document}
                                     )
-                # if steps[2]:
-                #     print("3")
-                #     if steps[2]["stepDocumentCloneMap"]:
-                #         for document_map in steps[2].get("stepDocumentCloneMap"):
-                #             for _, v in document_map.items():
-                #                 if (
-                #                     get_document_object(v).get("document_state")
-                #                     != "finalized"
-                #                 ):
-                #                     return
-                #     else:
-                #         if steps[2].get("stepTaskType") == "request_for_task":
-                #             for user in steps[2].get("stepTeamMembers"):
-                #                 clone_id = cloning_document(
-                #                     document_id, user, parent_id, process_id
-                #                 )
-                #                 steps.get("stepDocumentCloneMap").append(
-                #                     {user["member"]: clone_id}
-                #                 )
-                #             for user in steps[2].get("stepPublicMembers"):
-                #                 clone_id = (
-                #                     document_id,
-                #                     user,
-                #                     parent_id,
-                #                     process_id,
-                #                 )
-                #                 steps.get("stepDocumentCloneMap").append(
-                #                     {user["member"]: clone_id}
-                #                 )
-                #             for user in steps[2].get("stepUserMembers"):
-                #                 clone_id = cloning_document(
-                #                     document_id, user, parent_id, process_id
-                #                 )
-                #                 steps.get("stepDocumentCloneMap").append(
-                #                     {user["member"]: clone_id}
-                #                 )
-                #         if steps[2].get("stepTaskType") == "assign_task":
-                #             step2_documents = []
-                #             for _, v in step.get("stepDocumentCloneMap"):
-                #                 step2_documents.append(v)
-                #             for document in step2_documents:
-                #                 for user in steps[2].get("stepTeamMembers"):
-                #                     authorize(document, user, process_id, process_type)
-                #                     steps[2].get("stepDocumentCloneMap").append(
-                #                         {user["member"]: document}
-                #                     )
-                #                 for user in steps[2].get("stepPublicMembers"):
-                #                     authorize(document, user, process_id, process_type)
-                #                     steps[2].get("stepDocumentCloneMap").append(
-                #                         {user["member"]: document}
-                #                     )
-                #                 for user in steps[2].get("stepUserMembers"):
-                #                     authorize(document, user, process_id, process_type)
-                #                     steps[2].get("stepDocumentCloneMap").append(
-                #                         {user["member"]: document}
-                #                     )
-            update_process(process_id, steps, processing_state)
-            print("document finalized")
+                        update_process(process_id, steps, processing_state)
+                # Check that all documents are finalized
+                if all(check_items_state(finalized)):
+                    update_process(process_id, steps, "finalized")
+                                    
         except Exception as e:
             print("got error", e)
             finalize_item(self.item_id, "processing", self.item_type)
