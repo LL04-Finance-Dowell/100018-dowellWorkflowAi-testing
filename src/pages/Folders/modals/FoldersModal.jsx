@@ -183,7 +183,6 @@ const FoldersModal = () => {
         }
       } else toast.error('Incorrect folder name!');
     } else if (action === 'remove') {
-      console.log('item: ', item);
       const data = {
         item_type: item.document_name
           ? 'document'
@@ -230,7 +229,7 @@ const FoldersModal = () => {
         );
         setShowFoldersActionModal(false);
       } catch (err) {
-        console.log(err);
+        // console.log(err);
         toast.error(
           `Failed to remove ${
             item.document_name
