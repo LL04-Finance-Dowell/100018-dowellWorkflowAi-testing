@@ -253,7 +253,8 @@ def finalize_or_reject(request, process_id):
     item_id = request.data["item_id"]
     item_type = request.data["item_type"]
     role = request.data["role"]
-    link_id = request.data["link_id"]
+    if request.data["link_id"]:
+        link_id = request.data["link_id"]
     user = request.data["authorized"]
     user_type = request.data["user_type"]
     state = request.data["action"]
