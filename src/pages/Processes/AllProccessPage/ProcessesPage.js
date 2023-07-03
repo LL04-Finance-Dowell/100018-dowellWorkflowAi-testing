@@ -22,13 +22,13 @@ const ProcessesPage = ({ home, showOnlySaved, showOnlyPaused, showOnlyCancelled,
   const navigate = useNavigate();
   const [currentUserPortfolioDataType, setCurrentUserPortfolioDataType] = useState('');
 
-  const processing = allProcesses.filter(process => process.processing_state === "processing")
-  const draft = allProcesses.filter(process => process.processing_state === "draft");
+  // const processing = allProcesses.filter(process => process.processing_state === "processing")
+  // const draft = allProcesses.filter(process => process.processing_state === "draft");
 
 
-  console.log('all process',allProcesses)
-  console.log('processing',processing)
-  console.log('draft',draft)
+  // console.log('all process',allProcesses)
+  // console.log('processing',processing)
+  // console.log('draft',draft)
 
   // console.log(userDetail?.portfolio_info[0].org_id)
   const company_id = userDetail?.portfolio_info[0].org_id
