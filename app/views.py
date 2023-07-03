@@ -250,11 +250,12 @@ def finalize_or_reject(request, process_id):
     if not request.data:
         return Response("you are missing something", status.HTTP_400_BAD_REQUEST)
     link_id = None
+    user_type = "team"
     item_id = request.data["item_id"]
     item_type = request.data["item_type"]
     role = request.data["role"]
     user = request.data["authorized"]
-    user_type = request.data["user_type"]
+    # user_type = request.data["user_type"]
     state = request.data["action"]
     check, current_state = checks.is_finalized(item_id, item_type)
     if check and current_state != "processing":
