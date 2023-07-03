@@ -41,6 +41,7 @@ const VerificationPage = () => {
     };
 
     const sanitizedDataToPost = updateVerificationDataWithTimezone(dataToPost);
+    let link_id;
 
     // NEWER VERIFICATION LINKS
     if (
@@ -61,6 +62,8 @@ const VerificationPage = () => {
       const auth_role = paramsPassed.get('auth_role');
       const user_type = paramsPassed.get('user_type');
       const org_name = paramsPassed.get('org');
+      link_id = paramsPassed.get('link_id');
+
       const currentUserPortfolioName = userDetail?.portfolio_info?.length > 1 ? 
         userDetail?.portfolio_info.find(portfolio => portfolio.product === productName)?.portfolio_name
         :
@@ -115,7 +118,11 @@ const VerificationPage = () => {
     verifyProcessForUser(sanitizedDataToPost)
       .then((res) => {
         setLoading(false);
-        window.location = res.data;
+        window.location = 
+          isPublicUser ? 
+            `${res.data}&link_id=${link_id}`
+          : 
+            res.data;
       })
       .catch((err) => {
         console.log(err.response ? err.response.data : err.message);
