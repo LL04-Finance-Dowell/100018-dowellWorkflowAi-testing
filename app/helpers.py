@@ -264,4 +264,4 @@ def remove_favourite(identifier, type, username):
 
 def check_items_state(items) -> list:
     """Checks if item state is finalized"""
-    return [get_document_object(i)["document_state"] == "finalized" for i in items]
+    return [get_document_object(i)["document_state"] == "finalized" for i in items if isinstance(i, str)]

@@ -505,76 +505,76 @@ class Background:
             self.process["process_steps"], self.role, self.username
         )
         finalized = []
-        try:
-            no_of_steps = sum(isinstance(e, dict) for e in steps)
-  
-            if no_of_steps > 0:
-                print(f"process_id: {process_id}")
-                for index, step in enumerate(steps):
-                    if step["stepDocumentCloneMap"]:
-                        for document_map in step.get("stepDocumentCloneMap"):
-                            print(document_map)
-                            for _, v in document_map.items():
-                                if (
-                                    get_document_object(v).get("document_state")
-                                    == "processing"
-                                ):
-                                    continue
-                                    
-                                else:
-                                    finalized.append(v)          
-                    else:
-                        if step.get("stepTaskType") == "request_for_task":
+        # try:
+        no_of_steps = sum(isinstance(e, dict) for e in steps)
+
+        if no_of_steps > 0:
+            for index, step in enumerate(steps):
+                if step["stepDocumentCloneMap"]:
+                    for document_map in step.get("stepDocumentCloneMap"):
+                        print(document_map)
+                        for _, v in document_map.items():
+                            if (
+                                isinstance(v, str) and
+                                get_document_object(v).get("document_state")
+                                == "processing"
+                            ):
+                                continue
+                                
+                            else:
+                                finalized.append(v)          
+                else:
+                    if step.get("stepTaskType") == "request_for_task":
+                        for user in step.get("stepTeamMembers"):
+                            clone_id = cloning_document(
+                                document_id, user, parent_id, process_id
+                            )
+                            step.get("stepDocumentCloneMap").append(
+                                {user["member"]: clone_id}
+                            )
+                        for user in step.get("stepPublicMembers"):
+                            clone_id = (
+                                document_id,
+                                user,
+                                parent_id,
+                                process_id,
+                            )
+                            steps.get("stepDocumentCloneMap").append(
+                                {user["member"]: clone_id}
+                            )
+                        for user in step.get("stepUserMembers"):
+                            clone_id = cloning_document(
+                                document_id, user, parent_id, process_id
+                            )
+                            steps.get("stepDocumentCloneMap").append(
+                                {user["member"]: clone_id}
+                            )
+                    if step.get("stepTaskType") == "assign_task":
+                        step1_documents = []
+                        for _, v in steps[0].get("stepDocumentCloneMap"):
+                            step1_documents.append(v)
+                        for document in step1_documents:
                             for user in step.get("stepTeamMembers"):
-                                clone_id = cloning_document(
-                                    document_id, user, parent_id, process_id
-                                )
+                                authorize(document, user, process_id, process_type)
                                 step.get("stepDocumentCloneMap").append(
-                                    {user["member"]: clone_id}
+                                    {user["member"]: document}
                                 )
                             for user in step.get("stepPublicMembers"):
-                                clone_id = (
-                                    document_id,
-                                    user,
-                                    parent_id,
-                                    process_id,
-                                )
-                                steps.get("stepDocumentCloneMap").append(
-                                    {user["member"]: clone_id}
+                                authorize(document, user, process_id, process_type)
+                                step.get("stepDocumentCloneMap").append(
+                                    {user["member"]: document}
                                 )
                             for user in step.get("stepUserMembers"):
-                                clone_id = cloning_document(
-                                    document_id, user, parent_id, process_id
+                                authorize(document, user, process_id, process_type)
+                                step.get("stepDocumentCloneMap").append(
+                                    {user["member"]: document}
                                 )
-                                steps.get("stepDocumentCloneMap").append(
-                                    {user["member"]: clone_id}
-                                )
-                        if step.get("stepTaskType") == "assign_task":
-                            step1_documents = []
-                            for _, v in steps[0].get("stepDocumentCloneMap"):
-                                step1_documents.append(v)
-                            for document in step1_documents:
-                                for user in step.get("stepTeamMembers"):
-                                    authorize(document, user, process_id, process_type)
-                                    step.get("stepDocumentCloneMap").append(
-                                        {user["member"]: document}
-                                    )
-                                for user in step.get("stepPublicMembers"):
-                                    authorize(document, user, process_id, process_type)
-                                    step.get("stepDocumentCloneMap").append(
-                                        {user["member"]: document}
-                                    )
-                                for user in step.get("stepUserMembers"):
-                                    authorize(document, user, process_id, process_type)
-                                    step.get("stepDocumentCloneMap").append(
-                                        {user["member"]: document}
-                                    )
-                        update_process(process_id, steps, processing_state)
-                # Check that all documents are finalized
-                if all(check_items_state(finalized)):
-                    update_process(process_id, steps, "finalized")
+                    update_process(process_id, steps, processing_state)
+            # Check that all documents are finalized
+            if all(check_items_state(finalized)):
+                update_process(process_id, steps, "finalized")
                                     
-        except Exception as e:
-            print("got error", e)
-            finalize_item(self.item_id, "processing", self.item_type)
-            return
+        # except Exception as e:
+        #     print("got error", e)
+        #     finalize_item(self.item_id, "processing", self.item_type)
+        #     return
