@@ -6,13 +6,9 @@ from threading import Thread
 import qrcode
 import requests
 
-from app.constants import EDITOR_API, NOTIFICATION_API, QRCODE_URL, VERIFICATION_LINK
 from app.checks import display_right, location_right, time_limit_right
-from app.helpers import (
-    cloning_document,
-    register_public_login,
-    register_user_access,
-)
+from app.constants import EDITOR_API, NOTIFICATION_API, QRCODE_URL, VERIFICATION_LINK
+from app.helpers import cloning_document, register_public_login
 from app.mongo_db_connection import (
     authorize,
     finalize_item,
@@ -447,6 +443,7 @@ class HandleProcess:
                             "_id": clone_id,
                             "action": item_type,
                             "authorized": user_name,
+                            "user_type": user_type,
                             "document_map": doc_map,
                             "document_right": right,
                             "document_flag": item_flag,
@@ -477,6 +474,26 @@ class Background:
         self.role = role
         self.username = username
 
+    def register_finalized(link_id):
+        """Master single link as finalized"""
+        response = requests.put(
+            f"{QRCODE_URL}/?link_id={link_id}",
+            data={"is_finalized": True},
+            headers={"Content-Type": "application/json"},
+        )
+        if response.status_code == 200:
+            print("finalized")
+        return
+
+    def register_user_access(process_steps, authorized_role, user):
+        """Once someone has made changes to their docs"""
+        for step in process_steps:
+            if step["stepRole"] == authorized_role:
+                for clone_map in step["stepDocumentCloneMap"]:
+                    if user in clone_map:
+                        clone_map["accessed"] = True
+                        break
+
     def processing(self):
         steps = self.process["process_steps"]
         parent_id = self.process["parent_item_id"]
@@ -484,11 +501,9 @@ class Background:
         process_type = self.process["process_type"]
         document_id = self.item_id
         processing_state = self.process["processing_state"]
-        Thread(
-            target=lambda: register_user_access(
-                self.process["process_steps"], self.role, self.username
-            )
-        ).start()
+        Background.register_user_access(
+            self.process["process_steps"], self.role, self.username
+        )
         try:
             no_of_steps = sum(isinstance(e, dict) for e in steps)
             for document_map in steps[0].get("stepDocumentCloneMap"):

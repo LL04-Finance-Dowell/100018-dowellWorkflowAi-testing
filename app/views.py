@@ -19,7 +19,6 @@ from app.helpers import (
     cloning_process,
     create_favourite,
     list_favourites,
-    register_user_access,
     remove_favourite,
     validate_id,
 )
@@ -250,10 +249,13 @@ def finalize_or_reject(request, process_id):
     """After access is granted and the user has made changes on a document."""
     if not request.data:
         return Response("you are missing something", status.HTTP_400_BAD_REQUEST)
+    link_id = None
     item_id = request.data["item_id"]
     item_type = request.data["item_type"]
     role = request.data["role"]
+    link_id = request.data["link_id"]
     user = request.data["authorized"]
+    user_type = request.data["user_type"]
     state = request.data["action"]
     check, current_state = checks.is_finalized(item_id, item_type)
     if check and current_state != "processing":
@@ -261,7 +263,10 @@ def finalize_or_reject(request, process_id):
     res = finalize_item(item_id, state, item_type)
     if res["isSuccess"]:
         process = get_process_object(process_id)
-        Background(process, item_type, item_id, role, user).processing()
+        background = Background(process, item_type, item_id, role, user)
+        background.processing()
+        if link_id and user_type == "public":
+            background.register_finalized(link_id)
         return Response("document processed successfully", status.HTTP_200_OK)
     else:
         return Response("an error occurred during processing", status.HTTP_400_BAD_REQUEST)
@@ -1103,7 +1108,6 @@ def update_application_settings(request):
         )
     return Response(status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-
 @api_view(["GET"])
 def read_reminder(request, process_id, username):
     # cron = CronTab('root')
@@ -1119,7 +1123,7 @@ def read_reminder(request, process_id, username):
             for step in process_steps:
                 for mem in step["stepTeamMembers"]:
                     if mem["member"] == username:
-                        if not register_user_access(
+                        if not checks.register_user_access(
                             process_steps=process_steps,
                             authorized_role=step["stepRole"],
                             user=username,

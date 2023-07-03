@@ -19,16 +19,6 @@ from .mongo_db_connection import (
 )
 
 
-def register_user_access(process_steps, authorized_role, user):
-    """Once someone has made changes to their docs"""
-    for step in process_steps:
-        if step["stepRole"] == authorized_role:
-            for clone_map in step["stepDocumentCloneMap"]:
-                if user in clone_map:
-                    clone_map["accessed"] = True
-                    break
-
-
 def register_public_login(qrid, org_name):
     """Register a public QRID as used"""
     res = requests.post(
