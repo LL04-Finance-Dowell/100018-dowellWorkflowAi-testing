@@ -80,7 +80,9 @@ def webhook(request):
 @api_view(["GET"])
 def home(request):
     "Is server down? I though not!"
-    return Response("If you are seeing this :), the server is !down.", status.HTTP_200_OK)
+    return Response(
+        "If you are seeing this :), the server is !down.", status.HTTP_200_OK
+    )
 
 
 @api_view(["POST"])
@@ -259,7 +261,9 @@ def finalize_or_reject(request, process_id):
     state = request.data["action"]
     check, current_state = checks.is_finalized(item_id, item_type)
     if check and current_state != "processing":
-        return Response(f"document already processed as `{current_state}`!", status.HTTP_200_OK)
+        return Response(
+            f"document already processed as `{current_state}`!", status.HTTP_200_OK
+        )
     res = finalize_item(item_id, state, item_type)
     if "isSuccess" in res:
         process = get_process_object(process_id)
@@ -270,7 +274,9 @@ def finalize_or_reject(request, process_id):
             background.register_finalized(link_id)
         return Response("document processed successfully", status.HTTP_200_OK)
     else:
-        return Response("an error occurred during processing", status.HTTP_400_BAD_REQUEST)
+        return Response(
+            "an error occurred during processing", status.HTTP_400_BAD_REQUEST
+        )
 
 
 @api_view(["POST"])
@@ -1109,6 +1115,7 @@ def update_application_settings(request):
         )
     return Response(status.HTTP_500_INTERNAL_SERVER_ERROR)
 
+
 @api_view(["GET"])
 def read_reminder(request, process_id, username):
     # cron = CronTab('root')
@@ -1280,8 +1287,10 @@ def folder_update(request, folder_id):
         document_ids = [item["document_id"] for item in items if "document_id" in item]
         template_ids = [item["template_id"] for item in items if "template_id" in item]
         # process all ids
-        process_folders_to_item(document_ids, folder_id, add_document_to_folder)
-        process_folders_to_item(template_ids, folder_id, add_template_to_folder)
+        if items:
+            process_folders_to_item(document_ids, folder_id, add_document_to_folder)
+            process_folders_to_item(template_ids, folder_id, add_template_to_folder)
+
         updt_folder = json.loads(update_folder(folder_id, old_folder))
 
         if updt_folder["isSuccess"]:
