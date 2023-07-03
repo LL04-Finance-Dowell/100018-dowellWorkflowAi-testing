@@ -7,7 +7,6 @@ import DocumentCard from '../../components/hoverCard/documentCard/DocumentCard';
 import TemplateCard from '../../components/hoverCard/templateCard/TemplateCard';
 import SectionBox from '../../components/manageFiles/sectionBox/SectionBox';
 import { useSelector } from 'react-redux';
-import { toast } from 'react-toastify';
 
 // TODO HANDLE WHEN THE ID CAN'T BE FOUND IN FOLDERS
 // TODO HANDLE WHAT HAPPENS IF USER DELETES ALL CONTENTS IN A FOLDER
@@ -15,7 +14,9 @@ import { toast } from 'react-toastify';
 const FolderPage = () => {
   const { folder_id } = useParams();
   const { folders } = useAppContext();
-  const [folder] = useState(folders.find((folder) => folder._id === folder_id));
+  const [folder, setFolder] = useState(
+    folders.find((folder) => folder._id === folder_id)
+  );
   const { allDocuments } = useSelector((state) => state.document);
   const { allTemplates } = useSelector((state) => state.template);
 
@@ -39,10 +40,14 @@ const FolderPage = () => {
       setDocItems(modDocItems.filter((item) => item));
       setTempItems(modTempitems.filter((item) => item));
     } else {
-      toast.error('Invalid route!');
+      // console.error('Invalid route!');
       navigate('/folders');
     }
   }, [folder]);
+
+  useEffect(() => {
+    setFolder(folders.find((folder) => folder._id === folder_id));
+  }, [folders]);
 
   return (
     folder && (
@@ -56,6 +61,7 @@ const FolderPage = () => {
                 title={`${folder.folder_name} - Documents`}
                 Card={DocumentCard}
                 cardItems={docItems}
+                folderId={folder._id}
               />
             </div>
 
@@ -66,7 +72,8 @@ const FolderPage = () => {
                 title={`${folder.folder_name} - Templates`}
                 Card={TemplateCard}
                 cardItems={tempItems}
-                status={'finished'} //! Status is to be dynamic
+                status={'finished'}
+                folderId={folder._id}
               />
             </div>
           </ManageFiles>

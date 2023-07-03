@@ -40,6 +40,7 @@ const DocumentCard = ({
   hideFavoriteIcon,
   hideDeleteIcon,
   isFolder,
+  folderId,
 }) => {
   const dispatch = useDispatch();
   const { t } = useTranslation();
@@ -424,7 +425,9 @@ const DocumentCard = ({
           }}
         >
           <AddRemoveBtn type={'add'} item={{ ...cardItem, type: 'document' }} />
-          {isFolder && <AddRemoveBtn type={'remove'} item={cardItem} />}
+          {isFolder && (
+            <AddRemoveBtn type={'remove'} item={cardItem} folderId={folderId} />
+          )}
         </div>
       </div>
     );

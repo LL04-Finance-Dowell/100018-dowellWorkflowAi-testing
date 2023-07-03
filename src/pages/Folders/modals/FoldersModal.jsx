@@ -26,6 +26,7 @@ const FoldersModal = () => {
   const [folder, setFolder] = useState({});
   const [isEditing, setIsEditing] = useState(false);
   const [isAdding, setIsAdding] = useState(false);
+  const [isRemoving, setIsRemoving] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [folderName, setFolderName] = useState('');
   const [delFolderName, setDelFolderName] = useState('');
@@ -181,6 +182,67 @@ const FoldersModal = () => {
           setShowFoldersActionModal({ state: false, action: '' });
         }
       } else toast.error('Incorrect folder name!');
+    } else if (action === 'remove') {
+      console.log('item: ', item);
+      const data = {
+        item_type: item.document_name
+          ? 'document'
+          : item.template_name
+          ? 'template'
+          : '',
+      };
+      const folderServices = new FolderServices();
+      setIsRemoving(true);
+      try {
+        await folderServices.removeFolderItem(data, folderActionId, item._id);
+        const modFolder = {
+          ...folder,
+          data: folder.data.filter(
+            (itm) =>
+              (itm.document_id && itm.document_id !== item._id) ||
+              (itm.template_id && itm.template_id !== item._id)
+          ),
+        };
+
+        setFolders((prev) =>
+          prev.map((folderArr) =>
+            folderArr._id === folderActionId
+              ? {
+                  ...folderArr,
+                  data: folderArr.data.filter(
+                    (itm) =>
+                      (itm.document_id && itm.document_id !== item._id) ||
+                      (itm.template_id && itm.template_id !== item._id)
+                  ),
+                }
+              : folderArr
+          )
+        );
+
+        toast.success(
+          `${
+            item.document_name
+              ? 'Document'
+              : item.template_name
+              ? 'Template'
+              : ''
+          } removed`
+        );
+        setShowFoldersActionModal(false);
+      } catch (err) {
+        console.log(err);
+        toast.error(
+          `Failed to remove ${
+            item.document_name
+              ? 'Document'
+              : item.template_name
+              ? 'Template'
+              : ''
+          }`
+        );
+      } finally {
+        setIsRemoving(false);
+      }
     }
   };
 
@@ -433,6 +495,41 @@ const FoldersModal = () => {
                   </button>
                 )}
               </form>
+            </>
+          ) : action === 'remove' ? (
+            <>
+              <h3>
+                {isRemoving
+                  ? `Removing ${
+                      item.document_name || item.template_name
+                    } from ${folder.folder_name}`
+                  : `Remove ${item.document_name || item.template_name} from ${
+                      folder.folder_name
+                    }?`}
+              </h3>
+
+              <div className={styles.btns_wrapper}>
+                {isRemoving ? (
+                  <LoadingSpinner />
+                ) : (
+                  <>
+                    <button
+                      className={`${styles.opt_btn} ${styles.cancel_btn}`}
+                      onClick={() =>
+                        setShowFoldersActionModal({ state: false, action: '' })
+                      }
+                    >
+                      <FaTimes />
+                    </button>
+                    <button
+                      className={`${styles.opt_btn} ${styles.affirm_btn}`}
+                      onClick={handleSubmit}
+                    >
+                      <GiCheckMark />
+                    </button>
+                  </>
+                )}
+              </div>
             </>
           ) : (
             ''

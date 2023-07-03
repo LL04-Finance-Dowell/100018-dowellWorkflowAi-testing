@@ -23,7 +23,7 @@ import { LoadingSpinner } from '../../LoadingSpinner/LoadingSpinner';
 import { TemplateServices } from '../../../services/templateServices';
 import AddRemoveBtn from '../AddRemoveBtn';
 
-const TemplateCard = ({ cardItem, isFolder }) => {
+const TemplateCard = ({ cardItem, isFolder, folderId }) => {
   const dispatch = useDispatch();
   const { t } = useTranslation();
 
@@ -269,7 +269,9 @@ const TemplateCard = ({ cardItem, isFolder }) => {
           }}
         >
           <AddRemoveBtn type={'add'} item={{ ...cardItem, type: 'template' }} />
-          {isFolder && <AddRemoveBtn type={'remove'} item={cardItem} />}
+          {isFolder && (
+            <AddRemoveBtn type={'remove'} item={cardItem} folderId={folderId} />
+          )}
         </div>
       </div>
     );

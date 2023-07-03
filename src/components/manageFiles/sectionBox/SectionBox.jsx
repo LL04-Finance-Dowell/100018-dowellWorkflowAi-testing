@@ -31,6 +31,7 @@ const SectionBox = ({
   itemType,
   hideFavoriteIcon,
   hideDeleteIcon,
+  folderId,
 }) => {
   const [sliceCount, setSliceCount] = useState(1);
   const [refreshLoading, setRefreshLoading] = useState(false);
@@ -440,6 +441,7 @@ const SectionBox = ({
                           hideFavoriteIcon={hideFavoriteIcon}
                           hideDeleteIcon={hideDeleteIcon}
                           isFolder={itemType === 'folder' ? true : false}
+                          folderId={folderId}
                         />
                       ))}
                 </div>

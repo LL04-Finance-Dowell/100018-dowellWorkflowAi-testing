@@ -2,17 +2,22 @@ import React from 'react';
 import { AiOutlinePlus, AiOutlineMinus } from 'react-icons/ai';
 import { useAppContext } from '../../contexts/AppContext';
 
-const AddRemoveBtn = ({ type, item }) => {
-  const { setShowFoldersActionModal } = useAppContext();
+const AddRemoveBtn = ({ type, item, folderId }) => {
+  const { setShowFoldersActionModal, setFolderActionId } = useAppContext();
   const handleClick = () => {
-    if (type === 'add') {
+    if (type === 'add')
       setShowFoldersActionModal({
         state: true,
         action: 'add',
         item,
       });
-    } else if (type === 'remove') {
-      console.log('REMOVE FILE FROM FOLDER');
+    else if (type === 'remove') {
+      setShowFoldersActionModal({
+        state: true,
+        action: 'remove',
+        item,
+      });
+      setFolderActionId(folderId);
     }
   };
 

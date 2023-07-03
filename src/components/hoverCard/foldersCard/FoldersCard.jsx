@@ -11,14 +11,14 @@ const FoldersCard = ({ cardItem }) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { setShowFoldersActionModal, setFolderActionId } = useAppContext();
-  const [isFolderNew, setIsFolderNew] = useState(true);
+  const [isFolderNew, setIsFolderNew] = useState(false);
 
   const handleDelete = (e) => {
     setShowFoldersActionModal({ state: true, action: 'delete' });
     setFolderActionId(cardItem._id);
   };
 
-  const handleEdit = (e) => {
+  const handleEdit = () => {
     setShowFoldersActionModal({ state: true, action: 'edit' });
     setFolderActionId(cardItem._id);
   };
@@ -34,6 +34,9 @@ const FoldersCard = ({ cardItem }) => {
       Number(mm),
       Number(ss)
     );
+
+    if (new Date().getTime() - createdDate.getTime() < 18000000)
+      setIsFolderNew(true);
 
     const durationInterval = setInterval(() => {
       const currentDate = new Date();
