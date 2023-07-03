@@ -1,22 +1,15 @@
+"""Third Party Services"""
 EDITOR_API = "https://100058.pythonanywhere.com/api/generate-editor-link/"
 NOTIFICATION_API = "https://100092.pythonanywhere.com/api/v1/notifications/products/"
-VERIFICATION_LINK = (
-    "https://ll04-finance-dowell.github.io/100018-dowellWorkflowAi-testing/#/verify"
-)
-TARGETED_POPULATION_URL = "https://100032.pythonanywhere.com/api/targeted_population/"
 DOWELLCONNECTION_URL = "https://uxlivinglab.pythonanywhere.com"
 OLD_DOWELLCONNECTION_URL = "https://100002.pythonanywhere.com/"
 PUBLIC_LOGIN_API = "https://100093.pythonanywhere.com/api/public/"
-USER_CONNECTION_LIST = [
-    "login",
-    "bangalore",
-    "login",
-    "registration",
-    "registration",
-    "10004545",
-    "ABCDE",
-]
+QRCODE_URL = "https://100099.pythonanywhere.com/api/v3/qr-code/"
+VERIFICATION_LINK = (
+    "https://ll04-finance-dowell.github.io/100018-dowellWorkflowAi-testing/#/verify"
+)
 
+"""Database Collection Information"""
 WF_CONNECTION_LIST = [
     "Documents",
     "bangalore",
@@ -26,7 +19,14 @@ WF_CONNECTION_LIST = [
     "33689044433",
     "ABCDE",
 ]
-
+WF_CONNECTION_DICT = {
+    "cluster": "Documents",
+    "database": "Documentation",
+    "collection": "WorkflowReports",
+    "document": "workflowreports",
+    "team_member_ID": "33689044433",
+    "function_ID": "ABCDE",
+}
 PROCESS_CONNECTION_LIST = [
     "Documents",
     "bangalore",
@@ -36,7 +36,14 @@ PROCESS_CONNECTION_LIST = [
     "1000180001",
     "ABCDE",
 ]
-
+PROCESS_CONNECTION_DICT = {
+    "cluster": "Documents",
+    "database": "Documentation",
+    "collection": "WorkflowProcess",
+    "document": "WorkflowProcess",
+    "team_member_ID": "1000180001",
+    "function_ID": "ABCDE",
+}
 LINK_CONNECTION_LIST = [
     "Documents",
     "bangalore",
@@ -46,7 +53,14 @@ LINK_CONNECTION_LIST = [
     "1000180010",
     "ABCDE",
 ]
-
+LINK_CONNECTION_DICT = {
+    "cluster": "Documents",
+    "database": "Documentation",
+    "collection": "DocumentLink",
+    "document": "DocumentLink",
+    "team_member_ID": "1000180010",
+    "function_ID": "ABCDE",
+}
 DOCUMENT_CONNECTION_LIST = [
     "Documents",
     "bangalore",
@@ -56,52 +70,14 @@ DOCUMENT_CONNECTION_LIST = [
     "11689044433",
     "ABCDE",
 ]
-
-WF_CONNECTION_DICT = {
-    "cluster": "Documents",
-    "database": "Documentation",
-    "collection": "WorkflowReports",
-    "document": "workflowreports",
-    "team_member_ID": "33689044433",
-    "function_ID": "ABCDE",
-}
-
-WF_PROCESS_DICT = {
-    "cluster": "Documents",
-    "database": "Documentation",
-    "collection": "WorkflowProcess",
-    "document": "WorkflowProcess",
-    "team_member_ID": "1000180001",
-    "function_ID": "ABCDE",
-}
-
-LINK_CONNECTION_DICT = {
-    "cluster": "Documents",
-    "database": "Documentation",
-    "collection": "DocumentLink",
-    "document": "DocumentLink",
-    "team_member_ID": "1000180010",
-    "function_ID": "ABCDE",
-}
-
-TEMPLATE_CONNECTION_DICT = {
-    "cluster": "Documents",
-    "database": "Documentation",
-    "collection": "TemplateReports",
-    "document": "templatereports",
-    "team_member_ID": "22689044433",
-    "function_ID": "ABCDE",
-}
-
 DOCUMENT_CONNECTION_DICT = {
-        "cluster": "Documents",
-        "database": "Documentation",
-        "collection": "DocumentReports",
-        "document": "documentreports",
-        "team_member_ID": "11689044433",
-        "function_ID": "ABCDE",
-    }
-
+    "cluster": "Documents",
+    "database": "Documentation",
+    "collection": "DocumentReports",
+    "document": "documentreports",
+    "team_member_ID": "11689044433",
+    "function_ID": "ABCDE",
+}
 QR_CONNECTION_LIST = [
     "Documents",
     "bangalore",
@@ -111,7 +87,6 @@ QR_CONNECTION_LIST = [
     "10008484",
     "ABCDE",
 ]
-
 QR_CONNECTION_DICT = {
     "cluster": "Documents",
     "database": "Documentation",
@@ -120,27 +95,6 @@ QR_CONNECTION_DICT = {
     "team_member_ID": "10008484",
     "function_ID": "ABCDE",
 }
-
-QR_ID_CONNECTION_LIST = [
-    "Documents",
-    "bangalore",
-    "Documentation",
-    "qridtokens",
-    "qridtokens",
-    "10008484",
-    "ABCDE",
-]
-
-WF_AI_SETTING_LIST = [
-    "Documents",
-    "bangalore",
-    "Documentation",
-    "WorkflowAiSettings",
-    "WorkflowAiSettings",
-    "1000180009",
-    "ABCDE",
-]
-
 TEMPLATE_CONNECTION_LIST = [
     "Documents",
     "bangalore",
@@ -151,26 +105,6 @@ TEMPLATE_CONNECTION_LIST = [
     "ABCDE",
 ]
 
-SESSION_ARGS = ["login", "bangalore", "login", "login", "login", "6752828281", "ABCDE"]
-REGISTRATION_ARGS = [
-    "login",
-    "bangalore",
-    "login",
-    "registration",
-    "registration",
-    "10004545",
-    "ABCDE",
-]
-
-QR_ID_CONNECTION_DICT = {
-    "cluster": "Documents",
-    "database": "Documentation",
-    "collection": "qridtokens",
-    "document": "qridtokens",
-    "team_member_ID": "10008484",
-    "function_ID": "ABCDE",
-}
-
 TEMPLATE_CONNECTION_DICT = {
     "cluster": "Documents",
     "database": "Documentation",
@@ -179,16 +113,6 @@ TEMPLATE_CONNECTION_DICT = {
     "team_member_ID": "22689044433",
     "function_ID": "ABCDE",
 }
-
-DOCUMENT_CONNECTION_DICT = {
-    "cluster": "Documents",
-    "database": "Documentation",
-    "collection": "DocumentReports",
-    "document": "documentreports",
-    "team_member_ID": "11689044433",
-    "function_ID": "ABCDE",
-}
-
 DOCUMENT_CONNECTION_LIST = [
     "Documents",
     "bangalore",
@@ -196,6 +120,15 @@ DOCUMENT_CONNECTION_LIST = [
     "DocumentReports",
     "documentreports",
     "11689044433",
+    "ABCDE",
+]
+FOLDER_CONNECTION_LIST = [
+    "Documents",
+    "bangalore",
+    "Documentation",
+    "FolderReports",
+    "FolderReports",
+    "1205001",
     "ABCDE",
 ]
 FOLDER_CONNECTION_DICT = {
@@ -206,14 +139,14 @@ FOLDER_CONNECTION_DICT = {
     "team_member_ID": "1205001",
     "function_ID": "ABCDE",
 }
-FOLDER_CONNECTION_LIST = [
+WF_AI_SETTING_LIST = [
     "Documents",
     "bangalore",
-    "Documentation", 
-    "FolderReports",
-    "FolderReports",
-    "1205001",
-    "ABCDE"
+    "Documentation",
+    "WorkflowAiSettings",
+    "WorkflowAiSettings",
+    "1000180009",
+    "ABCDE",
 ]
 WF_AI_SETTING_DICT = {
     "cluster": "Documents",
@@ -223,8 +156,6 @@ WF_AI_SETTING_DICT = {
     "team_member_ID": "1000180009",
     "function_ID": "ABCDE",
 }
-
-
 MANAGEMENT_REPORTS_DICT = {
     "cluster": "Documents",
     "database": "Documentation",
@@ -233,8 +164,6 @@ MANAGEMENT_REPORTS_DICT = {
     "team_member_ID": "44689044433",
     "function_ID": "ABCDE",
 }
-
-
 MANAGEMENT_REPORTS_LIST = [
     "Documents",
     "bangalore",

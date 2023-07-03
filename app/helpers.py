@@ -1,44 +1,22 @@
 import json
+
 import bson
 import requests
 
-from app.constants import (
-    EDITOR_API,
-    PUBLIC_LOGIN_API,
-    NOTIFICATION_API,
-)
+from app.constants import EDITOR_API, PUBLIC_LOGIN_API
 from app.models import FavoriteDocument, FavoriteTemplate, FavoriteWorkflow
 from app.serializers import (
     FavouriteDocumentSerializer,
     FavouriteTemplateSerializer,
     FavouriteWorkflowSerializer,
-    WorkflowAiSettingSerializer,
 )
 
 from .mongo_db_connection import (
     get_document_object,
     get_process_object,
-    get_wf_object,
     save_document,
     save_process,
 )
-
-headers = {"Content-Type": "application/json"}
-
-
-def register_user_access(process_steps, authorized_role, user):
-    """Once someone has made changes to their docs"""
-    for step in process_steps:
-        if step["stepRole"] == authorized_role:
-            for clone_map in step["stepDocumentCloneMap"]:
-                if user in clone_map:
-                    clone_map["accessed"] = True
-                    break
-
-
-def delete_notification(notify_id):
-    """remove notifications in external products"""
-    return requests.delete(f"{NOTIFICATION_API}/{notify_id}")
 
 
 def register_public_login(qrid, org_name):
@@ -52,11 +30,11 @@ def register_public_login(qrid, org_name):
                 "product": "Workflow AI",
             }
         ),
-        headers=headers,
+        headers={"Content-Type": "application/json"},
     )
     if res.status_code == 200:
         return True
-    return 
+    return
 
 
 def has_tilde_characters(string):
@@ -97,10 +75,10 @@ def cloning_document(document_id, auth_viewers, parent_id, process_id):
                 folders="untitled",
             )
         )
+        return save_res["inserted_id"]
     except Exception as e:
         print(e)
         return
-    return save_res["inserted_id"]
 
 
 def cloning_process(process_id, created_by, creator_portfolio):
@@ -122,14 +100,14 @@ def cloning_process(process_id, created_by, creator_portfolio):
                 "clone",
             )
         )
+        return save_res["inserted_id"]
     except Exception as e:
         print(e)
         return
-    return save_res["inserted_id"]
 
 
-# Access to document/template
 def access_editor(item_id, item_type):
+    """Access to document/template"""
     collection = None
     document = None
     team_member_id = None
@@ -166,11 +144,15 @@ def access_editor(item_id, item_type):
         },
     }
     try:
-        response = requests.post(EDITOR_API, data=json.dumps(payload), headers=headers)
+        response = requests.post(
+            EDITOR_API,
+            data=json.dumps(payload),
+            headers={"Content-Type": "application/json"},
+        )
+        return response.json()
     except Exception as e:
         print(e)
         return
-    return response.json()
 
 
 # complete document and mark as complete
@@ -178,14 +160,6 @@ def processing_complete(process):
     if process["processing_state"] == "completed":
         return True
     return
-
-
-# Get WF Step
-def get_step(sid, step_name):
-    data = get_wf_object(sid)["workflows"]["steps"]
-    for step in data:
-        if step_name == step["step_name"]:
-            return step
 
 
 def validate_id(id):
@@ -199,36 +173,6 @@ def validate_id(id):
         return None
 
 
-def versioning(version):
-    """Version workflow settings"""
-    if version.startswith("New"):
-        version = version.removeprefix("New ")
-    else:
-        version = version.removeprefix("Latest ")
-    return version
-
-
-def version_control(version):
-    """Version control for wf settings"""
-    version = version.split(".")
-    if version[-1] != "9":
-        version[-1] = str(int(version[-1]) + 1)
-    elif version[1] != "9":
-        version[-1] = "0"
-        version[1] = str(int(version[1]) + 1)
-    elif version[-1] == "9" and version[1] != "9":
-        version[-1] = "0"
-        version[1] = str(int(version[1]) + 1)
-    elif version[1] == "9" and version[-1] == "9":
-        version[0] = str(int(version[0]) + 1)
-        version[1] = "0"
-        version[-1] = "0"
-    else:
-        version[0] = str(int(version[0]) + 1)
-    latest = ".".join(version)
-    return latest
-
-
 def list_favourites(company_id):
     """A List of bookmarks/favourites"""
     try:
@@ -238,13 +182,14 @@ def list_favourites(company_id):
         doc_serializer = FavouriteDocumentSerializer(documents, many=True)
         template_serializer = FavouriteTemplateSerializer(templates, many=True)
         workflow_serializer = FavouriteWorkflowSerializer(workflows, many=True)
-    except RuntimeError:
-        return 
-    return {
-        "documents": doc_serializer.data,
-        "templates": template_serializer.data,
-        "workflows": workflow_serializer.data,
-    }
+        return {
+            "documents": doc_serializer.data,
+            "templates": template_serializer.data,
+            "workflows": workflow_serializer.data,
+        }
+    except Exception as e:
+        print(e)
+        return
 
 
 def create_favourite(item, item_type, username):
@@ -257,7 +202,7 @@ def create_favourite(item, item_type, username):
             "company_id": item["company_id"],
             "favourited_by": username,
         }
-        serializer = FavouriteWorkflowSerializer(data)
+        serializer = FavouriteWorkflowSerializer(data=data)
         if serializer.is_valid():
             serializer.save()
             return msg
@@ -268,7 +213,7 @@ def create_favourite(item, item_type, username):
             "company_id": item["company_id"],
             "favourited_by": username,
         }
-        serializer = FavouriteDocumentSerializer(data)
+        serializer = FavouriteDocumentSerializer(data=data)
         if serializer.is_valid():
             serializer.save()
             return msg
@@ -279,11 +224,11 @@ def create_favourite(item, item_type, username):
             "company_id": item["company_id"],
             "favourited_by": username,
         }
-        serializer = FavouriteTemplateSerializer(data)
+        serializer = FavouriteTemplateSerializer(data=data)
         if serializer.is_valid():
             serializer.save()
             return msg
-    return 
+    return
 
 
 def remove_favourite(identifier, type, username):
@@ -295,29 +240,28 @@ def remove_favourite(identifier, type, username):
                 _id=identifier, favourited_by=username
             ).delete()
             return msg
-        except:
-            return 
+        except Exception as e:
+            print(e)
+            return
     if type == "document":
         try:
             FavoriteDocument.objects.filter(
                 _id=identifier, favourited_by=username
             ).delete()
             return msg
-        except:
-            return 
+        except Exception as e:
+            print(e)
+            return
     if type == "template":
         try:
             FavoriteTemplate.objects.filter(
                 _id=identifier, favourited_by=username
             ).delete()
             return msg
-        except:
-            return 
+        except Exception as e:
+            print(e)
+            return
 
-
-def CREATE_WF_AI_SETTING(data):
-    serializer = WorkflowAiSettingSerializer(data=data)
-    if serializer.is_valid():
-        serializer.save()
-        return WorkflowAiSettingSerializer(serializer).data
-    return 
+def check_items_state(items) -> list:
+    """Checks if item state is finalized"""
+    return [get_document_object(i)["document_state"] == "finalized" for i in items if isinstance(i, str)]

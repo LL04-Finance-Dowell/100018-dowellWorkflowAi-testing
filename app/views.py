@@ -1,47 +1,41 @@
-import os
 import ast
 import json
+import os
 import re
-from git.repo import Repo
-from crontab import CronTab
 
 import requests
-import multiprocessing
-from rest_framework import status
+from crontab import CronTab
 from django.core.cache import cache
+from git.repo import Repo
+from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from threading import Thread
-from app.processing import (
-    HandleProcess,
-    Process,
-    Background,
-)
-from app.utils import checks, notification_cron
-from app.utils.helpers import (
+from app import checks
+
+from app.processing import Background, HandleProcess, Process
+from app.utils import notification_cron
+from app.helpers import (
     access_editor,
     cloning_process,
     create_favourite,
     list_favourites,
     remove_favourite,
     validate_id,
-    delete_notification,
-    register_user_access,
 )
-from django.core.cache import cache
-from app.utils.mongo_db_connection import (
-    process_folders_to_item,
-    get_folder_list,
+from app.mongo_db_connection import (
     add_document_to_folder,
     add_template_to_folder,
     delete_document,
+    delete_folder,
+    delete_items_in_folder,
     delete_process,
     delete_template,
     delete_workflow,
-    delete_folder,
     finalize_item,
     get_document_list,
     get_document_object,
+    get_folder_list,
+    get_folder_object,
     get_link_object,
     get_links_object_by_process_id,
     get_process_list,
@@ -52,21 +46,21 @@ from app.utils.mongo_db_connection import (
     get_template_object,
     get_wf_list,
     get_wf_object,
-    get_workflow_setting_object,
     get_wfai_setting_list,
-    get_folder_object,
+    get_workflow_setting_object,
+    process_folders_to_item,
     save_document,
     save_folder,
     save_team,
     save_template,
     save_workflow,
     save_workflow_setting,
+    update_folder,
+    update_process,
     update_team_data,
     update_template_approval,
     update_wf,
-    update_process,
     update_workflow_setting,
-    update_folder,
 )
 
 from .constants import EDITOR_API
@@ -85,7 +79,8 @@ def webhook(request):
 
 @api_view(["GET"])
 def home(request):
-    return Response("WorkflowAI Service is running...", status.HTTP_200_OK)
+    "Is server down? I though not!"
+    return Response("If you are seeing this :), the server is !down.", status.HTTP_200_OK)
 
 
 @api_view(["POST"])
@@ -93,7 +88,6 @@ def document_processing(request):
     """processing is determined by action picked by user."""
     if not request.data:
         return Response("You are missing something!", status.HTTP_400_BAD_REQUEST)
-
     process = Process(
         request.data["workflows"],
         request.data["created_by"],
@@ -172,7 +166,6 @@ def document_processing(request):
         if res["isSuccess"]:
             return Response("Process has been cancelled!", status.HTTP_200_OK)
         return Response(status.HTTP_500_INTERNAL_SERVER_ERROR)
-
     if action == "pause_processing_after_completing_ongoing_step":
         return Response(
             "This Option is currently in development",
@@ -187,14 +180,11 @@ def document_processing(request):
 @api_view(["POST"])
 def get_process_link(request, process_id):
     """get a link process for person having notifications"""
-    links_info = get_links_object_by_process_id(process_id)[0]
+    links_info = get_links_object_by_process_id(process_id)
     if not links_info:
         return Response("Verification link unavailable", status.HTTP_400_BAD_REQUEST)
     user = request.data["user_name"]
-    if not links_info:
-        return Response(status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-    for link in links_info["links"]:
+    for link in links_info[0]["links"]:
         if user in link:
             return Response(link[user], status.HTTP_200_OK)
     return Response("user is not part of this process", status.HTTP_401_UNAUTHORIZED)
@@ -238,7 +228,7 @@ def process_verification(request):
         return Response(
             "display rights set do not allow access to this document",
             status.HTTP_400_BAD_REQUEST,
-    )
+        )
     if not handler.verify_time(auth_role):
         return Response(
             "time limit for access to this document has elapsed",
@@ -258,28 +248,36 @@ def process_verification(request):
 def finalize_or_reject(request, process_id):
     """After access is granted and the user has made changes on a document."""
     if not request.data:
-        return Response("You are missing something", status.HTTP_400_BAD_REQUEST)
+        return Response("you are missing something", status.HTTP_400_BAD_REQUEST)
+    link_id = None
+    user_type = "team"
     item_id = request.data["item_id"]
     item_type = request.data["item_type"]
     role = request.data["role"]
     user = request.data["authorized"]
+    # user_type = request.data["user_type"]
     state = request.data["action"]
     check, current_state = checks.is_finalized(item_id, item_type)
     if check and current_state != "processing":
-        return Response(f"Already processed as {current_state}!", status.HTTP_200_OK)
-    finalize_item(item_id, state, item_type)
-    process = get_process_object(process_id)
-    background = Background(process, item_type, item_id, role, user)
-    Thread(target=lambda: delete_notification(item_id)).start()
-    background.processing()
-    return Response("document processed successfully", status.HTTP_200_OK)
+        return Response(f"document already processed as `{current_state}`!", status.HTTP_200_OK)
+    res = finalize_item(item_id, state, item_type)
+    if "isSuccess" in res:
+        process = get_process_object(process_id)
+        background = Background(process, item_type, item_id, role, user)
+        background.processing()
+        if user_type == "public":
+            link_id = request.data["link_id"]
+            background.register_finalized(link_id)
+        return Response("document processed successfully", status.HTTP_200_OK)
+    else:
+        return Response("an error occurred during processing", status.HTTP_400_BAD_REQUEST)
 
 
 @api_view(["POST"])
-def trigger_process(request, process_id):
+def trigger_process(request):
     """Get process and begin processing it."""
     if not validate_id(request.data["process_id"]):
-        return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
+        return Response("something went wrong!", status.HTTP_400_BAD_REQUEST)
     process = get_process_object(request.data["process_id"])
     action = request.data["action"]
     state = process["processing_state"]
@@ -539,13 +537,16 @@ def get_document_content(request, document_id):
     for i in all_keys:
         temp_list = []
         for j in my_dict[i]:
-            if j["type"] == "CONTAINER_INPUT":
-                container_list = []
-                for item in j["data"]:
-                    container_list.append({"id": item["id"], "data": item["data"]})
-                temp_list.append({"id": j["id"], "data": container_list})
+            if "data" in j:
+                if j["type"] == "CONTAINER_INPUT":
+                    container_list = []
+                    for item in j["data"]:
+                        container_list.append({"id": item["id"], "data": item["data"]})
+                    temp_list.append({"id": j["id"], "data": container_list})
+                else:
+                    temp_list.append({"id": j["id"], "data": j["data"]})
             else:
-                temp_list.append({"id": j["id"], "data": j["data"]})
+                temp_list.append({"id": j["id"], "data": ""})
         content.append(
             {
                 i: temp_list,
@@ -573,7 +574,7 @@ def document_detail(request, document_id):
     editor_link = access_editor(document_id, "document")
     if not editor_link:
         return Response(status.HTTP_500_INTERNAL_SERVER_ERROR)
-    return Response(editor_link, status.HTTP_201_CREATED)
+    return Response(editor_link, status.HTTP_200_OK)
 
 
 @api_view(["GET"])
@@ -1108,7 +1109,6 @@ def update_application_settings(request):
         )
     return Response(status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-
 @api_view(["GET"])
 def read_reminder(request, process_id, username):
     # cron = CronTab('root')
@@ -1124,7 +1124,7 @@ def read_reminder(request, process_id, username):
             for step in process_steps:
                 for mem in step["stepTeamMembers"]:
                     if mem["member"] == username:
-                        if not register_user_access(
+                        if not checks.register_user_access(
                             process_steps=process_steps,
                             authorized_role=step["stepRole"],
                             user=username,
@@ -1277,20 +1277,19 @@ def folder_update(request, folder_id):
         old_folder = get_folder_object(folder_id)
         old_folder["folder_name"] = form["folder_name"]
         old_folder["data"].extend(items)
-        updt_folder = json.loads(update_folder(folder_id, old_folder))
         document_ids = [item["document_id"] for item in items if "document_id" in item]
         template_ids = [item["template_id"] for item in items if "template_id" in item]
-
         # process all ids
         process_folders_to_item(document_ids, folder_id, add_document_to_folder)
         process_folders_to_item(template_ids, folder_id, add_template_to_folder)
+        updt_folder = json.loads(update_folder(folder_id, old_folder))
 
         if updt_folder["isSuccess"]:
             return Response("Folder Updated", status.HTTP_201_CREATED)
-        return Response(status.HTTP_500_INTERNAL_SERVER_ERROR)
+    return Response(status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
-@api_view(["GET", "PUT"])
+@api_view(["GET"])
 def all_folders(request, company_id):
     """fetches Folders created."""
     data_type = request.query_params.get("data_type", "Real_Data")
@@ -1305,3 +1304,12 @@ def all_folders(request, company_id):
         except:
             return Response(status.HTTP_500_INTERNAL_SERVER_ERROR)
     return Response(folders_list, status.HTTP_200_OK)
+
+
+@api_view(["PUT"])
+def delete_item_from_folder(request, folder_id, item_id):
+    item_type = request.data["item_type"]
+    if request.method == "PUT":
+        res = delete_items_in_folder(item_id, folder_id, item_type)
+        return Response(res + " Item Deleted in Folder", status.HTTP_202_ACCEPTED)
+    return Response(status.HTTP_500_INTERNAL_SERVER_ERROR)
