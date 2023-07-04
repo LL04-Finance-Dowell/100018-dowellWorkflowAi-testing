@@ -63,6 +63,7 @@ const SelectMembersToAssign = ({
   const { workflowTeams, workflowTeamsLoaded } = useAppContext();
   const selectTeamRef = useRef();
   const selectMemberOptionRef = useRef();
+  const selectMembersRadioRef = useRef();
 
   const dispatch = useDispatch();
 
@@ -86,8 +87,13 @@ const SelectMembersToAssign = ({
       )
     )
       return;
-    if (!currentRadioOptionSelection)
-      return toast.info('Please check the option above');
+    if (!currentRadioOptionSelection) {
+      selectMembersRadioRef.current?.scrollIntoView({
+        block: 'center'
+      });
+      toast.info('Please check the option above');
+      return
+    }
     
   });
 
@@ -922,6 +928,7 @@ const SelectMembersToAssign = ({
                         : (e) =>
                             handleDisabledUserOptionSelection(e, current.title)
                     }
+                    radioRef={selectMembersRadioRef}
                   >
                     Select Members
                   </Radio>

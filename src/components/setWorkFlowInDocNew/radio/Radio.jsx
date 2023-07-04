@@ -1,8 +1,8 @@
 import React from "react";
 
-const Radio = ({ register, value, onChange, children, name, checked }) => {
+const Radio = ({ register, value, onChange, children, name, checked, radioRef }) => {
   return (
-    <label style={{ display: "flex", gap: "10px", fontSize: 12 }}>
+    <label style={{ display: "flex", gap: "10px", fontSize: 12 }} ref={radioRef}>
       {
         
         checked ? 
