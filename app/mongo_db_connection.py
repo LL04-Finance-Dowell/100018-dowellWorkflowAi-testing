@@ -984,7 +984,7 @@ def add_document_to_folder(document_id, folder):
         try:
             old_document["folders"].append(folder)
         except:
-            old_document["folders"] = folder
+            old_document["folders"] = [folder]
     new_folder = old_document["folders"]
     payload = json.dumps(
         {
@@ -1009,7 +1009,7 @@ def add_template_to_folder(template_id, folder):
         try:
             old_template["folders"].append(folder)
         except:
-            old_template["folders"] = folder
+            old_template["folders"] = [folder]
     new_folder = old_template["folders"]
     payload = json.dumps(
         {
@@ -1165,7 +1165,10 @@ def delete_items_in_folder(item_id, folder_id, item_type):
         old_template = get_template_object(item_id)
         old_template["folders"] = old_template.get("folders")
         if old_template["folders"] is not None:
-            old_template["folders"].remove(folder_id)
+            try:
+                old_template["folders"].remove(folder_id)
+            except:
+                old_template["folders"] = []
         new_folder = old_template["folders"]
         payload = json.dumps(
             {
@@ -1190,7 +1193,10 @@ def delete_items_in_folder(item_id, folder_id, item_type):
         old_document = get_document_object(item_id)
         old_document["folders"] = old_document.get("folders")
         if old_document["folders"] is not None:
-            old_document["folders"].remove(folder_id)
+            try:
+                old_document["folders"].remove(folder_id)
+            except:
+                old_document["folders"] = []
         new_folder = old_document["folders"]
         payload = json.dumps(
             {
