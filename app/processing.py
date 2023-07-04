@@ -539,14 +539,14 @@ class Background:
                                 parent_id,
                                 process_id,
                             )
-                            steps.get("stepDocumentCloneMap").append(
+                            step.get("stepDocumentCloneMap").append(
                                 {user["member"]: clone_id}
                             )
                         for user in step.get("stepUserMembers"):
                             clone_id = cloning_document(
                                 document_id, user, parent_id, process_id
                             )
-                            steps.get("stepDocumentCloneMap").append(
+                            step.get("stepDocumentCloneMap").append(
                                 {user["member"]: clone_id}
                             )
                     if step.get("stepTaskType") == "assign_task":
