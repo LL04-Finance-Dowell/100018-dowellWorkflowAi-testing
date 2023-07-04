@@ -126,11 +126,11 @@ const WorkflowApp = () => {
       const documentsToSign = allDocuments
         .filter(
           (document) =>
-            document.company_id === userCompanyId &&
             document.data_type === userPortfolioDataType &&
             (document.state === 'processing' ||
               document.document_state === 'processing') &&
             document.auth_viewers &&
+            Array.isArray(document.auth_viewers) &&
             document.auth_viewers.includes(userDetail?.userinfo?.username)
         )
         .filter((document) => document.process_id);
