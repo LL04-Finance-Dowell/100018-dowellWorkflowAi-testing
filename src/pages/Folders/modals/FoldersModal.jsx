@@ -42,7 +42,7 @@ const FoldersModal = () => {
     docPageArr: [],
     tempPageArr: [],
   });
-  const [itemsPerPage] = useState(20);
+  const [itemsPerPage] = useState(10);
   const [selectedDocs, setSelectedDocs] = useState([]);
   const [selectedTemps, setSelectedTemps] = useState([]);
   const [addFolderId, setAddFolderId] = useState();
