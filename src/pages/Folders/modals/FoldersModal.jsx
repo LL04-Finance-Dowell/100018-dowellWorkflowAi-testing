@@ -32,6 +32,17 @@ const FoldersModal = () => {
   const [delFolderName, setDelFolderName] = useState('');
   const [docsList, setDocsList] = useState([]);
   const [tempsList, setTempsList] = useState([]);
+  const [docsListToDisplay, setDocsListToDisplay] = useState([]);
+  const [tempsListToDisplay, setTempsListToDisplay] = useState([]);
+  const [docsListCurrentPage, setDocsListCurrentPage] = useState(1);
+  const [tempsListCurrentPage, setTempsListCurrentPage] = useState(1);
+  const [totalPageCount, setTotalPageCount] = useState({
+    docs: 0,
+    temps: 0,
+    docPageArr: [],
+    tempPageArr: [],
+  });
+  const [itemsPerPage] = useState(20);
   const [selectedDocs, setSelectedDocs] = useState([]);
   const [selectedTemps, setSelectedTemps] = useState([]);
   const [addFolderId, setAddFolderId] = useState();
@@ -272,11 +283,13 @@ const FoldersModal = () => {
   useEffect(() => {
     if (allDocuments)
       setDocsList(
-        allDocuments.map((doc) => ({
-          name: doc.document_name,
-          id: doc._id,
-          category: 'document',
-        }))
+        allDocuments
+          .filter((doc) => doc.document_type === 'original')
+          .map((doc) => ({
+            name: doc.document_name,
+            id: doc._id,
+            category: 'document',
+          }))
       );
 
     if (allTemplates)
@@ -288,6 +301,56 @@ const FoldersModal = () => {
         }))
       );
   }, [allDocuments, allTemplates]);
+
+  useEffect(() => {
+    const start = (docsListCurrentPage - 1) * itemsPerPage;
+    const end = docsListCurrentPage * itemsPerPage;
+
+    setDocsListToDisplay(docsList.slice(start, end));
+  }, [docsList, docsListCurrentPage]);
+
+  useEffect(() => {
+    const start = (tempsListCurrentPage - 1) * itemsPerPage;
+    const end = tempsListCurrentPage * itemsPerPage;
+
+    setTempsListToDisplay(tempsList.slice(start, end));
+  }, [tempsList, tempsListCurrentPage]);
+
+  useEffect(() => {
+    if (docsList.length)
+      setTotalPageCount((prev) => ({
+        ...prev,
+        docs: Math.ceil(docsList.length / itemsPerPage),
+      }));
+
+    if (tempsList.length)
+      setTotalPageCount((prev) => ({
+        ...prev,
+        temps: Math.ceil(tempsList.length / itemsPerPage),
+      }));
+  }, [docsList, tempsList]);
+
+  useEffect(() => {
+    if (totalPageCount.docs) {
+      if (totalPageCount.docs !== totalPageCount.docPageArr.length) {
+        const modArr = [];
+        for (let i = 1; i <= totalPageCount.docs; i++) {
+          modArr.push(i);
+        }
+        setTotalPageCount((prev) => ({ ...prev, docPageArr: [...modArr] }));
+      }
+    }
+
+    if (totalPageCount.temps) {
+      if (totalPageCount.temps !== totalPageCount.tempPageArr.length) {
+        const modArr = [];
+        for (let i = 1; i <= totalPageCount.temps; i++) {
+          modArr.push(i);
+        }
+        setTotalPageCount((prev) => ({ ...prev, tempPageArr: [...modArr] }));
+      }
+    }
+  }, [totalPageCount]);
 
   useEffect(() => {
     if (!state) {
@@ -338,8 +401,20 @@ const FoldersModal = () => {
             <>
               <h3>
                 {isEditing
-                  ? `Editing ${folder && folder.folder_name} folder`
-                  : `Edit ${folder && folder.folder_name} folder`}
+                  ? `Editing ${folder && folder.folder_name} ${
+                      folder.folder_name
+                        ? folder.folder_name.toLowerCase().includes('folder')
+                          ? ''
+                          : 'folder'
+                        : ''
+                    }`
+                  : `Edit ${folder && folder.folder_name} ${
+                      folder.folder_name
+                        ? folder.folder_name.toLowerCase().includes('folder')
+                          ? ''
+                          : 'folder'
+                        : ''
+                    }`}
 
                 {!isEditing && (
                   <button
@@ -367,21 +442,27 @@ const FoldersModal = () => {
 
                 <div className={styles.form_opt}>
                   <SelectInput
-                    list={docsList}
+                    list={docsListToDisplay}
                     type='docs'
                     selDocs={selectedDocs}
                     setSelDocs={setSelectedDocs}
                     folder={folder}
+                    totalPageCount={totalPageCount}
+                    docsListCurrentPage={docsListCurrentPage}
+                    setDocsListCurrentPage={setDocsListCurrentPage}
                   />
                 </div>
 
                 <div className={styles.form_opt}>
                   <SelectInput
-                    list={tempsList}
+                    list={tempsListToDisplay}
                     type='temps'
                     selTemps={selectedTemps}
                     setSelTemps={setSelectedTemps}
                     folder={folder}
+                    totalPageCount={totalPageCount}
+                    tempsListCurrentPage={tempsListCurrentPage}
+                    setTempsListCurrentPage={setTempsListCurrentPage}
                   />
                 </div>
 
@@ -398,8 +479,20 @@ const FoldersModal = () => {
             <>
               <h3 style={{ color: 'red' }}>
                 {isDeleting
-                  ? `Deleting ${folder && folder.folder_name} folder`
-                  : `Delete ${folder && folder.folder_name} folder?`}
+                  ? `Deleting ${folder && folder.folder_name} ${
+                      folder.folder_name
+                        ? folder.folder_name.toLowerCase().includes('folder')
+                          ? ''
+                          : 'folder'
+                        : ''
+                    }`
+                  : `Delete ${folder && folder.folder_name} ${
+                      folder.folder_name
+                        ? folder.folder_name.toLowerCase().includes('folder')
+                          ? ''
+                          : 'folder'
+                        : ''
+                    }?`}
 
                 {!isDeleting && (
                   <button
@@ -413,7 +506,7 @@ const FoldersModal = () => {
                 )}
               </h3>
 
-              <form className={styles.folder_form} onSubmit={handleSubmit}>
+              {/* <form className={styles.folder_form} onSubmit={handleSubmit}>
                 <div className={styles.form_opt}>
                   <label htmlFor='folder_name'>Name</label>
                   <input
@@ -424,7 +517,7 @@ const FoldersModal = () => {
                     onChange={(e) => setDelFolderName(e.target.value)}
                   />
                 </div>
-              </form>
+              </form> */}
 
               <div className={styles.btns_wrapper}>
                 {isDeleting ? (
@@ -549,6 +642,11 @@ const SelectInput = ({
   setSelTemps,
   setSelDocs,
   folder,
+  totalPageCount,
+  docsListCurrentPage,
+  tempsListCurrentPage,
+  setDocsListCurrentPage,
+  setTempsListCurrentPage,
 }) => {
   const [isDocDrop, setIsDocDrop] = useState(false);
   const [isTempDrop, setIsTempDrop] = useState(false);
@@ -574,15 +672,15 @@ const SelectInput = ({
     if (supEl && el) {
       if (supEl.dataset.id === 'docs' && el.dataset.id === 'docs') {
         if (isDocDrop)
-          supEl.style.height = el.getBoundingClientRect().height + 'px';
+          supEl.style.height = el.getBoundingClientRect().height + 10 + 'px';
         else supEl.style.height = '0px';
       } else if (supEl.dataset.id === 'temps' && el.dataset.id === 'temps') {
         if (isTempDrop)
-          supEl.style.height = el.getBoundingClientRect().height + 'px';
+          supEl.style.height = el.getBoundingClientRect().height + 10 + 'px';
         else supEl.style.height = '0px';
       }
     }
-  }, [superContainerRef, containerRef, isDocDrop, isTempDrop]);
+  }, [superContainerRef, containerRef, isDocDrop, isTempDrop, list]);
 
   return (
     <>
@@ -616,43 +714,75 @@ const SelectInput = ({
           data-id={type === 'docs' ? type : type === 'temps' ? type : ''}
         >
           {list.length ? (
-            list.map(({ name, id, category }) => (
-              <div
-                className={styles.drop_opt}
-                key={id}
-                style={
-                  folder.data &&
-                  folder.data.find((itm) => itm[`${category}_id`] === id)
-                    ? { pointerEvents: 'none' }
-                    : {}
-                }
-              >
-                <input
-                  id={id}
-                  type='checkbox'
-                  value={name}
-                  name={type}
-                  onChange={
-                    type === 'docs'
-                      ? handleDocsChange
-                      : type === 'temps'
-                      ? handleTempsChange
-                      : () => {
-                          // console.log('Change not handled');
-                        }
-                  }
-                  disabled={
+            <>
+              {list.map(({ name, id, category }) => (
+                <div
+                  className={styles.drop_opt}
+                  key={id}
+                  style={
                     folder.data &&
                     folder.data.find((itm) => itm[`${category}_id`] === id)
+                      ? { pointerEvents: 'none' }
+                      : {}
                   }
-                  checked={
-                    folder.data &&
-                    folder.data.find((itm) => itm[`${category}_id`] === id)
-                  }
-                />
-                <label htmlFor={id}>{name}</label>
+                >
+                  <input
+                    id={id}
+                    type='checkbox'
+                    value={name}
+                    name={type}
+                    onChange={
+                      type === 'docs'
+                        ? handleDocsChange
+                        : type === 'temps'
+                        ? handleTempsChange
+                        : () => {
+                            // console.log('Change not handled');
+                          }
+                    }
+                    disabled={
+                      folder.data &&
+                      folder.data.find((itm) => itm[`${category}_id`] === id)
+                    }
+                    checked={
+                      folder.data &&
+                      folder.data.find((itm) => itm[`${category}_id`] === id)
+                    }
+                  />
+                  <label htmlFor={id}>{name}</label>
+                </div>
+              ))}
+
+              <div className={styles.pagination_wrapper}>
+                {type === 'docs'
+                  ? totalPageCount.docPageArr.map((page) => (
+                      <button
+                        type='button'
+                        className={`${styles.page_btn} ${
+                          docsListCurrentPage === page ? styles.active : ''
+                        }`}
+                        key={page}
+                        onClick={() => setDocsListCurrentPage(page)}
+                      >
+                        {page}
+                      </button>
+                    ))
+                  : type === 'temps'
+                  ? totalPageCount.tempPageArr.map((page) => (
+                      <button
+                        type='button'
+                        className={`${styles.page_btn} ${
+                          tempsListCurrentPage === page ? styles.active : ''
+                        }`}
+                        key={page}
+                        onClick={() => setTempsListCurrentPage(page)}
+                      >
+                        {page}
+                      </button>
+                    ))
+                  : ''}
               </div>
-            ))
+            </>
           ) : (
             <p>
               No{' '}

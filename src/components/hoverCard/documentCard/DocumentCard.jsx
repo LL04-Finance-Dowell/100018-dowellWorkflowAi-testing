@@ -418,7 +418,7 @@ const DocumentCard = ({
         <div
           style={{
             position: 'absolute',
-            top: '0',
+            bottom: '0',
             left: '0',
             display: 'flex',
             alignItems: 'center',

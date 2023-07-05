@@ -29,7 +29,7 @@
 .folders_modal_sect button {
   background-color: transparent;
   display: block;
-  transition: all 0.3s ease;
+  transition: all 0.2s ease;
 }
 
 .folders_modal_sect button:not(.select_drop_btn, .close_btn):active {
@@ -43,7 +43,8 @@
   padding: 20px;
   text-align: center;
   border-radius: 10px;
-  border: var(--bs-modal-border-width) solid var(--bs-modal-border-color);
+
+  box-shadow: 0 0 8px #000;
 }
 
 .folders_modal_sect .opt_btn {
@@ -120,6 +121,7 @@
   height: 0;
   overflow: hidden;
   transition: all ease 0.3s;
+  width: 100%;
 }
 
 .drop_container {
@@ -171,6 +173,31 @@
 
 .folder_form select {
   cursor: pointer;
+}
+
+.pagination_wrapper {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(30px, 1fr));
+  width: 100%;
+  grid-gap: 5px;
+  border-top: 1.5px solid #d8d8d8;
+  padding-top: 10px;
+}
+
+.page_btn {
+  background-color: #d8d8d83d !important;
+  color: #7a7a7a !important;
+}
+
+.page_btn:hover {
+  color: #000 !important;
+  background-color: #d8d8d8 !important;
+}
+
+.page_btn.active {
+  color: #000 !important;
+  background-color: #d8d8d8 !important;
+  pointer-events: none;
 }
 
 /* * Edit Modal End */
