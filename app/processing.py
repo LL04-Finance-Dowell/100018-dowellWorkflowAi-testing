@@ -161,39 +161,6 @@ class HandleProcess:
             print("notification sent")
         return
 
-    def public_bulk_data(process_data, auth_name, step_role, portfolio, user_type):
-        hash = uuid.uuid4().hex
-        params = process_data["params"]
-        process_id = process_data["_id"]
-        item_id = process_data["parent_item_id"]
-        org_name = process_data["org_name"]
-        item_type = process_data["process_kind"]
-        company_id = process_data["company_id"]
-        link = f"{VERIFICATION_LINK}/{hash}/"
-        for i in range(0, len(auth_name)):
-            field = auth_name[i]
-            params[f"username[{i}]"] = field
-        params["auth_role"] = step_role
-        params["user_type"] = user_type
-        params["portfolio"] = portfolio
-        encoded_params = HandleProcess.parse_url(params)
-        new_link = f"{link}?{encoded_params}"
-        save_uuid_hash(
-            new_link,
-            process_id,
-            item_id,
-            step_role,
-            auth_name,
-            portfolio,
-            hash,
-            item_type,
-        )
-        HandleProcess.notify(
-            auth_name, item_id, portfolio, company_id, new_link, org_name
-        )
-        new_code = HandleProcess.generate_qrcode(new_link)
-        return new_link, new_code
-
     def user_team_public_data(process_data, auth_name, step_role, portfolio, user_type):
         hash = uuid.uuid4().hex
         link = f"{VERIFICATION_LINK}/{hash}/"
@@ -272,9 +239,10 @@ class HandleProcess:
             QRCODE_URL, data=payload, headers={"Content-Type": "application/json"}
         )
         if response.status_code == 201:
+            print("success")
             response = json.loads(response.text)
-            master_link = response["masterlink"]
-            master_qrcode = response["qrcode_image_url"]
+            master_link = response["qrcodes"][0]["masterlink"]
+            master_qrcode = response["qrcodes"][0]["qrcode_image_url"]
         return master_link, master_qrcode
 
     def start(self):
@@ -288,6 +256,7 @@ class HandleProcess:
         process_data["params"] = self.params
         m_code = None
         m_link = None
+        link_string  = "link"
         for step in steps:
             for member in step.get("stepPublicMembers", []):
                 link, qrcode = HandleProcess.user_team_public_data(
@@ -298,6 +267,7 @@ class HandleProcess:
                     "public",
                 )
                 links.append({member["member"]: link})
+                public_links.append({link_string: link})
                 qrcodes.append({member["member"]: qrcode})
             for member in step.get("stepTeamMembers", []):
                 link, qrcode = HandleProcess.user_team_public_data(
@@ -319,17 +289,6 @@ class HandleProcess:
                 )
                 links.append({member["member"]: link})
                 qrcodes.append({member["member"]: qrcode})
-            public_users = [m["member"] for m in step.get("stepPublicMembers", [])]
-            if public_users:
-                public_portfolio = step.get("stepPublicMembers", [])[0].get("portfolio")
-                link, qrcode = HandleProcess.public_bulk_data(
-                    self.process,
-                    public_users,
-                    step.get("stepRole"),
-                    public_portfolio,
-                    "bulk_public",
-                )
-                public_links.append({public_portfolio: link})
         clone_ids = HandleProcess.prepare_document_for_step_one_users(
             steps[0], self.process["parent_item_id"], process_id
         )
@@ -552,7 +511,7 @@ class Background:
                                 for item in prev_docs:
                                     key = next(iter(item))
                                     my_key = item[key]
-                                    if my_key is not "accessed":
+                                    if my_key != "accessed":
                                         step1_documents.append(my_key)
                                 for document in step1_documents:
                                     for user in step.get("stepTeamMembers"):
