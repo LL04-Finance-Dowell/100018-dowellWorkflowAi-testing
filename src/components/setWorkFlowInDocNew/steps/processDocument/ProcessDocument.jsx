@@ -64,6 +64,7 @@ const ProcessDocument = ({ savedProcess }) => {
   const [newProcessLoaded, setNewProcessLoaded] = useState(null);
   const [showGeneratedLinksPopup, setShowGeneratedLinksPopup] = useState(false);
   const [generatedLinks, setGeneratedLinks] = useState(null);
+  const [masterLink, setmasterLink] = useState(null)
   const [copiedLinks, setCopiedLinks] = useState([]);
   const [processObjToSave, setProcessObjectToSave] = useState(null);
   const [processObjToSaveTitle, setProcessObjectToSaveTitle] = useState('');
@@ -149,6 +150,7 @@ const ProcessDocument = ({ savedProcess }) => {
 
     try {
       const response = await (await startNewProcessV2(processObjToPost)).data;
+
       setNewProcessLoaded(true);
       setNewProcessLoading(false);
       if (
@@ -156,7 +158,9 @@ const ProcessDocument = ({ savedProcess }) => {
           newProcessActionOptions[`${processOptionSelection}`]
         )
       ) {
+        console.log(response)
         setGeneratedLinks(Array.isArray(response) ? response[0] : response);
+        setmasterLink(Array.isArray(response) ? response.master_link : response)
         setShowGeneratedLinksPopup(true);
         setNewProcessLoaded(false);
         return;
@@ -318,6 +322,7 @@ const ProcessDocument = ({ savedProcess }) => {
       {showGeneratedLinksPopup && (
         <GeneratedLinksModal
           linksObj={generatedLinks}
+          masterLink={masterLink}
           copiedLinks={copiedLinks}
           updateCopiedLinks={(links) => setCopiedLinks(links)}
           handleCloseBtnClick={() => setShowGeneratedLinksPopup(false)}
