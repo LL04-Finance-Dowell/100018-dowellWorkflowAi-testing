@@ -508,7 +508,6 @@ class Background:
         finalized = []
         try:
             no_of_steps = sum(isinstance(e, dict) for e in steps)
-
             if no_of_steps > 0:
                 for index, step in enumerate(steps):
                     if step["stepDocumentCloneMap"]:
@@ -519,11 +518,9 @@ class Background:
                                     get_document_object(v).get("document_state")
                                     == "processing"
                                 ):
-                                    continue
-                                    
+                                    continue 
                                 else:
                                     finalized.append(v)
-
                     else:
                         if step.get("stepTaskType") == "request_for_task":
                             for user in step.get("stepTeamMembers"):
@@ -552,13 +549,11 @@ class Background:
                             for i in range(1, len((steps))):
                                 current_idx = i
                                 prev_docs = steps[current_idx - 1].get("stepDocumentCloneMap")
-
                                 for item in prev_docs:
                                     key = next(iter(item))
                                     my_key = item[key]
                                     if my_key is not "accessed":
                                         step1_documents.append(my_key)
-                        
                                 for document in step1_documents:
                                     for user in step.get("stepTeamMembers"):
                                         authorize(document, user, process_id, process_type)
