@@ -22,28 +22,28 @@ const ProcessesPage = ({ home, showOnlySaved, showOnlyPaused, showOnlyCancelled,
   const navigate = useNavigate();
   const [currentUserPortfolioDataType, setCurrentUserPortfolioDataType] = useState('');
 
-  // const processing = allProcesses.filter(process => process.processing_state === "processing")
+  // const finilized = allProcesses.filter(process => process.processing_state === "finalized")
   // const draft = allProcesses.filter(process => process.processing_state === "draft");
 
 
   // console.log('all process',allProcesses)
-  // console.log('processing',processing)
+  // console.log('finalized',finilized)
   // console.log('draft',draft)
 
   // console.log(userDetail?.portfolio_info[0].org_id)
-  const company_id = userDetail?.portfolio_info[0].org_id
-  useEffect(() => {
-    axios
-      .get(`https://100094.pythonanywhere.com/v1/companies/${userDetail?.portfolio_info[0].org_id}/processes/completed/`)
-      .then((response) => {
-        console.log(response)
-        SetcompletedPcocess(response.data)
-      })
-      .catch((error) => {
-        console.log(error);
+  // const company_id = userDetail?.portfolio_info[0].org_id
+  // useEffect(() => {
+  //   axios
+  //     .get(`https://100094.pythonanywhere.com/v1/companies/${userDetail?.portfolio_info[0].org_id}/processes/completed/`)
+  //     .then((response) => {
+  //       console.log(response)
+  //       SetcompletedPcocess(response.data)
+  //     })
+  //     .catch((error) => {
+  //       console.log(error);
 
-      });
-  }, [company_id])
+  //     });
+  // }, [company_id])
 
 
 
@@ -208,7 +208,7 @@ const ProcessesPage = ({ home, showOnlySaved, showOnlyPaused, showOnlyCancelled,
                 cardBgColor="#1ABC9C"
                 title="completed proccess"
                 Card={ProcessCard}
-                cardItems={completedProcess}
+                cardItems={allProcesses.filter(process => process.processing_state === "finalized")}
                 status={processesLoading ? "pending" : "success"}
                 itemType={"processes"}
               />
