@@ -217,6 +217,16 @@ const SectionBox = ({
       documentService
         .allDocuments(currentUserCompanyId, currentUserportfolioDataType)
         .then((res) => {
+          // console.log(res.data);
+          // console.log(userDetail?.userinfo?.username);
+          // console.log(
+          //   res.data.documents.filter(
+          //     (item) =>
+          //       item.auth_viewers &&
+          //       !Array.isArray(item.auth_viewers) &&
+          //       typeof item.auth_viewers !== 'string'
+          //   )
+          // );
           const documentsToSign = res.data.documents
             .reverse()
             .filter(
@@ -226,6 +236,8 @@ const SectionBox = ({
                 (document.state === 'processing' ||
                   document.document_state === 'processing') &&
                 document.auth_viewers &&
+                (Array.isArray(document.auth_viewers) ||
+                  typeof document.auth_viewers === 'string') &&
                 document.auth_viewers.includes(userDetail?.userinfo?.username)
             )
             .filter((document) => document.process_id);
