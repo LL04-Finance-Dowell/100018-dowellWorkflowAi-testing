@@ -29,6 +29,7 @@ const Reports = () => {
   );
   const { allProcesses } = useSelector((state) => state.app);
 
+
   useEffect(() => {
     if (
       allDocumentsArray &&
@@ -92,8 +93,8 @@ const Reports = () => {
         ).length +
         allProcesses.filter(
           (item) =>
-            // item.created_by === userDetail?.userinfo.username
-            item.processing_state === 'completed'
+
+            item.processing_state === 'finalized'
         ).length;
 
       setItemsCountToDisplay((prevItems) => {

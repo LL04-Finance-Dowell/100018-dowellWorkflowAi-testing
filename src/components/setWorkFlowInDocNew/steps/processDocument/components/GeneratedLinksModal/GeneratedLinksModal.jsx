@@ -1,5 +1,6 @@
 import { AiOutlineClose } from 'react-icons/ai';
 import styles from './style.module.css';
+import { toast } from 'react-toastify';
 import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
@@ -15,6 +16,7 @@ import React from 'react';
 
 const GeneratedLinksModal = ({
   linksObj,
+  masterLink,
   copiedLinks,
   updateCopiedLinks,
   handleCloseBtnClick,
@@ -26,6 +28,7 @@ const GeneratedLinksModal = ({
   const [copiedStatus, setCopiedStatus] = useState(
     ArrayofLinks.map(() => false)
   );
+  console.log(masterLink, linksObj)
   const handleCopyLink = (link) => {
     if (!link) return;
 
@@ -54,71 +57,7 @@ const GeneratedLinksModal = ({
   }
 
 
-  // if (ProcessDetail) {
-  //   return (
-  //     <div className={styles.process__Generated__Links__Overlay}>
-  //       <div className={styles.process__Generated__Links__Container}>
-  //         <div
-  //           className={styles.process__Generated__Links__Container__Close__Icon}
-  //           onClick={() => {
-  //             dispatch(setshowsProcessDetailPopup(false));
-  //             dispatch(SetProcessDetail([]));
-  //             dispatch(setDetailFetched(false));
-  //           }}
-  //         >
-  //           <AiOutlineClose />
-  //         </div>
-  //         <h5 className={styles.DetailHeading}>Process Detail</h5>
-  //         <table className={styles.DetailTable}>
-  //           <tbody>
-  //             <tr>
-  //               <td>Process Title</td>
-  //               <td>{ProcessDetail.process_title}</td>
-  //             </tr>
-  //             <tr>
-  //               <td >Document Name</td>
-  //               <td>{ProcessDetail.document_name}</td>
-  //             </tr>
-  //             <tr>
-  //               {ProcessDetail.stepRole && (
-  //                 <>
-  //                   <td >Step Role</td>
-  //                   <td>{ProcessDetail.stepRole}</td>
-  //                 </>
-  //               )}
-  //             </tr>
-  //             <tr>
-  //               {ProcessDetail.stepName && (
-  //                 <>
-  //                   <td>Step Name</td>
-  //                   <td>{ProcessDetail.stepName}</td>
-  //                 </>
-  //               )}
-  //             </tr>
-  //             <tr>
-  //               {ProcessDetail.processing_state && (
-  //                 <>
-  //                   <td>Processing State</td>
-  //                   <td
-  //                     className={
-  //                       ProcessDetail.processing_state === 'processing'
-  //                         ? styles.ProcessingState
-  //                         : styles.FinalizedState
-  //                     }
-  //                   >
-  //                     {ProcessDetail.processing_state === 'processing'
-  //                       ? 'Processing...'
-  //                       : 'Finalized'}
-  //                   </td>
-  //                 </>
-  //               )}
-  //             </tr>
-  //           </tbody>
-  //         </table>
-  //       </div>
-  //     </div>
-  //   );
-  // }
+
   ///////////
   return linksObj && typeof linksObj === 'object' ? (
     <div className={styles.process__Generated__Links__Overlay}>
@@ -136,47 +75,101 @@ const GeneratedLinksModal = ({
                 <td>S/No.</td>
                 <td>Name</td>
                 <td>Link</td>
-                {/* <td>QR Code</td> */}
+                {linksObj.master_code ? <td>QR Code</td> : null}
                 <td>Copy</td>
               </tr>
             </thead>
+
             <tbody className={styles.process__Links__Container}>
-              {React.Children.toArray(
-                linksObj?.links?.map((link, index) => {
+              {linksObj.master_link && typeof linksObj.master_link === 'string' ? (
+                <>
+                  <tr>
+                    <td>0.</td>
+                    {/* <td>{Object.keys(linksObj.master_link)}</td> */}
+                    <td>Master Link</td>
+                    <td
+                      className={styles.single__Link}
+                      onClick={() => handleCopyLink(linksObj.master_link)}
+                    >
+                      {linksObj.master_link}
+                    </td>
+                    <td>
+                      {linksObj.master_code &&
+                        typeof linksObj.master_code === 'string' ? (
+                        <img
+                          src={linksObj.master_code}
+                          alt="qr code"
+                          onClick={() => {
+                            navigator.clipboard.writeText(linksObj.master_code);
+                            toast.info("Copied to clipboard!");
+                          }}
+                        />
+
+                      ) : (
+                        <>Qr code</>
+                      )}
+                    </td>
+                    <td>
+                      <span
+                        className={styles.process__Generated__Links__Copy__Item}
+                        onClick={() => handleCopyLink(linksObj.master_link)}
+                      >
+                        {copiedLinks.includes(linksObj.master_link) ? 'Copied' : 'Copy'}
+                      </span>
+                    </td>
+                  </tr>
+                  {linksObj.links.map((link, index) => {
+                    if (typeof link !== 'object') return null; // Skip non-object entries
+
+                    const linkName = Object.keys(link)[0];
+                    const linkValue = Object.values(link)[0];
+
+                    return (
+                      <tr key={index}>
+                        <td>{index + 1}.</td>
+                        <td>{linkName}</td>
+                        <td
+                          className={styles.single__Link}
+                          onClick={() => handleCopyLink(linkValue)}
+                        >
+                          {linkValue}
+                        </td>
+                        <td>{null}</td>
+                        <td>
+                          <span
+                            className={styles.process__Generated__Links__Copy__Item}
+                            onClick={() => handleCopyLink(linkValue)}
+                          >
+                            {copiedLinks.includes(linkValue) ? 'Copied' : 'Copy'}
+                          </span>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </>
+              ) : (
+                linksObj.links.map((link, index) => {
+                  if (typeof link !== 'object') return null; // Skip non-object entries
+
+                  const linkName = Object.keys(link)[0];
+                  const linkValue = Object.values(link)[0];
+
                   return (
-                    <tr>
+                    <tr key={index}>
                       <td>{index + 1}.</td>
-                      <td>
-                        {typeof link === 'object' ? Object.keys(link)[0] : ''}
-                      </td>
+                      <td>{linkName}</td>
                       <td
                         className={styles.single__Link}
-                        onClick={() => handleCopyLink(Object.values(link)[0])}
+                        onClick={() => handleCopyLink(linkValue)}
                       >
-                        {typeof link === 'object' ? Object.values(link)[0] : ''}
+                        {linkValue}
                       </td>
-                      {/* <td>
-                        {linksObj?.qrcodes[index] &&
-                          typeof linksObj?.qrcodes[index] === 'object' ? (
-                          <img
-                            src={Object.values(linksObj?.qrcodes[index])[0]}
-                            alt='qr code'
-                          />
-                        ) : (
-                          <>Qr code</>
-                        )}
-                      </td> */}
                       <td>
                         <span
-                          className={
-                            styles.process__Generated__Links__Copy__Item
-                          }
-                          onClick={() => handleCopyLink(Object.values(link)[0])}
+                          className={styles.process__Generated__Links__Copy__Item}
+                          onClick={() => handleCopyLink(linkValue)}
                         >
-                          {typeof link === 'object' &&
-                            copiedLinks.includes(Object.values(link)[0])
-                            ? 'Copied'
-                            : 'Copy'}
+                          {copiedLinks.includes(linkValue) ? 'Copied' : 'Copy'}
                         </span>
                       </td>
                     </tr>
@@ -188,6 +181,7 @@ const GeneratedLinksModal = ({
         </div>
       </div>
     </div>
+
   ) : (
     <div className={styles.process__Generated__Links__Overlay}>
       <div className={styles.process__Generated__Links__Container}>
