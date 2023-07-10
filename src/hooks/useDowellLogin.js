@@ -30,7 +30,7 @@ export default function useDowellLogin() {
      */
     toast.info(
       authorizedPortfolioName ? 
-      `Please log in with ${authorizedPortfolioName} to access this document` : 
+      `Please open this link with ${decodeURIComponent(authorizedPortfolioName)} to access this document` : 
       'You are not authorized to view this'
     );
     dispatch(setShowProfileSpinner(false));

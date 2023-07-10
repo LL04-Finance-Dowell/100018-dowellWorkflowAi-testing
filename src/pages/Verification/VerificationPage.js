@@ -88,7 +88,7 @@ const VerificationPage = () => {
       }
 
       if ((auth_username === userDetail?.userinfo?.username) && (auth_portfolio !== currentUserPortfolioName)) {
-        toast.info(`Please login with ${auth_portfolio} to view this document`);
+        toast.info(`Please open this link with ${decodeURIComponent(auth_portfolio)} to access this document`);
         setLoading(false);
         setVerificationFailed(true);
         return;
