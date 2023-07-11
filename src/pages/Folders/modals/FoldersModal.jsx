@@ -48,32 +48,12 @@ const FoldersModal = () => {
   const [addFolderId, setAddFolderId] = useState();
   const [addFolder, setAddFolder] = useState({});
   const [foldersContainingItem, setFoldersContainingItem] = useState([]);
-  const [userCompanyId] = useState(
-    userDetail?.portfolio_info?.length > 1
-      ? userDetail?.portfolio_info?.find(
-          (portfolio) => portfolio.product === productName
-        )?.org_id
-      : userDetail?.portfolio_info[0]?.org_id
-  );
-  const [userDataType] = useState(
-    userDetail?.portfolio_info?.length > 1
-      ? userDetail?.portfolio_info.find(
-          (portfolio) => portfolio.product === productName
-        )?.data_type
-      : userDetail?.portfolio_info[0].data_type
-  );
+  const [userCompanyId, setUserCompanyId] = useState('');
+  const [userDataType, setUserDataType] = useState('');
 
-  const {
-    allDocuments,
+  const { allDocuments } = useSelector((state) => state.document);
 
-    // : allDocumentsArray, allDocumentsStatus
-  } = useSelector((state) => state.document);
-
-  const {
-    allTemplates,
-
-    // : allTemplatesArray, allTemplatesStatus
-  } = useSelector((state) => state.template);
+  const { allTemplates } = useSelector((state) => state.template);
 
   const handleCreateFolder = async () => {
     const data = {
@@ -255,6 +235,25 @@ const FoldersModal = () => {
       }
     }
   };
+
+  useEffect(() => {
+    const companyId =
+      userDetail?.portfolio_info?.length > 1
+        ? userDetail?.portfolio_info?.find(
+            (portfolio) => portfolio.product === productName
+          )?.org_id
+        : userDetail?.portfolio_info[0]?.org_id;
+
+    const dataType =
+      userDetail?.portfolio_info?.length > 1
+        ? userDetail?.portfolio_info.find(
+            (portfolio) => portfolio.product === productName
+          )?.data_type
+        : userDetail?.portfolio_info[0].data_type;
+
+    setUserCompanyId(companyId);
+    setUserDataType(dataType);
+  }, [userDetail]);
 
   useEffect(() => {
     if (folderActionId)
