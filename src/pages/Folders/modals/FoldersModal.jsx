@@ -237,6 +237,8 @@ const FoldersModal = () => {
   };
 
   useEffect(() => {
+    if (!userDetail || userDetail.msg) return
+
     const companyId =
       userDetail?.portfolio_info?.length > 1
         ? userDetail?.portfolio_info?.find(

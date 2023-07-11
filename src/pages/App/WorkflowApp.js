@@ -104,6 +104,9 @@ const WorkflowApp = () => {
   ]);
 
   useEffect(() => {
+
+    if (!userDetail || userDetail.msg) return
+    
     const [userCompanyId, userPortfolioDataType] = [
       userDetail?.portfolio_info?.length > 1
         ? userDetail?.portfolio_info.find(

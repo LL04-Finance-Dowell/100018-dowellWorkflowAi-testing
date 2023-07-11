@@ -198,7 +198,7 @@ export const extractProcessObj = (
 
     const documentMapMissingInStep =
       processObj.workflows[0].workflows.steps.map((step) => {
-        if (step.stepDocumentMap.length < 1 && !step.skipStep)
+        if (step.stepDocumentMap.length < 1 && !step.skipStep && !step.stepRights === 'view')
           return 'Document map missing';
         return null;
       });
