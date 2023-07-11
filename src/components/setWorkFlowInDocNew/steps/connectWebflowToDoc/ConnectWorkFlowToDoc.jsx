@@ -48,7 +48,7 @@ const ConnectWorkFlowToDoc = ({ stepsPopulated, savedProcessSteps }) => {
     if (stepsPopulated && !savedProcessConfigured) {
       const processStepsToSet = savedProcessSteps[0].steps.map((step) => {
         const copyOfStep = { ...step };
-        const tt = Object.keys(copyOfStep)
+        const stepKeys = Object.keys(copyOfStep)
           .filter(
             (key) =>
               key !== 'stepPublicMembers' &&
@@ -60,7 +60,7 @@ const ConnectWorkFlowToDoc = ({ stepsPopulated, savedProcessSteps }) => {
             obj[key] = copyOfStep[key];
             return obj;
           }, {});
-        return tt;
+        return stepKeys;
       });
 
       const savedProcessStepsToSet = [
