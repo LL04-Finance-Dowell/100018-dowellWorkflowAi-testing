@@ -7,7 +7,7 @@ import qrcode
 import requests
 
 from app.checks import display_right, location_right, time_limit_right
-from app.constants import EDITOR_API, NOTIFICATION_API, QRCODE_URL, VERIFICATION_LINK
+from app.constants import EDITOR_API, MASTERLINK_URL, NOTIFICATION_API, QRCODE_URL, VERIFICATION_LINK
 from app.helpers import cloning_document, register_public_login, check_items_state
 from app.mongo_db_connection import (
     authorize,
@@ -385,7 +385,9 @@ class HandleProcess:
                 document = "documentreports"
                 field = "document_name"
                 team_member_id = "11689044433"
-                item_flag = get_document_object(clone_id)["document_state"]
+                document = get_document_object(clone_id)
+                item_flag = document["document_state"]
+                document_name = document["document_name"]
                 editor_link = HandleProcess.get_editor_link(
                     {
                         "product_name": "Workflow AI",
@@ -409,7 +411,7 @@ class HandleProcess:
                             "role": role,
                             "process_id": self.process["_id"],
                             "update_field": {
-                                "document_name": "",
+                                "document_name": document_name,
                                 "content": "",
                                 "page": "",
                             },
@@ -435,13 +437,17 @@ class Background:
 
     def register_finalized(link_id):
         """Master single link as finalized"""
+        print("here")
+        print(link_id)
         response = requests.put(
-            f"{QRCODE_URL}/?link_id={link_id}",
+            f"{MASTERLINK_URL}?link_id={link_id}",
             data={"is_finalized": True},
             headers={"Content-Type": "application/json"},
         )
         if response.status_code == 200:
             print("finalized")
+        else:
+            print("failed")
         return
 
     def register_user_access(process_steps, authorized_role, user):
@@ -460,7 +466,6 @@ class Background:
         process_type = self.process["process_type"]
         document_id = self.item_id
         processing_state = self.process["processing_state"]
-        print(self.username)
         Background.register_user_access(
             self.process["process_steps"], self.role, self.username
         )

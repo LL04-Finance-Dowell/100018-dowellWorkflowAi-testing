@@ -251,34 +251,32 @@ def finalize_or_reject(request, process_id):
     """After access is granted and the user has made changes on a document."""
     if not request.data:
         return Response("you are missing something", status.HTTP_400_BAD_REQUEST)
-    link_id = None
-    user_type = "team"
     item_id = request.data["item_id"]
     item_type = request.data["item_type"]
     role = request.data["role"]
     user = request.data["authorized"]
-    # user_type = request.data["user_type"]
+    user_type = request.data["user_type"]
+    link_id = request.data["link_id"]
     state = request.data["action"]
     check, current_state = checks.is_finalized(item_id, item_type)
     if check and current_state != "processing":
         return Response(
             f"document already processed as `{current_state}`!", status.HTTP_200_OK
         )
-    res = finalize_item(item_id, state, item_type)
-    if "isSuccess" in res:
+    res = json.loads(finalize_item(item_id, state, item_type))
+    if res["isSuccess"]:
         try:
             process = get_process_object(process_id)
             background = Background(process, item_type, item_id, role, user)
             background.processing()
             if user_type == "public":
-                link_id = request.data["link_id"]
                 background.register_finalized(link_id)
             return Response("document processed successfully", status.HTTP_200_OK)
         except Exception as err:
             print(err)
-            return Response("An error occured", status.HTTP_500_INTERNAL_SERVER_ERROR)
-    else:
-        return Response(
+            return Response("An error occured during processing", status.HTTP_500_INTERNAL_SERVER_ERROR)
+  
+    return Response(
             "an error occurred during processing", status.HTTP_400_BAD_REQUEST
         )
 
