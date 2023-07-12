@@ -49,6 +49,8 @@ const AssignTask = ({ currentStepIndex, stepsPopulated }) => {
       } 
       loading={loading}
     >
+      <p style={{ padding: "0", marginBottom: "14px"}}><b>Assign Task</b></p>
+
       <form onSubmit={handleSubmit(onSubmit)}>
         <Select
           label="member order"

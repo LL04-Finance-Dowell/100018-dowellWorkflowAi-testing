@@ -19,6 +19,7 @@ import SelectMembersToAssign from './contents/selectMembersToAssign/SelectMember
 import AssignCollapse from './contents/assignCollapse/AssignCollapse';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
+import AssignTask from './contents/selectMembersToAssign/assignTask/AssignTask';
 
 const ConnectWorkFlowToDoc = ({ stepsPopulated, savedProcessSteps }) => {
   const { register } = useForm();
@@ -48,7 +49,7 @@ const ConnectWorkFlowToDoc = ({ stepsPopulated, savedProcessSteps }) => {
     if (stepsPopulated && !savedProcessConfigured) {
       const processStepsToSet = savedProcessSteps[0].steps.map((step) => {
         const copyOfStep = { ...step };
-        const tt = Object.keys(copyOfStep)
+        const stepKeys = Object.keys(copyOfStep)
           .filter(
             (key) =>
               key !== 'stepPublicMembers' &&
@@ -60,7 +61,7 @@ const ConnectWorkFlowToDoc = ({ stepsPopulated, savedProcessSteps }) => {
             obj[key] = copyOfStep[key];
             return obj;
           }, {});
-        return tt;
+        return stepKeys;
       });
 
       const savedProcessStepsToSet = [
@@ -357,6 +358,11 @@ const ConnectWorkFlowToDoc = ({ stepsPopulated, savedProcessSteps }) => {
                         </div>
                         <div className={styles.diveder}></div>
                         <CopiesOfDoc
+                          currentStepIndex={index}
+                          stepsPopulated={stepsPopulated}
+                        />
+                        <div className={styles.diveder}></div>
+                        <AssignTask
                           currentStepIndex={index}
                           stepsPopulated={stepsPopulated}
                         />

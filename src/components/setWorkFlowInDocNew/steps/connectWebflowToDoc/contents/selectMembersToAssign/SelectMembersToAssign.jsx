@@ -1047,10 +1047,7 @@ const SelectMembersToAssign = ({
               }
             </div>
           </div>
-          <AssignTask
-            currentStepIndex={currentStepIndex}
-            stepsPopulated={stepsPopulated}
-          />
+          
         </>
       )}
     </div>

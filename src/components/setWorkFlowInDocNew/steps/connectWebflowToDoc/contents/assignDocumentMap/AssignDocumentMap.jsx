@@ -96,6 +96,11 @@ const AssignDocumentMap = ({ currentStepIndex, stepsPopulated }) => {
       processSteps.find(
         process => process.workflow === docCurrentWorkflow?._id
       )?.steps[currentStepIndex]?.skipStep ? <p>Step skipped</p> :
+
+      processSteps.find(
+        process => process.workflow === docCurrentWorkflow?._id
+      )?.steps[currentStepIndex]?.stepRights === 'view' ? <p>Contents skipped because rights have been set to <b>view</b></p> :
+
       contentOfDocument ? 
       <Contents
         feature={"table-of-contents"}
@@ -110,6 +115,11 @@ const AssignDocumentMap = ({ currentStepIndex, stepsPopulated }) => {
       processSteps.find(
         process => process.workflow === docCurrentWorkflow?._id
       )?.steps[currentStepIndex]?.skipStep ? <p>Step skipped</p> :
+
+      processSteps.find(
+        process => process.workflow === docCurrentWorkflow?._id
+      )?.steps[currentStepIndex]?.stepRights === 'view' ? <></> :
+
       <FormLayout isSubmitted={isSubmitted} loading={loading}>
         <form
           onSubmit={handleSubmit(onSubmit)}
