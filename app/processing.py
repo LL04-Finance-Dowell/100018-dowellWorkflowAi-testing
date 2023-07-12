@@ -385,7 +385,9 @@ class HandleProcess:
                 document = "documentreports"
                 field = "document_name"
                 team_member_id = "11689044433"
-                item_flag = get_document_object(clone_id)["document_state"]
+                document = get_document_object(clone_id)
+                item_flag = document["document_state"]
+                document_name = document["document_name"]
                 editor_link = HandleProcess.get_editor_link(
                     {
                         "product_name": "Workflow AI",
@@ -409,7 +411,7 @@ class HandleProcess:
                             "role": role,
                             "process_id": self.process["_id"],
                             "update_field": {
-                                "document_name": "",
+                                "document_name": document_name,
                                 "content": "",
                                 "page": "",
                             },
@@ -435,6 +437,8 @@ class Background:
 
     def register_finalized(link_id):
         """Master single link as finalized"""
+        print("here")
+        print(link_id)
         response = requests.put(
             f"{QRCODE_URL}/?link_id={link_id}",
             data={"is_finalized": True},
@@ -460,7 +464,6 @@ class Background:
         process_type = self.process["process_type"]
         document_id = self.item_id
         processing_state = self.process["processing_state"]
-        print(self.username)
         Background.register_user_access(
             self.process["process_steps"], self.role, self.username
         )
