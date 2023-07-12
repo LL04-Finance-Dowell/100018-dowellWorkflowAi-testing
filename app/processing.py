@@ -112,6 +112,8 @@ class Process:
                 "process_kind": "original",
                 "org_name": self.org_name,
             }
+    def get_parent_id(self):
+        return self.parent_id
 
 
 class HandleProcess:
@@ -121,6 +123,7 @@ class HandleProcess:
             "org": process["org_name"],
             "product": "Workflow AI",
         }
+
 
     def parse_url(params):
         return urllib.parse.urlencode(params)
@@ -215,6 +218,7 @@ class HandleProcess:
             for u in users:
                 step.get("stepDocumentCloneMap").append({u: clone_id})
         if public:
+
             public_clone_ids = []
             for u in public:
                 public_clone_ids.append(
@@ -224,7 +228,8 @@ class HandleProcess:
             clones.extend(public_clone_ids)
         return clones
 
-    def generate_public_qrcode(links, company_id):
+    def generate_public_qrcode(links, company_id, document_name):
+        print(document_name)
         master_link = None
         master_qrcode = None
         payload = json.dumps(
@@ -233,6 +238,7 @@ class HandleProcess:
                 "quantity": 1,
                 "company_id": company_id,
                 "links": links,
+                "document_name": document_name,
             }
         )
         response = requests.post(
@@ -314,8 +320,12 @@ class HandleProcess:
             )
         ).start()
         if public_links:
+            document_id = self.process['parent_item_id']
+            res = get_document_object(document_id)
+            # print(res)
+            document_name = res["document_name"]
             m_link, m_code = HandleProcess.generate_public_qrcode(
-                public_links, self.process["company_id"]
+                public_links, self.process["company_id"], document_name
             )
         return {"links": links, "master_link": m_link, "master_code": m_code}
 
