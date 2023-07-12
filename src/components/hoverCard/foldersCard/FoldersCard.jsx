@@ -35,12 +35,16 @@ const FoldersCard = ({ cardItem }) => {
       Number(ss)
     );
 
-    if (new Date().getTime() - createdDate.getTime() < 18000000)
-      setIsFolderNew(true);
+    const timeDifference = new Date().getTime() - createdDate.getTime();
+
+    // ? The backend created_on is not accurate, that's why I used a time difference of 24 hours
+
+    if (timeDifference < 86400000) setIsFolderNew(true);
 
     const durationInterval = setInterval(() => {
       const currentDate = new Date();
-      if (currentDate.getTime() - createdDate.getTime() > 18000000) {
+      const conTimeDifference = currentDate.getTime() - createdDate.getTime();
+      if (conTimeDifference > 86400000) {
         setIsFolderNew(false);
         clearInterval(durationInterval);
       }
