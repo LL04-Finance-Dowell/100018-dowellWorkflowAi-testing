@@ -263,7 +263,7 @@ def finalize_or_reject(request, process_id):
         return Response(
             f"document already processed as `{current_state}`!", status.HTTP_200_OK
         )
-    res = finalize_item(item_id, state, item_type)
+    res = json.loads(finalize_item(item_id, state, item_type))
     if res["isSuccess"]:
         try:
             process = get_process_object(process_id)
