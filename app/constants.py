@@ -5,6 +5,7 @@ DOWELLCONNECTION_URL = "https://uxlivinglab.pythonanywhere.com"
 OLD_DOWELLCONNECTION_URL = "https://100002.pythonanywhere.com/"
 PUBLIC_LOGIN_API = "https://100093.pythonanywhere.com/api/public/"
 QRCODE_URL = "https://100099.pythonanywhere.com/api/v3/qr-code/"
+MASTERLINK_URL = "https://100099.pythonanywhere.com/api/v3/masterlink/"
 VERIFICATION_LINK = (
     "https://ll04-finance-dowell.github.io/100018-dowellWorkflowAi-testing/#/verify"
 )

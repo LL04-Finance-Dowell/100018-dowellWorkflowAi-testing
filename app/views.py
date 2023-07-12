@@ -274,9 +274,9 @@ def finalize_or_reject(request, process_id):
             return Response("document processed successfully", status.HTTP_200_OK)
         except Exception as err:
             print(err)
-            return Response("An error occured", status.HTTP_500_INTERNAL_SERVER_ERROR)
-    else:
-        return Response(
+            return Response("An error occured during processing", status.HTTP_500_INTERNAL_SERVER_ERROR)
+  
+    return Response(
             "an error occurred during processing", status.HTTP_400_BAD_REQUEST
         )
 
