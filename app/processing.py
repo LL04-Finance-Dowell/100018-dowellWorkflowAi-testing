@@ -112,9 +112,6 @@ class Process:
                 "process_kind": "original",
                 "org_name": self.org_name,
             }
-    def get_parent_id(self):
-        return self.parent_id
-
 
 class HandleProcess:
     def __init__(self, process):
