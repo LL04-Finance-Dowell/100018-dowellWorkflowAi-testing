@@ -385,9 +385,9 @@ class HandleProcess:
                 document = "documentreports"
                 field = "document_name"
                 team_member_id = "11689044433"
-                document = get_document_object(clone_id)
-                item_flag = document["document_state"]
-                document_name = document["document_name"]
+                document_object = get_document_object(clone_id)
+                item_flag = document_object["document_state"]
+                document_name = document_object["document_name"]
                 editor_link = HandleProcess.get_editor_link(
                     {
                         "product_name": "Workflow AI",
