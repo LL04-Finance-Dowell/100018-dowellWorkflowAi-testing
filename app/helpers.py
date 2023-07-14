@@ -14,6 +14,7 @@ from app.serializers import (
 from .mongo_db_connection import (
     get_document_object,
     get_process_object,
+    get_template_object,
     save_document,
     save_process,
 )
@@ -113,20 +114,23 @@ def access_editor(item_id, item_type):
     team_member_id = None
     field = None
     action = None
+    item_name = ""
     if item_type == "document":
         collection = "DocumentReports"
         document = "documentreports"
         action = "document"
         field = "document_name"
         team_member_id = "11689044433"
+        item_name = get_document_object(item_id)
     if item_type == "template":
         collection = "TemplateReports"
         document = "templatereports"
         action = "template"
         field = "template_name"
         team_member_id = "22689044433"
+        item_name = get_template_object(item_id)
     payload = {
-        "product_name": "workflow_ai",
+        "product_name": "Workflow AI",
         "details": {
             "cluster": "Documents",
             "database": "Documentation",
@@ -140,7 +144,7 @@ def access_editor(item_id, item_type):
             "action": action,
             "flag": "editing",
             "command": "update",
-            "update_field": {field: "", "content": "", "page": ""},
+            "update_field": {field: "", "content": "", "page": "", "name": item_name},
         },
     }
     try:

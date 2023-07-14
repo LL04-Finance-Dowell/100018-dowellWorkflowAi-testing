@@ -703,7 +703,6 @@ def archive_restore(request):
             return Response(
                 "Invalid response data", status.HTTP_500_INTERNAL_SERVER_ERROR
             )
-
     if request.data["item_type"] == "document":
         res = delete_document(id, "Real_Data")
         try:
@@ -718,7 +717,6 @@ def archive_restore(request):
             return Response(
                 "Invalid response data", status.HTTP_500_INTERNAL_SERVER_ERROR
             )
-
     if request.data["item_type"] == "template":
         res = delete_template(id, "Real_Data")
         try:
@@ -733,7 +731,6 @@ def archive_restore(request):
             return Response(
                 "Invalid response data", status.HTTP_500_INTERNAL_SERVER_ERROR
             )
-
     if request.data["item_type"] == "process":
         res = delete_process(id, "Real_Data")
         try:
@@ -762,7 +759,6 @@ def archive_restore(request):
             return Response(
                 "Invalid response data", status.HTTP_500_INTERNAL_SERVER_ERROR
             )
-
     return Response(status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
