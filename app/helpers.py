@@ -122,6 +122,7 @@ def access_editor(item_id, item_type):
         field = "document_name"
         team_member_id = "11689044433"
         item_name = get_document_object(item_id)
+        name = item_name["document_name"]
     if item_type == "template":
         collection = "TemplateReports"
         document = "templatereports"
@@ -129,6 +130,7 @@ def access_editor(item_id, item_type):
         field = "template_name"
         team_member_id = "22689044433"
         item_name = get_template_object(item_id)
+        name = item_name["template_name"]
     payload = {
         "product_name": "Workflow AI",
         "details": {
@@ -143,8 +145,9 @@ def access_editor(item_id, item_type):
             "type": item_type,
             "action": action,
             "flag": "editing",
+            "name": name,
             "command": "update",
-            "update_field": {field: "", "content": "", "page": "", "name": item_name},
+            "update_field": {field: "", "content": "", "page": ""},
         },
     }
     try:
@@ -266,6 +269,11 @@ def remove_favourite(identifier, type, username):
             print(e)
             return
 
+
 def check_items_state(items) -> list:
     """Checks if item state is finalized"""
-    return [get_document_object(i)["document_state"] == "finalized" for i in items if isinstance(i, str)]
+    return [
+        get_document_object(i)["document_state"] == "finalized"
+        for i in items
+        if isinstance(i, str)
+    ]
