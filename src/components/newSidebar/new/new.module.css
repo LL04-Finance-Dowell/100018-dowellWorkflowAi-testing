@@ -21,6 +21,7 @@
   color: var(--e-global-color-cd6593d);
   font-size: 24px;
   line-height: 24px;
+  border-radius: 10px;
 }
 
 .new__button__box i {

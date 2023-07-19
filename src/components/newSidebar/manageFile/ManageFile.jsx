@@ -20,6 +20,7 @@ const ManageFile = () => {
   const dispatch = useDispatch();
   const { t } = useTranslation();
   const { userDetail } = useSelector((state) => state.auth);
+  const { themeColor } = useSelector((state) => state.app);
   const { folders } = useAppContext();
 
   const { allWorkflows: allWorkflowsArray, allWorkflowsStatus } = useSelector(
@@ -46,14 +47,14 @@ const ManageFile = () => {
       company_id:
         userDetail?.portfolio_info?.length > 1
           ? userDetail?.portfolio_info.find(
-            (portfolio) => portfolio.product === productName
-          )?.org_id
+              (portfolio) => portfolio.product === productName
+            )?.org_id
           : userDetail?.portfolio_info[0].org_id,
       data_type:
         userDetail?.portfolio_info?.length > 1
           ? userDetail?.portfolio_info.find(
-            (portfolio) => portfolio.product === productName
-          )?.data_type
+              (portfolio) => portfolio.product === productName
+            )?.data_type
           : userDetail?.portfolio_info[0].data_type,
     };
     /*  if (savedDocumentsStatus === "idle") dispatch(savedDocuments(data));
@@ -70,8 +71,8 @@ const ManageFile = () => {
     const currentUserportfolioDataType =
       userDetail?.portfolio_info?.length > 1
         ? userDetail?.portfolio_info.find(
-          (portfolio) => portfolio.product === productName
-        )?.data_type
+            (portfolio) => portfolio.product === productName
+          )?.data_type
         : userDetail?.portfolio_info[0]?.data_type;
 
     // THIS UPDATES AN INDIVIDUAL ITEM COUNT FOR EITHER DOCUMENT/TEMPLATE/WORKFLOW/PROCESS
@@ -192,54 +193,60 @@ const ManageFile = () => {
       prev.map((item) =>
         item.parent.includes('Documents')
           ? {
-            ...item,
-            count:
-              itemsCountToDisplay.documents.count > 0
-                ? itemsCountToDisplay.documents.count
-                : '000',
-          }
+              ...item,
+              count:
+                itemsCountToDisplay.documents.count > 0
+                  ? itemsCountToDisplay.documents.count
+                  : '000',
+            }
           : item.parent.includes('Templates')
-            ? {
+          ? {
               ...item,
               count:
                 itemsCountToDisplay.templates.count > 0
                   ? itemsCountToDisplay.templates.count
                   : '000',
             }
-            : item.parent.includes('Workflows')
-              ? {
-                ...item,
-                count:
-                  itemsCountToDisplay.workflows.count > 0
-                    ? itemsCountToDisplay.workflows.count
-                    : '000',
-              }
-              : item.parent.includes('Processes')
-                ? {
-                  ...item,
-                  count:
-                    itemsCountToDisplay.processes.count > 0
-                      ? itemsCountToDisplay.processes.count
-                      : '000',
-                }
-                : item
+          : item.parent.includes('Workflows')
+          ? {
+              ...item,
+              count:
+                itemsCountToDisplay.workflows.count > 0
+                  ? itemsCountToDisplay.workflows.count
+                  : '000',
+            }
+          : item.parent.includes('Processes')
+          ? {
+              ...item,
+              count:
+                itemsCountToDisplay.processes.count > 0
+                  ? itemsCountToDisplay.processes.count
+                  : '000',
+            }
+          : item
       )
     );
   }, [itemsCountToDisplay]);
 
   return (
     <div className={sidebarStyles.feature__box}>
-      <h2 className={sidebarStyles.feature__title}>{t('Manage File')}</h2>
+      <h2
+        className={sidebarStyles.feature__title}
+        style={{ color: themeColor }}
+      >
+        {t('Manage File')}
+      </h2>
       <CollapseItem items={test} />
 
-      <HashLink to="/folders" className={`${styles.folder_href} ${styles.parent__item__box}`}>
-
+      <HashLink
+        to='/folders'
+        className={`${styles.folder_href} ${styles.parent__item__box}`}
+      >
         <i>
           <IoMdArrowDropright size={25} />
         </i>
         Folders {folders.length ? `(${folders.length})` : ''}
       </HashLink>
-
     </div>
   );
 };

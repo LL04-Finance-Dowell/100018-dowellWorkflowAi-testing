@@ -9,6 +9,7 @@ import {
 } from '../features/app/appSlice';
 import { v4 } from 'uuid';
 import { FolderServices } from '../services/folderServices';
+import { TemplateServices } from '../services/templateServices';
 
 const AppContext = createContext({});
 
@@ -52,7 +53,7 @@ export const AppContextProvider = ({ children }) => {
   // const [isFetchingTeams, setIsFetchingTeams] = useState(true);
   const [isNoPointerEvents, setIsNoPointerEvents] = useState(false);
   const [workflowTeamsLoaded, setWorkflowTeamsLoaded] = useState(false);
-  const [workflowSettings, setWorkflowSettings] = useState();
+  const [workflowSettings, setWorkflowSettings] = useState(null);
   const [fetchedItems, setFetchedItems] = useState([]);
 
   const { userDetail } = useSelector((state) => state.auth);
@@ -74,6 +75,7 @@ export const AppContextProvider = ({ children }) => {
     state: false,
     action: '',
   });
+  const [dowellReasearchTemplates, setDowellResearchTemplates] = useState([]);
 
   // const [createdNewTeam, setCreatedNewTeam] = useState();
 
@@ -191,6 +193,21 @@ export const AppContextProvider = ({ children }) => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userDetail, isPublicUser, publicUserConfigured]);
+
+  // ?useEffect(() => {
+  //   new TemplateServices()
+  //     .allTemplatesDRC('6385c0f38eca0fb652c9457e')
+  //     .then((res) => {
+  //       console.log('done fetching: ', res.data, res);
+  //       setDowellResearchTemplates(res.data).catch((err) => {
+  //         console.log('Failed to fetch Dowell Research Templates: ', err);
+  //       });
+  //     });
+  // ?}, []);
+
+  useEffect(() => {
+    console.log('DRT: ', dowellReasearchTemplates);
+  }, [dowellReasearchTemplates]);
 
   useEffect(() => {
     if (userDetail && userDetail.portfolio_info) {

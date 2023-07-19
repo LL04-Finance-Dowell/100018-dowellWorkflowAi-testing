@@ -13,6 +13,7 @@ import { useAppContext } from '../../../contexts/AppContext';
 
 const New = () => {
   const { userDetail } = useSelector((state) => state.auth);
+  const { themeColor } = useSelector((state) => state.app);
   const dispatch = useDispatch();
   const { t } = useTranslation();
 
@@ -51,7 +52,11 @@ const New = () => {
   return (
     <div className={styles.container}>
       <div className={styles.box}>
-        <div onClick={handleOpen} className={styles.new__button__box}>
+        <div
+          onClick={handleOpen}
+          className={styles.new__button__box}
+          style={{ backgroundColor: themeColor }}
+        >
           <i>
             <FaPlus size={20} />
           </i>
