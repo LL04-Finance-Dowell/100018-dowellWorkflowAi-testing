@@ -489,10 +489,12 @@ def get_documents(request, company_id):
     if document_list is None:
         document_list = get_document_list(company_id, data_type)
         cache.set(cache_key, document_list, timeout=60)
-    return Response(
+    if document_list:
+        return Response(
         {"documents": document_list},
         status.HTTP_200_OK,
-    )
+        )
+    return Response({  "documents": []}, status.HTTP_200_OK)
 
 
 @api_view(["POST"])
@@ -727,7 +729,8 @@ def archive_restore(request):
                 "Failed to restore template from archives",
                 status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
-        except json.JSONDecodeError:
+        except Exception as e:
+            print(e)
             return Response(
                 "Invalid response data", status.HTTP_500_INTERNAL_SERVER_ERROR
             )
@@ -741,7 +744,8 @@ def archive_restore(request):
                 "Failed to restore process from archives",
                 status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
-        except json.JSONDecodeError:
+        except Exception as e:
+            print(e)
             return Response(
                 "Invalid response data", status.HTTP_500_INTERNAL_SERVER_ERROR
             )
@@ -755,7 +759,8 @@ def archive_restore(request):
                 "Failed to restore folder from archives",
                 status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
-        except json.JSONDecodeError:
+        except Exception as e:
+            print(e)
             return Response(
                 "Invalid response data", status.HTTP_500_INTERNAL_SERVER_ERROR
             )
