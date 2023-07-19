@@ -79,6 +79,23 @@ DOCUMENT_CONNECTION_DICT = {
     "team_member_ID": "11689044433",
     "function_ID": "ABCDE",
 }
+CLONES_CONNECTION_LIST = [
+    "Documents",
+    "bangalore",
+    "Documentation",
+    "CloneReports",
+    "CloneReports",
+    "1212001",
+    "ABCDE",
+]
+CLONES_CONNECTION_DICT = {
+    "cluster": "Documents",
+    "database": "Documentation",
+    "collection": "CloneReports",
+    "document": "CloneReports",
+    "team_member_ID": "1212001",
+    "function_ID": "ABCDE",
+}
 QR_CONNECTION_LIST = [
     "Documents",
     "bangalore",
@@ -105,7 +122,6 @@ TEMPLATE_CONNECTION_LIST = [
     "22689044433",
     "ABCDE",
 ]
-
 TEMPLATE_CONNECTION_DICT = {
     "cluster": "Documents",
     "database": "Documentation",

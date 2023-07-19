@@ -10,6 +10,8 @@ from app.constants import (
     FOLDER_CONNECTION_LIST,
     DOCUMENT_CONNECTION_DICT,
     DOCUMENT_CONNECTION_LIST,
+    CLONES_CONNECTION_DICT,
+    CLONES_CONNECTION_LIST,
     DOWELLCONNECTION_URL,
     LINK_CONNECTION_DICT,
     LINK_CONNECTION_LIST,
@@ -137,6 +139,13 @@ def get_document_object(document_id):
 
     return document
 
+def get_clone_object(clone_id):
+    clone = get_data_from_data_service(
+        *CLONES_CONNECTION_LIST, "find", {"_id": clone_id}
+    )
+
+    return clone
+
 
 def get_document_list(company_id, data_type):
     documents = get_data_from_data_service(
@@ -145,6 +154,15 @@ def get_document_list(company_id, data_type):
         {"company_id": str(company_id), "data_type": data_type},
     )
     return documents
+
+def get_clone_list(company_id, data_type):
+    clones = get_data_from_data_service(
+        *CLONES_CONNECTION_LIST,
+        "fetch",
+        {"company_id": str(company_id), "data_type": data_type},
+    )
+    print(clones)
+    return clones
 
 
 def get_folder_list(company_id, data_type):
@@ -466,6 +484,49 @@ def save_document(
     )
     return post_to_data_service(payload)
 
+def save_clone(
+    name,
+    data,
+    created_by,
+    company_id,
+    data_type,
+    page,
+    state,
+    auth_viewers,
+    document_type,
+    parent_id,
+    process_id,
+    folders,
+):
+    payload = json.dumps(
+        {
+            **CLONES_CONNECTION_DICT,
+            "command": "insert",
+            "field": {
+                "eventId": get_event_id()["event_id"],
+                "document_name": name,
+                "content": data,
+                "company_id": company_id,
+                "created_by": created_by,
+                "created_at": time,
+                "rejection_message": "",
+                "rejected_by": "",
+                "document_state": state,
+                "page": page,
+                "data_type": data_type,
+                "clone_list": [],
+                "auth_viewers": auth_viewers,
+                "document_type": document_type,
+                "parent_id": parent_id,
+                "process_id": process_id,
+                "folders": folders,
+            },
+            "update_field": {"order_nos": 21},
+            "platform": "bangalore",
+        }
+    )
+    return post_to_data_service(payload)
+
 
 def save_workflow_setting(
     company_id,
@@ -655,6 +716,22 @@ def authorize(document_id, viewers, process_id, item_type):
                 "platform": "bangalore",
             }
         )
+    if item_type == "clone":
+        payload = json.dumps(
+            {
+                **CLONES_CONNECTION_DICT,
+                "command": "update",
+                "field": {
+                    "_id": document_id,
+                },
+                "update_field": {
+                    "auth_viewers": viewers,
+                    "document_state": "processing",
+                    "process_id": process_id,
+                },
+                "platform": "bangalore",
+            }
+        )
     if item_type == "template":
         payload = json.dumps(
             {
@@ -683,6 +760,20 @@ def finalize_item(item_id, state, item_type):
         payload = json.dumps(
             {
                 **DOCUMENT_CONNECTION_DICT,
+                "command": "update",
+                "field": {
+                    "_id": item_id,
+                },
+                "update_field": {
+                    "document_state": state,
+                },
+                "platform": "bangalore",
+            }
+        )
+    elif item_type == "clone":
+        payload = json.dumps(
+            {
+                **CLONES_CONNECTION_DICT,
                 "command": "update",
                 "field": {
                     "_id": item_id,
@@ -723,6 +814,7 @@ def finalize_item(item_id, state, item_type):
         )
 
     if payload is not None:
+        print(payload)
         return post_to_data_service(payload)
     return
 
