@@ -4,7 +4,6 @@ from .models import (
     FavoriteDocument,
     FavoriteTemplate,
     FavoriteWorkflow,
-    WorkflowAiSetting,
 )
 
 
@@ -23,10 +22,4 @@ class FavouriteTemplateSerializer(serializers.ModelSerializer):
 class FavouriteWorkflowSerializer(serializers.ModelSerializer):
     class Meta:
         model = FavoriteWorkflow
-        fields = "__all__"
-
-
-class WorkflowAiSettingSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = WorkflowAiSetting
         fields = "__all__"
