@@ -215,7 +215,16 @@ export const extractProcessObj = (
         'Please make sure you select at least one item from the table of contents for each step',
     };
 
+<<<<<<< HEAD
   // if (!processObj.workflows[0].workflows.steps.every(step => step.stepDocumentMap.length > 0)) return { error : "Please make sure you select at least one item from the table of contents for each step" };
+=======
+    const documentMapMissingInStep =
+      processObj.workflows[0].workflows.steps.map((step) => {
+        if (step.stepDocumentMap.length < 1 && !step.skipStep && !step.stepRights === 'view')
+          return 'Document map missing';
+        return null;
+      });
+>>>>>>> de6956d7db77fb2c23f8a232139241e8b711a76b
 
   return processObj;
 };

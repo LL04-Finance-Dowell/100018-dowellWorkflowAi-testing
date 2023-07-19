@@ -29,7 +29,6 @@ const FoldersModal = () => {
   const [isRemoving, setIsRemoving] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [folderName, setFolderName] = useState('');
-  const [delFolderName, setDelFolderName] = useState('');
   const [docsList, setDocsList] = useState([]);
   const [tempsList, setTempsList] = useState([]);
   const [docsListToDisplay, setDocsListToDisplay] = useState([]);
@@ -48,32 +47,12 @@ const FoldersModal = () => {
   const [addFolderId, setAddFolderId] = useState();
   const [addFolder, setAddFolder] = useState({});
   const [foldersContainingItem, setFoldersContainingItem] = useState([]);
-  const [userCompanyId] = useState(
-    userDetail?.portfolio_info?.length > 1
-      ? userDetail?.portfolio_info?.find(
-          (portfolio) => portfolio.product === productName
-        )?.org_id
-      : userDetail?.portfolio_info[0]?.org_id
-  );
-  const [userDataType] = useState(
-    userDetail?.portfolio_info?.length > 1
-      ? userDetail?.portfolio_info.find(
-          (portfolio) => portfolio.product === productName
-        )?.data_type
-      : userDetail?.portfolio_info[0].data_type
-  );
+  const [userCompanyId, setUserCompanyId] = useState('');
+  const [userDataType, setUserDataType] = useState('');
 
-  const {
-    allDocuments,
+  const { allDocuments } = useSelector((state) => state.document);
 
-    // : allDocumentsArray, allDocumentsStatus
-  } = useSelector((state) => state.document);
-
-  const {
-    allTemplates,
-
-    // : allTemplatesArray, allTemplatesStatus
-  } = useSelector((state) => state.template);
+  const { allTemplates } = useSelector((state) => state.template);
 
   const handleCreateFolder = async () => {
     const data = {
@@ -178,21 +157,19 @@ const FoldersModal = () => {
         }
       } else toast.warn('Enter Folder name');
     } else if (action === 'delete') {
-      if (delFolderName.trim() === folder.folder_name) {
-        setIsDeleting(true);
-        try {
-          const data = { item_id: folder._id, item_type: 'folder' };
-          await folderServices.deleteFolder(data);
-          setFolders((prev) => prev.filter((fld) => fld._id !== folder._id));
-          toast.success('Folder deleted');
-        } catch (err) {
-          // console.log(err);
-          toast.error('Deleting failed!');
-        } finally {
-          setIsDeleting(false);
-          setShowFoldersActionModal({ state: false, action: '' });
-        }
-      } else toast.error('Incorrect folder name!');
+      setIsDeleting(true);
+      try {
+        const data = { item_id: folder._id, item_type: 'folder' };
+        await folderServices.deleteFolder(data);
+        setFolders((prev) => prev.filter((fld) => fld._id !== folder._id));
+        toast.success('Folder deleted');
+      } catch (err) {
+        // console.log(err);
+        toast.error('Deleting failed!');
+      } finally {
+        setIsDeleting(false);
+        setShowFoldersActionModal({ state: false, action: '' });
+      }
     } else if (action === 'remove') {
       const data = {
         item_type: item.document_name
@@ -255,6 +232,27 @@ const FoldersModal = () => {
       }
     }
   };
+
+  useEffect(() => {
+    if (!userDetail || userDetail.msg || userDetail.message) return
+
+    const companyId =
+      userDetail?.portfolio_info?.length > 1
+        ? userDetail?.portfolio_info?.find(
+            (portfolio) => portfolio.product === productName
+          )?.org_id
+        : userDetail?.portfolio_info[0]?.org_id;
+
+    const dataType =
+      userDetail?.portfolio_info?.length > 1
+        ? userDetail?.portfolio_info.find(
+            (portfolio) => portfolio.product === productName
+          )?.data_type
+        : userDetail?.portfolio_info[0].data_type;
+
+    setUserCompanyId(companyId);
+    setUserDataType(dataType);
+  }, [userDetail]);
 
   useEffect(() => {
     if (folderActionId)
@@ -357,7 +355,6 @@ const FoldersModal = () => {
       setFolderActionId('');
       setSelectedDocs([]);
       setSelectedTemps([]);
-      setDelFolderName('');
     }
   }, [state]);
 
@@ -666,6 +663,8 @@ const SelectInput = ({
     else setSelTemps(selTemps.filter((item) => item.id !== elId));
   };
 
+ 
+
   useEffect(() => {
     const supEl = superContainerRef.current;
     const el = containerRef.current;
@@ -745,8 +744,12 @@ const SelectInput = ({
                       folder.data.find((itm) => itm[`${category}_id`] === id)
                     }
                     checked={
-                      folder.data &&
-                      folder.data.find((itm) => itm[`${category}_id`] === id)
+                      (folder.data &&
+                        folder.data.find(
+                          (itm) => itm[`${category}_id`] === id
+                        )) ||
+                      (selDocs && selDocs.find((doc) => doc.id === id)) ||
+                      (selTemps && selTemps.find((temp) => temp.id === id))
                     }
                   />
                   <label htmlFor={id}>{name}</label>

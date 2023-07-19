@@ -36,8 +36,11 @@ const TypeFilter = ({ edit }) => {
       );
     else if (userPortfolios) filteredPortfolios = userPortfolios;
 
-    if (filteredPortfolios.length || filter) {
-      if (filteredPortfolios.length)
+    if (
+      (Array.isArray(filteredPortfolios) && filteredPortfolios.length) ||
+      filter
+    ) {
+      if (filteredPortfolios && filteredPortfolios.length)
         dispatch(
           setPortfoliosInWorkflowAITeams({
             type: 'filter',

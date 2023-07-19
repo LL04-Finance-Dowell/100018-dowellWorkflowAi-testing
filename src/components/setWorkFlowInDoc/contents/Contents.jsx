@@ -116,7 +116,7 @@ const Contents = ({
                         </thead>
                         <tbody>
                           <>
-                            {contentsPageWise[page].map((item) => (
+                            {React.Children.toArray(contentsPageWise[page].map((item) => (
                               <tr
                                 className={
                                   item._id === currentTableItem &&
@@ -129,7 +129,7 @@ const Contents = ({
                                   {item.data}
                                 </th>
                               </tr>
-                            ))}
+                            )))}
                           </>
                         </tbody>
                       </table>
