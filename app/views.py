@@ -314,9 +314,9 @@ def trigger_process(request):
 @api_view(["GET"])
 def processes(request, company_id):
     """fetches workflow process `I` created."""
-    data_type = request.query_params.get("data_type", "Real_Data")
-    if not validate_id(company_id):
-        return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
+    data_type = request.query_params.get("data_type")
+    if not validate_id(company_id) and data_type:
+        return Response("Invalid Request!", status.HTTP_400_BAD_REQUEST)
     cache_key = f"processes_{company_id}"
     process_list = cache.get(cache_key)
     if process_list is None:
@@ -331,9 +331,9 @@ def processes(request, company_id):
 @api_view(["GET"])
 def get_completed_processes(request, company_id):
     """fetches workflow process `I` created."""
-    data_type = request.query_params.get("data_type", "Real_Data")
-    if not validate_id(company_id):
-        return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
+    data_type = request.query_params.get("data_type")
+    if not validate_id(company_id) and data_type:
+        return Response("Invalid Request!", status.HTTP_400_BAD_REQUEST)
     cache_key = f"processes_{company_id}_completed"
     process_list = cache.get(cache_key)
     completed = None
@@ -463,9 +463,9 @@ def workflow_detail(request, workflow_id):
 @api_view(["GET"])
 def get_workflows(request, company_id):
     """List all workflows"""
-    data_type = request.query_params.get("data_type", "Real_Data")
-    if not validate_id(company_id):
-        return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
+    data_type = request.query_params.get("data_type")
+    if not validate_id(company_id) and data_type:
+        return Response("Invalid Request!", status.HTTP_400_BAD_REQUEST)
     workflow_list = get_wf_list(company_id, data_type)
     if workflow_list:
         return Response(
@@ -481,9 +481,9 @@ def get_workflows(request, company_id):
 @api_view(["GET"])
 def get_documents(request, company_id):
     """List of Created Documents."""
-    data_type = request.query_params.get("data_type", "Real_Data")
-    if not validate_id(company_id):
-        return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
+    data_type = request.query_params.get("data_type")
+    if not validate_id(company_id) and data_type:
+        return Response("Invalid Request!", status.HTTP_400_BAD_REQUEST)
     cache_key = f"documents_{company_id}"
     document_list = cache.get(cache_key)
     if document_list is None:
@@ -618,7 +618,6 @@ def archives(request):
             return Response(
                 "Invalid response data", status.HTTP_500_INTERNAL_SERVER_ERROR
             )
-
     if request.data["item_type"] == "document":
         res = delete_document(id, "Archive_Data")
         try:
@@ -634,7 +633,6 @@ def archives(request):
             return Response(
                 "Invalid response data", status.HTTP_500_INTERNAL_SERVER_ERROR
             )
-
     if request.data["item_type"] == "template":
         res = delete_template(id, "Archive_Data")
         try:
@@ -649,7 +647,6 @@ def archives(request):
             return Response(
                 "Invalid response data", status.HTTP_500_INTERNAL_SERVER_ERROR
             )
-
     if request.data["item_type"] == "process":
         res = delete_process(id, "Archive_Data")
         try:
@@ -998,9 +995,9 @@ def get_all_teams(request, company_id):
 @api_view(["GET"])
 def get_completed_documents(request, company_id):
     """List of Completed Documents."""
-    data_type = request.query_params.get("data_type", "Real_Data")
-    if not validate_id(company_id):
-        return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
+    data_type = request.query_params.get("data_type")
+    if not validate_id(company_id) and data_type:
+        return Response("Invalid Request!", status.HTTP_400_BAD_REQUEST)
     document_list = get_document_list(company_id, data_type)
     if document_list:
         completed = list(
@@ -1019,9 +1016,9 @@ def get_completed_documents(request, company_id):
 @api_view(["GET"])
 def get_completed_documents_by_process(request, company_id, process_id):
     """List of Completed Documents."""
-    data_type = request.query_params.get("data_type", "Real_Data")
-    if not validate_id(company_id):
-        return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
+    data_type = request.query_params.get("data_type")
+    if not validate_id(company_id) and data_type:
+        return Response("Invalid Request!", status.HTTP_400_BAD_REQUEST)
     document_list = get_document_list(company_id, data_type)
     if len(document_list) > 0:
         cloned = list(
@@ -1227,26 +1224,7 @@ def send_notif(request):
         return Response(
             f"Something went wrong: {err}", status.HTTP_500_INTERNAL_SERVER_ERROR
         )
-    # daily_reminder=cache.get("daily_reminder_data")
-    # hourly_reminder=cache.get("hourly_reminder_data")
-
-    # if daily_reminder is not None:
-
-    #     daily_result = [(item['process_id'], item['message']) for item in daily_reminder if username in item['member']]
-    # else:
-    #     daily_result = []
-    # if  hourly_reminder is not None:
-    #     hourly_result = [(item['process_id'], item['message']) for item in hourly_reminder if username in item['member']]
-    # else:
-    #     hourly_result = []
-    # try:
-    #     return Response([hourly_result,daily_result],
-    #         status.HTTP_200_OK
-    #     )
-    # except:
-    #     return Response("Failed to Get Reminder", status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-
+    
 @api_view(["POST"])
 def create_folder(request):
     data = []
@@ -1304,9 +1282,9 @@ def folder_update(request, folder_id):
 @api_view(["GET"])
 def all_folders(request, company_id):
     """fetches Folders created."""
-    data_type = request.query_params.get("data_type", "Real_Data")
-    if not validate_id(company_id):
-        return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
+    data_type = request.query_params.get("data_type")
+    if not validate_id(company_id) and data_type:
+        return Response("Invalid Request!", status.HTTP_400_BAD_REQUEST)
     cache_key = f"folders_{company_id}"
     folders_list = cache.get(cache_key)
     if folders_list is None:
