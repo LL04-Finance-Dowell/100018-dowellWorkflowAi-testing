@@ -24,6 +24,7 @@ import { RxHamburgerMenu } from 'react-icons/rx';
 import { IoIosCloseCircle } from 'react-icons/io';
 import { LoadingSpinner } from '../../components/LoadingSpinner/LoadingSpinner';
 import Chat from '../../components/Chat/Chat';
+import ProcessDetail from '../../components/manageFiles/ProcessDetail/ProcessDetail';
 import { formatDateAndTime, productName } from '../../utils/helpers';
 import { workflowRegistrationEventId } from '../../services/legalService';
 import { AuthServices } from '../../services/authServices';
@@ -297,6 +298,7 @@ const WorkflowLayout = ({ children }) => {
         )}
 
         {/* ////////// */}
+
         {languageSelectPosition && (
           <div
             onClick={HandleLanBtnClk}

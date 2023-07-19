@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 
 import { useForm } from 'react-hook-form';
 import Select from '../../select/Select';
-
+import { AiOutlineClose } from 'react-icons/ai';
 import { useDispatch, useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
 import {
@@ -22,6 +22,8 @@ import {
   setAllProcesses,
   setAllowErrorChecksStatusUpdateForNewProcess,
   setNewProcessErrorMessage,
+  setProcessName,
+  setShowProcessNameModal
 } from '../../../../features/app/appSlice';
 import { useTranslation } from 'react-i18next';
 import { extractProcessObj } from './utils/utils';
@@ -56,10 +58,12 @@ const ProcessDocument = ({ savedProcess }) => {
     teamMembersSelectedForProcess,
     userMembersSelectedForProcess,
     publicMembersSelectedForProcess,
-
+    ShowProcessNameModal,
+    ProcessName,
     allProcesses,
     errorsCheckedInNewProcess,
   } = useSelector((state) => state.app);
+
   const [newProcessLoading, setNewProcessLoading] = useState(false);
   const [newProcessLoaded, setNewProcessLoaded] = useState(null);
   const [showGeneratedLinksPopup, setShowGeneratedLinksPopup] = useState(false);
@@ -78,6 +82,7 @@ const ProcessDocument = ({ savedProcess }) => {
   const { t } = useTranslation();
 
   const handleProcessBtnClick = async () => {
+
     if (!processOptionSelection || processOptionSelection === 'Select') return;
 
     if (!userDetail) return;
@@ -99,7 +104,7 @@ const ProcessDocument = ({ savedProcess }) => {
       return toast.info('Please click the "Show process" button above to make sure there are no errors before processing.');
     }
 
-
+    dispatch(setShowProcessNameModal(false))
 
     if (processOptionSelection === 'saveAndContinueLater') {
       const processObjToSave = extractProcessObj(
@@ -122,14 +127,16 @@ const ProcessDocument = ({ savedProcess }) => {
     const processObjToPost = extractProcessObj(
       newProcessActionOptions[`${processOptionSelection}`],
       userDetail,
+      ProcessName,
       currentDocToWfs,
       docCurrentWorkflow,
       processSteps,
       tableOfContentForStep,
       teamMembersSelectedForProcess,
       publicMembersSelectedForProcess,
-      userMembersSelectedForProcess
+      userMembersSelectedForProcess,
     );
+    console.log(processObjToPost)
 
     if (processObjToPost.error) {
       dispatch(setNewProcessErrorMessage(processObjToPost.error));
@@ -150,7 +157,6 @@ const ProcessDocument = ({ savedProcess }) => {
 
     try {
       const response = await (await startNewProcessV2(processObjToPost)).data;
-
       setNewProcessLoaded(true);
       setNewProcessLoading(false);
       if (
@@ -158,7 +164,6 @@ const ProcessDocument = ({ savedProcess }) => {
           newProcessActionOptions[`${processOptionSelection}`]
         )
       ) {
-        console.log(response)
         setGeneratedLinks(Array.isArray(response) ? response[0] : response);
         setmasterLink(Array.isArray(response) ? response.master_link : response)
         setShowGeneratedLinksPopup(true);
@@ -181,7 +186,12 @@ const ProcessDocument = ({ savedProcess }) => {
           : 'New process creation failed'
       );
     }
+
   };
+  const HandleSaveClick = () => {
+    dispatch(setShowProcessNameModal(true))
+
+  }
 
   const handleSaveForLaterBtnClick = () => {
 
@@ -305,6 +315,75 @@ const ProcessDocument = ({ savedProcess }) => {
               takeActionValue={true}
               register={register}
             />
+
+
+            {ShowProcessNameModal && (
+              <div style={{
+                background: 'rgba(0, 0, 0, 0.12)',
+                backdropFilter: 'blur(5px)',
+                height: '100%',
+                width: '100%',
+                position: 'fixed',
+                top: 0,
+                left: 0,
+                animation: 'fadeIn 0.2s ease-in-out',
+                zIndex: 100002,
+                overflow: 'hidden',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center'
+              }}>
+
+                <div style={{
+                  backgroundColor: 'var(--white)',
+                  width: '73%',
+                  borderRadius: '10px',
+                  padding: '5% 2%',
+                  maxHeight: '30rem',
+                  position: 'relative'
+                }}>
+
+                  <div
+                    style={{
+                      position: 'absolute',
+                      top: '1%',
+                      right: '2%',
+                      cursor: 'pointer'
+                    }}
+                    onClick={() => {
+                      dispatch(setShowProcessNameModal(false));
+                    }}
+                  >
+
+                    <AiOutlineClose />
+                  </div>
+                  <input
+                    placeholder="Enter Process Name"
+                    style={{
+                      border: '2px solid grey',
+                      width: '100%',
+                      color: 'black',
+                      outline: 'none',
+                      height: '40px',
+                      borderRadius: '5px',
+                      '::placeholder': {
+                        fontSize: '36px', // Adjust the font size as desired
+                        color: 'grey',
+                      },
+                    }}
+                    value={ProcessName}
+                    onChange={(e) => dispatch(setProcessName(e.target.value))}
+                  />
+
+
+                  <div
+                    style={{ textAlign: "center", marginTop: "30px", backgroundColor: "black", color: "white", cursor: "pointer" }}
+                    onClick={handleProcessBtnClick}
+                  >Save</div>
+                </div>
+              </div>
+            )}
+
             {newProcessLoading ? (
               <ProgressBar
                 durationInMS={18000}
@@ -312,7 +391,7 @@ const ProcessDocument = ({ savedProcess }) => {
                 style={{ height: '40px' }}
               />
             ) : (
-              <button hoverBg='success' onClick={handleProcessBtnClick}>
+              <button hoverBg='success' onClick={HandleSaveClick}>
                 {t('Save / Start Process')}
               </button>
             )}

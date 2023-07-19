@@ -161,18 +161,18 @@ export const manageFileItems = [
   {
     id: uuidv4(),
     parent: 'My documents',
-    children: [
+    // children: [
 
-      { id: uuidv4(), child: 'All Documents', href: '/documents/#drafts' },
-      { id: uuidv4(), child: 'Completed Documents', href: '/documents/completed' },
-    ],
-    // href: '/documents/#drafts',
+    //   { id: uuidv4(), child: 'All Documents', href: '/documents/#drafts' },
+    //   { id: uuidv4(), child: 'Completed Documents', href: '/documents/completed' },
+    // ],
+    href: '/documents/completed',
   },
-  {
-    id: uuidv4(),
-    parent: 'My Templates',
-    href: '/templates/#drafts',
-  },
+  // {
+  //   id: uuidv4(),
+  //   parent: 'My Templates',
+  //   href: '/templates/#drafts',
+  // },
   {
     id: uuidv4(),
     parent: 'My Workflows',

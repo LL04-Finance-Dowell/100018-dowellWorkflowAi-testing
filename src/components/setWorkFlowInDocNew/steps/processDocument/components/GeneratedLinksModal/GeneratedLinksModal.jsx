@@ -9,6 +9,7 @@ import {
   setshowsProcessDetailPopup,
   SetProcessDetail,
   setDetailFetched,
+  ProcessName,
   setLinksFetched,
 } from '../../../../../../features/app/appSlice';
 
@@ -17,6 +18,7 @@ import React from 'react';
 const GeneratedLinksModal = ({
   linksObj,
   masterLink,
+  
   copiedLinks,
   updateCopiedLinks,
   handleCloseBtnClick,
@@ -28,7 +30,6 @@ const GeneratedLinksModal = ({
   const [copiedStatus, setCopiedStatus] = useState(
     ArrayofLinks.map(() => false)
   );
-  console.log(masterLink, linksObj)
   const handleCopyLink = (link) => {
     if (!link) return;
 
