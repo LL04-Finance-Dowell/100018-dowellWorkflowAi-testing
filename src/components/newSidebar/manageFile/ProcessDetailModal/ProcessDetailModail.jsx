@@ -1,5 +1,7 @@
 import React from 'react'
+import { useNavigate } from "react-router-dom";
 import styles from './ProcessDetailModal.css'
+import { v4 as uuidv4 } from 'uuid';
 import {
     setshowsProcessDetailPopup,
     SetProcessDetail,
@@ -8,9 +10,11 @@ import {
 import { AiOutlineClose } from 'react-icons/ai';
 import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-const ProcessDetailModail = () => {
+export const ProcessDetailModail = () => {
+    const navigate = useNavigate();
     const dispatch = useDispatch();
     const { ProcessDetail } = useSelector((state) => state.app);
+    console.log(ProcessDetail)
 
     function handleCloseDetailBtnClick() {
         dispatch(setshowsProcessDetailPopup(false));
@@ -32,7 +36,6 @@ const ProcessDetailModail = () => {
             justifyContent: 'center'
         }}>
 
-            <h1 className={styles.red}>helo</h1>
             <div style={{
                 backgroundColor: 'var(--white)',
                 width: '73%',
@@ -102,9 +105,15 @@ const ProcessDetailModail = () => {
                         </tr>
                     </tbody>
                 </table>
+                <div
+                    style={{ textAlign: "center", marginTop: "30px", backgroundColor: "black", color: "white", cursor: "pointer" }}
+                    onClick={() => {
+                        navigate('/processes/processdetail');
+                        dispatch(setshowsProcessDetailPopup(false));
+                    }}
+                >Show All Detail</div>
             </div>
         </div>
     );
 }
 
-export default ProcessDetailModail

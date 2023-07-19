@@ -65,6 +65,7 @@ const initialState = {
   column: [],
   proccess: [],
   IconColor: '',
+  ProcessName:'',
 
   userDetailPosition: null,
   languageSelectPosition: null,
@@ -79,7 +80,7 @@ const initialState = {
   ShowProfileSpinner: false,
   CopyProcess: [],
   ProcessDetail:[],
-
+  ShowProcessNameModal:false,
   linksFetched: false,
   DetailFetched:false,
   showGeneratedLinksPopup: false,
@@ -568,6 +569,9 @@ export const appSlice = createSlice({
     setIconColor: (state, action) => {
       state.IconColor = action.payload;
     },
+    setProcessName: (state, action) => {
+      state.ProcessName = action.payload;
+    },
     setTeamsSelectedSelectedForProcess: (state, action) => {
       state.teamsSelectedSelectedForProcess = [
         ...state.teamsSelectedSelectedForProcess,
@@ -675,6 +679,9 @@ export const appSlice = createSlice({
 
     setShowGeneratedLinksPopup: (state, action) => {
       state.showGeneratedLinksPopup = action.payload;
+    },
+    setShowProcessNameModal: (state, action) => {
+      state.ShowProcessNameModal = action.payload;
     },
     setshowsProcessDetailPopup: (state, action) => {
       state.showsProcessDetailPopup = action.payload;
@@ -810,6 +817,7 @@ export const {
   setShowProfileSpinner,
   setLanguageSelectPosition,
   setIconColor,
+  setProcessName,
   setUpdateProccessApi,
   setTeamsSelectedSelectedForProcess,
   setTeamMembersSelectedForProcess,
@@ -823,6 +831,7 @@ export const {
   setProcessesLoaded,
   setAllProcesses,
   SetArrayofLinks,
+  setShowProcessNameModal,
   SetCopyProcess,
   setShowGeneratedLinksPopup,
   SetProcessDetail,

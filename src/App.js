@@ -16,7 +16,7 @@ import WorkflowsPage from './pages/Workflows/AllWorkflowsPage/WorkflowsPage';
 
 import FoldersPage from './pages/Folders/FoldersPage';
 import FolderPage from './pages/Folders/FolderPage';
-
+import ProcessDetail from './components/manageFiles/ProcessDetail/ProcessDetail';
 import SetWorkflowInDoc from './components/setWorkFlowInDoc/SetWorkflowInDoc';
 import SetWorkflowInDocNew from './components/setWorkFlowInDocNew/SetWorkflowInDoc';
 
@@ -42,10 +42,10 @@ function App() {
       checkstatus();
     }, 300000); // 5 mints
 
-    return () => clearInterval(interval); 
-    
+    return () => clearInterval(interval);
+
   }, []);
-// console.log('chk')
+  // console.log('chk')
   function checkstatus() {
     // AJAX GET request
 
@@ -160,9 +160,14 @@ function App() {
             path={'completed'}
             element={<ProccessPage showOnlyCompleted={true} />}
           />
+          <Route
+            path={'processdetail'}
+            element={<ProccessPage showSingleProcess={true} />}
+          />
+
+
           {/* <Route path={"trash"} element={<ProccessPage showOnlyTrashed={true} />}/> */}
         </Route>
-
         <Route path={'/notifications'} element={<NotificationsPage />} />
 
         <Route path={'/folders'}>

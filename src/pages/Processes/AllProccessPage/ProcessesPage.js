@@ -3,9 +3,10 @@ import { v4 as uuidv4 } from "uuid";
 import { useState } from "react";
 import WorkflowLayout from "../../../layouts/WorkflowLayout/WorkflowLayout";
 import ManageFiles from "../../../components/manageFiles/ManageFiles";
+import ProcessDetail from "../../../components/manageFiles/ProcessDetail/ProcessDetail";
 import { useDispatch, useSelector } from "react-redux";
 import ProcessCard from "../../../components/hoverCard/processCard/ProcessCard";
-import ProcessDetailModail from "../../../components/newSidebar/manageFile/ProcessDetailModal/ProcessDetailModail";
+import { ProcessDetailModail } from "../../../components/newSidebar/manageFile/ProcessDetailModal/ProcessDetailModail";
 import GeneratedLinksModal from "../../../components/setWorkFlowInDocNew/steps/processDocument/components/GeneratedLinksModal/GeneratedLinksModal";
 import { useEffect } from "react";
 import { getAllProcessesV2 } from "../../../services/processServices";
@@ -14,7 +15,7 @@ import { setAllProcesses, setProcessesLoaded, setProcessesLoading, setShowGenera
 import { useNavigate } from "react-router-dom";
 import { productName } from "../../../utils/helpers";
 
-const ProcessesPage = ({ home, showOnlySaved, showOnlyPaused, showOnlyCancelled, showOnlyTrashed, showOnlyTests, showOnlyCompleted }) => {
+const ProcessesPage = ({ home, showSingleProcess, showOnlySaved, showOnlyPaused, showOnlyCancelled, showOnlyTrashed, showOnlyTests, showOnlyCompleted }) => {
   const { processesLoading, allProcesses, processesLoaded, ArrayofLinks, showGeneratedLinksPopup, linksFetched, showsProcessDetailPopup, DetailFetched } = useSelector((state) => state.app);
   const { userDetail } = useSelector((state) => state.auth);
   const [completedProcess, SetcompletedPcocess] = useState();
@@ -22,34 +23,13 @@ const ProcessesPage = ({ home, showOnlySaved, showOnlyPaused, showOnlyCancelled,
   const navigate = useNavigate();
   const [currentUserPortfolioDataType, setCurrentUserPortfolioDataType] = useState('');
 
-  // const finilized = allProcesses.filter(process => process.processing_state === "finalized")
-  // const draft = allProcesses.filter(process => process.processing_state === "draft");
-
-
-  // console.log('all process',allProcesses)
-  // console.log('finalized',finilized)
-  // console.log('draft',draft)
-
-  // console.log(userDetail?.portfolio_info[0].org_id)
-  // const company_id = userDetail?.portfolio_info[0].org_id
-  // useEffect(() => {
-  //   axios
-  //     .get(`https://100094.pythonanywhere.com/v1/companies/${userDetail?.portfolio_info[0].org_id}/processes/completed/`)
-  //     .then((response) => {
-  //       console.log(response)
-  //       SetcompletedPcocess(response.data)
-  //     })
-  //     .catch((error) => {
-  //       console.log(error);
-
-  //     });
-  // }, [company_id])
 
 
 
   useEffect(() => {
 
     if (showOnlySaved) navigate("#saved-processes");
+    if (showSingleProcess) navigate("#processdetail");
     if (showOnlyPaused) navigate("#paused-processes");
     if (showOnlyCancelled) navigate("#cancelled-processes");
     if (showOnlyTrashed) navigate("#thrashed-processes");
@@ -57,7 +37,7 @@ const ProcessesPage = ({ home, showOnlySaved, showOnlyPaused, showOnlyCancelled,
     if (showOnlyCompleted) navigate("#completed-processes");
     if (home) navigate('#drafts')
 
-  }, [showOnlySaved, showOnlyPaused, showOnlyCancelled, showOnlyTrashed, home, showOnlyTests, showOnlyCompleted])
+  }, [showOnlySaved, showSingleProcess, showOnlyPaused, showOnlyCancelled, showOnlyTrashed, home, showOnlyTests, showOnlyCompleted])
 
   useEffect(() => {
 
@@ -145,6 +125,7 @@ const ProcessesPage = ({ home, showOnlySaved, showOnlyPaused, showOnlyCancelled,
               />
             </div> : <></>
           }
+         
 
           {showGeneratedLinksPopup && linksFetched && Array.isArray(ArrayofLinks) &&
             <GeneratedLinksModal />
@@ -152,6 +133,14 @@ const ProcessesPage = ({ home, showOnlySaved, showOnlyPaused, showOnlyCancelled,
 
           {showsProcessDetailPopup && DetailFetched &&
             <ProcessDetailModail />
+          }
+
+           {
+            showSingleProcess ? <div id="processdetail">
+
+              <ProcessDetail />
+
+            </div> : <></>
           }
 
           {

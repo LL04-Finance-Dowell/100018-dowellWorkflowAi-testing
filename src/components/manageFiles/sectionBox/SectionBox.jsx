@@ -59,13 +59,13 @@ const SectionBox = ({
     const [currentUserCompanyId, currentUserportfolioDataType] = [
       userDetail?.portfolio_info?.length > 1
         ? userDetail?.portfolio_info.find(
-            (portfolio) => portfolio.product === productName
-          )?.org_id
+          (portfolio) => portfolio.product === productName
+        )?.org_id
         : userDetail?.portfolio_info[0]?.org_id,
       userDetail?.portfolio_info?.length > 1
         ? userDetail?.portfolio_info.find(
-            (portfolio) => portfolio.product === productName
-          )?.data_type
+          (portfolio) => portfolio.product === productName
+        )?.data_type
         : userDetail?.portfolio_info[0]?.data_type,
     ];
 
@@ -159,7 +159,7 @@ const SectionBox = ({
                     workflow?.data_type === currentUserportfolioDataType) ||
                   (workflow.workflows.data_type &&
                     workflow.workflows.data_type ===
-                      currentUserportfolioDataType)
+                    currentUserportfolioDataType)
               )
             )
           );
@@ -258,7 +258,7 @@ const SectionBox = ({
               return notification;
             }
           );
-
+          console.log(updatedNotifications)
           dispatch(setNotificationsForUser(updatedNotifications));
           toast.success('Successfully refreshed notifications');
           setRefreshLoading(false);
@@ -460,9 +460,8 @@ const SectionBox = ({
                 {cardItems && cardItems.length > 10 && (
                   <PrimaryButton
                     style={{
-                      pointerEvents: `${
-                        cardItems.length / 10 < sliceCount && 'none'
-                      }`,
+                      pointerEvents: `${cardItems.length / 10 < sliceCount && 'none'
+                        }`,
                     }}
                     hoverBg='success'
                     onClick={handleLoadMore}
