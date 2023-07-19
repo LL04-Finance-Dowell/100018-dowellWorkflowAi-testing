@@ -105,6 +105,7 @@ const ProcessDocument = ({ savedProcess }) => {
     }
 
     dispatch(setShowProcessNameModal(false))
+    dispatch(setProcessName(""))
 
     if (processOptionSelection === 'saveAndContinueLater') {
       const processObjToSave = extractProcessObj(
