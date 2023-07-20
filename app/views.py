@@ -1304,3 +1304,46 @@ def delete_item_from_folder(request, folder_id, item_id):
         res = delete_items_in_folder(item_id, folder_id, item_type)
         return Response(res + " Item Deleted in Folder", status.HTTP_202_ACCEPTED)
     return Response(status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+def _paginate( dataset,page,limit):
+    start = (page - 1) * limit
+    end =  start + limit
+    return dataset[start:end]
+
+
+
+@api_view(["GET"])
+def dowell_centre_template(request, company_id):
+    """Fetch Dowell Knowledge centre templates."""
+    data_type = request.query_params.get("data_type")
+    if not validate_id(company_id):
+        return Response("Something went wrong!", status=status.HTTP_400_BAD_REQUEST)
+    templates = get_template_list(company_id, data_type)
+    page = int(request.GET.get('page', 1))
+    templates = _paginate(templates,page,50)
+    return Response(
+        {"templates": templates},
+        status=status.HTTP_200_OK,
+    )
+
+
+@api_view(["GET"])
+def dowell_centre_documents(request, company_id):
+    """List of Created Documents."""
+    data_type = request.query_params.get("data_type")
+    if not validate_id(company_id):
+        return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
+    cache_key = f"documents_{company_id}"
+    document_list = cache.get(cache_key)
+    if document_list is None:
+        document_list = get_document_list(company_id, data_type)
+        cache.set(cache_key, document_list, timeout=60)
+
+    page = int(request.GET.get('page', 1))
+    document_list = _paginate(document_list,page,50)
+    return Response(
+        {"documents": document_list},
+        status.HTTP_200_OK,
+    )
+
