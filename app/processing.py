@@ -7,7 +7,13 @@ import qrcode
 import requests
 
 from app.checks import display_right, location_right, time_limit_right
-from app.constants import EDITOR_API, MASTERLINK_URL, NOTIFICATION_API, QRCODE_URL, VERIFICATION_LINK
+from app.constants import (
+    EDITOR_API,
+    MASTERLINK_URL,
+    NOTIFICATION_API,
+    QRCODE_URL,
+    VERIFICATION_LINK,
+)
 from app.helpers import cloning_document, register_public_login, check_items_state
 from app.mongo_db_connection import (
     authorize,
@@ -115,6 +121,7 @@ class Process:
                 "org_name": self.org_name,
             }
 
+
 class HandleProcess:
     def __init__(self, process):
         self.process = process
@@ -122,7 +129,6 @@ class HandleProcess:
             "org": process["org_name"],
             "product": "Workflow AI",
         }
-
 
     def parse_url(params):
         return urllib.parse.urlencode(params)
@@ -217,7 +223,6 @@ class HandleProcess:
             for u in users:
                 step.get("stepDocumentCloneMap").append({u: clone_id})
         if public:
-
             public_clone_ids = []
             for u in public:
                 public_clone_ids.append(
@@ -261,7 +266,7 @@ class HandleProcess:
         process_data["params"] = self.params
         m_code = None
         m_link = None
-        link_string  = "link"
+        link_string = "link"
         for step in steps:
             for member in step.get("stepPublicMembers", []):
                 link, qrcode = HandleProcess.user_team_public_data(
@@ -319,7 +324,7 @@ class HandleProcess:
             )
         ).start()
         if public_links:
-            document_id = self.process['parent_item_id']
+            document_id = self.process["parent_item_id"]
             res = get_document_object(document_id)
             # print(res)
             document_name = res["document_name"]
@@ -488,11 +493,12 @@ class Background:
                             for _, v in document_map.items():
                                 print(_, v)
                                 if (
-                                    isinstance(v, str) and
-                                    get_document_object(v).get("document_state")
-                                    == "processing" or v is None
+                                    isinstance(v, str)
+                                    and get_document_object(v).get("document_state")
+                                    == "processing"
+                                    or v is None
                                 ):
-                                    continue 
+                                    continue
                                 else:
                                     finalized.append(v)
                     else:
@@ -506,7 +512,10 @@ class Background:
                                 )
                             for user in step.get("stepPublicMembers"):
                                 clone_id = cloning_document(
-                                    document_id, user, parent_id, process_id,
+                                    document_id,
+                                    user,
+                                    parent_id,
+                                    process_id,
                                 )
                                 step.get("stepDocumentCloneMap").append(
                                     {user["member"]: clone_id}
@@ -522,7 +531,9 @@ class Background:
                             step1_documents = []
                             for i in range(1, len((steps))):
                                 current_idx = i
-                                prev_docs = steps[current_idx - 1].get("stepDocumentCloneMap")
+                                prev_docs = steps[current_idx - 1].get(
+                                    "stepDocumentCloneMap"
+                                )
                                 for item in prev_docs:
                                     key = next(iter(item))
                                     my_key = item[key]
@@ -530,25 +541,31 @@ class Background:
                                         step1_documents.append(my_key)
                                 for document in step1_documents:
                                     for user in step.get("stepTeamMembers"):
-                                        authorize(document, user, process_id, process_type)
+                                        authorize(
+                                            document, user, process_id, process_type
+                                        )
                                         step.get("stepDocumentCloneMap").append(
                                             {user["member"]: document}
                                         )
                                     for user in step.get("stepPublicMembers"):
-                                        authorize(document, user, process_id, process_type)
+                                        authorize(
+                                            document, user, process_id, process_type
+                                        )
                                         step.get("stepDocumentCloneMap").append(
                                             {user["member"]: document}
                                         )
                                     for user in step.get("stepUserMembers"):
-                                        authorize(document, user, process_id, process_type)
+                                        authorize(
+                                            document, user, process_id, process_type
+                                        )
                                         step.get("stepDocumentCloneMap").append(
                                             {user["member"]: document}
-                                    )
+                                        )
                         update_process(process_id, steps, processing_state)
                 # Check that all documents are finalized
                 if all(check_items_state(finalized)):
                     update_process(process_id, steps, "finalized")
-                                        
+
         except Exception as e:
             print("got error", e)
             finalize_item(self.item_id, "processing", self.item_type)

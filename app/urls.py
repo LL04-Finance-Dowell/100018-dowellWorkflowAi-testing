@@ -47,7 +47,7 @@ from .views import (
     read_reminder,
     send_notif,
     dowell_centre_template,
-    dowell_centre_documents
+    dowell_centre_documents,
 )
 
 urlpatterns = [
@@ -65,14 +65,24 @@ urlpatterns = [
     ),
     path("companies/<str:company_id>/teams/", get_all_teams),
     path("companies/<str:company_id>/settings/", all_workflow_ai_setting),
-    path("templates/", create_template, name='create_template'),
-    path("templates/<str:template_id>/", template_detail, name='template_detail'),
-    path("templates/<str:template_id>/object/", template_object, name='template_object'),
-    path("templates/<str:template_id>/approval/", approve, name='approve'),
-    path("documents/", create_document, name='create_document'),
-    path("documents/<str:document_id>/", document_detail, name='document_detail'),
-    path("documents/<str:document_id>/object/", document_object, name='document_object'),
-    path("documents/<str:document_id>/content/", get_document_content, name='get_document_content'),
+    path("templates/", create_template, name="create_template"),
+    path("templates/<str:template_id>/", template_detail, name="template_detail"),
+    path(
+        "templates/<str:template_id>/object/", template_object, name="template_object"
+    ),
+    path("templates/<str:template_id>/approval/", approve, name="approve"),
+    path("templates/<str:company_id>/knowledge-centre/", dowell_centre_template),
+    path("documents/", create_document, name="create_document"),
+    path("documents/<str:document_id>/", document_detail, name="document_detail"),
+    path(
+        "documents/<str:document_id>/object/", document_object, name="document_object"
+    ),
+    path(
+        "documents/<str:document_id>/content/",
+        get_document_content,
+        name="get_document_content",
+    ),
+    path("documents/<str:company_id>/knowledge-centre/", dowell_centre_documents),
     path("workflows/", create_workflow),
     path("workflows/<str:workflow_id>/", workflow_detail),
     path("processes/", document_processing),
@@ -102,7 +112,4 @@ urlpatterns = [
     path("folders/<str:folder_id>", folder_update),
     path("folders/<str:folder_id>/<str:item_id>", delete_item_from_folder),
     path("companies/<str:company_id>/folders/", all_folders),
-
-    path("dowell_centre_template/<str:company_id>/", dowell_centre_template),
-    path("dowell_centre_documents/<str:company_id>/", dowell_centre_documents),
 ]

@@ -275,11 +275,12 @@ def finalize_or_reject(request, process_id):
             return Response("document processed successfully", status.HTTP_200_OK)
         except Exception as err:
             print(err)
-            return Response("An error occured during processing", status.HTTP_500_INTERNAL_SERVER_ERROR)
-  
-    return Response(
-            "an error occurred during processing", status.HTTP_400_BAD_REQUEST
-        )
+            return Response(
+                "An error occured during processing",
+                status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
+
+    return Response("an error occurred during processing", status.HTTP_400_BAD_REQUEST)
 
 
 @api_view(["POST"])
@@ -492,10 +493,10 @@ def get_documents(request, company_id):
         cache.set(cache_key, document_list, timeout=60)
     if document_list:
         return Response(
-        {"documents": document_list},
-        status.HTTP_200_OK,
+            {"documents": document_list},
+            status.HTTP_200_OK,
         )
-    return Response({  "documents": []}, status.HTTP_200_OK)
+    return Response({"documents": []}, status.HTTP_200_OK)
 
 
 @api_view(["POST"])
@@ -1225,7 +1226,8 @@ def send_notif(request):
         return Response(
             f"Something went wrong: {err}", status.HTTP_500_INTERNAL_SERVER_ERROR
         )
-    
+
+
 @api_view(["POST"])
 def create_folder(request):
     data = []
@@ -1306,11 +1308,10 @@ def delete_item_from_folder(request, folder_id, item_id):
     return Response(status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
-def _paginate( dataset,page,limit):
+def _paginate(dataset, page, limit):
     start = (page - 1) * limit
-    end =  start + limit
+    end = start + limit
     return dataset[start:end]
-
 
 
 @api_view(["GET"])
@@ -1320,8 +1321,8 @@ def dowell_centre_template(request, company_id):
     if not validate_id(company_id):
         return Response("Something went wrong!", status=status.HTTP_400_BAD_REQUEST)
     templates = get_template_list(company_id, data_type)
-    page = int(request.GET.get('page', 1))
-    templates = _paginate(templates,page,50)
+    page = int(request.GET.get("page", 1))
+    templates = _paginate(templates, page, 50)
     return Response(
         {"templates": templates},
         status=status.HTTP_200_OK,
@@ -1340,10 +1341,9 @@ def dowell_centre_documents(request, company_id):
         document_list = get_document_list(company_id, data_type)
         cache.set(cache_key, document_list, timeout=60)
 
-    page = int(request.GET.get('page', 1))
-    document_list = _paginate(document_list,page,50)
+    page = int(request.GET.get("page", 1))
+    document_list = _paginate(document_list, page, 50)
     return Response(
         {"documents": document_list},
         status.HTTP_200_OK,
     )
-

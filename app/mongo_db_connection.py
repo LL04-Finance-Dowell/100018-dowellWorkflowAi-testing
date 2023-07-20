@@ -139,6 +139,7 @@ def get_document_object(document_id):
 
     return document
 
+
 def get_clone_object(clone_id):
     clone = get_data_from_data_service(
         *CLONES_CONNECTION_LIST, "find", {"_id": clone_id}
@@ -154,6 +155,7 @@ def get_document_list(company_id, data_type):
         {"company_id": str(company_id), "data_type": data_type},
     )
     return documents
+
 
 def get_clone_list(company_id, data_type):
     clones = get_data_from_data_service(
@@ -483,6 +485,7 @@ def save_document(
         }
     )
     return post_to_data_service(payload)
+
 
 def save_clone(
     name,
