@@ -446,8 +446,6 @@ class Background:
 
     def register_finalized(link_id):
         """Master single link as finalized"""
-        print("here")
-        print(link_id)
         response = requests.put(
             f"{MASTERLINK_URL}?link_id={link_id}",
             data={"is_finalized": True},

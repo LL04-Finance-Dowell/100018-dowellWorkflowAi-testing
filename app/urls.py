@@ -100,4 +100,6 @@ urlpatterns = [
     path("folders/<str:folder_id>", folder_update),
     path("folders/<str:folder_id>/<str:item_id>", delete_item_from_folder),
     path("companies/<str:company_id>/folders/", all_folders),
+    path("dowell_centre_template/<str:company_id>/", dowell_centre_template),
+    path("dowell_centre_documents/<str:company_id>/", get_documents),
 ]

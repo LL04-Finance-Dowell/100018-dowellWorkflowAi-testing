@@ -1339,6 +1339,7 @@ def dowell_centre_documents(request, company_id):
     if document_list is None:
         document_list = get_document_list(company_id, data_type)
         cache.set(cache_key, document_list, timeout=60)
+
     page = int(request.GET.get('page', 1))
     document_list = _paginate(document_list,page,50)
     return Response(
