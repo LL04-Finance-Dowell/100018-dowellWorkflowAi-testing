@@ -57,7 +57,11 @@ urlpatterns = [
     path("companies/<str:company_id>/workflows/", get_workflows),
     path("companies/<str:company_id>/favourites/", all_favourites),
     path("companies/<str:company_id>/templates/", get_templates),
+    path(
+        "companies/<str:company_id>/templates/knowledge-centre/", dowell_centre_template
+    ),
     path("companies/<str:company_id>/documents/", get_documents),
+    path("companies/<str:company_id>/documents/knowledge-centre/", dowell_centre_documents),
     path("companies/<str:company_id>/documents/completed/", get_completed_documents),
     path(
         "companies/<str:company_id>/processes/<str:process_id>/",
@@ -71,7 +75,6 @@ urlpatterns = [
         "templates/<str:template_id>/object/", template_object, name="template_object"
     ),
     path("templates/<str:template_id>/approval/", approve, name="approve"),
-    path("templates/<str:company_id>/knowledge-centre/", dowell_centre_template),
     path("documents/", create_document, name="create_document"),
     path("documents/<str:document_id>/", document_detail, name="document_detail"),
     path(
@@ -82,7 +85,6 @@ urlpatterns = [
         get_document_content,
         name="get_document_content",
     ),
-    path("documents/<str:company_id>/knowledge-centre/", dowell_centre_documents),
     path("workflows/", create_workflow),
     path("workflows/<str:workflow_id>/", workflow_detail),
     path("processes/", document_processing),
