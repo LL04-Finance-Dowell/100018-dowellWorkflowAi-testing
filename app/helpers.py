@@ -1,6 +1,4 @@
 import json
-import string
-import random
 
 import bson
 import requests
@@ -46,14 +44,6 @@ def has_tilde_characters(string):
             return True
     return False
 
-def randomize(characters: int):
-    upper = string.ascii_uppercase
-    lower = string.ascii_lowercase
-    digits = string.digits
-
-    rand = ''.join(random.choices(upper + lower + digits, k=characters))
-    return rand
-
 
 def cloning_document(document_id, auth_viewers, parent_id, process_id):
     """creating a document copy"""
@@ -70,8 +60,7 @@ def cloning_document(document_id, auth_viewers, parent_id, process_id):
             if has_tilde_characters(doc_name):
                 document_name = doc_name.replace('~', '')
             else:
-                rand = randomize(10)
-                document_name = doc_name + "_clone_" + viewer + f"_{rand}"
+                document_name = doc_name + viewer
         save_res = json.loads(
             save_document(
                 name=document_name,
