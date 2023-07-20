@@ -55,11 +55,12 @@ def cloning_document(document_id, auth_viewers, parent_id, process_id):
             else [auth_viewers]
         )
         document = get_document_object(document_id)
-        doc_name = document["document_name"]
-        if has_tilde_characters(doc_name):
-            document_name = doc_name
-        else:
-            document_name = "~" + doc_name + "~"
+        for viewer in viewers:
+            doc_name = document["document_name"]
+            if has_tilde_characters(doc_name):
+                document_name = doc_name.replace('~', '')
+            else:
+                document_name = doc_name + viewer
         save_res = json.loads(
             save_document(
                 name=document_name,
