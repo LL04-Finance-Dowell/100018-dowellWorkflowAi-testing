@@ -1,6 +1,7 @@
 from datetime import datetime, timedelta
 from app.mongo_db_connection import (
     get_document_object,
+    get_clone_object,
     get_link_object,
     get_template_object,
     org_wfai_setting,
@@ -21,6 +22,13 @@ def is_finalized(item_id, item_type):
     """Check for a process item's state"""
     if item_type == "document":
         document = get_document_object(item_id)
+        doc_state = document["document_state"]
+        if doc_state == "finalized":
+            return True, doc_state
+        if doc_state == "rejected":
+            return True, doc_state
+    if item_type == "clone":
+        document = get_clone_object(item_id)
         doc_state = document["document_state"]
         if doc_state == "finalized":
             return True, doc_state

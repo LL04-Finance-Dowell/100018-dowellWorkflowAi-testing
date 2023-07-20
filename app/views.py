@@ -33,7 +33,9 @@ from app.mongo_db_connection import (
     delete_workflow,
     finalize_item,
     get_document_list,
+    get_clone_list,
     get_document_object,
+    get_clone_object,
     get_folder_list,
     get_folder_object,
     get_link_object,
@@ -260,15 +262,18 @@ def finalize_or_reject(request, process_id):
     link_id = request.data["link_id"]
     state = request.data["action"]
     check, current_state = checks.is_finalized(item_id, item_type)
-    if check and current_state != "processing":
-        return Response(
-            f"document already processed as `{current_state}`!", status.HTTP_200_OK
-        )
+    # if check and current_state != "processing":
+    #     return Response(
+    #         f"document already processed as `{current_state}`!", status.HTTP_200_OK
+    #     )
     res = json.loads(finalize_item(item_id, state, item_type))
+    print(res, process_id)
+    print(res["isSuccess"])
     if res["isSuccess"]:
         try:
             process = get_process_object(process_id)
             background = Background(process, item_type, item_id, role, user)
+            print(background.role)
             background.processing()
             if user_type == "public":
                 background.register_finalized(link_id)
@@ -497,6 +502,22 @@ def get_documents(request, company_id):
         )
     return Response({  "documents": []}, status.HTTP_200_OK)
 
+@api_view(["GET"])
+def get_clones(request, company_id):
+    """List of Created Documents."""
+    data_type = request.query_params.get("data_type", "Real_Data")
+    if not validate_id(company_id):
+        return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
+    cache_key = f"clones_{company_id}"
+    clone_list = cache.get(cache_key)
+    if clone_list is None:
+        clone_list = get_clone_list(company_id, data_type)
+        cache.set(cache_key, clone_list, timeout=60)
+    return Response(
+        {"clones": clone_list},
+        status.HTTP_200_OK,
+    )
+
 
 @api_view(["POST"])
 def create_document(request):
@@ -595,6 +616,15 @@ def document_object(request, document_id):
         return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
     document = get_document_object(document_id)
     return Response(document, status.HTTP_200_OK)
+
+@api_view(["GET"])
+def clone_object(request, clone_id):
+    """Retrieves the document object for a specific document"""
+    if not validate_id(clone_id):
+        return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
+    clone = get_clone_object(clone_id)
+    print(clone)
+    return Response(clone, status.HTTP_200_OK)
 
 
 @api_view(["POST"])
