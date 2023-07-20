@@ -49,7 +49,7 @@ export const extractProcessObj = (
     data_type: currentUserDetails?.portfolio_info?.length > 1 ? currentUserDetails?.portfolio_info.find(portfolio => portfolio.product === productName)?.data_type : currentUserDetails?.portfolio_info[0]?.data_type,
     parent_id: documentToProcess?._id,
     action: actionVal,
-    ProcessName: ProcessName,
+    process_title: ProcessName,
     workflows: [
       {
         workflows: {
