@@ -1331,7 +1331,7 @@ def dowell_centre_template(request, company_id):
 @api_view(["GET"])
 def dowell_centre_documents(request, company_id):
     """List of Created Documents."""
-    data_type = request.query_params.get("data_type", "Real_Data")
+    data_type = request.query_params.get("data_type")
     if not validate_id(company_id):
         return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
     cache_key = f"documents_{company_id}"
