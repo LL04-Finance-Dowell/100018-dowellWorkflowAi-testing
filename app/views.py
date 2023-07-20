@@ -100,6 +100,7 @@ def document_processing(request):
         request.data["workflows_ids"],
         request.data["parent_id"],
         request.data["data_type"],
+        request.data["process_title"],
     )
     action = request.data["action"]
     data = None

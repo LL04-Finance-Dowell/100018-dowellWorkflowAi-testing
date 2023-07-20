@@ -33,6 +33,7 @@ class Process:
         workflow_ids,
         parent_id,
         data_type,
+        process_title,
     ):
         self.workflows = workflows
         self.created_by = created_by
@@ -49,6 +50,7 @@ class Process:
         self.process_title = " - ".join(
             [workflow["workflows"]["workflow_title"] for workflow in workflows]
         )
+        self.process_title = process_title
 
     def normal_process(self, action):
         res = json.loads(
@@ -127,8 +129,8 @@ class HandleProcess:
 
     def generate_qrcode(link):
         """Revert back to prod qr_path before push"""
-        qr_path = f"100094.pythonanywhere.com/media/qrcodes/{uuid.uuid4().hex}.png"  # Production
-        # qr_path = f"media/qrcodes/{uuid.uuid4().hex}.png"  # On dev
+        # qr_path = f"100094.pythonanywhere.com/media/qrcodes/{uuid.uuid4().hex}.png"  # Production
+        qr_path = f"media/qrcodes/{uuid.uuid4().hex}.png"  # On dev
         qr_code = qrcode.QRCode()
         qr_code.add_data(link)
         qr_code.make()
