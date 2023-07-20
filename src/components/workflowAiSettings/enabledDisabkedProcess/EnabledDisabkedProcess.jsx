@@ -16,6 +16,7 @@ import { WorkflowSettingServices } from '../../../services/workflowSettingServic
 import { toast } from 'react-toastify';
 import { useTranslation } from 'react-i18next';
 import { useAppContext } from '../../../contexts/AppContext';
+import { setThemeColor } from '../../../features/app/appSlice';
 
 const EnabledDisabkedProcess = () => {
   const dispatch = useDispatch();
@@ -168,6 +169,7 @@ const EnabledDisabkedProcess = () => {
     try {
       setIsUpdating(true);
       await workflowSettingServices.updateWorkflowAISettings(data);
+      setThemeColor(data.theme_color);
       toast.success('Updated successfully');
     } catch (e) {
       console.log(e);

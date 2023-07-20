@@ -27,8 +27,7 @@ const Reports = () => {
   const { allDocuments: allDocumentsArray } = useSelector(
     (state) => state.document
   );
-  const { allProcesses } = useSelector((state) => state.app);
-
+  const { allProcesses, themeColor } = useSelector((state) => state.app);
 
   useEffect(() => {
     if (
@@ -91,11 +90,8 @@ const Reports = () => {
             // item.created_by === userDetail?.userinfo.username
             item.processing_state === 'cancelled'
         ).length +
-        allProcesses.filter(
-          (item) =>
-
-            item.processing_state === 'finalized'
-        ).length;
+        allProcesses.filter((item) => item.processing_state === 'finalized')
+          .length;
 
       setItemsCountToDisplay((prevItems) => {
         return {
@@ -112,44 +108,49 @@ const Reports = () => {
       prevItems.map((item) =>
         item.parent.includes('My documents')
           ? {
-            ...item,
-            count:
-              itemsCountToDisplay.documents.count > 0
-                ? itemsCountToDisplay.documents.count
-                : '00',
-          }
+              ...item,
+              count:
+                itemsCountToDisplay.documents.count > 0
+                  ? itemsCountToDisplay.documents.count
+                  : '00',
+            }
           : item.parent.includes('My Templates')
-            ? {
+          ? {
               ...item,
               count:
                 itemsCountToDisplay.templates.count > 0
                   ? itemsCountToDisplay.templates.count
                   : '00',
             }
-            : item.parent.includes('My Workflows')
-              ? {
-                ...item,
-                count:
-                  itemsCountToDisplay.workflows.count > 0
-                    ? itemsCountToDisplay.workflows.count
-                    : '00',
-              }
-              : item.parent.includes('My Processes')
-                ? {
-                  ...item,
-                  count:
-                    itemsCountToDisplay.processes.count > 0
-                      ? itemsCountToDisplay.processes.count
-                      : '00',
-                }
-                : item
+          : item.parent.includes('My Workflows')
+          ? {
+              ...item,
+              count:
+                itemsCountToDisplay.workflows.count > 0
+                  ? itemsCountToDisplay.workflows.count
+                  : '00',
+            }
+          : item.parent.includes('My Processes')
+          ? {
+              ...item,
+              count:
+                itemsCountToDisplay.processes.count > 0
+                  ? itemsCountToDisplay.processes.count
+                  : '00',
+            }
+          : item
       )
     );
   }, [itemsCountToDisplay]);
 
   return (
     <div className={sidebarStyles.feature__box}>
-      <h2 className={sidebarStyles.feature__title}>{t('Reports')}</h2>
+      <h2
+        className={sidebarStyles.feature__title}
+        style={{ color: themeColor }}
+      >
+        {t('Reports')}
+      </h2>
       <CollapseItem items={test} />
     </div>
   );
@@ -181,7 +182,7 @@ export const manageFileItems = [
   {
     id: uuidv4(),
     parent: 'My Processes',
-    href: '/processes/completed'
+    href: '/processes/completed',
     // children: [
     //   {
     //     id: uuidv4(),

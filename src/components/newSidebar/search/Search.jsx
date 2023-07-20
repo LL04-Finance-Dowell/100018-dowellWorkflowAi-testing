@@ -36,6 +36,7 @@ const Search = () => {
   const { allWorkflowsStatus } = useSelector((state) => state.workflow);
   const { allTemplatesStatus } = useSelector((state) => state.template);
   const { allDocumentsStatus } = useSelector((state) => state.document);
+  const { themeColor } = useSelector((state) => state.app);
 
   const onSubmit = async (data) => {
     if (data.search.length < 1 || searchLoading)
@@ -194,7 +195,9 @@ const Search = () => {
 
   return (
     <div className={styles.container}>
-      <h2 className={styles.title}>{t('Search')}</h2>
+      <h2 className={styles.title} style={{ color: themeColor }}>
+        {t('Search')}
+      </h2>
       <p className={styles.info}>
         {t('Search in file names of Documents Templates & Workflows')}
       </p>
@@ -204,7 +207,7 @@ const Search = () => {
           placeholder={t('Type here to search')}
           readOnly={searchLoading ? true : false}
         />
-        <button type='submit'>
+        <button type='submit' style={{ backgroundColor: themeColor }}>
           {searchLoading ? (
             <LoadingSpinner color={'#fff'} />
           ) : (

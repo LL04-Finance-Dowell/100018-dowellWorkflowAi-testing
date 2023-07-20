@@ -1,8 +1,8 @@
-import { httpApiUrl, httpTemplate } from "../httpCommon/httpCommon";
+import { httpApiUrl, httpTemplate } from '../httpCommon/httpCommon';
 
 export class TemplateServices {
   createTemplate = (data) => {
-    return httpTemplate.post("/", data);
+    return httpTemplate.post('/', data);
   };
 
   detailTemplate = (templateId) => {
@@ -10,7 +10,7 @@ export class TemplateServices {
   };
 
   approvedTemplate = (data) => {
-    return httpTemplate.post("/approved/", data);
+    return httpTemplate.post('/approved/', data);
   };
 
   approveTemplate = (templateId) => {
@@ -18,22 +18,28 @@ export class TemplateServices {
   };
 
   pendingTemplate = (data) => {
-    return httpTemplate.post("/pending/", data);
+    return httpTemplate.post('/pending/', data);
   };
 
   mineTemplates = (data) => {
-    return httpTemplate.post("/mine/", data);
+    return httpTemplate.post('/mine/', data);
   };
 
   savedTemplates = (data) => {
-    return httpTemplate.post("/saved/", data);
+    return httpTemplate.post('/saved/', data);
   };
 
   allTemplates = (companyId, dataType) => {
-    return httpApiUrl.get(`/companies/${companyId}/templates/?data_type=${dataType}`);
+    return httpApiUrl.get(
+      `/companies/${companyId}/templates/?data_type=${dataType}`
+    );
+  };
+
+  allTemplatesDRC = (companyId) => {
+    return httpApiUrl.get(`/companies/${companyId}/templates/`);
   };
 
   singleTemplateDetail = async (templateId) => {
     return await httpTemplate.get(`/${templateId}/object/`);
-  }
+  };
 }

@@ -40,6 +40,7 @@ import { Tooltip } from 'react-tooltip';
 import { useTranslation } from 'react-i18next';
 import { GrStatusGoodSmall } from 'react-icons/gr';
 import { productName } from '../../utils/helpers';
+import { useAppContext } from '../../contexts/AppContext';
 
 const Sidebar = () => {
   const dispatch = useDispatch();
@@ -109,11 +110,15 @@ const Sidebar = () => {
     },
   ]);
   const { userDetail, session_id } = useSelector((state) => state.auth);
-  const { IconColor, ShowProfileSpinner } = useSelector((state) => state.app);
+  const { IconColor, ShowProfileSpinner, themeColor } = useSelector(
+    (state) => state.app
+  );
   const navigate = useNavigate();
   useCloseElementOnEscapekeyClick(() =>
     dispatch(setLegalAgreePageLoading(false))
   );
+
+  const { workflowSettings } = useAppContext();
 
   useEffect(() => {
     getAgreeStatus(session_id)
@@ -286,7 +291,7 @@ const Sidebar = () => {
         </h2>
       </div>
       <div className={styles.organization__box}>
-        <h2 className={styles.organization__text}>
+        <h2 className={styles.organization__text} style={{ color: themeColor }}>
           {userDetail?.portfolio_info?.length > 1
             ? userDetail?.portfolio_info?.find(
                 (portfolio) => portfolio.product === productName
@@ -323,6 +328,7 @@ const Sidebar = () => {
       <div className={styles.feature__box}>
         <h2
           className={`${styles.feature__title} ${styles.feature__title__small}`}
+          style={{ color: themeColor }}
         >
           {t('DoWell')} {t('Knowledge Center')}
         </h2>
