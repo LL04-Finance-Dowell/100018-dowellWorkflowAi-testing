@@ -13,11 +13,9 @@ from app.serializers import (
 
 from .mongo_db_connection import (
     get_document_object,
-    get_clone_object,
     get_process_object,
     get_template_object,
-    # save_document,
-    save_clone,
+    save_document,
     save_process,
 )
 
@@ -64,7 +62,7 @@ def cloning_document(document_id, auth_viewers, parent_id, process_id):
             else:
                 document_name = doc_name + viewer
         save_res = json.loads(
-            save_clone(
+            save_document(
                 name=document_name,
                 data=document["content"],
                 page=document["page"],
@@ -79,7 +77,6 @@ def cloning_document(document_id, auth_viewers, parent_id, process_id):
                 folders="untitled",
             )
         )
-        print(save_res)
         return save_res["inserted_id"]
     except Exception as e:
         print(e)
@@ -126,14 +123,6 @@ def access_editor(item_id, item_type):
         field = "document_name"
         team_member_id = "11689044433"
         item_name = get_document_object(item_id)
-        name = item_name["document_name"]
-    elif item_name == "clone":
-        collection = "CloneReports"
-        document = "CloneReports"
-        action = "document"
-        field = "document_name"
-        team_member_id = "1212001"
-        item_name = get_clone_object(item_id)
         name = item_name["document_name"]
     if item_type == "template":
         collection = "TemplateReports"
@@ -285,7 +274,7 @@ def remove_favourite(identifier, type, username):
 def check_items_state(items) -> list:
     """Checks if item state is finalized"""
     return [
-        get_clone_object(i)["document_state"] == "finalized"
+        get_document_object(i)["document_state"] == "finalized"
         for i in items
         if isinstance(i, str)
     ]

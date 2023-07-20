@@ -716,22 +716,6 @@ def authorize(document_id, viewers, process_id, item_type):
                 "platform": "bangalore",
             }
         )
-    if item_type == "clone":
-        payload = json.dumps(
-            {
-                **CLONES_CONNECTION_DICT,
-                "command": "update",
-                "field": {
-                    "_id": document_id,
-                },
-                "update_field": {
-                    "auth_viewers": viewers,
-                    "document_state": "processing",
-                    "process_id": process_id,
-                },
-                "platform": "bangalore",
-            }
-        )
     if item_type == "template":
         payload = json.dumps(
             {
@@ -760,20 +744,6 @@ def finalize_item(item_id, state, item_type):
         payload = json.dumps(
             {
                 **DOCUMENT_CONNECTION_DICT,
-                "command": "update",
-                "field": {
-                    "_id": item_id,
-                },
-                "update_field": {
-                    "document_state": state,
-                },
-                "platform": "bangalore",
-            }
-        )
-    elif item_type == "clone":
-        payload = json.dumps(
-            {
-                **CLONES_CONNECTION_DICT,
                 "command": "update",
                 "field": {
                     "_id": item_id,
@@ -814,7 +784,7 @@ def finalize_item(item_id, state, item_type):
         )
 
     if payload is not None:
-        print(payload)
+        # print(payload)
         return post_to_data_service(payload)
     return
 

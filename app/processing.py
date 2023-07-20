@@ -13,7 +13,6 @@ from app.mongo_db_connection import (
     authorize,
     finalize_item,
     get_document_object,
-    get_clone_object,
     save_process,
     save_process_links,
     save_process_qrcodes,
@@ -130,8 +129,8 @@ class HandleProcess:
 
     def generate_qrcode(link):
         """Revert back to prod qr_path before push"""
-        # qr_path = f"100094.pythonanywhere.com/media/qrcodes/{uuid.uuid4().hex}.png"  # Production
-        qr_path = f"media/qrcodes/{uuid.uuid4().hex}.png"  # On dev
+        qr_path = f"100094.pythonanywhere.com/media/qrcodes/{uuid.uuid4().hex}.png"  # Production
+        # qr_path = f"media/qrcodes/{uuid.uuid4().hex}.png"  # On dev
         qr_code = qrcode.QRCode()
         qr_code.add_data(link)
         qr_code.make()
@@ -391,11 +390,11 @@ class HandleProcess:
                     role = step["stepRole"]
         if clone_id:
             if item_type == "document":
-                collection = "CloneReports"
-                document = "CloneReports"
+                collection = "DocumentReports"
+                document = "documentreports"
                 field = "document_name"
-                team_member_id = "1212001"
-                document_object = get_clone_object(clone_id)
+                team_member_id = "11689044433"
+                document_object = get_document_object(clone_id)
                 item_flag = document_object["document_state"]
                 document_name = document_object["document_name"]
                 editor_link = HandleProcess.get_editor_link(
@@ -466,7 +465,7 @@ class Background:
             if step["stepRole"] == authorized_role:
                 for clone_map in step["stepDocumentCloneMap"]:
                     if user in clone_map:
-                        print("user:", user)
+                        # print("user:", user)
                         clone_map["accessed"] = True
                         continue
 
@@ -477,10 +476,9 @@ class Background:
         process_type = self.process["process_type"]
         document_id = self.item_id
         processing_state = self.process["processing_state"]
-        tst = Background.register_user_access(
+        Background.register_user_access(
             self.process["process_steps"], self.role, self.username
         )
-        print("user_access", tst)
         finalized = []
         try:
             no_of_steps = sum(isinstance(e, dict) for e in steps)
@@ -493,7 +491,7 @@ class Background:
                                 print(_, v)
                                 if (
                                     isinstance(v, str) and
-                                    get_clone_object(v).get("document_state")
+                                    get_document_object(v).get("document_state")
                                     == "processing" or v is None
                                 ):
                                     continue 
@@ -551,7 +549,6 @@ class Background:
                         update_process(process_id, steps, processing_state)
                 # Check that all documents are finalized
                 if all(check_items_state(finalized)):
-                    print(finalized)
                     update_process(process_id, steps, "finalized")
                                         
         except Exception as e:
