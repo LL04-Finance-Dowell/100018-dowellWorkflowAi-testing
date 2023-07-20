@@ -83,6 +83,14 @@ def get_template_list(company_id, data_type):
     )
     return templates
 
+def get_template_reports(company_id, data_type, template_state):
+    templates = get_data_from_data_service(
+        *TEMPLATE_CONNECTION_LIST,
+        "fetch",
+        {"company_id": company_id, "data_type": data_type, "template_state": template_state},
+    )
+    return templates
+
 
 def get_links_object_by_process_id(process_id):
     links = get_data_from_data_service(
@@ -153,6 +161,19 @@ def get_document_list(company_id, data_type):
         *DOCUMENT_CONNECTION_LIST,
         "fetch",
         {"company_id": str(company_id), "data_type": data_type},
+    )
+    return documents
+
+
+def get_documents_reports(company_id, data_type, document_state):
+    documents = get_data_from_data_service(
+        *DOCUMENT_CONNECTION_LIST,
+        "fetch",
+        {
+            "company_id": str(company_id),
+            "data_type": data_type,
+            "document_state": document_state,
+        },
     )
     return documents
 

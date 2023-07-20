@@ -1,7 +1,4 @@
-import json
-
 import jsonfield
-from django.core.validators import validate_comma_separated_integer_list
 from django.db import models
 
 

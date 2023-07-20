@@ -23,11 +23,12 @@ from .views import (
     fetch_process_links,
     finalize_or_reject,
     get_all_teams,
-    get_completed_documents,
+    get_reports_documents,
     get_completed_documents_by_process,
     get_document_content,
     get_documents,
     get_process_link,
+    get_reports_templates,
     get_team_data,
     get_templates,
     get_workflow_ai_setting,
@@ -60,9 +61,13 @@ urlpatterns = [
     path(
         "companies/<str:company_id>/templates/knowledge-centre/", dowell_centre_template
     ),
+    path("companies/<str:company_id>/templates/reports/", get_reports_templates),
     path("companies/<str:company_id>/documents/", get_documents),
-    path("companies/<str:company_id>/documents/knowledge-centre/", dowell_centre_documents),
-    path("companies/<str:company_id>/documents/completed/", get_completed_documents),
+    path(
+        "companies/<str:company_id>/documents/knowledge-centre/",
+        dowell_centre_documents,
+    ),
+    path("companies/<str:company_id>/documents/reports/", get_reports_documents),
     path(
         "companies/<str:company_id>/processes/<str:process_id>/",
         get_completed_documents_by_process,

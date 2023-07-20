@@ -468,7 +468,6 @@ class Background:
             if step["stepRole"] == authorized_role:
                 for clone_map in step["stepDocumentCloneMap"]:
                     if user in clone_map:
-                        # print("user:", user)
                         clone_map["accessed"] = True
                         continue
 
@@ -489,7 +488,6 @@ class Background:
                 for index, step in enumerate(steps):
                     if step["stepDocumentCloneMap"]:
                         for document_map in step.get("stepDocumentCloneMap"):
-                            print(document_map)
                             for _, v in document_map.items():
                                 print(_, v)
                                 if (

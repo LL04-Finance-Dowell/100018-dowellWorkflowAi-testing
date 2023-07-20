@@ -34,6 +34,7 @@ from app.mongo_db_connection import (
     finalize_item,
     get_document_list,
     get_document_object,
+    get_documents_reports,
     get_folder_list,
     get_folder_object,
     get_link_object,
@@ -44,6 +45,7 @@ from app.mongo_db_connection import (
     get_team_list,
     get_template_list,
     get_template_object,
+    get_template_reports,
     get_wf_list,
     get_wf_object,
     get_wfai_setting_list,
@@ -804,10 +806,24 @@ def trash_favourites(request, item_id, item_type, username):
 @api_view(["GET"])
 def get_templates(request, company_id):
     """List of Created Templates."""
-    data_type = request.query_params.get("data_type", "Real_Data")
-    if not validate_id(company_id):
+    data_type = request.query_params.get("data_type")
+    if not validate_id(company_id) and data_type:
         return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
     templates = get_template_list(company_id, data_type)
+    return Response(
+        {"templates": templates},
+        status.HTTP_200_OK,
+    )
+
+
+@api_view(["GET"])
+def get_reports_templates(request, company_id):
+    """List of templates based on their current state."""
+    data_type = request.query_params.get("data_type")
+    template_state = request.query_params.get("template_state")
+    if not validate_id(company_id) and data_type and template_state:
+        return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
+    templates = get_template_reports(company_id, data_type, template_state)
     return Response(
         {"templates": templates},
         status.HTTP_200_OK,
@@ -995,27 +1011,20 @@ def get_all_teams(request, company_id):
 
 
 @api_view(["GET"])
-def get_completed_documents(request, company_id):
-    """List of Completed Documents."""
+def get_reports_documents(request, company_id):
+    """List of documents based on their states"""
     data_type = request.query_params.get("data_type")
-    if not validate_id(company_id) and data_type:
+    document_state = request.query_params.get("doc_state")
+    if not validate_id(company_id) and data_type and document_state:
         return Response("Invalid Request!", status.HTTP_400_BAD_REQUEST)
-    document_list = get_document_list(company_id, data_type)
-    if document_list:
-        completed = list(
-            filter(lambda i: i.get("document_state") == "finalized", document_list)
-        )
-        return Response(
-            {"documents": completed},
-            status=status.HTTP_200_OK,
-        )
+    document_list = get_documents_reports(company_id, data_type, document_state)
     return Response(
-        {"documents": []},
+        {"documents": document_list},
         status=status.HTTP_200_OK,
     )
 
 
-@api_view(["GET"])
+@api_view(["GET"])  # TODO : Refactor this
 def get_completed_documents_by_process(request, company_id, process_id):
     """List of Completed Documents."""
     data_type = request.query_params.get("data_type")
