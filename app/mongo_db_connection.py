@@ -82,6 +82,7 @@ def get_template_list(company_id, data_type):
     return templates
 
 
+
 def get_links_object_by_process_id(process_id):
     links = get_data_from_data_service(
         *LINK_CONNECTION_LIST,
