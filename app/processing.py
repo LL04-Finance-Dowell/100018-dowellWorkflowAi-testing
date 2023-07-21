@@ -561,8 +561,8 @@ class Background:
                                         )
                         update_process(process_id, steps, processing_state)
                 # Check that all documents are finalized
-                if all(check_items_state(finalized)):
-                    update_process(process_id, steps, "finalized")
+                # if all(check_items_state(finalized)):
+                #     update_process(process_id, steps, "finalized")
 
         except Exception as e:
             print("got error", e)
