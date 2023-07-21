@@ -10,10 +10,12 @@ import TemplateCard from '../../../components/hoverCard/templateCard/TemplateCar
 import { useNavigate } from 'react-router-dom';
 import { productName } from '../../../utils/helpers';
 import { useAppContext } from '../../../contexts/AppContext';
+import { TemplateServices } from '../../../services/templateServices';
 
-const TemplatesPage = ({ home, showOnlySaved, showOnlyTrashed }) => {
+const TemplatesPage = ({ home, showOnlySaved, showOnlyTrashed, isDemo }) => {
   const { userDetail } = useSelector((state) => state.auth);
-  const { customTempName } = useAppContext();
+  const { customTempName, demoTemplates, demoTempStatus, fetchDemoTemplates } =
+    useAppContext();
 
   const { allTemplates: allTemplatesArray, allTemplatesStatus } = useSelector(
     (state) => state.template
@@ -22,6 +24,14 @@ const TemplatesPage = ({ home, showOnlySaved, showOnlyTrashed }) => {
   const navigate = useNavigate();
   const [currentUserPortfolioDataType, setCurrentUserPortfolioDataType] =
     useState('');
+
+  useEffect(() => {
+    if (isDemo) {
+      if (!demoTemplates) {
+        fetchDemoTemplates();
+      }
+    }
+  }, []);
 
   useEffect(() => {
     const data = {
@@ -51,6 +61,7 @@ const TemplatesPage = ({ home, showOnlySaved, showOnlyTrashed }) => {
     if (showOnlySaved) navigate('#saved-templates');
     if (showOnlyTrashed) navigate('#trashed-templates');
     if (home) navigate('#drafts');
+    // if (isDemo) navigate('#demo');
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [showOnlySaved, showOnlyTrashed, home]);
 
@@ -126,6 +137,19 @@ const TemplatesPage = ({ home, showOnlySaved, showOnlyTrashed }) => {
             </div>
           ) : (
             <></>
+          )}
+          {isDemo && (
+            <div id='demo-templates'>
+              <SectionBox
+                cardBgColor='#1ABC9C'
+                title='demo templates'
+                Card={TemplateCard}
+                cardItems={demoTemplates}
+                status={demoTempStatus}
+                itemType={'templates'}
+                isDemo={true}
+              />
+            </div>
           )}
         </ManageFiles>
       </div>

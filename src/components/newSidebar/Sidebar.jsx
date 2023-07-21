@@ -41,22 +41,24 @@ import { useTranslation } from 'react-i18next';
 import { GrStatusGoodSmall } from 'react-icons/gr';
 import { productName } from '../../utils/helpers';
 import { useAppContext } from '../../contexts/AppContext';
+import { HashLink } from 'react-router-hash-link';
+import { IoMdArrowDropright } from 'react-icons/io';
 
 const Sidebar = () => {
   const dispatch = useDispatch();
   const { t } = useTranslation();
   const [knowledge, Setknowledge] = useState([
-    {
-      id: uuidv4(),
-      parent: 'Templates',
-      children: [
-        { id: uuidv4(), child: 'Proposal' },
-        { id: uuidv4(), child: 'Student Progress reports' },
-        { id: uuidv4(), child: 'Resume' },
-        { id: uuidv4(), child: 'Christmas cards' },
-        { id: uuidv4(), child: 'Birthday cards' },
-      ],
-    },
+    // {
+    //   id: uuidv4(),
+    //   parent: 'Templates',
+    //   children: [
+    //     { id: uuidv4(), child: 'Proposal' },
+    //     { id: uuidv4(), child: 'Student Progress reports' },
+    //     { id: uuidv4(), child: 'Resume' },
+    //     { id: uuidv4(), child: 'Christmas cards' },
+    //     { id: uuidv4(), child: 'Birthday cards' },
+    //   ],
+    // },
     {
       id: uuidv4(),
       parent: 'Landing Supports',
@@ -332,7 +334,20 @@ const Sidebar = () => {
         >
           {t('DoWell')} {t('Knowledge Center')}
         </h2>
-        <CollapseItem items={knowledge} exception={true} />
+        <HashLink
+          to='/templates/demo#demo'
+          className={`${styles.templates_href} ${styles.parent__item__box}`}
+        >
+          Templates
+        </HashLink>
+
+        <HashLink
+          to='/documents/demo#demo'
+          className={`${styles.templates_href} ${styles.parent__item__box}`}
+        >
+          Documents
+        </HashLink>
+        {/* <CollapseItem items={knowledge} exception={true} /> */}
 
         <span className={styles.knowledge__Extra__Info}>
           {t('DoWell')} {t('True moments user experience lab')}

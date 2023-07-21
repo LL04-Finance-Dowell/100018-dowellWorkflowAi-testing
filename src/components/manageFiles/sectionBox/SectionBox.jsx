@@ -1,7 +1,7 @@
 import styles from './sectionBox.module.css';
 import maneFilesStyles from '../manageFiles.module.css';
 import BookSpinner from '../../bookSpinner/BookSpinner';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { PrimaryButton } from '../../styledComponents/styledComponents';
 import { IoIosRefresh } from 'react-icons/io';
@@ -21,6 +21,7 @@ import { setAllTemplates } from '../../../features/template/templateSlice';
 import { setAllWorkflows } from '../../../features/workflow/workflowsSlice';
 import { useTranslation } from 'react-i18next';
 import { productName } from '../../../utils/helpers';
+import { useAppContext } from '../../../contexts/AppContext';
 
 const SectionBox = ({
   cardItems,
@@ -32,6 +33,7 @@ const SectionBox = ({
   hideFavoriteIcon,
   hideDeleteIcon,
   folderId,
+  isDemo,
 }) => {
   const [sliceCount, setSliceCount] = useState(1);
   const [refreshLoading, setRefreshLoading] = useState(false);
@@ -43,15 +45,42 @@ const SectionBox = ({
   const { allWorkflowsStatus } = useSelector((state) => state.workflow);
   const dispatch = useDispatch();
   const { t } = useTranslation();
-
-  const [foldersLoading] = useState(false); //! THIS IS A DUMMY
-  const [folderLoading] = useState(false); //! THIS IS A DUMMY
-
-  // console.log('card Items: ', cardItems, title, card);
+  const [isDemoLoading, setIsDemoLoading] = useState(false);
+  const [cardItemsVar, setCardItemsVar] = useState(cardItems);
+  const [count, setCount] = useState(1);
+  const { fetchDemoTemplates, fetchDemoDocuments } = useAppContext();
 
   const handleLoadMore = () => {
     setSliceCount((prev) => prev + 1);
   };
+
+  const handleDemoLoadMore = async () => {
+    if (cardItemsVar.length / 10 > sliceCount) {
+      setSliceCount((prev) => prev + 1);
+    } else {
+      setIsDemoLoading(true);
+      try {
+        const res =
+          itemType === 'templates'
+            ? await new TemplateServices().demoTemplates(count + 1)
+            : itemType === 'documents'
+            ? await new DocumentServices().demoDocuments(count + 1)
+            : {};
+        setCardItemsVar(
+          res.data ? [...cardItemsVar, ...res.data.templates] : cardItemsVar
+        );
+        setCount(count + 1);
+      } catch (err) {
+        console.log(err);
+      } finally {
+        setIsDemoLoading(false);
+      }
+    }
+  };
+
+  // useEffect(() => {
+  //   console.log('cardItemsVar: ', cardItemsVar);
+  // }, [cardItemsVar]);
 
   const handleRefresh = () => {
     if (refreshLoading) return;
@@ -59,13 +88,13 @@ const SectionBox = ({
     const [currentUserCompanyId, currentUserportfolioDataType] = [
       userDetail?.portfolio_info?.length > 1
         ? userDetail?.portfolio_info.find(
-          (portfolio) => portfolio.product === productName
-        )?.org_id
+            (portfolio) => portfolio.product === productName
+          )?.org_id
         : userDetail?.portfolio_info[0]?.org_id,
       userDetail?.portfolio_info?.length > 1
         ? userDetail?.portfolio_info.find(
-          (portfolio) => portfolio.product === productName
-        )?.data_type
+            (portfolio) => portfolio.product === productName
+          )?.data_type
         : userDetail?.portfolio_info[0]?.data_type,
     ];
 
@@ -79,63 +108,67 @@ const SectionBox = ({
 
       const documentServices = new DocumentServices();
 
-      documentServices
-        .allDocuments(data.company_id, data.data_type)
-        .then((res) => {
-          dispatch(
-            setAllDocuments(
-              res.data.documents
-                .reverse()
-                .filter(
-                  (document) =>
-                    document.document_state !== 'trash' &&
-                    document.data_type &&
-                    document.data_type === currentUserportfolioDataType
-                )
-            )
-          );
-          toast.success('Successfully refreshed documents');
-          setRefreshLoading(false);
-        })
-        .catch((err) => {
-          // console.log(err, 'Refresh for documents failed');
-          toast.info('Refresh for documents failed');
-          setRefreshLoading(false);
-        });
+      if (!isDemo) {
+        documentServices
+          .allDocuments(data.company_id, data.data_type)
+          .then((res) => {
+            dispatch(
+              setAllDocuments(
+                res.data.documents
+                  .reverse()
+                  .filter(
+                    (document) =>
+                      document.document_state !== 'trash' &&
+                      document.data_type &&
+                      document.data_type === currentUserportfolioDataType
+                  )
+              )
+            );
+            toast.success('Successfully refreshed documents');
+            setRefreshLoading(false);
+          })
+          .catch((err) => {
+            // console.log(err, 'Refresh for documents failed');
+            toast.info('Refresh for documents failed');
+            setRefreshLoading(false);
+          });
+      } else fetchDemoDocuments();
     }
 
     if (itemType === 'templates') {
       setRefreshLoading(true);
 
-      const data = {
-        company_id: currentUserCompanyId,
-        data_type: currentUserportfolioDataType,
-      };
+      if (!isDemo) {
+        const data = {
+          company_id: currentUserCompanyId,
+          data_type: currentUserportfolioDataType,
+        };
 
-      const templatesServices = new TemplateServices();
+        const templatesServices = new TemplateServices();
 
-      templatesServices
-        .allTemplates(data.company_id, data.data_type)
-        .then((res) => {
-          dispatch(
-            setAllTemplates(
-              res.data.templates
-                .reverse()
-                .filter(
-                  (template) =>
-                    template.data_type &&
-                    template.data_type === currentUserportfolioDataType
-                )
-            )
-          );
-          toast.success('Successfully refreshed templates');
-          setRefreshLoading(false);
-        })
-        .catch((err) => {
-          // console.log(err, 'Refresh for templates failed');
-          toast.info('Refresh for templates failed');
-          setRefreshLoading(false);
-        });
+        templatesServices
+          .allTemplates(data.company_id, data.data_type)
+          .then((res) => {
+            dispatch(
+              setAllTemplates(
+                res.data.templates
+                  .reverse()
+                  .filter(
+                    (template) =>
+                      template.data_type &&
+                      template.data_type === currentUserportfolioDataType
+                  )
+              )
+            );
+            toast.success('Successfully refreshed templates');
+            setRefreshLoading(false);
+          })
+          .catch((err) => {
+            // console.log(err, 'Refresh for templates failed');
+            toast.info('Refresh for templates failed');
+            setRefreshLoading(false);
+          });
+      } else fetchDemoTemplates();
     }
 
     if (itemType === 'workflows') {
@@ -159,7 +192,7 @@ const SectionBox = ({
                     workflow?.data_type === currentUserportfolioDataType) ||
                   (workflow.workflows.data_type &&
                     workflow.workflows.data_type ===
-                    currentUserportfolioDataType)
+                      currentUserportfolioDataType)
               )
             )
           );
@@ -258,7 +291,7 @@ const SectionBox = ({
               return notification;
             }
           );
-          console.log(updatedNotifications)
+          console.log(updatedNotifications);
           dispatch(setNotificationsForUser(updatedNotifications));
           toast.success('Successfully refreshed notifications');
           setRefreshLoading(false);
@@ -270,6 +303,10 @@ const SectionBox = ({
         });
     }
   };
+
+  useEffect(() => {
+    setCardItemsVar(cardItems);
+  }, [cardItems]);
 
   return (
     <div className={styles.container}>
@@ -381,48 +418,6 @@ const SectionBox = ({
                 ) : (
                   <></>
                 )
-              ) : itemType === 'folders' ? (
-                // !foldersLoading ? (
-                //   <button
-                //     className={styles.refresh__btn}
-                //     // onClick={handleRefresh}
-                //   >
-                //     {refreshLoading ? (
-                //       <LoadingSpinner
-                //         color={'white'}
-                //         width={'1rem'}
-                //         height={'1rem'}
-                //       />
-                //     ) : (
-                //       <IoIosRefresh />
-                //     )}
-                //     <span>{t('Refresh')}</span>
-                //   </button>
-                // ) : (
-                //   <></>
-                // )
-                ''
-              ) : itemType === 'folder' ? (
-                // !folderLoading ? (
-                //   <button
-                //     className={styles.refresh__btn}
-                //     // onClick={handleRefresh}
-                //   >
-                //     {refreshLoading ? (
-                //       <LoadingSpinner
-                //         color={'white'}
-                //         width={'1rem'}
-                //         height={'1rem'}
-                //       />
-                //     ) : (
-                //       <IoIosRefresh />
-                //     )}
-                //     <span>{t('Refresh')}</span>
-                //   </button>
-                // ) : (
-                //   <></>
-                // )
-                ''
               ) : (
                 <></>
               )
@@ -437,14 +432,14 @@ const SectionBox = ({
             </div>
           ) : (
             Card &&
-            cardItems &&
-            cardItems.length && (
+            cardItemsVar &&
+            cardItemsVar.length && (
               <>
                 <div className={styles.grid__box}>
                   {Card &&
-                    cardItems &&
-                    cardItems.length > 0 &&
-                    cardItems
+                    cardItemsVar &&
+                    cardItemsVar.length > 0 &&
+                    cardItemsVar
                       .slice(0, sliceCount * 10)
                       .map((item) => (
                         <Card
@@ -457,20 +452,47 @@ const SectionBox = ({
                         />
                       ))}
                 </div>
-                {cardItems && cardItems.length > 10 && (
-                  <PrimaryButton
-                    style={{
-                      pointerEvents: `${cardItems.length / 10 < sliceCount && 'none'
-                        }`,
-                    }}
-                    hoverBg='success'
-                    onClick={handleLoadMore}
-                  >
-                    {cardItems.length / 10 < sliceCount
-                      ? 'no more load'
-                      : 'load more'}
-                  </PrimaryButton>
-                )}
+                {!isDemo
+                  ? cardItemsVar &&
+                    cardItemsVar.length > 10 && (
+                      <PrimaryButton
+                        style={{
+                          pointerEvents: `${
+                            cardItemsVar.length / 10 < sliceCount && 'none'
+                          }`,
+                        }}
+                        hoverBg='success'
+                        onClick={handleLoadMore}
+                      >
+                        {cardItemsVar.length / 10 < sliceCount
+                          ? 'no more load'
+                          : 'load more'}
+                      </PrimaryButton>
+                    )
+                  : cardItemsVar &&
+                    cardItemsVar.length > 10 && (
+                      <PrimaryButton
+                        // style={{
+                        //   pointerEvents: `${
+                        //     cardItemsVar.length / 10 < sliceCount && 'none'
+                        //   }`,
+                        // }}
+                        hoverBg='success'
+                        onClick={handleDemoLoadMore}
+                        style={isDemoLoading ? { pointerEvents: 'none' } : {}}
+                        disabled={isDemoLoading}
+                      >
+                        {isDemoLoading ? (
+                          <LoadingSpinner
+                            color={'white'}
+                            width={'1rem'}
+                            height={'1rem'}
+                          />
+                        ) : (
+                          'load more'
+                        )}
+                      </PrimaryButton>
+                    )}
               </>
             )
           )}

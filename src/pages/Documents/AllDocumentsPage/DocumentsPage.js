@@ -11,8 +11,9 @@ import DocumentCard from '../../../components/hoverCard/documentCard/DocumentCar
 import { useNavigate } from 'react-router-dom';
 import { productName } from '../../../utils/helpers';
 import { useAppContext } from '../../../contexts/AppContext';
+import { DocumentServices } from '../../../services/documentServices';
 
-const DocumentsPage = ({ home, showOnlySaved, showOnlyCompleted }) => {
+const DocumentsPage = ({ home, showOnlySaved, showOnlyCompleted, isDemo }) => {
   const { userDetail } = useSelector((state) => state.auth);
   const { allDocuments: allDocumentsArray, allDocumentsStatus } = useSelector(
     (state) => state.document
@@ -23,22 +24,31 @@ const DocumentsPage = ({ home, showOnlySaved, showOnlyCompleted }) => {
   const navigate = useNavigate();
   const [currentUserPortfolioDataType, setCurrentUserPortfolioDataType] =
     useState('');
-  const { customDocName } = useAppContext();
+  const { customDocName, demoDocuments, demoDocStatus, fetchDemoDocuments } =
+    useAppContext();
+
+  useEffect(() => {
+    if (isDemo) {
+      if (!demoDocuments) {
+        fetchDemoDocuments();
+      }
+    }
+  }, []);
 
   useEffect(() => {
     const userPortfolioDataType =
       userDetail?.portfolio_info?.length > 1
         ? userDetail?.portfolio_info.find(
-          (portfolio) => portfolio.product === productName
-        )?.data_type
+            (portfolio) => portfolio.product === productName
+          )?.data_type
         : userDetail?.portfolio_info[0]?.data_type;
 
     const data = {
       company_id:
         userDetail?.portfolio_info?.length > 1
           ? userDetail?.portfolio_info.find(
-            (portfolio) => portfolio.product === productName
-          )?.org_id
+              (portfolio) => portfolio.product === productName
+            )?.org_id
           : userDetail?.portfolio_info[0].org_id,
       data_type: userPortfolioDataType,
     };
@@ -55,6 +65,7 @@ const DocumentsPage = ({ home, showOnlySaved, showOnlyCompleted }) => {
     if (showOnlySaved) navigate('#saved-documents');
     if (showOnlyCompleted) navigate('#completed-documents');
     if (home) navigate('#drafts');
+    // if(isDemo) navigate("#demo");
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [showOnlySaved, showOnlyCompleted, home]);
 
@@ -102,7 +113,9 @@ const DocumentsPage = ({ home, showOnlySaved, showOnlyCompleted }) => {
                 cardBgColor='#1ABC9C'
                 title='saved documents'
                 Card={DocumentCard}
-                cardItems={allDocumentsArray.filter((document) => document.document_state === "finalized")}
+                cardItems={allDocumentsArray.filter(
+                  (document) => document.document_state === 'finalized'
+                )}
                 status={allDocumentsStatus}
                 itemType={'documents'}
               />
@@ -116,13 +129,29 @@ const DocumentsPage = ({ home, showOnlySaved, showOnlyCompleted }) => {
                 cardBgColor='#1ABC9C'
                 title='completed documents'
                 Card={DocumentCard}
-                cardItems={ allDocumentsArray.filter((document) => document.document_state === "finalized")}
+                cardItems={allDocumentsArray.filter(
+                  (document) => document.document_state === 'finalized'
+                )}
                 status={allDocumentsStatus}
                 itemType={'documents'}
               />
             </div>
           ) : (
             <></>
+          )}
+
+          {isDemo && (
+            <div id='demo-documents'>
+              <SectionBox
+                cardBgColor='#1ABC9C'
+                title='demo documents'
+                Card={DocumentCard}
+                cardItems={demoDocuments}
+                status={demoDocStatus}
+                itemType={'documents'}
+                isDemo={true}
+              />
+            </div>
           )}
         </ManageFiles>
       </div>
