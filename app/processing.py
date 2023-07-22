@@ -27,11 +27,10 @@ from app.helpers import (
 from app.mongo_db_connection import (
     authorize,
     finalize_item,
+    save_to_links_collection,
+    save_to_process_collection,
+    save_to_qrcode_collection,
     single_query_document_collection,
-    save_process,
-    save_process_links,
-    save_process_qrcodes,
-    save_uuid_hash,
     update_process,
 )
 
@@ -66,18 +65,20 @@ class Process:
 
     def normal_process(self, action):
         res = json.loads(
-            save_process(
-                self.process_title,
-                self.process_steps,
-                self.created_by,
-                self.company_id,
-                self.data_type,
-                self.parent_id,
-                action,
-                self.portfolio,
-                self.workflow_ids,
-                self.process_type,
-                "original",
+            save_to_process_collection(
+                {
+                    "process_title": self.process_title,
+                    "process_steps": self.process_steps,
+                    "created_by": self.created_by,
+                    "company_id": self.company_id,
+                    "data_type": self.data_type,
+                    "parent_id": self.parent_id,
+                    "processing_action": action,
+                    "creator_portfolio": self.portfolio,
+                    "workflow_construct_ids": self.workflow_ids,
+                    "process_type": self.process_type,
+                    "process_kind": "original",
+                }
             )
         )
         if res["isSuccess"]:
@@ -98,18 +99,20 @@ class Process:
     def test_process(self, action):
         data_type = "Testing_Data"
         res = json.loads(
-            save_process(
-                self.process_title,
-                self.process_steps,
-                self.created_by,
-                self.company_id,
-                data_type,
-                self.parent_id,
-                action,
-                self.portfolio,
-                self.workflow_ids,
-                self.process_type,
-                "original",
+            save_to_process_collection(
+                {
+                    "process_title": self.process_title,
+                    "process_steps": self.process_steps,
+                    "created_by": self.created_by,
+                    "company_id": self.company_id,
+                    "data_type": data_type,
+                    "parent_id": self.parent_id,
+                    "processing_action": action,
+                    "creator_portfolio": self.portfolio,
+                    "workflow_construct_ids": self.workflow_ids,
+                    "process_type": self.process_type,
+                    "process_kind": "original",
+                }
             )
         )
         if res["isSuccess"]:
@@ -190,15 +193,17 @@ class HandleProcess:
         params["portfolio"] = portfolio
         encoded_param = HandleProcess.parse_url(params)
         utp_link = f"{link}?{encoded_param}"
-        save_uuid_hash(
-            utp_link,
-            process_id,
-            item_id,
-            step_role,
-            auth_name,
-            portfolio,
-            hash,
-            item_type,
+        save_to_qrcode_collection(
+            {
+                "link": utp_link,
+                "process_id": process_id,
+                "item_id": item_id,
+                "auth_role": step_role,
+                "user_name": auth_name,
+                "auth_portfolio": portfolio,
+                "unique_hash": hash,
+                "item_type": item_type,
+            }
         )
         HandleProcess.notify(
             auth_name, item_id, portfolio, company_id, utp_link, org_name
@@ -239,7 +244,6 @@ class HandleProcess:
         return clones
 
     def generate_public_qrcode(links, company_id, document_name):
-        print(document_name)
         master_link = None
         master_qrcode = None
         payload = json.dumps(
@@ -320,7 +324,7 @@ class HandleProcess:
             qrcodes.append({"master_qrcode": m_code})
             # Grab API key
             public_api_key = get_query_param_value_from_url(m_link, "api_key")
-        save_process_links(
+        save_to_links_collection(
             {
                 "links": links,
                 "process_id": process_id,
@@ -335,13 +339,15 @@ class HandleProcess:
             "processing",
         )
         Thread(
-            target=lambda: save_process_qrcodes(
-                qrcodes,
-                self.process["_id"],
-                clone_ids,
-                self.process["processing_action"],
-                self.process["process_title"],
-                self.process["company_id"],
+            target=lambda: save_to_qrcode_collection(
+                {
+                    "qrcodes": qrcodes,
+                    "process_id": self.process["_id"],
+                    "item_id": clone_ids,
+                    "processing_action": self.process["processing_action"],
+                    "process_title": self.process["process_title"],
+                    "company_id": self.process["company_id"],
+                }
             )
         ).start()
         return {"links": links, "master_link": m_link, "master_code": m_code}

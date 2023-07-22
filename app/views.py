@@ -37,6 +37,12 @@ from app.mongo_db_connection import (
     delete_template,
     delete_workflow,
     finalize_item,
+    save_to_document_collection,
+    save_to_folder_collection,
+    save_to_setting_collection,
+    save_to_team_collection,
+    save_to_template_collection,
+    save_to_workflow_collection,
     single_query_document_collection,
     bulk_query_workflow_collection,
     single_query_folder_collection,
@@ -48,12 +54,6 @@ from app.mongo_db_connection import (
     single_query_workflow_collection,
     process_folders_to_item,
     bulk_query_document_collection,
-    save_document,
-    save_folder,
-    save_team,
-    save_template,
-    save_workflow,
-    save_workflow_setting,
     single_query_links_collection,
     single_query_process_collection,
     update_folder,
@@ -369,7 +369,7 @@ def a_single_process(request, process_id):
         if document:
             document_name = document["document_name"]
             process.update({"document_name": document_name})
-        links = single_query_links_collection({ "process_id": process["_id"]})
+        links = single_query_links_collection({"process_id": process["_id"]})
         if links:
             links_object = links[0]
             process.update({"links": links_object["links"]})
@@ -414,13 +414,15 @@ def create_workflow(request):
         "steps": form["steps"],
     }
     res = json.loads(
-        save_workflow(
-            data,
-            form["company_id"],
-            form["created_by"],
-            form["portfolio"],
-            form["data_type"],
-            "original",
+        save_to_workflow_collection(
+            {
+                "workflows": data,
+                "company_id": form["company_id"],
+                "created_by": form["created_by"],
+                "portfolio": form["portfolio"],
+                "data_type": form["data_type"],
+                "workflow_type": "original",
+            }
         )
     )
     if res["isSuccess"]:
@@ -453,17 +455,13 @@ def workflow_detail(request, workflow_id):
             return Response(
                 "Workflow Data is required", status=status.HTTP_400_BAD_REQUEST
             )
-
         old_workflow = single_query_workflow_collection({"_id": workflow_id})
-
         old_workflow["workflows"]["workflow_title"] = form["wf_title"]
         old_workflow["workflows"]["data_type"] = form["data_type"]
-
         old_workflow["workflows"]["steps"][0]["step_name"] = form["steps"][0][
             "step_name"
         ]
         old_workflow["workflows"]["steps"][0]["role"] = form["steps"][0]["role"]
-
         updt_wf = update_wf(workflow_id, old_workflow)
         updt_wf = json.loads(updt_wf)
         if updt_wf.get("isSuccess"):
@@ -480,13 +478,8 @@ def get_workflows(request, company_id):
     workflow_list = bulk_query_workflow_collection(
         {"company_id": company_id, "data_type": data_type}
     )
-    if workflow_list:
-        return Response(
-            {"workflows": workflow_list},
-            status.HTTP_200_OK,
-        )
     return Response(
-        {"workflows": []},
+        {"workflows": workflow_list},
         status.HTTP_200_OK,
     )
 
@@ -504,12 +497,10 @@ def get_documents(request, company_id):
             {"company_id": company_id, "data_type": data_type}
         )
         cache.set(cache_key, document_list, timeout=60)
-    if document_list:
-        return Response(
-            {"documents": document_list},
-            status.HTTP_200_OK,
-        )
-    return Response({"documents": []}, status.HTTP_200_OK)
+    return Response(
+        {"documents": document_list},
+        status.HTTP_200_OK,
+    )
 
 
 @api_view(["POST"])
@@ -523,19 +514,21 @@ def create_document(request):
     viewers = [request.data["created_by"]]
     folder = []
     res = json.loads(
-        save_document(
-            name="Untitled Document",
-            data=request.data["content"],
-            created_by=request.data["created_by"],
-            company_id=request.data["company_id"],
-            page=request.data["page"],
-            data_type=request.data["data_type"],
-            state="draft",
-            auth_viewers=viewers,
-            document_type="original",
-            parent_id=None,
-            process_id="",
-            folders=folder,
+        save_to_document_collection(
+            {
+                "document_name": "Untitled Document",
+                "content": request.data["content"],
+                "created_by": request.data["created_by"],
+                "company_id": request.data["company_id"],
+                "page": request.data["page"],
+                "data_type": request.data["data_type"],
+                "document_state": "draft",
+                "auth_viewers": viewers,
+                "document_type": "original",
+                "parent_id": None,
+                "process_id": "",
+                "folders": folder,
+            }
         )
     )
     if res["isSuccess"]:
@@ -860,15 +853,17 @@ def create_template(request):
     if not validate_id(request.data["company_id"]):
         return Response("Invalid company details", status.HTTP_400_BAD_REQUEST)
     res = json.loads(
-        save_template(
-            template_name,
-            data,
-            page,
-            folder,
-            request.data["created_by"],
-            request.data["company_id"],
-            request.data["data_type"],
-            "original",
+        save_to_template_collection(
+            {
+                "template_name": template_name,
+                "content": data,
+                "page": page,
+                "folders": folder,
+                "created_by": request.data["created_by"],
+                "company_id": request.data["company_id"],
+                "data_type": request.data["data_type"],
+                "template_type": "original",
+            }
         )
     )
     if res["isSuccess"]:
@@ -947,17 +942,19 @@ def create_team(request):
     universal_code = form["universal_code"]
     data_type = form["data_type"]
     team_set = json.loads(
-        save_team(
-            team_name,
-            team_type,
-            team_code,
-            team_spec,
-            details,
-            universal_code,
-            portfolio_list,
-            company_id,
-            created_by,
-            data_type,
+        save_to_team_collection(
+            {
+                "team_name": team_name,
+                "team_type": team_type,
+                "team_code": team_code,
+                "team_spec": team_spec,
+                "details": details,
+                "universal_code": universal_code,
+                "portfolio_list": portfolio_list,
+                "company_id": company_id,
+                "created_by": created_by,
+                "data_type": data_type,
+            }
         )
     )
     if team_set["isSuccess"]:
@@ -1069,7 +1066,7 @@ def get_completed_documents_by_process(request, company_id, process_id):
         {"company_id": company_id, "data_type": data_type, "process_id": process_id}
     )
     return Response(
-        {f"document_list of process: {process_id}": []},
+        {f"document_list of process: {process_id}": document_list},
         status=status.HTTP_200_OK,
     )
 
@@ -1088,24 +1085,26 @@ def create_application_settings(request):
         return Response({"WF SETTING EXISTS": is_exists}, status.HTTP_200_OK)
     try:
         res = json.loads(
-            save_workflow_setting(
-                company_id=company_id,
-                created_by=request.data["created_by"],
-                data_type=request.data["data_type"],
-                process=request.data["Process"],
-                documents=request.data["Documents"],
-                templates=request.data["Templates"],
-                workflows=request.data["Workflows"],
-                notarisation=request.data["Notarisation"],
-                folders=request.data["Folders"],
-                records=request.data["Records"],
-                references=request.data["References"],
-                approval=request.data["Approval_Process"],
-                evaluation=request.data["Evaluation_Process"],
-                reports=request.data["Reports"],
-                management=request.data["Management"],
-                portfolio=request.data["Portfolio_Choice"],
-                theme_color=request.data["theme_color"],
+            save_to_setting_collection(
+                {
+                    "company_id": company_id,
+                    "created_by": request.data["created_by"],
+                    "data_type": request.data["data_type"],
+                    "Process": request.data["Process"],
+                    "Documents": request.data["Documents"],
+                    "Templates": request.data["Templates"],
+                    "Workflows": request.data["Workflows"],
+                    "Notarisation": request.data["Notarisation"],
+                    "Folders": request.data["Folders"],
+                    "Records": request.data["Records"],
+                    "References": request.data["References"],
+                    "Approval_Process": request.data["Approval_Process"],
+                    "Evaluation_Process": request.data["Evaluation_Process"],
+                    "Reports": request.data["Reports"],
+                    "Management": request.data["Management"],
+                    "Portfolio_Choice": request.data["Portfolio_Choice"],
+                    "theme_color": request.data["theme_color"],
+                }
             )
         )
         if res["isSuccess"]:
@@ -1275,13 +1274,15 @@ def create_folder(request):
     if not validate_id(request.data["company_id"]):
         return Response("Invalid company details", status.HTTP_400_BAD_REQUEST)
     res = json.loads(
-        save_folder(
-            folder_name,
-            data,
-            request.data["created_by"],
-            request.data["company_id"],
-            request.data["data_type"],
-            "original",
+        save_to_folder_collection(
+            {
+                "folder_name": folder_name,
+                "data": data,
+                "created_by": request.data["created_by"],
+                "company_id": request.data["company_id"],
+                "data_type": request.data["data_type"],
+                "folder_type": "original",
+            }
         )
     )
     if res["isSuccess"]:

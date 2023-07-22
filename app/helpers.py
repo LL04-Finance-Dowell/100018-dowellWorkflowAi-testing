@@ -13,8 +13,8 @@ from app.serializers import (
 )
 
 from .mongo_db_connection import (
-    save_document,
-    save_process,
+    save_to_document_collection,
+    save_to_process_collection,
     single_query_document_collection,
     single_query_process_collection,
     single_query_template_collection,
@@ -78,19 +78,21 @@ def cloning_document(document_id, auth_viewers, parent_id, process_id):
             else:
                 document_name = doc_name + "-" + viewer
         save_res = json.loads(
-            save_document(
-                name=document_name,
-                data=document["content"],
-                page=document["page"],
-                created_by=document["created_by"],
-                company_id=document["company_id"],
-                data_type=document["data_type"],
-                state="processing",
-                auth_viewers=viewers,
-                document_type="clone",
-                parent_id=parent_id,
-                process_id=process_id,
-                folders="untitled",
+            save_to_document_collection(
+                {
+                    "document_name": document_name,
+                    "content": document["content"],
+                    "page": document["page"],
+                    "created_by": document["created_by"],
+                    "company_id": document["company_id"],
+                    "data_type": document["data_type"],
+                    "document_state": "processing",
+                    "auth_viewers": viewers,
+                    "document_type": "clone",
+                    "parent_id": parent_id,
+                    "process_id": process_id,
+                    "folders": "untitled",
+                }
             )
         )
         return save_res["inserted_id"]
@@ -104,18 +106,21 @@ def cloning_process(process_id, created_by, creator_portfolio):
     try:
         process = single_query_process_collection({"_id": process_id})
         save_res = json.loads(
-            save_process(
-                process["process_title"],
-                process["process_steps"],
-                created_by,
-                process["company_id"],
-                process["data_type"],
-                "no_parent_id",
-                process["processing_action"],
-                creator_portfolio,
-                process["workflow_construct_ids"],
-                process["process_type"],
-                "clone",
+            save_to_process_collection(
+                {
+                    "process_title": process["process_title"],
+                    "process_steps": process["process_steps"],
+                    "created_by": created_by,
+                    "company_id": process["company_id"],
+                    "data_type": process["data_type"],
+                    "parent_item_id": "no_parent_id",
+                    "processing_action": process["processing_action"],
+                    "creator_portfolio": creator_portfolio,
+                    "workflow_construct_ids": process["workflow_construct_ids"],
+                    "process_type": process["process_type"],
+                    "process_kind": "clone",
+                    "processing_state": "draft",
+                }
             )
         )
         return save_res["inserted_id"]
