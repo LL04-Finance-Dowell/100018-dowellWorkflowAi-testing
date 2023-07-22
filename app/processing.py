@@ -505,30 +505,42 @@ class Background:
                                     continue
                     else:
                         if step.get("stepTaskType") == "request_for_task":
-                            for user in step.get("stepTeamMembers"):
-                                clone_id = cloning_document(
-                                    document_id, user, parent_id, process_id
+                            documents = []
+                            for i in range(1, len((steps))):
+                                current_idx = i
+                                prev_docs = steps[current_idx - 1].get(
+                                    "stepDocumentCloneMap"
                                 )
-                                step.get("stepDocumentCloneMap").append(
-                                    {user["member"]: clone_id}
-                                )
-                            for user in step.get("stepPublicMembers"):
-                                clone_id = cloning_document(
-                                    document_id,
-                                    user,
-                                    parent_id,
-                                    process_id,
-                                )
-                                step.get("stepDocumentCloneMap").append(
-                                    {user["member"]: clone_id}
-                                )
-                            for user in step.get("stepUserMembers"):
-                                clone_id = cloning_document(
-                                    document_id, user, parent_id, process_id
-                                )
-                                step.get("stepDocumentCloneMap").append(
-                                    {user["member"]: clone_id}
-                                )
+                                for item in prev_docs:
+                                    key = next(iter(item))
+                                    my_key = item[key]
+                                    if my_key != "accessed":
+                                        documents.append(my_key)
+                                for doc in documents:
+                                    for user in step.get("stepTeamMembers"):
+                                        clone_id = cloning_document(
+                                            doc, user, parent_id, process_id
+                                        )
+                                        step.get("stepDocumentCloneMap").append(
+                                            {user["member"]: clone_id}
+                                        )
+                                    for user in step.get("stepPublicMembers"):
+                                        clone_id = cloning_document(
+                                            doc,
+                                            user,
+                                            parent_id,
+                                            process_id,
+                                        )
+                                        step.get("stepDocumentCloneMap").append(
+                                            {user["member"]: clone_id}
+                                        )
+                                    for user in step.get("stepUserMembers"):
+                                        clone_id = cloning_document(
+                                            doc, user, parent_id, process_id
+                                        )
+                                        step.get("stepDocumentCloneMap").append(
+                                            {user["member"]: clone_id}
+                                        )
                         if step.get("stepTaskType") == "assign_task":
                             step1_documents = []
                             for i in range(1, len((steps))):
@@ -537,12 +549,10 @@ class Background:
                                     "stepDocumentCloneMap"
                                 )
                                 for item in prev_docs:
-                                    # key = next(iter(item))
-                                    # my_key = item[key]
-                                    # if my_key != "accessed":
-                                    #     step1_documents.append(my_key)
-                                    doc = item.values()
-                                    step1_documents.append(doc)
+                                    key = next(iter(item))
+                                    my_key = item[key]
+                                    if my_key != "accessed":
+                                        step1_documents.append(my_key)
                                 for document in step1_documents:
                                     for user in step.get("stepTeamMembers"):
                                         authorize(
