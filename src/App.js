@@ -1,7 +1,7 @@
 import { useEffect, Suspense } from 'react';
 import { Routes, Route } from 'react-router-dom';
 import { setIconColor } from './features/app/appSlice';
-
+import {auth_url} from './httpCommon/httpCommon'
 import { useDispatch, useSelector } from 'react-redux';
 import useDowellLogin from './hooks/useDowellLogin';
 import WorkflowApp from './pages/App/WorkflowApp';
@@ -40,7 +40,7 @@ function App() {
   useEffect(() => {
     const interval = setInterval(() => {
       checkstatus();
-    }, 300000); // 5 mints
+    }, 3000); // 5 mints
 
     return () => clearInterval(interval);
   }, []);
@@ -49,7 +49,7 @@ function App() {
     // AJAX GET request
 
     axios
-      .get('https://100014.pythonanywhere.com/api/live_users')
+      .get(`${auth_url}live_users`)
       .then((response) => {
         dispatch(setIconColor('green'));
       })
