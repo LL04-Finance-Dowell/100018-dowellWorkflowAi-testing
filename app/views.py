@@ -199,7 +199,7 @@ def get_process_link(request, process_id):
     if not links_info:
         return Response("Verification link unavailable", status.HTTP_400_BAD_REQUEST)
     user = request.data["user_name"]
-    for link in links_info[0]["links"]:
+    for link in links_info["links"]:
         if user in link:
             return Response(link[user], status.HTTP_200_OK)
     return Response("user is not part of this process", status.HTTP_401_UNAUTHORIZED)
@@ -553,7 +553,7 @@ def get_document_content(request, document_id):
         return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
     content = []
     my_dict = ast.literal_eval(
-        single_query_document_collection(document_id)["content"]
+        single_query_document_collection({ "_id": document_id})["content"]
     )[0][0]
     all_keys = [i for i in my_dict.keys()]
     for i in all_keys:
@@ -1377,7 +1377,7 @@ def dowell_centre_documents(request, company_id):
         cache.set(cache_key, document_list, timeout=60)
 
     page = int(request.GET.get("page", 1))
-    document_list = _paginate(document_list, page, 50)
+    document_list = paginate(document_list, page, 50)
     return Response(
         {"documents": document_list},
         status.HTTP_200_OK,
