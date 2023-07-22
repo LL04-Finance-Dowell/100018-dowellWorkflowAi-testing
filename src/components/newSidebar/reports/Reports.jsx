@@ -159,26 +159,26 @@ const Reports = () => {
 export default Reports;
 
 export const manageFileItems = [
-  {
-    id: uuidv4(),
-    parent: 'My documents',
-    // children: [
+  // {
+  //   id: uuidv4(),
+  //   parent: 'My documents',
+  //   // children: [
 
-    //   { id: uuidv4(), child: 'All Documents', href: '/documents/#drafts' },
-    //   { id: uuidv4(), child: 'Completed Documents', href: '/documents/completed' },
-    // ],
-    href: '/documents/completed',
-  },
+  //   //   { id: uuidv4(), child: 'All Documents', href: '/documents/#drafts' },
+  //   //   { id: uuidv4(), child: 'Completed Documents', href: '/documents/completed' },
+  //   // ],
+  //   href: '/documents/completed',
+  // },
   // {
   //   id: uuidv4(),
   //   parent: 'My Templates',
   //   href: '/templates/#drafts',
   // },
-  {
-    id: uuidv4(),
-    parent: 'My Workflows',
-    href: '/workflows/#drafts',
-  },
+  // {
+  //   id: uuidv4(),
+  //   parent: 'My Workflows',
+  //   href: '/workflows/#drafts',
+  // },
   {
     id: uuidv4(),
     parent: 'My Processes',
