@@ -18,7 +18,7 @@ const SelectWorkflow = ({ savedDoc }) => {
   const { t } = useTranslation();
   const { isMobile } = useAppContext();
 
-  const { currentDocToWfs, selectedWorkflowsToDoc  } = useSelector((state) => state.app);
+  const { currentDocToWfs, selectedWorkflowsToDoc, docCurrentWorkflow, } = useSelector((state) => state.app);
   const { contentOfDocument } = useSelector((state) => state.document);
 
   const handleRemove = () => {
@@ -28,6 +28,11 @@ const SelectWorkflow = ({ savedDoc }) => {
   };
 
   const handleConnectWfToDoc = () => {
+    console.log(selectedWorkflowsToDoc)
+    if ( selectedWorkflowsToDoc?.length < 1) {
+      return toast.info('Please Select a Workflow to Continue');
+    }
+    
     if (savedDoc || selectedWorkflowsToDoc?.length < 1) return;
 
     const contentPageWise = contentOfDocument.reduce((r, a) => {
@@ -35,15 +40,16 @@ const SelectWorkflow = ({ savedDoc }) => {
       r[a.pageNum].push(a);
       return r;
     }, Object.create(null))
-    
+
     if (Object.keys(contentPageWise || {}).length < 1) return toast.info("The document selected for processing cannot be empty.");
-    
+
     dispatch(setWfToDocument());
     if (currentDocToWfs) {
       // const data = { document_id: currentDocToWfs._id };
-      
+
       // dispatch(contentDocument(data));
     }
+    
   };
 
   return (
