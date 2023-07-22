@@ -14,7 +14,6 @@ from app.checks import (
 )
 from app.constants import (
     EDITOR_API,
-    MASTERLINK_URL,
     NOTIFICATION_API,
     QRCODE_URL,
     VERIFICATION_LINK,
@@ -72,7 +71,7 @@ class Process:
                     "created_by": self.created_by,
                     "company_id": self.company_id,
                     "data_type": self.data_type,
-                    "parent_id": self.parent_id,
+                    "parent_item_id": self.parent_id,
                     "processing_action": action,
                     "creator_portfolio": self.portfolio,
                     "workflow_construct_ids": self.workflow_ids,
@@ -106,7 +105,7 @@ class Process:
                     "created_by": self.created_by,
                     "company_id": self.company_id,
                     "data_type": data_type,
-                    "parent_id": self.parent_id,
+                    "parent_item_id": self.parent_id,
                     "processing_action": action,
                     "creator_portfolio": self.portfolio,
                     "workflow_construct_ids": self.workflow_ids,
@@ -467,19 +466,6 @@ class Background:
         self.item_id = item_id
         self.role = role
         self.username = username
-
-    def register_finalized(link_id):
-        """Master single link as finalized"""
-        response = requests.put(
-            f"{MASTERLINK_URL}?link_id={link_id}",
-            data={"is_finalized": True},
-            headers={"Content-Type": "application/json"},
-        )
-        if response.status_code == 200:
-            print("finalized")
-        else:
-            print("failed")
-        return
 
     def register_user_access(process_steps, authorized_role, user):
         """Once someone has made changes to their docs"""

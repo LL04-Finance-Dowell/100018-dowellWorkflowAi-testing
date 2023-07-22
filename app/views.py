@@ -20,6 +20,7 @@ from app.helpers import (
     create_favourite,
     list_favourites,
     paginate,
+    register_finalized,
     remove_favourite,
     validate_id,
 )
@@ -283,8 +284,7 @@ def finalize_or_reject(request, process_id):
             background = Background(process, item_type, item_id, role, user)
             background.processing()
             if user_type == "public":
-                link_id = request.data["link_id"]
-                background.register_finalized(link_id)
+                register_finalized(request.data["link_id"])
             return Response("document processed successfully", status.HTTP_200_OK)
         except Exception as err:
             print(err)
@@ -363,6 +363,7 @@ def a_single_process(request, process_id):
     if not validate_id(process_id):
         return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
     process = single_query_process_collection({"_id": process_id})
+    print(process)
     if process["parent_item_id"]:
         document_id = process["parent_item_id"]
         document = single_query_document_collection({"_id": document_id})

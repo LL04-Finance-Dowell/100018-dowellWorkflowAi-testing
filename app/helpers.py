@@ -4,7 +4,7 @@ from urllib.parse import parse_qs, urlparse
 import bson
 import requests
 
-from app.constants import EDITOR_API, PUBLIC_LOGIN_API
+from app.constants import EDITOR_API, MASTERLINK_URL, PUBLIC_LOGIN_API
 from app.models import FavoriteDocument, FavoriteTemplate, FavoriteWorkflow
 from app.serializers import (
     FavouriteDocumentSerializer,
@@ -19,6 +19,21 @@ from .mongo_db_connection import (
     single_query_process_collection,
     single_query_template_collection,
 )
+
+
+def register_finalized(link_id):
+    """Master single link as finalized"""
+    print("here2 ")
+    response = requests.put(
+        f"{MASTERLINK_URL}?link_id={link_id}",
+        data={"is_finalized": True},
+        headers={"Content-Type": "application/json"},
+    )
+    if response.status_code == 200:
+        print("finalized")
+    else:
+        print("failed")
+    return
 
 
 def get_query_param_value_from_url(url, query_param):
