@@ -78,6 +78,7 @@ def has_tilde_characters(string):
 
 def cloning_document(document_id, auth_viewers, parent_id, process_id):
     """creating a document copy"""
+    print("auth_viewers", auth_viewers)
     try:
         viewers = []
         viewers = (

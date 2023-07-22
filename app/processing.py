@@ -489,6 +489,7 @@ class Background:
         )
         try:
             no_of_steps = sum(isinstance(e, dict) for e in steps)
+            print("no of steps", no_of_steps)
             if no_of_steps > 0:
                 for index, step in enumerate(steps):
                     if step["stepDocumentCloneMap"]:
@@ -505,6 +506,7 @@ class Background:
                                     continue
                     else:
                         if step.get("stepTaskType") == "request_for_task":
+                            print("requesting task")
                             documents = []
                             for i in range(1, len((steps))):
                                 current_idx = i
@@ -516,6 +518,7 @@ class Background:
                                     my_key = item[key]
                                     if my_key != "accessed":
                                         documents.append(my_key)
+                                print("previous documents", documents)
                                 for doc in documents:
                                     for user in step.get("stepTeamMembers"):
                                         clone_id = cloning_document(
@@ -542,6 +545,7 @@ class Background:
                                             {user["member"]: clone_id}
                                         )
                         if step.get("stepTaskType") == "assign_task":
+                            print("assign_task")
                             step1_documents = []
                             for i in range(1, len((steps))):
                                 current_idx = i
@@ -553,8 +557,10 @@ class Background:
                                     my_key = item[key]
                                     if my_key != "accessed":
                                         step1_documents.append(my_key)
+                                print("assign_docs", step1_documents)
                                 for document in step1_documents:
                                     for user in step.get("stepTeamMembers"):
+                                        print("teammember", step.get("stepTeamMembers"))
                                         authorize(
                                             document, user, process_id, process_type
                                         )
