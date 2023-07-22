@@ -195,11 +195,11 @@ def document_processing(request):
 @api_view(["POST"])
 def get_process_link(request, process_id):
     """get a link process for person having notifications"""
-    links_info = single_query_process_collection({"_id": process_id})
+    links_info = single_query_links_collection({"process_id": process_id})
     if not links_info:
         return Response("Verification link unavailable", status.HTTP_400_BAD_REQUEST)
     user = request.data["user_name"]
-    for link in links_info["links"]:
+    for link in links_info[0]["links"]:
         if user in link:
             return Response(link[user], status.HTTP_200_OK)
     return Response("user is not part of this process", status.HTTP_401_UNAUTHORIZED)
