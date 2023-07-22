@@ -49,6 +49,7 @@ from .views import (
     send_notif,
     dowell_centre_template,
     dowell_centre_documents,
+    get_reports_processes
 )
 
 urlpatterns = [
@@ -72,6 +73,7 @@ urlpatterns = [
         "companies/<str:company_id>/processes/<str:process_id>/",
         get_completed_documents_by_process,
     ),
+    path("companies/<str:company_id>/processes/reports/", get_reports_processes),
     path("companies/<str:company_id>/teams/", get_all_teams),
     path("companies/<str:company_id>/settings/", all_workflow_ai_setting),
     path("templates/", create_template, name="create_template"),

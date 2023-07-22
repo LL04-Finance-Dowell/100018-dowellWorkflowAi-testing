@@ -12,12 +12,19 @@ from app.serializers import (
 )
 
 from .mongo_db_connection import (
-    get_document_object,
-    get_process_object,
-    get_template_object,
+    single_query_document_collection,
+    single_query_process_collection,
+    single_query_template_collection,
     save_document,
     save_process,
 )
+
+
+def paginate(dataset, page, limit):
+    start = (page - 1) * limit
+    end = start + limit
+    return dataset[start:end]
+
 
 
 def register_public_login(qrid, org_name):
@@ -54,13 +61,13 @@ def cloning_document(document_id, auth_viewers, parent_id, process_id):
             if auth_viewers is not None and isinstance(auth_viewers, list)
             else [auth_viewers]
         )
-        document = get_document_object(document_id)
+        document = single_query_document_collection({"_id": document_id})
         for viewer in viewers:
             doc_name = document["document_name"]
             if has_tilde_characters(doc_name):
                 document_name = doc_name.replace("~", "")
             else:
-                document_name = doc_name + viewer
+                document_name = doc_name + "-" + viewer
         save_res = json.loads(
             save_document(
                 name=document_name,
@@ -86,7 +93,7 @@ def cloning_document(document_id, auth_viewers, parent_id, process_id):
 def cloning_process(process_id, created_by, creator_portfolio):
     """creating a process copy"""
     try:
-        process = get_process_object(process_id)
+        process = single_query_process_collection({ "_id": process_id})
         save_res = json.loads(
             save_process(
                 process["process_title"],
@@ -122,7 +129,7 @@ def access_editor(item_id, item_type):
         action = "document"
         field = "document_name"
         team_member_id = "11689044433"
-        item_name = get_document_object(item_id)
+        item_name = single_query_document_collection({ "_id": item_id})
         name = item_name["document_name"]
     if item_type == "template":
         collection = "TemplateReports"
@@ -130,7 +137,7 @@ def access_editor(item_id, item_type):
         action = "template"
         field = "template_name"
         team_member_id = "22689044433"
-        item_name = get_template_object(item_id)
+        item_name = single_query_template_collection({"_id": item_id})
         name = item_name["template_name"]
     payload = {
         "product_name": "Workflow AI",
@@ -274,7 +281,7 @@ def remove_favourite(identifier, type, username):
 def check_items_state(items) -> list:
     """Checks if item state is finalized"""
     return [
-        get_document_object(i)["document_state"] == "finalized"
+        single_query_document_collection({ "_id": i })["document_state"] == "finalized"
         for i in items
         if isinstance(i, str)
     ]

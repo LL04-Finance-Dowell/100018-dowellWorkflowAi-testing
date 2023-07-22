@@ -19,7 +19,6 @@ from app.constants import (
     MANAGEMENT_REPORTS_LIST,
     PROCESS_CONNECTION_LIST,
     QR_CONNECTION_DICT,
-    QR_CONNECTION_DICT,
     QR_CONNECTION_LIST,
     TEMPLATE_CONNECTION_DICT,
     TEMPLATE_CONNECTION_LIST,
@@ -33,6 +32,160 @@ from app.constants import (
 dd = datetime.now()
 time = dd.strftime("%d:%m:%Y,%H:%M:%S")
 headers = {"Content-Type": "application/json"}
+
+
+def bulk_query_qrcode_collection(options):
+    qrcodes = get_data_from_data_service(
+        *QR_CONNECTION_LIST,
+        "fetch",
+        field=options,
+    )
+    return qrcodes
+
+
+def single_query_qrcode_collection(options):
+    qrcode = get_data_from_data_service(
+        *QR_CONNECTION_LIST,
+        "find",
+        field=options,
+    )
+    return qrcode
+
+
+def bulk_query_team_collection(options):
+    teams = get_data_from_data_service(
+        *MANAGEMENT_REPORTS_LIST,
+        "fetch",
+        field=options,
+    )
+    return teams
+
+
+def single_query_team_collection(options):
+    team = get_data_from_data_service(
+        *MANAGEMENT_REPORTS_LIST,
+        "find",
+        field=options,
+    )
+    return team
+
+
+def bulk_query_process_collection(options):
+    processes = get_data_from_data_service(
+        *PROCESS_CONNECTION_LIST,
+        "fetch",
+        field=options,
+    )
+    return processes
+
+
+def single_query_process_collection(options):
+    processes = get_data_from_data_service(
+        *PROCESS_CONNECTION_LIST,
+        "find",
+        field=options,
+    )
+    return processes
+
+
+def bulk_query_document_collection(options):
+    documents = get_data_from_data_service(
+        *DOCUMENT_CONNECTION_LIST, "fetch", field=options
+    )
+    return documents
+
+
+def single_query_document_collection(options):
+    documents = get_data_from_data_service(
+        *DOCUMENT_CONNECTION_LIST, "find", field=options
+    )
+    return documents
+
+
+def bulk_query_template_collection(options):
+    templates = get_data_from_data_service(
+        *TEMPLATE_CONNECTION_LIST,
+        "fetch",
+        field=options,
+    )
+    return templates
+
+
+def single_query_template_collection(options):
+    template = get_data_from_data_service(
+        *TEMPLATE_CONNECTION_LIST,
+        "find",
+        field=options,
+    )
+    return template
+
+
+def bulk_query_links_collection(options):
+    links = get_data_from_data_service(*LINK_CONNECTION_LIST, "fetch", field=options)
+    return links
+
+
+def single_query_links_collection(options):
+    link = get_data_from_data_service(*LINK_CONNECTION_LIST, "fetch", field=options)
+    return link
+
+
+def single_query_clones_collection(options):
+    clone = get_data_from_data_service(*CLONES_CONNECTION_LIST, "find", field=options)
+    return clone
+
+
+def bulk_query_clones_collection(options):
+    clones = get_data_from_data_service(*CLONES_CONNECTION_LIST, "fetch", field=options)
+    return clones
+
+
+def single_query_settings_collection(options):
+    setting = get_data_from_data_service(
+        *WF_AI_SETTING_LIST,
+        "find",
+        field=options,
+    )
+    return setting
+
+
+def bulk_query_settings_collection(options):
+    settings = get_data_from_data_service(
+        *WF_AI_SETTING_LIST,
+        "fetch",
+        field=options,
+    )
+    return settings
+
+
+def bulk_query_workflow_collection(options):
+    workflows = get_data_from_data_service(
+        *WF_CONNECTION_LIST,
+        "fetch",
+        field=options,
+    )
+    return workflows
+
+
+def single_query_workflow_collection(options):
+    workflow = get_data_from_data_service(
+        *WF_CONNECTION_LIST,
+        "find",
+        field=options,
+    )
+    return workflow
+
+
+def single_query_folder_collection(options):
+    folder = get_data_from_data_service(*FOLDER_CONNECTION_LIST, "find", field=options)
+    return folder
+
+
+def bulk_query_folder_collection(options):
+    folders = get_data_from_data_service(
+        *FOLDER_CONNECTION_LIST, "fetch", field=options
+    )
+    return folders
 
 
 def post_to_data_service(data):
@@ -73,215 +226,6 @@ def get_data_from_data_service(
         if len(res["data"]):
             return res["data"]
     return
-
-
-def get_template_list(company_id, data_type):
-    templates = get_data_from_data_service(
-        *TEMPLATE_CONNECTION_LIST,
-        "fetch",
-        {"company_id": company_id, "data_type": data_type},
-    )
-    return templates
-
-def get_template_reports(company_id, data_type, template_state):
-    templates = get_data_from_data_service(
-        *TEMPLATE_CONNECTION_LIST,
-        "fetch",
-        {"company_id": company_id, "data_type": data_type, "template_state": template_state},
-    )
-    return templates
-
-
-def get_links_object_by_process_id(process_id):
-    links = get_data_from_data_service(
-        *LINK_CONNECTION_LIST,
-        "fetch",
-        {"process_id": str(process_id)},
-    )
-    return links
-
-
-def get_link_object(unique_hash):
-    link_ob = get_data_from_data_service(
-        *QR_CONNECTION_LIST, "find", {"unique_hash": str(unique_hash)}
-    )
-    return link_ob
-
-
-def get_links_object_by_document_id(document_id):
-    links_ob = get_data_from_data_service(
-        *LINK_CONNECTION_LIST, "fetch", {"document_id": str(document_id)}
-    )
-    return links_ob
-
-
-def get_links_list(company_id):
-    links = get_data_from_data_service(
-        *LINK_CONNECTION_LIST, "fetch", {"company_id": str(company_id)}
-    )
-    return links
-
-
-def get_workflow_setting_object(wf_setting_id):
-    setting = get_data_from_data_service(
-        *WF_AI_SETTING_LIST,
-        "find",
-        {"_id": wf_setting_id},
-    )
-    return setting
-
-
-def get_wfai_setting_list(company_id, data_type):
-    settings = get_data_from_data_service(
-        *WF_AI_SETTING_LIST,
-        "fetch",
-        {"company_id": str(company_id), "data_type": data_type},
-    )
-    return settings
-
-
-def get_document_object(document_id):
-    document = get_data_from_data_service(
-        *DOCUMENT_CONNECTION_LIST, "find", {"_id": document_id}
-    )
-
-    return document
-
-
-def get_clone_object(clone_id):
-    clone = get_data_from_data_service(
-        *CLONES_CONNECTION_LIST, "find", {"_id": clone_id}
-    )
-
-    return clone
-
-
-def get_document_list(company_id, data_type):
-    documents = get_data_from_data_service(
-        *DOCUMENT_CONNECTION_LIST,
-        "fetch",
-        {"company_id": str(company_id), "data_type": data_type},
-    )
-    return documents
-
-
-def get_documents_reports(company_id, data_type, document_state):
-    documents = get_data_from_data_service(
-        *DOCUMENT_CONNECTION_LIST,
-        "fetch",
-        {
-            "company_id": str(company_id),
-            "data_type": data_type,
-            "document_state": document_state,
-        },
-    )
-    return documents
-
-
-def get_clone_list(company_id, data_type):
-    clones = get_data_from_data_service(
-        *CLONES_CONNECTION_LIST,
-        "fetch",
-        {"company_id": str(company_id), "data_type": data_type},
-    )
-    print(clones)
-    return clones
-
-
-def get_folder_list(company_id, data_type):
-    folders = get_data_from_data_service(
-        *FOLDER_CONNECTION_LIST,
-        "fetch",
-        {"company_id": str(company_id), "data_type": data_type},
-    )
-    return folders
-
-
-def get_uuid_object(uuid_hash):
-    uuid = get_data_from_data_service(
-        *QR_CONNECTION_LIST, "find", {"uuid_hash": uuid_hash}
-    )
-    return uuid
-
-
-def get_uuid(process_id):
-    return get_data_from_data_service(
-        *QR_CONNECTION_LIST, "fetch", {"process_id": process_id}
-    )
-
-
-def get_team(team_id):
-    team = get_data_from_data_service(
-        *MANAGEMENT_REPORTS_LIST, "find", {"_id": team_id}
-    )
-    return team
-
-
-def get_team_list(company_id):
-    teams = get_data_from_data_service(
-        *MANAGEMENT_REPORTS_LIST,
-        "fetch",
-        {"company_id": str(company_id)},
-    )
-    return teams
-
-
-def get_template_object(template_id):
-    template = get_data_from_data_service(
-        *TEMPLATE_CONNECTION_LIST, "find", {"_id": template_id}
-    )
-    return template
-
-
-def get_folder_object(folder_id):
-    folder = get_data_from_data_service(
-        *FOLDER_CONNECTION_LIST, "find", {"_id": folder_id}
-    )
-    return folder
-
-
-def get_wf_list(company_id, data_type):
-    workflows = get_data_from_data_service(
-        *WF_CONNECTION_LIST,
-        "fetch",
-        {"company_id": str(company_id), "data_type": data_type},
-    )
-    return workflows
-
-
-def get_wf_object(workflow_id):
-    workflow = get_data_from_data_service(
-        *WF_CONNECTION_LIST, "find", {"_id": str(workflow_id)}
-    )
-    return workflow
-
-
-def get_process_object(workflow_process_id):
-    process = get_data_from_data_service(
-        *PROCESS_CONNECTION_LIST,
-        "find",
-        {"_id": str(workflow_process_id)},
-    )
-    return process
-
-
-def get_process_list(company_id, data_type):
-    processes = get_data_from_data_service(
-        *PROCESS_CONNECTION_LIST,
-        "fetch",
-        {
-            "company_id": str(company_id),
-            "data_type": data_type,
-        },
-    )
-    return processes
-
-
-def get_process_link_list(company_id):
-    process_links = get_data_from_data_service(
-        *LINK_CONNECTION_LIST, "fetch", {"company_id": str(company_id)}
-    )
-    return process_links
 
 
 def get_event_id():
@@ -1064,7 +1008,7 @@ def delete_document(document_id, data_type):
 
 
 def add_document_to_folder(document_id, folder):
-    old_document = get_document_object(document_id)
+    old_document = single_query_document_collection({"_id": document_id})
     old_document["folders"] = old_document.get("folders")
     if old_document["folders"] is not None:
         try:
@@ -1089,7 +1033,7 @@ def add_document_to_folder(document_id, folder):
 
 
 def add_template_to_folder(template_id, folder):
-    old_template = get_template_object(template_id)
+    old_template = single_query_template_collection({"_id": template_id})
     old_template["folders"] = old_template.get("folders")
     if old_template["folders"] is not None:
         try:
@@ -1240,7 +1184,7 @@ def process_folders_to_item(ids, folder_id, add_item_to_folder):
 
 
 def delete_items_in_folder(item_id, folder_id, item_type):
-    old_folder = get_folder_object(folder_id)
+    old_folder = single_query_folder_collection({"_id": folder_id})
     old_data = old_folder.get("data")
     if item_type == "template":
         new_data = [
@@ -1248,7 +1192,7 @@ def delete_items_in_folder(item_id, folder_id, item_type):
             for item in old_data
             if item
         ]
-        old_template = get_template_object(item_id)
+        old_template = single_query_template_collection({"_id": item_id})
         old_template["folders"] = old_template.get("folders")
         if old_template["folders"] is not None:
             try:
@@ -1276,7 +1220,7 @@ def delete_items_in_folder(item_id, folder_id, item_type):
             for item in old_data
             if item
         ]
-        old_document = get_document_object(item_id)
+        old_document = single_query_document_collection({"_id": item_id})
         old_document["folders"] = old_document.get("folders")
         if old_document["folders"] is not None:
             try:

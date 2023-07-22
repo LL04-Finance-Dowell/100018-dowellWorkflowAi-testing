@@ -1,10 +1,10 @@
 from datetime import datetime, timedelta
 from app.mongo_db_connection import (
-    get_document_object,
-    get_link_object,
-    get_template_object,
+    single_query_document_collection,
+    single_query_links_collection,
+    single_query_template_collection,
     org_wfai_setting,
-    get_process_object,
+    single_query_process_collection,
 )
 
 
@@ -21,14 +21,14 @@ def register_user_access(process_steps, authorized_role, user):
 def is_finalized(item_id, item_type):
     """Check for a process item's state"""
     if item_type == "document":
-        document = get_document_object(item_id)
+        document = single_query_document_collection({ "_id": item_id})
         doc_state = document["document_state"]
         if doc_state == "finalized":
             return True, doc_state
         if doc_state == "rejected":
             return True, doc_state
     if item_type == "template":
-        template = get_template_object(item_id)
+        template = single_query_template_collection({ "_id": item_id })
         temp_state = template["template_state"]
         if temp_state == "finalized":
             return True, temp_state
@@ -102,7 +102,7 @@ def time_limit_right(time, select_time_limits, start_time, end_time, creation_ti
 
 def step_processing_order(order, process_id, role):
     """Check members step processing sequence"""
-    process = get_process_object(process_id)
+    process = single_query_process_collection({ "_id": process_id})
     process_steps = process["process_steps"]
     for step in process_steps:
         public_members = step.get("stepPublicMembers")
@@ -216,7 +216,7 @@ def step_processing_order(order, process_id, role):
 
 def user_presence(token, user_name, portfolio):
     """Checking user presence in process links map"""
-    link_info = get_link_object(unique_hash=token)
+    link_info = single_query_links_collection(unique_hash=token)
     if link_info["user_name"] == user_name and link_info["auth_portfolio"] == portfolio:
         return True
     return None, link_info["process_id"], link_info["auth_role"]

@@ -1,12 +1,12 @@
-import sys
+
 import unittest
-from datetime import datetime, timedelta
+from datetime import datetime
 from unittest.mock import patch
 
-from django.test import Client, RequestFactory, TestCase, client
+from django.test import Client, RequestFactory, TestCase
 from django.urls import reverse
 from rest_framework import status
-from rest_framework.test import APIClient, APIRequestFactory, APITestCase
+from rest_framework.test import  APITestCase
 
 from app.checks import time_limit_right
 from app.views import archives, create_folder, delete_item_from_folder, folder_update

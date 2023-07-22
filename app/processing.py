@@ -18,7 +18,7 @@ from app.helpers import cloning_document, register_public_login, check_items_sta
 from app.mongo_db_connection import (
     authorize,
     finalize_item,
-    get_document_object,
+    single_query_document_collection,
     save_process,
     save_process_links,
     save_process_qrcodes,
@@ -54,10 +54,7 @@ class Process:
             step for workflow in workflows for step in workflow["workflows"]["steps"]
         ]
         self.process_title = process_title
-        # self.process_title = " - ".join(
-        #     [workflow["workflows"]["workflow_title"] for workflow in workflows]
-        # )
-
+    
     def normal_process(self, action):
         res = json.loads(
             save_process(
@@ -325,8 +322,7 @@ class HandleProcess:
         ).start()
         if public_links:
             document_id = self.process["parent_item_id"]
-            res = get_document_object(document_id)
-            # print(res)
+            res = single_query_document_collection({ "_id": document_id })
             document_name = res["document_name"]
             m_link, m_code = HandleProcess.generate_public_qrcode(
                 public_links, self.process["company_id"], document_name
@@ -399,7 +395,7 @@ class HandleProcess:
                 document = "documentreports"
                 field = "document_name"
                 team_member_id = "11689044433"
-                document_object = get_document_object(clone_id)
+                document_object = single_query_document_collection({ "_id": clone_id })
                 item_flag = document_object["document_state"]
                 document_name = document_object["document_name"]
                 editor_link = HandleProcess.get_editor_link(
@@ -492,7 +488,7 @@ class Background:
                                 print(_, v)
                                 if (
                                     isinstance(v, str)
-                                    and get_document_object(v).get("document_state")
+                                    and single_query_document_collection({ "_id": v }).get("document_state")
                                     == "processing"
                                     or v is None
                                 ):
