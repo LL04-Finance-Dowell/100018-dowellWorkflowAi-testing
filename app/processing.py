@@ -481,7 +481,7 @@ class Background:
         parent_id = self.process["parent_item_id"]
         process_id = self.process["_id"]
         process_type = self.process["process_type"]
-        document_id = self.item_id
+        # document_id = self.item_id
         processing_state = self.process["processing_state"]
         created_by = self.process["created_by"]
         Background.register_user_access(
@@ -560,21 +560,19 @@ class Background:
                                         step1_documents.append(my_key)
                             print("assign_docs", step1_documents)
                             print("team_member", current_step.get("stepTeamMembers"))
-                            for user in current_step.get("stepTeamMembers"):
-                                for document in step1_documents:
+                            for document in step1_documents:
+                                for user in current_step.get("stepTeamMembers"):
                                     print(f"assigned to {user} \n")
                                     authorize(document, user, process_id, process_type)
                                     current_step.get("stepDocumentCloneMap").append(
                                         {user["member"]: document}
                                     )
-                            for user in current_step.get("stepPublicMembers"):
-                                for document in step1_documents:
+                                for user in current_step.get("stepPublicMembers"):
                                     authorize(document, user, process_id, process_type)
                                     current_step.get("stepDocumentCloneMap").append(
                                         {user["member"]: document}
                                     )
-                            for user in current_step.get("stepUserMembers"):
-                                for document in step1_documents:
+                                for user in current_step.get("stepUserMembers"):
                                     authorize(document, user, process_id, process_type)
                                     current_step.get("stepDocumentCloneMap").append(
                                         {user["member"]: document}
