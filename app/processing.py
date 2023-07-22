@@ -299,6 +299,15 @@ class HandleProcess:
         clone_ids = HandleProcess.prepare_document_for_step_one_users(
             steps[0], self.process["parent_item_id"], process_id
         )
+        if public_links:
+            document_id = self.process["parent_item_id"]
+            res = single_query_document_collection({ "_id": document_id })
+            document_name = res["document_name"]
+            m_link, m_code = HandleProcess.generate_public_qrcode(
+                public_links, self.process["company_id"], document_name
+            )
+            links.append({ "master_link": m_link})
+            qrcodes.append({"master_qrcode": m_code})
         save_process_links(
             links,
             process_id,
@@ -320,13 +329,6 @@ class HandleProcess:
                 self.process["company_id"],
             )
         ).start()
-        if public_links:
-            document_id = self.process["parent_item_id"]
-            res = single_query_document_collection({ "_id": document_id })
-            document_name = res["document_name"]
-            m_link, m_code = HandleProcess.generate_public_qrcode(
-                public_links, self.process["company_id"], document_name
-            )
         return {"links": links, "master_link": m_link, "master_code": m_code}
 
     def verify_location(self, auth_role, location_data):

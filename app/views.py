@@ -270,7 +270,6 @@ def finalize_or_reject(request, process_id):
     role = request.data["role"]
     user = request.data["authorized"]
     user_type = request.data["user_type"]
-    link_id = request.data["link_id"]
     state = request.data["action"]
     check, current_state = checks.is_finalized(item_id, item_type)
     if check and current_state != "processing":
@@ -284,6 +283,7 @@ def finalize_or_reject(request, process_id):
             background = Background(process, item_type, item_id, role, user)
             background.processing()
             if user_type == "public":
+                link_id = request.data["link_id"]
                 background.register_finalized(link_id)
             return Response("document processed successfully", status.HTTP_200_OK)
         except Exception as err:
@@ -292,7 +292,6 @@ def finalize_or_reject(request, process_id):
                 "An error occured during processing",
                 status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
-
     return Response("an error occurred during processing", status.HTTP_400_BAD_REQUEST)
 
 
@@ -367,8 +366,13 @@ def a_single_process(request, process_id):
     if process["parent_item_id"]:
         document_id = process["parent_item_id"]
         document = single_query_document_collection({"_id": document_id})
-        document_name = document["document_name"]
-        process.update({"document_name": document_name})
+        if document:
+            document_name = document["document_name"]
+            process.update({"document_name": document_name})
+        links = single_query_links_collection({ "process_id": process["_id"]})
+        if links:
+            links_object = links[0]
+            process.update({"links": links_object["links"]})
     return Response(process, status.HTTP_200_OK)
 
 
