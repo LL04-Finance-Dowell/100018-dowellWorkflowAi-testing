@@ -489,7 +489,6 @@ class Background:
         )
         try:
             no_of_steps = sum(isinstance(e, dict) for e in steps)
-            print("no of steps", no_of_steps)
             if no_of_steps > 0:
                 for index, step in enumerate(steps):
                     if step["stepDocumentCloneMap"]:
@@ -506,7 +505,7 @@ class Background:
                                     continue
                     else:
                         if step.get("stepTaskType") == "request_for_task":
-                            print("requesting task")
+                            print("requesting task \n")
                             documents = []
                             for i in range(1, len((steps))):
                                 current_idx = i
@@ -545,7 +544,7 @@ class Background:
                                             {user["member"]: clone_id}
                                         )
                         if step.get("stepTaskType") == "assign_task":
-                            print("assign_task")
+                            print("assign_task \n")
                             step1_documents = []
                             for i in range(1, len((steps))):
                                 current_idx = i
@@ -558,23 +557,26 @@ class Background:
                                     if my_key != "accessed":
                                         step1_documents.append(my_key)
                                 print("assign_docs", step1_documents)
-                                for document in step1_documents:
-                                    for user in step.get("stepTeamMembers"):
-                                        print("teammember", step.get("stepTeamMembers"))
+                                for user in step.get("stepTeamMembers"):
+                                    print("teammember", step.get("stepTeamMembers"))
+                                    for document in step1_documents:
+                                        print(f"assigned to {user} \n")
                                         authorize(
                                             document, user, process_id, process_type
                                         )
                                         step.get("stepDocumentCloneMap").append(
                                             {user["member"]: document}
                                         )
-                                    for user in step.get("stepPublicMembers"):
+                                for user in step.get("stepPublicMembers"):
+                                    for document in step1_documents:
                                         authorize(
                                             document, user, process_id, process_type
                                         )
                                         step.get("stepDocumentCloneMap").append(
                                             {user["member"]: document}
                                         )
-                                    for user in step.get("stepUserMembers"):
+                                for user in step.get("stepUserMembers"):
+                                    for document in step1_documents:
                                         authorize(
                                             document, user, process_id, process_type
                                         )
@@ -585,7 +587,7 @@ class Background:
                 # TODO: Test If this is working as desired.
                 # state, docs = check_that_process_documents_are_finalized(self.process)
                 # if state:
-                #     update_process(process_id, steps, "finalized") 
+                #     update_process(process_id, steps, "finalized")
                 #     for d in docs:
                 #         authorize(d, created_by, process_id, process_type)
         except Exception as e:

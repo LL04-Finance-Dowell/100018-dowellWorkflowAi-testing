@@ -26,7 +26,7 @@ from .views import (
     get_reports_documents,
     get_completed_documents_by_process,
     get_document_content,
-    get_documents,
+    get_documents_in_organization,
     get_process_link,
     get_reports_templates,
     get_team_data,
@@ -49,7 +49,8 @@ from .views import (
     send_notif,
     dowell_centre_template,
     dowell_centre_documents,
-    get_reports_processes
+    get_reports_processes,
+    get_documents_types,
 )
 
 urlpatterns = [
@@ -63,12 +64,13 @@ urlpatterns = [
         "companies/<str:company_id>/templates/knowledge-centre/", dowell_centre_template
     ),
     path("companies/<str:company_id>/templates/reports/", get_reports_templates),
-    path("companies/<str:company_id>/documents/", get_documents),
+    path("companies/<str:company_id>/documents/", get_documents_in_organization),
     path(
         "companies/<str:company_id>/documents/knowledge-centre/",
         dowell_centre_documents,
     ),
     path("companies/<str:company_id>/documents/reports/", get_reports_documents),
+    path("companies/<str:company_id>/documents/types/", get_documents_types),
     path(
         "companies/<str:company_id>/processes/<str:process_id>/",
         get_completed_documents_by_process,

@@ -486,18 +486,30 @@ def get_workflows(request, company_id):
 
 
 @api_view(["GET"])
-def get_documents(request, company_id):
+def get_documents_in_organization(request, company_id):
     """List of Created Documents."""
     data_type = request.query_params.get("data_type")
     if not validate_id(company_id) and data_type:
         return Response("Invalid Request!", status.HTTP_400_BAD_REQUEST)
-    cache_key = f"documents_{company_id}"
-    document_list = cache.get(cache_key)
-    if document_list is None:
-        document_list = bulk_query_document_collection(
+    document_list = bulk_query_document_collection(
             {"company_id": company_id, "data_type": data_type}
         )
-        cache.set(cache_key, document_list, timeout=60)
+    return Response(
+        {"documents": document_list},
+        status.HTTP_200_OK,
+    )
+
+
+@api_view(["GET"])
+def get_documents_types(request, company_id):
+    """List of Created Documents."""
+    data_type = request.query_params.get("data_type")
+    doc_type = request.query_params.get("doc_type")
+    if not validate_id(company_id) and data_type and doc_type:
+        return Response("Invalid Request!", status.HTTP_400_BAD_REQUEST)
+    document_list = bulk_query_document_collection(
+            {"company_id": company_id, "data_type": data_type, "document_type": doc_type}
+        )
     return Response(
         {"documents": document_list},
         status.HTTP_200_OK,
