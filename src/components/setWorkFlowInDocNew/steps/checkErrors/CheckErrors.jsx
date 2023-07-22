@@ -9,6 +9,7 @@ import InfoBox from '../../../infoBox/InfoBox';
 import { useDispatch, useSelector } from 'react-redux';
 import ProgressBar from '../../../progressBar/ProgressBar';
 import { toast } from 'react-toastify';
+import Popup from '../../../Popup/Popup';
 import React from 'react';
 import {
   limitTaskTo,
@@ -16,7 +17,7 @@ import {
   taskType,
 } from '../connectWebflowToDoc/contents/selectMembersToAssign/assignTask/AssignTask';
 import { useTranslation } from 'react-i18next';
-import { setErrorsCheckedInNewProcess } from '../../../../features/app/appSlice';
+import { setErrorsCheckedInNewProcess, setCurrentMessage,setPopupIsOpen } from '../../../../features/app/appSlice';
 
 const CheckErrors = () => {
   const { t } = useTranslation();
@@ -33,6 +34,7 @@ const CheckErrors = () => {
     tableOfContentForStep,
     allowErrorChecksStatusUpdateForNewProcess,
     newProcessErrorMessage,
+    popupIsOpen,
   } = useSelector((state) => state.app);
   const [workflowItemsToDisplay, setWorkflowItemsToDisplay] = useState([]);
   const [sortItemActive, setSortItemActive] = useState(null);
@@ -159,14 +161,20 @@ const CheckErrors = () => {
   const handleSortProcess = () => {
     if (!docCurrentWorkflow) {
       document.querySelector('#select-doc').scrollIntoView({ block: 'center' })
+      // dispatch(setPopupIsOpen(true)); 
+      // dispatch( setCurrentMessage('You have not selecteda document'))
       return toast.info('Please select a document')
     };
     if (selectedWorkflowsToDoc.length < 1) {
       document.querySelector('#h2__Doc__Title').scrollIntoView({ block: 'center' })
+      // dispatch(setPopupIsOpen(true));
+      // dispatch( setCurrentMessage('Please select at least one workflow first.'))
       return toast.info('Please select at least one workflow first.');
     }
     if (!allowErrorChecksStatusUpdateForNewProcess && newProcessErrorMessage) {
       document.querySelector('#h2__Doc__Title').scrollIntoView({ block: 'center' })
+      // dispatch(setPopupIsOpen(true));
+      // dispatch( setCurrentMessage(newProcessErrorMessage))
       return toast.info(newProcessErrorMessage);
     }
     dispatch(setErrorsCheckedInNewProcess(true));
@@ -210,7 +218,9 @@ const CheckErrors = () => {
           ) : (
             <></>
           )}
-          {/* <PrimaryButton hoverBg="success">25%</PrimaryButton> */}
+           {/* {
+               popupIsOpen && <Popup/>
+            } */}
         </div>
         {sortItemActive ? (
           <div className={styles.proccess__container}>

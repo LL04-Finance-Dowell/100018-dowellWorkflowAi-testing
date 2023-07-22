@@ -1,7 +1,7 @@
 import styles from './processDocument.module.css';
 import { v4 as uuidv4 } from 'uuid';
 import { useState, useEffect } from 'react';
-
+import Popup from '../../../Popup/Popup';
 import { useForm } from 'react-hook-form';
 import Select from '../../select/Select';
 import { AiOutlineClose } from 'react-icons/ai';
@@ -23,7 +23,9 @@ import {
   setAllowErrorChecksStatusUpdateForNewProcess,
   setNewProcessErrorMessage,
   setProcessName,
-  setShowProcessNameModal
+  setShowProcessNameModal,
+  setCurrentMessage,
+  setPopupIsOpen
 } from '../../../../features/app/appSlice';
 import { useTranslation } from 'react-i18next';
 import { extractProcessObj } from './utils/utils';
@@ -60,6 +62,7 @@ const ProcessDocument = ({ savedProcess }) => {
     publicMembersSelectedForProcess,
     ShowProcessNameModal,
     ProcessName,
+    popupIsOpen,
     allProcesses,
     errorsCheckedInNewProcess,
   } = useSelector((state) => state.app);
@@ -88,19 +91,31 @@ const ProcessDocument = ({ savedProcess }) => {
     if (!userDetail) return;
     if (!currentDocToWfs) {
       document.querySelector('#select-doc').scrollIntoView({ block: 'center' })
+      // dispatch(setPopupIsOpen(true));
+      // dispatch( setCurrentMessage('You have not selected a document'))
+
+
       return toast.info('You have not selected a document');
 
     };
     if (!docCurrentWorkflow) {
       document.querySelector('#step-title').scrollIntoView({ block: 'center' });
+      // dispatch(setPopupIsOpen(true));
+      // dispatch( setCurrentMessage('You have not selected a workflow'))
+
       return toast.info('You have not selected any workflow');
     }
     if (processSteps.length < 1) {
+      // dispatch(setPopupIsOpen(true));
+      // dispatch( setCurrentMessage('You have not configured steps for any workflow'))
 
       return toast.info('You have not configured steps for any workflow')
     }
     if (!errorsCheckedInNewProcess) {
       document.querySelector('#h2__Doc__Title').scrollIntoView({ block: 'center' })
+      // dispatch(setPopupIsOpen(true));
+      // dispatch( setCurrentMessage('Please click the "Show process" button above to make sure there are no errors before processing'))
+
       return toast.info('Please click the "Show process" button above to make sure there are no errors before processing.');
     }
 
@@ -142,6 +157,8 @@ const ProcessDocument = ({ savedProcess }) => {
     if (processObjToPost.error) {
       dispatch(setNewProcessErrorMessage(processObjToPost.error));
       document.querySelector('#h2__Doc__Title').scrollIntoView({ block: 'center' })
+      // dispatch(setPopupIsOpen(true));
+      // dispatch( setCurrentMessage(processObjToPost.error))
 
       return toast.info(processObjToPost.error);
     }
@@ -150,6 +167,8 @@ const ProcessDocument = ({ savedProcess }) => {
     dispatch(setNewProcessErrorMessage(null));
 
     if (!errorsCheckedInNewProcess)
+      // dispatch(setPopupIsOpen(true));
+      // dispatch( setCurrentMessage('Please click the "Show process" button above to make sure there are no errors before processing.'))
       return toast.info(
         'Please click the "Show process" button above to make sure there are no errors before processing.'
       );
@@ -317,6 +336,10 @@ const ProcessDocument = ({ savedProcess }) => {
               register={register}
             />
 
+            {/* {
+               popupIsOpen && <Popup/>
+            } */}
+
 
             {ShowProcessNameModal && (
               <div style={{
@@ -365,11 +388,13 @@ const ProcessDocument = ({ savedProcess }) => {
                       width: '100%',
                       color: 'black',
                       outline: 'none',
+                      padding:'10px',
                       height: '40px',
                       borderRadius: '5px',
                       '::placeholder': {
                         fontSize: '36px', // Adjust the font size as desired
                         color: 'grey',
+                       
                       },
                     }}
                     value={ProcessName}
@@ -378,7 +403,7 @@ const ProcessDocument = ({ savedProcess }) => {
 
 
                   <div
-                    style={{ textAlign: "center", marginTop: "30px", backgroundColor: "black", color: "white", cursor: "pointer" }}
+                    style={{ textAlign: "center", marginTop: "30px", backgroundColor: "#61ce70", color: "white", cursor: "pointer" }}
                     onClick={handleProcessBtnClick}
                   >Save</div>
                 </div>
