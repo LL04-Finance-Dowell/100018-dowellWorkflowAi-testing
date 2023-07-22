@@ -66,7 +66,7 @@ const initialState = {
   proccess: [],
   IconColor: '',
   ProcessName:'',
-
+  currentMessage:'',                              
   userDetailPosition: null,
   languageSelectPosition: null,
   teamsSelectedSelectedForProcess: [],
@@ -85,7 +85,7 @@ const initialState = {
   DetailFetched:false,
   showGeneratedLinksPopup: false,
   showsProcessDetailPopup:false,
-
+  popupIsOpen:false,
   legalStatusLoading: true,
   showLegalStatusPopup: false,
   legalTermsAgreed: false,
@@ -572,6 +572,9 @@ export const appSlice = createSlice({
     setProcessName: (state, action) => {
       state.ProcessName = action.payload;
     },
+    setCurrentMessage: (state, action) => {
+      state.currentMessage = action.payload;
+    },
     setTeamsSelectedSelectedForProcess: (state, action) => {
       state.teamsSelectedSelectedForProcess = [
         ...state.teamsSelectedSelectedForProcess,
@@ -686,6 +689,9 @@ export const appSlice = createSlice({
     setshowsProcessDetailPopup: (state, action) => {
       state.showsProcessDetailPopup = action.payload;
     },
+    setPopupIsOpen: (state, action) => {
+      state.popupIsOpen = action.payload;
+    },
     setLinksFetched: (state, action) => {
       state.linksFetched = action.payload;
     },
@@ -798,6 +804,8 @@ export const {
   setMembersSetForProcess,
   setNotificationsLoaded,
   setContinents,
+  setCurrentMessage,
+  setPopupIsOpen,
   setContinentsLoaded,
   setThemeColor,
   setSettingProccess,
