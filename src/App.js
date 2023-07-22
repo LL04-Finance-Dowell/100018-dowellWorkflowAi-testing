@@ -43,7 +43,6 @@ function App() {
     }, 300000); // 5 mints
 
     return () => clearInterval(interval);
-
   }, []);
   // console.log('chk')
   function checkstatus() {
@@ -75,7 +74,7 @@ function App() {
             },
           }
         )
-        .then((response) => { })
+        .then((response) => {})
         .catch((error) => {
           console.log(error);
           // Empty catch block
@@ -87,7 +86,6 @@ function App() {
   //     <Route path='*' element={<ConstructionPage />} />
   //   </Routes>
   // );
-
 
   if (isPublicUser)
     return (
@@ -108,7 +106,11 @@ function App() {
             path={'saved'}
             element={<DocumentsPage showOnlySaved={true} />}
           />
-          <Route path={"completed"} element={<DocumentsPage showOnlyCompleted={true} />} />
+          <Route
+            path={'completed'}
+            element={<DocumentsPage showOnlyCompleted={true} />}
+          />
+          <Route path={'demo'} element={<DocumentsPage isDemo={true} />} />
           {/*  <Route path={"new"} element={<CreateNewDocumentPage />} />
         <Route path={"to-sign"} element={<SignDocumentsPage />} />
         <Route path={"rejected"} element={<RejectedDocumentsPage />} />
@@ -120,6 +122,7 @@ function App() {
             path={'saved'}
             element={<TemplatesPage showOnlySaved={true} />}
           />
+          <Route path={'demo'} element={<TemplatesPage isDemo={true} />} />
           {/* <Route path={"trash"} element={<TemplatesPage showOnlyTrashed={true} />}/> */}
           {/* <Route path={"new"} element={<CreateNewTemplatePage />} />
         <Route path={"to-approve"} element={<ApproveTemplatesPage />} />
@@ -164,7 +167,6 @@ function App() {
             path={'processdetail'}
             element={<ProccessPage showSingleProcess={true} />}
           />
-
 
           {/* <Route path={"trash"} element={<ProccessPage showOnlyTrashed={true} />}/> */}
         </Route>

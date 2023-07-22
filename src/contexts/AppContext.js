@@ -10,6 +10,7 @@ import {
 import { v4 } from 'uuid';
 import { FolderServices } from '../services/folderServices';
 import { TemplateServices } from '../services/templateServices';
+import { DocumentServices } from '../services/documentServices';
 
 const AppContext = createContext({});
 
@@ -70,6 +71,10 @@ export const AppContextProvider = ({ children }) => {
   const [folders, setFolders] = useState([]);
   const [folderActionId, setFolderActionId] = useState('');
   const [isFetchingFolders, setIsFetchingFolders] = useState(false);
+  const [demoTemplates, setDemoTemplates] = useState(null);
+  const [demoDocuments, setDemoDocuments] = useState(null);
+  const [demoDocStatus, setDemoDocStatus] = useState('');
+  const [demoTempStatus, setDemoTempStatus] = useState('');
 
   const [showFoldersActionModal, setShowFoldersActionModal] = useState({
     state: false,
@@ -137,6 +142,30 @@ export const AppContextProvider = ({ children }) => {
     setWorkflowSettings(res.data);
   };
 
+  const fetchDemoTemplates = async () => {
+    setDemoTempStatus('pending');
+    try {
+      const res = await new TemplateServices().demoTemplates(1);
+      setDemoTemplates(res.data ? res.data.templates : []);
+    } catch (err) {
+      console.log(err);
+    } finally {
+      setDemoTempStatus('');
+    }
+  };
+
+  const fetchDemoDocuments = async () => {
+    setDemoDocStatus('pending');
+    try {
+      const res = await new DocumentServices().demoDocuments(1);
+      setDemoDocuments(res.data ? res.data.documents : []);
+    } catch (err) {
+      console.log(err);
+    } finally {
+      setDemoDocStatus('');
+    }
+  };
+
   const fetchFolders = async () => {
     const folderServices = new FolderServices();
     const userCompanyId =
@@ -194,25 +223,10 @@ export const AppContextProvider = ({ children }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userDetail, isPublicUser, publicUserConfigured]);
 
-  // ?useEffect(() => {
-  //   new TemplateServices()
-  //     .allTemplatesDRC('6385c0f38eca0fb652c9457e')
-  //     .then((res) => {
-  //       console.log('done fetching: ', res.data, res);
-  //       setDowellResearchTemplates(res.data).catch((err) => {
-  //         console.log('Failed to fetch Dowell Research Templates: ', err);
-  //       });
-  //     });
-  // ?}, []);
-
-  useEffect(() => {
-    console.log('DRT: ', dowellReasearchTemplates);
-  }, [dowellReasearchTemplates]);
-
   useEffect(() => {
     if (userDetail && userDetail.portfolio_info) {
-      fetchFolders();
       fetchSettings();
+      fetchFolders();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userDetail]);
@@ -372,6 +386,14 @@ export const AppContextProvider = ({ children }) => {
         userDetail,
         isFetchingFolders,
         fetchFolders,
+        demoTemplates,
+        setDemoTemplates,
+        demoDocuments,
+        setDemoDocuments,
+        demoDocStatus,
+        demoTempStatus,
+        fetchDemoTemplates,
+        fetchDemoDocuments,
       }}
     >
       {children}

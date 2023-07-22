@@ -35,9 +35,11 @@ export class TemplateServices {
     );
   };
 
-  allTemplatesDRC = (companyId) => {
-    return httpApiUrl.get(`/companies/${companyId}/templates/`);
-  };
+  demoTemplates = (count) =>
+    httpApiUrl.get(
+      `companies/6385c0f38eca0fb652c9457e/templates/knowledge-centre/?data_type=Real_Data&page=${count}`
+    );
+  // * The company id for demoTemplates is hard coded to that of Dowell Knowledge Centre
 
   singleTemplateDetail = async (templateId) => {
     return await httpTemplate.get(`/${templateId}/object/`);
