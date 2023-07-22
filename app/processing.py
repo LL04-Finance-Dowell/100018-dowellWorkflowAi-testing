@@ -512,37 +512,38 @@ class Background:
                                 prev_docs = steps[current_idx - 1].get(
                                     "stepDocumentCloneMap"
                                 )
+                                current_step = steps[current_idx - 1]
                                 for item in prev_docs:
                                     key = next(iter(item))
                                     my_key = item[key]
                                     if my_key != "accessed":
                                         documents.append(my_key)
                                 print("previous documents", documents)
-                                for doc in documents:
-                                    for user in step.get("stepTeamMembers"):
-                                        clone_id = cloning_document(
-                                            doc, user, parent_id, process_id
-                                        )
-                                        step.get("stepDocumentCloneMap").append(
-                                            {user["member"]: clone_id}
-                                        )
-                                    for user in step.get("stepPublicMembers"):
-                                        clone_id = cloning_document(
-                                            doc,
-                                            user,
-                                            parent_id,
-                                            process_id,
-                                        )
-                                        step.get("stepDocumentCloneMap").append(
-                                            {user["member"]: clone_id}
-                                        )
-                                    for user in step.get("stepUserMembers"):
-                                        clone_id = cloning_document(
-                                            doc, user, parent_id, process_id
-                                        )
-                                        step.get("stepDocumentCloneMap").append(
-                                            {user["member"]: clone_id}
-                                        )
+                            for doc in documents:
+                                for user in current_step.get("stepTeamMembers"):
+                                    clone_id = cloning_document(
+                                        doc, user, parent_id, process_id
+                                    )
+                                    step.get("stepDocumentCloneMap").append(
+                                        {user["member"]: clone_id}
+                                    )
+                                for user in current_step.get("stepPublicMembers"):
+                                    clone_id = cloning_document(
+                                        doc,
+                                        user,
+                                        parent_id,
+                                        process_id,
+                                    )
+                                    step.get("stepDocumentCloneMap").append(
+                                        {user["member"]: clone_id}
+                                    )
+                                for user in current_step.get("stepUserMembers"):
+                                    clone_id = cloning_document(
+                                        doc, user, parent_id, process_id
+                                    )
+                                    step.get("stepDocumentCloneMap").append(
+                                        {user["member"]: clone_id}
+                                    )
                         if step.get("stepTaskType") == "assign_task":
                             print("assign_task \n")
                             step1_documents = []
@@ -551,38 +552,33 @@ class Background:
                                 prev_docs = steps[current_idx - 1].get(
                                     "stepDocumentCloneMap"
                                 )
+                                current_step = steps[current_idx - 1]
                                 for item in prev_docs:
                                     key = next(iter(item))
                                     my_key = item[key]
                                     if my_key != "accessed":
                                         step1_documents.append(my_key)
-                                print("assign_docs", step1_documents)
-                                for user in step.get("stepTeamMembers"):
-                                    print("teammember", step.get("stepTeamMembers"))
-                                    for document in step1_documents:
-                                        print(f"assigned to {user} \n")
-                                        authorize(
-                                            document, user, process_id, process_type
-                                        )
-                                        step.get("stepDocumentCloneMap").append(
-                                            {user["member"]: document}
-                                        )
-                                for user in step.get("stepPublicMembers"):
-                                    for document in step1_documents:
-                                        authorize(
-                                            document, user, process_id, process_type
-                                        )
-                                        step.get("stepDocumentCloneMap").append(
-                                            {user["member"]: document}
-                                        )
-                                for user in step.get("stepUserMembers"):
-                                    for document in step1_documents:
-                                        authorize(
-                                            document, user, process_id, process_type
-                                        )
-                                        step.get("stepDocumentCloneMap").append(
-                                            {user["member"]: document}
-                                        )
+                            print("assign_docs", step1_documents)
+                            print("team_member", current_step.get("stepTeamMembers"))
+                            for user in current_step.get("stepTeamMembers"):
+                                for document in step1_documents:
+                                    print(f"assigned to {user} \n")
+                                    authorize(document, user, process_id, process_type)
+                                    current_step.get("stepDocumentCloneMap").append(
+                                        {user["member"]: document}
+                                    )
+                            for user in current_step.get("stepPublicMembers"):
+                                for document in step1_documents:
+                                    authorize(document, user, process_id, process_type)
+                                    current_step.get("stepDocumentCloneMap").append(
+                                        {user["member"]: document}
+                                    )
+                            for user in current_step.get("stepUserMembers"):
+                                for document in step1_documents:
+                                    authorize(document, user, process_id, process_type)
+                                    current_step.get("stepDocumentCloneMap").append(
+                                        {user["member"]: document}
+                                    )
                         update_process(process_id, steps, processing_state)
                 # TODO: Test If this is working as desired.
                 # state, docs = check_that_process_documents_are_finalized(self.process)
