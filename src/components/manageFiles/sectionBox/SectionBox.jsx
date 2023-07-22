@@ -85,7 +85,7 @@ const SectionBox = ({
   const handleRefresh = () => {
     if (refreshLoading) return;
 
-    const [currentUserCompanyId, currentUserportfolioDataType] = [
+    const [currentUserCompanyId, currentUserportfolioDataType, currentUserPortfolioName] = [
       userDetail?.portfolio_info?.length > 1
         ? userDetail?.portfolio_info.find(
             (portfolio) => portfolio.product === productName
@@ -96,6 +96,11 @@ const SectionBox = ({
             (portfolio) => portfolio.product === productName
           )?.data_type
         : userDetail?.portfolio_info[0]?.data_type,
+      userDetail?.portfolio_info?.length > 1
+        ? userDetail?.portfolio_info.find(
+            (portfolio) => portfolio.product === productName
+          )?.data_type
+        : userDetail?.portfolio_info[0]?.portfolio_name, 
     ];
 
     if (itemType === 'documents') {
@@ -248,30 +253,27 @@ const SectionBox = ({
       const documentService = new DocumentServices();
 
       documentService
-        .allDocuments(currentUserCompanyId, currentUserportfolioDataType)
+        .getNotifications(currentUserCompanyId, currentUserportfolioDataType)
         .then((res) => {
-          // console.log(res.data);
-          // console.log(userDetail?.userinfo?.username);
-          // console.log(
-          //   res.data.documents.filter(
-          //     (item) =>
-          //       item.auth_viewers &&
-          //       !Array.isArray(item.auth_viewers) &&
-          //       typeof item.auth_viewers !== 'string'
-          //   )
-          // );
           const documentsToSign = res.data.documents
             .reverse()
             .filter(
               (document) =>
-                document.company_id === currentUserCompanyId &&
-                document.data_type === currentUserportfolioDataType &&
-                (document.state === 'processing' ||
-                  document.document_state === 'processing') &&
                 document.auth_viewers &&
-                (Array.isArray(document.auth_viewers) ||
-                  typeof document.auth_viewers === 'string') &&
-                document.auth_viewers.includes(userDetail?.userinfo?.username)
+                Array.isArray(document.auth_viewers) &&
+                (
+                  // new format
+                  (
+                    document.auth_viewers.every(item => typeof item === 'object') &&
+                    document.auth_viewers.map(viewer => viewer.member).includes(userDetail?.userinfo?.username) &&
+                    document.auth_viewers.map(viewer => viewer.portfolio).includes(currentUserPortfolioName)
+                  )
+                  ||
+                  // old format
+                  (
+                    document.auth_viewers.includes(userDetail?.userinfo?.username)
+                  )
+                )
             )
             .filter((document) => document.process_id);
 
@@ -291,7 +293,7 @@ const SectionBox = ({
               return notification;
             }
           );
-          console.log(updatedNotifications);
+          // console.log(updatedNotifications);
           dispatch(setNotificationsForUser(updatedNotifications));
           toast.success('Successfully refreshed notifications');
           setRefreshLoading(false);

@@ -22,7 +22,7 @@ import {
   setAllProcesses,
   setAllowErrorChecksStatusUpdateForNewProcess,
   setNewProcessErrorMessage,
-  setProcessName,
+  // setProcessName,
   setShowProcessNameModal,
   setCurrentMessage,
   setPopupIsOpen
@@ -61,7 +61,7 @@ const ProcessDocument = ({ savedProcess }) => {
     userMembersSelectedForProcess,
     publicMembersSelectedForProcess,
     ShowProcessNameModal,
-    ProcessName,
+    // ProcessName,
     popupIsOpen,
     allProcesses,
     errorsCheckedInNewProcess,
@@ -83,6 +83,7 @@ const ProcessDocument = ({ savedProcess }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { t } = useTranslation();
+  const [ processName, setProcessName ] = useState("");
 
   const handleProcessBtnClick = async () => {
 
@@ -143,7 +144,7 @@ const ProcessDocument = ({ savedProcess }) => {
     const processObjToPost = extractProcessObj(
       newProcessActionOptions[`${processOptionSelection}`],
       userDetail,
-      ProcessName,
+      processName,
       currentDocToWfs,
       docCurrentWorkflow,
       processSteps,
@@ -398,8 +399,8 @@ const ProcessDocument = ({ savedProcess }) => {
                        
                       },
                     }}
-                    value={ProcessName}
-                    onChange={(e) => dispatch(setProcessName(e.target.value))}
+                    value={processName}
+                    onChange={(e) => setProcessName(e.target.value)}
                   />
 
 

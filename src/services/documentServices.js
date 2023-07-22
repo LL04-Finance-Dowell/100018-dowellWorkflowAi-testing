@@ -46,4 +46,10 @@ export class DocumentServices {
   singleDocumentDetail = async (documentId) => {
     return await httpDocument.get(`/${documentId}/object/`);
   };
+
+  getNotifications = async (companyId, dataType) => {
+    return await httpApiUrl.get(
+      `/companies/${companyId}/documents/reports/?data_type=${dataType}&doc_state=processing`
+    )
+  }
 }
