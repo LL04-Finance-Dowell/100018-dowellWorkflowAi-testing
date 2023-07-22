@@ -40,6 +40,7 @@ from app.mongo_db_connection import (
     single_query_document_collection,
     bulk_query_workflow_collection,
     single_query_folder_collection,
+    single_query_qrcode_collection,
     single_query_team_collection,
     single_query_template_collection,
     single_query_workflow_collection,
@@ -214,7 +215,7 @@ def process_verification(request):
     auth_portfolio = request.data["auth_portfolio"]
     token = request.data["token"]
     org_name = request.data["org_name"]
-    link_object = single_query_links_collection({"unique_hash": token})
+    link_object = single_query_qrcode_collection({"unique_hash": token})
     if user_type == "team" or user_type == "user":
         if (
             link_object["user_name"] != auth_user
@@ -224,7 +225,7 @@ def process_verification(request):
                 "User Logged in is not part of this process",
                 status.HTTP_401_UNAUTHORIZED,
             )
-    process = single_query_process_collection(link_object["process_id"])
+    process = single_query_process_collection({"_id": link_object["process_id"]})
     process["org_name"] = org_name
     handler = HandleProcess(process)
     if not handler.verify_location(
@@ -553,7 +554,7 @@ def get_document_content(request, document_id):
         return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
     content = []
     my_dict = ast.literal_eval(
-        single_query_document_collection({ "_id": document_id})["content"]
+        single_query_document_collection({"_id": document_id})["content"]
     )[0][0]
     all_keys = [i for i in my_dict.keys()]
     for i in all_keys:
