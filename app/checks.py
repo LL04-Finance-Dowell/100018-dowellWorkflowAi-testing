@@ -25,7 +25,7 @@ def check_that_process_documents_are_finalized(process):
             return
         else:
             docs.extend([k for dict in step["stepDocumentCloneMap"] for k in dict.keys()])      
-    return all(check_items_state(docs))
+    return all(check_items_state(docs)), docs
 
 
 def register_user_access(process_steps, authorized_role, user):

@@ -483,6 +483,7 @@ class Background:
         process_type = self.process["process_type"]
         document_id = self.item_id
         processing_state = self.process["processing_state"]
+        created_by = self.process["created_by"]
         Background.register_user_access(
             self.process["process_steps"], self.role, self.username
         )
@@ -529,18 +530,18 @@ class Background:
                                     {user["member"]: clone_id}
                                 )
                         if step.get("stepTaskType") == "assign_task":
-                            step1_documents = []
+                            # step1_documents = []
                             for i in range(1, len((steps))):
                                 current_idx = i
                                 prev_docs = steps[current_idx - 1].get(
                                     "stepDocumentCloneMap"
                                 )
-                                for item in prev_docs:
-                                    key = next(iter(item))
-                                    my_key = item[key]
-                                    if my_key != "accessed":
-                                        step1_documents.append(my_key)
-                                for document in step1_documents:
+                                # for item in prev_docs:
+                                #     key = next(iter(item))
+                                #     my_key = item[key]
+                                #     if my_key != "accessed":
+                                #         step1_documents.append(my_key)
+                                for document in prev_docs:
                                     for user in step.get("stepTeamMembers"):
                                         authorize(
                                             document, user, process_id, process_type
@@ -564,8 +565,11 @@ class Background:
                                         )
                         update_process(process_id, steps, processing_state)
                 # TODO: Test If this is working as desired.
-                # if check_that_process_documents_are_finalized(self.process):
-                #     update_process(process_id, steps, "finalized")
+                # state, docs = check_that_process_documents_are_finalized(self.process)
+                # if state:
+                #     update_process(process_id, steps, "finalized") 
+                #     for d in docs:
+                #         authorize(d, created_by, process_id, process_type)
         except Exception as e:
             print("got error", e)
             finalize_item(self.item_id, "processing", self.item_type)
