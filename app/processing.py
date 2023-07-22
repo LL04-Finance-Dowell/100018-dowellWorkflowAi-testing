@@ -530,18 +530,20 @@ class Background:
                                     {user["member"]: clone_id}
                                 )
                         if step.get("stepTaskType") == "assign_task":
-                            # step1_documents = []
+                            step1_documents = []
                             for i in range(1, len((steps))):
                                 current_idx = i
                                 prev_docs = steps[current_idx - 1].get(
                                     "stepDocumentCloneMap"
                                 )
-                                # for item in prev_docs:
-                                #     key = next(iter(item))
-                                #     my_key = item[key]
-                                #     if my_key != "accessed":
-                                #         step1_documents.append(my_key)
-                                for document in prev_docs:
+                                for item in prev_docs:
+                                    # key = next(iter(item))
+                                    # my_key = item[key]
+                                    # if my_key != "accessed":
+                                    #     step1_documents.append(my_key)
+                                    doc = item.values()
+                                    step1_documents.append(doc)
+                                for document in step1_documents:
                                     for user in step.get("stepTeamMembers"):
                                         authorize(
                                             document, user, process_id, process_type
