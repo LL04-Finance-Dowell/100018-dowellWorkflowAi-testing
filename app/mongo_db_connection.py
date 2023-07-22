@@ -262,25 +262,154 @@ def get_event_id():
         return json.loads(r.text)["error"]
 
 
-def save_process_links(links, process_id, item_id, company_id):
+def save_process_links(options):
+    options["eventId"] = get_event_id()["event_id"]
     payload = json.dumps(
         {
             **LINK_CONNECTION_DICT,
             "command": "insert",
-            "field": {
-                "eventId": get_event_id()["event_id"],
-                "links": links,
-                "process_id": process_id,
-                "item_id": item_id,
-                "company_id": company_id,
-                "created_on": time,
-            },
+            "field": options,
             "update_field": {"order_nos": 21},
             "platform": "bangalore",
         }
     )
     return post_to_data_service(payload)
 
+
+def save_to_qrcode_collection(options):
+    options["eventId"] = get_event_id()["event_id"]
+    payload = json.dumps(
+        {
+            **QR_CONNECTION_DICT,
+            "command": "insert",
+            "field": options,
+            "update_field": {"order_nos": 21},
+            "platform": "bangalore",
+        }
+    )
+    return post_to_data_service(payload)
+
+
+def save_to_links_collection(options):
+    options["eventId"] = get_event_id()["event_id"]
+    payload = json.dumps(
+        {
+            **LINK_CONNECTION_DICT,
+            "command": "insert",
+            "field": options,
+            "update_field": {"order_nos": 21},
+            "platform": "bangalore",
+        }
+    )
+    return post_to_data_service(payload)
+
+
+def save_to_workflow_collection(options):
+    options["eventId"] = get_event_id()["event_id"]
+    options["created_on"] = time
+    options["approved"] = False
+    options["rejected"] = False
+    options["auth_viewers"] = []
+    payload = json.dumps(
+        {
+            **WF_CONNECTION_DICT,
+            "command": "insert",
+            "field": options,
+            "update_field": {"order_nos": 21},
+            "platform": "bangalore",
+        }
+    )
+    return post_to_data_service(payload)
+
+
+def save_to_template_collection(options):
+    options["eventId"] = get_event_id()["event_id"]
+    options["created_on"] = time
+    options["approved"] = False
+    options["rejected"] = False
+    options["auth_viewers"] = []
+    options["template_state"] = "draft"
+    payload = json.dumps(
+        {
+            **TEMPLATE_CONNECTION_DICT,
+            "command": "insert",
+            "field": options,
+            "update_field": {"order_nos": 21},
+            "platform": "bangalore",
+        }
+    )
+    return post_to_data_service(payload)
+
+
+def save_to_document_collection(options):
+    options["eventId"] = get_event_id()["event_id"]
+    options["created_on"] = time
+    options["clone_list"] = []
+    payload = json.dumps(
+        {
+            **DOCUMENT_CONNECTION_DICT,
+            "command": "insert",
+            "field": options,
+            "update_field": {"order_nos": 21},
+            "platform": "bangalore",
+        }
+    )
+    return post_to_data_service(payload)
+
+
+def save_to_clone_collection(options):
+    options["eventId"] = get_event_id()["event_id"]
+    options["created_on"] = time
+    options["approved"] = False
+    options["rejected"] = False
+    options["clone_list"] = []
+    payload = json.dumps(
+        {
+            **CLONES_CONNECTION_DICT,
+            "command": "insert",
+            "field": options,
+            "update_field": {"order_nos": 21},
+            "platform": "bangalore",
+        }
+    )
+    return post_to_data_service(payload)
+
+
+def save_to_setting_collection(options):
+    """Saving workflow settings"""
+    options["eventId"] = get_event_id()["event_id"]
+    options["created_on"] = time
+    payload = json.dumps(
+        {
+            **WF_AI_SETTING_DICT,
+            "command": "insert",
+            "field": options,
+            "update_field": {"order_nos": 21},
+            "platform": "bangalore",
+        }
+    )
+
+    return post_to_data_service(payload)
+
+
+def save_to_folder_collection(options):
+    options["eventId"] = get_event_id()["event_id"]
+    options["created_on"] = time
+    options["folder_state"] = "draft"
+    payload = json.dumps(
+        {
+            **FOLDER_CONNECTION_DICT,
+            "command": "insert",
+            "field": options,
+            "update_field": {"order_nos": 21},
+            "platform": "bangalore",
+        }
+    )
+    return post_to_data_service(payload)
+
+
+
+# Old Functions
 
 def save_process_qrcodes(
     qrcodes, process_id, item_id, processing_choice, process_title, company_id

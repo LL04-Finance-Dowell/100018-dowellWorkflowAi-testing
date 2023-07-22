@@ -6,7 +6,12 @@ from threading import Thread
 import qrcode
 import requests
 
-from app.checks import display_right, location_right, time_limit_right
+from app.checks import (
+    check_that_process_documents_are_finalized,
+    display_right,
+    location_right,
+    time_limit_right,
+)
 from app.constants import (
     EDITOR_API,
     MASTERLINK_URL,
@@ -14,7 +19,11 @@ from app.constants import (
     QRCODE_URL,
     VERIFICATION_LINK,
 )
-from app.helpers import cloning_document, register_public_login, check_items_state
+from app.helpers import (
+    cloning_document,
+    get_query_param_value_from_url,
+    register_public_login,
+)
 from app.mongo_db_connection import (
     authorize,
     finalize_item,
@@ -54,7 +63,7 @@ class Process:
             step for workflow in workflows for step in workflow["workflows"]["steps"]
         ]
         self.process_title = process_title
-    
+
     def normal_process(self, action):
         res = json.loads(
             save_process(
@@ -262,6 +271,7 @@ class HandleProcess:
         process_data = self.process
         process_data["params"] = self.params
         m_code = None
+        public_api_key = None
         m_link = None
         link_string = "link"
         for step in steps:
@@ -301,18 +311,23 @@ class HandleProcess:
         )
         if public_links:
             document_id = self.process["parent_item_id"]
-            res = single_query_document_collection({ "_id": document_id })
+            res = single_query_document_collection({"_id": document_id})
             document_name = res["document_name"]
             m_link, m_code = HandleProcess.generate_public_qrcode(
                 public_links, self.process["company_id"], document_name
             )
-            links.append({ "master_link": m_link})
+            links.append({"master_link": m_link})
             qrcodes.append({"master_qrcode": m_code})
+            # Grab API key
+            public_api_key = get_query_param_value_from_url(m_link, "api_key")
         save_process_links(
-            links,
-            process_id,
-            clone_ids,
-            company_id,
+            {
+                "links": links,
+                "process_id": process_id,
+                "clone_ids": clone_ids,
+                "company_id ": company_id,
+                "public_api_key": public_api_key,
+            }
         )
         update_process(
             process_id,
@@ -397,7 +412,7 @@ class HandleProcess:
                 document = "documentreports"
                 field = "document_name"
                 team_member_id = "11689044433"
-                document_object = single_query_document_collection({ "_id": clone_id })
+                document_object = single_query_document_collection({"_id": clone_id})
                 item_flag = document_object["document_state"]
                 document_name = document_object["document_name"]
                 editor_link = HandleProcess.get_editor_link(
@@ -479,7 +494,6 @@ class Background:
         Background.register_user_access(
             self.process["process_steps"], self.role, self.username
         )
-        finalized = []
         try:
             no_of_steps = sum(isinstance(e, dict) for e in steps)
             if no_of_steps > 0:
@@ -487,16 +501,15 @@ class Background:
                     if step["stepDocumentCloneMap"]:
                         for document_map in step.get("stepDocumentCloneMap"):
                             for _, v in document_map.items():
-                                print(_, v)
                                 if (
                                     isinstance(v, str)
-                                    and single_query_document_collection({ "_id": v }).get("document_state")
+                                    and single_query_document_collection(
+                                        {"_id": v}
+                                    ).get("document_state")
                                     == "processing"
                                     or v is None
                                 ):
                                     continue
-                                else:
-                                    finalized.append(v)
                     else:
                         if step.get("stepTaskType") == "request_for_task":
                             for user in step.get("stepTeamMembers"):
@@ -558,10 +571,9 @@ class Background:
                                             {user["member"]: document}
                                         )
                         update_process(process_id, steps, processing_state)
-                # Check that all documents are finalized
-                # if all(check_items_state(finalized)):
+                # TODO: Test If this is working as desired.
+                # if check_that_process_documents_are_finalized(self.process):
                 #     update_process(process_id, steps, "finalized")
-
         except Exception as e:
             print("got error", e)
             finalize_item(self.item_id, "processing", self.item_type)

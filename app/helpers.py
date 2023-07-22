@@ -1,4 +1,5 @@
 import json
+from urllib.parse import parse_qs, urlparse
 
 import bson
 import requests
@@ -12,19 +13,27 @@ from app.serializers import (
 )
 
 from .mongo_db_connection import (
+    save_document,
+    save_process,
     single_query_document_collection,
     single_query_process_collection,
     single_query_template_collection,
-    save_document,
-    save_process,
 )
 
 
+def get_query_param_value_from_url(url, query_param):
+    # Parse the URL to get the query parameters
+    parsed_url = urlparse(url)
+    query_params = parse_qs(parsed_url.query)
+    value = query_params.get(query_param, [None])[0]
+    return value
+
+
 def paginate(dataset, page, limit):
+    """Paginate/Chunk Results"""
     start = (page - 1) * limit
     end = start + limit
     return dataset[start:end]
-
 
 
 def register_public_login(qrid, org_name):
@@ -93,7 +102,7 @@ def cloning_document(document_id, auth_viewers, parent_id, process_id):
 def cloning_process(process_id, created_by, creator_portfolio):
     """creating a process copy"""
     try:
-        process = single_query_process_collection({ "_id": process_id})
+        process = single_query_process_collection({"_id": process_id})
         save_res = json.loads(
             save_process(
                 process["process_title"],
@@ -129,7 +138,7 @@ def access_editor(item_id, item_type):
         action = "document"
         field = "document_name"
         team_member_id = "11689044433"
-        item_name = single_query_document_collection({ "_id": item_id})
+        item_name = single_query_document_collection({"_id": item_id})
         name = item_name["document_name"]
     if item_type == "template":
         collection = "TemplateReports"
@@ -276,12 +285,3 @@ def remove_favourite(identifier, type, username):
         except Exception as e:
             print(e)
             return
-
-
-def check_items_state(items) -> list:
-    """Checks if item state is finalized"""
-    return [
-        single_query_document_collection({ "_id": i })["document_state"] == "finalized"
-        for i in items
-        if isinstance(i, str)
-    ]

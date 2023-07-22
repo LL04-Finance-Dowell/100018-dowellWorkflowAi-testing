@@ -8,6 +8,26 @@ from app.mongo_db_connection import (
 )
 
 
+def check_items_state(items) -> list:
+    """Checks if item state is finalized"""
+    return [
+        single_query_document_collection({"_id": i})["document_state"] == "finalized"
+        for i in items
+        if isinstance(i, str)
+    ]
+
+
+def check_that_process_documents_are_finalized(process):
+    """Checks if all process documents are finalized"""
+    docs = []
+    for step in process["process_steps"]:
+        if not step["stepDocumentCloneMap"]:
+            return
+        else:
+            docs.extend([k for dict in step["stepDocumentCloneMap"] for k in dict.keys()])      
+    return all(check_items_state(docs))
+
+
 def register_user_access(process_steps, authorized_role, user):
     """Once someone has made changes to their docs"""
     for step in process_steps:
@@ -21,14 +41,14 @@ def register_user_access(process_steps, authorized_role, user):
 def is_finalized(item_id, item_type):
     """Check for a process item's state"""
     if item_type == "document":
-        document = single_query_document_collection({ "_id": item_id})
+        document = single_query_document_collection({"_id": item_id})
         doc_state = document["document_state"]
         if doc_state == "finalized":
             return True, doc_state
         if doc_state == "rejected":
             return True, doc_state
     if item_type == "template":
-        template = single_query_template_collection({ "_id": item_id })
+        template = single_query_template_collection({"_id": item_id})
         temp_state = template["template_state"]
         if temp_state == "finalized":
             return True, temp_state
@@ -102,7 +122,7 @@ def time_limit_right(time, select_time_limits, start_time, end_time, creation_ti
 
 def step_processing_order(order, process_id, role):
     """Check members step processing sequence"""
-    process = single_query_process_collection({ "_id": process_id})
+    process = single_query_process_collection({"_id": process_id})
     process_steps = process["process_steps"]
     for step in process_steps:
         public_members = step.get("stepPublicMembers")
