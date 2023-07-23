@@ -23,7 +23,7 @@ import {
   setAllowErrorChecksStatusUpdateForNewProcess,
   setNewProcessErrorMessage,
   setCurrentMessage,
-  
+
 } from '../../../../features/app/appSlice';
 import { useTranslation } from 'react-i18next';
 import { extractProcessObj } from './utils/utils';
@@ -79,7 +79,7 @@ const ProcessDocument = ({ savedProcess, Process_title, setProcess_title }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { t } = useTranslation();
-  const [ processName, setProcessName ] = useState("");
+  const [processName, setProcessName] = useState("");
 
   const handleProcessBtnClick = async () => {
 
@@ -115,11 +115,11 @@ const ProcessDocument = ({ savedProcess, Process_title, setProcess_title }) => {
 
       return toast.info('Please click the "Show process" button above to make sure there are no errors before processing.');
     }
-    console.log('pt-title',Process_title)
+    console.log('pt-title', Process_title)
 
 
-   
-    
+
+
 
     if (processOptionSelection === 'saveAndContinueLater') {
       const processObjToSave = extractProcessObj(
@@ -152,18 +152,19 @@ const ProcessDocument = ({ savedProcess, Process_title, setProcess_title }) => {
       userMembersSelectedForProcess,
     );
     console.log(processObjToPost)
-
+    
     if (processObjToPost.error) {
       dispatch(setNewProcessErrorMessage(processObjToPost.error));
       document.querySelector('#h2__Doc__Title')?.scrollIntoView({ block: 'center' })
       // dispatch(setPopupIsOpen(true));
       // dispatch( setCurrentMessage(processObjToPost.error))
-
+      
       return toast.info(processObjToPost.error);
     }
-
+    
     dispatch(setAllowErrorChecksStatusUpdateForNewProcess(true));
     dispatch(setNewProcessErrorMessage(null));
+    setProcess_title("")
 
     if (!errorsCheckedInNewProcess)
       // dispatch(setPopupIsOpen(true));
@@ -205,8 +206,7 @@ const ProcessDocument = ({ savedProcess, Process_title, setProcess_title }) => {
           : 'New process creation failed'
       );
     }
-    
-    setProcess_title("")
+
 
   };
 
