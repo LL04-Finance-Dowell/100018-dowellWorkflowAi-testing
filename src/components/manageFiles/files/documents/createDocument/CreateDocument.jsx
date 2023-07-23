@@ -46,6 +46,7 @@ const CreateDocument = ({ handleToggleOverlay }) => {
       data_type: userDetail?.portfolio_info?.length > 1 ? userDetail?.portfolio_info.find(portfolio => portfolio.product === productName)?.data_type : userDetail?.portfolio_info[0].data_type,
       page: foundTemplateObj?.page,
       content: foundTemplateObj?.content,
+      portfolio: userDetail?.portfolio_info?.length > 1 ? userDetail?.portfolio_info.find((portfolio) => portfolio.product === productName)?.portfolio_name : userDetail?.portfolio_info[0].portfolio_name,
     };
 
     dispatch(createDocument(createDocumentData));
