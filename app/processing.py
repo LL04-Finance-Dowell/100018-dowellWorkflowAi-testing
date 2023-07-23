@@ -504,9 +504,10 @@ class Background:
                 print( "# go to next step")
                 for idx, step in enumerate(steps[1:], start=1):
                     print(step)
-                    if step.get("stepDocumentCloneMap"):
+                    if step.get("stepDocumentCloneMap") == []:
                         print("# find all documents and check if any document is in state processing")
                         for document_map in step.get("stepDocumentCloneMap"):
+                            print("# the step has a clone map")
                             for _, v in document_map.items():
                                 if (
                                     isinstance(v, str)
@@ -516,6 +517,7 @@ class Background:
                                     == "processing"
                                     or v is None
                                 ):
+                                    print("# document in state processing")
                                     return
                     else:
                         if step.get("stepTaskType") == "request_for_task":
