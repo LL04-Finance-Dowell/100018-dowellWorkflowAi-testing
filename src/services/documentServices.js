@@ -52,4 +52,10 @@ export class DocumentServices {
       `/companies/${companyId}/documents/reports/?data_type=${dataType}&doc_state=processing`
     )
   }
+
+  getAllOriginalDocuments = async (companyId, dataType) => {
+    return await httpApiUrl.get(
+      `/companies/${companyId}/documents/types/?data_type=${dataType}&doc_type=original`
+    )
+  }
 }

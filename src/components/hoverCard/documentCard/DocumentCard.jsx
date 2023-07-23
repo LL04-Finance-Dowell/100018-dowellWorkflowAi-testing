@@ -301,7 +301,14 @@ const DocumentCard = ({
             <MdOutlineFiberNew />
           </div>
         )}
-        {cardItem.document_name ? cardItem.document_name : 'no item'}
+        {
+          cardItem.document_name ? 
+            cardItem.document_name : 
+            typeof cardItem.document_name === 'string' && cardItem.document_name.length < 1 ?
+            ''
+            :
+            'no item'
+        }
       </div>
     );
   };

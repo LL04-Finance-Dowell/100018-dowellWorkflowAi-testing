@@ -28,6 +28,8 @@ const initialState = {
   contentOfDocumentStatus: 'idle',
   allDocumentsStatus: 'idle',
   errorMessage: null,
+  originalDocuments: [],
+  originalDocumentsLoaded: false,
 };
 
 export const documentSlice = createSlice({
@@ -39,6 +41,12 @@ export const documentSlice = createSlice({
     },
     setAllDocuments: (state, action) => {
       state.allDocuments = action.payload;
+    },
+    setOriginalDocuments: (state, action) => {
+      state.originalDocuments = action.payload;
+    },
+    setOriginalDocumentsLoaded: (state, action) => {
+      state.originalDocumentsLoaded = action.payload;
     },
   },
   extraReducers: (builder) => {
@@ -155,6 +163,11 @@ export const documentSlice = createSlice({
 });
 
 // Action creators are generated for each case reducer function
-export const { setContentOfDocument, setAllDocuments } = documentSlice.actions;
+export const { 
+  setContentOfDocument, 
+  setAllDocuments,
+  setOriginalDocuments,
+  setOriginalDocumentsLoaded, 
+} = documentSlice.actions;
 
 export default documentSlice.reducer;
