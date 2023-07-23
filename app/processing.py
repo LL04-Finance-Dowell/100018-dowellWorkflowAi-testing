@@ -508,8 +508,8 @@ class Background:
                                     == "processing"
                                     or v is None
                                 ):
-                                    # If yes continue with the loop until you find one is state finalized.
-                                    continue
+                                    # If yes exit the loop that step is incomplete
+                                    break
                     # NO, we don;t have documents?
                     else:
                         if step.get("stepTaskType") == "request_for_task":
