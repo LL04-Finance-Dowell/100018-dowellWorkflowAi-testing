@@ -256,7 +256,7 @@ const SectionBox = ({
         .getNotifications(currentUserCompanyId, currentUserportfolioDataType)
         .then((res) => {
           const documentsToSign = res.data.documents
-            .reverse()
+            ?.reverse()
             .filter(
               (document) =>
                 document.auth_viewers &&

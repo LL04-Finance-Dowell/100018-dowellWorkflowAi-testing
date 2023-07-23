@@ -135,6 +135,7 @@ const WorkflowApp = () => {
       documentService.getNotifications(userCompanyId, userPortfolioDataType).then(res => {
         // console.log(res.data);
         const documentsToSign = res.data.documents
+        ?.reverse()
         .filter(
           (document) =>
             document.auth_viewers &&
