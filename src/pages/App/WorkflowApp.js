@@ -28,6 +28,7 @@ import React from 'react';
 import DocumentCard from '../../components/hoverCard/documentCard/DocumentCard';
 import { useTranslation } from 'react-i18next';
 import { productName } from '../../utils/helpers';
+import { DocumentServices } from '../../services/documentServices';
 
 const WorkflowApp = () => {
   const { userDetail } = useSelector((state) => state.auth);
@@ -107,7 +108,7 @@ const WorkflowApp = () => {
 
     if (!userDetail || userDetail.msg || userDetail.message) return
     
-    const [userCompanyId, userPortfolioDataType] = [
+    const [userCompanyId, userPortfolioDataType, userPortfolioName] = [
       userDetail?.portfolio_info?.length > 1
         ? userDetail?.portfolio_info.find(
             (portfolio) => portfolio.product === productName
@@ -118,46 +119,68 @@ const WorkflowApp = () => {
             (portfolio) => portfolio.product === productName
           )?.data_type
         : userDetail?.portfolio_info[0]?.data_type,
+      userDetail?.portfolio_info?.length > 1
+        ? userDetail?.portfolio_info.find(
+            (portfolio) => portfolio.product === productName
+          )?.data_type
+        : userDetail?.portfolio_info[0]?.portfolio_name,        
     ];
     if (!notificationsLoaded) {
       dispatch(setNotificationsLoading(true));
 
       dispatch(setNotificationFinalStatus(null));
 
-      if (!allDocuments || allDocuments?.length < 1) return;
+      const documentService = new DocumentServices();
 
-      const documentsToSign = allDocuments
+      documentService.getNotifications(userCompanyId, userPortfolioDataType).then(res => {
+        // console.log(res.data);
+        const documentsToSign = res.data.documents
         .filter(
           (document) =>
-            document.data_type === userPortfolioDataType &&
-            (document.state === 'processing' ||
-              document.document_state === 'processing') &&
             document.auth_viewers &&
             Array.isArray(document.auth_viewers) &&
-            document.auth_viewers.includes(userDetail?.userinfo?.username)
+            (
+              // new format
+              (
+                document.auth_viewers.every(item => typeof item === 'object') &&
+                document.auth_viewers.map(viewer => viewer.member).includes(userDetail?.userinfo?.username) &&
+                document.auth_viewers.map(viewer => viewer.portfolio).includes(userPortfolioName)
+              )
+              ||
+              // old format
+              (
+                document.auth_viewers.includes(userDetail?.userinfo?.username)
+              )
+            )
+            
         )
         .filter((document) => document.process_id);
 
-      dispatch(setNotificationFinalStatus(100));
+        dispatch(setNotificationFinalStatus(100));
 
-      const currentNotifications = notificationsForUser.slice();
-      let updatedNotifications = currentNotifications.map((notification) => {
-        const data = documentsToSign.map((dataObj) => {
-          let copyOfDataObj = { ...dataObj };
-          copyOfDataObj.type = 'sign-document';
-          return copyOfDataObj;
+        const currentNotifications = notificationsForUser.slice();
+        let updatedNotifications = currentNotifications.map((notification) => {
+          const data = documentsToSign.map((dataObj) => {
+            let copyOfDataObj = { ...dataObj };
+            copyOfDataObj.type = 'sign-document';
+            return copyOfDataObj;
+          });
+          const copyOfNotification = { ...notification };
+          if (copyOfNotification.title === 'documents') {
+            copyOfNotification.items = data;
+            return copyOfNotification;
+          }
+          return notification;
         });
-        const copyOfNotification = { ...notification };
-        if (copyOfNotification.title === 'documents') {
-          copyOfNotification.items = data;
-          return copyOfNotification;
-        }
-        return notification;
-      });
 
-      dispatch(setNotificationsForUser(updatedNotifications));
-      dispatch(setNotificationsLoading(false));
-      dispatch(setNotificationsLoaded(true));
+        dispatch(setNotificationsForUser(updatedNotifications));
+        dispatch(setNotificationsLoading(false));
+        dispatch(setNotificationsLoaded(true));
+        
+      }).catch(err => {
+        console.log('Failed to load notifications: ', err.response ? err.response.data : err.message);
+        dispatch(setNotificationsLoading(false));
+      })
     }
 
     if (!favoriteItemsLoaded) {
@@ -177,7 +200,7 @@ const WorkflowApp = () => {
         });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [userDetail, allDocuments, favoriteItemsLoaded, notificationsLoaded]);
+  }, [userDetail, favoriteItemsLoaded, notificationsLoaded]);
 
   useEffect(() => {
     if (!location.state || !location.state.elementIdToScrollTo) return;

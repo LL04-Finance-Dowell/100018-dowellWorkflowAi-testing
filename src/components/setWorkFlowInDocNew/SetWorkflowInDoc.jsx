@@ -31,6 +31,7 @@ import { getSingleProcessV2 } from '../../services/processServices';
 import Spinner from '../spinner/Spinner';
 import { contentDocument } from '../../features/document/asyncThunks';
 
+import ProcessName from './steps/setProcessName/ProcessName';
 import { useTranslation } from 'react-i18next';
 
 const SetWorkflowInDoc = () => {
@@ -46,6 +47,7 @@ const SetWorkflowInDoc = () => {
   const [draftProcessDOc, setDraftProcessDoc] = useState(null);
   const [isDraftProcess, setIsDraftProcess] = useState(false);
   const [draftProcessLoaded, setDraftProcessLoaded] = useState(false);
+  const [Process_title, setProcess_title] = useState('')
 
   useEffect(() => {
     const processId = searchParams.get('id');
@@ -166,7 +168,7 @@ const SetWorkflowInDoc = () => {
 
     dispatch(setSelectedWorkflowsToDoc(foundWorkflow));
     dispatch(setWfToDocument());
-   
+
     dispatch(setDocCurrentWorkflow(foundWorkflow));
 
     process?.process_steps.forEach((step, currentStepIndex) => {
@@ -188,7 +190,7 @@ const SetWorkflowInDoc = () => {
 
         if (key === 'stepTeamMembers') {
           step[key].forEach((user) => {
-          
+
             dispatch(
               setTeamMembersSelectedForProcess({
                 member: user.member,
@@ -278,7 +280,9 @@ const SetWorkflowInDoc = () => {
               <div className={styles.diveder}></div>
               <CheckErrors />
               <div className={styles.diveder}></div>
-              <ProcessDocument savedProcess={draftProcess} />
+              <ProcessName Process_title ={Process_title} setProcess_title = {setProcess_title} />
+              <div className={styles.diveder}></div>
+              <ProcessDocument savedProcess={draftProcess}  Process_title ={Process_title} setProcess_title = {setProcess_title}/>
             </>
           ) : (
             <>
@@ -303,7 +307,9 @@ const SetWorkflowInDoc = () => {
             <div className={styles.diveder}></div>
             <CheckErrors />
             <div className={styles.diveder}></div>
-            <ProcessDocument />
+            <ProcessName Process_title ={Process_title} setProcess_title = {setProcess_title} />
+            <div className={styles.diveder}></div>
+            <ProcessDocument  Process_title ={Process_title} setProcess_title = {setProcess_title}/>
           </>
         )}
       </div>

@@ -13,7 +13,7 @@ const requiredProcessStepsKeys = {
 export const extractProcessObj = (
   actionVal,
   currentUserDetails,
-  ProcessName,
+  Process_title,
   documentToProcess,
   selectedDocumentWorkflow,
   documentProcessSteps,
@@ -49,7 +49,7 @@ export const extractProcessObj = (
     data_type: currentUserDetails?.portfolio_info?.length > 1 ? currentUserDetails?.portfolio_info.find(portfolio => portfolio.product === productName)?.data_type : currentUserDetails?.portfolio_info[0]?.data_type,
     parent_id: documentToProcess?._id,
     action: actionVal,
-    process_title: ProcessName,
+    process_title: Process_title,
     workflows: [
       {
         workflows: {

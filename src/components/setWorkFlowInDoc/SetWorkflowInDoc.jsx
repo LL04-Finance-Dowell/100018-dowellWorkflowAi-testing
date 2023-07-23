@@ -4,7 +4,7 @@ import SelectWorkflow from './steps/selectWorkflow/SelectWorkflow';
 import styles from './setWorkflowInDoc.module.css';
 import CheckErrors from './steps/checkErrors/CheckErrors';
 import ProcessDocument from './steps/processDocument/ProcessDocument';
-
+import ProcessName from '../setWorkFlowInDocNew/steps/setProcessName/ProcessName';
 import ContentMapOfDoc from './contentMapOfDoc/ContentMapOfDoc';
 
 import WorkflowLayout from '../../layouts/WorkflowLayout/WorkflowLayout';
@@ -67,6 +67,7 @@ const SetWorkflowInDoc = () => {
         <ContentMapOfDoc />
         <ConnectWorkFlowToDoc />
         <CheckErrors />
+        <ProcessName />
         <ProcessDocument />
         {/* <CustomerSupport /> */}
       </div>
