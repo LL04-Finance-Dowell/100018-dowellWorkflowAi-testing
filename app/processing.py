@@ -521,7 +521,7 @@ class Background:
                             for doc in documents:
                                 for user in current_step.get("stepTeamMembers"):
                                     clone_id = cloning_document(
-                                        doc, user, parent_id, process_id
+                                        doc, [user], parent_id, process_id
                                     )
                                     step.get("stepDocumentCloneMap").append(
                                         {user["member"]: clone_id}
@@ -529,7 +529,7 @@ class Background:
                                 for user in current_step.get("stepPublicMembers"):
                                     clone_id = cloning_document(
                                         doc,
-                                        user,
+                                        [user],
                                         parent_id,
                                         process_id,
                                     )
@@ -538,7 +538,7 @@ class Background:
                                     )
                                 for user in current_step.get("stepUserMembers"):
                                     clone_id = cloning_document(
-                                        doc, user, parent_id, process_id
+                                        doc, [user], parent_id, process_id
                                     )
                                     step.get("stepDocumentCloneMap").append(
                                         {user["member"]: clone_id}
@@ -562,17 +562,17 @@ class Background:
                             for document in step1_documents:
                                 for user in current_step.get("stepTeamMembers"):
                                     print(f"assigned to {user} \n")
-                                    authorize(document, user, process_id, process_type)
+                                    authorize(document, [user], process_id, process_type)
                                     current_step.get("stepDocumentCloneMap").append(
                                         {user["member"]: document}
                                     )
                                 for user in current_step.get("stepPublicMembers"):
-                                    authorize(document, user, process_id, process_type)
+                                    authorize(document, [user], process_id, process_type)
                                     current_step.get("stepDocumentCloneMap").append(
                                         {user["member"]: document}
                                     )
                                 for user in current_step.get("stepUserMembers"):
-                                    authorize(document, user, process_id, process_type)
+                                    authorize(document, [user], process_id, process_type)
                                     current_step.get("stepDocumentCloneMap").append(
                                         {user["member"]: document}
                                     )
