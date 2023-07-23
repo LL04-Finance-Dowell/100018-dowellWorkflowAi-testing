@@ -81,11 +81,13 @@ def cloning_document(document_id, auth_viewers, parent_id, process_id):
     print("auth_viewers", auth_viewers)
     try:
         viewers = []
-        viewers = (
-            [item for item in set(auth_viewers)]
-            if auth_viewers is not None and isinstance(auth_viewers, list)
-            else [auth_viewers]
-        )
+        for m in auth_viewers:
+            viewers.append(m["member"])
+        # viewers = (
+        #     [item for item in set(auth_viewers)]
+        #     if auth_viewers is not None and isinstance(auth_viewers, list)
+        #     else [auth_viewers]
+        # )
         document = single_query_document_collection({"_id": document_id})
         for viewer in viewers:
             doc_name = document["document_name"]
@@ -103,7 +105,7 @@ def cloning_document(document_id, auth_viewers, parent_id, process_id):
                     "company_id": document["company_id"],
                     "data_type": document["data_type"],
                     "document_state": "processing",
-                    "auth_viewers": viewers,
+                    "auth_viewers": auth_viewers,
                     "document_type": "clone",
                     "parent_id": parent_id,
                     "process_id": process_id,

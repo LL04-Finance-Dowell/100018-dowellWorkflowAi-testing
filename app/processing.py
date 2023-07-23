@@ -220,23 +220,22 @@ class HandleProcess:
 
     def prepare_document_for_step_one_users(step, parent_item_id, process_id):
         clones = []
-        users = [
-            m["member"]
-            for m in step.get("stepTeamMembers", []) + step.get("stepUserMembers", [])
-        ]
-        public = [m["member"] for m in step.get("stepPublicMembers", [])]
+        users = []
+        for m in step.get("stepTeamMembers", []) + step.get("stepUserMembers", []):
+            users.append(m)
+        public = [m for m in step.get("stepPublicMembers", [])]
         if users:
             clone_id = cloning_document(
                 parent_item_id, users, parent_item_id, process_id
             )
             clones = [clone_id]
             for u in users:
-                step.get("stepDocumentCloneMap").append({u: clone_id})
+                step.get("stepDocumentCloneMap").append({u["member"]: clone_id})
         if public:
             public_clone_ids = []
             for u in public:
                 public_clone_ids.append(
-                    {u: cloning_document(parent_item_id, u, parent_item_id, process_id)}
+                    {u: cloning_document(parent_item_id, [u], parent_item_id, process_id)}
                 )
             step.get("stepDocumentCloneMap").extend(public_clone_ids)
             clones.extend(public_clone_ids)
