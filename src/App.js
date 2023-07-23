@@ -76,7 +76,7 @@ function App() {
         )
         .then((response) => {})
         .catch((error) => {
-          console.log(error);
+          // console.log(error);
           // Empty catch block
         });
   }
