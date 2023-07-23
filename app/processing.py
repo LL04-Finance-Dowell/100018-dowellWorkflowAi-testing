@@ -516,7 +516,7 @@ class Background:
                                     == "processing"
                                     or v is None
                                 ):
-                                    break
+                                    return
                     else:
                         if step.get("stepTaskType") == "request_for_task":
                             documents = []
