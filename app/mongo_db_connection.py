@@ -316,7 +316,6 @@ def save_to_template_collection(options):
     options["created_on"] = time
     options["approved"] = False
     options["rejected"] = False
-    options["auth_viewers"] = []
     options["template_state"] = "draft"
     payload = json.dumps(
         {

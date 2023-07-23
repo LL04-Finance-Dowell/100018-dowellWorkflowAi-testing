@@ -329,7 +329,7 @@ def trigger_process(request):
 def processes(request, company_id):
     """fetches workflow process `I` created."""
     data_type = request.query_params.get("data_type")
-    if not validate_id(company_id) and data_type:
+    if not validate_id(company_id) or data_type is None:
         return Response("Invalid Request!", status.HTTP_400_BAD_REQUEST)
     cache_key = f"processes_{company_id}"
     process_list = cache.get(cache_key)
@@ -345,7 +345,7 @@ def processes(request, company_id):
 def get_completed_processes(request, company_id):
     """fetches workflow process `I` created."""
     data_type = request.query_params.get("data_type")
-    if not validate_id(company_id) and data_type:
+    if not validate_id(company_id) or data_type is None:
         return Response("Invalid Request!", status.HTTP_400_BAD_REQUEST)
     completed = bulk_query_process_collection(
         {
@@ -474,7 +474,7 @@ def workflow_detail(request, workflow_id):
 def get_workflows(request, company_id):
     """List all workflows"""
     data_type = request.query_params.get("data_type")
-    if not validate_id(company_id) and data_type:
+    if not validate_id(company_id) or data_type is None:
         return Response("Invalid Request!", status.HTTP_400_BAD_REQUEST)
     workflow_list = bulk_query_workflow_collection(
         {"company_id": company_id, "data_type": data_type}
@@ -489,11 +489,11 @@ def get_workflows(request, company_id):
 def get_documents_in_organization(request, company_id):
     """List of Created Documents."""
     data_type = request.query_params.get("data_type")
-    if not validate_id(company_id) and data_type:
+    if not validate_id(company_id) or data_type is None:
         return Response("Invalid Request!", status.HTTP_400_BAD_REQUEST)
     document_list = bulk_query_document_collection(
-            {"company_id": company_id, "data_type": data_type}
-        )
+        {"company_id": company_id, "data_type": data_type}
+    )
     return Response(
         {"documents": document_list},
         status.HTTP_200_OK,
@@ -505,11 +505,11 @@ def get_documents_types(request, company_id):
     """List of Created Documents."""
     data_type = request.query_params.get("data_type")
     doc_type = request.query_params.get("doc_type")
-    if not validate_id(company_id) and data_type and doc_type:
+    if not validate_id(company_id) or data_type is None or doc_type is None:
         return Response("Invalid Request!", status.HTTP_400_BAD_REQUEST)
     document_list = bulk_query_document_collection(
-            {"company_id": company_id, "data_type": data_type, "document_type": doc_type}
-        )
+        {"company_id": company_id, "data_type": data_type, "document_type": doc_type}
+    )
     return Response(
         {"documents": document_list},
         status.HTTP_200_OK,
@@ -524,7 +524,10 @@ def create_document(request):
             {"message": "Failed to process document creation."},
             status.HTTP_200_OK,
         )
-    viewers = [request.data["created_by"]]
+    portfolio = ""
+    if request.data["portfolio"]:
+        portfolio = request.data["portfolio"]
+    viewers = [{ "member": request.data["created_by"], "portfolio": portfolio}]
     folder = []
     res = json.loads(
         save_to_document_collection(
@@ -826,7 +829,7 @@ def trash_favourites(request, item_id, item_type, username):
 def get_templates(request, company_id):
     """List of Created Templates."""
     data_type = request.query_params.get("data_type")
-    if not validate_id(company_id) and data_type:
+    if not validate_id(company_id) or data_type is None:
         return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
     templates = bulk_query_template_collection(
         {"company_id": company_id, "data_type": data_type}
@@ -842,7 +845,7 @@ def get_reports_templates(request, company_id):
     """List of templates based on their current state."""
     data_type = request.query_params.get("data_type")
     template_state = request.query_params.get("template_state")
-    if not validate_id(company_id) and data_type and template_state:
+    if not validate_id(company_id) or data_type is None or template_state is None:
         return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
     templates = bulk_query_template_collection(
         {
@@ -865,6 +868,10 @@ def create_template(request):
     template_name = "Untitled Template"
     if not validate_id(request.data["company_id"]):
         return Response("Invalid company details", status.HTTP_400_BAD_REQUEST)
+    portfolio = ""
+    if request.data["portfolio"]:
+        portfolio = request.data["portfolio"]
+    viewers = [{ "member": request.data["created_by"], "portfolio": portfolio}]
     res = json.loads(
         save_to_template_collection(
             {
@@ -876,6 +883,7 @@ def create_template(request):
                 "company_id": request.data["company_id"],
                 "data_type": request.data["data_type"],
                 "template_type": "original",
+                "auth_viewers": viewers
             }
         )
     )
@@ -1037,7 +1045,7 @@ def get_reports_documents(request, company_id):
     """List of documents based on their states"""
     data_type = request.query_params.get("data_type")
     document_state = request.query_params.get("doc_state")
-    if not validate_id(company_id) and data_type and document_state:
+    if not validate_id(company_id) or data_type is None or document_state is None:
         return Response("Invalid Request!", status.HTTP_400_BAD_REQUEST)
     document_list = bulk_query_document_collection(
         {
@@ -1057,7 +1065,7 @@ def get_reports_processes(request, company_id):
     """Process Reports by processing state"""
     data_type = request.query_params.get("data_type")
     process_state = request.query_params.get("process_state")
-    if not validate_id(company_id) and data_type and process_state:
+    if not validate_id(company_id) or data_type is None or process_state is None:
         return Response("Invalid Request!", status.HTTP_400_BAD_REQUEST)
     process_list = bulk_query_process_collection(
         {
@@ -1073,7 +1081,7 @@ def get_reports_processes(request, company_id):
 def get_completed_documents_by_process(request, company_id, process_id):
     """List of Completed Documents."""
     data_type = request.query_params.get("data_type")
-    if not validate_id(company_id) and data_type and not validate_id(process_id):
+    if not validate_id(company_id) or data_type is None or not validate_id(process_id):
         return Response("Invalid Request!", status.HTTP_400_BAD_REQUEST)
     document_list = bulk_query_document_collection(
         {"company_id": company_id, "data_type": data_type, "process_id": process_id}
@@ -1175,84 +1183,80 @@ def read_reminder(request, process_id, username):
     # cron = CronTab('root')
     if not validate_id(process_id):
         return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
-    cache_key = f"processes_{process_id}"
-    process_detail = cache.get(cache_key)
-    if process_detail is None:
-        try:
-            process_detail = single_query_process_collection({"_id": process_id})
-            cache.set(cache_key, process_detail, timeout=60)
-            process_steps = process_detail["process_steps"]
-            for step in process_steps:
-                for mem in step["stepTeamMembers"]:
-                    if mem["member"] == username:
-                        if not checks.register_user_access(
-                            process_steps=process_steps,
-                            authorized_role=step["stepRole"],
-                            user=username,
-                        ):
-                            data = {
-                                "username": username,
-                                "portfolio": mem["portfolio"],
-                                "product_name": "Workflow AI",
-                                "company_id": process_detail["company_id"],
-                                "org_name": "WorkflowAi",
-                                "org_id": process_detail["company_id"],
-                                "title": "Document to Sign",
-                                "message": "You have a document to sign.",
-                                "link": process_detail["_id"],
-                                "duration": "5",  # TODO: pass reminder time here
-                                "button_status": "",
-                            }
+    try:
+        process_detail = single_query_process_collection({"_id": process_id})
+        process_steps = process_detail["process_steps"]
+        for step in process_steps:
+            for mem in step["stepTeamMembers"]:
+                if mem["member"] == username:
+                    if not checks.register_user_access(
+                        process_steps=process_steps,
+                        authorized_role=step["stepRole"],
+                        user=username,
+                    ):
+                        data = {
+                            "username": username,
+                            "portfolio": mem["portfolio"],
+                            "product_name": "Workflow AI",
+                            "company_id": process_detail["company_id"],
+                            "org_name": "WorkflowAi",
+                            "org_id": process_detail["company_id"],
+                            "title": "Document to Sign",
+                            "message": "You have a document to sign.",
+                            "link": process_detail["_id"],
+                            "duration": "5",  # TODO: pass reminder time here
+                            "button_status": "",
+                        }
 
-                            current_directory = os.getcwd()
-                            script_path = os.path.join(
-                                current_directory, "/utils/notification_cron.py"
+                        current_directory = os.getcwd()
+                        script_path = os.path.join(
+                            current_directory, "/utils/notification_cron.py"
+                        )
+                        command = f'python3 {script_path} "{data}"'
+                        cron = CronTab("root")
+                        job = cron.new(command=command)
+                        if step["stepReminder"] == "every_hour":
+                            # # Schedule cron job to run notification_cron.py every hour
+                            # # command = f"0 * * * * python3 {current_directory}/utils/notification_cron.py '{data}'"
+                            # # os.system(f"crontab -l | {{ cat; echo '{command}'; }} | crontab -")
+                            # hourly_job = cron.new(command=f"python3 {current_directory}/utils/notification_cron.py '{data}'")
+                            # hourly_job.minute.every(1)
+                            # cron.write()
+                            # print(hourly_job.command)
+                            # response_data = {
+                            #     "command": hourly_job.command,
+                            #     # "next_run": hourly_job.next_run(),
+                            # }
+                            # return Response(response_data)
+                            job.setall("* * * * *")
+                        elif step["stepReminder"] == "every_day":
+                            # Schedule cron job to run notification_cron.py every day
+                            # command = f"0 0 * * * python3 {current_directory}/utils/notification_cron.py '{data}'"
+                            # os.system(f"crontab -l | {{ cat; echo '{command}'; }} | crontab -")
+                            # daily_job = cron.new(command=f"python3 {current_directory}/utils/notification_cron.py '{data}'")
+                            # daily_job.day.every(1)
+                            # cron.write()
+                            # response_data = {
+                            #     "command": hourly_job.command,
+                            #     # "next_run": hourly_job.next_run(),
+                            # }
+                            # return Response(response_data)
+                            job.setall("0 0 * * *")
+                        else:
+                            return Response(
+                                f"Invalid step reminder value: {step['stepReminder']}",
+                                status.HTTP_400_BAD_REQUEST,
                             )
-                            command = f'python3 {script_path} "{data}"'
-                            cron = CronTab("root")
-                            job = cron.new(command=command)
-                            if step["stepReminder"] == "every_hour":
-                                # # Schedule cron job to run notification_cron.py every hour
-                                # # command = f"0 * * * * python3 {current_directory}/utils/notification_cron.py '{data}'"
-                                # # os.system(f"crontab -l | {{ cat; echo '{command}'; }} | crontab -")
-                                # hourly_job = cron.new(command=f"python3 {current_directory}/utils/notification_cron.py '{data}'")
-                                # hourly_job.minute.every(1)
-                                # cron.write()
-                                # print(hourly_job.command)
-                                # response_data = {
-                                #     "command": hourly_job.command,
-                                #     # "next_run": hourly_job.next_run(),
-                                # }
-                                # return Response(response_data)
-                                job.setall("* * * * *")
-                            elif step["stepReminder"] == "every_day":
-                                # Schedule cron job to run notification_cron.py every day
-                                # command = f"0 0 * * * python3 {current_directory}/utils/notification_cron.py '{data}'"
-                                # os.system(f"crontab -l | {{ cat; echo '{command}'; }} | crontab -")
-                                # daily_job = cron.new(command=f"python3 {current_directory}/utils/notification_cron.py '{data}'")
-                                # daily_job.day.every(1)
-                                # cron.write()
-                                # response_data = {
-                                #     "command": hourly_job.command,
-                                #     # "next_run": hourly_job.next_run(),
-                                # }
-                                # return Response(response_data)
-                                job.setall("0 0 * * *")
-                            else:
-                                return Response(
-                                    f"Invalid step reminder value: {step['stepReminder']}",
-                                    status.HTTP_400_BAD_REQUEST,
-                                )
 
-                            job.enable()
-                            cron.write()
-                            return Response("Cron job scheduled", status.HTTP_200_OK)
-                            # return Response(f"User hasnt accessed process: {step['stepReminder']}")
-        except Exception as err:
-            return Response(
-                f"An error occured: {err}", status.HTTP_500_INTERNAL_SERVER_ERROR
-            )
-    return Response(process_detail, status.HTTP_200_OK)
+                        job.enable()
+                        cron.write()
+                        return Response("Cron job scheduled", status.HTTP_200_OK)
+                        # return Response(f"User hasnt accessed process: {step['stepReminder']}")
+        return Response(process_detail, status.HTTP_200_OK)
+    except Exception as err:
+        return Response(
+            f"An error occured: {err}", status.HTTP_500_INTERNAL_SERVER_ERROR
+        )
 
 
 @api_view(["POST"])
@@ -1273,7 +1277,6 @@ def send_notif(request):
     try:
         notification_cron.send_notification(data)
         return Response("Notification sent", status.HTTP_201_CREATED)
-
     except Exception as err:
         return Response(
             f"Something went wrong: {err}", status.HTTP_500_INTERNAL_SERVER_ERROR
@@ -1328,9 +1331,7 @@ def folder_update(request, folder_id):
         if items:
             process_folders_to_item(document_ids, folder_id, add_document_to_folder)
             process_folders_to_item(template_ids, folder_id, add_template_to_folder)
-
         updt_folder = json.loads(update_folder(folder_id, old_folder))
-
         if updt_folder["isSuccess"]:
             return Response("Folder Updated", status.HTTP_201_CREATED)
     return Response(status.HTTP_500_INTERNAL_SERVER_ERROR)
@@ -1340,7 +1341,7 @@ def folder_update(request, folder_id):
 def all_folders(request, company_id):
     """fetches Folders created."""
     data_type = request.query_params.get("data_type")
-    if not validate_id(company_id) and data_type:
+    if not validate_id(company_id) or data_type is None:
         return Response("Invalid Request!", status.HTTP_400_BAD_REQUEST)
     cache_key = f"folders_{company_id}"
     folders_list = cache.get(cache_key)
