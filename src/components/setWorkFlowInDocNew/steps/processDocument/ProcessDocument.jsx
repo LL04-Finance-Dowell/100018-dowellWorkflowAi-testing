@@ -91,7 +91,7 @@ const ProcessDocument = ({ savedProcess }) => {
 
     if (!userDetail) return;
     if (!currentDocToWfs) {
-      document.querySelector('#select-doc').scrollIntoView({ block: 'center' })
+      document.querySelector('#select-doc')?.scrollIntoView({ block: 'center' })
       // dispatch(setPopupIsOpen(true));
       // dispatch( setCurrentMessage('You have not selected a document'))
 
@@ -100,7 +100,7 @@ const ProcessDocument = ({ savedProcess }) => {
 
     };
     if (!docCurrentWorkflow) {
-      document.querySelector('#step-title').scrollIntoView({ block: 'center' });
+      document.querySelector('#step-title')?.scrollIntoView({ block: 'center' });
       // dispatch(setPopupIsOpen(true));
       // dispatch( setCurrentMessage('You have not selected a workflow'))
 
@@ -113,7 +113,7 @@ const ProcessDocument = ({ savedProcess }) => {
       return toast.info('You have not configured steps for any workflow')
     }
     if (!errorsCheckedInNewProcess) {
-      document.querySelector('#h2__Doc__Title').scrollIntoView({ block: 'center' })
+      document.querySelector('#h2__Doc__Title')?.scrollIntoView({ block: 'center' })
       // dispatch(setPopupIsOpen(true));
       // dispatch( setCurrentMessage('Please click the "Show process" button above to make sure there are no errors before processing'))
 
@@ -121,7 +121,6 @@ const ProcessDocument = ({ savedProcess }) => {
     }
 
     dispatch(setShowProcessNameModal(false))
-    dispatch(setProcessName(""))
 
     if (processOptionSelection === 'saveAndContinueLater') {
       const processObjToSave = extractProcessObj(
@@ -157,7 +156,7 @@ const ProcessDocument = ({ savedProcess }) => {
 
     if (processObjToPost.error) {
       dispatch(setNewProcessErrorMessage(processObjToPost.error));
-      document.querySelector('#h2__Doc__Title').scrollIntoView({ block: 'center' })
+      document.querySelector('#h2__Doc__Title')?.scrollIntoView({ block: 'center' })
       // dispatch(setPopupIsOpen(true));
       // dispatch( setCurrentMessage(processObjToPost.error))
 
