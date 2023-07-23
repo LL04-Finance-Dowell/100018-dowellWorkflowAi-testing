@@ -26,7 +26,7 @@ def register_finalized(link_id):
     print("here2 ")
     response = requests.put(
         f"{MASTERLINK_URL}?link_id={link_id}",
-        data={"is_finalized": True},
+        data=json.dumps({"is_finalized": True}),
         headers={"Content-Type": "application/json"},
     )
     if response.status_code == 200:
