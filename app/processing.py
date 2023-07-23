@@ -236,7 +236,7 @@ class HandleProcess:
             for u in public:
                 public_clone_ids.append(
                     {
-                        u: cloning_document(
+                        u["member"]: cloning_document(
                             parent_item_id, [u], parent_item_id, process_id
                         )
                     }
