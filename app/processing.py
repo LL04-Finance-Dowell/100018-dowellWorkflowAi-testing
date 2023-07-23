@@ -7,6 +7,7 @@ import qrcode
 import requests
 
 from app.checks import (
+    check_items_state,
     check_that_process_documents_are_finalized,
     display_right,
     location_right,
@@ -490,175 +491,254 @@ class Background:
         Background.register_user_access(
             self.process["process_steps"], self.role, self.username
         )
-        try:
-            no_of_steps = sum(isinstance(e, dict) for e in steps)
-            if no_of_steps > 0:
-                for idx, step in enumerate(steps):
-                    # Do we have documents in the step?
-                    # YES
-                    if step["stepDocumentCloneMap"]:
-                        # Find all documents and check if any document is in state processing
-                        for document_map in step.get("stepDocumentCloneMap"):
-                            for _, v in document_map.items():
-                                if (
-                                    isinstance(v, str)
-                                    and single_query_document_collection(
-                                        {"_id": v}
-                                    ).get("document_state")
-                                    == "processing"
-                                    or v is None
-                                ):
-                                    # If yes exit the loop that step is incomplete
-                                    break
-                    # NO, we don;t have documents?
-                    else:
-                        if step.get("stepTaskType") == "request_for_task":
-                            print("requesting task \n")
-                            documents = []
-                            # get documents from previous step
-                            prev_docs = steps[idx - 1].get("stepDocumentCloneMap")
-                            for item in prev_docs:
-                                key = next(iter(item))
-                                my_key = item[key]
-                                if my_key != "accessed":
-                                    documents.append(my_key)
-                            print("previous documents", documents)
-                            # current_step = steps[idx - 1]
-                            users = [
-                                user
-                                for user in step.get("stepTeamMembers", [])
-                                + step.get("stepPublicMembers", [])
-                                + step.get("stepUserMembers", [])
-                            ]
-                            # now for the previous documents create copies for `this` steps users.
-                            for usr in users:
-                                for doc in documents:
-                                    clone_id = cloning_document(
-                                        doc, [usr], parent_id, process_id
-                                    )
-                                    step.get("stepDocumentCloneMap").append(
-                                        {usr["member"]: clone_id}
-                                    )
-                        if step.get("stepTaskType") == "assign_task":
-                            print("assign_task \n")
-                            step_documents = []
-                            prev_docs = steps[idx - 1].get("stepDocumentCloneMap")
-                            for item in prev_docs:
-                                key = next(iter(item))
-                                my_key = item[key]
-                                if my_key != "accessed":
-                                    step_documents.append(my_key)
-                            print("assign_docs", step_documents)
-                            assign_users = [
-                                user
-                                for user in step.get("stepTeamMembers", [])
-                                + step.get("stepPublicMembers", [])
-                                + step.get("stepUserMembers", [])
-                            ]
-                            # Authorize users of the current step with documents from the prev step.
-                            for usr in assign_users:
-                                for doc in step_documents:
-                                    print(f"assigned to {usr} \n")
-                                    authorize(doc, [usr], process_id, process_type)
-                                    step.get("stepDocumentCloneMap").append(
-                                        {usr["member"]: doc}
-                                    )
-                        update_process(process_id, steps, processing_state)
-                # for index, step in enumerate(steps):
-                #     if step["stepDocumentCloneMap"]:
-                #         for document_map in step.get("stepDocumentCloneMap"):
-                #             for _, v in document_map.items():
-                #                 if (
-                #                     isinstance(v, str)
-                #                     and single_query_document_collection(
-                #                         {"_id": v}
-                #                     ).get("document_state")
-                #                     == "processing"
-                #                     or v is None
-                #                 ):
-                #                     continue
-                #     else:
-                #         if step.get("stepTaskType") == "request_for_task":
-                #             print("requesting task \n")
-                #             documents = []
-                #             for i in range(1, len((steps))):
-                #                 current_idx = i
-                #                 prev_docs = steps[current_idx - 1].get(
-                #                     "stepDocumentCloneMap"
-                #                 )
-                #                 current_step = steps[current_idx - 1]
-                #                 for item in prev_docs:
-                #                     key = next(iter(item))
-                #                     my_key = item[key]
-                #                     if my_key != "accessed":
-                #                         documents.append(my_key)
-                #                 print("previous documents", documents)
-                #             for doc in documents:
-                #                 for user in current_step.get("stepTeamMembers"):
-                #                     clone_id = cloning_document(
-                #                         doc, [user], parent_id, process_id
-                #                     )
-                #                     step.get("stepDocumentCloneMap").append(
-                #                         {user["member"]: clone_id}
-                #                     )
-                #                 for user in current_step.get("stepPublicMembers"):
-                #                     clone_id = cloning_document(
-                #                         doc,
-                #                         [user],
-                #                         parent_id,
-                #                         process_id,
-                #                     )
-                #                     step.get("stepDocumentCloneMap").append(
-                #                         {user["member"]: clone_id}
-                #                     )
-                #                 for user in current_step.get("stepUserMembers"):
-                #                     clone_id = cloning_document(
-                #                         doc, [user], parent_id, process_id
-                #                     )
-                #                     step.get("stepDocumentCloneMap").append(
-                #                         {user["member"]: clone_id}
-                #                     )
-                #         if step.get("stepTaskType") == "assign_task":
-                #             print("assign_task \n")
-                #             step1_documents = []
-                #             for i in range(1, len((steps))):
-                #                 current_idx = i
-                #                 prev_docs = steps[current_idx - 1].get(
-                #                     "stepDocumentCloneMap"
-                #                 )
-                #                 current_step = steps[current_idx - 1]
-                #                 for item in prev_docs:
-                #                     key = next(iter(item))
-                #                     my_key = item[key]
-                #                     if my_key != "accessed":
-                #                         step1_documents.append(my_key)
-                #             print("assign_docs", step1_documents)
-                #             print("team_member", current_step.get("stepTeamMembers"))
-                #             for document in step1_documents:
-                #                 for user in current_step.get("stepTeamMembers"):
-                #                     print(f"assigned to {user} \n")
-                #                     authorize(document, [user], process_id, process_type)
-                #                     current_step.get("stepDocumentCloneMap").append(
-                #                         {user["member"]: document}
-                #                     )
-                #                 for user in current_step.get("stepPublicMembers"):
-                #                     authorize(document, [user], process_id, process_type)
-                #                     current_step.get("stepDocumentCloneMap").append(
-                #                         {user["member"]: document}
-                #                     )
-                #                 for user in current_step.get("stepUserMembers"):
-                #                     authorize(document, [user], process_id, process_type)
-                #                     current_step.get("stepDocumentCloneMap").append(
-                #                         {user["member"]: document}
-                #                     )
-                #         update_process(process_id, steps, processing_state)
-                # TODO: Test If this is working as desired.
-                # state, docs = check_that_process_documents_are_finalized(self.process)
-                # if state:
-                #     update_process(process_id, steps, "finalized")
-                #     for d in docs:
-                #         authorize(d, created_by, process_id, process_type)
-        except Exception as e:
-            print("got error", e)
-            finalize_item(self.item_id, "processing", self.item_type)
+        # check if all step one docs are finalized.
+        items = []
+        for map in steps[0].get("stepDocumentCloneMap", []):
+            items.append(map["member"])
+        # Yes
+        if all(check_items_state(items)):
+            # go to next step
+            for idx, step in enumerate(steps):
+                if step.get("stepDocumentCloneMap"):
+                    # find all documents and check if any document is in state processing
+                    for document_map in step.get("stepDocumentCloneMap"):
+                        for _, v in document_map.items():
+                            if (
+                                isinstance(v, str)
+                                and single_query_document_collection({"_id": v}).get(
+                                    "document_state"
+                                )
+                                == "processing"
+                                or v is None
+                            ):
+                                break
+                else:
+                    if step.get("stepTaskType") == "request_for_task":
+                        documents = []
+                        # get documents from previous step
+                        prev_idx = idx - 1
+                        prev_docs = steps[prev_idx].get("stepDocumentCloneMap")
+                        for item in prev_docs:
+                            key = next(iter(item))
+                            my_key = item[key]
+                            if my_key != "accessed":
+                                documents.append(my_key)
+                        print("previous documents", documents)
+                        users = [
+                            user
+                            for user in step.get("stepTeamMembers", [])
+                            + step.get("stepPublicMembers", [])
+                            + step.get("stepUserMembers", [])
+                        ]
+                        # now for the previous documents create copies for `this` steps users.
+                        for usr in users:
+                            for doc in documents:
+                                clone_id = cloning_document(
+                                    doc, [usr], parent_id, process_id
+                                )
+                                step.get("stepDocumentCloneMap").append(
+                                    {usr["member"]: clone_id}
+                                )
+                    # Option 2
+                    if step.get("stepTaskType") == "assign_task":
+                        step_documents = []
+                        # get documents from previous step
+                        prev_idx = idx - 1
+                        prev_docs = steps[prev_idx].get("stepDocumentCloneMap")
+                        for item in prev_docs:
+                            key = next(iter(item))
+                            my_key = item[key]
+                            if my_key != "accessed":
+                                step_documents.append(my_key)
+                        print("assign_docs", step_documents)
+                        assign_users = [
+                            user
+                            for user in step.get("stepTeamMembers", [])
+                            + step.get("stepPublicMembers", [])
+                            + step.get("stepUserMembers", [])
+                        ]
+                        # Authorize users of the current step with documents from the prev step.
+                        for usr in assign_users:
+                            for doc in step_documents:
+                                print(f"assigned to {usr} \n")
+                                authorize(doc, [usr], process_id, process_type)
+                                step.get("stepDocumentCloneMap").append(
+                                    {usr["member"]: doc}
+                                )
+                    update_process(process_id, steps, processing_state)
+        else:  # N0 check if all step2 docs are finalized
+            # update_process(process_id, steps, processing_state)
             return
+
+        # try:
+        #     no_of_steps = sum(isinstance(e, dict) for e in steps)
+        #     if no_of_steps > 0:
+        #         for idx, step in enumerate(steps):
+        #             # Do we have documents in the step? YES
+        #             if step["stepDocumentCloneMap"]:
+        #                 # Find all documents and check if any document is in state processing
+        #                 for document_map in step.get("stepDocumentCloneMap"):
+        #                     for _, v in document_map.items():
+        #                         if (
+        #                             isinstance(v, str)
+        #                             and single_query_document_collection(
+        #                                 {"_id": v}
+        #                             ).get("document_state")
+        #                             == "processing"
+        #                             or v is None
+        #                         ):
+        #                             # If yes exit the loop that step is incomplete
+        #                             break
+        #             # NO, we don;t have documents?
+        #         for step in steps:
+        #             # else:
+        #             if step.get("stepTaskType") == "request_for_task":
+        #                 print("requesting task \n")
+        #                 documents = []
+        #                 # get documents from previous step
+        #                 prev_docs = steps[idx - 1].get("stepDocumentCloneMap")
+        #                 for item in prev_docs:
+        #                     key = next(iter(item))
+        #                     my_key = item[key]
+        #                     if my_key != "accessed":
+        #                         documents.append(my_key)
+        #                 print("previous documents", documents)
+        #                 # current_step = steps[idx - 1]
+        #                 users = [
+        #                     user
+        #                     for user in step.get("stepTeamMembers", [])
+        #                     + step.get("stepPublicMembers", [])
+        #                     + step.get("stepUserMembers", [])
+        #                 ]
+        #                 # now for the previous documents create copies for `this` steps users.
+        #                 for usr in users:
+        #                     for doc in documents:
+        #                         clone_id = cloning_document(
+        #                             doc, [usr], parent_id, process_id
+        #                         )
+        #                         step.get("stepDocumentCloneMap").append(
+        #                             {usr["member"]: clone_id}
+        #                         )
+        #             if step.get("stepTaskType") == "assign_task":
+        #                 print("assign_task \n")
+        #                 step_documents = []
+        #                 prev_docs = steps[idx - 1].get("stepDocumentCloneMap")
+        #                 for item in prev_docs:
+        #                     key = next(iter(item))
+        #                     my_key = item[key]
+        #                     if my_key != "accessed":
+        #                         step_documents.append(my_key)
+        #                 print("assign_docs", step_documents)
+        #                 assign_users = [
+        #                     user
+        #                     for user in step.get("stepTeamMembers", [])
+        #                     + step.get("stepPublicMembers", [])
+        #                     + step.get("stepUserMembers", [])
+        #                 ]
+        #                 # Authorize users of the current step with documents from the prev step.
+        #                 for usr in assign_users:
+        #                     for doc in step_documents:
+        #                         print(f"assigned to {usr} \n")
+        #                         authorize(doc, [usr], process_id, process_type)
+        #                         step.get("stepDocumentCloneMap").append(
+        #                             {usr["member"]: doc}
+        #                         )
+        #             update_process(process_id, steps, processing_state)
+        # for index, step in enumerate(steps):
+        #     if step["stepDocumentCloneMap"]:
+        #         for document_map in step.get("stepDocumentCloneMap"):
+        #             for _, v in document_map.items():
+        #                 if (
+        #                     isinstance(v, str)
+        #                     and single_query_document_collection(
+        #                         {"_id": v}
+        #                     ).get("document_state")
+        #                     == "processing"
+        #                     or v is None
+        #                 ):
+        #                     continue
+        #     else:
+        #         if step.get("stepTaskType") == "request_for_task":
+        #             print("requesting task \n")
+        #             documents = []
+        #             for i in range(1, len((steps))):
+        #                 current_idx = i
+        #                 prev_docs = steps[current_idx - 1].get(
+        #                     "stepDocumentCloneMap"
+        #                 )
+        #                 current_step = steps[current_idx - 1]
+        #                 for item in prev_docs:
+        #                     key = next(iter(item))
+        #                     my_key = item[key]
+        #                     if my_key != "accessed":
+        #                         documents.append(my_key)
+        #                 print("previous documents", documents)
+        #             for doc in documents:
+        #                 for user in current_step.get("stepTeamMembers"):
+        #                     clone_id = cloning_document(
+        #                         doc, [user], parent_id, process_id
+        #                     )
+        #                     step.get("stepDocumentCloneMap").append(
+        #                         {user["member"]: clone_id}
+        #                     )
+        #                 for user in current_step.get("stepPublicMembers"):
+        #                     clone_id = cloning_document(
+        #                         doc,
+        #                         [user],
+        #                         parent_id,
+        #                         process_id,
+        #                     )
+        #                     step.get("stepDocumentCloneMap").append(
+        #                         {user["member"]: clone_id}
+        #                     )
+        #                 for user in current_step.get("stepUserMembers"):
+        #                     clone_id = cloning_document(
+        #                         doc, [user], parent_id, process_id
+        #                     )
+        #                     step.get("stepDocumentCloneMap").append(
+        #                         {user["member"]: clone_id}
+        #                     )
+        #         if step.get("stepTaskType") == "assign_task":
+        #             print("assign_task \n")
+        #             step1_documents = []
+        #             for i in range(1, len((steps))):
+        #                 current_idx = i
+        #                 prev_docs = steps[current_idx - 1].get(
+        #                     "stepDocumentCloneMap"
+        #                 )
+        #                 current_step = steps[current_idx - 1]
+        #                 for item in prev_docs:
+        #                     key = next(iter(item))
+        #                     my_key = item[key]
+        #                     if my_key != "accessed":
+        #                         step1_documents.append(my_key)
+        #             print("assign_docs", step1_documents)
+        #             print("team_member", current_step.get("stepTeamMembers"))
+        #             for document in step1_documents:
+        #                 for user in current_step.get("stepTeamMembers"):
+        #                     print(f"assigned to {user} \n")
+        #                     authorize(document, [user], process_id, process_type)
+        #                     current_step.get("stepDocumentCloneMap").append(
+        #                         {user["member"]: document}
+        #                     )
+        #                 for user in current_step.get("stepPublicMembers"):
+        #                     authorize(document, [user], process_id, process_type)
+        #                     current_step.get("stepDocumentCloneMap").append(
+        #                         {user["member"]: document}
+        #                     )
+        #                 for user in current_step.get("stepUserMembers"):
+        #                     authorize(document, [user], process_id, process_type)
+        #                     current_step.get("stepDocumentCloneMap").append(
+        #                         {user["member"]: document}
+        #                     )
+        #         update_process(process_id, steps, processing_state)
+        # TODO: Test If this is working as desired.
+        # state, docs = check_that_process_documents_are_finalized(self.process)
+        # if state:
+        #     update_process(process_id, steps, "finalized")
+        #     for d in docs:
+        #         authorize(d, created_by, process_id, process_type)
+        # except Exception as e:
+        #     print("got error", e)
+        #     finalize_item(self.item_id, "processing", self.item_type)
+        #     return
