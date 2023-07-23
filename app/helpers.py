@@ -23,16 +23,12 @@ from .mongo_db_connection import (
 
 def register_finalized(link_id):
     """Master single link as finalized"""
-    print("here2 ")
     response = requests.put(
         f"{MASTERLINK_URL}?link_id={link_id}",
         data=json.dumps({"is_finalized": True}),
         headers={"Content-Type": "application/json"},
     )
-    if response.status_code == 200:
-        print("finalized")
-    else:
-        print("failed")
+    print(response.status_code)
     return
 
 
