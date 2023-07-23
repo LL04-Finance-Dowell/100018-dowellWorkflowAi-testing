@@ -495,13 +495,17 @@ class Background:
             # check if all step one docs are finalized.
             items = []
             for map in steps[0].get("stepDocumentCloneMap", []):
-                items.append(map["member"])
+                for _, v in map.items():
+                    if v is not None and isinstance(v, str):
+                        items.append(v)
             # Yes
+            print(items)
             if all(check_items_state(items)):
-                # go to next step
-                for idx, step in enumerate(steps):
+                print( "# go to next step")
+                for idx, step in enumerate(steps[1:], start=1):
+                    print(step)
                     if step.get("stepDocumentCloneMap"):
-                        # find all documents and check if any document is in state processing
+                        print("# find all documents and check if any document is in state processing")
                         for document_map in step.get("stepDocumentCloneMap"):
                             for _, v in document_map.items():
                                 if (
@@ -516,7 +520,7 @@ class Background:
                     else:
                         if step.get("stepTaskType") == "request_for_task":
                             documents = []
-                            # get documents from previous step
+                            print("# get documents from previous step")
                             prev_idx = idx - 1
                             prev_docs = steps[prev_idx].get("stepDocumentCloneMap")
                             for item in prev_docs:
@@ -531,7 +535,7 @@ class Background:
                                 + step.get("stepPublicMembers", [])
                                 + step.get("stepUserMembers", [])
                             ]
-                            # now for the previous documents create copies for `this` steps users.
+                            print("# now for the previous documents create copies for `this` steps users.")
                             for usr in users:
                                 for doc in documents:
                                     clone_id = cloning_document(
@@ -558,7 +562,7 @@ class Background:
                                 + step.get("stepPublicMembers", [])
                                 + step.get("stepUserMembers", [])
                             ]
-                            # Authorize users of the current step with documents from the prev step.
+                            print("# Authorize users of the current step with documents from the prev step.")
                             for usr in assign_users:
                                 for doc in step_documents:
                                     print(f"assigned to {usr} \n")
@@ -569,6 +573,7 @@ class Background:
                         update_process(process_id, steps, processing_state)
             else:  # N0 check if all step2 docs are finalized
                 # update_process(process_id, steps, processing_state)
+                print("Not finalized")
                 return
         except Exception as e:
             print("got error", e)
