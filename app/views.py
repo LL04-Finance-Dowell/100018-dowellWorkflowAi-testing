@@ -628,7 +628,7 @@ def document_object(request, document_id):
     """Retrieves the document object for a specific document"""
     if not validate_id(document_id):
         return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
-    document = single_query_document_collection(document_id)
+    document = single_query_document_collection({"_id":document_id})
     return Response(document, status.HTTP_200_OK)
 
 
@@ -859,7 +859,6 @@ def get_reports_templates(request, company_id):
     """List of templates based on their current state."""
     data_type = request.query_params.get("data_type")
     template_state = request.query_params.get("template_state")
-    # auth_viewers = request.query_params.get("auth_viewers")
     if not validate_id(company_id) or data_type is None or template_state is None:
         return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
     templates = bulk_query_template_collection(
@@ -867,7 +866,6 @@ def get_reports_templates(request, company_id):
             "company_id": company_id,
             "data_type": data_type,
             "template_state": template_state,
-            # "auth_viewers": [auth_viewers]
         }
     )
     return Response(
@@ -1063,7 +1061,15 @@ def get_reports_documents(request, company_id):
     """List of documents based on their states"""
     data_type = request.query_params.get("data_type")
     document_state = request.query_params.get("doc_state")
-    auth_viewers = request.query_params.get("auth_viewers")
+    member = request.query_params.get("member")
+    portfolio = request.query_params.get("portfolio")
+    auth_viewers = [
+            {
+                "member": member,
+                "portfolio": portfolio
+            }
+    ]
+    
     if not validate_id(company_id) or data_type is None or document_state is None:
         return Response("Invalid Request!", status.HTTP_400_BAD_REQUEST)
     document_list = bulk_query_document_collection(
@@ -1071,11 +1077,9 @@ def get_reports_documents(request, company_id):
             "company_id": company_id,
             "data_type": data_type,
             "document_state": document_state,
-            "auth_viewers": [auth_viewers]
+            "auth_viewers": auth_viewers
         }
     )
-    page = int(request.GET.get("page", 1))
-    document_list = paginate(document_list, page, 50)
     return Response(
         {"documents": document_list},
         status=status.HTTP_200_OK,
