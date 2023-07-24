@@ -154,6 +154,7 @@ def access_editor(item_id, item_type):
     field = None
     action = None
     item_name = ""
+    name = ""
     if item_type == "document":
         collection = "DocumentReports"
         document = "documentreports"
