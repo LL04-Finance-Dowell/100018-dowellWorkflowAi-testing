@@ -77,7 +77,7 @@ urlpatterns = [
     ),
     path("companies/<str:company_id>/processes/reports/", get_reports_processes),
     path("companies/<str:company_id>/teams/", get_all_teams),
-    path("companies/<str:company_id>/settings/", all_workflow_ai_setting),
+    path("companies/<str:company_id>/settings/", all_workflow_ai_setting),#i'm here
     path("templates/", create_template, name="create_template"),
     path("templates/<str:template_id>/", template_detail, name="template_detail"),
     path(
