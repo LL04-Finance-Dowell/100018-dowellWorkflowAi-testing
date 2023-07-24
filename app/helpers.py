@@ -60,7 +60,10 @@ def cloning_document(document_id, auth_viewers, parent_id, process_id):
             if has_tilde_characters(doc_name):
                 document_name = doc_name.replace('~', '')
             else:
-                document_name = doc_name + viewer
+                if isinstance(viewer, dict):
+                    document_name = doc_name + "_" + viewer["member"]
+                else:
+                    document_name = doc_name + "_" + viewer
         save_res = json.loads(
             save_document(
                 name=document_name,
@@ -278,3 +281,11 @@ def check_items_state(items) -> list:
         for i in items
         if isinstance(i, str)
     ]
+
+
+def check_all_accessed_true(data) -> bool:
+    for item in data:
+        step_document_clone_map = item.get("stepDocumentCloneMap", [])
+        if not all(elem.get("accessed", False) for elem in step_document_clone_map):
+            return False
+    return True

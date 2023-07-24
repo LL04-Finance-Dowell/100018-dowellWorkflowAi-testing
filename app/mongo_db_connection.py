@@ -161,7 +161,7 @@ def get_clone_list(company_id, data_type):
         "fetch",
         {"company_id": str(company_id), "data_type": data_type},
     )
-    print(clones)
+    # print(clones)
     return clones
 
 

@@ -13,8 +13,16 @@ def register_user_access(process_steps, authorized_role, user):
             if step["stepRole"] == authorized_role:
                 for clone_map in step["stepDocumentCloneMap"]:
                     if user in clone_map:
-                        clone_map["accessed"] = True
+                        clone_map.update({"accessed": True})
                         break
+
+def register_single_user_access(step, authorized_role, user):
+        """Once someone has made changes to their docs"""
+        if step["stepRole"] == authorized_role:
+            for clone_map in step["stepDocumentCloneMap"]:
+                if user in clone_map:
+                    clone_map["accessed"] = True
+                    continue
 
 
 def is_finalized(item_id, item_type):

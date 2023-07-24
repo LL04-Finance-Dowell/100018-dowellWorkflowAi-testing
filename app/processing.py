@@ -6,9 +6,9 @@ from threading import Thread
 import qrcode
 import requests
 
-from app.checks import display_right, location_right, time_limit_right
+from app.checks import display_right, location_right, time_limit_right, register_single_user_access
 from app.constants import EDITOR_API, MASTERLINK_URL, NOTIFICATION_API, QRCODE_URL, VERIFICATION_LINK
-from app.helpers import cloning_document, register_public_login, check_items_state
+from app.helpers import cloning_document, register_public_login, check_items_state, check_all_accessed_true
 from app.mongo_db_connection import (
     authorize,
     finalize_item,
@@ -129,8 +129,8 @@ class HandleProcess:
 
     def generate_qrcode(link):
         """Revert back to prod qr_path before push"""
-        qr_path = f"100094.pythonanywhere.com/media/qrcodes/{uuid.uuid4().hex}.png"  # Production
-        # qr_path = f"media/qrcodes/{uuid.uuid4().hex}.png"  # On dev
+        # qr_path = f"100094.pythonanywhere.com/media/qrcodes/{uuid.uuid4().hex}.png"  # Production
+        qr_path = f"media/qrcodes/{uuid.uuid4().hex}.png"  # On dev
         qr_code = qrcode.QRCode()
         qr_code.add_data(link)
         qr_code.make()
@@ -246,6 +246,7 @@ class HandleProcess:
         if response.status_code == 201:
             print("success")
             response = json.loads(response.text)
+            # print(f"response: {response}")
             master_link = response["qrcodes"][0]["masterlink"]
             master_qrcode = response["qrcodes"][0]["qrcode_image_url"]
         return master_link, master_qrcode
@@ -486,17 +487,24 @@ class Background:
                 for index, step in enumerate(steps):
                     if step["stepDocumentCloneMap"]:
                         for document_map in step.get("stepDocumentCloneMap"):
-                            print(document_map)
-                            for _, v in document_map.items():
-                                print(_, v)
+                            # print("doc_map:", document_map)
+                            for k, v in list(document_map.items()):
+                                # print(k, v)
                                 if (
                                     isinstance(v, str) and
                                     get_document_object(v).get("document_state")
-                                    == "processing" or v is None
+                                    == "processing"
                                 ):
+                                    # print("doc_state:", get_document_object(v).get("document_state"))
                                     continue 
-                                else:
+                                elif (
+                                    isinstance(v, str) and
+                                    get_document_object(v).get("document_state")
+                                    == "finalized"
+                                ):
+                                    register_single_user_access(step, step.get("stepRole"), k)
                                     finalized.append(v)
+                                    # print(finalized)
                     else:
                         if step.get("stepTaskType") == "request_for_task":
                             for user in step.get("stepTeamMembers"):
@@ -525,11 +533,12 @@ class Background:
                             for i in range(1, len((steps))):
                                 current_idx = i
                                 prev_docs = steps[current_idx - 1].get("stepDocumentCloneMap")
-                                for item in prev_docs:
-                                    key = next(iter(item))
-                                    my_key = item[key]
-                                    if my_key != "accessed":
-                                        step1_documents.append(my_key)
+                                if prev_docs:
+                                    for item in prev_docs:
+                                        key = next(iter(item))
+                                        my_key = item[key]
+                                        if my_key != "accessed":
+                                            step1_documents.append(my_key)
                                 for document in step1_documents:
                                     for user in step.get("stepTeamMembers"):
                                         authorize(document, user, process_id, process_type)
@@ -548,9 +557,13 @@ class Background:
                                     )
                         update_process(process_id, steps, processing_state)
                 # Check that all documents are finalized
-                if all(check_items_state(finalized)):
+                all_accessed_true = check_all_accessed_true(steps)
+                print(all_accessed_true)
+                if all_accessed_true == True:
                     update_process(process_id, steps, "finalized")
-                                        
+                else:
+                    update_process(process_id, steps, "processing")
+         
         except Exception as e:
             print("got error", e)
             finalize_item(self.item_id, "processing", self.item_type)

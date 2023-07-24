@@ -257,7 +257,6 @@ def finalize_or_reject(request, process_id):
     role = request.data["role"]
     user = request.data["authorized"]
     user_type = request.data["user_type"]
-    link_id = request.data["link_id"]
     state = request.data["action"]
     check, current_state = checks.is_finalized(item_id, item_type)
     if check and current_state != "processing":
@@ -271,6 +270,7 @@ def finalize_or_reject(request, process_id):
             background = Background(process, item_type, item_id, role, user)
             background.processing()
             if user_type == "public":
+                link_id = request.data["link_id"]
                 background.register_finalized(link_id)
             return Response("document processed successfully", status.HTTP_200_OK)
         except Exception as err:
