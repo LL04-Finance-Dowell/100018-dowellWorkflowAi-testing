@@ -147,30 +147,40 @@ def cloning_process(process_id, created_by, creator_portfolio):
 
 
 def access_editor(item_id, item_type):
-    """Access to document/template"""
-    collection = None
-    document = None
-    team_member_id = None
-    field = None
-    action = None
-    item_name = ""
-    name = ""
+    """
+    Access to document/template
+    
+    This function generates a payload for accessing a document or template based on the given item_id and item_type.
+    
+    Parameters:
+        item_id (str): The unique identifier of the document or template.
+        item_type (str): The type of item ('document' or 'template').
+    
+    Returns:
+        dict: A dictionary containing the payload with necessary details for accessing the document or template.
+    """
+    
+    # Determine the team_member_id based on the item_type
+    team_member_id = "11689044433" if item_type == "document" else "22689044433"
+    
+    # Set collection, document, and field variables based on the item_type
     if item_type == "document":
         collection = "DocumentReports"
         document = "documentreports"
-        action = "document"
         field = "document_name"
-        team_member_id = "11689044433"
-        item_name = single_query_document_collection({"_id": item_id})
-        name = item_name["document_name"]
-    if item_type == "template":
+    elif item_type == "template":
         collection = "TemplateReports"
         document = "templatereports"
-        action = "template"
         field = "template_name"
-        team_member_id = "22689044433"
+
+    # Get the item name from the appropriate collection based on item_type and item_id
+    if item_type == "document":
+        item_name = single_query_document_collection({"_id": item_id})
+    else:
         item_name = single_query_template_collection({"_id": item_id})
-        name = item_name["template_name"]
+    name = item_name.get(field, "")
+    
+    # Create and return the payload dictionary
     payload = {
         "product_name": "Workflow AI",
         "details": {
@@ -183,7 +193,7 @@ def access_editor(item_id, item_type):
             "_id": item_id,
             "field": field,
             "type": item_type,
-            "action": action,
+            "action": "document" if item_type == "document" else "template",
             "flag": "editing",
             "name": name,
             "command": "update",
