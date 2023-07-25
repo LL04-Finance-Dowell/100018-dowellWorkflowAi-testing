@@ -284,8 +284,7 @@ def finalize_or_reject(request, process_id):
             background = Background(process, item_type, item_id, role, user)
             background.processing()
             if user_type == "public":
-                link_id = request.data["link_id"]
-                background.register_finalized(link_id)
+                register_finalized(request.data["link_id"])
             return Response("document processed successfully", status.HTTP_200_OK)
         except Exception as err:
             print(err)
@@ -869,6 +868,8 @@ def get_reports_templates(request, company_id):
             "template_state": template_state,
         }
     )
+    page = int(request.GET.get("page", 1))
+    templates = paginate(templates, page, 50)
     return Response(
         {"templates": templates},
         status.HTTP_200_OK,
@@ -880,6 +881,7 @@ def create_template(request):
     data = ""
     page = ""
     folder = []
+    template_name = "Untitled Template"
     if not validate_id(request.data["company_id"]):
         return Response("Invalid company details", status.HTTP_400_BAD_REQUEST)
     portfolio = ""
@@ -889,7 +891,7 @@ def create_template(request):
     res = json.loads(
         save_to_template_collection(
             {
-                "template_name": "Untitled Template",
+                "template_name": template_name,
                 "content": data,
                 "page": page,
                 "folders": folder,
@@ -1080,6 +1082,8 @@ def get_reports_documents(request, company_id):
             "auth_viewers": auth_viewers
         }
     )
+    page = int(request.GET.get("page", 1))
+    document_list = paginate(document_list, page, 50)
     return Response(
         {"documents": document_list},
         status=status.HTTP_200_OK,
