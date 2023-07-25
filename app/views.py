@@ -273,10 +273,10 @@ def finalize_or_reject(request, process_id):
     user_type = request.data["user_type"]
     state = request.data["action"]
     check, current_state = checks.is_finalized(item_id, item_type)
-    # if check and current_state != "processing":
-    #     return Response(
-    #         f"document already processed as `{current_state}`!", status.HTTP_200_OK
-    #     )
+    if check and current_state != "processing":
+        return Response(
+            f"document already processed as `{current_state}`!", status.HTTP_200_OK
+        )
     res = json.loads(finalize_item(item_id, state, item_type))
     if res["isSuccess"]:
         try:
