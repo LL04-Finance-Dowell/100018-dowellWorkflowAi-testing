@@ -6,17 +6,34 @@ from threading import Thread
 import qrcode
 import requests
 
-from app.checks import display_right, location_right, time_limit_right, register_single_user_access
-from app.constants import EDITOR_API, MASTERLINK_URL, NOTIFICATION_API, QRCODE_URL, VERIFICATION_LINK
-from app.helpers import cloning_document, register_public_login, check_items_state, check_all_accessed_true
+from app.checks import (
+    check_items_state,
+    check_that_process_documents_are_finalized,
+    display_right,
+    location_right,
+    time_limit_right,
+    register_single_user_access,
+)
+from app.constants import (
+    EDITOR_API,
+    NOTIFICATION_API,
+    QRCODE_URL,
+    VERIFICATION_LINK,
+)
+from app.helpers import (
+    cloning_document,
+    get_query_param_value_from_url,
+    register_public_login,
+    check_items_state,
+    check_all_accessed_true,
+)
 from app.mongo_db_connection import (
     authorize,
     finalize_item,
-    get_document_object,
-    save_process,
-    save_process_links,
-    save_process_qrcodes,
-    save_uuid_hash,
+    save_to_links_collection,
+    save_to_process_collection,
+    save_to_qrcode_collection,
+    single_query_document_collection,
     update_process,
 )
 
@@ -48,24 +65,23 @@ class Process:
             step for workflow in workflows for step in workflow["workflows"]["steps"]
         ]
         self.process_title = process_title
-        # self.process_title = " - ".join(
-        #     [workflow["workflows"]["workflow_title"] for workflow in workflows]
-        # )
 
     def normal_process(self, action):
         res = json.loads(
-            save_process(
-                self.process_title,
-                self.process_steps,
-                self.created_by,
-                self.company_id,
-                self.data_type,
-                self.parent_id,
-                action,
-                self.portfolio,
-                self.workflow_ids,
-                self.process_type,
-                "original",
+            save_to_process_collection(
+                {
+                    "process_title": self.process_title,
+                    "process_steps": self.process_steps,
+                    "created_by": self.created_by,
+                    "company_id": self.company_id,
+                    "data_type": self.data_type,
+                    "parent_item_id": self.parent_id,
+                    "processing_action": action,
+                    "creator_portfolio": self.portfolio,
+                    "workflow_construct_ids": self.workflow_ids,
+                    "process_type": self.process_type,
+                    "process_kind": "original",
+                }
             )
         )
         if res["isSuccess"]:
@@ -86,18 +102,20 @@ class Process:
     def test_process(self, action):
         data_type = "Testing_Data"
         res = json.loads(
-            save_process(
-                self.process_title,
-                self.process_steps,
-                self.created_by,
-                self.company_id,
-                data_type,
-                self.parent_id,
-                action,
-                self.portfolio,
-                self.workflow_ids,
-                self.process_type,
-                "original",
+            save_to_process_collection(
+                {
+                    "process_title": self.process_title,
+                    "process_steps": self.process_steps,
+                    "created_by": self.created_by,
+                    "company_id": self.company_id,
+                    "data_type": data_type,
+                    "parent_item_id": self.parent_id,
+                    "processing_action": action,
+                    "creator_portfolio": self.portfolio,
+                    "workflow_construct_ids": self.workflow_ids,
+                    "process_type": self.process_type,
+                    "process_kind": "original",
+                }
             )
         )
         if res["isSuccess"]:
@@ -115,6 +133,7 @@ class Process:
                 "org_name": self.org_name,
             }
 
+
 class HandleProcess:
     def __init__(self, process):
         self.process = process
@@ -123,14 +142,13 @@ class HandleProcess:
             "product": "Workflow AI",
         }
 
-
     def parse_url(params):
         return urllib.parse.urlencode(params)
 
     def generate_qrcode(link):
         """Revert back to prod qr_path before push"""
-        # qr_path = f"100094.pythonanywhere.com/media/qrcodes/{uuid.uuid4().hex}.png"  # Production
-        qr_path = f"media/qrcodes/{uuid.uuid4().hex}.png"  # On dev
+        qr_path = f"100094.pythonanywhere.com/media/qrcodes/{uuid.uuid4().hex}.png"  # Production
+        # qr_path = f"media/qrcodes/{uuid.uuid4().hex}.png"  # On dev
         qr_code = qrcode.QRCode()
         qr_code.add_data(link)
         qr_code.make()
@@ -178,15 +196,17 @@ class HandleProcess:
         params["portfolio"] = portfolio
         encoded_param = HandleProcess.parse_url(params)
         utp_link = f"{link}?{encoded_param}"
-        save_uuid_hash(
-            utp_link,
-            process_id,
-            item_id,
-            step_role,
-            auth_name,
-            portfolio,
-            hash,
-            item_type,
+        save_to_qrcode_collection(
+            {
+                "link": utp_link,
+                "process_id": process_id,
+                "item_id": item_id,
+                "auth_role": step_role,
+                "user_name": auth_name,
+                "auth_portfolio": portfolio,
+                "unique_hash": hash,
+                "item_type": item_type,
+            }
         )
         HandleProcess.notify(
             auth_name, item_id, portfolio, company_id, utp_link, org_name
@@ -204,31 +224,32 @@ class HandleProcess:
 
     def prepare_document_for_step_one_users(step, parent_item_id, process_id):
         clones = []
-        users = [
-            m["member"]
-            for m in step.get("stepTeamMembers", []) + step.get("stepUserMembers", [])
-        ]
-        public = [m["member"] for m in step.get("stepPublicMembers", [])]
+        users = []
+        for m in step.get("stepTeamMembers", []) + step.get("stepUserMembers", []):
+            users.append(m)
+        public = [m for m in step.get("stepPublicMembers", [])]
         if users:
             clone_id = cloning_document(
                 parent_item_id, users, parent_item_id, process_id
             )
             clones = [clone_id]
             for u in users:
-                step.get("stepDocumentCloneMap").append({u: clone_id})
+                step.get("stepDocumentCloneMap").append({u["member"]: clone_id})
         if public:
-
             public_clone_ids = []
             for u in public:
                 public_clone_ids.append(
-                    {u: cloning_document(parent_item_id, u, parent_item_id, process_id)}
+                    {
+                        u["member"]: cloning_document(
+                            parent_item_id, [u], parent_item_id, process_id
+                        )
+                    }
                 )
             step.get("stepDocumentCloneMap").extend(public_clone_ids)
             clones.extend(public_clone_ids)
         return clones
 
     def generate_public_qrcode(links, company_id, document_name):
-        print(document_name)
         master_link = None
         master_qrcode = None
         payload = json.dumps(
@@ -246,7 +267,7 @@ class HandleProcess:
         if response.status_code == 201:
             print("success")
             response = json.loads(response.text)
-            # print(f"response: {response}")
+            print(f"response: {response}")
             master_link = response["qrcodes"][0]["masterlink"]
             master_qrcode = response["qrcodes"][0]["qrcode_image_url"]
         return master_link, master_qrcode
@@ -261,8 +282,9 @@ class HandleProcess:
         process_data = self.process
         process_data["params"] = self.params
         m_code = None
+        public_api_key = None
         m_link = None
-        link_string  = "link"
+        link_string = "link"
         for step in steps:
             for member in step.get("stepPublicMembers", []):
                 link, qrcode = HandleProcess.user_team_public_data(
@@ -298,11 +320,25 @@ class HandleProcess:
         clone_ids = HandleProcess.prepare_document_for_step_one_users(
             steps[0], self.process["parent_item_id"], process_id
         )
-        save_process_links(
-            links,
-            process_id,
-            clone_ids,
-            company_id,
+        if public_links:
+            document_id = self.process["parent_item_id"]
+            res = single_query_document_collection({"_id": document_id})
+            document_name = res["document_name"]
+            m_link, m_code = HandleProcess.generate_public_qrcode(
+                public_links, self.process["company_id"], document_name
+            )
+            links.append({"master_link": m_link})
+            qrcodes.append({"master_qrcode": m_code})
+            # Grab API key
+            public_api_key = get_query_param_value_from_url(m_link, "api_key")
+        save_to_links_collection(
+            {
+                "links": links,
+                "process_id": process_id,
+                "clone_ids": clone_ids,
+                "company_id ": company_id,
+                "public_api_key": public_api_key,
+            }
         )
         update_process(
             process_id,
@@ -310,23 +346,17 @@ class HandleProcess:
             "processing",
         )
         Thread(
-            target=lambda: save_process_qrcodes(
-                qrcodes,
-                self.process["_id"],
-                clone_ids,
-                self.process["processing_action"],
-                self.process["process_title"],
-                self.process["company_id"],
+            target=lambda: save_to_qrcode_collection(
+                {
+                    "qrcodes": qrcodes,
+                    "process_id": self.process["_id"],
+                    "item_id": clone_ids,
+                    "processing_action": self.process["processing_action"],
+                    "process_title": self.process["process_title"],
+                    "company_id": self.process["company_id"],
+                }
             )
         ).start()
-        if public_links:
-            document_id = self.process['parent_item_id']
-            res = get_document_object(document_id)
-            # print(res)
-            document_name = res["document_name"]
-            m_link, m_code = HandleProcess.generate_public_qrcode(
-                public_links, self.process["company_id"], document_name
-            )
         return {"links": links, "master_link": m_link, "master_code": m_code}
 
     def verify_location(self, auth_role, location_data):
@@ -395,7 +425,7 @@ class HandleProcess:
                 document = "documentreports"
                 field = "document_name"
                 team_member_id = "11689044433"
-                document_object = get_document_object(clone_id)
+                document_object = single_query_document_collection({"_id": clone_id})
                 item_flag = document_object["document_state"]
                 document_name = document_object["document_name"]
                 editor_link = HandleProcess.get_editor_link(
@@ -445,28 +475,12 @@ class Background:
         self.role = role
         self.username = username
 
-    def register_finalized(link_id):
-        """Master single link as finalized"""
-        print("here")
-        print(link_id)
-        response = requests.put(
-            f"{MASTERLINK_URL}?link_id={link_id}",
-            data={"is_finalized": True},
-            headers={"Content-Type": "application/json"},
-        )
-        if response.status_code == 200:
-            print("finalized")
-        else:
-            print("failed")
-        return
-
     def register_user_access(process_steps, authorized_role, user):
         """Once someone has made changes to their docs"""
         for step in process_steps:
             if step["stepRole"] == authorized_role:
                 for clone_map in step["stepDocumentCloneMap"]:
                     if user in clone_map:
-                        # print("user:", user)
                         clone_map["accessed"] = True
                         continue
 
@@ -477,9 +491,11 @@ class Background:
         process_type = self.process["process_type"]
         document_id = self.item_id
         processing_state = self.process["processing_state"]
+        created_by = self.process["created_by"]
         Background.register_user_access(
             self.process["process_steps"], self.role, self.username
         )
+
         finalized = []
         try:
             no_of_steps = sum(isinstance(e, dict) for e in steps)
@@ -492,42 +508,38 @@ class Background:
                                 # print(k, v)
                                 if (
                                     isinstance(v, str) and
-                                    get_document_object(v).get("document_state")
+                                    single_query_document_collection({"_id": v}).get("document_state")
                                     == "processing"
                                 ):
                                     # print("doc_state:", get_document_object(v).get("document_state"))
                                     continue 
                                 elif (
                                     isinstance(v, str) and
-                                    get_document_object(v).get("document_state")
+                                    single_query_document_collection({"_id": v}).get("document_state")
                                     == "finalized"
                                 ):
                                     register_single_user_access(step, step.get("stepRole"), k)
                                     finalized.append(v)
-                                    # print(finalized)
+                                    print(finalized)
                     else:
                         if step.get("stepTaskType") == "request_for_task":
-                            for user in step.get("stepTeamMembers"):
+                            users = [
+                                user
+                                for user in step.get("stepTeamMembers", [])
+                                + step.get("stepPublicMembers", [])
+                                + step.get("stepUserMembers", [])
+                            ]
+                            
+                            for user in users:
+                                print("user:", [user])
+                                print("actual user:", user["member"])
                                 clone_id = cloning_document(
-                                    document_id, user, parent_id, process_id
+                                    document_id, [user], parent_id, process_id
                                 )
                                 step.get("stepDocumentCloneMap").append(
                                     {user["member"]: clone_id}
                                 )
-                            for user in step.get("stepPublicMembers"):
-                                clone_id = cloning_document(
-                                    document_id, user, parent_id, process_id,
-                                )
-                                step.get("stepDocumentCloneMap").append(
-                                    {user["member"]: clone_id}
-                                )
-                            for user in step.get("stepUserMembers"):
-                                clone_id = cloning_document(
-                                    document_id, user, parent_id, process_id
-                                )
-                                step.get("stepDocumentCloneMap").append(
-                                    {user["member"]: clone_id}
-                                )
+
                         if step.get("stepTaskType") == "assign_task":
                             step1_documents = []
                             for i in range(1, len((steps))):
@@ -568,3 +580,107 @@ class Background:
             print("got error", e)
             finalize_item(self.item_id, "processing", self.item_type)
             return
+
+        # try:
+        #     # check if all step one docs are finalized.
+        #     items = []
+        #     for map in steps[0].get("stepDocumentCloneMap", []):
+        #         for _, v in map.items():
+        #             if v is not None and isinstance(v, str):
+        #                 items.append(v)
+        #     # Yes
+        #     print(items)
+        #     if all(check_items_state(items)):
+        #         print( "# go to next step")
+        #         for idx, step in enumerate(steps[1:], start=1):
+        #             print(step)
+        #             if step.get("stepDocumentCloneMap") == []:
+        #                 print("# find all documents and check if any document is in state processing")
+        #                 for document_map in step.get("stepDocumentCloneMap"):
+        #                     # print("doc_map:", document_map)
+        #                     for k, v in list(document_map.items()):
+        #                         # print(k, v)
+        #                         if (
+        #                             isinstance(v, str) and
+        #                             single_query_document_collection({"_id": v}).get("document_state")
+        #                             == "processing"
+        #                         ):
+        #                             # print("doc_state:", get_document_object(v).get("document_state"))
+        #                             continue 
+        #                         elif (
+        #                             isinstance(v, str) and
+        #                             single_query_document_collection({"_id": v}).get("document_state")
+        #                             == "finalized"
+        #                         ):
+        #                             register_single_user_access(step, step.get("stepRole"), k)
+        #                             # finalized.append(v)
+        #                             print(finalized)
+        #             else:
+        #                 if step.get("stepTaskType") == "request_for_task":
+        #                     documents = []
+        #                     print("# get documents from previous step")
+        #                     prev_idx = idx - 1
+        #                     prev_docs = steps[prev_idx].get("stepDocumentCloneMap")
+        #                     for item in prev_docs:
+        #                         key = next(iter(item))
+        #                         my_key = item[key]
+        #                         if my_key != "accessed":
+        #                             documents.append(my_key)
+        #                     print("previous documents", documents)
+        #                     users = [
+        #                         user
+        #                         for user in step.get("stepTeamMembers", [])
+        #                         + step.get("stepPublicMembers", [])
+        #                         + step.get("stepUserMembers", [])
+        #                     ]
+        #                     print("# now for the previous documents create copies for `this` steps users.")
+        #                     for usr in users:
+        #                         for doc in documents:
+        #                             clone_id = cloning_document(
+        #                                 doc, [usr], parent_id, process_id
+        #                             )
+        #                             step.get("stepDocumentCloneMap").append(
+        #                                 {usr["member"]: clone_id}
+        #                             )
+        #                 # Option 2
+        #                 if step.get("stepTaskType") == "assign_task":
+        #                     step1_documents = []
+        #                     for i in range(1, len((steps))):
+        #                         current_idx = i
+        #                         prev_docs = steps[current_idx - 1].get("stepDocumentCloneMap")
+        #                         if prev_docs:
+        #                             for item in prev_docs:
+        #                                 key = next(iter(item))
+        #                                 my_key = item[key]
+        #                                 if my_key != "accessed":
+        #                                     step1_documents.append(my_key)
+        #                         for document in step1_documents:
+        #                             for user in step.get("stepTeamMembers"):
+        #                                 authorize(document, user, process_id, process_type)
+        #                                 step.get("stepDocumentCloneMap").append(
+        #                                     {user["member"]: document}
+        #                                 )
+        #                             for user in step.get("stepPublicMembers"):
+        #                                 authorize(document, user, process_id, process_type)
+        #                                 step.get("stepDocumentCloneMap").append(
+        #                                     {user["member"]: document}
+        #                                 )
+        #                             for user in step.get("stepUserMembers"):
+        #                                 authorize(document, user, process_id, process_type)
+        #                                 step.get("stepDocumentCloneMap").append(
+        #                                     {user["member"]: document}
+        #                             )
+        #                 update_process(process_id, steps, processing_state)
+        #         # Check that all documents are finalized
+        #         all_accessed_true = check_all_accessed_true(steps)
+        #         print(all_accessed_true)
+        #         if all_accessed_true == True:
+        #             update_process(process_id, steps, "finalized")
+        #         else:
+        #             update_process(process_id, steps, "processing")
+         
+        # except Exception as e:
+        #     print("got error", e)
+        #     finalize_item(self.item_id, "processing", self.item_type)
+        #     return
+        

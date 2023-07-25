@@ -7,7 +7,7 @@ from app.constants import NOTIFICATION_API
 
 def send_notification(data):
     try:
-        response =  requests.post(
+        response = requests.post(
             NOTIFICATION_API,
             # data=data,
             # data=json.dumps(data),
@@ -19,8 +19,9 @@ def send_notification(data):
     except Exception as err:
         print(err)
         raise
-   
+
     return data
+
 
 if __name__ == "__main__":
     # Retrieve command line arguments

@@ -19,12 +19,18 @@ from app.helpers import (
     cloning_process,
     create_favourite,
     list_favourites,
+    paginate,
+    register_finalized,
     remove_favourite,
     validate_id,
 )
 from app.mongo_db_connection import (
     add_document_to_folder,
     add_template_to_folder,
+    bulk_query_clones_collection,
+    bulk_query_process_collection,
+    bulk_query_team_collection,
+    bulk_query_template_collection,
     delete_document,
     delete_folder,
     delete_items_in_folder,
@@ -32,29 +38,25 @@ from app.mongo_db_connection import (
     delete_template,
     delete_workflow,
     finalize_item,
-    get_document_list,
-    get_document_object,
-    get_folder_list,
-    get_folder_object,
-    get_link_object,
-    get_links_object_by_process_id,
-    get_process_list,
-    get_process_object,
-    get_team,
-    get_team_list,
-    get_template_list,
-    get_template_object,
-    get_wf_list,
-    get_wf_object,
-    get_wfai_setting_list,
-    get_workflow_setting_object,
+    save_to_document_collection,
+    save_to_folder_collection,
+    save_to_setting_collection,
+    save_to_team_collection,
+    save_to_template_collection,
+    save_to_workflow_collection,
+    single_query_document_collection,
+    bulk_query_workflow_collection,
+    single_query_folder_collection,
+    single_query_qrcode_collection,
+    single_query_team_collection,
+    single_query_template_collection,
+    single_query_workflow_collection,
+    bulk_query_settings_collection,
+    single_query_workflow_collection,
     process_folders_to_item,
-    save_document,
-    save_folder,
-    save_team,
-    save_template,
-    save_workflow,
-    save_workflow_setting,
+    bulk_query_document_collection,
+    single_query_links_collection,
+    single_query_process_collection,
     update_folder,
     update_process,
     update_team_data,
@@ -109,36 +111,48 @@ def document_processing(request):
         return Response("Process Saved in drafts.", status.HTTP_201_CREATED)
     if action == "start_document_processing_content_wise":
         if request.data.get("process_id") is not None:
-            process = get_process_object(request.data["process_id"])
+            process = single_query_process_collection(
+                {"_id": request.data["process_id"]}
+            )
         else:
             data = process.normal_process(action)
     if action == "start_document_processing_wf_steps_wise":
         if request.data.get("process_id") is not None:
-            process = get_process_object(request.data["process_id"])
+            process = single_query_process_collection(
+                {"_id": request.data["process_id"]}
+            )
         else:
             data = process.normal_process(action)  # type: ignore
     if action == "start_document_processing_wf_wise":
         if request.data.get("process_id") is not None:
-            process = get_process_object(request.data["process_id"])
+            process = single_query_process_collection(
+                {"_id": request.data["process_id"]}
+            )
         else:
             data = process.normal_process(action)  # type: ignore
     if action == "test_document_processing_content_wise":
         if request.data.get("process_id") is not None:
-            process = get_process_object(request.data["process_id"])
+            process = single_query_process_collection(
+                {"_id": request.data["process_id"]}
+            )
         else:
             data = process.test_process(action)  # type: ignore
     if action == "test_document_processing_wf_steps_wise":
         if request.data.get("process_id") is not None:
-            process = get_process_object(request.data["process_id"])
+            process = single_query_process_collection(
+                {"_id": request.data["process_id"]}
+            )
         else:
             data = process.test_process(action)  # type: ignore
     if action == "test_document_processing_wf_wise":
         if request.data.get("process_id") is not None:
-            process = get_process_object(request.data["process_id"])
+            process = single_query_process_collection(
+                {"_id": request.data["process_id"]}
+            )
         else:
             data = process.test_process(action)  # type: ignore
     if action == "close_processing_and_mark_as_completed":
-        process = get_process_object(request.data["process_id"])
+        process = single_query_process_collection({"_id": request.data["process_id"]})
         if process["processing_state"] == "completed":
             return Response(
                 "This Workflow process is already complete", status.HTTP_200_OK
@@ -156,7 +170,7 @@ def document_processing(request):
             )
         return Response(status.HTTP_500_INTERNAL_SERVER_ERROR)
     if action == "cancel_process_before_completion":
-        process = get_process_object(request.data["process_id"])
+        process = single_query_process_collection({"_id": request.data["process_id"]})
         if process["processing_state"] == "cancelled":
             return Response("This Workflow process is Cancelled!", status.HTTP_200_OK)
         res = json.loads(
@@ -183,7 +197,7 @@ def document_processing(request):
 @api_view(["POST"])
 def get_process_link(request, process_id):
     """get a link process for person having notifications"""
-    links_info = get_links_object_by_process_id(process_id)
+    links_info = single_query_links_collection({"process_id": process_id})
     if not links_info:
         return Response("Verification link unavailable", status.HTTP_400_BAD_REQUEST)
     user = request.data["user_name"]
@@ -202,7 +216,7 @@ def process_verification(request):
     auth_portfolio = request.data["auth_portfolio"]
     token = request.data["token"]
     org_name = request.data["org_name"]
-    link_object = get_link_object(token)
+    link_object = single_query_qrcode_collection({"unique_hash": token})
     if user_type == "team" or user_type == "user":
         if (
             link_object["user_name"] != auth_user
@@ -212,7 +226,7 @@ def process_verification(request):
                 "User Logged in is not part of this process",
                 status.HTTP_401_UNAUTHORIZED,
             )
-    process = get_process_object(link_object["process_id"])
+    process = single_query_process_collection({"_id": link_object["process_id"]})
     process["org_name"] = org_name
     handler = HandleProcess(process)
     if not handler.verify_location(
@@ -259,14 +273,14 @@ def finalize_or_reject(request, process_id):
     user_type = request.data["user_type"]
     state = request.data["action"]
     check, current_state = checks.is_finalized(item_id, item_type)
-    if check and current_state != "processing":
-        return Response(
-            f"document already processed as `{current_state}`!", status.HTTP_200_OK
-        )
+    # if check and current_state != "processing":
+    #     return Response(
+    #         f"document already processed as `{current_state}`!", status.HTTP_200_OK
+    #     )
     res = json.loads(finalize_item(item_id, state, item_type))
     if res["isSuccess"]:
         try:
-            process = get_process_object(process_id)
+            process = single_query_process_collection({"_id": process_id})
             background = Background(process, item_type, item_id, role, user)
             background.processing()
             if user_type == "public":
@@ -275,11 +289,11 @@ def finalize_or_reject(request, process_id):
             return Response("document processed successfully", status.HTTP_200_OK)
         except Exception as err:
             print(err)
-            return Response("An error occured during processing", status.HTTP_500_INTERNAL_SERVER_ERROR)
-  
-    return Response(
-            "an error occurred during processing", status.HTTP_400_BAD_REQUEST
-        )
+            return Response(
+                "An error occured during processing",
+                status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
+    return Response("an error occurred during processing", status.HTTP_400_BAD_REQUEST)
 
 
 @api_view(["POST"])
@@ -287,7 +301,7 @@ def trigger_process(request):
     """Get process and begin processing it."""
     if not validate_id(request.data["process_id"]):
         return Response("something went wrong!", status.HTTP_400_BAD_REQUEST)
-    process = get_process_object(request.data["process_id"])
+    process = single_query_process_collection({"_id": request.data["process_id"]})
     action = request.data["action"]
     state = process["processing_state"]
     if request.data["user_name"] != process["created_by"]:
@@ -316,16 +330,15 @@ def trigger_process(request):
 def processes(request, company_id):
     """fetches workflow process `I` created."""
     data_type = request.query_params.get("data_type")
-    if not validate_id(company_id) and data_type:
+    if not validate_id(company_id) or data_type is None:
         return Response("Invalid Request!", status.HTTP_400_BAD_REQUEST)
     cache_key = f"processes_{company_id}"
     process_list = cache.get(cache_key)
     if process_list is None:
-        try:
-            process_list = get_process_list(company_id, data_type)
-            cache.set(cache_key, process_list, timeout=60)
-        except:
-            return Response(status.HTTP_500_INTERNAL_SERVER_ERROR)
+        process_list = bulk_query_process_collection(
+            {"company_id": company_id, "data_type": data_type}
+        )
+        cache.set(cache_key, process_list, timeout=60)
     return Response(process_list, status.HTTP_200_OK)
 
 
@@ -333,23 +346,15 @@ def processes(request, company_id):
 def get_completed_processes(request, company_id):
     """fetches workflow process `I` created."""
     data_type = request.query_params.get("data_type")
-    if not validate_id(company_id) and data_type:
+    if not validate_id(company_id) or data_type is None:
         return Response("Invalid Request!", status.HTTP_400_BAD_REQUEST)
-    cache_key = f"processes_{company_id}_completed"
-    process_list = cache.get(cache_key)
-    completed = None
-    if process_list is None:
-        try:
-            process_list = get_process_list(company_id, data_type)
-            if len(process_list) > 0:
-                completed = list(
-                    filter(
-                        lambda x: x.get("processing_state") == "finalized", process_list
-                    )
-                )
-            cache.set(cache_key, completed, timeout=60)
-        except Exception as err:
-            return Response(err, status.HTTP_500_INTERNAL_SERVER_ERROR)
+    completed = bulk_query_process_collection(
+        {
+            "company_id": company_id,
+            "data_type": data_type,
+            "processing_state": "completed",
+        }
+    )
     return Response(completed, status.HTTP_200_OK)
 
 
@@ -358,11 +363,18 @@ def a_single_process(request, process_id):
     """get process by process id"""
     if not validate_id(process_id):
         return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
-    process = get_process_object(process_id)
-    document_id = process["parent_item_id"]
-    document = get_document_object(document_id)
-    document_name = document["document_name"]
-    process.update({"document_name": document_name})
+    process = single_query_process_collection({"_id": process_id})
+    print(process)
+    if process["parent_item_id"]:
+        document_id = process["parent_item_id"]
+        document = single_query_document_collection({"_id": document_id})
+        if document:
+            document_name = document["document_name"]
+            process.update({"document_name": document_name})
+        links = single_query_links_collection({"process_id": process["_id"]})
+        if links:
+            links_object = links[0]
+            process.update({"links": links_object["links"]})
     return Response(process, status.HTTP_200_OK)
 
 
@@ -371,7 +383,7 @@ def fetch_process_links(request, process_id):
     """verification links for a process"""
     if not validate_id(process_id):
         return Response("something went wrong!", status.HTTP_400_BAD_REQUEST)
-    process_info = get_links_object_by_process_id(process_id)
+    process_info = single_query_process_collection({"process_id": process_id})
     if process_info:
         process = process_info[0]
         return Response(process["links"], status.HTTP_200_OK)
@@ -404,13 +416,15 @@ def create_workflow(request):
         "steps": form["steps"],
     }
     res = json.loads(
-        save_workflow(
-            data,
-            form["company_id"],
-            form["created_by"],
-            form["portfolio"],
-            form["data_type"],
-            "original",
+        save_to_workflow_collection(
+            {
+                "workflows": data,
+                "company_id": form["company_id"],
+                "created_by": form["created_by"],
+                "portfolio": form["portfolio"],
+                "data_type": form["data_type"],
+                "workflow_type": "original",
+            }
         )
     )
     if res["isSuccess"]:
@@ -435,7 +449,7 @@ def workflow_detail(request, workflow_id):
     if not validate_id(workflow_id):
         return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
     if request.method == "GET":
-        data = get_wf_object(workflow_id)
+        data = single_query_workflow_collection({"_id": workflow_id})
         return Response(data, status.HTTP_200_OK)
     if request.method == "PUT":
         form = request.data
@@ -443,17 +457,13 @@ def workflow_detail(request, workflow_id):
             return Response(
                 "Workflow Data is required", status=status.HTTP_400_BAD_REQUEST
             )
-
-        old_workflow = get_wf_object(workflow_id)
-
+        old_workflow = single_query_workflow_collection({"_id": workflow_id})
         old_workflow["workflows"]["workflow_title"] = form["wf_title"]
         old_workflow["workflows"]["data_type"] = form["data_type"]
-
         old_workflow["workflows"]["steps"][0]["step_name"] = form["steps"][0][
             "step_name"
         ]
         old_workflow["workflows"]["steps"][0]["role"] = form["steps"][0]["role"]
-
         updt_wf = update_wf(workflow_id, old_workflow)
         updt_wf = json.loads(updt_wf)
         if updt_wf.get("isSuccess"):
@@ -465,37 +475,46 @@ def workflow_detail(request, workflow_id):
 def get_workflows(request, company_id):
     """List all workflows"""
     data_type = request.query_params.get("data_type")
-    if not validate_id(company_id) and data_type:
+    if not validate_id(company_id) or data_type is None:
         return Response("Invalid Request!", status.HTTP_400_BAD_REQUEST)
-    workflow_list = get_wf_list(company_id, data_type)
-    if workflow_list:
-        return Response(
-            {"workflows": workflow_list},
-            status.HTTP_200_OK,
-        )
+    workflow_list = bulk_query_workflow_collection(
+        {"company_id": company_id, "data_type": data_type}
+    )
     return Response(
-        {"workflows": []},
+        {"workflows": workflow_list},
         status.HTTP_200_OK,
     )
 
 
 @api_view(["GET"])
-def get_documents(request, company_id):
+def get_documents_in_organization(request, company_id):
     """List of Created Documents."""
     data_type = request.query_params.get("data_type")
-    if not validate_id(company_id) and data_type:
+    if not validate_id(company_id) or data_type is None:
         return Response("Invalid Request!", status.HTTP_400_BAD_REQUEST)
-    cache_key = f"documents_{company_id}"
-    document_list = cache.get(cache_key)
-    if document_list is None:
-        document_list = get_document_list(company_id, data_type)
-        cache.set(cache_key, document_list, timeout=60)
-    if document_list:
-        return Response(
+    document_list = bulk_query_document_collection(
+        {"company_id": company_id, "data_type": data_type}
+    )
+    return Response(
         {"documents": document_list},
         status.HTTP_200_OK,
-        )
-    return Response({  "documents": []}, status.HTTP_200_OK)
+    )
+
+
+@api_view(["GET"])
+def get_documents_types(request, company_id):
+    """List of Created Documents."""
+    data_type = request.query_params.get("data_type")
+    doc_type = request.query_params.get("doc_type")
+    if not validate_id(company_id) or data_type is None or doc_type is None:
+        return Response("Invalid Request!", status.HTTP_400_BAD_REQUEST)
+    document_list = bulk_query_document_collection(
+        {"company_id": company_id, "data_type": data_type, "document_type": doc_type}
+    )
+    return Response(
+        {"documents": document_list},
+        status.HTTP_200_OK,
+    )
 
 
 @api_view(["POST"])
@@ -506,22 +525,27 @@ def create_document(request):
             {"message": "Failed to process document creation."},
             status.HTTP_200_OK,
         )
-    viewers = [request.data["created_by"]]
+    portfolio = ""
+    if request.data["portfolio"]:
+        portfolio = request.data["portfolio"]
+    viewers = [{ "member": request.data["created_by"], "portfolio": portfolio}]
     folder = []
     res = json.loads(
-        save_document(
-            name="Untitled Document",
-            data=request.data["content"],
-            created_by=request.data["created_by"],
-            company_id=request.data["company_id"],
-            page=request.data["page"],
-            data_type=request.data["data_type"],
-            state="draft",
-            auth_viewers=viewers,
-            document_type="original",
-            parent_id=None,
-            process_id="",
-            folders=folder,
+        save_to_document_collection(
+            {
+                "document_name": "Untitled Document",
+                "content": request.data["content"],
+                "created_by": request.data["created_by"],
+                "company_id": request.data["company_id"],
+                "page": request.data["page"],
+                "data_type": request.data["data_type"],
+                "document_state": "draft",
+                "auth_viewers": viewers,
+                "document_type": "original",
+                "parent_id": None,
+                "process_id": "",
+                "folders": folder,
+            }
         )
     )
     if res["isSuccess"]:
@@ -543,7 +567,9 @@ def get_document_content(request, document_id):
     if not validate_id(document_id):
         return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
     content = []
-    my_dict = ast.literal_eval(get_document_object(document_id)["content"])[0][0]
+    my_dict = ast.literal_eval(
+        single_query_document_collection({"_id": document_id})["content"]
+    )[0][0]
     all_keys = [i for i in my_dict.keys()]
     for i in all_keys:
         temp_list = []
@@ -593,7 +619,7 @@ def document_object(request, document_id):
     """Retrieves the document object for a specific document"""
     if not validate_id(document_id):
         return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
-    document = get_document_object(document_id)
+    document = single_query_document_collection({"_id": document_id})
     return Response(document, status.HTTP_200_OK)
 
 
@@ -803,10 +829,32 @@ def trash_favourites(request, item_id, item_type, username):
 @api_view(["GET"])
 def get_templates(request, company_id):
     """List of Created Templates."""
-    data_type = request.query_params.get("data_type", "Real_Data")
-    if not validate_id(company_id):
+    data_type = request.query_params.get("data_type")
+    if not validate_id(company_id) or data_type is None:
         return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
-    templates = get_template_list(company_id, data_type)
+    templates = bulk_query_template_collection(
+        {"company_id": company_id, "data_type": data_type}
+    )
+    return Response(
+        {"templates": templates},
+        status.HTTP_200_OK,
+    )
+
+
+@api_view(["GET"])
+def get_reports_templates(request, company_id):
+    """List of templates based on their current state."""
+    data_type = request.query_params.get("data_type")
+    template_state = request.query_params.get("template_state")
+    if not validate_id(company_id) or data_type is None or template_state is None:
+        return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
+    templates = bulk_query_template_collection(
+        {
+            "company_id": company_id,
+            "data_type": data_type,
+            "template_state": template_state,
+        }
+    )
     return Response(
         {"templates": templates},
         status.HTTP_200_OK,
@@ -821,16 +869,23 @@ def create_template(request):
     template_name = "Untitled Template"
     if not validate_id(request.data["company_id"]):
         return Response("Invalid company details", status.HTTP_400_BAD_REQUEST)
+    portfolio = ""
+    if request.data["portfolio"]:
+        portfolio = request.data["portfolio"]
+    viewers = [{ "member": request.data["created_by"], "portfolio": portfolio}]
     res = json.loads(
-        save_template(
-            template_name,
-            data,
-            page,
-            folder,
-            request.data["created_by"],
-            request.data["company_id"],
-            request.data["data_type"],
-            "original",
+        save_to_template_collection(
+            {
+                "template_name": template_name,
+                "content": data,
+                "page": page,
+                "folders": folder,
+                "created_by": request.data["created_by"],
+                "company_id": request.data["company_id"],
+                "data_type": request.data["data_type"],
+                "template_type": "original",
+                "auth_viewers": viewers
+            }
         )
     )
     if res["isSuccess"]:
@@ -878,7 +933,7 @@ def template_object(request, template_id):
     """Gets the JSON object for a template id"""
     if not validate_id(template_id):
         return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
-    template = get_template_object(template_id)
+    template = single_query_template_collection({"_id": template_id})
     return Response(template, status.HTTP_200_OK)
 
 
@@ -909,23 +964,27 @@ def create_team(request):
     universal_code = form["universal_code"]
     data_type = form["data_type"]
     team_set = json.loads(
-        save_team(
-            team_name,
-            team_type,
-            team_code,
-            team_spec,
-            details,
-            universal_code,
-            portfolio_list,
-            company_id,
-            created_by,
-            data_type,
+        save_to_team_collection(
+            {
+                "team_name": team_name,
+                "team_type": team_type,
+                "team_code": team_code,
+                "team_spec": team_spec,
+                "details": details,
+                "universal_code": universal_code,
+                "portfolio_list": portfolio_list,
+                "company_id": company_id,
+                "created_by": created_by,
+                "data_type": data_type,
+            }
         )
     )
     if team_set["isSuccess"]:
         return Response(
             {
-                "Team Saved": get_team(team_set["inserted_id"]),
+                "Team Saved": single_query_team_collection(
+                    {"_id": team_set["inserted_id"]}
+                ),
             },
             status.HTTP_201_CREATED,
         )
@@ -938,7 +997,7 @@ def update_team(request):
     form = request.data
     if not form:
         return Response("Team Data required", status.HTTP_400_BAD_REQUEST)
-    team_data = get_team(form["team_id"])
+    team_data = single_query_team_collection({"_id": form["team_id"]})
     team_data["company_id"] = form["company_id"]
     team_data["created_by"] = form["created_by"]
     team_data["team_id"] = form["team_id"]
@@ -954,7 +1013,7 @@ def update_team(request):
     if team_set["isSuccess"]:
         return Response(
             {
-                "Team Updated": get_team(form["team_id"]),
+                "Team Updated": single_query_team_collection({"_id": form["team_id"]}),
             },
             status.HTTP_201_CREATED,
         )
@@ -964,73 +1023,72 @@ def update_team(request):
 @api_view(["GET"])
 def get_team_data(request, team_id):
     """Get specific Team"""
-    teams = get_team(team_id)
+    teams = single_query_team_collection({"_id": team_id})
     return Response(teams, status.HTTP_200_OK)
 
 
-@api_view(["POST", "GET"])
+@api_view(["GET"])
 def get_all_teams(request, company_id):
     """Get All Team"""
-    all_team = get_team_list(company_id)
+    all_team = bulk_query_team_collection({"company_id": company_id})
+    data_type = request.query_params.get("data_type")
     form = request.data
-    if not form:
-        try:
-            return Response(all_team, status.HTTP_200_OK)
-        except:
-            return Response("Data Type Required", status.HTTP_400_BAD_REQUEST)
-    try:
-        return Response(
-            [
-                data
-                for data in all_team
-                if form["data_type"] in str(data.get("data_type", ""))
-            ],
-            status.HTTP_200_OK,
-        )
-    except:
-        return Response(
-            "Failed to Load Team Data", status.HTTP_500_INTERNAL_SERVER_ERROR
-        )
+    if not form and data_type:
+        return Response("Invalid Request", status.HTTP_400_BAD_REQUEST)
+    all_team = bulk_query_team_collection(
+        {"company_id": company_id, "data_type": data_type}
+    )
+    return Response(all_team, status.HTTP_200_OK)
 
 
 @api_view(["GET"])
-def get_completed_documents(request, company_id):
-    """List of Completed Documents."""
+def get_reports_documents(request, company_id):
+    """List of documents based on their states"""
     data_type = request.query_params.get("data_type")
-    if not validate_id(company_id) and data_type:
+    document_state = request.query_params.get("doc_state")
+    if not validate_id(company_id) or data_type is None or document_state is None:
         return Response("Invalid Request!", status.HTTP_400_BAD_REQUEST)
-    document_list = get_document_list(company_id, data_type)
-    if document_list:
-        completed = list(
-            filter(lambda i: i.get("document_state") == "finalized", document_list)
-        )
-        return Response(
-            {"documents": completed},
-            status=status.HTTP_200_OK,
-        )
+    document_list = bulk_query_document_collection(
+        {
+            "company_id": company_id,
+            "data_type": data_type,
+            "document_state": document_state,
+        }
+    )
     return Response(
-        {"documents": []},
+        {"documents": document_list},
         status=status.HTTP_200_OK,
     )
 
 
 @api_view(["GET"])
+def get_reports_processes(request, company_id):
+    """Process Reports by processing state"""
+    data_type = request.query_params.get("data_type")
+    process_state = request.query_params.get("process_state")
+    if not validate_id(company_id) or data_type is None or process_state is None:
+        return Response("Invalid Request!", status.HTTP_400_BAD_REQUEST)
+    process_list = bulk_query_process_collection(
+        {
+            "company_id": company_id,
+            "data_type": data_type,
+            "process_state": process_state,
+        }
+    )
+    return Response(process_list, status.HTTP_200_OK)
+
+
+@api_view(["GET"])  # TODO : Refactor this
 def get_completed_documents_by_process(request, company_id, process_id):
     """List of Completed Documents."""
     data_type = request.query_params.get("data_type")
-    if not validate_id(company_id) and data_type:
+    if not validate_id(company_id) or data_type is None or not validate_id(process_id):
         return Response("Invalid Request!", status.HTTP_400_BAD_REQUEST)
-    document_list = get_document_list(company_id, data_type)
-    if len(document_list) > 0:
-        cloned = list(
-            filter(lambda i: i.get("process_id") == process_id, document_list)
-        )
-        return Response(
-            {f"document_list of process: {process_id}": cloned},
-            status=status.HTTP_200_OK,
-        )
+    document_list = bulk_query_document_collection(
+        {"company_id": company_id, "data_type": data_type, "process_id": process_id}
+    )
     return Response(
-        {f"document_list of process: {process_id}": []},
+        {f"document_list of process: {process_id}": document_list},
         status=status.HTTP_200_OK,
     )
 
@@ -1049,24 +1107,26 @@ def create_application_settings(request):
         return Response({"WF SETTING EXISTS": is_exists}, status.HTTP_200_OK)
     try:
         res = json.loads(
-            save_workflow_setting(
-                company_id=company_id,
-                created_by=request.data["created_by"],
-                data_type=request.data["data_type"],
-                process=request.data["Process"],
-                documents=request.data["Documents"],
-                templates=request.data["Templates"],
-                workflows=request.data["Workflows"],
-                notarisation=request.data["Notarisation"],
-                folders=request.data["Folders"],
-                records=request.data["Records"],
-                references=request.data["References"],
-                approval=request.data["Approval_Process"],
-                evaluation=request.data["Evaluation_Process"],
-                reports=request.data["Reports"],
-                management=request.data["Management"],
-                portfolio=request.data["Portfolio_Choice"],
-                theme_color=request.data["theme_color"],
+            save_to_setting_collection(
+                {
+                    "company_id": company_id,
+                    "created_by": request.data["created_by"],
+                    "data_type": request.data["data_type"],
+                    "Process": request.data["Process"],
+                    "Documents": request.data["Documents"],
+                    "Templates": request.data["Templates"],
+                    "Workflows": request.data["Workflows"],
+                    "Notarisation": request.data["Notarisation"],
+                    "Folders": request.data["Folders"],
+                    "Records": request.data["Records"],
+                    "References": request.data["References"],
+                    "Approval_Process": request.data["Approval_Process"],
+                    "Evaluation_Process": request.data["Evaluation_Process"],
+                    "Reports": request.data["Reports"],
+                    "Management": request.data["Management"],
+                    "Portfolio_Choice": request.data["Portfolio_Choice"],
+                    "theme_color": request.data["theme_color"],
+                }
             )
         )
         if res["isSuccess"]:
@@ -1084,7 +1144,9 @@ def create_application_settings(request):
 @api_view(["GET"])
 def all_workflow_ai_setting(request, company_id, data_type="Real_data"):
     """Get All WF AI"""
-    all_setting = get_wfai_setting_list(company_id, data_type)
+    all_setting = bulk_query_settings_collection(
+        {"company_id": company_id, "data_type": data_type}
+    )
     return Response(
         all_setting,
         status.HTTP_200_OK,
@@ -1094,7 +1156,7 @@ def all_workflow_ai_setting(request, company_id, data_type="Real_data"):
 @api_view(["GET"])
 def get_workflow_ai_setting(request, wf_setting_id):
     """Get All WF AI"""
-    setting = get_workflow_setting_object(wf_setting_id)
+    setting = single_query_workflow_collection({"_id": wf_setting_id})
     return Response(setting, status.HTTP_200_OK)
 
 
@@ -1104,7 +1166,7 @@ def update_application_settings(request):
     form = request.data
     if not form:
         return Response("Workflow Data is Required", status.HTTP_400_BAD_REQUEST)
-    old_wf_setting = get_workflow_setting_object(form["wf_setting_id"])
+    old_wf_setting = single_query_workflow_collection({"_id": form["wf_setting_id"]})
     for key, new_value in form.items():
         if key in old_wf_setting:
             old_wf_setting[key] = new_value
@@ -1122,84 +1184,80 @@ def read_reminder(request, process_id, username):
     # cron = CronTab('root')
     if not validate_id(process_id):
         return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
-    cache_key = f"processes_{process_id}"
-    process_detail = cache.get(cache_key)
-    if process_detail is None:
-        try:
-            process_detail = get_process_object(process_id)
-            cache.set(cache_key, process_detail, timeout=60)
-            process_steps = process_detail["process_steps"]
-            for step in process_steps:
-                for mem in step["stepTeamMembers"]:
-                    if mem["member"] == username:
-                        if not checks.register_user_access(
-                            process_steps=process_steps,
-                            authorized_role=step["stepRole"],
-                            user=username,
-                        ):
-                            data = {
-                                "username": username,
-                                "portfolio": mem["portfolio"],
-                                "product_name": "Workflow AI",
-                                "company_id": process_detail["company_id"],
-                                "org_name": "WorkflowAi",
-                                "org_id": process_detail["company_id"],
-                                "title": "Document to Sign",
-                                "message": "You have a document to sign.",
-                                "link": process_detail["_id"],
-                                "duration": "5",  # TODO: pass reminder time here
-                                "button_status": "",
-                            }
+    try:
+        process_detail = single_query_process_collection({"_id": process_id})
+        process_steps = process_detail["process_steps"]
+        for step in process_steps:
+            for mem in step["stepTeamMembers"]:
+                if mem["member"] == username:
+                    if not checks.register_user_access(
+                        process_steps=process_steps,
+                        authorized_role=step["stepRole"],
+                        user=username,
+                    ):
+                        data = {
+                            "username": username,
+                            "portfolio": mem["portfolio"],
+                            "product_name": "Workflow AI",
+                            "company_id": process_detail["company_id"],
+                            "org_name": "WorkflowAi",
+                            "org_id": process_detail["company_id"],
+                            "title": "Document to Sign",
+                            "message": "You have a document to sign.",
+                            "link": process_detail["_id"],
+                            "duration": "5",  # TODO: pass reminder time here
+                            "button_status": "",
+                        }
 
-                            current_directory = os.getcwd()
-                            script_path = os.path.join(
-                                current_directory, "/utils/notification_cron.py"
+                        current_directory = os.getcwd()
+                        script_path = os.path.join(
+                            current_directory, "/utils/notification_cron.py"
+                        )
+                        command = f'python3 {script_path} "{data}"'
+                        cron = CronTab("root")
+                        job = cron.new(command=command)
+                        if step["stepReminder"] == "every_hour":
+                            # # Schedule cron job to run notification_cron.py every hour
+                            # # command = f"0 * * * * python3 {current_directory}/utils/notification_cron.py '{data}'"
+                            # # os.system(f"crontab -l | {{ cat; echo '{command}'; }} | crontab -")
+                            # hourly_job = cron.new(command=f"python3 {current_directory}/utils/notification_cron.py '{data}'")
+                            # hourly_job.minute.every(1)
+                            # cron.write()
+                            # print(hourly_job.command)
+                            # response_data = {
+                            #     "command": hourly_job.command,
+                            #     # "next_run": hourly_job.next_run(),
+                            # }
+                            # return Response(response_data)
+                            job.setall("* * * * *")
+                        elif step["stepReminder"] == "every_day":
+                            # Schedule cron job to run notification_cron.py every day
+                            # command = f"0 0 * * * python3 {current_directory}/utils/notification_cron.py '{data}'"
+                            # os.system(f"crontab -l | {{ cat; echo '{command}'; }} | crontab -")
+                            # daily_job = cron.new(command=f"python3 {current_directory}/utils/notification_cron.py '{data}'")
+                            # daily_job.day.every(1)
+                            # cron.write()
+                            # response_data = {
+                            #     "command": hourly_job.command,
+                            #     # "next_run": hourly_job.next_run(),
+                            # }
+                            # return Response(response_data)
+                            job.setall("0 0 * * *")
+                        else:
+                            return Response(
+                                f"Invalid step reminder value: {step['stepReminder']}",
+                                status.HTTP_400_BAD_REQUEST,
                             )
-                            command = f'python3 {script_path} "{data}"'
-                            cron = CronTab("root")
-                            job = cron.new(command=command)
-                            if step["stepReminder"] == "every_hour":
-                                # # Schedule cron job to run notification_cron.py every hour
-                                # # command = f"0 * * * * python3 {current_directory}/utils/notification_cron.py '{data}'"
-                                # # os.system(f"crontab -l | {{ cat; echo '{command}'; }} | crontab -")
-                                # hourly_job = cron.new(command=f"python3 {current_directory}/utils/notification_cron.py '{data}'")
-                                # hourly_job.minute.every(1)
-                                # cron.write()
-                                # print(hourly_job.command)
-                                # response_data = {
-                                #     "command": hourly_job.command,
-                                #     # "next_run": hourly_job.next_run(),
-                                # }
-                                # return Response(response_data)
-                                job.setall("* * * * *")
-                            elif step["stepReminder"] == "every_day":
-                                # Schedule cron job to run notification_cron.py every day
-                                # command = f"0 0 * * * python3 {current_directory}/utils/notification_cron.py '{data}'"
-                                # os.system(f"crontab -l | {{ cat; echo '{command}'; }} | crontab -")
-                                # daily_job = cron.new(command=f"python3 {current_directory}/utils/notification_cron.py '{data}'")
-                                # daily_job.day.every(1)
-                                # cron.write()
-                                # response_data = {
-                                #     "command": hourly_job.command,
-                                #     # "next_run": hourly_job.next_run(),
-                                # }
-                                # return Response(response_data)
-                                job.setall("0 0 * * *")
-                            else:
-                                return Response(
-                                    f"Invalid step reminder value: {step['stepReminder']}",
-                                    status.HTTP_400_BAD_REQUEST,
-                                )
 
-                            job.enable()
-                            cron.write()
-                            return Response("Cron job scheduled", status.HTTP_200_OK)
-                            # return Response(f"User hasnt accessed process: {step['stepReminder']}")
-        except Exception as err:
-            return Response(
-                f"An error occured: {err}", status.HTTP_500_INTERNAL_SERVER_ERROR
-            )
-    return Response(process_detail, status.HTTP_200_OK)
+                        job.enable()
+                        cron.write()
+                        return Response("Cron job scheduled", status.HTTP_200_OK)
+                        # return Response(f"User hasnt accessed process: {step['stepReminder']}")
+        return Response(process_detail, status.HTTP_200_OK)
+    except Exception as err:
+        return Response(
+            f"An error occured: {err}", status.HTTP_500_INTERNAL_SERVER_ERROR
+        )
 
 
 @api_view(["POST"])
@@ -1220,12 +1278,12 @@ def send_notif(request):
     try:
         notification_cron.send_notification(data)
         return Response("Notification sent", status.HTTP_201_CREATED)
-
     except Exception as err:
         return Response(
             f"Something went wrong: {err}", status.HTTP_500_INTERNAL_SERVER_ERROR
         )
-    
+
+
 @api_view(["POST"])
 def create_folder(request):
     data = []
@@ -1233,13 +1291,15 @@ def create_folder(request):
     if not validate_id(request.data["company_id"]):
         return Response("Invalid company details", status.HTTP_400_BAD_REQUEST)
     res = json.loads(
-        save_folder(
-            folder_name,
-            data,
-            request.data["created_by"],
-            request.data["company_id"],
-            request.data["data_type"],
-            "original",
+        save_to_folder_collection(
+            {
+                "folder_name": folder_name,
+                "data": data,
+                "created_by": request.data["created_by"],
+                "company_id": request.data["company_id"],
+                "data_type": request.data["data_type"],
+                "folder_type": "original",
+            }
         )
     )
     if res["isSuccess"]:
@@ -1255,7 +1315,7 @@ def folder_update(request, folder_id):
     if not validate_id(folder_id):
         return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
     if request.method == "GET":
-        folder_details = get_folder_object(folder_id)
+        folder_details = single_query_folder_collection({"_id": folder_id})
         return Response(folder_details, status.HTTP_200_OK)
 
     if request.method == "PUT":
@@ -1263,7 +1323,7 @@ def folder_update(request, folder_id):
         if not form:
             return Response("Folder Data is Required", status.HTTP_400_BAD_REQUEST)
         items = form["items"]
-        old_folder = get_folder_object(folder_id)
+        old_folder = single_query_folder_collection({"_id": folder_id})
         old_folder["folder_name"] = form["folder_name"]
         old_folder["data"].extend(items)
         document_ids = [item["document_id"] for item in items if "document_id" in item]
@@ -1272,9 +1332,7 @@ def folder_update(request, folder_id):
         if items:
             process_folders_to_item(document_ids, folder_id, add_document_to_folder)
             process_folders_to_item(template_ids, folder_id, add_template_to_folder)
-
         updt_folder = json.loads(update_folder(folder_id, old_folder))
-
         if updt_folder["isSuccess"]:
             return Response("Folder Updated", status.HTTP_201_CREATED)
     return Response(status.HTTP_500_INTERNAL_SERVER_ERROR)
@@ -1284,13 +1342,15 @@ def folder_update(request, folder_id):
 def all_folders(request, company_id):
     """fetches Folders created."""
     data_type = request.query_params.get("data_type")
-    if not validate_id(company_id) and data_type:
+    if not validate_id(company_id) or data_type is None:
         return Response("Invalid Request!", status.HTTP_400_BAD_REQUEST)
     cache_key = f"folders_{company_id}"
     folders_list = cache.get(cache_key)
     if folders_list is None:
         try:
-            folders_list = get_folder_list(company_id, data_type)
+            folders_list = bulk_query_clones_collection(
+                {"company_id": company_id, "data_type": data_type}
+            )
             cache.set(cache_key, folders_list, timeout=60)
         except:
             return Response(status.HTTP_500_INTERNAL_SERVER_ERROR)
@@ -1304,3 +1364,42 @@ def delete_item_from_folder(request, folder_id, item_id):
         res = delete_items_in_folder(item_id, folder_id, item_type)
         return Response(res + " Item Deleted in Folder", status.HTTP_202_ACCEPTED)
     return Response(status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+@api_view(["GET"])
+def dowell_centre_template(request, company_id):
+    """Fetch Dowell Knowledge centre templates."""
+    data_type = request.query_params.get("data_type")
+    if not validate_id(company_id):
+        return Response("Something went wrong!", status=status.HTTP_400_BAD_REQUEST)
+    templates = bulk_query_template_collection(
+        {"company_id": company_id, "data_type": data_type}
+    )
+    page = int(request.GET.get("page", 1))
+    templates = paginate(templates, page, 50)
+    return Response(
+        {"templates": templates},
+        status=status.HTTP_200_OK,
+    )
+
+
+@api_view(["GET"])
+def dowell_centre_documents(request, company_id):
+    """List of Created Documents."""
+    data_type = request.query_params.get("data_type")
+    if not validate_id(company_id):
+        return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
+    cache_key = f"documents_{company_id}"
+    document_list = cache.get(cache_key)
+    if document_list is None:
+        document_list = bulk_query_document_collection(
+            {"company_id": company_id, "data_type": data_type}
+        )
+        cache.set(cache_key, document_list, timeout=60)
+
+    page = int(request.GET.get("page", 1))
+    document_list = paginate(document_list, page, 50)
+    return Response(
+        {"documents": document_list},
+        status.HTTP_200_OK,
+    )
