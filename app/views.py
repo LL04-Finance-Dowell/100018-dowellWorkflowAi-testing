@@ -339,6 +339,8 @@ def processes(request, company_id):
             {"company_id": company_id, "data_type": data_type}
         )
         cache.set(cache_key, process_list, timeout=60)
+    page = int(request.GET.get("page", 1))
+    process_list = paginate(process_list, page, 50)
     return Response(process_list, status.HTTP_200_OK)
 
 
@@ -355,6 +357,8 @@ def get_completed_processes(request, company_id):
             "processing_state": "completed",
         }
     )
+    page = int(request.GET.get("page", 1))
+    completed = paginate(completed, page, 50)
     return Response(completed, status.HTTP_200_OK)
 
 
@@ -480,6 +484,8 @@ def get_workflows(request, company_id):
     workflow_list = bulk_query_workflow_collection(
         {"company_id": company_id, "data_type": data_type}
     )
+    page = int(request.GET.get("page", 1))
+    workflow_list = paginate(workflow_list, page, 50)
     return Response(
         {"workflows": workflow_list},
         status.HTTP_200_OK,
@@ -495,6 +501,8 @@ def get_documents_in_organization(request, company_id):
     document_list = bulk_query_document_collection(
         {"company_id": company_id, "data_type": data_type}
     )
+    page = int(request.GET.get("page", 1))
+    document_list = paginate(document_list, page, 50)
     return Response(
         {"documents": document_list},
         status.HTTP_200_OK,
@@ -511,6 +519,8 @@ def get_documents_types(request, company_id):
     document_list = bulk_query_document_collection(
         {"company_id": company_id, "data_type": data_type, "document_type": doc_type}
     )
+    page = int(request.GET.get("page", 1))
+    document_list = paginate(document_list, page, 50)
     return Response(
         {"documents": document_list},
         status.HTTP_200_OK,
@@ -619,7 +629,7 @@ def document_object(request, document_id):
     """Retrieves the document object for a specific document"""
     if not validate_id(document_id):
         return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
-    document = single_query_document_collection({"_id": document_id})
+    document = single_query_document_collection({"_id":document_id})
     return Response(document, status.HTTP_200_OK)
 
 
@@ -810,6 +820,8 @@ def all_favourites(request, company_id):
     if not validate_id(company_id):
         return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
     data = list_favourites(company_id)
+    page = int(request.GET.get("page", 1))
+    data = paginate(data, page, 50)
     return Response(data, status.HTTP_200_OK)
 
 
@@ -835,6 +847,8 @@ def get_templates(request, company_id):
     templates = bulk_query_template_collection(
         {"company_id": company_id, "data_type": data_type}
     )
+    page = int(request.GET.get("page", 1))
+    templates = paginate(templates, page, 50)
     return Response(
         {"templates": templates},
         status.HTTP_200_OK,
@@ -866,7 +880,6 @@ def create_template(request):
     data = ""
     page = ""
     folder = []
-    template_name = "Untitled Template"
     if not validate_id(request.data["company_id"]):
         return Response("Invalid company details", status.HTTP_400_BAD_REQUEST)
     portfolio = ""
@@ -876,7 +889,7 @@ def create_template(request):
     res = json.loads(
         save_to_template_collection(
             {
-                "template_name": template_name,
+                "template_name": "Untitled Template",
                 "content": data,
                 "page": page,
                 "folders": folder,
@@ -1038,6 +1051,8 @@ def get_all_teams(request, company_id):
     all_team = bulk_query_team_collection(
         {"company_id": company_id, "data_type": data_type}
     )
+    page = int(request.GET.get("page", 1))
+    all_team = paginate(all_team, page, 50)
     return Response(all_team, status.HTTP_200_OK)
 
 
@@ -1046,6 +1061,15 @@ def get_reports_documents(request, company_id):
     """List of documents based on their states"""
     data_type = request.query_params.get("data_type")
     document_state = request.query_params.get("doc_state")
+    member = request.query_params.get("member")
+    portfolio = request.query_params.get("portfolio")
+    auth_viewers = [
+            {
+                "member": member,
+                "portfolio": portfolio
+            }
+    ]
+    
     if not validate_id(company_id) or data_type is None or document_state is None:
         return Response("Invalid Request!", status.HTTP_400_BAD_REQUEST)
     document_list = bulk_query_document_collection(
@@ -1053,6 +1077,7 @@ def get_reports_documents(request, company_id):
             "company_id": company_id,
             "data_type": data_type,
             "document_state": document_state,
+            "auth_viewers": auth_viewers
         }
     )
     return Response(
@@ -1075,6 +1100,8 @@ def get_reports_processes(request, company_id):
             "process_state": process_state,
         }
     )
+    page = int(request.GET.get("page", 1))
+    process_list = paginate(process_list, page, 50)
     return Response(process_list, status.HTTP_200_OK)
 
 
@@ -1087,6 +1114,8 @@ def get_completed_documents_by_process(request, company_id, process_id):
     document_list = bulk_query_document_collection(
         {"company_id": company_id, "data_type": data_type, "process_id": process_id}
     )
+    page = int(request.GET.get("page", 1))
+    document_list = paginate(document_list, page, 50)
     return Response(
         {f"document_list of process: {process_id}": document_list},
         status=status.HTTP_200_OK,
@@ -1147,6 +1176,8 @@ def all_workflow_ai_setting(request, company_id, data_type="Real_data"):
     all_setting = bulk_query_settings_collection(
         {"company_id": company_id, "data_type": data_type}
     )
+    page = int(request.GET.get("page", 1))
+    all_setting = paginate(all_setting, page, 50)
     return Response(
         all_setting,
         status.HTTP_200_OK,
@@ -1354,6 +1385,8 @@ def all_folders(request, company_id):
             cache.set(cache_key, folders_list, timeout=60)
         except:
             return Response(status.HTTP_500_INTERNAL_SERVER_ERROR)
+    page = int(request.GET.get("page", 1))
+    folders_list = paginate(folders_list, page, 50)
     return Response(folders_list, status.HTTP_200_OK)
 
 
