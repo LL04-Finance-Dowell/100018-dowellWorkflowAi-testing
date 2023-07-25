@@ -284,7 +284,8 @@ def finalize_or_reject(request, process_id):
             background = Background(process, item_type, item_id, role, user)
             background.processing()
             if user_type == "public":
-                register_finalized(request.data["link_id"])
+                link_id = request.data["link_id"]
+                background.register_finalized(link_id)
             return Response("document processed successfully", status.HTTP_200_OK)
         except Exception as err:
             print(err)
@@ -859,6 +860,14 @@ def get_reports_templates(request, company_id):
     """List of templates based on their current state."""
     data_type = request.query_params.get("data_type")
     template_state = request.query_params.get("template_state")
+    member = request.query_params.get("member")
+    portfolio = request.query_params.get("portfolio")
+    auth_viewers = [
+            {
+                "member": member,
+                "portfolio": portfolio
+            }
+    ]
     if not validate_id(company_id) or data_type is None or template_state is None:
         return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
     templates = bulk_query_template_collection(
@@ -866,6 +875,7 @@ def get_reports_templates(request, company_id):
             "company_id": company_id,
             "data_type": data_type,
             "template_state": template_state,
+            "auth_viewers":auth_viewers
         }
     )
     page = int(request.GET.get("page", 1))
@@ -881,7 +891,6 @@ def create_template(request):
     data = ""
     page = ""
     folder = []
-    template_name = "Untitled Template"
     if not validate_id(request.data["company_id"]):
         return Response("Invalid company details", status.HTTP_400_BAD_REQUEST)
     portfolio = ""
@@ -891,7 +900,7 @@ def create_template(request):
     res = json.loads(
         save_to_template_collection(
             {
-                "template_name": template_name,
+                "template_name": "Untitled Template",
                 "content": data,
                 "page": page,
                 "folders": folder,
@@ -1071,7 +1080,6 @@ def get_reports_documents(request, company_id):
                 "portfolio": portfolio
             }
     ]
-    
     if not validate_id(company_id) or data_type is None or document_state is None:
         return Response("Invalid Request!", status.HTTP_400_BAD_REQUEST)
     document_list = bulk_query_document_collection(
