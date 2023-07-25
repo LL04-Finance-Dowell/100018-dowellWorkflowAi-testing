@@ -865,7 +865,6 @@ def create_template(request):
     data = ""
     page = ""
     folder = []
-    template_name = "Untitled Template"
     if not validate_id(request.data["company_id"]):
         return Response("Invalid company details", status.HTTP_400_BAD_REQUEST)
     portfolio = ""
@@ -875,7 +874,7 @@ def create_template(request):
     res = json.loads(
         save_to_template_collection(
             {
-                "template_name": template_name,
+                "template_name": "Untitled Template",
                 "content": data,
                 "page": page,
                 "folders": folder,
