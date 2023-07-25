@@ -284,7 +284,8 @@ def finalize_or_reject(request, process_id):
             background = Background(process, item_type, item_id, role, user)
             background.processing()
             if user_type == "public":
-                register_finalized(request.data["link_id"])
+                link_id = request.data["link_id"]
+                background.register_finalized(link_id)
             return Response("document processed successfully", status.HTTP_200_OK)
         except Exception as err:
             print(err)

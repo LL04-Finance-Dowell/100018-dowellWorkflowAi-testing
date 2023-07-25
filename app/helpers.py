@@ -89,11 +89,14 @@ def cloning_document(document_id, auth_viewers, parent_id, process_id):
         for viewer in viewers:
             doc_name = document["document_name"]
             if not doc_name:
-                document_name = "doc -" + viewer
+                document_name = "doc - " + viewer
             # if has_tilde_characters(doc_name):
             #     document_name = doc_name.replace("~", "")
             else:
-                document_name = doc_name + "-" + viewer
+                if isinstance(viewer, dict):
+                    document_name = doc_name + "_" + viewer["member"]
+                else:
+                    document_name = doc_name + "_" + viewer
         save_res = json.loads(
             save_to_document_collection(
                 {
@@ -318,3 +321,20 @@ def remove_favourite(identifier, type, username):
         except Exception as e:
             print(e)
             return
+
+
+def check_items_state(items) -> list:
+    """Checks if item state is finalized"""
+    return [
+        single_query_document_collection({"_id": i})["document_state"] == "finalized"
+        for i in items
+        if isinstance(i, str)
+    ]
+
+
+def check_all_accessed_true(data) -> bool:
+    for item in data:
+        step_document_clone_map = item.get("stepDocumentCloneMap", [])
+        if not all(elem.get("accessed", False) for elem in step_document_clone_map):
+            return False
+    return True
