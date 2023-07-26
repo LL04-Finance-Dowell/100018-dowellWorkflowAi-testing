@@ -18,6 +18,8 @@ from .views import (
     create_application_settings,
     document_detail,
     document_object,
+    clone_detail,
+    clone_object,
     document_processing,
     favorites,
     fetch_process_links,
@@ -27,6 +29,7 @@ from .views import (
     get_completed_documents_by_process,
     get_document_content,
     get_documents_in_organization,
+    get_clones_in_organization,
     get_process_link,
     get_reports_templates,
     get_team_data,
@@ -65,6 +68,7 @@ urlpatterns = [
     ),
     path("companies/<str:company_id>/templates/reports/", get_reports_templates),
     path("companies/<str:company_id>/documents/", get_documents_in_organization),
+    path("companies/<str:company_id>/documents/clones/", get_clones_in_organization),
     path(
         "companies/<str:company_id>/documents/knowledge-centre/",
         dowell_centre_documents,
@@ -88,6 +92,10 @@ urlpatterns = [
     path("documents/<str:document_id>/", document_detail, name="document_detail"),
     path(
         "documents/<str:document_id>/object/", document_object, name="document_object"
+    ),
+    path("documents/clones/<str:clone_id>/", clone_detail, name="clone_detail"),
+    path(
+        "documents/clones/<str:clone_id>/object/", clone_object, name="clone_object"
     ),
     path(
         "documents/<str:document_id>/content/",
