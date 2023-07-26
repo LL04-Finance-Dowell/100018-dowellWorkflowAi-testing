@@ -341,8 +341,8 @@ def processes(request, company_id):
             {"company_id": company_id, "data_type": data_type}
         )
         cache.set(cache_key, process_list, timeout=60)
-    # page = int(request.GET.get("page", 1))
-    # process_list = paginate(process_list, page, 50)
+    page = int(request.GET.get("page", 1))
+    process_list = paginate(process_list, page, 50)
     return Response(process_list, status.HTTP_200_OK)
 
 
@@ -523,8 +523,8 @@ def get_clones_in_organization(request, company_id):
         )
         cache.set(cache_key, clones_list, timeout=60)
 
-    # page = int(request.GET.get("page", 1))
-    # clones_list = paginate(clones_list, page, 50)
+    page = int(request.GET.get("page", 1))
+    clones_list = paginate(clones_list, page, 50)
     return Response(
         {"clones": clones_list},
         status.HTTP_200_OK,
