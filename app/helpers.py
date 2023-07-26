@@ -1,9 +1,10 @@
 import json
+from urllib.parse import parse_qs, urlparse
 
 import bson
 import requests
 
-from app.constants import EDITOR_API, PUBLIC_LOGIN_API
+from app.constants import EDITOR_API, MASTERLINK_URL, PUBLIC_LOGIN_API
 from app.models import FavoriteDocument, FavoriteTemplate, FavoriteWorkflow
 from app.serializers import (
     FavouriteDocumentSerializer,
@@ -12,14 +13,41 @@ from app.serializers import (
 )
 
 from .mongo_db_connection import (
-    get_document_object,
-    get_clone_object,
-    get_process_object,
-    get_template_object,
-    # save_document,
-    save_clone,
-    save_process,
+    save_to_document_collection,
+    save_to_process_collection,
+    single_query_document_collection,
+    single_query_process_collection,
+    single_query_template_collection,
 )
+
+
+def register_finalized(link_id):
+    """Master single link as finalized"""
+    response = requests.put(
+        f"{MASTERLINK_URL}?link_id={link_id}",
+        data=json.dumps({"is_finalized": True}),
+        headers={"Content-Type": "application/json"},
+    )
+    print(response.status_code)
+    return
+
+
+def get_query_param_value_from_url(url, query_param):
+    # Parse the URL to get the query parameters
+    parsed_url = urlparse(url)
+    query_params = parse_qs(parsed_url.query)
+    value = query_params.get(query_param, [None])[0]
+    return value
+
+
+def paginate(dataset, page, limit):
+    """Paginate/Chunk Results"""
+    if dataset is not None:
+        start = (page - 1) * limit
+        end = start + limit
+        return dataset[start:end]
+    return []
+
 
 
 def register_public_login(qrid, org_name):
@@ -49,37 +77,47 @@ def has_tilde_characters(string):
 
 def cloning_document(document_id, auth_viewers, parent_id, process_id):
     """creating a document copy"""
+    print("auth_viewers", auth_viewers)
     try:
         viewers = []
-        viewers = (
-            [item for item in set(auth_viewers)]
-            if auth_viewers is not None and isinstance(auth_viewers, list)
-            else [auth_viewers]
-        )
-        document = get_document_object(document_id)
+        for m in auth_viewers:
+            viewers.append(m["member"])
+        # viewers = (
+        #     [item for item in set(auth_viewers)]
+        #     if auth_viewers is not None and isinstance(auth_viewers, list)
+        #     else [auth_viewers]
+        # )
+        document = single_query_document_collection({"_id": document_id})
+        print(document["document_name"])
         for viewer in viewers:
             doc_name = document["document_name"]
-            if has_tilde_characters(doc_name):
-                document_name = doc_name.replace('~', '')
+            if not doc_name:
+                document_name = "doc - " + viewer
+            # if has_tilde_characters(doc_name):
+            #     document_name = doc_name.replace("~", "")
             else:
-                document_name = doc_name + viewer
+                if isinstance(viewer, dict):
+                    document_name = doc_name + "_" + viewer["member"]
+                else:
+                    document_name = doc_name + "_" + viewer
         save_res = json.loads(
-            save_clone(
-                name=document_name,
-                data=document["content"],
-                page=document["page"],
-                created_by=document["created_by"],
-                company_id=document["company_id"],
-                data_type=document["data_type"],
-                state="processing",
-                auth_viewers=viewers,
-                document_type="clone",
-                parent_id=parent_id,
-                process_id=process_id,
-                folders="untitled",
+            save_to_document_collection(
+                {
+                    "document_name": document_name,
+                    "content": document["content"],
+                    "page": document["page"],
+                    "created_by": document["created_by"],
+                    "company_id": document["company_id"],
+                    "data_type": document["data_type"],
+                    "document_state": "processing",
+                    "auth_viewers": auth_viewers,
+                    "document_type": "clone",
+                    "parent_id": parent_id,
+                    "process_id": process_id,
+                    "folders": "untitled",
+                }
             )
         )
-        print(save_res)
         return save_res["inserted_id"]
     except Exception as e:
         print(e)
@@ -89,20 +127,23 @@ def cloning_document(document_id, auth_viewers, parent_id, process_id):
 def cloning_process(process_id, created_by, creator_portfolio):
     """creating a process copy"""
     try:
-        process = get_process_object(process_id)
+        process = single_query_process_collection({"_id": process_id})
         save_res = json.loads(
-            save_process(
-                process["process_title"],
-                process["process_steps"],
-                created_by,
-                process["company_id"],
-                process["data_type"],
-                "no_parent_id",
-                process["processing_action"],
-                creator_portfolio,
-                process["workflow_construct_ids"],
-                process["process_type"],
-                "clone",
+            save_to_process_collection(
+                {
+                    "process_title": process["process_title"],
+                    "process_steps": process["process_steps"],
+                    "created_by": created_by,
+                    "company_id": process["company_id"],
+                    "data_type": process["data_type"],
+                    "parent_item_id": "no_parent_id",
+                    "processing_action": process["processing_action"],
+                    "creator_portfolio": creator_portfolio,
+                    "workflow_construct_ids": process["workflow_construct_ids"],
+                    "process_type": process["process_type"],
+                    "process_kind": "clone",
+                    "processing_state": "draft",
+                }
             )
         )
         return save_res["inserted_id"]
@@ -112,37 +153,40 @@ def cloning_process(process_id, created_by, creator_portfolio):
 
 
 def access_editor(item_id, item_type):
-    """Access to document/template"""
-    collection = None
-    document = None
-    team_member_id = None
-    field = None
-    action = None
-    item_name = ""
+    """
+    Access to document/template
+    
+    This function generates a payload for accessing a document or template based on the given item_id and item_type.
+    
+    Parameters:
+        item_id (str): The unique identifier of the document or template.
+        item_type (str): The type of item ('document' or 'template').
+    
+    Returns:
+        dict: A dictionary containing the payload with necessary details for accessing the document or template.
+    """
+    
+    # Determine the team_member_id based on the item_type
+    team_member_id = "11689044433" if item_type == "document" else "22689044433"
+    
+    # Set collection, document, and field variables based on the item_type
     if item_type == "document":
         collection = "DocumentReports"
         document = "documentreports"
-        action = "document"
         field = "document_name"
-        team_member_id = "11689044433"
-        item_name = get_document_object(item_id)
-        name = item_name["document_name"]
-    elif item_name == "clone":
-        collection = "CloneReports"
-        document = "CloneReports"
-        action = "document"
-        field = "document_name"
-        team_member_id = "1212001"
-        item_name = get_clone_object(item_id)
-        name = item_name["document_name"]
-    if item_type == "template":
+    elif item_type == "template":
         collection = "TemplateReports"
         document = "templatereports"
-        action = "template"
         field = "template_name"
-        team_member_id = "22689044433"
-        item_name = get_template_object(item_id)
-        name = item_name["template_name"]
+
+    # Get the item name from the appropriate collection based on item_type and item_id
+    if item_type == "document":
+        item_name = single_query_document_collection({"_id": item_id})
+    else:
+        item_name = single_query_template_collection({"_id": item_id})
+    name = item_name.get(field, "")
+    
+    # Create and return the payload dictionary
     payload = {
         "product_name": "Workflow AI",
         "details": {
@@ -155,7 +199,7 @@ def access_editor(item_id, item_type):
             "_id": item_id,
             "field": field,
             "type": item_type,
-            "action": action,
+            "action": "document" if item_type == "document" else "template",
             "flag": "editing",
             "name": name,
             "command": "update",
@@ -285,7 +329,15 @@ def remove_favourite(identifier, type, username):
 def check_items_state(items) -> list:
     """Checks if item state is finalized"""
     return [
-        get_clone_object(i)["document_state"] == "finalized"
+        single_query_document_collection({"_id": i})["document_state"] == "finalized"
         for i in items
         if isinstance(i, str)
     ]
+
+
+def check_all_accessed_true(data) -> bool:
+    for item in data:
+        step_document_clone_map = item.get("stepDocumentCloneMap", [])
+        if not all(elem.get("accessed", False) for elem in step_document_clone_map):
+            return False
+    return True

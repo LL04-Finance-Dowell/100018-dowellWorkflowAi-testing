@@ -5,38 +5,36 @@ import jsonfield.fields
 
 
 class Migration(migrations.Migration):
-
     initial = True
 
-    dependencies = [
-    ]
+    dependencies = []
 
     operations = [
         migrations.CreateModel(
-            name='FavoriteDocument',
+            name="FavoriteDocument",
             fields=[
-                ('_id', models.TextField(primary_key=True, serialize=False)),
-                ('document_name', jsonfield.fields.JSONField()),
-                ('company_id', jsonfield.fields.JSONField()),
-                ('favourited_by', models.TextField(max_length=200)),
+                ("_id", models.TextField(primary_key=True, serialize=False)),
+                ("document_name", jsonfield.fields.JSONField()),
+                ("company_id", jsonfield.fields.JSONField()),
+                ("favourited_by", models.TextField(max_length=200)),
             ],
         ),
         migrations.CreateModel(
-            name='FavoriteTemplate',
+            name="FavoriteTemplate",
             fields=[
-                ('_id', models.TextField(primary_key=True, serialize=False)),
-                ('company_id', jsonfield.fields.JSONField()),
-                ('template_name', jsonfield.fields.JSONField()),
-                ('favourited_by', models.TextField(max_length=200)),
+                ("_id", models.TextField(primary_key=True, serialize=False)),
+                ("company_id", jsonfield.fields.JSONField()),
+                ("template_name", jsonfield.fields.JSONField()),
+                ("favourited_by", models.TextField(max_length=200)),
             ],
         ),
         migrations.CreateModel(
-            name='FavoriteWorkflow',
+            name="FavoriteWorkflow",
             fields=[
-                ('_id', models.TextField(primary_key=True, serialize=False)),
-                ('company_id', jsonfield.fields.JSONField()),
-                ('workflows', jsonfield.fields.JSONField()),
-                ('favourited_by', models.TextField(max_length=200)),
+                ("_id", models.TextField(primary_key=True, serialize=False)),
+                ("company_id", jsonfield.fields.JSONField()),
+                ("workflows", jsonfield.fields.JSONField()),
+                ("favourited_by", models.TextField(max_length=200)),
             ],
         ),
     ]
