@@ -878,8 +878,6 @@ def get_reports_templates(request, company_id):
             "auth_viewers":auth_viewers
         }
     )
-    page = int(request.GET.get("page", 1))
-    templates = paginate(templates, page, 50)
     return Response(
         {"templates": templates},
         status.HTTP_200_OK,
@@ -1085,8 +1083,6 @@ def get_reports_documents(request, company_id):
             "auth_viewers": auth_viewers,
         }
     )
-    page = int(request.GET.get("page", 1))
-    document_list = paginate(document_list, page, 50)
     return Response(
         {"documents": document_list},
         status=status.HTTP_200_OK,
