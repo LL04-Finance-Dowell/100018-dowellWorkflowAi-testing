@@ -54,6 +54,7 @@ from .views import (
     dowell_centre_documents,
     get_reports_processes,
     get_documents_types,
+    get_templates_documents,
 )
 
 urlpatterns = [
@@ -131,4 +132,5 @@ urlpatterns = [
     path("folders/<str:folder_id>", folder_update),
     path("folders/<str:folder_id>/<str:item_id>", delete_item_from_folder),
     path("companies/<str:company_id>/folders/", all_folders),
+    path('companies/<str:company_id>/', get_templates_documents),
 ]

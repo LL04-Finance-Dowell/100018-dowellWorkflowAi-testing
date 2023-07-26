@@ -1184,3 +1184,4 @@ def delete_items_in_folder(item_id, folder_id, item_type):
         }
     )
     return post_to_data_service(payload)
+
