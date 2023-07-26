@@ -22,9 +22,15 @@ export class DocumentServices {
     return httpDocument.post('/rejected/', data);
   };
 
-  savedDocuments = (data) => {
-    return httpDocument.post('/saved/', data);
-  };
+  // ? This is the formal function for savedDocuments. I don't know its usage, that's why I'm not earsing it
+  // savedDocuments = (data) => {
+  //   return httpDocument.post('/saved/', data);
+  // };
+
+  getSavedDocuments = (companyId, dataType, pageCount) =>
+    httpApiUrl.get(
+      `/companies/${companyId}/documents/?data_type=${dataType}&page=${pageCount}`
+    );
 
   contentDocument = (documentId) => {
     // console.log(documentId)
@@ -37,9 +43,9 @@ export class DocumentServices {
     );
   };
 
-  demoDocuments = (count) =>
+  demoDocuments = (pageCount) =>
     httpApiUrl.get(
-      `companies/6385c0f38eca0fb652c9457e/documents/knowledge-centre/?data_type=Real_Data&page=${count}`
+      `companies/6385c0f38eca0fb652c9457e/documents/knowledge-centre/?data_type=Real_Data&page=${pageCount}`
     );
   // * The company id for demoTemplates is hard coded to that of Dowell Knowledge Centre
 
@@ -47,15 +53,20 @@ export class DocumentServices {
     return await httpDocument.get(`/${documentId}/object/`);
   };
 
-  getNotifications = async (companyId, dataType) => {
+  getNotifications = async (companyId, dataType, userName, portfolioName) => {
     return await httpApiUrl.get(
-      `/companies/${companyId}/documents/reports/?data_type=${dataType}&doc_state=processing`
-    )
-  }
+      `/companies/${companyId}/documents/reports/?data_type=${dataType}&doc_state=processing&member=${userName}&portfolio=${portfolioName}`
+    );
+  };
 
   getAllOriginalDocuments = async (companyId, dataType) => {
     return await httpApiUrl.get(
       `/companies/${companyId}/documents/types/?data_type=${dataType}&doc_type=original`
-    )
-  }
+    );
+  };
+
+  getDocumentReports = (companyId, dataType, userName, portfolioName) =>
+    httpApiUrl.get(
+      `/companies/${companyId}/documents/reports/?data_type=${dataType}&doc_state=draft&member=${userName}&portfolio=${portfolioName}`
+    );
 }

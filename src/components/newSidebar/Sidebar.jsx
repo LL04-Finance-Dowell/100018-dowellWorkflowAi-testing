@@ -42,7 +42,6 @@ import { GrStatusGoodSmall } from 'react-icons/gr';
 import { productName } from '../../utils/helpers';
 import { useAppContext } from '../../contexts/AppContext';
 import { HashLink } from 'react-router-hash-link';
-import { IoMdArrowDropright } from 'react-icons/io';
 
 const Sidebar = () => {
   const dispatch = useDispatch();

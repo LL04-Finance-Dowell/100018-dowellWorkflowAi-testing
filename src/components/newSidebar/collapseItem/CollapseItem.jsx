@@ -2,7 +2,7 @@ import { useState } from 'react';
 import styles from './collapseItem.module.css';
 import Collapse from '../../../layouts/collapse/Collapse';
 import { HashLink } from 'react-router-hash-link';
-import { IoMdArrowDropright } from 'react-icons/io';
+import { IoMdArrowDropright, IoMdArrowDropdown } from 'react-icons/io';
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { detailTemplate } from '../../../features/template/asyncThunks';
@@ -90,10 +90,6 @@ const CollapseItem = ({ items, listType, exception }) => {
     setMenuItems(items);
   }, [items]);
 
-  // useEffect(() => {
-  //   console.log('menuItems: ', menuItems);
-  // }, [menuItems]);
-
   return (
     <div className={styles.container}>
       {React.Children.toArray(
@@ -108,7 +104,11 @@ const CollapseItem = ({ items, listType, exception }) => {
               onClick={() => handleParentClick(item.id)}
             >
               <i>
-                <IoMdArrowDropright size={25} />
+                {item.isOpen ? (
+                  <IoMdArrowDropdown size={25} />
+                ) : (
+                  <IoMdArrowDropright size={25} />
+                )}
               </i>
               {t(
                 exception
@@ -140,18 +140,28 @@ const CollapseItem = ({ items, listType, exception }) => {
               <div className={styles.children__item__container}>
                 <Collapse open={item.isOpen}>
                   <div className={styles.children__item__box}>
-                    {listType && listType === 'ol' ? (
-                      <ol>
-                        {React.Children.toArray(
-                          item.children.map((item) => <ListItem item={item} />)
-                        )}
-                      </ol>
+                    {item.children.length ? (
+                      listType && listType === 'ol' ? (
+                        <ol>
+                          {React.Children.toArray(
+                            item.children.map((item) => (
+                              <ListItem item={item} />
+                            ))
+                          )}
+                        </ol>
+                      ) : (
+                        <ul>
+                          {React.Children.toArray(
+                            item.children.map((item) => (
+                              <ListItem item={item} />
+                            ))
+                          )}
+                        </ul>
+                      )
                     ) : (
-                      <ul>
-                        {React.Children.toArray(
-                          item.children.map((item) => <ListItem item={item} />)
-                        )}
-                      </ul>
+                      <span style={{ marginLeft: '25px' }}>
+                        {t('No results found!')}
+                      </span>
                     )}
                   </div>
                 </Collapse>

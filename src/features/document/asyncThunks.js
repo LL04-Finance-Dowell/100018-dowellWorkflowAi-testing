@@ -1,23 +1,25 @@
-import { createAsyncThunk } from "@reduxjs/toolkit";
-import { DocumentServices } from "../../services/documentServices";
-import { setEditorLink } from "../app/appSlice";
-import { productName } from "../../utils/helpers";
-import { setAllDocuments } from "./documentSlice";
+import { createAsyncThunk } from '@reduxjs/toolkit';
+import { DocumentServices } from '../../services/documentServices';
+import { setEditorLink } from '../app/appSlice';
+import { productName } from '../../utils/helpers';
+import { setAllDocuments } from './documentSlice';
 
 const filterDocuments = (documents, thunkAPI) => {
   let filteredDocuments = [];
 
-  const userThunkPortfolioDataTypeState = thunkAPI.getState().auth?.userDetail?.portfolio_info?.length > 1 ?
-    thunkAPI.getState().auth?.userDetail?.portfolio_info.find(portfolio => portfolio.product === productName)?.data_type
-    :
-    thunkAPI.getState().auth?.userDetail?.portfolio_info[0]?.data_type;
+  const userThunkPortfolioDataTypeState =
+    thunkAPI.getState().auth?.userDetail?.portfolio_info?.length > 1
+      ? thunkAPI
+          .getState()
+          .auth?.userDetail?.portfolio_info.find(
+            (portfolio) => portfolio.product === productName
+          )?.data_type
+      : thunkAPI.getState().auth?.userDetail?.portfolio_info[0]?.data_type;
 
   if (documents && documents.length && documents?.length > 0) {
     filteredDocuments = documents.filter(
       (item) =>
-        item.data_type &&
-        item.data_type ===
-        userThunkPortfolioDataTypeState
+        item.data_type && item.data_type === userThunkPortfolioDataTypeState
     );
   } else {
     filteredDocuments = [];
@@ -29,24 +31,29 @@ const filterDocuments = (documents, thunkAPI) => {
 const documentServices = new DocumentServices();
 
 export const createDocument = createAsyncThunk(
-  "document/create",
+  'document/create',
   async (data, thunkAPI) => {
     try {
       const res = await documentServices.createDocument(data);
 
       const newDocument = {
-        document_name: "New Document",
+        document_name: 'New Document',
         newly_created: true,
         _id: res.data._id,
         created_by: thunkAPI.getState().auth?.userDetail?.userinfo?.username,
-        data_type: thunkAPI.getState().auth?.userDetail?.portfolio_info?.length > 1 ?
-          thunkAPI.getState().auth?.userDetail?.portfolio_info.find(portfolio => portfolio.product === productName)?.data_type
-          :
-        thunkAPI.getState().auth?.userDetail?.portfolio_info[0]?.data_type,
+        data_type:
+          thunkAPI.getState().auth?.userDetail?.portfolio_info?.length > 1
+            ? thunkAPI
+                .getState()
+                .auth?.userDetail?.portfolio_info.find(
+                  (portfolio) => portfolio.product === productName
+                )?.data_type
+            : thunkAPI.getState().auth?.userDetail?.portfolio_info[0]
+                ?.data_type,
         created_on: new Date().toString(),
         document_type: 'original',
         document_state: 'draft',
-      }
+      };
 
       const existingDocuments = [...thunkAPI.getState().document?.allDocuments];
       existingDocuments.unshift(newDocument);
@@ -62,7 +69,7 @@ export const createDocument = createAsyncThunk(
 );
 
 export const detailDocument = createAsyncThunk(
-  "document/detail",
+  'document/detail',
   async (data, thunkAPI) => {
     try {
       const res = await documentServices.detailDocument(data);
@@ -75,11 +82,9 @@ export const detailDocument = createAsyncThunk(
   }
 );
 
-export const signDocument = createAsyncThunk("document/sign", async (data) => {
+export const signDocument = createAsyncThunk('document/sign', async (data) => {
   try {
     const res = await documentServices.signDocument(data);
-
-
 
     return res.data;
   } catch (error) {
@@ -88,7 +93,7 @@ export const signDocument = createAsyncThunk("document/sign", async (data) => {
 });
 
 export const mineDocuments = createAsyncThunk(
-  "document/mine",
+  'document/mine',
   async (data, thunkAPI) => {
     try {
       const res = await documentServices.mineDocuments(data);
@@ -103,11 +108,10 @@ export const mineDocuments = createAsyncThunk(
 );
 
 export const rejectedDocuments = createAsyncThunk(
-  "document/rejected",
+  'document/rejected',
   async (data) => {
     try {
       const res = await documentServices.rejectedDocuments(data);
-
 
       return res.data;
     } catch (error) {
@@ -117,11 +121,10 @@ export const rejectedDocuments = createAsyncThunk(
 );
 
 export const savedDocuments = createAsyncThunk(
-  "document/saved",
+  'document/saved',
   async (data, thunkAPI) => {
     try {
       const res = await documentServices.savedDocuments(data);
-
 
       const documents = filterDocuments(res.data.documents, thunkAPI);
 
@@ -133,27 +136,34 @@ export const savedDocuments = createAsyncThunk(
 );
 
 export const contentDocument = createAsyncThunk(
-  "document/contentDocument",
+  'document/contentDocument',
   async (data) => {
     try {
       const res = await documentServices.contentDocument(data);
 
-
       // console.log(res.data)
       return res.data;
     } catch (error) {
-      console.log("Content document fetch error: ", error);
+      console.log('Content document fetch error: ', error);
     }
   }
 );
 
 export const allDocuments = createAsyncThunk(
-  "document/all",
+  'document/all',
   async (data, thunkAPI) => {
     try {
-      const res = await documentServices.allDocuments(data.company_id, data.data_type);
+      const res = await documentServices.allDocuments(
+        data.company_id,
+        data.data_type
+      );
 
-      const documents = filterDocuments(res.data.documents.reverse().filter(document => document.document_state !== "trash"), thunkAPI);
+      const documents = filterDocuments(
+        res.data.documents
+          .reverse()
+          .filter((document) => document.document_state !== 'trash'),
+        thunkAPI
+      );
 
       return documents;
     } catch (error) {

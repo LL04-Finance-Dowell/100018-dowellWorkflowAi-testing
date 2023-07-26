@@ -73,3 +73,13 @@
 .incomplete__parent {
   font-weight: 400;
 }
+
+.item_btn {
+  background: none;
+  color: inherit;
+  padding: 5px 0;
+}
+
+.item_btn:hover {
+  text-decoration: underline;
+}

@@ -12,6 +12,7 @@ import { useNavigate } from 'react-router-dom';
 import { productName } from '../../../utils/helpers';
 import { useAppContext } from '../../../contexts/AppContext';
 import { DocumentServices } from '../../../services/documentServices';
+import { useLocation } from 'react-router-dom';
 
 const DocumentsPage = ({ home, showOnlySaved, showOnlyCompleted, isDemo }) => {
   const { userDetail } = useSelector((state) => state.auth);
@@ -22,10 +23,18 @@ const DocumentsPage = ({ home, showOnlySaved, showOnlyCompleted, isDemo }) => {
   // const finilized = allDocumentsArray.filter((document) => document.document_state === "finalized")
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const location = useLocation();
   const [currentUserPortfolioDataType, setCurrentUserPortfolioDataType] =
     useState('');
-  const { customDocName, demoDocuments, demoDocStatus, fetchDemoDocuments } =
-    useAppContext();
+  const {
+    customDocName,
+    demoDocuments,
+    demoDocStatus,
+    fetchDemoDocuments,
+    fetchDocumentReports,
+    docReports,
+    docReportsStatus,
+  } = useAppContext();
 
   useEffect(() => {
     if (isDemo) {
@@ -34,6 +43,13 @@ const DocumentsPage = ({ home, showOnlySaved, showOnlyCompleted, isDemo }) => {
       }
     }
   }, []);
+
+  useEffect(() => {
+    if (location.hash === '#completed-documents' && !docReports) {
+      console.log('I am fetching: ', docReports);
+      fetchDocumentReports();
+    }
+  }, [location]);
 
   useEffect(() => {
     const userPortfolioDataType =
@@ -72,6 +88,10 @@ const DocumentsPage = ({ home, showOnlySaved, showOnlyCompleted, isDemo }) => {
   // useEffect(() => {
   //   console.log('all Docs: ', allDocumentsArray);
   // });
+
+  useEffect(() => {
+    console.log('all Docs: ', allDocumentsArray);
+  }, [allDocumentsArray]);
 
   return (
     <WorkflowLayout>
@@ -129,11 +149,10 @@ const DocumentsPage = ({ home, showOnlySaved, showOnlyCompleted, isDemo }) => {
                 cardBgColor='#1ABC9C'
                 title='completed documents'
                 Card={DocumentCard}
-                cardItems={allDocumentsArray.filter(
-                  (document) => document.document_state === 'finalized'
-                )}
-                status={allDocumentsStatus}
+                cardItems={docReports}
+                status={docReportsStatus}
                 itemType={'documents'}
+                isReports={true}
               />
             </div>
           ) : (

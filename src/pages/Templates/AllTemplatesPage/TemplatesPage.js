@@ -12,10 +12,23 @@ import { productName } from '../../../utils/helpers';
 import { useAppContext } from '../../../contexts/AppContext';
 import { TemplateServices } from '../../../services/templateServices';
 
-const TemplatesPage = ({ home, showOnlySaved, showOnlyTrashed, isDemo }) => {
+const TemplatesPage = ({
+  home,
+  showOnlySaved,
+  showOnlyTrashed,
+  isDemo,
+  isReports,
+}) => {
   const { userDetail } = useSelector((state) => state.auth);
-  const { customTempName, demoTemplates, demoTempStatus, fetchDemoTemplates } =
-    useAppContext();
+  const {
+    customTempName,
+    demoTemplates,
+    demoTempStatus,
+    fetchDemoTemplates,
+    tempReports,
+    tempReportsStatus,
+    fetchTemplateReports,
+  } = useAppContext();
 
   const { allTemplates: allTemplatesArray, allTemplatesStatus } = useSelector(
     (state) => state.template
@@ -31,6 +44,10 @@ const TemplatesPage = ({ home, showOnlySaved, showOnlyTrashed, isDemo }) => {
         fetchDemoTemplates();
       }
     }
+  }, []);
+
+  useEffect(() => {
+    if (isReports && !tempReports) fetchTemplateReports();
   }, []);
 
   useEffect(() => {
@@ -148,6 +165,19 @@ const TemplatesPage = ({ home, showOnlySaved, showOnlyTrashed, isDemo }) => {
                 status={demoTempStatus}
                 itemType={'templates'}
                 isDemo={true}
+              />
+            </div>
+          )}
+          {isReports && (
+            <div id='demo-templates'>
+              <SectionBox
+                cardBgColor='#1ABC9C'
+                title='template reports'
+                Card={TemplateCard}
+                cardItems={tempReports}
+                status={tempReportsStatus}
+                itemType={'templates'}
+                isReports={true}
               />
             </div>
           )}
