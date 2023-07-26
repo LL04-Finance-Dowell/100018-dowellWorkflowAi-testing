@@ -63,6 +63,8 @@ from app.mongo_db_connection import (
     update_template_approval,
     update_wf,
     update_workflow_setting,
+    bulk_query_document_collection_modified,
+    bulk_query_template_collection_modified,
 )
 
 from .constants import EDITOR_API
@@ -1443,3 +1445,46 @@ def dowell_centre_documents(request, company_id):
         {"documents": document_list},
         status.HTTP_200_OK,
     )
+
+@api_view(["GET"])
+def get_templates_documents(request, company_id):
+    """Fetch saved and draft templates/documents based on user request."""
+    # Extract the "data_type" query parameter from the request
+    data_type = request.query_params.get("data_type")
+    doc_state = request.query_params.get("doc_state")
+
+    page = int(request.GET.get("page", 1)) 
+    # Check if the provided company_id is valid and "data_type" is not empty
+    if not validate_id(company_id) or data_type is None or doc_state is None:
+        # Return a response with an error message and HTTP status code 400 (Bad Request)
+        return Response("Invalid Request!", status.HTTP_400_BAD_REQUEST)
+
+    # Prepare options to pass to bulk_query functions
+    options = {"company_id": company_id, "data_type": data_type}
+    
+    # Check the user request to decide whether to fetch templates or documents
+    if doc_state == "templates_saved":
+        # Call bulk_query_template_collection_modified with "status" parameter set to "saved"
+        templates_documents = bulk_query_template_collection_modified(options, status="saved")
+        templates_documents = paginate(templates_documents, page, 20)
+        key = "saved_templates"
+    elif doc_state == "templates_draft":
+        # Call bulk_query_template_collection_modified with "status" parameter set to "draft"
+        templates_documents = bulk_query_template_collection_modified(options, status="draft")
+        key = "draft_templates"
+    elif doc_state == "documents_saved":
+        # Call bulk_query_document_collection_modified with "status" parameter set to "saved"
+        templates_documents = bulk_query_document_collection_modified(options, status="saved")
+        templates_documents = paginate(templates_documents, page, 20)
+        key = "saved_documents"
+    elif doc_state == "documents_draft":
+        # Call bulk_query_document_collection_modified with "status" parameter set to "draft"
+        templates_documents = bulk_query_document_collection_modified(options, status="draft")
+        templates_documents = paginate(templates_documents, page, 20)
+        key = "draft_documents"
+    else:
+        # If the user request does not match any of the above patterns, return an error response
+        return Response("Invalid Request!", status.HTTP_400_BAD_REQUEST)
+
+    # Return a JSON response containing the fetched templates/documents and HTTP status code 200 (OK)
+    return Response({key: templates_documents}, status=status.HTTP_200_OK)

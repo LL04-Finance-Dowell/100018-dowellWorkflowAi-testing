@@ -18,6 +18,8 @@ from .mongo_db_connection import (
     single_query_document_collection,
     single_query_process_collection,
     single_query_template_collection,
+    bulk_query_template_collection_modified,
+    bulk_query_document_collection_modified,
 )
 
 
