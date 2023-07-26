@@ -354,7 +354,7 @@ def get_completed_processes(request, company_id):
         {
             "company_id": company_id,
             "data_type": data_type,
-            "processing_state": "completed",
+            "processing_state": "finalized",
         }
     )
     page = int(request.GET.get("page", 1))
