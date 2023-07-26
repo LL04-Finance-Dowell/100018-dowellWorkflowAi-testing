@@ -27,7 +27,7 @@ from app.helpers import (
 from app.mongo_db_connection import (
     add_document_to_folder,
     add_template_to_folder,
-    bulk_query_clones_collection,
+    bulk_query_folder_collection,
     bulk_query_process_collection,
     bulk_query_team_collection,
     bulk_query_template_collection,
@@ -538,7 +538,7 @@ def create_document(request):
     portfolio = ""
     if request.data["portfolio"]:
         portfolio = request.data["portfolio"]
-    viewers = [{ "member": request.data["created_by"], "portfolio": portfolio}]
+    viewers = [{"member": request.data["created_by"], "portfolio": portfolio}]
     folder = []
     res = json.loads(
         save_to_document_collection(
@@ -629,7 +629,7 @@ def document_object(request, document_id):
     """Retrieves the document object for a specific document"""
     if not validate_id(document_id):
         return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
-    document = single_query_document_collection({"_id":document_id})
+    document = single_query_document_collection({"_id": document_id})
     return Response(document, status.HTTP_200_OK)
 
 
@@ -896,7 +896,7 @@ def create_template(request):
     portfolio = ""
     if request.data["portfolio"]:
         portfolio = request.data["portfolio"]
-    viewers = [{ "member": request.data["created_by"], "portfolio": portfolio}]
+    viewers = [{"member": request.data["created_by"], "portfolio": portfolio}]
     res = json.loads(
         save_to_template_collection(
             {
@@ -908,7 +908,7 @@ def create_template(request):
                 "company_id": request.data["company_id"],
                 "data_type": request.data["data_type"],
                 "template_type": "original",
-                "auth_viewers": viewers
+                "auth_viewers": viewers,
             }
         )
     )
@@ -1074,12 +1074,7 @@ def get_reports_documents(request, company_id):
     document_state = request.query_params.get("doc_state")
     member = request.query_params.get("member")
     portfolio = request.query_params.get("portfolio")
-    auth_viewers = [
-            {
-                "member": member,
-                "portfolio": portfolio
-            }
-    ]
+    auth_viewers = [{"member": member, "portfolio": portfolio}]
     if not validate_id(company_id) or data_type is None or document_state is None:
         return Response("Invalid Request!", status.HTTP_400_BAD_REQUEST)
     document_list = bulk_query_document_collection(
@@ -1087,7 +1082,7 @@ def get_reports_documents(request, company_id):
             "company_id": company_id,
             "data_type": data_type,
             "document_state": document_state,
-            "auth_viewers": auth_viewers
+            "auth_viewers": auth_viewers,
         }
     )
     page = int(request.GET.get("page", 1))
@@ -1391,7 +1386,7 @@ def all_folders(request, company_id):
     folders_list = cache.get(cache_key)
     if folders_list is None:
         try:
-            folders_list = bulk_query_clones_collection(
+            folders_list = bulk_query_folder_collection(
                 {"company_id": company_id, "data_type": data_type}
             )
             cache.set(cache_key, folders_list, timeout=60)
