@@ -229,16 +229,18 @@ def process_verification(request):
                 status.HTTP_401_UNAUTHORIZED,
             )
     process = single_query_process_collection({"_id": link_object["process_id"]})
+    # print(process["process_steps"])
     process["org_name"] = org_name
     handler = HandleProcess(process)
-    if not handler.verify_location(
+    location = handler.verify_location(
         auth_role,
         {
             "city": request.data["city"],
             "country": request.data["country"],
             "continent": request.data["continent"],
         },
-    ):
+    )
+    if not location:
         return Response(
             "access to this document not allowed from this location",
             status.HTTP_400_BAD_REQUEST,
@@ -341,8 +343,8 @@ def processes(request, company_id):
             {"company_id": company_id, "data_type": data_type}
         )
         cache.set(cache_key, process_list, timeout=60)
-    page = int(request.GET.get("page", 1))
-    process_list = paginate(process_list, page, 50)
+    # page = int(request.GET.get("page", 1))
+    # process_list = paginate(process_list, page, 50)
     return Response(process_list, status.HTTP_200_OK)
 
 
