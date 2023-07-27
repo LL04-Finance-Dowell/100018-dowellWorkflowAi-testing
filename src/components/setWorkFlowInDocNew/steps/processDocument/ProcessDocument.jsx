@@ -23,7 +23,7 @@ import {
   setAllowErrorChecksStatusUpdateForNewProcess,
   setNewProcessErrorMessage,
   setCurrentMessage,
-
+  setPopupIsOpen
 } from '../../../../features/app/appSlice';
 import { useTranslation } from 'react-i18next';
 import { extractProcessObj } from './utils/utils';
@@ -61,6 +61,7 @@ const ProcessDocument = ({ savedProcess, Process_title, setProcess_title }) => {
     publicMembersSelectedForProcess,
     allProcesses,
     errorsCheckedInNewProcess,
+    popupIsOpen
   } = useSelector((state) => state.app);
 
   const [newProcessLoading, setNewProcessLoading] = useState(false);
@@ -115,7 +116,9 @@ const ProcessDocument = ({ savedProcess, Process_title, setProcess_title }) => {
 
       return toast.info('Please click the "Show process" button above to make sure there are no errors before processing.');
     }
-    console.log('pt-title', Process_title)
+    if (!Process_title) {
+      return toast.info("Please Enter a Process Name")
+    }
 
 
 
@@ -152,16 +155,16 @@ const ProcessDocument = ({ savedProcess, Process_title, setProcess_title }) => {
       userMembersSelectedForProcess,
     );
     console.log(processObjToPost)
-    
+
     if (processObjToPost.error) {
       dispatch(setNewProcessErrorMessage(processObjToPost.error));
       document.querySelector('#h2__Doc__Title')?.scrollIntoView({ block: 'center' })
       // dispatch(setPopupIsOpen(true));
       // dispatch( setCurrentMessage(processObjToPost.error))
-      
+
       return toast.info(processObjToPost.error);
     }
-    
+
     dispatch(setAllowErrorChecksStatusUpdateForNewProcess(true));
     dispatch(setNewProcessErrorMessage(null));
     setProcess_title("")
@@ -198,6 +201,7 @@ const ProcessDocument = ({ savedProcess, Process_title, setProcess_title }) => {
       setNewProcessLoaded(false);
     } catch (err) {
       setNewProcessLoading(false);
+      dispatch(setPopupIsOpen(true));
       toast.info(
         err.response
           ? err.response.status === 500
@@ -333,9 +337,9 @@ const ProcessDocument = ({ savedProcess, Process_title, setProcess_title }) => {
               register={register}
             />
 
-            {/* {
-               popupIsOpen && <Popup/>
-            } */}
+            {
+              popupIsOpen && <Popup />
+            }
 
 
             {/* {ShowProcessNameModal && (

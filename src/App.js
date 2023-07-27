@@ -80,7 +80,7 @@ function App() {
           // Empty catch block
         });
   }
-  // // USE ONLY WHEN APP IS BROKEN OR UNDERGOING MAJOR CHANGES
+  // USE ONLY WHEN APP IS BROKEN OR UNDERGOING MAJOR CHANGES
   // return (
   //   <Routes>
   //     <Route path='*' element={<ConstructionPage />} />

@@ -20,6 +20,7 @@ const SelectedDocuments = ({
   } = useForm();
   const dispatch = useDispatch();
   const { t } = useTranslation();
+  console.log(selectedDocuments.clones)
 
   const onSubmit = (data) => {
     if (!selectedDocument) return;

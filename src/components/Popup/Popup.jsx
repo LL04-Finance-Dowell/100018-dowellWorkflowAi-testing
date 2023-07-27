@@ -1,6 +1,7 @@
 import React from 'react';
+import styles from './Popup.module.css'
 import { AiOutlineClose } from 'react-icons/ai';
-
+import { PrimaryButton } from '../styledComponents/styledComponents';
 import { setPopupIsOpen, setCurrentMessage } from '../../features/app/appSlice'
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -14,39 +15,13 @@ const Popup = ({ isOpen, message }) => {
     }
     console.log(currentMessage)
 
-    return (
-        <div style={{
-            background: 'rgba(0, 0, 0, 0.12)',
-            backdropFilter: 'blur(5px)',
-            height: '100%',
-            width: '100%',
-            position: 'fixed',
-            top: 0,
-            left: 0,
-            animation: 'fadeIn 0.2s ease-in-out',
-            zIndex: 100002,
-            overflow: 'hidden',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center'
-        }}>
+    return currentMessage ? (
+        <div className={styles.outer_div}>
 
-            <div style={{
-                backgroundColor: 'var(--white)',
-                width: '50%',
-                borderRadius: '10px',
-                padding: '5% 2%',
-                maxHeight: '30rem',
-                position: 'relative'
-            }}>
+            <div className={styles.inner_div}>
 
                 <div
-                    style={{
-                        position: 'absolute',
-                        top: '1%',
-                        right: '2%',
-                        cursor: 'pointer'
-                    }}
+                    className={styles.close_btn}
                     onClick={() => {
                         dispatch(setPopupIsOpen(false));
 
@@ -60,6 +35,46 @@ const Popup = ({ isOpen, message }) => {
             </div>
         </div>
 
+    ) : (
+        <div className={styles.outer_div}>
+
+            <div className={styles.inner_div}>
+
+                <div
+                    className={styles.close_btn}
+                    onClick={() => {
+                        dispatch(setPopupIsOpen(false));
+
+                    }}
+                >
+
+                    <AiOutlineClose />
+                </div>
+
+                <h5 className={styles.error_msg}>{'An Error Occured while creating a Process'}</h5>
+                <div className={styles.btn_div}>
+                    {/* <div
+                        className={styles.danger_btn}
+                        onClick={() => {
+                            dispatch(setPopupIsOpen(false));
+
+                        }}
+                    >
+                        Cancel
+                    </div> */}
+                    <div
+                        className={styles.primry_btn}
+
+                        onClick={() => {
+                            dispatch(setPopupIsOpen(false));
+
+                        }}
+                    >
+                        Retry
+                    </div>
+                </div>
+            </div>
+        </div>
     );
 };
 

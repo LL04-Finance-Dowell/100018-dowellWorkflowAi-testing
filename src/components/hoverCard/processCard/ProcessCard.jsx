@@ -33,7 +33,7 @@ const ProcessCard = ({ cardItem, title }) => {
   const [copyprocessLoading, setcopyprocessLoading] = useState(false);
   const [processDetailLoading, setProcessDetailLoading] = useState(false);
 
-
+  console.log(allProcesses)
   const handleProcessItemClick = async (item) => {
     if (item.processing_state === 'draft' && item.workflow_construct_ids) {
       navigate(
@@ -53,8 +53,8 @@ const ProcessCard = ({ cardItem, title }) => {
     axios
       .get(`https://100094.pythonanywhere.com/v1/processes/${process_id}/`)
       .then((response) => {
-        
-        
+
+
         dispatch(SetProcessDetail(response.data));
         setProcessDetailLoading(false);
         dispatch(setDetailFetched(true));
@@ -63,8 +63,8 @@ const ProcessCard = ({ cardItem, title }) => {
         console.log(error);
         setProcessDetailLoading(false);
         toast.info(
-          process_title ? 
-            `Failed to fetch details for ${process_title}` : 
+          process_title ?
+            `Failed to fetch details for ${process_title}` :
             'Failed to fetch process details'
         )
       });

@@ -14,10 +14,13 @@ import axios from "axios";
 import { setAllProcesses, setProcessesLoaded, setProcessesLoading, setShowGeneratedLinksPopup } from "../../../features/app/appSlice";
 import { useNavigate } from "react-router-dom";
 import { productName } from "../../../utils/helpers";
+import { reports } from "../../../components/newSidebar/Sidebar";
 
 const ProcessesPage = ({ home, showSingleProcess, showOnlySaved, showOnlyPaused, showOnlyCancelled, showOnlyTrashed, showOnlyTests, showOnlyCompleted }) => {
   const { processesLoading, allProcesses, processesLoaded, ArrayofLinks, showGeneratedLinksPopup, linksFetched, showsProcessDetailPopup, DetailFetched } = useSelector((state) => state.app);
   const { userDetail } = useSelector((state) => state.auth);
+
+
   const [completedProcess, SetcompletedPcocess] = useState();
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -66,8 +69,10 @@ const ProcessesPage = ({ home, showSingleProcess, showOnlySaved, showOnlyPaused,
 
     getAllProcessesV2(userCompanyId, userPortfolioDataType).then(res => {
       const savedProcessesInLocalStorage = JSON.parse(localStorage.getItem('user-saved-processes'));
+      console.log(res)
       if (savedProcessesInLocalStorage) {
         const processes = [...savedProcessesInLocalStorage, ...res.data.filter(process => process.processing_state)].sort((a, b) => new Date(b?.created_at) - new Date(a?.created_at));
+        console.log(processes)
         dispatch(setAllProcesses(processes));
       } else {
         dispatch(setAllProcesses(res.data.filter(process => process.processing_state).reverse()));
@@ -88,6 +93,17 @@ const ProcessesPage = ({ home, showSingleProcess, showOnlySaved, showOnlyPaused,
       userDetail?.portfolio_info[0].data_type;
 
     setCurrentUserPortfolioDataType(userPortfolioDataType)
+
+    axios
+      .get(`https://100094.pythonanywhere.com/v1/companies/6385c0f38eca0fb652c9457e/processes/completed/?data_type=Real_Data`)
+      .then((response) => {
+        console.log(response)
+        SetcompletedPcocess(response.data)
+      })
+      .catch((error) => {
+        console.log(error);
+
+      });
   }, [userDetail])
 
 
@@ -125,7 +141,7 @@ const ProcessesPage = ({ home, showSingleProcess, showOnlySaved, showOnlyPaused,
               />
             </div> : <></>
           }
-         
+
 
           {showGeneratedLinksPopup && linksFetched && Array.isArray(ArrayofLinks) &&
             <GeneratedLinksModal />
@@ -135,7 +151,7 @@ const ProcessesPage = ({ home, showSingleProcess, showOnlySaved, showOnlyPaused,
             <ProcessDetailModail />
           }
 
-           {
+          {
             showSingleProcess ? <div id="processdetail">
 
               <ProcessDetail />
@@ -197,7 +213,7 @@ const ProcessesPage = ({ home, showSingleProcess, showOnlySaved, showOnlyPaused,
                 cardBgColor="#1ABC9C"
                 title="completed proccess"
                 Card={ProcessCard}
-                cardItems={allProcesses.filter(process => process.processing_state === "finalized")}
+                cardItems={completedProcess}
                 status={processesLoading ? "pending" : "success"}
                 itemType={"processes"}
               />

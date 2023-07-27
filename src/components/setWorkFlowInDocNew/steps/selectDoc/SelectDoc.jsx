@@ -20,23 +20,30 @@ import { useTranslation } from 'react-i18next';
 import { productName } from '../../../../utils/helpers';
 import { DocumentServices } from '../../../../services/documentServices';
 import { setOriginalDocuments, setOriginalDocumentsLoaded } from '../../../../features/document/documentSlice';
+import axios from 'axios';
 
-const  SelectDoc = ({ savedDoc }) => {
+const SelectDoc = ({ savedDoc }) => {
   const dispatch = useDispatch();
   const { t } = useTranslation();
   const { isMobile } = useAppContext();
-  const { 
+  const {
     allDocuments: allDocumentsArray,
-    originalDocuments, 
-    originalDocumentsLoaded 
+    originalDocuments,
+    originalDocumentsLoaded
   } = useSelector(
     (state) => state.document
   );
   const { userDetail } = useSelector((state) => state.auth);
 
+
   const [selectedDocuments, setSelectedDocuments] = useState([]);
   const [selectedDocumentCopies, setSelectedDocumentCopies] = useState([]);
   const [currentSelectedDocument, setCurrentSelectedDocument] = useState(null);
+
+  const data = {
+    company_id: userDetail?.portfolio_info?.length > 1 ? userDetail?.portfolio_info.find(portfolio => portfolio.product === productName)?.org_id : userDetail?.portfolio_info[0].org_id,
+    data_type: userDetail?.portfolio_info?.length > 1 ? userDetail?.portfolio_info.find(portfolio => portfolio.product === productName)?.data_type : userDetail?.portfolio_info[0].data_type,
+  };
 
   useEffect(() => {
     if (savedDoc) return;
@@ -44,21 +51,18 @@ const  SelectDoc = ({ savedDoc }) => {
     dispatch(setOriginalDocumentsLoaded(false));
 
     const documentServices = new DocumentServices();
-    const data = {
-      company_id: userDetail?.portfolio_info?.length > 1 ? userDetail?.portfolio_info.find(portfolio => portfolio.product === productName)?.org_id : userDetail?.portfolio_info[0].org_id,
-      data_type: userDetail?.portfolio_info?.length > 1 ? userDetail?.portfolio_info.find(portfolio => portfolio.product === productName)?.data_type : userDetail?.portfolio_info[0].data_type,
-    };
+
 
     documentServices.getAllOriginalDocuments(data.company_id, data.data_type)
-    .then(res => {
-      // console.log(res.data.documents);
-      dispatch(setOriginalDocuments(res.data.documents?.reverse()));
-      dispatch(setOriginalDocumentsLoaded(true));
-    })
-    .catch(err => {
-      console.log('Failed to load original documents: ', err.response ? err.response.data : err.message);
-      dispatch(setOriginalDocumentsLoaded(true));
-    })
+      .then(res => {
+        console.log(res.data.documents);
+        dispatch(setOriginalDocuments(res.data.documents?.reverse()));
+        dispatch(setOriginalDocumentsLoaded(true));
+      })
+      .catch(err => {
+        console.log('Failed to load original documents: ', err.response ? err.response.data : err.message);
+        dispatch(setOriginalDocumentsLoaded(true));
+      })
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -66,10 +70,22 @@ const  SelectDoc = ({ savedDoc }) => {
 
 
   const handleAddSelectedDocuments = (document) => {
+    console.log(document)
+    axios
+      .get(`https://100094.pythonanywhere.com/v1/companies/${data.company_id}/documents/${document._id}/clones/?data_type=${data.data_type}`)
+      .then((response) => {
+        console.log(response.data)
+        setSelectedDocumentCopies(
+          response.data
+        );
+
+      })
+      .catch((error) => {
+        console.log(error)
+      });
     setCurrentSelectedDocument(document);
-    Array.isArray(allDocumentsArray) && allDocumentsArray && setSelectedDocumentCopies(
-      allDocumentsArray.filter((item) => item.parent_id === document._id)
-    );
+    Array.isArray(allDocumentsArray)
+    console.log(selectedDocumentCopies)
 
     const isInclude = selectedDocuments.find(
       (item) => item._id === document._id

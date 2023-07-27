@@ -7,7 +7,7 @@ import { useForm } from 'react-hook-form';
 import Select from '../../select/Select';
 import AssignButton from '../../assignButton/AssignButton';
 import { useDispatch, useSelector } from 'react-redux';
-import { removeFromSelectedWorkflowsToDoc } from '../../../../features/app/appSlice';
+import { removeFromSelectedWorkflowsToDoc,setPopupIsOpen } from '../../../../features/app/appSlice';
 import { toast } from 'react-toastify';
 import {
   processActionOptions,
@@ -182,6 +182,7 @@ const ProcessDocument = () => {
     } catch (error) {
       setNewProcessLoading(false);
       toast.error('An error occured while trying to start a new process');
+
     }
   };
 
@@ -198,7 +199,7 @@ const ProcessDocument = () => {
     <>
       <div className={styles.container}>
         <h2 className={`h2-small step-title ${styles.header}`}>
-          5. Process Document
+          6. Process Document
         </h2>
         <div className={styles.box}>
           <div className={styles.left__container}>

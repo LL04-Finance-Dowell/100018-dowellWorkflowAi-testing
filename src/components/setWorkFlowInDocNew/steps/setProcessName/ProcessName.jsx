@@ -3,11 +3,11 @@ import styles from './ProcessName.module.css'
 import { useDispatch, useSelector } from 'react-redux';
 
 import { setProcessName } from '../../../../features/app/appSlice';
-const ProcessName = ({Process_title,setProcess_title}) => {
-  const dispatch = useDispatch();
-  const {  ProcessName } = useSelector((state) => state.app);
+const ProcessName = ({ Process_title, setProcess_title }) => {
+    const dispatch = useDispatch();
+    const { ProcessName } = useSelector((state) => state.app);
 
-   
+
 
 
     return (
@@ -20,6 +20,7 @@ const ProcessName = ({Process_title,setProcess_title}) => {
                             {'Provide a name for this Process'}
                         </h3>
                         <input
+                            required={true}
                             placeholder="Enter Process Name"
                             style={{
                                 border: '1px solid grey',
@@ -29,13 +30,13 @@ const ProcessName = ({Process_title,setProcess_title}) => {
                                 padding: '10px',
                                 height: '40px',
                                 '::placeholder': {
-                                    fontSize: '36px', // Adjust the font size as desired
+                                    fontSize: '36px', 
                                     color: 'grey',
 
                                 },
                             }}
-                        value={Process_title}
-                        onChange={(e) => setProcess_title(e.target.value)}
+                            value={Process_title}
+                            onChange={(e) => setProcess_title(e.target.value)}
                         />
                     </div>
                 </div>

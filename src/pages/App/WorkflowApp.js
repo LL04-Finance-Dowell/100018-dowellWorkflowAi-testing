@@ -196,7 +196,7 @@ const WorkflowApp = () => {
           setFavoriteitemsLoaded(true);
         })
         .catch((err) => {
-          console.log(err.response ? err.response.data : err.message);
+          // console.log(err.response ? err.response.data : err.message);
           // setFavoriteitemsLoaded(true)
         });
     }
