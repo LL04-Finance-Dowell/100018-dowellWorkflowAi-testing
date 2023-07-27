@@ -89,9 +89,17 @@ const DocumentsPage = ({ home, showOnlySaved, showOnlyCompleted, isDemo }) => {
   //   console.log('all Docs: ', allDocumentsArray);
   // });
 
-  // useEffect(() => {
-  //   console.log('all Docs: ', allDocumentsArray);
-  // }, [allDocumentsArray]);
+  useEffect(() => {
+    console.log('all Docs: ', allDocumentsArray);
+    console.log(
+      'all Docs filter: ',
+      allDocumentsArray.filter(
+        (item) =>
+          item.created_by === userDetail?.userinfo?.username &&
+          item.document_type === 'original'
+      )
+    );
+  }, [allDocumentsArray]);
 
   return (
     <WorkflowLayout>
@@ -110,15 +118,11 @@ const DocumentsPage = ({ home, showOnlySaved, showOnlyCompleted, isDemo }) => {
                 cardItems={
                   allDocumentsArray &&
                   allDocumentsArray.length &&
-                  allDocumentsArray
-                    .filter(
-                      (item) =>
-                        item.created_by === userDetail?.userinfo?.username &&
-                        item.document_type === 'original'
-                    )
-                    .filter(
-                      (item) => item.data_type === currentUserPortfolioDataType
-                    )
+                  allDocumentsArray.filter(
+                    (item) =>
+                      item.created_by === userDetail?.userinfo?.username &&
+                      item.document_type === 'original'
+                  )
                 }
                 status={allDocumentsStatus}
                 itemType={'documents'}

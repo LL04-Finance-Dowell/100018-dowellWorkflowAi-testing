@@ -285,6 +285,8 @@ const DocumentCard = ({
     }
   };
 
+  console.log('cardItem: ', cardItem);
+
   const FrontSide = () => {
     return (
       <div>
