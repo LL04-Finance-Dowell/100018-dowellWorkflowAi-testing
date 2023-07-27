@@ -37,9 +37,15 @@ export class DocumentServices {
     return httpDocument.get(`/${documentId}/content/`);
   };
 
+  // allDocuments = (companyId, dataType) => {
+  //   return httpApiUrl.get(
+  //     `/companies/${companyId}/documents/?data_type=${dataType}`
+  //   );
+  // };
+
   allDocuments = (companyId, dataType) => {
     return httpApiUrl.get(
-      `/companies/${companyId}/documents/?data_type=${dataType}`
+      `/companies/${companyId}/documents/?data_type=${dataType}&document_type=original&document_state=draft`
     );
   };
 

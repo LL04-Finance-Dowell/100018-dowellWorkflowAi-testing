@@ -77,6 +77,8 @@ export const AppContextProvider = ({ children }) => {
   const [demoTempStatus, setDemoTempStatus] = useState('');
   const [docReports, setDocReports] = useState(null);
   const [docReportsStatus, setDocReportsStatus] = useState('');
+  const [savedDocuments, setSavedDocuments] = useState(null);
+  const [savedDocumentsStatus, setSavedDocumentsStatus] = useState('');
   const [tempReports, setTempReports] = useState(null);
   const [tempReportsStatus, setTempReportsStatus] = useState('');
   const [companyId, setCompanyId] = useState(
@@ -192,6 +194,21 @@ export const AppContextProvider = ({ children }) => {
       console.log(err);
     } finally {
       setDocReportsStatus('');
+    }
+  };
+
+  const fetchSavedDocuments = async () => {
+    setSavedDocumentsStatus('pending');
+    try {
+      const res = await new DocumentServices().getSavedDocuments(
+        companyId,
+        dataType
+      );
+      setSavedDocuments(res.data ? res.data.documents : []);
+    } catch (err) {
+      console.log(err);
+    } finally {
+      setSavedDocumentsStatus('');
     }
   };
 
@@ -463,6 +480,9 @@ export const AppContextProvider = ({ children }) => {
         fetchTemplateReports,
         userName,
         portfolioName,
+        savedDocuments,
+        savedDocumentsStatus,
+        fetchSavedDocuments,
       }}
     >
       {children}

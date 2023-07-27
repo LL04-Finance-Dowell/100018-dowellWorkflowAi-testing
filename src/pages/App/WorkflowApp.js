@@ -205,25 +205,25 @@ const WorkflowApp = () => {
         });
     }
 
-    if (!favoriteItemsLoaded) {
-      const dataToPost = {
-        company_id: userCompanyId,
-        username: userDetail?.userinfo?.username,
-      };
+    // if (!favoriteItemsLoaded) {
+    //   const dataToPost = {
+    //     company_id: userCompanyId,
+    //     username: userDetail?.userinfo?.username,
+    //   };
 
-      getFavoritesForUser(dataToPost.company_id)
-        .then((res) => {
-          setFavoriteitems(res.data);
-          setFavoriteitemsLoaded(true);
-        })
-        .catch((err) => {
-          console.log(
-            err
-            // .response ? err.response.data : err.message
-          );
-          // setFavoriteitemsLoaded(true)
-        });
-    }
+    //   getFavoritesForUser(dataToPost.company_id)
+    //     .then((res) => {
+    //       setFavoriteitems(res.data);
+    //       setFavoriteitemsLoaded(true);
+    //     })
+    //     .catch((err) => {
+    //       console.log(
+    //         err
+    //         // .response ? err.response.data : err.message
+    //       );
+    //       // setFavoriteitemsLoaded(true)
+    //     });
+    // }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userDetail, favoriteItemsLoaded, notificationsLoaded]);
 
