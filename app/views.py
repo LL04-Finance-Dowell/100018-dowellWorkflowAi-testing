@@ -1481,7 +1481,7 @@ def dowell_centre_documents(request, company_id):
         status.HTTP_200_OK,
     )
 
-  
+
 @api_view(["GET"])
 def get_templates_documents(request, company_id):
     """Fetch saved and draft templates/documents based on user request."""
@@ -1495,15 +1495,17 @@ def get_templates_documents(request, company_id):
         # Return a response with an error message and HTTP status code 400 (Bad Request)
         return Response("Invalid Request!", status.HTTP_400_BAD_REQUEST)
 
-    # Prepare options to pass to bulk_query functions
-    options = {"company_id": company_id, "data_type": data_type, "status": doc_state}
-    
+    item_status = doc_state.split("_")[1]    
     # Check the user request to decide whether to fetch templates or documents
     if doc_state in ["templates_saved", "templates_draft"]:
         # Call bulk_query_template_collection with the appropriate "status" parameter
+        # Prepare options to pass to bulk_query functions
+        options = {"company_id": company_id, "data_type": data_type, "template_state": item_status}
         templates_documents = bulk_query_template_collection(options)
         key = "saved_templates" if doc_state == "templates_saved" else "draft_templates"
     elif doc_state in ["documents_saved", "documents_draft"]:
+        # Prepare options to pass to bulk_query functions
+        options = {"company_id": company_id, "data_type": data_type, "document_state": item_status}
         # Call bulk_query_document_collection with the appropriate "status" parameter
         templates_documents = bulk_query_document_collection(options)
         key = "saved_documents" if doc_state == "documents_saved" else "draft_documents"
