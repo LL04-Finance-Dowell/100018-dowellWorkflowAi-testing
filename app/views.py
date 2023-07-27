@@ -532,6 +532,28 @@ def get_clones_in_organization(request, company_id):
 
 
 @api_view(["GET"])
+def get_clones_by_document(request, company_id, document_id):
+    """List of Created Documents."""
+    data_type = request.query_params.get("data_type")
+    if not validate_id(company_id):
+        return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
+    cache_key = f"clones_{company_id}"
+    clones_list = cache.get(cache_key)
+    if clones_list is None:
+        clones_list = bulk_query_clones_collection(
+            {"company_id": company_id, "data_type": data_type, "parent_id": document_id, "document_state": "finalized"}
+        )
+        cache.set(cache_key, clones_list, timeout=60)
+
+    page = int(request.GET.get("page", 1))
+    clones_list = paginate(clones_list, page, 50)
+    return Response(
+        {"clones": clones_list},
+        status.HTTP_200_OK,
+    )
+
+
+@api_view(["GET"])
 def get_documents_types(request, company_id):
     """List of Created Documents."""
     data_type = request.query_params.get("data_type")
@@ -601,6 +623,48 @@ def get_document_content(request, document_id):
     content = []
     my_dict = ast.literal_eval(
         single_query_document_collection({"_id": document_id})["content"]
+    )[0][0]
+    all_keys = [i for i in my_dict.keys()]
+    for i in all_keys:
+        temp_list = []
+        for j in my_dict[i]:
+            if "data" in j:
+                if j["type"] == "CONTAINER_INPUT":
+                    container_list = []
+                    for item in j["data"]:
+                        container_list.append({"id": item["id"], "data": item["data"]})
+                    temp_list.append({"id": j["id"], "data": container_list})
+                else:
+                    temp_list.append({"id": j["id"], "data": j["data"]})
+            else:
+                temp_list.append({"id": j["id"], "data": ""})
+        content.append(
+            {
+                i: temp_list,
+            }
+        )
+    sorted_content = []
+    for dicts in content:
+        for key, val in dicts.items():
+            sorted_content.append(
+                {
+                    key: sorted(
+                        dicts[key],
+                        key=lambda x: int([a for a in re.findall("\d+", x["id"])][-1]),
+                    )
+                }
+            )
+    return Response(sorted_content, status.HTTP_200_OK)
+
+
+@api_view(["GET"])
+def get_clone_content(request, clone_id):
+    """Content map of a given document"""
+    if not validate_id(clone_id):
+        return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
+    content = []
+    my_dict = ast.literal_eval(
+        single_query_clones_collection({"_id": clone_id})["content"]
     )[0][0]
     all_keys = [i for i in my_dict.keys()]
     for i in all_keys:
