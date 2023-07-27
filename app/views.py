@@ -548,7 +548,12 @@ def get_clones_by_document(request, company_id, document_id):
     clones_list = cache.get(cache_key)
     if clones_list is None:
         clones_list = bulk_query_clones_collection(
-            {"company_id": company_id, "data_type": data_type, "parent_id": document_id, "document_state": "finalized"}
+            {
+                "company_id": company_id,
+                "data_type": data_type,
+                "parent_id": document_id,
+                "document_state": "finalized",
+            }
         )
         cache.set(cache_key, clones_list, timeout=60)
 
@@ -570,8 +575,8 @@ def get_documents_types(request, company_id):
     document_list = bulk_query_document_collection(
         {"company_id": company_id, "data_type": data_type, "document_type": doc_type}
     )
-    page = int(request.GET.get("page", 1))
-    document_list = paginate(document_list, page, 50)
+    # page = int(request.GET.get("page", 1))
+    # document_list = paginate(document_list, page, 50)
     return Response(
         {"documents": document_list},
         status.HTTP_200_OK,
