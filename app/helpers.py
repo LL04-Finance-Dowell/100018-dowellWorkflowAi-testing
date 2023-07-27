@@ -250,7 +250,7 @@ def access_editor(item_id, item_type):
             "_id": item_id,
             "field": field,
             "type": item_type,
-            "action": "document" if item_type == "document" else "template",
+            "action": "document" if item_type == "document" else "clone" if item_type == "clone" else "template",
             "flag": "editing",
             "name": name,
             "command": "update",
