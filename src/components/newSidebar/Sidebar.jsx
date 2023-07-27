@@ -195,34 +195,34 @@ const Sidebar = () => {
   };
 
   /////////////////////
-  useEffect(() => {
-    axios
-      .get(
-        'https://100094.pythonanywhere.com/v1/companies/6385c0f38eca0fb652c9457e/templates/?='
-      )
-      .then((response) => {
-        const templateNames = response.data.templates.map(
-          (template) => template.template_name
-        );
-        const updatedKnowledge = knowledge.map((item) => {
-          if (item.parent === 'Templates') {
-            const updatedChildren = item.children.map((child, index) => {
-              // Map each template child to the corresponding template name from the response
-              if (index < templateNames.length) {
-                return { id: uuidv4(), child: templateNames[index] };
-              }
-              return child;
-            });
-            return { ...item, children: updatedChildren };
-          }
-          return item;
-        });
-        Setknowledge(updatedKnowledge);
-      })
-      .catch((error) => {
-        // Handle any errors
-      });
-  }, []);
+  // useEffect(() => {
+  //   axios
+  //     .get(
+  //       'https://100094.pythonanywhere.com/v1/companies/6385c0f38eca0fb652c9457e/templates/?='
+  //     )
+  //     .then((response) => {
+  //       const templateNames = response.data.templates.map(
+  //         (template) => template.template_name
+  //       );
+  //       const updatedKnowledge = knowledge.map((item) => {
+  //         if (item.parent === 'Templates') {
+  //           const updatedChildren = item.children.map((child, index) => {
+  //             // Map each template child to the corresponding template name from the response
+  //             if (index < templateNames.length) {
+  //               return { id: uuidv4(), child: templateNames[index] };
+  //             }
+  //             return child;
+  //           });
+  //           return { ...item, children: updatedChildren };
+  //         }
+  //         return item;
+  //       });
+  //       Setknowledge(updatedKnowledge);
+  //     })
+  //     .catch((error) => {
+  //       // Handle any errors
+  //     });
+  // }, []);
 
   return (
     <div className={styles.container}>
