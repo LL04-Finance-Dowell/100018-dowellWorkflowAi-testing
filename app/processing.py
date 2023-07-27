@@ -422,6 +422,7 @@ class HandleProcess:
                     right = step["stepRights"]
                     role = step["stepRole"]
         if clone_id:
+            print("Clone id", clone_id)
             if item_type == "document":
                 collection = "DocumentReports"
                 document = "documentreports"
