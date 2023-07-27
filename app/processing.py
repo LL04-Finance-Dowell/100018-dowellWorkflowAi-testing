@@ -428,7 +428,7 @@ class HandleProcess:
                 document = "documentreports"
                 field = "document_name"
                 team_member_id = "11689044433"
-                document_object = single_query_document_collection({"_id": clone_id})
+                document_object = single_query_clones_collection({"_id": clone_id})
                 print("-----",document_object)
                 item_flag = document_object["document_state"]
                 document_name = document_object["document_name"]
