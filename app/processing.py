@@ -364,6 +364,7 @@ class HandleProcess:
     def verify_location(self, auth_role, location_data):
         for step in self.process["process_steps"]:
             if step.get("stepRole") == auth_role:
+                print(step.get("stepLocation"))
                 if step.get("stepLocation"):
                     return location_right(
                         step.get("stepLocation"),
@@ -423,52 +424,12 @@ class HandleProcess:
                     role = step["stepRole"]
         if clone_id:
             if item_type == "document":
-                collection = "DocumentReports"
-                document = "documentreports"
-                field = "document_name"
-                team_member_id = "11689044433"
-                document_object = single_query_document_collection({"_id": clone_id})
-                print("This is " + document_object)
-                item_flag = document_object["document_state"]
-                print("Item_flag" + item_flag)
-                document_name = document_object["document_name"]
-                editor_link = HandleProcess.get_editor_link(
-                    {
-                        "product_name": "Workflow AI",
-                        "details": {
-                            "field": field,
-                            "cluster": "Documents",
-                            "database": "Documentation",
-                            "collection": collection,
-                            "document": document,
-                            "team_member_ID": team_member_id,
-                            "function_ID": "ABCDE",
-                            "command": "update",
-                            "flag": "signing",
-                            "_id": clone_id,
-                            "action": item_type,
-                            "authorized": user_name,
-                            "user_type": user_type,
-                            "document_map": doc_map,
-                            "document_right": right,
-                            "document_flag": item_flag,
-                            "role": role,
-                            "process_id": self.process["_id"],
-                            "update_field": {
-                                "document_name": document_name,
-                                "content": "",
-                                "page": "",
-                            },
-                        },
-                    }
-                )
-
-            if item_type == "clone":
                 collection = "CloneReports"
                 document = "CloneReports"
                 field = "document_name"
                 team_member_id = "1212001"
                 document_object = single_query_clones_collection({"_id": clone_id})
+                # print("document_obj", document_object)
                 item_flag = document_object["document_state"]
                 document_name = document_object["document_name"]
                 editor_link = HandleProcess.get_editor_link(

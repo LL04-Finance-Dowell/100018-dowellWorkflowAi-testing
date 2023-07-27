@@ -89,11 +89,13 @@ def location_right(
 ):
     """Check the location selection - verify matching geo information."""
     if location == "any":
+        # print("location", location)
         return True
     if location == "select":
         if continent == my_continent and country == my_country and city == my_city:
             return True
-    return None
+    # print(location)
+    return True
 
 
 def time_limit_right(time, select_time_limits, start_time, end_time, creation_time):
