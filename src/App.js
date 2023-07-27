@@ -1,7 +1,7 @@
 import { useEffect, Suspense } from 'react';
 import { Routes, Route } from 'react-router-dom';
 import { setIconColor } from './features/app/appSlice';
-import {auth_url} from './httpCommon/httpCommon'
+import { auth_url } from './httpCommon/httpCommon';
 import { useDispatch, useSelector } from 'react-redux';
 import useDowellLogin from './hooks/useDowellLogin';
 import WorkflowApp from './pages/App/WorkflowApp';
@@ -123,6 +123,10 @@ function App() {
             element={<TemplatesPage showOnlySaved={true} />}
           />
           <Route path={'demo'} element={<TemplatesPage isDemo={true} />} />
+          <Route
+            path={'reports'}
+            element={<TemplatesPage isReports={true} />}
+          />
           {/* <Route path={"trash"} element={<TemplatesPage showOnlyTrashed={true} />}/> */}
           {/* <Route path={"new"} element={<CreateNewTemplatePage />} />
         <Route path={"to-approve"} element={<ApproveTemplatesPage />} />

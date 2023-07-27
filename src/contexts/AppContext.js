@@ -58,7 +58,7 @@ export const AppContextProvider = ({ children }) => {
   const [fetchedItems, setFetchedItems] = useState([]);
 
   const { userDetail } = useSelector((state) => state.auth);
-  const [rerender, setRerender] = useState('rand');
+  const [rerender, setRerender] = useState('rand'); //* This is to force certain useEffects to rerun
   const [processDisplayName, setProcessDisplayName] = useState('');
   const [openNameChangeModal, setOpenNameChangeModal] = useState(false);
   const [nameChangeTitle, setNameChangeTitle] = useState('');
@@ -68,13 +68,37 @@ export const AppContextProvider = ({ children }) => {
   const { permissionArray } = useSelector((state) => state.app);
   const dispatch = useDispatch();
 
-  const [folders, setFolders] = useState([]);
+  const [folders, setFolders] = useState(null);
   const [folderActionId, setFolderActionId] = useState('');
   const [isFetchingFolders, setIsFetchingFolders] = useState(false);
   const [demoTemplates, setDemoTemplates] = useState(null);
   const [demoDocuments, setDemoDocuments] = useState(null);
   const [demoDocStatus, setDemoDocStatus] = useState('');
   const [demoTempStatus, setDemoTempStatus] = useState('');
+  const [docReports, setDocReports] = useState(null);
+  const [docReportsStatus, setDocReportsStatus] = useState('');
+  const [tempReports, setTempReports] = useState(null);
+  const [tempReportsStatus, setTempReportsStatus] = useState('');
+  const [companyId, setCompanyId] = useState(
+    userDetail?.portfolio_info?.length > 1
+      ? userDetail?.portfolio_info.find(
+          (portfolio) => portfolio.product === productName
+        )?.org_id
+      : userDetail?.portfolio_info[0].org_id
+  );
+  const [userName, setUserName] = useState(
+    userDetail?.portfolio_info[0]?.username
+  );
+  const [portfolioName, setPortfolioName] = useState(
+    userDetail?.portfolio_info[0]?.portfolio_name
+  );
+  const [dataType, setDataType] = useState(
+    userDetail?.portfolio_info?.length > 1
+      ? userDetail?.portfolio_info.find(
+          (portfolio) => portfolio.product === productName
+        )?.data_type
+      : userDetail?.portfolio_info[0]?.data_type
+  );
 
   const [showFoldersActionModal, setShowFoldersActionModal] = useState({
     state: false,
@@ -154,6 +178,42 @@ export const AppContextProvider = ({ children }) => {
     }
   };
 
+  const fetchDocumentReports = async () => {
+    setDocReportsStatus('pending');
+    try {
+      const res = await new DocumentServices().getDocumentReports(
+        companyId,
+        dataType,
+        userName,
+        portfolioName
+      );
+      setDocReports(res.data ? res.data.documents : []);
+    } catch (err) {
+      console.log(err);
+    } finally {
+      setDocReportsStatus('');
+    }
+  };
+
+  const fetchTemplateReports = async () => {
+    setTempReportsStatus('pending');
+    try {
+      const res = await new TemplateServices().getTemplateReports(
+        companyId,
+        dataType,
+        userName,
+        portfolioName
+      );
+      setTempReports(res.data ? res.data.templates : []);
+    } catch (err) {
+      console.log(err);
+    } finally {
+      setTempReportsStatus('');
+    }
+  };
+
+  // console.log(userName, portfolioName, dataType);
+
   const fetchDemoDocuments = async () => {
     setDemoDocStatus('pending');
     try {
@@ -176,7 +236,7 @@ export const AppContextProvider = ({ children }) => {
         : userDetail?.portfolio_info[0]?.org_id;
     setIsFetchingFolders(true);
     try {
-      const res = await folderServices.getAllFolders(userCompanyId);
+      const res = await folderServices.getAllFolders(userCompanyId, dataType);
       setFolders(res.data ? res.data.reverse() : []);
     } catch (err) {
       console.log(err);
@@ -189,8 +249,8 @@ export const AppContextProvider = ({ children }) => {
     str ? str.slice(str.indexOf('(') + 1, str.indexOf(')')) : str;
 
   // useEffect(() => {
-  //   console.log('folders: ', folders);
-  // }, [folders]);
+  //   console.log('userDetail: ', userDetail);
+  // }, [userDetail]);
 
   useEffect(() => {
     if (!publicUserConfigured) return;
@@ -214,7 +274,8 @@ export const AppContextProvider = ({ children }) => {
           .catch((err) => {
             console.log(
               'Failed to fetch teams: ',
-              err.response ? err.response.data : err.message
+              err
+              // .response ? err.response.data : err.message
             );
             setWorkflowTeamsLoaded(true);
           });
@@ -226,7 +287,7 @@ export const AppContextProvider = ({ children }) => {
   useEffect(() => {
     if (userDetail && userDetail.portfolio_info) {
       fetchSettings();
-      fetchFolders();
+      // fetchFolders();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userDetail]);
@@ -394,6 +455,14 @@ export const AppContextProvider = ({ children }) => {
         demoTempStatus,
         fetchDemoTemplates,
         fetchDemoDocuments,
+        fetchDocumentReports,
+        docReports,
+        docReportsStatus,
+        tempReports,
+        tempReportsStatus,
+        fetchTemplateReports,
+        userName,
+        portfolioName,
       }}
     >
       {children}

@@ -44,4 +44,9 @@ export class TemplateServices {
   singleTemplateDetail = async (templateId) => {
     return await httpTemplate.get(`/${templateId}/object/`);
   };
+
+  getTemplateReports = (companyId, dataType, userName, portfolioName) =>
+    httpApiUrl.get(
+      `/companies/${companyId}/templates/reports/?data_type=${dataType}&template_state=draft&member=${userName}&portfolio=${portfolioName}`
+    );
 }

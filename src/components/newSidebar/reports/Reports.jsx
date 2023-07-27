@@ -6,6 +6,7 @@ import { v4 as uuidv4 } from 'uuid';
 import sidebarStyles from '../sidebar.module.css';
 
 import { useTranslation } from 'react-i18next';
+import { useAppContext } from '../../../contexts/AppContext';
 
 const Reports = () => {
   const { t } = useTranslation();
@@ -17,6 +18,7 @@ const Reports = () => {
     processes: { count: 0, countSet: false },
   });
   const { userDetail } = useSelector((state) => state.auth);
+  const { docReports, tempReports } = useAppContext();
 
   const { allWorkflows: allWorkflowsArray } = useSelector(
     (state) => state.workflow
@@ -30,78 +32,98 @@ const Reports = () => {
   const { allProcesses, themeColor } = useSelector((state) => state.app);
 
   useEffect(() => {
-    if (
-      allDocumentsArray &&
-      allDocumentsArray.length > 0 &&
-      !itemsCountToDisplay.documents.countSet
-    ) {
-      const countOfDocuments = allDocumentsArray.filter(
-        (item) =>
-          item.document_state === 'draft' &&
-          item.created_by === userDetail?.userinfo?.username
-      ).length;
+    if (docReports)
       setItemsCountToDisplay((prevItems) => {
         return {
           ...prevItems,
-          documents: { count: countOfDocuments, countSet: true },
+          documents: { count: docReports.length, countSet: true },
         };
       });
-    }
-    if (
-      allTemplatesArray &&
-      allTemplatesArray.length > 0 &&
-      !itemsCountToDisplay.templates.countSet
-    ) {
-      const countOfTemplates = allTemplatesArray.filter(
-        (item) => item.template_state === 'draft'
-        // && item.created_by === userDetail?.userinfo.username
-      ).length;
-      setItemsCountToDisplay((prevItems) => {
-        return {
-          ...prevItems,
-          templates: { count: countOfTemplates, countSet: true },
-        };
-      });
-    }
-    if (
-      allWorkflowsArray &&
-      allWorkflowsArray.length > 0 &&
-      !itemsCountToDisplay.workflows.countSet
-    ) {
-      const countOfWorkflows = allWorkflowsArray.filter(
-        (item) => item.created_by === userDetail?.userinfo.username
-        // item.template_state === 'draft'
-      ).length;
-      setItemsCountToDisplay((prevItems) => {
-        return {
-          ...prevItems,
-          workflows: { count: countOfWorkflows, countSet: true },
-        };
-      });
-    }
-    if (
-      allProcesses &&
-      allProcesses.length > 0 &&
-      !itemsCountToDisplay.processes.countSet
-    ) {
-      const countOfProcesses =
-        allProcesses.filter(
-          (item) =>
-            // item.created_by === userDetail?.userinfo.username
-            item.processing_state === 'cancelled'
-        ).length +
-        allProcesses.filter((item) => item.processing_state === 'finalized')
-          .length;
+  }, [docReports]);
 
+  useEffect(() => {
+    if (tempReports)
       setItemsCountToDisplay((prevItems) => {
         return {
           ...prevItems,
-          processes: { count: countOfProcesses, countSet: true },
+          templates: { count: tempReports.length, countSet: true },
         };
       });
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [allDocumentsArray, allTemplatesArray, allWorkflowsArray, allProcesses]);
+  }, [tempReports]);
+
+  // useEffect(() => {
+  //   if (
+  //     allDocumentsArray &&
+  //     allDocumentsArray.length > 0 &&
+  //     !itemsCountToDisplay.documents.countSet
+  //   ) {
+  //     const countOfDocuments = allDocumentsArray.filter(
+  //       (item) =>
+  //         item.document_state === 'draft' &&
+  //         item.created_by === userDetail?.userinfo?.username
+  //     ).length;
+  //     setItemsCountToDisplay((prevItems) => {
+  //       return {
+  //         ...prevItems,
+  //         documents: { count: countOfDocuments, countSet: true },
+  //       };
+  //     });
+  //   }
+  //   if (
+  //     allTemplatesArray &&
+  //     allTemplatesArray.length > 0 &&
+  //     !itemsCountToDisplay.templates.countSet
+  //   ) {
+  //     const countOfTemplates = allTemplatesArray.filter(
+  //       (item) => item.template_state === 'draft'
+  //       // && item.created_by === userDetail?.userinfo.username
+  //     ).length;
+  //     setItemsCountToDisplay((prevItems) => {
+  //       return {
+  //         ...prevItems,
+  //         templates: { count: countOfTemplates, countSet: true },
+  //       };
+  //     });
+  //   }
+  //   if (
+  //     allWorkflowsArray &&
+  //     allWorkflowsArray.length > 0 &&
+  //     !itemsCountToDisplay.workflows.countSet
+  //   ) {
+  //     const countOfWorkflows = allWorkflowsArray.filter(
+  //       (item) => item.created_by === userDetail?.userinfo.username
+  //       // item.template_state === 'draft'
+  //     ).length;
+  //     setItemsCountToDisplay((prevItems) => {
+  //       return {
+  //         ...prevItems,
+  //         workflows: { count: countOfWorkflows, countSet: true },
+  //       };
+  //     });
+  //   }
+  //   if (
+  //     allProcesses &&
+  //     allProcesses.length > 0 &&
+  //     !itemsCountToDisplay.processes.countSet
+  //   ) {
+  //     const countOfProcesses =
+  //       allProcesses.filter(
+  //         (item) =>
+  //           // item.created_by === userDetail?.userinfo.username
+  //           item.processing_state === 'cancelled'
+  //       ).length +
+  //       allProcesses.filter((item) => item.processing_state === 'finalized')
+  //         .length;
+
+  //     setItemsCountToDisplay((prevItems) => {
+  //       return {
+  //         ...prevItems,
+  //         processes: { count: countOfProcesses, countSet: true },
+  //       };
+  //     });
+  //   }
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [allDocumentsArray, allTemplatesArray, allWorkflowsArray, allProcesses]);
 
   useEffect(() => {
     setTest((prevItems) =>
@@ -143,6 +165,10 @@ const Reports = () => {
     );
   }, [itemsCountToDisplay]);
 
+  // useEffect(() => {
+  //   console.log('test: ', test);
+  // }, [test]);
+
   return (
     <div className={sidebarStyles.feature__box}>
       <h2
@@ -159,21 +185,21 @@ const Reports = () => {
 export default Reports;
 
 export const manageFileItems = [
-  // {
-  //   id: uuidv4(),
-  //   parent: 'My documents',
-  //   // children: [
+  {
+    id: uuidv4(),
+    parent: 'My documents',
+    // children: [
 
-  //   //   { id: uuidv4(), child: 'All Documents', href: '/documents/#drafts' },
-  //   //   { id: uuidv4(), child: 'Completed Documents', href: '/documents/completed' },
-  //   // ],
-  //   href: '/documents/completed',
-  // },
-  // {
-  //   id: uuidv4(),
-  //   parent: 'My Templates',
-  //   href: '/templates/#drafts',
-  // },
+    //   { id: uuidv4(), child: 'All Documents', href: '/documents/#drafts' },
+    //   { id: uuidv4(), child: 'Completed Documents', href: '/documents/completed' },
+    // ],
+    href: '/documents/completed',
+  },
+  {
+    id: uuidv4(),
+    parent: 'My Templates',
+    href: '/templates/reports',
+  },
   // {
   //   id: uuidv4(),
   //   parent: 'My Workflows',

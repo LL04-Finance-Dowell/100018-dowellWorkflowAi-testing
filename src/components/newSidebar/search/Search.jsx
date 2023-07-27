@@ -32,7 +32,7 @@ const Search = () => {
   const navigate = useNavigate();
 
   const { t } = useTranslation();
-  const { searchItems } = useAppContext();
+  const { searchItems, setRerender } = useAppContext();
   const { allWorkflowsStatus } = useSelector((state) => state.workflow);
   const { allTemplatesStatus } = useSelector((state) => state.template);
   const { allDocumentsStatus } = useSelector((state) => state.document);
@@ -43,59 +43,11 @@ const Search = () => {
       return setSearchResultItems([]);
 
     setSearchLoading(true);
-
-    // const dataToPost = {
-    //   company_id: userDetail?.portfolio_info[0]?.org_id,
-    //   search: data.search,
-    // }
-
-    // try {
-    //   const response = await (await searchForItem(dataToPost)).data;
-    //   setSearchResultLoaded(true);
-    //   setSearchLoading(false);
-    //   setSearchResults(response.search_result);
-
-    //   let updatedItems = items.map(item => {
-    //     const copyOfItem = {...item};
-
-    //     if (copyOfItem.type === "Documents") {
-    //       const documentsFound = response.search_result.filter(searchResultItem => searchResultItem.document_name).slice(0, 3)
-    //       copyOfItem.parent = "Documents";
-    //       copyOfItem.count = documentsFound.length;
-    //       copyOfItem.children = documentsFound.map(result => {
-    //         return { id: uuidv4(), child: result.document_name, searchItem: true, href: "#", itemObj: result}
-    //       })
-    //       copyOfItem.isOpen = true
-    //       return copyOfItem
-    //     }
-    //     if (item.type === "Templates") {
-    //       const templatesFound = response.search_result.filter(searchResultItem => searchResultItem.template_name).slice(0, 3)
-    //       copyOfItem.parent = "Templates";
-    //       copyOfItem.count = templatesFound.length;
-    //       copyOfItem.children = templatesFound.map(result => {
-    //         return { id: uuidv4(), child: result.template_name, searchItem: true, href: "#", itemObj: result}
-    //       })
-    //       copyOfItem.isOpen = true
-    //       return copyOfItem
-    //     }
-
-    //     const workflowsFound = response.search_result.filter(searchResultItem => searchResultItem.workflows).slice(0, 3)
-    //     copyOfItem.parent = "Workflows";
-    //     copyOfItem.count = workflowsFound.length;
-    //     copyOfItem.children = workflowsFound.map(result => {
-    //       return { id: uuidv4(), child: result.workflows?.workflow_title, searchItem: true, href: "#", itemObj: result}
-    //     })
-    //     copyOfItem.isOpen = true
-    //     return copyOfItem
-    //   })
-    //   setSearchResultItems(updatedItems);
-
-    // } catch (error) {
-    //   console.log(error.response ? error.response.data : error.message);
-    //   setSearchLoading(false);
-    //   toast.error(error.response ? error.response.data : error.message)
-    // }
   };
+
+  useEffect(() => {
+    setRerender(uuidv4());
+  }, [searchResultItems]);
 
   useEffect(() => {
     if (
@@ -150,7 +102,7 @@ const Search = () => {
               itemObj: result,
             };
           });
-          copyOfItem.isOpen = true;
+          copyOfItem.isOpen = false;
           return copyOfItem;
         }
 
@@ -168,7 +120,7 @@ const Search = () => {
             itemObj: result,
           };
         });
-        copyOfItem.isOpen = true;
+        copyOfItem.isOpen = false;
         return copyOfItem;
       });
       setSearchResultItems(updatedItems);
@@ -219,72 +171,6 @@ const Search = () => {
             </>
           )}
         </button>
-        {/* {
-          searchResultLoaded ? <div className={styles.minified__Search__Results}>
-            <div className={styles.minified__Search__Top__Row}>
-              <h5>Search results</h5>
-              <button onClick={() => setSearchResultLoaded(false)}>
-                <IoMdClose />
-              </button>
-            </div>
-            <div className={styles.minified__Search__Container}>
-              {
-                searchResults.length < 1 ? <p>No items found matching {search}</p> : <>
-                  {
-                    React.Children.toArray(searchResults.slice(0, 3).map(searchResultItem => {
-                      return <button id={searchResultItem._id} onClick={() => handleSearchItemClick(searchResultItem)}>
-                        <span className={styles.search__Item__Info}>
-                          { 
-                            searchResultItem.document_name ? "Document" :
-                            searchResultItem.template_name ? "Template" :
-                            searchResultItem.workflows ? "Workflow" :
-                            ""
-                          }
-                        </span>
-                        <span>
-                          { 
-                            searchResultItem.document_name ? 
-                              searchResultItem.document_name.length > 10 ?
-                                searchResultItem.document_name.slice(0, 10) + "..." :
-                                searchResultItem.document_name
-                            :
-                            searchResultItem.template_name ? 
-                              searchResultItem.template_name.length > 10 ?
-                                searchResultItem.template_name.slice(0, 10) + "..." :
-                                searchResultItem.template_name
-                            :
-                            searchResultItem.workflows ?
-                              searchResultItem.workflows?.workflow_title.length > 10 ?
-                                searchResultItem.workflows?.workflow_title.slice(0, 10) + "..." :
-                                searchResultItem.workflows?.workflow_title
-                            :
-                            ""
-                          }
-                          <Tooltip 
-                            anchorId={searchResultItem._id} 
-                            content={
-                              searchResultItem.document_name ? searchResultItem.document_name :
-                              searchResultItem.template_name ? searchResultItem.template_name :
-                              searchResultItem.workflows?.workflow_title ? searchResultItem.workflows?.workflow_title :
-                              ""
-                            } 
-                            place="top" 
-                          />
-                        </span>
-                      </button>
-                    }))
-                  }
-                </>
-              }
-            </div>
-            { 
-              searchResults.length > 3 ? <button className={styles.see__All__Btn} onClick={handleSeeMoreBtnClick}>
-                See all
-              </button> :
-              <></>
-            }
-          </div> : <></>
-        } */}
       </form>
       <CollapseItem listType='ol' items={searchResultItems} />
       {searchResults.length > 3 ? (

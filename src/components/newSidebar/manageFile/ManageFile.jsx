@@ -245,7 +245,7 @@ const ManageFile = () => {
         <i>
           <IoMdArrowDropright size={25} />
         </i>
-        Folders {folders.length ? `(${folders.length})` : ''}
+        Folders {folders ? `(${folders.length})` : ''}
       </HashLink>
     </div>
   );

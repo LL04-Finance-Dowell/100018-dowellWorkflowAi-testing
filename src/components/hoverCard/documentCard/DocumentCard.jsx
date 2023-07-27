@@ -285,6 +285,8 @@ const DocumentCard = ({
     }
   };
 
+  console.log('cardItem: ', cardItem);
+
   const FrontSide = () => {
     return (
       <div>
@@ -301,14 +303,12 @@ const DocumentCard = ({
             <MdOutlineFiberNew />
           </div>
         )}
-        {
-          cardItem.document_name ? 
-            cardItem.document_name : 
-            typeof cardItem.document_name === 'string' && cardItem.document_name.length < 1 ?
-            ''
-            :
-            'no item'
-        }
+        {cardItem.document_name
+          ? cardItem.document_name
+          : typeof cardItem.document_name === 'string' &&
+            cardItem.document_name.length < 1
+          ? ''
+          : 'no item'}
       </div>
     );
   };

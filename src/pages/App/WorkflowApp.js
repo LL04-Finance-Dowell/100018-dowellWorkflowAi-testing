@@ -56,6 +56,8 @@ const WorkflowApp = () => {
     customDocName,
     customTempName,
     customWrkfName,
+    userName,
+    portfolioName,
   } = useAppContext();
   const { allDocuments } = useSelector((state) => state.document);
   // const { allTemplates } = useSelector((state) => state.template);
@@ -105,9 +107,8 @@ const WorkflowApp = () => {
   ]);
 
   useEffect(() => {
+    if (!userDetail || userDetail.msg || userDetail.message) return;
 
-    if (!userDetail || userDetail.msg || userDetail.message) return
-    
     const [userCompanyId, userPortfolioDataType, userPortfolioName] = [
       userDetail?.portfolio_info?.length > 1
         ? userDetail?.portfolio_info.find(
@@ -123,7 +124,7 @@ const WorkflowApp = () => {
         ? userDetail?.portfolio_info.find(
             (portfolio) => portfolio.product === productName
           )?.data_type
-        : userDetail?.portfolio_info[0]?.portfolio_name,        
+        : userDetail?.portfolio_info[0]?.portfolio_name,
     ];
     if (!notificationsLoaded) {
       dispatch(setNotificationsLoading(true));
@@ -132,56 +133,76 @@ const WorkflowApp = () => {
 
       const documentService = new DocumentServices();
 
-      documentService.getNotifications(userCompanyId, userPortfolioDataType).then(res => {
-        // console.log(res.data);
-        const documentsToSign = res.data.documents
-        ?.reverse()
-        .filter(
-          (document) =>
-            document.auth_viewers &&
-            Array.isArray(document.auth_viewers) &&
-            (
-              // new format
-              (
-                document.auth_viewers.every(item => typeof item === 'object') &&
-                document.auth_viewers.map(viewer => viewer.member).includes(userDetail?.userinfo?.username) &&
-                document.auth_viewers.map(viewer => viewer.portfolio).includes(userPortfolioName)
-              )
-              ||
-              // old format
-              (
-                document.auth_viewers.includes(userDetail?.userinfo?.username)
-              )
-            )
-            
+      documentService
+        .getNotifications(
+          userCompanyId,
+          userPortfolioDataType,
+          userName,
+          portfolioName
         )
-        .filter((document) => document.process_id);
+        .then((res) => {
+          // console.log('response: ', res.data);
+          const documentsToSign = res.data.documents
+            ? res.data.documents
+                ?.reverse()
+                .filter(
+                  (document) =>
+                    document.auth_viewers &&
+                    Array.isArray(document.auth_viewers) &&
+                    // new format
+                    ((document.auth_viewers.every(
+                      (item) => typeof item === 'object'
+                    ) &&
+                      document.auth_viewers
+                        .map((viewer) => viewer.member)
+                        .includes(userDetail?.userinfo?.username) &&
+                      document.auth_viewers
+                        .map((viewer) => viewer.portfolio)
+                        .includes(userPortfolioName)) ||
+                      // old format
+                      document.auth_viewers.includes(
+                        userDetail?.userinfo?.username
+                      ))
+                )
+                .filter((document) => document.process_id)
+            : [];
 
-        dispatch(setNotificationFinalStatus(100));
+          dispatch(setNotificationFinalStatus(100));
 
-        const currentNotifications = notificationsForUser.slice();
-        let updatedNotifications = currentNotifications.map((notification) => {
-          const data = documentsToSign.map((dataObj) => {
-            let copyOfDataObj = { ...dataObj };
-            copyOfDataObj.type = 'sign-document';
-            return copyOfDataObj;
-          });
-          const copyOfNotification = { ...notification };
-          if (copyOfNotification.title === 'documents') {
-            copyOfNotification.items = data;
-            return copyOfNotification;
-          }
-          return notification;
+          // console.log('notificationForUser: ', notificationsForUser);
+
+          const currentNotifications = notificationsForUser.slice();
+
+          // console.log('currentNotifications: ', currentNotifications);
+          // console.log('documentsToSign: ', documentsToSign);
+
+          let updatedNotifications = currentNotifications.map(
+            (notification) => {
+              const data = documentsToSign.map((dataObj) => {
+                let copyOfDataObj = { ...dataObj };
+                copyOfDataObj.type = 'sign-document';
+                return copyOfDataObj;
+              });
+              const copyOfNotification = { ...notification };
+              if (copyOfNotification.title === 'documents') {
+                copyOfNotification.items = data;
+                return copyOfNotification;
+              }
+              return notification;
+            }
+          );
+
+          dispatch(setNotificationsForUser(updatedNotifications));
+          dispatch(setNotificationsLoading(false));
+          dispatch(setNotificationsLoaded(true));
+        })
+        .catch((err) => {
+          console.log(
+            'Failed to load notifications: ',
+            err.response ? err.response.data : err.message
+          );
+          dispatch(setNotificationsLoading(false));
         });
-
-        dispatch(setNotificationsForUser(updatedNotifications));
-        dispatch(setNotificationsLoading(false));
-        dispatch(setNotificationsLoaded(true));
-        
-      }).catch(err => {
-        console.log('Failed to load notifications: ', err.response ? err.response.data : err.message);
-        dispatch(setNotificationsLoading(false));
-      })
     }
 
     if (!favoriteItemsLoaded) {
@@ -196,7 +217,10 @@ const WorkflowApp = () => {
           setFavoriteitemsLoaded(true);
         })
         .catch((err) => {
-          // console.log(err.response ? err.response.data : err.message);
+          console.log(
+            err
+            // .response ? err.response.data : err.message
+          );
           // setFavoriteitemsLoaded(true)
         });
     }

@@ -6,6 +6,8 @@ import { IoMdArrowDropup } from 'react-icons/io';
 import { useTranslation } from 'react-i18next';
 import { useAppContext } from '../../../contexts/AppContext';
 import { v4 } from 'uuid';
+import { useDispatch } from 'react-redux';
+import { detailDocument } from '../../../features/document/asyncThunks';
 
 const HandleTasks = ({ feature, tasks }) => {
   const { t } = useTranslation();
@@ -97,6 +99,7 @@ const ItemsDisplay = ({ items, colorClass }) => {
   const [itemsToDisplay, setItemsToDisplay] = useState([]);
   const [startIndex, setStartIndex] = useState(0);
   const { setRerender } = useAppContext();
+  const dispatch = useDispatch();
 
   const itemsPusher = () => {
     let count = 0;
@@ -121,20 +124,32 @@ const ItemsDisplay = ({ items, colorClass }) => {
     setRerender(v4());
   };
 
+  const handleItemOpen = (itm) => {
+    const data = {
+      document_name: itm.child,
+      document_id: itm.id,
+    };
+    dispatch(detailDocument(data.document_id));
+    //  * For this function, no checks were included for document,template or workflows, because as at now, only documents can be incomplete/complete
+    // * If any of the others are to be included in the future, do ensure to put a check inorder to avoid unnecesarry bugs
+  };
+
   useEffect(() => {
     itemsPusher();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // useEffect(() => {
-
-  // }, [itemsToDisplay]);
   return (
     <>
       {itemsToDisplay.length > 0 &&
         itemsToDisplay.map((item) => (
           <li key={item.id} className={colorClass}>
-            {item.child}
+            <button
+              className={styles.item_btn}
+              onClick={() => handleItemOpen(item)}
+            >
+              {item.child}
+            </button>
           </li>
         ))}
 

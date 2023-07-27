@@ -7,8 +7,8 @@ export class FolderServices {
 
   getFolder = (folderId) => httpApiUrl.get(`folders/${folderId}`);
 
-  getAllFolders = (companyId) =>
-    httpApiUrl.get(`companies/${companyId}/folders/`);
+  getAllFolders = (companyId, dataType) =>
+    httpApiUrl.get(`companies/${companyId}/folders/?data_type=${dataType}`);
 
   deleteFolder = (data) => httpApiUrl.post('archives/', data);
 

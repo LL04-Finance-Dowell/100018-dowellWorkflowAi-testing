@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import WorkflowLayout from '../../layouts/WorkflowLayout/WorkflowLayout';
 import SectionBox from '../../components/manageFiles/sectionBox/SectionBox';
 import ManageFiles from '../../components/manageFiles/ManageFiles';
@@ -10,7 +10,12 @@ const FoldersPage = () => {
   const { allDocumentsStatus } = useSelector((state) => state.document);
   const { allTemplatesStatus } = useSelector((state) => state.template);
 
-  const { folders, isFetchingFolders } = useAppContext();
+  const { folders, isFetchingFolders, fetchFolders } = useAppContext();
+
+  useEffect(() => {
+    if (!folders) fetchFolders();
+  }, []);
+
   return (
     <WorkflowLayout>
       <section id='folders_sect'>
