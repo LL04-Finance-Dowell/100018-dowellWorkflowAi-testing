@@ -47,7 +47,7 @@ def paginate(dataset, page, limit):
     if dataset is not None:
         elements_to_return = page * limit
         if elements_to_return > len(dataset):
-            return dataset[:][::-1]  
+            return dataset[:][::-1]
         else:
             return dataset[:elements_to_return][::-1]
     return []
@@ -195,26 +195,27 @@ def cloning_process(process_id, created_by, creator_portfolio):
 def access_editor(item_id, item_type):
     """
     Access to document/template
-    
+
     This function generates a payload for accessing a document or template based on the given item_id and item_type.
-    
+
     Parameters:
         item_id (str): The unique identifier of the document or template.
         item_type (str): The type of item ('document' or 'template').
-    
+
     Returns:
         dict: A dictionary containing the payload with necessary details for accessing the document or template.
     """
-    
+
     # Determine the team_member_id based on the item_type
     # team_member_id = "11689044433" if item_type == "document" else "22689044433"
     team_member_id = (
-        "11689044433" if item_type == "document" 
-        else "1212001" if item_type == "clone"
+        "11689044433"
+        if item_type == "document"
+        else "1212001"
+        if item_type == "clone"
         else "22689044433"
     )
 
-    
     # Set collection, document, and field variables based on the item_type
     if item_type == "document":
         collection = "DocumentReports"
@@ -237,7 +238,7 @@ def access_editor(item_id, item_type):
     else:
         item_name = single_query_template_collection({"_id": item_id})
     name = item_name.get(field, "")
-    
+
     # Create and return the payload dictionary
     payload = {
         "product_name": "Workflow AI",
