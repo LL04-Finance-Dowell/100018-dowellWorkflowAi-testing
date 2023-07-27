@@ -72,7 +72,7 @@ urlpatterns = [
     path("companies/<str:company_id>/templates/reports/", get_reports_templates),
     path("companies/<str:company_id>/documents/", get_documents_in_organization),
     path("companies/<str:company_id>/documents/clones/", get_clones_in_organization),
-    path("companies/<str:company_id>/documents/clones/<str:document_id>/", get_clones_by_document),
+    path("companies/<str:company_id>/documents/<str:document_id>/clones/", get_clones_by_document),
     path(
         "companies/<str:company_id>/documents/knowledge-centre/",
         dowell_centre_documents,
