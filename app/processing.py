@@ -149,8 +149,8 @@ class HandleProcess:
 
     def generate_qrcode(link):
         """Revert back to prod qr_path before push"""
-        qr_path = f"100094.pythonanywhere.com/media/qrcodes/{uuid.uuid4().hex}.png"  # Production
-        # qr_path = f"media/qrcodes/{uuid.uuid4().hex}.png"  # On dev
+        # qr_path = f"100094.pythonanywhere.com/media/qrcodes/{uuid.uuid4().hex}.png"  # Production
+        qr_path = f"media/qrcodes/{uuid.uuid4().hex}.png"  # On dev
         qr_code = qrcode.QRCode()
         qr_code.add_data(link)
         qr_code.make()
@@ -428,7 +428,9 @@ class HandleProcess:
                 field = "document_name"
                 team_member_id = "11689044433"
                 document_object = single_query_document_collection({"_id": clone_id})
+                print("This is " + document_object)
                 item_flag = document_object["document_state"]
+                print("Item_flag" + item_flag)
                 document_name = document_object["document_name"]
                 editor_link = HandleProcess.get_editor_link(
                     {
@@ -460,7 +462,7 @@ class HandleProcess:
                         },
                     }
                 )
-            
+
             if item_type == "clone":
                 collection = "CloneReports"
                 document = "CloneReports"
@@ -546,17 +548,23 @@ class Background:
                         for document_map in step.get("stepDocumentCloneMap"):
                             for k, v in list(document_map.items()):
                                 if (
-                                    isinstance(v, str) and
-                                    single_query_clones_collection({"_id": v}).get("document_state")
+                                    isinstance(v, str)
+                                    and single_query_clones_collection({"_id": v}).get(
+                                        "document_state"
+                                    )
                                     == "processing"
                                 ):
-                                    continue 
+                                    continue
                                 elif (
-                                    isinstance(v, str) and
-                                    single_query_clones_collection({"_id": v}).get("document_state")
+                                    isinstance(v, str)
+                                    and single_query_clones_collection({"_id": v}).get(
+                                        "document_state"
+                                    )
                                     == "finalized"
                                 ):
-                                    register_single_user_access(step, step.get("stepRole"), k)
+                                    register_single_user_access(
+                                        step, step.get("stepRole"), k
+                                    )
                                     finalized.append(v)
                                     print(finalized)
                     else:
@@ -567,7 +575,7 @@ class Background:
                                 + step.get("stepPublicMembers", [])
                                 + step.get("stepUserMembers", [])
                             ]
-                            
+
                             for user in users:
                                 clone_id = cloning_clone(
                                     document_id, [user], parent_id, process_id
@@ -580,7 +588,9 @@ class Background:
                             step1_documents = []
                             for i in range(1, len((steps))):
                                 current_idx = i
-                                prev_docs = steps[current_idx - 1].get("stepDocumentCloneMap")
+                                prev_docs = steps[current_idx - 1].get(
+                                    "stepDocumentCloneMap"
+                                )
                                 if prev_docs:
                                     for item in prev_docs:
                                         key = next(iter(item))
@@ -589,20 +599,26 @@ class Background:
                                             step1_documents.append(my_key)
                                 for document in step1_documents:
                                     for user in step.get("stepTeamMembers"):
-                                        authorize(document, user, process_id, process_type)
+                                        authorize(
+                                            document, user, process_id, process_type
+                                        )
                                         step.get("stepDocumentCloneMap").append(
                                             {user["member"]: document}
                                         )
                                     for user in step.get("stepPublicMembers"):
-                                        authorize(document, user, process_id, process_type)
+                                        authorize(
+                                            document, user, process_id, process_type
+                                        )
                                         step.get("stepDocumentCloneMap").append(
                                             {user["member"]: document}
                                         )
                                     for user in step.get("stepUserMembers"):
-                                        authorize(document, user, process_id, process_type)
+                                        authorize(
+                                            document, user, process_id, process_type
+                                        )
                                         step.get("stepDocumentCloneMap").append(
                                             {user["member"]: document}
-                                    )
+                                        )
                         update_process(process_id, steps, processing_state)
                 # Check that all documents are finalized
                 all_accessed_true = check_all_accessed_true(steps)
@@ -611,7 +627,7 @@ class Background:
                     update_process(process_id, steps, "finalized")
                 else:
                     update_process(process_id, steps, "processing")
-         
+
         except Exception as e:
             print("got error", e)
             finalize_item(self.item_id, "processing", self.item_type)
@@ -642,7 +658,7 @@ class Background:
         #                             == "processing"
         #                         ):
         #                             # print("doc_state:", get_document_object(v).get("document_state"))
-        #                             continue 
+        #                             continue
         #                         elif (
         #                             isinstance(v, str) and
         #                             single_query_document_collection({"_id": v}).get("document_state")
@@ -714,9 +730,8 @@ class Background:
         #             update_process(process_id, steps, "finalized")
         #         else:
         #             update_process(process_id, steps, "processing")
-         
+
         # except Exception as e:
         #     print("got error", e)
         #     finalize_item(self.item_id, "processing", self.item_type)
         #     return
-        
