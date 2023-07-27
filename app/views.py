@@ -919,8 +919,6 @@ def get_reports_templates(request, company_id):
             "auth_viewers":auth_viewers
         }
     )
-    page = int(request.GET.get("page", 1))
-    templates = paginate(templates, page, 50)
     return Response(
         {"templates": templates},
         status.HTTP_200_OK,
@@ -1126,8 +1124,6 @@ def get_reports_documents(request, company_id):
             "auth_viewers": auth_viewers,
         }
     )
-    page = int(request.GET.get("page", 1))
-    document_list = paginate(document_list, page, 50)
     return Response(
         {"documents": document_list},
         status=status.HTTP_200_OK,
@@ -1485,3 +1481,39 @@ def dowell_centre_documents(request, company_id):
         status.HTTP_200_OK,
     )
 
+
+@api_view(["GET"])
+def get_templates_documents(request, company_id):
+    """Fetch saved and draft templates/documents based on user request."""
+    # Extract the "data_type" and "doc_state" query parameters from the request
+    data_type = request.query_params.get("data_type")
+    doc_state = request.query_params.get("doc_state")
+
+    page = int(request.GET.get("page", 1)) 
+    # Check if the provided company_id is valid and "data_type" is not empty
+    if not validate_id(company_id) or data_type is None or doc_state is None:
+        # Return a response with an error message and HTTP status code 400 (Bad Request)
+        return Response("Invalid Request!", status.HTTP_400_BAD_REQUEST)
+
+    item_status = doc_state.split("_")[1]    
+    # Check the user request to decide whether to fetch templates or documents
+    if doc_state in ["templates_saved", "templates_draft"]:
+        # Call bulk_query_template_collection with the appropriate "status" parameter
+        # Prepare options to pass to bulk_query functions
+        options = {"company_id": company_id, "data_type": data_type, "template_state": item_status}
+        templates_documents = bulk_query_template_collection(options)
+        key = "saved_templates" if doc_state == "templates_saved" else "draft_templates"
+    elif doc_state in ["documents_saved", "documents_draft"]:
+        # Prepare options to pass to bulk_query functions
+        options = {"company_id": company_id, "data_type": data_type, "document_state": item_status}
+        # Call bulk_query_document_collection with the appropriate "status" parameter
+        templates_documents = bulk_query_document_collection(options)
+        key = "saved_documents" if doc_state == "documents_saved" else "draft_documents"
+    else:
+        # If the user request does not match any of the above patterns, return an error response
+        return Response("Invalid Request!", status.HTTP_400_BAD_REQUEST)
+
+    templates_documents = paginate(templates_documents, page, 20)
+    
+    # Return a JSON response containing the fetched templates/documents and HTTP status code 200 (OK)
+    return Response({key: templates_documents}, status=status.HTTP_200_OK)

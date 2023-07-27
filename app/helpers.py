@@ -45,11 +45,12 @@ def get_query_param_value_from_url(url, query_param):
 def paginate(dataset, page, limit):
     """Paginate/Chunk Results"""
     if dataset is not None:
-        start = (page - 1) * limit
-        end = start + limit
-        return dataset[start:end]
+        elements_to_return = page * limit
+        if elements_to_return > len(dataset):
+            return dataset[:][::-1]  
+        else:
+            return dataset[:elements_to_return][::-1]
     return []
-
 
 
 def register_public_login(qrid, org_name):
