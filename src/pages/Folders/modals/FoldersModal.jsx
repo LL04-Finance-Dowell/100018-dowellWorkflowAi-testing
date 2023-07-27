@@ -64,7 +64,10 @@ const FoldersModal = () => {
     try {
       setIsCreating(true);
       await folderServices.createFolder(data);
-      const res = await folderServices.getAllFolders(userCompanyId);
+      const res = await folderServices.getAllFolders(
+        userCompanyId,
+        userDataType
+      );
       setFolders(res.data ? res.data.reverse() : []);
       toast.success('Folder created');
       navigate('/folders');
@@ -234,7 +237,7 @@ const FoldersModal = () => {
   };
 
   useEffect(() => {
-    if (!userDetail || userDetail.msg || userDetail.message) return
+    if (!userDetail || userDetail.msg || userDetail.message) return;
 
     const companyId =
       userDetail?.portfolio_info?.length > 1
@@ -662,8 +665,6 @@ const SelectInput = ({
       setSelTemps([...selTemps, list.find((item) => item.id === elId)]);
     else setSelTemps(selTemps.filter((item) => item.id !== elId));
   };
-
- 
 
   useEffect(() => {
     const supEl = superContainerRef.current;

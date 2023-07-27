@@ -54,6 +54,8 @@ const SectionBox = ({
     fetchDemoDocuments,
     fetchDocumentReports,
     fetchTemplateReports,
+    userName,
+    portfolioName,
   } = useAppContext();
 
   const handleLoadMore = () => {
@@ -267,30 +269,37 @@ const SectionBox = ({
       const documentService = new DocumentServices();
 
       documentService
-        .getNotifications(currentUserCompanyId, currentUserportfolioDataType)
+        .getNotifications(
+          currentUserCompanyId,
+          currentUserportfolioDataType,
+          userName,
+          portfolioName
+        )
         .then((res) => {
           const documentsToSign = res.data.documents
-            ?.reverse()
-            .filter(
-              (document) =>
-                document.auth_viewers &&
-                Array.isArray(document.auth_viewers) &&
-                // new format
-                ((document.auth_viewers.every(
-                  (item) => typeof item === 'object'
-                ) &&
-                  document.auth_viewers
-                    .map((viewer) => viewer.member)
-                    .includes(userDetail?.userinfo?.username) &&
-                  document.auth_viewers
-                    .map((viewer) => viewer.portfolio)
-                    .includes(currentUserPortfolioName)) ||
-                  // old format
-                  document.auth_viewers.includes(
-                    userDetail?.userinfo?.username
-                  ))
-            )
-            .filter((document) => document.process_id);
+            ? res.data.documents
+                ?.reverse()
+                .filter(
+                  (document) =>
+                    document.auth_viewers &&
+                    Array.isArray(document.auth_viewers) &&
+                    // new format
+                    ((document.auth_viewers.every(
+                      (item) => typeof item === 'object'
+                    ) &&
+                      document.auth_viewers
+                        .map((viewer) => viewer.member)
+                        .includes(userDetail?.userinfo?.username) &&
+                      document.auth_viewers
+                        .map((viewer) => viewer.portfolio)
+                        .includes(currentUserPortfolioName)) ||
+                      // old format
+                      document.auth_viewers.includes(
+                        userDetail?.userinfo?.username
+                      ))
+                )
+                .filter((document) => document.process_id)
+            : [];
 
           const currentNotifications = notificationsForUser.slice();
           let updatedNotifications = currentNotifications.map(

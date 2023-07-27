@@ -89,9 +89,9 @@ const DocumentsPage = ({ home, showOnlySaved, showOnlyCompleted, isDemo }) => {
   //   console.log('all Docs: ', allDocumentsArray);
   // });
 
-  useEffect(() => {
-    console.log('all Docs: ', allDocumentsArray);
-  }, [allDocumentsArray]);
+  // useEffect(() => {
+  //   console.log('all Docs: ', allDocumentsArray);
+  // }, [allDocumentsArray]);
 
   return (
     <WorkflowLayout>

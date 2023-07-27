@@ -68,7 +68,7 @@ export const AppContextProvider = ({ children }) => {
   const { permissionArray } = useSelector((state) => state.app);
   const dispatch = useDispatch();
 
-  const [folders, setFolders] = useState([]);
+  const [folders, setFolders] = useState(null);
   const [folderActionId, setFolderActionId] = useState('');
   const [isFetchingFolders, setIsFetchingFolders] = useState(false);
   const [demoTemplates, setDemoTemplates] = useState(null);
@@ -236,7 +236,7 @@ export const AppContextProvider = ({ children }) => {
         : userDetail?.portfolio_info[0]?.org_id;
     setIsFetchingFolders(true);
     try {
-      const res = await folderServices.getAllFolders(userCompanyId);
+      const res = await folderServices.getAllFolders(userCompanyId, dataType);
       setFolders(res.data ? res.data.reverse() : []);
     } catch (err) {
       console.log(err);
@@ -287,7 +287,7 @@ export const AppContextProvider = ({ children }) => {
   useEffect(() => {
     if (userDetail && userDetail.portfolio_info) {
       fetchSettings();
-      fetchFolders();
+      // fetchFolders();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userDetail]);
