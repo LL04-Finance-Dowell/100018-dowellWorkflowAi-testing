@@ -45,6 +45,7 @@ from app.mongo_db_connection import (
     save_to_template_collection,
     save_to_workflow_collection,
     single_query_document_collection,
+    single_query_clones_collection,
     bulk_query_workflow_collection,
     single_query_folder_collection,
     single_query_qrcode_collection,
@@ -55,6 +56,7 @@ from app.mongo_db_connection import (
     single_query_workflow_collection,
     process_folders_to_item,
     bulk_query_document_collection,
+    bulk_query_clones_collection,
     single_query_links_collection,
     single_query_process_collection,
     update_folder,
@@ -285,7 +287,7 @@ def finalize_or_reject(request, process_id):
             background.processing()
             if user_type == "public":
                 link_id = request.data["link_id"]
-                background.register_finalized(link_id)
+                register_finalized(link_id)
             return Response("document processed successfully", status.HTTP_200_OK)
         except Exception as err:
             print(err)
@@ -368,7 +370,6 @@ def a_single_process(request, process_id):
     if not validate_id(process_id):
         return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
     process = single_query_process_collection({"_id": process_id})
-    print(process)
     if process["parent_item_id"]:
         document_id = process["parent_item_id"]
         document = single_query_document_collection({"_id": document_id})
@@ -508,6 +509,27 @@ def get_documents_in_organization(request, company_id):
         status.HTTP_200_OK,
     )
 
+@api_view(["GET"])
+def get_clones_in_organization(request, company_id):
+    """List of Created Documents."""
+    data_type = request.query_params.get("data_type")
+    if not validate_id(company_id):
+        return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
+    cache_key = f"clones_{company_id}"
+    clones_list = cache.get(cache_key)
+    if clones_list is None:
+        clones_list = bulk_query_clones_collection(
+            {"company_id": company_id, "data_type": data_type}
+        )
+        cache.set(cache_key, clones_list, timeout=60)
+
+    page = int(request.GET.get("page", 1))
+    clones_list = paginate(clones_list, page, 50)
+    return Response(
+        {"clones": clones_list},
+        status.HTTP_200_OK,
+    )
+
 
 @api_view(["GET"])
 def get_documents_types(request, company_id):
@@ -633,6 +655,26 @@ def document_object(request, document_id):
     return Response(document, status.HTTP_200_OK)
 
 
+@api_view(["GET"])
+def clone_detail(request, clone_id):
+    """editor link for a document"""
+    if not validate_id(clone_id):
+        return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
+    editor_link = access_editor(clone_id, "clone")
+    if not editor_link:
+        return Response(status.HTTP_500_INTERNAL_SERVER_ERROR)
+    return Response(editor_link, status.HTTP_200_OK)
+
+
+@api_view(["GET"])
+def clone_object(request, clone_id):
+    """Retrieves the document object for a specific document"""
+    if not validate_id(clone_id):
+        return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
+    document = single_query_clones_collection({"_id": clone_id})
+    return Response(document, status.HTTP_200_OK)
+
+
 @api_view(["POST"])
 def archives(request):
     """Archiving  (Template | Workflow | Document | Folder)"""
@@ -659,7 +701,6 @@ def archives(request):
         res = delete_document(id, "Archive_Data")
         try:
             res_dict = json.loads(res)
-            print(res_dict)
             if res_dict["isSuccess"]:
                 return Response("Document moved to archives", status.HTTP_200_OK)
             return Response(

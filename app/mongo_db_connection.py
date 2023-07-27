@@ -689,6 +689,20 @@ def finalize_item(item_id, state, item_type):
                 "platform": "bangalore",
             }
         )
+    elif item_type == "clone":
+        payload = json.dumps(
+            {
+                **CLONES_CONNECTION_DICT,
+                "command": "update",
+                "field": {
+                    "_id": item_id,
+                },
+                "update_field": {
+                    "document_state": state,
+                },
+                "platform": "bangalore",
+            }
+        )
     elif item_type == "template":
         payload = json.dumps(
             {

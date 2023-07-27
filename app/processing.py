@@ -22,6 +22,7 @@ from app.constants import (
 )
 from app.helpers import (
     cloning_document,
+    cloning_clone,
     get_query_param_value_from_url,
     register_public_login,
     check_items_state,
@@ -34,6 +35,7 @@ from app.mongo_db_connection import (
     save_to_process_collection,
     save_to_qrcode_collection,
     single_query_document_collection,
+    single_query_clones_collection,
     update_process,
 )
 
@@ -458,6 +460,45 @@ class HandleProcess:
                         },
                     }
                 )
+            
+            if item_type == "clone":
+                collection = "CloneReports"
+                document = "CloneReports"
+                field = "document_name"
+                team_member_id = "1212001"
+                document_object = single_query_clones_collection({"_id": clone_id})
+                item_flag = document_object["document_state"]
+                document_name = document_object["document_name"]
+                editor_link = HandleProcess.get_editor_link(
+                    {
+                        "product_name": "Workflow AI",
+                        "details": {
+                            "field": field,
+                            "cluster": "Documents",
+                            "database": "Documentation",
+                            "collection": collection,
+                            "document": document,
+                            "team_member_ID": team_member_id,
+                            "function_ID": "ABCDE",
+                            "command": "update",
+                            "flag": "signing",
+                            "_id": clone_id,
+                            "action": item_type,
+                            "authorized": user_name,
+                            "user_type": user_type,
+                            "document_map": doc_map,
+                            "document_right": right,
+                            "document_flag": item_flag,
+                            "role": role,
+                            "process_id": self.process["_id"],
+                            "update_field": {
+                                "document_name": document_name,
+                                "content": "",
+                                "page": "",
+                            },
+                        },
+                    }
+                )
                 if user_type == "public" and editor_link:
                     Thread(
                         target=lambda: register_public_login(
@@ -503,19 +544,16 @@ class Background:
                 for index, step in enumerate(steps):
                     if step["stepDocumentCloneMap"]:
                         for document_map in step.get("stepDocumentCloneMap"):
-                            # print("doc_map:", document_map)
                             for k, v in list(document_map.items()):
-                                # print(k, v)
                                 if (
                                     isinstance(v, str) and
-                                    single_query_document_collection({"_id": v}).get("document_state")
+                                    single_query_clones_collection({"_id": v}).get("document_state")
                                     == "processing"
                                 ):
-                                    # print("doc_state:", get_document_object(v).get("document_state"))
                                     continue 
                                 elif (
                                     isinstance(v, str) and
-                                    single_query_document_collection({"_id": v}).get("document_state")
+                                    single_query_clones_collection({"_id": v}).get("document_state")
                                     == "finalized"
                                 ):
                                     register_single_user_access(step, step.get("stepRole"), k)
@@ -531,9 +569,7 @@ class Background:
                             ]
                             
                             for user in users:
-                                print("user:", [user])
-                                print("actual user:", user["member"])
-                                clone_id = cloning_document(
+                                clone_id = cloning_clone(
                                     document_id, [user], parent_id, process_id
                                 )
                                 step.get("stepDocumentCloneMap").append(

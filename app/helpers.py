@@ -14,8 +14,10 @@ from app.serializers import (
 
 from .mongo_db_connection import (
     save_to_document_collection,
+    save_to_clone_collection,
     save_to_process_collection,
     single_query_document_collection,
+    single_query_clones_collection,
     single_query_process_collection,
     single_query_template_collection,
 )
@@ -83,26 +85,19 @@ def cloning_document(document_id, auth_viewers, parent_id, process_id):
         viewers = []
         for m in auth_viewers:
             viewers.append(m["member"])
-        # viewers = (
-        #     [item for item in set(auth_viewers)]
-        #     if auth_viewers is not None and isinstance(auth_viewers, list)
-        #     else [auth_viewers]
-        # )
+
         document = single_query_document_collection({"_id": document_id})
-        print(document["document_name"])
         for viewer in viewers:
             doc_name = document["document_name"]
             if not doc_name:
                 document_name = "doc - " + viewer
-            # if has_tilde_characters(doc_name):
-            #     document_name = doc_name.replace("~", "")
             else:
                 if isinstance(viewer, dict):
                     document_name = doc_name + "_" + viewer["member"]
                 else:
                     document_name = doc_name + "_" + viewer
         save_res = json.loads(
-            save_to_document_collection(
+            save_to_clone_collection(
                 {
                     "document_name": document_name,
                     "content": document["content"],
@@ -113,6 +108,50 @@ def cloning_document(document_id, auth_viewers, parent_id, process_id):
                     "document_state": "processing",
                     "auth_viewers": auth_viewers,
                     "document_type": "clone",
+                    "document_state": "processing",
+                    "parent_id": parent_id,
+                    "process_id": process_id,
+                    "folders": "untitled",
+                }
+            )
+        )
+        return save_res["inserted_id"]
+    except Exception as e:
+        print(e)
+        return
+
+
+def cloning_clone(clone_id, auth_viewers, parent_id, process_id):
+    """creating a document copy"""
+    print("auth_viewers", auth_viewers)
+    try:
+        viewers = []
+        for m in auth_viewers:
+            viewers.append(m["member"])
+
+        document = single_query_clones_collection({"_id": clone_id})
+        for viewer in viewers:
+            doc_name = document["document_name"]
+            if not doc_name:
+                document_name = "doc - " + viewer
+            else:
+                if isinstance(viewer, dict):
+                    document_name = doc_name + "_" + viewer["member"]
+                else:
+                    document_name = doc_name + "_" + viewer
+        save_res = json.loads(
+            save_to_clone_collection(
+                {
+                    "document_name": document_name,
+                    "content": document["content"],
+                    "page": document["page"],
+                    "created_by": document["created_by"],
+                    "company_id": document["company_id"],
+                    "data_type": document["data_type"],
+                    "document_state": "processing",
+                    "auth_viewers": auth_viewers,
+                    "document_type": "clone",
+                    "document_state": "processing",
                     "parent_id": parent_id,
                     "process_id": process_id,
                     "folders": "untitled",
@@ -168,12 +207,22 @@ def access_editor(item_id, item_type):
     """
     
     # Determine the team_member_id based on the item_type
-    team_member_id = "11689044433" if item_type == "document" else "22689044433"
+    # team_member_id = "11689044433" if item_type == "document" else "22689044433"
+    team_member_id = (
+        "11689044433" if item_type == "document" 
+        else "1212001" if item_type == "clone"
+        else "22689044433"
+    )
+
     
     # Set collection, document, and field variables based on the item_type
     if item_type == "document":
         collection = "DocumentReports"
         document = "documentreports"
+        field = "document_name"
+    if item_type == "clone":
+        collection = "CloneReports"
+        document = "CloneReports"
         field = "document_name"
     elif item_type == "template":
         collection = "TemplateReports"
@@ -183,6 +232,8 @@ def access_editor(item_id, item_type):
     # Get the item name from the appropriate collection based on item_type and item_id
     if item_type == "document":
         item_name = single_query_document_collection({"_id": item_id})
+    elif item_type == "clone":
+        item_name = single_query_clones_collection({"_id": item_id})
     else:
         item_name = single_query_template_collection({"_id": item_id})
     name = item_name.get(field, "")

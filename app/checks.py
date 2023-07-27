@@ -5,6 +5,7 @@ from app.mongo_db_connection import (
     single_query_template_collection,
     org_wfai_setting,
     single_query_process_collection,
+    single_query_clones_collection,
 )
 
 
@@ -50,6 +51,13 @@ def is_finalized(item_id, item_type):
     """Check for a process item's state"""
     if item_type == "document":
         document = single_query_document_collection({"_id": item_id})
+        doc_state = document["document_state"]
+        if doc_state == "finalized":
+            return True, doc_state
+        if doc_state == "rejected":
+            return True, doc_state
+    if item_type == "clone":
+        document = single_query_clones_collection({"_id": item_id})
         doc_state = document["document_state"]
         if doc_state == "finalized":
             return True, doc_state
