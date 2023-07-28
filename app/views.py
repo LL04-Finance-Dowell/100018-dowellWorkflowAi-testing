@@ -1184,15 +1184,11 @@ def get_reports_documents(request, company_id):
     document_state = request.query_params.get("doc_state")
     member = request.query_params.get("member")
     portfolio = request.query_params.get("portfolio")
-    auth_viewers = [{"member": member, "portfolio": portfolio}]
-    if (
-        not validate_id(company_id)
-        or data_type is None
-        or document_state is None
-        or data_type == "undefined"
-        or document_state == "undefined"
-    ):
+    if not validate_id(company_id) or data_type is None or document_state is None:
         return Response("Invalid Request!", status.HTTP_400_BAD_REQUEST)
+    if member == "undefined" or portfolio == "undefined":
+        return Response("Invalid Request!", status.HTTP_400_BAD_REQUEST)
+    auth_viewers = [{"member": member, "portfolio": portfolio}]
     document_list = bulk_query_document_collection(
         {
             "company_id": company_id,
