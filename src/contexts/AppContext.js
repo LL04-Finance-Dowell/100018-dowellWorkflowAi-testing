@@ -265,9 +265,26 @@ export const AppContextProvider = ({ children }) => {
   const extractCustomName = (str) =>
     str ? str.slice(str.indexOf('(') + 1, str.indexOf(')')) : str;
 
-  // useEffect(() => {
-  //   console.log('userDetail: ', userDetail);
-  // }, [userDetail]);
+  useEffect(() => {
+    if (userDetail) {
+      setCompanyId(
+        userDetail?.portfolio_info?.length > 1
+          ? userDetail?.portfolio_info.find(
+              (portfolio) => portfolio.product === productName
+            )?.org_id
+          : userDetail?.portfolio_info[0].org_id
+      );
+      setUserName(userDetail?.portfolio_info[0]?.username);
+      setPortfolioName(userDetail?.portfolio_info[0]?.portfolio_name);
+      setDataType(
+        userDetail?.portfolio_info?.length > 1
+          ? userDetail?.portfolio_info.find(
+              (portfolio) => portfolio.product === productName
+            )?.data_type
+          : userDetail?.portfolio_info[0]?.data_type
+      );
+    }
+  }, [userDetail]);
 
   useEffect(() => {
     if (!publicUserConfigured) return;

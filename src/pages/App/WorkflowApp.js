@@ -126,7 +126,7 @@ const WorkflowApp = () => {
           )?.data_type
         : userDetail?.portfolio_info[0]?.portfolio_name,
     ];
-    if (!notificationsLoaded) {
+    if (!notificationsLoaded && userName && portfolioName) {
       dispatch(setNotificationsLoading(true));
 
       dispatch(setNotificationFinalStatus(null));
@@ -225,7 +225,13 @@ const WorkflowApp = () => {
     //     });
     // }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [userDetail, favoriteItemsLoaded, notificationsLoaded]);
+  }, [
+    userDetail,
+    favoriteItemsLoaded,
+    notificationsLoaded,
+    userName,
+    portfolioName,
+  ]);
 
   useEffect(() => {
     if (!location.state || !location.state.elementIdToScrollTo) return;
