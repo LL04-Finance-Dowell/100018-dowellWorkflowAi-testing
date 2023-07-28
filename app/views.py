@@ -487,8 +487,6 @@ def get_workflows(request, company_id):
     workflow_list = bulk_query_workflow_collection(
         {"company_id": company_id, "data_type": data_type}
     )
-    page = int(request.GET.get("page", 1))
-    workflow_list = paginate(workflow_list, page, 50)
     return Response(
         {"workflows": workflow_list},
         status.HTTP_200_OK,
