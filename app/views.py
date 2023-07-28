@@ -528,8 +528,6 @@ def get_clones_in_organization(request, company_id):
         )
         cache.set(cache_key, clones_list, timeout=60)
 
-    page = int(request.GET.get("page", 1))
-    clones_list = paginate(clones_list, page, 50)
     return Response(
         {"clones": clones_list},
         status.HTTP_200_OK,
@@ -1182,12 +1180,13 @@ def get_reports_documents(request, company_id):
     document_state = request.query_params.get("doc_state")
     member = request.query_params.get("member")
     portfolio = request.query_params.get("portfolio")
+
     if not validate_id(company_id) or data_type is None or document_state is None:
         return Response("Invalid Request!", status.HTTP_400_BAD_REQUEST)
     if member == "undefined" or portfolio == "undefined":
         return Response("Invalid Request!", status.HTTP_400_BAD_REQUEST)
     auth_viewers = [{"member": member, "portfolio": portfolio}]
-    document_list = bulk_query_document_collection(
+    document_list = bulk_query_clones_collection(
         {
             "company_id": company_id,
             "data_type": data_type,
