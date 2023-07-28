@@ -429,7 +429,6 @@ class HandleProcess:
                 field = "document_name"
                 team_member_id = "1212001"
                 document_object = single_query_clones_collection({"_id": clone_id})
-                # print("document_obj", document_object)
                 item_flag = document_object["document_state"]
                 document_name = document_object["document_name"]
                 editor_link = HandleProcess.get_editor_link(
