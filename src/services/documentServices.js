@@ -73,6 +73,6 @@ export class DocumentServices {
 
   getDocumentReports = (companyId, dataType, userName, portfolioName) =>
     httpApiUrl.get(
-      `/companies/${companyId}/documents/reports/?data_type=${dataType}&doc_state=draft&member=${userName}&portfolio=${portfolioName}`
+      `/companies/${companyId}/documents/reports/?data_type=${dataType}&doc_state=finalized&member=${userName}&portfolio=${portfolioName}`
     );
 }

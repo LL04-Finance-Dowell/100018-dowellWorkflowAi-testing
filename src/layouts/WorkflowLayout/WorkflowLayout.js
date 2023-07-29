@@ -143,7 +143,6 @@ const WorkflowLayout = ({ children }) => {
           dispatch(setProcessesLoaded(true));
         })
         .catch((err) => {
-          console.log('Failed: ', err.response);
           dispatch(setProcessesLoading(false));
         });
     }

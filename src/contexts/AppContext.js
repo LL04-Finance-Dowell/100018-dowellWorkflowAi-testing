@@ -189,7 +189,7 @@ export const AppContextProvider = ({ children }) => {
         userName,
         portfolioName
       );
-      setDocReports(res.data ? res.data.documents : []);
+      setDocReports(res.data.documents ? res.data.documents : []);
     } catch (err) {
       console.log(err);
     } finally {
