@@ -123,7 +123,7 @@ const WorkflowApp = () => {
       userDetail?.portfolio_info?.length > 1
         ? userDetail?.portfolio_info.find(
             (portfolio) => portfolio.product === productName
-          )?.data_type
+          )?.portfolio_name
         : userDetail?.portfolio_info[0]?.portfolio_name,
     ];
     if (!notificationsLoaded && userName && portfolioName) {
