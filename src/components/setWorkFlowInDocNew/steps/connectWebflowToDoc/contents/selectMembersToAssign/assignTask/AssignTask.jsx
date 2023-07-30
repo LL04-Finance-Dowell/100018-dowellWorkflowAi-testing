@@ -1,13 +1,15 @@
-import { useForm } from "react-hook-form";
-import Select from "../../../../../select/Select";
-import { useState } from "react";
-import { v4 as uuidv4 } from "uuid";
-import FormLayout from "../../../../../formLayout/FormLayout";
-import AssignButton from "../../../../../assignButton/AssignButton";
-import { updateSingleProcessStep } from "../../../../../../../features/app/appSlice";
-import { useDispatch, useSelector } from "react-redux";
+import { useForm } from 'react-hook-form';
+import Select from '../../../../../select/Select';
+import { useState } from 'react';
+import { v4 as uuidv4 } from 'uuid';
+import FormLayout from '../../../../../formLayout/FormLayout';
+import AssignButton from '../../../../../assignButton/AssignButton';
+import { updateSingleProcessStep } from '../../../../../../../features/app/appSlice';
+import { useDispatch, useSelector } from 'react-redux';
+import { useAppContext } from '../../../../../../../contexts/AppContext';
 
 const AssignTask = ({ currentStepIndex, stepsPopulated }) => {
+  const { setIsAssignTask } = useAppContext();
   const {
     register,
     handleSubmit,
@@ -16,103 +18,132 @@ const AssignTask = ({ currentStepIndex, stepsPopulated }) => {
   } = useForm();
   const [loading, setLoading] = useState(false);
   const dispatch = useDispatch();
-  const { docCurrentWorkflow, processSteps } = useSelector((state) => state.app);
+  const { docCurrentWorkflow, processSteps } = useSelector(
+    (state) => state.app
+  );
 
   const onSubmit = (data) => {
     setLoading(true);
-    
-    
+
     const initialProcessStepObj = {
       workflow: docCurrentWorkflow._id,
       indexToUpdate: currentStepIndex,
-    }
-    
-    dispatch(updateSingleProcessStep({ ...initialProcessStepObj, "stepTaskType": data.taskType }))
-    dispatch(updateSingleProcessStep({ ...initialProcessStepObj, "stepRights": data.rights }))
-    dispatch(updateSingleProcessStep({ ...initialProcessStepObj, "stepProcessingOrder": data.memberOrder }))
-    dispatch(updateSingleProcessStep({ ...initialProcessStepObj, "stepTaskLimitation": data.limitTaskTo }))
-    dispatch(updateSingleProcessStep({ ...initialProcessStepObj, "stepActivityType": data.activityType }))
+    };
+
+    dispatch(
+      updateSingleProcessStep({
+        ...initialProcessStepObj,
+        stepTaskType: data.taskType,
+      })
+    );
+    dispatch(
+      updateSingleProcessStep({
+        ...initialProcessStepObj,
+        stepRights: data.rights,
+      })
+    );
+    dispatch(
+      updateSingleProcessStep({
+        ...initialProcessStepObj,
+        stepProcessingOrder: data.memberOrder,
+      })
+    );
+    dispatch(
+      updateSingleProcessStep({
+        ...initialProcessStepObj,
+        stepTaskLimitation: data.limitTaskTo,
+      })
+    );
+    dispatch(
+      updateSingleProcessStep({
+        ...initialProcessStepObj,
+        stepActivityType: data.activityType,
+      })
+    );
+
+    setIsAssignTask(data.taskType === 'assign_task' ? true : false);
 
     setLoading(false);
   };
 
   return (
-    <FormLayout 
+    <FormLayout
       isSubmitted={
-        stepsPopulated && 
+        stepsPopulated &&
         processSteps.find(
-          process => process.workflow === docCurrentWorkflow?._id
-        )?.steps[currentStepIndex]?.stepProcessingOrder ? 
-        true 
-        : 
-        isSubmitSuccessful
-      } 
+          (process) => process.workflow === docCurrentWorkflow?._id
+        )?.steps[currentStepIndex]?.stepProcessingOrder
+          ? true
+          : isSubmitSuccessful
+      }
       loading={loading}
     >
-      <p style={{ padding: "0", marginBottom: "14px"}}><b>Assign Task</b></p>
+      <p style={{ padding: '0', marginBottom: '14px' }}>
+        <b>Assign Task</b>
+      </p>
 
       <form onSubmit={handleSubmit(onSubmit)}>
         <Select
-          label="member order"
+          label='member order'
           register={register}
-          name="memberOrder"
+          name='memberOrder'
           options={memberOrder}
           takeNormalValue={true}
           currentValue={
             processSteps.find(
-              process => process.workflow === docCurrentWorkflow?._id
+              (process) => process.workflow === docCurrentWorkflow?._id
             )?.steps[currentStepIndex]?.stepProcessingOrder
           }
         />
         <Select
-          label="Task Type"
+          label='Task Type'
           register={register}
-          name="taskType"
+          name='taskType'
           options={taskType}
           takeNormalValue={true}
           currentValue={
             processSteps.find(
-              process => process.workflow === docCurrentWorkflow?._id
+              (process) => process.workflow === docCurrentWorkflow?._id
             )?.steps[currentStepIndex]?.stepTaskType
           }
         />
         <Select
-          label="Rights"
+          label='Rights'
           register={register}
-          name="rights"
+          name='rights'
           options={rights}
           takeNormalValue={true}
           currentValue={
             processSteps.find(
-              process => process.workflow === docCurrentWorkflow?._id
+              (process) => process.workflow === docCurrentWorkflow?._id
             )?.steps[currentStepIndex]?.stepRights
           }
         />
         <Select
-          label="activity type"
+          label='activity type'
           register={register}
-          name="activityType"
+          name='activityType'
           options={activityType}
           takeNormalValue={true}
           currentValue={
             processSteps.find(
-              process => process.workflow === docCurrentWorkflow?._id
+              (process) => process.workflow === docCurrentWorkflow?._id
             )?.steps[currentStepIndex]?.stepActivityType
           }
         />
         <Select
-          label="limit task to"
+          label='limit task to'
           register={register}
-          name="limitTaskTo"
+          name='limitTaskTo'
           options={limitTaskTo}
           takeNormalValue={true}
           currentValue={
             processSteps.find(
-              process => process.workflow === docCurrentWorkflow?._id
+              (process) => process.workflow === docCurrentWorkflow?._id
             )?.steps[currentStepIndex]?.stepTaskLimitation
           }
         />
-        <AssignButton loading={loading} buttonText="Assign Task" />
+        <AssignButton loading={loading} buttonText='Assign Task' />
       </form>
     </FormLayout>
   );
@@ -123,118 +154,118 @@ export default AssignTask;
 export const memberOrder = [
   {
     id: uuidv4(),
-    option: "No order (Parallel processing)",
-    normalValue: "no_order"
+    option: 'No order (Parallel processing)',
+    normalValue: 'no_order',
   },
   {
     id: uuidv4(),
-    option: "Team Member > User > Public",
-    normalValue: "team_user_public",
+    option: 'Team Member > User > Public',
+    normalValue: 'team_user_public',
   },
   {
     id: uuidv4(),
-    option: "Team Member > Public > User",
-    normalValue: "team_public_user",
+    option: 'Team Member > Public > User',
+    normalValue: 'team_public_user',
   },
   {
     id: uuidv4(),
-    option: "User > Team Member > Public",
-    normalValue: "user_team_public",
+    option: 'User > Team Member > Public',
+    normalValue: 'user_team_public',
   },
   {
     id: uuidv4(),
-    option: "User > Public > Team Member",
-    normalValue: "user_public_team",
+    option: 'User > Public > Team Member',
+    normalValue: 'user_public_team',
   },
   {
     id: uuidv4(),
-    option: "Public > User > Team Member",
-    normalValue: "public_user_team",
+    option: 'Public > User > Team Member',
+    normalValue: 'public_user_team',
   },
   {
     id: uuidv4(),
-    option: "Public > Team Member > User ",
-    normalValue: "public_team_user",
+    option: 'Public > Team Member > User ',
+    normalValue: 'public_team_user',
   },
 ];
 
 export const taskType = [
   {
     id: uuidv4(),
-    option: "Request for task",
-    normalValue: "request_for_task", 
+    option: 'Request for task',
+    normalValue: 'request_for_task',
   },
   {
     id: uuidv4(),
-    option: "Assign task",
-    normalValue: "assign_task",
+    option: 'Assign task',
+    normalValue: 'assign_task',
   },
 ];
 
 export const rights = [
   {
     id: uuidv4(),
-    option: "Add/Edit",
-    normalValue: "add_edit"
+    option: 'Add/Edit',
+    normalValue: 'add_edit',
   },
-  { id: uuidv4(), option: "View", normalValue: "view" },
-  { id: uuidv4(), option: "Comment", normalValue: "comment" },
-  { id: uuidv4(), option: "Approve", normalValue: "approve" },
+  { id: uuidv4(), option: 'View', normalValue: 'view' },
+  { id: uuidv4(), option: 'Comment', normalValue: 'comment' },
+  { id: uuidv4(), option: 'Approve', normalValue: 'approve' },
 ];
 
 export const activityType = [
   {
     id: uuidv4(),
-    option: "Team Task",
-    normalValue: "team_task"
+    option: 'Team Task',
+    normalValue: 'team_task',
   },
-  { id: uuidv4(), option: "Individual Task", normalValue: "individual_task" },
+  { id: uuidv4(), option: 'Individual Task', normalValue: 'individual_task' },
 ];
 
 export const limitTaskTo = [
   {
     id: uuidv4(),
-    option: "Portfolios assigned on or before step start date & time",
-    normalValue: "portfolios_assigned_on_or_before_step_start_date_and_time",
+    option: 'Portfolios assigned on or before step start date & time',
+    normalValue: 'portfolios_assigned_on_or_before_step_start_date_and_time',
   },
   {
     id: uuidv4(),
-    option: "Portfolios assigned on or before step end date & time",
-    normalValue: "portfolios_assigned_on_or_before_step_end_date_and_time",
+    option: 'Portfolios assigned on or before step end date & time',
+    normalValue: 'portfolios_assigned_on_or_before_step_end_date_and_time',
   },
 ];
 
 export const members = [
   {
     id: uuidv4(),
-    option: "Member 1",
+    option: 'Member 1',
   },
   {
     id: uuidv4(),
-    option: "Member 2",
+    option: 'Member 2',
   },
   {
     id: uuidv4(),
-    option: "Member 3",
+    option: 'Member 3',
   },
 ];
 
 export const taskFeatures = [
-  { id: uuidv4(), feature: "Add/Edit" },
-  { id: uuidv4(), feature: "View" },
-  { id: uuidv4(), feature: "Comment" },
-  { id: uuidv4(), feature: "Approve" },
+  { id: uuidv4(), feature: 'Add/Edit' },
+  { id: uuidv4(), feature: 'View' },
+  { id: uuidv4(), feature: 'Comment' },
+  { id: uuidv4(), feature: 'Approve' },
 ];
 
 export const membersPortfolio = [
-  { id: uuidv4(), option: "Member Porfolio 1" },
-  { id: uuidv4(), option: "Member Porfolio 2" },
-  { id: uuidv4(), option: "Member Porfolio 3" },
+  { id: uuidv4(), option: 'Member Porfolio 1' },
+  { id: uuidv4(), option: 'Member Porfolio 2' },
+  { id: uuidv4(), option: 'Member Porfolio 3' },
 ];
 
 export const displayDocument = [
-  { id: uuidv4(), option: "Display document before processing this step" },
-  { id: uuidv4(), option: "Display document after processing this step" },
-  { id: uuidv4(), option: "Display document only in this step" },
-  { id: uuidv4(), option: "Display document in all steps" },
+  { id: uuidv4(), option: 'Display document before processing this step' },
+  { id: uuidv4(), option: 'Display document after processing this step' },
+  { id: uuidv4(), option: 'Display document only in this step' },
+  { id: uuidv4(), option: 'Display document in all steps' },
 ];

@@ -108,6 +108,8 @@ export const AppContextProvider = ({ children }) => {
   });
   const [dowellReasearchTemplates, setDowellResearchTemplates] = useState([]);
 
+  const [isAssignTask, setIsAssignTask] = useState(true);
+
   // const [createdNewTeam, setCreatedNewTeam] = useState();
 
   const addToFavoritesState = (category, value) => {
@@ -500,6 +502,8 @@ export const AppContextProvider = ({ children }) => {
         savedDocuments,
         savedDocumentsStatus,
         fetchSavedDocuments,
+        isAssignTask,
+        setIsAssignTask,
       }}
     >
       {children}

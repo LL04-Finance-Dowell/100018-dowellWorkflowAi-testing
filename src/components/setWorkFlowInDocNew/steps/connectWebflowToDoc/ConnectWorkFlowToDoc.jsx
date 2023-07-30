@@ -31,8 +31,6 @@ const ConnectWorkFlowToDoc = ({ stepsPopulated, savedProcessSteps }) => {
     (state) => state.app
   );
 
-  
-
   const [currentSteps, setCurrentSteps] = useState([]);
   const [enabledSteps, setEnabledSteps] = useState([]);
   const [showSteps, setShowSteps] = useState([]);
@@ -42,8 +40,6 @@ const ConnectWorkFlowToDoc = ({ stepsPopulated, savedProcessSteps }) => {
   }, [docCurrentWorkflow]);
 
   const [setContentToggle] = useState(false);
-
-  
 
   useEffect(() => {
     if (stepsPopulated && !savedProcessConfigured) {
@@ -136,8 +132,6 @@ const ConnectWorkFlowToDoc = ({ stepsPopulated, savedProcessSteps }) => {
     dispatch(setProcessSteps(stepsForWorkflow));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [docCurrentWorkflow, stepsPopulated, savedProcessSteps]);
-
-  
 
   const handleSkipSelection = (
     e,
