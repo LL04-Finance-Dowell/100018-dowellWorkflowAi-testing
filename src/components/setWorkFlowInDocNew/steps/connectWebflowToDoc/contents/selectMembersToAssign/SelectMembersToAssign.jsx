@@ -406,11 +406,11 @@ const SelectMembersToAssign = ({
           );
         return;
       case 'Public':
-        const publicUserAlreadyAdded = userMembersSelectedForProcess.find(
-          (user) =>
-            user.member === parsedSelectedJsonValue.member &&
-            user.portfolio === parsedSelectedJsonValue.portfolio &&
-            user.stepIndex === currentStepIndex
+        const publicUserAlreadyAdded = publicMembersSelectedForProcess.find(
+          (pubMember) =>
+            pubMember.member === parsedSelectedJsonValue.member &&
+            pubMember.portfolio === parsedSelectedJsonValue.portfolio &&
+            pubMember.stepIndex === currentStepIndex
         );
         if (publicUserAlreadyAdded) {
           dispatch(
