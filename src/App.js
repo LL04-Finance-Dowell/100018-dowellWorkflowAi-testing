@@ -110,6 +110,10 @@ function App() {
             path={'completed'}
             element={<DocumentsPage showOnlyCompleted={true} />}
           />
+          <Route
+            path={'rejected'}
+            element={<DocumentsPage isRejected={true} />}
+          />
           <Route path={'demo'} element={<DocumentsPage isDemo={true} />} />
           {/*  <Route path={"new"} element={<CreateNewDocumentPage />} />
         <Route path={"to-sign"} element={<SignDocumentsPage />} />
@@ -166,6 +170,11 @@ function App() {
           <Route
             path={'completed'}
             element={<ProccessPage showOnlyCompleted={true} />}
+          />
+
+          <Route
+            path={'active'}
+            element={<ProccessPage showOnlyActive={true} />}
           />
           <Route
             path={'processdetail'}

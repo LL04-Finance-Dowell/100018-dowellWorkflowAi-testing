@@ -17,7 +17,13 @@ import { useAppContext } from '../../../contexts/AppContext';
 import { DocumentServices } from '../../../services/documentServices';
 import { useLocation } from 'react-router-dom';
 
-const DocumentsPage = ({ home, showOnlySaved, showOnlyCompleted, isDemo }) => {
+const DocumentsPage = ({
+  home,
+  showOnlySaved,
+  showOnlyCompleted,
+  isDemo,
+  isRejected,
+}) => {
   const { userDetail } = useSelector((state) => state.auth);
   const { allDocuments: allDocumentsArray, allDocumentsStatus } = useSelector(
     (state) => state.document
@@ -35,24 +41,18 @@ const DocumentsPage = ({ home, showOnlySaved, showOnlyCompleted, isDemo }) => {
     demoDocStatus,
     fetchDemoDocuments,
     fetchDocumentReports,
-    docReports,
-    docReportsStatus,
+    docsCompleted,
+    docsCompletedStatus,
     savedDocuments,
     savedDocumentsStatus,
     fetchSavedDocuments,
+    docsRejected,
+    docsRejectedStatus,
   } = useAppContext();
 
   useEffect(() => {
-    if (isDemo) {
-      if (!demoDocuments) {
-        fetchDemoDocuments();
-      }
-    }
-  }, []);
-
-  useEffect(() => {
-    if (location.hash === '#completed-documents' && !docReports)
-      fetchDocumentReports();
+    if (location.hash === '#completed-documents' && !docsCompleted)
+      fetchDocumentReports('finalized');
   }, [location]);
 
   useEffect(() => {
@@ -88,29 +88,10 @@ const DocumentsPage = ({ home, showOnlySaved, showOnlyCompleted, isDemo }) => {
     }
     if (showOnlyCompleted) navigate('#completed-documents');
     if (home) navigate('#drafts');
-    // if(isDemo) navigate("#demo");
+    if (isRejected && !docsRejected) fetchDocumentReports('rejected');
+    if (isDemo && !demoDocuments) fetchDemoDocuments();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [showOnlySaved, showOnlyCompleted, home]);
-
-  // useEffect(() => {
-  //   console.log('all Docs: ', allDocumentsArray);
-  // });
-
-  // useEffect(() => {
-  //   console.log('all Docs: ', allDocumentsArray);
-  //   console.log(
-  //     'all Docs filter: ',
-  //     allDocumentsArray.filter(
-  //       (item) =>
-  //         item.created_by === userDetail?.userinfo?.username &&
-  //         item.document_type === 'original'
-  //     )
-  //   );
-  // }, [allDocumentsArray]);
-
-  // useEffect(() => {
-  //   console.log('Saved Docs: ', savedDocuments);
-  // }, [savedDocuments]);
+  }, [showOnlySaved, showOnlyCompleted, home, isRejected, isDemo]);
 
   return (
     <WorkflowLayout>
@@ -162,14 +143,28 @@ const DocumentsPage = ({ home, showOnlySaved, showOnlyCompleted, isDemo }) => {
                 cardBgColor='#1ABC9C'
                 title='completed documents'
                 Card={DocumentCard}
-                cardItems={docReports}
-                status={docReportsStatus}
+                cardItems={docsCompleted}
+                status={docsCompletedStatus}
                 itemType={'documents'}
-                isReports={true}
+                isCompleted={true}
               />
             </div>
           ) : (
             <></>
+          )}
+
+          {isRejected && (
+            <div id='rejected-documents'>
+              <SectionBox
+                cardBgColor='#1ABC9C'
+                title='rejected documents'
+                Card={DocumentCard}
+                cardItems={docsRejected}
+                status={docsRejectedStatus}
+                itemType={'documents'}
+                isRejected={true}
+              />
+            </div>
           )}
 
           {isDemo && (

@@ -35,6 +35,8 @@ const SectionBox = ({
   folderId,
   isDemo,
   isReports,
+  isCompleted,
+  isRejected,
 }) => {
   const [sliceCount, setSliceCount] = useState(1);
   const [refreshLoading, setRefreshLoading] = useState(false);
@@ -126,7 +128,8 @@ const SectionBox = ({
       const documentServices = new DocumentServices();
 
       if (isDemo) fetchDemoDocuments();
-      else if (isReports) fetchDocumentReports();
+      else if (isCompleted) fetchDocumentReports('finalized');
+      else if (isRejected) fetchDocumentReports('rejected');
       else {
         documentServices
           .allDocuments(data.company_id, data.data_type)

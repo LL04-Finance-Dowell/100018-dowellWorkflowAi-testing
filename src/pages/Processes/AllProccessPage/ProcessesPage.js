@@ -19,6 +19,7 @@ import {
 } from '../../../features/app/appSlice';
 import { useNavigate } from 'react-router-dom';
 import { productName } from '../../../utils/helpers';
+import { useAppContext } from '../../../contexts/AppContext';
 
 const ProcessesPage = ({
   home,
@@ -29,6 +30,7 @@ const ProcessesPage = ({
   showOnlyTrashed,
   showOnlyTests,
   showOnlyCompleted,
+  showOnlyActive,
 }) => {
   const {
     processesLoading,
@@ -46,6 +48,13 @@ const ProcessesPage = ({
   const navigate = useNavigate();
   const [currentUserPortfolioDataType, setCurrentUserPortfolioDataType] =
     useState('');
+  const {
+    activeProcesses,
+    activeProcessesStatus,
+    completedProcesses,
+    completedProcessesStatus,
+    fetchProcessReports,
+  } = useAppContext();
 
   useEffect(() => {
     if (showOnlySaved) navigate('#saved-processes');
@@ -54,8 +63,12 @@ const ProcessesPage = ({
     if (showOnlyCancelled) navigate('#cancelled-processes');
     if (showOnlyTrashed) navigate('#thrashed-processes');
     if (showOnlyTests) navigate('#test-processes');
-    if (showOnlyCompleted) navigate('#completed-processes');
     if (home) navigate('#drafts');
+    if (showOnlyCompleted) {
+      if (!completedProcesses) fetchProcessReports('completed');
+      navigate('#completed-processes');
+    }
+    if (showOnlyActive && !activeProcesses) fetchProcessReports('active');
   }, [
     showOnlySaved,
     showSingleProcess,
@@ -65,6 +78,7 @@ const ProcessesPage = ({
     home,
     showOnlyTests,
     showOnlyCompleted,
+    showOnlyActive,
   ]);
 
   useEffect(() => {
@@ -128,19 +142,6 @@ const ProcessesPage = ({
 
     setCurrentUserPortfolioDataType(userPortfolioDataType);
   }, [userDetail]);
-
-  useEffect(() => {
-    if (showOnlySaved) {
-      console.log(
-        'saved processes: ',
-        allProcesses
-          .filter((process) => process.processing_state === 'processing')
-          .filter(
-            (process) => process.data_type === currentUserPortfolioDataType
-          )
-      );
-    }
-  }, [showOnlySaved, allProcesses]);
 
   return (
     <WorkflowLayout>
@@ -285,15 +286,25 @@ const ProcessesPage = ({
                 cardBgColor='#1ABC9C'
                 title='completed proccess'
                 Card={ProcessCard}
-                cardItems={allProcesses.filter(
-                  (process) => process.processing_state === 'finalized'
-                )}
-                status={processesLoading ? 'pending' : 'success'}
+                cardItems={completedProcesses}
+                status={completedProcessesStatus}
                 itemType={'processes'}
               />
             </div>
           ) : (
             <></>
+          )}
+          {showOnlyActive && (
+            <div id='active-processes'>
+              <SectionBox
+                cardBgColor='#1ABC9C'
+                title='active proccess'
+                Card={ProcessCard}
+                cardItems={activeProcesses}
+                status={activeProcessesStatus}
+                itemType={'processes'}
+              />
+            </div>
           )}
         </ManageFiles>
       </div>

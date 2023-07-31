@@ -28,9 +28,7 @@ export class DocumentServices {
   // };
 
   getSavedDocuments = (companyId, dataType, pageCount) =>
-    httpApiUrl.get(
-      `/companies/${companyId}/documents/?data_type=${dataType}&page=${pageCount}`
-    );
+    httpApiUrl.get(`/companies/${companyId}/documents/?data_type=${dataType}`);
 
   contentDocument = (documentId) => {
     // console.log(documentId)
@@ -71,8 +69,8 @@ export class DocumentServices {
     );
   };
 
-  getDocumentReports = (companyId, dataType, userName, portfolioName) =>
+  getDocumentReports = (companyId, dataType, userName, portfolioName, state) =>
     httpApiUrl.get(
-      `/companies/${companyId}/documents/reports/?data_type=${dataType}&doc_state=finalized&member=${userName}&portfolio=${portfolioName}`
+      `/companies/${companyId}/documents/reports/?data_type=${dataType}&doc_state=${state}&member=${userName}&portfolio=${portfolioName}`
     );
 }

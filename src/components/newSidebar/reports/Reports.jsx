@@ -18,7 +18,7 @@ const Reports = () => {
     processes: { count: 0, countSet: false },
   });
   const { userDetail } = useSelector((state) => state.auth);
-  const { docReports, tempReports } = useAppContext();
+  const { docsCompleted, tempReports } = useAppContext();
 
   const { allWorkflows: allWorkflowsArray } = useSelector(
     (state) => state.workflow
@@ -32,14 +32,14 @@ const Reports = () => {
   const { allProcesses, themeColor } = useSelector((state) => state.app);
 
   useEffect(() => {
-    if (docReports)
+    if (docsCompleted)
       setItemsCountToDisplay((prevItems) => {
         return {
           ...prevItems,
-          documents: { count: docReports.length, countSet: true },
+          documents: { count: docsCompleted.length, countSet: true },
         };
       });
-  }, [docReports]);
+  }, [docsCompleted]);
 
   useEffect(() => {
     if (tempReports)
@@ -188,12 +188,15 @@ export const manageFileItems = [
   {
     id: uuidv4(),
     parent: 'My documents',
-    // children: [
-
-    //   { id: uuidv4(), child: 'All Documents', href: '/documents/#drafts' },
-    //   { id: uuidv4(), child: 'Completed Documents', href: '/documents/completed' },
-    // ],
-    href: '/documents/completed',
+    children: [
+      { id: uuidv4(), child: 'Rejected', href: '/documents/rejected' },
+      {
+        id: uuidv4(),
+        child: 'Completed',
+        href: '/documents/completed',
+      },
+    ],
+    // href: '/documents/completed',
   },
   {
     id: uuidv4(),
@@ -208,19 +211,24 @@ export const manageFileItems = [
   {
     id: uuidv4(),
     parent: 'My Processes',
-    href: '/processes/completed',
-    // children: [
-    //   {
-    //     id: uuidv4(),
-    //     child: 'Cancelled Processes',
-    //     href: '/processes/cancelled',
-    //   },
-    //   { id: uuidv4(), child: 'Test Processes', href: '/processes/tests' },
-    //   {
-    //     id: uuidv4(),
-    //     child: 'Completed Processes',
-    //     href: '/processes/completed',
-    //   },
-    // ],
+    // href: '/processes/completed',
+    children: [
+      // {
+      //   id: uuidv4(),
+      //   child: 'Cancelled Processes',
+      //   href: '/processes/cancelled',
+      // },
+      // { id: uuidv4(), child: 'Test Processes', href: '/processes/tests' },
+      {
+        id: uuidv4(),
+        child: 'Completed Processes',
+        href: '/processes/completed',
+      },
+      {
+        id: uuidv4(),
+        child: 'Active Processes',
+        href: '/processes/active',
+      },
+    ],
   },
 ];

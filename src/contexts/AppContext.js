@@ -11,6 +11,10 @@ import { v4 } from 'uuid';
 import { FolderServices } from '../services/folderServices';
 import { TemplateServices } from '../services/templateServices';
 import { DocumentServices } from '../services/documentServices';
+import {
+  getCompletedProcesses,
+  getActiveProcesses,
+} from '../services/processServices';
 
 const AppContext = createContext({});
 
@@ -75,12 +79,19 @@ export const AppContextProvider = ({ children }) => {
   const [demoDocuments, setDemoDocuments] = useState(null);
   const [demoDocStatus, setDemoDocStatus] = useState('');
   const [demoTempStatus, setDemoTempStatus] = useState('');
-  const [docReports, setDocReports] = useState(null);
-  const [docReportsStatus, setDocReportsStatus] = useState('');
+  const [docsCompleted, setDocsCompleted] = useState(null);
+  const [docsRejected, setDocsRejected] = useState(null);
+  const [docsCompletedStatus, setDocsCompletedStatus] = useState('');
+  const [docsRejectedStatus, setDocsRejectedStatus] = useState('');
   const [savedDocuments, setSavedDocuments] = useState(null);
   const [savedDocumentsStatus, setSavedDocumentsStatus] = useState('');
   const [tempReports, setTempReports] = useState(null);
   const [tempReportsStatus, setTempReportsStatus] = useState('');
+  const [completedProcesses, setCompletedProcesses] = useState(null);
+  const [completedProcessesStatus, setCompletedProcessesStatus] = useState('');
+  const [activeProcesses, setActiveProcesses] = useState(null);
+  const [activeProcessesStatus, setActiveProcessesStatus] = useState('');
+
   const [companyId, setCompanyId] = useState(
     userDetail?.portfolio_info?.length > 1
       ? userDetail?.portfolio_info.find(
@@ -182,20 +193,45 @@ export const AppContextProvider = ({ children }) => {
     }
   };
 
-  const fetchDocumentReports = async () => {
-    setDocReportsStatus('pending');
+  const fetchDocumentReports = async (state) => {
+    if (state === 'finalized') setDocsCompletedStatus('pending');
+    else if (state === 'rejected') setDocsRejectedStatus('pending');
     try {
       const res = await new DocumentServices().getDocumentReports(
         companyId,
         dataType,
         userName,
-        portfolioName
+        portfolioName,
+        state
       );
-      setDocReports(res.data.documents ? res.data.documents : []);
+      if (state === 'finalized')
+        setDocsCompleted(res.data.documents ? res.data.documents : []);
+      else if (state === 'rejected')
+        setDocsRejected(res.data.documents ? res.data.documents : []);
     } catch (err) {
       console.log(err);
     } finally {
-      setDocReportsStatus('');
+      if (state === 'finalized') setDocsCompletedStatus('');
+      else if (state === 'rejected') setDocsRejectedStatus('');
+    }
+  };
+
+  const fetchProcessReports = async (type) => {
+    if (type === 'completed') setCompletedProcessesStatus('pending');
+    else if (type === 'active') setActiveProcessesStatus('pending');
+    try {
+      if (type === 'completed') {
+        const res = await getCompletedProcesses(companyId, dataType);
+        setCompletedProcesses(res.data ? res.data : []);
+      } else if (type === 'active') {
+        const res = await getActiveProcesses(companyId, dataType);
+        setActiveProcesses(res.data ? res.data : []);
+      }
+    } catch (err) {
+      console.log(err);
+    } finally {
+      if (type === 'completed') setCompletedProcessesStatus('');
+      else if (type === 'active') setActiveProcessesStatus('');
     }
   };
 
@@ -492,11 +528,18 @@ export const AppContextProvider = ({ children }) => {
         fetchDemoTemplates,
         fetchDemoDocuments,
         fetchDocumentReports,
-        docReports,
-        docReportsStatus,
+        docsCompleted,
+        docsRejected,
+        docsCompletedStatus,
+        docsRejectedStatus,
         tempReports,
         tempReportsStatus,
         fetchTemplateReports,
+        activeProcesses,
+        activeProcessesStatus,
+        completedProcesses,
+        completedProcessesStatus,
+        fetchProcessReports,
         userName,
         portfolioName,
         savedDocuments,
