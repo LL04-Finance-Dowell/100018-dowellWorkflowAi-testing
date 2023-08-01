@@ -136,6 +136,14 @@ const Reports = () => {
                   ? itemsCountToDisplay.documents.count
                   : '00',
             }
+
+            : item.parent.includes('Org. documents')? {
+              ...item,
+              count:
+                itemsCountToDisplay.documents.count > 0
+                  ? itemsCountToDisplay.documents.count
+                  : '00',
+            }
           : item.parent.includes('My Templates')
           ? {
               ...item,
