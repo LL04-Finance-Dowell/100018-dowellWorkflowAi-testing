@@ -83,6 +83,10 @@ export const AppContextProvider = ({ children }) => {
   const [docsRejected, setDocsRejected] = useState(null);
   const [docsCompletedStatus, setDocsCompletedStatus] = useState('');
   const [docsRejectedStatus, setDocsRejectedStatus] = useState('');
+  const [orgDocsCompleted, setOrgDocsCompleted] = useState(null);
+  const [orgDocsRejected, setOrgDocsRejected] = useState(null);
+  const [orgDocsCompletedStatus, setOrgDocsCompletedStatus] = useState('');
+  const [orgDocsRejectedStatus, setOrgDocsRejectedStatus] = useState('');
   const [savedDocuments, setSavedDocuments] = useState(null);
   const [savedDocumentsStatus, setSavedDocumentsStatus] = useState('');
   const [tempReports, setTempReports] = useState(null);
@@ -95,8 +99,8 @@ export const AppContextProvider = ({ children }) => {
   const [companyId, setCompanyId] = useState(
     userDetail?.portfolio_info?.length > 1
       ? userDetail?.portfolio_info.find(
-          (portfolio) => portfolio.product === productName
-        )?.org_id
+        (portfolio) => portfolio.product === productName
+      )?.org_id
       : userDetail?.portfolio_info[0].org_id
   );
   const [userName, setUserName] = useState(
@@ -108,8 +112,8 @@ export const AppContextProvider = ({ children }) => {
   const [dataType, setDataType] = useState(
     userDetail?.portfolio_info?.length > 1
       ? userDetail?.portfolio_info.find(
-          (portfolio) => portfolio.product === productName
-        )?.data_type
+        (portfolio) => portfolio.product === productName
+      )?.data_type
       : userDetail?.portfolio_info[0]?.data_type
   );
 
@@ -170,8 +174,8 @@ export const AppContextProvider = ({ children }) => {
     const userCompanyId =
       userDetail?.portfolio_info?.length > 1
         ? userDetail?.portfolio_info?.find(
-            (portfolio) => portfolio.product === productName
-          )?.org_id
+          (portfolio) => portfolio.product === productName
+        )?.org_id
         : userDetail?.portfolio_info[0]?.org_id;
 
     const res = await new WorkflowSettingServices().fetchWorkflowSettings(
@@ -213,6 +217,27 @@ export const AppContextProvider = ({ children }) => {
     } finally {
       if (state === 'finalized') setDocsCompletedStatus('');
       else if (state === 'rejected') setDocsRejectedStatus('');
+    }
+  };
+
+  const fetchOrgDocumentReports = async (state) => {
+    if (state === 'finalized') setOrgDocsCompletedStatus('pending');
+    else if (state === 'rejected') setOrgDocsRejectedStatus('pending');
+    try {
+      const res = await new DocumentServices().getOrgDocumentReports(
+        companyId,
+        dataType,
+        state
+      );
+      if (state === 'finalized')
+        setOrgDocsCompleted(res.data.clones ? res.data.clones : []);
+      else if (state === 'rejected')
+        setOrgDocsRejected(res.data.clones ? res.data.clones : []);
+    } catch (err) {
+      console.log(err);
+    } finally {
+      if (state === 'finalized') setOrgDocsCompletedStatus('');
+      else if (state === 'rejected') setOrgDocsRejectedStatus('');
     }
   };
 
@@ -286,8 +311,8 @@ export const AppContextProvider = ({ children }) => {
     const userCompanyId =
       userDetail?.portfolio_info?.length > 1
         ? userDetail?.portfolio_info?.find(
-            (portfolio) => portfolio.product === productName
-          )?.org_id
+          (portfolio) => portfolio.product === productName
+        )?.org_id
         : userDetail?.portfolio_info[0]?.org_id;
     setIsFetchingFolders(true);
     try {
@@ -308,8 +333,8 @@ export const AppContextProvider = ({ children }) => {
       setCompanyId(
         userDetail?.portfolio_info?.length > 1
           ? userDetail?.portfolio_info.find(
-              (portfolio) => portfolio.product === productName
-            )?.org_id
+            (portfolio) => portfolio.product === productName
+          )?.org_id
           : userDetail?.portfolio_info[0].org_id
       );
       setUserName(userDetail?.portfolio_info[0]?.username);
@@ -317,8 +342,8 @@ export const AppContextProvider = ({ children }) => {
       setDataType(
         userDetail?.portfolio_info?.length > 1
           ? userDetail?.portfolio_info.find(
-              (portfolio) => portfolio.product === productName
-            )?.data_type
+            (portfolio) => portfolio.product === productName
+          )?.data_type
           : userDetail?.portfolio_info[0]?.data_type
       );
     }
@@ -333,8 +358,8 @@ export const AppContextProvider = ({ children }) => {
         const userCompanyId =
           userDetail?.portfolio_info?.length > 1
             ? userDetail?.portfolio_info?.find(
-                (portfolio) => portfolio.product === productName
-              )?.org_id
+              (portfolio) => portfolio.product === productName
+            )?.org_id
             : userDetail?.portfolio_info[0]?.org_id;
 
         settingService
@@ -409,8 +434,8 @@ export const AppContextProvider = ({ children }) => {
                         title === 'Process'
                           ? 'Processes'
                           : title === 'Portfolio Choice'
-                          ? 'Portfolio/Team Roles'
-                          : title,
+                            ? 'Portfolio/Team Roles'
+                            : title,
                       boxId: child._id,
                     });
                 });
@@ -438,7 +463,7 @@ export const AppContextProvider = ({ children }) => {
           (item.content.includes('Documents') ||
             item.content.includes('Templates') ||
             item.content.includes('Workflows')) &&
-          !item.content.includes('set display name')
+            !item.content.includes('set display name')
             ? item.content
             : null
       );
@@ -547,6 +572,12 @@ export const AppContextProvider = ({ children }) => {
         fetchSavedDocuments,
         isAssignTask,
         setIsAssignTask,
+        dataType,
+        orgDocsCompleted,
+        orgDocsRejected,
+        orgDocsCompletedStatus,
+        orgDocsRejectedStatus,
+        fetchOrgDocumentReports
       }}
     >
       {children}

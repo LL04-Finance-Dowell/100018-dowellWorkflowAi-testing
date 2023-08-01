@@ -58,6 +58,7 @@ const SectionBox = ({
     fetchTemplateReports,
     userName,
     portfolioName,
+    fetchOrgDocumentReports,
   } = useAppContext();
 
   const handleLoadMore = () => {
@@ -128,8 +129,10 @@ const SectionBox = ({
       const documentServices = new DocumentServices();
 
       if (isDemo) fetchDemoDocuments();
-      else if (isCompleted) fetchDocumentReports('finalized');
-      else if (isRejected) fetchDocumentReports('rejected');
+      else if (isCompleted && !window.location.hash.includes('completed#org')) fetchDocumentReports('finalized');
+      else if (isCompleted && window.location.hash.includes('completed#org')) fetchOrgDocumentReports('finalized');
+      else if (isRejected && !window.location.hash.includes('rejected#org')) fetchDocumentReports('rejected');
+      else if (isRejected && window.location.hash.includes('rejected#org')) fetchOrgDocumentReports('rejected');
       else {
         documentServices
           .allDocuments(data.company_id, data.data_type)

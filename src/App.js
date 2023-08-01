@@ -1,4 +1,4 @@
-import { useEffect, Suspense } from 'react';
+import { useEffect, Suspense, useRef } from 'react';
 import { Routes, Route } from 'react-router-dom';
 import { setIconColor } from './features/app/appSlice';
 import { auth_url } from './httpCommon/httpCommon';
@@ -33,7 +33,10 @@ import axios from 'axios';
 function App() {
   const dispatch = useDispatch();
   const { session_id, userDetail } = useSelector((state) => state.auth);
-  const { isPublicUser } = useAppContext();
+  const { isPublicUser, dataType } = useAppContext();
+  const clientVerUrlRef = useRef('https://ll04-finance-dowell.github.io/workflowai.online')
+  const betaVerUrlRef = useRef('https://ll04-finance-dowell.github.io/100018-dowellWorkflowAi-testing/')
+
 
   useDowellLogin();
 
@@ -44,6 +47,15 @@ function App() {
 
     return () => clearInterval(interval);
   }, []);
+
+  // ! Comment the below useEffect to prevent redirection
+  // useEffect(() => {
+  //   if (window.location.pathname.includes('-testing')) {
+  //     if (dataType === 'Real_Data') window.location.replace(clientVerUrlRef.current);
+  //   } else {
+  //     if (dataType !== 'Real_Data') window.location.replace(betaVerUrlRef.current)
+  //   }
+  // }, [dataType])
   // console.log('chk')
   function checkstatus() {
     // AJAX GET request
@@ -74,7 +86,7 @@ function App() {
             },
           }
         )
-        .then((response) => {})
+        .then((response) => { })
         .catch((error) => {
           // console.log(error);
           // Empty catch block

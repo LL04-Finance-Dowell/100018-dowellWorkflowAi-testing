@@ -73,4 +73,6 @@ export class DocumentServices {
     httpApiUrl.get(
       `/companies/${companyId}/documents/reports/?data_type=${dataType}&doc_state=${state}&member=${userName}&portfolio=${portfolioName}`
     );
+
+  getOrgDocumentReports = (companyId, dataType, state) => httpApiUrl.get(`/companies/${companyId}/documents/clones/?data_type=${dataType}&doc_state=${state}`)
 }

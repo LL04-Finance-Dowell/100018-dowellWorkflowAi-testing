@@ -200,6 +200,18 @@ export const manageFileItems = [
   },
   {
     id: uuidv4(),
+    parent: 'Org. documents',
+    children: [
+      { id: uuidv4(), child: 'Rejected', href: '/documents/rejected#org' },
+      {
+        id: uuidv4(),
+        child: 'Completed',
+        href: '/documents/completed#org',
+      },
+    ],
+  },
+  {
+    id: uuidv4(),
     parent: 'My Templates',
     href: '/templates/reports',
   },

@@ -48,6 +48,11 @@ const DocumentsPage = ({
     fetchSavedDocuments,
     docsRejected,
     docsRejectedStatus,
+    fetchOrgDocumentReports,
+    orgDocsCompleted,
+    orgDocsRejected,
+    orgDocsCompletedStatus,
+    orgDocsRejectedStatus,
   } = useAppContext();
 
   useEffect(() => {
@@ -59,16 +64,16 @@ const DocumentsPage = ({
     const userPortfolioDataType =
       userDetail?.portfolio_info?.length > 1
         ? userDetail?.portfolio_info.find(
-            (portfolio) => portfolio.product === productName
-          )?.data_type
+          (portfolio) => portfolio.product === productName
+        )?.data_type
         : userDetail?.portfolio_info[0]?.data_type;
 
     const data = {
       company_id:
         userDetail?.portfolio_info?.length > 1
           ? userDetail?.portfolio_info.find(
-              (portfolio) => portfolio.product === productName
-            )?.org_id
+            (portfolio) => portfolio.product === productName
+          )?.org_id
           : userDetail?.portfolio_info[0].org_id,
       data_type: userPortfolioDataType,
     };
@@ -86,9 +91,11 @@ const DocumentsPage = ({
       navigate('#saved-documents');
       if (!savedDocuments) fetchSavedDocuments();
     }
-    if (showOnlyCompleted) navigate('#completed-documents');
+    if (showOnlyCompleted && !window.location.hash.includes('completed#org')) navigate('#completed-documents');
+    if (showOnlyCompleted && window.location.hash.includes('completed#org') && !orgDocsCompleted) fetchOrgDocumentReports('finalized');
     if (home) navigate('#drafts');
-    if (isRejected && !docsRejected) fetchDocumentReports('rejected');
+    if (isRejected && !docsRejected && !window.location.hash.includes('rejected#org')) fetchDocumentReports('rejected');
+    if (isRejected && !orgDocsRejected && window.location.hash.includes('rejected#org')) fetchOrgDocumentReports('rejected');
     if (isDemo && !demoDocuments) fetchDemoDocuments();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [showOnlySaved, showOnlyCompleted, home, isRejected, isDemo]);
@@ -141,10 +148,10 @@ const DocumentsPage = ({
             <div id='completed-documents'>
               <SectionBox
                 cardBgColor='#1ABC9C'
-                title='completed documents'
+                title={`completed documents${window.location.hash.includes('completed#org') ? '(company)' : ''}`}
                 Card={DocumentCard}
-                cardItems={docsCompleted}
-                status={docsCompletedStatus}
+                cardItems={window.location.hash.includes('completed#org') ? orgDocsCompleted : docsCompleted}
+                status={window.location.hash.includes('completed#org') ? orgDocsCompletedStatus : docsCompletedStatus}
                 itemType={'documents'}
                 isCompleted={true}
               />
@@ -157,10 +164,10 @@ const DocumentsPage = ({
             <div id='rejected-documents'>
               <SectionBox
                 cardBgColor='#1ABC9C'
-                title='rejected documents'
+                title={`rejected documents${window.location.hash.includes('rejected#org') ? '(company)' : ''}`}
                 Card={DocumentCard}
-                cardItems={docsRejected}
-                status={docsRejectedStatus}
+                cardItems={window.location.hash.includes('rejected#org') ? orgDocsRejected : docsRejected}
+                status={window.location.hash.includes('rejected#org') ? orgDocsRejectedStatus : docsRejectedStatus}
                 itemType={'documents'}
                 isRejected={true}
               />
