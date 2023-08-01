@@ -478,6 +478,8 @@ const SectionBox = ({
                           hideDeleteIcon={hideDeleteIcon}
                           isFolder={itemType === 'folder' ? true : false}
                           folderId={folderId}
+                          isCompletedDoc={isCompleted}
+                          isRejectedDoc={isRejected}
                         />
                       ))}
                 </div>

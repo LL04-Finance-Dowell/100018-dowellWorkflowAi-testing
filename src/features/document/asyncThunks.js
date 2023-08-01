@@ -171,3 +171,17 @@ export const allDocuments = createAsyncThunk(
     }
   }
 );
+
+export const documentReport = createAsyncThunk(
+  'document/report',
+  async (data, thunkAPI) => {
+    try {
+      const res = await documentServices.documentCloneReport(data);
+      thunkAPI.dispatch(setEditorLink(res.data));
+
+      return res.data;
+    } catch (error) {
+      console.log(error);
+    }
+  }
+);
