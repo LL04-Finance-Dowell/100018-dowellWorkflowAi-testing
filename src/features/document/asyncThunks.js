@@ -1,6 +1,6 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { DocumentServices } from '../../services/documentServices';
-import { setEditorLink } from '../app/appSlice';
+import { setEditorLink, setShowProfileSpinner } from '../app/appSlice';
 import { productName } from '../../utils/helpers';
 import { setAllDocuments } from './documentSlice';
 
@@ -175,13 +175,16 @@ export const allDocuments = createAsyncThunk(
 export const documentReport = createAsyncThunk(
   'document/report',
   async (data, thunkAPI) => {
+    thunkAPI.dispatch(setShowProfileSpinner(true));
     try {
       const res = await documentServices.documentCloneReport(data);
+      thunkAPI.dispatch(setShowProfileSpinner(false));
       thunkAPI.dispatch(setEditorLink(res.data));
 
       return res.data;
     } catch (error) {
       console.log(error);
+      thunkAPI.dispatch(setShowProfileSpinner(false));
     }
   }
 );
