@@ -74,5 +74,9 @@ export class DocumentServices {
       `/companies/${companyId}/documents/reports/?data_type=${dataType}&doc_state=${state}&member=${userName}&portfolio=${portfolioName}`
     );
 
+  documentCloneReport = (documentId) => {
+    return httpDocument.get(`/clones/${documentId}/`);
+  };
+
   getOrgDocumentReports = (companyId, dataType, state) => httpApiUrl.get(`/companies/${companyId}/documents/clones/?data_type=${dataType}&doc_state=${state}`)
 }
