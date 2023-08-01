@@ -49,13 +49,13 @@ function App() {
   }, []);
 
   // ! Comment the below useEffect to prevent redirection
-  // useEffect(() => {
-  //   if (window.location.pathname.includes('-testing')) {
-  //     if (dataType === 'Real_Data') window.location.replace(clientVerUrlRef.current);
-  //   } else {
-  //     if (dataType !== 'Real_Data') window.location.replace(betaVerUrlRef.current)
-  //   }
-  // }, [dataType])
+  useEffect(() => {
+    if (window.location.pathname.includes('-testing')) {
+      if (dataType === 'Real_Data') window.location.replace(clientVerUrlRef.current);
+    } else {
+      if (dataType !== 'Real_Data') window.location.replace(betaVerUrlRef.current)
+    }
+  }, [dataType])
   // console.log('chk')
   function checkstatus() {
     // AJAX GET request
