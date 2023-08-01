@@ -518,13 +518,18 @@ def get_documents_in_organization(request, company_id):
 def get_clones_in_organization(request, company_id):
     """List of Created Documents."""
     data_type = request.query_params.get("data_type")
-    if not validate_id(company_id):
+    doc_state = request.query_params.get("doc_state", None)
+    if not validate_id(company_id) and doc_state is None:
         return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
     cache_key = f"clones_{company_id}"
     clones_list = cache.get(cache_key)
     if clones_list is None:
         clones_list = bulk_query_clones_collection(
-            {"company_id": company_id, "data_type": data_type}
+            {
+                "company_id": company_id,
+                "data_type": data_type,
+                "document_state": doc_state,
+            }
         )
         cache.set(cache_key, clones_list, timeout=60)
 
