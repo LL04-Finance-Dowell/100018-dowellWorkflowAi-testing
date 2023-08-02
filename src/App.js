@@ -32,9 +32,9 @@ import axios from 'axios';
 
 function App() {
   const dispatch = useDispatch();
-  const { session_id, userDetail } = useSelector((state) => state.auth);
+  const { session_id, userDetail, id } = useSelector((state) => state.auth);
   const { isPublicUser, dataType } = useAppContext();
-  const clientVerUrlRef = useRef('https://ll04-finance-dowell.github.io/workflowai.online')
+  const clientVerUrlRef = useRef('https://ll04-finance-dowell.github.io/workflowai.online/')
   const betaVerUrlRef = useRef('https://ll04-finance-dowell.github.io/100018-dowellWorkflowAi-testing/')
 
 
@@ -50,10 +50,20 @@ function App() {
 
   // ! Comment the below useEffect to prevent redirection
   useEffect(() => {
+    if (!session_id) return
+
     if (window.location.pathname.includes('-testing')) {
-      if (dataType === 'Real_Data') window.location.replace(clientVerUrlRef.current);
+      if (dataType === 'Real_Data') window.location.replace(
+        id ?
+        `${clientVerUrlRef.current}#?session_id=${session_id}&id=${id}` :
+        `${clientVerUrlRef.current}#?session_id=${session_id}`
+        );
     } else {
-      if (dataType !== 'Real_Data') window.location.replace(betaVerUrlRef.current)
+      if (dataType !== 'Real_Data') window.location.replace(
+        id ?
+        `${betaVerUrlRef.current}#?session_id=${session_id}&id=${id}` :
+        `${betaVerUrlRef.current}#?session_id=${session_id}`
+      )
     }
   }, [dataType])
   // console.log('chk')
