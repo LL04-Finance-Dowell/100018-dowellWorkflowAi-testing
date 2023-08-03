@@ -194,8 +194,8 @@ const DocumentCard = ({
       portfolio:
         userDetail?.portfolio_info?.length > 1
           ? userDetail?.portfolio_info.find(
-              (portfolio) => portfolio.product === productName
-            )?.portfolio_name
+            (portfolio) => portfolio.product === productName
+          )?.portfolio_name
           : userDetail?.portfolio_info[0]?.portfolio_name,
       city: userDetail?.userinfo?.city,
       country: userDetail?.userinfo?.country,
@@ -220,8 +220,8 @@ const DocumentCard = ({
       const currentUserPortfolioName =
         userDetail?.portfolio_info?.length > 1
           ? userDetail?.portfolio_info.find(
-              (portfolio) => portfolio.product === productName
-            )?.portfolio_name
+            (portfolio) => portfolio.product === productName
+          )?.portfolio_name
           : userDetail?.portfolio_info[0]?.portfolio_name;
 
       if (
@@ -295,7 +295,7 @@ const DocumentCard = ({
 
   const FrontSide = () => {
     return (
-      <div>
+      <div style={{ wordWrap: 'break-word', width: '100%' }}>
         {cardItem.newly_created && (
           <div
             style={{
@@ -313,8 +313,8 @@ const DocumentCard = ({
           ? cardItem.document_name
           : typeof cardItem.document_name === 'string' &&
             cardItem.document_name.length < 1
-          ? ''
-          : 'no item'}
+            ? ''
+            : 'no item'}
       </div>
     );
   };

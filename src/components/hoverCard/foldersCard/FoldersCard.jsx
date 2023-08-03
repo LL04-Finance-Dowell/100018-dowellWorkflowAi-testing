@@ -37,7 +37,7 @@ const FoldersCard = ({ cardItem }) => {
 
     const timeDifference = new Date().getTime() - createdDate.getTime();
 
-    // ? The backend created_on is not accurate, that's why I used a time difference of 24 hours
+    // ? As at this implementation, the backend created_on is not accurate, that's why I used a time difference of 24 hours
 
     if (timeDifference < 86400000) setIsFolderNew(true);
 
@@ -57,7 +57,7 @@ const FoldersCard = ({ cardItem }) => {
 
   const FrontSide = () => {
     return (
-      <div>
+      <div style={{ wordWrap: 'break-word', width: '100%' }}>
         {cardItem.folder_name ? cardItem.folder_name : 'no item'}
         {isFolderNew && (
           <span

@@ -145,7 +145,7 @@ const TemplateCard = ({ cardItem, isFolder, folderId }) => {
 
   const FrontSide = () => {
     return (
-      <div>
+      <div style={{ wordWrap: 'break-word', width: '100%' }}>
         {cardItem.newly_created && (
           <div
             style={{
