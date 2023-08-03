@@ -187,7 +187,7 @@ const ProcessCard = ({ cardItem, title }) => {
 
   const FrontSide = () => {
     return cardItem ? (
-      <div >
+      <div style={{ wordWrap: 'break-word', width: '100%' }}>
         {cardItem.process_kind === "clone" && <div style={{
           position: 'absolute',
           top: 0,
