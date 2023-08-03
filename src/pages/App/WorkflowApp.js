@@ -123,10 +123,10 @@ const WorkflowApp = () => {
       userDetail?.portfolio_info?.length > 1
         ? userDetail?.portfolio_info.find(
             (portfolio) => portfolio.product === productName
-          )?.data_type
+          )?.portfolio_name
         : userDetail?.portfolio_info[0]?.portfolio_name,
     ];
-    if (!notificationsLoaded) {
+    if (!notificationsLoaded && userName && portfolioName) {
       dispatch(setNotificationsLoading(true));
 
       dispatch(setNotificationFinalStatus(null));
@@ -225,7 +225,13 @@ const WorkflowApp = () => {
     //     });
     // }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [userDetail, favoriteItemsLoaded, notificationsLoaded]);
+  }, [
+    userDetail,
+    favoriteItemsLoaded,
+    notificationsLoaded,
+    userName,
+    portfolioName,
+  ]);
 
   useEffect(() => {
     if (!location.state || !location.state.elementIdToScrollTo) return;

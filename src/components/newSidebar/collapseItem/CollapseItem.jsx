@@ -95,14 +95,7 @@ const CollapseItem = ({ items, listType, exception }) => {
       {React.Children.toArray(
         menuItems.map((item) => (
           <>
-            <HashLink
-              to={item.href && item.href}
-              // key={item.id}
-              className={`${styles.parent__item__box} ${
-                item.isOpen && styles.active
-              }`}
-              onClick={() => handleParentClick(item.id)}
-            >
+            <TagSetter item={item} handleParentClick={handleParentClick}>
               <i>
                 {item.isOpen ? (
                   <IoMdArrowDropdown size={25} />
@@ -115,27 +108,27 @@ const CollapseItem = ({ items, listType, exception }) => {
                   ? item.parent
                   : item.parent.toLowerCase().includes('documents') &&
                     customDocName
-                  ? item.parent
+                    ? item.parent
                       .toLowerCase()
                       .replace('documents', customDocName)
-                  : item.parent.toLowerCase().includes('templates') &&
-                    customTempName
-                  ? item.parent
-                      .toLowerCase()
-                      .replace('templates', customTempName)
-                  : item.parent.toLowerCase().includes('workflows') &&
-                    customWrkfName
-                  ? item.parent
-                      .toLowerCase()
-                      .replace('workflows', customWrkfName)
-                  : item.parent
+                    : item.parent.toLowerCase().includes('templates') &&
+                      customTempName
+                      ? item.parent
+                        .toLowerCase()
+                        .replace('templates', customTempName)
+                      : item.parent.toLowerCase().includes('workflows') &&
+                        customWrkfName
+                        ? item.parent
+                          .toLowerCase()
+                          .replace('workflows', customWrkfName)
+                        : item.parent
               )}{' '}
               {item.count
                 ? item.count === '000'
                   ? `(${item.count})`
                   : `(${item.count?.toString().padStart(3, '0')})`
                 : ''}
-            </HashLink>
+            </TagSetter>
             {item.children ? (
               <div className={styles.children__item__container}>
                 <Collapse open={item.isOpen}>
@@ -175,5 +168,23 @@ const CollapseItem = ({ items, listType, exception }) => {
     </div>
   );
 };
+
+
+const TagSetter = ({ item, children, handleParentClick }) => (
+  item.href ?
+    <HashLink
+      to={item.href}
+      key={item.id}
+      className={`${styles.parent__item__box} ${item.isOpen && styles.active
+        }`}
+      onClick={() => handleParentClick(item.id)}
+    >{children}</HashLink>
+    : <button style={{ backgroundColor: 'transparent' }}
+      key={item.id}
+      className={`${styles.parent__item__box} ${item.isOpen && styles.active
+        }`}
+      onClick={() => handleParentClick(item.id)}
+    > {children} </button>
+)
 
 export default CollapseItem;

@@ -60,7 +60,7 @@ const SelectMembersToAssign = ({
   const [radioOptionsEnabledInStep, setRadioOptionsEnabledInStep] = useState(
     []
   );
-  const { workflowTeams, workflowTeamsLoaded } = useAppContext();
+  const { workflowTeams, workflowTeamsLoaded, isAssignTask } = useAppContext();
   const selectTeamRef = useRef();
   const selectMemberOptionRef = useRef();
   const selectMembersRadioRef = useRef();
@@ -74,7 +74,6 @@ const SelectMembersToAssign = ({
   useClickInside(teamMembersRef, () => {
     if (!currentRadioOptionSelection)
       return toast.info('Please check either option above');
-    
   });
 
   useClickInside(selectMembersRef, () => {
@@ -89,12 +88,11 @@ const SelectMembersToAssign = ({
       return;
     if (!currentRadioOptionSelection) {
       selectMembersRadioRef.current?.scrollIntoView({
-        block: 'center'
+        block: 'center',
       });
       toast.info('Please check the option above');
-      return
+      return;
     }
-    
   });
 
   useEffect(() => {
@@ -322,8 +320,6 @@ const SelectMembersToAssign = ({
   }, [stepsPopulated, processSteps]);
 
   const handleSelectTeam = (parsedSelectedJsonValue) => {
-    
-
     selectTeamRef.current.value = '';
 
     const teamAddedToProcess = teamsSelectedSelectedForProcess.find(
@@ -370,13 +366,16 @@ const SelectMembersToAssign = ({
           );
           return;
         }
-        dispatch(
-          setTeamMembersSelectedForProcess({
-            member: parsedSelectedJsonValue.member,
-            portfolio: parsedSelectedJsonValue.portfolio,
-            stepIndex: currentStepIndex,
-          })
-        );
+        if (isAssignTask && teamMembersSelectedForProcess.length >= 20)
+          toast.info('Only 20 members can be selected');
+        else
+          dispatch(
+            setTeamMembersSelectedForProcess({
+              member: parsedSelectedJsonValue.member,
+              portfolio: parsedSelectedJsonValue.portfolio,
+              stepIndex: currentStepIndex,
+            })
+          );
         return;
       case 'Users':
         const userAlreadyAdded = userMembersSelectedForProcess.find(
@@ -395,20 +394,23 @@ const SelectMembersToAssign = ({
           );
           return;
         }
-        dispatch(
-          setUserMembersSelectedForProcess({
-            member: parsedSelectedJsonValue.member,
-            portfolio: parsedSelectedJsonValue.portfolio,
-            stepIndex: currentStepIndex,
-          })
-        );
+        if (isAssignTask && userMembersSelectedForProcess.length >= 20)
+          toast.info('Only 20 members can be selected');
+        else
+          dispatch(
+            setUserMembersSelectedForProcess({
+              member: parsedSelectedJsonValue.member,
+              portfolio: parsedSelectedJsonValue.portfolio,
+              stepIndex: currentStepIndex,
+            })
+          );
         return;
       case 'Public':
-        const publicUserAlreadyAdded = userMembersSelectedForProcess.find(
-          (user) =>
-            user.member === parsedSelectedJsonValue.member &&
-            user.portfolio === parsedSelectedJsonValue.portfolio &&
-            user.stepIndex === currentStepIndex
+        const publicUserAlreadyAdded = publicMembersSelectedForProcess.find(
+          (pubMember) =>
+            pubMember.member === parsedSelectedJsonValue.member &&
+            pubMember.portfolio === parsedSelectedJsonValue.portfolio &&
+            pubMember.stepIndex === currentStepIndex
         );
         if (publicUserAlreadyAdded) {
           dispatch(
@@ -420,16 +422,18 @@ const SelectMembersToAssign = ({
           );
           return;
         }
-        dispatch(
-          setPublicMembersSelectedForProcess({
-            member: parsedSelectedJsonValue.member,
-            portfolio: parsedSelectedJsonValue.portfolio,
-            stepIndex: currentStepIndex,
-          })
-        );
+        if (isAssignTask && publicMembersSelectedForProcess.length >= 20)
+          toast.info('Only 20 members can be selected');
+        else
+          dispatch(
+            setPublicMembersSelectedForProcess({
+              member: parsedSelectedJsonValue.member,
+              portfolio: parsedSelectedJsonValue.portfolio,
+              stepIndex: currentStepIndex,
+            })
+          );
         return;
       default:
-        
     }
   };
 
@@ -440,7 +444,6 @@ const SelectMembersToAssign = ({
     name,
     radioValue
   ) => {
-    
     setCurrentGroupSelectionItem(newGroupValue);
     setCurrentRadioOptionSelection(newRadioSelection);
 
@@ -615,6 +618,16 @@ const SelectMembersToAssign = ({
       });
     }
   };
+
+  // useEffect(() => {
+  //   console.log('team Mems: ', teamMembersSelectedForProcess);
+  //   console.log('user Mems: ', userMembersSelectedForProcess);
+  //   console.log('public Mems: ', publicMembersSelectedForProcess);
+  // }, [
+  //   teamMembersSelectedForProcess,
+  //   userMembersSelectedForProcess,
+  //   publicMembersSelectedForProcess,
+  // ]);
 
   return (
     <div className={styles.container}>
@@ -1047,7 +1060,6 @@ const SelectMembersToAssign = ({
               }
             </div>
           </div>
-          
         </>
       )}
     </div>

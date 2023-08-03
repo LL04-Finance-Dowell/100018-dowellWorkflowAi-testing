@@ -35,6 +35,8 @@ const SectionBox = ({
   folderId,
   isDemo,
   isReports,
+  isCompleted,
+  isRejected,
 }) => {
   const [sliceCount, setSliceCount] = useState(1);
   const [refreshLoading, setRefreshLoading] = useState(false);
@@ -56,6 +58,7 @@ const SectionBox = ({
     fetchTemplateReports,
     userName,
     portfolioName,
+    fetchOrgDocumentReports,
   } = useAppContext();
 
   const handleLoadMore = () => {
@@ -126,7 +129,10 @@ const SectionBox = ({
       const documentServices = new DocumentServices();
 
       if (isDemo) fetchDemoDocuments();
-      else if (isReports) fetchDocumentReports();
+      else if (isCompleted && !window.location.hash.includes('completed#org')) fetchDocumentReports('finalized');
+      else if (isCompleted && window.location.hash.includes('completed#org')) fetchOrgDocumentReports('finalized');
+      else if (isRejected && !window.location.hash.includes('rejected#org')) fetchDocumentReports('rejected');
+      else if (isRejected && window.location.hash.includes('rejected#org')) fetchOrgDocumentReports('rejected');
       else {
         documentServices
           .allDocuments(data.company_id, data.data_type)
@@ -475,6 +481,8 @@ const SectionBox = ({
                           hideDeleteIcon={hideDeleteIcon}
                           isFolder={itemType === 'folder' ? true : false}
                           folderId={folderId}
+                          isCompletedDoc={isCompleted}
+                          isRejectedDoc={isRejected}
                         />
                       ))}
                 </div>

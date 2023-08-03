@@ -31,6 +31,18 @@ export const getAllProcessesV2 = async (companyId, dataType) => {
   );
 };
 
+export const getCompletedProcesses = (companyId, dataType) => {
+  return httpApiUrl.get(
+    `/companies/${companyId}/processes/completed/?data_type=${dataType}`
+  );
+};
+
+export const getActiveProcesses = (companyId, dataType) => {
+  return httpApiUrl.get(
+    `/companies/${companyId}/processes/?data_type=${dataType}&doc_state=processing`
+  );
+};
+
 export const verifyProcessV2 = async (data) => {
   return await httpProcess.post('/verification/', data);
 };

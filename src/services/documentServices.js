@@ -28,9 +28,7 @@ export class DocumentServices {
   // };
 
   getSavedDocuments = (companyId, dataType, pageCount) =>
-    httpApiUrl.get(
-      `/companies/${companyId}/documents/?data_type=${dataType}&page=${pageCount}`
-    );
+    httpApiUrl.get(`/companies/${companyId}/documents/?data_type=${dataType}`);
 
   contentDocument = (documentId) => {
     // console.log(documentId)
@@ -71,8 +69,14 @@ export class DocumentServices {
     );
   };
 
-  getDocumentReports = (companyId, dataType, userName, portfolioName) =>
+  getDocumentReports = (companyId, dataType, userName, portfolioName, state) =>
     httpApiUrl.get(
-      `/companies/${companyId}/documents/reports/?data_type=${dataType}&doc_state=draft&member=${userName}&portfolio=${portfolioName}`
+      `/companies/${companyId}/documents/reports/?data_type=${dataType}&doc_state=${state}&member=${userName}&portfolio=${portfolioName}`
     );
+
+  documentCloneReport = (documentId) => {
+    return httpDocument.get(`/clones/${documentId}/`);
+  };
+
+  getOrgDocumentReports = (companyId, dataType, state) => httpApiUrl.get(`/companies/${companyId}/documents/clones/?data_type=${dataType}&doc_state=${state}`)
 }

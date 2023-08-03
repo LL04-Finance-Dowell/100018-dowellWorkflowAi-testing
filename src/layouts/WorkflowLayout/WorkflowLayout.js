@@ -143,7 +143,6 @@ const WorkflowLayout = ({ children }) => {
           dispatch(setProcessesLoaded(true));
         })
         .catch((err) => {
-          console.log('Failed: ', err.response);
           dispatch(setProcessesLoading(false));
         });
     }
@@ -381,6 +380,29 @@ const WorkflowLayout = ({ children }) => {
       </div>
 
       <FoldersModal />
+      
+      {ShowProfileSpinner && (
+        <div
+          style={{
+            background: 'rgba(0, 0, 0, 0.12)',
+            backdropFilter: 'blur(5px)',
+            animation: 'fadeIn 0.2s ease-in-out',
+            zIndex: 99999,
+            overflow: 'hidden',
+            display: 'flex',
+            height: '100%',
+            width: '100%',
+            alignItems: 'center',
+            justifyContent: 'center',
+            color: '#000',
+            position: 'fixed',
+            top: '0%',
+            left: '0%',
+          }}
+        >
+          <Spinner />
+        </div>
+      )}
     </>
   );
 };

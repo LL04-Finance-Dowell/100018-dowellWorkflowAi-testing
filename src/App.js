@@ -1,4 +1,4 @@
-import { useEffect, Suspense } from 'react';
+import { useEffect, Suspense, useRef } from 'react';
 import { Routes, Route } from 'react-router-dom';
 import { setIconColor } from './features/app/appSlice';
 import { auth_url } from './httpCommon/httpCommon';
@@ -32,8 +32,11 @@ import axios from 'axios';
 
 function App() {
   const dispatch = useDispatch();
-  const { session_id, userDetail } = useSelector((state) => state.auth);
-  const { isPublicUser } = useAppContext();
+  const { session_id, userDetail, id } = useSelector((state) => state.auth);
+  const { isPublicUser, dataType } = useAppContext();
+  const clientVerUrlRef = useRef('https://ll04-finance-dowell.github.io/workflowai.online/')
+  const betaVerUrlRef = useRef('https://ll04-finance-dowell.github.io/100018-dowellWorkflowAi-testing/')
+
 
   useDowellLogin();
 
@@ -44,6 +47,25 @@ function App() {
 
     return () => clearInterval(interval);
   }, []);
+
+  // ! Comment the below useEffect to prevent redirection
+  useEffect(() => {
+    if (!session_id) return
+
+    if (window.location.pathname.includes('-testing')) {
+      if (dataType === 'Real_Data') window.location.replace(
+        id ?
+        `${clientVerUrlRef.current}#?session_id=${session_id}&id=${id}` :
+        `${clientVerUrlRef.current}#?session_id=${session_id}`
+        );
+    } else {
+      if (dataType !== 'Real_Data') window.location.replace(
+        id ?
+        `${betaVerUrlRef.current}#?session_id=${session_id}&id=${id}` :
+        `${betaVerUrlRef.current}#?session_id=${session_id}`
+      )
+    }
+  }, [dataType])
   // console.log('chk')
   function checkstatus() {
     // AJAX GET request
@@ -74,7 +96,7 @@ function App() {
             },
           }
         )
-        .then((response) => {})
+        .then((response) => { })
         .catch((error) => {
           // console.log(error);
           // Empty catch block
@@ -109,6 +131,10 @@ function App() {
           <Route
             path={'completed'}
             element={<DocumentsPage showOnlyCompleted={true} />}
+          />
+          <Route
+            path={'rejected'}
+            element={<DocumentsPage isRejected={true} />}
           />
           <Route path={'demo'} element={<DocumentsPage isDemo={true} />} />
           {/*  <Route path={"new"} element={<CreateNewDocumentPage />} />
@@ -166,6 +192,11 @@ function App() {
           <Route
             path={'completed'}
             element={<ProccessPage showOnlyCompleted={true} />}
+          />
+
+          <Route
+            path={'active'}
+            element={<ProccessPage showOnlyActive={true} />}
           />
           <Route
             path={'processdetail'}

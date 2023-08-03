@@ -2,7 +2,7 @@ import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import HoverCard from '../HoverCard';
 import { Button } from '../styledComponents';
-import { detailDocument } from '../../../features/document/asyncThunks';
+import { detailDocument, documentReport } from '../../../features/document/asyncThunks';
 import { useState } from 'react';
 import { toast } from 'react-toastify';
 import { LoadingSpinner } from '../../LoadingSpinner/LoadingSpinner';
@@ -41,6 +41,8 @@ const DocumentCard = ({
   hideDeleteIcon,
   isFolder,
   folderId,
+  isCompletedDoc,
+  isRejectedDoc,
 }) => {
   const dispatch = useDispatch();
   const { t } = useTranslation();
@@ -172,6 +174,12 @@ const DocumentCard = ({
       document_name: item.document_name,
       document_id: item._id,
     };
+
+    if (isCompletedDoc || isRejectedDoc) {
+      dispatch(documentReport(data.document_id))
+      return
+    }
+
     dispatch(detailDocument(data.document_id));
   };
 

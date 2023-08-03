@@ -17,7 +17,13 @@ import { useAppContext } from '../../../contexts/AppContext';
 import { DocumentServices } from '../../../services/documentServices';
 import { useLocation } from 'react-router-dom';
 
-const DocumentsPage = ({ home, showOnlySaved, showOnlyCompleted, isDemo }) => {
+const DocumentsPage = ({
+  home,
+  showOnlySaved,
+  showOnlyCompleted,
+  isDemo,
+  isRejected,
+}) => {
   const { userDetail } = useSelector((state) => state.auth);
   const { allDocuments: allDocumentsArray, allDocumentsStatus } = useSelector(
     (state) => state.document
@@ -35,40 +41,39 @@ const DocumentsPage = ({ home, showOnlySaved, showOnlyCompleted, isDemo }) => {
     demoDocStatus,
     fetchDemoDocuments,
     fetchDocumentReports,
-    docReports,
-    docReportsStatus,
+    docsCompleted,
+    docsCompletedStatus,
     savedDocuments,
     savedDocumentsStatus,
     fetchSavedDocuments,
+    docsRejected,
+    docsRejectedStatus,
+    fetchOrgDocumentReports,
+    orgDocsCompleted,
+    orgDocsRejected,
+    orgDocsCompletedStatus,
+    orgDocsRejectedStatus,
   } = useAppContext();
 
   useEffect(() => {
-    if (isDemo) {
-      if (!demoDocuments) {
-        fetchDemoDocuments();
-      }
-    }
-  }, []);
-
-  useEffect(() => {
-    if (location.hash === '#completed-documents' && !docReports)
-      fetchDocumentReports();
+    if (location.hash === '#completed-documents' && !docsCompleted)
+      fetchDocumentReports('finalized');
   }, [location]);
 
   useEffect(() => {
     const userPortfolioDataType =
       userDetail?.portfolio_info?.length > 1
         ? userDetail?.portfolio_info.find(
-            (portfolio) => portfolio.product === productName
-          )?.data_type
+          (portfolio) => portfolio.product === productName
+        )?.data_type
         : userDetail?.portfolio_info[0]?.data_type;
 
     const data = {
       company_id:
         userDetail?.portfolio_info?.length > 1
           ? userDetail?.portfolio_info.find(
-              (portfolio) => portfolio.product === productName
-            )?.org_id
+            (portfolio) => portfolio.product === productName
+          )?.org_id
           : userDetail?.portfolio_info[0].org_id,
       data_type: userPortfolioDataType,
     };
@@ -86,31 +91,14 @@ const DocumentsPage = ({ home, showOnlySaved, showOnlyCompleted, isDemo }) => {
       navigate('#saved-documents');
       if (!savedDocuments) fetchSavedDocuments();
     }
-    if (showOnlyCompleted) navigate('#completed-documents');
+    if (showOnlyCompleted && !window.location.hash.includes('completed#org')) navigate('#completed-documents');
+    if (showOnlyCompleted && window.location.hash.includes('completed#org') && !orgDocsCompleted) fetchOrgDocumentReports('finalized');
     if (home) navigate('#drafts');
-    // if(isDemo) navigate("#demo");
+    if (isRejected && !docsRejected && !window.location.hash.includes('rejected#org')) fetchDocumentReports('rejected');
+    if (isRejected && !orgDocsRejected && window.location.hash.includes('rejected#org')) fetchOrgDocumentReports('rejected');
+    if (isDemo && !demoDocuments) fetchDemoDocuments();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [showOnlySaved, showOnlyCompleted, home]);
-
-  // useEffect(() => {
-  //   console.log('all Docs: ', allDocumentsArray);
-  // });
-
-  // useEffect(() => {
-  //   console.log('all Docs: ', allDocumentsArray);
-  //   console.log(
-  //     'all Docs filter: ',
-  //     allDocumentsArray.filter(
-  //       (item) =>
-  //         item.created_by === userDetail?.userinfo?.username &&
-  //         item.document_type === 'original'
-  //     )
-  //   );
-  // }, [allDocumentsArray]);
-
-  // useEffect(() => {
-  //   console.log('Saved Docs: ', savedDocuments);
-  // }, [savedDocuments]);
+  }, [showOnlySaved, showOnlyCompleted, home, isRejected, isDemo]);
 
   return (
     <WorkflowLayout>
@@ -160,16 +148,30 @@ const DocumentsPage = ({ home, showOnlySaved, showOnlyCompleted, isDemo }) => {
             <div id='completed-documents'>
               <SectionBox
                 cardBgColor='#1ABC9C'
-                title='completed documents'
+                title={`completed documents${window.location.hash.includes('completed#org') ? '(company)' : ''}`}
                 Card={DocumentCard}
-                cardItems={docReports}
-                status={docReportsStatus}
+                cardItems={window.location.hash.includes('completed#org') ? orgDocsCompleted : docsCompleted}
+                status={window.location.hash.includes('completed#org') ? orgDocsCompletedStatus : docsCompletedStatus}
                 itemType={'documents'}
-                isReports={true}
+                isCompleted={true}
               />
             </div>
           ) : (
             <></>
+          )}
+
+          {isRejected && (
+            <div id='rejected-documents'>
+              <SectionBox
+                cardBgColor='#1ABC9C'
+                title={`rejected documents${window.location.hash.includes('rejected#org') ? '(company)' : ''}`}
+                Card={DocumentCard}
+                cardItems={window.location.hash.includes('rejected#org') ? orgDocsRejected : docsRejected}
+                status={window.location.hash.includes('rejected#org') ? orgDocsRejectedStatus : docsRejectedStatus}
+                itemType={'documents'}
+                isRejected={true}
+              />
+            </div>
           )}
 
           {isDemo && (

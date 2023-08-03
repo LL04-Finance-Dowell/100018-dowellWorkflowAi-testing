@@ -47,7 +47,7 @@ const SetWorkflowInDoc = () => {
   const [draftProcessDOc, setDraftProcessDoc] = useState(null);
   const [isDraftProcess, setIsDraftProcess] = useState(false);
   const [draftProcessLoaded, setDraftProcessLoaded] = useState(false);
-  const [Process_title, setProcess_title] = useState('')
+  const [Process_title, setProcess_title] = useState('');
 
   useEffect(() => {
     const processId = searchParams.get('id');
@@ -190,7 +190,6 @@ const SetWorkflowInDoc = () => {
 
         if (key === 'stepTeamMembers') {
           step[key].forEach((user) => {
-
             dispatch(
               setTeamMembersSelectedForProcess({
                 member: user.member,
@@ -280,9 +279,16 @@ const SetWorkflowInDoc = () => {
               <div className={styles.diveder}></div>
               <CheckErrors />
               <div className={styles.diveder}></div>
-              <ProcessName Process_title ={Process_title} setProcess_title = {setProcess_title} />
+              <ProcessName
+                Process_title={Process_title}
+                setProcess_title={setProcess_title}
+              />
               <div className={styles.diveder}></div>
-              <ProcessDocument savedProcess={draftProcess}  Process_title ={Process_title} setProcess_title = {setProcess_title}/>
+              <ProcessDocument
+                savedProcess={draftProcess}
+                Process_title={Process_title}
+                setProcess_title={setProcess_title}
+              />
             </>
           ) : (
             <>
@@ -307,9 +313,15 @@ const SetWorkflowInDoc = () => {
             <div className={styles.diveder}></div>
             <CheckErrors />
             <div className={styles.diveder}></div>
-            <ProcessName Process_title ={Process_title} setProcess_title = {setProcess_title} />
+            <ProcessName
+              Process_title={Process_title}
+              setProcess_title={setProcess_title}
+            />
             <div className={styles.diveder}></div>
-            <ProcessDocument  Process_title ={Process_title} setProcess_title = {setProcess_title}/>
+            <ProcessDocument
+              Process_title={Process_title}
+              setProcess_title={setProcess_title}
+            />
           </>
         )}
       </div>
