@@ -1038,7 +1038,7 @@ def create_template(request):
                 "function_ID": "ABCDE",
                 "command": "update",
                 "flag": "editing",
-                "update_field": {"template_name": "", "content": "", "page": ""},
+                "update_field": {"template_name": "Untitled Template", "content": "", "page": ""},
             },
         }
         editor_link = requests.post(
