@@ -67,6 +67,7 @@ function App() {
   //   }
   // }, [dataType])
   // console.log('chk')
+  
   function checkstatus() {
     // AJAX GET request
 
