@@ -49,23 +49,23 @@ function App() {
   }, []);
 
   // ! Comment the below useEffect to prevent redirection
-  useEffect(() => {
-    if (!session_id) return
+  // useEffect(() => {
+  //   if (!session_id) return
 
-    if (window.location.pathname.includes('-testing')) {
-      if (dataType === 'Real_Data') window.location.replace(
-        id ?
-        `${clientVerUrlRef.current}#?session_id=${session_id}&id=${id}` :
-        `${clientVerUrlRef.current}#?session_id=${session_id}`
-        );
-    } else {
-      if (dataType !== 'Real_Data') window.location.replace(
-        id ?
-        `${betaVerUrlRef.current}#?session_id=${session_id}&id=${id}` :
-        `${betaVerUrlRef.current}#?session_id=${session_id}`
-      )
-    }
-  }, [dataType])
+  //   if (window.location.pathname.includes('-testing')) {
+  //     if (dataType === 'Real_Data') window.location.replace(
+  //       id ?
+  //       `${clientVerUrlRef.current}#?session_id=${session_id}&id=${id}` :
+  //       `${clientVerUrlRef.current}#?session_id=${session_id}`
+  //       );
+  //   } else {
+  //     if (dataType !== 'Real_Data') window.location.replace(
+  //       id ?
+  //       `${betaVerUrlRef.current}#?session_id=${session_id}&id=${id}` :
+  //       `${betaVerUrlRef.current}#?session_id=${session_id}`
+  //     )
+  //   }
+  // }, [dataType])
   // console.log('chk')
   function checkstatus() {
     // AJAX GET request

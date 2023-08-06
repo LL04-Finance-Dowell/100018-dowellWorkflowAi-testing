@@ -44,7 +44,7 @@ const ProcessCard = ({ cardItem, title }) => {
     }
 
     getProcessDetail(item._id, item.process_title)
-    dispatch(setshowsProcessDetailPopup(true));
+    // dispatch(setshowsProcessDetailPopup(true));
     setProcessDetailLoading(true);
   };
 
@@ -58,6 +58,7 @@ const ProcessCard = ({ cardItem, title }) => {
         dispatch(SetProcessDetail(response.data));
         setProcessDetailLoading(false);
         dispatch(setDetailFetched(true));
+        navigate('/processes/processdetail');
       })
       .catch((error) => {
         console.log(error);

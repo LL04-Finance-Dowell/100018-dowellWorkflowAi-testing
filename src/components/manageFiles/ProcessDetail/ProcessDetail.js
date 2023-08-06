@@ -15,7 +15,7 @@ const ProcessDetail = () => {
   //     console.log({member})
   //   </a>
   // ))}
-  console.log(ProcessDetail.links)
+  console.log(ProcessDetail)
   const handleCopyLink = (link) => {
     if (!link) return;
 
@@ -142,7 +142,21 @@ const Step = ({ step, index }) => {
       )}
       {expanded && (
         <div className={styles.expanded}>
-          <p>something</p>
+          <div>
+            <span>Public Member :</span><span> {step.stepPublicMembers.map((member, index) => {
+              return <span>{`${member.member}, `}</span>
+            })}</span>
+          </div>
+          <div>
+            <span>Team Member :</span><span> {step.stepTeamMembers.map((member, index) => {
+              return <span>{`${member.member}, `}</span>
+            })}</span>
+          </div>
+          <div>
+            <span>User Member :</span><span> {step.stepUserMembers.map((member, index) => {
+              return <span>{`${member.member}, `}</span>
+            })}</span>
+          </div>
         </div>
       )}
     </div>
