@@ -388,9 +388,22 @@ def check_items_state(items) -> list:
     ]
 
 
-def check_all_accessed_true(data) -> bool:
+def check_all_finalized_true(data) -> bool:
     for item in data:
         step_document_clone_map = item.get("stepDocumentCloneMap", [])
-        if not all(elem.get("accessed", False) for elem in step_document_clone_map):
+        doc_states = []
+        for doc in step_document_clone_map:
+            for key, value in doc.items():
+                if key != "accessed":
+                    doc_state = single_query_clones_collection({"_id": value}).get("document_state")
+                    if doc_state == "finalized":
+                        doc_states.append(True)
+                    elif doc_state == "processing":
+                        doc_states.append(False)
+                    else:
+                        doc_states.append(False)
+        if not all(doc_states):
+            print(doc_states)
             return False
+        print(doc_states)
     return True

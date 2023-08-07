@@ -638,13 +638,13 @@ def authorize(document_id, viewers, process_id, item_type):
     if item_type == "document":
         payload = json.dumps(
             {
-                **DOCUMENT_CONNECTION_DICT,
+                **CLONES_CONNECTION_DICT,
                 "command": "update",
                 "field": {
                     "_id": document_id,
                 },
                 "update_field": {
-                    "auth_viewers": viewers,
+                    "auth_viewers": [viewers],
                     "document_state": "processing",
                     "process_id": process_id,
                 },
@@ -660,7 +660,7 @@ def authorize(document_id, viewers, process_id, item_type):
                     "_id": document_id,
                 },
                 "update_field": {
-                    "auth_viewers": viewers,
+                    "auth_viewers": [viewers],
                     "document_state": "processing",
                     "process_id": process_id,
                 },

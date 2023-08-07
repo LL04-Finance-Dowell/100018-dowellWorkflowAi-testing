@@ -26,7 +26,7 @@ from app.helpers import (
     get_query_param_value_from_url,
     register_public_login,
     check_items_state,
-    check_all_accessed_true,
+    check_all_finalized_true,
 )
 from app.mongo_db_connection import (
     authorize,
@@ -495,9 +495,9 @@ class Background:
         document_id = self.item_id
         processing_state = self.process["processing_state"]
         created_by = self.process["created_by"]
-        Background.register_user_access(
-            self.process["process_steps"], self.role, self.username
-        )
+        # Background.register_user_access(
+        #     self.process["process_steps"], self.role, self.username
+        # )
 
         finalized = []
         try:
@@ -509,24 +509,22 @@ class Background:
                             for k, v in list(document_map.items()):
                                 if (
                                     isinstance(v, str)
-                                    and single_query_clones_collection({"_id": v}).get(
-                                        "document_state"
-                                    )
-                                    == "processing"
+                                    and single_query_clones_collection({"_id": v}).get("document_state") == "processing"
                                 ):
                                     continue
                                 elif (
                                     isinstance(v, str)
-                                    and single_query_clones_collection({"_id": v}).get(
-                                        "document_state"
-                                    )
-                                    == "finalized"
+                                    and single_query_clones_collection({"_id": v}).get("document_state") == "finalized"
+                                    and k in [mem["member"] for mem in (single_query_clones_collection({"_id": v}).get("auth_viewers", []))]
                                 ):
                                     register_single_user_access(
                                         step, step.get("stepRole"), k
                                     )
+                                    # print([mem["member"] for mem in single_query_clones_collection({"_id": v}).get("auth_viewers", [])])
                                     finalized.append(v)
-                                    print(finalized)
+                                    # print(finalized) # uncomment to check out the finalized array
+                                else:
+                                    continue
                     else:
                         if step.get("stepTaskType") == "request_for_task":
                             users = [
@@ -553,35 +551,41 @@ class Background:
                                 )
                                 if prev_docs:
                                     for item in prev_docs:
+                                        # print(f"item: {item}")
                                         key = next(iter(item))
                                         my_key = item[key]
-                                        if my_key != "accessed":
+                                        # print(f"my_key: {my_key}\n")
+                                        # # doc = single_query_clones_collection({"_id": my_key})
+                                        # # print(f"document: {doc}")
+                                        if ("accessed" in item
+                                            and single_query_clones_collection({"_id": my_key}).get("document_state") == "finalized"
+                                            ):
                                             step1_documents.append(my_key)
                                 for document in step1_documents:
                                     for user in step.get("stepTeamMembers"):
                                         authorize(
-                                            document, user, process_id, process_type
+                                            document, user, process_id, "document"
                                         )
                                         step.get("stepDocumentCloneMap").append(
                                             {user["member"]: document}
                                         )
                                     for user in step.get("stepPublicMembers"):
                                         authorize(
-                                            document, user, process_id, process_type
+                                            document, user, process_id, "document"
                                         )
                                         step.get("stepDocumentCloneMap").append(
                                             {user["member"]: document}
                                         )
                                     for user in step.get("stepUserMembers"):
                                         authorize(
-                                            document, user, process_id, process_type
+                                            document, user, process_id, "document"
                                         )
                                         step.get("stepDocumentCloneMap").append(
                                             {user["member"]: document}
                                         )
                         update_process(process_id, steps, processing_state)
                 # Check that all documents are finalized
-                all_accessed_true = check_all_accessed_true(steps)
+                all_accessed_true = check_all_finalized_true(steps)
                 print(all_accessed_true)
                 if all_accessed_true == True:
                     update_process(process_id, steps, "finalized")
