@@ -10,7 +10,13 @@ from git.repo import Repo
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from app import checks
+from app.checks import (
+    check_product_usage_credits,
+    is_finalized,
+    is_wf_setting_exist,
+    register_user_access,
+    check_document_credits_authorization,
+)
 
 from app.processing import Background, HandleProcess, Process
 from app.utils import notification_cron
@@ -276,7 +282,7 @@ def finalize_or_reject(request, process_id):
     user = request.data["authorized"]
     user_type = request.data["user_type"]
     state = request.data["action"]
-    check, current_state = checks.is_finalized(item_id, item_type)
+    check, current_state = is_finalized(item_id, item_type)
     if check and current_state != "processing":
         return Response(
             f"document already processed as `{current_state}`!", status.HTTP_200_OK
@@ -596,14 +602,20 @@ def create_document(request):
     if request.data["portfolio"]:
         portfolio = request.data["portfolio"]
     viewers = [{"member": request.data["created_by"], "portfolio": portfolio}]
+    organization_id = request.data["company_id"]
     folder = []
+    if not check_document_credits_authorization(organization_id):
+        return Response(
+            {"message": "You do not have enough credits to access this service."},
+            status.HTTP_401_UNAUTHORIZED,
+        )
     res = json.loads(
         save_to_document_collection(
             {
                 "document_name": "Untitled Document",
                 "content": request.data["content"],
                 "created_by": request.data["created_by"],
-                "company_id": request.data["company_id"],
+                "company_id": organization_id,
                 "page": request.data["page"],
                 "data_type": request.data["data_type"],
                 "document_state": "draft",
@@ -1038,8 +1050,11 @@ def create_template(request):
                 "function_ID": "ABCDE",
                 "command": "update",
                 "flag": "editing",
-                "name": "Untitled Template",
-                "update_field": {"template_name": "", "content": "", "page": ""},
+                "update_field": {
+                    "template_name": "Untitled Template",
+                    "content": "",
+                    "page": "",
+                },
             },
         }
         editor_link = requests.post(
@@ -1249,7 +1264,7 @@ def create_application_settings(request):
     company_id = request.data["company_id"]
     if not validate_id(company_id):
         return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
-    is_exists = checks.is_wf_setting_exist(
+    is_exists = is_wf_setting_exist(
         company_id, request.data["created_by"], request.data["data_type"]
     )
     if is_exists:
@@ -1341,7 +1356,7 @@ def read_reminder(request, process_id, username):
         for step in process_steps:
             for mem in step["stepTeamMembers"]:
                 if mem["member"] == username:
-                    if not checks.register_user_access(
+                    if not register_user_access(
                         process_steps=process_steps,
                         authorized_role=step["stepRole"],
                         user=username,
@@ -1601,3 +1616,10 @@ def get_templates_documents(request, company_id):
 
     # Return a JSON response containing the fetched templates/documents and HTTP status code 200 (OK)
     return Response({key: templates_documents}, status=status.HTTP_200_OK)
+
+
+@api_view(["GET"])
+def get_workspace_credits_information(request, company_id):
+    product_info = check_product_usage_credits(company_id)
+    if product_info:
+        return Response(product_info, status.HTTP_200_OK)

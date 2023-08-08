@@ -13,7 +13,6 @@ from app.serializers import (
 )
 
 from .mongo_db_connection import (
-    save_to_document_collection,
     save_to_clone_collection,
     save_to_process_collection,
     single_query_document_collection,
@@ -252,7 +251,11 @@ def access_editor(item_id, item_type):
             "_id": item_id,
             "field": field,
             "type": item_type,
-            "action": "document" if item_type == "document" else "clone" if item_type == "clone" else "template",
+            "action": "document"
+            if item_type == "document"
+            else "clone"
+            if item_type == "clone"
+            else "template",
             "flag": "editing",
             "name": name,
             "command": "update",
@@ -395,7 +398,9 @@ def check_all_finalized_true(data) -> bool:
         for doc in step_document_clone_map:
             for key, value in doc.items():
                 if key != "accessed":
-                    doc_state = single_query_clones_collection({"_id": value}).get("document_state")
+                    doc_state = single_query_clones_collection({"_id": value}).get(
+                        "document_state"
+                    )
                     if doc_state == "finalized":
                         doc_states.append(True)
                     elif doc_state == "processing":
