@@ -14,13 +14,15 @@ from app.mongo_db_connection import (
 
 def check_document_credits_authorization(organization_id):
     url = f"{CREDITS_API}/user/?type=get_api_key&workspace_id={organization_id}"
-    response = requests.get(url)
-    if response.status_code == 200:
+    res = requests.get(url)
+    if res.status_code == 200 and res.json()["success"] == True:
+        response = res.json()
         services = response["data"]["services"]
         for sv in services:
             if sv["name"] == WORKFLOW_AI:
                 for sub in sv["sub_service"]:
                     if sub["sub_service_name"] == "DOCUMENT":
+                        print(sub)
                         if (
                             sub["sub_service_credits"] >= 0
                             and sub["sub_service_credits"] != None
@@ -28,6 +30,24 @@ def check_document_credits_authorization(organization_id):
                             return True
     return
 
+
+def check_template_credits_authorization(organization_id):
+    url = f"{CREDITS_API}/user/?type=get_api_key&workspace_id={organization_id}"
+    res = requests.get(url)
+    if res.status_code == 200 and res.json()["success"] == True:
+        response = res.json()
+        services = response["data"]["services"]
+        for sv in services:
+            if sv["name"] == WORKFLOW_AI:
+                for sub in sv["sub_service"]:
+                    if sub["sub_service_name"] == "TEMPLATE":
+                        print(sub)
+                        if (
+                            sub["sub_service_credits"] >= 0
+                            and sub["sub_service_credits"] != None
+                        ):
+                            return True
+    return
 
 def check_credits_authorization(organization_id):
     """Finds the API key for a given workspace"""

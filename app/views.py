@@ -12,6 +12,7 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from app.checks import (
     check_product_usage_credits,
+    check_template_credits_authorization,
     is_finalized,
     is_wf_setting_exist,
     register_user_access,
@@ -606,7 +607,7 @@ def create_document(request):
     folder = []
     if not check_document_credits_authorization(organization_id):
         return Response(
-            {"message": "You do not have enough credits to access this service."},
+            {"message": "You do not have enough product credits to access this service."},
             status.HTTP_401_UNAUTHORIZED,
         )
     res = json.loads(
@@ -1020,6 +1021,12 @@ def create_template(request):
     if request.data["portfolio"]:
         portfolio = request.data["portfolio"]
     viewers = [{"member": request.data["created_by"], "portfolio": portfolio}]
+    organization_id = request.data["company_id"]
+    if not check_template_credits_authorization(organization_id):
+        return Response(
+            {"message": "You do not have enough credits to access this service."},
+            status.HTTP_401_UNAUTHORIZED,
+        )
     res = json.loads(
         save_to_template_collection(
             {
@@ -1028,7 +1035,7 @@ def create_template(request):
                 "page": page,
                 "folders": folder,
                 "created_by": request.data["created_by"],
-                "company_id": request.data["company_id"],
+                "company_id": organization_id,
                 "data_type": request.data["data_type"],
                 "template_type": "original",
                 "auth_viewers": viewers,
