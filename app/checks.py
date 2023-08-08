@@ -12,6 +12,42 @@ from app.mongo_db_connection import (
 )
 
 
+def check_workflow_credits_authorization(organization_id):
+    url = f"{CREDITS_API}/user/?type=get_api_key&workspace_id={organization_id}"
+    res = requests.get(url)
+    if res.status_code == 200 and res.json()["success"] == True:
+        response = res.json()
+        services = response["data"]["services"]
+        for sv in services:
+            if sv["name"] == WORKFLOW_AI:
+                for sub in sv["sub_service"]:
+                    if sub["sub_service_name"] == "PROCESS":
+                        print(sub)
+                        if (
+                            sub["sub_service_credits"] >= 0
+                            and sub["sub_service_credits"] != None
+                        ):
+                            return True
+    return
+
+def check_process_credits_authorization(organization_id):
+    url = f"{CREDITS_API}/user/?type=get_api_key&workspace_id={organization_id}"
+    res = requests.get(url)
+    if res.status_code == 200 and res.json()["success"] == True:
+        response = res.json()
+        services = response["data"]["services"]
+        for sv in services:
+            if sv["name"] == WORKFLOW_AI:
+                for sub in sv["sub_service"]:
+                    if sub["sub_service_name"] == "PROCESS":
+                        print(sub)
+                        if (
+                            sub["sub_service_credits"] >= 0
+                            and sub["sub_service_credits"] != None
+                        ):
+                            return True
+    return
+
 def check_document_credits_authorization(organization_id):
     url = f"{CREDITS_API}/user/?type=get_api_key&workspace_id={organization_id}"
     res = requests.get(url)

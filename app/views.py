@@ -11,8 +11,10 @@ from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from app.checks import (
+    check_process_credits_authorization,
     check_product_usage_credits,
     check_template_credits_authorization,
+    check_workflow_credits_authorization,
     is_finalized,
     is_wf_setting_exist,
     register_user_access,
@@ -101,11 +103,17 @@ def document_processing(request):
     """processing is determined by action picked by user."""
     if not request.data:
         return Response("You are missing something!", status.HTTP_400_BAD_REQUEST)
+    organization_id = request.data["company_id"]
+    if not check_process_credits_authorization(organization_id):
+        return Response(
+            {"message": "You do not have enough credits to access this service."},
+            status.HTTP_401_UNAUTHORIZED,
+        )
     process = Process(
         request.data["workflows"],
         request.data["created_by"],
         request.data["creator_portfolio"],
-        request.data["company_id"],
+        organization_id,
         request.data["process_type"],
         request.data["org_name"],
         request.data["workflows_ids"],
@@ -425,6 +433,12 @@ def create_workflow(request):
     form = request.data
     if not form:
         return Response("Workflow Data required", status.HTTP_400_BAD_REQUEST)
+    organization_id = form["company_id"]
+    if not check_workflow_credits_authorization(organization_id):
+        return Response(
+            {"message": "You do not have enough credits to access this service."},
+            status.HTTP_401_UNAUTHORIZED,
+        )
     data = {
         "workflow_title": form["wf_title"],
         "steps": form["steps"],
@@ -433,7 +447,7 @@ def create_workflow(request):
         save_to_workflow_collection(
             {
                 "workflows": data,
-                "company_id": form["company_id"],
+                "company_id": organization_id,
                 "created_by": form["created_by"],
                 "portfolio": form["portfolio"],
                 "data_type": form["data_type"],
@@ -607,7 +621,9 @@ def create_document(request):
     folder = []
     if not check_document_credits_authorization(organization_id):
         return Response(
-            {"message": "You do not have enough product credits to access this service."},
+            {
+                "message": "You do not have enough product credits to access this service."
+            },
             status.HTTP_401_UNAUTHORIZED,
         )
     res = json.loads(
