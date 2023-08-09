@@ -102,11 +102,7 @@ def check_product_usage_credits(organization_id):
     url = f"{CREDITS_API}/user/?type=get_api_key&workspace_id={organization_id}"
     res = requests.get(url)
     if res.status_code == 200 and res.json()["success"] == True:
-        response = res.json()
-        services = response["data"]["services"]
-        for sv in services:
-            if sv["name"] == WORKFLOW_AI:
-                return sv
+        return res.json()
     return res.json()["message"]
 
 
