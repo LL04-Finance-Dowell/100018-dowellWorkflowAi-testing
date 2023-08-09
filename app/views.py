@@ -104,11 +104,6 @@ def document_processing(request):
     if not request.data:
         return Response("You are missing something!", status.HTTP_400_BAD_REQUEST)
     organization_id = request.data["company_id"]
-    if not check_process_credits_authorization(organization_id):
-        return Response(
-            {"message": "You do not have enough credits to access this service."},
-            status.HTTP_401_UNAUTHORIZED,
-        )
     process = Process(
         request.data["workflows"],
         request.data["created_by"],
@@ -434,11 +429,6 @@ def create_workflow(request):
     if not form:
         return Response("Workflow Data required", status.HTTP_400_BAD_REQUEST)
     organization_id = form["company_id"]
-    if not check_workflow_credits_authorization(organization_id):
-        return Response(
-            {"message": "You do not have enough credits to access this service."},
-            status.HTTP_401_UNAUTHORIZED,
-        )
     data = {
         "workflow_title": form["wf_title"],
         "steps": form["steps"],
@@ -619,13 +609,6 @@ def create_document(request):
     viewers = [{"member": request.data["created_by"], "portfolio": portfolio}]
     organization_id = request.data["company_id"]
     folder = []
-    if not check_document_credits_authorization(organization_id):
-        return Response(
-            {
-                "message": "You do not have enough product credits to access this service."
-            },
-            status.HTTP_401_UNAUTHORIZED,
-        )
     res = json.loads(
         save_to_document_collection(
             {
@@ -1038,11 +1021,6 @@ def create_template(request):
         portfolio = request.data["portfolio"]
     viewers = [{"member": request.data["created_by"], "portfolio": portfolio}]
     organization_id = request.data["company_id"]
-    if not check_template_credits_authorization(organization_id):
-        return Response(
-            {"message": "You do not have enough credits to access this service."},
-            status.HTTP_401_UNAUTHORIZED,
-        )
     res = json.loads(
         save_to_template_collection(
             {
