@@ -1,6 +1,6 @@
-import { useEffect, Suspense, useRef } from 'react';
+import { useEffect, Suspense, useRef, useState } from 'react';
 import { Routes, Route } from 'react-router-dom';
-import { setIconColor } from './features/app/appSlice';
+import { setApiKeyFetchFailureMessage, setIconColor, setShowApiKeyFetchFailureModal } from './features/app/appSlice';
 import { auth_url } from './httpCommon/httpCommon';
 import { useDispatch, useSelector } from 'react-redux';
 import useDowellLogin from './hooks/useDowellLogin';
@@ -36,8 +36,7 @@ function App() {
   const { IconColor, ShowProfileSpinner, themeColor, creditResponse } = useSelector(
     (state) => state.app
   );
-  const company_id = userDetail?.portfolio_info?.length > 1 ? userDetail?.portfolio_info.find(portfolio => portfolio.product === productName)?.org_id : userDetail?.portfolio_info[0].org_id
-  console.log(company_id)
+  const [ companyId, setCompanyId ] = useState(null);
   const { isPublicUser, dataType } = useAppContext();
   const clientVerUrlRef = useRef('https://ll04-finance-dowell.github.io/workflowai.online/')
   const betaVerUrlRef = useRef('https://ll04-finance-dowell.github.io/100018-dowellWorkflowAi-testing/')
@@ -52,6 +51,18 @@ function App() {
 
     return () => clearInterval(interval);
   }, []);
+
+  useEffect(() => {
+
+    if (!userDetail) return
+
+    setCompanyId(
+      userDetail?.portfolio_info?.length > 1 ? 
+        userDetail?.portfolio_info.find(portfolio => portfolio.product === productName)?.org_id 
+        : 
+        userDetail?.portfolio_info[0].org_id
+    )
+  }, [userDetail])
   
   // // ! Comment the below useEffect to prevent redirection
   useEffect(() => {
@@ -70,9 +81,18 @@ function App() {
             //       `${betaVerUrlRef.current}#?session_id=${session_id}`
             //     )
             //   }
+
+    if (!companyId) return
+
     axios
-    .get(`https://100105.pythonanywhere.com/api/v3/user/?type=get_api_key&workspace_id=${company_id}`)
+    .get(`https://100105.pythonanywhere.com/api/v3/user/?type=get_api_key&workspace_id=${companyId}`)
     .then((response) => {
+      if (!response.data?.success) {
+        dispatch(setShowApiKeyFetchFailureModal(true));
+        dispatch(setApiKeyFetchFailureMessage(response.data?.message));
+        return
+      } 
+
       dispatch(setcreditResponse(response?.data?.data?.is_active))
       console.log(response?.data?.data?.is_active)
       dispatch(setcreditResponse(response?.data?.data?.total_credits))
@@ -89,7 +109,7 @@ function App() {
 
 
 
-  }, [dataType])
+  }, [dataType, companyId])
   // console.log('chk')
 
   function checkstatus() {

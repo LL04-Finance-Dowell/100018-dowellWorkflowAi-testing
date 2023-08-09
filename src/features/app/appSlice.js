@@ -99,6 +99,8 @@ const initialState = {
   allowErrorChecksStatusUpdateForNewProcess: false,
   newProcessErrorMessage: null,
   errorsCheckedInNewProcess: false,
+  showApiKeyFetchFailureModal: false,
+  apiKeyFetchFailureMessage: '',
 };
 
 export const appSlice = createSlice({
@@ -766,6 +768,12 @@ export const appSlice = createSlice({
     setErrorsCheckedInNewProcess: (state, action) => {
       state.errorsCheckedInNewProcess = action.payload;
     },
+    setShowApiKeyFetchFailureModal: (state, action) => {
+      state.showApiKeyFetchFailureModal = action.payload;
+    },
+    setApiKeyFetchFailureMessage: (state, action) => {
+      state.apiKeyFetchFailureMessage = action.payload;
+    },
   },
   extraReducers: (builder) => {
     //getItemsCount
@@ -864,6 +872,8 @@ export const {
   setAllowErrorChecksStatusUpdateForNewProcess,
   setNewProcessErrorMessage,
   setErrorsCheckedInNewProcess,
+  setApiKeyFetchFailureMessage,
+  setShowApiKeyFetchFailureModal,
 } = appSlice.actions;
 
 export default appSlice.reducer;

@@ -29,6 +29,7 @@ import DocumentCard from '../../components/hoverCard/documentCard/DocumentCard';
 import { useTranslation } from 'react-i18next';
 import { productName } from '../../utils/helpers';
 import { DocumentServices } from '../../services/documentServices';
+import ApiKeyFailureModal from '../../components/apiKeyFailureModal/ApiKeyFailureModal';
 
 const WorkflowApp = () => {
   const { userDetail } = useSelector((state) => state.auth);
@@ -38,6 +39,7 @@ const WorkflowApp = () => {
     notificationFinalStatus,
     notificationsLoaded,
     ShowProfileSpinner,
+    showApiKeyFetchFailureModal,
   } = useSelector((state) => state.app);
 
   // console.log('notification: ', notificationsForUser);
@@ -325,6 +327,28 @@ const WorkflowApp = () => {
           }}
         >
           <Spinner />
+        </div>
+      )}
+      {showApiKeyFetchFailureModal && (
+        <div
+          style={{
+            background: 'rgba(0, 0, 0, 0.12)',
+            backdropFilter: 'blur(5px)',
+            animation: 'fadeIn 0.2s ease-in-out',
+            zIndex: 99999,
+            overflow: 'hidden',
+            display: 'flex',
+            height: '100%',
+            width: '100%',
+            alignItems: 'center',
+            justifyContent: 'center',
+            color: '#000',
+            position: 'fixed',
+            top: '0%',
+            left: '0%',
+          }}
+        >
+          <ApiKeyFailureModal />
         </div>
       )}
       <div className={styles.container}>
