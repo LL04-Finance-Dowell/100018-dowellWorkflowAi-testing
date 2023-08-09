@@ -24,7 +24,7 @@ import WorkflowAiSettings from './components/workflowAiSettings/WorkflowAiSettin
 import VerificationPage from './pages/Verification/VerificationPage';
 import ProccessPage from './pages/Processes/AllProccessPage/ProcessesPage';
 import SearchPage from './pages/Search/SearchPage';
-
+import { productName } from './utils/helpers';
 import { useAppContext } from './contexts/AppContext';
 
 import axios from 'axios';
@@ -36,13 +36,15 @@ function App() {
   const { IconColor, ShowProfileSpinner, themeColor, creditResponse } = useSelector(
     (state) => state.app
   );
+  const company_id = userDetail?.portfolio_info?.length > 1 ? userDetail?.portfolio_info.find(portfolio => portfolio.product === productName)?.org_id : userDetail?.portfolio_info[0].org_id
+  console.log(company_id)
   const { isPublicUser, dataType } = useAppContext();
   const clientVerUrlRef = useRef('https://ll04-finance-dowell.github.io/workflowai.online/')
   const betaVerUrlRef = useRef('https://ll04-finance-dowell.github.io/100018-dowellWorkflowAi-testing/')
-
-
+  
+  
   useDowellLogin();
-
+  
   useEffect(() => {
     const interval = setInterval(() => {
       checkstatus();
@@ -50,26 +52,26 @@ function App() {
 
     return () => clearInterval(interval);
   }, []);
-
+  
   // // ! Comment the below useEffect to prevent redirection
   useEffect(() => {
     //   if (!session_id) return
-
+    
     //   if (window.location.pathname.includes('-testing')) {
-    //     if (dataType === 'Real_Data') window.location.replace(
-    //       id ?
-    //       `${clientVerUrlRef.current}#?session_id=${session_id}&id=${id}` :
-    //       `${clientVerUrlRef.current}#?session_id=${session_id}`
-    //       );
-    //   } else {
-    //     if (dataType !== 'Real_Data') window.location.replace(
-    //       id ?
-    //       `${betaVerUrlRef.current}#?session_id=${session_id}&id=${id}` :
-    //       `${betaVerUrlRef.current}#?session_id=${session_id}`
-    //     )
-    //   }
+      //     if (dataType === 'Real_Data') window.location.replace(
+        //       id ?
+        //       `${clientVerUrlRef.current}#?session_id=${session_id}&id=${id}` :
+        //       `${clientVerUrlRef.current}#?session_id=${session_id}`
+        //       );
+        //   } else {
+          //     if (dataType !== 'Real_Data') window.location.replace(
+            //       id ?
+            //       `${betaVerUrlRef.current}#?session_id=${session_id}&id=${id}` :
+            //       `${betaVerUrlRef.current}#?session_id=${session_id}`
+            //     )
+            //   }
     axios
-    .get(`https://100105.pythonanywhere.com/api/v3/user/?type=get_api_key&workspace_id=63a2b3fb2be81449d3a30d3f`)
+    .get(`https://100105.pythonanywhere.com/api/v3/user/?type=get_api_key&workspace_id=${company_id}`)
     .then((response) => {
       dispatch(setcreditResponse(response?.data?.data?.is_active))
       console.log(response?.data?.data?.is_active)
@@ -87,16 +89,6 @@ function App() {
 
 
 
-    axios
-      .get(`https://100105.pythonanywhere.com/api/v3/user/?type=get_api_key&workspace_id=63a2b3fb2be81449d3a30d3f`)
-      .then((response) => {
-        console.log(response)
-        dispatch(setcreditResponse(response))
-      })
-      .catch((error) => {
-
-        console.log(error)
-      });
   }, [dataType])
   // console.log('chk')
 
