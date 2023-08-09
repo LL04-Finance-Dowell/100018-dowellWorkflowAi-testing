@@ -30,6 +30,7 @@ def check_workflow_credits_authorization(organization_id):
                             return True
     return
 
+
 def check_process_credits_authorization(organization_id):
     url = f"{CREDITS_API}/user/?type=get_api_key&workspace_id={organization_id}"
     res = requests.get(url)
@@ -47,6 +48,7 @@ def check_process_credits_authorization(organization_id):
                         ):
                             return True
     return
+
 
 def check_document_credits_authorization(organization_id):
     url = f"{CREDITS_API}/user/?type=get_api_key&workspace_id={organization_id}"
@@ -85,6 +87,7 @@ def check_template_credits_authorization(organization_id):
                             return True
     return
 
+
 def check_credits_authorization(organization_id):
     """Finds the API key for a given workspace"""
     url = f"{CREDITS_API}/user/?type=get_api_key&workspace_id={organization_id}"
@@ -97,12 +100,14 @@ def check_credits_authorization(organization_id):
 def check_product_usage_credits(organization_id):
     """Checks if the given workspace has enough credits to access services"""
     url = f"{CREDITS_API}/user/?type=get_api_key&workspace_id={organization_id}"
-    response = requests.get(url)
-    if response.status_code == 200:
+    res = requests.get(url)
+    if res.status_code == 200 and res.json()["success"] == True:
+        response = res.json()
         services = response["data"]["services"]
         for sv in services:
             if sv["name"] == WORKFLOW_AI:
                 return sv
+    return res.json()["message"]
 
 
 def check_items_state(items) -> list:
