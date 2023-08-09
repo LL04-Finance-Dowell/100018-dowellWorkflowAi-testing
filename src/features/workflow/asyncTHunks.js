@@ -4,6 +4,7 @@ import { setCurrentWorkflow, setToggleManageFileForm } from '../app/appSlice';
 import { removeFromMinedWf, setAllWorkflows } from './workflowsSlice';
 // import { v4 as uuidv4 } from 'uuid';
 import { changeToTitleCase, productName } from '../../utils/helpers';
+import { toast } from 'react-toastify';
 
 const workflowServices = new WorkflowServices();
 
@@ -60,6 +61,8 @@ export const createWorkflow = createAsyncThunk(
       return res.data.workflow;
     } catch (error) {
       console.log(error);
+      toast.info('Workflow Creation Failed');
+
     }
   }
 );

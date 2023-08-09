@@ -6,6 +6,7 @@ import { useForm } from 'react-hook-form';
 import Select from '../../select/Select';
 import { AiOutlineClose } from 'react-icons/ai';
 import { useDispatch, useSelector } from 'react-redux';
+import axios from 'axios';
 import { toast } from 'react-toastify';
 import {
   newProcessActionOptions,
@@ -61,7 +62,8 @@ const ProcessDocument = ({ savedProcess, Process_title, setProcess_title }) => {
     publicMembersSelectedForProcess,
     allProcesses,
     errorsCheckedInNewProcess,
-    popupIsOpen
+    popupIsOpen,
+    creditResponse
   } = useSelector((state) => state.app);
 
   const [newProcessLoading, setNewProcessLoading] = useState(false);
@@ -176,40 +178,63 @@ const ProcessDocument = ({ savedProcess, Process_title, setProcess_title }) => {
         'Please click the "Show process" button above to make sure there are no errors before processing.'
       );
 
-    setNewProcessLoading(true);
+    
+      const Api_key = creditResponse?.data?.data?.api_key
+    axios
+      .post(
+        `https://100105.pythonanywhere.com/api/v3/process-services/?type=product_service&api_key=${Api_key}`,
+        {
+          "service_id": "DOWELL10026",
+          "sub_service_ids": ["DOWELL100264"],
+        },
+      )
+      .then(async (response) => {
+        console.log(response)
+        if (response.data.success == true) {
+          setNewProcessLoading(true);
 
-    try {
-      const response = await (await startNewProcessV2(processObjToPost)).data;
-      setNewProcessLoaded(true);
-      setNewProcessLoading(false);
-      if (
-        processActionOptionsWithLinkReturned.includes(
-          newProcessActionOptions[`${processOptionSelection}`]
-        )
-      ) {
-        setGeneratedLinks(Array.isArray(response) ? response[0] : response);
-        setmasterLink(Array.isArray(response) ? response.master_link : response)
-        setShowGeneratedLinksPopup(true);
-        setNewProcessLoaded(false);
-        return;
-      }
-      toast.success(
-        typeof response === 'string'
-          ? response
-          : 'Successfully created new process'
-      );
-      setNewProcessLoaded(false);
-    } catch (err) {
-      setNewProcessLoading(false);
-      dispatch(setPopupIsOpen(true));
-      toast.info(
-        err.response
-          ? err.response.status === 500
-            ? 'New process creation failed'
-            : err.response.data
-          : 'New process creation failed'
-      );
-    }
+          try {
+            const response = await(await startNewProcessV2(processObjToPost)).data;
+            setNewProcessLoaded(true);
+            setNewProcessLoading(false);
+            if (
+              processActionOptionsWithLinkReturned.includes(
+                newProcessActionOptions[`${processOptionSelection}`]
+              )
+            ) {
+              setGeneratedLinks(Array.isArray(response) ? response[0] : response);
+              setmasterLink(Array.isArray(response) ? response.master_link : response)
+              setShowGeneratedLinksPopup(true);
+              setNewProcessLoaded(false);
+              return;
+            }
+            toast.success(
+              typeof response === 'string'
+                ? response
+                : 'Successfully created new process'
+            );
+            setNewProcessLoaded(false);
+          } catch (err) {
+            setNewProcessLoading(false);
+
+            toast.info(
+              err.response
+                ? err.response.status === 500
+                  ? 'New process creation failed'
+                  : err.response.data
+                : 'New process creation failed'
+            );
+            dispatch(setPopupIsOpen(true));
+          }
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+        toast.info(error.response?.data?.message)
+
+      });
+
+
 
 
   };

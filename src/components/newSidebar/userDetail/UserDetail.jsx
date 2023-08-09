@@ -7,6 +7,9 @@ import { productName } from '../../../utils/helpers';
 
 const UserDetail = () => {
   const { userDetail } = useSelector((state) => state.auth);
+  const { creditResponse } = useSelector((state) => state.app);
+  console.log(creditResponse?.data?.data?.is_active)
+
   const { t } = useTranslation();
 
   return (
@@ -39,6 +42,14 @@ const UserDetail = () => {
         <span>
           <span className={styles.title}>{t('Organization Name')}:</span>{' '}
           {userDetail?.portfolio_info?.length > 1 ? userDetail?.portfolio_info.find(portfolio => portfolio.product === productName)?.org_name : userDetail.portfolio_info[0].org_name}
+        </span>
+        <span>
+          <span className={styles.title}>{t('Is Active')}:</span>{' '}
+          {creditResponse?.data?.data?.is_active}
+        </span>
+        <span>
+          <span className={styles.title}>{t('Total Credits')}:</span>{' '}
+          {creditResponse?.data?.data?.total_credits}
         </span>
       </div>
     </div>

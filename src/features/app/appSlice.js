@@ -66,7 +66,8 @@ const initialState = {
   proccess: [],
   IconColor: '',
   ProcessName:'',
-  currentMessage:'',                              
+  currentMessage:'',   
+  creditResponse:[],                           
   userDetailPosition: null,
   languageSelectPosition: null,
   teamsSelectedSelectedForProcess: [],
@@ -575,6 +576,9 @@ export const appSlice = createSlice({
     setCurrentMessage: (state, action) => {
       state.currentMessage = action.payload;
     },
+    setcreditResponse: (state, action) => {
+      state.creditResponse = action.payload;
+    },
     setTeamsSelectedSelectedForProcess: (state, action) => {
       state.teamsSelectedSelectedForProcess = [
         ...state.teamsSelectedSelectedForProcess,
@@ -805,6 +809,7 @@ export const {
   setNotificationsLoaded,
   setContinents,
   setCurrentMessage,
+  setcreditResponse,
   setPopupIsOpen,
   setContinentsLoaded,
   setThemeColor,

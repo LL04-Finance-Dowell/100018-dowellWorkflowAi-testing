@@ -3,6 +3,7 @@ import { TemplateServices } from '../../services/templateServices';
 import { setEditorLink } from '../app/appSlice';
 import { productName } from '../../utils/helpers';
 import { setAllTemplates } from './templateSlice';
+import { toast } from 'react-toastify';
 
 const filterTemplates = (templates, thunkAPI) => {
   let filteredTemplates = [];
@@ -54,7 +55,8 @@ export const createTemplate = createAsyncThunk(
 
       return res.data;
     } catch (error) {
-      console.log(error);
+      console.log(error.response.data.message);
+      toast.info('Template Creation Failed');
     }
   }
 );

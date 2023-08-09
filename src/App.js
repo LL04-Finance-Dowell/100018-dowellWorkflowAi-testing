@@ -19,7 +19,7 @@ import FolderPage from './pages/Folders/FolderPage';
 import ProcessDetail from './components/manageFiles/ProcessDetail/ProcessDetail';
 import SetWorkflowInDoc from './components/setWorkFlowInDoc/SetWorkflowInDoc';
 import SetWorkflowInDocNew from './components/setWorkFlowInDocNew/SetWorkflowInDoc';
-
+import { setcreditResponse } from './features/app/appSlice'
 import WorkflowAiSettings from './components/workflowAiSettings/WorkflowAiSettings';
 import VerificationPage from './pages/Verification/VerificationPage';
 import ProccessPage from './pages/Processes/AllProccessPage/ProcessesPage';
@@ -33,6 +33,9 @@ import axios from 'axios';
 function App() {
   const dispatch = useDispatch();
   const { session_id, userDetail, id } = useSelector((state) => state.auth);
+  const { IconColor, ShowProfileSpinner, themeColor, creditResponse } = useSelector(
+    (state) => state.app
+  );
   const { isPublicUser, dataType } = useAppContext();
   const clientVerUrlRef = useRef('https://ll04-finance-dowell.github.io/workflowai.online/')
   const betaVerUrlRef = useRef('https://ll04-finance-dowell.github.io/100018-dowellWorkflowAi-testing/')
@@ -48,25 +51,55 @@ function App() {
     return () => clearInterval(interval);
   }, []);
 
-  // ! Comment the below useEffect to prevent redirection
+  // // ! Comment the below useEffect to prevent redirection
   useEffect(() => {
-    if (!session_id) return
+    //   if (!session_id) return
 
-    if (window.location.pathname.includes('-testing')) {
-      if (dataType === 'Real_Data') window.location.replace(
-        id ?
-        `${clientVerUrlRef.current}#?session_id=${session_id}&id=${id}` :
-        `${clientVerUrlRef.current}#?session_id=${session_id}`
-        );
-    } else {
-      if (dataType !== 'Real_Data') window.location.replace(
-        id ?
-        `${betaVerUrlRef.current}#?session_id=${session_id}&id=${id}` :
-        `${betaVerUrlRef.current}#?session_id=${session_id}`
-      )
-    }
+    //   if (window.location.pathname.includes('-testing')) {
+    //     if (dataType === 'Real_Data') window.location.replace(
+    //       id ?
+    //       `${clientVerUrlRef.current}#?session_id=${session_id}&id=${id}` :
+    //       `${clientVerUrlRef.current}#?session_id=${session_id}`
+    //       );
+    //   } else {
+    //     if (dataType !== 'Real_Data') window.location.replace(
+    //       id ?
+    //       `${betaVerUrlRef.current}#?session_id=${session_id}&id=${id}` :
+    //       `${betaVerUrlRef.current}#?session_id=${session_id}`
+    //     )
+    //   }
+    axios
+    .get(`https://100105.pythonanywhere.com/api/v3/user/?type=get_api_key&workspace_id=63a2b3fb2be81449d3a30d3f`)
+    .then((response) => {
+      dispatch(setcreditResponse(response?.data?.data?.is_active))
+      console.log(response?.data?.data?.is_active)
+      dispatch(setcreditResponse(response?.data?.data?.total_credits))
+      console.log(response?.data?.data?.total_credits)
+      dispatch(setcreditResponse(response?.data?.data?.api_key))
+      console.log(response?.data?.data?.api_key)
+
+      // dispatch(setcreditResponse(response))
+    })
+    .catch((error) => {
+
+      console.log(error)
+    });
+
+
+
+    axios
+      .get(`https://100105.pythonanywhere.com/api/v3/user/?type=get_api_key&workspace_id=63a2b3fb2be81449d3a30d3f`)
+      .then((response) => {
+        console.log(response)
+        dispatch(setcreditResponse(response))
+      })
+      .catch((error) => {
+
+        console.log(error)
+      });
   }, [dataType])
-  
+  // console.log('chk')
+
   function checkstatus() {
     // AJAX GET request
 
@@ -102,6 +135,9 @@ function App() {
           // Empty catch block
         });
   }
+  // console.log(creditResponse.data.is_active)
+  // console.log(creditResponse.data.service_id)
+
   // USE ONLY WHEN APP IS BROKEN OR UNDERGOING MAJOR CHANGES
   // return (
   //   <Routes>

@@ -10,10 +10,13 @@ import { setToggleManageFileForm } from '../../../features/app/appSlice';
 import { useTranslation } from 'react-i18next';
 import { productName } from '../../../utils/helpers';
 import { useAppContext } from '../../../contexts/AppContext';
+import axios from 'axios';
+import { toast } from 'react-toastify';
 
 const New = () => {
   const { userDetail } = useSelector((state) => state.auth);
-  const { themeColor } = useSelector((state) => state.app);
+  const { themeColor,creditResponse } = useSelector((state) => state.app);
+  // console.log(creditResponse.data.data.api_key)
   const dispatch = useDispatch();
   const { t } = useTranslation();
 
@@ -32,25 +35,46 @@ const New = () => {
         company_id:
           userDetail?.portfolio_info?.length > 1
             ? userDetail?.portfolio_info.find(
-                (portfolio) => portfolio.product === productName
-              )?.org_id
+              (portfolio) => portfolio.product === productName
+            )?.org_id
             : userDetail?.portfolio_info[0].org_id,
         data_type:
           userDetail?.portfolio_info?.length > 1
             ? userDetail?.portfolio_info.find(
-                (portfolio) => portfolio.product === productName
-              )?.data_type
+              (portfolio) => portfolio.product === productName
+            )?.data_type
             : userDetail?.portfolio_info[0].data_type,
-        portfolio: 
+        portfolio:
           userDetail?.portfolio_info?.length > 1
             ? userDetail?.portfolio_info.find(
-                (portfolio) => portfolio.product === productName
-              )?.portfolio_name
+              (portfolio) => portfolio.product === productName
+            )?.portfolio_name
             : userDetail?.portfolio_info[0].portfolio_name,
       };
+      const Api_key = creditResponse?.data?.data?.api_key
+      axios
+        .post(
+          `https://100105.pythonanywhere.com/api/v3/process-services/?type=product_service&api_key=${Api_key}`,
+          {
+            "service_id": "DOWELL10026",
+            "sub_service_ids": ["DOWELL100262"],
+          },
+        )
+        .then((response) => {
+          console.log(response)
+          if (response.data.success == true) {
 
-      dispatch(createTemplate(data));
-    } else {
+            dispatch(createTemplate(data));
+          }
+        })
+        .catch((error) => {
+          console.log(error.response?.data?.message);
+          toast.info(error.response?.data?.message)
+
+        });
+
+    }
+    else {
       dispatch(setToggleManageFileForm(true));
     }
   };

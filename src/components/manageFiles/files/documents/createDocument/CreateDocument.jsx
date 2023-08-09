@@ -13,10 +13,12 @@ import { setToggleManageFileForm } from '../../../../../features/app/appSlice';
 import Spinner from '../../../../spinner/Spinner';
 import { useTranslation } from 'react-i18next';
 import { productName } from '../../../../../utils/helpers';
+import axios from 'axios';
+import { toast } from 'react-toastify';
 
 const CreateDocument = ({ handleToggleOverlay }) => {
   const { userDetail } = useSelector((state) => state.auth);
-
+  const {creditResponse } = useSelector((state) => state.app);
   const dispatch = useDispatch();
   const { t } = useTranslation();
 
@@ -48,8 +50,29 @@ const CreateDocument = ({ handleToggleOverlay }) => {
       content: foundTemplateObj?.content,
       portfolio: userDetail?.portfolio_info?.length > 1 ? userDetail?.portfolio_info.find((portfolio) => portfolio.product === productName)?.portfolio_name : userDetail?.portfolio_info[0].portfolio_name,
     };
+    const Api_key = creditResponse?.data?.data?.api_key
+    axios
+    .post(
+      `https://100105.pythonanywhere.com/api/v3/process-services/?type=product_service&api_key=${Api_key}`,
+      {
+        "service_id": "DOWELL10026",
+        "sub_service_ids": ["DOWELL100261"],
+      },
+    )
+    .then((response) => {
+      console.log(response)
+      if (response.data.success == true) {
 
-    dispatch(createDocument(createDocumentData));
+        dispatch(createDocument(createDocumentData));
+      }
+    })
+    .catch((error) => {
+      console.log(error);
+      toast.info(error.response?.data?.message)
+
+    });
+
+    
   };
 
   const handleDropdown = () => {

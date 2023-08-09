@@ -16,7 +16,7 @@ import SubmitButton from '../../../../submitButton/SubmitButton';
 import { setToggleManageFileForm } from '../../../../../features/app/appSlice';
 import Spinner from '../../../../spinner/Spinner';
 import { TiTick } from 'react-icons/ti';
-
+import axios from 'axios';
 import StepTable from './stepTable/StepTable';
 import { useTranslation } from 'react-i18next';
 import { productName } from '../../../../../utils/helpers';
@@ -28,6 +28,7 @@ const CreateWorkflows = ({ handleToggleOverlay }) => {
 
   const stepNameRef = useRef(null);
   const { userDetail } = useSelector((state) => state.auth);
+  const { creditResponse } = useSelector((state) => state.app);
 
   const dispatch = useDispatch();
   const { status, workflowDetailStatus, updateWorkflowStatus } = useSelector(
@@ -152,8 +153,29 @@ const CreateWorkflows = ({ handleToggleOverlay }) => {
               )?.portfolio_name
             : userDetail?.portfolio_info[0]?.portfolio_name,
       };
+      const Api_key = creditResponse?.data?.data?.api_key
+      axios
+      .post(
+        `https://100105.pythonanywhere.com/api/v3/process-services/?type=product_service&api_key=${Api_key}`,
+        {
+          "service_id": "DOWELL10026",
+          "sub_service_ids": ["DOWELL100263"],
+        },
+      )
+      .then((response) => {
+        console.log(response)
+        if (response.data.success == true) {
 
-      dispatch(createWorkflow({ data, notify, handleAfterCreated }));
+          dispatch(createWorkflow({ data, notify, handleAfterCreated }));
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+        toast.info(error.response?.data?.message)
+
+      });
+
+     
     }
   };
 

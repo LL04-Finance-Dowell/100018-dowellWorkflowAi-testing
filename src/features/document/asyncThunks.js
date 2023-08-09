@@ -3,6 +3,7 @@ import { DocumentServices } from '../../services/documentServices';
 import { setEditorLink, setShowProfileSpinner } from '../app/appSlice';
 import { productName } from '../../utils/helpers';
 import { setAllDocuments } from './documentSlice';
+import { toast } from 'react-toastify';
 
 const filterDocuments = (documents, thunkAPI) => {
   let filteredDocuments = [];
@@ -63,7 +64,9 @@ export const createDocument = createAsyncThunk(
 
       return res.data;
     } catch (error) {
-      console.log(error);
+      console.log(error.response.data.message);
+      toast.info('Document Creation Failed');
+
     }
   }
 );

@@ -111,9 +111,10 @@ const Sidebar = () => {
     },
   ]);
   const { userDetail, session_id } = useSelector((state) => state.auth);
-  const { IconColor, ShowProfileSpinner, themeColor } = useSelector(
+  const { IconColor, ShowProfileSpinner, themeColor, creditResponse } = useSelector(
     (state) => state.app
   );
+  // console.log(creditResponse && creditResponse.data)
   const navigate = useNavigate();
   useCloseElementOnEscapekeyClick(() =>
     dispatch(setLegalAgreePageLoading(false))
@@ -223,6 +224,8 @@ const Sidebar = () => {
   //       // Handle any errors
   //     });
   // }, []);
+  // console.log(creditResponse.data.is_active)
+  // console.log(creditResponse.data.service_id)
 
   return (
     <div className={styles.container}>
@@ -295,15 +298,15 @@ const Sidebar = () => {
         <h2 className={styles.organization__text} style={{ color: themeColor }}>
           {userDetail?.portfolio_info?.length > 1
             ? userDetail?.portfolio_info?.find(
+              (portfolio) => portfolio.product === productName
+            )?.org_name
+              ? userDetail?.portfolio_info?.find(
                 (portfolio) => portfolio.product === productName
               )?.org_name
-              ? userDetail?.portfolio_info?.find(
-                  (portfolio) => portfolio.product === productName
-                )?.org_name
               : 'My Organization'
             : userDetail.portfolio_info[0].org_name
-            ? userDetail.portfolio_info[0].org_name
-            : 'My Organization'}
+              ? userDetail.portfolio_info[0].org_name
+              : 'My Organization'}
         </h2>
         {userDetail?.userinfo?.org_img ? (
           <img alt='' src={userDetail?.userinfo?.org_img} />
