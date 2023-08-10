@@ -51,7 +51,7 @@ const New = () => {
             )?.portfolio_name
             : userDetail?.portfolio_info[0].portfolio_name,
       };
-      const Api_key = creditResponse?.data?.data?.api_key
+      const Api_key = creditResponse?.api_key
       axios
         .post(
           `https://100105.pythonanywhere.com/api/v3/process-services/?type=product_service&api_key=${Api_key}`,

@@ -179,7 +179,7 @@ const ProcessDocument = ({ savedProcess, Process_title, setProcess_title }) => {
       );
 
     
-      const Api_key = creditResponse?.data?.data?.api_key
+      const Api_key = creditResponse?.api_key
     axios
       .post(
         `https://100105.pythonanywhere.com/api/v3/process-services/?type=product_service&api_key=${Api_key}`,

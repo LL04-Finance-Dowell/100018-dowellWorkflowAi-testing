@@ -93,12 +93,14 @@ function App() {
         return
       } 
 
-      dispatch(setcreditResponse(response?.data?.data?.is_active))
-      console.log(response?.data?.data?.is_active)
-      dispatch(setcreditResponse(response?.data?.data?.total_credits))
-      console.log(response?.data?.data?.total_credits)
-      dispatch(setcreditResponse(response?.data?.data?.api_key))
-      console.log(response?.data?.data?.api_key)
+      dispatch(setcreditResponse({
+        is_active: response?.data?.data?.is_active,
+        total_credits: response?.data?.data?.total_credits,
+        api_key: response?.data?.data?.api_key
+      }))
+      // console.log(response?.data?.data?.is_active)
+      // console.log(response?.data?.data?.total_credits)
+      // console.log(response?.data?.data?.api_key)
 
       // dispatch(setcreditResponse(response))
     })
