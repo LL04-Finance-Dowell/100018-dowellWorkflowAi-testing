@@ -74,11 +74,11 @@ function App() {
     .get(`https://100105.pythonanywhere.com/api/v3/user/?type=get_api_key&workspace_id=${company_id}`)
     .then((response) => {
       dispatch(setcreditResponse(response?.data?.data?.is_active))
-      console.log(response?.data?.data?.is_active)
+      // console.log(response?.data?.data?.is_active)
       dispatch(setcreditResponse(response?.data?.data?.total_credits))
-      console.log(response?.data?.data?.total_credits)
+      // console.log(response?.data?.data?.total_credits)
       dispatch(setcreditResponse(response?.data?.data?.api_key))
-      console.log(response?.data?.data?.api_key)
+      // console.log(response?.data?.data?.api_key)
 
       // dispatch(setcreditResponse(response))
     })
