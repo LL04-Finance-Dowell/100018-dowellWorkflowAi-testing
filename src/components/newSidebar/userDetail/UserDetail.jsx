@@ -45,11 +45,11 @@ const UserDetail = () => {
         </span>
         <span>
           <span className={styles.title}>{t('Is Active')}:</span>{' '}
-          {creditResponse?.data?.data?.is_active}
+          {creditResponse?.is_active}
         </span>
         <span>
           <span className={styles.title}>{t('Total Credits')}:</span>{' '}
-          {creditResponse?.data?.data?.total_credits}
+          {creditResponse?.total_credits}
         </span>
       </div>
     </div>
