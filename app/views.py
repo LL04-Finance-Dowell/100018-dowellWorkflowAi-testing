@@ -1050,6 +1050,7 @@ def create_template(request):
                 "team_member_ID": "22689044433",
                 "function_ID": "ABCDE",
                 "command": "update",
+                "name": "Untitled Template",
                 "flag": "editing",
                 "update_field": {
                     "template_name": "Untitled Template",
