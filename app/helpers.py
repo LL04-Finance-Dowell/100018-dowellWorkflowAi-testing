@@ -34,7 +34,7 @@ def register_finalized(link_id):
 
 
 def get_query_param_value_from_url(url, query_param):
-    # Parse the URL to get the query parameters
+    """Parse the URL to get the query parameters"""
     parsed_url = urlparse(url)
     query_params = parse_qs(parsed_url.query)
     value = query_params.get(query_param, [None])[0]
@@ -408,7 +408,5 @@ def check_all_finalized_true(data) -> bool:
                     else:
                         doc_states.append(False)
         if not all(doc_states):
-            print(doc_states)
             return False
-        print(doc_states)
     return True
