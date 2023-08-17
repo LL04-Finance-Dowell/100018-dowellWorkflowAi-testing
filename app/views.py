@@ -584,11 +584,10 @@ def get_documents_types(request, company_id):
     doc_type = request.query_params.get("doc_type")
     if not validate_id(company_id) or data_type is None or doc_type is None:
         return Response("Invalid Request!", status.HTTP_400_BAD_REQUEST)
-    document_list = bulk_query_document_collection(
+    documents = bulk_query_document_collection(
         {"company_id": company_id, "data_type": data_type, "document_type": doc_type}
     )
-    # page = int(request.GET.get("page", 1))
-    # document_list = paginate(document_list, page, 50)
+    document_list = [{"_id": item["_id"], "document_name": item["document_name"]} for item in documents]
     return Response(
         {"documents": document_list},
         status.HTTP_200_OK,
