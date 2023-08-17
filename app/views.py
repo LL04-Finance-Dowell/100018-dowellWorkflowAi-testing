@@ -946,8 +946,6 @@ def all_favourites(request, company_id):
     if not validate_id(company_id):
         return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
     data = list_favourites(company_id)
-    page = int(request.GET.get("page", 1))
-    data = paginate(data, page, 50)
     return Response(data, status.HTTP_200_OK)
 
 
