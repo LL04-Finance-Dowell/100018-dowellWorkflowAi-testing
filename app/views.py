@@ -520,7 +520,7 @@ def get_documents_in_organization(request, company_id):
             "document_state": document_state,
         }
     )
-    document_list = [{"_id": item["_id"], "document_name": item["document_name"]} for item in documents]
+    document_list = [{"_id": item["_id"], "document_name": item["document_name"], "created_by": item["created_by"] } for item in documents]
     return Response({"documents": document_list}, status=status.HTTP_200_OK)
 
 
