@@ -229,8 +229,6 @@ class ApproveTestCase(TestCase):
             mock_validate_id.return_value = True
             mock_update_template_approval.return_value = '{"isSuccess": true}'
             response = approve(request, template_id)
-            print(f"here is rhe tesdjwdw {response}")
-
             self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data, "Template Approved")
 

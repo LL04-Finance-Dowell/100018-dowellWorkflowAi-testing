@@ -314,7 +314,6 @@ def get_clone_list(company_id, data_type):
         "fetch",
         {"company_id": str(company_id), "data_type": data_type},
     )
-    # print(clones)
     return clones
 
 
@@ -733,7 +732,6 @@ def finalize_item(item_id, state, item_type):
         )
 
     if payload is not None:
-        # print(payload)
         return post_to_data_service(payload)
     return
 

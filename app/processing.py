@@ -188,8 +188,6 @@ class HandleProcess:
             ),
             {"Content-Type": "application/json"},
         )
-        if response.status_code == 201:
-            print("notification sent")
         return
 
     def user_team_public_data(process_data, auth_name, step_role, portfolio, user_type):
@@ -277,9 +275,7 @@ class HandleProcess:
             QRCODE_URL, data=payload, headers={"Content-Type": "application/json"}
         )
         if response.status_code == 201:
-            print("success")
             response = json.loads(response.text)
-            print(f"response: {response}")
             master_link = response["qrcodes"][0]["masterlink"]
             master_qrcode = response["qrcodes"][0]["qrcode_image_url"]
         return master_link, master_qrcode
@@ -374,7 +370,6 @@ class HandleProcess:
     def verify_location(self, auth_role, location_data):
         for step in self.process["process_steps"]:
             if step.get("stepRole") == auth_role:
-                print(step.get("stepLocation"))
                 if step.get("stepLocation"):
                     return location_right(
                         step.get("stepLocation"),

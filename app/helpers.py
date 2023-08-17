@@ -29,7 +29,6 @@ def register_finalized(link_id):
         data=json.dumps({"is_finalized": True}),
         headers={"Content-Type": "application/json"},
     )
-    print(response.status_code)
     return
 
 
@@ -79,12 +78,10 @@ def has_tilde_characters(string):
 
 def cloning_document(document_id, auth_viewers, parent_id, process_id):
     """creating a document copy"""
-    print("auth_viewers", auth_viewers)
     try:
         viewers = []
         for m in auth_viewers:
             viewers.append(m["member"])
-
         document = single_query_document_collection({"_id": document_id})
         for viewer in viewers:
             doc_name = document["document_name"]
@@ -122,12 +119,10 @@ def cloning_document(document_id, auth_viewers, parent_id, process_id):
 
 def cloning_clone(clone_id, auth_viewers, parent_id, process_id):
     """creating a document copy"""
-    print("auth_viewers", auth_viewers)
     try:
         viewers = []
         for m in auth_viewers:
             viewers.append(m["member"])
-
         document = single_query_clones_collection({"_id": clone_id})
         for viewer in viewers:
             doc_name = document["document_name"]

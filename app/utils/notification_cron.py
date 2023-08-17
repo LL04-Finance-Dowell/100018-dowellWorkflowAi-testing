@@ -14,7 +14,6 @@ def send_notification(data):
             json=data,
             headers={"Content-Type": "application/json"},
         )
-        print(data)
         response.raise_for_status()
     except Exception as err:
         print(err)
@@ -31,8 +30,5 @@ if __name__ == "__main__":
     if len(args) > 0:
         # Parse the JSON argument
         data = json.loads(args[0])
-        print(data)
-
         # Call the send_notification function with the parsed data
         send_notification(data)
-        print(data)

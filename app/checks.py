@@ -22,7 +22,6 @@ def check_workflow_credits_authorization(organization_id):
             if sv["name"] == WORKFLOW_AI:
                 for sub in sv["sub_service"]:
                     if sub["sub_service_name"] == "PROCESS":
-                        print(sub)
                         if (
                             sub["sub_service_credits"] >= 0
                             and sub["sub_service_credits"] != None
@@ -41,7 +40,6 @@ def check_process_credits_authorization(organization_id):
             if sv["name"] == WORKFLOW_AI:
                 for sub in sv["sub_service"]:
                     if sub["sub_service_name"] == "PROCESS":
-                        print(sub)
                         if (
                             sub["sub_service_credits"] >= 0
                             and sub["sub_service_credits"] != None
@@ -60,7 +58,6 @@ def check_document_credits_authorization(organization_id):
             if sv["name"] == WORKFLOW_AI:
                 for sub in sv["sub_service"]:
                     if sub["sub_service_name"] == "DOCUMENT":
-                        print(sub)
                         if (
                             sub["sub_service_credits"] >= 0
                             and sub["sub_service_credits"] != None
@@ -79,7 +76,6 @@ def check_template_credits_authorization(organization_id):
             if sv["name"] == WORKFLOW_AI:
                 for sub in sv["sub_service"]:
                     if sub["sub_service_name"] == "TEMPLATE":
-                        print(sub)
                         if (
                             sub["sub_service_credits"] >= 0
                             and sub["sub_service_credits"] != None
@@ -189,12 +185,10 @@ def location_right(
 ):
     """Check the location selection - verify matching geo information."""
     if location == "any":
-        # print("location", location)
         return True
     if location == "select":
         if continent == my_continent and country == my_country and city == my_city:
             return True
-    # print(location)
     return True
 
 
