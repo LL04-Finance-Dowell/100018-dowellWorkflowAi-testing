@@ -510,11 +510,9 @@ def get_documents_in_organization(request, company_id):
     data_type = request.query_params.get("data_type")
     document_type = request.query_params.get("document_type")
     document_state = request.query_params.get("document_state")
-
     if not validate_id(company_id) or not data_type:
         return Response("Invalid Request!", status=status.HTTP_400_BAD_REQUEST)
-
-    document_list = bulk_query_document_collection(
+    documents = bulk_query_document_collection(
         {
             "company_id": company_id,
             "data_type": data_type,
@@ -522,6 +520,7 @@ def get_documents_in_organization(request, company_id):
             "document_state": document_state,
         }
     )
+    document_list = [{"_id": item["_id"], "document_name": item["document_name"]} for item in documents]
     return Response({"documents": document_list}, status=status.HTTP_200_OK)
 
 
@@ -543,7 +542,6 @@ def get_clones_in_organization(request, company_id):
             }
         )
         cache.set(cache_key, clones_list, timeout=60)
-
     return Response(
         {"clones": clones_list},
         status.HTTP_200_OK,
@@ -1251,7 +1249,8 @@ def get_completed_documents_by_process(request, company_id, process_id):
         {"company_id": company_id, "data_type": data_type, "process_id": process_id}
     )
     page = int(request.GET.get("page", 1))
-    document_list = paginate(document_list, page, 50)
+    documents = paginate(document_list, page, 50)
+    document_list = [{"_id": item["_id"], "document_name": item["document_name"]} for item in documents]
     return Response(
         {f"document_list of process: {process_id}": document_list},
         status=status.HTTP_200_OK,
@@ -1546,8 +1545,9 @@ def dowell_centre_template(request, company_id):
     )
     page = int(request.GET.get("page", 1))
     templates = paginate(templates, page, 50)
+    template_list = [{"_id": item["_id"], "template_name": item["template_name"]} for item in templates]
     return Response(
-        {"templates": templates},
+        {"templates": template_list},
         status=status.HTTP_200_OK,
     )
 
@@ -1567,7 +1567,8 @@ def dowell_centre_documents(request, company_id):
         cache.set(cache_key, document_list, timeout=60)
 
     page = int(request.GET.get("page", 1))
-    document_list = paginate(document_list, page, 50)
+    documents = paginate(document_list, page, 50)
+    document_list = [{"_id": item["_id"], "document_name": item["document_name"]} for item in documents]
     return Response(
         {"documents": document_list},
         status.HTTP_200_OK,
