@@ -584,7 +584,10 @@ def get_documents_types(request, company_id):
     documents = bulk_query_document_collection(
         {"company_id": company_id, "data_type": data_type, "document_type": doc_type}
     )
-    document_list = [{"_id": item["_id"], "document_name": item["document_name"]} for item in documents]
+    document_list = [
+        {"_id": item["_id"], "document_name": item["document_name"]}
+        for item in documents
+    ]
     return Response(
         {"documents": document_list},
         status.HTTP_200_OK,
@@ -971,10 +974,22 @@ def get_templates(request, company_id):
     templates = bulk_query_template_collection(
         {"company_id": company_id, "data_type": data_type}
     )
-    # page = int(request.GET.get("page", 1))
-    # templates = paginate(templates, page, 50)
+    templates_list = [
+        {
+            "folders": item["folders"],
+            "company_id": item["company_id"],
+            "data_type": item["data_type"],
+            "template_type": "original",
+            "auth_viewers": item["auth_viewers"],
+            "_id": item["_id"],
+            "document_name": item["document_name"],
+            "created_by": item["created_by"],
+            "template_state": item["template_state"],
+        }
+        for item in templates
+    ]
     return Response(
-        {"templates": templates},
+        {"templates": templates_list},
         status.HTTP_200_OK,
     )
 
@@ -1247,7 +1262,10 @@ def get_completed_documents_by_process(request, company_id, process_id):
     )
     page = int(request.GET.get("page", 1))
     documents = paginate(document_list, page, 50)
-    document_list = [{"_id": item["_id"], "document_name": item["document_name"]} for item in documents]
+    document_list = [
+        {"_id": item["_id"], "document_name": item["document_name"]}
+        for item in documents
+    ]
     return Response(
         {f"document_list of process: {process_id}": document_list},
         status=status.HTTP_200_OK,
@@ -1542,7 +1560,10 @@ def dowell_centre_template(request, company_id):
     )
     page = int(request.GET.get("page", 1))
     templates = paginate(templates, page, 50)
-    template_list = [{"_id": item["_id"], "template_name": item["template_name"]} for item in templates]
+    template_list = [
+        {"_id": item["_id"], "template_name": item["template_name"]}
+        for item in templates
+    ]
     return Response(
         {"templates": template_list},
         status=status.HTTP_200_OK,
@@ -1565,7 +1586,10 @@ def dowell_centre_documents(request, company_id):
 
     page = int(request.GET.get("page", 1))
     documents = paginate(document_list, page, 50)
-    document_list = [{"_id": item["_id"], "document_name": item["document_name"]} for item in documents]
+    document_list = [
+        {"_id": item["_id"], "document_name": item["document_name"]}
+        for item in documents
+    ]
     return Response(
         {"documents": document_list},
         status.HTTP_200_OK,

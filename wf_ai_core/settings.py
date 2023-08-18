@@ -150,3 +150,26 @@ CACHES = {
         "LOCATION": "unique-snowflake",
     }
 }
+<<<<<<< HEAD
+=======
+
+LOGGING = {
+    'version': 1,
+    # The version number of our log
+    'disable_existing_loggers': False,
+    'handlers': {
+        'file': {
+            'level': 'WARNING',
+            'class': 'logging.FileHandler',
+            'filename': BASE_DIR / 'warning.log',
+        },
+    },
+    'loggers': {
+        '': {
+            'handlers': ['file'],
+            'level': 'WARNING',
+            'propagate': True,
+        },
+    },
+}
+>>>>>>> 19a2b0c87dff39f4b96d0e455406d3b252e6edae
