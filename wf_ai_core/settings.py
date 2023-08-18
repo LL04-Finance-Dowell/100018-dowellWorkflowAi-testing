@@ -24,7 +24,13 @@ SECRET_KEY = "django-insecure-)_w-=ulkg8#7(q1^b&2+!+n%+b)8v$%wfq_mm6a+t!k7g9c$tk
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["localhost", "74.50.67.58", "workflowai.uxlivinglab.online"]
+ALLOWED_HOSTS = [
+    "localhost",
+    "74.50.67.58",
+    "workflowai.uxlivinglab.online",
+    "127.0.0.1",
+    "100094.pythonanywhere.com",
+]
 
 # Application definition
 
@@ -152,21 +158,21 @@ CACHES = {
 }
 
 LOGGING = {
-    'version': 1,
+    "version": 1,
     # The version number of our log
-    'disable_existing_loggers': False,
-    'handlers': {
-        'file': {
-            'level': 'WARNING',
-            'class': 'logging.FileHandler',
-            'filename': BASE_DIR / 'warning.log',
+    "disable_existing_loggers": False,
+    "handlers": {
+        "file": {
+            "level": "WARNING",
+            "class": "logging.FileHandler",
+            "filename": BASE_DIR / "warning.log",
         },
     },
-    'loggers': {
-        '': {
-            'handlers': ['file'],
-            'level': 'WARNING',
-            'propagate': True,
+    "loggers": {
+        "": {
+            "handlers": ["file"],
+            "level": "WARNING",
+            "propagate": True,
         },
     },
 }
