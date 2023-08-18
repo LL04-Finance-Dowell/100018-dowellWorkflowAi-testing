@@ -979,12 +979,11 @@ def get_templates(request, company_id):
             "folders": item["folders"],
             "company_id": item["company_id"],
             "data_type": item["data_type"],
-            "template_type": "original",
             "auth_viewers": item["auth_viewers"],
             "_id": item["_id"],
-            "document_name": item["document_name"],
+            "template_type": item["template_type"],
+            "template_name": item["template_name"],
             "created_by": item["created_by"],
-            "template_state": item["template_state"],
         }
         for item in templates
     ]
