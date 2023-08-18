@@ -150,8 +150,6 @@ CACHES = {
         "LOCATION": "unique-snowflake",
     }
 }
-<<<<<<< HEAD
-=======
 
 LOGGING = {
     'version': 1,
@@ -172,4 +170,3 @@ LOGGING = {
         },
     },
 }
->>>>>>> 19a2b0c87dff39f4b96d0e455406d3b252e6edae
