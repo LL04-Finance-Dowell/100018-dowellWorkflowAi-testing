@@ -81,6 +81,24 @@ DOCUMENT_CONNECTION_DICT = {
     "team_member_ID": "11689044433",
     "function_ID": "ABCDE",
 }
+DOCUMENT_METADATA_CONNECTION_LIST = [
+    "Documents",
+    "bangalore",
+    "Documentation",
+    "DocumentMetaData",
+    "DocumentMetaData",
+    "1222001",
+    "ABCDE",
+]
+DOCUMENT_METADATA_CONNECTION_DICT = {
+    "cluster": "Documents",
+    "database": "Documentation",
+    "collection": "DocumentMetaData",
+    "document": "DocumentMetaData",
+    "team_member_ID": "1222001",
+    "function_ID": "ABCDE",
+}
+
 CLONES_CONNECTION_LIST = [
     "Documents",
     "bangalore",

@@ -10,6 +10,8 @@ from app.constants import (
     FOLDER_CONNECTION_LIST,
     DOCUMENT_CONNECTION_DICT,
     DOCUMENT_CONNECTION_LIST,
+    DOCUMENT_METADATA_CONNECTION_DICT,
+    DOCUMENT_METADATA_CONNECTION_LIST,
     CLONES_CONNECTION_DICT,
     CLONES_CONNECTION_LIST,
     DOWELLCONNECTION_URL,
@@ -94,10 +96,22 @@ def bulk_query_document_collection(options):
     )
     return documents
 
+def bulk_query_document_metadata_collection(options):
+    documents = get_data_from_data_service(
+        *DOCUMENT_METADATA_CONNECTION_LIST, "fetch", field=options
+    )
+    return documents
+
 
 def single_query_document_collection(options):
     documents = get_data_from_data_service(
         *DOCUMENT_CONNECTION_LIST, "find", field=options
+    )
+    return documents
+
+def single_query_document_metadata_collection(options):
+    documents = get_data_from_data_service(
+        *DOCUMENT_METADATA_CONNECTION_LIST, "find", field=options
     )
     return documents
 
@@ -222,6 +236,7 @@ def get_data_from_data_service(
     )
     response = post_to_data_service(payload)
     res = json.loads(response)
+    print(res)
     if res["data"] is not None:
         if len(res["data"]):
             return res["data"]
@@ -521,6 +536,21 @@ def save_to_document_collection(options):
     payload = json.dumps(
         {
             **DOCUMENT_CONNECTION_DICT,
+            "command": "insert",
+            "field": options,
+            "update_field": {"order_nos": 21},
+            "platform": "bangalore",
+        }
+    )
+    return post_to_data_service(payload)
+
+def save_to_document_metadata_collection(options):
+    options["eventId"] = get_event_id()["event_id"]
+    options["created_on"] = time
+    options["clone_list"] = []
+    payload = json.dumps(
+        {
+            **DOCUMENT_METADATA_CONNECTION_DICT,
             "command": "insert",
             "field": options,
             "update_field": {"order_nos": 21},
