@@ -69,7 +69,6 @@ class DocumentDetailTestCase(BaseTestCase):
     def test_document_detail_success(self):
         """Successful document retrieval"""
         document_id = self.document_id
-        print(document_id)
         url = reverse(document_detail, args=[document_id])
         request = self.factory.get(url)
 

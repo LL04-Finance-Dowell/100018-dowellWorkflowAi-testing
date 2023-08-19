@@ -1,11 +1,13 @@
 """Third Party Services"""
+CREDITS_API = "https://100105.pythonanywhere.com/api/v3"
+WORKFLOW_AI = "WORKFLOW AI"
 EDITOR_API = "https://100058.pythonanywhere.com/api/generate-editor-link/"
 NOTIFICATION_API = "https://100092.pythonanywhere.com/api/v1/notifications/products/"
-DOWELLCONNECTION_URL = "https://uxlivinglab.pythonanywhere.com"
+DOWELLCONNECTION_URL = "https://uxlivinglab.pythonanywhere.com/"
 OLD_DOWELLCONNECTION_URL = "https://100002.pythonanywhere.com/"
 PUBLIC_LOGIN_API = "https://100093.pythonanywhere.com/api/public/"
-QRCODE_URL = "https://100099.pythonanywhere.com/api/v3/qr-code/"
-MASTERLINK_URL = "https://100099.pythonanywhere.com/api/v3/masterlink/"
+QRCODE_URL = "https://www.qrcodereviews.uxlivinglab.online/api/v3/qr-code/"
+MASTERLINK_URL = "https://www.qrcodereviews.uxlivinglab.online/api/v3/masterlink/"
 VERIFICATION_LINK = (
     "https://ll04-finance-dowell.github.io/100018-dowellWorkflowAi-testing/#/verify"
 )

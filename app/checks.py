@@ -1,4 +1,7 @@
 from datetime import datetime, timedelta
+
+import requests
+from app.constants import CREDITS_API, WORKFLOW_AI
 from app.mongo_db_connection import (
     single_query_document_collection,
     single_query_links_collection,
@@ -7,6 +10,96 @@ from app.mongo_db_connection import (
     single_query_process_collection,
     single_query_clones_collection,
 )
+
+
+def check_workflow_credits_authorization(organization_id):
+    url = f"{CREDITS_API}/user/?type=get_api_key&workspace_id={organization_id}"
+    res = requests.get(url)
+    if res.status_code == 200 and res.json()["success"] == True:
+        response = res.json()
+        services = response["data"]["services"]
+        for sv in services:
+            if sv["name"] == WORKFLOW_AI:
+                for sub in sv["sub_service"]:
+                    if sub["sub_service_name"] == "PROCESS":
+                        if (
+                            sub["sub_service_credits"] >= 0
+                            and sub["sub_service_credits"] != None
+                        ):
+                            return True
+    return
+
+
+def check_process_credits_authorization(organization_id):
+    url = f"{CREDITS_API}/user/?type=get_api_key&workspace_id={organization_id}"
+    res = requests.get(url)
+    if res.status_code == 200 and res.json()["success"] == True:
+        response = res.json()
+        services = response["data"]["services"]
+        for sv in services:
+            if sv["name"] == WORKFLOW_AI:
+                for sub in sv["sub_service"]:
+                    if sub["sub_service_name"] == "PROCESS":
+                        if (
+                            sub["sub_service_credits"] >= 0
+                            and sub["sub_service_credits"] != None
+                        ):
+                            return True
+    return
+
+
+def check_document_credits_authorization(organization_id):
+    url = f"{CREDITS_API}/user/?type=get_api_key&workspace_id={organization_id}"
+    res = requests.get(url)
+    if res.status_code == 200 and res.json()["success"] == True:
+        response = res.json()
+        services = response["data"]["services"]
+        for sv in services:
+            if sv["name"] == WORKFLOW_AI:
+                for sub in sv["sub_service"]:
+                    if sub["sub_service_name"] == "DOCUMENT":
+                        if (
+                            sub["sub_service_credits"] >= 0
+                            and sub["sub_service_credits"] != None
+                        ):
+                            return True
+    return
+
+
+def check_template_credits_authorization(organization_id):
+    url = f"{CREDITS_API}/user/?type=get_api_key&workspace_id={organization_id}"
+    res = requests.get(url)
+    if res.status_code == 200 and res.json()["success"] == True:
+        response = res.json()
+        services = response["data"]["services"]
+        for sv in services:
+            if sv["name"] == WORKFLOW_AI:
+                for sub in sv["sub_service"]:
+                    if sub["sub_service_name"] == "TEMPLATE":
+                        if (
+                            sub["sub_service_credits"] >= 0
+                            and sub["sub_service_credits"] != None
+                        ):
+                            return True
+    return
+
+
+def check_credits_authorization(organization_id):
+    """Finds the API key for a given workspace"""
+    url = f"{CREDITS_API}/user/?type=get_api_key&workspace_id={organization_id}"
+    response = requests.get(url)
+    if response.status_code == 200:
+        api_key = response["data"]["api_key"]
+        return api_key
+
+
+def check_product_usage_credits(organization_id):
+    """Checks if the given workspace has enough credits to access services"""
+    url = f"{CREDITS_API}/user/?type=get_api_key&workspace_id={organization_id}"
+    res = requests.get(url)
+    if res.status_code == 200 and res.json()["success"] == True:
+        return res.json()
+    return res.json()["message"]
 
 
 def check_items_state(items) -> list:
@@ -25,7 +118,9 @@ def check_that_process_documents_are_finalized(process):
         if not step["stepDocumentCloneMap"]:
             return
         else:
-            docs.extend([k for dict in step["stepDocumentCloneMap"] for k in dict.keys()])      
+            docs.extend(
+                [k for dict in step["stepDocumentCloneMap"] for k in dict.keys()]
+            )
     return all(check_items_state(docs)), docs
 
 
@@ -38,13 +133,14 @@ def register_user_access(process_steps, authorized_role, user):
                     clone_map["accessed"] = True
                     break
 
+
 def register_single_user_access(step, authorized_role, user):
-        """Once someone has made changes to their docs"""
-        if step["stepRole"] == authorized_role:
-            for clone_map in step["stepDocumentCloneMap"]:
-                if user in clone_map:
-                    clone_map["accessed"] = True
-                    continue
+    """Once someone has made changes to their docs"""
+    if step["stepRole"] == authorized_role:
+        for clone_map in step["stepDocumentCloneMap"]:
+            if user in clone_map:
+                clone_map["accessed"] = True
+                continue
 
 
 def is_finalized(item_id, item_type):
@@ -89,12 +185,10 @@ def location_right(
 ):
     """Check the location selection - verify matching geo information."""
     if location == "any":
-        # print("location", location)
         return True
     if location == "select":
         if continent == my_continent and country == my_country and city == my_city:
             return True
-    # print(location)
     return True
 
 

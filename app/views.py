@@ -10,7 +10,16 @@ from git.repo import Repo
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from app import checks
+from app.checks import (
+    check_process_credits_authorization,
+    check_product_usage_credits,
+    check_template_credits_authorization,
+    check_workflow_credits_authorization,
+    is_finalized,
+    is_wf_setting_exist,
+    register_user_access,
+    check_document_credits_authorization,
+)
 
 from app.processing import Background, HandleProcess, Process
 from app.utils import notification_cron
@@ -94,11 +103,12 @@ def document_processing(request):
     """processing is determined by action picked by user."""
     if not request.data:
         return Response("You are missing something!", status.HTTP_400_BAD_REQUEST)
+    organization_id = request.data["company_id"]
     process = Process(
         request.data["workflows"],
         request.data["created_by"],
         request.data["creator_portfolio"],
-        request.data["company_id"],
+        organization_id,
         request.data["process_type"],
         request.data["org_name"],
         request.data["workflows_ids"],
@@ -276,7 +286,7 @@ def finalize_or_reject(request, process_id):
     user = request.data["authorized"]
     user_type = request.data["user_type"]
     state = request.data["action"]
-    check, current_state = checks.is_finalized(item_id, item_type)
+    check, current_state = is_finalized(item_id, item_type)
     if check and current_state != "processing":
         return Response(
             f"document already processed as `{current_state}`!", status.HTTP_200_OK
@@ -418,6 +428,7 @@ def create_workflow(request):
     form = request.data
     if not form:
         return Response("Workflow Data required", status.HTTP_400_BAD_REQUEST)
+    organization_id = form["company_id"]
     data = {
         "workflow_title": form["wf_title"],
         "steps": form["steps"],
@@ -426,7 +437,7 @@ def create_workflow(request):
         save_to_workflow_collection(
             {
                 "workflows": data,
-                "company_id": form["company_id"],
+                "company_id": organization_id,
                 "created_by": form["created_by"],
                 "portfolio": form["portfolio"],
                 "data_type": form["data_type"],
@@ -499,11 +510,9 @@ def get_documents_in_organization(request, company_id):
     data_type = request.query_params.get("data_type")
     document_type = request.query_params.get("document_type")
     document_state = request.query_params.get("document_state")
-
     if not validate_id(company_id) or not data_type:
         return Response("Invalid Request!", status=status.HTTP_400_BAD_REQUEST)
-
-    document_list = bulk_query_document_collection(
+    documents = bulk_query_document_collection(
         {
             "company_id": company_id,
             "data_type": data_type,
@@ -511,7 +520,7 @@ def get_documents_in_organization(request, company_id):
             "document_state": document_state,
         }
     )
-    return Response({"documents": document_list}, status=status.HTTP_200_OK)
+    return Response({"documents": documents}, status=status.HTTP_200_OK)
 
 
 @api_view(["GET"])
@@ -532,7 +541,6 @@ def get_clones_in_organization(request, company_id):
             }
         )
         cache.set(cache_key, clones_list, timeout=60)
-
     return Response(
         {"clones": clones_list},
         status.HTTP_200_OK,
@@ -573,11 +581,13 @@ def get_documents_types(request, company_id):
     doc_type = request.query_params.get("doc_type")
     if not validate_id(company_id) or data_type is None or doc_type is None:
         return Response("Invalid Request!", status.HTTP_400_BAD_REQUEST)
-    document_list = bulk_query_document_collection(
+    documents = bulk_query_document_collection(
         {"company_id": company_id, "data_type": data_type, "document_type": doc_type}
     )
-    # page = int(request.GET.get("page", 1))
-    # document_list = paginate(document_list, page, 50)
+    document_list = [
+        {"_id": item["_id"], "document_name": item["document_name"]}
+        for item in documents
+    ]
     return Response(
         {"documents": document_list},
         status.HTTP_200_OK,
@@ -596,6 +606,7 @@ def create_document(request):
     if request.data["portfolio"]:
         portfolio = request.data["portfolio"]
     viewers = [{"member": request.data["created_by"], "portfolio": portfolio}]
+    organization_id = request.data["company_id"]
     folder = []
     res = json.loads(
         save_to_document_collection(
@@ -603,7 +614,7 @@ def create_document(request):
                 "document_name": "Untitled Document",
                 "content": request.data["content"],
                 "created_by": request.data["created_by"],
-                "company_id": request.data["company_id"],
+                "company_id": organization_id,
                 "page": request.data["page"],
                 "data_type": request.data["data_type"],
                 "document_state": "draft",
@@ -938,8 +949,6 @@ def all_favourites(request, company_id):
     if not validate_id(company_id):
         return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
     data = list_favourites(company_id)
-    page = int(request.GET.get("page", 1))
-    data = paginate(data, page, 50)
     return Response(data, status.HTTP_200_OK)
 
 
@@ -965,10 +974,23 @@ def get_templates(request, company_id):
     templates = bulk_query_template_collection(
         {"company_id": company_id, "data_type": data_type}
     )
-    # page = int(request.GET.get("page", 1))
-    # templates = paginate(templates, page, 50)
+    templates_list = []
+    if templates:
+        templates_list = [
+            {
+                "folders": item["folders"],
+                "company_id": item["company_id"],
+                "data_type": item["data_type"],
+                "auth_viewers": item["auth_viewers"],
+                "_id": item["_id"],
+                "template_type": item["template_type"],
+                "template_name": item["template_name"],
+                "created_by": item["created_by"],
+            }
+            for item in templates
+        ]
     return Response(
-        {"templates": templates},
+        {"templates": templates_list},
         status.HTTP_200_OK,
     )
 
@@ -1008,6 +1030,7 @@ def create_template(request):
     if request.data["portfolio"]:
         portfolio = request.data["portfolio"]
     viewers = [{"member": request.data["created_by"], "portfolio": portfolio}]
+    organization_id = request.data["company_id"]
     res = json.loads(
         save_to_template_collection(
             {
@@ -1016,7 +1039,7 @@ def create_template(request):
                 "page": page,
                 "folders": folder,
                 "created_by": request.data["created_by"],
-                "company_id": request.data["company_id"],
+                "company_id": organization_id,
                 "data_type": request.data["data_type"],
                 "template_type": "original",
                 "auth_viewers": viewers,
@@ -1037,8 +1060,13 @@ def create_template(request):
                 "team_member_ID": "22689044433",
                 "function_ID": "ABCDE",
                 "command": "update",
+                "name": "Untitled Template",
                 "flag": "editing",
-                "update_field": {"template_name": "", "content": "", "page": ""},
+                "update_field": {
+                    "template_name": "Untitled Template",
+                    "content": "",
+                    "page": "",
+                },
             },
         }
         editor_link = requests.post(
@@ -1234,7 +1262,11 @@ def get_completed_documents_by_process(request, company_id, process_id):
         {"company_id": company_id, "data_type": data_type, "process_id": process_id}
     )
     page = int(request.GET.get("page", 1))
-    document_list = paginate(document_list, page, 50)
+    documents = paginate(document_list, page, 50)
+    document_list = [
+        {"_id": item["_id"], "document_name": item["document_name"]}
+        for item in documents
+    ]
     return Response(
         {f"document_list of process: {process_id}": document_list},
         status=status.HTTP_200_OK,
@@ -1248,7 +1280,7 @@ def create_application_settings(request):
     company_id = request.data["company_id"]
     if not validate_id(company_id):
         return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
-    is_exists = checks.is_wf_setting_exist(
+    is_exists = is_wf_setting_exist(
         company_id, request.data["created_by"], request.data["data_type"]
     )
     if is_exists:
@@ -1340,7 +1372,7 @@ def read_reminder(request, process_id, username):
         for step in process_steps:
             for mem in step["stepTeamMembers"]:
                 if mem["member"] == username:
-                    if not checks.register_user_access(
+                    if not register_user_access(
                         process_steps=process_steps,
                         authorized_role=step["stepRole"],
                         user=username,
@@ -1529,8 +1561,12 @@ def dowell_centre_template(request, company_id):
     )
     page = int(request.GET.get("page", 1))
     templates = paginate(templates, page, 50)
+    template_list = [
+        {"_id": item["_id"], "template_name": item["template_name"]}
+        for item in templates
+    ]
     return Response(
-        {"templates": templates},
+        {"templates": template_list},
         status=status.HTTP_200_OK,
     )
 
@@ -1550,7 +1586,11 @@ def dowell_centre_documents(request, company_id):
         cache.set(cache_key, document_list, timeout=60)
 
     page = int(request.GET.get("page", 1))
-    document_list = paginate(document_list, page, 50)
+    documents = paginate(document_list, page, 50)
+    document_list = [
+        {"_id": item["_id"], "document_name": item["document_name"]}
+        for item in documents
+    ]
     return Response(
         {"documents": document_list},
         status.HTTP_200_OK,
@@ -1600,3 +1640,10 @@ def get_templates_documents(request, company_id):
 
     # Return a JSON response containing the fetched templates/documents and HTTP status code 200 (OK)
     return Response({key: templates_documents}, status=status.HTTP_200_OK)
+
+
+@api_view(["GET"])
+def get_workspace_credits_information(request, company_id):
+    product_info = check_product_usage_credits(company_id)
+    if product_info:
+        return Response(product_info, status.HTTP_200_OK)

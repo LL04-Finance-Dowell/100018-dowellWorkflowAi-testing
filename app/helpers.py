@@ -13,7 +13,6 @@ from app.serializers import (
 )
 
 from .mongo_db_connection import (
-    save_to_document_collection,
     save_to_clone_collection,
     save_to_process_collection,
     single_query_document_collection,
@@ -30,12 +29,11 @@ def register_finalized(link_id):
         data=json.dumps({"is_finalized": True}),
         headers={"Content-Type": "application/json"},
     )
-    print(response.status_code)
     return
 
 
 def get_query_param_value_from_url(url, query_param):
-    # Parse the URL to get the query parameters
+    """Parse the URL to get the query parameters"""
     parsed_url = urlparse(url)
     query_params = parse_qs(parsed_url.query)
     value = query_params.get(query_param, [None])[0]
@@ -80,12 +78,10 @@ def has_tilde_characters(string):
 
 def cloning_document(document_id, auth_viewers, parent_id, process_id):
     """creating a document copy"""
-    print("auth_viewers", auth_viewers)
     try:
         viewers = []
         for m in auth_viewers:
             viewers.append(m["member"])
-
         document = single_query_document_collection({"_id": document_id})
         for viewer in viewers:
             doc_name = document["document_name"]
@@ -123,12 +119,10 @@ def cloning_document(document_id, auth_viewers, parent_id, process_id):
 
 def cloning_clone(clone_id, auth_viewers, parent_id, process_id):
     """creating a document copy"""
-    print("auth_viewers", auth_viewers)
     try:
         viewers = []
         for m in auth_viewers:
             viewers.append(m["member"])
-
         document = single_query_clones_collection({"_id": clone_id})
         for viewer in viewers:
             doc_name = document["document_name"]
@@ -252,7 +246,11 @@ def access_editor(item_id, item_type):
             "_id": item_id,
             "field": field,
             "type": item_type,
-            "action": "document" if item_type == "document" else "clone" if item_type == "clone" else "template",
+            "action": "document"
+            if item_type == "document"
+            else "clone"
+            if item_type == "clone"
+            else "template",
             "flag": "editing",
             "name": name,
             "command": "update",
@@ -395,7 +393,9 @@ def check_all_finalized_true(data) -> bool:
         for doc in step_document_clone_map:
             for key, value in doc.items():
                 if key != "accessed":
-                    doc_state = single_query_clones_collection({"_id": value}).get("document_state")
+                    doc_state = single_query_clones_collection({"_id": value}).get(
+                        "document_state"
+                    )
                     if doc_state == "finalized":
                         doc_states.append(True)
                     elif doc_state == "processing":
@@ -403,7 +403,5 @@ def check_all_finalized_true(data) -> bool:
                     else:
                         doc_states.append(False)
         if not all(doc_states):
-            print(doc_states)
             return False
-        print(doc_states)
     return True
