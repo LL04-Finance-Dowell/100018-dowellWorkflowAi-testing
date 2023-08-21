@@ -608,11 +608,17 @@ def create_document(request):
     viewers = [{"member": request.data["created_by"], "portfolio": portfolio}]
     organization_id = request.data["company_id"]
     folder = []
+    template_id=request.data["template_id"]
+    print(template_id)
+    content=single_query_template_collection({"_id": template_id})
+    print(content)
+    
+    
     res = json.loads(
         save_to_document_collection(
             {
                 "document_name": "Untitled Document",
-                "content": request.data["content"],
+                "content": content,
                 "created_by": request.data["created_by"],
                 "company_id": organization_id,
                 "page": request.data["page"],
