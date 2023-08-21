@@ -945,7 +945,6 @@ def favorites(request):
 
 @api_view(["GET"])
 def all_favourites(request, company_id):
-    """List favs"""
     if not validate_id(company_id):
         return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
     data = list_favourites(company_id)
@@ -954,7 +953,6 @@ def all_favourites(request, company_id):
 
 @api_view(["DELETE"])
 def trash_favourites(request, item_id, item_type, username):
-    """Trash Favourites"""
     if not validate_id(item_id):
         return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
     msg = remove_favourite(
@@ -967,7 +965,6 @@ def trash_favourites(request, item_id, item_type, username):
 
 @api_view(["GET"])
 def get_templates(request, company_id):
-    """List of Created Templates."""
     data_type = request.query_params.get("data_type")
     if not validate_id(company_id) or data_type is None:
         return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
@@ -997,7 +994,6 @@ def get_templates(request, company_id):
 
 @api_view(["GET"])
 def get_reports_templates(request, company_id):
-    """List of templates based on their current state."""
     data_type = request.query_params.get("data_type")
     template_state = request.query_params.get("template_state")
     member = request.query_params.get("member")
