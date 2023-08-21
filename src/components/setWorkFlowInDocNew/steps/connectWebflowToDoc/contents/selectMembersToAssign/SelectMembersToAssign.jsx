@@ -64,6 +64,7 @@ const SelectMembersToAssign = ({
   const selectTeamRef = useRef();
   const selectMemberOptionRef = useRef();
   const selectMembersRadioRef = useRef();
+  const [selectionCount, setSelectionCount] = useState(0);
 
   const dispatch = useDispatch();
 
@@ -94,6 +95,34 @@ const SelectMembersToAssign = ({
       return;
     }
   });
+
+  useEffect(() => {
+    console.log('ENTERED EFFECT');
+    switch (current.header) {
+      case 'Team':
+        console.log('ENTERED TEAM');
+        setSelectionCount(teamMembersSelectedForProcess.length)
+        break;
+      case 'Users':
+        console.log('ENTERED USER');
+        setSelectionCount(userMembersSelectedForProcess.length)
+        break
+      case 'Public':
+        console.log('ENTERED PUBLIC');
+        setSelectionCount(publicMembersSelectedForProcess.length)
+        break
+      default:
+        return
+    }
+
+
+
+  }, [teamMembersSelectedForProcess,
+    userMembersSelectedForProcess,
+    publicMembersSelectedForProcess, current.header])
+
+
+
 
   useEffect(() => {
     if (selectedMembersSet || !workflowTeamsLoaded) return;
@@ -223,9 +252,9 @@ const SelectMembersToAssign = ({
       currentSelectedOptions,
       currentEnabledRadioOptionsFromStepPopulation,
     ] = [
-      userTypeOptionsEnabled.slice(),
-      { ...enableRadioOptionsFromStepPopulation },
-    ];
+        userTypeOptionsEnabled.slice(),
+        { ...enableRadioOptionsFromStepPopulation },
+      ];
     if (teamMembersSelectedForProcess.length > 0) {
       if (
         currentSelectedOptions.find(
@@ -641,9 +670,8 @@ const SelectMembersToAssign = ({
                 <div
                   onClick={() => toast.info('Step skipped')}
                   // key={item.id}
-                  className={`${styles.select__header} ${
-                    current.id === item.id && styles.selected
-                  }`}
+                  className={`${styles.select__header} ${current.id === item.id && styles.selected
+                    }`}
                 >
                   {item.header}
                 </div>
@@ -657,13 +685,12 @@ const SelectMembersToAssign = ({
           <div className={styles.select__container}>
             <div className={styles.select__header__box}>
               {React.Children.toArray(
-                selectMembersComp.map((item) => (
+                selectMembersComp.map((item, index) => (
                   <div
                     onClick={() => handleSetCurrent(item)}
-                    // key={item.id}
-                    className={`${styles.select__header} ${
-                      current.id === item.id && styles.selected
-                    }`}
+                    key={index}
+                    className={`${styles.select__header} ${current.id === item.id && styles.selected
+                      }`}
                   >
                     {item.header}
                   </div>
@@ -706,17 +733,17 @@ const SelectMembersToAssign = ({
                         option.name === current.header &&
                         option.stepIndex === currentStepIndex
                     ) &&
-                    currentRadioOptionSelection &&
-                    radioOptionsEnabledInStep.find(
-                      (option) =>
-                        option.stepIndex === currentStepIndex &&
-                        option.currentHeader === current.header &&
-                        option.name ===
+                      currentRadioOptionSelection &&
+                      radioOptionsEnabledInStep.find(
+                        (option) =>
+                          option.stepIndex === currentStepIndex &&
+                          option.currentHeader === current.header &&
+                          option.name ===
                           'selectItemOptionForUser-' +
-                            currentStepIndex +
-                            '-' +
-                            current.header
-                    )?.valueActive ===
+                          currentStepIndex +
+                          '-' +
+                          current.header
+                      )?.valueActive ===
                       'all' + current.header
                       ? true
                       : false
@@ -728,18 +755,18 @@ const SelectMembersToAssign = ({
                         option.stepIndex === currentStepIndex
                     )
                       ? () =>
-                          handleUserGroupSelection(
-                            current.all + ' first',
-                            { ...current, allSelected: true },
-                            current.header,
-                            'selectItemOptionForUser-' +
-                              currentStepIndex +
-                              '-' +
-                              current.header,
-                            'all' + current.header
-                          )
+                        handleUserGroupSelection(
+                          current.all + ' first',
+                          { ...current, allSelected: true },
+                          current.header,
+                          'selectItemOptionForUser-' +
+                          currentStepIndex +
+                          '-' +
+                          current.header,
+                          'all' + current.header
+                        )
                       : (e) =>
-                          handleDisabledUserOptionSelection(e, current.title)
+                        handleDisabledUserOptionSelection(e, current.title)
                   }
                 >
                   Select all {current.header}
@@ -759,17 +786,17 @@ const SelectMembersToAssign = ({
                         option.name === current.header &&
                         option.stepIndex === currentStepIndex
                     ) &&
-                    currentRadioOptionSelection &&
-                    radioOptionsEnabledInStep.find(
-                      (option) =>
-                        option.stepIndex === currentStepIndex &&
-                        option.currentHeader === current.header &&
-                        option.name ===
+                      currentRadioOptionSelection &&
+                      radioOptionsEnabledInStep.find(
+                        (option) =>
+                          option.stepIndex === currentStepIndex &&
+                          option.currentHeader === current.header &&
+                          option.name ===
                           'selectItemOptionForUser-' +
-                            currentStepIndex +
-                            '-' +
-                            current.header
-                    )?.valueActive ===
+                          currentStepIndex +
+                          '-' +
+                          current.header
+                      )?.valueActive ===
                       'selectIn' + current.header
                       ? true
                       : false
@@ -781,18 +808,18 @@ const SelectMembersToAssign = ({
                         option.stepIndex === currentStepIndex
                     )
                       ? () =>
-                          handleUserGroupSelection(
-                            current.all + ' second',
-                            current,
-                            current.header,
-                            'selectItemOptionForUser-' +
-                              currentStepIndex +
-                              '-' +
-                              current.header,
-                            'selectIn' + current.header
-                          )
+                        handleUserGroupSelection(
+                          current.all + ' second',
+                          current,
+                          current.header,
+                          'selectItemOptionForUser-' +
+                          currentStepIndex +
+                          '-' +
+                          current.header,
+                          'selectIn' + current.header
+                        )
                       : (e) =>
-                          handleDisabledUserOptionSelection(e, current.title)
+                        handleDisabledUserOptionSelection(e, current.title)
                   }
                 >
                   {current.selectInTeam}
@@ -812,8 +839,8 @@ const SelectMembersToAssign = ({
                       current.teams.length === 1
                         ? current.teams.length + 1
                         : current.teams.length > 5
-                        ? 5
-                        : current.teams.length
+                          ? 5
+                          : current.teams.length
                     }
                     className={styles.open__select}
                     onChange={({ target }) =>
@@ -826,38 +853,38 @@ const SelectMembersToAssign = ({
                             option.name === current.header &&
                             option.stepIndex === currentStepIndex
                         ) &&
-                        currentRadioOptionSelection &&
-                        radioOptionsEnabledInStep.find(
-                          (option) =>
-                            option.stepIndex === currentStepIndex &&
-                            option.currentHeader === current.header &&
-                            option.name ===
+                          currentRadioOptionSelection &&
+                          radioOptionsEnabledInStep.find(
+                            (option) =>
+                              option.stepIndex === currentStepIndex &&
+                              option.currentHeader === current.header &&
+                              option.name ===
                               'selectItemOptionForUser-' +
-                                currentStepIndex +
-                                '-' +
-                                current.header
-                        )?.valueActive ===
+                              currentStepIndex +
+                              '-' +
+                              current.header
+                          )?.valueActive ===
                           'selectIn' + current.header
                           ? 'all'
                           : userTypeOptionsEnabled.find(
-                              (option) =>
-                                option.name === current.header &&
-                                option.stepIndex === currentStepIndex
-                            ) &&
+                            (option) =>
+                              option.name === current.header &&
+                              option.stepIndex === currentStepIndex
+                          ) &&
                             currentRadioOptionSelection &&
                             radioOptionsEnabledInStep.find(
                               (option) =>
                                 option.stepIndex === currentStepIndex &&
                                 option.currentHeader === current.header &&
                                 option.name ===
-                                  'selectItemOptionForUser-' +
-                                    currentStepIndex +
-                                    '-' +
-                                    current.header
+                                'selectItemOptionForUser-' +
+                                currentStepIndex +
+                                '-' +
+                                current.header
                             )?.valueActive ===
-                              'all' + current.header
-                          ? 'all'
-                          : 'none',
+                            'all' + current.header
+                            ? 'all'
+                            : 'none',
                     }}
                     name='select-from-team'
                     ref={selectTeamRef}
@@ -903,28 +930,28 @@ const SelectMembersToAssign = ({
                           option.name === current.header &&
                           option.stepIndex === currentStepIndex
                       ) &&
-                      currentRadioOptionSelection &&
-                      radioOptionsEnabledInStep.find(
-                        (option) =>
-                          option.stepIndex === currentStepIndex &&
-                          option.currentHeader === current.header &&
-                          option.name ===
+                        currentRadioOptionSelection &&
+                        radioOptionsEnabledInStep.find(
+                          (option) =>
+                            option.stepIndex === currentStepIndex &&
+                            option.currentHeader === current.header &&
+                            option.name ===
                             'selectItemOptionForUser-' +
-                              currentStepIndex +
-                              '-' +
-                              current.header
-                      )?.valueActive ===
+                            currentStepIndex +
+                            '-' +
+                            current.header
+                        )?.valueActive ===
                         'select' + current.header
                         ? true
                         : enableRadioOptionsFromStepPopulation[
-                            `${current.header}`
-                          ].find(
-                            (option) =>
-                              option.memberOptionEnabled &&
-                              option.stepIndex === currentStepIndex
-                          )
-                        ? true
-                        : false
+                          `${current.header}`
+                        ].find(
+                          (option) =>
+                            option.memberOptionEnabled &&
+                            option.stepIndex === currentStepIndex
+                        )
+                          ? true
+                          : false
                     }
                     onChange={
                       userTypeOptionsEnabled.find(
@@ -933,17 +960,20 @@ const SelectMembersToAssign = ({
                           option.stepIndex === currentStepIndex
                       )
                         ? ({ target }) =>
-                            handleMemberRadioChange(
-                              target.value,
-                              current.header,
-                              target.name
-                            )
+                          handleMemberRadioChange(
+                            target.value,
+                            current.header,
+                            target.name
+                          )
                         : (e) =>
-                            handleDisabledUserOptionSelection(e, current.title)
+                          handleDisabledUserOptionSelection(e, current.title)
                     }
                     radioRef={selectMembersRadioRef}
                   >
                     Select Members
+                    <span className="sel_count" style={{ position: 'absolute', top: '0', right: '0', pointerEvents: 'none', fontSize: 'inherit' }}>
+                      Selection count: {selectionCount}
+                    </span>
                   </Radio>
                   <div
                     className={styles.select__Members__Wrapper}
@@ -956,8 +986,8 @@ const SelectMembersToAssign = ({
                         current.portfolios.length === 1
                           ? current.portfolios.length + 1
                           : current.portfolios.length > 10
-                          ? 10
-                          : current.portfolios.length
+                            ? 10
+                            : current.portfolios.length
                       }
                       className={styles.open__select}
                       onChange={({ target }) =>
@@ -970,33 +1000,33 @@ const SelectMembersToAssign = ({
                               option.name === current.header &&
                               option.stepIndex === currentStepIndex
                           ) &&
-                          currentRadioOptionSelection &&
-                          radioOptionsEnabledInStep.find(
-                            (option) =>
-                              option.stepIndex === currentStepIndex &&
-                              option.currentHeader === current.header &&
-                              option.name ===
+                            currentRadioOptionSelection &&
+                            radioOptionsEnabledInStep.find(
+                              (option) =>
+                                option.stepIndex === currentStepIndex &&
+                                option.currentHeader === current.header &&
+                                option.name ===
                                 'selectItemOptionForUser-' +
-                                  currentStepIndex +
-                                  '-' +
-                                  current.header
-                          )?.valueActive ===
+                                currentStepIndex +
+                                '-' +
+                                current.header
+                            )?.valueActive ===
                             'select' + current.header
                             ? 'all'
                             : enableRadioOptionsFromStepPopulation[
-                                `${current.header}`
-                              ].find(
-                                (option) =>
-                                  option.memberOptionEnabled &&
-                                  option.stepIndex === currentStepIndex
-                              ) &&
+                              `${current.header}`
+                            ].find(
+                              (option) =>
+                                option.memberOptionEnabled &&
+                                option.stepIndex === currentStepIndex
+                            ) &&
                               currentEnabledSteps.find(
                                 (step) =>
                                   step.index === currentStepIndex &&
                                   step.enableStep === true
                               )
-                            ? 'all'
-                            : 'none',
+                              ? 'all'
+                              : 'none',
                       }}
                       ref={selectMemberOptionRef}
                     >
@@ -1007,32 +1037,32 @@ const SelectMembersToAssign = ({
                             className={
                               current.header === 'Team'
                                 ? teamMembersSelectedForProcess.find(
-                                    (user) =>
-                                      user.member === item.member &&
-                                      user.portfolio === item.portfolio &&
-                                      user.stepIndex === currentStepIndex
-                                  )
+                                  (user) =>
+                                    user.member === item.member &&
+                                    user.portfolio === item.portfolio &&
+                                    user.stepIndex === currentStepIndex
+                                )
                                   ? styles.user__Selected
                                   : styles.user__Not__Selected
                                 : current.header === 'Users'
-                                ? userMembersSelectedForProcess.find(
+                                  ? userMembersSelectedForProcess.find(
                                     (user) =>
                                       user.member === item.member &&
                                       user.portfolio === item.portfolio &&
                                       user.stepIndex === currentStepIndex
                                   )
-                                  ? styles.user__Selected
-                                  : styles.user__Not__Selected
-                                : current.header === 'Public'
-                                ? publicMembersSelectedForProcess.find(
-                                    (user) =>
-                                      user.member === item.member &&
-                                      user.portfolio === item.portfolio &&
-                                      user.stepIndex === currentStepIndex
-                                  )
-                                  ? styles.user__Selected
-                                  : styles.user__Not__Selected
-                                : ''
+                                    ? styles.user__Selected
+                                    : styles.user__Not__Selected
+                                  : current.header === 'Public'
+                                    ? publicMembersSelectedForProcess.find(
+                                      (user) =>
+                                        user.member === item.member &&
+                                        user.portfolio === item.portfolio &&
+                                        user.stepIndex === currentStepIndex
+                                    )
+                                      ? styles.user__Selected
+                                      : styles.user__Not__Selected
+                                    : ''
                             }
                             // key={item.id}
                             value={JSON.stringify(item)}

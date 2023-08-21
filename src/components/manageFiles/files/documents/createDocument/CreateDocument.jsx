@@ -18,7 +18,7 @@ import { toast } from 'react-toastify';
 
 const CreateDocument = ({ handleToggleOverlay }) => {
   const { userDetail } = useSelector((state) => state.auth);
-  const {creditResponse } = useSelector((state) => state.app);
+  const { creditResponse } = useSelector((state) => state.app);
   const dispatch = useDispatch();
   const { t } = useTranslation();
 
@@ -43,36 +43,36 @@ const CreateDocument = ({ handleToggleOverlay }) => {
 
     const createDocumentData = {
       company_id: userDetail?.portfolio_info?.length > 1 ? userDetail?.portfolio_info.find(portfolio => portfolio.product === productName)?.org_id : userDetail?.portfolio_info[0].org_id,
-      // template_id: template,
+      template_id: template,
       created_by: userDetail?.userinfo.username,
       data_type: userDetail?.portfolio_info?.length > 1 ? userDetail?.portfolio_info.find(portfolio => portfolio.product === productName)?.data_type : userDetail?.portfolio_info[0].data_type,
       page: foundTemplateObj?.page,
-      content: foundTemplateObj?.content,
+      // content: foundTemplateObj?.content,
       portfolio: userDetail?.portfolio_info?.length > 1 ? userDetail?.portfolio_info.find((portfolio) => portfolio.product === productName)?.portfolio_name : userDetail?.portfolio_info[0].portfolio_name,
     };
     const Api_key = creditResponse?.api_key
     axios
-    .post(
-      `https://100105.pythonanywhere.com/api/v3/process-services/?type=product_service&api_key=${Api_key}`,
-      {
-        "service_id": "DOWELL10026",
-        "sub_service_ids": ["DOWELL100261"],
-      },
-    )
-    .then((response) => {
-      console.log(response)
-      if (response.data.success == true) {
+      .post(
+        `https://100105.pythonanywhere.com/api/v3/process-services/?type=product_service&api_key=${Api_key}`,
+        {
+          "service_id": "DOWELL10026",
+          "sub_service_ids": ["DOWELL100261"],
+        },
+      )
+      .then((response) => {
+        console.log(response)
+        if (response.data.success == true) {
 
-        dispatch(createDocument(createDocumentData));
-      }
-    })
-    .catch((error) => {
-      console.log(error);
-      toast.info(error.response?.data?.message)
+          dispatch(createDocument(createDocumentData));
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+        toast.info(error.response?.data?.message)
 
-    });
+      });
 
-    
+
   };
 
   const handleDropdown = () => {

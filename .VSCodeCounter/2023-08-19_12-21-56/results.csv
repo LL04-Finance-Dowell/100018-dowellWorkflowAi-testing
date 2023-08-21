@@ -1,0 +1,323 @@
+"filename", "language", "JavaScript", "Markdown", "JSON", "JavaScript JSX", "CSS", "comment", "blank", "total"
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\App.css", "CSS", 0, 0, 0, 0, 3, 0, 1, 4
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\App.js", "JavaScript", 204, 0, 0, 0, 0, 46, 35, 285
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\App.test.js", "JavaScript", 7, 0, 0, 0, 0, 0, 2, 9
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\Translation Files\Transalationfr.json", "JSON", 0, 0, 308, 0, 0, 0, 13, 321
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\Translation Files\TranslationEn.json", "JSON", 0, 0, 310, 0, 0, 0, 5, 315
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\Translation Files\Translationchi.json", "JSON", 0, 0, 309, 0, 0, 0, 22, 331
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\Translation Files\Translationgr.json", "JSON", 0, 0, 310, 0, 0, 0, 20, 330
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\Translation Files\Translationsp.json", "JSON", 0, 0, 308, 0, 0, 0, 19, 327
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\app\store.js", "JavaScript", 32, 0, 0, 0, 0, 0, 7, 39
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\assets\README.md", "Markdown", 0, 4, 0, 0, 0, 0, 1, 5
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\components\Chat\Chat.jsx", "JavaScript JSX", 0, 0, 0, 237, 0, 19, 30, 286
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\components\Chat\Chat.module.css", "CSS", 0, 0, 0, 0, 357, 16, 51, 424
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\components\LanguageSelector\LanguageDropdown.js", "JavaScript", 99, 0, 0, 0, 0, 1, 7, 107
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\components\LanguageSelector\LanguageDropdown.module.css", "CSS", 0, 0, 0, 0, 61, 0, 10, 71
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\components\LoadingSpinner\LoadingSpinner.js", "JavaScript", 9, 0, 0, 0, 0, 0, 4, 13
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\components\LoadingSpinner\style.css", "CSS", 0, 0, 0, 0, 17, 0, 1, 18
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\components\Popup\Popup.jsx", "JavaScript JSX", 0, 0, 0, 54, 0, 9, 19, 82
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\components\Popup\Popup.module.css", "CSS", 0, 0, 0, 0, 78, 0, 8, 86
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\components\README.md", "Markdown", 0, 5, 0, 0, 0, 0, 3, 8
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\components\TestComponent\TestComponent.js", "JavaScript", 0, 0, 0, 0, 0, 0, 1, 1
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\components\TestComponent\style.css", "CSS", 0, 0, 0, 0, 0, 0, 1, 1
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\components\apiKeyFailureModal\ApiKeyFailureModal.jsx", "JavaScript JSX", 0, 0, 0, 23, 0, 0, 4, 27
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\components\apiKeyFailureModal\styles.module.css", "CSS", 0, 0, 0, 0, 27, 0, 4, 31
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\components\bookSpinner\BookSpinner.jsx", "JavaScript JSX", 0, 0, 0, 22, 0, 4, 3, 29
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\components\bookSpinner\bookSpinner.module.css", "CSS", 0, 0, 0, 0, 335, 3, 5, 343
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\components\editor\Editor.jsx", "JavaScript JSX", 0, 0, 0, 76, 0, 1, 7, 84
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\components\editor\editor.module.css", "CSS", 0, 0, 0, 0, 80, 1, 12, 93
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\components\flipMenu\FlipMenu.jsx", "JavaScript JSX", 0, 0, 0, 191, 0, 3, 18, 212
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\components\flipMenu\flipMenu.module.css", "CSS", 0, 0, 0, 0, 71, 2, 11, 84
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\components\flip\Flip.jsx", "JavaScript JSX", 0, 0, 0, 17, 0, 0, 4, 21
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\components\flip\flip.module.css", "CSS", 0, 0, 0, 0, 30, 0, 5, 35
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\components\hoverCard\AddRemoveBtn.jsx", "JavaScript JSX", 0, 0, 0, 37, 0, 0, 4, 41
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\components\hoverCard\HoverCard.jsx", "JavaScript JSX", 0, 0, 0, 27, 0, 0, 3, 30
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\components\hoverCard\documentCard\DocumentCard.jsx", "JavaScript JSX", 0, 0, 0, 408, 0, 13, 38, 459
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\components\hoverCard\foldersCard\FoldersCard.jsx", "JavaScript JSX", 0, 0, 0, 120, 0, 1, 17, 138
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\components\hoverCard\hoverCard.module.css", "CSS", 0, 0, 0, 0, 51, 3, 7, 61
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\components\hoverCard\processCard\ProcessCard.jsx", "JavaScript JSX", 0, 0, 0, 258, 0, 13, 44, 315
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\components\hoverCard\styledComponents.js", "JavaScript", 16, 0, 0, 0, 0, 0, 3, 19
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\components\hoverCard\templateCard\TemplateCard.jsx", "JavaScript JSX", 0, 0, 0, 262, 0, 0, 23, 285
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\components\hoverCard\workflowCard\WorkflowCard.jsx", "JavaScript JSX", 0, 0, 0, 271, 0, 1, 16, 288
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\components\hoverCard\workflowCard\workflowCard.module.css", "CSS", 0, 0, 0, 0, 54, 1, 11, 66
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\components\iFrame\Iframe.jsx", "JavaScript JSX", 0, 0, 0, 28, 0, 0, 5, 33
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\components\infoBox\InfoBox.jsx", "JavaScript JSX", 0, 0, 0, 540, 0, 12, 31, 583
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\components\infoBox\TypeFilter.jsx", "JavaScript JSX", 0, 0, 0, 171, 0, 4, 18, 193
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\components\infoBox\infoBox.module.css", "CSS", 0, 0, 0, 0, 0, 0, 1, 1
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\components\infoBox\styledComponents.js", "JavaScript", 87, 0, 0, 0, 0, 8, 9, 104
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\components\infoBox\typefilter.css", "CSS", 0, 0, 0, 0, 64, 0, 13, 77
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\components\landingPage\customerSupport\CustomerSupport.jsx", "JavaScript JSX", 0, 0, 0, 88, 0, 0, 6, 94
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\components\landingPage\customerSupport\customerSupport.module.css", "CSS", 0, 0, 0, 0, 133, 17, 19, 169
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\components\landingPage\customerSupport\swiper.css", "CSS", 0, 0, 0, 0, 17, 0, 4, 21
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\components\landingPage\handleTasks\HandleTasks.jsx", "JavaScript JSX", 0, 0, 0, 170, 0, 3, 15, 188
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\components\landingPage\handleTasks\handleTasks.module.css", "CSS", 0, 0, 0, 0, 71, 0, 15, 86
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\components\manageFiles\ManageFiles.jsx", "JavaScript JSX", 0, 0, 0, 61, 0, 12, 6, 79
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\components\manageFiles\ProcessDetail\ProcessDetail.js", "JavaScript", 140, 0, 0, 0, 0, 9, 21, 170
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\components\manageFiles\ProcessDetail\ProcessDetail.module.css", "CSS", 0, 0, 0, 0, 192, 2, 28, 222
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\components\manageFiles\files\documents\createDocument\CreateDocument.jsx", "JavaScript JSX", 0, 0, 0, 151, 0, 3, 20, 174
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\components\manageFiles\files\documents\createDocument\createDocument.module.css", "CSS", 0, 0, 0, 0, 106, 11, 14, 131
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\components\manageFiles\files\workflows\createWorkflows\CreateWorkflow.jsx", "JavaScript JSX", 0, 0, 0, 255, 0, 1, 31, 287
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\components\manageFiles\files\workflows\createWorkflows\createWorkflow.module.css", "CSS", 0, 0, 0, 0, 51, 51, 11, 113
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\components\manageFiles\files\workflows\createWorkflows\stepTable\StepTable.jsx", "JavaScript JSX", 0, 0, 0, 70, 0, 0, 5, 75
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\components\manageFiles\files\workflows\createWorkflows\stepTable\stepTable.module.css", "CSS", 0, 0, 0, 0, 58, 0, 8, 66
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\components\manageFiles\manageFiles.module.css", "CSS", 0, 0, 0, 0, 76, 1, 10, 87
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\components\manageFiles\overlay\Overlay.jsx", "JavaScript JSX", 0, 0, 0, 21, 0, 0, 4, 25
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\components\manageFiles\overlay\overlay.module.css", "CSS", 0, 0, 0, 0, 77, 2, 14, 93
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\components\manageFiles\sectionBox\SectionBox.jsx", "JavaScript JSX", 0, 0, 0, 493, 0, 16, 31, 540
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\components\manageFiles\sectionBox\sectionBox.module.css", "CSS", 0, 0, 0, 0, 41, 9, 9, 59
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\components\modal\EditTeamModal.jsx", "JavaScript JSX", 0, 0, 0, 273, 0, 8, 22, 303
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\components\modal\NameChangeModal.jsx", "JavaScript JSX", 0, 0, 0, 45, 0, 0, 5, 50
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\components\modal\TeamModal.jsx", "JavaScript JSX", 0, 0, 0, 117, 0, 1, 21, 139
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\components\modal\editTeamModal.css", "CSS", 0, 0, 0, 0, 146, 2, 23, 171
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\components\modal\nameChangeModal.css", "CSS", 0, 0, 0, 0, 65, 0, 10, 75
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\components\newSidebar\Sidebar.jsx", "JavaScript JSX", 0, 0, 0, 377, 0, 60, 29, 466
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\components\newSidebar\collapseItem\CollapseItem.jsx", "JavaScript JSX", 0, 0, 0, 177, 0, 0, 14, 191
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\components\newSidebar\collapseItem\collapseItem.module.css", "CSS", 0, 0, 0, 0, 46, 0, 9, 55
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\components\newSidebar\footer\Footer.jsx", "JavaScript JSX", 0, 0, 0, 27, 0, 0, 5, 32
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\components\newSidebar\footer\footer.module.css", "CSS", 0, 0, 0, 0, 35, 0, 7, 42
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\components\newSidebar\manageFile\ManageFile.jsx", "JavaScript JSX", 0, 0, 0, 291, 0, 44, 18, 353
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\components\newSidebar\manageFile\ProcessDetailModal\ProcessDetailModail.jsx", "JavaScript JSX", 0, 0, 0, 113, 0, 0, 7, 120
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\components\newSidebar\manageFile\ProcessDetailModal\ProcessDetailModal.css", "CSS", 0, 0, 0, 0, 45, 0, 8, 53
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\components\newSidebar\manageFile\manageFile.module.css", "CSS", 0, 0, 0, 0, 13, 0, 1, 14
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\components\newSidebar\new\New.jsx", "JavaScript JSX", 0, 0, 0, 116, 0, 1, 11, 128
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\components\newSidebar\new\new.module.css", "CSS", 0, 0, 0, 0, 50, 0, 8, 58
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\components\newSidebar\notifications\Notifications.jsx", "JavaScript JSX", 0, 0, 0, 141, 0, 1, 11, 153
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\components\newSidebar\notifications\notification.module.css", "CSS", 0, 0, 0, 0, 23, 0, 3, 26
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\components\newSidebar\reports\Reports.jsx", "JavaScript JSX", 0, 0, 0, 153, 0, 88, 14, 255
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\components\newSidebar\search\Search.jsx", "JavaScript JSX", 0, 0, 0, 213, 0, 1, 21, 235
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\components\newSidebar\search\search.module.css", "CSS", 0, 0, 0, 0, 126, 1, 17, 144
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\components\newSidebar\sidebar.module.css", "CSS", 0, 0, 0, 0, 172, 3, 27, 202
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\components\newSidebar\userDetail\UserDetail.jsx", "JavaScript JSX", 0, 0, 0, 54, 0, 0, 6, 60
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\components\newSidebar\userDetail\userDetail.module.css", "CSS", 0, 0, 0, 0, 45, 0, 6, 51
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\components\progressBar\ProgressBar.jsx", "JavaScript JSX", 0, 0, 0, 35, 0, 0, 9, 44
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\components\progressBar\style.css", "CSS", 0, 0, 0, 0, 12, 0, 1, 13
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\components\setWorkFlowInDocNew\SetWorkflowInDoc.jsx", "JavaScript JSX", 0, 0, 0, 296, 0, 7, 30, 333
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\components\setWorkFlowInDocNew\assignButton\AssignButton.jsx", "JavaScript JSX", 0, 0, 0, 22, 0, 0, 3, 25
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\components\setWorkFlowInDocNew\contentMapOfDoc\ContentMapOfDoc.jsx", "JavaScript JSX", 0, 0, 0, 76, 0, 15, 15, 106
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\components\setWorkFlowInDocNew\contentMapOfDoc\contentMapOfDoc.module.css", "CSS", 0, 0, 0, 0, 112, 3, 11, 126
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\components\setWorkFlowInDocNew\contents\Contents.jsx", "JavaScript JSX", 0, 0, 0, 309, 0, 39, 20, 368
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\components\setWorkFlowInDocNew\contents\contentPagination\ContentPagination.jsx", "JavaScript JSX", 0, 0, 0, 105, 0, 1, 12, 118
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\components\setWorkFlowInDocNew\contents\contentPagination\styles.module.css", "CSS", 0, 0, 0, 0, 53, 0, 11, 64
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\components\setWorkFlowInDocNew\contents\contents.module.css", "CSS", 0, 0, 0, 0, 87, 3, 16, 106
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\components\setWorkFlowInDocNew\customerSupport\CustomerSupport.jsx", "JavaScript JSX", 0, 0, 0, 79, 0, 0, 7, 86
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\components\setWorkFlowInDocNew\customerSupport\customerSupport.module.css", "CSS", 0, 0, 0, 0, 130, 2, 18, 150
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\components\setWorkFlowInDocNew\customerSupport\swiper.css", "CSS", 0, 0, 0, 0, 18, 0, 4, 22
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\components\setWorkFlowInDocNew\formLayout\FormLayout.jsx", "JavaScript JSX", 0, 0, 0, 16, 0, 1, 5, 22
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\components\setWorkFlowInDocNew\formLayout\formLayout.module.css", "CSS", 0, 0, 0, 0, 34, 0, 4, 38
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\components\setWorkFlowInDocNew\globalStyles.css", "CSS", 0, 0, 0, 0, 33, 0, 8, 41
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\components\setWorkFlowInDocNew\radio\Radio.jsx", "JavaScript JSX", 0, 0, 0, 15, 0, 0, 4, 19
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\components\setWorkFlowInDocNew\select\Select.jsx", "JavaScript JSX", 0, 0, 0, 43, 0, 0, 4, 47
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\components\setWorkFlowInDocNew\select\select.module.css", "CSS", 0, 0, 0, 0, 29, 0, 4, 33
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\components\setWorkFlowInDocNew\setWorkflowInDoc.module.css", "CSS", 0, 0, 0, 0, 70, 0, 9, 79
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\components\setWorkFlowInDocNew\steps\checkErrors\CheckErrors.jsx", "JavaScript JSX", 0, 0, 0, 1349, 0, 12, 40, 1401
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\components\setWorkFlowInDocNew\steps\checkErrors\checkErrors.module.css", "CSS", 0, 0, 0, 0, 91, 7, 15, 113
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\components\setWorkFlowInDocNew\steps\connectWebflowToDoc\ConnectWorkFlowToDoc.jsx", "JavaScript JSX", 0, 0, 0, 371, 0, 27, 34, 432
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\components\setWorkFlowInDocNew\steps\connectWebflowToDoc\connectWorkFlowToDoc.module.css", "CSS", 0, 0, 0, 0, 145, 25, 21, 191
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\components\setWorkFlowInDocNew\steps\connectWebflowToDoc\contents\assignCollapse\AssignCollapse.jsx", "JavaScript JSX", 0, 0, 0, 123, 0, 0, 16, 139
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\components\setWorkFlowInDocNew\steps\connectWebflowToDoc\contents\assignCollapse\assignCollapse.module.css", "CSS", 0, 0, 0, 0, 69, 1, 13, 83
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\components\setWorkFlowInDocNew\steps\connectWebflowToDoc\contents\assignCollapse\display\Display.jsx", "JavaScript JSX", 0, 0, 0, 60, 0, 0, 6, 66
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\components\setWorkFlowInDocNew\steps\connectWebflowToDoc\contents\assignCollapse\location\Location.jsx", "JavaScript JSX", 0, 0, 0, 196, 0, 13, 15, 224
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\components\setWorkFlowInDocNew\steps\connectWebflowToDoc\contents\assignCollapse\reminder\Reminder.jsx", "JavaScript JSX", 0, 0, 0, 56, 0, 0, 6, 62
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\components\setWorkFlowInDocNew\steps\connectWebflowToDoc\contents\assignCollapse\time\Time.jsx", "JavaScript JSX", 0, 0, 0, 171, 0, 0, 10, 181
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\components\setWorkFlowInDocNew\steps\connectWebflowToDoc\contents\assignDocumentMap\AssignDocumentMap.jsx", "JavaScript JSX", 0, 0, 0, 121, 0, 1, 23, 145
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\components\setWorkFlowInDocNew\steps\connectWebflowToDoc\contents\copiesOfDoc\CopiesOfDoc.jsx", "JavaScript JSX", 0, 0, 0, 205, 0, 3, 27, 235
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\components\setWorkFlowInDocNew\steps\connectWebflowToDoc\contents\copiesOfDoc\copiesOdDoc.module.css", "CSS", 0, 0, 0, 0, 4, 0, 1, 5
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\components\setWorkFlowInDocNew\steps\connectWebflowToDoc\contents\selectMembersToAssign\SelectMembersToAssign.jsx", "JavaScript JSX", 0, 0, 0, 1081, 0, 72, 75, 1228
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\components\setWorkFlowInDocNew\steps\connectWebflowToDoc\contents\selectMembersToAssign\assignTask\AssignTask.jsx", "JavaScript JSX", 0, 0, 0, 252, 0, 0, 20, 272
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\components\setWorkFlowInDocNew\steps\connectWebflowToDoc\contents\selectMembersToAssign\selectMembersToAssign.module.css", "CSS", 0, 0, 0, 0, 78, 0, 15, 93
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\components\setWorkFlowInDocNew\steps\connectWebflowToDoc\dropdown\Dropdown.jsx", "JavaScript JSX", 0, 0, 0, 66, 0, 6, 10, 82
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\components\setWorkFlowInDocNew\steps\connectWebflowToDoc\dropdown\dropdown.module.css", "CSS", 0, 0, 0, 0, 58, 1, 11, 70
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\components\setWorkFlowInDocNew\steps\processDocument\ProcessDocument.jsx", "JavaScript JSX", 0, 0, 0, 417, 0, 97, 66, 580
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\components\setWorkFlowInDocNew\steps\processDocument\components\GeneratedLinksModal\GeneratedLinksModal.jsx", "JavaScript JSX", 0, 0, 0, 219, 0, 2, 17, 238
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\components\setWorkFlowInDocNew\steps\processDocument\components\GeneratedLinksModal\style.module.css", "CSS", 0, 0, 0, 0, 116, 2, 19, 137
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\components\setWorkFlowInDocNew\steps\processDocument\components\SaveConfirmationModal\SaveConfirmationModal.jsx", "JavaScript JSX", 0, 0, 0, 71, 0, 0, 7, 78
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\components\setWorkFlowInDocNew\steps\processDocument\components\SaveConfirmationModal\style.module.css", "CSS", 0, 0, 0, 0, 94, 0, 14, 108
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\components\setWorkFlowInDocNew\steps\processDocument\processDocument.module.css", "CSS", 0, 0, 0, 0, 38, 0, 7, 45
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\components\setWorkFlowInDocNew\steps\processDocument\utils\utils.js", "JavaScript", 175, 0, 0, 0, 0, 18, 29, 222
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\components\setWorkFlowInDocNew\steps\selectDoc\SelectDoc.jsx", "JavaScript JSX", 0, 0, 0, 265, 0, 8, 25, 298
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\components\setWorkFlowInDocNew\steps\selectDoc\selectDoc.module.css", "CSS", 0, 0, 0, 0, 77, 30, 16, 123
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\components\setWorkFlowInDocNew\steps\selectDoc\selectedDocuments\SelectedDocuments.jsx", "JavaScript JSX", 0, 0, 0, 79, 0, 5, 12, 96
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\components\setWorkFlowInDocNew\steps\selectDoc\selectedDocuments\selectedDocuments.module.css", "CSS", 0, 0, 0, 0, 47, 3, 7, 57
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\components\setWorkFlowInDocNew\steps\selectDoc\swiper.css", "CSS", 0, 0, 0, 0, 36, 0, 7, 43
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\components\setWorkFlowInDocNew\steps\selectWorkflow\SelectWorkflow.jsx", "JavaScript JSX", 0, 0, 0, 78, 0, 2, 15, 95
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\components\setWorkFlowInDocNew\steps\selectWorkflow\selectWorkflow.module.css", "CSS", 0, 0, 0, 0, 33, 0, 6, 39
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\components\setWorkFlowInDocNew\steps\selectWorkflow\selectWorkflowBoxes\SelectWorkflowBoxes.jsx", "JavaScript JSX", 0, 0, 0, 377, 0, 11, 32, 420
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\components\setWorkFlowInDocNew\steps\selectWorkflow\selectWorkflowBoxes\infoBoxes.module.css", "CSS", 0, 0, 0, 0, 28, 46, 12, 86
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\components\setWorkFlowInDocNew\steps\selectWorkflow\selectedWorkflow\SelectedWorkflows.jsx", "JavaScript JSX", 0, 0, 0, 83, 0, 0, 9, 92
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\components\setWorkFlowInDocNew\steps\selectWorkflow\selectedWorkflow\selectedWorkflows.module.css", "CSS", 0, 0, 0, 0, 26, 0, 3, 29
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\components\setWorkFlowInDocNew\steps\setProcessName\ProcessName.jsx", "JavaScript JSX", 0, 0, 0, 41, 0, 0, 8, 49
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\components\setWorkFlowInDocNew\steps\setProcessName\ProcessName.module.css", "CSS", 0, 0, 0, 0, 38, 0, 7, 45
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\components\setWorkFlowInDoc\SetWorkflowInDoc.jsx", "JavaScript JSX", 0, 0, 0, 69, 0, 2, 8, 79
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\components\setWorkFlowInDoc\assignButton\AssignButton.jsx", "JavaScript JSX", 0, 0, 0, 22, 0, 0, 3, 25
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\components\setWorkFlowInDoc\assignButton\assignButton.module.css", "CSS", 0, 0, 0, 0, 17, 0, 1, 18
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\components\setWorkFlowInDoc\contentMapOfDoc\ContentMapOfDoc.jsx", "JavaScript JSX", 0, 0, 0, 76, 0, 38, 14, 128
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\components\setWorkFlowInDoc\contentMapOfDoc\contentMapOfDoc.module.css", "CSS", 0, 0, 0, 0, 79, 1, 10, 90
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\components\setWorkFlowInDoc\contents\Contents.jsx", "JavaScript JSX", 0, 0, 0, 178, 0, 35, 13, 226
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\components\setWorkFlowInDoc\contents\contents.module.css", "CSS", 0, 0, 0, 0, 84, 2, 15, 101
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\components\setWorkFlowInDoc\customerSupport\CustomerSupport.jsx", "JavaScript JSX", 0, 0, 0, 79, 0, 0, 7, 86
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\components\setWorkFlowInDoc\customerSupport\customerSupport.module.css", "CSS", 0, 0, 0, 0, 130, 2, 18, 150
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\components\setWorkFlowInDoc\customerSupport\swiper.css", "CSS", 0, 0, 0, 0, 18, 0, 4, 22
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\components\setWorkFlowInDoc\formLayout\FormLayout.jsx", "JavaScript JSX", 0, 0, 0, 16, 0, 1, 5, 22
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\components\setWorkFlowInDoc\formLayout\formLayout.module.css", "CSS", 0, 0, 0, 0, 35, 0, 4, 39
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\components\setWorkFlowInDoc\globalStyles.css", "CSS", 0, 0, 0, 0, 30, 0, 7, 37
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\components\setWorkFlowInDoc\select\Select.jsx", "JavaScript JSX", 0, 0, 0, 19, 0, 0, 3, 22
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\components\setWorkFlowInDoc\select\select.module.css", "CSS", 0, 0, 0, 0, 16, 0, 1, 17
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\components\setWorkFlowInDoc\setWorkflowInDoc.module.css", "CSS", 0, 0, 0, 0, 49, 0, 7, 56
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\components\setWorkFlowInDoc\steps\checkErrors\CheckErrors.jsx", "JavaScript JSX", 0, 0, 0, 55, 0, 0, 6, 61
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\components\setWorkFlowInDoc\steps\checkErrors\checkErrors.module.css", "CSS", 0, 0, 0, 0, 30, 0, 6, 36
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\components\setWorkFlowInDoc\steps\checkErrors\infoTable\InfoTable.jsx", "JavaScript JSX", 0, 0, 0, 248, 0, 1, 16, 265
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\components\setWorkFlowInDoc\steps\checkErrors\infoTable\infoTable.module.css", "CSS", 0, 0, 0, 0, 40, 0, 8, 48
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\components\setWorkFlowInDoc\steps\connectWebflowToDoc\ConnectWorkFlowToDoc.jsx", "JavaScript JSX", 0, 0, 0, 181, 0, 17, 25, 223
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\components\setWorkFlowInDoc\steps\connectWebflowToDoc\assignForms\forms\assignDocumentMap\AssignDocumentMap.jsx", "JavaScript JSX", 0, 0, 0, 52, 0, 0, 7, 59
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\components\setWorkFlowInDoc\steps\connectWebflowToDoc\assignForms\forms\assignLocation\AssignLocation.jsx", "JavaScript JSX", 0, 0, 0, 126, 0, 1, 13, 140
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\components\setWorkFlowInDoc\steps\connectWebflowToDoc\assignForms\forms\assignTask\AssignTask.jsx", "JavaScript JSX", 0, 0, 0, 141, 0, 0, 36, 177
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\components\setWorkFlowInDoc\steps\connectWebflowToDoc\assignForms\forms\assignTime\AssignTimes.jsx", "JavaScript JSX", 0, 0, 0, 164, 0, 0, 19, 183
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\components\setWorkFlowInDoc\steps\connectWebflowToDoc\connectWorkFlowToDoc.module.css", "CSS", 0, 0, 0, 0, 140, 33, 20, 193
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\components\setWorkFlowInDoc\steps\connectWebflowToDoc\dropdown\Dropdown.jsx", "JavaScript JSX", 0, 0, 0, 64, 0, 6, 8, 78
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\components\setWorkFlowInDoc\steps\connectWebflowToDoc\dropdown\dropdown.module.css", "CSS", 0, 0, 0, 0, 59, 1, 11, 71
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\components\setWorkFlowInDoc\steps\processDocument\ProcessDocument.jsx", "JavaScript JSX", 0, 0, 0, 378, 0, 1, 32, 411
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\components\setWorkFlowInDoc\steps\processDocument\processDocument.module.css", "CSS", 0, 0, 0, 0, 254, 3, 39, 296
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\components\setWorkFlowInDoc\steps\selectDoc\SelectDoc.jsx", "JavaScript JSX", 0, 0, 0, 90, 0, 7, 11, 108
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\components\setWorkFlowInDoc\steps\selectDoc\selectDoc.module.css", "CSS", 0, 0, 0, 0, 52, 1, 8, 61
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\components\setWorkFlowInDoc\steps\selectDoc\swiper.css", "CSS", 0, 0, 0, 0, 32, 0, 6, 38
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\components\setWorkFlowInDoc\steps\selectWorkflow\SelectWorkflow.jsx", "JavaScript JSX", 0, 0, 0, 41, 0, 3, 6, 50
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\components\setWorkFlowInDoc\steps\selectWorkflow\selectWorkflow.module.css", "CSS", 0, 0, 0, 0, 6, 0, 1, 7
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\components\setWorkFlowInDoc\steps\selectWorkflow\workFlowSwiper\WorkflowSwiper.jsx", "JavaScript JSX", 0, 0, 0, 57, 0, 5, 10, 72
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\components\setWorkFlowInDoc\steps\selectWorkflow\workFlowSwiper\swiper.css", "CSS", 0, 0, 0, 0, 33, 2, 6, 41
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\components\setWorkFlowInDoc\steps\selectWorkflow\workFlowSwiper\workFlowSwiper.module.css", "CSS", 0, 0, 0, 0, 20, 0, 3, 23
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\components\setWorkFlowInDoc\steps\selectWorkflow\ınfoBoxes\InfoBoxes.jsx", "JavaScript JSX", 0, 0, 0, 297, 0, 19, 27, 343
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\components\setWorkFlowInDoc\steps\selectWorkflow\ınfoBoxes\infoBoxes.module.css", "CSS", 0, 0, 0, 0, 18, 53, 11, 82
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\components\skeloton\Skeleton.jsx", "JavaScript JSX", 0, 0, 0, 12, 0, 0, 3, 15
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\components\skeloton\skeleton.module.css", "CSS", 0, 0, 0, 0, 33, 0, 6, 39
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\components\spinner\Spinner.jsx", "JavaScript JSX", 0, 0, 0, 76, 0, 0, 5, 81
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\components\spinner\spinner.module.css", "CSS", 0, 0, 0, 0, 89, 0, 12, 101
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\components\styledComponents\styledComponents.js", "JavaScript", 31, 0, 0, 0, 0, 0, 2, 33
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\components\submitButton\SubmitButton.jsx", "JavaScript JSX", 0, 0, 0, 26, 0, 0, 5, 31
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\components\submitButton\submitButton.module.css", "CSS", 0, 0, 0, 0, 0, 0, 1, 1
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\components\workflowAiSettings\WorkflowAiSettings.jsx", "JavaScript JSX", 0, 0, 0, 110, 0, 2, 12, 124
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\components\workflowAiSettings\enabledDisabkedProcess\EnabledDisabkedProcess.jsx", "JavaScript JSX", 0, 0, 0, 402, 0, 3, 39, 444
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\components\workflowAiSettings\enabledProcess\EnabledProcess.jsx", "JavaScript JSX", 0, 0, 0, 277, 0, 53, 37, 367
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\components\workflowAiSettings\teamInWorkflowAi\TeamsInWorkflowAi.jsx", "JavaScript JSX", 0, 0, 0, 473, 0, 22, 39, 534
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\components\workflowAiSettings\themes\Themes.jsx", "JavaScript JSX", 0, 0, 0, 76, 0, 0, 6, 82
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\components\workflowAiSettings\themes\themes.module.css", "CSS", 0, 0, 0, 0, 12, 0, 1, 13
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\components\workflowAiSettings\veriables.js", "JavaScript", 666, 0, 0, 0, 0, 108, 40, 814
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\components\workflowAiSettings\workflowAiSettings.module.css", "CSS", 0, 0, 0, 0, 76, 4, 14, 94
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\contexts\AppContext.js", "JavaScript", 58, 0, 0, 0, 0, 523, 6, 587
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\contexts\README.md", "Markdown", 0, 2, 0, 0, 0, 0, 2, 4
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\contexts\UserContext.js", "JavaScript", 11, 0, 0, 0, 0, 0, 5, 16
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\features\app\appSlice.js", "JavaScript", 838, 0, 0, 0, 0, 10, 32, 880
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\features\app\asyncThunks.js", "JavaScript", 14, 0, 0, 0, 0, 0, 4, 18
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\features\auth\asyncThunks.js", "JavaScript", 36, 0, 0, 0, 0, 0, 9, 45
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\features\auth\authSlice.js", "JavaScript", 68, 0, 0, 0, 0, 4, 6, 78
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\features\document\asyncThunks.js", "JavaScript", 162, 0, 0, 0, 0, 1, 31, 194
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\features\document\documentSlice.js", "JavaScript", 160, 0, 0, 0, 0, 9, 5, 174
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\features\favorites\asyncThunks.js", "JavaScript", 22, 0, 0, 0, 0, 0, 6, 28
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\features\favorites\favoritesSlice.js", "JavaScript", 38, 0, 0, 0, 0, 3, 6, 47
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\features\settings\asyncThunks.js", "JavaScript", 42, 0, 0, 0, 0, 0, 9, 51
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\features\settings\settingSlice.js", "JavaScript", 56, 0, 0, 0, 0, 4, 5, 65
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\features\template\asyncThunks.js", "JavaScript", 103, 0, 0, 0, 0, 0, 27, 130
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\features\template\templateSlice.js", "JavaScript", 89, 0, 0, 0, 0, 6, 5, 100
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\features\workflow\asyncTHunks.js", "JavaScript", 121, 0, 0, 0, 0, 4, 30, 155
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\features\workflow\workflowsSlice.js", "JavaScript", 110, 0, 0, 0, 0, 10, 6, 126
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\hooks\README.md", "Markdown", 0, 2, 0, 0, 0, 0, 2, 4
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\hooks\useChangeElementPropertyOnScroll.js", "JavaScript", 20, 0, 0, 0, 0, 8, 9, 37
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\hooks\useClickInside.js", "JavaScript", 13, 0, 0, 0, 0, 0, 7, 20
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\hooks\useCloseElementOnEscapeKeyClick.js", "JavaScript", 13, 0, 0, 0, 0, 0, 6, 19
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\hooks\useDowellLogin.js", "JavaScript", 117, 0, 0, 0, 0, 26, 29, 172
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\hooks\useScrollPosition.js", "JavaScript", 14, 0, 0, 0, 0, 0, 5, 19
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\hooks\useWindowSize.js", "JavaScript", 20, 0, 0, 0, 0, 8, 3, 31
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\httpCommon\httpCommon.js", "JavaScript", 36, 0, 0, 0, 0, 0, 14, 50
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\i18n.js", "JavaScript", 40, 0, 0, 0, 0, 0, 7, 47
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\index.css", "CSS", 0, 0, 0, 0, 68, 1, 10, 79
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\index.js", "JavaScript", 32, 0, 0, 0, 0, 3, 3, 38
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\layouts\README.md", "Markdown", 0, 5, 0, 0, 0, 0, 3, 8
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\layouts\WorkflowLayout\WorkflowLayout.js", "JavaScript", 377, 0, 0, 0, 0, 5, 29, 411
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\layouts\WorkflowLayout\style.css", "CSS", 0, 0, 0, 0, 27, 0, 3, 30
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\layouts\WorkflowLayout\workflowLayout.module.css", "CSS", 0, 0, 0, 0, 199, 8, 28, 235
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\layouts\collapse\Collapse.jsx", "JavaScript JSX", 0, 0, 0, 31, 0, 1, 6, 38
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\pages\App\WorkflowApp.js", "JavaScript", 495, 0, 0, 0, 0, 88, 39, 622
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\pages\App\style.css", "CSS", 0, 0, 0, 0, 33, 0, 1, 34
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\pages\App\workflowApp.module.css", "CSS", 0, 0, 0, 0, 60, 0, 8, 68
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\pages\ConstructionPage\ConstructionPage.jsx", "JavaScript JSX", 0, 0, 0, 13, 0, 0, 4, 17
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\pages\ConstructionPage\style.module.css", "CSS", 0, 0, 0, 0, 23, 0, 3, 26
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\pages\Documents\AllDocumentsPage\DocumentsPage.js", "JavaScript", 185, 0, 0, 0, 0, 14, 15, 214
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\pages\Documents\AllDocumentsPage\documentsPage.module.css", "CSS", 0, 0, 0, 0, 55, 0, 7, 62
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\pages\Documents\AllDocumentsPage\style.css", "CSS", 0, 0, 0, 0, 0, 0, 1, 1
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\pages\Documents\Documents\Documents.jsx", "JavaScript JSX", 0, 0, 0, 0, 0, 10, 3, 13
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\pages\Documents\Documents\documents.module.css", "CSS", 0, 0, 0, 0, 0, 0, 2, 2
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\pages\Documents\DraftsDoc\DraftsDoc.jsx", "JavaScript JSX", 0, 0, 0, 0, 0, 10, 3, 13
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\pages\Documents\DraftsDoc\rejected.module.css", "CSS", 0, 0, 0, 0, 0, 0, 1, 1
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\pages\Documents\NewDocumentPage\CreateNewDocumentPage.js", "JavaScript", 7, 0, 0, 0, 0, 0, 3, 10
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\pages\Documents\NewDocumentPage\style.css", "CSS", 0, 0, 0, 0, 0, 0, 1, 1
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\pages\Documents\ProcessDocumentsPage\ProcessDocumentsPage.js", "JavaScript", 7, 0, 0, 0, 0, 0, 3, 10
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\pages\Documents\ProcessDocumentsPage\style.css", "CSS", 0, 0, 0, 0, 0, 0, 1, 1
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\pages\Documents\RejectedDocuments\RejectedDocumentsPage.js", "JavaScript", 7, 0, 0, 0, 0, 0, 3, 10
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\pages\Documents\RejectedDocuments\style.css", "CSS", 0, 0, 0, 0, 0, 0, 1, 1
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\pages\Documents\SignDocumentPage\SignDocumentsPage.js", "JavaScript", 7, 0, 0, 0, 0, 0, 3, 10
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\pages\Documents\SignDocumentPage\style.css", "CSS", 0, 0, 0, 0, 0, 0, 1, 1
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\pages\Folders\FolderPage.jsx", "JavaScript JSX", 0, 0, 0, 74, 0, 3, 10, 87
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\pages\Folders\FoldersPage.jsx", "JavaScript JSX", 0, 0, 0, 40, 0, 0, 6, 46
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\pages\Folders\modals\FolderModal.jsx", "JavaScript JSX", 0, 0, 0, 5, 0, 0, 3, 8
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\pages\Folders\modals\FoldersModal.jsx", "JavaScript JSX", 0, 0, 0, 732, 0, 20, 53, 805
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\pages\Folders\modals\folders_modal.module.css", "CSS", 0, 0, 0, 0, 168, 4, 32, 204
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\pages\Landing\Home.js", "JavaScript", 22, 0, 0, 0, 0, 176, 8, 206
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\pages\Landing\home.css", "CSS", 0, 0, 0, 0, 34, 0, 1, 35
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\pages\Notifications\NotificationsPage.js", "JavaScript", 7, 0, 0, 0, 0, 0, 3, 10
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\pages\Notifications\style.css", "CSS", 0, 0, 0, 0, 0, 0, 1, 1
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\pages\Processes\AllProccessPage\ProcessesPage.js", "JavaScript", 303, 0, 0, 0, 0, 0, 18, 321
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\pages\README.md", "Markdown", 0, 5, 0, 0, 0, 0, 4, 9
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\pages\Search\DisplaySearch.jsx", "JavaScript JSX", 0, 0, 0, 212, 0, 0, 14, 226
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\pages\Search\SearchPage.jsx", "JavaScript JSX", 0, 0, 0, 601, 0, 51, 46, 698
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\pages\Search\style.module.css", "CSS", 0, 0, 0, 0, 268, 8, 49, 325
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\pages\Search\util.js", "JavaScript", 56, 0, 0, 0, 0, 4, 7, 67
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\pages\Templates\AllTemplatesPage\TemplatesPage.js", "JavaScript", 174, 0, 0, 0, 0, 6, 15, 195
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\pages\Templates\AllTemplatesPage\style.css", "CSS", 0, 0, 0, 0, 0, 0, 1, 1
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\pages\Templates\ApproveTemplatesPage\ApproveTemplatesPage.js", "JavaScript", 7, 0, 0, 0, 0, 0, 2, 9
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\pages\Templates\ApproveTemplatesPage\style.css", "CSS", 0, 0, 0, 0, 0, 0, 1, 1
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\pages\Templates\CreateTemplatePage\CreateNewTemplatePage.js", "JavaScript", 53, 0, 0, 0, 0, 0, 10, 63
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\pages\Templates\CreateTemplatePage\style.css", "CSS", 0, 0, 0, 0, 69, 0, 12, 81
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\pages\Templates\CretedByMeTemp\CretedByMeTemp.jsx", "JavaScript JSX", 0, 0, 0, 4, 0, 0, 2, 6
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\pages\Templates\NewTemplate\NewTemplate.jsx", "JavaScript JSX", 0, 0, 0, 4, 0, 0, 2, 6
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\pages\Templates\RejectedTemplatesPage\RejectedTemplatesPage.js", "JavaScript", 7, 0, 0, 0, 0, 0, 3, 10
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\pages\Templates\RejectedTemplatesPage\style.css", "CSS", 0, 0, 0, 0, 0, 0, 1, 1
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\pages\Templates\TempDraft\TempDraft.jsx", "JavaScript JSX", 0, 0, 0, 4, 0, 0, 2, 6
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\pages\Templates\TempDraft\toBe.module.css", "CSS", 0, 0, 0, 0, 0, 0, 1, 1
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\pages\Verification\VerificationPage.js", "JavaScript", 165, 0, 0, 0, 0, 3, 29, 197
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\pages\Verification\style.css", "CSS", 0, 0, 0, 0, 23, 0, 2, 25
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\pages\Workflows\AllWorkflowsPage\WorkflowsPage.js", "JavaScript", 140, 0, 0, 0, 0, 4, 14, 158
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\pages\Workflows\AllWorkflowsPage\style.css", "CSS", 0, 0, 0, 0, 0, 0, 1, 1
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\pages\Workflows\ApproveWorkflowPage\ApproveWorkflowPage.js", "JavaScript", 7, 0, 0, 0, 0, 0, 3, 10
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\pages\Workflows\ApproveWorkflowPage\style.css", "CSS", 0, 0, 0, 0, 0, 0, 1, 1
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\pages\Workflows\CreateNewWorkflowPage\CreateNewWorkflowPage.js", "JavaScript", 7, 0, 0, 0, 0, 0, 3, 10
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\pages\Workflows\CreateNewWorkflowPage\style.css", "CSS", 0, 0, 0, 0, 0, 0, 1, 1
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\pages\Workflows\DraftF\DraftF.jsx", "JavaScript JSX", 0, 0, 0, 4, 0, 0, 2, 6
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\pages\Workflows\NewWorkflow\NewWorkFlow.jsx", "JavaScript JSX", 0, 0, 0, 4, 0, 0, 2, 6
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\pages\Workflows\RejectedWorkflowsPage\RejectedWorkflowsPage.js", "JavaScript", 7, 0, 0, 0, 0, 0, 3, 10
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\pages\Workflows\RejectedWorkflowsPage\style.css", "CSS", 0, 0, 0, 0, 0, 0, 1, 1
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\pages\Workflows\ToBeApproved\ToBeApproved.jsx", "JavaScript JSX", 0, 0, 0, 0, 0, 0, 1, 1
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\pages\Workflows\ToBeApproved\toBe.module.css", "CSS", 0, 0, 0, 0, 0, 0, 1, 1
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\reportWebVitals.js", "JavaScript", 12, 0, 0, 0, 0, 0, 2, 14
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\services\README.md", "Markdown", 0, 6, 0, 0, 0, 0, 5, 11
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\services\appServices.js", "JavaScript", 6, 0, 0, 0, 0, 0, 2, 8
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\services\archiveServices.js", "JavaScript", 8, 0, 0, 0, 0, 0, 2, 10
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\services\authServices.js", "JavaScript", 18, 0, 0, 0, 0, 0, 6, 24
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\services\axios.js", "JavaScript", 36, 0, 0, 0, 0, 1, 8, 45
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\services\common.js", "JavaScript", 9, 0, 0, 0, 0, 0, 2, 11
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\services\documentServices.js", "JavaScript", 54, 0, 0, 0, 0, 11, 18, 83
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\services\favoritesServices.js", "JavaScript", 20, 0, 0, 0, 0, 0, 6, 26
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\services\folderServices.js", "JavaScript", 11, 0, 0, 0, 0, 0, 7, 18
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\services\legalService.js", "JavaScript", 5, 0, 0, 0, 0, 0, 3, 8
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\services\locationServices.js", "JavaScript", 7, 0, 0, 0, 0, 0, 3, 10
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\services\processServices.js", "JavaScript", 74, 0, 0, 0, 0, 4, 18, 96
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\services\routes.js", "JavaScript", 5, 0, 0, 0, 0, 0, 2, 7
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\services\searchServices.js", "JavaScript", 4, 0, 0, 0, 0, 0, 2, 6
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\services\templateServices.js", "JavaScript", 40, 0, 0, 0, 0, 1, 12, 53
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\services\workflowServices.js", "JavaScript", 21, 0, 0, 0, 0, 0, 4, 25
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\services\workflowSettingServices.js", "JavaScript", 27, 0, 0, 0, 0, 3, 10, 40
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\setupTests.js", "JavaScript", 1, 0, 0, 0, 0, 4, 1, 6
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\utils\README.md", "Markdown", 0, 9, 0, 0, 0, 0, 2, 11
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\utils\continentsData.js", "JavaScript", 221, 0, 0, 0, 0, 0, 0, 221
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\utils\helpers.js", "JavaScript", 99, 0, 0, 0, 0, 27, 21, 147
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\utils\localStorageUtils.js", "JavaScript", 6, 0, 0, 0, 0, 0, 2, 8
+"c:\Users\SELENE\Desktop\Web Dev\Do Well\100018-dowellWorkflowAi-testing\src\utils\timezonesObj.js", "JavaScript", 6, 0, 0, 0, 0, 0, 2, 8
+"Total", "-", 6429, 38, 1545, 18358, 6751, 2483, 3670, 39274
