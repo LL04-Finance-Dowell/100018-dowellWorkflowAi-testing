@@ -974,16 +974,17 @@ def get_templates(request, company_id):
     templates = bulk_query_template_collection(
         {"company_id": company_id, "data_type": data_type}
     )
+    print(templates)
     templates_list = []
     if templates:
         templates_list = [
             {
-                "folders": item["folders"],
+                "folders": item.get("folders",[]),
                 "company_id": item["company_id"],
                 "data_type": item["data_type"],
-                "auth_viewers": item["auth_viewers"],
+                "auth_viewers": item.get("auth_viewers", []),
                 "_id": item["_id"],
-                "template_type": item["template_type"],
+                "template_type": item.get("template_type", "draft"),
                 "template_name": item["template_name"],
                 "created_by": item["created_by"],
             }
