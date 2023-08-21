@@ -611,7 +611,6 @@ def create_document(request):
     template_id=request.data["template_id"]
     content=single_query_template_collection({"_id": template_id})["content"]
     page= single_query_template_collection({"_id": template_id})["page"]
-    print(page)
     res = json.loads(
         save_to_document_collection(
             {
