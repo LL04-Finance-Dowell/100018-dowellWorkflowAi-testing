@@ -971,7 +971,6 @@ def get_templates(request, company_id):
     templates = bulk_query_template_collection(
         {"company_id": company_id, "data_type": data_type}
     )
-    print(templates)
     templates_list = []
     if templates:
         templates_list = [
