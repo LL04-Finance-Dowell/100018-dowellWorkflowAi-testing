@@ -610,7 +610,8 @@ def create_document(request):
     folder = []
     template_id=request.data["template_id"]
     content=single_query_template_collection({"_id": template_id})["content"]
-
+    page= single_query_template_collection({"_id": template_id})["page"]
+    print(page)
     res = json.loads(
         save_to_document_collection(
             {
@@ -618,7 +619,7 @@ def create_document(request):
                 "content": content,
                 "created_by": request.data["created_by"],
                 "company_id": organization_id,
-                "page": request.data["page"],
+                "page": page,
                 "data_type": request.data["data_type"],
                 "document_state": "draft",
                 "auth_viewers": viewers,
