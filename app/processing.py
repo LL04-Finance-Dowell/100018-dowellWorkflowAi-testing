@@ -3,8 +3,8 @@ import urllib.parse
 import uuid
 from threading import Thread
 import os
-#from dotenv import load_dotenv
-#load_dotenv()
+from dotenv import load_dotenv
+load_dotenv()
 import qrcode
 import requests
 
