@@ -609,11 +609,8 @@ def create_document(request):
     organization_id = request.data["company_id"]
     folder = []
     template_id=request.data["template_id"]
-    print(template_id)
-    content=single_query_template_collection({"_id": template_id})
-    print(content)
-    
-    
+    content=single_query_template_collection({"_id": template_id})["content"]
+
     res = json.loads(
         save_to_document_collection(
             {
