@@ -6,7 +6,7 @@ import { FaPlus } from 'react-icons/fa';
 import { HashLink } from 'react-router-hash-link';
 import { useDispatch, useSelector } from 'react-redux';
 import { createTemplate } from '../../../features/template/asyncThunks';
-import { setToggleManageFileForm } from '../../../features/app/appSlice';
+import { setToggleManageFileForm, settemLoading, settemLoaded } from '../../../features/app/appSlice';
 import { useTranslation } from 'react-i18next';
 import { productName } from '../../../utils/helpers';
 import { useAppContext } from '../../../contexts/AppContext';
@@ -15,7 +15,7 @@ import { toast } from 'react-toastify';
 
 const New = () => {
   const { userDetail } = useSelector((state) => state.auth);
-  const { themeColor,creditResponse } = useSelector((state) => state.app);
+  const { themeColor, creditResponse } = useSelector((state) => state.app);
   // console.log(creditResponse.data.data.api_key)
   const dispatch = useDispatch();
   const { t } = useTranslation();
@@ -60,19 +60,20 @@ const New = () => {
             "sub_service_ids": ["DOWELL100262"],
           },
         )
+      // dispatch(settemLoading(true))
         .then((response) => {
-          console.log(response)
+
           if (response.data.success == true) {
 
             dispatch(createTemplate(data));
           }
         })
+      // dispatch(settemLoading(false))
         .catch((error) => {
           console.log(error.response?.data?.message);
           toast.info(error.response?.data?.message)
 
         });
-
     }
     else {
       dispatch(setToggleManageFileForm(true));

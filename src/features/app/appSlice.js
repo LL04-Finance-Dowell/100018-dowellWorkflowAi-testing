@@ -75,6 +75,8 @@ const initialState = {
   userMembersSelectedForProcess: [],
   publicMembersSelectedForProcess: [],
   processesLoading: true,
+  temLoading: false,
+  temLoaded: true,
   processesLoaded: false,
   allProcesses: [],
   ArrayofLinks: [],
@@ -670,6 +672,12 @@ export const appSlice = createSlice({
     setProcessesLoaded: (state, action) => {
       state.processesLoaded = action.payload;
     },
+    settemLoading: (state, action) => {
+      state.temLoading = action.payload;
+    },
+    settemLoaded: (state, action) => {
+      state.temLoaded = action.payload;
+    },
     setAllProcesses: (state, action) => {
       state.allProcesses = action.payload;
     },
@@ -850,7 +858,9 @@ export const {
   removeFromPublicMembersSelectedForProcess,
   setProcessesLoading,
   setProcessesLoaded,
+  settemLoading,
   setAllProcesses,
+  settemLoaded,
   SetArrayofLinks,
   setShowProcessNameModal,
   SetCopyProcess,

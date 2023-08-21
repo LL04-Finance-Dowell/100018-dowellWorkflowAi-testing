@@ -45,12 +45,14 @@ const UserDetail = () => {
         </span>
         <span>
           <span className={styles.title}>{t('Is Active')}:</span>{' '}
-          {creditResponse?.is_active}
+          {creditResponse?.is_active ? 'Active' : 'Not Active'}
         </span>
+
         <span>
           <span className={styles.title}>{t('Total Credits')}:</span>{' '}
-          {creditResponse?.total_credits}
+          {creditResponse?.total_credits || 0}
         </span>
+
       </div>
     </div>
   );
