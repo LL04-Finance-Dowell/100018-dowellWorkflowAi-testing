@@ -630,14 +630,17 @@ def create_document(request):
     viewers = [{"member": request.data["created_by"], "portfolio": portfolio}]
     organization_id = request.data["company_id"]
     folder = []
+    template_id=request.data["template_id"]
+    content=single_query_template_collection({"_id": template_id})["content"]
+    page= single_query_template_collection({"_id": template_id})["page"]
     res = json.loads(
         save_to_document_collection(
             {
                 "document_name": "Untitled Document",
-                "content": request.data["content"],
+                "content": content,
                 "created_by": request.data["created_by"],
                 "company_id": organization_id,
-                "page": request.data["page"],
+                "page": page,
                 "data_type": request.data["data_type"],
                 "document_state": "draft",
                 "auth_viewers": viewers,
@@ -992,7 +995,6 @@ def favorites(request):
 
 @api_view(["GET"])
 def all_favourites(request, company_id):
-    """List favs"""
     if not validate_id(company_id):
         return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
     data = list_favourites(company_id)
@@ -1001,7 +1003,6 @@ def all_favourites(request, company_id):
 
 @api_view(["DELETE"])
 def trash_favourites(request, item_id, item_type, username):
-    """Trash Favourites"""
     if not validate_id(item_id):
         return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
     msg = remove_favourite(
@@ -1014,7 +1015,6 @@ def trash_favourites(request, item_id, item_type, username):
 
 @api_view(["GET"])
 def get_templates(request, company_id):
-    """List of Created Templates."""
     data_type = request.query_params.get("data_type")
     if not validate_id(company_id) or data_type is None:
         return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
@@ -1025,12 +1025,12 @@ def get_templates(request, company_id):
     if templates:
         templates_list = [
             {
-                "folders": item["folders"],
+                "folders": item.get("folders",[]),
                 "company_id": item["company_id"],
                 "data_type": item["data_type"],
-                "auth_viewers": item["auth_viewers"],
+                "auth_viewers": item.get("auth_viewers", []),
                 "_id": item["_id"],
-                "template_type": item["template_type"],
+                "template_type": item.get("template_type", "draft"),
                 "template_name": item["template_name"],
                 "created_by": item["created_by"],
             }
@@ -1044,7 +1044,6 @@ def get_templates(request, company_id):
 
 @api_view(["GET"])
 def get_reports_templates(request, company_id):
-    """List of templates based on their current state."""
     data_type = request.query_params.get("data_type")
     template_state = request.query_params.get("template_state")
     member = request.query_params.get("member")
