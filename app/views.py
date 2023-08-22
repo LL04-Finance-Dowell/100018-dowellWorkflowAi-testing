@@ -11,14 +11,9 @@ from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from app.checks import (
-    check_process_credits_authorization,
-    check_product_usage_credits,
-    check_template_credits_authorization,
-    check_workflow_credits_authorization,
     is_finalized,
     is_wf_setting_exist,
     register_user_access,
-    check_document_credits_authorization,
 )
 
 from app.processing import Background, HandleProcess, Process
@@ -239,7 +234,6 @@ def process_verification(request):
                 status.HTTP_401_UNAUTHORIZED,
             )
     process = single_query_process_collection({"_id": link_object["process_id"]})
-    # print(process["process_steps"])
     process["org_name"] = org_name
     handler = HandleProcess(process)
     location = handler.verify_location(
@@ -353,8 +347,6 @@ def processes(request, company_id):
             {"company_id": company_id, "data_type": data_type}
         )
         cache.set(cache_key, process_list, timeout=60)
-    # page = int(request.GET.get("page", 1))
-    # process_list = paginate(process_list, page, 50)
     return Response(process_list, status.HTTP_200_OK)
 
 
@@ -565,7 +557,6 @@ def get_clones_by_document(request, company_id, document_id):
             }
         )
         cache.set(cache_key, clones_list, timeout=60)
-
     page = int(request.GET.get("page", 1))
     clones_list = paginate(clones_list, page, 50)
     return Response(
@@ -608,9 +599,9 @@ def create_document(request):
     viewers = [{"member": request.data["created_by"], "portfolio": portfolio}]
     organization_id = request.data["company_id"]
     folder = []
-    template_id=request.data["template_id"]
-    content=single_query_template_collection({"_id": template_id})["content"]
-    page= single_query_template_collection({"_id": template_id})["page"]
+    template_id = request.data["template_id"]
+    content = single_query_template_collection({"_id": template_id})["content"]
+    page = single_query_template_collection({"_id": template_id})["page"]
     res = json.loads(
         save_to_document_collection(
             {
@@ -978,7 +969,7 @@ def get_templates(request, company_id):
     if templates:
         templates_list = [
             {
-                "folders": item.get("folders",[]),
+                "folders": item.get("folders", []),
                 "company_id": item["company_id"],
                 "data_type": item["data_type"],
                 "auth_viewers": item.get("auth_viewers", []),
@@ -1583,7 +1574,6 @@ def dowell_centre_documents(request, company_id):
             {"company_id": company_id, "data_type": data_type}
         )
         cache.set(cache_key, document_list, timeout=60)
-
     page = int(request.GET.get("page", 1))
     documents = paginate(document_list, page, 50)
     document_list = [
@@ -1599,21 +1589,13 @@ def dowell_centre_documents(request, company_id):
 @api_view(["GET"])
 def get_templates_documents(request, company_id):
     """Fetch saved and draft templates/documents based on user request."""
-    # Extract the "data_type" and "doc_state" query parameters from the request
     data_type = request.query_params.get("data_type")
     doc_state = request.query_params.get("doc_state")
-
     page = int(request.GET.get("page", 1))
-    # Check if the provided company_id is valid and "data_type" is not empty
     if not validate_id(company_id) or data_type is None or doc_state is None:
-        # Return a response with an error message and HTTP status code 400 (Bad Request)
         return Response("Invalid Request!", status.HTTP_400_BAD_REQUEST)
-
     item_status = doc_state.split("_")[1]
-    # Check the user request to decide whether to fetch templates or documents
     if doc_state in ["templates_saved", "templates_draft"]:
-        # Call bulk_query_template_collection with the appropriate "status" parameter
-        # Prepare options to pass to bulk_query functions
         options = {
             "company_id": company_id,
             "data_type": data_type,
@@ -1622,27 +1604,14 @@ def get_templates_documents(request, company_id):
         templates_documents = bulk_query_template_collection(options)
         key = "saved_templates" if doc_state == "templates_saved" else "draft_templates"
     elif doc_state in ["documents_saved", "documents_draft"]:
-        # Prepare options to pass to bulk_query functions
         options = {
             "company_id": company_id,
             "data_type": data_type,
             "document_state": item_status,
         }
-        # Call bulk_query_document_collection with the appropriate "status" parameter
         templates_documents = bulk_query_document_collection(options)
         key = "saved_documents" if doc_state == "documents_saved" else "draft_documents"
     else:
-        # If the user request does not match any of the above patterns, return an error response
         return Response("Invalid Request!", status.HTTP_400_BAD_REQUEST)
-
     templates_documents = paginate(templates_documents, page, 20)
-
-    # Return a JSON response containing the fetched templates/documents and HTTP status code 200 (OK)
     return Response({key: templates_documents}, status=status.HTTP_200_OK)
-
-
-@api_view(["GET"])
-def get_workspace_credits_information(request, company_id):
-    product_info = check_product_usage_credits(company_id)
-    if product_info:
-        return Response(product_info, status.HTTP_200_OK)

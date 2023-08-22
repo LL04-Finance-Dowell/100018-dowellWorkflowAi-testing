@@ -730,7 +730,6 @@ def finalize_item(item_id, state, item_type):
                 "platform": "bangalore",
             }
         )
-
     if payload is not None:
         return post_to_data_service(payload)
     return

@@ -38,7 +38,6 @@ from .views import (
     get_templates,
     get_workflow_ai_setting,
     get_workflows,
-    get_workspace_credits_information,
     process_copies,
     process_verification,
     processes,
@@ -62,7 +61,6 @@ from .views import (
 
 urlpatterns = [
     path("server/", webhook),
-    path("companies/<str:company_id>/credits/", get_workspace_credits_information),
     path("companies/<str:company_id>/processes/", processes),
     path("companies/<str:company_id>/processes/completed/", get_completed_processes),
     path("companies/<str:company_id>/workflows/", get_workflows),
