@@ -72,7 +72,7 @@ const SelectDoc = ({ savedDoc }) => {
   const handleAddSelectedDocuments = (document) => {
     console.log(document)
     axios
-      .get(`https://100094.pythonanywhere.com/v1/companies/${data.company_id}/documents/${document._id}/clones/?data_type=${data.data_type}`)
+      .get(`https://workflowai.uxlivinglab.online/v1/companies/${data.company_id}/documents/${document._id}/clones/?data_type=${data.data_type}`)
       .then((response) => {
         console.log(response.data)
         setSelectedDocumentCopies(
