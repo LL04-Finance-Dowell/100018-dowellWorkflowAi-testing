@@ -18,6 +18,8 @@ from .mongo_db_connection import (
     save_to_process_collection,
     single_query_document_collection,
     single_query_clones_collection,
+    single_query_clones_metadata_collection,
+    single_query_document_metadata_collection,
     single_query_process_collection,
     single_query_template_collection,
 )
@@ -118,16 +120,12 @@ def cloning_document(document_id, auth_viewers, parent_id, process_id):
                 {
                     "document_name": document_name,
                     "document_id": save_res["inserted_id"],
-                    "content": document["content"],
-                    "created_by": document["created_by"],
                     "company_id": document["company_id"],
                     "data_type": document["data_type"],
                     "auth_viewers": auth_viewers,
                     "document_type": "clone",
                     "document_state": "processing",
-                    "parent_id": parent_id,
                     "process_id": process_id,
-                    "folders": "untitled",
                 }
             )
         )
@@ -447,3 +445,19 @@ def check_all_finalized_true(data) -> bool:
         if not all(doc_states):
             return False
     return True
+
+
+def get_metadata_id(item_id, item_type):
+    """Gets gthe inserted_id of the metadata for the respective item_id"""
+    if item_type == "document":
+        try:
+            coll_id = single_query_document_metadata_collection({"document_id": item_id})["_id"]
+            return coll_id
+        except Exception as err:
+            print("AN error occured: ", err)
+    elif item_type == "clone":
+        try:
+            coll_id = single_query_clones_metadata_collection({"document_id": item_id})["_id"]
+            return coll_id
+        except Exception as err:
+            print("An error occured: ", err)

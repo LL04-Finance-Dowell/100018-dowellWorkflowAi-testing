@@ -32,6 +32,7 @@ from app.helpers import (
     register_finalized,
     remove_favourite,
     validate_id,
+    get_metadata_id,
 )
 from app.mongo_db_connection import (
     add_document_to_folder,
@@ -57,6 +58,7 @@ from app.mongo_db_connection import (
     single_query_document_collection,
     single_query_document_metadata_collection,
     single_query_clones_collection,
+    single_query_clones_metadata_collection,
     bulk_query_workflow_collection,
     single_query_folder_collection,
     single_query_qrcode_collection,
@@ -69,6 +71,7 @@ from app.mongo_db_connection import (
     bulk_query_document_collection,
     bulk_query_document_metadata_collection,
     bulk_query_clones_collection,
+    bulk_query_clones_metadata_collection,
     single_query_links_collection,
     single_query_process_collection,
     update_folder,
@@ -297,6 +300,10 @@ def finalize_or_reject(request, process_id):
     res = json.loads(finalize_item(item_id, state, item_type))
     if res["isSuccess"]:
         try:
+            # Update the metadata
+            meta_id = get_metadata_id(item_id, item_type)
+            finalize_item(meta_id, state, item_type)
+
             process = single_query_process_collection({"_id": process_id})
             background = Background(process, item_type, item_id, role, user)
             background.processing()
@@ -534,11 +541,27 @@ def get_documents_in_organization(request, company_id):
     document_state = request.query_params.get("document_state")
     if not validate_id(company_id) or not data_type:
         return Response("Invalid Request!", status=status.HTTP_400_BAD_REQUEST)
-    documents = bulk_query_document_metadata_collection(
+    documents = bulk_query_document_collection(
         {
             "company_id": company_id,
             "data_type": data_type,
             "document_type": document_type,
+            "document_state": document_state,
+        }
+    )
+    return Response({"documents": documents}, status=status.HTTP_200_OK)
+
+@api_view(["GET"])
+def get_documents_metadata_in_organization(request, company_id):
+    """List of Created Documents."""
+    data_type = request.query_params.get("data_type")
+    document_state = request.query_params.get("document_state")
+    if not validate_id(company_id) or not data_type:
+        return Response("Invalid Request!", status=status.HTTP_400_BAD_REQUEST)
+    documents = bulk_query_document_metadata_collection(
+        {
+            "company_id": company_id,
+            "data_type": data_type,
             "document_state": document_state,
         }
     )
@@ -556,6 +579,28 @@ def get_clones_in_organization(request, company_id):
     clones_list = cache.get(cache_key)
     if clones_list is None:
         clones_list = bulk_query_clones_collection(
+            {
+                "company_id": company_id,
+                "data_type": data_type,
+                "document_state": doc_state,
+            }
+        )
+        cache.set(cache_key, clones_list, timeout=60)
+    return Response(
+        {"clones": clones_list},
+        status.HTTP_200_OK,
+    )
+
+def get_clones_metadata_in_organization(request, company_id):
+    """List of Created Documents."""
+    data_type = request.query_params.get("data_type")
+    doc_state = request.query_params.get("doc_state", None)
+    if not validate_id(company_id) and doc_state is None:
+        return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
+    cache_key = f"clones_{company_id}"
+    clones_list = cache.get(cache_key)
+    if clones_list is None:
+        clones_list = bulk_query_clones_metadata_collection(
             {
                 "company_id": company_id,
                 "data_type": data_type,
@@ -656,15 +701,10 @@ def create_document(request):
                 {
                     "document_name": "Untitled Document",
                     "document_id": res["inserted_id"],
-                    "created_by": request.data["created_by"],
                     "company_id": organization_id,
                     "data_type": request.data["data_type"],
                     "document_state": "draft",
                     "auth_viewers": viewers,
-                    "document_type": "original",
-                    "parent_id": None,
-                    "process_id": "",
-                    "folders": folder,
                 }
             )
         )
