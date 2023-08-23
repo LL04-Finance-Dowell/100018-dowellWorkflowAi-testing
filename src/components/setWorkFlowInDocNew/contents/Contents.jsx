@@ -325,7 +325,7 @@ const Contents = ({
                                   anchorId={
                                     item._id + currentStepIndex + item._id
                                   }
-                                  content={'Required or not required'}
+                                  content={'Mark as required'}
                                   place='top'
                                 />
                               </>
