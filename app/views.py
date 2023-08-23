@@ -48,6 +48,7 @@ from app.mongo_db_connection import (
     delete_template,
     delete_workflow,
     finalize_item,
+    update_metadata,
     save_to_document_collection,
     save_to_document_metadata_collection,
     save_to_folder_collection,
@@ -298,18 +299,20 @@ def finalize_or_reject(request, process_id):
             f"document already processed as `{current_state}`!", status.HTTP_200_OK
         )
     res = json.loads(finalize_item(item_id, state, item_type))
+    
     if res["isSuccess"]:
         try:
-            # Update the metadata
-            meta_id = get_metadata_id(item_id, item_type)
-            finalize_item(meta_id, state, item_type)
-
             process = single_query_process_collection({"_id": process_id})
             background = Background(process, item_type, item_id, role, user)
             background.processing()
             if user_type == "public":
                 link_id = request.data["link_id"]
                 register_finalized(link_id)
+
+            # Update the metadata
+            meta_id = get_metadata_id(item_id, item_type)
+            update_metadata(meta_id, state, item_type)
+
             return Response("document processed successfully", status.HTTP_200_OK)
         except Exception as err:
             print(err)
@@ -591,6 +594,7 @@ def get_clones_in_organization(request, company_id):
         status.HTTP_200_OK,
     )
 
+@api_view(["GET"])
 def get_clones_metadata_in_organization(request, company_id):
     """List of Created Documents."""
     data_type = request.query_params.get("data_type")

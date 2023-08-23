@@ -791,6 +791,41 @@ def finalize_item(item_id, state, item_type):
     return
 
 
+def update_metadata(item_id, state, item_type):
+    payload = None
+    if item_type == "document":
+        payload = json.dumps(
+            {
+                **DOCUMENT_METADATA_CONNECTION_DICT,
+                "command": "update",
+                "field": {
+                    "_id": item_id,
+                },
+                "update_field": {
+                    "document_state": state,
+                },
+                "platform": "bangalore",
+            }
+        )
+    elif item_type == "clone":
+        payload = json.dumps(
+            {
+                **CLONES_METADATA_CONNECTION_DICT,
+                "command": "update",
+                "field": {
+                    "_id": item_id,
+                },
+                "update_field": {
+                    "document_state": state,
+                },
+                "platform": "bangalore",
+            }
+        )
+    if payload is not None:
+        return post_to_data_service(payload)
+    return
+
+
 def update_process(process_id, steps, state):
     payload = json.dumps(
         {
