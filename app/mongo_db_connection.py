@@ -14,6 +14,8 @@ from app.constants import (
     DOCUMENT_METADATA_CONNECTION_LIST,
     CLONES_CONNECTION_DICT,
     CLONES_CONNECTION_LIST,
+    CLONES_METADATA_CONNECTION_DICT,
+    CLONES_METADATA_CONNECTION_LIST,
     DOWELLCONNECTION_URL,
     LINK_CONNECTION_DICT,
     LINK_CONNECTION_LIST,
@@ -96,16 +98,15 @@ def bulk_query_document_collection(options):
     )
     return documents
 
-def bulk_query_document_metadata_collection(options):
-    documents = get_data_from_data_service(
-        *DOCUMENT_METADATA_CONNECTION_LIST, "fetch", field=options
-    )
-    return documents
-
-
 def single_query_document_collection(options):
     documents = get_data_from_data_service(
         *DOCUMENT_CONNECTION_LIST, "find", field=options
+    )
+    return documents
+
+def bulk_query_document_metadata_collection(options):
+    documents = get_data_from_data_service(
+        *DOCUMENT_METADATA_CONNECTION_LIST, "fetch", field=options
     )
     return documents
 
@@ -148,9 +149,16 @@ def single_query_clones_collection(options):
     clone = get_data_from_data_service(*CLONES_CONNECTION_LIST, "find", field=options)
     return clone
 
-
 def bulk_query_clones_collection(options):
     clones = get_data_from_data_service(*CLONES_CONNECTION_LIST, "fetch", field=options)
+    return clones
+
+def single_query_clones_metadata_collection(options):
+    clone = get_data_from_data_service(*CLONES_METADATA_CONNECTION_LIST, "find", field=options)
+    return clone
+
+def bulk_query_clones_metadata_collection(options):
+    clones = get_data_from_data_service(*CLONES_METADATA_CONNECTION_LIST, "fetch", field=options)
     return clones
 
 
@@ -569,6 +577,23 @@ def save_to_clone_collection(options):
     payload = json.dumps(
         {
             **CLONES_CONNECTION_DICT,
+            "command": "insert",
+            "field": options,
+            "update_field": {"order_nos": 21},
+            "platform": "bangalore",
+        }
+    )
+    return post_to_data_service(payload)
+
+def save_to_clone_metadata_collection(options):
+    options["eventId"] = get_event_id()["event_id"]
+    options["created_on"] = time
+    options["approved"] = False
+    options["rejected"] = False
+    options["clone_list"] = []
+    payload = json.dumps(
+        {
+            **CLONES_METADATA_CONNECTION_DICT,
             "command": "insert",
             "field": options,
             "update_field": {"order_nos": 21},

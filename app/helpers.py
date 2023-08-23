@@ -14,6 +14,7 @@ from app.serializers import (
 
 from .mongo_db_connection import (
     save_to_clone_collection,
+    save_to_clone_metadata_collection,
     save_to_process_collection,
     single_query_document_collection,
     single_query_clones_collection,
@@ -111,6 +112,27 @@ def cloning_document(document_id, auth_viewers, parent_id, process_id):
                 }
             )
         )
+        
+        save_res_metadata = json.loads(
+            save_to_clone_metadata_collection(
+                {
+                    "document_name": document_name,
+                    "document_id": save_res["inserted_id"],
+                    "content": document["content"],
+                    "created_by": document["created_by"],
+                    "company_id": document["company_id"],
+                    "data_type": document["data_type"],
+                    "auth_viewers": auth_viewers,
+                    "document_type": "clone",
+                    "document_state": "processing",
+                    "parent_id": parent_id,
+                    "process_id": process_id,
+                    "folders": "untitled",
+                }
+            )
+        )
+        print("metadata: ", save_res_metadata)
+
         return save_res["inserted_id"]
     except Exception as e:
         print(e)
@@ -152,6 +174,26 @@ def cloning_clone(clone_id, auth_viewers, parent_id, process_id):
                 }
             )
         )
+        
+        save_res_metadata = json.loads(
+            save_to_clone_metadata_collection(
+                {
+                    "document_name": document_name,
+                    "document_id": save_res["inserted_id"],
+                    "created_by": document["created_by"],
+                    "company_id": document["company_id"],
+                    "data_type": document["data_type"],
+                    "auth_viewers": auth_viewers,
+                    "document_type": "clone",
+                    "document_state": "processing",
+                    "parent_id": parent_id,
+                    "process_id": process_id,
+                    "folders": "untitled",
+                }
+            )
+        )
+        print("metadata: ", save_res_metadata)
+
         return save_res["inserted_id"]
     except Exception as e:
         print(e)

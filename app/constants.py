@@ -116,6 +116,23 @@ CLONES_CONNECTION_DICT = {
     "team_member_ID": "1212001",
     "function_ID": "ABCDE",
 }
+CLONES_METADATA_CONNECTION_LIST = [
+    "Documents",
+    "bangalore",
+    "Documentation",
+    "CloneMetaData",
+    "CloneMetaData",
+    "1226001",
+    "ABCDE",
+]
+CLONES_METADATA_CONNECTION_DICT = {
+    "cluster": "Documents",
+    "database": "Documentation",
+    "collection": "CloneMetaData",
+    "document": "CloneMetaData",
+    "team_member_ID": "1226001",
+    "function_ID": "ABCDE",
+}
 QR_CONNECTION_LIST = [
     "Documents",
     "bangalore",
