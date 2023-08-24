@@ -3,13 +3,14 @@ import urllib.parse
 import uuid
 from threading import Thread
 import os
-from dotenv import load_dotenv
-
-load_dotenv()
+#from dotenv import load_dotenv
+#load_dotenv()
 import qrcode
 import requests
 
 from app.checks import (
+    check_items_state,
+    check_that_process_documents_are_finalized,
     display_right,
     location_right,
     time_limit_right,
@@ -24,7 +25,9 @@ from app.constants import (
 from app.helpers import (
     cloning_document,
     cloning_clone,
+    get_query_param_value_from_url,
     register_public_login,
+    check_items_state,
     check_all_finalized_true,
 )
 from app.mongo_db_connection import (
@@ -148,9 +151,9 @@ class HandleProcess:
 
     def generate_qrcode(link):
         """Revert back to prod qr_path before push"""
-        current_env = os.environ.get("ENV")
-        staging_path = os.environ.get("STAGING_PATH")
-        production_path = os.environ.get("PRODUCTION_PATH")
+        current_env = os.environ.get('ENV')
+        staging_path = os.environ.get('STAGING_PATH')
+        production_path = os.environ.get('PRODUCTION_PATH')
         if current_env == "PRODUCTION":
             qr_path = f"{production_path}/qrcodes/{uuid.uuid4().hex}.png"
         elif current_env == "STAGING":
@@ -166,7 +169,7 @@ class HandleProcess:
         return f"https://{qr_path}"
 
     def notify(auth_name, doc_id, portfolio, company_id, link, org_name):
-        return requests.post(
+        response = requests.post(
             NOTIFICATION_API,
             json.dumps(
                 {
@@ -185,6 +188,7 @@ class HandleProcess:
             ),
             {"Content-Type": "application/json"},
         )
+        return
 
     def user_team_public_data(process_data, auth_name, step_role, portfolio, user_type):
         hash = uuid.uuid4().hex
@@ -333,6 +337,8 @@ class HandleProcess:
             )
             links.append({"master_link": m_link})
             qrcodes.append({"master_qrcode": m_code})
+            # Grab API key
+            public_api_key = get_query_param_value_from_url(m_link, "api_key")
         save_to_links_collection(
             {
                 "links": links,
@@ -397,7 +403,7 @@ class HandleProcess:
                         self.process["created_at"],
                     )
                 else:
-                    return True
+                    return True  # If the steptimeLimit key does not exist
 
     def verify_access(self, auth_role, user_name, user_type):
         clone_id = None
@@ -490,11 +496,14 @@ class Background:
         steps = self.process["process_steps"]
         parent_id = self.process["parent_item_id"]
         process_id = self.process["_id"]
+        process_type = self.process["process_type"]
         document_id = self.item_id
         processing_state = self.process["processing_state"]
+        created_by = self.process["created_by"]
         # Background.register_user_access(
         #     self.process["process_steps"], self.role, self.username
         # )
+
         finalized = []
         try:
             no_of_steps = sum(isinstance(e, dict) for e in steps)
@@ -505,27 +514,13 @@ class Background:
                             for k, v in list(document_map.items()):
                                 if (
                                     isinstance(v, str)
-                                    and single_query_clones_collection({"_id": v}).get(
-                                        "document_state"
-                                    )
-                                    == "processing"
+                                    and single_query_clones_collection({"_id": v}).get("document_state") == "processing"
                                 ):
                                     continue
                                 elif (
                                     isinstance(v, str)
-                                    and single_query_clones_collection({"_id": v}).get(
-                                        "document_state"
-                                    )
-                                    == "finalized"
-                                    and k
-                                    in [
-                                        mem["member"]
-                                        for mem in (
-                                            single_query_clones_collection(
-                                                {"_id": v}
-                                            ).get("auth_viewers", [])
-                                        )
-                                    ]
+                                    and single_query_clones_collection({"_id": v}).get("document_state") == "finalized"
+                                    and k in [mem["member"] for mem in (single_query_clones_collection({"_id": v}).get("auth_viewers", []))]
                                 ):
                                     register_single_user_access(
                                         step, step.get("stepRole"), k
@@ -559,13 +554,9 @@ class Background:
                                     for item in prev_docs:
                                         key = next(iter(item))
                                         my_key = item[key]
-                                        if (
-                                            "accessed" in item
-                                            and single_query_clones_collection(
-                                                {"_id": my_key}
-                                            ).get("document_state")
-                                            == "finalized"
-                                        ):
+                                        if ("accessed" in item
+                                            and single_query_clones_collection({"_id": my_key}).get("document_state") == "finalized"
+                                            ):
                                             step1_documents.append(my_key)
                                 for document in step1_documents:
                                     for user in step.get("stepTeamMembers"):
