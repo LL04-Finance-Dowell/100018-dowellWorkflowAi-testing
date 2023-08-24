@@ -10,8 +10,12 @@ from app.constants import (
     FOLDER_CONNECTION_LIST,
     DOCUMENT_CONNECTION_DICT,
     DOCUMENT_CONNECTION_LIST,
+    DOCUMENT_METADATA_CONNECTION_DICT,
+    DOCUMENT_METADATA_CONNECTION_LIST,
     CLONES_CONNECTION_DICT,
     CLONES_CONNECTION_LIST,
+    CLONES_METADATA_CONNECTION_DICT,
+    CLONES_METADATA_CONNECTION_LIST,
     DOWELLCONNECTION_URL,
     LINK_CONNECTION_DICT,
     LINK_CONNECTION_LIST,
@@ -22,6 +26,8 @@ from app.constants import (
     QR_CONNECTION_LIST,
     TEMPLATE_CONNECTION_DICT,
     TEMPLATE_CONNECTION_LIST,
+    TEMPLATE_METADATA_CONNECTION_DICT,
+    TEMPLATE_METADATA_CONNECTION_LIST,
     WF_AI_SETTING_DICT,
     WF_AI_SETTING_LIST,
     WF_CONNECTION_DICT,
@@ -94,10 +100,21 @@ def bulk_query_document_collection(options):
     )
     return documents
 
-
 def single_query_document_collection(options):
     documents = get_data_from_data_service(
         *DOCUMENT_CONNECTION_LIST, "find", field=options
+    )
+    return documents
+
+def bulk_query_document_metadata_collection(options):
+    documents = get_data_from_data_service(
+        *DOCUMENT_METADATA_CONNECTION_LIST, "fetch", field=options
+    )
+    return documents
+
+def single_query_document_metadata_collection(options):
+    documents = get_data_from_data_service(
+        *DOCUMENT_METADATA_CONNECTION_LIST, "find", field=options
     )
     return documents
 
@@ -119,6 +136,24 @@ def single_query_template_collection(options):
     )
     return template
 
+def bulk_query_template_metadata_collection(options):
+    templates = get_data_from_data_service(
+        *TEMPLATE_METADATA_CONNECTION_LIST,
+        "fetch",
+        field=options,
+    )
+    return templates
+
+
+def single_query_template_metadata_collection(options):
+    template = get_data_from_data_service(
+        *TEMPLATE_METADATA_CONNECTION_LIST,
+        "find",
+        field=options,
+    )
+    print(f"Fetched metadata {template}")
+    return template
+
 
 def bulk_query_links_collection(options):
     links = get_data_from_data_service(*LINK_CONNECTION_LIST, "fetch", field=options)
@@ -134,9 +169,16 @@ def single_query_clones_collection(options):
     clone = get_data_from_data_service(*CLONES_CONNECTION_LIST, "find", field=options)
     return clone
 
-
 def bulk_query_clones_collection(options):
     clones = get_data_from_data_service(*CLONES_CONNECTION_LIST, "fetch", field=options)
+    return clones
+
+def single_query_clones_metadata_collection(options):
+    clone = get_data_from_data_service(*CLONES_METADATA_CONNECTION_LIST, "find", field=options)
+    return clone
+
+def bulk_query_clones_metadata_collection(options):
+    clones = get_data_from_data_service(*CLONES_METADATA_CONNECTION_LIST, "fetch", field=options)
     return clones
 
 
@@ -222,6 +264,7 @@ def get_data_from_data_service(
     )
     response = post_to_data_service(payload)
     res = json.loads(response)
+    # print(res)
     if res["data"] is not None:
         if len(res["data"]):
             return res["data"]
@@ -513,6 +556,21 @@ def save_to_template_collection(options):
     )
     return post_to_data_service(payload)
 
+def save_to_template_metadata_collection(options):
+    options["created_on"] = time
+    options["approved"] = False
+    options["rejected"] = False
+    options["template_state"] = "draft"
+    payload = json.dumps(
+        {
+            **TEMPLATE_METADATA_CONNECTION_DICT,
+            "command": "insert",
+            "field": options,
+            "update_field": {"order_nos": 21},
+            "platform": "bangalore",
+        }
+    )
+    return post_to_data_service(payload)
 
 def save_to_document_collection(options):
     options["eventId"] = get_event_id()["event_id"]
@@ -521,6 +579,21 @@ def save_to_document_collection(options):
     payload = json.dumps(
         {
             **DOCUMENT_CONNECTION_DICT,
+            "command": "insert",
+            "field": options,
+            "update_field": {"order_nos": 21},
+            "platform": "bangalore",
+        }
+    )
+    return post_to_data_service(payload)
+
+def save_to_document_metadata_collection(options):
+    options["eventId"] = get_event_id()["event_id"]
+    options["created_on"] = time
+    options["clone_list"] = []
+    payload = json.dumps(
+        {
+            **DOCUMENT_METADATA_CONNECTION_DICT,
             "command": "insert",
             "field": options,
             "update_field": {"order_nos": 21},
@@ -539,6 +612,23 @@ def save_to_clone_collection(options):
     payload = json.dumps(
         {
             **CLONES_CONNECTION_DICT,
+            "command": "insert",
+            "field": options,
+            "update_field": {"order_nos": 21},
+            "platform": "bangalore",
+        }
+    )
+    return post_to_data_service(payload)
+
+def save_to_clone_metadata_collection(options):
+    options["eventId"] = get_event_id()["event_id"]
+    options["created_on"] = time
+    options["approved"] = False
+    options["rejected"] = False
+    options["clone_list"] = []
+    payload = json.dumps(
+        {
+            **CLONES_METADATA_CONNECTION_DICT,
             "command": "insert",
             "field": options,
             "update_field": {"order_nos": 21},
@@ -726,6 +816,56 @@ def finalize_item(item_id, state, item_type):
                 },
                 "update_field": {
                     "document_state": state,
+                },
+                "platform": "bangalore",
+            }
+        )
+
+    if payload is not None:
+        return post_to_data_service(payload)
+    return
+
+
+def update_metadata(item_id, state, item_type):
+    payload = None
+    if item_type == "document":
+        payload = json.dumps(
+            {
+                **DOCUMENT_METADATA_CONNECTION_DICT,
+                "command": "update",
+                "field": {
+                    "_id": item_id,
+                },
+                "update_field": {
+                    "document_state": state,
+                },
+                "platform": "bangalore",
+            }
+        )
+    elif item_type == "clone":
+        payload = json.dumps(
+            {
+                **CLONES_METADATA_CONNECTION_DICT,
+                "command": "update",
+                "field": {
+                    "_id": item_id,
+                },
+                "update_field": {
+                    "document_state": state,
+                },
+                "platform": "bangalore",
+            }
+        )
+    elif item_type == "template":
+        payload = json.dumps(
+            {
+                **TEMPLATE_METADATA_CONNECTION_DICT,
+                "command": "update",
+                "field": {
+                    "_id": item_id,
+                },
+                "update_field": {
+                    "template_state": state,
                 },
                 "platform": "bangalore",
             }
@@ -1181,4 +1321,3 @@ def delete_items_in_folder(item_id, folder_id, item_type):
         }
     )
     return post_to_data_service(payload)
-

@@ -79,6 +79,24 @@ DOCUMENT_CONNECTION_DICT = {
     "team_member_ID": "11689044433",
     "function_ID": "ABCDE",
 }
+DOCUMENT_METADATA_CONNECTION_LIST = [
+    "Documents",
+    "bangalore",
+    "Documentation",
+    "DocumentMetaData",
+    "DocumentMetaData",
+    "1222001",
+    "ABCDE",
+]
+DOCUMENT_METADATA_CONNECTION_DICT = {
+    "cluster": "Documents",
+    "database": "Documentation",
+    "collection": "DocumentMetaData",
+    "document": "DocumentMetaData",
+    "team_member_ID": "1222001",
+    "function_ID": "ABCDE",
+}
+
 CLONES_CONNECTION_LIST = [
     "Documents",
     "bangalore",
@@ -94,6 +112,23 @@ CLONES_CONNECTION_DICT = {
     "collection": "CloneReports",
     "document": "CloneReports",
     "team_member_ID": "1212001",
+    "function_ID": "ABCDE",
+}
+CLONES_METADATA_CONNECTION_LIST = [
+    "Documents",
+    "bangalore",
+    "Documentation",
+    "CloneMetaData",
+    "CloneMetaData",
+    "1226001",
+    "ABCDE",
+]
+CLONES_METADATA_CONNECTION_DICT = {
+    "cluster": "Documents",
+    "database": "Documentation",
+    "collection": "CloneMetaData",
+    "document": "CloneMetaData",
+    "team_member_ID": "1226001",
     "function_ID": "ABCDE",
 }
 QR_CONNECTION_LIST = [
@@ -130,6 +165,25 @@ TEMPLATE_CONNECTION_DICT = {
     "team_member_ID": "22689044433",
     "function_ID": "ABCDE",
 }
+
+TEMPLATE_METADATA_CONNECTION_DICT ={
+    "cluster": "Documents",
+    "database": "Documentation",
+    "collection": "TemplateMetaData",
+    "document": "TemplateMetaData",
+    "team_member_ID": "1223001",
+    "function_ID": "ABCDE",
+}
+TEMPLATE_METADATA_CONNECTION_LIST=[
+    "Documents",
+    "bangalore",
+    "Documentation",
+    "TemplateMetaData",
+    "TemplateMetaData",
+    "1223001",
+    "ABCDE",
+    
+]
 DOCUMENT_CONNECTION_LIST = [
     "Documents",
     "bangalore",
