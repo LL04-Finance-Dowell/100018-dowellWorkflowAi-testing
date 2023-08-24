@@ -36,6 +36,7 @@ from app.mongo_db_connection import (
     bulk_query_process_collection,
     bulk_query_team_collection,
     bulk_query_template_collection,
+    bulk_query_template_metadata_collection,
     delete_document,
     delete_folder,
     delete_items_in_folder,
@@ -50,7 +51,9 @@ from app.mongo_db_connection import (
     save_to_setting_collection,
     save_to_team_collection,
     save_to_template_collection,
+    save_to_template_metadata_collection,
     save_to_workflow_collection,
+    single_query_template_metadata_collection,
     single_query_document_collection,
     single_query_document_metadata_collection,
     single_query_clones_collection,
@@ -1120,12 +1123,26 @@ def create_template(request):
                 "created_by": request.data["created_by"],
                 "company_id": organization_id,
                 "data_type": request.data["data_type"],
-                "template_type": "original",
+                "template_type": "draft",
                 "auth_viewers": viewers,
             }
         )
     )
-    if res["isSuccess"]:
+
+    if res["isSuccess"]:            
+        collection_id  = res["inserted_id"]
+        save_to_template_metadata_collection({
+            "template_name": "Untitled Template",
+            "collection_id": collection_id,
+            "data_type": request.data["data_type"],
+            "company_id": organization_id,
+            "auth_viewers": viewers,
+            "template_state": "draft",}
+            )
+        
+        
+        
+        
         payload = {
             "product_name": "workflowai",
             "details": {
@@ -1704,3 +1721,24 @@ def get_templates_documents(request, company_id):
         return Response("Invalid Request!", status.HTTP_400_BAD_REQUEST)
     templates_documents = paginate(templates_documents, page, 20)
     return Response({key: templates_documents}, status=status.HTTP_200_OK)
+
+
+#MetaData GET requests
+@api_view(["GET"])
+def get_templates_metadata(request, company_id):
+    data_type = request.query_params.get("data_type")
+    if not validate_id(company_id) or data_type is None:
+        return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
+    templates_meta_data = bulk_query_template_metadata_collection(
+        {"company_id": company_id, "data_type": data_type}
+    )
+    return Response({"templates": templates_meta_data})
+
+@api_view(["GET"])
+def template_metadata_object(request, collection_id):
+    """Gets the JSON object for a template id"""
+    if not validate_id(collection_id):
+        return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
+    template = single_query_template_collection({"collection_id": collection_id})
+    return Response(template, status.HTTP_200_OK)
+    

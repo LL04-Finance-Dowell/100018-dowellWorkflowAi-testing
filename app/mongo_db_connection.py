@@ -26,6 +26,8 @@ from app.constants import (
     QR_CONNECTION_LIST,
     TEMPLATE_CONNECTION_DICT,
     TEMPLATE_CONNECTION_LIST,
+    TEMPLATE_METADATA_CONNECTION_DICT,
+    TEMPLATE_METADATA_CONNECTION_LIST,
     WF_AI_SETTING_DICT,
     WF_AI_SETTING_LIST,
     WF_CONNECTION_DICT,
@@ -129,6 +131,23 @@ def bulk_query_template_collection(options):
 def single_query_template_collection(options):
     template = get_data_from_data_service(
         *TEMPLATE_CONNECTION_LIST,
+        "find",
+        field=options,
+    )
+    return template
+
+def bulk_query_template_metadata_collection(options):
+    templates = get_data_from_data_service(
+        *TEMPLATE_METADATA_CONNECTION_LIST,
+        "fetch",
+        field=options,
+    )
+    return templates
+
+
+def single_query_template_metadata_collection(options):
+    template = get_data_from_data_service(
+        *TEMPLATE_METADATA_CONNECTION_LIST,
         "find",
         field=options,
     )
@@ -535,7 +554,21 @@ def save_to_template_collection(options):
         }
     )
     return post_to_data_service(payload)
-
+def save_to_template_metadata_collection(options):
+    options["created_on"] = time
+    options["approved"] = False
+    options["rejected"] = False
+    options["template_state"] = "draft"
+    payload = json.dumps(
+        {
+            **TEMPLATE_METADATA_CONNECTION_DICT,
+            "command": "insert",
+            "field": options,
+            "update_field": {"order_nos": 21},
+            "platform": "bangalore",
+        }
+    )
+    return post_to_data_service(payload)
 
 def save_to_document_collection(options):
     options["eventId"] = get_event_id()["event_id"]
@@ -785,6 +818,7 @@ def finalize_item(item_id, state, item_type):
                 "platform": "bangalore",
             }
         )
+
     if payload is not None:
         return post_to_data_service(payload)
     return
@@ -1271,4 +1305,3 @@ def delete_items_in_folder(item_id, folder_id, item_type):
         }
     )
     return post_to_data_service(payload)
-
