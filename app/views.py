@@ -631,8 +631,6 @@ def get_clones_by_document(request, company_id, document_id):
             }
         )
         cache.set(cache_key, clones_list, timeout=60)
-    page = int(request.GET.get("page", 1))
-    clones_list = paginate(clones_list, page, 50)
     return Response(
         {"clones": clones_list},
         status.HTTP_200_OK,
@@ -690,6 +688,7 @@ def create_document(request):
                 "document_type": "original",
                 "parent_id": None,
                 "process_id": "",
+                "folders": [],
             }
         )
     )
@@ -698,7 +697,7 @@ def create_document(request):
             save_to_document_metadata_collection(
                 {
                     "document_name": "Untitled Document",
-                    "document_id": res["inserted_id"],
+                    "collection_id": res["inserted_id"],
                     "company_id": organization_id,
                     "data_type": request.data["data_type"],
                     "document_state": "draft",
