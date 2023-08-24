@@ -130,6 +130,24 @@ TEMPLATE_CONNECTION_DICT = {
     "team_member_ID": "22689044433",
     "function_ID": "ABCDE",
 }
+TEMPLATE_METADATA_CONNECTION_LIST = [
+    "Documents",
+    "bangalore",
+    "Documentation",
+    "TemplateMetaData",
+    "TemplateMetaData",
+    "1223001",
+    "ABCDE",
+]
+TEMPLATE_METADATA_COLLECTION = {
+    "cluster": "Documents",
+    "database": "Documentation",
+    "collection": "TemplateMetaData",
+    "document": "TemplateMetaData",
+    "team_member_ID": "1223001",
+    "function_ID": "ABCDE",
+}
+
 DOCUMENT_CONNECTION_LIST = [
     "Documents",
     "bangalore",
@@ -190,3 +208,4 @@ MANAGEMENT_REPORTS_LIST = [
     "44689044433",
     "ABCDE",
 ]
+

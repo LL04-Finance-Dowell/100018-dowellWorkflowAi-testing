@@ -22,11 +22,13 @@ from app.constants import (
     QR_CONNECTION_LIST,
     TEMPLATE_CONNECTION_DICT,
     TEMPLATE_CONNECTION_LIST,
+    TEMPLATE_METADATA_CONNECTION_LIST,
     WF_AI_SETTING_DICT,
     WF_AI_SETTING_LIST,
     WF_CONNECTION_DICT,
     WF_CONNECTION_LIST,
     PROCESS_CONNECTION_DICT,
+    TEMPLATE_METADATA_COLLECTION,
 )
 
 dd = datetime.now()
@@ -110,10 +112,25 @@ def bulk_query_template_collection(options):
     )
     return templates
 
+def bulk_query_template_metadata_collection(options):
+    templates = get_data_from_data_service(
+        *TEMPLATE_METADATA_CONNECTION_LIST,
+        "fetch",
+        field=options,
+    )
+    return templates
 
 def single_query_template_collection(options):
     template = get_data_from_data_service(
         *TEMPLATE_CONNECTION_LIST,
+        "find",
+        field=options,
+    )
+    return template
+
+def single_query_template_metadata_collection(options):
+    template = get_data_from_data_service(
+        *TEMPLATE_METADATA_CONNECTION_LIST,
         "find",
         field=options,
     )
@@ -231,6 +248,14 @@ def get_data_from_data_service(
 def get_template_list(company_id, data_type):
     templates = get_data_from_data_service(
         *TEMPLATE_CONNECTION_LIST,
+        "fetch",
+        {"company_id": company_id, "data_type": data_type},
+    )
+    return templates
+
+def get_template_metadata_list(company_id, data_type):
+    templates = get_data_from_data_service(
+        *TEMPLATE_METADATA_CONNECTION_LIST,
         "fetch",
         {"company_id": company_id, "data_type": data_type},
     )
@@ -361,6 +386,11 @@ def get_template_object(template_id):
     )
     return template
 
+def get_template_metadata_object(template_id):
+    template = get_data_from_data_service(
+        *TEMPLATE_METADATA_CONNECTION_LIST, "find", {"_id": template_id}
+    )
+    return template
 
 def get_folder_object(folder_id):
     folder = get_data_from_data_service(
@@ -505,6 +535,23 @@ def save_to_template_collection(options):
     payload = json.dumps(
         {
             **TEMPLATE_CONNECTION_DICT,
+            "command": "insert",
+            "field": options,
+            "update_field": {"order_nos": 21},
+            "platform": "bangalore",
+        }
+    )
+    return post_to_data_service(payload)
+
+def save_to_template_metadata_collection(options):
+    options["eventId"] = get_event_id()["event_id"]
+    options["created_on"] = time
+    options["approved"] = False
+    options["rejected"] = False
+    options["template_state"] = "draft"
+    payload = json.dumps(
+        {
+            **TEMPLATE_METADATA_COLLECTION,
             "command": "insert",
             "field": options,
             "update_field": {"order_nos": 21},
@@ -822,11 +869,44 @@ def update_template(template_id, data):
     )
     return post_to_data_service(payload)
 
+def update_template_metadata(template_id, data):
+    payload = json.dumps(
+        {
+            **TEMPLATE_METADATA_COLLECTION,
+            "command": "update",
+            "field": {
+                "_id": template_id,
+            },
+            "update_field": {
+                "content": data,
+            },
+            "platform": "bangalore",
+        }
+    )
+    return post_to_data_service(payload)
+
 
 def update_template_approval(template_id, approval):
     payload = json.dumps(
         {
             **TEMPLATE_CONNECTION_DICT,
+            # "command": "insert",
+            "command": "update",
+            "field": {
+                "_id": template_id,
+            },
+            "update_field": {
+                "approved": approval,
+            },
+            "platform": "bangalore",
+        }
+    )
+    return post_to_data_service(payload)
+
+def update_template_metadata_approval(template_id, approval):
+    payload = json.dumps(
+        {
+            **TEMPLATE_METADATA_COLLECTION,
             # "command": "insert",
             "command": "update",
             "field": {
@@ -933,6 +1013,22 @@ def delete_template(template_id, data_type):
     payload = json.dumps(
         {
             **TEMPLATE_CONNECTION_DICT,
+            "command": "update",
+            "field": {
+                "_id": template_id,
+            },
+            "update_field": {
+                "data_type": data_type,
+            },
+            "platform": "bangalore",
+        }
+    )
+    return post_to_data_service(payload)
+
+def delete_template_metadata(template_id, data_type):
+    payload = json.dumps(
+        {
+            **TEMPLATE_METADATA_COLLECTION,
             "command": "update",
             "field": {
                 "_id": template_id,
