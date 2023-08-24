@@ -272,6 +272,8 @@ def process_verification(request):
 @api_view(["POST"])
 def finalize_or_reject(request, process_id):
     """After access is granted and the user has made changes on a document."""
+
+    print("------------------Starting-------------------------------")
     if not request.data:
         return Response("you are missing something", status.HTTP_400_BAD_REQUEST)
     item_id = request.data["item_id"]
@@ -280,21 +282,37 @@ def finalize_or_reject(request, process_id):
     user = request.data["authorized"]
     user_type = request.data["user_type"]
     state = request.data["action"]
+    print(f"item type is {item_type}")
     check, current_state = is_finalized(item_id, item_type)
-    if check and current_state != "processing":
-        return Response(
-            f"document already processed as `{current_state}`!", status.HTTP_200_OK
-        )
+    if item_type == "clone":
+        if check and current_state != "processing":
+            return Response(
+                f"document already processed as `{current_state}`!", status.HTTP_200_OK
+            )
+    elif item_type == "template":
+        if check and current_state != "draft":
+            return Response(
+                f"template already processed as `{current_state}`!", status.HTTP_200_OK
+            )
     res = json.loads(finalize_item(item_id, state, item_type))
     if res["isSuccess"]:
         try:
             process = single_query_process_collection({"_id": process_id})
             background = Background(process, item_type, item_id, role, user)
             background.processing()
-            if user_type == "public":
-                link_id = request.data["link_id"]
-                register_finalized(link_id)
-            return Response("document processed successfully", status.HTTP_200_OK)
+            print(item_type)
+            if item_type == "document":
+                if user_type == "public":
+                    link_id = request.data["link_id"]
+                    register_finalized(link_id)
+                return Response("document processed successfully", status.HTTP_200_OK)
+
+            elif item_type == "template":
+                if user_type == "public":
+                    link_id = request.data["link_id"]
+                    register_finalized(link_id)
+                return Response("template processed successfully", status.HTTP_200_OK)
+               
         except Exception as err:
             print(err)
             return Response(
@@ -1050,7 +1068,6 @@ def create_template(request):
                 "team_member_ID": "22689044433",
                 "function_ID": "ABCDE",
                 "command": "update",
-                "name": "Untitled Template",
                 "flag": "editing",
                 "update_field": {
                     "template_name": "Untitled Template",
