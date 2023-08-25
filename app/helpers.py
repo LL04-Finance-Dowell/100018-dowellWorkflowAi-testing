@@ -120,6 +120,7 @@ def cloning_document(document_id, auth_viewers, parent_id, process_id):
                 {
                     "document_name": document_name,
                     "document_id": save_res["inserted_id"],
+                    "created_by": document["created_by"],
                     "company_id": document["company_id"],
                     "data_type": document["data_type"],
                     "auth_viewers": auth_viewers,

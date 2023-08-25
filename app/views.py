@@ -698,6 +698,7 @@ def create_document(request):
                 {
                     "document_name": "Untitled Document",
                     "collection_id": res["inserted_id"],
+                    "created_by": request.data["created_by"],
                     "company_id": organization_id,
                     "data_type": request.data["data_type"],
                     "document_state": "draft",
