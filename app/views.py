@@ -1133,6 +1133,7 @@ def create_template(request):
         collection_id  = res["inserted_id"]
         save_to_template_metadata_collection({
             "template_name": "Untitled Template",
+            "created_by": request.data["created_by"],
             "collection_id": collection_id,
             "data_type": request.data["data_type"],
             "company_id": organization_id,
