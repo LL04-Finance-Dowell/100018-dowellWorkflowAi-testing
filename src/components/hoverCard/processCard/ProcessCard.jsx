@@ -33,7 +33,7 @@ const ProcessCard = ({ cardItem, title }) => {
   const [copyprocessLoading, setcopyprocessLoading] = useState(false);
   const [processDetailLoading, setProcessDetailLoading] = useState(false);
 
-  console.log(allProcesses)
+  // console.log(allProcesses)
   const handleProcessItemClick = async (item) => {
     if (item.processing_state === 'draft' && item.workflow_construct_ids) {
       navigate(
