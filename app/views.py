@@ -706,7 +706,7 @@ def create_document(request):
                 }
             )
         )
-        print(res_metedata)
+        #print(res_metedata)
         if not res_metedata["isSuccess"]:
             return Response(
                 "An error occured while trying to save document metadata",
@@ -1131,7 +1131,7 @@ def create_template(request):
 
     if res["isSuccess"]:            
         collection_id  = res["inserted_id"]
-        save_to_template_metadata_collection({
+        res_metadata=save_to_template_metadata_collection({
             "template_name": "Untitled Template",
             "created_by": request.data["created_by"],
             "collection_id": collection_id,
@@ -1141,6 +1141,12 @@ def create_template(request):
             "template_state": "draft",}
             )
         
+        if not res_metadata["isSuccess"]:
+            return Response(
+                "An error occured while trying to save document metadata",
+                status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
+
         payload = {
             "product_name": "workflowai",
             "details": {
