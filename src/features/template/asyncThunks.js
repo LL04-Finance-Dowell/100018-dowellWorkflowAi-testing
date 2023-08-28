@@ -9,16 +9,16 @@ const filterTemplates = (templates, thunkAPI) => {
   let filteredTemplates = [];
 
   const userThunkPortfolioDataTypeState = thunkAPI.getState().auth?.userDetail?.portfolio_info?.length > 1 ?
-      thunkAPI.getState().auth?.userDetail?.portfolio_info.find(portfolio => portfolio.product === productName)?.data_type
+    thunkAPI.getState().auth?.userDetail?.portfolio_info.find(portfolio => portfolio.product === productName)?.data_type
     :
-  thunkAPI.getState().auth?.userDetail?.portfolio_info[0]?.data_type;
+    thunkAPI.getState().auth?.userDetail?.portfolio_info[0]?.data_type;
 
   if (templates && templates.length && templates.length > 0) {
     filteredTemplates = templates.filter(
       (item) =>
         item.data_type &&
         item.data_type ===
-          userThunkPortfolioDataTypeState
+        userThunkPortfolioDataTypeState
     );
   } else {
     filteredTemplates = [];
@@ -34,7 +34,7 @@ export const createTemplate = createAsyncThunk(
   async (data, thunkAPI) => {
     try {
       const res = await templateServices.createTemplate(data);
-      
+
       const newTemplate = {
         template_name: "New Template",
         newly_created: true,
@@ -43,14 +43,14 @@ export const createTemplate = createAsyncThunk(
         data_type: thunkAPI.getState().auth?.userDetail?.portfolio_info?.length > 1 ?
           thunkAPI.getState().auth?.userDetail?.portfolio_info.find(portfolio => portfolio.product === productName)?.data_type
           :
-        thunkAPI.getState().auth?.userDetail?.portfolio_info[0]?.data_type,
+          thunkAPI.getState().auth?.userDetail?.portfolio_info[0]?.data_type,
         created_on: new Date().toString(),
       }
 
       const existingTemplates = [...thunkAPI.getState().template?.allTemplates];
       existingTemplates.unshift(newTemplate);
       thunkAPI.dispatch(setAllTemplates(existingTemplates));
-      
+
       thunkAPI.dispatch(setEditorLink(res.data.editor_link));
 
       return res.data;
@@ -67,7 +67,7 @@ export const detailTemplate = createAsyncThunk(
     try {
       const res = await templateServices.detailTemplate(data);
 
-      
+
 
       thunkAPI.dispatch(setEditorLink(res.data));
 
@@ -84,7 +84,7 @@ export const mineTemplates = createAsyncThunk(
     try {
       const res = await templateServices.mineTemplates(data);
 
-    
+
 
       const templates = filterTemplates(res.data, thunkAPI);
 
@@ -119,7 +119,7 @@ export const allTemplates = createAsyncThunk(
         data.data_type
       );
 
-      const templates = filterTemplates(res.data.templates.reverse(), thunkAPI);
+      const templates = filterTemplates(res.data.templates ?? [].reverse(), thunkAPI);
 
       return templates;
     } catch (error) {

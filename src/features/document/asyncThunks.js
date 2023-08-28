@@ -11,10 +11,10 @@ const filterDocuments = (documents, thunkAPI) => {
   const userThunkPortfolioDataTypeState =
     thunkAPI.getState().auth?.userDetail?.portfolio_info?.length > 1
       ? thunkAPI
-          .getState()
-          .auth?.userDetail?.portfolio_info.find(
-            (portfolio) => portfolio.product === productName
-          )?.data_type
+        .getState()
+        .auth?.userDetail?.portfolio_info.find(
+          (portfolio) => portfolio.product === productName
+        )?.data_type
       : thunkAPI.getState().auth?.userDetail?.portfolio_info[0]?.data_type;
 
   if (documents && documents.length && documents?.length > 0) {
@@ -45,12 +45,12 @@ export const createDocument = createAsyncThunk(
         data_type:
           thunkAPI.getState().auth?.userDetail?.portfolio_info?.length > 1
             ? thunkAPI
-                .getState()
-                .auth?.userDetail?.portfolio_info.find(
-                  (portfolio) => portfolio.product === productName
-                )?.data_type
+              .getState()
+              .auth?.userDetail?.portfolio_info.find(
+                (portfolio) => portfolio.product === productName
+              )?.data_type
             : thunkAPI.getState().auth?.userDetail?.portfolio_info[0]
-                ?.data_type,
+              ?.data_type,
         created_on: new Date().toString(),
         document_type: 'original',
         document_state: 'draft',
@@ -159,10 +159,10 @@ export const allDocuments = createAsyncThunk(
       const res = await documentServices.allDocuments(
         data.company_id,
         data.data_type
-      );
+      )
 
       const documents = filterDocuments(
-        res.data.documents
+        res.data.documents ?? []
           .reverse()
           .filter((document) => document.document_state !== 'trash'),
         thunkAPI
