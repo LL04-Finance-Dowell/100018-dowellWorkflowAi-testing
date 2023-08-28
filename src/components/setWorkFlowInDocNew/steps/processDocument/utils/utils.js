@@ -47,7 +47,7 @@ export const extractProcessObj = (
     created_by: currentUserDetails?.userinfo?.username,
     creator_portfolio: currentUserDetails?.portfolio_info?.length > 1 ? currentUserDetails?.portfolio_info.find(portfolio => portfolio.product === productName)?.portfolio_name : currentUserDetails?.portfolio_info[0]?.portfolio_name,
     data_type: currentUserDetails?.portfolio_info?.length > 1 ? currentUserDetails?.portfolio_info.find(portfolio => portfolio.product === productName)?.data_type : currentUserDetails?.portfolio_info[0]?.data_type,
-    parent_id: documentToProcess?._id,
+    parent_id: documentToProcess?.collection_id,
     action: actionVal,
     process_title: Process_title,
     workflows: [

@@ -35,7 +35,7 @@ const SelectedDocuments = ({
     // const fetchData = { document_id: currentDocument?._id };
 
     
-    dispatch(contentDocument(selectedDocument._id));
+    dispatch(contentDocument(selectedDocument.collection_id));
     dispatch(setCurrentDocToWfs(selectedDocument));
     dispatch(setContentOfDocument(null));
   };
