@@ -22,6 +22,7 @@ from app.constants import (
     NOTIFICATION_API,
     QRCODE_URL,
     VERIFICATION_LINK,
+    PRODUCTION_VERIFICATION_LINK,
 )
 from app.helpers import (
     cloning_document,
@@ -169,6 +170,7 @@ class HandleProcess:
         qr_img.save(qr_path)
         return f"https://{qr_path}"
 
+
     def notify(auth_name, doc_id, portfolio, company_id, link, org_name):
         response = requests.post(
             NOTIFICATION_API,
@@ -193,7 +195,13 @@ class HandleProcess:
 
     def user_team_public_data(process_data, auth_name, step_role, portfolio, user_type):
         hash = uuid.uuid4().hex
-        link = f"{VERIFICATION_LINK}/{hash}/"
+        link = None
+        current_env = os.environ.get('ENV')
+        if current_env == "PRODUCTION":
+            link = f"{PRODUCTION_VERIFICATION_LINK}/{hash}/"
+        else:
+            link = f"{VERIFICATION_LINK}/{hash}/"
+        
         params = process_data["params"]
         process_id = process_data["_id"]
         item_id = process_data["parent_item_id"]
