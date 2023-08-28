@@ -151,7 +151,6 @@ def single_query_template_metadata_collection(options):
         "find",
         field=options,
     )
-    print(f"Fetched metadata {template}")
     return template
 
 

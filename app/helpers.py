@@ -22,6 +22,7 @@ from .mongo_db_connection import (
     single_query_document_metadata_collection,
     single_query_process_collection,
     single_query_template_collection,
+    single_query_template_metadata_collection,
 )
 
 
@@ -114,7 +115,7 @@ def cloning_document(document_id, auth_viewers, parent_id, process_id):
                 }
             )
         )
-        
+
         save_res_metadata = json.loads(
             save_to_clone_metadata_collection(
                 {
@@ -173,7 +174,7 @@ def cloning_clone(clone_id, auth_viewers, parent_id, process_id):
                 }
             )
         )
-        
+
         save_res_metadata = json.loads(
             save_to_clone_metadata_collection(
                 {
@@ -240,9 +241,6 @@ def access_editor(item_id, item_type):
     Returns:
         dict: A dictionary containing the payload with necessary details for accessing the document or template.
     """
-
-    # Determine the team_member_id based on the item_type
-    # team_member_id = "11689044433" if item_type == "document" else "22689044433"
     team_member_id = (
         "11689044433"
         if item_type == "document"
@@ -250,8 +248,6 @@ def access_editor(item_id, item_type):
         if item_type == "clone"
         else "22689044433"
     )
-
-    # Set collection, document, and field variables based on the item_type
     if item_type == "document":
         collection = "DocumentReports"
         document = "documentreports"
@@ -264,17 +260,21 @@ def access_editor(item_id, item_type):
         collection = "TemplateReports"
         document = "templatereports"
         field = "template_name"
-
-    # Get the item name from the appropriate collection based on item_type and item_id
     if item_type == "document":
         item_name = single_query_document_collection({"_id": item_id})
+        meta_data = single_query_document_metadata_collection(
+            {"collection_id": item_id}
+        )
     elif item_type == "clone":
         item_name = single_query_clones_collection({"_id": item_id})
+        meta_data = single_query_clones_metadata_collection({"collection_id": item_id})
     else:
         item_name = single_query_template_collection({"_id": item_id})
+        meta_data = single_query_template_metadata_collection(
+            {"collection_id": item_id}
+        )
     name = item_name.get(field, "")
-
-    # Create and return the payload dictionary
+    metadata_id = meta_data.get("_id")
     payload = {
         "product_name": "Workflow AI",
         "details": {
@@ -287,6 +287,7 @@ def access_editor(item_id, item_type):
             "_id": item_id,
             "field": field,
             "type": item_type,
+            "metadata_id": metadata_id,
             "action": "document"
             if item_type == "document"
             else "clone"
@@ -309,7 +310,8 @@ def access_editor(item_id, item_type):
         print(e)
         return
 
-#will be updated
+
+# will be updated
 def access_editor_metadata(item_id, item_type, metadata_id):
     """
     Access to document/template
@@ -368,7 +370,7 @@ def access_editor_metadata(item_id, item_type, metadata_id):
             "team_member_ID": team_member_id,
             "function_ID": "ABCDE",
             "_id": item_id,
-            "metadata_id":metadata_id,
+            "metadata_id": metadata_id,
             "field": field,
             "type": item_type,
             "action": "document"
@@ -392,6 +394,8 @@ def access_editor_metadata(item_id, item_type, metadata_id):
     except Exception as e:
         print(e)
         return
+
+
 # complete document and mark as complete
 def processing_complete(process):
     if process["processing_state"] == "completed":
@@ -534,13 +538,17 @@ def get_metadata_id(item_id, item_type):
     """Gets gthe inserted_id of the metadata for the respective item_id"""
     if item_type == "document":
         try:
-            coll_id = single_query_document_metadata_collection({"document_id": item_id})["_id"]
+            coll_id = single_query_document_metadata_collection(
+                {"document_id": item_id}
+            )["_id"]
             return coll_id
         except Exception as err:
             print("AN error occured: ", err)
     elif item_type == "clone":
         try:
-            coll_id = single_query_clones_metadata_collection({"document_id": item_id})["_id"]
+            coll_id = single_query_clones_metadata_collection({"document_id": item_id})[
+                "_id"
+            ]
             return coll_id
         except Exception as err:
             print("An error occured: ", err)
