@@ -55,14 +55,14 @@ const TemplatesPage = ({
       company_id:
         userDetail?.portfolio_info?.length > 1
           ? userDetail?.portfolio_info.find(
-              (portfolio) => portfolio.product === productName
-            )?.org_id
+            (portfolio) => portfolio.product === productName
+          )?.org_id
           : userDetail?.portfolio_info[0].org_id,
       data_type:
         userDetail?.portfolio_info?.length > 1
           ? userDetail?.portfolio_info.find(
-              (portfolio) => portfolio.product === productName
-            )?.data_type
+            (portfolio) => portfolio.product === productName
+          )?.data_type
           : userDetail?.portfolio_info[0].data_type,
     };
 
@@ -73,6 +73,11 @@ const TemplatesPage = ({
     if (allTemplatesStatus === 'idle') dispatch(allTemplates(data));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userDetail]);
+
+  useEffect(() => {
+    console.log('allTemplatesArray: ', allTemplatesArray);
+  }, [allTemplatesArray])
+  console.log('allTemplatesArray: ', allTemplatesArray);
 
   useEffect(() => {
     if (showOnlySaved) navigate('#saved-templates');
@@ -86,8 +91,8 @@ const TemplatesPage = ({
     const userPortfolioDataType =
       userDetail?.portfolio_info?.length > 1
         ? userDetail?.portfolio_info.find(
-            (portfolio) => portfolio.product === productName
-          )?.data_type
+          (portfolio) => portfolio.product === productName
+        )?.data_type
         : userDetail?.portfolio_info[0]?.data_type;
 
     setCurrentUserPortfolioDataType(userPortfolioDataType);

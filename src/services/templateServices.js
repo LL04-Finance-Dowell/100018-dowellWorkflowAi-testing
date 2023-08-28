@@ -30,8 +30,11 @@ export class TemplateServices {
   };
 
   allTemplates = (companyId, dataType) => {
+    // return httpApiUrl.get(
+    //   `/companies/${companyId}/templates/?data_type=${dataType}`
+    // );
     return httpApiUrl.get(
-      `/companies/${companyId}/templates/?data_type=${dataType}`
+      `/companies/${companyId}/templates/metadata/?data_type=${dataType}`
     );
   };
 

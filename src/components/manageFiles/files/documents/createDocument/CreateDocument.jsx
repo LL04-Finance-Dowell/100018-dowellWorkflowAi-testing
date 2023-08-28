@@ -41,12 +41,15 @@ const CreateDocument = ({ handleToggleOverlay }) => {
     );
     if (!foundTemplateObj) return;
 
+    console.log('page: ', foundTemplateObj?.page)
+    console.log('temp obj: ', foundTemplateObj)
+
     const createDocumentData = {
       company_id: userDetail?.portfolio_info?.length > 1 ? userDetail?.portfolio_info.find(portfolio => portfolio.product === productName)?.org_id : userDetail?.portfolio_info[0].org_id,
-      template_id: template,
+      template_id: foundTemplateObj.collection_id,
       created_by: userDetail?.userinfo.username,
       data_type: userDetail?.portfolio_info?.length > 1 ? userDetail?.portfolio_info.find(portfolio => portfolio.product === productName)?.data_type : userDetail?.portfolio_info[0].data_type,
-      page: foundTemplateObj?.page,
+      // page: foundTemplateObj?.page,
       // content: foundTemplateObj?.content,
       portfolio: userDetail?.portfolio_info?.length > 1 ? userDetail?.portfolio_info.find((portfolio) => portfolio.product === productName)?.portfolio_name : userDetail?.portfolio_info[0].portfolio_name,
     };

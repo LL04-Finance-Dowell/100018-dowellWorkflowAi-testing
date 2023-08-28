@@ -33,17 +33,24 @@ import axios from 'axios';
 function App() {
   const dispatch = useDispatch();
   const { session_id, userDetail, id } = useSelector((state) => state.auth);
-  const { IconColor, ShowProfileSpinner, themeColor, creditResponse } = useSelector(
+  const { IconColor, ShowProfileSpinner, themeColor, creditResponse, } = useSelector(
     (state) => state.app
   );
-  const [ companyId, setCompanyId ] = useState(null);
+  const { allDocuments } = useSelector(state => state.document)
+  const { allTemplates } = useSelector(state => state.template)
+  const [companyId, setCompanyId] = useState(null);
   const { isPublicUser, dataType } = useAppContext();
   const clientVerUrlRef = useRef('https://ll04-finance-dowell.github.io/workflowai.online/')
   const betaVerUrlRef = useRef('https://ll04-finance-dowell.github.io/100018-dowellWorkflowAi-testing/')
-  
-  
+
+
   useDowellLogin();
-  
+
+  useEffect(() => {
+    console.log('allDocuments: ', allDocuments);
+    console.log('allTemplates: ', allTemplates);
+  }, [allDocuments])
+
   useEffect(() => {
     const interval = setInterval(() => {
       checkstatus();
@@ -57,57 +64,57 @@ function App() {
     if (!userDetail) return
 
     setCompanyId(
-      userDetail?.portfolio_info?.length > 1 ? 
-        userDetail?.portfolio_info.find(portfolio => portfolio.product === productName)?.org_id 
-        : 
+      userDetail?.portfolio_info?.length > 1 ?
+        userDetail?.portfolio_info.find(portfolio => portfolio.product === productName)?.org_id
+        :
         userDetail?.portfolio_info[0].org_id
     )
   }, [userDetail])
-  
+
   // // ! Comment the below useEffect to prevent redirection
   useEffect(() => {
-      // if (!session_id) return
-    
-      // if (window.location.pathname.includes('-testing')) {
-      //     if (dataType === 'Real_Data') window.location.replace(
-      //         id ?
-      //         `${clientVerUrlRef.current}#?session_id=${session_id}&id=${id}` :
-      //         `${clientVerUrlRef.current}#?session_id=${session_id}`
-      //         );
-      //     } else {
-      //         if (dataType !== 'Real_Data') window.location.replace(
-      //             id ?
-      //             `${betaVerUrlRef.current}#?session_id=${session_id}&id=${id}` :
-      //             `${betaVerUrlRef.current}#?session_id=${session_id}`
-      //           )
-      //         }
+    // if (!session_id) return
+
+    // if (window.location.pathname.includes('-testing')) {
+    //     if (dataType === 'Real_Data') window.location.replace(
+    //         id ?
+    //         `${clientVerUrlRef.current}#?session_id=${session_id}&id=${id}` :
+    //         `${clientVerUrlRef.current}#?session_id=${session_id}`
+    //         );
+    //     } else {
+    //         if (dataType !== 'Real_Data') window.location.replace(
+    //             id ?
+    //             `${betaVerUrlRef.current}#?session_id=${session_id}&id=${id}` :
+    //             `${betaVerUrlRef.current}#?session_id=${session_id}`
+    //           )
+    //         }
 
     if (!companyId) return
 
     axios
-    .get(`https://100105.pythonanywhere.com/api/v3/user/?type=get_api_key&workspace_id=${companyId}`)
-    .then((response) => {
-      if (!response.data?.success) {
-        dispatch(setShowApiKeyFetchFailureModal(true));
-        dispatch(setApiKeyFetchFailureMessage(response.data?.message));
-        return
-      } 
+      .get(`https://100105.pythonanywhere.com/api/v3/user/?type=get_api_key&workspace_id=${companyId}`)
+      .then((response) => {
+        if (!response.data?.success) {
+          dispatch(setShowApiKeyFetchFailureModal(true));
+          dispatch(setApiKeyFetchFailureMessage(response.data?.message));
+          return
+        }
 
-      dispatch(setcreditResponse({
-        is_active: response?.data?.data?.is_active,
-        total_credits: response?.data?.data?.total_credits,
-        api_key: response?.data?.data?.api_key
-      }))
-      // console.log(response?.data?.data?.is_active)
-      // console.log(response?.data?.data?.total_credits)
-      // console.log(response?.data?.data?.api_key)
+        dispatch(setcreditResponse({
+          is_active: response?.data?.data?.is_active,
+          total_credits: response?.data?.data?.total_credits,
+          api_key: response?.data?.data?.api_key
+        }))
+        // console.log(response?.data?.data?.is_active)
+        // console.log(response?.data?.data?.total_credits)
+        // console.log(response?.data?.data?.api_key)
 
-      // dispatch(setcreditResponse(response))
-    })
-    .catch((error) => {
+        // dispatch(setcreditResponse(response))
+      })
+      .catch((error) => {
 
-      console.log(error)
-    });
+        console.log(error)
+      });
 
 
 
