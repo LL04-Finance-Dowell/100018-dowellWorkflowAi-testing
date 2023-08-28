@@ -20,6 +20,7 @@ from app.processing import Background, HandleProcess, Process
 from app.utils import notification_cron
 from app.helpers import (
     access_editor,
+    access_editor_metadata,
     cloning_process,
     create_favourite,
     list_favourites,
@@ -693,7 +694,7 @@ def create_document(request):
         )
     )
     if res["isSuccess"]:
-        res_metedata = json.loads(
+        res_metadata = json.loads(
             save_to_document_metadata_collection(
                 {
                     "document_name": "Untitled Document",
@@ -707,13 +708,14 @@ def create_document(request):
             )
         )
         #print(res_metedata)
-        if not res_metedata["isSuccess"]:
+        if not res_metadata["isSuccess"]:
             return Response(
                 "An error occured while trying to save document metadata",
                 status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
+        metadata_id=(res_metadata["inserted_id"])
 
-        editor_link = access_editor(res["inserted_id"], "document")
+        editor_link = access_editor_metadata(res["inserted_id"], "document", metadata_id)
         if not editor_link:
             return Response(
                 "Could not open document editor.",
@@ -1131,7 +1133,7 @@ def create_template(request):
 
     if res["isSuccess"]:            
         collection_id  = res["inserted_id"]
-        res_metadata=save_to_template_metadata_collection({
+        res_metadata=json.loads(save_to_template_metadata_collection({
             "template_name": "Untitled Template",
             "created_by": request.data["created_by"],
             "collection_id": collection_id,
@@ -1139,7 +1141,7 @@ def create_template(request):
             "company_id": organization_id,
             "auth_viewers": viewers,
             "template_state": "draft",}
-            )
+            ))
         
         if not res_metadata["isSuccess"]:
             return Response(
@@ -1153,6 +1155,7 @@ def create_template(request):
                 "_id": res["inserted_id"],
                 "field": "template_name",
                 "action": "template",
+                "metadata_id": res_metadata["inserted_id"],
                 "cluster": "Documents",
                 "database": "Documentation",
                 "collection": "TemplateReports",

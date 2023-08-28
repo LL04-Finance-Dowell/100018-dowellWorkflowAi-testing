@@ -309,7 +309,89 @@ def access_editor(item_id, item_type):
         print(e)
         return
 
+#will be updated
+def access_editor_metadata(item_id, item_type, metadata_id):
+    """
+    Access to document/template
 
+    This function generates a payload for accessing a document or template based on the given item_id and item_type.
+
+    Parameters:
+        item_id (str): The unique identifier of the document or template.
+        item_type (str): The type of item ('document' or 'template').
+
+    Returns:
+        dict: A dictionary containing the payload with necessary details for accessing the document or template.
+    """
+
+    # Determine the team_member_id based on the item_type
+    # team_member_id = "11689044433" if item_type == "document" else "22689044433"
+    team_member_id = (
+        "11689044433"
+        if item_type == "document"
+        else "1212001"
+        if item_type == "clone"
+        else "22689044433"
+    )
+
+    # Set collection, document, and field variables based on the item_type
+    if item_type == "document":
+        collection = "DocumentReports"
+        document = "documentreports"
+        field = "document_name"
+    if item_type == "clone":
+        collection = "CloneReports"
+        document = "CloneReports"
+        field = "document_name"
+    elif item_type == "template":
+        collection = "TemplateReports"
+        document = "templatereports"
+        field = "template_name"
+
+    # Get the item name from the appropriate collection based on item_type and item_id
+    if item_type == "document":
+        item_name = single_query_document_collection({"_id": item_id})
+    elif item_type == "clone":
+        item_name = single_query_clones_collection({"_id": item_id})
+    else:
+        item_name = single_query_template_collection({"_id": item_id})
+    name = item_name.get(field, "")
+
+    # Create and return the payload dictionary
+    payload = {
+        "product_name": "Workflow AI",
+        "details": {
+            "cluster": "Documents",
+            "database": "Documentation",
+            "collection": collection,
+            "document": document,
+            "team_member_ID": team_member_id,
+            "function_ID": "ABCDE",
+            "_id": item_id,
+            "metadata_id":metadata_id,
+            "field": field,
+            "type": item_type,
+            "action": "document"
+            if item_type == "document"
+            else "clone"
+            if item_type == "clone"
+            else "template",
+            "flag": "editing",
+            "name": name,
+            "command": "update",
+            "update_field": {field: "", "content": "", "page": ""},
+        },
+    }
+    try:
+        response = requests.post(
+            EDITOR_API,
+            data=json.dumps(payload),
+            headers={"Content-Type": "application/json"},
+        )
+        return response.json()
+    except Exception as e:
+        print(e)
+        return
 # complete document and mark as complete
 def processing_complete(process):
     if process["processing_state"] == "completed":
