@@ -9,6 +9,9 @@ MASTERLINK_URL = "https://www.qrcodereviews.uxlivinglab.online/api/v3/masterlink
 VERIFICATION_LINK = (
     "https://ll04-finance-dowell.github.io/100018-dowellWorkflowAi-testing/#/verify"
 )
+PRODUCTION_VERIFICATION_LINK = (
+    "https://ll04-finance-dowell.github.io/workflowai.online//#/verify"
+)
 
 """Database Collection Information"""
 WF_CONNECTION_LIST = [
