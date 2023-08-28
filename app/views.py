@@ -304,9 +304,13 @@ def finalize_or_reject(request, process_id):
                 link_id = request.data["link_id"]
                 register_finalized(link_id)
 
-            # Update the metadata
-            meta_id = get_metadata_id(item_id, item_type)
-            update_metadata(meta_id, state, item_type)
+            # Check if the document is finalized or authorized to a new user
+            new_check, new_state = is_finalized(item_id, item_type)
+            if new_check and new_state != "finalized":
+                # Update the metadata
+                meta_id = get_metadata_id(item_id, item_type)
+                print("metadata_id: ", meta_id)
+                update_metadata(meta_id, state, item_type)
 
             return Response("document processed successfully", status.HTTP_200_OK)
         except Exception as err:
@@ -604,7 +608,7 @@ def get_clones_metadata_in_organization(request, company_id):
                 "document_state": doc_state,
             }
         )
-        cache.set(cache_key, clones_list, timeout=60)
+        cache.set(cache_key, clones_list, timeout=10)
     return Response(
         {"clones": clones_list},
         status.HTTP_200_OK,
