@@ -3,9 +3,10 @@ import urllib.parse
 import uuid
 from threading import Thread
 import os
-#from dotenv import load_dotenv
 
-#load_dotenv()
+# from dotenv import load_dotenv
+
+# load_dotenv()
 import qrcode
 import requests
 
@@ -38,6 +39,7 @@ from app.mongo_db_connection import (
     save_to_links_collection,
     save_to_process_collection,
     save_to_qrcode_collection,
+    single_query_clones_metadata_collection,
     single_query_document_collection,
     single_query_clones_collection,
     update_process,
@@ -153,9 +155,9 @@ class HandleProcess:
 
     def generate_qrcode(link):
         """Revert back to prod qr_path before push"""
-        current_env = os.environ.get('ENV')
-        staging_path = os.environ.get('STAGING_PATH')
-        production_path = os.environ.get('PRODUCTION_PATH')
+        current_env = os.environ.get("ENV")
+        staging_path = os.environ.get("STAGING_PATH")
+        production_path = os.environ.get("PRODUCTION_PATH")
         if current_env == "PRODUCTION":
             qr_path = f"{production_path}/qrcodes/{uuid.uuid4().hex}.png"
         elif current_env == "STAGING":
@@ -169,7 +171,6 @@ class HandleProcess:
         qr_img = qr_code.make_image(fill_color=qr_color, back_color="#DCDCDC")
         qr_img.save(qr_path)
         return f"https://{qr_path}"
-
 
     def notify(auth_name, doc_id, portfolio, company_id, link, org_name):
         response = requests.post(
@@ -196,12 +197,12 @@ class HandleProcess:
     def user_team_public_data(process_data, auth_name, step_role, portfolio, user_type):
         hash = uuid.uuid4().hex
         link = None
-        current_env = os.environ.get('ENV')
+        current_env = os.environ.get("ENV")
         if current_env == "PRODUCTION":
             link = f"{PRODUCTION_VERIFICATION_LINK}/{hash}/"
         else:
             link = f"{VERIFICATION_LINK}/{hash}/"
-        
+
         params = process_data["params"]
         process_id = process_data["_id"]
         item_id = process_data["parent_item_id"]
@@ -443,8 +444,12 @@ class HandleProcess:
                 field = "document_name"
                 team_member_id = "1212001"
                 document_object = single_query_clones_collection({"_id": clone_id})
+                metadata = single_query_clones_metadata_collection(
+                    {"collection_id": clone_id}
+                )
                 item_flag = document_object["document_state"]
                 document_name = document_object["document_name"]
+                metadata_id = metadata.get("_id")
                 editor_link = HandleProcess.get_editor_link(
                     {
                         "product_name": "Workflow AI",
@@ -466,6 +471,7 @@ class HandleProcess:
                             "document_right": right,
                             "document_flag": item_flag,
                             "role": role,
+                            "metadata_id": metadata_id,
                             "process_id": self.process["_id"],
                             "update_field": {
                                 "document_name": document_name,
@@ -523,13 +529,27 @@ class Background:
                             for k, v in list(document_map.items()):
                                 if (
                                     isinstance(v, str)
-                                    and single_query_clones_collection({"_id": v}).get("document_state") == "processing"
+                                    and single_query_clones_collection({"_id": v}).get(
+                                        "document_state"
+                                    )
+                                    == "processing"
                                 ):
                                     continue
                                 elif (
                                     isinstance(v, str)
-                                    and single_query_clones_collection({"_id": v}).get("document_state") == "finalized"
-                                    and k in [mem["member"] for mem in (single_query_clones_collection({"_id": v}).get("auth_viewers", []))]
+                                    and single_query_clones_collection({"_id": v}).get(
+                                        "document_state"
+                                    )
+                                    == "finalized"
+                                    and k
+                                    in [
+                                        mem["member"]
+                                        for mem in (
+                                            single_query_clones_collection(
+                                                {"_id": v}
+                                            ).get("auth_viewers", [])
+                                        )
+                                    ]
                                 ):
                                     register_single_user_access(
                                         step, step.get("stepRole"), k
@@ -563,9 +583,13 @@ class Background:
                                     for item in prev_docs:
                                         key = next(iter(item))
                                         my_key = item[key]
-                                        if ("accessed" in item
-                                            and single_query_clones_collection({"_id": my_key}).get("document_state") == "finalized"
-                                            ):
+                                        if (
+                                            "accessed" in item
+                                            and single_query_clones_collection(
+                                                {"_id": my_key}
+                                            ).get("document_state")
+                                            == "finalized"
+                                        ):
                                             step1_documents.append(my_key)
                                 for document in step1_documents:
                                     for user in step.get("stepTeamMembers"):
