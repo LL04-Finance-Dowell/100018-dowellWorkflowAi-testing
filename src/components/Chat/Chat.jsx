@@ -8,8 +8,8 @@ import { useTranslation } from 'react-i18next';
 import { productName } from '../../utils/helpers';
 
 const Chat = () => {
-  const { session_id,userDetail } = useSelector((state) => state.auth);
-
+  const { session_id, userDetail } = useSelector((state) => state.auth);
+  
   const { t } = useTranslation();
   const [apiMessages, setapiMessages] = useState([]);
   const [isPopupOpen, setIsPopupOpen] = useState(false);
@@ -18,6 +18,10 @@ const Chat = () => {
   const [messages, setMessages] = useState([]);
   const [modals, setModal] = useState([]);
   const [hasChatStarted, setHasChatStarted] = useState(false);
+  const [ispopupOpen, SetIsPopupOpen] = useState(false);
+  let popupTimeout;
+
+
 
   // useEffect(() => {
   //   IntilizingRoom(session_id);
@@ -149,6 +153,7 @@ const Chat = () => {
             fill='currentColor'
             className={styles.SVG_class}
             viewBox='0 -2 52 52'
+           
           >
             {' '}
             <path
@@ -161,7 +166,7 @@ const Chat = () => {
             />{' '}
           </svg>
         </button>
-
+       
         {isPopupOpen && (
           <div className={styles.First_popuopAuto_Close}>
             <div

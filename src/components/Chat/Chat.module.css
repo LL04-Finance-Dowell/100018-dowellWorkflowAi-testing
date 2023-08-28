@@ -2,6 +2,23 @@
     background-color: #fff;
 }
 
+.First_popuopAuto_Close {
+    position: absolute;
+    top: 10px; /* Position the popup above the button */
+    right: 10px;
+    transform: translateX(-50%);
+    background-color: white;
+    border: 1px solid #ccc;
+    padding: 10px;
+    border-radius: 5px;
+    display: none; /* Initially hide the popup */
+    z-index: 100000002; /* Ensure the popup is above other content */
+  }
+  
+  /* Add transitions for smooth visibility changes */
+  .First_popuopAuto_Close {
+    transition: top 0.3s ease-in-out;
+  }
 .Chat_button {
     position: fixed !important;
     bottom: 34px;
@@ -11,7 +28,7 @@
     font-weight: bold;
     padding: 0.5rem 0.75rem 0.5rem 0.75rem;
     margin: 0 1.25rem 0 1.25rem;
-    border-radius: 9px;
+    border-radius: 40px;
     height: 3.5rem;
     width: 3.5rem;
 
@@ -23,8 +40,8 @@
 
 .SVG_class {
     fill: currentColor;
-    height: 7rem;
-    width: 7rem;
+    height: 6.6rem;
+    width: 6.3rem;
     box-sizing: border-box;
 
 }

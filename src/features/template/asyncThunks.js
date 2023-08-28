@@ -34,6 +34,7 @@ export const createTemplate = createAsyncThunk(
   async (data, thunkAPI) => {
     try {
       const res = await templateServices.createTemplate(data);
+      console.log('ressssssssssssssssssssss',res)
       
       const newTemplate = {
         template_name: "New Template",
@@ -50,6 +51,7 @@ export const createTemplate = createAsyncThunk(
       const existingTemplates = [...thunkAPI.getState().template?.allTemplates];
       existingTemplates.unshift(newTemplate);
       thunkAPI.dispatch(setAllTemplates(existingTemplates));
+      console.log(res.data.editor_link)
       
       thunkAPI.dispatch(setEditorLink(res.data.editor_link));
 
