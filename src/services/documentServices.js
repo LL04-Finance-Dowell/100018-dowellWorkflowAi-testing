@@ -6,8 +6,16 @@ export class DocumentServices {
     return httpDocument.post('/', data);
   };
 
-  detailDocument = (documentId) => {
-    return httpDocument.get(`/${documentId}/`);
+  detailDocument = (data) => {
+    console.log(data)
+    if (data.document_state == "processing") {
+
+      return httpDocument.get(`/clones/${data.collection_id}/`);
+    }
+    if (data.document_state == "draft") {
+
+      return httpDocument.get(`/${data.collection_id}/`);
+    }
   };
 
   signDocument = (data) => {
@@ -28,7 +36,8 @@ export class DocumentServices {
   // };
 
   getSavedDocuments = (companyId, dataType, pageCount) =>
-    httpApiUrl.get(`/companies/${companyId}/documents/?data_type=${dataType}`);
+    httpApiUrl.get(`/companies/${companyId}/documents/clones/metadata/?data_type=${dataType}&doc_state=processing`);
+  // {{base_url}}/companies/6390b313d77dc467630713f2/documents/clones/metadata/?data_type=Real_Data&doc_state=finalized
 
   contentDocument = (collection_id) => {
     console.log(collection_id)
@@ -75,8 +84,8 @@ export class DocumentServices {
 
   getDocumentReports = (companyId, dataType, userName, portfolioName, state) =>
     httpApiUrl.get(
-      `/companies/${companyId}/documents/reports/?data_type=${dataType}&doc_state=${state}&member=${userName}&portfolio=${portfolioName}`
-     
+      `/companies/${companyId}/documents/reports/metadata/?data_type=${dataType}&doc_state=${state}&portfolio=${portfolioName}&member=${userName}`
+
     );
 
   documentCloneReport = (documentId) => {

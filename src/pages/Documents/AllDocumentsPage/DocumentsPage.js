@@ -28,6 +28,7 @@ const DocumentsPage = ({
   const { allDocuments: allDocumentsArray, allDocumentsStatus } = useSelector(
     (state) => state.document
   );
+  console.log(allDocumentsArray)
 
   // const finilized = allDocumentsArray.filter((document) => document.document_state === "finalized")
   const dispatch = useDispatch();
@@ -106,7 +107,7 @@ const DocumentsPage = ({
       item.document_type === 'original'
   )
   );
-
+ var reversedDocArray = [... allDocumentsArray].reverse()
   console.log('allDocs: ', allDocumentsArray);
 
   return (
@@ -124,12 +125,12 @@ const DocumentsPage = ({
                 title={customDocName ? `My ${customDocName}` : 'My Documents'}
                 Card={DocumentCard}
                 cardItems={
-                  allDocumentsArray &&
-                  allDocumentsArray.length &&
-                  allDocumentsArray.filter(
+                  reversedDocArray &&
+                  reversedDocArray.length &&
+                  reversedDocArray.filter(
                     (item) =>
-                      item.created_by === userDetail?.userinfo?.username &&
-                      item.document_type === 'original'
+                      item.created_by === userDetail?.userinfo?.username 
+                      
                   )
                 }
                 status={allDocumentsStatus}

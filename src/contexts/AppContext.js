@@ -267,7 +267,7 @@ export const AppContextProvider = ({ children }) => {
         companyId,
         dataType
       );
-      setSavedDocuments(res.data ? res.data.documents : []);
+      setSavedDocuments(res.data ? res.data.clones : []);
     } catch (err) {
       console.log(err);
     } finally {
