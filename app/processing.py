@@ -32,9 +32,11 @@ from app.helpers import (
     register_public_login,
     check_items_state,
     check_all_finalized_true,
+    get_metadata_id,
 )
 from app.mongo_db_connection import (
     authorize,
+    authorize_metadata,
     finalize_item,
     save_to_links_collection,
     save_to_process_collection,
@@ -599,6 +601,9 @@ class Background:
                                         step.get("stepDocumentCloneMap").append(
                                             {user["member"]: document}
                                         )
+                                        # Change auth viewers in the metadata as well
+                                        metadata_id = get_metadata_id(document, "document")
+                                        authorize_metadata(metadata_id, user, process_id, "document")
                                     for user in step.get("stepPublicMembers"):
                                         authorize(
                                             document, user, process_id, "document"
@@ -606,6 +611,9 @@ class Background:
                                         step.get("stepDocumentCloneMap").append(
                                             {user["member"]: document}
                                         )
+                                        # Change auth viewers in the metadata as well
+                                        metadata_id = get_metadata_id(document, "document")
+                                        authorize_metadata(metadata_id, user, process_id, "document")
                                     for user in step.get("stepUserMembers"):
                                         authorize(
                                             document, user, process_id, "document"
@@ -613,6 +621,9 @@ class Background:
                                         step.get("stepDocumentCloneMap").append(
                                             {user["member"]: document}
                                         )
+                                        # Change auth viewers in the metadata as well
+                                        metadata_id = get_metadata_id(document, "document")
+                                        authorize_metadata(metadata_id, user, process_id, "document")
                         update_process(process_id, steps, processing_state)
                 # Check that all documents are finalized
                 all_accessed_true = check_all_finalized_true(steps)
