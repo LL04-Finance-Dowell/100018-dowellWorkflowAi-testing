@@ -538,7 +538,7 @@ def check_all_finalized_true(data) -> bool:
 
 
 def get_metadata_id(item_id, item_type):
-    """Gets gthe inserted_id of the metadata for the respective item_id"""
+    """ Gets gthe inserted_id of the metadata for the respective item_id"""
     if item_type == "document":
         try:
             coll_id = single_query_document_metadata_collection(
