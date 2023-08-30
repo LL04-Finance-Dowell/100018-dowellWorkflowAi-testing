@@ -78,7 +78,7 @@ export class DocumentServices {
   getAllOriginalDocuments = async (companyId, dataType) => {
     return await httpApiUrl.get(
       // `/companies/${companyId}/documents/types/?data_type=${dataType}&doc_type=original`
-      `/companies/6390b313d77dc467630713f2/documents/metadata/?data_type=Real_Data&document_state=draft`
+      `/companies/${companyId}/documents/metadata/?data_type=${dataType}&document_state=draft`
     );
   };
 
