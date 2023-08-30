@@ -7,7 +7,7 @@ import axios from "axios";
 import { useTranslation } from "react-i18next";
 import { productName } from "../../utils/helpers";
 
-import ChatIcon from "../../assets/chat_icon.png";
+import ChatIcon from "../../assets/chatting.png";
 
 const Chat = () => {
   const { session_id, userDetail } = useSelector((state) => state.auth);
@@ -21,7 +21,22 @@ const Chat = () => {
   const [modals, setModal] = useState([]);
   const [hasChatStarted, setHasChatStarted] = useState(false);
   const [ispopupOpen, SetIsPopupOpen] = useState(false);
+
+  ///for the chat icon
+  const [showImage, setShowImage] = useState(true);
+
   let popupTimeout;
+
+  ///for the chat
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      setShowImage(false);
+    }, 10000); // 10 seconds in milliseconds
+
+    return () => {
+      clearTimeout(timeout);
+    };
+  }, []);
 
   // console.log("the user details are ", userDetail)
 
@@ -147,7 +162,9 @@ const Chat = () => {
     // const storemessages = [...messages];
     // console.log(storemessages)
     // localStorage.setItem('messages', JSON.stringify(storemessages));
-    // setIsNestedPopupOpen(false);
+    setIsPopupOpen(false);
+    setIsNestedPopupOpen(false);
+    console.log("minimize btn clicked");
   }
 
   async function handleNestedPopupClose() {
@@ -169,12 +186,12 @@ const Chat = () => {
       }
     );
     const a = await response.json();
-    if(a?.success == true){
-      setModal([])
-      setIsPopupOpen(false);
-      setHasChatStarted(false)
-      setIsNestedPopupOpen(false);
+    if (a?.success == true) {
+      setModal([]);
       setapiMessages([]); // Clear the apiMessages state
+      setIsPopupOpen(false);
+      setHasChatStarted(false);
+      setIsNestedPopupOpen(false);
     }
     console.log("the response for close is ", a);
     // if (hasChatStarted) {
@@ -190,15 +207,28 @@ const Chat = () => {
   return (
     <div className={styles.Main_div}>
       <div>
-        {/* <button className={styles.Chat_button}> */}
-        <img
-          src={ChatIcon}
-          className={styles.Chat_button}
-          width="100"
-          onClick={handleButtonClick}
-        />
-
-        {/* </button> */}
+        <div className={styles.Chat_buttonIcon}>
+          {showImage && <img src={ChatIcon} width="100" />}
+        </div>
+        <button onClick={handleButtonClick} className={styles.Chat_button}>
+          {" "}
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="currentColor"
+            className={styles.SVG_class}
+            viewBox="0 -2 52 52"
+          >
+            {" "}
+            <path
+              color="black"
+              d="M14 1a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1h-2.5a2 2 0 0 0-1.6.8L8 14.333 6.1 11.8a2 2 0 0 0-1.6-.8H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h12zM2 0a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2.5a1 1 0 0 1 .8.4l1.9 2.533a1 1 0 0 0 1.6 0l1.9-2.533a1 1 0 0 1 .8-.4H14a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2z"
+            />{" "}
+            <path
+              color="black"
+              d="M3 3.5a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5zM3 6a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9A.5.5 0 0 1 3 6zm0 2.5a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5z"
+            />{" "}
+          </svg>
+        </button>
 
         {isPopupOpen && (
           <div className={styles.First_popuopAuto_Close}>
