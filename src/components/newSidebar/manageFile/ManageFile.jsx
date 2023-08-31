@@ -47,14 +47,14 @@ const ManageFile = () => {
       company_id:
         userDetail?.portfolio_info?.length > 1
           ? userDetail?.portfolio_info.find(
-              (portfolio) => portfolio.product === productName
-            )?.org_id
+            (portfolio) => portfolio.product === productName
+          )?.org_id
           : userDetail?.portfolio_info[0].org_id,
       data_type:
         userDetail?.portfolio_info?.length > 1
           ? userDetail?.portfolio_info.find(
-              (portfolio) => portfolio.product === productName
-            )?.data_type
+            (portfolio) => portfolio.product === productName
+          )?.data_type
           : userDetail?.portfolio_info[0].data_type,
     };
     /*  if (savedDocumentsStatus === "idle") dispatch(savedDocuments(data));
@@ -71,8 +71,8 @@ const ManageFile = () => {
     const currentUserportfolioDataType =
       userDetail?.portfolio_info?.length > 1
         ? userDetail?.portfolio_info.find(
-            (portfolio) => portfolio.product === productName
-          )?.data_type
+          (portfolio) => portfolio.product === productName
+        )?.data_type
         : userDetail?.portfolio_info[0]?.data_type;
 
     // THIS UPDATES AN INDIVIDUAL ITEM COUNT FOR EITHER DOCUMENT/TEMPLATE/WORKFLOW/PROCESS
@@ -85,15 +85,10 @@ const ManageFile = () => {
         allDocumentsArray
           .filter(
             (item) =>
-              item.created_by === userDetail?.userinfo?.username &&
-              item.document_type === 'original'
+              item.created_by === userDetail?.userinfo?.username
           )
-          .filter((item) => item.data_type === currentUserportfolioDataType)
-          .length +
-        allDocumentsArray
-          .filter((document) => document.document_type === 'original')
-          .filter((item) => item.data_type === currentUserportfolioDataType)
-          .length;
+          .filter((item) => item.data_type === currentUserportfolioDataType).length
+      console.log('count of document', countOfDocuments)
       setItemsCountToDisplay((prevItems) => {
         return {
           ...prevItems,
@@ -111,10 +106,7 @@ const ManageFile = () => {
         allTemplatesArray
           .filter((item) => item.created_by === userDetail?.userinfo?.username)
           .filter((item) => item.data_type === currentUserportfolioDataType)
-          .length +
-        allTemplatesArray.filter(
-          (item) => item.data_type === currentUserportfolioDataType
-        ).length;
+          .length 
       setItemsCountToDisplay((prevItems) => {
         return {
           ...prevItems,
@@ -136,13 +128,7 @@ const ManageFile = () => {
               item.workflows &&
               (item?.data_type === currentUserportfolioDataType ||
                 item.workflows?.data_type === currentUserportfolioDataType)
-          ).length +
-        allWorkflowsArray.filter(
-          (item) =>
-            item.workflows &&
-            (item?.data_type === currentUserportfolioDataType ||
-              item.workflows?.data_type === currentUserportfolioDataType)
-        ).length;
+          ).length
       setItemsCountToDisplay((prevItems) => {
         return {
           ...prevItems,
@@ -193,37 +179,37 @@ const ManageFile = () => {
       prev.map((item) =>
         item.parent.includes('Documents')
           ? {
-              ...item,
-              count:
-                itemsCountToDisplay.documents.count > 0
-                  ? itemsCountToDisplay.documents.count
-                  : '000',
-            }
+            ...item,
+            count:
+              itemsCountToDisplay.documents.count > 0
+                ? itemsCountToDisplay.documents.count
+                : '000',
+          }
           : item.parent.includes('Templates')
-          ? {
+            ? {
               ...item,
               count:
                 itemsCountToDisplay.templates.count > 0
                   ? itemsCountToDisplay.templates.count
                   : '000',
             }
-          : item.parent.includes('Workflows')
-          ? {
-              ...item,
-              count:
-                itemsCountToDisplay.workflows.count > 0
-                  ? itemsCountToDisplay.workflows.count
-                  : '000',
-            }
-          : item.parent.includes('Processes')
-          ? {
-              ...item,
-              count:
-                itemsCountToDisplay.processes.count > 0
-                  ? itemsCountToDisplay.processes.count
-                  : '000',
-            }
-          : item
+            : item.parent.includes('Workflows')
+              ? {
+                ...item,
+                count:
+                  itemsCountToDisplay.workflows.count > 0
+                    ? itemsCountToDisplay.workflows.count
+                    : '000',
+              }
+              : item.parent.includes('Processes')
+                ? {
+                  ...item,
+                  count:
+                    itemsCountToDisplay.processes.count > 0
+                      ? itemsCountToDisplay.processes.count
+                      : '000',
+                }
+                : item
       )
     );
   }, [itemsCountToDisplay]);

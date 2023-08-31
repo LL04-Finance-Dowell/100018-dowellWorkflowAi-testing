@@ -101,14 +101,9 @@ const DocumentsPage = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [showOnlySaved, showOnlyCompleted, home, isRejected, isDemo]);
 
-  console.log('draft docs: ', allDocumentsArray.filter(
-    (item) =>
-      item.created_by === userDetail?.userinfo?.username &&
-      item.document_type === 'original'
-  )
-  );
+  
  var reversedDocArray = [... allDocumentsArray].reverse()
-  console.log('allDocs: ', allDocumentsArray);
+  
 
   return (
     <WorkflowLayout>

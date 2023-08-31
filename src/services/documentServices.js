@@ -71,7 +71,7 @@ export class DocumentServices {
 
   getNotifications = async (companyId, dataType, userName, portfolioName) => {
     return await httpApiUrl.get(
-      `/companies/${companyId}/documents/reports/?data_type=${dataType}&doc_state=processing&member=${userName}&portfolio=${portfolioName}`
+      `/companies/${companyId}/documents/reports/metadata/?data_type=${dataType}&doc_state=processing&member=${userName}&portfolio=${portfolioName}`
     );
   };
 
