@@ -46,10 +46,7 @@ function App() {
 
   useDowellLogin();
 
-  useEffect(() => {
-    console.log('allDocuments: ', allDocuments);
-    console.log('allTemplates: ', allTemplates);
-  }, [allDocuments])
+ 
 
   useEffect(() => {
     const interval = setInterval(() => {
