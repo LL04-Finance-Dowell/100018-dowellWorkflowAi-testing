@@ -303,15 +303,10 @@ def finalize_or_reject(request, process_id):
             if user_type == "public":
                 link_id = request.data["link_id"]
                 register_finalized(link_id)
-
-            # Check if the document is finalized or authorized to a new user
             new_check, new_state = is_finalized(item_id, item_type)
             if new_check and new_state != "finalized":
-                # Update the metadata
                 meta_id = get_metadata_id(item_id, item_type)
-                print("metadata_id: ", meta_id)
                 update_metadata(meta_id, state, item_type)
-
             return Response("document processed successfully", status.HTTP_200_OK)
         except Exception as err:
             print(err)
@@ -708,7 +703,6 @@ def create_document(request):
                 }
             )
         )
-        #print(res_metedata)
         if not res_metadata["isSuccess"]:
             return Response(
                 "An error occured while trying to save document metadata",

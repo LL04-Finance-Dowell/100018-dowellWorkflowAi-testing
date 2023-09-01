@@ -133,8 +133,6 @@ def cloning_document(document_id, auth_viewers, parent_id, process_id):
                     }
                 )
             )
-            print("metadata: ", save_res_metadata)
-
         return save_res["inserted_id"]
     except Exception as e:
         print(e)
@@ -195,8 +193,6 @@ def cloning_clone(clone_id, auth_viewers, parent_id, process_id):
                     }
                 )
             )
-            print("metadata: ", save_res_metadata)
-
         return save_res["inserted_id"]
     except Exception as e:
         print(e)
@@ -546,7 +542,7 @@ def get_metadata_id(item_id, item_type):
             )["_id"]
             return coll_id
         except Exception as err:
-            print("AN error occured: ", err)
+            print(err)
     elif item_type == "clone":
         try:
             coll_id = single_query_clones_metadata_collection({"collection_id": item_id})[
@@ -554,4 +550,4 @@ def get_metadata_id(item_id, item_type):
             ]
             return coll_id
         except Exception as err:
-            print("An error occured: ", err)
+            print(err)

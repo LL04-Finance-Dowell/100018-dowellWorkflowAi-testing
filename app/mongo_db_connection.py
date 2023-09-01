@@ -263,7 +263,6 @@ def get_data_from_data_service(
     )
     response = post_to_data_service(payload)
     res = json.loads(response)
-    # print(res)
     if res["data"] is not None:
         if len(res["data"]):
             return res["data"]
