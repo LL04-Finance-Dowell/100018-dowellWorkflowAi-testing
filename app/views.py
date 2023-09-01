@@ -2,6 +2,7 @@ import ast
 import json
 import os
 import re
+import uuid  # Import the uuid library
 
 import requests
 from crontab import CronTab
@@ -1797,3 +1798,35 @@ def get_reports_documents_metadata(request, company_id):
         {"documents": document_list},
         status=status.HTTP_200_OK,
     )
+
+
+@api_view(["POST"])
+def get_template_and_insert_metadata(request, template_id):
+    # Get the template from the template collection using the template ID
+    template = single_query_template_collection({"_id": template_id})
+
+    if not template:
+        return Response("Template not found", status.HTTP_404_NOT_FOUND)
+
+    # Prepare the options dictionary for saving to metadata collection
+    options = {
+        "template_name": template.get("template_name"),
+        "created_by": template.get("created_by"),
+        "collection_id": template.get("_id"),
+        "data_type": template.get("data_type"),
+        "company_id": template.get("company_id"),
+        "auth_viewers": template.get("auth_viewers", []),
+        "template_state": "draft",
+    }
+    # Insert the template details into the template metadata collection
+    res_metadata = json.loads(save_to_template_metadata_collection(options))
+
+    if res_metadata["isSuccess"]:
+        return Response(
+            {"template": res_metadata},
+            status=status.HTTP_200_OK,
+        )
+    else:
+        return Response(
+            "Invalid Request!", status.HTTP_400_BAD_REQUEST
+        )
