@@ -1826,11 +1826,10 @@ def get_template_and_insert_metadata(request, template_id):
 
     if res_metadata["isSuccess"]:
         return Response(
-            {"message": "Template details inserted into metadata collection"},
-            status.HTTP_201_CREATED,
+            {"template": res_metadata},
+            status=status.HTTP_200_OK,
         )
     else:
         return Response(
-            "Error while inserting template details into metadata collection",
-            status.HTTP_500_INTERNAL_SERVER_ERROR,
+            "Invalid Request!", status.HTTP_400_BAD_REQUEST
         )
