@@ -1818,9 +1818,6 @@ def get_template_and_insert_metadata(request, template_id):
         "auth_viewers": template.get("auth_viewers", []),
         "template_state": "draft",
     }
-
-    
-
     # Insert the template details into the template metadata collection
     res_metadata = json.loads(save_to_template_metadata_collection(options))
 

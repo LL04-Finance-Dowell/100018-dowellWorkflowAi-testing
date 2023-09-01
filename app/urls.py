@@ -99,7 +99,6 @@ urlpatterns = [
     path("companies/<str:company_id>/settings/", all_workflow_ai_setting),
     path("templates/", create_template, name="create_template"),
     path("templates/<str:template_id>/", template_detail, name="template_detail"),
-    path("templates/<str:template_id>/insert-metadata/", get_template_and_insert_metadata, name="get_template_and_insert_metadata"),
     path(
         "templates/<str:template_id>/object/", template_object, name="template_object"
     ),
@@ -155,5 +154,6 @@ urlpatterns = [
     path('companies/<str:company_id>/', get_templates_documents),
     path("companies/<str:company_id>/templates/reports/metadata/", get_reports_templates_metata),
     path("companies/<str:company_id>/documents/reports/metadata/", get_reports_documents_metadata),
+    path("templates/<str:template_id>/insert-metadata/", get_template_and_insert_metadata, name="get_template_and_insert_metadata"),
 
 ]
