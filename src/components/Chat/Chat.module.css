@@ -19,11 +19,20 @@
   .First_popuopAuto_Close {
     transition: top 0.3s ease-in-out;
   }
-.Chat_button {
+
+  .Chat_buttonIcon {
     position: fixed !important;
-    bottom: 34px;
-    right: 10px;
-    background-color: #1fb6ff;
+    bottom: 100px;
+    right: 30px;
+    background-color: none;
+
+
+}
+  .Chat_button {
+    position: fixed !important;
+    bottom: 44px;
+    right: 30px;
+    background-color: #AFCDB1;
     color: #fff;
     font-weight: bold;
     padding: 0.5rem 0.75rem 0.5rem 0.75rem;
@@ -35,8 +44,9 @@
 }
 
 .Chat_button:hover {
-    background-color: #0095e5;
+    background-color: #2E7D32;
 }
+
 
 .SVG_class {
     fill: currentColor;
@@ -116,8 +126,9 @@
     padding: 5px;
     width: fit-content;
     margin-bottom: 25px;
-    background-color: #1e3bff;
+    background-color: #2E7D32;
     border-radius: 50px;
+    border-bottom-left-radius: 0;
     color: #fff;
 }
 
@@ -126,13 +137,13 @@
     border-radius: 50px;
     font-size: 20px;
     padding: 5px;
-    background-color: #1fb6ff;
+    background-color: #005733;
     color: #fff;
   
 }
 
 .Chat_Now_Button:hover {
-    background-color: #1f42a6;
+    background-color: #2E7D32;
 }
 
 .Powered_text {
@@ -215,9 +226,11 @@
 .Sender_sms {
     float: right;
     font-weight: bold;
-    background-color: blue;
+    background-color: #2E7D32;
     color: white;
     padding: 13px;
+    padding-top: 3px;
+    padding-bottom: 3px;
     border-radius: 20px 20px 0px 20px;
     margin-right: 5px;
     font-size: 15px;
@@ -232,6 +245,8 @@
     background-color: #eeeaea;
     width: fit-content;
     padding: 13px;
+    padding-top: 3px;
+    padding-bottom: 3px;
     border-radius: 20px 20px 20px 0;
 
 }
@@ -256,20 +271,22 @@
     border-radius: 10px;
     width: 190px;
     padding: 10px;
+    padding-top: 5px;
+    padding-bottom: 5px;
     font-size: 15px;
 }
 
 .Send_button {
     border-radius: 10px;
     width: 45px;
-    background-color: #1fb6ff;
+    background-color: #2E7D32;
     transition: background-color 0.2s ease-in-out;
     color: #fff;
     font-weight: bold;
 }
 
 .Send_button:hover {
-    background-color: #1e3bff;
+    background-color: #005733;
     transition: background-color 0.2s ease-in-out;
 }
 
