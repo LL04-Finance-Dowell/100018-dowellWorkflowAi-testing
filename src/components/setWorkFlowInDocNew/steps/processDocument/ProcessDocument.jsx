@@ -156,7 +156,7 @@ const ProcessDocument = ({ savedProcess, Process_title, setProcess_title }) => {
       publicMembersSelectedForProcess,
       userMembersSelectedForProcess,
     );
-    console.log(processObjToPost)
+ 
 
     if (processObjToPost.error) {
       dispatch(setNewProcessErrorMessage(processObjToPost.error));

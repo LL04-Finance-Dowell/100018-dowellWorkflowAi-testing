@@ -41,8 +41,6 @@ const CreateDocument = ({ handleToggleOverlay }) => {
     );
     if (!foundTemplateObj) return;
 
-    console.log('page: ', foundTemplateObj?.page)
-    console.log('temp obj: ', foundTemplateObj)
 
     const createDocumentData = {
       company_id: userDetail?.portfolio_info?.length > 1 ? userDetail?.portfolio_info.find(portfolio => portfolio.product === productName)?.org_id : userDetail?.portfolio_info[0].org_id,
@@ -104,7 +102,7 @@ const CreateDocument = ({ handleToggleOverlay }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   const reversedArray = [...allTemplatesArray].reverse();
-  console.log(reversedArray)
+ 
   return (
     <Overlay title='Create Document' handleToggleOverlay={handleToggleOverlay}>
       {allTemplatesStatus === 'pending' ? (

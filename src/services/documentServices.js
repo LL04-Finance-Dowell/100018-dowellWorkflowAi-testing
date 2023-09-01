@@ -7,7 +7,7 @@ export class DocumentServices {
   };
 
   detailDocument = (data) => {
-    console.log(data)
+   
     if (data.document_state == "processing") {
 
       return httpDocument.get(`/clones/${data.collection_id}/`);
@@ -40,7 +40,7 @@ export class DocumentServices {
   // {{base_url}}/companies/6390b313d77dc467630713f2/documents/clones/metadata/?data_type=Real_Data&doc_state=finalized
 
   contentDocument = (collection_id) => {
-    console.log(collection_id)
+   
     return httpDocument.get(`/${collection_id}/content/`);
   };
 

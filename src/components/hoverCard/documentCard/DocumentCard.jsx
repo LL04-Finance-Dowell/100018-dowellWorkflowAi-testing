@@ -136,7 +136,7 @@ const DocumentCard = ({
   };
 
   const handleDetailDocumnet = async (item) => {
-    console.log(item)
+  
     if (dataLoading) return;
     if (documentLoading)
       return toast.info('Please wait for this document to be refreshed first');

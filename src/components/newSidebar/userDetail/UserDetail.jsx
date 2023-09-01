@@ -8,7 +8,7 @@ import { productName } from '../../../utils/helpers';
 const UserDetail = () => {
   const { userDetail } = useSelector((state) => state.auth);
   const { creditResponse } = useSelector((state) => state.app);
-  console.log(creditResponse?.data?.data?.is_active)
+  
 
   const { t } = useTranslation();
 

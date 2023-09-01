@@ -88,7 +88,7 @@ const ManageFile = () => {
               item.created_by === userDetail?.userinfo?.username
           )
           .filter((item) => item.data_type === currentUserportfolioDataType).length
-      console.log('count of document', countOfDocuments)
+      
       setItemsCountToDisplay((prevItems) => {
         return {
           ...prevItems,

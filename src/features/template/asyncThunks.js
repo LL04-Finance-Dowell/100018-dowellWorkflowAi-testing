@@ -116,9 +116,9 @@ export const allTemplates = createAsyncThunk(
         data.company_id,
         data.data_type
       );
-      console.log(res)
+      
       const templates = filterTemplates(res.data.templates , thunkAPI);
-      console.log(templates)
+     
 
       return templates;
     } catch (error) {

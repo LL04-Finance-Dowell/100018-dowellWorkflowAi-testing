@@ -15,7 +15,7 @@ const ProcessDetail = () => {
   //     console.log({member})
   //   </a>
   // ))}
-  console.log(ProcessDetail)
+  
   const handleCopyLink = (link) => {
     if (!link) return;
 
