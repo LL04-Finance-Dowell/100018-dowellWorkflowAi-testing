@@ -63,6 +63,7 @@ from .views import (
     get_templates_documents,
     get_reports_templates_metata,
     get_reports_documents_metadata,
+    get_template_and_insert_metadata,
 )
 
 urlpatterns = [
@@ -98,6 +99,7 @@ urlpatterns = [
     path("companies/<str:company_id>/settings/", all_workflow_ai_setting),
     path("templates/", create_template, name="create_template"),
     path("templates/<str:template_id>/", template_detail, name="template_detail"),
+    path("templates/<str:template_id>/insert-metadata/", get_template_and_insert_metadata, name="get_template_and_insert_metadata"),
     path(
         "templates/<str:template_id>/object/", template_object, name="template_object"
     ),
