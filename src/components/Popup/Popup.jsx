@@ -13,7 +13,7 @@ const Popup = ({ isOpen, message }) => {
     const onClose = () => {
         dispatch(setPopupIsOpen(false));
     }
-    console.log(currentMessage)
+   
 
     return currentMessage ? (
         <div className={styles.outer_div}>

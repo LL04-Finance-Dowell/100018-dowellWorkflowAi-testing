@@ -28,6 +28,7 @@ const DocumentsPage = ({
   const { allDocuments: allDocumentsArray, allDocumentsStatus } = useSelector(
     (state) => state.document
   );
+  console.log(allDocumentsArray)
 
   // const finilized = allDocumentsArray.filter((document) => document.document_state === "finalized")
   const dispatch = useDispatch();
@@ -100,14 +101,9 @@ const DocumentsPage = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [showOnlySaved, showOnlyCompleted, home, isRejected, isDemo]);
 
-  console.log('draft docs: ', allDocumentsArray.filter(
-    (item) =>
-      item.created_by === userDetail?.userinfo?.username &&
-      item.document_type === 'original'
-  )
-  );
-
-  console.log('allDocs: ', allDocumentsArray);
+  
+ var reversedDocArray = [... allDocumentsArray].reverse()
+  
 
   return (
     <WorkflowLayout>
@@ -124,12 +120,12 @@ const DocumentsPage = ({
                 title={customDocName ? `My ${customDocName}` : 'My Documents'}
                 Card={DocumentCard}
                 cardItems={
-                  allDocumentsArray &&
-                  allDocumentsArray.length &&
-                  allDocumentsArray.filter(
+                  reversedDocArray &&
+                  reversedDocArray.length &&
+                  reversedDocArray.filter(
                     (item) =>
-                      item.created_by === userDetail?.userinfo?.username &&
-                      item.document_type === 'original'
+                      item.created_by === userDetail?.userinfo?.username 
+                      
                   )
                 }
                 status={allDocumentsStatus}

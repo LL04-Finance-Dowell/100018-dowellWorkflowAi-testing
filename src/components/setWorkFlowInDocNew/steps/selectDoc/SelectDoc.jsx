@@ -55,7 +55,7 @@ const SelectDoc = ({ savedDoc }) => {
 
     documentServices.getAllOriginalDocuments(data.company_id, data.data_type)
       .then(res => {
-        console.log(res.data.documents);
+       
         dispatch(setOriginalDocuments(res.data.documents?.reverse()));
         dispatch(setOriginalDocumentsLoaded(true));
       })
@@ -70,7 +70,7 @@ const SelectDoc = ({ savedDoc }) => {
 
 
   const handleAddSelectedDocuments = (document) => {
-    console.log(document)
+   
     axios
       .get(`https://workflowai.uxlivinglab.online/v1/companies/${data.company_id}/documents/${document._id}/clones/?data_type=${data.data_type}`)
       .then((response) => {

@@ -75,9 +75,11 @@ const TemplatesPage = ({
   }, [userDetail]);
 
   useEffect(() => {
-    console.log('allTemplatesArray: ', allTemplatesArray);
+
   }, [allTemplatesArray])
-  console.log('allTemplatesArray: ', allTemplatesArray);
+
+  var reverseArray = [...allTemplatesArray].reverse()
+ 
 
   useEffect(() => {
     if (showOnlySaved) navigate('#saved-templates');
@@ -112,9 +114,9 @@ const TemplatesPage = ({
                 title={customTempName ? `My ${customTempName}` : 'My Templates'}
                 Card={TemplateCard}
                 cardItems={
-                  allTemplatesArray &&
-                  allTemplatesArray.length &&
-                  allTemplatesArray
+                  reverseArray &&
+                  reverseArray.length &&
+                  reverseArray
                     .filter(
                       (item) =>
                         item.created_by === userDetail?.userinfo?.username
@@ -136,7 +138,7 @@ const TemplatesPage = ({
                 cardBgColor='#1ABC9C'
                 title='saved templates'
                 Card={TemplateCard}
-                cardItems={allTemplatesArray.filter(
+                cardItems={reverseArray.filter(
                   (item) => item.data_type === currentUserPortfolioDataType
                 )}
                 status={allTemplatesStatus}

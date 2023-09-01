@@ -50,6 +50,6 @@ export class TemplateServices {
 
   getTemplateReports = (companyId, dataType, userName, portfolioName) =>
     httpApiUrl.get(
-      `/companies/${companyId}/templates/reports/?data_type=${dataType}&template_state=draft&member=${userName}&portfolio=${portfolioName}`
+      `/companies/${companyId}/templates/reports/metadata/?data_type=${dataType}&template_state=draft&portfolio=${portfolioName}&member=${userName}`
     );
 }

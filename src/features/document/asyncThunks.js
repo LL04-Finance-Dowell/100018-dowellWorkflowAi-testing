@@ -74,6 +74,7 @@ export const createDocument = createAsyncThunk(
 export const detailDocument = createAsyncThunk(
   'document/detail',
   async (data, thunkAPI) => {
+    
     try {
       const res = await documentServices.detailDocument(data);
       thunkAPI.dispatch(setEditorLink(res.data));

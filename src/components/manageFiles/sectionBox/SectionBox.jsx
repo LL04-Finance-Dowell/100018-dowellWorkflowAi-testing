@@ -140,7 +140,7 @@ const SectionBox = ({
             dispatch(
               setAllDocuments(
                 res.data.documents
-                  .reverse()
+                  
                   .filter(
                     (document) =>
                       document.document_state !== 'trash' &&
@@ -179,7 +179,7 @@ const SectionBox = ({
             dispatch(
               setAllTemplates(
                 res.data.templates
-                  .reverse()
+                  
                   .filter(
                     (template) =>
                       template.data_type &&

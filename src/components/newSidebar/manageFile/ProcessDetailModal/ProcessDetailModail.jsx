@@ -14,7 +14,7 @@ export const ProcessDetailModail = () => {
     const navigate = useNavigate();
     const dispatch = useDispatch();
     const { ProcessDetail } = useSelector((state) => state.app);
-    console.log(ProcessDetail)
+    
 
     function handleCloseDetailBtnClick() {
         dispatch(setshowsProcessDetailPopup(false));

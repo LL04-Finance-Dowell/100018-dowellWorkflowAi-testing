@@ -136,6 +136,7 @@ const DocumentCard = ({
   };
 
   const handleDetailDocumnet = async (item) => {
+  
     if (dataLoading) return;
     if (documentLoading)
       return toast.info('Please wait for this document to be refreshed first');
@@ -172,15 +173,19 @@ const DocumentCard = ({
 
     const data = {
       document_name: item.document_name,
-      document_id: item._id,
+      collection_id: item.collection_id,
+      document_state:item.document_state
     };
 
     if (isCompletedDoc || isRejectedDoc) {
-      dispatch(documentReport(data.document_id))
+      dispatch(documentReport(data.collection_id))
       return
     }
+ 
 
-    dispatch(detailDocument(data.document_id));
+      dispatch(detailDocument(data));
+   
+
   };
 
   const handleGoToEditor = async (link) => {

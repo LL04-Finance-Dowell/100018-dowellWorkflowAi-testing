@@ -34,13 +34,13 @@ const TemplateCard = ({ cardItem, isFolder, folderId }) => {
   const [templateLoading, setTemplateLoading] = useState(false);
 
   const handleTemplateDetail = (item) => {
-    console.log(item)
+    
     const data = {
 
       collection_id: item.collection_id,
       template_name: item.template_name,
     };
-    console.log(data)
+   
 
     dispatch(detailTemplate(data.collection_id));
   };
