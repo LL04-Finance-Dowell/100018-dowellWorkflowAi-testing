@@ -64,7 +64,7 @@ const Chat = () => {
         `https://100096.pythonanywhere.com/api/v2/room-control/`,
         options
       );
-      console.log("the response is ", response);
+      
       if (response.ok) {
         const data = await response.json();
         // console.log("the room initialization res is ",data)
@@ -94,7 +94,7 @@ const Chat = () => {
         message_type: "text",
       })
       .then((res) => {
-        console.log("the post response is ", res);
+        
         const newMessage = { text: message, sender: "" };
         const updatedMessages = [...messages, newMessage];
         setMessages(updatedMessages);
