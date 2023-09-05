@@ -285,10 +285,14 @@ const WorkflowLayout = ({ children }) => {
                   </p>
                   {children}
                 </div>
-
+                <div className={styles.chat_container}>
                 <Chat />
+                </div>
               </div>
+              <div className={styles.editor_container}>
               <Editor />
+              </div>
+             
             </>
           )
         ) : (

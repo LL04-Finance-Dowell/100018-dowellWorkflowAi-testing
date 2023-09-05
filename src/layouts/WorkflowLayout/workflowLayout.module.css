@@ -232,3 +232,24 @@
     left: 350px;
   }
 }
+@media screen and (min-width: 768px) and (max-width: 1024px) {
+  .container{
+    margin: 0;
+    width: 100%;
+    
+  }
+  .children__box{
+    /* border: 2px red solid; */
+    /* margin: 0; */
+
+  }
+  .content__box{
+    width: 100%;
+    /* border: 2px red solid; */
+    margin: 0;
+  }
+  /* .editor_container{
+    border: #61ce70 solid;
+    margin: 0;
+  } */
+}
