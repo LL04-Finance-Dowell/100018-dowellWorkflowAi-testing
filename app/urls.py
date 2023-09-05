@@ -38,9 +38,10 @@ from .views import (
     get_reports_templates,
     get_team_data,
     get_templates,
+    get_templates_metadata,
+    # template_metadata_object,
     get_workflow_ai_setting,
     get_workflows,
-    get_workspace_credits_information,
     process_copies,
     process_verification,
     processes,
@@ -64,12 +65,13 @@ from .views import (
 
 urlpatterns = [
     path("server/", webhook),
-    path("companies/<str:company_id>/credits/", get_workspace_credits_information),
     path("companies/<str:company_id>/processes/", processes),
     path("companies/<str:company_id>/processes/completed/", get_completed_processes),
     path("companies/<str:company_id>/workflows/", get_workflows),
     path("companies/<str:company_id>/favourites/", all_favourites),
     path("companies/<str:company_id>/templates/", get_templates),
+    path("companies/<str:company_id>/templates/metadata/", get_templates_metadata),
+    # path("template/<str:collection_id>/templates/objects/metadata/", template_metadata_object),
     path(
         "companies/<str:company_id>/templates/knowledge-centre/", dowell_centre_template
     ),

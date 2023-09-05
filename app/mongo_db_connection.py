@@ -26,6 +26,8 @@ from app.constants import (
     QR_CONNECTION_LIST,
     TEMPLATE_CONNECTION_DICT,
     TEMPLATE_CONNECTION_LIST,
+    TEMPLATE_METADATA_CONNECTION_DICT,
+    TEMPLATE_METADATA_CONNECTION_LIST,
     WF_AI_SETTING_DICT,
     WF_AI_SETTING_LIST,
     WF_CONNECTION_DICT,
@@ -132,6 +134,24 @@ def single_query_template_collection(options):
         "find",
         field=options,
     )
+    return template
+
+def bulk_query_template_metadata_collection(options):
+    templates = get_data_from_data_service(
+        *TEMPLATE_METADATA_CONNECTION_LIST,
+        "fetch",
+        field=options,
+    )
+    return templates
+
+
+def single_query_template_metadata_collection(options):
+    template = get_data_from_data_service(
+        *TEMPLATE_METADATA_CONNECTION_LIST,
+        "find",
+        field=options,
+    )
+    print(f"Fetched metadata {template}")
     return template
 
 
@@ -536,6 +556,21 @@ def save_to_template_collection(options):
     )
     return post_to_data_service(payload)
 
+def save_to_template_metadata_collection(options):
+    options["created_on"] = time
+    options["approved"] = False
+    options["rejected"] = False
+    options["template_state"] = "draft"
+    payload = json.dumps(
+        {
+            **TEMPLATE_METADATA_CONNECTION_DICT,
+            "command": "insert",
+            "field": options,
+            "update_field": {"order_nos": 21},
+            "platform": "bangalore",
+        }
+    )
+    return post_to_data_service(payload)
 
 def save_to_document_collection(options):
     options["eventId"] = get_event_id()["event_id"]
@@ -817,6 +852,20 @@ def update_metadata(item_id, state, item_type):
                 },
                 "update_field": {
                     "document_state": state,
+                },
+                "platform": "bangalore",
+            }
+        )
+    elif item_type == "template":
+        payload = json.dumps(
+            {
+                **TEMPLATE_METADATA_CONNECTION_DICT,
+                "command": "update",
+                "field": {
+                    "_id": item_id,
+                },
+                "update_field": {
+                    "template_state": state,
                 },
                 "platform": "bangalore",
             }
@@ -1272,4 +1321,3 @@ def delete_items_in_folder(item_id, folder_id, item_type):
         }
     )
     return post_to_data_service(payload)
-

@@ -1,6 +1,4 @@
 """Third Party Services"""
-CREDITS_API = "https://100105.pythonanywhere.com/api/v3"
-WORKFLOW_AI = "WORKFLOW AI"
 EDITOR_API = "https://100058.pythonanywhere.com/api/generate-editor-link/"
 NOTIFICATION_API = "https://100092.pythonanywhere.com/api/v1/notifications/products/"
 DOWELLCONNECTION_URL = "https://uxlivinglab.pythonanywhere.com/"
@@ -167,6 +165,25 @@ TEMPLATE_CONNECTION_DICT = {
     "team_member_ID": "22689044433",
     "function_ID": "ABCDE",
 }
+
+TEMPLATE_METADATA_CONNECTION_DICT ={
+    "cluster": "Documents",
+    "database": "Documentation",
+    "collection": "TemplateMetaData",
+    "document": "TemplateMetaData",
+    "team_member_ID": "1223001",
+    "function_ID": "ABCDE",
+}
+TEMPLATE_METADATA_CONNECTION_LIST=[
+    "Documents",
+    "bangalore",
+    "Documentation",
+    "TemplateMetaData",
+    "TemplateMetaData",
+    "1223001",
+    "ABCDE",
+    
+]
 DOCUMENT_CONNECTION_LIST = [
     "Documents",
     "bangalore",
