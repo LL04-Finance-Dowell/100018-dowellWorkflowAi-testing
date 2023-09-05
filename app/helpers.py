@@ -550,4 +550,36 @@ def get_metadata_id(item_id, item_type):
             ]
             return coll_id
         except Exception as err:
-            print(err)
+            print("An error occured: ", err)
+
+
+def check_step_items_state(items) -> bool:
+    """Checks if item state is finalized"""
+    doc_states = []
+    for i in items:
+        doc_state = single_query_clones_collection({"_id": i}).get("document_state")
+        if doc_state == "finalized":
+            doc_states.append(True)
+        elif doc_state == "processing":
+            doc_states.append(False)
+        else:
+            doc_states.append(False)
+    if not all(doc_states):
+            return False
+    return True
+
+
+def check_user_in_auth_viewers(user, item) -> bool:
+    """Checks if user is in the item auth_viewers"""
+    auth_viewers = []
+    viewers = single_query_clones_collection({"_id": item}).get("auth_viewers")
+
+    for i in viewers:
+        for k, v in i.items():
+            if k != "portfolio":
+                auth_viewers.append(v)
+
+    if user in auth_viewers:
+        return True
+    else:
+        return False
