@@ -521,11 +521,11 @@ class Background:
                         # print("user_in_viewers: ", user_in_viewers)
 
                         if (check_step_items_state(current_doc_map)) or (not user_in_viewers):
-                            print("all finalized", check_step_items_state(current_doc_map))
-                            print("user_in_viewers: ", user_in_viewers)
+                            # print("all finalized", check_step_items_state(current_doc_map))
+                            # print("user_in_viewers: ", user_in_viewers)
                             pass
                         elif document_id in current_doc_map:
-                            print("document exists in current step", document_id)
+                            # print("document exists in current step", document_id)
                             for document_map in step.get("stepDocumentCloneMap"):
                                 for k, v in list(document_map.items()):
                                     if (
@@ -548,7 +548,7 @@ class Background:
                             # pass
                             if (document_id not in current_doc_map) and not check_step_items_state(current_doc_map):
                                 if step.get("stepTaskType") == "request_for_task":
-                                    print("type: ", step.get("stepTaskType"))
+                                    # print("type: ", step.get("stepTaskType"))
                                     users = [
                                         user
                                         for user in step.get("stepTeamMembers", [])
@@ -559,8 +559,8 @@ class Background:
                                         clone_id = cloning_clone(
                                             document_id, [user], parent_id, process_id
                                         )
-                                        print("user: ", user)
-                                        print("clone_id: ", clone_id)
+                                        # print("user: ", user)
+                                        # print("clone_id: ", clone_id)
                                         step.get("stepDocumentCloneMap").append(
                                             {user["member"]: clone_id}
                                         )
@@ -604,7 +604,7 @@ class Background:
                                                 )
                     else:
                         if step.get("stepTaskType") == "request_for_task":
-                            print("type: ", step.get("stepTaskType"))
+                            # print("type: ", step.get("stepTaskType"))
                             users = [
                                 user
                                 for user in step.get("stepTeamMembers", [])
@@ -615,8 +615,8 @@ class Background:
                                 clone_id = cloning_clone(
                                     document_id, [user], parent_id, process_id
                                 )
-                                print("user: ", user)
-                                print("clone_id: ", clone_id)
+                                # print("user: ", user)
+                                # print("clone_id: ", clone_id)
                                 step.get("stepDocumentCloneMap").append(
                                     {user["member"]: clone_id}
                                 )
