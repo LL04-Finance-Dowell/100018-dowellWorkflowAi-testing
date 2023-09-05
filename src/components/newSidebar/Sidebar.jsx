@@ -43,7 +43,7 @@ import { productName } from "../../utils/helpers";
 import { useAppContext } from "../../contexts/AppContext";
 import { HashLink } from "react-router-hash-link";
 
-const Sidebar = () => {
+const Sidebar = ({toggleSidebar, isMobile}) => {
   const dispatch = useDispatch();
   const { t } = useTranslation();
   const [knowledge, Setknowledge] = useState([
@@ -324,7 +324,7 @@ const Sidebar = () => {
         </div>
       </div>
       <Notifications />
-      <New />
+      <New toggleSidebar={toggleSidebar} isMobile={isMobile}/>
       <Search />
       <div className={styles.gap}></div>
       <ManageFile />

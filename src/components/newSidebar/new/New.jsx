@@ -13,7 +13,7 @@ import { useAppContext } from '../../../contexts/AppContext';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 
-const New = () => {
+const New = ({toggleSidebar,isMobile}) => {
   const { userDetail } = useSelector((state) => state.auth);
   const { themeColor, creditResponse } = useSelector((state) => state.app);
   // console.log(creditResponse.data.data.api_key)
@@ -105,8 +105,11 @@ const New = () => {
               </HashLink>
             ))}
             <button
-              onClick={() =>
-                setShowFoldersActionModal({ state: true, action: 'create' })
+              onClick={() =>{
+                setShowFoldersActionModal({ state: true, action: 'create' });
+                if(isMobile == true){
+                  toggleSidebar()
+                }}
               }
             >
               Folder

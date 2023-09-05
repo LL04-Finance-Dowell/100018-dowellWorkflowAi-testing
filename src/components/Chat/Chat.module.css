@@ -302,9 +302,10 @@
     border-radius: 50px;
     font-size: 20px;
     padding: 5px;
-    background-color: #1fb6ff;
+    /* background-color: #1fb6ff; */
     color: #fff;
     width: 90% !important;
+    margin-left: 5%;
   }
   .First_popuop {
     position: fixed;
@@ -338,9 +339,10 @@
     border-radius: 50px;
     font-size: 20px;
     padding: 5px;
-    background-color: #1fb6ff;
+    /* background-color: #1fb6ff; */
     color: #fff;
     width: 80% !important;
+    margin-left: 10%;
   }
   .First_popuop {
     position: fixed;
@@ -375,6 +377,8 @@
     margin: 2px;
     padding: 10px;
     font-size: 15px;
+    padding-top: 2px;
+    padding-bottom: 2px;
   }
 }
 
@@ -384,7 +388,7 @@
     border-radius: 50px;
     font-size: 20px;
     padding: 5px;
-    background-color: #1fb6ff;
+    /* background-color: #1fb6ff; */
     color: #fff;
     width: 95% !important;
   }
@@ -426,13 +430,15 @@
     margin: 2px;
     padding: 10px;
     font-size: 15px;
+    padding-top: 2px;
+    padding-bottom: 2px;
   }
 
   .Send_button {
     size: 30px;
     border-radius: 10px;
     width: 45px;
-    background-color: #1fb6ff;
+    /* background-color: #1fb6ff; */
     transition: background-color 0.2s ease-in-out;
     color: #fff;
     font-weight: bold;
@@ -450,5 +456,10 @@
     bottom: 90px;
     right: 8px;
     background-color: none;
+  }
+  .Text_input {
+    /* border: 1px red solid; */
+    padding-top: 2px;
+    padding-bottom: 2px;
   }
 }

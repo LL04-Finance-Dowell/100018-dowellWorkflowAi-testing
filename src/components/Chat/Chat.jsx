@@ -266,14 +266,14 @@ const Chat = () => {
               <p className={styles.First_popuop_sms}>
                 {t("Hi, How can I help you ?")}
               </p>
-
-              <button
-                className={styles.Chat_Now_Button}
-                onClick={handleNestedButtonClick}
-              >
-                {t("Chat Now")}
-              </button>
-
+              
+                <button
+                  className={styles.Chat_Now_Button}
+                  onClick={handleNestedButtonClick}
+                >
+                  {t("Chat Now")}
+                </button>
+              
               <h1 className={styles.Powered_text}>{t("Powered by Dowell")}</h1>
             </div>
           </div>

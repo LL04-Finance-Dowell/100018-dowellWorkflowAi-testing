@@ -257,10 +257,10 @@ const WorkflowLayout = ({ children }) => {
                       className={`${styles.sidebar__box} hide-scrollbar`}
                       style={{ display: isSidebarOpen ? 'block' : 'none' }}
                     >
-                      <SideBar />
+                      <SideBar toggleSidebar={toggleSidebar} isMobile={true} />
                     </div>
                     <div
-                      style={{ position: 'fixed', top: 2, left: 0, zIndex: 2 }}
+                      style={{ position: 'fixed', top: 4, left: 4, zIndex: 2 }}
                     >
                       {isSidebarOpen ? (
                         <IoIosCloseCircle size={40} onClick={toggleSidebar} />
@@ -275,7 +275,7 @@ const WorkflowLayout = ({ children }) => {
                   </>
                 ) : (
                   <div className={`${styles.sidebar__box} hide-scrollbar`}>
-                    <SideBar />
+                    <SideBar toggleSidebar={toggleSidebar} isMobile={false} />
                   </div>
                 )}
 
