@@ -3,9 +3,10 @@ import urllib.parse
 import uuid
 from threading import Thread
 import os
-from dotenv import load_dotenv
 
-load_dotenv()
+# from dotenv import load_dotenv
+
+# load_dotenv()
 import qrcode
 import requests
 
@@ -22,6 +23,7 @@ from app.constants import (
     NOTIFICATION_API,
     QRCODE_URL,
     VERIFICATION_LINK,
+    PRODUCTION_VERIFICATION_LINK,
 )
 from app.helpers import (
     cloning_document,
@@ -32,13 +34,16 @@ from app.helpers import (
     check_all_finalized_true,
     check_step_items_state,
     check_user_in_auth_viewers,
+    get_metadata_id,
 )
 from app.mongo_db_connection import (
     authorize,
+    authorize_metadata,
     finalize_item,
     save_to_links_collection,
     save_to_process_collection,
     save_to_qrcode_collection,
+    single_query_clones_metadata_collection,
     single_query_document_collection,
     single_query_clones_collection,
     update_process,
@@ -154,9 +159,9 @@ class HandleProcess:
 
     def generate_qrcode(link):
         """Revert back to prod qr_path before push"""
-        current_env = os.environ.get('ENV')
-        staging_path = os.environ.get('STAGING_PATH')
-        production_path = os.environ.get('PRODUCTION_PATH')
+        current_env = os.environ.get("ENV")
+        staging_path = os.environ.get("STAGING_PATH")
+        production_path = os.environ.get("PRODUCTION_PATH")
         if current_env == "PRODUCTION":
             qr_path = f"{production_path}/qrcodes/{uuid.uuid4().hex}.png"
         elif current_env == "STAGING":
@@ -195,7 +200,13 @@ class HandleProcess:
 
     def user_team_public_data(process_data, auth_name, step_role, portfolio, user_type):
         hash = uuid.uuid4().hex
-        link = f"{VERIFICATION_LINK}/{hash}/"
+        link = None
+        current_env = os.environ.get("ENV")
+        if current_env == "PRODUCTION":
+            link = f"{PRODUCTION_VERIFICATION_LINK}/{hash}/"
+        else:
+            link = f"{VERIFICATION_LINK}/{hash}/"
+
         params = process_data["params"]
         process_id = process_data["_id"]
         item_id = process_data["parent_item_id"]
@@ -438,8 +449,12 @@ class HandleProcess:
                 field = "document_name"
                 team_member_id = "1212001"
                 document_object = single_query_clones_collection({"_id": clone_id})
+                metadata = single_query_clones_metadata_collection(
+                    {"collection_id": clone_id}
+                )
                 item_flag = document_object["document_state"]
                 document_name = document_object["document_name"]
+                metadata_id = metadata.get("_id")
                 editor_link = HandleProcess.get_editor_link(
                     {
                         "product_name": "Workflow AI",
@@ -461,6 +476,7 @@ class HandleProcess:
                             "document_right": right,
                             "document_flag": item_flag,
                             "role": role,
+                            "metadata_id": metadata_id,
                             "process_id": self.process["_id"],
                             "update_field": {
                                 "document_name": document_name,
@@ -631,9 +647,13 @@ class Background:
                                     for item in prev_docs:
                                         key = next(iter(item))
                                         my_key = item[key]
-                                        if ("accessed" in item
-                                            and single_query_clones_collection({"_id": my_key}).get("document_state") == "finalized"
-                                            ):
+                                        if (
+                                            "accessed" in item
+                                            and single_query_clones_collection(
+                                                {"_id": my_key}
+                                            ).get("document_state")
+                                            == "finalized"
+                                        ):
                                             step1_documents.append(my_key)
                                 for document in step1_documents:
                                     for user in step.get("stepTeamMembers"):
@@ -643,6 +663,9 @@ class Background:
                                         step.get("stepDocumentCloneMap").append(
                                             {user["member"]: document}
                                         )
+                                        # Change auth viewers in the metadata as well
+                                        metadata_id = get_metadata_id(document, "document")
+                                        authorize_metadata(metadata_id, user, process_id, "document")
                                     for user in step.get("stepPublicMembers"):
                                         authorize(
                                             document, user, process_id, "document"
@@ -650,6 +673,9 @@ class Background:
                                         step.get("stepDocumentCloneMap").append(
                                             {user["member"]: document}
                                         )
+                                        # Change auth viewers in the metadata as well
+                                        metadata_id = get_metadata_id(document, "document")
+                                        authorize_metadata(metadata_id, user, process_id, "document")
                                     for user in step.get("stepUserMembers"):
                                         authorize(
                                             document, user, process_id, "document"
@@ -657,6 +683,9 @@ class Background:
                                         step.get("stepDocumentCloneMap").append(
                                             {user["member"]: document}
                                         )
+                                        # Change auth viewers in the metadata as well
+                                        metadata_id = get_metadata_id(document, "document")
+                                        authorize_metadata(metadata_id, user, process_id, "document")
                         update_process(process_id, steps, processing_state)
                 # Check that all documents are finalized
                 all_accessed_true = check_all_finalized_true(steps)

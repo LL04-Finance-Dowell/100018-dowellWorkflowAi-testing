@@ -151,7 +151,6 @@ def single_query_template_metadata_collection(options):
         "find",
         field=options,
     )
-    print(f"Fetched metadata {template}")
     return template
 
 
@@ -264,7 +263,6 @@ def get_data_from_data_service(
     )
     response = post_to_data_service(payload)
     res = json.loads(response)
-    # print(res)
     if res["data"] is not None:
         if len(res["data"]):
             return res["data"]
@@ -720,6 +718,46 @@ def update_folder(folder_id, old_folder):
         }
     )
     return post_to_data_service(payload)
+
+
+def authorize_metadata(metadata_id, viewers, process_id, item_type):
+    payload = None
+    if item_type == "document": # document here is process_type
+        payload = json.dumps(
+            {
+                **CLONES_METADATA_CONNECTION_DICT,
+                "command": "update",
+                "field": {
+                    "_id": metadata_id,
+                },
+                "update_field": {
+                    "auth_viewers": [viewers],
+                    "document_state": "processing",
+                    "process_id": process_id,
+                },
+                "platform": "bangalore",
+            }
+        )
+    if item_type == "template":
+        payload = json.dumps(
+            {
+                **TEMPLATE_METADATA_CONNECTION_DICT,
+                "command": "update",
+                "field": {
+                    "_id": metadata_id,
+                },
+                "update_field": {
+                    "auth_viewers": [viewers],
+                    "document_state": "processing",
+                    "process_id": process_id,
+                },
+                "platform": "bangalore",
+            }
+        )
+    if payload is not None:        
+        return post_to_data_service(payload)
+
+    return
 
 
 def authorize(document_id, viewers, process_id, item_type):

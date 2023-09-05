@@ -61,6 +61,9 @@ from .views import (
     get_reports_processes,
     get_documents_types,
     get_templates_documents,
+    get_reports_templates_metata,
+    get_reports_documents_metadata,
+    get_template_and_insert_metadata,
 )
 
 urlpatterns = [
@@ -149,4 +152,8 @@ urlpatterns = [
     path("folders/<str:folder_id>/<str:item_id>", delete_item_from_folder),
     path("companies/<str:company_id>/folders/", all_folders),
     path('companies/<str:company_id>/', get_templates_documents),
+    path("companies/<str:company_id>/templates/reports/metadata/", get_reports_templates_metata),
+    path("companies/<str:company_id>/documents/reports/metadata/", get_reports_documents_metadata),
+    path("templates/<str:template_id>/insert-metadata/", get_template_and_insert_metadata, name="get_template_and_insert_metadata"),
+
 ]

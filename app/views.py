@@ -2,6 +2,7 @@ import ast
 import json
 import os
 import re
+import uuid  # Import the uuid library
 
 import requests
 from crontab import CronTab
@@ -20,6 +21,7 @@ from app.processing import Background, HandleProcess, Process
 from app.utils import notification_cron
 from app.helpers import (
     access_editor,
+    access_editor_metadata,
     cloning_process,
     create_favourite,
     list_favourites,
@@ -53,11 +55,8 @@ from app.mongo_db_connection import (
     save_to_template_collection,
     save_to_template_metadata_collection,
     save_to_workflow_collection,
-    single_query_template_metadata_collection,
     single_query_document_collection,
-    single_query_document_metadata_collection,
     single_query_clones_collection,
-    single_query_clones_metadata_collection,
     bulk_query_workflow_collection,
     single_query_folder_collection,
     single_query_qrcode_collection,
@@ -305,11 +304,10 @@ def finalize_or_reject(request, process_id):
             if user_type == "public":
                 link_id = request.data["link_id"]
                 register_finalized(link_id)
-
-            # Update the metadata
-            meta_id = get_metadata_id(item_id, item_type)
-            update_metadata(meta_id, state, item_type)
-
+            new_check, new_state = is_finalized(item_id, item_type)
+            if new_check and new_state != "finalized":
+                meta_id = get_metadata_id(item_id, item_type)
+                update_metadata(meta_id, state, item_type)
             return Response("document processed successfully", status.HTTP_200_OK)
         except Exception as err:
             print(err)
@@ -606,7 +604,7 @@ def get_clones_metadata_in_organization(request, company_id):
                 "document_state": doc_state,
             }
         )
-        cache.set(cache_key, clones_list, timeout=60)
+        cache.set(cache_key, clones_list, timeout=10)
     return Response(
         {"clones": clones_list},
         status.HTTP_200_OK,
@@ -693,7 +691,7 @@ def create_document(request):
         )
     )
     if res["isSuccess"]:
-        res_metedata = json.loads(
+        res_metadata = json.loads(
             save_to_document_metadata_collection(
                 {
                     "document_name": "Untitled Document",
@@ -706,14 +704,14 @@ def create_document(request):
                 }
             )
         )
-        print(res_metedata)
-        if not res_metedata["isSuccess"]:
+        if not res_metadata["isSuccess"]:
             return Response(
                 "An error occured while trying to save document metadata",
                 status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
+        metadata_id=(res_metadata["inserted_id"])
 
-        editor_link = access_editor(res["inserted_id"], "document")
+        editor_link = access_editor_metadata(res["inserted_id"], "document", metadata_id)
         if not editor_link:
             return Response(
                 "Could not open document editor.",
@@ -1131,7 +1129,7 @@ def create_template(request):
 
     if res["isSuccess"]:            
         collection_id  = res["inserted_id"]
-        save_to_template_metadata_collection({
+        res_metadata=json.loads(save_to_template_metadata_collection({
             "template_name": "Untitled Template",
             "created_by": request.data["created_by"],
             "collection_id": collection_id,
@@ -1139,14 +1137,21 @@ def create_template(request):
             "company_id": organization_id,
             "auth_viewers": viewers,
             "template_state": "draft",}
-            )
+            ))
         
+        if not res_metadata["isSuccess"]:
+            return Response(
+                "An error occured while trying to save document metadata",
+                status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
+
         payload = {
             "product_name": "workflowai",
             "details": {
                 "_id": res["inserted_id"],
                 "field": "template_name",
                 "action": "template",
+                "metadata_id": res_metadata["inserted_id"],
                 "cluster": "Documents",
                 "database": "Documentation",
                 "collection": "TemplateReports",
@@ -1742,3 +1747,86 @@ def get_templates_metadata(request, company_id):
 #     print(f"Template oject metadata {template}")
 #     return Response(template, status.HTTP_200_OK)
     
+
+
+
+@api_view(["GET"])
+def get_reports_templates_metata(request, company_id):
+    data_type = request.query_params.get("data_type")
+    template_state = request.query_params.get("template_state")
+    member = request.query_params.get("member")
+    portfolio = request.query_params.get("portfolio")
+    auth_viewers = [{"member": member, "portfolio": portfolio}]
+    if not validate_id(company_id) or data_type is None or template_state is None:
+        return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
+    templates = bulk_query_template_metadata_collection(
+        {
+            "company_id": company_id,
+            "data_type": data_type,
+            "template_state": template_state,
+            "auth_viewers": auth_viewers,
+        }
+    )
+    return Response(
+        {"templates": templates},
+        status.HTTP_200_OK,
+    )
+
+
+@api_view(["GET"])
+def get_reports_documents_metadata(request, company_id):
+    """List of documents based on their states"""
+    data_type = request.query_params.get("data_type")
+    document_state = request.query_params.get("doc_state")
+    member = request.query_params.get("member")
+    portfolio = request.query_params.get("portfolio")
+
+    if not validate_id(company_id) or data_type is None or document_state is None:
+        return Response("Invalid Request!", status.HTTP_400_BAD_REQUEST)
+    if member == "undefined" or portfolio == "undefined":
+        return Response("Invalid Request!", status.HTTP_400_BAD_REQUEST)
+    auth_viewers = [{"member": member, "portfolio": portfolio}]
+    document_list = bulk_query_clones_metadata_collection(
+        {
+            "company_id": company_id,
+            "data_type": data_type,
+            "document_state": document_state,
+            "auth_viewers": auth_viewers,
+        }
+    )
+    return Response(
+        {"documents": document_list},
+        status=status.HTTP_200_OK,
+    )
+
+
+@api_view(["POST"])
+def get_template_and_insert_metadata(request, template_id):
+    # Get the template from the template collection using the template ID
+    template = single_query_template_collection({"_id": template_id})
+
+    if not template:
+        return Response("Template not found", status.HTTP_404_NOT_FOUND)
+
+    # Prepare the options dictionary for saving to metadata collection
+    options = {
+        "template_name": template.get("template_name"),
+        "created_by": template.get("created_by"),
+        "collection_id": template.get("_id"),
+        "data_type": template.get("data_type"),
+        "company_id": template.get("company_id"),
+        "auth_viewers": template.get("auth_viewers", []),
+        "template_state": "draft",
+    }
+    # Insert the template details into the template metadata collection
+    res_metadata = json.loads(save_to_template_metadata_collection(options))
+
+    if res_metadata["isSuccess"]:
+        return Response(
+            {"template": res_metadata},
+            status=status.HTTP_200_OK,
+        )
+    else:
+        return Response(
+            "Invalid Request!", status.HTTP_400_BAD_REQUEST
+        )
