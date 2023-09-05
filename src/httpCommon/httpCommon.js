@@ -1,7 +1,7 @@
 import axios from "axios";
 import { extractAuthQueryParamsFromVerificationURL, extractTokenFromVerificationURL } from "../utils/helpers";
 
-export const api_url = "https://workflowai.uxlivinglab.online/v1/";
+export const api_url = "https://100094.pythonanywhere.com/v1/";
 export const auth_url = "https://100014.pythonanywhere.com/api/";
 const auth_url_other = "https://100093.pythonanywhere.com/api/";
 const new_process_api_url = "https://workflowai.uxlivinglab.online/v0.2/";
