@@ -10,6 +10,7 @@ import { useTranslation } from 'react-i18next';
 import 'swiper/css';
 import 'swiper/css/navigation';
 import 'swiper/css/pagination';
+import { useNavigate } from 'react-router-dom';
 
 import './swiper.css';
 import { useRef } from 'react';
@@ -22,6 +23,8 @@ const CustomerSupport = () => {
     offset: ['end end', 'start start'],
   });
   const y = useTransform(scrollYProgress, [0, 1], ['200px', '-200px']);
+
+  const navigate = useNavigate();
 
   return (
     <div ref={ref} style={{ y }} className={styles.container}>
@@ -71,7 +74,7 @@ const CustomerSupport = () => {
                       'Learning Support New Trends Case Studies References Templates'
                     )}
                   </p>
-                  <button className={styles.knowledge__button}>
+                  <button className={styles.knowledge__button} onClick={()=>{navigate('/templates/#drafts')}}>
                     {t('Click Here')}
                   </button>
                 </div>

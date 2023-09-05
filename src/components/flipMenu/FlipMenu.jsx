@@ -111,6 +111,9 @@ export const FlipBack = (props) => {
         },
       });
     }
+    if(role === ""){
+      navigate('/documents/#drafts')
+    }
     if (role === 'newTemp') {
       const data = {
         created_by: userDetail?.userinfo.username,
