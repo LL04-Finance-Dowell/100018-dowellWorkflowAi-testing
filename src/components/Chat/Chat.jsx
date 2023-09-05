@@ -44,9 +44,11 @@ const Chat = () => {
   //   IntilizingRoom(session_id);
   // }, [session_id]);
 
+  ///userDetail?.userinfo?.userID
+
   const IntilizingRoom = async (session_id) => {
     const data = {
-      user_id: userDetail?.userinfo?.userID,
+      user_id: userDetail?.portfolio_info[0]?.org_id,
       org_id: userDetail?.userinfo?.client_admin_id,
       portfolio_name: userDetail?.portfolio_info[0]?.portfolio_name,
       product_name: "WORKFLOWAI",
@@ -262,7 +264,7 @@ const Chat = () => {
                 }
               </h2>
               <p className={styles.First_popuop_sms}>
-                {t("Hi ! How Can I Help You !!!")}
+                {t("Hi, How can I help you ?")}
               </p>
 
               <button
