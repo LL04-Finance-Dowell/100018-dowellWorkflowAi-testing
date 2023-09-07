@@ -1106,11 +1106,11 @@ def update_uuid_object(uuid_hash):
     )
     return post_to_data_service(payload)
 
-
+    
 def delete_template(template_id, data_type):
     payload = json.dumps(
         {
-            **TEMPLATE_CONNECTION_DICT,
+            **TEMPLATE_METADATA_CONNECTION_DICT,
             "command": "update",
             "field": {
                 "_id": template_id,
@@ -1144,7 +1144,7 @@ def delete_folder(folder_id, data_type):
 def delete_document(document_id, data_type):
     payload = json.dumps(
         {
-            **DOCUMENT_CONNECTION_DICT,
+            **DOCUMENT_METADATA_CONNECTION_DICT,
             "command": "update",
             "field": {
                 "_id": document_id,
