@@ -1446,7 +1446,6 @@ def all_workflow_ai_setting(request, company_id, data_type="Real_Data"):
 @api_view(["GET"])
 def get_workflow_ai_setting(request, wf_setting_id):
     """Get All WF AI"""
-    print(f"Coming here!!! {wf_setting_id}")
     setting = single_query_workflow_collection({"_id": wf_setting_id})
     return Response(setting, status.HTTP_200_OK)
 
@@ -1455,11 +1454,9 @@ def get_workflow_ai_setting(request, wf_setting_id):
 def update_application_settings(request):
     """Update workflow Setting"""
     form = request.data
-    print(f"form {form}")
     if not form:
         return Response("Workflow Data is Required", status.HTTP_400_BAD_REQUEST)
     old_wf_setting = single_query_workflow_collection({"_id": form["wf_setting_id"]})
-    print(f"Old_worflow {old_wf_setting}")
     for key, new_value in form.items():
         if key in old_wf_setting:
             old_wf_setting[key] = new_value
