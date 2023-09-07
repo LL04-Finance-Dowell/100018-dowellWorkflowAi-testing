@@ -482,12 +482,21 @@ def workflow_detail(request, workflow_id):
                 "Workflow Data is required", status=status.HTTP_400_BAD_REQUEST
             )
         old_workflow = single_query_workflow_collection({"_id": workflow_id})
-        old_workflow["workflows"]["workflow_title"] = form["wf_title"]
+        old_workflow["workflows"]["workflow_title"] = form["workflows"]["workflow_title"]
         old_workflow["workflows"]["data_type"] = form["data_type"]
-        old_workflow["workflows"]["steps"][0]["step_name"] = form["steps"][0][
-            "step_name"
-        ]
-        old_workflow["workflows"]["steps"][0]["role"] = form["steps"][0]["role"]
+
+        for i, step in enumerate(form["workflows"]["steps"]):
+            if i < len(old_workflow["workflows"]["steps"]):
+                old_workflow["workflows"]["steps"][i]["step_name"] = step["step_name"]
+                old_workflow["workflows"]["steps"][i]["role"] = step["role"]
+            else:
+                new_step = {"step_name": step["step_name"], "role": step["role"]}
+                old_workflow["workflows"]["steps"].append(new_step)
+        if len(form["workflows"]["steps"]) < len(old_workflow["workflows"]["steps"]):
+            del old_workflow["workflows"]["steps"][len(form["workflows"]["steps"]):]
+
+        # old_workflow["workflows"]["steps"][0]["step_name"] = form["workflows"]["steps"][0]["step_name"]
+        # old_workflow["workflows"]["steps"][1]["role"] = form["workflows"]["steps"][1]["role"]
         updt_wf = update_wf(workflow_id, old_workflow)
         updt_wf = json.loads(updt_wf)
         if updt_wf.get("isSuccess"):
@@ -1421,7 +1430,7 @@ def create_application_settings(request):
 
 
 @api_view(["GET"])
-def all_workflow_ai_setting(request, company_id, data_type="Real_data"):
+def all_workflow_ai_setting(request, company_id, data_type="Real_Data"):
     """Get All WF AI"""
     all_setting = bulk_query_settings_collection(
         {"company_id": company_id, "data_type": data_type}
