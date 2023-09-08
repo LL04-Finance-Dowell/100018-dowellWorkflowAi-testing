@@ -14,7 +14,7 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAppContext } from '../../../contexts/AppContext';
 
-function ListItem({ item }) {
+function ListItem({ item, toggleSidebar, isMobile }) {
   let children = null;
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -32,7 +32,7 @@ function ListItem({ item }) {
 
   const handleLinkItemClick = (e, item) => {
     e.preventDefault();
-
+    // console.log("the handle link item click ", item)
     if (!item.href) return;
 
     if (item.searchItem && item.itemObj) {
@@ -51,6 +51,9 @@ function ListItem({ item }) {
         return;
       }
       return;
+    }
+    if(isMobile == true){
+      toggleSidebar()
     }
     navigate(item.href);
   };
@@ -73,7 +76,7 @@ function ListItem({ item }) {
   );
 }
 
-const CollapseItem = ({ items, listType, exception }) => {
+const CollapseItem = ({ items, listType, exception, toggleSidebar, isMobile }) => {
   const { t } = useTranslation();
   const { customDocName, customTempName, customWrkfName } = useAppContext();
 
@@ -138,7 +141,7 @@ const CollapseItem = ({ items, listType, exception }) => {
                         <ol>
                           {React.Children.toArray(
                             item.children.map((item) => (
-                              <ListItem item={item} />
+                              <ListItem item={item} toggleSidebar={toggleSidebar} isMobile={isMobile} />
                             ))
                           )}
                         </ol>
@@ -168,6 +171,7 @@ const CollapseItem = ({ items, listType, exception }) => {
     </div>
   );
 };
+
 
 
 const TagSetter = ({ item, children, handleParentClick }) => (

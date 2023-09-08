@@ -7,7 +7,7 @@ import { useEffect } from 'react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
-const Notifications = () => {
+const Notifications = ({toggleSidebar, isMobile}) => {
   const { t } = useTranslation();
   const { notificationsForUser } = useSelector((state) => state.app);
   const [notificationItems, setNotificationItems] = useState(items);
@@ -70,7 +70,7 @@ const Notifications = () => {
       <h2 className={styles.header}>{t('Notifications')}</h2>
       <div className={styles.line}></div>
       <div className={styles.collapse__box}>
-        <CollapseItem listType='ol' items={notificationItems} />
+        <CollapseItem listType='ol' items={notificationItems} toggleSidebar={toggleSidebar} isMobile={isMobile} />
       </div>
     </div>
   );

@@ -108,6 +108,9 @@ const WorkflowApp = () => {
     },
   ]);
 
+  ///choose notification
+  const [whichNotification, setWhichNotification] = useState("")
+
   useEffect(() => {
     if (!userDetail || userDetail.msg || userDetail.message) return;
 
@@ -252,6 +255,8 @@ const WorkflowApp = () => {
 
   useEffect(() => {
     if (location.hash) {
+      // console.log("the location is ", location.hash)
+      setWhichNotification(location.hash)
       setVisible(true);
     } else {
       setVisible(false);
@@ -370,31 +375,105 @@ const WorkflowApp = () => {
                 </div>
               </div>
             ) : (
-              notificationsForUser.map((item) => (
-                <div key={item._id} id={item.title}>
+                whichNotification == "#documents" ? 
+                 <div key={notificationsForUser[0]._id} id={notificationsForUser[0].title}>
                   <SectionBox
-                    Card={item.card}
+                    Card={notificationsForUser[0].card}
                     title={`notifications - ${
-                      item.title.toLowerCase().includes('documents') &&
+                      notificationsForUser[0].title.toLowerCase().includes('documents') &&
                       customDocName
                         ? customDocName
-                        : item.title.toLowerCase().includes('templates') &&
+                        : notificationsForUser[0].title.toLowerCase().includes('templates') &&
                           customTempName
                         ? customTempName
-                        : item.title.toLowerCase().includes('workflows') &&
+                        : notificationsForUser[0].title.toLowerCase().includes('workflows') &&
                           customWrkfName
                         ? customWrkfName
-                        : item.title
+                        : notificationsForUser[0].title
                     }`}
-                    cardItems={item.items}
-                    cardBgColor={item.cardBgColor}
-                    idKey={item.id ? item.id : null}
+                    cardItems={notificationsForUser[0].items}
+                    cardBgColor={notificationsForUser[0].cardBgColor}
+                    idKey={notificationsForUser[0].id ? notificationsForUser[0].id : null}
                     hideFavoriteIcon={true}
                     itemType={'notifications'}
                     hideDeleteIcon={true}
                   />
-                </div>
-              ))
+                </div> :
+                whichNotification == "#templates" ? 
+                <div key={notificationsForUser[1]._id} id={notificationsForUser[1].title}>
+                 <SectionBox
+                   Card={notificationsForUser[1].card}
+                   title={`notifications - ${
+                    notificationsForUser[1].title.toLowerCase().includes('documents') &&
+                     customDocName
+                       ? customDocName
+                       : notificationsForUser[1].title.toLowerCase().includes('templates') &&
+                         customTempName
+                       ? customTempName
+                       : notificationsForUser[1].title.toLowerCase().includes('workflows') &&
+                         customWrkfName
+                       ? customWrkfName
+                       : notificationsForUser[1].title
+                   }`}
+                   cardItems={notificationsForUser[1].items}
+                   cardBgColor={notificationsForUser[1].cardBgColor}
+                   idKey={notificationsForUser[1].id ? notificationsForUser[1].id : null}
+                   hideFavoriteIcon={true}
+                   itemType={'notifications'}
+                   hideDeleteIcon={true}
+                 />
+               </div> :
+          
+                <div key={notificationsForUser[2]._id} id={notificationsForUser[2].title}>
+                 <SectionBox
+                   Card={notificationsForUser[2].card}
+                   title={`notifications - ${
+                    notificationsForUser[2].title.toLowerCase().includes('documents') &&
+                     customDocName
+                       ? customDocName
+                       : notificationsForUser[2].title.toLowerCase().includes('templates') &&
+                         customTempName
+                       ? customTempName
+                       : notificationsForUser[2].title.toLowerCase().includes('workflows') &&
+                         customWrkfName
+                       ? customWrkfName
+                       : notificationsForUser[2].title
+                   }`}
+                   cardItems={notificationsForUser[2].items}
+                   cardBgColor={notificationsForUser[2].cardBgColor}
+                   idKey={notificationsForUser[2].id ? notificationsForUser[2].id : null}
+                   hideFavoriteIcon={true}
+                   itemType={'notifications'}
+                   hideDeleteIcon={true}
+                 />
+               </div> 
+
+
+              // notificationsForUser.map((item) => (
+              //   <div key={item._id} id={item.title}>
+              //     <SectionBox
+              //       Card={item.card}
+              //       title={`notifications - ${
+              //         item.title.toLowerCase().includes('documents') &&
+              //         customDocName
+              //           ? customDocName
+              //           : item.title.toLowerCase().includes('templates') &&
+              //             customTempName
+              //           ? customTempName
+              //           : item.title.toLowerCase().includes('workflows') &&
+              //             customWrkfName
+              //           ? customWrkfName
+              //           : item.title
+              //       }`}
+              //       cardItems={item.items}
+              //       cardBgColor={item.cardBgColor}
+              //       idKey={item.id ? item.id : null}
+              //       hideFavoriteIcon={true}
+              //       itemType={'notifications'}
+              //       hideDeleteIcon={true}
+              //     />
+              //   </div>
+              // ))
             )}
             <div className={styles.tasks__container}>
               {uncompletedTasks[0].children.length ? (

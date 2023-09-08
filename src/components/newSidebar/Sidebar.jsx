@@ -323,7 +323,7 @@ const Sidebar = ({toggleSidebar, isMobile}) => {
           )}
         </div>
       </div>
-      <Notifications />
+      <Notifications toggleSidebar={toggleSidebar} isMobile={isMobile} />
       <New toggleSidebar={toggleSidebar} isMobile={isMobile}/>
       <Search />
       <div className={styles.gap}></div>
