@@ -290,7 +290,6 @@ class HandleProcess:
         )
         if response.status_code == 201:
             response = json.loads(response.text)
-            print(response)
             master_link = response["qrcodes"][0]["masterlink"]
             master_qrcode = response["qrcodes"][0]["qrcode_image_url"]
         return master_link, master_qrcode
