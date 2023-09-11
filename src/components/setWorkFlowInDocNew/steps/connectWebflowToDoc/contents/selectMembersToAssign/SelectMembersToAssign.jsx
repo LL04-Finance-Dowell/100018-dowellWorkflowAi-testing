@@ -171,7 +171,11 @@ const SelectMembersToAssign = ({
       (member) => {
         if (member.header === 'Team') {
           member.portfolios =
-            extractAndFormatPortfoliosForMembers('team_member');
+          [
+            ...extractAndFormatPortfoliosForMembers('team_member'),
+            ...extractAndFormatPortfoliosForMembers('owner')
+          ];
+            // console.log('the team portfolio issss', member.portfolios)
           member.teams = workflowTeams?.filter(
             (team) => team.team_type === 'team'
           );
@@ -658,6 +662,7 @@ const SelectMembersToAssign = ({
   //   publicMembersSelectedForProcess,
   // ]);
 
+ 
   return (
     <div className={styles.container}>
       {processSteps.find(
