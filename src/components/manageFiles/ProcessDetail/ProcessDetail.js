@@ -2,8 +2,6 @@ import React, { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
 import styles from './ProcessDetail.module.css'
 import { toast } from 'react-toastify';
-import { useNavigate } from 'react-router-dom';
-
 // import { MdExpandMore } from "react-icons/md";
 import { MdContentCopy, MdExpandMore, MdExpandLess } from "react-icons/md";
 
@@ -117,13 +115,11 @@ const ProcessDetail = () => {
 
 const Step = ({ step, index }) => {
   const [expanded, setExpanded] = useState(false);
-  const navigate = useNavigate();
 
   const stepDivClass = expanded ? styles.Step_div_expanded : styles.Step_div;
 
   return (
-    <div onClick={()=>{navigate('StepDetail');
-  }} className={stepDivClass}>
+    <div className={stepDivClass}>
       <div className={styles.Process_Title}>
         {step.stepNumber}.
       </div>
@@ -131,17 +127,22 @@ const Step = ({ step, index }) => {
         {step.stepName}
       </div>
 
-   
+      
        
         <div className={styles.expanded}>
           <div>
-            <div>Public Member :</div>
+          <span>Public Member :</span><span>{step.stepPublicMembers.length}</span>
+
           </div>
           <div>
-            <span>Team Member :</span>
+          <span>Team Member :</span><span>{step.stepTeamMembers.length}</span>
+
           </div>
           <div>
-            <span>User Member :</span>
+      
+          <span>User Member :</span><span>{step.stepUserMembers.length}</span>
+
+            
           </div>
         </div>
       
