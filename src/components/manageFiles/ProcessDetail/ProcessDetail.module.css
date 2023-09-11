@@ -5,6 +5,7 @@
   color: black;
     margin-top: 10px;
     margin-bottom: 30px;
+    cursor: pointer;
 }
 .info_container{
   width: 100%;

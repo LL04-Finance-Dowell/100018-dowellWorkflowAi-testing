@@ -230,7 +230,7 @@ const ConnectWorkFlowToDoc = ({ stepsPopulated, savedProcessSteps }) => {
       if (foundNextStepElem) foundNextStepElem.scrollIntoView();
     }
   };
-
+console.log(stepsPopulated)
   return (
     <>
       <div className={styles.container}>

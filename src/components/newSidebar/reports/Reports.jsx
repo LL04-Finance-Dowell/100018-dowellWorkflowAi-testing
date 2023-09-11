@@ -52,79 +52,79 @@ const Reports = () => {
       });
   }, [tempReports]);
 
-  // useEffect(() => {
-  //   if (
-  //     allDocumentsArray &&
-  //     allDocumentsArray.length > 0 &&
-  //     !itemsCountToDisplay.documents.countSet
-  //   ) {
-  //     const countOfDocuments = allDocumentsArray.filter(
-  //       (item) =>
-  //         item.document_state === 'draft' &&
-  //         item.created_by === userDetail?.userinfo?.username
-  //     ).length;
-  //     setItemsCountToDisplay((prevItems) => {
-  //       return {
-  //         ...prevItems,
-  //         documents: { count: countOfDocuments, countSet: true },
-  //       };
-  //     });
-  //   }
-  //   if (
-  //     allTemplatesArray &&
-  //     allTemplatesArray.length > 0 &&
-  //     !itemsCountToDisplay.templates.countSet
-  //   ) {
-  //     const countOfTemplates = allTemplatesArray.filter(
-  //       (item) => item.template_state === 'draft'
-  //       // && item.created_by === userDetail?.userinfo.username
-  //     ).length;
-  //     setItemsCountToDisplay((prevItems) => {
-  //       return {
-  //         ...prevItems,
-  //         templates: { count: countOfTemplates, countSet: true },
-  //       };
-  //     });
-  //   }
-  //   if (
-  //     allWorkflowsArray &&
-  //     allWorkflowsArray.length > 0 &&
-  //     !itemsCountToDisplay.workflows.countSet
-  //   ) {
-  //     const countOfWorkflows = allWorkflowsArray.filter(
-  //       (item) => item.created_by === userDetail?.userinfo.username
-  //       // item.template_state === 'draft'
-  //     ).length;
-  //     setItemsCountToDisplay((prevItems) => {
-  //       return {
-  //         ...prevItems,
-  //         workflows: { count: countOfWorkflows, countSet: true },
-  //       };
-  //     });
-  //   }
-  //   if (
-  //     allProcesses &&
-  //     allProcesses.length > 0 &&
-  //     !itemsCountToDisplay.processes.countSet
-  //   ) {
-  //     const countOfProcesses =
-  //       allProcesses.filter(
-  //         (item) =>
-  //           // item.created_by === userDetail?.userinfo.username
-  //           item.processing_state === 'cancelled'
-  //       ).length +
-  //       allProcesses.filter((item) => item.processing_state === 'finalized')
-  //         .length;
+  useEffect(() => {
+    if (
+      allDocumentsArray &&
+      allDocumentsArray.length > 0 &&
+      !itemsCountToDisplay.documents.countSet
+    ) {
+      const countOfDocuments = allDocumentsArray.filter(
+        (item) =>
+          item.document_state === 'draft' &&
+          item.created_by === userDetail?.userinfo?.username
+      ).length;
+      setItemsCountToDisplay((prevItems) => {
+        return {
+          ...prevItems,
+          documents: { count: countOfDocuments, countSet: true },
+        };
+      });
+    }
+    if (
+      allTemplatesArray &&
+      allTemplatesArray.length > 0 &&
+      !itemsCountToDisplay.templates.countSet
+    ) {
+      const countOfTemplates = allTemplatesArray.filter(
+        (item) => item.template_state === 'draft'
+        // && item.created_by === userDetail?.userinfo.username
+      ).length;
+      setItemsCountToDisplay((prevItems) => {
+        return {
+          ...prevItems,
+          templates: { count: countOfTemplates, countSet: true },
+        };
+      });
+    }
+    if (
+      allWorkflowsArray &&
+      allWorkflowsArray.length > 0 &&
+      !itemsCountToDisplay.workflows.countSet
+    ) {
+      const countOfWorkflows = allWorkflowsArray.filter(
+        (item) => item.created_by === userDetail?.userinfo.username
+        // item.template_state === 'draft'
+      ).length;
+      setItemsCountToDisplay((prevItems) => {
+        return {
+          ...prevItems,
+          workflows: { count: countOfWorkflows, countSet: true },
+        };
+      });
+    }
+    if (
+      allProcesses &&
+      allProcesses.length > 0 &&
+      !itemsCountToDisplay.processes.countSet
+    ) {
+      const countOfProcesses =
+        allProcesses.filter(
+          (item) =>
+            // item.created_by === userDetail?.userinfo.username
+            item.processing_state === 'cancelled'
+        ).length +
+        allProcesses.filter((item) => item.processing_state === 'finalized')
+          .length;
 
-  //     setItemsCountToDisplay((prevItems) => {
-  //       return {
-  //         ...prevItems,
-  //         processes: { count: countOfProcesses, countSet: true },
-  //       };
-  //     });
-  //   }
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, [allDocumentsArray, allTemplatesArray, allWorkflowsArray, allProcesses]);
+      setItemsCountToDisplay((prevItems) => {
+        return {
+          ...prevItems,
+          processes: { count: countOfProcesses, countSet: true },
+        };
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [allDocumentsArray, allTemplatesArray, allWorkflowsArray, allProcesses]);
 
   useEffect(() => {
     setTest((prevItems) =>

@@ -5,7 +5,7 @@ import { auth_url } from './httpCommon/httpCommon';
 import { useDispatch, useSelector } from 'react-redux';
 import useDowellLogin from './hooks/useDowellLogin';
 import WorkflowApp from './pages/App/WorkflowApp';
-
+import StepDetail from './components/manageFiles/ProcessDetail/StepDetail';
 import './App.css';
 import DocumentsPage from './pages/Documents/AllDocumentsPage/DocumentsPage';
 
@@ -46,7 +46,7 @@ function App() {
 
   useDowellLogin();
 
- 
+
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -257,9 +257,14 @@ function App() {
             element={<ProccessPage showSingleProcess={true} />}
           />
 
+
           {/* <Route path={"trash"} element={<ProccessPage showOnlyTrashed={true} />}/> */}
         </Route>
         <Route path={'/notifications'} element={<NotificationsPage />} />
+        <Route
+          path={'/StepDetail'}
+          element={<StepDetail />}
+        />
 
         <Route path={'/folders'}>
           <Route index element={<FoldersPage />} />

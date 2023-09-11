@@ -2,6 +2,8 @@ import React, { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
 import styles from './ProcessDetail.module.css'
 import { toast } from 'react-toastify';
+import { useNavigate } from 'react-router-dom';
+
 // import { MdExpandMore } from "react-icons/md";
 import { MdContentCopy, MdExpandMore, MdExpandLess } from "react-icons/md";
 
@@ -115,11 +117,13 @@ const ProcessDetail = () => {
 
 const Step = ({ step, index }) => {
   const [expanded, setExpanded] = useState(false);
+  const navigate = useNavigate();
 
   const stepDivClass = expanded ? styles.Step_div_expanded : styles.Step_div;
 
   return (
-    <div className={stepDivClass}>
+    <div onClick={()=>{navigate('StepDetail');
+  }} className={stepDivClass}>
       <div className={styles.Process_Title}>
         {step.stepNumber}.
       </div>
@@ -127,38 +131,20 @@ const Step = ({ step, index }) => {
         {step.stepName}
       </div>
 
-      {expanded ? (
-        <MdExpandLess
-          size={40}
-          className={styles.expand_icon}
-          onClick={() => setExpanded(false)}
-        />
-      ) : (
-        <MdExpandMore
-          size={40}
-          className={styles.expand_icon}
-          onClick={() => setExpanded(true)}
-        />
-      )}
-      {expanded && (
+   
+       
         <div className={styles.expanded}>
           <div>
-            <span>Public Member :</span><span> {step.stepPublicMembers.map((member, index) => {
-              return <span>{`${member.member}, `}</span>
-            })}</span>
+            <div>Public Member :</div>
           </div>
           <div>
-            <span>Team Member :</span><span> {step.stepTeamMembers.map((member, index) => {
-              return <span>{`${member.member}, `}</span>
-            })}</span>
+            <span>Team Member :</span>
           </div>
           <div>
-            <span>User Member :</span><span> {step.stepUserMembers.map((member, index) => {
-              return <span>{`${member.member}, `}</span>
-            })}</span>
+            <span>User Member :</span>
           </div>
         </div>
-      )}
+      
     </div>
   );
 };

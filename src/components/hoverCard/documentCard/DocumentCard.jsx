@@ -269,6 +269,7 @@ const DocumentCard = ({
   };
 
   const handleFetchNewDocumentDetail = async (documentId) => {
+    console.log("chkeinggggggggg")
     if (documentLoading) return;
     if (dataLoading)
       return toast.info('Please wait for this document to open first');
