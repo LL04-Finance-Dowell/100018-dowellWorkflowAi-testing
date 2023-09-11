@@ -1,4 +1,4 @@
-import { httpApiUrl, httpWorkflow } from '../httpCommon/httpCommon';
+import { httpApiUrl, httpWorkflow,httpWorkflowNew } from '../httpCommon/httpCommon';
 
 export class WorkflowServices {
   createWorkflow = (data) => {
@@ -21,4 +21,11 @@ export class WorkflowServices {
   allWorkflows = (companyId, dataType) => {
     return httpApiUrl.get(`/companies/${companyId}/workflows/?data_type=${dataType}`);
   };
+  
+  ////new update for workflow
+updateWorkflowNew = (workflowId, data) => {
+  return httpWorkflowNew.put(`/${workflowId}/`, data);
+};
 }
+
+

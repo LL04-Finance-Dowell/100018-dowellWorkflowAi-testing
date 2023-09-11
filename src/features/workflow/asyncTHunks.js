@@ -115,13 +115,13 @@ export const detailWorkflow = createAsyncThunk(
 
 export const updateWorkflow = createAsyncThunk(
   'workflow/update',
-  async ({ updateData, notify, handleAfterCreated }, thunkAPI) => {
+  async ({ newData, notify, handleAfterCreated }, thunkAPI) => {
     try {
-      const res = await workflowServices.updateWorkflow(
-        updateData.workflow_id,
-        updateData
+      const res = await workflowServices.updateWorkflowNew(
+        newData._id,
+        newData
       );
-
+        console.log("the res is ", res)
       typeof res.data === 'string' && notify(changeToTitleCase(res.data));
 
       // thunkAPI.dispatch(removeFromMinedWf(updateData.workflow_id));

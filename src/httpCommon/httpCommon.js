@@ -7,6 +7,9 @@ const auth_url_other = "https://100093.pythonanywhere.com/api/";
 const new_process_api_url = "https://workflowai.uxlivinglab.online/v0.2/";
 export const auth_expo_url = "https://100093.pythonanywhere.com";
 
+///new api
+const api_url_workflow = "https://100094.pythonanywhere.com/v1/"
+
 export const dowellLoginUrl =
   `https://100014.pythonanywhere.com/?redirect_url=${
     window.location.href.includes("verify/") ?
@@ -48,3 +51,9 @@ export const searchHttpInstance = axios.create({ baseURL: api_url + "search" });
 export const httpFavourite = axios.create({ baseURL: api_url + "favourites" });
 
 export const httpArchive = axios.create({ baseURL: api_url + "archives" });
+
+
+///new workflow api for update
+export const httpWorkflowNew = axios.create({
+  baseURL: api_url_workflow + "workflows",
+});

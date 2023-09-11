@@ -1,25 +1,25 @@
-import styles from './createWorkflow.module.css';
-import { useForm } from 'react-hook-form';
-import { useEffect, useState, useRef } from 'react';
-import { v4 as uuidv4 } from 'uuid';
-import Overlay from '../../../overlay/Overlay';
-import overlayStyles from '../../../overlay/overlay.module.css';
-import { useDispatch, useSelector } from 'react-redux';
+import styles from "./createWorkflow.module.css";
+import { useForm } from "react-hook-form";
+import { useEffect, useState, useRef } from "react";
+import { v4 as uuidv4 } from "uuid";
+import Overlay from "../../../overlay/Overlay";
+import overlayStyles from "../../../overlay/overlay.module.css";
+import { useDispatch, useSelector } from "react-redux";
 import {
   createWorkflow,
   updateWorkflow,
-} from '../../../../../features/workflow/asyncTHunks';
-import { toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+} from "../../../../../features/workflow/asyncTHunks";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
-import SubmitButton from '../../../../submitButton/SubmitButton';
-import { setToggleManageFileForm } from '../../../../../features/app/appSlice';
-import Spinner from '../../../../spinner/Spinner';
-import { TiTick } from 'react-icons/ti';
-import axios from 'axios';
-import StepTable from './stepTable/StepTable';
-import { useTranslation } from 'react-i18next';
-import { productName } from '../../../../../utils/helpers';
+import SubmitButton from "../../../../submitButton/SubmitButton";
+import { setToggleManageFileForm } from "../../../../../features/app/appSlice";
+import Spinner from "../../../../spinner/Spinner";
+import { TiTick } from "react-icons/ti";
+import axios from "axios";
+import StepTable from "./stepTable/StepTable";
+import { useTranslation } from "react-i18next";
+import { productName } from "../../../../../utils/helpers";
 
 const CreateWorkflows = ({ handleToggleOverlay }) => {
   const { t } = useTranslation();
@@ -37,7 +37,7 @@ const CreateWorkflows = ({ handleToggleOverlay }) => {
   const { currentWorkflow } = useSelector((state) => state.app);
 
   const [internalWorkflows, setInternalWorkflows] = useState([]);
-  const [workflowTitle, setWorkflowTitle] = useState('');
+  const [workflowTitle, setWorkflowTitle] = useState("");
   const [currentTableCell, setCurrentTableCall] = useState(null);
 
   const { register, handleSubmit, reset, setValue, watch } = useForm();
@@ -70,7 +70,7 @@ const CreateWorkflows = ({ handleToggleOverlay }) => {
       ) &&
       !currentTableCell
     )
-      toast.warn('Role name already in use');
+      toast.warn("Role name already in use");
     else {
       if (currentTableCell) {
         setInternalWorkflows((prev) =>
@@ -98,7 +98,7 @@ const CreateWorkflows = ({ handleToggleOverlay }) => {
   const handleCreateWorkflow = () => {
     const handleAfterCreated = () => {
       reset();
-      setWorkflowTitle('');
+      setWorkflowTitle("");
       setInternalWorkflows([]);
       dispatch(setToggleManageFileForm(false));
     };
@@ -109,26 +109,42 @@ const CreateWorkflows = ({ handleToggleOverlay }) => {
     }));
 
     if (currentWorkflow) {
-      const updateData = {
-        created_by: userDetail?.userinfo?.username,
-        company_id:
-          userDetail?.portfolio_info?.length > 1
-            ? userDetail?.portfolio_info.find(
-                (portfolio) => portfolio.product === productName
-              )?.org_id
-            : userDetail?.portfolio_info[0].org_id,
-        wf_title: workflowTitle,
-        workflow_id: currentWorkflow._id,
-        data_type:
-          userDetail?.portfolio_info?.length > 1
-            ? userDetail?.portfolio_info.find(
-                (portfolio) => portfolio.product === productName
-              )?.data_type
-            : userDetail?.portfolio_info[0].data_type,
-        steps,
-      };
+      // const updateData = {
+      //   created_by: userDetail?.userinfo?.username,
+      //   company_id:
+      //     userDetail?.portfolio_info?.length > 1
+      //       ? userDetail?.portfolio_info.find(
+      //           (portfolio) => portfolio.product === productName
+      //         )?.org_id
+      //       : userDetail?.portfolio_info[0].org_id,
+      //   wf_title: workflowTitle,
+      //   workflow_id: currentWorkflow._id,
+      //   data_type:
+      //     userDetail?.portfolio_info?.length > 1
+      //       ? userDetail?.portfolio_info.find(
+      //           (portfolio) => portfolio.product === productName
+      //         )?.data_type
+      //       : userDetail?.portfolio_info[0].data_type,
+      //   steps,
+      // };
 
-      dispatch(updateWorkflow({ updateData, notify, handleAfterCreated }));
+      // console.log("the currentWorkflow is ", currentWorkflow);
+      // console.log("the portfolio is ", userDetail);
+      // console.log("the product name is ", productName);
+
+      const newData = JSON.parse(JSON.stringify(currentWorkflow));
+      if (Array.isArray(steps)) {
+        newData.workflows.steps = steps;
+      } else {
+        console.error("newSteps must be an array.");
+      }
+      delete newData?.workflows.data_type;
+      newData.portfolio = newData.creator_portfolio;
+      delete newData.creator_portfolio;
+      console.log("the updated data is ", newData);
+
+
+      dispatch(updateWorkflow({ newData, notify, handleAfterCreated }));
     } else {
       const data = {
         created_by: userDetail?.userinfo.username,
@@ -153,34 +169,31 @@ const CreateWorkflows = ({ handleToggleOverlay }) => {
               )?.portfolio_name
             : userDetail?.portfolio_info[0]?.portfolio_name,
       };
-      const Api_key = creditResponse?.api_key
+
+      const Api_key = creditResponse?.api_key;
       axios
-      .post(
-        `https://100105.pythonanywhere.com/api/v3/process-services/?type=product_service&api_key=${Api_key}`,
-        {
-          "service_id": "DOWELL10026",
-          "sub_service_ids": ["DOWELL100263"],
-        },
-      )
-      .then((response) => {
-        console.log(response)
-        if (response.data.success == true) {
-
-          dispatch(createWorkflow({ data, notify, handleAfterCreated }));
-        }
-      })
-      .catch((error) => {
-        console.log(error);
-        toast.info(error.response?.data?.message)
-
-      });
-
-     
+        .post(
+          `https://100105.pythonanywhere.com/api/v3/process-services/?type=product_service&api_key=${Api_key}`,
+          {
+            service_id: "DOWELL10026",
+            sub_service_ids: ["DOWELL100263"],
+          }
+        )
+        .then((response) => {
+          console.log(response);
+          if (response.data.success == true) {
+            dispatch(createWorkflow({ data, notify, handleAfterCreated }));
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+          toast.info(error.response?.data?.message);
+        });
     }
   };
 
   useEffect(() => {
-    if (workflowDetailStatus === 'error') {
+    if (workflowDetailStatus === "error") {
       dispatch(setToggleManageFileForm(false));
     } else {
       if (currentWorkflow && currentWorkflow.workflows) {
@@ -201,21 +214,21 @@ const CreateWorkflows = ({ handleToggleOverlay }) => {
   return (
     <Overlay
       title={`${
-        workflowDetailStatus === 'pending' || currentWorkflow
-          ? 'Update'
-          : 'Create'
+        workflowDetailStatus === "pending" || currentWorkflow
+          ? "Update"
+          : "Create"
       } Workflow`}
       handleToggleOverlay={handleToggleOverlay}
     >
-      {workflowDetailStatus === 'pending' ? (
+      {workflowDetailStatus === "pending" ? (
         <Spinner />
-      ) : status === 'pending' || updateWorkflowStatus === 'pending' ? (
+      ) : status === "pending" || updateWorkflowStatus === "pending" ? (
         <Spinner />
       ) : (
         <div className={styles.form__container}>
           <div className={overlayStyles.input__box}>
             <label>
-              {t('Workflow Title')} <span>*</span>
+              {t("Workflow Title")} <span>*</span>
             </label>
             <input value={workflowTitle} onChange={handleWorkflowChange} />
           </div>
@@ -230,32 +243,32 @@ const CreateWorkflows = ({ handleToggleOverlay }) => {
           />
 
           <form onSubmit={handleSubmit(onSubmit)}>
-            <div className={styles.form__box} style={{ display: 'flex' }}>
+            <div className={styles.form__box} style={{ display: "flex" }}>
               <>
                 <div className={overlayStyles.input__box}>
-                  <label ref={stepNameRef} htmlFor='step_name'>
-                    {t('Step Name')}
+                  <label ref={stepNameRef} htmlFor="step_name">
+                    {t("Step Name")}
                   </label>
                   <input
                     required
-                    placeholder={t('Step Name')}
-                    id='step_name'
-                    {...register('step_name')}
+                    placeholder={t("Step Name")}
+                    id="step_name"
+                    {...register("step_name")}
                   />
                 </div>
                 <div className={overlayStyles.input__box}>
-                  <label htmlFor='role'>{t('Role')}</label>
+                  <label htmlFor="role">{t("Role")}</label>
                   <input
                     required
-                    placeholder={t('Role')}
-                    id='role'
-                    {...register('role')}
+                    placeholder={t("Role")}
+                    id="role"
+                    {...register("role")}
                   />
                 </div>
               </>
 
-              <button className={styles.add__table__button} type='submit'>
-                {currentTableCell ? <TiTick /> : '+'}
+              <button className={styles.add__table__button} type="submit">
+                {currentTableCell ? <TiTick /> : "+"}
               </button>
             </div>
           </form>
@@ -265,16 +278,16 @@ const CreateWorkflows = ({ handleToggleOverlay }) => {
               onClick={handleToggleOverlay}
               className={styles.cancel__button}
             >
-              {t('cancel')}
+              {t("cancel")}
             </button>
             <SubmitButton
               onClick={handleCreateWorkflow}
               status={currentWorkflow ? updateWorkflowStatus : status}
-              type='button'
+              type="button"
               className={styles.add__button}
               disabled={submitBtnDisabled}
             >
-              {currentWorkflow ? t('update') : t('save')}
+              {currentWorkflow ? t("update") : t("save")}
             </SubmitButton>
           </div>
         </div>
