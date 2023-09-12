@@ -64,7 +64,6 @@ from app.mongo_db_connection import (
     single_query_template_collection,
     single_query_workflow_collection,
     bulk_query_settings_collection,
-    single_query_workflow_collection,
     process_folders_to_item,
     bulk_query_document_collection,
     bulk_query_document_metadata_collection,
@@ -78,6 +77,7 @@ from app.mongo_db_connection import (
     update_template_approval,
     update_wf,
     update_workflow_setting,
+    get_workflow_setting_object
 )
 
 from .constants import EDITOR_API
@@ -1446,7 +1446,7 @@ def all_workflow_ai_setting(request, company_id, data_type="Real_Data"):
 @api_view(["GET"])
 def get_workflow_ai_setting(request, wf_setting_id):
     """Get All WF AI"""
-    setting = single_query_workflow_collection({"_id": wf_setting_id})
+    setting = get_workflow_setting_object(wf_setting_id)
     return Response(setting, status.HTTP_200_OK)
 
 
@@ -1456,11 +1456,11 @@ def update_application_settings(request):
     form = request.data
     if not form:
         return Response("Workflow Data is Required", status.HTTP_400_BAD_REQUEST)
-    old_wf_setting = single_query_workflow_collection({"_id": form["wf_setting_id"]})
+    old_wf_setting = get_workflow_setting_object(form["_id"])
     for key, new_value in form.items():
         if key in old_wf_setting:
             old_wf_setting[key] = new_value
-    updt_wf = json.loads(update_workflow_setting(form["wf_setting_id"], old_wf_setting))
+    updt_wf = json.loads(update_workflow_setting(form["_id"], old_wf_setting))
     if updt_wf["isSuccess"]:
         return Response(
             {"body": "Workflow Setting Updated", "updated": updt_wf},
