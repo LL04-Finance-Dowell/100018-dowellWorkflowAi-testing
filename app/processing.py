@@ -526,19 +526,15 @@ class Background:
             if no_of_steps > 0:
                 for index, step in enumerate(steps):
                     if step["stepDocumentCloneMap"]:
-                        current_doc_map = [
-                            v
-                            for document_map in step["stepDocumentCloneMap"]
-                            for k, v in document_map.items()
-                            if isinstance(v, str)
-                        ]
-                        print(f"(step-{index}): ")
-                        user_in_viewers = check_user_in_auth_viewers(
-                            user=self.username, item=document_id
-                        )
-                        if (check_step_items_state(current_doc_map)) or (
-                            not user_in_viewers
-                        ):
+                        current_doc_map = [v for document_map in step["stepDocumentCloneMap"] for k, v in document_map.items() if isinstance(v, str)]
+                        print(f"current_step_documents (step-{index}): ", current_doc_map)
+                        
+                        user_in_viewers = check_user_in_auth_viewers(user=self.username, item=document_id)
+                        # print("user_in_viewers: ", user_in_viewers)
+
+                        if (not user_in_viewers):
+                            # print("all finalized", check_step_items_state(current_doc_map))
+                            # print("user_in_viewers: ", user_in_viewers)
                             pass
                         elif document_id in current_doc_map:
                             for document_map in step.get("stepDocumentCloneMap"):

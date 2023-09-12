@@ -304,10 +304,21 @@ def finalize_or_reject(request, process_id):
             if user_type == "public":
                 link_id = request.data["link_id"]
                 register_finalized(link_id)
-            new_check, new_state = is_finalized(item_id, item_type)
-            if new_check and new_state != "finalized":
+
+            # Get the item state
+            item = single_query_clones_collection({"_id": item_id})
+            print(item.get("document_state"))
+
+            if item.get("document_state") == "finalized":
+                # Update the metadata
                 meta_id = get_metadata_id(item_id, item_type)
-                update_metadata(meta_id, state, item_type)
+                print("meta_id: ", meta_id)
+                update_metadata(meta_id, "finalized", item_type)
+            elif item.get("document_state") == "processing":
+                # Update the metadata
+                meta_id = get_metadata_id(item_id, item_type)
+                update_metadata(meta_id, "processing", item_type)
+
             return Response("document processed successfully", status.HTTP_200_OK)
         except Exception as err:
             print(err)

@@ -778,6 +778,22 @@ def authorize(document_id, viewers, process_id, item_type):
                 "platform": "bangalore",
             }
         )
+        
+        metadata_payload = json.dumps(
+            {
+                **CLONES_METADATA_CONNECTION_DICT,
+                "command": "update",
+                "field": {
+                    "collection_id": document_id,
+                },
+                "update_field": {
+                    "auth_viewers": [viewers],
+                    "document_state": "processing",
+                    "process_id": process_id,
+                },
+                "platform": "bangalore",
+            }
+        )
     if item_type == "template":
         payload = json.dumps(
             {
@@ -795,6 +811,9 @@ def authorize(document_id, viewers, process_id, item_type):
             }
         )
     if payload is not None:
+        meta_payload = post_to_data_service(metadata_payload)
+        print(meta_payload)
+
         return post_to_data_service(payload)
 
     return
