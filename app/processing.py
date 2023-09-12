@@ -621,6 +621,13 @@ class Background:
                                                 step.get("stepDocumentCloneMap").append(
                                                     {user["member"]: document}
                                                 )
+                                                # Change auth viewers in the metadata as well
+                                                metadata_id = get_metadata_id(
+                                                    document, "document"
+                                                )
+                                                authorize_metadata(
+                                                    metadata_id, user, process_id, "document"
+                                                )
                                             for user in step.get("stepPublicMembers"):
                                                 authorize(
                                                     document,
@@ -631,6 +638,13 @@ class Background:
                                                 step.get("stepDocumentCloneMap").append(
                                                     {user["member"]: document}
                                                 )
+                                                # Change auth viewers in the metadata as well
+                                                metadata_id = get_metadata_id(
+                                                    document, "document"
+                                                )
+                                                authorize_metadata(
+                                                    metadata_id, user, process_id, "document"
+                                                )
                                             for user in step.get("stepUserMembers"):
                                                 authorize(
                                                     document,
@@ -640,6 +654,13 @@ class Background:
                                                 )
                                                 step.get("stepDocumentCloneMap").append(
                                                     {user["member"]: document}
+                                                )
+                                                # Change auth viewers in the metadata as well
+                                                metadata_id = get_metadata_id(
+                                                    document, "document"
+                                                )
+                                                authorize_metadata(
+                                                    metadata_id, user, process_id, "document"
                                                 )
                     else:
                         if step.get("stepTaskType") == "request_for_task":
