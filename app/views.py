@@ -291,10 +291,10 @@ def finalize_or_reject(request, process_id):
     user_type = request.data["user_type"]
     state = request.data["action"]
     check, current_state = is_finalized(item_id, item_type)
-    if check and current_state != "processing":
-        return Response(
-            f"document already processed as `{current_state}`!", status.HTTP_200_OK
-        )
+    # if check and current_state != "processing":
+    #     return Response(
+    #         f"document already processed as `{current_state}`!", status.HTTP_200_OK
+    #     )
     res = json.loads(finalize_item(item_id, state, item_type))
     
     if res["isSuccess"]:
@@ -306,9 +306,19 @@ def finalize_or_reject(request, process_id):
                 link_id = request.data["link_id"]
                 register_finalized(link_id)
 
-            # Update the metadata
-            meta_id = get_metadata_id(item_id, item_type)
-            update_metadata(meta_id, state, item_type)
+            # Get the item state
+            item = single_query_clones_collection({"_id": item_id})
+            print(item.get("document_state"))
+
+            if item.get("document_state") == "finalized":
+                # Update the metadata
+                meta_id = get_metadata_id(item_id, item_type)
+                print("meta_id: ", meta_id)
+                update_metadata(meta_id, "finalized", item_type)
+            elif item.get("document_state") == "processing":
+                # Update the metadata
+                meta_id = get_metadata_id(item_id, item_type)
+                update_metadata(meta_id, "processing", item_type)
 
             return Response("document processed successfully", status.HTTP_200_OK)
         except Exception as err:
@@ -606,7 +616,7 @@ def get_clones_metadata_in_organization(request, company_id):
                 "document_state": doc_state,
             }
         )
-        cache.set(cache_key, clones_list, timeout=60)
+        cache.set(cache_key, clones_list, timeout=5)
     return Response(
         {"clones": clones_list},
         status.HTTP_200_OK,

@@ -119,7 +119,7 @@ def cloning_document(document_id, auth_viewers, parent_id, process_id):
             save_to_clone_metadata_collection(
                 {
                     "document_name": document_name,
-                    "document_id": save_res["inserted_id"],
+                    "collection_id": save_res["inserted_id"],
                     "created_by": document["created_by"],
                     "company_id": document["company_id"],
                     "data_type": document["data_type"],
@@ -178,7 +178,7 @@ def cloning_clone(clone_id, auth_viewers, parent_id, process_id):
             save_to_clone_metadata_collection(
                 {
                     "document_name": document_name,
-                    "document_id": save_res["inserted_id"],
+                    "collection_id": save_res["inserted_id"],
                     "created_by": document["created_by"],
                     "company_id": document["company_id"],
                     "data_type": document["data_type"],
@@ -452,13 +452,13 @@ def get_metadata_id(item_id, item_type):
     """Gets gthe inserted_id of the metadata for the respective item_id"""
     if item_type == "document":
         try:
-            coll_id = single_query_document_metadata_collection({"document_id": item_id})["_id"]
+            coll_id = single_query_document_metadata_collection({"collection_id": item_id})["_id"]
             return coll_id
         except Exception as err:
             print("AN error occured: ", err)
     elif item_type == "clone":
         try:
-            coll_id = single_query_clones_metadata_collection({"document_id": item_id})["_id"]
+            coll_id = single_query_clones_metadata_collection({"collection_id": item_id})["_id"]
             return coll_id
         except Exception as err:
             print("An error occured: ", err)

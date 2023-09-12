@@ -520,7 +520,7 @@ class Background:
                         user_in_viewers = check_user_in_auth_viewers(user=self.username, item=document_id)
                         # print("user_in_viewers: ", user_in_viewers)
 
-                        if (check_step_items_state(current_doc_map)) or (not user_in_viewers):
+                        if (not user_in_viewers):
                             # print("all finalized", check_step_items_state(current_doc_map))
                             # print("user_in_viewers: ", user_in_viewers)
                             pass
