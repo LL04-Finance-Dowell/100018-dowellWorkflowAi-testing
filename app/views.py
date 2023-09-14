@@ -77,7 +77,7 @@ from app.mongo_db_connection import (
     update_template_approval,
     update_wf,
     update_workflow_setting,
-    get_workflow_setting_object
+    get_workflow_setting_object,
 )
 
 from .constants import EDITOR_API
@@ -295,7 +295,7 @@ def finalize_or_reject(request, process_id):
             f"document already processed as `{current_state}`!", status.HTTP_200_OK
         )
     res = json.loads(finalize_item(item_id, state, item_type))
-    
+
     if res["isSuccess"]:
         try:
             process = single_query_process_collection({"_id": process_id})
@@ -493,7 +493,9 @@ def workflow_detail(request, workflow_id):
                 "Workflow Data is required", status=status.HTTP_400_BAD_REQUEST
             )
         old_workflow = single_query_workflow_collection({"_id": workflow_id})
-        old_workflow["workflows"]["workflow_title"] = form["workflows"]["workflow_title"]
+        old_workflow["workflows"]["workflow_title"] = form["workflows"][
+            "workflow_title"
+        ]
         old_workflow["workflows"]["data_type"] = form["data_type"]
 
         for i, step in enumerate(form["workflows"]["steps"]):
@@ -504,7 +506,7 @@ def workflow_detail(request, workflow_id):
                 new_step = {"step_name": step["step_name"], "role": step["role"]}
                 old_workflow["workflows"]["steps"].append(new_step)
         if len(form["workflows"]["steps"]) < len(old_workflow["workflows"]["steps"]):
-            del old_workflow["workflows"]["steps"][len(form["workflows"]["steps"]):]
+            del old_workflow["workflows"]["steps"][len(form["workflows"]["steps"]) :]
 
         # old_workflow["workflows"]["steps"][0]["step_name"] = form["workflows"]["steps"][0]["step_name"]
         # old_workflow["workflows"]["steps"][1]["role"] = form["workflows"]["steps"][1]["role"]
@@ -567,6 +569,7 @@ def get_documents_in_organization(request, company_id):
     )
     return Response({"documents": documents}, status=status.HTTP_200_OK)
 
+
 @api_view(["GET"])
 def get_documents_metadata_in_organization(request, company_id):
     """List of Created Documents."""
@@ -606,6 +609,7 @@ def get_clones_in_organization(request, company_id):
         {"clones": clones_list},
         status.HTTP_200_OK,
     )
+
 
 @api_view(["GET"])
 def get_clones_metadata_in_organization(request, company_id):
@@ -729,9 +733,11 @@ def create_document(request):
                 "An error occured while trying to save document metadata",
                 status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
-        metadata_id=(res_metadata["inserted_id"])
+        metadata_id = res_metadata["inserted_id"]
 
-        editor_link = access_editor_metadata(res["inserted_id"], "document", metadata_id)
+        editor_link = access_editor_metadata(
+            res["inserted_id"], "document", metadata_id
+        )
         if not editor_link:
             return Response(
                 "Could not open document editor.",
@@ -1147,18 +1153,22 @@ def create_template(request):
         )
     )
 
-    if res["isSuccess"]:            
-        collection_id  = res["inserted_id"]
-        res_metadata=json.loads(save_to_template_metadata_collection({
-            "template_name": "Untitled Template",
-            "created_by": request.data["created_by"],
-            "collection_id": collection_id,
-            "data_type": request.data["data_type"],
-            "company_id": organization_id,
-            "auth_viewers": viewers,
-            "template_state": "draft",}
-            ))
-        
+    if res["isSuccess"]:
+        collection_id = res["inserted_id"]
+        res_metadata = json.loads(
+            save_to_template_metadata_collection(
+                {
+                    "template_name": "Untitled Template",
+                    "created_by": request.data["created_by"],
+                    "collection_id": collection_id,
+                    "data_type": request.data["data_type"],
+                    "company_id": organization_id,
+                    "auth_viewers": viewers,
+                    "template_state": "draft",
+                }
+            )
+        )
+
         if not res_metadata["isSuccess"]:
             return Response(
                 "An error occured while trying to save document metadata",
@@ -1746,7 +1756,7 @@ def get_templates_documents(request, company_id):
     return Response({key: templates_documents}, status=status.HTTP_200_OK)
 
 
-#MetaData GET requests
+# MetaData GET requests
 @api_view(["GET"])
 def get_templates_metadata(request, company_id):
     data_type = request.query_params.get("data_type")
@@ -1757,6 +1767,7 @@ def get_templates_metadata(request, company_id):
     )
     return Response({"templates": templates_meta_data})
 
+
 # @api_view(["GET"])
 # def template_metadata_object(request, collection_id):
 #     """Gets the JSON object for a template id"""
@@ -1766,8 +1777,6 @@ def get_templates_metadata(request, company_id):
 #     template = single_query_template_metadata_collection({"collection_id": collection_id})
 #     print(f"Template oject metadata {template}")
 #     return Response(template, status.HTTP_200_OK)
-    
-
 
 
 @api_view(["GET"])
@@ -1800,7 +1809,6 @@ def get_reports_documents_metadata(request, company_id):
     document_state = request.query_params.get("doc_state")
     member = request.query_params.get("member")
     portfolio = request.query_params.get("portfolio")
-
     if not validate_id(company_id) or data_type is None or document_state is None:
         return Response("Invalid Request!", status.HTTP_400_BAD_REQUEST)
     if member == "undefined" or portfolio == "undefined":
@@ -1822,13 +1830,9 @@ def get_reports_documents_metadata(request, company_id):
 
 @api_view(["POST"])
 def get_template_and_insert_metadata(request, template_id):
-    # Get the template from the template collection using the template ID
     template = single_query_template_collection({"_id": template_id})
-
     if not template:
         return Response("Template not found", status.HTTP_404_NOT_FOUND)
-
-    # Prepare the options dictionary for saving to metadata collection
     options = {
         "template_name": template.get("template_name"),
         "created_by": template.get("created_by"),
@@ -1838,18 +1842,14 @@ def get_template_and_insert_metadata(request, template_id):
         "auth_viewers": template.get("auth_viewers", []),
         "template_state": "draft",
     }
-    # Insert the template details into the template metadata collection
     res_metadata = json.loads(save_to_template_metadata_collection(options))
-
     if res_metadata["isSuccess"]:
         return Response(
             {"template": res_metadata},
             status=status.HTTP_200_OK,
         )
     else:
-        return Response(
-            "Invalid Request!", status.HTTP_400_BAD_REQUEST
-        )
+        return Response("Invalid Request!", status.HTTP_400_BAD_REQUEST)
 
 
 @api_view(["GET"])
@@ -1861,28 +1861,28 @@ def get_mobile_notifications_docusign(request, company_id):
     portfolio = request.query_params.get("portfolio")
     wf_setting_id = request.query_params.get("wf_setting_id")
     notarisation = ["Sign_with_Seal", "Digital_Signature"]
-
     if not validate_id(company_id) or data_type is None or document_state is None:
         return Response("Invalid Request!", status.HTTP_400_BAD_REQUEST)
     if member == "undefined" or portfolio == "undefined":
         return Response("Invalid Request!", status.HTTP_400_BAD_REQUEST)
     auth_viewers = [{"member": member, "portfolio": portfolio}]
-    
     check_Sett = get_workflow_setting_object(wf_setting_id)
-
-    if "Notarisation" in check_Sett and set(notarisation).issubset(check_Sett["Notarisation"]):
-        # print(f"'Notarisation' is available and matches: {check_Sett['Notarisation']}")
+    if "Notarisation" in check_Sett and set(notarisation).issubset(
+        check_Sett["Notarisation"]
+    ):
         document_list = bulk_query_clones_metadata_collection(
-        {
-            "company_id": company_id,
-            "data_type": data_type,
-            "document_state": document_state,
-            "auth_viewers": auth_viewers,
-        })
-
-        return Response({"Document_notification":document_list}, status=status.HTTP_200_OK)
-
+            {
+                "company_id": company_id,
+                "data_type": data_type,
+                "document_state": document_state,
+                "auth_viewers": auth_viewers,
+            }
+        )
+        return Response(
+            {"Document_notification": document_list}, status=status.HTTP_200_OK
+        )
     else:
         return Response(
-            "'Notarisation' Docusign requires Notorisation settings.", status.HTTP_400_BAD_REQUEST
+            "'Notarisation' Docusign requires Notorisation settings.",
+            status.HTTP_400_BAD_REQUEST,
         )
