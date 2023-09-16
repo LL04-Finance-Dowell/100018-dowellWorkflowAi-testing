@@ -148,7 +148,7 @@ const ProcessesPage = ({
   return (
     <WorkflowLayout>
       <div id='new-proccess'>
-        <ManageFiles title='Processes' removePageSuffix={true}>
+        <ManageFiles title='' removePageSuffix={true}>
           {home ? (
             <div id='drafts'>
               <SectionBox
