@@ -49,13 +49,14 @@ const ProcessCard = ({ cardItem, title }) => {
   };
 
   function getProcessDetail(process_id, process_title) {
-
+    console.log("getProcessDetail", process_id)
     axios
       .get(`https://workflowai.uxlivinglab.online/v1/processes/${process_id}/`)
       .then((response) => {
 
 
         dispatch(SetProcessDetail(response.data));
+        console.log("mubeen getProcessDetail", response.data);
         setProcessDetailLoading(false);
         dispatch(setDetailFetched(true));
         navigate('/processes/processdetail');
