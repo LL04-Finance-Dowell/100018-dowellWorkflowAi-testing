@@ -23,6 +23,7 @@ import { setcreditResponse } from './features/app/appSlice'
 import WorkflowAiSettings from './components/workflowAiSettings/WorkflowAiSettings';
 import VerificationPage from './pages/Verification/VerificationPage';
 import ProccessPage from './pages/Processes/AllProccessPage/ProcessesPage';
+import CopyProcessPage from './pages/Processes/CopyProcessPage';
 import SearchPage from './pages/Search/SearchPage';
 import { productName } from './utils/helpers';
 import { useAppContext } from './contexts/AppContext';
@@ -255,6 +256,10 @@ function App() {
           <Route
             path={'processdetail'}
             element={<ProccessPage showSingleProcess={true} />}
+          />
+          <Route
+            path={'process-import/:process_id'}
+            element={<CopyProcessPage />}
           />
 
 
