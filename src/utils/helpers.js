@@ -145,3 +145,9 @@ export const extractTokenFromVerificationURL = (inputUrl) => {
 }
 
 export const productName = "Workflow AI";
+
+export const extractProcessIdFromProcessImportURL = (inputUrl) => {
+  if (typeof inputUrl !== 'string') return ''
+
+  return inputUrl.split('processes/process-import/')[1]?.split('/')[0]
+}

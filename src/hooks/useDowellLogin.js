@@ -132,6 +132,22 @@ export default function useDowellLogin() {
     })
   }
 
+  const extractImportProcessIdFromURLAndNavigate = (url) => {
+    /**
+     * Handles routing to the process import page.
+     * 
+     * @param url The sanitized process import link.
+     * 
+     */
+
+    // extracting the process id from the url
+    const [ processId ] = [
+      url.split('importProcessId~')[1]?.split('~')[0],
+    ]
+
+    return navigate(`/processes/process-import/${processId}`)
+  }
+
   useEffect(() => {
     const session_id = searchParams.get('session_id');
     const id = searchParams.get('id');
@@ -161,6 +177,11 @@ export default function useDowellLogin() {
       } else {
         if (currentLocation.includes('token~') && !currentLocation.includes('userDetailsConfigured~')) return extractTokenFromURLAndNavigateToVerificationPage(currentLocation, session_id)
         dispatch(getUserInfo({ session_id }));
+      }
+
+      // FOR PROCESS IMPORTS
+      if (currentLocation.includes('importProcessId~')) {
+        extractImportProcessIdFromURLAndNavigate(currentLocation);
       }
     }
     if (!localSession && !session_id) {

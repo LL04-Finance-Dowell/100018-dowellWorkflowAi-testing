@@ -1,5 +1,5 @@
 import axios from "axios";
-import { extractAuthQueryParamsFromVerificationURL, extractTokenFromVerificationURL } from "../utils/helpers";
+import { extractAuthQueryParamsFromVerificationURL, extractTokenFromVerificationURL, extractProcessIdFromProcessImportURL } from "../utils/helpers";
 
 export const api_url = "https://100094.pythonanywhere.com/v1/";
 export const auth_url = "https://100014.pythonanywhere.com/api/";
@@ -15,6 +15,10 @@ export const dowellLoginUrl =
     window.location.href.includes("verify/") ?
       window.location.origin +
     `/100018-dowellWorkflowAi-testing/%23token~${extractTokenFromVerificationURL(window.location.href)}~${extractAuthQueryParamsFromVerificationURL(window.location.href)}~`
+    :
+    window.location.href.includes("process-import/") ?
+      window.location.origin +
+    `/100018-dowellWorkflowAi-testing/%23importProcessId~${extractProcessIdFromProcessImportURL(window.location.href)}~`
     :
     window.location.origin +
     "/100018-dowellWorkflowAi-testing/%23"
