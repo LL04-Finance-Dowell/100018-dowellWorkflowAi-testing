@@ -1859,30 +1859,36 @@ def get_mobile_notifications_docusign(request, company_id):
     document_state = request.query_params.get("doc_state")
     member = request.query_params.get("member")
     portfolio = request.query_params.get("portfolio")
-    wf_setting_id = request.query_params.get("wf_setting_id")
     notarisation = ["Sign_with_Seal", "Digital_Signature"]
     if not validate_id(company_id) or data_type is None or document_state is None:
         return Response("Invalid Request!", status.HTTP_400_BAD_REQUEST)
     if member == "undefined" or portfolio == "undefined":
         return Response("Invalid Request!", status.HTTP_400_BAD_REQUEST)
     auth_viewers = [{"member": member, "portfolio": portfolio}]
-    check_Sett = get_workflow_setting_object(wf_setting_id)
-    if "Notarisation" in check_Sett and set(notarisation).issubset(
-        check_Sett["Notarisation"]
-    ):
-        document_list = bulk_query_clones_metadata_collection(
-            {
-                "company_id": company_id,
-                "data_type": data_type,
-                "document_state": document_state,
-                "auth_viewers": auth_viewers,
-            }
-        )
-        return Response(
-            {"Document_notification": document_list}, status=status.HTTP_200_OK
-        )
-    else:
-        return Response(
-            "'Notarisation' Docusign requires Notorisation settings.",
-            status.HTTP_400_BAD_REQUEST,
-        )
+    try:
+        check_setup=bulk_query_settings_collection({
+            "company_id": company_id,
+            "created_by": member,
+            })
+        
+        for data in check_setup:        
+            if "Notarisation"  in data and set(notarisation).issubset(data["Notarisation"]):
+                document_list = bulk_query_clones_metadata_collection(
+                {
+                    "company_id": company_id,
+                    "data_type": data_type,
+                    "document_state": document_state,
+                    "auth_viewers": auth_viewers,
+                }
+            )
+                return Response(
+                    {"Document_notification": document_list}, status=status.HTTP_200_OK
+            )
+            else:
+                return Response(
+                    "'Notarisation' Docusign requires Notorisation settings.",
+                    status.HTTP_404_NOT_FOUND,
+            )
+    except:
+        return Response("No settings saved for this user.", status.HTTP_404_NOT_FOUND)
+    
