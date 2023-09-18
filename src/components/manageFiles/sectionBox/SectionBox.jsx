@@ -158,6 +158,7 @@ const SectionBox = ({
             setRefreshLoading(false);
           });
       }
+      setRefreshLoading(false);
     }
 
     if (itemType === 'templates') {
