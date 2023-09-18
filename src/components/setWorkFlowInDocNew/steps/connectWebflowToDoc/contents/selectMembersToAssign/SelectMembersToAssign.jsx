@@ -240,6 +240,11 @@ const SelectMembersToAssign = ({
           currentGroupSelectionItem.header
         )
       );
+      currentGroupSelectionItem?.portfolios.forEach((team) =>
+      handleAddNewMember(
+          team
+        )
+      );
       return;
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -477,6 +482,11 @@ const SelectMembersToAssign = ({
     name,
     radioValue
   ) => {
+    console.log(" newRadioSelection",newRadioSelection,
+      "newGroupValue",newGroupValue,
+      "currentHeader",currentHeader,
+      "name",name,
+      "radioValue",radioValue)
     setCurrentGroupSelectionItem(newGroupValue);
     setCurrentRadioOptionSelection(newRadioSelection);
 
@@ -662,6 +672,8 @@ const SelectMembersToAssign = ({
   //   publicMembersSelectedForProcess,
   // ]);
 
+  console.log("the teamMembersSelectedForProcess are ",teamMembersSelectedForProcess)
+  console.log("the current val is  ",current)
  
   return (
     <div className={styles.container}>
