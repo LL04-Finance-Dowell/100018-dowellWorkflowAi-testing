@@ -59,7 +59,7 @@ class Process:
         process_type,
         org_name,
         workflow_ids,
-        parent_id,
+
         data_type,
         process_title,
     ):
