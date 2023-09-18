@@ -1,36 +1,35 @@
-import styles from './processDocument.module.css';
-import { v4 as uuidv4 } from 'uuid';
-import { useState, useEffect } from 'react';
-import Popup from '../../../Popup/Popup';
-import { useForm } from 'react-hook-form';
-import Select from '../../select/Select';
-import { AiOutlineClose } from 'react-icons/ai';
-import { useDispatch, useSelector } from 'react-redux';
-import axios from 'axios';
-import { toast } from 'react-toastify';
+import styles from "./processDocument.module.css";
+import { v4 as uuidv4 } from "uuid";
+import { useState, useEffect } from "react";
+import Popup from "../../../Popup/Popup";
+import { useForm } from "react-hook-form";
+import Select from "../../select/Select";
+import { AiOutlineClose } from "react-icons/ai";
+import { useDispatch, useSelector } from "react-redux";
+import axios from "axios";
+import { toast } from "react-toastify";
 import {
   newProcessActionOptions,
   processActionOptionsWithLinkReturned,
   startNewProcessV2,
-} from '../../../../services/processServices';
-import ProgressBar from '../../../progressBar/ProgressBar';
-import SelectDoc from '../selectDoc/SelectDoc';
-import React from 'react';
-import { useNavigate } from 'react-router-dom';
-import GeneratedLinksModal from './components/GeneratedLinksModal/GeneratedLinksModal';
-import SaveConfimationModal from './components/SaveConfirmationModal/SaveConfirmationModal';
+} from "../../../../services/processServices";
+import ProgressBar from "../../../progressBar/ProgressBar";
+import SelectDoc from "../selectDoc/SelectDoc";
+import React from "react";
+import { useNavigate } from "react-router-dom";
+import GeneratedLinksModal from "./components/GeneratedLinksModal/GeneratedLinksModal";
+import SaveConfimationModal from "./components/SaveConfirmationModal/SaveConfirmationModal";
 import {
   setAllProcesses,
   setAllowErrorChecksStatusUpdateForNewProcess,
   setNewProcessErrorMessage,
   setCurrentMessage,
-  setPopupIsOpen
-} from '../../../../features/app/appSlice';
-import { useTranslation } from 'react-i18next';
-import { extractProcessObj } from './utils/utils';
+  setPopupIsOpen,
+} from "../../../../features/app/appSlice";
+import { useTranslation } from "react-i18next";
+import { extractProcessObj } from "./utils/utils";
 
 const ProcessDocument = ({ savedProcess, Process_title, setProcess_title }) => {
-
   // const [ScrollView , SetScrollView] = useState();
 
   // useEffect(() => {
@@ -63,17 +62,17 @@ const ProcessDocument = ({ savedProcess, Process_title, setProcess_title }) => {
     allProcesses,
     errorsCheckedInNewProcess,
     popupIsOpen,
-    creditResponse
+    creditResponse,
   } = useSelector((state) => state.app);
 
   const [newProcessLoading, setNewProcessLoading] = useState(false);
   const [newProcessLoaded, setNewProcessLoaded] = useState(null);
   const [showGeneratedLinksPopup, setShowGeneratedLinksPopup] = useState(false);
   const [generatedLinks, setGeneratedLinks] = useState(null);
-  const [masterLink, setmasterLink] = useState(null)
+  const [masterLink, setmasterLink] = useState(null);
   const [copiedLinks, setCopiedLinks] = useState([]);
   const [processObjToSave, setProcessObjectToSave] = useState(null);
-  const [processObjToSaveTitle, setProcessObjectToSaveTitle] = useState('');
+  const [processObjToSaveTitle, setProcessObjectToSaveTitle] = useState("");
   const [
     showConfirmationModalForSaveLater,
     setShowConfirmationModalForSaveLater,
@@ -85,48 +84,49 @@ const ProcessDocument = ({ savedProcess, Process_title, setProcess_title }) => {
   const [processName, setProcessName] = useState("");
 
   const handleProcessBtnClick = async () => {
-
-    if (!processOptionSelection || processOptionSelection === 'Select') return;
+    if (!processOptionSelection || processOptionSelection === "Select") return;
 
     if (!userDetail) return;
     if (!currentDocToWfs) {
-      document.querySelector('#select-doc')?.scrollIntoView({ block: 'center' })
+      document
+        .querySelector("#select-doc")
+        ?.scrollIntoView({ block: "center" });
       // dispatch(setPopupIsOpen(true));
       // dispatch( setCurrentMessage('You have not selected a document'))
 
-
-      return toast.info('You have not selected a document');
-
-    };
+      return toast.info("You have not selected a document");
+    }
     if (!docCurrentWorkflow) {
-      document.querySelector('#step-title')?.scrollIntoView({ block: 'center' });
+      document
+        .querySelector("#step-title")
+        ?.scrollIntoView({ block: "center" });
       // dispatch(setPopupIsOpen(true));
       // dispatch( setCurrentMessage('You have not selected a workflow'))
 
-      return toast.info('You have not selected any workflow');
+      return toast.info("You have not selected any workflow");
     }
     if (processSteps.length < 1) {
       // dispatch(setPopupIsOpen(true));
       // dispatch( setCurrentMessage('You have not configured steps for any workflow'))
 
-      return toast.info('You have not configured steps for any workflow')
+      return toast.info("You have not configured steps for any workflow");
     }
     if (!errorsCheckedInNewProcess) {
-      document.querySelector('#h2__Doc__Title')?.scrollIntoView({ block: 'center' })
+      document
+        .querySelector("#h2__Doc__Title")
+        ?.scrollIntoView({ block: "center" });
       // dispatch(setPopupIsOpen(true));
       // dispatch( setCurrentMessage('Please click the "Show process" button above to make sure there are no errors before processing'))
 
-      return toast.info('Please click the "Show process" button above to make sure there are no errors before processing.');
+      return toast.info(
+        'Please click the "Show process" button above to make sure there are no errors before processing.'
+      );
     }
     if (!Process_title) {
-      return toast.info("Please Enter a Process Name")
+      return toast.info("Please Enter a Process Name");
     }
 
-
-
-
-
-    if (processOptionSelection === 'saveAndContinueLater') {
+    if (processOptionSelection === "saveAndContinueLater") {
       const processObjToSave = extractProcessObj(
         processOptionSelection,
         userDetail,
@@ -154,22 +154,19 @@ const ProcessDocument = ({ savedProcess, Process_title, setProcess_title }) => {
       tableOfContentForStep,
       teamMembersSelectedForProcess,
       publicMembersSelectedForProcess,
-      userMembersSelectedForProcess,
+      userMembersSelectedForProcess
     );
- 
 
     if (processObjToPost.error) {
       dispatch(setNewProcessErrorMessage(processObjToPost.error));
-      document.querySelector('#h2__Doc__Title')?.scrollIntoView({ block: 'center' })
+      document
+        .querySelector("#h2__Doc__Title")
+        ?.scrollIntoView({ block: "center" });
       // dispatch(setPopupIsOpen(true));
       // dispatch( setCurrentMessage(processObjToPost.error))
 
       return toast.info(processObjToPost.error);
     }
-
-    dispatch(setAllowErrorChecksStatusUpdateForNewProcess(true));
-    dispatch(setNewProcessErrorMessage(null));
-    setProcess_title("")
 
     if (!errorsCheckedInNewProcess)
       // dispatch(setPopupIsOpen(true));
@@ -178,23 +175,29 @@ const ProcessDocument = ({ savedProcess, Process_title, setProcess_title }) => {
         'Please click the "Show process" button above to make sure there are no errors before processing.'
       );
 
-    
-      const Api_key = creditResponse?.api_key
+    const Api_key = creditResponse?.api_key;
     axios
       .post(
         `https://100105.pythonanywhere.com/api/v3/process-services/?type=product_service&api_key=${Api_key}`,
         {
-          "service_id": "DOWELL10026",
-          "sub_service_ids": ["DOWELL100264"],
-        },
+          service_id: "DOWELL10026",
+          sub_service_ids: ["DOWELL100264"],
+        }
       )
       .then(async (response) => {
-        console.log(response)
+        console.log("the res from axios is ", response);
         if (response.data.success == true) {
           setNewProcessLoading(true);
 
           try {
-            const response = await(await startNewProcessV2(processObjToPost)).data;
+            const response = await (
+              await startNewProcessV2(processObjToPost)
+            ).data;
+            console.log("the process obj to post is ", processObjToPost);
+            console.log("the response from adding new process is ", response);
+            dispatch(setAllowErrorChecksStatusUpdateForNewProcess(true));
+            dispatch(setNewProcessErrorMessage(null));
+            setProcess_title("");
             setNewProcessLoaded(true);
             setNewProcessLoading(false);
             if (
@@ -202,16 +205,20 @@ const ProcessDocument = ({ savedProcess, Process_title, setProcess_title }) => {
                 newProcessActionOptions[`${processOptionSelection}`]
               )
             ) {
-              setGeneratedLinks(Array.isArray(response) ? response[0] : response);
-              setmasterLink(Array.isArray(response) ? response.master_link : response)
+              setGeneratedLinks(
+                Array.isArray(response) ? response[0] : response
+              );
+              setmasterLink(
+                Array.isArray(response) ? response.master_link : response
+              );
               setShowGeneratedLinksPopup(true);
               setNewProcessLoaded(false);
               return;
             }
             toast.success(
-              typeof response === 'string'
+              typeof response === "string"
                 ? response
-                : 'Successfully created new process'
+                : "Successfully created new process"
             );
             setNewProcessLoaded(false);
           } catch (err) {
@@ -220,9 +227,9 @@ const ProcessDocument = ({ savedProcess, Process_title, setProcess_title }) => {
             toast.info(
               err.response
                 ? err.response.status === 500
-                  ? 'New process creation failed'
+                  ? "New process creation failed"
                   : err.response.data
-                : 'New process creation failed'
+                : "New process creation failed"
             );
             dispatch(setPopupIsOpen(true));
           }
@@ -230,17 +237,11 @@ const ProcessDocument = ({ savedProcess, Process_title, setProcess_title }) => {
       })
       .catch((error) => {
         console.log(error);
-        toast.info(error.response?.data?.message)
-
+        toast.info(error.response?.data?.message);
       });
-
-
-
-
   };
 
   const handleSaveForLaterBtnClick = () => {
-
     const processObjToSaveCopy = structuredClone(processObjToSave);
 
     processObjToSaveCopy._id = savedProcess
@@ -249,9 +250,9 @@ const ProcessDocument = ({ savedProcess, Process_title, setProcess_title }) => {
     processObjToSaveCopy.process_title = processObjToSaveTitle;
     processObjToSaveCopy.parent_item_id = processObjToSave.parent_id;
     processObjToSaveCopy.processing_action = processOptionSelection;
-    processObjToSaveCopy.processing_state = 'draft';
-    processObjToSaveCopy.process_type = 'document';
-    processObjToSaveCopy.process_kind = 'original';
+    processObjToSaveCopy.processing_state = "draft";
+    processObjToSaveCopy.process_type = "document";
+    processObjToSaveCopy.process_kind = "original";
     processObjToSaveCopy.workflow_construct_ids =
       processObjToSave.workflows_ids;
     processObjToSaveCopy.created_at = new Date();
@@ -264,17 +265,15 @@ const ProcessDocument = ({ savedProcess, Process_title, setProcess_title }) => {
     delete processObjToSaveCopy.parent_id;
     delete processObjToSaveCopy.workflows_ids;
 
-
-
     // saving to local storage
     const savedProcessesInLocalStorage = JSON.parse(
-      localStorage.getItem('user-saved-processes')
+      localStorage.getItem("user-saved-processes")
     );
 
     // user has never saved any processes locally before
     if (!savedProcessesInLocalStorage) {
       localStorage.setItem(
-        'user-saved-processes',
+        "user-saved-processes",
         JSON.stringify([processObjToSaveCopy])
       );
       updateUIAfterLocalProcessSave(processObjToSaveCopy);
@@ -285,7 +284,7 @@ const ProcessDocument = ({ savedProcess, Process_title, setProcess_title }) => {
     if (!savedProcess) {
       savedProcessesInLocalStorage.push(processObjToSaveCopy);
       localStorage.setItem(
-        'user-saved-processes',
+        "user-saved-processes",
         JSON.stringify(savedProcessesInLocalStorage)
       );
       updateUIAfterLocalProcessSave(processObjToSaveCopy);
@@ -301,7 +300,7 @@ const ProcessDocument = ({ savedProcess, Process_title, setProcess_title }) => {
     if (foundProcessIndex === -1) {
       savedProcessesInLocalStorage.push(processObjToSaveCopy);
       localStorage.setItem(
-        'user-saved-processes',
+        "user-saved-processes",
         JSON.stringify(savedProcessesInLocalStorage)
       );
       updateUIAfterLocalProcessSave(processObjToSaveCopy);
@@ -310,7 +309,7 @@ const ProcessDocument = ({ savedProcess, Process_title, setProcess_title }) => {
 
     savedProcessesInLocalStorage[foundProcessIndex] = processObjToSaveCopy;
     localStorage.setItem(
-      'user-saved-processes',
+      "user-saved-processes",
       JSON.stringify(savedProcessesInLocalStorage)
     );
     updateUIAfterLocalProcessSave(processObjToSaveCopy, true);
@@ -342,30 +341,27 @@ const ProcessDocument = ({ savedProcess, Process_title, setProcess_title }) => {
 
     dispatch(setAllProcesses(copyOfProcesses));
     dispatch(setAllowErrorChecksStatusUpdateForNewProcess(false));
-    toast.success('Successfully saved process');
-    navigate('/processes/#drafts');
+    toast.success("Successfully saved process");
+    navigate("/processes/#drafts");
   };
 
   return (
     <>
       <div className={styles.container}>
-        <h2 className={styles.h2__Doc__Title}>6. {t('Process Document')}</h2>
+        <h2 className={styles.h2__Doc__Title}>6. {t("Process Document")}</h2>
         <div className={styles.box}>
           <div className={styles.box__inner}>
             <h3 className={styles.box__header}>
-              {t('Select next Action in Document processing')}
+              {t("Select next Action in Document processing")}
             </h3>
             <Select
-              name='processOptionSelection'
+              name="processOptionSelection"
               options={proccesses}
               takeActionValue={true}
               register={register}
             />
 
-            {
-              popupIsOpen && <Popup />
-            }
-
+            {popupIsOpen && <Popup />}
 
             {/* {ShowProcessNameModal && (
               <div style={{
@@ -439,12 +435,12 @@ const ProcessDocument = ({ savedProcess, Process_title, setProcess_title }) => {
             {newProcessLoading ? (
               <ProgressBar
                 durationInMS={18000}
-                finalWidth={newProcessLoaded ? '100' : null}
-                style={{ height: '40px' }}
+                finalWidth={newProcessLoaded ? "100" : null}
+                style={{ height: "40px" }}
               />
             ) : (
-              <button hoverBg='success' onClick={handleProcessBtnClick}>
-                {t('Save / Start Process')}
+              <button hoverBg="success" onClick={handleProcessBtnClick}>
+                {t("Save / Start Process")}
               </button>
             )}
           </div>
@@ -476,104 +472,104 @@ const ProcessDocument = ({ savedProcess, Process_title, setProcess_title }) => {
 export default ProcessDocument;
 
 export const proccesses = [
-  { id: uuidv4(), option: 'Select', actionKey: 'Select' },
+  { id: uuidv4(), option: "Select", actionKey: "Select" },
   {
     id: crypto.randomUUID(),
-    option: 'Save and continue later',
-    actionKey: 'saveAndContinueLater',
+    option: "Save and continue later",
+    actionKey: "saveAndContinueLater",
   },
   {
     id: uuidv4(),
-    option: 'Save workflows to document and keep it in draft',
-    actionKey: 'saveWorkflowToDocumentAndDrafts',
+    option: "Save workflows to document and keep it in draft",
+    actionKey: "saveWorkflowToDocumentAndDrafts",
   },
   {
     id: uuidv4(),
     option:
-      'Cancel process before completion. Document will reset to initial state',
-    actionKey: 'cancelProcessBeforeCompletion',
+      "Cancel process before completion. Document will reset to initial state",
+    actionKey: "cancelProcessBeforeCompletion",
   },
   {
     id: uuidv4(),
-    option: 'Pause processing after completing the ongoing step',
-    actionKey: 'pauseProcessAfterCompletingOngoingStep',
+    option: "Pause processing after completing the ongoing step",
+    actionKey: "pauseProcessAfterCompletingOngoingStep",
   },
   {
     id: uuidv4(),
-    option: 'Resume processing from next step',
-    actionKey: 'resumeProcessingFromNextStep',
+    option: "Resume processing from next step",
+    actionKey: "resumeProcessingFromNextStep",
   },
   {
     id: uuidv4(),
     option: "Test document processing WORKFLOW WISE (Won't update real data)",
-    actionKey: 'testDocumentProcessWorkflowWise',
+    actionKey: "testDocumentProcessWorkflowWise",
   },
   {
     id: uuidv4(),
     option: "Test document processing CONTENT WISE (Won't update real data)",
-    actionKey: 'testDocumentProcessWorkflowStepWise',
+    actionKey: "testDocumentProcessWorkflowStepWise",
   },
   {
     id: uuidv4(),
     option:
       "Test document processing WORKFLOW STEP WISE (Won't update real data)",
-    actionKey: 'testDocumentProcessContentWise',
+    actionKey: "testDocumentProcessContentWise",
   },
   {
     id: uuidv4(),
-    option: 'START document processing WORKFLOW WISE',
-    actionKey: 'startDocumentProcessingWorkflowWise',
+    option: "START document processing WORKFLOW WISE",
+    actionKey: "startDocumentProcessingWorkflowWise",
   },
   {
     id: uuidv4(),
-    option: 'START document processing CONTENT WISE',
-    actionKey: 'startDocumentProcessingWorkflowStepWise',
+    option: "START document processing CONTENT WISE",
+    actionKey: "startDocumentProcessingWorkflowStepWise",
   },
   {
     id: uuidv4(),
-    option: 'START document processing WORKFLOW STEP WISE',
-    actionKey: 'startDocumentProcessingContentWise',
+    option: "START document processing WORKFLOW STEP WISE",
+    actionKey: "startDocumentProcessingContentWise",
   },
   {
     id: uuidv4(),
     option:
-      'Close processing and mark as completed (No further processing permitted)',
-    actionKey: 'closeProcessingAndMarkCompleted',
+      "Close processing and mark as completed (No further processing permitted)",
+    actionKey: "closeProcessingAndMarkCompleted",
   },
 ];
 
 export const workflows = [
-  { id: uuidv4(), option: 'Workflow 1' },
-  { id: uuidv4(), option: 'Workflow 2' },
-  { id: uuidv4(), option: 'Workflow 3' },
-  { id: uuidv4(), option: 'All Workflows' },
+  { id: uuidv4(), option: "Workflow 1" },
+  { id: uuidv4(), option: "Workflow 2" },
+  { id: uuidv4(), option: "Workflow 3" },
+  { id: uuidv4(), option: "All Workflows" },
 ];
 
 export const processDocument = [
   {
     id: uuidv4(),
-    process: 'Member (Team > Guest > Public)',
-    processDetail: 'Member (Team > Guest > Public)',
+    process: "Member (Team > Guest > Public)",
+    processDetail: "Member (Team > Guest > Public)",
   },
   {
     id: uuidv4(),
-    process: 'Workflows (1 > 2 > 3...)',
-    processDetail: 'Workflows (1 > 2 > 3...)',
+    process: "Workflows (1 > 2 > 3...)",
+    processDetail: "Workflows (1 > 2 > 3...)",
   },
   {
     id: uuidv4(),
-    process: 'Workflow steps (Step1 > Step2 > Step3..)',
-    processDetail: 'Workflow steps (Step1 > Step2 > Step3..)',
+    process: "Workflow steps (Step1 > Step2 > Step3..)",
+    processDetail: "Workflow steps (Step1 > Step2 > Step3..)",
   },
   {
     id: uuidv4(),
-    process: 'Document content',
-    processDetail: 'Document content',
+    process: "Document content",
+    processDetail: "Document content",
   },
   {
     id: uuidv4(),
-    process: 'Signing location',
-    processDetail: 'Signing location',
+    process: "Signing location",
+    processDetail: "Signing location",
   },
-  { id: uuidv4(), process: 'Time limit', processDetail: 'Time limit' },
+  { id: uuidv4(), process: "Time limit", processDetail: "Time limit" },
 ];
