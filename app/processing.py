@@ -306,38 +306,110 @@ class HandleProcess:
         public_api_key = None
         m_link = None
         link_string = "link"
-        for step in steps:
-            for member in step.get("stepPublicMembers", []):
-                link, qrcode = HandleProcess.user_team_public_data(
-                    self.process,
-                    member["member"],
-                    step.get("stepRole"),
-                    member["portfolio"],
-                    "public",
-                )
-                links.append({member["member"]: link})
-                public_links.append({link_string: link})
-                qrcodes.append({member["member"]: qrcode})
-            for member in step.get("stepTeamMembers", []):
-                link, qrcode = HandleProcess.user_team_public_data(
-                    self.process,
-                    member["member"],
-                    step.get("stepRole"),
-                    member["portfolio"],
-                    "team",
-                )
-                links.append({member["member"]: link})
-                qrcodes.append({member["member"]: qrcode})
-            for member in step.get("stepUserMembers", []):
-                link, qrcode = HandleProcess.user_team_public_data(
-                    self.process,
-                    member["member"],
-                    step.get("stepRole"),
-                    member["portfolio"],
-                    "user",
-                )
-                links.append({member["member"]: link})
-                qrcodes.append({member["member"]: qrcode})
+        for idx, step in enumerate(steps):
+            if idx > 0:
+                previous_step = steps[idx - 1]
+                previous_members = previous_step.get("stepPublicMembers", [])
+                for member in step.get("stepPublicMembers", []):
+                    for _ in previous_members:  # Iterate for each member in the previous step
+                        link, qrcode = HandleProcess.user_team_public_data(
+                            self.process,
+                            member["member"],
+                            step.get("stepRole"),
+                            member["portfolio"],
+                            "public",
+                        )
+                        links.append({member["member"]: link})
+                        public_links.append({link_string: link})
+                        qrcodes.append({member["member"]: qrcode})
+                for member in step.get("stepTeamMembers", []):
+                    for _ in previous_members:  # Iterate for each member in the previous step
+                        link, qrcode = HandleProcess.user_team_public_data(
+                            self.process,
+                            member["member"],
+                            step.get("stepRole"),
+                            member["portfolio"],
+                            "public",
+                        )
+                        links.append({member["member"]: link})
+                        public_links.append({link_string: link})
+                for member in step.get("stepUserMembers", []):
+                    for _ in previous_members:  # Iterate for each member in the previous step
+                        link, qrcode = HandleProcess.user_team_public_data(
+                            self.process,
+                            member["member"],
+                            step.get("stepRole"),
+                            member["portfolio"],
+                            "public",
+                        )
+                        links.append({member["member"]: link})
+                        public_links.append({link_string: link})
+            else:
+                for step in steps:
+                    for member in step.get("stepPublicMembers", []):
+                        link, qrcode = HandleProcess.user_team_public_data(
+                            self.process,
+                            member["member"],
+                            step.get("stepRole"),
+                            member["portfolio"],
+                            "public",
+                        )
+                        links.append({member["member"]: link})
+                        public_links.append({link_string: link})
+                        qrcodes.append({member["member"]: qrcode})
+                    for member in step.get("stepTeamMembers", []):
+                        link, qrcode = HandleProcess.user_team_public_data(
+                            self.process,
+                            member["member"],
+                            step.get("stepRole"),
+                            member["portfolio"],
+                            "team",
+                        )
+                        links.append({member["member"]: link})
+                        qrcodes.append({member["member"]: qrcode})
+                    for member in step.get("stepUserMembers", []):
+                        link, qrcode = HandleProcess.user_team_public_data(
+                            self.process,
+                            member["member"],
+                            step.get("stepRole"),
+                            member["portfolio"],
+                            "user",
+                        )
+                        links.append({member["member"]: link})
+                        qrcodes.append({member["member"]: qrcode})
+        
+        # for step in steps:
+        #     for member in step.get("stepPublicMembers", []):
+        #         link, qrcode = HandleProcess.user_team_public_data(
+        #             self.process,
+        #             member["member"],
+        #             step.get("stepRole"),
+        #             member["portfolio"],
+        #             "public",
+        #         )
+        #         links.append({member["member"]: link})
+        #         public_links.append({link_string: link})
+        #         qrcodes.append({member["member"]: qrcode})
+        #     for member in step.get("stepTeamMembers", []):
+        #         link, qrcode = HandleProcess.user_team_public_data(
+        #             self.process,
+        #             member["member"],
+        #             step.get("stepRole"),
+        #             member["portfolio"],
+        #             "team",
+        #         )
+        #         links.append({member["member"]: link})
+        #         qrcodes.append({member["member"]: qrcode})
+        #     for member in step.get("stepUserMembers", []):
+        #         link, qrcode = HandleProcess.user_team_public_data(
+        #             self.process,
+        #             member["member"],
+        #             step.get("stepRole"),
+        #             member["portfolio"],
+        #             "user",
+        #         )
+        #         links.append({member["member"]: link})
+        #         qrcodes.append({member["member"]: qrcode})
         clone_ids = HandleProcess.prepare_document_for_step_one_users(
             steps[0], self.process["parent_item_id"], process_id
         )
@@ -416,6 +488,7 @@ class HandleProcess:
                 else:
                     return True  # If the steptimeLimit key does not exist
 
+    # Verify Access Original
     def verify_access(self, auth_role, user_name, user_type):
         clone_id = None
         doc_map = None
@@ -430,6 +503,7 @@ class HandleProcess:
         for step in self.process["process_steps"]:
             if step.get("stepRole") == auth_role:
                 if user_type == "public":
+                    print(user_name)
                     user_name = user_name[0]
                 if any(user_name in map for map in step.get("stepDocumentCloneMap")):
                     for d_map in step["stepDocumentCloneMap"]:
@@ -439,6 +513,86 @@ class HandleProcess:
                     right = step["stepRights"]
                     role = step["stepRole"]
         if clone_id:
+            if item_type == "document":
+                collection = "CloneReports"
+                document = "CloneReports"
+                field = "document_name"
+                team_member_id = "1212001"
+                document_object = single_query_clones_collection({"_id": clone_id})
+                metadata = single_query_clones_metadata_collection(
+                    {"collection_id": clone_id}
+                )
+                item_flag = document_object["document_state"]
+                document_name = document_object["document_name"]
+                metadata_id = metadata.get("_id")
+                editor_link = HandleProcess.get_editor_link(
+                    {
+                        "product_name": "Workflow AI",
+                        "details": {
+                            "field": field,
+                            "cluster": "Documents",
+                            "database": "Documentation",
+                            "collection": collection,
+                            "document": document,
+                            "team_member_ID": team_member_id,
+                            "function_ID": "ABCDE",
+                            "command": "update",
+                            "flag": "signing",
+                            "_id": clone_id,
+                            "action": item_type,
+                            "authorized": user_name,
+                            "user_type": user_type,
+                            "document_map": doc_map,
+                            "document_right": right,
+                            "document_flag": item_flag,
+                            "role": role,
+                            "metadata_id": metadata_id,
+                            "process_id": self.process["_id"],
+                            "update_field": {
+                                "document_name": document_name,
+                                "content": "",
+                                "page": "",
+                            },
+                        },
+                    }
+                )
+                if user_type == "public" and editor_link:
+                    Thread(
+                        target=lambda: register_public_login(
+                            user_name[0], self.process["org_name"]
+                        )
+                    )
+                return editor_link
+    
+    # Verify_Access V2
+    def verify_access_v2(self, auth_role, user_name, user_type, document_id):
+        clone_id = None
+        doc_map = None
+        right = None
+        role = None
+        item_flag = None
+        field = None
+        collection = None
+        document = None
+        team_member_id = None
+        item_type = self.process["process_type"]
+        for step in self.process["process_steps"]:
+            if step.get("stepRole") == auth_role:
+                if user_type == "public":
+                    print(user_name)
+                    user_name = user_name[0]
+                if any(user_name in map for map in step.get("stepDocumentCloneMap")):
+                    for d_map in step["stepDocumentCloneMap"]:
+                        if d_map.get(user_name) is not None:
+                            print("doc_map: ", d_map)
+                            if d_map.get(user_name) == document_id:
+                                clone_id = d_map.get(user_name)
+                            # clone_id = d_map.get(user_name)
+                    doc_map = step["stepDocumentMap"]
+                    right = step["stepRights"]
+                    role = step["stepRole"]
+        if clone_id:
+            print("clone_id: ", clone_id)
             if item_type == "document":
                 collection = "CloneReports"
                 document = "CloneReports"
