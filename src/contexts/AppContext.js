@@ -209,7 +209,7 @@ export const AppContextProvider = ({ children }) => {
         state
       );
       if (state === 'finalized')
-        setDocsCompleted(res.data.documents ? res.data.documents : []);
+        setDocsCompleted(res.data.documents ? res.data.documents.reverse() : []);
       else if (state === 'rejected')
         setDocsRejected(res.data.documents ? res.data.documents : []);
     } catch (err) {
