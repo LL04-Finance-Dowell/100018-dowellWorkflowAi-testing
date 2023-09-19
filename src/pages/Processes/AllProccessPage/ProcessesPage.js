@@ -147,7 +147,7 @@ const ProcessesPage = ({
 
   return (
     <WorkflowLayout>
-      <div id='new-proccess'>
+      <div id='new-process'>
         <ManageFiles title='' removePageSuffix={true}>
           {home ? (
             <div id='drafts'>
@@ -177,7 +177,7 @@ const ProcessesPage = ({
             <div id='saved-processes'>
               <SectionBox
                 cardBgColor='#1ABC9C'
-                title='saved proccess'
+                title='saved process'
                 Card={ProcessCard}
                 cardItems={allProcesses
                   .filter(
@@ -213,7 +213,7 @@ const ProcessesPage = ({
             <div id='paused-processes'>
               <SectionBox
                 cardBgColor='#1ABC9C'
-                title='paused proccess'
+                title='paused process'
                 Card={ProcessCard}
                 cardItems={allProcesses
                   .filter((process) => process.processing_state === 'paused')
@@ -232,7 +232,7 @@ const ProcessesPage = ({
             <div id='cancelled-processes'>
               <SectionBox
                 cardBgColor='#1ABC9C'
-                title='cancelled proccess'
+                title='cancelled process'
                 Card={ProcessCard}
                 cardItems={allProcesses
                   .filter((process) => process.processing_state === 'cancelled')
@@ -251,7 +251,7 @@ const ProcessesPage = ({
             <div id='trashed-processes'>
               <SectionBox
                 cardBgColor='#1ABC9C'
-                title='trashed proccess'
+                title='trashed process'
                 Card={ProcessCard}
                 cardItems={allProcesses.filter(
                   (process) => process.processing_state === 'trash'
@@ -267,7 +267,7 @@ const ProcessesPage = ({
             <div id='test-processes'>
               <SectionBox
                 cardBgColor='#1ABC9C'
-                title='test proccess'
+                title='test process'
                 Card={ProcessCard}
                 cardItems={allProcesses
                   .filter((process) => process.processing_state === 'test')
@@ -286,7 +286,7 @@ const ProcessesPage = ({
             <div id='completed-processes'>
               <SectionBox
                 cardBgColor='#1ABC9C'
-                title='completed proccess'
+                title='completed process'
                 Card={ProcessCard}
                 cardItems={completedProcesses}
                 status={completedProcessesStatus}
@@ -300,7 +300,7 @@ const ProcessesPage = ({
             <div id='active-processes'>
               <SectionBox
                 cardBgColor='#1ABC9C'
-                title='active proccess'
+                title='active process'
                 Card={ProcessCard}
                 cardItems={activeProcesses}
                 status={activeProcessesStatus}

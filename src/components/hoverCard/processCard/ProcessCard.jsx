@@ -156,7 +156,7 @@ const ProcessCard = ({ cardItem, title }) => {
       // }
       // const data = await response.json();
       // console.log("the response for fetching process is ", response);
-      const data = [{"Link 1": `http://localhost:3000/100018-dowellWorkflowAi-testing/#/processes/process-import/${process_id}`}]
+      const data = [{"Link 1": `https://ll04-finance-dowell.github.io/100018-dowellWorkflowAi-testing/#/processes/process-import/${process_id}`}]
       console.log("the process link is ", data)
       dispatch(SetArrayofLinks(data));
       dispatch(setLinksFetched(true));
