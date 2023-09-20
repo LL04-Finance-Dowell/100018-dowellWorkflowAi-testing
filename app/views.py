@@ -287,7 +287,7 @@ def process_verification_v2(request):
     auth_portfolio = request.data["auth_portfolio"]
     token = request.data["token"]
     org_name = request.data["org_name"]
-    item_id = request.data["item_id"]
+    collection_id = request.data["collection_id"]
     link_object = single_query_qrcode_collection({"unique_hash": token})
     if user_type == "team" or user_type == "user":
         if (
@@ -324,7 +324,7 @@ def process_verification_v2(request):
             "time limit for access to this document has elapsed",
             status.HTTP_400_BAD_REQUEST,
         )
-    editor_link = handler.verify_access_v2(auth_role, auth_user, user_type, item_id)
+    editor_link = handler.verify_access_v2(auth_role, auth_user, user_type, collection_id)
     if editor_link:
         return Response(editor_link, status.HTTP_200_OK)
     else:

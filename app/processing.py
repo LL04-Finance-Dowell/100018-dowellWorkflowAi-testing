@@ -306,110 +306,39 @@ class HandleProcess:
         public_api_key = None
         m_link = None
         link_string = "link"
-        for idx, step in enumerate(steps):
-            if idx > 0:
-                previous_step = steps[idx - 1]
-                previous_members = previous_step.get("stepPublicMembers", [])
-                for member in step.get("stepPublicMembers", []):
-                    for _ in previous_members:  # Iterate for each member in the previous step
-                        link, qrcode = HandleProcess.user_team_public_data(
-                            self.process,
-                            member["member"],
-                            step.get("stepRole"),
-                            member["portfolio"],
-                            "public",
-                        )
-                        links.append({member["member"]: link})
-                        public_links.append({link_string: link})
-                        qrcodes.append({member["member"]: qrcode})
-                for member in step.get("stepTeamMembers", []):
-                    for _ in previous_members:  # Iterate for each member in the previous step
-                        link, qrcode = HandleProcess.user_team_public_data(
-                            self.process,
-                            member["member"],
-                            step.get("stepRole"),
-                            member["portfolio"],
-                            "public",
-                        )
-                        links.append({member["member"]: link})
-                        public_links.append({link_string: link})
-                for member in step.get("stepUserMembers", []):
-                    for _ in previous_members:  # Iterate for each member in the previous step
-                        link, qrcode = HandleProcess.user_team_public_data(
-                            self.process,
-                            member["member"],
-                            step.get("stepRole"),
-                            member["portfolio"],
-                            "public",
-                        )
-                        links.append({member["member"]: link})
-                        public_links.append({link_string: link})
-            else:
-                for step in steps:
-                    for member in step.get("stepPublicMembers", []):
-                        link, qrcode = HandleProcess.user_team_public_data(
-                            self.process,
-                            member["member"],
-                            step.get("stepRole"),
-                            member["portfolio"],
-                            "public",
-                        )
-                        links.append({member["member"]: link})
-                        public_links.append({link_string: link})
-                        qrcodes.append({member["member"]: qrcode})
-                    for member in step.get("stepTeamMembers", []):
-                        link, qrcode = HandleProcess.user_team_public_data(
-                            self.process,
-                            member["member"],
-                            step.get("stepRole"),
-                            member["portfolio"],
-                            "team",
-                        )
-                        links.append({member["member"]: link})
-                        qrcodes.append({member["member"]: qrcode})
-                    for member in step.get("stepUserMembers", []):
-                        link, qrcode = HandleProcess.user_team_public_data(
-                            self.process,
-                            member["member"],
-                            step.get("stepRole"),
-                            member["portfolio"],
-                            "user",
-                        )
-                        links.append({member["member"]: link})
-                        qrcodes.append({member["member"]: qrcode})
-        
-        # for step in steps:
-        #     for member in step.get("stepPublicMembers", []):
-        #         link, qrcode = HandleProcess.user_team_public_data(
-        #             self.process,
-        #             member["member"],
-        #             step.get("stepRole"),
-        #             member["portfolio"],
-        #             "public",
-        #         )
-        #         links.append({member["member"]: link})
-        #         public_links.append({link_string: link})
-        #         qrcodes.append({member["member"]: qrcode})
-        #     for member in step.get("stepTeamMembers", []):
-        #         link, qrcode = HandleProcess.user_team_public_data(
-        #             self.process,
-        #             member["member"],
-        #             step.get("stepRole"),
-        #             member["portfolio"],
-        #             "team",
-        #         )
-        #         links.append({member["member"]: link})
-        #         qrcodes.append({member["member"]: qrcode})
-        #     for member in step.get("stepUserMembers", []):
-        #         link, qrcode = HandleProcess.user_team_public_data(
-        #             self.process,
-        #             member["member"],
-        #             step.get("stepRole"),
-        #             member["portfolio"],
-        #             "user",
-        #         )
-        #         links.append({member["member"]: link})
-        #         qrcodes.append({member["member"]: qrcode})
+    
+        for step in steps:
+            for member in step.get("stepPublicMembers", []):
+                link, qrcode = HandleProcess.user_team_public_data(
+                    self.process,
+                    member["member"],
+                    step.get("stepRole"),
+                    member["portfolio"],
+                    "public",
+                )
+                links.append({member["member"]: link})
+                public_links.append({link_string: link})
+                qrcodes.append({member["member"]: qrcode})
+            for member in step.get("stepTeamMembers", []):
+                link, qrcode = HandleProcess.user_team_public_data(
+                    self.process,
+                    member["member"],
+                    step.get("stepRole"),
+                    member["portfolio"],
+                    "team",
+                )
+                links.append({member["member"]: link})
+                qrcodes.append({member["member"]: qrcode})
+            for member in step.get("stepUserMembers", []):
+                link, qrcode = HandleProcess.user_team_public_data(
+                    self.process,
+                    member["member"],
+                    step.get("stepRole"),
+                    member["portfolio"],
+                    "user",
+                )
+                links.append({member["member"]: link})
+                qrcodes.append({member["member"]: qrcode})
         clone_ids = HandleProcess.prepare_document_for_step_one_users(
             steps[0], self.process["parent_item_id"], process_id
         )
