@@ -154,7 +154,7 @@ const DocumentCard = ({
         /*  dispatch(setEditorLink(response)); */
 
         // setDataLoading(false);
-        handleGoToEditor(response);
+        handleGoToEditor(response, item);
       } catch (error) {
         // console.log(error);
         setDataLoading(false);
@@ -188,7 +188,7 @@ const DocumentCard = ({
 
   };
 
-  const handleGoToEditor = async (link) => {
+  const handleGoToEditor = async (link, item) => {
     if (!link) return;
     const token = extractTokenFromVerificationURL(link);
     if (!token) return;
