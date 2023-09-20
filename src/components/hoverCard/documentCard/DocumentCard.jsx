@@ -205,6 +205,7 @@ const DocumentCard = ({
       city: userDetail?.userinfo?.city,
       country: userDetail?.userinfo?.country,
       continent: userDetail?.userinfo?.timezone?.split('/')[0],
+      collection_id: item.collection_id
     };
 
     const sanitizedDataToPost = updateVerificationDataWithTimezone(dataToPost);
