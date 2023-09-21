@@ -65,6 +65,7 @@ from .views import (
     get_reports_documents_metadata,
     get_template_and_insert_metadata,
     get_mobile_notifications_docusign,
+    import_process_settings,
 )
 
 urlpatterns = [
@@ -157,4 +158,5 @@ urlpatterns = [
     path("companies/<str:company_id>/documents/reports/metadata/", get_reports_documents_metadata),
     path("templates/<str:template_id>/insert-metadata/", get_template_and_insert_metadata, name="get_template_and_insert_metadata"),
     path("docusign/<str:company_id>", get_mobile_notifications_docusign),
+    path("processes/process-import/<str:process_id>", import_process_settings)
 ]

@@ -1892,3 +1892,22 @@ def get_mobile_notifications_docusign(request, company_id):
     except:
         return Response("No settings saved for this user.", status.HTTP_404_NOT_FOUND)
     
+"""Import of process settings"""
+@api_view(['POST'])
+def import_process_settings(request, process_id):
+    company_id = request.POST.get("company_id")
+    portfolio_id = request.POST.get("portfolio")
+    member = request.POST.get("member")
+    data_type = request.POST.get("data_type")
+        
+    """get process by process id"""
+    if not validate_id(process_id):
+        return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
+    process = single_query_process_collection({"_id": process_id})
+    print(process)
+    
+    
+    """Create A new document from the old document"""
+    """Create a new workflow from the old workflow"""
+
+
