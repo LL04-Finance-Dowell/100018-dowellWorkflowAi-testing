@@ -287,9 +287,10 @@ def process_verification_v2(request):
     auth_portfolio = request.data["auth_portfolio"]
     token = request.data["token"]
     org_name = request.data["org_name"]
-    collection_id = request.data["collection_id"]
+    # collection_id = request.data["collection_id"]
     link_object = single_query_qrcode_collection({"unique_hash": token})
     if user_type == "team" or user_type == "user":
+        collection_id = request.data["collection_id"]
         if (
             link_object["user_name"] != auth_user
             or link_object["auth_portfolio"] != auth_portfolio
@@ -298,7 +299,18 @@ def process_verification_v2(request):
                 "User Logged in is not part of this process",
                 status.HTTP_401_UNAUTHORIZED,
             )
+    
+
     process = single_query_process_collection({"_id": link_object["process_id"]})
+    if user_type == "public":
+        for step in process["process_steps"]:
+            if step.get("stepRole") == auth_role:
+                for item in step["stepDocumentCloneMap"]:
+                    if item.get(auth_user[0]):
+                        collection_id = item.get(auth_user[0])
+                        print("collection_id", item.get(auth_user[0]))
+                        # print("collection_id")
+
     process["org_name"] = org_name
     handler = HandleProcess(process)
     location = handler.verify_location(
