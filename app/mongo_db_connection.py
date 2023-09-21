@@ -845,7 +845,8 @@ def finalize_item(item_id, state, item_type, message):
                     "_id": item_id,
                 },
                 "update_field": {
-                    "document_state": state,
+                    "document_state": state,     
+                    "message":message
             
                 },
                 "platform": "bangalore",
@@ -861,6 +862,8 @@ def finalize_item(item_id, state, item_type, message):
                 },
                 "update_field": {
                     "document_state": state,
+                    "message":message
+
 
                 },
                 "platform": "bangalore",
