@@ -357,12 +357,24 @@ def finalize_or_reject(request, process_id):
     user = request.data["authorized"]
     user_type = request.data["user_type"]
     state = request.data["action"]
+
+    message = ""
+
+    if state == "rejected":
+        message = request.data.get("rejection_message", None)
+        if not message:
+            return Response(
+                "provide a reason for rejecting the document",
+                status = status.HTTP_400_BAD_REQUEST
+            )
+
     check, current_state = is_finalized(item_id, item_type)
     if check and current_state != "processing":
         return Response(
             f"document already processed as `{current_state}`!", status.HTTP_200_OK
         )
-    res = json.loads(finalize_item(item_id, state, item_type))
+    
+    res = json.loads(finalize_item(item_id, state, item_type, message))
 
     if res["isSuccess"]:
         try:
@@ -778,7 +790,8 @@ def create_document(request):
                 "document_type": "original",
                 "parent_id": None,
                 "process_id": "",
-                "folders": [],
+                "folders": [], 
+                "message":""
             }
         )
     )
@@ -1217,6 +1230,8 @@ def create_template(request):
                 "data_type": request.data["data_type"],
                 "template_type": "draft",
                 "auth_viewers": viewers,
+                "message": ""
+
             }
         )
     )

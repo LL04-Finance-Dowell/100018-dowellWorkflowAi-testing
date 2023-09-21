@@ -819,7 +819,7 @@ def authorize(document_id, viewers, process_id, item_type):
     return
 
 
-def finalize_item(item_id, state, item_type):
+def finalize_item(item_id, state, item_type, message):
     payload = None
     if item_type == "document":
         payload = json.dumps(
@@ -831,6 +831,7 @@ def finalize_item(item_id, state, item_type):
                 },
                 "update_field": {
                     "document_state": state,
+                    "message":message
                 },
                 "platform": "bangalore",
             }
@@ -844,7 +845,9 @@ def finalize_item(item_id, state, item_type):
                     "_id": item_id,
                 },
                 "update_field": {
-                    "document_state": state,
+                    "document_state": state,     
+                    "message":message
+            
                 },
                 "platform": "bangalore",
             }
@@ -859,6 +862,9 @@ def finalize_item(item_id, state, item_type):
                 },
                 "update_field": {
                     "document_state": state,
+                    "message":message
+
+
                 },
                 "platform": "bangalore",
             }
@@ -873,6 +879,7 @@ def finalize_item(item_id, state, item_type):
                 },
                 "update_field": {
                     "document_state": state,
+
                 },
                 "platform": "bangalore",
             }
