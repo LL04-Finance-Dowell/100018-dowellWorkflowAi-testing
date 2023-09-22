@@ -66,6 +66,7 @@ from .views import (
     get_reports_documents_metadata,
     get_template_and_insert_metadata,
     get_mobile_notifications_docusign,
+    process_public_users
 )
 
 urlpatterns = [
@@ -135,6 +136,8 @@ urlpatterns = [
     path("processes/<str:process_id>/finalize-or-reject/", finalize_or_reject),
     path("processes/<str:process_id>/all-links/", fetch_process_links),
     path("processes/<str:process_id>/user-link/", get_process_link),
+    path("processes/<str:process_id>/public/", process_public_users),
+
     path("favourites/", favorites),
     path(
         "favourites/<str:item_id>/<str:item_type>/<str:username>/",
