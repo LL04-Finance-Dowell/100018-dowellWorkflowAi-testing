@@ -1979,36 +1979,34 @@ def get_mobile_notifications_docusign(request, company_id):
     
 
 @api_view(["GET", "POST"])
-def process_public_users(request, process_id):
-    if not validate_id(process_id):
+def process_public_users(request, company_id):
+    if not validate_id(company_id):
         return Response("something went wrong!", status.HTTP_400_BAD_REQUEST)
     
     if request.method == "GET":
-        public_data = single_query_public_collection({
-            "company_id": request.data["company_id"],
+        public_users = single_query_public_collection({
+            "company_id": company_id
         })
 
-        return Response(f"public:{public_data}", status=status.HTTP_200_OK)
+        return Response(f"public:{public_users}", status=status.HTTP_200_OK)
         
     if request.method == "POST":
-        company_id = request.data.get("company_id")
-        public_links = request.data.get("public_links")
+        process_id = request.data.get("process_id")
         member = request.data.get("member")
 
-        if not public_links or not company_id or not member:
+        if not process_id or not member:
             return Response("provide all the fields", status=status.HTTP_400_BAD_REQUEST)
         
         options = {
-            "company_id": company_id,
-            "public_links": public_links,
-            "member": member,
+            "process_id": process_id,
+            "member": member
         }
        
         res = json.loads(save_to_public_collection(options))
        
         if res["isSuccess"]:
             return Response(
-                "Public users details changed!", status.HTTP_200_OK
+                "Public users details stored!", status.HTTP_201_CREATED
             )
         
         return Response(status.HTTP_500_INTERNAL_SERVER_ERROR)

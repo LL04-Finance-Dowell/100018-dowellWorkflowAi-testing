@@ -136,7 +136,7 @@ urlpatterns = [
     path("processes/<str:process_id>/finalize-or-reject/", finalize_or_reject),
     path("processes/<str:process_id>/all-links/", fetch_process_links),
     path("processes/<str:process_id>/user-link/", get_process_link),
-    path("processes/<str:process_id>/public/", process_public_users),
+    path("processes/<str:company_id>/public/", process_public_users),
 
     path("favourites/", favorites),
     path(
