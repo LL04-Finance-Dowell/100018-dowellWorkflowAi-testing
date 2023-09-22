@@ -117,7 +117,7 @@ const WorkflowsPage = ({ home, showOnlySaved, showOnlyTrashed }) => {
                     (item?.data_type === currentUserPortfolioDataType ||
                       item.workflows?.data_type ===
                         currentUserPortfolioDataType)
-                )}
+                ).reverse()}
                 itemType={'workflows'}
               />
             </div>
