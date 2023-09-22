@@ -287,9 +287,10 @@ def process_verification_v2(request):
     auth_portfolio = request.data["auth_portfolio"]
     token = request.data["token"]
     org_name = request.data["org_name"]
-    collection_id = request.data["collection_id"]
+    # collection_id = request.data["collection_id"]
     link_object = single_query_qrcode_collection({"unique_hash": token})
     if user_type == "team" or user_type == "user":
+        collection_id = request.data["collection_id"]
         if (
             link_object["user_name"] != auth_user
             or link_object["auth_portfolio"] != auth_portfolio
@@ -298,7 +299,18 @@ def process_verification_v2(request):
                 "User Logged in is not part of this process",
                 status.HTTP_401_UNAUTHORIZED,
             )
+    
+
     process = single_query_process_collection({"_id": link_object["process_id"]})
+    if user_type == "public":
+        for step in process["process_steps"]:
+            if step.get("stepRole") == auth_role:
+                for item in step["stepDocumentCloneMap"]:
+                    if item.get(auth_user[0]):
+                        collection_id = item.get(auth_user[0])
+                        print("collection_id", item.get(auth_user[0]))
+                        # print("collection_id")
+
     process["org_name"] = org_name
     handler = HandleProcess(process)
     location = handler.verify_location(
@@ -345,12 +357,24 @@ def finalize_or_reject(request, process_id):
     user = request.data["authorized"]
     user_type = request.data["user_type"]
     state = request.data["action"]
+
+    message = ""
+
+    if state == "rejected":
+        message = request.data.get("rejection_message", None)
+        if not message:
+            return Response(
+                "provide a reason for rejecting the document",
+                status = status.HTTP_400_BAD_REQUEST
+            )
+
     check, current_state = is_finalized(item_id, item_type)
     if check and current_state != "processing":
         return Response(
             f"document already processed as `{current_state}`!", status.HTTP_200_OK
         )
-    res = json.loads(finalize_item(item_id, state, item_type))
+    
+    res = json.loads(finalize_item(item_id, state, item_type, message))
 
     if res["isSuccess"]:
         try:
@@ -766,7 +790,8 @@ def create_document(request):
                 "document_type": "original",
                 "parent_id": None,
                 "process_id": "",
-                "folders": [],
+                "folders": [], 
+                "message":""
             }
         )
     )
@@ -1205,6 +1230,8 @@ def create_template(request):
                 "data_type": request.data["data_type"],
                 "template_type": "draft",
                 "auth_viewers": viewers,
+                "message": ""
+
             }
         )
     )

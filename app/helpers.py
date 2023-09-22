@@ -112,6 +112,7 @@ def cloning_document(document_id, auth_viewers, parent_id, process_id):
                     "parent_id": parent_id,
                     "process_id": process_id,
                     "folders": "untitled",
+                    "message":""
                 }
             )
         )
@@ -171,6 +172,8 @@ def cloning_clone(clone_id, auth_viewers, parent_id, process_id):
                     "parent_id": parent_id,
                     "process_id": process_id,
                     "folders": "untitled",
+                    "message":""
+
                 }
             )
         )
