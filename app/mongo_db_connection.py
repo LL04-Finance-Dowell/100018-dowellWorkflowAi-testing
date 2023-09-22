@@ -33,6 +33,8 @@ from app.constants import (
     WF_CONNECTION_DICT,
     WF_CONNECTION_LIST,
     PROCESS_CONNECTION_DICT,
+    PUBLIC_CONNECTION_LIST,
+    PUBLIC_CONNECTION_DICT
 )
 
 dd = datetime.now()
@@ -227,6 +229,13 @@ def bulk_query_folder_collection(options):
         *FOLDER_CONNECTION_LIST, "fetch", field=options
     )
     return folders
+
+
+def bulk_query_public_collection(options):
+    public = get_data_from_data_service(
+        *PUBLIC_CONNECTION_LIST, "find", field=options
+    )
+    return public
 
 
 def post_to_data_service(data):
@@ -450,6 +459,12 @@ def get_process_list(company_id, data_type):
 def get_process_link_list(company_id):
     process_links = get_data_from_data_service(
         *LINK_CONNECTION_LIST, "fetch", {"company_id": str(company_id)}
+    )
+    return process_links
+
+def get(company_id):
+    process_links = get_data_from_data_service(
+        *PUBLIC, "fetch", {"company_id": str(company_id)}
     )
     return process_links
 
@@ -690,6 +705,19 @@ def save_to_process_collection(options):
     payload = json.dumps(
         {
             **PROCESS_CONNECTION_DICT,
+            "command": "insert",
+            "field": options,
+            "update_field": {"order_nos": 21},
+            "platform": "bangalore",
+        }
+    )
+    return post_to_data_service(payload)
+
+
+def save_to_public_collection(options):
+    payload = json.dumps(
+        {
+            **PUBLIC_CONNECTION_DICT,
             "command": "insert",
             "field": options,
             "update_field": {"order_nos": 21},

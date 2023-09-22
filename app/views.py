@@ -78,6 +78,8 @@ from app.mongo_db_connection import (
     update_wf,
     update_workflow_setting,
     get_workflow_setting_object,
+    bulk_query_public_collection,
+    save_to_public_collection
 )
 
 from .constants import EDITOR_API
@@ -1901,3 +1903,38 @@ def get_mobile_notifications_docusign(request, company_id):
             "'Notarisation' Docusign requires Notorisation settings.",
             status.HTTP_400_BAD_REQUEST,
         )
+
+@api_view(["GET", "POST"])
+def process_public_users(request, process_id):
+    if not validate_id(process_id):
+        return Response("something went wrong!", status.HTTP_400_BAD_REQUEST)
+    
+    if request.method == "GET":
+        public_data = bulk_query_public_collection({
+            "company_id": request.data["company_id"],
+        })
+
+        return Response(f"public:{public_data}", status=status.HTTP_200_OK)
+        
+    if request.method == "POST":
+        company_id = request.data.get("company_id")
+        public_links = request.data.get("public_links")
+        member = request.data.get("member")
+
+        if not public_links or not company_id or not member:
+            return Response("provide all the fields", status=status.HTTP_400_BAD_REQUEST)
+        
+        options = {
+            "company_id": company_id,
+            "public_links": public_links,
+            "member": member,
+        }
+       
+        res = json.loads(save_to_public_collection(options))
+       
+        if res["isSuccess"]:
+            return Response(
+                "Public users details changed!", status.HTTP_200_OK
+            )
+        
+        return Response(status.HTTP_500_INTERNAL_SERVER_ERROR)
