@@ -100,16 +100,19 @@ const SelectMembersToAssign = ({
     console.log('ENTERED EFFECT');
     switch (current.header) {
       case 'Team':
-        console.log('ENTERED TEAM');
-        setSelectionCount(teamMembersSelectedForProcess.length)
+        // console.log('ENTERED TEAM');
+        const teamNum = teamMembersSelectedForProcess.filter(item => item?.stepIndex == currentStepIndex )
+        setSelectionCount(teamNum.length)
         break;
       case 'Users':
-        console.log('ENTERED USER');
-        setSelectionCount(userMembersSelectedForProcess.length)
+        // console.log('ENTERED USER');
+        const userNum = publicMembersSelectedForProcess.filter(item => item?.stepIndex == currentStepIndex )
+        setSelectionCount(userNum.length)
         break
       case 'Public':
-        console.log('ENTERED PUBLIC');
-        setSelectionCount(publicMembersSelectedForProcess.length)
+        // console.log('ENTERED PUBLIC');
+        const publicNum = publicMembersSelectedForProcess.filter(item => item?.stepIndex == currentStepIndex )
+        setSelectionCount(publicNum.length)
         break
       default:
         return
@@ -672,8 +675,11 @@ const SelectMembersToAssign = ({
   //   publicMembersSelectedForProcess,
   // ]);
 
-  console.log("the teamMembersSelectedForProcess are ",teamMembersSelectedForProcess)
-  console.log("the current val is  ",current)
+  // console.log("the teamMembersSelectedForProcess are ",teamMembersSelectedForProcess)
+  // console.log("the userMembersSelectedForProcess are ",userMembersSelectedForProcess)
+  // console.log("the publicMembersSelectedForProcess are ",publicMembersSelectedForProcess)
+  // console.log("the current val is  ",current)
+  // console.log("the current step index is  ",currentStepIndex)
  
   return (
     <div className={styles.container}>
