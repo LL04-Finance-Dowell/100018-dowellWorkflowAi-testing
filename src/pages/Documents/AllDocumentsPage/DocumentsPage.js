@@ -103,6 +103,8 @@ const DocumentsPage = ({
 
   
  var reversedDocArray = [... allDocumentsArray].reverse()
+ var dataForDrafts = reversedDocArray.filter((item)=> item?.document_state == 'draft')
+ var dataForSaved = reversedDocArray.filter((item) => item?.document_state == 'saved')
   
 
   return (
@@ -141,8 +143,16 @@ const DocumentsPage = ({
                 cardBgColor='#1ABC9C'
                 title='saved documents'
                 Card={DocumentCard}
-                cardItems={savedDocuments}
-                status={savedDocumentsStatus}
+                cardItems={
+                  reversedDocArray &&
+                  reversedDocArray.length &&
+                  reversedDocArray.filter(
+                    (item) =>
+                      item.created_by === userDetail?.userinfo?.username 
+                      
+                  )
+                }
+                status={allDocumentsStatus}
                 itemType={'documents'}
               />
             </div>
