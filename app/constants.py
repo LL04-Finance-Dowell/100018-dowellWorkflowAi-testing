@@ -247,3 +247,23 @@ MANAGEMENT_REPORTS_LIST = [
     "44689044433",
     "ABCDE",
 ]
+
+PUBLIC_CONNECTION_LIST = [
+    "Documents",
+    "bangalore",
+    "Documentation",
+    "PublicQRIDLink",
+    "PublicQRIDLink",
+    "1240001",
+    "ABCDE",
+]
+
+PUBLIC_CONNECTION_DICT = {
+    "cluster": "Documents",
+    "database": "Documentation",
+    "collection": "PublicQRIDLink",
+    "document": "PublicQRIDLink",
+    "team_member_ID": "1240001",
+    "function_ID": "ABCDE",
+    
+}
