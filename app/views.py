@@ -46,6 +46,7 @@ from app.mongo_db_connection import (
     delete_template,
     delete_workflow,
     finalize_item,
+    save_to_process_collection,
     update_metadata,
     save_to_document_collection,
     save_to_document_metadata_collection,
@@ -1980,7 +1981,7 @@ def get_mobile_notifications_docusign(request, company_id):
 
 @api_view(["GET", "POST"])
 def process_public_users(request, company_id):
-    if not validate_id(company_id):
+    if not validate_id(company_id) :
         return Response("something went wrong!", status.HTTP_400_BAD_REQUEST)
     
     if request.method == "GET":
@@ -2010,3 +2011,125 @@ def process_public_users(request, company_id):
             )
         
         return Response(status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
+"""Import of process settings"""
+@api_view(['POST'])
+def import_process_settings(request, process_id):
+    data = request.data  
+    company_id = data.get("company_id")
+    portfolio = data.get("portfolio")
+    member = data.get("member")
+    data_type = data.get("data_type")
+
+    # Validate process_id and companyID
+    if not validate_id(process_id) or not validate_id(company_id):
+        return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
+    
+    # Get workflow, document and process by process_id
+    old_process = single_query_process_collection({"_id": process_id})
+    document_id = old_process.get("parent_item_id")
+    workflow_id = old_process.get("workflow_construct_ids")
+
+    # Create a new document from the old document
+    old_document = single_query_document_collection({"_id": document_id})
+    viewers = [{"member": member, "portfolio": portfolio}]
+    new_document_data = {
+        "document_name": old_document["document_name"],
+        "content": old_document["content"],
+        "created_by": member,
+        "company_id": company_id,
+        "page": old_document["page"],
+        "data_type": data_type,
+        "document_state": "draft",
+        "auth_viewers": viewers,
+        "document_type": "imports",
+        "parent_id": None,
+        "process_id": "",
+        "folders": [],
+        "message": "",
+    }
+
+    res = json.loads(save_to_document_collection(new_document_data))
+    if not res.get("isSuccess"):
+        return Response("Failed to create document", status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    # Create document metadata
+    metadata_data = {
+        "document_name": old_document["document_name"],
+        "collection_id": res["inserted_id"],
+        "created_by": member,
+        "company_id": company_id,
+        "data_type": data_type,
+        "document_state": "draft",
+        "auth_viewers": viewers,
+        "document_type": "imports",
+    }
+
+    res_metadata = json.loads(save_to_document_metadata_collection(metadata_data))
+    if not res_metadata.get("isSuccess"):
+        return Response("Failed to create document metadata", status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    metadata_id = res_metadata["inserted_id"]
+
+    # Access editor metadata
+    editor_link = access_editor_metadata(res["inserted_id"], "document", metadata_id)
+    if not editor_link:
+        return Response("Could not open document editor.", status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    # Create a new workflow from the old workflow
+    old_workflow = single_query_workflow_collection({"_id": workflow_id[0]})
+    new_wf_title = old_workflow["workflows"]["workflow_title"]
+    new_wf_steps = old_workflow["workflows"]["steps"]
+    workflow_data = {
+        "workflows": {
+            "workflow_title": new_wf_title,
+            "steps": new_wf_steps,
+        },
+        "company_id": company_id,
+        "created_by": member,
+        "portfolio": portfolio,
+        "data_type": data_type,
+        "workflow_type": "imports",
+    }
+
+    res_workflow = json.loads(save_to_workflow_collection(workflow_data))
+    if not res_workflow.get("isSuccess"):
+        return Response("Failed to create workflow", status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    # Create a new process without a process step
+    process_data = {
+        "process_title": old_process["process_title"],
+        "process_steps": [],
+        "created_by": member,
+        "company_id": company_id,
+        "data_type": data_type,
+        "parent_item_id": res["inserted_id"],
+        "processing_action": "imports",
+        "creator_portfolio": portfolio,
+        "workflow_construct_ids": [res_workflow["inserted_id"]],
+        "process_type": old_process["process_type"],
+        "process_kind": "import",
+    }
+    
+    res_process = json.loads(save_to_process_collection(process_data))
+    if not res_process.get("isSuccess"):
+        return Response("Failed to create process", status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    # Return response
+    response_data = {
+        "Message": "Workflow, document and process created successfully",
+        "editor_link": editor_link,
+        "document_id": res["inserted_id"],
+        "workflow_id": res_workflow["inserted_id"],
+        "process_id": res_process["inserted_id"]
+    }
+
+    return Response(response_data, status.HTTP_201_CREATED)
+
+
+    
+    
+    
+    
+
+
