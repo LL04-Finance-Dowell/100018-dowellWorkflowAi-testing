@@ -91,3 +91,7 @@
   color: var(--e-global-color-1342d1f);
   font-size: 0.8rem;
 }
+
+.display_none{
+  display: none;
+}

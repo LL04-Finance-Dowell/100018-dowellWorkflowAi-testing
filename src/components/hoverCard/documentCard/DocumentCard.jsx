@@ -65,7 +65,7 @@ const DocumentCard = ({
       type: "document",
     };
     dispatch(handleFavorites(data)); */
-    console.log('the data to be bookmarked is ', item)
+    // console.log('the data to be bookmarked is ', item)
     if (actionType === 'add') {
       addToFavoritesState('documents', {
         ...item,
