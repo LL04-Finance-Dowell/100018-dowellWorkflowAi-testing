@@ -33,6 +33,8 @@ from app.constants import (
     WF_CONNECTION_DICT,
     WF_CONNECTION_LIST,
     PROCESS_CONNECTION_DICT,
+    PUBLIC_CONNECTION_LIST,
+    PUBLIC_CONNECTION_DICT
 )
 
 dd = datetime.now()
@@ -92,6 +94,13 @@ def single_query_process_collection(options):
         field=options,
     )
     return processes
+
+
+def single_query_public_collection(options):
+    public = get_data_from_data_service(
+        *PUBLIC_CONNECTION_LIST, "find", field=options
+    )
+    return public
 
 
 def bulk_query_document_collection(options):
@@ -698,6 +707,17 @@ def save_to_process_collection(options):
     )
     return post_to_data_service(payload)
 
+def save_to_public_collection(options):
+    payload = json.dumps(
+        {
+            **PUBLIC_CONNECTION_DICT,
+            "command": "insert",
+            "field": options,
+            "update_field": {"order_nos": 21},
+            "platform": "bangalore",
+        }
+    )
+    return post_to_data_service(payload)
 
 def update_folder(folder_id, old_folder):
     payload = json.dumps(
