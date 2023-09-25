@@ -1978,19 +1978,104 @@ def get_mobile_notifications_docusign(request, company_id):
 """Import of process settings"""
 @api_view(['POST'])
 def import_process_settings(request, process_id):
-    company_id = request.POST.get("company_id")
-    portfolio_id = request.POST.get("portfolio")
-    member = request.POST.get("member")
-    data_type = request.POST.get("data_type")
-        
-    """get process by process id"""
+    company_id = request.data.get("company_id")
+    portfolio = request.data.get("portfolio")
+    member = request.data.get("member")
+    data_type = request.data.get("data_type")
+    
+    # Validate process_id
     if not validate_id(process_id):
         return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
+
+    # Get process by process_id
     process = single_query_process_collection({"_id": process_id})
-    print(process)
+    document_id = process.get("parent_item_id")
+    workflow_id = process.get("workflow_construct_ids")
+
+    # Create a new document from the old document
+    old_document = single_query_document_collection({"_id": document_id})
+    viewers = [{"member": member, "portfolio": portfolio}]
+    new_document_data = {
+        "document_name": old_document["document_name"],
+        "content": old_document["content"],
+        "created_by": member,
+        "company_id": company_id,
+        "page": old_document["page"],
+        "data_type": data_type,
+        "document_state": "draft",
+        "auth_viewers": viewers,
+        "document_type": "original",
+        "parent_id": None,
+        "process_id": "",
+        "folders": [],
+        "message": "",
+    }
+
+    res = json.loads(save_to_document_collection(new_document_data))
+    if not res.get("isSuccess"):
+        return Response("Failed to create document", status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    # Create document metadata
+    res_metadata = json.loads(
+        save_to_document_metadata_collection(
+            {
+                "document_name": old_document["document_name"],
+                "collection_id": res["inserted_id"],
+                "created_by": member,
+                "company_id": company_id,
+                "data_type": data_type,
+                "document_state": "draft",
+                "auth_viewers": viewers,
+            }
+        )
+    )
+
+    if not res_metadata.get("isSuccess"):
+        return Response(
+            "Failed to create document metadata",
+            status.HTTP_500_INTERNAL_SERVER_ERROR,
+        )
+
+    metadata_id = res_metadata["inserted_id"]
+
+    # Access editor metadata
+    editor_link = access_editor_metadata(res["inserted_id"], "document", metadata_id)
+    if not editor_link:
+        return Response(
+            "Could not open document editor.",
+            status.HTTP_500_INTERNAL_SERVER_ERROR,
+        )
+
+    # Create a new workflow from the old workflow
+    old_workflow = single_query_workflow_collection({"_id": workflow_id[0]})
+    new_wf_title = old_workflow["workflows"]["workflow_title"]
+    new_wf_steps = old_workflow["workflows"]["steps"]
+    workflow_data = {
+        "workflows": {
+            "workflow_title": new_wf_title,
+            "steps": new_wf_steps,
+        },
+        "company_id": company_id,
+        "created_by": member,
+        "portfolio": portfolio,
+        "data_type": data_type,
+        "workflow_type": "original",
+    }
+
+    res_workflow = json.loads(save_to_workflow_collection(workflow_data))
+    if not res_workflow.get("isSuccess"):
+        return Response(
+            "Failed to create workflow",
+            status.HTTP_500_INTERNAL_SERVER_ERROR,
+        )
+        
+    #Create a new process wihout members
+    
+
+    return Response({"Message":"Workflow and document created successfully","editor_link": editor_link, "_id": res["inserted_id"]}, status.HTTP_201_CREATED)
     
     
-    """Create A new document from the old document"""
-    """Create a new workflow from the old workflow"""
+    
+    
 
 
