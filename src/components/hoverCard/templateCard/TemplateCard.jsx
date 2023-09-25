@@ -57,6 +57,7 @@ const TemplateCard = ({ cardItem, isFolder, folderId }) => {
             _id: item._id,
             company_id: item.company_id,
             template_name: item.template_name,
+            collection_id: item.collection_id
           },
           item_type: 'template',
           username: userDetail?.userinfo?.username,

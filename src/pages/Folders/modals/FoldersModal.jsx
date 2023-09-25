@@ -20,6 +20,7 @@ const FoldersModal = () => {
     setFolders,
     setFolderActionId,
     userDetail,
+    fetchFolders
   } = useAppContext();
   const [isCreating, setIsCreating] = useState(false);
   const navigate = useNavigate();
@@ -255,6 +256,7 @@ const FoldersModal = () => {
 
     setUserCompanyId(companyId);
     setUserDataType(dataType);
+    fetchFolders()
   }, [userDetail]);
 
   useEffect(() => {
@@ -573,7 +575,7 @@ const FoldersModal = () => {
                           (conFolder) => conFolder._id === folder._id
                         )}
                       >
-                        {folder.folder_name}
+                        {folder?.folder_name}
                       </option>
                     ))}
                   </select>
