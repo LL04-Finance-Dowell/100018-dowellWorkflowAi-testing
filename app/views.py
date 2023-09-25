@@ -1981,7 +1981,7 @@ def get_mobile_notifications_docusign(request, company_id):
 
 @api_view(["GET", "POST"])
 def process_public_users(request, company_id):
-    if not validate_id(company_id):
+    if not validate_id(company_id) :
         return Response("something went wrong!", status.HTTP_400_BAD_REQUEST)
     
     if request.method == "GET":
@@ -2021,10 +2021,10 @@ def import_process_settings(request, process_id):
     member = data.get("member")
     data_type = data.get("data_type")
 
-    # Validate process_id
-    if not validate_id(process_id):
+    # Validate process_id and companyID
+    if not validate_id(process_id) or not validate_id(company_id):
         return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
-
+    
     # Get workflow, document and process by process_id
     old_process = single_query_process_collection({"_id": process_id})
     document_id = old_process.get("parent_item_id")
