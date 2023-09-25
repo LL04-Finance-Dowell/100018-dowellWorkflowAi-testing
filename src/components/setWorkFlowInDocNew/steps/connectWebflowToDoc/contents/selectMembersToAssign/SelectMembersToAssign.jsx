@@ -1084,7 +1084,12 @@ const SelectMembersToAssign = ({
                                         user.stepIndex === currentStepIndex
                                     )
                                       ? styles.user__Selected
-                                      : styles.user__Not__Selected
+                                      : publicMembersSelectedForProcess.find(
+                                        (user) =>
+                                          user.member === item.member &&
+                                          user.portfolio === item.portfolio &&
+                                          user.stepIndex !== currentStepIndex
+                                      ) ? styles.display_none : styles.user__Not__Selected
                                     : ''
                             }
                             // key={item.id}

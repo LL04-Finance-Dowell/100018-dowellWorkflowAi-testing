@@ -5,7 +5,7 @@ import { v4 as uuidv4 } from 'uuid';
 import SectionBox from '../../components/manageFiles/sectionBox/SectionBox';
 import HandleTasks from '../../components/landingPage/handleTasks/HandleTasks';
 import FlipMenu from '../../components/flipMenu/FlipMenu';
-import DocumnetCard from '../../components/hoverCard/documentCard/DocumentCard';
+// import DocumnetCard from '../../components/hoverCard/documentCard/DocumentCard';
 import TemplateCard from '../../components/hoverCard/templateCard/TemplateCard';
 import WorkflowCard from '../../components/hoverCard/workflowCard/WorkflowCard';
 import { useDispatch, useSelector } from 'react-redux';
@@ -210,25 +210,26 @@ const WorkflowApp = () => {
         });
     }
 
-    // if (!favoriteItemsLoaded) {
-    //   const dataToPost = {
-    //     company_id: userCompanyId,
-    //     username: userDetail?.userinfo?.username,
-    //   };
+    if (!favoriteItemsLoaded) {
+      const dataToPost = {
+        company_id: userCompanyId,
+        username: userDetail?.userinfo?.username,
+      };
 
-    //   getFavoritesForUser(dataToPost.company_id)
-    //     .then((res) => {
-    //       setFavoriteitems(res.data);
-    //       setFavoriteitemsLoaded(true);
-    //     })
-    //     .catch((err) => {
-    //       console.log(
-    //         err
-    //         // .response ? err.response.data : err.message
-    //       );
-    //       // setFavoriteitemsLoaded(true)
-    //     });
-    // }
+      getFavoritesForUser(dataToPost.company_id)
+        .then((res) => {
+          setFavoriteitems(res.data);
+          console.log("the favourite items are ", res.data)
+          setFavoriteitemsLoaded(true);
+        })
+        .catch((err) => {
+          console.log(
+            err
+            // .response ? err.response.data : err.message
+          );
+          // setFavoriteitemsLoaded(true)
+        });
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     userDetail,
@@ -523,6 +524,7 @@ const WorkflowApp = () => {
                                     userDetail?.userinfo?.username
                                 )}
                                 status={favoriteItemsLoaded}
+                                itemType={'documents'}
                               />
                             </div>
                           );
@@ -623,7 +625,7 @@ export const notifications = [
     id: uuidv4(),
     title: 'documents',
     cardBgColor: '#1ABC9C',
-    card: DocumnetCard,
+    card: DocumentCard,
     items: [{ id: uuidv4() }],
   },
   {

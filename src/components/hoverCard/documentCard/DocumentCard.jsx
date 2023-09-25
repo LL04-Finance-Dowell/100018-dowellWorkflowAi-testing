@@ -65,6 +65,7 @@ const DocumentCard = ({
       type: "document",
     };
     dispatch(handleFavorites(data)); */
+    // console.log('the data to be bookmarked is ', item)
     if (actionType === 'add') {
       addToFavoritesState('documents', {
         ...item,
@@ -76,6 +77,7 @@ const DocumentCard = ({
             _id: item._id,
             company_id: item.company_id,
             document_name: item.document_name,
+            collection_id: item.collection_id
           },
           item_type: 'document',
           username: userDetail?.userinfo?.username,
@@ -136,7 +138,7 @@ const DocumentCard = ({
   };
 
   const handleDetailDocumnet = async (item) => {
-  
+   console.log("handle detail doc hit ", dataLoading)
     if (dataLoading) return;
     if (documentLoading)
       return toast.info('Please wait for this document to be refreshed first');

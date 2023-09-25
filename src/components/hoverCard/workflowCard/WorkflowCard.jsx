@@ -86,6 +86,7 @@ const WorkflowCard = ({ cardItem }) => {
             _id: item._id,
             company_id: item.company_id,
             workflows: item.workflows,
+            collection_id: item.collection_id
           },
           item_type: 'workflow',
           username: userDetail?.userinfo?.username,
