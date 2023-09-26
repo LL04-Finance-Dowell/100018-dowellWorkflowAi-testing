@@ -181,7 +181,7 @@ const ProcessesPage = ({
                 Card={ProcessCard}
                 cardItems={allProcesses
                   .filter(
-                    (process) => process.processing_state === 'processing'
+                    (process) => process.processing_state === 'processing' ||  process.processing_action === "imports"
                   )
                   .filter(
                     (process) =>
