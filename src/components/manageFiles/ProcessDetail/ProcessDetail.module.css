@@ -267,6 +267,15 @@
   
 }
 
+.processHeadingChart {
+  color: #000000;
+  font: 20px;
+}
+
+.processHeadingChart2 {
+  color: #000000;
+}
+
 .ImageContainer {
   position: relative;
   bottom: 0;
