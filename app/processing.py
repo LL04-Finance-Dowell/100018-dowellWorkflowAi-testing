@@ -2,15 +2,11 @@ import json
 import urllib.parse
 import uuid
 from threading import Thread
-<<<<<<< HEAD
 import os
 
 # from dotenv import load_dotenv
 
 # load_dotenv()
-=======
-
->>>>>>> c3fe8cf4 (template approval)
 import qrcode
 import requests
 
