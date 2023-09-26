@@ -391,7 +391,7 @@ def finalize_or_reject(request, process_id):
     if res["isSuccess"]:
         try:
             process = single_query_process_collection({"_id": process_id})
-            background = Background(process, item_type, item_id, role, user)
+            background = Background(process, item_type, item_id, role, user, message)
             background.processing()
 
             if user_type == "public":

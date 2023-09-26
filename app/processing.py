@@ -607,12 +607,13 @@ class HandleProcess:
 
 
 class Background:
-    def __init__(self, process, item_type, item_id, role, username):
+    def __init__(self, process, item_type, item_id, role, username, message):
         self.process = process
         self.item_type = item_type
         self.item_id = item_id
         self.role = role
         self.username = username
+        self.message = message
 
     def register_user_access(process_steps, authorized_role, user):
         """Once someone has made changes to their docs"""
@@ -874,9 +875,9 @@ class Background:
             # print(f"Item ID {self.item_id}")
             # print(f"Item type {self.item_type}")
             if process_type == "document":
-                finalize_item(self.item_id, "processing", self.item_type)
+                finalize_item(self.item_id, "processing", self.item_type, self.message)
             elif process_type == "template":
-                finalize_item(self.item_id, "saved", self.item_type)
+                finalize_item(self.item_id, "saved", self.item_type, self.message)
             return 
 
 
