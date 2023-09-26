@@ -824,7 +824,7 @@ def authorize(document_id, viewers, process_id, item_type):
                 },
                 "update_field": {
                     "auth_viewers": [viewers],
-                    "document_state": "processing",
+                    "template_state": "draft",
                     "process_id": process_id,
                 },
                 "platform": "bangalore",
@@ -1064,6 +1064,22 @@ def update_template_approval(template_id, approval):
     )
     return post_to_data_service(payload)
 
+def update_template(template_id, process_id, state):
+    payload = json.dumps(
+        {
+            **DOCUMENT_CONNECTION_DICT,
+            "command": "update",
+            "field": {
+                "_id": template_id,
+            },
+            "update_field": {
+                "process_id": process_id,
+                "template_state": state,
+            },
+            "platform": "bangalore",
+        }
+    )
+    return post_to_data_service(payload)
 
 def update_document(document_id, process_id, state):
     payload = json.dumps(
