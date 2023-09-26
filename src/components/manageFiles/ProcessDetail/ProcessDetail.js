@@ -1,7 +1,18 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
 import styles from './ProcessDetail.module.css'
 import { toast } from 'react-toastify';
+import { processReport } from '../../../httpCommon/httpCommon';
+import axios from 'axios';
+import { processDetailReport } from '../../../utils/helpers';
+import {
+  Chart as ChartJS, ArcElement, Tooltip, Legend, CategoryScale,
+  LinearScale,
+  BarElement,
+  Title
+} from 'chart.js';
+import Spinner from 'react-bootstrap/Spinner';
+import { Bar, Pie } from 'react-chartjs-2';
 // import { MdExpandMore } from "react-icons/md";
 import { MdContentCopy, MdExpandMore, MdExpandLess, PiUsersThreeBold } from "react-icons/md";
 import { FaUsers, FaUsersCog, FaUserSecret } from "react-icons/fa";
@@ -9,6 +20,14 @@ import Card from 'react-bootstrap/Card';
 import Accordion from 'react-bootstrap/Accordion';
 import processImage from "../../../assets/processImage.png";
 import greenImage from "../../../assets/greenImage.png";
+
+ChartJS.register(ArcElement, Tooltip, Legend, CategoryScale,
+  LinearScale,
+  BarElement,
+  Title,
+);
+
+
 
 const ProcessDetail = () => {
   const { ProcessDetail } = useSelector((state) => state.app);
@@ -34,9 +53,9 @@ const ProcessDetail = () => {
     <>
       <div className={styles.body_div}>
         <div className={styles.steps}>
-          <div className={styles.processName}>  
-          <img src={greenImage} alt={'Green Image'} />
-          {/* <div class={styles.textOverlay}> */}
+          <div className={styles.processName}>
+            <img src={greenImage} alt={'Green Image'} />
+            {/* <div class={styles.textOverlay}> */}
             <div className={styles.processHeading}>
               <h3>{ProcessDetail.process_title}</h3>
             </div>
@@ -83,21 +102,7 @@ const ProcessDetail = () => {
               );
             })}
           </div>
-          {/* <h3 className={styles.Process_Title}>Steps :</h3> */}
 
-          {/* <div className={styles.info_container}>
-            <div className={styles.grid_container}>
-              {ProcessDetail.process_steps.map((step, index) => {
-                return (
-                  <Step
-                    className={styles.grid_item}
-                    step={step}
-                    index={index}
-                  />
-                );
-              })}
-            </div>
-          </div> */}
           <h3 className={styles.Process_Title}>Links :</h3>
           <div className={styles.info_container}>
             <div className={styles.process__Links__Wrapper}>
@@ -144,48 +149,79 @@ const ProcessDetail = () => {
               </table>
             </div>
           </div>
+
+          <div className={styles.processName}>
+            <img src={greenImage} alt={'Green Image'} />
+            <div className={styles.processHeading}>
+              <h3>Evaluation Report:</h3>
+            </div>
+          </div>
+          <div className={styles.info_container}>
+            <EvaluationReportComponent />
+            {/* <TestChart /> */}
+          </div>
+
+
+
+
+          {/* <h3 className={styles.Process_Title}>Steps :</h3> */}
+
+          {/* <div className={styles.info_container}>
+            <div className={styles.grid_container}>
+              {ProcessDetail.process_steps.map((step, index) => {
+                return (
+                  <Step
+                    className={styles.grid_item}
+                    step={step}
+                    index={index}
+                  />
+                );
+              })}
+            </div>
+          </div> */}
+
         </div>
       </div>
     </>
   );
 };
 
-const Step = ({ step, index }) => {
-  const [expanded, setExpanded] = useState(false);
+// const Step = ({ step, index }) => {
+//   const [expanded, setExpanded] = useState(false);
 
-  const stepDivClass = expanded ? styles.Step_div_expanded : styles.Step_div;
+//   const stepDivClass = expanded ? styles.Step_div_expanded : styles.Step_div;
 
-  return (
-    <div className={stepDivClass}>
-      <div className={styles.Process_Title}>
-        {step.stepNumber}.
-      </div>
-      <div className={styles.Process_Title}>
-        {step.stepName}
-      </div>
-
-
-
-      <div className={styles.expanded}>
-        <div>
-          <span>Public Member :</span><span>{step.stepPublicMembers.length}</span>
-
-        </div>
-        <div>
-          <span>Team Member :</span><span>{step.stepTeamMembers.length}</span>
-
-        </div>
-        <div>
-
-          <span>User Member :</span><span>{step.stepUserMembers.length}</span>
+//   return (
+//     <div className={stepDivClass}>
+//       <div className={styles.Process_Title}>
+//         {step.stepNumber}.
+//       </div>
+//       <div className={styles.Process_Title}>
+//         {step.stepName}
+//       </div>
 
 
-        </div>
-      </div>
 
-    </div>
-  );
-};
+//       <div className={styles.expanded}>
+//         <div>
+//           <span>Public Member :</span><span>{step.stepPublicMembers.length}</span>
+
+//         </div>
+//         <div>
+//           <span>Team Member :</span><span>{step.stepTeamMembers.length}</span>
+
+//         </div>
+//         <div>
+
+//           <span>User Member :</span><span>{step.stepUserMembers.length}</span>
+
+
+//         </div>
+//       </div>
+
+//     </div>
+//   );
+// };
 
 const StepCards = ({ step, index }) => {
 
@@ -196,7 +232,7 @@ const StepCards = ({ step, index }) => {
           <Accordion.Header style={{ color: '#13511D', fontWeight: 'bold' }}>{step.stepName}</Accordion.Header>
           <Accordion.Body>
             <div className={styles.CardContainer}>
-              <Card key={index} style={{ width: '18rem', backgroundColor: '#EDD680' }}>
+              <Card key={index} style={{ width: '15rem', backgroundColor: '#EDD680' }}>
                 <Card.Body>
                   <Card.Title><span><FaUserSecret /></span></Card.Title>
                   <Card.Subtitle className="mb-2" style={{ color: '#3E3E3E', fontSize: '26.78px' }}>User Member</Card.Subtitle>
@@ -205,7 +241,7 @@ const StepCards = ({ step, index }) => {
                   </Card.Text>
                 </Card.Body>
               </Card>
-              <Card key={index} style={{ width: '18rem', backgroundColor: '##72C8E0' }}>
+              <Card key={index} style={{ width: '15rem', backgroundColor: '##72C8E0' }}>
                 <Card.Body>
                   <Card.Title><span><FaUsersCog /></span></Card.Title>
                   <Card.Subtitle className="mb-2" style={{ color: '#3E3E3E', fontSize: '26.78px' }}>Team Member</Card.Subtitle>
@@ -214,7 +250,7 @@ const StepCards = ({ step, index }) => {
                   </Card.Text>
                 </Card.Body>
               </Card>
-              <Card key={index} style={{ width: '18rem', backgroundColor: '#FFF0F0' }}>
+              <Card key={index} style={{ width: '15rem', backgroundColor: '#FFF0F0' }}>
                 <Card.Body>
                   <Card.Title><span><FaUsers /></span></Card.Title>
                   <Card.Subtitle className="mb-2" style={{ color: '#3E3E3E', fontSize: '26.78px' }}>Public Member</Card.Subtitle>
@@ -274,4 +310,227 @@ const CircularProgressBar = ({ percentage }) => {
     </svg>
   );
 };
+
+export const pieChartData = {
+  labels: ['Score 1', 'Score 2', 'Score 3', 'Score 4', 'Score 5', 'Score 6', 'Score 7'],
+  datasets: [
+    {
+      label: 'score list',
+      data: [1, 3, 2, 10, 7, 4, 8], // Values from the 'score_list'
+      backgroundColor: [
+        '#FF6384',
+        '#36A2EB',
+        '#FFCE56',
+        '#8B4513',
+        '#98FB98',
+        '#20B2AA',
+        '#FF4500'
+      ],
+      hoverBackgroundColor: [
+        '#FF6384',
+        '#36A2EB',
+        '#FFCE56',
+        '#8B4513',
+        '#98FB98',
+        '#20B2AA',
+        '#FF4500'
+      ],
+      borderWidth: 1,
+    }
+  ]
+};
+
+const EvaluationReportComponent = () => {
+  const [reportData, setReportData] = useState(processDetailReport);
+  const { ProcessDetail } = useSelector((state) => state.app);
+  console.log("ProcessDetail", ProcessDetail._id)
+
+  const normalityAnalysisData = {
+    labels: ['Actual Areas', 'Rectangle Area', 'Slope', 'Slope Percentage Deviation', 'Calculated Slope'],
+    datasets: [
+      {
+        label: 'Analysis Value',
+        data: [
+          reportData?.normality_analysis?.list1?.actual_areas,
+          reportData?.normality_analysis?.list1?.rectangle_area,
+          reportData?.normality_analysis?.list1?.slope[0], // assuming only one value in slope array
+          reportData?.normality_analysis?.list1?.slope_percentage_deviation,
+          reportData?.normality_analysis?.list1?.calculated_slope
+        ] || [3.42, 3.73, 1.84, 0.25, 1.84], // Placeholder values
+        backgroundColor: '#FFCE56'
+      }
+    ]
+  };
+
+  const barChartData = {
+    labels: ['Mean', 'Median', 'Mode'],
+    datasets: [
+      {
+        label: 'Scores Statistics',
+        data: [reportData?.central_tendencies?.normal_dist?.mergedMean, reportData?.central_tendencies?.normal_dist?.mergedMedian, reportData?.central_tendencies?.normal_dist?.mergedMode?.length] || [5.0, 4.0, 4.0], // Mean, median, and mode values from 'central_tendencies'
+        backgroundColor: [
+          'rgba(255, 99, 132, 0.6)',
+          'rgba(54, 162, 235, 0.6)',
+          'rgba(255, 206, 86, 0.6)'
+        ],
+        borderColor: [
+          'rgba(255, 99, 132, 1)',
+          'rgba(54, 162, 235, 1)',
+          'rgba(255, 206, 86, 1)'
+        ],
+        borderWidth: 1,
+      }
+    ]
+  };
+
+  const pieChartData = {
+    labels: ['Score 1', 'Score 2', 'Score 3', 'Score 4', 'Score 5', 'Score 6', 'Score 7'],
+    datasets: [
+      {
+        label: 'score list',
+        data: reportData?.score_list || [1, 3, 2, 10, 7, 4, 8], // Values from the 'score_list'
+        backgroundColor: [
+          '#FF6384',
+          '#36A2EB',
+          '#FFCE56',
+          '#8B4513',
+          '#98FB98',
+          '#20B2AA',
+          '#FF4500'
+        ],
+        hoverBackgroundColor: [
+          '#FF6384',
+          '#36A2EB',
+          '#FFCE56',
+          '#8B4513',
+          '#98FB98',
+          '#20B2AA',
+          '#FF4500'
+        ],
+        borderWidth: 1,
+      }
+    ]
+  };
+
+  const promotersScores = ((reportData?.score_list?.filter(score => score === 9 || score === 10).length) / reportData.score_list.length) * 100;
+  console.log("promotersScores", promotersScores)
+  const passiveScores = ((reportData?.score_list?.filter(score => score === 7 || score === 8).length) / reportData.score_list.length) * 100;
+  const DetractorsScores = ((reportData?.score_list?.filter(score => score > 0 && score <= 6).length) / reportData.score_list.length) * 100;
+
+  const npsScoreDistributionData = {
+    labels: ['Detractors', 'Passives', 'Promoters'],
+    datasets: [
+      {
+        data: [DetractorsScores, passiveScores, promotersScores] || [20, 10, 65], // Assuming percentages for each category
+        backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56'],
+        hoverBackgroundColor: ['#FF6384', '#36A2EB', '#FFCE56']
+      }
+    ]
+  };
+
+  useEffect(() => {
+    console.log(ProcessDetail);
+    const fetchData = async () => {
+      try {
+        const requestBody = { process_id: 'abc0099986567abcd' };
+        const response = await axios.post('https://100035.pythonanywhere.com/evaluation/evaluation-api/?report_type=process', requestBody);
+        console.log("response", response.data.score_list)
+        setReportData(response.data);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  if (!reportData) {
+    return <Spinner animation="grow" variant="success" />;
+  }
+
+  console.log("reportData", reportData)
+  // Process reportData and structure it for chart display
+  const barChartOptions = {
+    maintainAspectRatio: false,
+    responsive: false,  // Set to false to prevent resizing
+    // scales: {
+    //   y: {
+    //     beginAtZero: true
+    //   }
+    // },
+    height: "222px",    // Set your desired height
+    width: "450px"      // Set your desired width
+  };
+  return (
+    <div>
+      <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
+        <div className={styles.processHeadingChart2}>
+          <h5>Normality Analysis Data:</h5>
+        </div>
+
+        <div className={styles.processHeadingChart2}>
+          <h5>Bar Chart for Central Tendencies:</h5>
+        </div>
+      </div>
+
+      <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
+
+        <Bar data={normalityAnalysisData} options={barChartOptions} />
+        <Bar data={barChartData} options={barChartOptions} />
+      </div>
+      <br/>
+
+      <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
+        <div className={styles.processHeadingChart2}>
+          <h5>Pie Chart for Score List:</h5>
+        </div>
+
+        <div className={styles.processHeadingChart2}>
+          <h5>Pie Chart for NPS Score Distribution:</h5>
+        </div>
+      </div>
+
+      <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
+
+        <Pie
+          data={pieChartData}
+          options={barChartOptions}
+        />
+        <Pie
+          data={npsScoreDistributionData}
+          options={barChartOptions}
+        />
+      </div>
+      {/* <div className={styles.processHeadingChart}>
+        <h3>Normality Analysis Data:</h3>
+      </div>
+      <Bar data={normalityAnalysisData} options={barChartOptions}/>
+      <br />
+
+      <div className={styles.processHeadingChart}>
+        <h3>Bar Chart for Central Tendencies:</h3>
+      </div>
+      <Bar data={barChartData} options={barChartOptions}/>
+      <br />
+
+      <div className={styles.processHeadingChart}>
+        <h3>Pie Chart for Score List:</h3>
+      </div>
+      <Pie
+        data={pieChartData}
+        options={barChartOptions}
+      />
+      <br />
+
+      <div className={styles.processHeadingChart}>
+        <h3>Pie Chart for NPS Score Distribution:</h3>
+      </div>
+      <Pie
+        data={npsScoreDistributionData}
+        options={barChartOptions}
+      /> */}
+    </div>
+  );
+};
+
 export default ProcessDetail
