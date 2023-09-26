@@ -398,7 +398,7 @@ def finalize_or_reject(request, process_id):
                 link_id = request.data["link_id"]
                 register_finalized(link_id)
 
-            if item_type == 'document':
+            if item_type == 'document' or item_type == "clone":
                 # Get the item state
                 item = single_query_clones_collection({"_id": item_id})
                 print(item.get("document_state"))
@@ -417,6 +417,7 @@ def finalize_or_reject(request, process_id):
             
             if item_type == 'template':
                 item = single_query_template_collection({"_id": item_id})
+                print(item)
                 if item.get("template_state") == "finalized":
                     # Update the metadata
                     meta_id = single_query_template_metadata_collection({"collection_id": item_id})
