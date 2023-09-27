@@ -13,13 +13,27 @@ import { setAllWorkflows } from "../../features/workflow/workflowsSlice";
 import { setAllProcesses } from "../../features/app/appSlice";
 import { LoadingSpinner } from "../../components/LoadingSpinner/LoadingSpinner";
 
+import { setCopiedDocument, setCopiedWorkflow } from "../../features/processCopyReducer";
+
 const CopyProcessPage = () => {
   const { userDetail } = useSelector((state) => state.auth);
   const { process_id } = useParams();
   const [processCopy, setProcessCopy] = useState(null);
+  const [processData, setProcessData] = useState(null);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const dispatch = useDispatch();
+
+  useEffect(() => {
+    
+    axios.get(`https://100094.pythonanywhere.com/v1/processes/${process_id}/`)
+      .then((response) => {
+        setProcessData(response.data);
+      })
+      .catch((error) => {
+        console.error('Error fetching data:', error);
+      });
+  }, [process_id]);
 
   const handleCopy = async () => {
     setLoading(true);
@@ -54,7 +68,16 @@ const CopyProcessPage = () => {
       );
   
       console.log("the response is ", response.data);
-      setProcessCopy(response.data);
+      // setProcessCopy(response.data);
+        const doc_id = response.data?.document_id
+        const workflow_id = response.data?.workflow_id
+        if(doc_id){
+          const docData = await axios.get(`https://100094.pythonanywhere.com/v1/documents/${doc_id}/`);
+          console.log('the response for the copied document is ', docData)
+          dispatch(setCopiedDocument(docData))
+        }
+
+
   
       const documentServices = new DocumentServices();
       const res1 = await documentServices.allDocuments(data.company_id, data.data_type);
@@ -68,6 +91,12 @@ const CopyProcessPage = () => {
           )
         )
       );
+      console.log('the refreshed doc data is ', res1.data)
+      if(doc_id){
+        const findDoc = res1.data.documents.find((item)=>item.collection_id == doc_id)
+        console.log('the response for the copied document is ', findDoc)
+        dispatch(setCopiedDocument(findDoc))
+      }
   
       const workflowServices = new WorkflowServices();
       const res2 = await workflowServices.allWorkflows(data.company_id, data.data_type);
@@ -82,6 +111,12 @@ const CopyProcessPage = () => {
           )
         )
       );
+      console.log('the refreshed workflow data is ', res2.data)
+      if(workflow_id){
+        const workflowData = res2.data.workflows.find((item)=>item._id == workflow_id)
+        console.log('the response for the copied workflow is ', workflowData)
+        dispatch(setCopiedWorkflow(workflowData))
+      }
   
       const res3 = await getAllProcessesV2(data.company_id, data.data_type);
       const savedProcessesInLocalStorage = JSON.parse(
@@ -98,7 +133,7 @@ const CopyProcessPage = () => {
       } else {
         dispatch(setAllProcesses(res3.data.reverse()));
       }
-  
+      navigate('/workflows/new-set-workflow')
       setLoading(false);
     } catch (error) {
       console.log("error sending request ", error);
@@ -128,8 +163,8 @@ const CopyProcessPage = () => {
               }}
             >
               <h4>
-                Are you sure, do you want to import process with the id of{" "}
-                {process_id}?
+                Are you sure, do you want to import process = {" ' "}
+                {processData?.process_title} {" ' "}?
               </h4>
               <div style={{ display: "flex", justifyContent: "center" }}>
                 <button
