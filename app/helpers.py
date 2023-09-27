@@ -605,6 +605,13 @@ def get_metadata_id(item_id, item_type):
             return coll_id
         except Exception as err:
             print("An error occured: ", err)
+        
+    elif item_type == "template":
+        try:
+            coll_id = single_query_template_metadata_collection({"collection_id": item_id})["_id"]
+            return coll_id
+        except Exception as err:
+            print("An error occured: ", err)
 
 
 def check_step_items_state(items) -> bool:
