@@ -1,6 +1,6 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import { useForm } from 'react-hook-form';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { setCurrentDocToWfs } from '../../../../../features/app/appSlice';
 import { contentDocument } from '../../../../../features/document/asyncThunks';
 import { setContentOfDocument } from '../../../../../features/document/documentSlice';
@@ -21,6 +21,27 @@ const SelectedDocuments = ({
   const dispatch = useDispatch();
   const { t } = useTranslation();
   console.log(selectedDocuments.clones)
+
+    ////copied docs
+    const copiedDocument = useSelector((state) => state.copyProcess.document);
+    useEffect(() => {
+      if (!copiedDocument) return;
+    
+      console.log('Selection started!');
+      
+      // Set a 5-second delay before executing the following code
+      const timerId = setTimeout(() => {
+        dispatch(contentDocument(copiedDocument.collection_id));
+        dispatch(setCurrentDocToWfs(copiedDocument));
+        dispatch(setContentOfDocument(null));
+        console.log('The button should be clicked');
+      }, 3000); // 5000 milliseconds = 5 seconds
+    
+      // Clean up the timer if the copiedDocument changes or the component unmounts
+      return () => clearTimeout(timerId);
+    }, [copiedDocument]);
+    
+    
 
   const onSubmit = (data) => {
     if (!selectedDocument) return;

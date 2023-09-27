@@ -1,3 +1,4 @@
+import React, {useEffect} from 'react';
 import styles from './selectWorkflow.module.css';
 import SelectWorkflowBoxes from './selectWorkflowBoxes/SelectWorkflowBoxes';
 import { useAppContext } from '../../../../contexts/AppContext';
@@ -20,6 +21,26 @@ const SelectWorkflow = ({ savedDoc }) => {
 
   const { currentDocToWfs, selectedWorkflowsToDoc, docCurrentWorkflow, } = useSelector((state) => state.app);
   const { contentOfDocument } = useSelector((state) => state.document);
+
+  ////copied workflow
+  const copiedWorkflow = useSelector((state) => state.copyProcess.workflow);
+
+  useEffect(()=>{
+    console.log('start useEffect in step 2. select workflow',selectedWorkflowsToDoc?.length)
+    const timerId = setTimeout(() => {
+    if (selectedWorkflowsToDoc?.length >= 1 && copiedWorkflow !==null) {
+     
+      const contentPageWise = contentOfDocument.reduce((r, a) => {
+        r[a.pageNum] = r[a.pageNum] || [];
+        r[a.pageNum].push(a);
+        return r;
+      }, Object.create(null))
+      if (Object.keys(contentPageWise || {}).length < 1) return toast.info("The document selected for processing cannot be empty.");
+      dispatch(setWfToDocument());
+      console.log('finished useEffect in step 2. select workflow')
+    }}, 5000);
+    return () => clearTimeout(timerId);
+  },[copiedWorkflow, selectedWorkflowsToDoc])
 
   const handleRemove = () => {
     if (savedDoc) return;

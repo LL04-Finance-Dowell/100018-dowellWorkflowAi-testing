@@ -156,7 +156,7 @@ const ProcessesPage = ({
                 title='drafts'
                 Card={ProcessCard}
                 cardItems={allProcesses
-                  .filter((process) => process.processing_state === 'draft')
+                  .filter((process) => process.processing_state === 'draft' ||  process.processing_action === "imports")
                   .filter(
                     (process) =>
                       process.data_type === currentUserPortfolioDataType

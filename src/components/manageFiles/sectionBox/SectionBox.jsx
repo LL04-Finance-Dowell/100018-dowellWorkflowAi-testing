@@ -247,16 +247,17 @@ const SectionBox = ({
           const savedProcessesInLocalStorage = JSON.parse(
             localStorage.getItem('user-saved-processes')
           );
+          console.log('the res.data is ',res.data)
           if (savedProcessesInLocalStorage) {
             const processes = [
               ...savedProcessesInLocalStorage,
-              ...res.data.filter((process) => process.processing_state),
+              ...res.data.reverse(),
             ].sort((a, b) => new Date(b?.created_at) - new Date(a?.created_at));
             dispatch(setAllProcesses(processes));
           } else {
             dispatch(
               setAllProcesses(
-                res.data.filter((process) => process.processing_state).reverse()
+                res.data.reverse()
               )
             );
           }
@@ -340,7 +341,7 @@ const SectionBox = ({
   useEffect(() => {
     setCardItemsVar(cardItems);
   }, [cardItems]);
-
+console.log('the card items are ', cardItems)
   return (
     <div className={styles.container}>
       <div className={styles.content__container}>

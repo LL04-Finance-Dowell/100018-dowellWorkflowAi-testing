@@ -11,6 +11,9 @@ import storageSession from "redux-persist/lib/storage/session";
 import { persistReducer, persistStore } from "redux-persist";
 import thunk from "redux-thunk";
 
+///process copy reducer
+import processCopyReducer from "../features/processCopyReducer";
+
 const persistConfig = {
   key: "root",
   storage: storageSession,
@@ -25,6 +28,7 @@ const rootReducer = combineReducers({
   auth: authReducer,
   settings: settingsReducer,
   favorites: favoritesReducer,
+  copyProcess : processCopyReducer,
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
