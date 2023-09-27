@@ -163,7 +163,7 @@ const CopyProcessPage = () => {
               }}
             >
               <h4>
-                Are you sure, do you want to import process = {" ' "}
+                Do you want to import process {" ' "}
                 {processData?.process_title} {" ' "}?
               </h4>
               <div style={{ display: "flex", justifyContent: "center" }}>
