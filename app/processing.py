@@ -636,14 +636,18 @@ class Background:
         #     self.process["process_steps"], self.role, self.username
         # )
 
+        print(steps)
+
         finalized = []
         try:
             no_of_steps = sum(isinstance(e, dict) for e in steps)
             if no_of_steps > 0:
                 for index, step in enumerate(steps):
+
                     if step["stepDocumentCloneMap"]:
                         current_doc_map = [v for document_map in step["stepDocumentCloneMap"] for k, v in document_map.items() if isinstance(v, str)]
-                        print(f"current_step_documents (step-{index}): ", current_doc_map)
+                        # print(f"current_step_documents (step-{index}): ", current_doc_map)
+
                         
                         user_in_viewers = check_user_in_auth_viewers(user=self.username, item=document_id)
                         # print("user_in_viewers: ", user_in_viewers)

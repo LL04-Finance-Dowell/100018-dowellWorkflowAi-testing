@@ -633,8 +633,13 @@ def check_step_items_state(items) -> bool:
 def check_user_in_auth_viewers(user, item) -> bool:
     """Checks if user is in the item auth_viewers"""
     auth_viewers = []
-    viewers = single_query_clones_collection({"_id": item}).get("auth_viewers")
+    clone = single_query_clones_collection({"_id": item})
 
+    if clone:
+        viewers = clone.get("auth_viewers")
+    else:
+        viewers = []
+    
     for i in viewers:
         for k, v in i.items():
             if k != "portfolio":
