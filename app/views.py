@@ -401,32 +401,27 @@ def finalize_or_reject(request, process_id):
             if item_type == 'document' or item_type == "clone":
                 # Get the item state
                 item = single_query_clones_collection({"_id": item_id})
-                print(item.get("document_state"))
 
                 if item.get("document_state") == "finalized":
-                    # Update the metadata
-                    meta_id = get_metadata_id(item_id, item_type)
-                    print("meta_id: ", meta_id)
-                    update_metadata(meta_id, "finalized", item_type)
+                    meta_id = get_metadata_id(item_id, item_type).get("_id")
+                    update_metadata(meta_id, "finalized", item_type).get("_id")
                 elif item.get("document_state") == "processing":
-                    # Update the metadata
-                    meta_id = get_metadata_id(item_id, item_type)
+                    meta_id = get_metadata_id(item_id, item_type).get("_id")
                     update_metadata(meta_id, "processing", item_type)
 
                 return Response("document processed successfully", status.HTTP_200_OK)
             
             if item_type == 'template':
                 item = single_query_template_collection({"_id": item_id})
-                print(item)
+             
                 if item.get("template_state") == "finalized":
-                    # Update the metadata
-                    meta_id = single_query_template_metadata_collection({"collection_id": item_id})
-                    print("meta_id: ", meta_id)
+                    meta_id = single_query_template_metadata_collection({"collection_id": item_id}).get("_id")
                     update_metadata(meta_id, "finalized", item_type)
+
                 elif item.get("document_state") == "processing":
-                    # Update the metadata
-                    meta_id = single_query_template_metadata_collection({"collection_id": item_id})
+                    meta_id = single_query_template_metadata_collection({"collection_id": item_id}).get("_id")
                     update_metadata(meta_id, "processing", item_type)
+
 
                 return Response("template processed successfully", status.HTTP_200_OK)
             
