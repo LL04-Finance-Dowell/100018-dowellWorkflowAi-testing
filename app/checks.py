@@ -11,7 +11,6 @@ from app.mongo_db_connection import (
 
 
 def check_items_state(items) -> list:
-    """Checks if item state is finalized"""
     return [
         single_query_document_collection({"_id": i})["document_state"] == "finalized"
         for i in items
@@ -20,7 +19,6 @@ def check_items_state(items) -> list:
 
 
 def check_that_process_documents_are_finalized(process):
-    """Checks if all process documents are finalized"""
     docs = []
     for step in process["process_steps"]:
         if not step["stepDocumentCloneMap"]:
@@ -33,7 +31,6 @@ def check_that_process_documents_are_finalized(process):
 
 
 def register_user_access(process_steps, authorized_role, user):
-    """Once someone has made changes to their docs"""
     for step in process_steps:
         if step["stepRole"] == authorized_role:
             for clone_map in step["stepDocumentCloneMap"]:
@@ -43,7 +40,6 @@ def register_user_access(process_steps, authorized_role, user):
 
 
 def register_single_user_access(step, authorized_role, user):
-    """Once someone has made changes to their docs"""
     if step["stepRole"] == authorized_role:
         for clone_map in step["stepDocumentCloneMap"]:
             if user in clone_map:
@@ -52,7 +48,6 @@ def register_single_user_access(step, authorized_role, user):
 
 
 def is_finalized(item_id, item_type):
-    """Check for a process item's state"""
     if item_type == "document":
         document = single_query_document_collection({"_id": item_id})
         doc_state = document["document_state"]
@@ -78,7 +73,6 @@ def is_finalized(item_id, item_type):
 
 
 def display_right(display):
-    """Check for the right document display rights."""
     display_allowed = {
         "before_this_step": True,
         "after_this_step": False,
@@ -91,7 +85,6 @@ def display_right(display):
 def location_right(
     location, continent, my_continent, country, my_country, city, my_city
 ):
-    """Check the location selection - verify matching geo information."""
     if location == "any":
         return True
     if location == "select":
@@ -101,7 +94,6 @@ def location_right(
 
 
 def time_limit_right(time, select_time_limits, start_time, end_time, creation_time):
-    """check time limits for processing step."""
     current_time = datetime.now().strftime("%Y-%m-%dT%H:%M")
     current_time_object = datetime.strptime(current_time, "%Y-%m-%dT%H:%M")
     if time == "no_time_limit":
@@ -141,7 +133,6 @@ def time_limit_right(time, select_time_limits, start_time, end_time, creation_ti
 
 
 def step_processing_order(order, process_id, role):
-    """Check members step processing sequence"""
     process = single_query_process_collection({"_id": process_id})
     process_steps = process["process_steps"]
     for step in process_steps:
@@ -255,7 +246,6 @@ def step_processing_order(order, process_id, role):
 
 
 def user_presence(token, user_name, portfolio):
-    """Checking user presence in process links map"""
     link_info = single_query_links_collection(unique_hash=token)
     if link_info["user_name"] == user_name and link_info["auth_portfolio"] == portfolio:
         return True
