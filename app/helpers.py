@@ -529,3 +529,10 @@ def check_user_in_auth_viewers(user, item) -> bool:
         return True
     else:
         return False
+def remove_members_from_steps(data):
+    for step in data.get("process_steps", []):
+        step["stepPublicMembers"] = []
+        step["stepTeamMembers"] = []
+        step["stepUserMembers"] = []
+        step["stepDocumentCloneMap"]=[]
+    

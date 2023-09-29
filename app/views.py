@@ -30,6 +30,7 @@ from app.helpers import (
     remove_favourite,
     validate_id,
     get_metadata_id,
+    remove_members_from_steps,
 )
 from app.mongo_db_connection import (
     add_document_to_folder,
@@ -2073,9 +2074,10 @@ def import_process_settings(request, process_id):
     res_workflow = json.loads(save_to_workflow_collection(workflow_data))
     if not res_workflow.get("isSuccess"):
         return Response("Failed to create workflow", status.HTTP_500_INTERNAL_SERVER_ERROR)
+    remove_members_from_steps(old_process)
     process_data = {
         "process_title": old_process["process_title"],
-        "process_steps": [],
+        "process_steps": old_process["process_steps"],
         "created_by": member,
         "company_id": company_id,
         "data_type": data_type,
