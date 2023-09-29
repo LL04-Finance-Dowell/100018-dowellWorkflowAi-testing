@@ -350,13 +350,14 @@ const EvaluationReportComponent = () => {
     datasets: [
       {
         label: 'Analysis Value',
-        data: [
-          reportData?.normality_analysis?.list1?.actual_areas,
-          reportData?.normality_analysis?.list1?.rectangle_area,
-          reportData?.normality_analysis?.list1?.slope[0], // assuming only one value in slope array
-          reportData?.normality_analysis?.list1?.slope_percentage_deviation,
-          reportData?.normality_analysis?.list1?.calculated_slope
-        ] || [3.42, 3.73, 1.84, 0.25, 1.84], // Placeholder values
+        data: 
+        [
+          reportData?.normality_analysis?.list1?.actual_areas || 3.42,
+          reportData?.normality_analysis?.list1?.rectangle_area || 3.73,
+          reportData?.normality_analysis?.list1?.slope[0] || 1.84, // assuming only one value in slope array
+          reportData?.normality_analysis?.list1?.slope_percentage_deviation || 0.25,
+          reportData?.normality_analysis?.list1?.calculated_slope || 1.84
+        ],
         backgroundColor: '#FFCE56'
       }
     ]
@@ -367,7 +368,11 @@ const EvaluationReportComponent = () => {
     datasets: [
       {
         label: 'Scores Statistics',
-        data: [reportData?.central_tendencies?.normal_dist?.mergedMean, reportData?.central_tendencies?.normal_dist?.mergedMedian, reportData?.central_tendencies?.normal_dist?.mergedMode?.length] || [5.0, 4.0, 4.0], // Mean, median, and mode values from 'central_tendencies'
+        data: [
+          reportData?.central_tendencies?.normal_dist?.mergedMean || 5.0,
+           reportData?.central_tendencies?.normal_dist?.mergedMedian || 4.0,
+            reportData?.central_tendencies?.normal_dist?.mergedMode?.length || 4.0
+        ],
         backgroundColor: [
           'rgba(255, 99, 132, 0.6)',
           'rgba(54, 162, 235, 0.6)',
@@ -412,16 +417,22 @@ const EvaluationReportComponent = () => {
     ]
   };
 
-  const promotersScores = ((reportData?.score_list?.filter(score => score === 9 || score === 10).length) / reportData.score_list.length) * 100;
-  console.log("promotersScores", promotersScores)
-  const passiveScores = ((reportData?.score_list?.filter(score => score === 7 || score === 8).length) / reportData.score_list.length) * 100;
-  const DetractorsScores = ((reportData?.score_list?.filter(score => score > 0 && score <= 6).length) / reportData.score_list.length) * 100;
+  let promotersScores = 0;
+  let passiveScores = 0;
+  let DetractorsScores = 0;
+  if (reportData && reportData.score_list) {
+    const scoreListLength = reportData.score_list.length;
+  
+    promotersScores = ((reportData.score_list.filter(score => score === 9 || score === 10).length) / scoreListLength) * 100;
+    passiveScores = ((reportData.score_list.filter(score => score === 7 || score === 8).length) / scoreListLength) * 100;
+    DetractorsScores = ((reportData.score_list.filter(score => score > 0 && score <= 6).length) / scoreListLength) * 100;
+  }
 
   const npsScoreDistributionData = {
     labels: ['Detractors', 'Passives', 'Promoters'],
     datasets: [
       {
-        data: [DetractorsScores, passiveScores, promotersScores] || [20, 10, 65], // Assuming percentages for each category
+        data: [DetractorsScores || 20, passiveScores || 10, promotersScores || 65], // Assuming percentages for each category
         backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56'],
         hoverBackgroundColor: ['#FF6384', '#36A2EB', '#FFCE56']
       }
