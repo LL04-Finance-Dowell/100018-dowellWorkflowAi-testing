@@ -15,7 +15,6 @@ const UserDetail = () => {
   const { userDetail } = useSelector((state) => state.auth);
   const { creditResponse } = useSelector((state) => state.app);
 
-  console.log("userDetail", userDetail, "creditResponse", creditResponse)
   const { t } = useTranslation();
 
   const handleMouseEnter = () => {
@@ -34,7 +33,7 @@ const UserDetail = () => {
 
   const handleActivateWorkspace = () => {
     // Assuming you have the API key stored in a variable apiKey
-    const apiKey = creditResponse.apiKey;
+    const apiKey = creditResponse.api_key;
 
     // API endpoint
     const endpoint = `https://100105.pythonanywhere.com/api/v3/user/?type=activate_key&api_key=${apiKey}`;
@@ -51,7 +50,6 @@ const UserDetail = () => {
   };
 
   const handleBuyCredits = () => {
-    // window.location.href = 'https://ll05-ai-dowell.github.io/100105-DowellApiKeySystem/';
     window.open('https://ll05-ai-dowell.github.io/100105-DowellApiKeySystem/', '_blank');
   };
 
