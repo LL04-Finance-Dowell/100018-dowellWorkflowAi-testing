@@ -882,9 +882,8 @@ def finalize_item(item_id, state, item_type, message):
                 },
                 "update_field": {
                     "document_state": state,
+                    "template_state": "saved",     
                     "message":message
-
-
                 },
                 "platform": "bangalore",
             }

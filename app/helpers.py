@@ -112,6 +112,7 @@ def cloning_document(document_id, auth_viewers, parent_id, process_id):
                     "parent_id": parent_id,
                     "process_id": process_id,
                     "folders": "untitled",
+                    "template":document["template"],
                     "message":""
                 }
             )
@@ -214,6 +215,7 @@ def cloning_clone(clone_id, auth_viewers, parent_id, process_id):
                     "parent_id": parent_id,
                     "process_id": process_id,
                     "folders": "untitled",
+                    "template":document["template"],
                     "message":""
 
                 }
@@ -563,7 +565,8 @@ def check_all_finalized_true(data, process_type) -> bool:
         doc_states = []
         for doc in step_document_clone_map:
             for key, value in doc.items():
-                if key != "accessed":
+
+                if key != "accessed":                
                     if process_type == "document":
                         doc_state = single_query_clones_collection({"_id": value}).get(
                             "document_state"

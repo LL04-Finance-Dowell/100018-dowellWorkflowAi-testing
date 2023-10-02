@@ -615,6 +615,7 @@ class Background:
         self.username = username
         self.message = message
 
+
     def register_user_access(process_steps, authorized_role, user):
         """Once someone has made changes to their docs"""
         for step in process_steps:
@@ -635,8 +636,9 @@ class Background:
         # Background.register_user_access(
         #     self.process["process_steps"], self.role, self.username
         # )
-
+        
         finalized = []
+
         try:
             no_of_steps = sum(isinstance(e, dict) for e in steps)
             if no_of_steps > 0:
@@ -645,7 +647,6 @@ class Background:
                     if step["stepDocumentCloneMap"]:
                         current_doc_map = [v for document_map in step["stepDocumentCloneMap"] for k, v in document_map.items() if isinstance(v, str)]
                         print(f"current_step_documents (step-{index}): ", current_doc_map)
-
                         
                         user_in_viewers = check_user_in_auth_viewers(user=self.username, item=document_id)
                         # print("user_in_viewers: ", user_in_viewers)
@@ -861,15 +862,13 @@ class Background:
                                         authorize_metadata(
                                             metadata_id, user, process_id, "document"
                                         )
+                       
                         update_process(process_id, steps, processing_state)
                 # Check that all documents are finalized
                 all_accessed_true = check_all_finalized_true(steps, process_type)
                 print(all_accessed_true)
                 if all_accessed_true == True:
-                    if process_type == "document":
                         update_process(process_id, steps, "finalized")
-                    elif process_type == "template":
-                        update_process(process_id, steps, "saved")
                 else:
                     update_process(process_id, steps, "processing")
         except Exception as e:
