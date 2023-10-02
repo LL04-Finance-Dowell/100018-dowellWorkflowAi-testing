@@ -67,6 +67,8 @@ const WorkflowLayout = ({ children }) => {
   const { searchItemsStatus, setSearchItems, updateSearchItemStatus } =
     useAppContext();
 
+  const [showUserDetail, setShowUserDetail] = useState(false);
+
   const handleClick = () => {
     if (session_id) {
       setCreateNewPortfolioLoading(true);
@@ -79,7 +81,18 @@ const WorkflowLayout = ({ children }) => {
 
   useCloseElementOnEscapekeyClick(() => setCreateNewPortfolioLoading(false));
 
-  const handleMouseEnter = () => {
+  const handleMouseEnter = (e) => {
+  //   const top = e.target.getBoundingClientRect().top;
+  //   const left = e.target.getBoundingClientRect().left + 25;
+
+  //   dispatch(
+  //     setUserDetailPosition({
+  //       top,
+  //       left,
+  //     })
+  //   );
+
+    console.log(userDetailPosition)
     dispatch(setUserDetailPosition(userDetailPosition));
   };
 
@@ -320,7 +333,7 @@ const WorkflowLayout = ({ children }) => {
         {/* /////////// */}
         {userDetailPosition && (
           <div
-            onClick={handleMouseEnter}
+            onMouseOver={(e) => handleMouseEnter(e)}
             onMouseLeave={handleMouseLeave}
             style={{
               position: 'fixed',

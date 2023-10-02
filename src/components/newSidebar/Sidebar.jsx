@@ -273,7 +273,7 @@ const Sidebar = ({toggleSidebar, isMobile}) => {
           cursor="pointer"
           size={25}
           onMouseEnter={(e) => handleToggleUserDetail(e)}
-          onMouseLeave={handleMouseLeave}
+          // onMouseLeave={handleMouseLeave}
         />
       </div>
       <div className={styles.user__box}>
