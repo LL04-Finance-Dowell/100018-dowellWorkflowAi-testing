@@ -381,7 +381,7 @@ def finalize_or_reject(request, process_id):
                 f"document already processed as `{current_state}`!", status.HTTP_200_OK
             )
     elif item_type == "template":
-        if check and current_state != "saved":
+        if check and current_state != "draft":
             return Response(
                 f"template already processed as `{current_state}`!", status.HTTP_200_OK
             )
@@ -392,15 +392,14 @@ def finalize_or_reject(request, process_id):
         try:
             process = single_query_process_collection({"_id": process_id})
             background = Background(process, item_type, item_id, role, user, message)
-            background.processing()
-
 
             if user_type == "public":
                 link_id = request.data["link_id"]
                 register_finalized(link_id)
 
             if item_type == 'document' or item_type == "clone":
-                # Get the item state
+                background.document_processing()
+
                 item = single_query_clones_collection({"_id": item_id})
 
                 if item:
@@ -412,6 +411,20 @@ def finalize_or_reject(request, process_id):
                         update_metadata(meta_id, "processing", item_type)
 
                 return Response("document processed successfully", status.HTTP_200_OK)
+            
+            elif item_type == 'template':
+                background.template_processing()
+                item = single_query_template_collection({"_id": item_id})
+
+                if item:
+                    if item.get("template_state") == "saved":
+                        meta_id = get_metadata_id(item_id, item_type)
+                        update_metadata(meta_id, "finalized", item_type)
+                    elif item.get("template_state") == "processing":
+                        meta_id = get_metadata_id(item_id, item_type)
+                        update_metadata(meta_id, "processing", item_type)
+
+                return Response("template processed successfully", status.HTTP_200_OK)
             
         except Exception as err:
             print(err)
