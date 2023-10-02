@@ -380,6 +380,11 @@ def finalize_or_reject(request, process_id):
             return Response(
                 f"document already processed as `{current_state}`!", status.HTTP_200_OK
             )
+    elif item_type == "template":
+        if check and current_state != "saved":
+            return Response(
+                f"template already processed as `{current_state}`!", status.HTTP_200_OK
+            )
 
     res = json.loads(finalize_item(item_id, state, item_type, message))
 
@@ -397,12 +402,6 @@ def finalize_or_reject(request, process_id):
             if item_type == 'document' or item_type == "clone":
                 # Get the item state
                 item = single_query_clones_collection({"_id": item_id})
-                
-                # Processing the template
-                document_processed = single_query_document_collection({"_id": item_id})
-                related_template_id = single_query_template_collection({"_id": document_processed["template"]}).get("_id")
-
-                finalize_item(related_template_id, state, "template", message)
 
                 if item:
                     if item.get("document_state") == "finalized":

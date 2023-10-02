@@ -636,6 +636,8 @@ class Background:
         # Background.register_user_access(
         #     self.process["process_steps"], self.role, self.username
         # )
+
+        print(self.process)
         
         finalized = []
 
@@ -648,7 +650,7 @@ class Background:
                         current_doc_map = [v for document_map in step["stepDocumentCloneMap"] for k, v in document_map.items() if isinstance(v, str)]
                         print(f"current_step_documents (step-{index}): ", current_doc_map)
                         
-                        user_in_viewers = check_user_in_auth_viewers(user=self.username, item=document_id)
+                        user_in_viewers = check_user_in_auth_viewers(user=self.username, item=document_id, process_type=process_type)
                         # print("user_in_viewers: ", user_in_viewers)
 
                         if (not user_in_viewers):
@@ -658,36 +660,63 @@ class Background:
                         elif document_id in current_doc_map:
                             for document_map in step.get("stepDocumentCloneMap"):
                                 for k, v in list(document_map.items()):
-                                    if (
-                                        isinstance(v, str)
-                                        and single_query_clones_collection(
-                                            {"_id": v}
-                                        ).get("document_state")
-                                        == "processing"
-                                    ):
-                                        continue
-                                    elif (
-                                        isinstance(v, str)
-                                        and single_query_clones_collection(
-                                            {"_id": v}
-                                        ).get("document_state")
-                                        == "finalized"
-                                        and k
-                                        in [
-                                            mem["member"]
-                                            for mem in (
-                                                single_query_clones_collection(
-                                                    {"_id": v}
-                                                ).get("auth_viewers", [])
+                                    if process_type == "document":
+                                        if (
+                                            isinstance(v, str)
+                                            and single_query_clones_collection(
+                                                {"_id": v}
+                                            ).get("document_state")
+                                            == "processing"
+                                        ):
+                                            continue
+                                        elif (
+                                            isinstance(v, str)
+                                            and single_query_clones_collection(
+                                                {"_id": v}
+                                            ).get("document_state")
+                                            == "finalized"
+                                            and k
+                                            in [
+                                                mem["member"]
+                                                for mem in (
+                                                    single_query_clones_collection(
+                                                        {"_id": v}
+                                                    ).get("auth_viewers", [])
+                                                )
+                                            ]
+                                        ):
+                                            register_single_user_access(
+                                                step, step.get("stepRole"), k
                                             )
-                                        ]
-                                    ):
-                                        register_single_user_access(
-                                            step, step.get("stepRole"), k
-                                        )
-                                        finalized.append(v)
+                                            finalized.append(v)
+                                        else:
+                                            continue
+
+                                    # template process type
                                     else:
-                                        continue
+                                        if(
+                                            isinstance(v, str)
+                                            and single_query_template_collection(
+                                                {"_id": v}
+                                            ).get("template_state")
+                                            == "saved"
+                                            and k
+                                            in [
+                                                mem["member"]
+                                                for mem in (
+                                                    single_query_template_collection(
+                                                        {"_id": v}
+                                                    ).get("auth_viewers", [])
+                                                )
+                                            ]
+                                        ):
+                                            register_single_user_access(
+                                                step, step.get("stepRole"), k
+                                            )
+                                            finalized.append(v)
+                                        else:
+                                            continue
+
                         else:
                             if (
                                 document_id not in current_doc_map
@@ -717,66 +746,86 @@ class Background:
                                             for item in prev_docs:
                                                 key = next(iter(item))
                                                 my_key = item[key]
-                                                if (
+
+                                                if process_type == "template":
+                                                    if (
+                                                        "accessed" in item
+                                                        and single_query_template_collection(
+                                                            {"_id": my_key}
+                                                        ).get("template_state")
+                                                        == "saved"
+                                                    ):
+                                                        step1_documents.append(my_key)
+
+                                                else:
+                                                    if (
                                                     "accessed" in item
                                                     and single_query_clones_collection(
                                                         {"_id": my_key}
                                                     ).get("document_state")
                                                     == "finalized"
-                                                ):
-                                                    step1_documents.append(my_key)
+                                                    ):
+                                                        step1_documents.append(my_key)
+
                                         for document in step1_documents:
                                             for user in step.get("stepTeamMembers"):
                                                 authorize(
                                                     document,
                                                     user,
                                                     process_id,
-                                                    "document",
+                                                    process_type,
                                                 )
                                                 step.get("stepDocumentCloneMap").append(
                                                     {user["member"]: document}
                                                 )
                                                 # Change auth viewers in the metadata as well
                                                 metadata_id = get_metadata_id(
-                                                    document, "document"
+                                                    document, process_type
                                                 )
+
+
                                                 authorize_metadata(
-                                                    metadata_id, user, process_id, "document"
+                                                    metadata_id, user, process_id, process_type
                                                 )
+                                           
+
                                             for user in step.get("stepPublicMembers"):
+
                                                 authorize(
                                                     document,
                                                     user,
                                                     process_id,
-                                                    "document",
+                                                    process_type,
                                                 )
                                                 step.get("stepDocumentCloneMap").append(
                                                     {user["member"]: document}
                                                 )
                                                 # Change auth viewers in the metadata as well
                                                 metadata_id = get_metadata_id(
-                                                    document, "document"
+                                                    document, process_type
                                                 )
                                                 authorize_metadata(
-                                                    metadata_id, user, process_id, "document"
+                                                    metadata_id, user, process_id, process_type
                                                 )
+                                                
                                             for user in step.get("stepUserMembers"):
-                                                authorize(
-                                                    document,
-                                                    user,
-                                                    process_id,
-                                                    "document",
-                                                )
-                                                step.get("stepDocumentCloneMap").append(
-                                                    {user["member"]: document}
-                                                )
-                                                # Change auth viewers in the metadata as well
-                                                metadata_id = get_metadata_id(
-                                                    document, "document"
-                                                )
-                                                authorize_metadata(
-                                                    metadata_id, user, process_id, "document"
-                                                )
+                                                    authorize(
+                                                        document,
+                                                        user,
+                                                        process_id,
+                                                        process_type,
+                                                    )
+                                                    step.get("stepDocumentCloneMap").append(
+                                                        {user["member"]: document}
+                                                    )
+                                                    # Change auth viewers in the metadata as well
+                                                    metadata_id = get_metadata_id(
+                                                        document, process_type
+                                                    )
+                                                    authorize_metadata(
+                                                        metadata_id, user, process_id, process_type
+                                                    )
+                                              
                     else:
                         if step.get("stepTaskType") == "request_for_task":
                             users = [
@@ -829,10 +878,10 @@ class Background:
                                         )
                                         # Change auth viewers in the metadata as well
                                         metadata_id = get_metadata_id(
-                                            document, "document"
+                                            document, process_type
                                         )
                                         authorize_metadata(
-                                            metadata_id, user, process_id, "document"
+                                            metadata_id, user, process_id, process_type
                                         )
                                     for user in step.get("stepPublicMembers"):
                                         authorize(
@@ -843,10 +892,10 @@ class Background:
                                         )
                                         # Change auth viewers in the metadata as well
                                         metadata_id = get_metadata_id(
-                                            document, "document"
+                                            document, process_type
                                         )
                                         authorize_metadata(
-                                            metadata_id, user, process_id, "document"
+                                            metadata_id, user, process_id, process_type
                                         )
                                     for user in step.get("stepUserMembers"):
                                         authorize(
@@ -857,10 +906,10 @@ class Background:
                                         )
                                         # Change auth viewers in the metadata as well
                                         metadata_id = get_metadata_id(
-                                            document, "document"
+                                            document, process_type
                                         )
                                         authorize_metadata(
-                                            metadata_id, user, process_id, "document"
+                                            metadata_id, user, process_id, process_type
                                         )
                        
                         update_process(process_id, steps, processing_state)
