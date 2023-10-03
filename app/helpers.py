@@ -633,24 +633,16 @@ def check_step_items_state(items) -> bool:
     return True
 
 
-def check_user_in_auth_viewers(user, item, process_type) -> bool:
-    """Checks if user is in the item auth_viewers"""
+def check_user_in_auth_viewers(user, item) -> bool:
     auth_viewers = []
-    if process_type == "document":
-        viewers = single_query_clones_collection({"_id": item})
-    else:
-        viewers = single_query_template_collection({"_id": item})
+    viewers = single_query_clones_collection({"_id": item}).get("auth_viewers")
+    for i in viewers:
+        for k, v in i.items():
+            if k != "portfolio":
+                auth_viewers.append(v)
 
-    if viewers:
-        for i in viewers.get("auth_viewers"):
-            for k, v in i.items():
-                if k != "portfolio":
-                    auth_viewers.append(v)
-
-        if user in auth_viewers:
-            return True
-        else:
-            return False
+    if user in auth_viewers:
+        return True
     else:
         return False
 

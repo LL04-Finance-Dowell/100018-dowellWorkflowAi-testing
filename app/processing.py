@@ -640,7 +640,7 @@ class Background:
         finalized = []
         try:
             no_of_steps = sum(isinstance(e, dict) for e in steps)
-            user_in_viewers = check_user_in_auth_viewers(user=self.username, item=document_id, process_type=process_type)
+            user_in_viewers = check_user_in_auth_viewers(user=self.username, item=document_id)
 
             if no_of_steps > 0:
                 for index, step in enumerate(steps):
@@ -879,7 +879,7 @@ class Background:
 
             try:
                 no_of_steps = sum(isinstance(e, dict) for e in steps)
-                user_in_viewers = check_user_in_auth_viewers(user=self.username, item=template_id, process_type=process_type)
+                user_in_viewers = check_user_in_auth_viewers(user=self.username, item=template_id)
 
                 if no_of_steps > 0:
                     for index, step in enumerate(steps):
