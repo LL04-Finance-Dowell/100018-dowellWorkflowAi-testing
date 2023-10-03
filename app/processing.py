@@ -640,15 +640,13 @@ class Background:
         finalized = []
         try:
             no_of_steps = sum(isinstance(e, dict) for e in steps)
-
             if no_of_steps > 0:
                 for index, step in enumerate(steps):
                     if step["stepDocumentCloneMap"]:
                         current_doc_map = [v for document_map in step["stepDocumentCloneMap"] for k, v in document_map.items() if isinstance(v, str)]
-                        user_in_viewers = check_user_in_auth_viewers(user=self.username, item=document_id, item_type="document")
-
                         print(f"current_step_documents (step-{index}): ", current_doc_map)
                         
+                        user_in_viewers = check_user_in_auth_viewers(user=self.username, item=document_id, item_type="document")
                         # print("user_in_viewers: ", user_in_viewers)
 
                         if (not user_in_viewers):
@@ -856,7 +854,7 @@ class Background:
                                         )
                         update_process(process_id, steps, processing_state)
                 # Check that all documents are finalized
-                all_accessed_true = check_all_finalized_true(steps)
+                all_accessed_true = check_all_finalized_true(steps, process_type)
                 if all_accessed_true:
                     update_process(process_id, steps, "finalized")
                 else:
@@ -865,7 +863,6 @@ class Background:
             print("got error", e)
             finalize_item(self.item_id, "processing", self.item_type, self.message)
             return
-    
 
     def template_processing(self):
             steps = self.process["process_steps"]
