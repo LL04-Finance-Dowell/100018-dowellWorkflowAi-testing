@@ -27,7 +27,6 @@ from .mongo_db_connection import (
 
 
 def register_finalized(link_id):
-    """Master single link as finalized"""
     response = requests.put(
         f"{MASTERLINK_URL}?link_id={link_id}",
         data=json.dumps({"is_finalized": True}),
@@ -44,7 +43,6 @@ def get_query_param_value_from_url(url, query_param):
 
 
 def paginate(dataset, page, limit):
-    """Paginate/Chunk Results"""
     if dataset is not None:
         elements_to_return = page * limit
         if elements_to_return > len(dataset):
@@ -55,7 +53,6 @@ def paginate(dataset, page, limit):
 
 
 def register_public_login(qrid, org_name):
-    """Register a public QRID as used"""
     res = requests.post(
         url=PUBLIC_LOGIN_API,
         data=json.dumps(
@@ -80,7 +77,6 @@ def has_tilde_characters(string):
 
 
 def cloning_document(document_id, auth_viewers, parent_id, process_id):
-    """creating a document copy"""
     try:
         viewers = []
         for m in auth_viewers:
@@ -116,7 +112,6 @@ def cloning_document(document_id, auth_viewers, parent_id, process_id):
                 }
             )
         )
-
         if save_res["isSuccess"]:
             save_res_metadata = json.loads(
                 save_to_clone_metadata_collection(
@@ -183,7 +178,6 @@ def cloning_document(document_id, auth_viewers, parent_id, process_id):
 
 
 def cloning_clone(clone_id, auth_viewers, parent_id, process_id):
-    """creating a document copy"""
     try:
         viewers = []
         for m in auth_viewers:
@@ -220,10 +214,8 @@ def cloning_clone(clone_id, auth_viewers, parent_id, process_id):
                 }
             )
         )
-
         if save_res["isSuccess"]:
             save_res_metadata = json.loads(
-                
                 save_to_clone_metadata_collection(
                     {
                         "document_name": document_name,
@@ -246,7 +238,6 @@ def cloning_clone(clone_id, auth_viewers, parent_id, process_id):
 
 
 def cloning_process(process_id, created_by, creator_portfolio):
-    """creating a process copy"""
     try:
         process = single_query_process_collection({"_id": process_id})
         save_res = json.loads(
@@ -274,18 +265,6 @@ def cloning_process(process_id, created_by, creator_portfolio):
 
 
 def access_editor(item_id, item_type):
-    """
-    Access to document/template
-
-    This function generates a payload for accessing a document or template based on the given item_id and item_type.
-
-    Parameters:
-        item_id (str): The unique identifier of the document or template.
-        item_type (str): The type of item ('document' or 'template').
-
-    Returns:
-        dict: A dictionary containing the payload with necessary details for accessing the document or template.
-    """
     team_member_id = (
         "11689044433"
         if item_type == "document"
@@ -356,23 +335,8 @@ def access_editor(item_id, item_type):
         return
 
 
-# will be updated
+#TODO: will be updated
 def access_editor_metadata(item_id, item_type, metadata_id):
-    """
-    Access to document/template
-
-    This function generates a payload for accessing a document or template based on the given item_id and item_type.
-
-    Parameters:
-        item_id (str): The unique identifier of the document or template.
-        item_type (str): The type of item ('document' or 'template').
-
-    Returns:
-        dict: A dictionary containing the payload with necessary details for accessing the document or template.
-    """
-
-    # Determine the team_member_id based on the item_type
-    # team_member_id = "11689044433" if item_type == "document" else "22689044433"
     team_member_id = (
         "11689044433"
         if item_type == "document"
@@ -380,8 +344,6 @@ def access_editor_metadata(item_id, item_type, metadata_id):
         if item_type == "clone"
         else "22689044433"
     )
-
-    # Set collection, document, and field variables based on the item_type
     if item_type == "document":
         collection = "DocumentReports"
         document = "documentreports"
@@ -394,8 +356,6 @@ def access_editor_metadata(item_id, item_type, metadata_id):
         collection = "TemplateReports"
         document = "templatereports"
         field = "template_name"
-
-    # Get the item name from the appropriate collection based on item_type and item_id
     if item_type == "document":
         item_name = single_query_document_collection({"_id": item_id})
     elif item_type == "clone":
@@ -403,8 +363,6 @@ def access_editor_metadata(item_id, item_type, metadata_id):
     else:
         item_name = single_query_template_collection({"_id": item_id})
     name = item_name.get(field, "")
-
-    # Create and return the payload dictionary
     payload = {
         "product_name": "Workflow AI",
         "details": {
@@ -441,7 +399,6 @@ def access_editor_metadata(item_id, item_type, metadata_id):
         return
 
 
-# complete document and mark as complete
 def processing_complete(process):
     if process["processing_state"] == "completed":
         return True
@@ -449,7 +406,6 @@ def processing_complete(process):
 
 
 def validate_id(id):
-    """Validate anything mongoDB object id"""
     try:
         if bson.objectid.ObjectId.is_valid(id):
             return True
@@ -460,7 +416,6 @@ def validate_id(id):
 
 
 def list_favourites(company_id):
-    """A List of bookmarks/favourites"""
     try:
         documents = FavoriteDocument.objects.filter(company_id=company_id)
         templates = FavoriteTemplate.objects.filter(company_id=company_id)
@@ -479,7 +434,6 @@ def list_favourites(company_id):
 
 
 def create_favourite(item, item_type, username):
-    """Add to favourites/Bookmarks"""
     msg = "Item added to bookmarks"
     if item_type == "workflow":
         data = {
@@ -518,7 +472,6 @@ def create_favourite(item, item_type, username):
 
 
 def remove_favourite(identifier, type, username):
-    """Remove Item from favourites"""
     msg = "Item removed from bookmarks."
     if type == "workflow":
         try:
@@ -550,7 +503,6 @@ def remove_favourite(identifier, type, username):
 
 
 def check_items_state(items) -> list:
-    """Checks if item state is finalized"""
     return [
         single_query_document_collection({"_id": i})["document_state"] == "finalized"
         for i in items
@@ -594,7 +546,6 @@ def check_all_finalized_true(data, process_type) -> bool:
 
 
 def get_metadata_id(item_id, item_type):
-    """ Gets gthe inserted_id of the metadata for the respective item_id"""
     if item_type == "document":
         try:
             coll_id = single_query_document_metadata_collection({"collection_id": item_id})["_id"]
@@ -617,7 +568,6 @@ def get_metadata_id(item_id, item_type):
 
 
 def check_step_items_state(items) -> bool:
-    """Checks if item state is finalized"""
     doc_states = []
     for i in items:
         doc_state = single_query_clones_collection({"_id": i}).get("document_state")
@@ -650,4 +600,11 @@ def check_user_in_auth_viewers(user, item, item_type) -> bool:
         return True
     else:
         return False
-
+    
+def remove_members_from_steps(data):
+    for step in data.get("process_steps", []):
+        step["stepPublicMembers"] = []
+        step["stepTeamMembers"] = []
+        step["stepUserMembers"] = []
+        step["stepDocumentCloneMap"]=[]
+    
