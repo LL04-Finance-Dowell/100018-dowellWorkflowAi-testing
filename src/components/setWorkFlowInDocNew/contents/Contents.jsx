@@ -42,6 +42,7 @@ const Contents = ({
   }; */
 
   const handleContentSelection = (valueAsJSON, contentPage) => {
+    // console.log('the valueAsJSON, contentPage are ',valueAsJSON, contentPage)
     const contentStepAlreadyAdded = tableOfContentForStep.find(
       (step) =>
         step.workflow === docCurrentWorkflow._id &&
@@ -74,7 +75,17 @@ const Contents = ({
       r[a.pageNum] = r[a.pageNum] || [];
       r[a.pageNum].push(a);
       return r;
-    }, Object.create(null));
+    }, {});
+    
+    // Determine the range of page numbers
+    const minPageNum = Math.min(...contents.map((content) => content.pageNum));
+    const maxPageNum = Math.max(...contents.map((content) => content.pageNum));
+    
+    // Initialize the object with empty arrays for all page numbers in the range
+    for (let pageNum = minPageNum; pageNum <= maxPageNum; pageNum++) {
+      contentsGroupedByPageNum[pageNum] = contentsGroupedByPageNum[pageNum] || [{"pageNum": pageNum}];
+    }
+    
 
     setContentsPageWise(contentsGroupedByPageNum);
 
@@ -121,8 +132,7 @@ const Contents = ({
     );
   };
 
-
-
+ 
   return (
     <div
       style={{
