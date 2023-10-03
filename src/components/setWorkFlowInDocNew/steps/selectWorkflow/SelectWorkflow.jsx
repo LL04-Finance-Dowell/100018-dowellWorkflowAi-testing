@@ -11,6 +11,8 @@ import {
   setWfToDocument,
 } from '../../../../features/app/appSlice';
 
+import { startConnecting } from '../../../../features/processCopyReducer';
+
 import { useTranslation } from 'react-i18next';
 import { toast } from 'react-toastify';
 
@@ -24,23 +26,30 @@ const SelectWorkflow = ({ savedDoc }) => {
 
   ////copied workflow
   const copiedWorkflow = useSelector((state) => state.copyProcess.workflow);
+  const startCopyingWF = useSelector((state)=> state.copyProcess.startSelectWorkflow)
 
-  useEffect(()=>{
-    console.log('start useEffect in step 2. select workflow',selectedWorkflowsToDoc?.length)
+  useEffect(() => {
+    if (!copiedWorkflow) return;
+
+    console.log('start useEffect in step 2. select workflow',startCopyingWF ,selectedWorkflowsToDoc?.length)
     const timerId = setTimeout(() => {
-    if (selectedWorkflowsToDoc?.length >= 1 && copiedWorkflow !==null) {
-     
-      const contentPageWise = contentOfDocument.reduce((r, a) => {
-        r[a.pageNum] = r[a.pageNum] || [];
-        r[a.pageNum].push(a);
-        return r;
-      }, Object.create(null))
-      if (Object.keys(contentPageWise || {}).length < 1) return toast.info("The document selected for processing cannot be empty.");
+    if (selectedWorkflowsToDoc?.length >= 1 && copiedWorkflow !==null && startCopyingWF) {
+    //  console.log('entered to stpe 2. slect workflow')
+      // const contentPageWise = contentOfDocument.reduce((r, a) => {
+      //   r[a.pageNum] = r[a.pageNum] || [];
+      //   r[a.pageNum].push(a);
+      //   return r;
+      // }, Object.create(null))
+   
+      // if (Object.keys(contentPageWise || {}).length < 1) return toast.info("The document selected for processing cannot be empty.");
       dispatch(setWfToDocument());
-      console.log('finished useEffect in step 2. select workflow')
-    }}, 5000);
+      // console.log('middle of step 2')
+      dispatch(startConnecting())
+      // console.log('finished useEffect in step 2. select workflow')
+    }}, 2000);
     return () => clearTimeout(timerId);
-  },[copiedWorkflow, selectedWorkflowsToDoc])
+  },[copiedWorkflow, selectedWorkflowsToDoc, startCopyingWF])
+
 
   const handleRemove = () => {
     if (savedDoc) return;

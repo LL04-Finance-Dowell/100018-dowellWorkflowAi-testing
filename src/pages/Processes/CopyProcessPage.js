@@ -13,7 +13,7 @@ import { setAllWorkflows } from "../../features/workflow/workflowsSlice";
 import { setAllProcesses } from "../../features/app/appSlice";
 import { LoadingSpinner } from "../../components/LoadingSpinner/LoadingSpinner";
 
-import { setCopiedDocument, setCopiedWorkflow } from "../../features/processCopyReducer";
+import { setCopiedDocument, setCopiedWorkflow ,setProcessStepCopy} from "../../features/processCopyReducer";
 
 const CopyProcessPage = () => {
   const { userDetail } = useSelector((state) => state.auth);
@@ -25,10 +25,11 @@ const CopyProcessPage = () => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    
+    // console.log('effect entered')
     axios.get(`https://100094.pythonanywhere.com/v1/processes/${process_id}/`)
       .then((response) => {
         setProcessData(response.data);
+        // console.log(response.data)
       })
       .catch((error) => {
         console.error('Error fetching data:', error);
@@ -59,7 +60,7 @@ const CopyProcessPage = () => {
           : userDetail?.portfolio_info[0].portfolio_name,
       org_name: "workflowAI",
     };
-    console.log(JSON.stringify(data));
+    // console.log(JSON.stringify(data));
   
     try {
       const response = await axios.post(
@@ -67,13 +68,15 @@ const CopyProcessPage = () => {
         data
       );
   
-      console.log("the response is ", response.data);
+      // console.log("the response is ", response.data);
       // setProcessCopy(response.data);
         const doc_id = response.data?.document_id
         const workflow_id = response.data?.workflow_id
+        const process_ID = response.data?.process_id
+
         if(doc_id){
           const docData = await axios.get(`https://100094.pythonanywhere.com/v1/documents/${doc_id}/`);
-          console.log('the response for the copied document is ', docData)
+          // console.log('the response for the copied document is ', docData)
           dispatch(setCopiedDocument(docData))
         }
 
@@ -91,10 +94,10 @@ const CopyProcessPage = () => {
           )
         )
       );
-      console.log('the refreshed doc data is ', res1.data)
+      // console.log('the refreshed doc data is ', res1.data)
       if(doc_id){
         const findDoc = res1.data.documents.find((item)=>item.collection_id == doc_id)
-        console.log('the response for the copied document is ', findDoc)
+        // console.log('the response for the copied document is ', findDoc)
         dispatch(setCopiedDocument(findDoc))
       }
   
@@ -111,10 +114,10 @@ const CopyProcessPage = () => {
           )
         )
       );
-      console.log('the refreshed workflow data is ', res2.data)
+      // console.log('the refreshed workflow data is ', res2.data)
       if(workflow_id){
         const workflowData = res2.data.workflows.find((item)=>item._id == workflow_id)
-        console.log('the response for the copied workflow is ', workflowData)
+        // console.log('the response for the copied workflow is ', workflowData)
         dispatch(setCopiedWorkflow(workflowData))
       }
   
@@ -122,7 +125,21 @@ const CopyProcessPage = () => {
       const savedProcessesInLocalStorage = JSON.parse(
         localStorage.getItem("user-saved-processes")
       );
-  
+
+      ///save the process steps
+      // console.log('the processID is ', process_ID)
+      try {
+        const response5 = await fetch(`https://100094.pythonanywhere.com/v1/processes/${process_ID}/`);
+        if (!response5.ok) {
+          throw new Error('Network response was not ok');
+        }
+        const data = await response5.json();
+        // console.log('the copied process steps are ', data)
+        dispatch(setProcessStepCopy(data));
+      } catch (error) {
+        console.log('An error occurred while fetching process data:', error);
+      }
+      
       // console.log("the res3.data is ", res3.data);
       if (savedProcessesInLocalStorage) {
         const processes = [

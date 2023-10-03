@@ -26,6 +26,8 @@ import { contentDocument } from '../../../../features/document/asyncThunks';
 import { setCurrentDocToWfs } from '../../../../features/app/appSlice';
 import { setContentOfDocument } from '../../../../features/document/documentSlice';
 
+import { startCopyingDocument } from '../../../../features/processCopyReducer';
+
 const SelectDoc = ({ savedDoc }) => {
   const dispatch = useDispatch();
   const { t } = useTranslation();
@@ -52,7 +54,7 @@ useEffect(()=>{
   if(copiedDocument !== null){
     setCurrentSelectedDocument(copiedDocument)
     setSelectedDocuments((prev) => [copiedDocument]);
-
+    dispatch(startCopyingDocument())
     // dispatch(contentDocument(copiedDocument.collection_id));
     // dispatch(setCurrentDocToWfs(copiedDocument));
     // dispatch(setContentOfDocument(null));

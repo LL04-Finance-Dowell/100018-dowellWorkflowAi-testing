@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import globalStyles from "../../connectWorkFlowToDoc.module.css";
 import { v4 as uuidv4 } from "uuid";
 import { useForm } from "react-hook-form";
@@ -25,6 +26,63 @@ const AssignDocumentMap = ({ currentStepIndex, stepsPopulated }) => {
     useSelector((state) => state.app);
   const dispatch = useDispatch();
 
+  const [copiedDoc, setCopiedDoc] = useState([])
+
+  ////copied process
+  const copiedProcess = useSelector((state) => state.copyProcess.processStep);
+  
+  useEffect(() => {
+    if (copiedProcess == null) {
+      return;
+    }
+    // console.log('entered the pick document phase', copiedProcess.process_steps);
+  
+    // Create a temporary array to accumulate the changes
+    const newTableOfContentArr = [];
+  
+    for (let i = 0; i < copiedProcess.process_steps.length; i++) {
+      for (let y = 0; y < copiedProcess.process_steps[i].stepDocumentMap.length; y++) {
+        const content = {
+          "id": `${copiedProcess.process_steps[i].stepDocumentMap[y].content}`,
+          "pageNum": copiedProcess.process_steps[i].stepDocumentMap[y].page
+        };
+        const jsonContent = JSON.stringify(content);
+        const newTableOfContentObj = {
+          ...content,
+          workflow: docCurrentWorkflow._id,
+          stepIndex: i,
+          required: false,
+          page: copiedProcess.process_steps[i].stepDocumentMap[y].page,
+        };
+        // console.log('the step copy doc is ', newTableOfContentObj);
+        const contentStepAlreadyAdded = newTableOfContentArr.find(
+          (step) =>
+            step.workflow === docCurrentWorkflow._id &&
+            step.id === content.id &&
+            step.stepIndex === currentStepIndex
+        );
+  
+        if (!contentStepAlreadyAdded) {
+          // console.log('content added')
+          newTableOfContentArr.push(newTableOfContentObj);
+        }
+      }
+    }
+  
+    // Update the state after the loop is completed
+    if (newTableOfContentArr.length > 0) {
+      setCopiedDoc([...copiedDoc, ...newTableOfContentArr]);
+      newTableOfContentArr.forEach((newTableOfContentObj) => {
+        dispatch(setTableOfContentForStep(newTableOfContentObj));
+      });
+    }
+  
+    // console.log('finished the pick document phase');
+  
+  }, []);
+  
+        
+
   const onSubmit = (data) => {
     setLoading(true);
 
@@ -37,6 +95,7 @@ const AssignDocumentMap = ({ currentStepIndex, stepsPopulated }) => {
           workflow: docCurrentWorkflow._id,
           stepIndex: currentStepIndex,
         };
+        // console.log('the newTableOfContentObj is ',newTableOfContentObj)
         dispatch(setTableOfContentForStep(newTableOfContentObj));
       };
 
@@ -47,9 +106,10 @@ const AssignDocumentMap = ({ currentStepIndex, stepsPopulated }) => {
         tableOfContentForStep.filter(
           (content) => content.stepIndex === currentStepIndex - 1
         );
-
+// console.log('the tableOfContentForStep is ', tableOfContentForStep)
       switch (data.document) {
         case "Current Selection":
+          // console.log('content on current selection', data);
           return setLoading(false);
         case "All Document":
           contentOfDocument.forEach((content) => {
@@ -61,7 +121,7 @@ const AssignDocumentMap = ({ currentStepIndex, stepsPopulated }) => {
             );
 
             if (contentStepAlreadyAdded) return;
-
+              // console.log('the content of document is ', content)
             addNewTableOfContentStep(content);
           });
           return setLoading(false);
@@ -84,7 +144,7 @@ const AssignDocumentMap = ({ currentStepIndex, stepsPopulated }) => {
             );
 
             if (contentStepAlreadyAdded) return;
-
+            // console.log('the content of document is ', content)
             addNewTableOfContentStep(content);
           });
           return setLoading(false);
@@ -103,7 +163,7 @@ const AssignDocumentMap = ({ currentStepIndex, stepsPopulated }) => {
             (tableOfContentStep) => {
               const copyOfTableOfContentStep = { ...tableOfContentStep };
               copyOfTableOfContentStep.stepIndex = currentStepIndex;
-
+              // console.log('the content of document is ', copyOfTableOfContentStep)
               addNewTableOfContentStep(copyOfTableOfContentStep);
             }
           );
