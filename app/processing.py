@@ -373,7 +373,7 @@ class HandleProcess:
 
         elif public_links and self.process['process_type'] == "template" :
             template_id = self.process["parent_item_id"]
-            res = single_query_template_collection({"_id": template_id})
+            res = single_query_template_collecstepTeamMemberstion({"_id": template_id})
             template_name = res["template_name"]
             m_link, m_code = HandleProcess.generate_public_qrcode(
                 public_links, self.process["company_id"], template_name
@@ -640,12 +640,13 @@ class Background:
         finalized = []
         try:
             no_of_steps = sum(isinstance(e, dict) for e in steps)
-            user_in_viewers = check_user_in_auth_viewers(user=self.username, item=document_id)
 
             if no_of_steps > 0:
                 for index, step in enumerate(steps):
                     if step["stepDocumentCloneMap"]:
                         current_doc_map = [v for document_map in step["stepDocumentCloneMap"] for k, v in document_map.items() if isinstance(v, str)]
+                        user_in_viewers = check_user_in_auth_viewers(user=self.username, item=document_id, item_type="document")
+
                         print(f"current_step_documents (step-{index}): ", current_doc_map)
                         
                         # print("user_in_viewers: ", user_in_viewers)
@@ -862,7 +863,7 @@ class Background:
                     update_process(process_id, steps, "processing")
         except Exception as e:
             print("got error", e)
-            finalize_item(self.item_id, "processing", self.item_type)
+            finalize_item(self.item_id, "processing", self.item_type, self.message)
             return
     
 
@@ -873,28 +874,29 @@ class Background:
             process_type = self.process["process_type"]
             template_id = self.item_id
             processing_state = self.process["processing_state"]
-        
             
             finalized = []
 
+
             try:
                 no_of_steps = sum(isinstance(e, dict) for e in steps)
-                user_in_viewers = check_user_in_auth_viewers(user=self.username, item=template_id)
 
                 if no_of_steps > 0:
-                    for index, step in enumerate(steps):
+
+                    for step in steps:
 
                         if step["stepDocumentCloneMap"]:
                             current_temp_map = [v for template_map in step["stepDocumentCloneMap"] for k, v in template_map.items() if isinstance(v, str)]
-                            
+                            user_in_viewers =  check_user_in_auth_viewers(self.username, template_id, "template")
+                            print(user_in_viewers)
 
                             if (not user_in_viewers):
                                 # print("all finalized", check_step_items_state(current_doc_map))
                                 pass
+
                             elif template_id in current_temp_map:
                                 for template_map in step.get("stepDocumentCloneMap"):
                                     for k, v in list(template_map.items()):
-                                      
                                             if (
                                                 isinstance(v, str)
                                                 and single_query_template_collection(
@@ -907,7 +909,7 @@ class Background:
                                                     for mem in (
                                                         single_query_template_collection(
                                                             {"_id": v}
-                                                        ).get("auth_viewers", [])
+                                                        ).get("auth_viewers", [])[0]
                                                     )
                                                 ]
                                             ):
@@ -959,7 +961,6 @@ class Background:
                                                         template, process_type
                                                     )
 
-
                                                     authorize_metadata(
                                                         metadata_id, user, process_id, process_type
                                                     )
@@ -1004,6 +1005,7 @@ class Background:
                                                 
                         else:
                             if step.get("stepTaskType") == "assign_task":
+                                print("step")
                                 step1_templates = []
                                 for i in range(1, len((steps))):
                                     current_idx = i
@@ -1020,6 +1022,7 @@ class Background:
                                                 and single_query_template_collection({"_id": my_key}).get("template_state") == "saved"
                                                 ):
                                                 step1_templates.append(my_key)
+                                                print("step1_templates", step1_templates)
                                     for template in step1_templates:
                                         for user in step.get("stepTeamMembers"):
                                             authorize(
@@ -1063,17 +1066,15 @@ class Background:
                                             authorize_metadata(
                                                 metadata_id, user, process_id, process_type
                                             )
-                        
+
                             update_process(process_id, steps, processing_state)
                     # Check that all documents are finalized
                     all_accessed_true = check_all_finalized_true(steps, process_type)
-                    print(all_accessed_true)
                     if all_accessed_true == True:
                             update_process(process_id, steps, "finalized")
                     else:
                         update_process(process_id, steps, "processing")
             except Exception as e:
                 print("got error", e)
-            
                 finalize_item(self.item_id, "saved", self.item_type, self.message)
                 return 

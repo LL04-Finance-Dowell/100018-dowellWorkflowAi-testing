@@ -131,6 +131,7 @@ def document_processing(request):
         process.normal_process(action)
         return Response("Process Saved in drafts.", status.HTTP_201_CREATED)
     if action == "start_document_processing_content_wise":
+        print("Okay")
         if request.data.get("process_id") is not None:
             process = single_query_process_collection(
                 {"_id": request.data["process_id"]}
@@ -375,6 +376,7 @@ def finalize_or_reject(request, process_id):
 
     check, current_state = is_finalized(item_id, item_type)
 
+
     if item_type == "document" or item_type == "clone":
         if check and current_state != "processing":
             return Response(
@@ -419,10 +421,10 @@ def finalize_or_reject(request, process_id):
                 if item:
                     if item.get("template_state") == "saved":
                         meta_id = get_metadata_id(item_id, item_type)
-                        update_metadata(meta_id, "finalized", item_type)
-                    elif item.get("template_state") == "processing":
+                        update_metadata(meta_id, "saved", item_type)
+                    elif item.get("template_state") == "draft":
                         meta_id = get_metadata_id(item_id, item_type)
-                        update_metadata(meta_id, "processing", item_type)
+                        update_metadata(meta_id, "draft", item_type)
 
                 return Response("template processed successfully", status.HTTP_200_OK)
             
