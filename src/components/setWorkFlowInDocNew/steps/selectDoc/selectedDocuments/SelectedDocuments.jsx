@@ -8,6 +8,8 @@ import { PrimaryButton } from '../../../../styledComponents/styledComponents';
 import styles from './selectedDocuments.module.css';
 import { useTranslation } from 'react-i18next';
 
+import { startCopyingWorkflow } from '../../../../../features/processCopyReducer';
+
 const SelectedDocuments = ({
   selectedDocument,
   selectedDocuments,
@@ -24,22 +26,24 @@ const SelectedDocuments = ({
 
     ////copied docs
     const copiedDocument = useSelector((state) => state.copyProcess.document);
+    const startCopyingDoc = useSelector((state)=> state.copyProcess.startSelectDocument)
     useEffect(() => {
       if (!copiedDocument) return;
     
-      console.log('Selection started!');
-      
-      // Set a 5-second delay before executing the following code
-      const timerId = setTimeout(() => {
-        dispatch(contentDocument(copiedDocument.collection_id));
-        dispatch(setCurrentDocToWfs(copiedDocument));
-        dispatch(setContentOfDocument(null));
-        console.log('The button should be clicked');
-      }, 3000); // 5000 milliseconds = 5 seconds
-    
-      // Clean up the timer if the copiedDocument changes or the component unmounts
-      return () => clearTimeout(timerId);
-    }, [copiedDocument]);
+      // console.log('Selection started!', startCopyingDoc);
+
+      if(copiedDocument !==null && startCopyingDoc == true){
+        setTimeout(()=>{
+          dispatch(contentDocument(copiedDocument.collection_id));
+          dispatch(setCurrentDocToWfs(copiedDocument));
+          dispatch(setContentOfDocument(null));
+          dispatch(startCopyingWorkflow())
+          // console.log('document should be selected');
+        },3000)
+        
+      }
+
+    }, [copiedDocument, startCopyingDoc]);
     
     
 

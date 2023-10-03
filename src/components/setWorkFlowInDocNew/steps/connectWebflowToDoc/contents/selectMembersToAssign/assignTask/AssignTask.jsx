@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import Select from '../../../../../select/Select';
 import { useState } from 'react';
@@ -21,6 +22,52 @@ const AssignTask = ({ currentStepIndex, stepsPopulated }) => {
   const { docCurrentWorkflow, processSteps } = useSelector(
     (state) => state.app
   );
+
+      ////copied process
+      const copiedProcess = useSelector((state) => state.copyProcess.processStep);
+
+      useEffect(()=>{
+        if(copiedProcess == null){ return }
+        // console.log('entered the useEffect to assign task1')
+        const initialProcessStepObj = {
+          workflow: docCurrentWorkflow._id,
+          indexToUpdate: currentStepIndex,
+        };
+    
+        dispatch(
+          updateSingleProcessStep({
+            ...initialProcessStepObj,
+            stepTaskType: copiedProcess.process_steps[currentStepIndex].stepTaskType,
+          })
+        );
+        dispatch(
+          updateSingleProcessStep({
+            ...initialProcessStepObj,
+            stepRights: copiedProcess.process_steps[currentStepIndex].stepRights,
+          })
+        );
+        dispatch(
+          updateSingleProcessStep({
+            ...initialProcessStepObj,
+            stepProcessingOrder: copiedProcess.process_steps[currentStepIndex].stepProcessingOrder,
+          })
+        );
+        dispatch(
+          updateSingleProcessStep({
+            ...initialProcessStepObj,
+            stepTaskLimitation: copiedProcess.process_steps[currentStepIndex].stepTaskLimitation,
+          })
+        );
+        dispatch(
+          updateSingleProcessStep({
+            ...initialProcessStepObj,
+            stepActivityType: copiedProcess.process_steps[currentStepIndex].stepActivityType,
+          })
+        );
+    
+        setIsAssignTask(copiedProcess.process_steps[currentStepIndex].stepTaskType === 'assign_task' ? true : false);
+        // console.log('finished the useEffect to assign task1')
+      },[copiedProcess])
 
   const onSubmit = (data) => {
     setLoading(true);
