@@ -741,6 +741,7 @@ def update_folder(folder_id, old_folder):
 
 
 def authorize_metadata(metadata_id, viewers, process_id, item_type):
+    print(metadata_id, viewers, process_id, item_type)
     payload = None
     if item_type == "document": # document here is process_type
         payload = json.dumps(
@@ -774,7 +775,8 @@ def authorize_metadata(metadata_id, viewers, process_id, item_type):
                 "platform": "bangalore",
             }
         )
-    if payload is not None:        
+    if payload is not None:  
+        print(payload)      
         return post_to_data_service(payload)
 
     return
@@ -798,7 +800,23 @@ def authorize(document_id, viewers, process_id, item_type):
                 "platform": "bangalore",
             }
         )
-        
+    if item_type == "template":
+        payload = json.dumps(
+            {
+                **TEMPLATE_CONNECTION_DICT,
+                "command": "update",
+                "field": {
+                    "_id": document_id,
+                },
+                "update_field": {
+                    "auth_viewers": [viewers],
+                    "template_state": "draft",
+                    "process_id": process_id,
+                },
+                "platform": "bangalore",
+            }
+        )
+            
         metadata_payload = json.dumps(
             {
                 **CLONES_METADATA_CONNECTION_DICT,
@@ -814,22 +832,7 @@ def authorize(document_id, viewers, process_id, item_type):
                 "platform": "bangalore",
             }
         )
-    if item_type == "template":
-        payload = json.dumps(
-            {
-                **TEMPLATE_CONNECTION_DICT,
-                "command": "update",
-                "field": {
-                    "_id": document_id,
-                },
-                "update_field": {
-                    "auth_viewers": [viewers],
-                    "document_state": "processing",
-                    "process_id": process_id,
-                },
-                "platform": "bangalore",
-            }
-        )
+
     if payload is not None:
         meta_payload = post_to_data_service(metadata_payload)
         print(meta_payload)
@@ -842,6 +845,7 @@ def authorize(document_id, viewers, process_id, item_type):
 def finalize_item(item_id, state, item_type, message):
     payload = None
     if item_type == "document":
+        print(item_type)
         payload = json.dumps(
             {
                 **DOCUMENT_CONNECTION_DICT,
@@ -881,10 +885,8 @@ def finalize_item(item_id, state, item_type, message):
                     "_id": item_id,
                 },
                 "update_field": {
-                    "document_state": state,
+                    "template_state": state,
                     "message":message
-
-
                 },
                 "platform": "bangalore",
             }
@@ -1064,6 +1066,22 @@ def update_template_approval(template_id, approval):
     )
     return post_to_data_service(payload)
 
+def update_template(template_id, process_id, state):
+    payload = json.dumps(
+        {
+            **DOCUMENT_CONNECTION_DICT,
+            "command": "update",
+            "field": {
+                "_id": template_id,
+            },
+            "update_field": {
+                "process_id": process_id,
+                "template_state": state,
+            },
+            "platform": "bangalore",
+        }
+    )
+    return post_to_data_service(payload)
 
 def update_document(document_id, process_id, state):
     payload = json.dumps(

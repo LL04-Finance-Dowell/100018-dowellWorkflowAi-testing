@@ -47,7 +47,6 @@ from app.mongo_db_connection import (
     delete_template,
     delete_workflow,
     finalize_item,
-    save_to_process_collection,
     update_metadata,
     save_to_document_collection,
     save_to_document_metadata_collection,
@@ -81,7 +80,10 @@ from app.mongo_db_connection import (
     update_workflow_setting,
     get_workflow_setting_object,
     single_query_public_collection,
-    save_to_public_collection
+    save_to_public_collection,
+    single_query_template_metadata_collection
+
+    
 )
 
 from .constants import EDITOR_API
@@ -130,6 +132,7 @@ def document_processing(request):
         process.normal_process(action)
         return Response("Process Saved in drafts.", status.HTTP_201_CREATED)
     if action == "start_document_processing_content_wise":
+        print("Okay")
         if request.data.get("process_id") is not None:
             process = single_query_process_collection(
                 {"_id": request.data["process_id"]}
@@ -373,37 +376,59 @@ def finalize_or_reject(request, process_id):
             )
 
     check, current_state = is_finalized(item_id, item_type)
-    if check and current_state != "processing":
-        return Response(
-            f"document already processed as `{current_state}`!", status.HTTP_200_OK
-        )
-    
+
+
+    if item_type == "document" or item_type == "clone":
+        if check and current_state != "processing":
+            return Response(
+                f"document already processed as `{current_state}`!", status.HTTP_200_OK
+            )
+    elif item_type == "template":
+        if check and current_state != "draft":
+            return Response(
+                f"template already processed as `{current_state}`!", status.HTTP_200_OK
+            )
+
     res = json.loads(finalize_item(item_id, state, item_type, message))
 
     if res["isSuccess"]:
         try:
             process = single_query_process_collection({"_id": process_id})
-            background = Background(process, item_type, item_id, role, user)
-            background.processing()
+            background = Background(process, item_type, item_id, role, user, message)
+
             if user_type == "public":
                 link_id = request.data["link_id"]
                 register_finalized(link_id)
 
-            # Get the item state
-            item = single_query_clones_collection({"_id": item_id})
-            print(item.get("document_state"))
+            if item_type == 'document' or item_type == "clone":
+                background.document_processing()
 
-            if item.get("document_state") == "finalized":
-                # Update the metadata
-                meta_id = get_metadata_id(item_id, item_type)
-                print("meta_id: ", meta_id)
-                update_metadata(meta_id, "finalized", item_type)
-            elif item.get("document_state") == "processing":
-                # Update the metadata
-                meta_id = get_metadata_id(item_id, item_type)
-                update_metadata(meta_id, "processing", item_type)
+                item = single_query_clones_collection({"_id": item_id})
 
-            return Response("document processed successfully", status.HTTP_200_OK)
+                if item:
+                    if item.get("document_state") == "finalized":
+                        meta_id = get_metadata_id(item_id, item_type)
+                        update_metadata(meta_id, "finalized", item_type)
+                    elif item.get("document_state") == "processing":
+                        meta_id = get_metadata_id(item_id, item_type)
+                        update_metadata(meta_id, "processing", item_type)
+
+                return Response("document processed successfully", status.HTTP_200_OK)
+            
+            elif item_type == 'template':
+                background.template_processing()
+                item = single_query_template_collection({"_id": item_id})
+
+                if item:
+                    if item.get("template_state") == "saved":
+                        meta_id = get_metadata_id(item_id, item_type)
+                        update_metadata(meta_id, "saved", item_type)
+                    elif item.get("template_state") == "draft":
+                        meta_id = get_metadata_id(item_id, item_type)
+                        update_metadata(meta_id, "draft", item_type)
+
+                return Response("template processed successfully", status.HTTP_200_OK)
+            
         except Exception as err:
             print(err)
             return Response(
@@ -795,6 +820,7 @@ def create_document(request):
                 "parent_id": None,
                 "process_id": "",
                 "folders": [], 
+                "template": request.data["template_id"],
                 "message":""
             }
         )
@@ -1982,7 +2008,7 @@ def get_mobile_notifications_docusign(request, company_id):
 
 @api_view(["GET", "POST"])
 def process_public_users(request, company_id):
-    if not validate_id(company_id) :
+    if not validate_id(company_id):
         return Response("something went wrong!", status.HTTP_400_BAD_REQUEST)
     
     if request.method == "GET":
@@ -2006,7 +2032,8 @@ def process_public_users(request, company_id):
                 "Public users details stored!", status.HTTP_201_CREATED
             )
         return Response(status.HTTP_500_INTERNAL_SERVER_ERROR)
-    
+
+
 """Import of process settings"""
 @api_view(['POST'])
 def import_process_settings(request, process_id):
@@ -2103,7 +2130,3 @@ def import_process_settings(request, process_id):
 
     
     
-    
-    
-
-

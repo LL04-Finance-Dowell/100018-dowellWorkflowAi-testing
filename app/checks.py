@@ -65,10 +65,12 @@ def is_finalized(item_id, item_type):
     if item_type == "template":
         template = single_query_template_collection({"_id": item_id})
         temp_state = template["template_state"]
-        if temp_state == "finalized":
+        if temp_state == "saved":
             return True, temp_state
-        if temp_state == "rejected":
+        elif temp_state == "rejected":
             return True, temp_state
+        elif temp_state == "draft":
+            return False, "draft"
     return False, "processing"
 
 

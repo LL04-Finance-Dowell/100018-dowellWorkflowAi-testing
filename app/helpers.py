@@ -107,6 +107,7 @@ def cloning_document(document_id, auth_viewers, parent_id, process_id):
                     "parent_id": parent_id,
                     "process_id": process_id,
                     "folders": "untitled",
+                    "template":document["template"],
                     "message":""
                 }
             )
@@ -132,6 +133,48 @@ def cloning_document(document_id, auth_viewers, parent_id, process_id):
     except Exception as e:
         print(e)
         return
+
+# def template_process(template_id, auth_viewers, parent_id, process_id):
+#     """creating a document copy"""
+#     print("auth_viewers", auth_viewers)
+#     try:
+#         viewers = []
+#         for m in auth_viewers:
+#             viewers.append(m["member"])
+
+#         template = single_query_template_collection({"_id": template_id})
+#         for viewer in viewers:
+#             temp_name = template["template_name"]
+#             if not temp_name:
+#                 template_name = "temp - " + viewer
+#             else:
+#                 if isinstance(viewer, dict):
+#                     template_name = temp_name + "_" + viewer["member"]
+#                 else:
+#                     template_name = temp_name + "_" + viewer
+#         save_res = json.loads(
+#             save_to_clone_collection(
+#                 {
+#                     "document_name": template_name,
+#                     "content": template["content"],
+#                     "page": template["page"],
+#                     "created_by": template["created_by"],
+#                     "company_id": template["company_id"],
+#                     "data_type": template["data_type"],
+#                     "document_state": "processing",
+#                     "auth_viewers": auth_viewers,
+#                     "document_type": "clone",
+#                     "document_state": "processing",
+#                     "parent_id": parent_id,
+#                     "process_id": process_id,
+#                     "folders": "untitled",
+#                 }
+#             )
+#         )
+#         return save_res["inserted_id"]
+#     except Exception as e:
+#         print(e)
+#         return
 
 
 def cloning_clone(clone_id, auth_viewers, parent_id, process_id):
@@ -165,6 +208,7 @@ def cloning_clone(clone_id, auth_viewers, parent_id, process_id):
                     "parent_id": parent_id,
                     "process_id": process_id,
                     "folders": "untitled",
+                    "template":document["template"],
                     "message":""
 
                 }
@@ -466,24 +510,38 @@ def check_items_state(items) -> list:
     ]
 
 
-def check_all_finalized_true(data) -> bool:
+def check_all_finalized_true(data, process_type) -> bool:
     for item in data:
         step_document_clone_map = item.get("stepDocumentCloneMap", [])
         doc_states = []
         for doc in step_document_clone_map:
             for key, value in doc.items():
-                if key != "accessed":
-                    doc_state = single_query_clones_collection({"_id": value}).get(
-                        "document_state"
-                    )
-                    if doc_state == "finalized":
-                        doc_states.append(True)
-                    elif doc_state == "processing":
-                        doc_states.append(False)
-                    else:
-                        doc_states.append(False)
+
+                if key != "accessed":                
+                    if process_type == "document":
+                        doc_state = single_query_clones_collection({"_id": value}).get(
+                            "document_state"
+                        )
+                        if doc_state == "finalized":
+                            doc_states.append(True)
+                        elif doc_state == "processing":
+                            doc_states.append(False)
+                        else:
+                            doc_states.append(False)
+                    elif process_type == "template":
+                        doc_state = single_query_template_collection({"_id": value}).get(
+                            "template_state"
+                        )
+                        if doc_state == "saved":
+                            doc_states.append(True)
+                        elif doc_state == "draft":
+                            doc_states.append(False)
+                        else:
+                            doc_states.append(False)
         if not all(doc_states):
+            print(f"Printing doc states {doc_states}")
             return False
+        print(f"Printing doc states2 {doc_states}")
     return True
 
 
@@ -497,6 +555,13 @@ def get_metadata_id(item_id, item_type):
     elif item_type == "clone":
         try:
             coll_id = single_query_clones_metadata_collection({"collection_id": item_id})["_id"]
+            return coll_id
+        except Exception as err:
+            print("An error occured: ", err)
+        
+    elif item_type == "template":
+        try:
+            coll_id = single_query_template_metadata_collection({"collection_id": item_id})["_id"]
             return coll_id
         except Exception as err:
             print("An error occured: ", err)
@@ -517,9 +582,15 @@ def check_step_items_state(items) -> bool:
     return True
 
 
-def check_user_in_auth_viewers(user, item) -> bool:
+def check_user_in_auth_viewers(user, item, item_type) -> bool:
     auth_viewers = []
-    viewers = single_query_clones_collection({"_id": item}).get("auth_viewers")
+    if item_type == "document":
+        viewers = single_query_clones_collection({"_id": item}).get("auth_viewers", [])
+        
+    elif item_type == "template":
+        viewers = single_query_template_collection({"_id": item}).get("auth_viewers")
+        viewers = viewers[0]
+
     for i in viewers:
         for k, v in i.items():
             if k != "portfolio":
@@ -529,6 +600,7 @@ def check_user_in_auth_viewers(user, item) -> bool:
         return True
     else:
         return False
+    
 def remove_members_from_steps(data):
     for step in data.get("process_steps", []):
         step["stepPublicMembers"] = []
