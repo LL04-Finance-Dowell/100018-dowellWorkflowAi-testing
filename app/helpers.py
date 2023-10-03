@@ -37,7 +37,6 @@ def register_finalized(link_id):
 
 
 def get_query_param_value_from_url(url, query_param):
-    # Parse the URL to get the query parameters
     parsed_url = urlparse(url)
     query_params = parse_qs(parsed_url.query)
     value = query_params.get(query_param, [None])[0]
@@ -636,32 +635,19 @@ def check_step_items_state(items) -> bool:
 def check_user_in_auth_viewers(user, item, item_type) -> bool:
     auth_viewers = []
     if item_type == "document":
-        viewers = single_query_clones_collection({"_id": item})
-
-        if viewers:
-            for i in viewers.get("auth_viewers"):
-                for k, v in i.items():
-                    if k != "portfolio":
-                        auth_viewers.append(v)
-
-            if user in auth_viewers:
-                return True
-            else:
-                return False
-        else:
-            return False
+        viewers = single_query_clones_collection({"_id": item}).get("auth_viewers", [])
         
     elif item_type == "template":
         viewers = single_query_template_collection({"_id": item}).get("auth_viewers")
         viewers = viewers[0]
 
-        for i in viewers:
-            for k, v in i.items():
-                if k != "portfolio":
-                    auth_viewers.append(v)
+    for i in viewers:
+        for k, v in i.items():
+            if k != "portfolio":
+                auth_viewers.append(v)
 
-        if user in auth_viewers:
-            return True
-        else:
-            return False
+    if user in auth_viewers:
+        return True
+    else:
+        return False
 
