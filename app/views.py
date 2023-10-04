@@ -1342,6 +1342,48 @@ def template_object(request, template_id):
     return Response(template, status.HTTP_200_OK)
 
 
+@api_view(["GET"])
+def get_template_content(request, template_id):
+    """Content map of a given template"""
+    if not validate_id(template_id):
+        return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
+    content = []
+    my_dict = ast.literal_eval(
+        single_query_template_collection({"_id": template_id})["content"]
+    )[0][0]
+    all_keys = [i for i in my_dict.keys()]
+    for i in all_keys:
+        temp_list = []
+        for j in my_dict[i]:
+            if "data" in j:
+                if j["type"] == "CONTAINER_INPUT":
+                    container_list = []
+                    for item in j["data"]:
+                        container_list.append({"id": item["id"], "data": item["data"]})
+                    temp_list.append({"id": j["id"], "data": container_list})
+                else:
+                    temp_list.append({"id": j["id"], "data": j["data"]})
+            else:
+                temp_list.append({"id": j["id"], "data": ""})
+        content.append(
+            {
+                i: temp_list,
+            }
+        )
+    sorted_content = []
+    for dicts in content:
+        for key, val in dicts.items():
+            sorted_content.append(
+                {
+                    key: sorted(
+                        dicts[key],
+                        key=lambda x: int([a for a in re.findall("\d+", x["id"])][-1]),
+                    )
+                }
+            )
+    return Response(sorted_content, status.HTTP_200_OK)
+
+
 @api_view(["PUT"])
 def approve(request, template_id):
     """Approve a given template"""
