@@ -2,17 +2,11 @@ import json
 import urllib.parse
 import uuid
 from threading import Thread
-import os
-
-# from dotenv import load_dotenv
-
-# load_dotenv()
 import qrcode
 import requests
+from django.conf import settings
 
 from app.checks import (
-    check_items_state,
-    check_that_process_documents_are_finalized,
     display_right,
     location_right,
     time_limit_right,
@@ -27,10 +21,8 @@ from app.constants import (
 )
 from app.helpers import (
     cloning_document,
-    # cloning_template,
     cloning_clone,
     register_public_login,
-    check_items_state,
     check_all_finalized_true,
     check_step_items_state,
     check_user_in_auth_viewers,
@@ -49,7 +41,6 @@ from app.mongo_db_connection import (
     single_query_clones_collection,
     single_query_process_collection,
     update_process,
-    update_template,
 )
 
 
@@ -161,11 +152,11 @@ class HandleProcess:
         return urllib.parse.urlencode(params)
 
     def generate_qrcode(link):
-        current_env = os.environ.get("ENV")
-        if current_env == "LOCAL": # When working locally set this environmental variable
-            qr_path = f"media/qrcodes/{uuid.uuid4().hex}.png"  
-        else:
-            qr_path = f"100094.pythonanywhere.com/media/qrcodes/{uuid.uuid4().hex}.png"
+        # When working locally change to this.
+        # We have to do this manually as pythonanywhere has issues resolving our environmental variables.
+        # qr_path = f"media/qrcodes/{uuid.uuid4().hex}.png"  
+        # In production the below works
+        qr_path = f"100094.pythonanywhere.com/media/qrcodes/{uuid.uuid4().hex}.png" 
         qr_code = qrcode.QRCode()
         qr_code.add_data(link)
         qr_code.make()
@@ -199,7 +190,7 @@ class HandleProcess:
     def user_team_public_data(process_data, auth_name, step_role, portfolio, user_type):
         hash = uuid.uuid4().hex
         link = None
-        current_env = os.environ.get("ENV")
+        current_env = settings.ENV
         if current_env == "PRODUCTION":
             link = f"{PRODUCTION_VERIFICATION_LINK}/{hash}/"
         else:
@@ -456,7 +447,6 @@ class HandleProcess:
         for step in self.process["process_steps"]:
             if step.get("stepRole") == auth_role:
                 if user_type == "public":
-                    print(user_name)
                     user_name = user_name[0]
                 if any(user_name in map for map in step.get("stepDocumentCloneMap")):
                     for d_map in step["stepDocumentCloneMap"]:
@@ -532,12 +522,10 @@ class HandleProcess:
         for step in self.process["process_steps"]:
             if step.get("stepRole") == auth_role:
                 if user_type == "public":
-                    print(user_name)
                     user_name = user_name[0]
                 if any(user_name in map for map in step.get("stepDocumentCloneMap")):
                     for d_map in step["stepDocumentCloneMap"]:
                         if d_map.get(user_name) is not None:
-                            print("doc_map: ", d_map)
                             if d_map.get(user_name) == document_id:
                                 clone_id = d_map.get(user_name)
                             # clone_id = d_map.get(user_name)
@@ -545,7 +533,6 @@ class HandleProcess:
                     right = step["stepRights"]
                     role = step["stepRole"]
         if clone_id:
-            print("clone_id: ", clone_id)
             if item_type == "document":
                 collection = "CloneReports"
                 document = "CloneReports"
@@ -636,14 +623,8 @@ class Background:
                 for index, step in enumerate(steps):
                     if step["stepDocumentCloneMap"]:
                         current_doc_map = [v for document_map in step["stepDocumentCloneMap"] for k, v in document_map.items() if isinstance(v, str)]
-                        print(f"current_step_documents (step-{index}): ", current_doc_map)
-                        
                         user_in_viewers = check_user_in_auth_viewers(user=self.username, item=document_id, item_type="document")
-                        # print("user_in_viewers: ", user_in_viewers)
-
                         if (not user_in_viewers):
-                            # print("all finalized", check_step_items_state(current_doc_map))
-                            # print("user_in_viewers: ", user_in_viewers)
                             pass
                         elif document_id in current_doc_map:
                             for document_map in step.get("stepDocumentCloneMap"):
@@ -863,26 +844,16 @@ class Background:
             process_type = self.process["process_type"]
             template_id = self.item_id
             processing_state = self.process["processing_state"]
-            
             finalized = []
-
-
             try:
                 no_of_steps = sum(isinstance(e, dict) for e in steps)
-
                 if no_of_steps > 0:
-
                     for step in steps:
-
                         if step["stepDocumentCloneMap"]:
                             current_temp_map = [v for template_map in step["stepDocumentCloneMap"] for k, v in template_map.items() if isinstance(v, str)]
                             user_in_viewers =  check_user_in_auth_viewers(self.username, template_id, "template")
-                            print(user_in_viewers)
-
                             if (not user_in_viewers):
-                                # print("all finalized", check_step_items_state(current_doc_map))
                                 pass
-
                             elif template_id in current_temp_map:
                                 for template_map in step.get("stepDocumentCloneMap"):
                                     for k, v in list(template_map.items()):
@@ -953,10 +924,7 @@ class Background:
                                                     authorize_metadata(
                                                         metadata_id, user, process_id, process_type
                                                     )
-                                            
-
                                                 for user in step.get("stepPublicMembers"):
-
                                                     authorize(
                                                         template,
                                                         user,
@@ -973,7 +941,6 @@ class Background:
                                                     authorize_metadata(
                                                         metadata_id, user, process_id, process_type
                                                     )
-                                                    
                                                 for user in step.get("stepUserMembers"):
                                                         authorize(
                                                             template,
@@ -991,10 +958,8 @@ class Background:
                                                         authorize_metadata(
                                                             metadata_id, user, process_id, process_type
                                                         )
-                                                
                         else:
                             if step.get("stepTaskType") == "assign_task":
-                                print("step")
                                 step1_templates = []
                                 for i in range(1, len((steps))):
                                     current_idx = i
@@ -1003,7 +968,6 @@ class Background:
                                     )
                                     if prev_templates:
                                         for item in prev_templates:
-                                            # print(f"item: {item}")
                                             key = next(iter(item))
                                             my_key = item[key]
                                         
@@ -1011,7 +975,6 @@ class Background:
                                                 and single_query_template_collection({"_id": my_key}).get("template_state") == "saved"
                                                 ):
                                                 step1_templates.append(my_key)
-                                                print("step1_templates", step1_templates)
                                     for template in step1_templates:
                                         for user in step.get("stepTeamMembers"):
                                             authorize(
