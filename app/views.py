@@ -307,8 +307,6 @@ def process_verification_v2(request):
                 "User Logged in is not part of this process",
                 status.HTTP_401_UNAUTHORIZED,
             )
-    
-
     process = single_query_process_collection({"_id": link_object["process_id"]})
     if user_type == "public":
         for step in process["process_steps"]:
@@ -316,9 +314,6 @@ def process_verification_v2(request):
                 for item in step["stepDocumentCloneMap"]:
                     if item.get(auth_user[0]):
                         collection_id = item.get(auth_user[0])
-                        print("collection_id", item.get(auth_user[0]))
-                        # print("collection_id")
-
     process["org_name"] = org_name
     handler = HandleProcess(process)
     location = handler.verify_location(
@@ -365,9 +360,7 @@ def finalize_or_reject(request, process_id):
     user = request.data["authorized"]
     user_type = request.data["user_type"]
     state = request.data["action"]
-
     message = ""
-
     if state == "rejected":
         message = request.data.get("rejection_message", None)
         if not message:
@@ -375,10 +368,7 @@ def finalize_or_reject(request, process_id):
                 "provide a reason for rejecting the document",
                 status = status.HTTP_400_BAD_REQUEST
             )
-
     check, current_state = is_finalized(item_id, item_type)
-
-
     if item_type == "document" or item_type == "clone":
         if check and current_state != "processing":
             return Response(
@@ -389,23 +379,17 @@ def finalize_or_reject(request, process_id):
             return Response(
                 f"template already processed as `{current_state}`!", status.HTTP_200_OK
             )
-
     res = json.loads(finalize_item(item_id, state, item_type, message))
-
     if res["isSuccess"]:
         try:
             process = single_query_process_collection({"_id": process_id})
             background = Background(process, item_type, item_id, role, user, message)
-
             if user_type == "public":
                 link_id = request.data["link_id"]
                 register_finalized(link_id)
-
             if item_type == 'document' or item_type == "clone":
                 background.document_processing()
-
                 item = single_query_clones_collection({"_id": item_id})
-
                 if item:
                     if item.get("document_state") == "finalized":
                         meta_id = get_metadata_id(item_id, item_type)
@@ -413,13 +397,10 @@ def finalize_or_reject(request, process_id):
                     elif item.get("document_state") == "processing":
                         meta_id = get_metadata_id(item_id, item_type)
                         update_metadata(meta_id, "processing", item_type)
-
                 return Response("document processed successfully", status.HTTP_200_OK)
-            
             elif item_type == 'template':
                 background.template_processing()
                 item = single_query_template_collection({"_id": item_id})
-
                 if item:
                     if item.get("template_state") == "saved":
                         meta_id = get_metadata_id(item_id, item_type)
@@ -427,9 +408,7 @@ def finalize_or_reject(request, process_id):
                     elif item.get("template_state") == "draft":
                         meta_id = get_metadata_id(item_id, item_type)
                         update_metadata(meta_id, "draft", item_type)
-
                 return Response("template processed successfully", status.HTTP_200_OK)
-            
         except Exception as err:
             print(err)
             return Response(
@@ -607,7 +586,6 @@ def workflow_detail(request, workflow_id):
             "workflow_title"
         ]
         old_workflow["workflows"]["data_type"] = form["data_type"]
-
         for i, step in enumerate(form["workflows"]["steps"]):
             if i < len(old_workflow["workflows"]["steps"]):
                 old_workflow["workflows"]["steps"][i]["step_name"] = step["step_name"]
@@ -617,9 +595,6 @@ def workflow_detail(request, workflow_id):
                 old_workflow["workflows"]["steps"].append(new_step)
         if len(form["workflows"]["steps"]) < len(old_workflow["workflows"]["steps"]):
             del old_workflow["workflows"]["steps"][len(form["workflows"]["steps"]) :]
-
-        # old_workflow["workflows"]["steps"][0]["step_name"] = form["workflows"]["steps"][0]["step_name"]
-        # old_workflow["workflows"]["steps"][1]["role"] = form["workflows"]["steps"][1]["role"]
         updt_wf = update_wf(workflow_id, old_workflow)
         updt_wf = json.loads(updt_wf)
         if updt_wf.get("isSuccess"):
@@ -802,7 +777,6 @@ def create_document(request):
         portfolio = request.data["portfolio"]
     viewers = [{"member": request.data["created_by"], "portfolio": portfolio}]
     organization_id = request.data["company_id"]
-    folder = []
     template_id = request.data["template_id"]
     content = single_query_template_collection({"_id": template_id})["content"]
     page = single_query_template_collection({"_id": template_id})["page"]
@@ -846,7 +820,6 @@ def create_document(request):
                 status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
         metadata_id = res_metadata["inserted_id"]
-
         editor_link = access_editor_metadata(
             res["inserted_id"], "document", metadata_id
         )
@@ -866,21 +839,16 @@ def get_item_content(request, item_id):
     """Content map of a given document or a template"""
     if not validate_id(item_id):
         return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
-
     content = []
-
     item_type = request.query_params.get("item_type")
-
     if item_type == 'templates':
         my_dict = ast.literal_eval(
             single_query_template_collection({"_id": item_id})["content"]
         )[0][0]
-
     else:
         my_dict = ast.literal_eval(
             single_query_document_collection({"_id": item_id})["content"]
         )[0][0]
-
     all_keys = [i for i in my_dict.keys()]
     for i in all_keys:
         temp_list = []
@@ -1075,7 +1043,6 @@ def archives(request):
             return Response(
                 "Invalid response data", status.HTTP_500_INTERNAL_SERVER_ERROR
             )
-
     return Response(status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
@@ -1277,7 +1244,6 @@ def create_template(request):
             }
         )
     )
-
     if res["isSuccess"]:
         collection_id = res["inserted_id"]
         res_metadata = json.loads(
@@ -1299,7 +1265,6 @@ def create_template(request):
                 "An error occured while trying to save document metadata",
                 status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
-
         payload = {
             "product_name": "workflowai",
             "details": {
@@ -1763,7 +1728,6 @@ def folder_update(request, folder_id):
         old_folder["data"].extend(items)
         document_ids = [item["document_id"] for item in items if "document_id" in item]
         template_ids = [item["template_id"] for item in items if "template_id" in item]
-        # process all ids
         if items:
             process_folders_to_item(document_ids, folder_id, add_document_to_folder)
             process_folders_to_item(template_ids, folder_id, add_template_to_folder)

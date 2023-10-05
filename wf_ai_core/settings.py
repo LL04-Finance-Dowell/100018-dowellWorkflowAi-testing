@@ -12,6 +12,8 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 import os
 from pathlib import Path
 
+ENV="PRODUCTION"
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -22,7 +24,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = "django-insecure-)_w-=ulkg8#7(q1^b&2+!+n%+b)8v$%wfq_mm6a+t!k7g9c$tk"
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = [
     "localhost",
@@ -155,24 +157,4 @@ CACHES = {
         "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
         "LOCATION": "unique-snowflake",
     }
-}
-
-LOGGING = {
-    "version": 1,
-    # The version number of our log
-    "disable_existing_loggers": False,
-    "handlers": {
-        "file": {
-            "level": "WARNING",
-            "class": "logging.FileHandler",
-            "filename": BASE_DIR / "warning.log",
-        },
-    },
-    "loggers": {
-        "": {
-            "handlers": ["file"],
-            "level": "WARNING",
-            "propagate": True,
-        },
-    },
 }
