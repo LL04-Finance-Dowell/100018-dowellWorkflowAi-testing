@@ -161,16 +161,23 @@ class HandleProcess:
         return urllib.parse.urlencode(params)
 
     def generate_qrcode(link):
-        """Revert back to prod qr_path before push"""
-        # qr_path = f"100094.pythonanywhere.com/media/qrcodes/{uuid.uuid4().hex}.png"  # Production
+    """Revert back to prod qr_path before push"""
+    current_env = os.environ.get("ENV")
+    staging_path = os.environ.get("STAGING_PATH")
+    production_path = os.environ.get("PRODUCTION_PATH")
+    if current_env == "PRODUCTION":
+        qr_path = f"{production_path}/qrcodes/{uuid.uuid4().hex}.png"
+    elif current_env == "STAGING":
+        qr_path = f"{staging_path}/qrcodes/{uuid.uuid4().hex}.png"
+    else:
         qr_path = f"media/qrcodes/{uuid.uuid4().hex}.png"  # On dev
-        qr_code = qrcode.QRCode()
-        qr_code.add_data(link)
-        qr_code.make()
-        qr_color = "black"
-        qr_img = qr_code.make_image(fill_color=qr_color, back_color="#DCDCDC")
-        qr_img.save(qr_path)
-        return f"https://{qr_path}"
+    qr_code = qrcode.QRCode()
+    qr_code.add_data(link)
+    qr_code.make()
+    qr_color = "black"
+    qr_img = qr_code.make_image(fill_color=qr_color, back_color="#DCDCDC")
+    qr_img.save(qr_path)
+    return f"https://{qr_path}"
 
     def notify(auth_name, doc_id, portfolio, company_id, link, org_name):
         response = requests.post(
