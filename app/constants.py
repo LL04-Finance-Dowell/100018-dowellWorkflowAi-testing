@@ -10,7 +10,7 @@ VERIFICATION_LINK = (
     "https://ll04-finance-dowell.github.io/100018-dowellWorkflowAi-testing/#/verify"
 )
 PRODUCTION_VERIFICATION_LINK = (
-    "https://ll04-finance-dowell.github.io/workflowai.online//#/verify"
+    "https://ll04-finance-dowell.github.io/workflowai.online/#/verify"
 )
 
 """Database Collection Information"""

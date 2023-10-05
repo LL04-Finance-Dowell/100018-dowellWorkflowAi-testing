@@ -161,16 +161,11 @@ class HandleProcess:
         return urllib.parse.urlencode(params)
 
     def generate_qrcode(link):
-        """Revert back to prod qr_path before push"""
         current_env = os.environ.get("ENV")
-        staging_path = os.environ.get("STAGING_PATH")
-        production_path = os.environ.get("PRODUCTION_PATH")
-        if current_env == "PRODUCTION":
-            qr_path = f"{production_path}/qrcodes/{uuid.uuid4().hex}.png"
-        elif current_env == "STAGING":
-            qr_path = f"{staging_path}/qrcodes/{uuid.uuid4().hex}.png"
+        if current_env == "LOCAL": # When working locally set this environmental variable
+            qr_path = f"media/qrcodes/{uuid.uuid4().hex}.png"  
         else:
-            qr_path = f"media/qrcodes/{uuid.uuid4().hex}.png"  # On dev
+            qr_path = f"100094.pythonanywhere.com/media/qrcodes/{uuid.uuid4().hex}.png"
         qr_code = qrcode.QRCode()
         qr_code.add_data(link)
         qr_code.make()
@@ -209,7 +204,6 @@ class HandleProcess:
             link = f"{PRODUCTION_VERIFICATION_LINK}/{hash}/"
         else:
             link = f"{VERIFICATION_LINK}/{hash}/"
-
         params = process_data["params"]
         process_id = process_data["_id"]
         item_id = process_data["parent_item_id"]
@@ -250,7 +244,6 @@ class HandleProcess:
 
     def prepare_document_for_step_one_users(step, parent_item_id, process_id):
         process_type = single_query_process_collection({"_id":process_id}).get("process_type")
-        print(f"Process type {process_type}")
         clones = []
         users = []
         for m in step.get("stepTeamMembers", []) + step.get("stepUserMembers", []):
@@ -327,10 +320,8 @@ class HandleProcess:
         process_data = self.process
         process_data["params"] = self.params
         m_code = None
-        public_api_key = None
         m_link = None
         link_string = "link"
-    
         for step in steps:
             for member in step.get("stepPublicMembers", []):
                 link, qrcode = HandleProcess.user_team_public_data(
@@ -366,7 +357,7 @@ class HandleProcess:
         clone_ids = HandleProcess.prepare_document_for_step_one_users(
             steps[0], self.process["parent_item_id"], process_id
         )
-        if public_links and self.process['process_type'] == "doucment" :
+        if public_links and self.process['process_type'] == "document" :
             document_id = self.process["parent_item_id"]
             res = single_query_document_collection({"_id": document_id})
             document_name = res["document_name"]
@@ -375,27 +366,22 @@ class HandleProcess:
             )
             links.append({"master_link": m_link})
             qrcodes.append({"master_qrcode": m_code})
-            # Grab API key
-            public_api_key = get_query_param_value_from_url(m_link, "api_key")
 
         elif public_links and self.process['process_type'] == "template" :
             template_id = self.process["parent_item_id"]
-            res = single_query_template_collecstepTeamMemberstion({"_id": template_id})
+            res = single_query_template_collection({"_id": template_id})
             template_name = res["template_name"]
             m_link, m_code = HandleProcess.generate_public_qrcode(
                 public_links, self.process["company_id"], template_name
             )
             links.append({"master_link": m_link})
             qrcodes.append({"master_qrcode": m_code})
-            # Grab API key
-            public_api_key = get_query_param_value_from_url(m_link, "api_key")
         save_to_links_collection(
             {
                 "links": links,
                 "process_id": process_id,
                 "clone_ids": clone_ids,
                 "company_id ": company_id,
-                "public_api_key": public_api_key,
             }
         )
         update_process(
@@ -420,7 +406,6 @@ class HandleProcess:
     def verify_location(self, auth_role, location_data):
         for step in self.process["process_steps"]:
             if step.get("stepRole") == auth_role:
-                # print(step.get("stepLocation"))
                 if step.get("stepLocation"):
                     return location_right(
                         step.get("stepLocation"),
