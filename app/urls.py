@@ -28,7 +28,7 @@ from .views import (
     get_reports_documents,
     get_completed_documents_by_process,
     get_clones_by_document,
-    get_document_content,
+    get_item_content,
     get_clone_content,
     get_documents_in_organization,
     get_documents_metadata_in_organization,
@@ -39,7 +39,6 @@ from .views import (
     get_team_data,
     get_templates,
     get_templates_metadata,
-    get_template_content,
     # template_metadata_object,
     get_workflow_ai_setting,
     get_workflows,
@@ -80,11 +79,6 @@ urlpatterns = [
     path("companies/<str:company_id>/favourites/", all_favourites),
     path("companies/<str:company_id>/templates/", get_templates),
     path("companies/<str:company_id>/templates/metadata/", get_templates_metadata),
-        path(
-        "templates/<str:template_id>/content/",
-        get_template_content,
-        name="get_template_content",
-    ),
     # path("template/<str:collection_id>/templates/objects/metadata/", template_metadata_object),
     path(
         "companies/<str:company_id>/templates/knowledge-centre/", dowell_centre_template
@@ -124,8 +118,8 @@ urlpatterns = [
         "documents/clones/<str:clone_id>/object/", clone_object, name="clone_object"
     ),
     path(
-        "documents/<str:document_id>/content/",
-        get_document_content,
+        "documents/<str:item_id>/content/",
+        get_item_content,
         name="get_document_content",
     ),
     path(
