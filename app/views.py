@@ -47,6 +47,7 @@ from app.mongo_db_connection import (
     delete_template,
     delete_workflow,
     finalize_item,
+    save_to_process_collection,
     update_metadata,
     save_to_document_collection,
     save_to_document_metadata_collection,
