@@ -28,7 +28,7 @@ from .views import (
     get_reports_documents,
     get_completed_documents_by_process,
     get_clones_by_document,
-    get_document_content,
+    get_item_content,
     get_clone_content,
     get_documents_in_organization,
     get_documents_metadata_in_organization,
@@ -118,8 +118,8 @@ urlpatterns = [
         "documents/clones/<str:clone_id>/object/", clone_object, name="clone_object"
     ),
     path(
-        "documents/<str:document_id>/content/",
-        get_document_content,
+        "documents/<str:item_id>/content/",
+        get_item_content,
         name="get_document_content",
     ),
     path(

@@ -861,14 +861,25 @@ def create_document(request):
 
 
 @api_view(["GET"])
-def get_document_content(request, document_id):
-    """Content map of a given document"""
-    if not validate_id(document_id):
+def get_item_content(request, item_id):
+    """Content map of a given document or a template"""
+    if not validate_id(item_id):
         return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
+
     content = []
-    my_dict = ast.literal_eval(
-        single_query_document_collection({"_id": document_id})["content"]
-    )[0][0]
+
+    item_type = request.query_params.get("item_type")
+
+    if item_type == 'templates':
+        my_dict = ast.literal_eval(
+            single_query_template_collection({"_id": item_id})["content"]
+        )[0][0]
+
+    else:
+        my_dict = ast.literal_eval(
+            single_query_document_collection({"_id": item_id})["content"]
+        )[0][0]
+
     all_keys = [i for i in my_dict.keys()]
     for i in all_keys:
         temp_list = []
@@ -1340,7 +1351,6 @@ def template_object(request, template_id):
         return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
     template = single_query_template_collection({"_id": template_id})
     return Response(template, status.HTTP_200_OK)
-
 
 @api_view(["PUT"])
 def approve(request, template_id):
