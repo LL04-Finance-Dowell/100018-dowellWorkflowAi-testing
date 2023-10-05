@@ -111,7 +111,6 @@ def cloning_document(document_id, auth_viewers, parent_id, process_id):
                 }
             )
         )
-        print("save_doc_res: ", save_res)
         if save_res["isSuccess"]:
             save_res_metadata = json.loads(
                 save_to_clone_metadata_collection(
@@ -129,7 +128,6 @@ def cloning_document(document_id, auth_viewers, parent_id, process_id):
                     }
                 )
             )
-        print("cloned_doc: ", save_res["inserted_id"])
         return save_res["inserted_id"]
     except Exception as e:
         print(e)
