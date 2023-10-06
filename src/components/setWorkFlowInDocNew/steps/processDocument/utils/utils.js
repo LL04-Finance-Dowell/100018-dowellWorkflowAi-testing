@@ -4,7 +4,7 @@ const requiredProcessStepsKeys = {
   stepCloneCount: 'select copies of document for processing',
   stepDocumentMap: 'select at least one item from the table of contents',
   stepDisplay: 'configure a display',
-  stepProcessingOrder: "select a 'member order'",
+  // stepProcessingOrder: "select a 'member order'",
   stepRights: "select a 'rights'",
   stepActivityType: "select a 'activity type'",
   stepLocation: 'configure a location',
@@ -59,10 +59,10 @@ export const extractProcessObj = (
       },
     ],
     workflows_ids: [selectedDocumentWorkflow._id], // this will be updated later to capture multiple workflows
-    process_type: 'document',
+    process_type: documentToProcess.document_name ? 'document' : 'template',
     org_name: currentUserDetails?.portfolio_info?.length > 1 ? currentUserDetails?.portfolio_info.find(portfolio => portfolio.product === productName)?.org_name : currentUserDetails?.portfolio_info[0]?.org_name,
   };
-
+console.log('the documentToProcess is in util ', documentToProcess)
   const foundProcessSteps = documentProcessSteps.find(
     (process) => process.workflow === selectedDocumentWorkflow._id
   );

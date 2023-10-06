@@ -31,8 +31,10 @@
   flex-direction: column;
   height: fit-content !important;
   margin: auto;
-  width: 98px;
+  width: 90%;
   align-items: center;
+  overflow: hidden;
+  /* border: solid; */
 }
 
 .features__title {
@@ -40,6 +42,10 @@
   font-weight: 600;
   margin-bottom: 100px;
   line-height: 24px;
+/* border: solid; */
+width: 100%;
+  overflow: hidden; /* Hide any content that exceeds the maximum height */
+  text-overflow: ellipsis;
 }
 
 .features__button {

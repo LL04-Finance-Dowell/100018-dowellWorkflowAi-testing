@@ -126,3 +126,17 @@ export const allTemplates = createAsyncThunk(
     }
   }
 );
+
+export const contentTemplate = createAsyncThunk(
+  'template/contentTemplate',
+  async (data) => {
+    try {
+      const res = await templateServices.contentTemplate(data);
+
+      // console.log(res.data)
+      return res.data;
+    } catch (error) {
+      console.log('Content template fetch error: ', error);
+    }
+  }
+);

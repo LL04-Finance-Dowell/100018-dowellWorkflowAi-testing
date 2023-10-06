@@ -22,7 +22,8 @@ const AssignTask = ({ currentStepIndex, stepsPopulated }) => {
   const { docCurrentWorkflow, processSteps } = useSelector(
     (state) => state.app
   );
-
+    ///import which doc or template approval
+    const whichApproval = useSelector((state)=> state.copyProcess.whichApproval)
       ////copied process
       const copiedProcess = useSelector((state) => state.copyProcess.processStep);
 
@@ -146,7 +147,7 @@ const AssignTask = ({ currentStepIndex, stepsPopulated }) => {
           label='Task Type'
           register={register}
           name='taskType'
-          options={taskType}
+          options={whichApproval == 'document' ? taskType : taskTypeReverse}
           takeNormalValue={true}
           currentValue={
             processSteps.find(
@@ -247,6 +248,19 @@ export const taskType = [
     option: 'Assign task',
     normalValue: 'assign_task',
   },
+];
+export const taskTypeReverse = [
+  {
+    id: uuidv4(),
+    option: 'Assign task',
+    normalValue: 'assign_task',
+  },
+  {
+    id: uuidv4(),
+    option: 'Request for task',
+    normalValue: 'request_for_task',
+  },
+ 
 ];
 
 export const rights = [

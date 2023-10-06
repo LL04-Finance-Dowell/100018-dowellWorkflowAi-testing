@@ -52,4 +52,8 @@ export class TemplateServices {
     httpApiUrl.get(
       `/companies/${companyId}/templates/reports/metadata/?data_type=${dataType}&template_state=draft&portfolio=${portfolioName}&member=${userName}`
     );
+
+    contentTemplate = async (data) => {
+      return await httpTemplate.get(`/${data}/content/`);
+    };
 }

@@ -21,6 +21,9 @@ import { useNavigate } from 'react-router-dom';
 import { productName } from '../../../utils/helpers';
 import { useAppContext } from '../../../contexts/AppContext';
 
+//import create proccess page to choose between template approval and doc approval
+import CreateProcess from '../../../components/manageFiles/files/createProcess/createProcess';
+
 const ProcessesPage = ({
   home,
   showSingleProcess,
@@ -31,6 +34,7 @@ const ProcessesPage = ({
   showOnlyTests,
   showOnlyCompleted,
   showOnlyActive,
+  chooseProcess
 }) => {
   const {
     processesLoading,
@@ -308,6 +312,8 @@ const ProcessesPage = ({
               />
             </div>
           )}
+
+          {chooseProcess ? <CreateProcess /> : <></>}
         </ManageFiles>
       </div>
     </WorkflowLayout>
