@@ -152,7 +152,7 @@ urlpatterns = [
     path("update-to-teams/", update_team),
     path("settings/", create_application_settings),
     path("update-settings/", update_application_settings),
-    path("settings/<str:wf_setting_id>", get_workflow_ai_setting),
+    path("settings/<str:company_id>", get_workflow_ai_setting),
     path("reminder/<str:process_id>/<str:username>", read_reminder),
     path("notify/", send_notif),
     path("folders/", create_folder, name="create_folder"),
