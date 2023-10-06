@@ -127,5 +127,5 @@ const items = [
   { id: uuidv4(), content: 'template', href: '/templates/#newTemplate' },
   { id: uuidv4(), content: 'document', href: '/documents/#newDocument' },
   { id: uuidv4(), content: 'workflow', href: '/workflows/#newWorkflow' },
-  { id: uuidv4(), content: 'process', href: '/workflows/new-set-workflow' },
+  { id: uuidv4(), content: 'process', href: '/processes/createprocess' },
 ];

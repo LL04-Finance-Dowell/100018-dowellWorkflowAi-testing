@@ -39,10 +39,11 @@ export class DocumentServices {
     httpApiUrl.get(`/companies/${companyId}/documents/clones/metadata/?data_type=${dataType}&document_state=draft`);
   // {{base_url}}/companies/6390b313d77dc467630713f2/documents/clones/metadata/?data_type=Real_Data&doc_state=finalized
 
-  contentDocument = (collection_id) => {
-   
-    return httpDocument.get(`/${collection_id}/content/`);
+
+  contentDocument = (collection_id, item ) => {
+    return httpDocument.get(`/${collection_id}/content/?item_type=${item}`);
   };
+  
 
   // allDocuments = (companyId, dataType) => {
   //   return httpApiUrl.get(
