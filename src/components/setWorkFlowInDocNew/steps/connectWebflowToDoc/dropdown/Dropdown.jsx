@@ -1,3 +1,4 @@
+import React,{useEffect} from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   setDocCurrentWorkflow,
@@ -14,6 +15,22 @@ const Dropdown = ({ disableClick }) => {
   );
   /*  const [toggle, setToggle] = useState(false); */
 
+      ////copied workflow
+      const copiedWorkflow = useSelector((state) => state.copyProcess.workflow);
+
+      useEffect(()=>{
+        const timerId = setTimeout(() => {
+          console.log('entered drop down', wfToDocument.workflows)
+        if (wfToDocument.workflows  && copiedWorkflow !==null) {
+          dispatch(setDocCurrentWorkflow(wfToDocument.workflows[0]));
+   
+          dispatch(setDropdowndToggle(false));
+          console.log('finished dropdown')
+        }
+      }, 5000);
+      return () => clearTimeout(timerId);
+      },[copiedWorkflow, wfToDocument])
+
   const handleToggle = () => {
     if (disableClick) return;
     dispatch(setDropdowndToggle(!dropdownToggle));
@@ -25,6 +42,7 @@ const Dropdown = ({ disableClick }) => {
     dispatch(setDropdowndToggle(false));
   };
 
+  console.log("the wfToDocument.workflows are ",wfToDocument.workflows)
   
 
   return (

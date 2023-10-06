@@ -29,6 +29,9 @@ import {
 import { useTranslation } from "react-i18next";
 import { extractProcessObj } from "./utils/utils";
 
+//import reset copy data 
+import { resetCopyData } from "../../../../features/processCopyReducer";
+
 const ProcessDocument = ({ savedProcess, Process_title, setProcess_title }) => {
   // const [ScrollView , SetScrollView] = useState();
 
@@ -85,7 +88,7 @@ const ProcessDocument = ({ savedProcess, Process_title, setProcess_title }) => {
 
   const handleProcessBtnClick = async () => {
     if (!processOptionSelection || processOptionSelection === "Select") return;
-
+    dispatch(resetCopyData())
     if (!userDetail) return;
     if (!currentDocToWfs) {
       document

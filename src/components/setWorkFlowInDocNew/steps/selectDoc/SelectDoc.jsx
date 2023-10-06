@@ -22,6 +22,12 @@ import { DocumentServices } from '../../../../services/documentServices';
 import { setOriginalDocuments, setOriginalDocumentsLoaded } from '../../../../features/document/documentSlice';
 import axios from 'axios';
 
+import { contentDocument } from '../../../../features/document/asyncThunks';
+import { setCurrentDocToWfs } from '../../../../features/app/appSlice';
+import { setContentOfDocument } from '../../../../features/document/documentSlice';
+
+import { startCopyingDocument } from '../../../../features/processCopyReducer';
+
 const SelectDoc = ({ savedDoc }) => {
   const dispatch = useDispatch();
   const { t } = useTranslation();
@@ -39,6 +45,23 @@ const SelectDoc = ({ savedDoc }) => {
   const [selectedDocuments, setSelectedDocuments] = useState([]);
   const [selectedDocumentCopies, setSelectedDocumentCopies] = useState([]);
   const [currentSelectedDocument, setCurrentSelectedDocument] = useState(null);
+
+  ////copied docs
+  const copiedDocument = useSelector((state) => state.copyProcess.document);
+const copiedWorkflow = useSelector((state) => state.copyProcess.workflow);
+useEffect(()=>{
+  console.log('the copied doc and workflow are , ', copiedDocument, copiedWorkflow)
+  if(copiedDocument !== null){
+    setCurrentSelectedDocument(copiedDocument)
+    setSelectedDocuments((prev) => [copiedDocument]);
+    dispatch(startCopyingDocument())
+    // dispatch(contentDocument(copiedDocument.collection_id));
+    // dispatch(setCurrentDocToWfs(copiedDocument));
+    // dispatch(setContentOfDocument(null));
+  }
+}, [copiedDocument, copiedWorkflow])
+
+
 
   const data = {
     company_id: userDetail?.portfolio_info?.length > 1 ? userDetail?.portfolio_info.find(portfolio => portfolio.product === productName)?.org_id : userDetail?.portfolio_info[0].org_id,
@@ -70,7 +93,7 @@ const SelectDoc = ({ savedDoc }) => {
 
 
   const handleAddSelectedDocuments = (document) => {
-   
+   console.log(document)
     axios
       .get(`https://workflowai.uxlivinglab.online/v1/companies/${data.company_id}/documents/${document._id}/clones/?data_type=${data.data_type}`)
       .then((response) => {

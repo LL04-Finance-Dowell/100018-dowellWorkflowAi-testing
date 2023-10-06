@@ -1,12 +1,14 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import { useForm } from 'react-hook-form';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { setCurrentDocToWfs } from '../../../../../features/app/appSlice';
 import { contentDocument } from '../../../../../features/document/asyncThunks';
 import { setContentOfDocument } from '../../../../../features/document/documentSlice';
 import { PrimaryButton } from '../../../../styledComponents/styledComponents';
 import styles from './selectedDocuments.module.css';
 import { useTranslation } from 'react-i18next';
+
+import { startCopyingWorkflow } from '../../../../../features/processCopyReducer';
 
 const SelectedDocuments = ({
   selectedDocument,
@@ -21,6 +23,29 @@ const SelectedDocuments = ({
   const dispatch = useDispatch();
   const { t } = useTranslation();
   console.log(selectedDocuments.clones)
+
+    ////copied docs
+    const copiedDocument = useSelector((state) => state.copyProcess.document);
+    const startCopyingDoc = useSelector((state)=> state.copyProcess.startSelectDocument)
+    useEffect(() => {
+      if (!copiedDocument) return;
+    
+      // console.log('Selection started!', startCopyingDoc);
+
+      if(copiedDocument !==null && startCopyingDoc == true){
+        setTimeout(()=>{
+          dispatch(contentDocument(copiedDocument.collection_id));
+          dispatch(setCurrentDocToWfs(copiedDocument));
+          dispatch(setContentOfDocument(null));
+          dispatch(startCopyingWorkflow())
+          // console.log('document should be selected');
+        },3000)
+        
+      }
+
+    }, [copiedDocument, startCopyingDoc]);
+    
+    
 
   const onSubmit = (data) => {
     if (!selectedDocument) return;

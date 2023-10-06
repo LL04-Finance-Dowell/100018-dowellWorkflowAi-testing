@@ -27,6 +27,9 @@ const ConnectWorkFlowToDoc = ({ stepsPopulated, savedProcessSteps }) => {
   const { t } = useTranslation();
   const { savedProcessConfigured } = useSelector((state) => state.app);
 
+    ////copied process
+    const copiedProcess = useSelector((state) => state.copyProcess.processStep);
+  // console.log('the copied procesSteps are ', copiedProcess)
   const { docCurrentWorkflow, processSteps } = useSelector(
     (state) => state.app
   );
@@ -124,7 +127,7 @@ const ConnectWorkFlowToDoc = ({ stepsPopulated, savedProcessSteps }) => {
       [],
       {
         workflow: docCurrentWorkflow?._id,
-        steps: docCurrentWorkflow?.workflows?.steps,
+        steps: copiedProcess == null ? docCurrentWorkflow?.workflows?.steps : copiedProcess.process_steps,
       },
     ];
     stepsForWorkflow.push(stepsObj);
@@ -230,7 +233,7 @@ const ConnectWorkFlowToDoc = ({ stepsPopulated, savedProcessSteps }) => {
       if (foundNextStepElem) foundNextStepElem.scrollIntoView();
     }
   };
-console.log(stepsPopulated)
+console.log("the stepsPopulated are ", stepsPopulated)
   return (
     <>
       <div className={styles.container}>
