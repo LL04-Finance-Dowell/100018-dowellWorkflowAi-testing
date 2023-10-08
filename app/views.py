@@ -66,6 +66,7 @@ from app.mongo_db_connection import (
     single_query_template_collection,
     single_query_workflow_collection,
     bulk_query_settings_collection,
+    single_query_settings_collection,
     process_folders_to_item,
     bulk_query_document_collection,
     bulk_query_document_metadata_collection,
@@ -1554,9 +1555,13 @@ def all_workflow_ai_setting(request, company_id, data_type="Real_Data"):
 
 
 @api_view(["GET"])
-def get_workflow_ai_setting(request, wf_setting_id):
-    """Get All WF AI"""
-    setting = get_workflow_setting_object(wf_setting_id)
+def get_workflow_ai_setting(request, company_id):
+    """Get Single WF AI"""
+    member = request.query_params.get("member")
+    setting = single_query_settings_collection({
+            "company_id": company_id,
+            "created_by": member,
+            })
     return Response(setting, status.HTTP_200_OK)
 
 
@@ -1959,7 +1964,7 @@ def get_mobile_notifications_docusign(request, company_id):
             "created_by": member,
             })
         
-        for data in check_setup:        
+        for data in check_setup:    
             if "Notarisation"  in data and set(notarisation).issubset(data["Notarisation"]):
                 document_list = bulk_query_clones_metadata_collection(
                 {
