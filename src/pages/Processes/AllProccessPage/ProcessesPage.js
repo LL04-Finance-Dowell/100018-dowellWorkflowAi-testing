@@ -22,6 +22,9 @@ import { productName } from '../../../utils/helpers';
 import { useAppContext } from '../../../contexts/AppContext';
 import EvaluationReportComponent from '../../../components/manageFiles/ProcessDetail/StepDetail';
 
+//import create proccess page to choose between template approval and doc approval
+import CreateProcess from '../../../components/manageFiles/files/createProcess/createProcess';
+
 const ProcessesPage = ({
   home,
   showSingleProcess,
@@ -32,7 +35,7 @@ const ProcessesPage = ({
   showOnlyTests,
   showOnlyCompleted,
   showOnlyActive,
-  showEvaluationReport
+  chooseProcess
 }) => {
   const {
     processesLoading,
@@ -43,6 +46,7 @@ const ProcessesPage = ({
     linksFetched,
     showsProcessDetailPopup,
     DetailFetched,
+    showEvaluationReport
   } = useSelector((state) => state.app);
   const { userDetail } = useSelector((state) => state.auth);
 
@@ -319,6 +323,8 @@ const ProcessesPage = ({
               />
             </div>
           )}
+
+          {chooseProcess ? <CreateProcess /> : <></>}
         </ManageFiles>
       </div>
     </WorkflowLayout>

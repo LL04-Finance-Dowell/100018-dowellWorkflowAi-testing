@@ -9,6 +9,7 @@ import styles from './selectedDocuments.module.css';
 import { useTranslation } from 'react-i18next';
 
 import { startCopyingWorkflow } from '../../../../../features/processCopyReducer';
+import { contentTemplate } from '../../../../../features/template/asyncThunks';
 
 const SelectedDocuments = ({
   selectedDocument,
@@ -23,6 +24,9 @@ const SelectedDocuments = ({
   const dispatch = useDispatch();
   const { t } = useTranslation();
   console.log(selectedDocuments.clones)
+
+    ///import which doc or template approval
+    const whichApproval = useSelector((state)=> state.copyProcess.whichApproval)
 
     ////copied docs
     const copiedDocument = useSelector((state) => state.copyProcess.document);
@@ -45,7 +49,7 @@ const SelectedDocuments = ({
 
     }, [copiedDocument, startCopyingDoc]);
     
-    
+    // console.log('the selected document is ', selectedDocument)
 
   const onSubmit = (data) => {
     if (!selectedDocument) return;
@@ -59,8 +63,16 @@ const SelectedDocuments = ({
 
     // const fetchData = { document_id: currentDocument?._id };
 
-    
-    dispatch(contentDocument(selectedDocument.collection_id));
+    if(whichApproval == 'Document'){
+     const item = 'documents'
+      dispatch(contentDocument({ collection_id: selectedDocument.collection_id, item }));
+    }
+    else{
+      const item = 'templates'
+      dispatch(contentDocument({ collection_id: selectedDocument.collection_id, item }));
+    }
+
+    // dispatch(contentDocument(selectedDocument.collection_id, whichApproval));
     dispatch(setCurrentDocToWfs(selectedDocument));
     dispatch(setContentOfDocument(null));
   };

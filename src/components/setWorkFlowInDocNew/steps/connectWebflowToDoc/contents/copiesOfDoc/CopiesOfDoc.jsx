@@ -36,9 +36,10 @@ const CopiesOfDoc = ({ currentStepIndex, stepsPopulated }) => {
     if (copiesFeaturesSet) return;
 
     const currentCopies = copiesFeaturesToDisplay.slice();
+    // console.log('the currentDocToWfs is ',currentDocToWfs)
     const singleCopyOfCurrentDocument = {
       id: currentDocToWfs?._id,
-      feature: currentDocToWfs?.document_name,
+      feature: currentDocToWfs?.document_name ? currentDocToWfs?.document_name  : currentDocToWfs?.template_name,
       document_number: 1,
     };
     currentCopies.push(singleCopyOfCurrentDocument);
@@ -75,14 +76,14 @@ const CopiesOfDoc = ({ currentStepIndex, stepsPopulated }) => {
       for (let i = 0; i < totalNumberOfAssignedUsersInPreviousStep; i++)
         newCopiesForCurrentStep.push({
           id: currentDocToWfs?._id,
-          feature: currentDocToWfs?.document_name,
+          feature: currentDocToWfs?.document_name ? currentDocToWfs?.document_name  : currentDocToWfs?.template_name,
           document_number: i + 1,
         });
       setCopiesFeaturesToDisplay(newCopiesForCurrentStep);
     } else {
       newCopiesForCurrentStep.push({
         id: currentDocToWfs?._id,
-        feature: currentDocToWfs?.document_name,
+        feature: currentDocToWfs?.document_name ? currentDocToWfs?.document_name  : currentDocToWfs?.template_name,
         document_number: 1,
       });
       setCopiesFeaturesToDisplay(newCopiesForCurrentStep);
@@ -102,7 +103,7 @@ const CopiesOfDoc = ({ currentStepIndex, stepsPopulated }) => {
       const copiesForCurrentStep = [];
       const singleCopyOfCurrentDocument = {
         id: currentDocToWfs?._id,
-        feature: currentDocToWfs?.document_name,
+        feature: currentDocToWfs?.document_name ? currentDocToWfs?.document_name  : currentDocToWfs?.template_name,
         document_number: 1,
       };
       copiesForCurrentStep.push(singleCopyOfCurrentDocument);
@@ -116,7 +117,7 @@ const CopiesOfDoc = ({ currentStepIndex, stepsPopulated }) => {
     for (let i = 0; i < documentCountForStep; i++) {
       copiesForCurrentStep.push({
         id: currentDocToWfs?._id,
-        feature: currentDocToWfs?.document_name,
+        feature: currentDocToWfs?.document_name ? currentDocToWfs?.document_name  : currentDocToWfs?.template_name,
         document_number: i + 1,
       });
       setCopiesFeaturesToDisplay(copiesForCurrentStep);

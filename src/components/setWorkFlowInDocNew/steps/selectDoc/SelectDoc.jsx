@@ -27,6 +27,7 @@ import { setCurrentDocToWfs } from '../../../../features/app/appSlice';
 import { setContentOfDocument } from '../../../../features/document/documentSlice';
 
 import { startCopyingDocument } from '../../../../features/processCopyReducer';
+import { TemplateServices } from '../../../../services/templateServices';
 
 const SelectDoc = ({ savedDoc }) => {
   const dispatch = useDispatch();
@@ -40,6 +41,9 @@ const SelectDoc = ({ savedDoc }) => {
     (state) => state.document
   );
   const { userDetail } = useSelector((state) => state.auth);
+
+  ///import which doc or template approval
+  const whichApproval = useSelector((state)=> state.copyProcess.whichApproval)
 
 
   const [selectedDocuments, setSelectedDocuments] = useState([]);
@@ -61,7 +65,7 @@ useEffect(()=>{
   }
 }, [copiedDocument, copiedWorkflow])
 
-
+console.log('the picked approval is ', whichApproval)
 
   const data = {
     company_id: userDetail?.portfolio_info?.length > 1 ? userDetail?.portfolio_info.find(portfolio => portfolio.product === productName)?.org_id : userDetail?.portfolio_info[0].org_id,
@@ -73,19 +77,32 @@ useEffect(()=>{
 
     dispatch(setOriginalDocumentsLoaded(false));
 
-    const documentServices = new DocumentServices();
-
-
-    documentServices.getAllOriginalDocuments(data.company_id, data.data_type)
-      .then(res => {
-       
-        dispatch(setOriginalDocuments(res.data.documents?.reverse()));
+    if(whichApproval == 'Document'){
+      const documentServices = new DocumentServices();
+      documentServices.getAllOriginalDocuments(data.company_id, data.data_type)
+        .then(res => {
+          console.log('the doc data are ', res.data)
+          dispatch(setOriginalDocuments(res.data.documents?.reverse()));
+          dispatch(setOriginalDocumentsLoaded(true));
+        })
+        .catch(err => {
+          console.log('Failed to load original documents: ', err.response ? err.response.data : err.message);
+          dispatch(setOriginalDocumentsLoaded(true));
+        })
+    }else{
+      const templateServices = new TemplateServices()
+      templateServices.allTemplates(data.company_id, data.data_type)
+      .then(res=>{
+        console.log('the template data are ', res.data)
+        dispatch(setOriginalDocuments(res.data.templates?.reverse()))
         dispatch(setOriginalDocumentsLoaded(true));
       })
       .catch(err => {
         console.log('Failed to load original documents: ', err.response ? err.response.data : err.message);
         dispatch(setOriginalDocumentsLoaded(true));
       })
+    }
+    
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -94,10 +111,11 @@ useEffect(()=>{
 
   const handleAddSelectedDocuments = (document) => {
    console.log(document)
+   if(whichApproval == 'Document'){
     axios
       .get(`https://workflowai.uxlivinglab.online/v1/companies/${data.company_id}/documents/${document._id}/clones/?data_type=${data.data_type}`)
       .then((response) => {
-        console.log(response.data)
+        console.log('the response for document detail is ',response.data)
         setSelectedDocumentCopies(
           response.data
         );
@@ -106,6 +124,10 @@ useEffect(()=>{
       .catch((error) => {
         console.log(error)
       });
+    }
+    else{
+
+    }
     setCurrentSelectedDocument(document);
     Array.isArray(allDocumentsArray)
     console.log(selectedDocumentCopies)
@@ -185,7 +207,7 @@ useEffect(()=>{
                             className={`${styles.swiper__slide__features} animate`}
                           >
                             <p className={styles.features__title}>
-                              {item.document_name}
+                              {whichApproval == 'Document' ? item.document_name : item.template_name}
                             </p>
                             <button
                               onClick={() => handleAddSelectedDocuments(item)}
@@ -271,7 +293,7 @@ useEffect(()=>{
                             className={`${styles.swiper__slide__features} animate`}
                           >
                             <p className={styles.features__title}>
-                              {item.document_name}
+                            {whichApproval == 'Document' ? item.document_name : item.template_name}
                             </p>
                             <button
                               onClick={() => handleAddSelectedDocuments(item)}

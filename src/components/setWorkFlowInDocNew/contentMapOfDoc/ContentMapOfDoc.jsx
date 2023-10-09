@@ -70,7 +70,7 @@ const ContentMapOfDoc = () => {
           {contentOfDocument && contentOfDocumentStatus !== 'pending' ? (
             <>
               <h4 className={styles.header}>
-                Content Map of {currentDocToWfs?.document_name}
+                Content Map of {currentDocToWfs?.document_name} {currentDocToWfs?.template_name}
               </h4>
               <i>{toggleContent ? <IoIosArrowUp /> : <IoIosArrowDown />}</i>
             </>

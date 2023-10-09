@@ -264,6 +264,10 @@ function App() {
             element={<ProccessPage showSingleProcess={true} />}
           /> */}
           <Route
+            path={'createprocess'}
+            element={<ProccessPage chooseProcess={true} />}
+          />
+          <Route
             path={'process-import/:process_id'}
             element={<CopyProcessPage />}
           />

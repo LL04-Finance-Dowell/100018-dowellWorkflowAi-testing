@@ -6,13 +6,17 @@ const initialState = {
   processStep: null,
   startSelectDocument: false,
   startSelectWorkflow: false,
-  startConnectWorkflow: false
+  startConnectWorkflow: false,
+  whichApproval : 'Document'
 };
 
 export const copiedProcessSlice = createSlice({
   name: "copiedProcess",
   initialState,
   reducers: {
+    setWhichApproval: (state, action)=>{
+      state.whichApproval = action.payload
+    },
     setCopiedDocument: (state, action) => {
       state.document = action.payload;
     },
@@ -42,6 +46,6 @@ export const copiedProcessSlice = createSlice({
   }
 });
 
-export const { setCopiedDocument, setCopiedWorkflow,setProcessStepCopy, startConnecting, startCopyingDocument, startCopyingWorkflow, resetCopyData } = copiedProcessSlice.actions;
+export const { setWhichApproval,setCopiedDocument, setCopiedWorkflow,setProcessStepCopy, startConnecting, startCopyingDocument, startCopyingWorkflow, resetCopyData } = copiedProcessSlice.actions;
 
 export default copiedProcessSlice.reducer;

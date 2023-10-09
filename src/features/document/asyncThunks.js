@@ -141,9 +141,10 @@ export const savedDocuments = createAsyncThunk(
 
 export const contentDocument = createAsyncThunk(
   'document/contentDocument',
-  async (data) => {
+  async ({ collection_id, item }) => {
     try {
-      const res = await documentServices.contentDocument(data);
+      console.log(collection_id, item)
+      const res = await documentServices.contentDocument(collection_id, item);
 
       // console.log(res.data)
       return res.data;
