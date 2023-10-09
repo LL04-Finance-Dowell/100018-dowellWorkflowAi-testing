@@ -392,7 +392,7 @@ class HandleProcess:
                 }
             )
         ).start()
-        return {"links": links, "master_link": m_link, "master_code": m_code}
+        return {"process_id": process_id, "links": links, "master_link": m_link, "master_code": m_code}
 
     def verify_location(self, auth_role, location_data):
         for step in self.process["process_steps"]:
