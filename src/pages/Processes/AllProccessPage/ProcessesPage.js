@@ -20,6 +20,7 @@ import {
 import { useNavigate } from 'react-router-dom';
 import { productName } from '../../../utils/helpers';
 import { useAppContext } from '../../../contexts/AppContext';
+import EvaluationReportComponent from '../../../components/manageFiles/ProcessDetail/StepDetail';
 
 //import create proccess page to choose between template approval and doc approval
 import CreateProcess from '../../../components/manageFiles/files/createProcess/createProcess';
@@ -45,6 +46,7 @@ const ProcessesPage = ({
     linksFetched,
     showsProcessDetailPopup,
     DetailFetched,
+    showEvaluationReport
   } = useSelector((state) => state.app);
   const { userDetail } = useSelector((state) => state.auth);
 
@@ -65,6 +67,7 @@ const ProcessesPage = ({
   useEffect(() => {
     if (showOnlySaved) navigate('#saved-processes');
     if (showSingleProcess) navigate('#processdetail');
+    if (showEvaluationReport) navigate('#evaluation-report');
     if (showOnlyPaused) navigate('#paused-processes');
     if (showOnlyCancelled) navigate('#cancelled-processes');
     if (showOnlyTrashed) navigate('#thrashed-processes');
@@ -101,13 +104,13 @@ const ProcessesPage = ({
     const [userCompanyId, userPortfolioDataType] = [
       userDetail?.portfolio_info?.length > 1
         ? userDetail?.portfolio_info.find(
-            (portfolio) => portfolio.product === productName
-          )?.org_id
+          (portfolio) => portfolio.product === productName
+        )?.org_id
         : userDetail?.portfolio_info[0]?.org_id,
       userDetail?.portfolio_info?.length > 1
         ? userDetail?.portfolio_info.find(
-            (portfolio) => portfolio.product === productName
-          )?.data_type
+          (portfolio) => portfolio.product === productName
+        )?.data_type
         : userDetail?.portfolio_info[0]?.data_type,
     ];
 
@@ -142,8 +145,8 @@ const ProcessesPage = ({
     const userPortfolioDataType =
       userDetail?.portfolio_info?.length > 1
         ? userDetail?.portfolio_info.find(
-            (portfolio) => portfolio.product === productName
-          )?.data_type
+          (portfolio) => portfolio.product === productName
+        )?.data_type
         : userDetail?.portfolio_info[0].data_type;
 
     setCurrentUserPortfolioDataType(userPortfolioDataType);
@@ -208,6 +211,14 @@ const ProcessesPage = ({
           {showSingleProcess ? (
             <div id='processdetail'>
               <ProcessDetail />
+            </div>
+          ) : (
+            <></>
+          )}
+
+          {showEvaluationReport ? (
+            <div id='evaluation'>
+              <EvaluationReportComponent />
             </div>
           ) : (
             <></>

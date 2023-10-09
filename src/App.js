@@ -25,6 +25,7 @@ import VerificationPage from './pages/Verification/VerificationPage';
 import ProccessPage from './pages/Processes/AllProccessPage/ProcessesPage';
 import CopyProcessPage from './pages/Processes/CopyProcessPage';
 import SearchPage from './pages/Search/SearchPage';
+import EvaluationReportComponent from './components/manageFiles/ProcessDetail/StepDetail';
 import { productName } from './utils/helpers';
 import { useAppContext } from './contexts/AppContext';
 
@@ -253,10 +254,15 @@ function App() {
             path={'active'}
             element={<ProccessPage showOnlyActive={true} />}
           />
-          <Route
+          <Route path={'processdetail'} element={<ProccessPage showSingleProcess={true} />}>
+          </Route>
+
+          <Route path="evaluation-report" element={<ProccessPage showEvaluationReport={true} />} />
+
+          {/* <Route
             path={'processdetail'}
             element={<ProccessPage showSingleProcess={true} />}
-          />
+          /> */}
           <Route
             path={'createprocess'}
             element={<ProccessPage chooseProcess={true} />}
@@ -265,7 +271,6 @@ function App() {
             path={'process-import/:process_id'}
             element={<CopyProcessPage />}
           />
-
 
           {/* <Route path={"trash"} element={<ProccessPage showOnlyTrashed={true} />}/> */}
         </Route>
