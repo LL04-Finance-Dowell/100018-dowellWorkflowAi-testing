@@ -1999,10 +1999,12 @@ def process_public_users(request, company_id):
         
     if request.method == "POST":
         process_id = request.data.get("process_id")
+        company_id = request.data.get("company_id")
         member = request.data.get("member")
         if not process_id or not member:
             return Response("provide all the fields", status=status.HTTP_400_BAD_REQUEST)
         options = {
+            "company_id":company_id,
             "process_id": process_id,
             "member": member
         }
