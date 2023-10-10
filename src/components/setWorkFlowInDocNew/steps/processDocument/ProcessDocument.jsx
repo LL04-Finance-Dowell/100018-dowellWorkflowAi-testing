@@ -28,6 +28,7 @@ import {
 } from "../../../../features/app/appSlice";
 import { useTranslation } from "react-i18next";
 import { extractProcessObj } from "./utils/utils";
+import { productName } from "../../../../utils/helpers";
 
 //import reset copy data 
 import { resetCopyData } from "../../../../features/processCopyReducer";
@@ -203,6 +204,46 @@ const ProcessDocument = ({ savedProcess, Process_title, setProcess_title }) => {
             ).data;
             console.log("the process obj to post is ", processObjToPost);
             console.log("the response from adding new process is ", response);
+
+            // console.log('the user Details are ', userDetail)
+            try{
+              const company_id = userDetail?.portfolio_info?.length > 1 ? userDetail?.portfolio_info.find(portfolio => portfolio.product === productName)?.org_id : userDetail?.portfolio_info[0]?.org_id
+              const publicData ={
+                "process_id": response.process_id,
+                "member": userDetail.userinfo.username,
+                "company_id": company_id,
+                "qr_ids":processObjToPost.workflows[0].workflows.steps[0].stepPublicMembers
+                 }
+                const requestOptions = {
+                  method: 'POST',
+                  headers: {
+                    'Content-Type': 'application/json', 
+                    
+                  },
+                  body: JSON.stringify(publicData), 
+                };
+                fetch(`https://100094.pythonanywhere.com/v1/processes/${company_id}/public/`, requestOptions)
+                .then((response) => {
+                  if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                  }
+                  return response.json();
+                  
+                })
+                .then((data) => {
+                
+                  console.log('Response from the POST request to add to public is :', data);
+                })
+                .catch((error) => {
+                  
+                  console.error('Error:', error);
+                });
+            }
+            catch(err){
+              console.log(err.response)
+            }
+
+
             dispatch(setAllowErrorChecksStatusUpdateForNewProcess(true));
             dispatch(setNewProcessErrorMessage(null));
             setProcess_title("");
@@ -228,6 +269,7 @@ const ProcessDocument = ({ savedProcess, Process_title, setProcess_title }) => {
                 ? response
                 : "Successfully created new process"
             );
+
             setNewProcessLoaded(false);
           } catch (err) {
             setNewProcessLoading(false);
