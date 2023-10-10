@@ -185,6 +185,25 @@ export const AppContextProvider = ({ children }) => {
     setWorkflowSettings(res.data);
   };
 
+  const fetchSettingsData = async () => {
+    const userCompanyId =
+      userDetail?.portfolio_info?.length > 1
+        ? userDetail?.portfolio_info?.find(
+          (portfolio) => portfolio.product === productName
+        )?.org_id
+        : userDetail?.portfolio_info[0]?.org_id;
+
+    const member = userDetail.userinfo.username
+
+    const res = await new WorkflowSettingServices().fetchWorkflowSettingsData(
+      userCompanyId,
+      member
+    );
+
+    console.log("res.data",res.data)
+    setWorkflowSettings(res.data);
+  };
+  
   const fetchDemoTemplates = async () => {
     setDemoTempStatus('pending');
     try {
@@ -383,7 +402,8 @@ export const AppContextProvider = ({ children }) => {
 
   useEffect(() => {
     if (userDetail && userDetail.portfolio_info) {
-      fetchSettings();
+      // fetchSettings();
+      fetchSettingsData();
       // fetchFolders();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps

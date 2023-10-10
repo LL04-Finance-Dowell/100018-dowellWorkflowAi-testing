@@ -57,6 +57,8 @@ const EnabledDisabkedProcess = () => {
   };
 
   const onSubmit = async () => {
+    console.log("workflowSettings", workflowSettings._id)
+    console.log("userDetail", userDetail)
     const Process = sortData(
       permissionArray[0].children[0]._id,
       permissionArray[0].children[0].column[0]._id,
@@ -136,6 +138,7 @@ const EnabledDisabkedProcess = () => {
     );
 
     const data = {
+      _id: workflowSettings?._id || "6447a3449224dc414b404ec5",
       company_id:
         userDetail?.portfolio_info?.length > 1
           ? userDetail?.portfolio_info.find(
@@ -149,6 +152,9 @@ const EnabledDisabkedProcess = () => {
               (portfolio) => portfolio.product === productName
             )?.data_type
           : userDetail?.portfolio_info[0].data_type,
+      eventId: workflowSettings?.eventId || "FB1010000000000000000000003004",
+      created_on: workflowSettings?.created_on || "25:04:2023,09:47:22",
+      created_at: workflowSettings?.created_at || "12:09:2023,11:26:17",
       Process,
       Documents,
       Templates,
@@ -162,11 +168,11 @@ const EnabledDisabkedProcess = () => {
       Reports,
       Management,
       Portfolio_Choice,
-      theme_color: themeColor,
-      wf_setting_id: workflowSettings[0]._id,
+      theme_color: themeColor
     };
 
     try {
+      console.log(data)
       setIsUpdating(true);
       await workflowSettingServices.updateWorkflowAISettings(data);
       setThemeColor(data.theme_color);
@@ -358,6 +364,7 @@ const EnabledDisabkedProcess = () => {
       })
     );
   }, [permissionArray]);
+
 
   // useEffect(() => {
   //   console.log('perm Arr: ', permissionArray);
