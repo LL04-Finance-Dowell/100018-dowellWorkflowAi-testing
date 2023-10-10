@@ -96,9 +96,9 @@ def single_query_process_collection(options):
     return processes
 
 
-def single_query_public_collection(options):
+def bulk_query_public_collection(options):
     public = get_data_from_data_service(
-        *PUBLIC_CONNECTION_LIST, "find", field=options
+        *PUBLIC_CONNECTION_LIST, "fetch", field=options
     )
     return public
 
