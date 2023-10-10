@@ -36,4 +36,8 @@ export class WorkflowSettingServices {
   fetchWorkflowSettings = (companyId) => {
     return httpApiUrl.get(`companies/${companyId}/settings/`);
   };
+
+  fetchWorkflowSettingsData = (companyId, member) => {
+    return httpApiUrl.get(`settings/${companyId}?member=${member}`);
+  };
 }
