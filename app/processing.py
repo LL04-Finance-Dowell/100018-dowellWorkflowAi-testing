@@ -508,7 +508,7 @@ class HandleProcess:
                 return editor_link
     
     # Verify_Access V2
-    def verify_access_v2(self, auth_role, user_name, user_type, document_id):
+    def verify_access_v2(self, auth_role, user_name, user_type, collection_id=None):
         clone_id = None
         doc_map = None
         right = None
@@ -526,9 +526,12 @@ class HandleProcess:
                 if any(user_name in map for map in step.get("stepDocumentCloneMap")):
                     for d_map in step["stepDocumentCloneMap"]:
                         if d_map.get(user_name) is not None:
-                            if d_map.get(user_name) == document_id:
+                            # Check if the collection_id is passed as an argument
+                            if collection_id is not None:
+                                if d_map.get(user_name) == collection_id:
+                                    clone_id = d_map.get(user_name)
+                            else:
                                 clone_id = d_map.get(user_name)
-                            # clone_id = d_map.get(user_name)
                     doc_map = step["stepDocumentMap"]
                     right = step["stepRights"]
                     role = step["stepRole"]
@@ -625,6 +628,7 @@ class Background:
                         current_doc_map = [v for document_map in step["stepDocumentCloneMap"] for k, v in document_map.items() if isinstance(v, str)]
                         user_in_viewers = check_user_in_auth_viewers(user=self.username, item=document_id, item_type="document")
                         if (not user_in_viewers):
+                            print("user not in auth_viewers: ", user_in_viewers)
                             pass
                         elif document_id in current_doc_map:
                             for document_map in step.get("stepDocumentCloneMap"):
@@ -709,7 +713,7 @@ class Background:
                                                 )
                                                 # Change auth viewers in the metadata as well
                                                 metadata_id = get_metadata_id(
-                                                    document, "document"
+                                                    document, "clone"
                                                 )
                                                 authorize_metadata(
                                                     metadata_id, user, process_id, "document"
@@ -726,7 +730,7 @@ class Background:
                                                 )
                                                 # Change auth viewers in the metadata as well
                                                 metadata_id = get_metadata_id(
-                                                    document, "document"
+                                                    document, "clone"
                                                 )
                                                 authorize_metadata(
                                                     metadata_id, user, process_id, "document"
@@ -743,7 +747,7 @@ class Background:
                                                 )
                                                 # Change auth viewers in the metadata as well
                                                 metadata_id = get_metadata_id(
-                                                    document, "document"
+                                                    document, "clone"
                                                 )
                                                 authorize_metadata(
                                                     metadata_id, user, process_id, "document"
@@ -792,7 +796,7 @@ class Background:
                                         )
                                         # Change auth viewers in the metadata as well
                                         metadata_id = get_metadata_id(
-                                            document, "document"
+                                            document, "clone"
                                         )
                                         authorize_metadata(
                                             metadata_id, user, process_id, "document"
@@ -806,7 +810,7 @@ class Background:
                                         )
                                         # Change auth viewers in the metadata as well
                                         metadata_id = get_metadata_id(
-                                            document, "document"
+                                            document, "clone"
                                         )
                                         authorize_metadata(
                                             metadata_id, user, process_id, "document"
@@ -820,7 +824,7 @@ class Background:
                                         )
                                         # Change auth viewers in the metadata as well
                                         metadata_id = get_metadata_id(
-                                            document, "document"
+                                            document, "clone"
                                         )
                                         authorize_metadata(
                                             metadata_id, user, process_id, "document"

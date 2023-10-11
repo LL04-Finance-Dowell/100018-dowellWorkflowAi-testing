@@ -589,10 +589,11 @@ def check_user_in_auth_viewers(user, item, item_type) -> bool:
         viewers = single_query_template_collection({"_id": item}).get("auth_viewers")
         viewers = viewers[0]
 
-    for i in viewers:
-        for k, v in i.items():
-            if k != "portfolio":
-                auth_viewers.append(v)
+    if viewers:
+        for i in viewers:
+            for k, v in i.items():
+                if k != "portfolio":
+                    auth_viewers.append(v)
 
     if user in auth_viewers:
         return True
