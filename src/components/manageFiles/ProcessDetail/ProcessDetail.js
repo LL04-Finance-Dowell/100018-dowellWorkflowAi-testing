@@ -23,6 +23,7 @@ import Card from 'react-bootstrap/Card';
 import Accordion from 'react-bootstrap/Accordion';
 import processImage from "../../../assets/processImage.png";
 import greenImage from "../../../assets/greenImage.png";
+import UserDetail from '../../newSidebar/userDetail/UserDetail';
 
 ChartJS.register(ArcElement, Tooltip, Legend, CategoryScale,
   LinearScale,
@@ -34,6 +35,7 @@ ChartJS.register(ArcElement, Tooltip, Legend, CategoryScale,
 
 const ProcessDetail = () => {
   const { ProcessDetail } = useSelector((state) => state.app);
+  const { userDetail } = useSelector((state) => state.auth);
   const navigate = useNavigate();
 
   const handleNavigate = () => {
@@ -55,6 +57,8 @@ const ProcessDetail = () => {
     toast.info("Link Copied")
   };
 
+  console.log("userDetailMubeen", userDetail.userinfo.username)
+  console.log("userDetailMubeen", userDetail.userinfo.firstname)
 
 
   return (
@@ -75,7 +79,7 @@ const ProcessDetail = () => {
               <div >
                 <div className={styles.Flex_div}>
                   <div className={styles.label}>Created By :</div>
-                  <div className={styles.value}>{ProcessDetail.created_by}</div>
+                  <div className={styles.value}>{userDetail.userinfo.username}</div>
                 </div>
                 <div className={styles.Flex_div}>
                   <div className={styles.label}>Processing State :</div>
@@ -84,6 +88,10 @@ const ProcessDetail = () => {
                 <div className={styles.Flex_div}>
                   <div className={styles.label}>Processing Type :</div>
                   <div className={styles.value}>{ProcessDetail.process_type}</div>
+                </div>
+                <div className={styles.Flex_div}>
+                  <div className={styles.label}>Portfolio:</div>
+                  <div className={styles.value}>{userDetail.userportfolio[0].portfolio_name}</div>
                 </div>
               </div>
               <div className={styles.LeftContent}>

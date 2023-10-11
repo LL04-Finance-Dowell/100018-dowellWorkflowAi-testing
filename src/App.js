@@ -25,7 +25,6 @@ import VerificationPage from './pages/Verification/VerificationPage';
 import ProccessPage from './pages/Processes/AllProccessPage/ProcessesPage';
 import CopyProcessPage from './pages/Processes/CopyProcessPage';
 import SearchPage from './pages/Search/SearchPage';
-import EvaluationReportComponent from './components/manageFiles/ProcessDetail/StepDetail';
 import { productName } from './utils/helpers';
 import { useAppContext } from './contexts/AppContext';
 

@@ -23,7 +23,6 @@ ChartJS.register(ArcElement, Tooltip, Legend, CategoryScale,
 const EvaluationReportComponent = () => {
   const [reportData, setReportData] = useState(processDetailReport);
   const { ProcessDetail } = useSelector((state) => state.app);
-  console.log("ProcessDetail", ProcessDetail._id)
 
   useEffect(() => {
     console.log('EvaluationReportComponent mounted');
@@ -34,14 +33,14 @@ const EvaluationReportComponent = () => {
     datasets: [
       {
         label: 'Analysis Value',
-        data: 
-        [
-          reportData?.normality_analysis?.list1?.actual_areas || 3.42,
-          reportData?.normality_analysis?.list1?.rectangle_area || 3.73,
-          reportData?.normality_analysis?.list1?.slope[0] || 1.84, // assuming only one value in slope array
-          reportData?.normality_analysis?.list1?.slope_percentage_deviation || 0.25,
-          reportData?.normality_analysis?.list1?.calculated_slope || 1.84
-        ],
+        data:
+          [
+            reportData?.normality_analysis?.list1?.actual_areas || 3.42,
+            reportData?.normality_analysis?.list1?.rectangle_area || 3.73,
+            reportData?.normality_analysis?.list1?.slope[0] || 1.84, // assuming only one value in slope array
+            reportData?.normality_analysis?.list1?.slope_percentage_deviation || 0.25,
+            reportData?.normality_analysis?.list1?.calculated_slope || 1.84
+          ],
         backgroundColor: '#FFCE56'
       }
     ]
@@ -54,8 +53,8 @@ const EvaluationReportComponent = () => {
         label: 'Scores Statistics',
         data: [
           reportData?.central_tendencies?.normal_dist?.mergedMean || 5.0,
-           reportData?.central_tendencies?.normal_dist?.mergedMedian || 4.0,
-            reportData?.central_tendencies?.normal_dist?.mergedMode?.length || 4.0
+          reportData?.central_tendencies?.normal_dist?.mergedMedian || 4.0,
+          reportData?.central_tendencies?.normal_dist?.mergedMode?.length || 4.0
         ],
         backgroundColor: [
           'rgba(255, 99, 132, 0.6)',
@@ -106,7 +105,7 @@ const EvaluationReportComponent = () => {
   let DetractorsScores = 0;
   if (reportData && reportData.score_list) {
     const scoreListLength = reportData.score_list.length;
-  
+
     promotersScores = ((reportData.score_list.filter(score => score === 9 || score === 10).length) / scoreListLength) * 100;
     passiveScores = ((reportData.score_list.filter(score => score === 7 || score === 8).length) / scoreListLength) * 100;
     DetractorsScores = ((reportData.score_list.filter(score => score > 0 && score <= 6).length) / scoreListLength) * 100;
@@ -124,7 +123,7 @@ const EvaluationReportComponent = () => {
   };
 
   useEffect(() => {
-    console.log(ProcessDetail);
+    console.log("ProcessDetail", ProcessDetail);
     const fetchData = async () => {
       try {
         const requestBody = { process_id: 'abc0099986567abcd' };
@@ -143,7 +142,6 @@ const EvaluationReportComponent = () => {
     return <Spinner animation="grow" variant="success" />;
   }
 
-  console.log("reportData", reportData)
   // Process reportData and structure it for chart display
   const barChartOptions = {
     maintainAspectRatio: false,
@@ -158,44 +156,53 @@ const EvaluationReportComponent = () => {
   };
   return (
     <div>
-      <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
-        <div className={styles.processHeadingChart2}>
-          <h5>Normality Analysis Data:</h5>
+      {reportData ? (
+        <div>
+          <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
+            <div className={styles.processHeadingChart2}>
+              <h5>Normality Analysis Data:</h5>
+            </div>
+
+            <div className={styles.processHeadingChart2}>
+              <h5>Bar Chart for Central Tendencies:</h5>
+            </div>
+          </div>
+
+          <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
+
+            <Bar data={normalityAnalysisData} options={barChartOptions} />
+            <Bar data={barChartData} options={barChartOptions} />
+          </div>
+          <br />
+
+          <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
+            <div className={styles.processHeadingChart2}>
+              <h5>Pie Chart for Score List:</h5>
+            </div>
+
+            <div className={styles.processHeadingChart2}>
+              <h5>Pie Chart for NPS Score Distribution:</h5>
+            </div>
+          </div>
+
+          <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
+
+            <Pie
+              data={pieChartData}
+              options={barChartOptions}
+            />
+            <Pie
+              data={npsScoreDistributionData}
+              options={barChartOptions}
+            />
+          </div>
         </div>
-
-        <div className={styles.processHeadingChart2}>
-          <h5>Bar Chart for Central Tendencies:</h5>
+      ) : (
+        <div>
+          <h3>No scale attached with this process</h3>
         </div>
-      </div>
+      )}
 
-      <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
-
-        <Bar data={normalityAnalysisData} options={barChartOptions} />
-        <Bar data={barChartData} options={barChartOptions} />
-      </div>
-      <br/>
-
-      <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
-        <div className={styles.processHeadingChart2}>
-          <h5>Pie Chart for Score List:</h5>
-        </div>
-
-        <div className={styles.processHeadingChart2}>
-          <h5>Pie Chart for NPS Score Distribution:</h5>
-        </div>
-      </div>
-
-      <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
-
-        <Pie
-          data={pieChartData}
-          options={barChartOptions}
-        />
-        <Pie
-          data={npsScoreDistributionData}
-          options={barChartOptions}
-        />
-      </div>
       {/* <div className={styles.processHeadingChart}>
         <h3>Normality Analysis Data:</h3>
       </div>
