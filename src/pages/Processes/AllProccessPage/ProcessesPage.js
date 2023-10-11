@@ -35,7 +35,8 @@ const ProcessesPage = ({
   showOnlyTests,
   showOnlyCompleted,
   showOnlyActive,
-  chooseProcess
+  chooseProcess,
+  showEvaluationReport
 }) => {
   const {
     processesLoading,
@@ -45,8 +46,7 @@ const ProcessesPage = ({
     showGeneratedLinksPopup,
     linksFetched,
     showsProcessDetailPopup,
-    DetailFetched,
-    showEvaluationReport
+    DetailFetched
   } = useSelector((state) => state.app);
   const { userDetail } = useSelector((state) => state.auth);
 
@@ -63,6 +63,8 @@ const ProcessesPage = ({
     completedProcessesStatus,
     fetchProcessReports,
   } = useAppContext();
+
+  console.log("showEvaluationReport", showEvaluationReport)
 
   useEffect(() => {
     if (showOnlySaved) navigate('#saved-processes');
@@ -88,6 +90,7 @@ const ProcessesPage = ({
     showOnlyTests,
     showOnlyCompleted,
     showOnlyActive,
+    showEvaluationReport,
   ]);
 
   useEffect(() => {
