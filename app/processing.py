@@ -314,17 +314,32 @@ class HandleProcess:
         m_link = None
         link_string = "link"
         for step in steps:
-            for member in step.get("stepPublicMembers", []):
-                link, qrcode = HandleProcess.user_team_public_data(
-                    self.process,
-                    member["member"],
-                    step.get("stepRole"),
-                    member["portfolio"],
-                    "public",
-                )
-                links.append({member["member"]: link})
-                public_links.append({link_string: link})
-                qrcodes.append({member["member"]: qrcode})
+            if len(step["stepPublicMembers"]) < 50:
+                for member in step.get("stepPublicMembers", []):
+                    link, qrcode = HandleProcess.user_team_public_data(
+                        self.process,
+                        member["member"],
+                        step.get("stepRole"),
+                        member["portfolio"],
+                        "public",
+                    )
+                    links.append({member["member"]: link})
+                    public_links.append({link_string: link})
+                    qrcodes.append({member["member"]: qrcode})
+            else:
+                for member in step.get("stepPublicMembers", []):
+                    link, qrcode = HandleProcess.user_team_public_data(
+                        self.process,
+                        member["member"],
+                        step.get("stepRole"),
+                        member["portfolio"],
+                        "public",
+                    )
+                    links.append({member["member"]: link})
+                    public_links.append({link_string: link})
+                    qrcodes.append({member["member"]: qrcode})
+                    break
+
             for member in step.get("stepTeamMembers", []):
                 link, qrcode = HandleProcess.user_team_public_data(
                     self.process,
