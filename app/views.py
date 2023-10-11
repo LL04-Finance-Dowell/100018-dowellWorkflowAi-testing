@@ -299,7 +299,7 @@ def process_verification_v2(request):
     # collection_id = request.data["collection_id"]
     link_object = single_query_qrcode_collection({"unique_hash": token})
     if user_type == "team" or user_type == "user":
-        collection_id = request.data["collection_id"]
+        collection_id = request.data["collection_id"] if request.data.get("collection_id") else None
         if (
             link_object["user_name"] != auth_user
             or link_object["auth_portfolio"] != auth_portfolio
