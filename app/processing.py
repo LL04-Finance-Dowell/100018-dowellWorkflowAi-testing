@@ -222,7 +222,8 @@ class HandleProcess:
         HandleProcess.notify(
             auth_name, item_id, portfolio, company_id, utp_link, org_name
         )
-        utp_code = HandleProcess.generate_qrcode(utp_link)
+        # utp_code = HandleProcess.generate_qrcode(utp_link)
+        utp_code = None
         return utp_link, utp_code
 
     def get_editor_link(payload):
@@ -300,6 +301,40 @@ class HandleProcess:
             master_link = response["qrcodes"][0]["masterlink"]
             master_qrcode = response["qrcodes"][0]["qrcode_image_url"]
         return master_link, master_qrcode
+    
+    def handle_first_batch_public_links(self, step,links, public_links, qrcodes):
+        for index, member in enumerate(step.get("stepPublicMembers", [])):
+            if index <= 10:
+                link, qrcode = HandleProcess.user_team_public_data(
+                    self.process,
+                    member["member"],
+                    step.get("stepRole"),
+                    member["portfolio"],
+                    "public",
+                )
+                links.append({member["member"]: link})
+                public_links.append({"link": link})
+                qrcodes.append({member["member"]: qrcode})
+            else:
+                break
+
+    def handle_last_batch_public_links(self, step,links, public_links, qrcodes):
+            for index, member in enumerate(step.get("stepPublicMembers", [])):
+                if index <= 10:
+                    continue
+                else:
+                    link, qrcode = HandleProcess.user_team_public_data(
+                        self.process,
+                        member["member"],
+                        step.get("stepRole"),
+                        member["portfolio"],
+                        "public",
+                    )
+                    links.append({member["member"]: link})
+                    public_links.append({"link": link})
+                    qrcodes.append({member["member"]: qrcode})
+            
+
 
     def start(self):
         links = []
@@ -327,19 +362,10 @@ class HandleProcess:
                     public_links.append({link_string: link})
                     qrcodes.append({member["member"]: qrcode})
             else:
-                for member in step.get("stepPublicMembers", []):
-                    link, qrcode = HandleProcess.user_team_public_data(
-                        self.process,
-                        member["member"],
-                        step.get("stepRole"),
-                        member["portfolio"],
-                        "public",
-                    )
-                    links.append({member["member"]: link})
-                    public_links.append({link_string: link})
-                    qrcodes.append({member["member"]: qrcode})
-                    break
-
+                Thread(target=HandleProcess.handle_first_batch_public_links(
+                        self, step,links, public_links, qrcodes)
+                    ).start()
+                
             for member in step.get("stepTeamMembers", []):
                 link, qrcode = HandleProcess.user_team_public_data(
                     self.process,
@@ -382,6 +408,7 @@ class HandleProcess:
             )
             links.append({"master_link": m_link})
             qrcodes.append({"master_qrcode": m_code})
+
         save_to_links_collection(
             {
                 "links": links,
@@ -407,6 +434,12 @@ class HandleProcess:
                 }
             )
         ).start()
+
+        if len(step["stepPublicMembers"]) > 50:
+            Thread(target=HandleProcess.handle_last_batch_public_links(
+                self, step,links, public_links, qrcodes)
+            ).start() 
+
         return {"links": links, "master_link": m_link, "master_code": m_code}
 
     def verify_location(self, auth_role, location_data):
