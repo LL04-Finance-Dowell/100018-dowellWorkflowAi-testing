@@ -23,7 +23,10 @@ const AssignTask = ({ currentStepIndex, stepsPopulated }) => {
     (state) => state.app
   );
     ///import which doc or template approval
-    const whichApproval = useSelector((state)=> state.copyProcess.whichApproval)
+    // const whichApproval = useSelector((state)=> state.copyProcess.whichApproval)
+    const currentURL = window.location.href;
+    const parts = currentURL.split('/'); 
+    const whichApproval =  parts[parts.length - 1];
       ////copied process
       const copiedProcess = useSelector((state) => state.copyProcess.processStep);
 
@@ -147,7 +150,7 @@ const AssignTask = ({ currentStepIndex, stepsPopulated }) => {
           label='Task Type'
           register={register}
           name='taskType'
-          options={whichApproval == 'document' ? taskType : taskTypeReverse}
+          options={whichApproval == 'new-set-workflow-document' ? taskType : taskTypeReverse}
           takeNormalValue={true}
           currentValue={
             processSteps.find(

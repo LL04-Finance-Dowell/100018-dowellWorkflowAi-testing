@@ -217,6 +217,8 @@ function App() {
           <Route index element={<WorkflowsPage home={true} />} />
           <Route path={'set-workflow'} element={<SetWorkflowInDoc />} />
           <Route path={'new-set-workflow'} element={<SetWorkflowInDocNew />} />
+          <Route path={'new-set-workflow-document'} element={<SetWorkflowInDocNew />} />
+          <Route path={'new-set-workflow-template'} element={<SetWorkflowInDocNew />} />
           <Route
             path={'saved'}
             element={<WorkflowsPage showOnlySaved={true} />}

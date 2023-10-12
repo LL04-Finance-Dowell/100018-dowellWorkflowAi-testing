@@ -43,7 +43,10 @@ const SelectDoc = ({ savedDoc }) => {
   const { userDetail } = useSelector((state) => state.auth);
 
   ///import which doc or template approval
-  const whichApproval = useSelector((state)=> state.copyProcess.whichApproval)
+  // const whichApproval = useSelector((state)=> state.copyProcess.whichApproval)
+  const currentURL = window.location.href;
+  const parts = currentURL.split('/'); 
+  const whichApproval =  parts[parts.length - 1];
 
 
   const [selectedDocuments, setSelectedDocuments] = useState([]);
@@ -77,7 +80,7 @@ console.log('the picked approval is ', whichApproval)
 
     dispatch(setOriginalDocumentsLoaded(false));
 
-    if(whichApproval == 'Document'){
+    if(whichApproval == 'new-set-workflow-document'){
       const documentServices = new DocumentServices();
       documentServices.getAllOriginalDocuments(data.company_id, data.data_type)
         .then(res => {
@@ -105,13 +108,13 @@ console.log('the picked approval is ', whichApproval)
     
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [whichApproval]);
 
 
 
   const handleAddSelectedDocuments = (document) => {
    console.log(document)
-   if(whichApproval == 'Document'){
+   if(whichApproval == 'new-set-workflow-document'){
     axios
       .get(`https://workflowai.uxlivinglab.online/v1/companies/${data.company_id}/documents/${document._id}/clones/?data_type=${data.data_type}`)
       .then((response) => {
@@ -207,7 +210,7 @@ console.log('the picked approval is ', whichApproval)
                             className={`${styles.swiper__slide__features} animate`}
                           >
                             <p className={styles.features__title}>
-                              {whichApproval == 'Document' ? item.document_name : item.template_name}
+                              {whichApproval == 'new-set-workflow-document' ? item.document_name : item.template_name}
                             </p>
                             <button
                               onClick={() => handleAddSelectedDocuments(item)}
@@ -293,7 +296,7 @@ console.log('the picked approval is ', whichApproval)
                             className={`${styles.swiper__slide__features} animate`}
                           >
                             <p className={styles.features__title}>
-                            {whichApproval == 'Document' ? item.document_name : item.template_name}
+                            {whichApproval == 'new-set-workflow-document' ? item.document_name : item.template_name}
                             </p>
                             <button
                               onClick={() => handleAddSelectedDocuments(item)}
