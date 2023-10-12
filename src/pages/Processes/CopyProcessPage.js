@@ -150,7 +150,7 @@ const CopyProcessPage = () => {
       } else {
         dispatch(setAllProcesses(res3.data.reverse()));
       }
-      navigate('/workflows/new-set-workflow')
+      navigate('/workflows/new-set-workflow-document')
       setLoading(false);
     } catch (error) {
       console.log("error sending request ", error);

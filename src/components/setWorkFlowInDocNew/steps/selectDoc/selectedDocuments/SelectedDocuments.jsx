@@ -26,7 +26,10 @@ const SelectedDocuments = ({
   console.log(selectedDocuments.clones)
 
     ///import which doc or template approval
-    const whichApproval = useSelector((state)=> state.copyProcess.whichApproval)
+    // const whichApproval = useSelector((state)=> state.copyProcess.whichApproval)
+    const currentURL = window.location.href;
+    const parts = currentURL.split('/'); 
+    const whichApproval =  parts[parts.length - 1];
 
     ////copied docs
     const copiedDocument = useSelector((state) => state.copyProcess.document);
@@ -63,7 +66,7 @@ const SelectedDocuments = ({
 
     // const fetchData = { document_id: currentDocument?._id };
 
-    if(whichApproval == 'Document'){
+    if(whichApproval == 'new-set-workflow-document'){
      const item = 'documents'
       dispatch(contentDocument({ collection_id: selectedDocument.collection_id, item }));
     }

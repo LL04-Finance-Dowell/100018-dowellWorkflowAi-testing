@@ -41,7 +41,11 @@ const ProcessDocument = ({ savedProcess, Process_title, setProcess_title }) => {
   // }, []);
 
     ///import which doc or template approval
-    const whichApproval = useSelector((state)=> state.copyProcess.whichApproval)
+    // const whichApproval = useSelector((state)=> state.copyProcess.whichApproval)
+    const currentURL = window.location.href;
+    const parts = currentURL.split('/'); 
+    const whichApproval =  parts[parts.length - 1];
+    const whichApprovalType = whichApproval == 'new-set-workflow-document' ? 'document' : 'template'
 
   useEffect(() => {
     if (!savedProcess) return;
@@ -301,7 +305,7 @@ const ProcessDocument = ({ savedProcess, Process_title, setProcess_title }) => {
     processObjToSaveCopy.parent_item_id = processObjToSave.parent_id;
     processObjToSaveCopy.processing_action = processOptionSelection;
     processObjToSaveCopy.processing_state = "draft";
-    processObjToSaveCopy.process_type = whichApproval;
+    processObjToSaveCopy.process_type = whichApprovalType;
     processObjToSaveCopy.process_kind = "original";
     processObjToSaveCopy.workflow_construct_ids =
       processObjToSave.workflows_ids;

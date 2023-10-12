@@ -33,6 +33,7 @@ import { contentDocument } from '../../features/document/asyncThunks';
 
 import ProcessName from './steps/setProcessName/ProcessName';
 import { useTranslation } from 'react-i18next';
+import Tabs from './Tabs';
 
 const SetWorkflowInDoc = () => {
   const dispatch = useDispatch();
@@ -48,6 +49,10 @@ const SetWorkflowInDoc = () => {
   const [isDraftProcess, setIsDraftProcess] = useState(false);
   const [draftProcessLoaded, setDraftProcessLoaded] = useState(false);
   const [Process_title, setProcess_title] = useState('');
+
+  const currentURL = window.location.href;
+  const parts = currentURL.split('/'); 
+  const whichApproval =  parts[parts.length - 1];
 
   useEffect(() => {
     const processId = searchParams.get('id');
@@ -254,10 +259,13 @@ const SetWorkflowInDoc = () => {
         ) : (
           <></>
         )}
+        <div>
+          <Tabs />
+        </div>
         <h2 className={`${styles.title} h2-large `}>
           {draftProcess
             ? draftProcess?.process_title
-            : t('Set WorkFlows in Documents')}
+            : t(`Set WorkFlows in ${whichApproval == 'new-set-workflow-document' ? 'Documents' : 'Templates'}`)}
         </h2>
         {isDraftProcess ? (
           !draftProcessLoading && draftProcess && draftProcessDOc ? (
