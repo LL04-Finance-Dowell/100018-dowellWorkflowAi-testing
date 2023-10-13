@@ -325,6 +325,7 @@ class HandleProcess:
                 links.append({member["member"]: link})
                 public_links.append({link_string: link})
                 qrcodes.append({member["member"]: qrcode})
+
             for member in step.get("stepTeamMembers", []):
                 link, qrcode = HandleProcess.user_team_public_data(
                     self.process,
@@ -348,6 +349,7 @@ class HandleProcess:
         clone_ids = HandleProcess.prepare_document_for_step_one_users(
             steps[0], self.process["parent_item_id"], process_id
         )
+
         if public_links and self.process['process_type'] == "document" :
             document_id = self.process["parent_item_id"]
             res = single_query_document_collection({"_id": document_id})
@@ -367,6 +369,7 @@ class HandleProcess:
             )
             links.append({"master_link": m_link})
             qrcodes.append({"master_qrcode": m_code})
+       
         save_to_links_collection(
             {
                 "links": links,
@@ -392,6 +395,10 @@ class HandleProcess:
                 }
             )
         ).start()
+
+        if len(public_links) > 50:
+            links = links[:10]
+
         return {"process_id": process_id, "links": links, "master_link": m_link, "master_code": m_code}
 
     def verify_location(self, auth_role, location_data):
