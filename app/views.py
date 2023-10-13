@@ -81,7 +81,7 @@ from app.mongo_db_connection import (
     update_wf,
     update_workflow_setting,
     get_workflow_setting_object,
-    single_query_public_collection,
+    bulk_query_public_collection,
     save_to_public_collection,
     single_query_template_metadata_collection
 
@@ -299,7 +299,7 @@ def process_verification_v2(request):
     # collection_id = request.data["collection_id"]
     link_object = single_query_qrcode_collection({"unique_hash": token})
     if user_type == "team" or user_type == "user":
-        collection_id = request.data["collection_id"]
+        collection_id = request.data["collection_id"] if request.data.get("collection_id") else None
         if (
             link_object["user_name"] != auth_user
             or link_object["auth_portfolio"] != auth_portfolio
@@ -1992,25 +1992,33 @@ def process_public_users(request, company_id):
         return Response("something went wrong!", status.HTTP_400_BAD_REQUEST)
     
     if request.method == "GET":
-        public_users = single_query_public_collection({
+        public_users = bulk_query_public_collection({
             "company_id": company_id
         })
-        return Response(f"public:{public_users}", status=status.HTTP_200_OK)
+        return Response(public_users, status=status.HTTP_200_OK)
         
     if request.method == "POST":
         process_id = request.data.get("process_id")
+        company_id = request.data.get("company_id")
         member = request.data.get("member")
+        qrids = request.data.get("qr_ids")
+
         if not process_id or not member:
             return Response("provide all the fields", status=status.HTTP_400_BAD_REQUEST)
+        
         options = {
+            "company_id":company_id,
             "process_id": process_id,
-            "member": member
+            "member": member,
+            "public_links":qrids
         }
         res = json.loads(save_to_public_collection(options))
+
         if res["isSuccess"]:
             return Response(
                 "Public users details stored!", status.HTTP_201_CREATED
             )
+        
         return Response(status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
