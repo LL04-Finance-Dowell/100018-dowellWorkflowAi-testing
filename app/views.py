@@ -1778,13 +1778,13 @@ def dowell_centre_template(request, company_id):
     data_type = request.query_params.get("data_type")
     if not validate_id(company_id):
         return Response("Something went wrong!", status=status.HTTP_400_BAD_REQUEST)
-    templates = bulk_query_template_collection(
+    templates = bulk_query_template_metadata_collection(
         {"company_id": company_id, "data_type": data_type}
     )
     page = int(request.GET.get("page", 1))
     templates = paginate(templates, page, 50)
     template_list = [
-        {"_id": item["_id"], "template_name": item["template_name"]}
+        {"_id": item["_id"], "template_name": item["template_name"], "collection_id": item["collection_id"],}
         for item in templates
     ]
     return Response(
@@ -1802,14 +1802,14 @@ def dowell_centre_documents(request, company_id):
     cache_key = f"documents_{company_id}"
     document_list = cache.get(cache_key)
     if document_list is None:
-        document_list = bulk_query_document_collection(
+        document_list = bulk_query_document_metadata_collection(
             {"company_id": company_id, "data_type": data_type}
         )
         cache.set(cache_key, document_list, timeout=60)
     page = int(request.GET.get("page", 1))
     documents = paginate(document_list, page, 50)
     document_list = [
-        {"_id": item["_id"], "document_name": item["document_name"]}
+        {"_id": item["_id"], "document_name": item["document_name"], "collection_id": item["collection_id"]}
         for item in documents
     ]
     return Response(
