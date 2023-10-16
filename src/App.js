@@ -259,6 +259,8 @@ function App() {
           </Route>
 
           <Route path="evaluation-report" element={<ProccessPage showEvaluationReport={true} />} />
+          <Route path="document-report" element={<ProccessPage showDocumentReport={true} />} />
+          <Route path="scale-report" element={<ProccessPage showScaleReport={true} />} />
 
           {/* <Route
             path={'processdetail'}

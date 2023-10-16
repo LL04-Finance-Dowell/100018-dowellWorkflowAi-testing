@@ -24,6 +24,8 @@ import EvaluationReportComponent from '../../../components/manageFiles/ProcessDe
 
 //import create proccess page to choose between template approval and doc approval
 import CreateProcess from '../../../components/manageFiles/files/createProcess/createProcess';
+import DocumentDetailReport from '../../../components/manageFiles/ProcessDetail/DocumentDetailReport';
+import ScaleDetailReport from '../../../components/manageFiles/ProcessDetail/ScaleDetailReport';
 
 const ProcessesPage = ({
   home,
@@ -36,7 +38,9 @@ const ProcessesPage = ({
   showOnlyCompleted,
   showOnlyActive,
   chooseProcess,
-  showEvaluationReport
+  showEvaluationReport,
+  showDocumentReport,
+  showScaleReport
 }) => {
   const {
     processesLoading,
@@ -70,6 +74,8 @@ const ProcessesPage = ({
     if (showOnlySaved) navigate('#saved-processes');
     if (showSingleProcess) navigate('#processdetail');
     if (showEvaluationReport) navigate('#evaluation-report');
+    if (showDocumentReport) navigate('#document-report');
+    if (showScaleReport) navigate('#scale-report');
     if (showOnlyPaused) navigate('#paused-processes');
     if (showOnlyCancelled) navigate('#cancelled-processes');
     if (showOnlyTrashed) navigate('#thrashed-processes');
@@ -91,6 +97,8 @@ const ProcessesPage = ({
     showOnlyCompleted,
     showOnlyActive,
     showEvaluationReport,
+    showDocumentReport,
+    showScaleReport,
   ]);
 
   useEffect(() => {
@@ -219,6 +227,20 @@ const ProcessesPage = ({
             <></>
           )}
 
+          {showDocumentReport ? (
+            <div id='document'>
+              <DocumentDetailReport />
+            </div>
+          ) : (
+            <></>
+          )}
+          {showScaleReport ? (
+            <div id='scale'>
+              <ScaleDetailReport />
+            </div>
+          ) : (
+            <></>
+          )}
           {showEvaluationReport ? (
             <div id='evaluation'>
               <EvaluationReportComponent />
