@@ -325,6 +325,7 @@ class HandleProcess:
                 links.append({member["member"]: link})
                 public_links.append({link_string: link})
                 qrcodes.append({member["member"]: qrcode})
+
             for member in step.get("stepTeamMembers", []):
                 link, qrcode = HandleProcess.user_team_public_data(
                     self.process,
@@ -348,6 +349,7 @@ class HandleProcess:
         clone_ids = HandleProcess.prepare_document_for_step_one_users(
             steps[0], self.process["parent_item_id"], process_id
         )
+
         if public_links and self.process['process_type'] == "document" :
             document_id = self.process["parent_item_id"]
             res = single_query_document_collection({"_id": document_id})
@@ -367,6 +369,7 @@ class HandleProcess:
             )
             links.append({"master_link": m_link})
             qrcodes.append({"master_qrcode": m_code})
+       
         save_to_links_collection(
             {
                 "links": links,
@@ -392,7 +395,11 @@ class HandleProcess:
                 }
             )
         ).start()
-        return {"links": links, "master_link": m_link, "master_code": m_code}
+
+        if len(public_links) > 50:
+            links = links[:10]
+
+        return {"process_id": process_id, "links": links, "master_link": m_link, "master_code": m_code}
 
     def verify_location(self, auth_role, location_data):
         for step in self.process["process_steps"]:
@@ -508,7 +515,7 @@ class HandleProcess:
                 return editor_link
     
     # Verify_Access V2
-    def verify_access_v2(self, auth_role, user_name, user_type, document_id):
+    def verify_access_v2(self, auth_role, user_name, user_type, collection_id=None):
         clone_id = None
         doc_map = None
         right = None
@@ -526,9 +533,12 @@ class HandleProcess:
                 if any(user_name in map for map in step.get("stepDocumentCloneMap")):
                     for d_map in step["stepDocumentCloneMap"]:
                         if d_map.get(user_name) is not None:
-                            if d_map.get(user_name) == document_id:
+                            # Check if the collection_id is passed as an argument
+                            if collection_id is not None:
+                                if d_map.get(user_name) == collection_id:
+                                    clone_id = d_map.get(user_name)
+                            else:
                                 clone_id = d_map.get(user_name)
-                            # clone_id = d_map.get(user_name)
                     doc_map = step["stepDocumentMap"]
                     right = step["stepRights"]
                     role = step["stepRole"]
@@ -625,6 +635,7 @@ class Background:
                         current_doc_map = [v for document_map in step["stepDocumentCloneMap"] for k, v in document_map.items() if isinstance(v, str)]
                         user_in_viewers = check_user_in_auth_viewers(user=self.username, item=document_id, item_type="document")
                         if (not user_in_viewers):
+                            print("user not in auth_viewers: ", user_in_viewers)
                             pass
                         elif document_id in current_doc_map:
                             for document_map in step.get("stepDocumentCloneMap"):
@@ -709,7 +720,7 @@ class Background:
                                                 )
                                                 # Change auth viewers in the metadata as well
                                                 metadata_id = get_metadata_id(
-                                                    document, "document"
+                                                    document, "clone"
                                                 )
                                                 authorize_metadata(
                                                     metadata_id, user, process_id, "document"
@@ -726,7 +737,7 @@ class Background:
                                                 )
                                                 # Change auth viewers in the metadata as well
                                                 metadata_id = get_metadata_id(
-                                                    document, "document"
+                                                    document, "clone"
                                                 )
                                                 authorize_metadata(
                                                     metadata_id, user, process_id, "document"
@@ -743,7 +754,7 @@ class Background:
                                                 )
                                                 # Change auth viewers in the metadata as well
                                                 metadata_id = get_metadata_id(
-                                                    document, "document"
+                                                    document, "clone"
                                                 )
                                                 authorize_metadata(
                                                     metadata_id, user, process_id, "document"
@@ -792,7 +803,7 @@ class Background:
                                         )
                                         # Change auth viewers in the metadata as well
                                         metadata_id = get_metadata_id(
-                                            document, "document"
+                                            document, "clone"
                                         )
                                         authorize_metadata(
                                             metadata_id, user, process_id, "document"
@@ -806,7 +817,7 @@ class Background:
                                         )
                                         # Change auth viewers in the metadata as well
                                         metadata_id = get_metadata_id(
-                                            document, "document"
+                                            document, "clone"
                                         )
                                         authorize_metadata(
                                             metadata_id, user, process_id, "document"
@@ -820,7 +831,7 @@ class Background:
                                         )
                                         # Change auth viewers in the metadata as well
                                         metadata_id = get_metadata_id(
-                                            document, "document"
+                                            document, "clone"
                                         )
                                         authorize_metadata(
                                             metadata_id, user, process_id, "document"
