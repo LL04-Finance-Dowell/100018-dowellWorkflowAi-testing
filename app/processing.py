@@ -396,7 +396,7 @@ class HandleProcess:
             )
         ).start()
 
-        if len(public_links) > 50:
+        if len(public_links) > 10:
             links = links[:10]
 
         return {"process_id": process_id, "links": links, "master_link": m_link, "master_code": m_code}
