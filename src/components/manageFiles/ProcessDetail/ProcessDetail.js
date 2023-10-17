@@ -38,6 +38,12 @@ const ProcessDetail = () => {
   const { userDetail } = useSelector((state) => state.auth);
   const navigate = useNavigate();
 
+  const handleNavigateDocument = () => {
+    navigate('/processes/document-report');
+  };
+  const handleNavigateScale = () => {
+    navigate('/processes/scale-report');
+  };
   const handleNavigate = () => {
     navigate('/processes/evaluation-report');
   };
@@ -168,6 +174,16 @@ const ProcessDetail = () => {
 
 
           <div className={`d-flex flex-column align-items-center justify-content-center`}>
+              <Button onClick={handleNavigateDocument} variant="success" className="mb-4">
+                Click here to see report type document
+              </Button>
+          </div>
+          <div className={`d-flex flex-column align-items-center justify-content-center`}>
+              <Button onClick={handleNavigateScale} variant="success" className="mb-4">
+                Click here to see report type scale
+              </Button>
+          </div>
+          <div className={`d-flex flex-column align-items-center justify-content-center`}>
               <Button onClick={handleNavigate} variant="success" className="mb-4">
                 Click here to see Evaluation Report
               </Button>
@@ -194,43 +210,6 @@ const ProcessDetail = () => {
     </>
   );
 };
-
-// const Step = ({ step, index }) => {
-//   const [expanded, setExpanded] = useState(false);
-
-//   const stepDivClass = expanded ? styles.Step_div_expanded : styles.Step_div;
-
-//   return (
-//     <div className={stepDivClass}>
-//       <div className={styles.Process_Title}>
-//         {step.stepNumber}.
-//       </div>
-//       <div className={styles.Process_Title}>
-//         {step.stepName}
-//       </div>
-
-
-
-//       <div className={styles.expanded}>
-//         <div>
-//           <span>Public Member :</span><span>{step.stepPublicMembers.length}</span>
-
-//         </div>
-//         <div>
-//           <span>Team Member :</span><span>{step.stepTeamMembers.length}</span>
-
-//         </div>
-//         <div>
-
-//           <span>User Member :</span><span>{step.stepUserMembers.length}</span>
-
-
-//         </div>
-//       </div>
-
-//     </div>
-//   );
-// };
 
 const StepCards = ({ step, index }) => {
 

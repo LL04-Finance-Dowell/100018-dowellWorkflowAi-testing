@@ -374,3 +374,74 @@ export const processDetailReport =
       }
     }
 }
+
+export const DocumentProcessDetailReport = {
+      "scale_category": "nps scale",
+      "no_of_scales": 12,
+      "nps_score": 96,
+      "nps_total_score": 120,
+      "max_total_score": 10,
+      "score_list": [
+          10,
+          10,
+          4,
+          10,
+          10,
+          4,
+          10,
+          10,
+          4,
+          10,
+          10,
+          4
+      ],
+      "scale_specific_data": {
+          "net_promoter_score": 33.33333333333333,
+          "promoters_percentage": 66.66666666666666,
+          "passives_percentage": 0.0,
+          "detractors_percentage": 33.33333333333333,
+          "overall_nps_category": "majorly promoters"
+      },
+      "normality_analysis": {
+          "title": "evaluation_module",
+          "process_id": "abcdef12345document",
+          "bins": 10.0,
+          "allowed_error": 4.0,
+          "series_count": 1,
+          "list1": {
+              "normality": "no",
+              "auc_z_scores": -0.7,
+              "actual_areas": 6.396597925352755,
+              "rectangle_area": 3.3851375012865383,
+              "Kurt": "Leptokurtic curve",
+              "ind_dev": 1.0,
+              "slope": [
+                  0.36789614249311026,
+                  0.37455606159782767
+              ],
+              "slope_percentage_deviation": 0.25,
+              "calculated_slope": 2.0248682972773397,
+              "evidence_counter": {
+                  "Mean equals to Median": {
+                      "Mean is within deviation": "yes",
+                      "Median is within deviation": "yes"
+                  },
+                  "Mean equals to Mode": {
+                      "Mean is within deviation": "yes",
+                      "Mode is within deviation": "yes"
+                  },
+                  "Mode equals to Median": "yes",
+                  "Skewness is equal to 0": {
+                      "Standard deviation is within deviation": "yes"
+                  },
+                  "Kurtosis curve": "no",
+                  "Points in Range1": "no",
+                  "Points in Range2": "no",
+                  "Points in Range3": "no",
+                  "Satifies sigmoid function whose mirror image will give bell shaped curve": "yes",
+                  "Rotational Symmetric": "no"
+              }
+          }
+      },
+      "central_tendencies": "Process Id already in use. Please enter a different Process Id & try again."
+  }

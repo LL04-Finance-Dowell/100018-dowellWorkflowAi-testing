@@ -150,8 +150,10 @@ const SearchPage = () => {
     refreshLoading,
   ]);
 
+  console.log("searchItemsoutside",searchItems)
   useEffect(() => {
     const currentSearchResults = searchResults.slice();
+    console.log("searchItems",searchItems)
 
     switch (currentSearchOption) {
       case searchCategories.all:
