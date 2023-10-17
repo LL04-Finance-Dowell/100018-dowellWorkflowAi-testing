@@ -85,19 +85,19 @@ const ProcessDetail = () => {
               <div >
                 <div className={styles.Flex_div}>
                   <div className={styles.label}>Created By :</div>
-                  <div className={styles.value}>{userDetail.userinfo.username}</div>
+                  <div className={styles.value}>{userDetail?.userinfo.username || ""}</div>
                 </div>
                 <div className={styles.Flex_div}>
                   <div className={styles.label}>Processing State :</div>
-                  <div className={styles.valueProcessing}>{ProcessDetail.processing_state}</div>
+                  <div className={styles.valueProcessing}>{ProcessDetail?.processing_state || ""}</div>
                 </div>
                 <div className={styles.Flex_div}>
                   <div className={styles.label}>Processing Type :</div>
-                  <div className={styles.value}>{ProcessDetail.process_type}</div>
+                  <div className={styles.value}>{ProcessDetail?.process_type || ""}</div>
                 </div>
                 <div className={styles.Flex_div}>
                   <div className={styles.label}>Portfolio:</div>
-                  <div className={styles.value}>{userDetail.userportfolio[0].portfolio_name}</div>
+                  <div className={styles.value}>{userDetail?.userportfolio[0]?.portfolio_name || ""}</div>
                 </div>
               </div>
               <div className={styles.LeftContent}>
