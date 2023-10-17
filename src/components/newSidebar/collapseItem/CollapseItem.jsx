@@ -31,6 +31,7 @@ function ListItem({ item, toggleSidebar, isMobile }) {
   }
 
   const handleLinkItemClick = (e, item) => {
+    console.log(e, item, "item collapse")
     e.preventDefault();
     // console.log("the handle link item click ", item)
     if (!item.href) return;
@@ -59,11 +60,12 @@ function ListItem({ item, toggleSidebar, isMobile }) {
   };
 
   return (
-    <div key={item.id}>
-      <li style={{ color: item.asParent && styles.as__parent }}>
+    // <a key={item.id}>
+    <>
+      <li  key={item.id} style={{ color: item.asParent && styles.as__parent }}>
         <HashLink
           className={styles.hash__link}
-          to={item.href ? item.href : '#'}
+          to={item.href}
           onClick={(e) => handleLinkItemClick(e, item)}
         >
           {t(item.child)}
@@ -72,7 +74,7 @@ function ListItem({ item, toggleSidebar, isMobile }) {
       <HashLink className={styles.hash__link} to={item.href ? item.href : '#'}>
         {children}
       </HashLink>
-    </div>
+      </>
   );
 }
 
