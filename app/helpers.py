@@ -242,7 +242,7 @@ def cloning_clone(clone_id, auth_viewers, parent_id, process_id):
             }
             if document.get("signed_by"):
                 metadata_dict["signed_by"] = document["signed_by"]
-                
+
             save_res_metadata = json.loads(
                 save_to_clone_metadata_collection(
                     metadata_dict
@@ -602,13 +602,19 @@ def check_step_items_state(items) -> bool:
 def check_user_in_auth_viewers(user, item, item_type) -> bool:
     auth_viewers = []
     if item_type == "document":
-        viewers = single_query_clones_collection({"_id": item}).get("auth_viewers", [])
+        viewers = single_query_clones_collection({"_id": item}).get("auth_viewers")
+        print("all_viewers: ", viewers)
         
     elif item_type == "template":
         viewers = single_query_template_collection({"_id": item}).get("auth_viewers")
         viewers = viewers[0]
 
     for i in viewers:
+        if isinstance(i, list):
+            # if item comes as a list, get the first item
+            i = i[0]
+            
+        print("viewer ", i)
         for k, v in i.items():
             if k != "portfolio":
                 auth_viewers.append(v)
@@ -625,3 +631,13 @@ def remove_members_from_steps(data):
         step["stepUserMembers"] = []
         step["stepDocumentCloneMap"]=[]
     
+
+def update_signed(signers_list: list, member: str, status: bool) -> list:
+    for elem in signers_list:
+        for key, val in elem.items():
+            if key == member:
+                elem[key] = status
+            print(f"key={key} | old_value={val} | new_val={elem[key]}")
+
+    print(signers_list)
+    return(signers_list)
