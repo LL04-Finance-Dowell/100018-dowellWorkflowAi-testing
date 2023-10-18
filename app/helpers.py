@@ -568,20 +568,20 @@ def get_metadata_id(item_id, item_type):
             coll_id = single_query_document_metadata_collection({"collection_id": item_id})["_id"]
             return coll_id
         except Exception as err:
-            print(err)
+            print("unable to get metadata_id: ", err)
     elif item_type == "clone":
         try:
             coll_id = single_query_clones_metadata_collection({"collection_id": item_id})["_id"]
             return coll_id
         except Exception as err:
-            print("An error occured: ", err)
+            print("unable to get metadata_id: ", err)
         
     elif item_type == "template":
         try:
             coll_id = single_query_template_metadata_collection({"collection_id": item_id})["_id"]
             return coll_id
         except Exception as err:
-            print("An error occured: ", err)
+            print("unable to get metadata_id: ", err)
 
 
 def check_step_items_state(items) -> bool:
@@ -603,7 +603,6 @@ def check_user_in_auth_viewers(user, item, item_type) -> bool:
     auth_viewers = []
     if item_type == "document":
         viewers = single_query_clones_collection({"_id": item}).get("auth_viewers")
-        print("all_viewers: ", viewers)
         
     elif item_type == "template":
         viewers = single_query_template_collection({"_id": item}).get("auth_viewers")
@@ -613,8 +612,7 @@ def check_user_in_auth_viewers(user, item, item_type) -> bool:
         if isinstance(i, list):
             # if item comes as a list, get the first item
             i = i[0]
-            
-        print("viewer ", i)
+
         for k, v in i.items():
             if k != "portfolio":
                 auth_viewers.append(v)
@@ -639,5 +637,5 @@ def update_signed(signers_list: list, member: str, status: bool) -> list:
                 elem[key] = status
             print(f"key={key} | old_value={val} | new_val={elem[key]}")
 
-    print(signers_list)
+    print("signers_list: ", signers_list)
     return(signers_list)

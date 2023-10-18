@@ -741,7 +741,7 @@ def update_folder(folder_id, old_folder):
 
 
 def authorize_metadata(metadata_id, viewers, process_id, item_type):
-    print(metadata_id, viewers, process_id, item_type)
+    print("metadata_id: ", metadata_id, "viewers: ", viewers, "process_id: ", process_id, "item_type", item_type)
     payload = None
     if item_type == "document": # document here is process_type
         payload = json.dumps(
