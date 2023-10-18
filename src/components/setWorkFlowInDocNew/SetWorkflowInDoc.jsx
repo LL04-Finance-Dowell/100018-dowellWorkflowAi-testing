@@ -54,6 +54,11 @@ const SetWorkflowInDoc = () => {
   const parts = currentURL.split('/'); 
   const whichApproval =  parts[parts.length - 1];
 
+  // useEffect(()=>{
+  //   dispatch(resetSetWorkflows());
+  //   dispatch(setContentOfDocument(null));
+  //   console.log('form reset')
+  // },[])
   useEffect(() => {
     const processId = searchParams.get('id');
     const processState = searchParams.get('state');
