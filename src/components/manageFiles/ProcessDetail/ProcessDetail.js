@@ -24,6 +24,7 @@ import Accordion from 'react-bootstrap/Accordion';
 import processImage from "../../../assets/processImage.png";
 import greenImage from "../../../assets/greenImage.png";
 import UserDetail from '../../newSidebar/userDetail/UserDetail';
+import { productName } from '../../../utils/helpers';
 
 ChartJS.register(ArcElement, Tooltip, Legend, CategoryScale,
   LinearScale,
@@ -64,7 +65,7 @@ const ProcessDetail = () => {
   };
 
   console.log("userDetailMubeen", userDetail.userinfo.username)
-  console.log("userDetailMubeen", userDetail.userinfo.firstname)
+  console.log("userDetailMubeenuserDetail", userDetail)
 
 
   return (
@@ -85,19 +86,20 @@ const ProcessDetail = () => {
               <div >
                 <div className={styles.Flex_div}>
                   <div className={styles.label}>Created By :</div>
-                  <div className={styles.value}>{userDetail?.userinfo.username || ""}</div>
+                  <div className={styles.value}>{userDetail?.userinfo?.username}</div>
                 </div>
                 <div className={styles.Flex_div}>
                   <div className={styles.label}>Processing State :</div>
-                  <div className={styles.valueProcessing}>{ProcessDetail?.processing_state || ""}</div>
+                  <div className={styles.valueProcessing}>{ProcessDetail?.processing_state}</div>
                 </div>
                 <div className={styles.Flex_div}>
                   <div className={styles.label}>Processing Type :</div>
-                  <div className={styles.value}>{ProcessDetail?.process_type || ""}</div>
+                  <div className={styles.value}>{ProcessDetail?.process_type}</div>
                 </div>
                 <div className={styles.Flex_div}>
                   <div className={styles.label}>Portfolio:</div>
-                  <div className={styles.value}>{userDetail?.userportfolio[0]?.portfolio_name || ""}</div>
+                  {/* <div className={styles.value}>{userDetail?.portfolio_info[0]?.portfolio_name}</div> */}
+                  <div className={styles.value}>{userDetail?.portfolio_info?.length > 1 ? userDetail?.portfolio_info.find(portfolio => portfolio.product === productName)?.portfolio_name : userDetail?.portfolio_info[0]?.portfolio_name}</div>
                 </div>
               </div>
               <div className={styles.LeftContent}>
@@ -113,7 +115,7 @@ const ProcessDetail = () => {
           </div>
           <div className={styles.Process_Title}>
             Steps:
-            {ProcessDetail.process_steps.map((step, index) => {
+            {ProcessDetail?.process_steps.map((step, index) => {
               return (
                 <>
                   <StepCards
@@ -225,7 +227,7 @@ const StepCards = ({ step, index }) => {
                   <Card.Title><span><FaUserSecret /></span></Card.Title>
                   <Card.Subtitle className="mb-2" style={{ color: '#3E3E3E', fontSize: '26.78px' }}>User Member</Card.Subtitle>
                   <Card.Text style={{ textAlign: 'right', color: '#D5B02E', fontSize: '50.9px', fontStyle: 'Rajdhani' }}>
-                    {step.stepUserMembers.length}
+                    {step?.stepUserMembers?.length}
                   </Card.Text>
                 </Card.Body>
               </Card>
@@ -234,7 +236,7 @@ const StepCards = ({ step, index }) => {
                   <Card.Title><span><FaUsersCog /></span></Card.Title>
                   <Card.Subtitle className="mb-2" style={{ color: '#3E3E3E', fontSize: '26.78px' }}>Team Member</Card.Subtitle>
                   <Card.Text style={{ textAlign: 'right', color: '#2E99B7', fontSize: '50.9px', fontStyle: 'Rajdhani' }}>
-                    {step.stepTeamMembers.length}
+                    {step?.stepTeamMembers?.length}
                   </Card.Text>
                 </Card.Body>
               </Card>
@@ -243,7 +245,7 @@ const StepCards = ({ step, index }) => {
                   <Card.Title><span><FaUsers /></span></Card.Title>
                   <Card.Subtitle className="mb-2" style={{ color: '#3E3E3E', fontSize: '26.78px' }}>Public Member</Card.Subtitle>
                   <Card.Text style={{ textAlign: 'right', color: '#E07575', fontSize: '50.9px', fontStyle: 'Rajdhani' }}>
-                    {step.stepPublicMembers.length}
+                    {step?.stepPublicMembers?.length}
                   </Card.Text>
                 </Card.Body>
               </Card>
