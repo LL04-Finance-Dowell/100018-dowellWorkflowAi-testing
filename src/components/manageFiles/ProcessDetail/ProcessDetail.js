@@ -173,38 +173,31 @@ const ProcessDetail = () => {
               </table>
             </div>
           </div>
+          <div className="d-grid gap-2">
+            <Button variant="secondary" size="md" onClick={handleNavigateDocument}>
+              Document Report
+            </Button>
+            <Button onClick={handleNavigateScale} variant="secondary" size="md">
+              Scale Report
+            </Button>
 
+            <Button onClick={handleNavigate} variant="secondary" size="md">
+              Evaluation Report
+            </Button>
+          </div><br />
 
-          <div className={`d-flex flex-column align-items-center justify-content-center`}>
-              <Button onClick={handleNavigateDocument} variant="success" className="mb-4">
-                Click here to see report type document
-              </Button>
-          </div>
-          <div className={`d-flex flex-column align-items-center justify-content-center`}>
-              <Button onClick={handleNavigateScale} variant="success" className="mb-4">
-                Click here to see report type scale
-              </Button>
-          </div>
-          <div className={`d-flex flex-column align-items-center justify-content-center`}>
-              <Button onClick={handleNavigate} variant="success" className="mb-4">
-                Click here to see Evaluation Report
-              </Button>
-          </div>
+          {/* <div className={styles.button_container}>
+            <Button onClick={handleNavigateDocument} variant="success" className={styles.custom_button}>
+              Document Report
+            </Button>
 
-          {/* <h3 className={styles.Process_Title}>Steps :</h3> */}
+            <Button onClick={handleNavigateScale} variant="success" className={styles.custom_button}>
+              Scale Report
+            </Button>
 
-          {/* <div className={styles.info_container}>
-            <div className={styles.grid_container}>
-              {ProcessDetail.process_steps.map((step, index) => {
-                return (
-                  <Step
-                    className={styles.grid_item}
-                    step={step}
-                    index={index}
-                  />
-                );
-              })}
-            </div>
+            <Button onClick={handleNavigate} variant="success" className={styles.custom_button}>
+              Evaluation Report
+            </Button>
           </div> */}
 
         </div>

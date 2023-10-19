@@ -34,7 +34,7 @@ export default function DocumentDetailReport() {
   const apiUrl = 'https://100035.pythonanywhere.com/evaluation/evaluation-api/?report_type=document';
   const payload = {
     process_id: 'abcdef12345',
-    document_id: 'zyx12345'
+    document_id: ProcessDetail.parent_item_id || 'zyx12345'
   };
 
   useEffect(() => {
