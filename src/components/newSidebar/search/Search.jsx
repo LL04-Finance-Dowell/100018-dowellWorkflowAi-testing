@@ -32,7 +32,7 @@ const Search = () => {
   const navigate = useNavigate();
 
   const { t } = useTranslation();
-  const { searchItems, setRerender } = useAppContext();
+  const { searchItems,demoTemplates, setRerender } = useAppContext();
   const { allWorkflowsStatus } = useSelector((state) => state.workflow);
   const { allTemplatesStatus } = useSelector((state) => state.template);
   const { allDocumentsStatus } = useSelector((state) => state.document);
@@ -44,9 +44,10 @@ const Search = () => {
 
     setSearchLoading(true);
   };
-
+// console.log('the demoTemplates are ', demoTemplates)
   useEffect(() => {
     setRerender(uuidv4());
+    // console.log('hit the first useEffect')
   }, [searchResultItems]);
 
   useEffect(() => {
@@ -61,7 +62,7 @@ const Search = () => {
 
     try {
       const results = searchItemByKeyAndGroupResults(search, searchItems);
-
+// console.log('hit the second useEffect',results, search, searchItems)
       setSearchResultLoaded(true);
       setSearchLoading(false);
       setSearchResults(results);
@@ -71,7 +72,7 @@ const Search = () => {
 
         if (copyOfItem.type === 'Documents') {
           const documentsFound = results
-            .filter((searchResultItem) => searchResultItem.document_name)
+            .filter((searchResultItem) => searchResultItem.document_name && searchResultItem.document_state)
             .slice(0, 3);
           copyOfItem.parent = 'Documents';
           copyOfItem.count = documentsFound.length;
@@ -87,11 +88,47 @@ const Search = () => {
           copyOfItem.isOpen = true;
           return copyOfItem;
         }
+        if (copyOfItem.type === 'Org_Documents') {
+          const documentsFound = results
+            .filter((searchResultItem) => searchResultItem.document_name && !searchResultItem.document_state)
+            .slice(0, 3);
+          copyOfItem.parent = 'Org_Documents';
+          copyOfItem.count = documentsFound.length;
+          copyOfItem.children = documentsFound.map((result) => {
+            return {
+              id: uuidv4(),
+              child: result.document_name,
+              searchItem: true,
+              href: '#',
+              itemObj: result,
+            };
+          });
+          copyOfItem.isOpen = false;
+          return copyOfItem;
+        }
         if (item.type === 'Templates') {
           const templatesFound = results
-            .filter((searchResultItem) => searchResultItem.template_name)
+            .filter((searchResultItem) => searchResultItem.template_name && searchResultItem.template_state)
             .slice(0, 3);
           copyOfItem.parent = 'Templates';
+          copyOfItem.count = templatesFound.length;
+          copyOfItem.children = templatesFound.map((result) => {
+            return {
+              id: uuidv4(),
+              child: result.template_name,
+              searchItem: true,
+              href: '#',
+              itemObj: result,
+            };
+          });
+          copyOfItem.isOpen = false;
+          return copyOfItem;
+        }
+        if (item.type === 'Org_Templates') {
+          const templatesFound = results
+            .filter((searchResultItem) => searchResultItem.template_name && !searchResultItem.template_state)
+            .slice(0, 3);
+          copyOfItem.parent = 'Org_Templates';
           copyOfItem.count = templatesFound.length;
           copyOfItem.children = templatesFound.map((result) => {
             return {
@@ -144,6 +181,7 @@ const Search = () => {
       state: { searchResults: searchResults, searchItem: search },
     });
   };
+  // console.log('searchLoading ',searchLoading, " searchResults ",searchResults, " searchResultItems ", searchResultItems," searchResultLoaded ",searchResultLoaded)
 
   return (
     <div className={styles.container}>
@@ -227,6 +265,33 @@ export const items = [
     children: [
       { id: uuidv4(), child: 'Leave process' },
       { id: uuidv4(), child: 'Payment process' },
+      { id: uuidv4(), child: '..' },
+      { id: uuidv4(), child: '..' },
+    ],
+  },
+  {
+    id: uuidv4(),
+    isOpen: false,
+    parent: 'Org Templates (04)',
+    type: 'Org_Templates',
+    children: [
+      { id: uuidv4(), child: 'Leave format' },
+      { id: uuidv4(), child: 'Payment voucher' },
+      { id: uuidv4(), child: '..' },
+      { id: uuidv4(), child: '..' },
+    ],
+  },
+  {
+    id: uuidv4(),
+    isOpen: false,
+    parent: 'Org Documents (07)',
+    type: 'Org_Documents',
+    children: [
+      { id: uuidv4(), child: 'Payment voucher' },
+      { id: uuidv4(), child: 'Answer sheet' },
+      { id: uuidv4(), child: 'Agreement' },
+      { id: uuidv4(), child: 'Appointment order' },
+      { id: uuidv4(), child: 'Letter' },
       { id: uuidv4(), child: '..' },
       { id: uuidv4(), child: '..' },
     ],

@@ -16,6 +16,7 @@ export class DocumentServices {
 
       return httpDocument.get(`/${data.collection_id}/`);
     }
+    return httpDocument.get(`/${data.collection_id}/`);
   };
 
   signDocument = (data) => {

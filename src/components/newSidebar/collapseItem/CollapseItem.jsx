@@ -38,16 +38,19 @@ function ListItem({ item, toggleSidebar, isMobile }) {
 
     if (item.searchItem && item.itemObj) {
       const searchItemObj = item.itemObj;
+      // console.log(searchItemObj)
       if (searchItemObj.document_name) {
-        dispatch(detailDocument(searchItemObj._id));
+        // console.log('doc hit')
+        dispatch(detailDocument(searchItemObj));
         return;
       }
       if (searchItemObj.template_name) {
-        dispatch(detailTemplate(searchItemObj._id));
+        dispatch(detailTemplate(searchItemObj.collection_id));
         return;
       }
       if (searchItemObj.workflows) {
         dispatch(setToggleManageFileForm(true));
+        navigate('/workflows/saved#saved-workflows')
         dispatch(detailWorkflow(searchItemObj._id));
         return;
       }
