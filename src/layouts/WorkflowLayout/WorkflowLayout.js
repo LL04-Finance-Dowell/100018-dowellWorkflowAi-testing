@@ -64,7 +64,7 @@ const WorkflowLayout = ({ children }) => {
   const { allDocuments } = useSelector((state) => state.document);
   const { allTemplates } = useSelector((state) => state.template);
   const { allWorkflows } = useSelector((state) => state.workflow);
-  const { searchItemsStatus, setSearchItems, updateSearchItemStatus } =
+  const { searchItemsStatus, setSearchItems, updateSearchItemStatus,demoTemplates,fetchDemoTemplates, demoDocuments, fetchDemoDocuments } =
     useAppContext();
 
   const [showUserDetail, setShowUserDetail] = useState(false);
@@ -206,6 +206,23 @@ const WorkflowLayout = ({ children }) => {
     )
       return;
 
+      if (!demoTemplates) {
+        fetchDemoTemplates();
+      }
+      // console.log('the demoTemplates in layout are ', demoTemplates)
+      if(demoTemplates !== null){
+        setSearchItems((prevItems) => {
+          return [...prevItems, ...demoTemplates];
+        });
+      }
+
+      if (!demoDocuments) fetchDemoDocuments();
+      if(demoDocuments !== null){
+        setSearchItems((prevItems) => {
+          return [...prevItems, ...demoDocuments];
+        });
+      }
+
     if (!searchItemsStatus.documentsAdded) {
       setSearchItems((prevItems) => {
         return [...prevItems, ...allDocuments];
@@ -227,7 +244,7 @@ const WorkflowLayout = ({ children }) => {
       updateSearchItemStatus('workflowsAdded', true);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [allDocuments, allTemplates, allWorkflows, searchItemsStatus]);
+  }, [allDocuments, allTemplates, allWorkflows, searchItemsStatus, demoTemplates]);
 
   function toggleSidebar() {
     setIsSidebarOpen(!isSidebarOpen);

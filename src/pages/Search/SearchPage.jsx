@@ -28,6 +28,7 @@ import { useMediaQuery } from 'react-responsive';
 import { MdFilterList } from 'react-icons/md';
 import DisplaySearch from './DisplaySearch';
 import { productName } from '../../utils/helpers';
+import { useNavigate } from 'react-router-dom';
 
 const searchCategories = {
   documents: 'documents',
@@ -60,6 +61,8 @@ const SearchPage = () => {
     query: '(max-width: 750px)',
   });
 
+  const navigate = useNavigate();
+
   useEffect(() => {
     if (!state) return;
 
@@ -76,21 +79,22 @@ const SearchPage = () => {
         document_name: item.document_name,
         document_id: item._id,
       };
-      dispatch(detailDocument(data.document_id));
+      dispatch(detailDocument(item));
     }
     if (item.template_name) {
       const data = {
         template_id: item._id,
         template_name: item.template_name,
       };
-      dispatch(detailTemplate(data.template_id));
+      dispatch(detailTemplate(item.collection_id));
     }
     if (item.workflows) {
       dispatch(setToggleManageFileForm(true));
       const data = {
         workflow_id: item._id,
       };
-      dispatch(detailWorkflow(data.workflow_id));
+      navigate('/workflows/saved#saved-workflows')
+      dispatch(detailWorkflow(item._id));
     }
   };
 
@@ -493,7 +497,7 @@ const SearchPage = () => {
                             <span
                               style={{
                                 backgroundColor:
-                                  'var(--e-global-color-62c33d9)',
+                                  'var(--e-global-color-accent)',
                               }}
                             >
                               templates
@@ -501,7 +505,7 @@ const SearchPage = () => {
                             <span
                               style={{
                                 backgroundColor:
-                                  'var(--e-global-color-1342d1f)',
+                                  'var(--e-global-color-accent)',
                               }}
                             >
                               workflows
