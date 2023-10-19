@@ -81,7 +81,15 @@ def cloning_document(document_id, auth_viewers, parent_id, process_id):
         viewers = []
         for m in auth_viewers:
             viewers.append(m["member"])
+
         document = single_query_document_collection({"_id": document_id})
+        # Create new "signed" list to track users who have signed the document
+        signed = []
+        for item in auth_viewers:
+            mem = item["member"]
+            print(mem)
+            signed.append({mem: False})
+
         for viewer in viewers:
             doc_name = document["document_name"]
             if not doc_name:
@@ -107,7 +115,8 @@ def cloning_document(document_id, auth_viewers, parent_id, process_id):
                     "parent_id": parent_id,
                     "process_id": process_id,
                     "folders": "untitled",
-                    "message":""
+                    "message":"",
+                    "signed_by": signed,
                 }
             )
         )
@@ -125,6 +134,7 @@ def cloning_document(document_id, auth_viewers, parent_id, process_id):
                         "document_state": "processing",
                         "process_id": process_id,
                         "parent_id": parent_id,
+                        "signed_by": signed,
                     }
                 )
             )
@@ -191,42 +201,51 @@ def cloning_clone(clone_id, auth_viewers, parent_id, process_id):
                     document_name = doc_name + "_" + viewer["member"]
                 else:
                     document_name = doc_name + "_" + viewer
+
+        clone_dict = {
+            "document_name": document_name,
+            "content": document["content"],
+            "page": document["page"],
+            "created_by": document["created_by"],
+            "company_id": document["company_id"],
+            "data_type": document["data_type"],
+            "document_state": "processing",
+            "auth_viewers": auth_viewers,
+            "document_type": "clone",
+            "document_state": "processing",
+            "parent_id": parent_id,
+            "process_id": process_id,
+            "folders": "untitled",
+            "message":""
+        }
+        if document.get("signed_by"):
+            clone_dict["signed_by"] = document["signed_by"]
+            
         save_res = json.loads(
             save_to_clone_collection(
-                {
-                    "document_name": document_name,
-                    "content": document["content"],
-                    "page": document["page"],
-                    "created_by": document["created_by"],
-                    "company_id": document["company_id"],
-                    "data_type": document["data_type"],
-                    "document_state": "processing",
-                    "auth_viewers": auth_viewers,
-                    "document_type": "clone",
-                    "document_state": "processing",
-                    "parent_id": parent_id,
-                    "process_id": process_id,
-                    "folders": "untitled",
-                    "message":""
-
-                }
+                clone_dict
             )
         )
+
         if save_res["isSuccess"]:
+            metadata_dict = {
+                "document_name": document_name,
+                "collection_id": save_res["inserted_id"],
+                "created_by": document["created_by"],
+                "company_id": document["company_id"],
+                "data_type": document["data_type"],
+                "auth_viewers": auth_viewers,
+                "document_type": "clone",
+                "document_state": "processing",
+                "parent_id": parent_id,
+                "process_id": process_id,
+            }
+            if document.get("signed_by"):
+                metadata_dict["signed_by"] = document["signed_by"]
+
             save_res_metadata = json.loads(
                 save_to_clone_metadata_collection(
-                    {
-                        "document_name": document_name,
-                        "collection_id": save_res["inserted_id"],
-                        "created_by": document["created_by"],
-                        "company_id": document["company_id"],
-                        "data_type": document["data_type"],
-                        "auth_viewers": auth_viewers,
-                        "document_type": "clone",
-                        "document_state": "processing",
-                        "parent_id": parent_id,
-                        "process_id": process_id,
-                    }
+                    metadata_dict
                 )
             )
         return save_res["inserted_id"]
@@ -549,20 +568,20 @@ def get_metadata_id(item_id, item_type):
             coll_id = single_query_document_metadata_collection({"collection_id": item_id})["_id"]
             return coll_id
         except Exception as err:
-            print(err)
+            print("unable to get metadata_id: ", err)
     elif item_type == "clone":
         try:
             coll_id = single_query_clones_metadata_collection({"collection_id": item_id})["_id"]
             return coll_id
         except Exception as err:
-            print("An error occured: ", err)
+            print("unable to get metadata_id: ", err)
         
     elif item_type == "template":
         try:
             coll_id = single_query_template_metadata_collection({"collection_id": item_id})["_id"]
             return coll_id
         except Exception as err:
-            print("An error occured: ", err)
+            print("unable to get metadata_id: ", err)
 
 
 def check_step_items_state(items) -> bool:
@@ -583,17 +602,20 @@ def check_step_items_state(items) -> bool:
 def check_user_in_auth_viewers(user, item, item_type) -> bool:
     auth_viewers = []
     if item_type == "document":
-        viewers = single_query_clones_collection({"_id": item}).get("auth_viewers", [])
+        viewers = single_query_clones_collection({"_id": item}).get("auth_viewers")
         
     elif item_type == "template":
         viewers = single_query_template_collection({"_id": item}).get("auth_viewers")
         viewers = viewers[0]
 
-    if viewers:
-        for i in viewers:
-            for k, v in i.items():
-                if k != "portfolio":
-                    auth_viewers.append(v)
+    for i in viewers:
+        if isinstance(i, list):
+            # if item comes as a list, get the first item
+            i = i[0]
+
+        for k, v in i.items():
+            if k != "portfolio":
+                auth_viewers.append(v)
 
     if user in auth_viewers:
         return True
@@ -607,3 +629,13 @@ def remove_members_from_steps(data):
         step["stepUserMembers"] = []
         step["stepDocumentCloneMap"]=[]
     
+
+def update_signed(signers_list: list, member: str, status: bool) -> list:
+    for elem in signers_list:
+        for key, val in elem.items():
+            if key == member:
+                elem[key] = status
+            print(f"key={key} | old_value={val} | new_val={elem[key]}")
+
+    print("signers_list: ", signers_list)
+    return(signers_list)

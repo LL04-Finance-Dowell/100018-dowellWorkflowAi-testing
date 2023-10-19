@@ -741,7 +741,7 @@ def update_folder(folder_id, old_folder):
 
 
 def authorize_metadata(metadata_id, viewers, process_id, item_type):
-    print("authorize_metadata: ", metadata_id, viewers, process_id, item_type)
+    print("metadata_id: ", metadata_id, "viewers: ", viewers, "process_id: ", process_id, "item_type", item_type)
     payload = None
     if item_type == "document": # document here is process_type
         payload = json.dumps(
@@ -776,7 +776,7 @@ def authorize_metadata(metadata_id, viewers, process_id, item_type):
             }
         )
     if payload is not None:  
-        print(payload)      
+        # print(payload)
         return post_to_data_service(payload)
 
     return
@@ -784,22 +784,71 @@ def authorize_metadata(metadata_id, viewers, process_id, item_type):
 
 def authorize(document_id, viewers, process_id, item_type):
     payload = None
+    metadata_payload = None
     if item_type == "document":
-        payload = json.dumps(
-            {
-                **CLONES_CONNECTION_DICT,
-                "command": "update",
-                "field": {
-                    "_id": document_id,
-                },
-                "update_field": {
-                    "auth_viewers": [viewers],
-                    "document_state": "processing",
-                    "process_id": process_id,
-                },
-                "platform": "bangalore",
-            }
-        )
+        if isinstance(viewers, list):
+            payload = json.dumps(
+                {
+                    **CLONES_CONNECTION_DICT,
+                    "command": "update",
+                    "field": {
+                        "_id": document_id,
+                    },
+                    "update_field": {
+                        "auth_viewers": viewers,
+                        "document_state": "processing",
+                        "process_id": process_id,
+                    },
+                    "platform": "bangalore",
+                }
+            )
+            metadata_payload = json.dumps(
+                {
+                    **CLONES_METADATA_CONNECTION_DICT,
+                    "command": "update",
+                    "field": {
+                        "collection_id": document_id,
+                    },
+                    "update_field": {
+                        "auth_viewers": viewers,
+                        "document_state": "processing",
+                        "process_id": process_id,
+                    },
+                    "platform": "bangalore",
+                }
+            )
+        else:
+            payload = json.dumps(
+                {
+                    **CLONES_CONNECTION_DICT,
+                    "command": "update",
+                    "field": {
+                        "_id": document_id,
+                    },
+                    "update_field": {
+                        "auth_viewers": [viewers],
+                        "document_state": "processing",
+                        "process_id": process_id,
+                    },
+                    "platform": "bangalore",
+                }
+            )
+            metadata_payload = json.dumps(
+                {
+                    **CLONES_METADATA_CONNECTION_DICT,
+                    "command": "update",
+                    "field": {
+                        "collection_id": document_id,
+                    },
+                    "update_field": {
+                        "auth_viewers": [viewers],
+                        "document_state": "processing",
+                        "process_id": process_id,
+                    },
+                    "platform": "bangalore",
+                }
+            )
+
     if item_type == "template":
         payload = json.dumps(
             {
@@ -816,38 +865,25 @@ def authorize(document_id, viewers, process_id, item_type):
                 "platform": "bangalore",
             }
         )
-            
-    metadata_payload = json.dumps(
-        {
-            **CLONES_METADATA_CONNECTION_DICT,
-            "command": "update",
-            "field": {
-                "collection_id": document_id,
-            },
-            "update_field": {
-                "auth_viewers": [viewers],
-                "document_state": "processing",
-                "process_id": process_id,
-            },
-            "platform": "bangalore",
-        }
-    )
 
     if payload is not None:
-        meta_payload = post_to_data_service(metadata_payload)
-        print(meta_payload)
+        if metadata_payload is not None:
+            post_to_data_service(metadata_payload)
+            # print("meta_payload", metadata_payload)
+        else:
+            print("unable to update metadata")
 
         return post_to_data_service(payload)
 
     return
 
 
-def finalize_item(item_id, state, item_type, message):
+def finalize_item(item_id, state, item_type, message, signers=None):
     payload = None
+    payload_dict = None
     if item_type == "document":
         print(item_type)
-        payload = json.dumps(
-            {
+        payload_dict = {
                 **DOCUMENT_CONNECTION_DICT,
                 "command": "update",
                 "field": {
@@ -859,10 +895,11 @@ def finalize_item(item_id, state, item_type, message):
                 },
                 "platform": "bangalore",
             }
+        payload = json.dumps(
+            payload_dict
         )
     elif item_type == "clone":
-        payload = json.dumps(
-            {
+        payload_dict = {
                 **CLONES_CONNECTION_DICT,
                 "command": "update",
                 "field": {
@@ -875,10 +912,11 @@ def finalize_item(item_id, state, item_type, message):
                 },
                 "platform": "bangalore",
             }
+        payload = json.dumps(
+            payload_dict
         )
     elif item_type == "template":
-        payload = json.dumps(
-            {
+        payload_dict = {
                 **TEMPLATE_CONNECTION_DICT,
                 "command": "update",
                 "field": {
@@ -890,10 +928,11 @@ def finalize_item(item_id, state, item_type, message):
                 },
                 "platform": "bangalore",
             }
+        payload = json.dumps(
+            payload_dict
         )
     elif item_type == "workflow":
-        payload = json.dumps(
-            {
+        payload_dict = {
                 **WF_CONNECTION_DICT,
                 "command": "update",
                 "field": {
@@ -905,18 +944,27 @@ def finalize_item(item_id, state, item_type, message):
                 },
                 "platform": "bangalore",
             }
+        payload = json.dumps(
+            payload_dict
         )
 
     if payload is not None:
-        return post_to_data_service(payload)
+        if signers is not None:
+            update_field = payload_dict["update_field"]
+            update_field["signed_by"] = signers
+            payload = json.dumps(payload_dict)
+
+            return post_to_data_service(payload)
+        else:
+            return post_to_data_service(payload)
     return
 
 
-def update_metadata(item_id, state, item_type):
+def update_metadata(item_id, state, item_type, signers=None):
     payload = None
+    payload_dict = None
     if item_type == "document":
-        payload = json.dumps(
-            {
+        payload_dict = {
                 **DOCUMENT_METADATA_CONNECTION_DICT,
                 "command": "update",
                 "field": {
@@ -927,10 +975,11 @@ def update_metadata(item_id, state, item_type):
                 },
                 "platform": "bangalore",
             }
+        payload = json.dumps(
+            payload_dict
         )
     elif item_type == "clone":
-        payload = json.dumps(
-            {
+        payload_dict = {
                 **CLONES_METADATA_CONNECTION_DICT,
                 "command": "update",
                 "field": {
@@ -941,10 +990,11 @@ def update_metadata(item_id, state, item_type):
                 },
                 "platform": "bangalore",
             }
+        payload = json.dumps(
+            payload_dict
         )
     elif item_type == "template":
-        payload = json.dumps(
-            {
+        payload_dict = {
                 **TEMPLATE_METADATA_CONNECTION_DICT,
                 "command": "update",
                 "field": {
@@ -955,9 +1005,16 @@ def update_metadata(item_id, state, item_type):
                 },
                 "platform": "bangalore",
             }
+        payload = json.dumps(
+            payload_dict
         )
     if payload is not None:
-        return post_to_data_service(payload)
+        if signers is not None:
+            update_field = payload_dict["update_field"]
+            update_field["signed_by"] = signers
+            return post_to_data_service(payload)
+        else:
+            return post_to_data_service(payload)
     return
 
 

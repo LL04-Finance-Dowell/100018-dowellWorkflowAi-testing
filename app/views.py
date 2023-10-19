@@ -31,6 +31,7 @@ from app.helpers import (
     validate_id,
     get_metadata_id,
     remove_members_from_steps,
+    update_signed,
 )
 from app.mongo_db_connection import (
     add_document_to_folder,
@@ -381,7 +382,16 @@ def finalize_or_reject(request, process_id):
             return Response(
                 f"template already processed as `{current_state}`!", status.HTTP_200_OK
             )
-    res = json.loads(finalize_item(item_id, state, item_type, message))
+        
+    # get signers list from document object for preparation to send in finalize_item payload
+    if item_type == "clone":
+        signers_list = single_query_clones_collection({"_id": item_id}).get("signed_by")
+        updated_signers_true = update_signed(signers_list, member=user, status=True)
+
+    # elif item_type == "template":
+    #     signed_list = single_query_template_collection({"_id": item_id}).get("signed_by")
+    res = json.loads(finalize_item(item_id, state, item_type, message, signers=updated_signers_true))
+
     if res["isSuccess"]:
         try:
             process = single_query_process_collection({"_id": process_id})
@@ -395,10 +405,13 @@ def finalize_or_reject(request, process_id):
                 if item:
                     if item.get("document_state") == "finalized":
                         meta_id = get_metadata_id(item_id, item_type)
-                        update_metadata(meta_id, "finalized", item_type)
+                        # set the memeber member in "signed_by" to "True" and update the metadata with the updated signers_list
+                        update_metadata(meta_id, "finalized", item_type, signers=updated_signers_true)
                     elif item.get("document_state") == "processing":
                         meta_id = get_metadata_id(item_id, item_type)
-                        update_metadata(meta_id, "processing", item_type)
+                        # set the memeber member in "signed_by" to "False" and update the metadata with the updated signers_list
+                        # updated_signers_false = update_signed(signers_list, member=user, status=False)
+                        # update_metadata(meta_id, "processing", item_type, signers=updated_signers_false)
                 return Response("document processed successfully", status.HTTP_200_OK)
             elif item_type == 'template':
                 background.template_processing()
@@ -406,9 +419,13 @@ def finalize_or_reject(request, process_id):
                 if item:
                     if item.get("template_state") == "saved":
                         meta_id = get_metadata_id(item_id, item_type)
-                        update_metadata(meta_id, "saved", item_type)
+                        # set the memeber member in "signed_by" to "True" and update the metadata with the updated signers_list
+                        updated_signers_true = update_signed(signers_list, member=user, status=True)
+                        update_metadata(meta_id, "saved", item_type, signers=updated_signers_true)
                     elif item.get("template_state") == "draft":
                         meta_id = get_metadata_id(item_id, item_type)
+                        # set the memeber member in "signed_by" to "False" and update the metadata with the updated signers_list
+                        # updated_signers_false = update_signed(signers_list, member=user, status=False)
                         update_metadata(meta_id, "draft", item_type)
                 return Response("template processed successfully", status.HTTP_200_OK)
         except Exception as err:
