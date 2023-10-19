@@ -82,7 +82,7 @@ from app.mongo_db_connection import (
     update_wf,
     update_workflow_setting,
     get_workflow_setting_object,
-    single_query_public_collection,
+    bulk_query_public_collection,
     save_to_public_collection,
     single_query_template_metadata_collection
 
@@ -297,10 +297,10 @@ def process_verification_v2(request):
     auth_portfolio = request.data["auth_portfolio"]
     token = request.data["token"]
     org_name = request.data["org_name"]
-    # collection_id = request.data["collection_id"]
+    collection_id = None
     link_object = single_query_qrcode_collection({"unique_hash": token})
     if user_type == "team" or user_type == "user":
-        collection_id = request.data["collection_id"]
+        collection_id = request.data["collection_id"] if request.data.get("collection_id") else None
         if (
             link_object["user_name"] != auth_user
             or link_object["auth_portfolio"] != auth_portfolio
@@ -341,6 +341,7 @@ def process_verification_v2(request):
             "time limit for access to this document has elapsed",
             status.HTTP_400_BAD_REQUEST,
         )
+    
     editor_link = handler.verify_access_v2(auth_role, auth_user, user_type, collection_id)
     if editor_link:
         return Response(editor_link, status.HTTP_200_OK)
@@ -1795,13 +1796,13 @@ def dowell_centre_template(request, company_id):
     data_type = request.query_params.get("data_type")
     if not validate_id(company_id):
         return Response("Something went wrong!", status=status.HTTP_400_BAD_REQUEST)
-    templates = bulk_query_template_collection(
+    templates = bulk_query_template_metadata_collection(
         {"company_id": company_id, "data_type": data_type}
     )
     page = int(request.GET.get("page", 1))
     templates = paginate(templates, page, 50)
     template_list = [
-        {"_id": item["_id"], "template_name": item["template_name"]}
+        {"_id": item["_id"], "template_name": item["template_name"], "collection_id": item["collection_id"],}
         for item in templates
     ]
     return Response(
@@ -1819,14 +1820,14 @@ def dowell_centre_documents(request, company_id):
     cache_key = f"documents_{company_id}"
     document_list = cache.get(cache_key)
     if document_list is None:
-        document_list = bulk_query_document_collection(
+        document_list = bulk_query_document_metadata_collection(
             {"company_id": company_id, "data_type": data_type}
         )
         cache.set(cache_key, document_list, timeout=60)
     page = int(request.GET.get("page", 1))
     documents = paginate(document_list, page, 50)
     document_list = [
-        {"_id": item["_id"], "document_name": item["document_name"]}
+        {"_id": item["_id"], "document_name": item["document_name"], "collection_id": item["collection_id"]}
         for item in documents
     ]
     return Response(
@@ -2009,25 +2010,33 @@ def process_public_users(request, company_id):
         return Response("something went wrong!", status.HTTP_400_BAD_REQUEST)
     
     if request.method == "GET":
-        public_users = single_query_public_collection({
+        public_users = bulk_query_public_collection({
             "company_id": company_id
         })
-        return Response(f"public:{public_users}", status=status.HTTP_200_OK)
+        return Response(public_users, status=status.HTTP_200_OK)
         
     if request.method == "POST":
         process_id = request.data.get("process_id")
+        company_id = request.data.get("company_id")
         member = request.data.get("member")
+        qrids = request.data.get("qr_ids")
+
         if not process_id or not member:
             return Response("provide all the fields", status=status.HTTP_400_BAD_REQUEST)
+        
         options = {
+            "company_id":company_id,
             "process_id": process_id,
-            "member": member
+            "member": member,
+            "public_links":qrids
         }
         res = json.loads(save_to_public_collection(options))
+
         if res["isSuccess"]:
             return Response(
                 "Public users details stored!", status.HTTP_201_CREATED
             )
+        
         return Response(status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
