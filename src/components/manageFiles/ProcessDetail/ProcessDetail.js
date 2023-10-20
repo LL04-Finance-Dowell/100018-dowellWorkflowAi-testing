@@ -25,6 +25,7 @@ import processImage from "../../../assets/processImage.png";
 import greenImage from "../../../assets/greenImage.png";
 import UserDetail from '../../newSidebar/userDetail/UserDetail';
 import { productName } from '../../../utils/helpers';
+import ProgressBar from 'react-bootstrap/ProgressBar';
 
 ChartJS.register(ArcElement, Tooltip, Legend, CategoryScale,
   LinearScale,
@@ -127,7 +128,7 @@ const ProcessDetail = () => {
             })}
           </div>
 
-          <h3 className={styles.Process_Title}>Links :</h3>
+          <div className={styles.Process_Title}>Links :</div>
           <div className={styles.info_container}>
             <div className={styles.process__Links__Wrapper}>
               <table>
@@ -173,7 +174,7 @@ const ProcessDetail = () => {
               </table>
             </div>
           </div>
-          <div className="d-grid gap-2">
+          {/* <div className="d-grid gap-2">
             <Button variant="secondary" size="md" onClick={handleNavigateDocument}>
               Document Report
             </Button>
@@ -184,21 +185,21 @@ const ProcessDetail = () => {
             <Button onClick={handleNavigate} variant="secondary" size="md">
               Evaluation Report
             </Button>
-          </div><br />
-
-          {/* <div className={styles.button_container}>
-            <Button onClick={handleNavigateDocument} variant="success" className={styles.custom_button}>
+          </div><br /> */}
+          <ProgressBar striped variant="success" now={100} className={styles.custom_progress_bar} /><br/>
+          <div className={styles.button_container}>
+            <Button onClick={handleNavigateDocument} variant="success">
               Document Report
             </Button>
 
-            <Button onClick={handleNavigateScale} variant="success" className={styles.custom_button}>
+            <Button onClick={handleNavigateScale} variant="success">
               Scale Report
             </Button>
 
-            <Button onClick={handleNavigate} variant="success" className={styles.custom_button}>
+            <Button onClick={handleNavigate} variant="success">
               Evaluation Report
             </Button>
-          </div> */}
+          </div><br />
 
         </div>
       </div>

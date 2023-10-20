@@ -1,5 +1,5 @@
 .Process_Title {
-  font-size: 30px;
+  font-size: 24px;
   font-weight: bold;
   color: rgb(2 1 1);
   margin-top: 10px;
@@ -312,15 +312,28 @@
   justify-content: space-around;
 }
 
+.button_container .btn {
+  margin-bottom: 1rem;
+  transition: background-color 0.3s ease-in-out;
+}
+
+.button_container .btn:hover {
+  background-color: #04661b; /* Change color on hover */
+}
+
 .custom_button {
   margin-bottom: 1rem;
   transition: background-color 0.3s ease-in-out;
-  background-color: #43c058;
+  background-color: #66b172;
   color: white;
 }
 
 .custom_button:hover {
-  background-color: #13511D; /* Change color on hover */
+  background-color: #04380d; /* Change color on hover */
+}
+
+.custom_progress_bar {
+  height: 5px; /* Adjust the height to your desired value */
 }
 
 @keyframes fadeIn {
