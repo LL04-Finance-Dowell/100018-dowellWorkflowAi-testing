@@ -176,6 +176,7 @@ const CopiesOfDoc = ({ currentStepIndex, stepsPopulated }) => {
             <FormLayout
               isSubmitted={stepsPopulated ? stepsPopulated : isSubmitSuccessful}
               loading={loading}
+              style={{padding:'10px'}}
             >
               <form onSubmit={handleSubmit(onSubmit)}>
                 <h2 className={styles.header}>
