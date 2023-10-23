@@ -128,6 +128,7 @@ const AssignTask = ({ currentStepIndex, stepsPopulated }) => {
           : isSubmitSuccessful
       }
       loading={loading}
+      style={{padding: '10px'}}
     >
       <p style={{ padding: '0', marginBottom: '14px' }}>
         <b>Assign Task</b>

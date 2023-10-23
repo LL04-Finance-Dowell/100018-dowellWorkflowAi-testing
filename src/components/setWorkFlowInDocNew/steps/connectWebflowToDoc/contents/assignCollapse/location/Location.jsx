@@ -105,6 +105,7 @@ const Location = ({ currentStepIndex, stepsPopulated }) => {
         onSubmit={handleSubmit(handleSetLocation)}
       >
         <div>
+          <div   style={{marginBottom: '5px'}}>
           <Radio
             register={register}
             value='anyLocation'
@@ -115,9 +116,11 @@ const Location = ({ currentStepIndex, stepsPopulated }) => {
                 (process) => process.workflow === docCurrentWorkflow?._id
               )?.steps[currentStepIndex]?.stepLocation === 'any'
             }
+          
           >
             Any Location
           </Radio>
+          </div>
           <Radio
             register={register}
             value='selectLocation'

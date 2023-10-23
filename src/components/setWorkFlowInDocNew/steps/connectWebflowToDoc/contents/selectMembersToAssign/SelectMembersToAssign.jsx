@@ -814,11 +814,12 @@ const SelectMembersToAssign = ({
                       : (e) =>
                         handleDisabledUserOptionSelection(e, current.title)
                   }
-                  className='radBtn'
+                  className={styles.radBtn}
                 >
                   Select all {current.header}
                 </Radio>
                 </div>
+                <div className={styles.radContainer}>
                 <Radio
                   register={register}
                   name={
@@ -869,9 +870,11 @@ const SelectMembersToAssign = ({
                       : (e) =>
                         handleDisabledUserOptionSelection(e, current.title)
                   }
+                  className={styles.radBtn}
                 >
                   {current.selectInTeam}
                 </Radio>
+                </div>
               </div>
               <div
                 ref={teamMembersRef}

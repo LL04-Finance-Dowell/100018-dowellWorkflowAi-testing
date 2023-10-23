@@ -74,6 +74,7 @@ const Time = ({ currentStepIndex, stepsPopulated }) => {
         onSubmit={handleSubmit(handleSetTime)}
       >
         <div>
+        <div   style={{marginBottom: '5px'}}>
           <Radio
             name='time'
             value='noTimeLimit'
@@ -87,6 +88,7 @@ const Time = ({ currentStepIndex, stepsPopulated }) => {
           >
             No Time limit
           </Radio>
+          </div>
           <Radio
             name='time'
             value='selectTimeLimit'
