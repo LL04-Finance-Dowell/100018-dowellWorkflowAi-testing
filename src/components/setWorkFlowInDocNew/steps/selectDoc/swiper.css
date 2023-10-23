@@ -2,6 +2,7 @@
   height: 310px;
   border: solid var(--e-global-color-secondary) 1px;
   min-width: 0;
+  padding-top: 10px;
 }
 
 .select-doc .swiper-slide {
