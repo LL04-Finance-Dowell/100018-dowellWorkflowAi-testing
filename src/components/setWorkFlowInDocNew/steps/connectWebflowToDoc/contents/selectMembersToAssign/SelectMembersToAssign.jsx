@@ -21,6 +21,7 @@ import useClickInside from '../../../../../../hooks/useClickInside';
 import { toast } from 'react-toastify';
 import { useAppContext } from '../../../../../../contexts/AppContext';
 import { LoadingSpinner } from '../../../../../LoadingSpinner/LoadingSpinner';
+import { httpProcess } from '../../../../../../httpCommon/httpCommon';
 
 const SelectMembersToAssign = ({
   currentStepIndex,
@@ -65,6 +66,8 @@ const SelectMembersToAssign = ({
   const selectMemberOptionRef = useRef();
   const selectMembersRadioRef = useRef();
   const [selectionCount, setSelectionCount] = useState(0);
+  const { userDetail } = useSelector((state) => state.auth);
+  const [usedId, setUsedId]= useState([])
 
   const dispatch = useDispatch();
 
@@ -128,6 +131,7 @@ const SelectMembersToAssign = ({
 
 
   useEffect(() => {
+    const UpdateUsers = async()=>{
     if (selectedMembersSet || !workflowTeamsLoaded) return;
 
     const copyOfCurrentSelectMembersState = selectMembers.slice();
@@ -170,6 +174,19 @@ const SelectMembersToAssign = ({
       return memberPortfolios;
     };
 
+    const company_id = userDetail?.portfolio_info[0]?.org_id;
+    await fetch(`https://100094.pythonanywhere.com/v1/processes/${company_id}/public/`)
+    .then(response => {
+    if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+        return response.json(); // Parse the response as JSON
+    })
+    .then(data => {
+      let usedIdd = data.map(item => item.public_links).flat();
+      setUsedId(usedIdd)
+    })
+
     const updatedMembersState = copyOfCurrentSelectMembersState.map(
       (member) => {
         if (member.header === 'Team') {
@@ -203,6 +220,8 @@ const SelectMembersToAssign = ({
 
     setSelectMembersComp(updatedMembersState);
     setSelectedMembersSet(true);
+    }
+    UpdateUsers()
   }, [
     selectedMembersSet,
     workflowTeamsLoaded,
@@ -680,6 +699,9 @@ const SelectMembersToAssign = ({
   // console.log("the publicMembersSelectedForProcess are ",publicMembersSelectedForProcess)
   // console.log("the current val is  ",current)
   // console.log("the current step index is  ",currentStepIndex)
+  console.log('the used id are ', usedId)
+  let idUsed = current.portfolios.filter((item) => !usedId.some((link) => link.member === item.member))
+  console.log('the filtered ids are ', idUsed, current)
  
   return (
     <div className={styles.container}>
@@ -741,6 +763,7 @@ const SelectMembersToAssign = ({
                 {current.title}
               </h3>
               <div>
+                <div className={styles.radContainer}>
                 <Radio
                   register={register}
                   name={
@@ -791,9 +814,11 @@ const SelectMembersToAssign = ({
                       : (e) =>
                         handleDisabledUserOptionSelection(e, current.title)
                   }
+                  className='radBtn'
                 >
                   Select all {current.header}
                 </Radio>
+                </div>
                 <Radio
                   register={register}
                   name={
@@ -1055,7 +1080,9 @@ const SelectMembersToAssign = ({
                     >
                       <option value={''} disabled hidden selected></option>
                       {React.Children.toArray(
-                        current.portfolios.map((item) => (
+                        current.portfolios
+                        .filter((item) => !usedId.some((link) => link.member === item.member))
+                        .map((item) => (
                           <option
                             className={
                               current.header === 'Team'

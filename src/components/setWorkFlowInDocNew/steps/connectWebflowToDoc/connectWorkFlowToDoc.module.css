@@ -48,10 +48,11 @@
   padding: 5px;
   border: 1px solid var(--e-global-color-secondary);
   /* width: min(14.65vw, 167px); */
-  width: calc(100% / 3);
+  width: calc(100% / 3.09);
   color: var(--e-global-color-secondary);
   position: relative;
   padding-bottom: 15px;
+  margin-right: 10px;
 }
 
 .title__box {

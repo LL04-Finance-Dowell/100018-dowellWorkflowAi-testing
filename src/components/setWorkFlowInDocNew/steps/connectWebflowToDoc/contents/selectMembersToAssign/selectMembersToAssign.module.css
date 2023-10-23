@@ -95,3 +95,10 @@
 .display_none{
   display: none;
 }
+
+.radBtn{
+  margin-bottom: 15px;
+}
+.radContainer{
+  margin-bottom: 5px !important;
+}

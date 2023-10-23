@@ -12,10 +12,13 @@
 
 .left__container {
   width: 33%;
+  margin-right: 3%;
+  /* border: solid; */
+  /* padding-top: 2%; */
 }
 
 .right__container {
-  width: 67%;
+  width: 64%;
 }
 
 .swiper__slide__box {
@@ -96,8 +99,12 @@ width: 100%;
   .right__container {
     width: 100%;
   }
- 
-  
+  .features__title {
+    padding-top: 20px;
+  }
+  .features__button {
+    margin-bottom: 20px;
+  }
 }
 /* @media (max-width: 290px) {
   .features__button {
