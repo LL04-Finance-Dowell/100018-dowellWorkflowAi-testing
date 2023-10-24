@@ -22,8 +22,10 @@ from app.utils import notification_cron
 from app.helpers import (
     access_editor,
     access_editor_metadata,
+    check_all_accessed,
     cloning_process,
     create_favourite,
+    get_link,
     list_favourites,
     paginate,
     register_finalized,
@@ -227,9 +229,24 @@ def get_process_link(request, process_id):
     if not links_info:
         return Response("Verification link unavailable", status.HTTP_400_BAD_REQUEST)
     user = request.data["user_name"]
-    for link in links_info[0]["links"]:
-        if user in link:
-            return Response(link[user], status.HTTP_200_OK)
+    
+    process = single_query_process_collection({"_id": process_id})
+    process_steps = process.get("process_steps")
+
+    links = links_info[0]["links"]
+
+    for step in process_steps:
+        step_clone_map = step.get("stepDocumentCloneMap")
+        step_role = step.get("stepRole")
+
+        state = check_all_accessed(step_clone_map)
+        if state:
+            pass
+        else:
+            link = get_link(user, step_role, links)
+            if link:
+                return Response(link, status.HTTP_200_OK)
+
     return Response("user is not part of this process", status.HTTP_401_UNAUTHORIZED)
 
 # Process verification v1
