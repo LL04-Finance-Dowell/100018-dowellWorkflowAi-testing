@@ -21,7 +21,7 @@ import {
 import { RiDeleteBin6Line } from 'react-icons/ri';
 import { moveItemToArchive } from '../../../services/archiveServices';
 import { setAllDocuments } from '../../../features/document/documentSlice';
-import { BsBookmark, BsFillBookmarkFill } from 'react-icons/bs';
+import { BsBookmark, BsFillBookmarkFill, BsArrowBarRight } from 'react-icons/bs';
 import {
   extractTokenFromVerificationURL,
   productName,
@@ -331,6 +331,14 @@ const DocumentCard = ({
   const BackSide = () => {
     return (
       <div>
+        <div
+            style={{
+              cursor: 'pointer',
+              position: 'absolute',
+              left: '0',
+              top: '0',
+            }}
+          >{<BsArrowBarRight />}</div>
         {!hideFavoriteIcon && (
           <div
             style={{
