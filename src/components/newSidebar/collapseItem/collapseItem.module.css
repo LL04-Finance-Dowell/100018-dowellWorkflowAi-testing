@@ -52,3 +52,7 @@
   text-decoration: none;
   color: var(--e-global-color-9d2ac19) !important;
 }
+
+.hash__link:hover {
+  text-decoration: underline !important;
+}

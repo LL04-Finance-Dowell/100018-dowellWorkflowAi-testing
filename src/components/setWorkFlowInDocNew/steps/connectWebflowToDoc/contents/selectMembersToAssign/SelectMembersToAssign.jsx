@@ -700,7 +700,7 @@ const SelectMembersToAssign = ({
   // console.log("the current val is  ",current)
   // console.log("the current step index is  ",currentStepIndex)
   console.log('the used id are ', usedId)
-  let idUsed = current.portfolios.filter((item) => !usedId.some((link) => link.member === item.member))
+  let idUsed = current.portfolios.filter((item) => !usedId.some((link) => link?.member === item?.member))
   console.log('the filtered ids are ', idUsed, current)
  
   return (
@@ -1084,7 +1084,7 @@ const SelectMembersToAssign = ({
                       <option value={''} disabled hidden selected></option>
                       {React.Children.toArray(
                         current.portfolios
-                        .filter((item) => !usedId.some((link) => link.member === item.member))
+                        .filter((item) => !usedId.some((link) => link?.member === item?.member))
                         .map((item) => (
                           <option
                             className={
@@ -1139,7 +1139,7 @@ const SelectMembersToAssign = ({
                           whiteSpace: 'pre',
                         }}
                         anchorId={item.id + currentStepIndex}
-                        content={`user: ${item.member} \nportfolio: ${item.portfolio}`}
+                        content={`user: ${item?.member} \nportfolio: ${item.portfolio}`}
                         place='top'
                       />
                     ))}

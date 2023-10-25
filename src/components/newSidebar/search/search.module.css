@@ -5,16 +5,16 @@
 .title {
   color: var(--e-global-color-accent);
   margin-top: 10px;
-  margin-bottom: 29px;
-  font-size: 29px !important;
+  margin-bottom: 15px;
+  font-size: 27px !important;
   font-weight: 600;
-  text-align: center;
+  text-align: left;
 }
 
 .info {
   font-size: 15px;
   color: var(--e-global-color-9d2ac19);
-  text-align: center;
+  text-align: left;
   margin-bottom: 20px;
 }
 

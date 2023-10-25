@@ -186,7 +186,7 @@ const Search = () => {
   return (
     <div className={styles.container}>
       <h2 className={styles.title} style={{ color: themeColor }}>
-        {t('Search')}
+        Search
       </h2>
       <p className={styles.info}>
         {t('Search in file names of Documents Templates & Workflows')}
