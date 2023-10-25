@@ -69,6 +69,7 @@ const ProcessesPage = ({
   } = useAppContext();
 
   console.log("showEvaluationReport", showEvaluationReport)
+  console.log("userdetail", userDetail)
 
   useEffect(() => {
     if (showOnlySaved) navigate('#saved-processes');

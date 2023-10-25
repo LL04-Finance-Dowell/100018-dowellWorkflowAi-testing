@@ -16,6 +16,8 @@ const FoldersPage = () => {
     if (!folders) fetchFolders();
   }, []);
 
+  let allFolders = [... folders].reverse()
+  console.log("folders", folders)
   return (
     <WorkflowLayout>
       <section id='folders_sect'>
@@ -25,7 +27,7 @@ const FoldersPage = () => {
               cardBgColor='#1ABC9C'
               title={'My Folders'}
               Card={FoldersCard}
-              cardItems={folders}
+              cardItems={allFolders}
               status={
                 allDocumentsStatus === 'pending' ||
                 allTemplatesStatus === 'pending' ||

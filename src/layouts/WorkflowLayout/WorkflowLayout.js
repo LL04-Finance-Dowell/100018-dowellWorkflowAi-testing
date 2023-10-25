@@ -182,6 +182,7 @@ const WorkflowLayout = ({ children }) => {
         product: workflowProduct.product,
       })
       .then((res) => {
+        console.log("res.datamubeen", res.data)
         dispatch(updateUserDetail(res.data));
         dispatch(setAdminUserPortfolioLoaded(true));
       })
