@@ -133,7 +133,7 @@ const SelectMembersToAssign = ({
 
 
     useEffect(() => {
-      if (selectedMembersSet || !workflowTeamsLoaded || !usedIdsLoaded) return;
+      if (selectedMembersSet || !workflowTeamsLoaded ) return;
   
       const copyOfCurrentSelectMembersState = selectMembers.slice();
   
@@ -1099,7 +1099,7 @@ const SelectMembersToAssign = ({
                       <option value={''} disabled hidden selected></option>
                       {React.Children.toArray(
                         current.portfolios
-                        .filter((item) => !usedId.some((link) => link?.member === item?.member))
+                       
                         .map((item) => (
                           <option
                             className={
