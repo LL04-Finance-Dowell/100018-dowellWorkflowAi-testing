@@ -639,3 +639,14 @@ def update_signed(signers_list: list, member: str, status: bool) -> list:
 
     print("signers_list: ", signers_list)
     return(signers_list)
+
+
+def check_all_accessed(dic):
+    return all([item.get("accessed") for item in dic])
+
+def get_link(user, role, links):
+    for link in links:
+        if link.get(user):
+            auth_role = f"auth_role={role}"
+            if user in link[user] and auth_role in link[user]:
+                return link[user]
