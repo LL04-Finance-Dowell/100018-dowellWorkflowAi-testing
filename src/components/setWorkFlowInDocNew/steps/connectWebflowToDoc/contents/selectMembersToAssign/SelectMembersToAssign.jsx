@@ -1099,7 +1099,7 @@ const SelectMembersToAssign = ({
                       <option value={''} disabled hidden selected></option>
                       {React.Children.toArray(
                         current.portfolios
-                       
+                        .filter((item) => !usedId.some((link) => link?.member === item?.member))
                         .map((item) => (
                           <option
                             className={
