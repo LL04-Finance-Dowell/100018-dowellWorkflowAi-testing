@@ -68,10 +68,12 @@ const SelectMembersToAssign = ({
   const [selectionCount, setSelectionCount] = useState(0);
   const { userDetail } = useSelector((state) => state.auth);
   const [usedId, setUsedId]= useState([])
+  const [usedIdsLoaded, setUsedIdsLoaded] = useState(false);
 
   const dispatch = useDispatch();
 
   const handleSetCurrent = (item) => {
+    // console.log('handlesetcurrent is ', item)
     setCurrent(item);
   };
 
@@ -130,105 +132,116 @@ const SelectMembersToAssign = ({
 
 
 
-  useEffect(() => {
-    const UpdateUsers = async()=>{
-    if (selectedMembersSet || !workflowTeamsLoaded) return;
-
-    const copyOfCurrentSelectMembersState = selectMembers.slice();
-
-    const extractAndFormatPortfoliosForMembers = (criteria) => {
-      const membersmatchingCriteria = [
-        ...new Map(
-          selectedMembersForProcess.map((member) => [
-            member['username'],
-            member,
-          ])
-        ).values(),
-      ].filter(
-        (member) =>
-          member.member_type === criteria && member.status === 'enable'
-      );
-      const memberPortfolios = membersmatchingCriteria
-        .map((member) => {
-          if (Array.isArray(member.username)) {
-            let membersFound = member.username.forEach((user) => {
-              return {
-                id: uuidv4(),
-                content: `${user} - (${member.portfolio_name})`,
-                member: user,
-                portfolio: member.portfolio_name,
-              };
-            });
-            if (!membersFound) return null;
-            return Object.assign({}, ...membersFound);
-          }
-          return {
-            id: uuidv4(),
-            content: `${member.username} - (${member.portfolio_name})`,
-            member: member.username,
-            portfolio: member.portfolio_name,
-          };
-        })
-        .filter((member) => member);
-
-      return memberPortfolios;
-    };
-
-    const company_id = userDetail?.portfolio_info[0]?.org_id;
-    await fetch(`https://100094.pythonanywhere.com/v1/processes/${company_id}/public/`)
-    .then(response => {
-    if (!response.ok) {
-        throw new Error(`HTTP error! Status: ${response.status}`);
-    }
-        return response.json(); // Parse the response as JSON
-    })
-    .then(data => {
-      let usedIdd = data.map(item => item.public_links).flat();
-      setUsedId(usedIdd)
-    })
-
-    const updatedMembersState = copyOfCurrentSelectMembersState.map(
-      (member) => {
-        if (member.header === 'Team') {
-          member.portfolios =
-          [
-            ...extractAndFormatPortfoliosForMembers('team_member'),
-            ...extractAndFormatPortfoliosForMembers('owner')
-          ];
-            // console.log('the team portfolio issss', member.portfolios)
-          member.teams = workflowTeams?.filter(
-            (team) => team.team_type === 'team'
-          );
-          return member;
-        }
-        if (member.header === 'Users') {
-          member.portfolios =
-            extractAndFormatPortfoliosForMembers('to-be-decided');
-          member.teams = workflowTeams.filter(
-            (team) => team.team_type === 'to-be-decided'
-          );
-          return member;
-        }
-
-        member.portfolios = extractAndFormatPortfoliosForMembers('public');
-        member.teams = workflowTeams.filter(
-          (team) => team.team_type === 'public'
+    useEffect(() => {
+      if (selectedMembersSet || !workflowTeamsLoaded || !usedIdsLoaded) return;
+  
+      const copyOfCurrentSelectMembersState = selectMembers.slice();
+  
+      const extractAndFormatPortfoliosForMembers = (criteria) => {
+        const membersmatchingCriteria = [
+          ...new Map(
+            selectedMembersForProcess.map((member) => [
+              member['username'],
+              member,
+            ])
+          ).values(),
+        ].filter(
+          (member) =>
+            member.member_type === criteria && member.status === 'enable'
         );
-        return member;
-      }
-    );
+        const memberPortfolios = membersmatchingCriteria
+          .map((member) => {
+            if (Array.isArray(member.username)) {
+              let membersFound = member.username.forEach((user) => {
+                return {
+                  id: uuidv4(),
+                  content: `${user} - (${member.portfolio_name})`,
+                  member: user,
+                  portfolio: member.portfolio_name,
+                };
+              });
+              if (!membersFound) return null;
+              return Object.assign({}, ...membersFound);
+            }
+            return {
+              id: uuidv4(),
+              content: `${member.username} - (${member.portfolio_name})`,
+              member: member.username,
+              portfolio: member.portfolio_name,
+            };
+          })
+          .filter((member) => member);
+  
+        return memberPortfolios;
+      };
+  
+      const updatedMembersState = copyOfCurrentSelectMembersState.map(
+        (member) => {
+          if (member.header === 'Team') {
+            member.portfolios =
+            [
+              ...extractAndFormatPortfoliosForMembers('team_member'),
+              ...extractAndFormatPortfoliosForMembers('owner')
+            ];
+              // console.log('the team portfolio issss', member.portfolios)
+            member.teams = workflowTeams?.filter(
+              (team) => team.team_type === 'team'
+            );
+            return member;
+          }
+          if (member.header === 'Users') {
+            member.portfolios =
+              extractAndFormatPortfoliosForMembers('to-be-decided');
+            member.teams = workflowTeams.filter(
+              (team) => team.team_type === 'to-be-decided'
+            );
+            return member;
+          }
+  
+          member.portfolios = extractAndFormatPortfoliosForMembers('public');
+          member.teams = workflowTeams.filter(
+            (team) => team.team_type === 'public'
+          );
+          return member;
+        }
+      );
+  
+      setSelectMembersComp(updatedMembersState);
+      setSelectedMembersSet(true);
+    }, [
+      selectedMembersSet,
+      workflowTeamsLoaded,
+      workflowTeams,
+      selectedMembersForProcess,
+      usedIdsLoaded
+    ]);
 
-    setSelectMembersComp(updatedMembersState);
-    setSelectedMembersSet(true);
-    }
-    UpdateUsers()
-  }, [
-    selectedMembersSet,
-    workflowTeamsLoaded,
-    workflowTeams,
-    selectedMembersForProcess,
-  ]);
-
+    useEffect(() => {
+      const fetchData = async () => {
+        const company_id = userDetail?.portfolio_info[0]?.org_id;
+        
+        try {
+          const response = await fetch(`https://100094.pythonanywhere.com/v1/processes/${company_id}/public/`);
+          
+          if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+          }
+          
+          const data = await response.json(); // Parse the response as JSON
+          
+          const usedIdd = data.map(item => item.public_links).flat();
+          setUsedId(usedIdd);
+          setUsedIdsLoaded(true)
+        } catch (error) {
+          console.error(error);
+          // Handle the error as needed
+        }
+      
+      };
+  
+      fetchData();
+    }, [userDetail]);
+  
   useEffect(() => {
     if (!currentRadioOptionSelection) return;
 
@@ -701,7 +714,9 @@ const SelectMembersToAssign = ({
   // console.log("the current step index is  ",currentStepIndex)
   console.log('the used id are ', usedId)
   let idUsed = current.portfolios.filter((item) => !usedId.some((link) => link?.member === item?.member))
-  console.log('the filtered ids are ', idUsed, current)
+  console.log('the current are ', current)
+  console.log('the selectedMembersForProcess are ', selectedMembersForProcess)
+  console.log('the selectMembersComp are ', selectMembersComp)
  
   return (
     <div className={styles.container}>

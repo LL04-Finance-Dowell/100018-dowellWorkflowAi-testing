@@ -176,7 +176,7 @@ export default function useDowellLogin() {
         dispatch(getUserInfoOther({ session_id }));
       } else {
         if (currentLocation.includes('token~') && !currentLocation.includes('userDetailsConfigured~')) return extractTokenFromURLAndNavigateToVerificationPage(currentLocation, session_id)
-        dispatch(getUserInfo({ session_id }));
+        dispatch(getUserInfo({ session_id, product: 'Workflow AI' }));
       }
 
       // FOR PROCESS IMPORTS
