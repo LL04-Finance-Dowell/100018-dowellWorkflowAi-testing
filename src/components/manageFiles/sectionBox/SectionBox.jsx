@@ -59,6 +59,8 @@ const SectionBox = ({
     userName,
     portfolioName,
     fetchOrgDocumentReports,
+    isFetchingFolders,
+    fetchFolders
   } = useAppContext();
 
   const handleLoadMore = () => {
@@ -271,6 +273,13 @@ const SectionBox = ({
         });
     }
 
+    if (itemType === 'folders') {
+      setRefreshLoading(true);
+      fetchFolders();
+      setRefreshLoading(false);
+    }
+
+
     if (itemType === 'notifications') {
       setRefreshLoading(true);
 
@@ -432,7 +441,28 @@ console.log('the card items are ', cardItems)
                 ) : (
                   <></>
                 )
-              ) : itemType === 'notifications' ? (
+              ) : itemType === 'folders' ? (
+                !isFetchingFolders ? (
+                  <button
+                    className={styles.refresh__btn}
+                    onClick={handleRefresh}
+                  >
+                    {refreshLoading ? (
+                      <LoadingSpinner
+                        color={'white'}
+                        width={'1rem'}
+                        height={'1rem'}
+                      />
+                    ) : (
+                      <IoIosRefresh />
+                    )}
+                    <span>Refresh</span>
+                  </button>
+                ) : (
+                  <></>
+                )
+              ) 
+              : itemType === 'notifications' ? (
                 !notificationsLoading ? (
                   <button
                     className={styles.refresh__btn}
