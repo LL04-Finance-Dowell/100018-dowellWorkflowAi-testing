@@ -611,7 +611,7 @@ export const introVideos = [
   {
     id: uuidv4(),
     title: 'capabilities',
-    src: 'https://www.youtube.com/embed/videoseries?list=PL6rKBSwpVCYVzo4-0ZhuMwoY0FOZdqwP-',
+    src: 'https://www.youtube.com/embed/e5HdKmoA8b8',
   },
   {
     id: uuidv4(),

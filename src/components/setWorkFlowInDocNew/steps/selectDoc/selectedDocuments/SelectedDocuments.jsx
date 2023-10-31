@@ -41,7 +41,9 @@ const SelectedDocuments = ({
 
       if(copiedDocument !==null && startCopyingDoc == true){
         setTimeout(()=>{
-          dispatch(contentDocument(copiedDocument.collection_id));
+          // console.log('for the test the collectionid is ',copiedDocument.collection_id)
+          const item = 'documents'
+          dispatch(contentDocument({collection_id:copiedDocument.collection_id, item}));
           dispatch(setCurrentDocToWfs(copiedDocument));
           dispatch(setContentOfDocument(null));
           dispatch(startCopyingWorkflow())

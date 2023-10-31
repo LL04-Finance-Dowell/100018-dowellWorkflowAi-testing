@@ -69,6 +69,7 @@ const SelectMembersToAssign = ({
   const { userDetail } = useSelector((state) => state.auth);
   const [usedId, setUsedId]= useState([])
   const [usedIdsLoaded, setUsedIdsLoaded] = useState(false);
+  const [isTooltipVisible, setIsTooltipVisible] = useState(false);
 
   const dispatch = useDispatch();
 
@@ -1147,16 +1148,23 @@ const SelectMembersToAssign = ({
                       )}
                     </select>
                     {current.portfolios.map((item) => (
-                      <Tooltip
-                        style={{
-                          width: 'max-content',
-                          zIndex: 2,
-                          whiteSpace: 'pre',
-                        }}
-                        anchorId={item.id + currentStepIndex}
-                        content={`user: ${item?.member} \nportfolio: ${item.portfolio}`}
-                        place='top'
-                      />
+                       <div
+                       onMouseEnter={() => setIsTooltipVisible(true)}
+                       onMouseLeave={() => setIsTooltipVisible(false)}
+                       key={item.id}
+                     >
+                       <Tooltip
+                         style={{
+                           width: 'max-content',
+                           zIndex: 2,
+                           whiteSpace: 'pre',
+                         }}
+                         anchorId={item.id + currentStepIndex}
+                         content={`user: ${item?.member} \nportfolio: ${item.portfolio}`}
+                         place='top'
+                         isOpen={isTooltipVisible}
+                       />
+                     </div>
                     ))}
                   </div>
                 </>
