@@ -32,9 +32,6 @@ const Reports = () => {
   );
   const { allProcesses, themeColor } = useSelector((state) => state.app);
 
-  console.log("allProcesses", allProcesses.filter((item) => item.processing_state === 'draft'))
-  console.log("allProcessesreport", allProcesses.filter((item) => item.processing_state === 'finalized'))
-  console.log("allProcessesreportprocessing", allProcesses.filter((item) => item.processing_state === 'processing').sort((a, b) => new Date(b?.created_on || b?.created_at) - new Date(a?.created_on || a?.created_at)))
 
   useEffect(() => {
     if (docsCompleted)

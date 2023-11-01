@@ -315,10 +315,8 @@ const FoldersModal = () => {
   }, [allDocuments, allTemplates]);
 
   useEffect(() => {
-    console.log(docsList)
     const start = (docsListCurrentPage - 1) * itemsPerPage;
     const end = docsListCurrentPage * itemsPerPage;
-    console.log("docsList.slice(start, end)",docsList.slice(start, end))
     setDocsListToDisplay(docsList.slice(start, end));
   }, [docsList, docsListCurrentPage]);
 
@@ -665,9 +663,6 @@ const SelectInput = ({
   const superContainerRef = useRef(null);
   const containerRef = useRef(null);
 
-  console.log("selDocs", selDocs)
-  console.log("selTemps", selTemps)
-  console.log("list", list)
 
   const handleDocsChange = (e) => {
     const elId = e.target.id;

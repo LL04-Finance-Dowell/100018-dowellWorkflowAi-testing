@@ -214,13 +214,6 @@ const ManageFile = () => {
     );
   }, [itemsCountToDisplay]);
 
-  console.log("allDocumentsArray", allDocumentsArray)
-
-
-  console.log("allWorkflowsArray", allWorkflowsArray)
-  console.log("allTemplatesArray", allTemplatesArray)
-  console.log("allProcesses", allProcesses)
-  
   return (
     <div className={sidebarStyles.feature__box}>
       <h2
