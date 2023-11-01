@@ -79,8 +79,6 @@ const TemplatesPage = ({
   }, [allTemplatesArray])
 
   var reverseArray = [...allTemplatesArray].reverse()
- 
-
   useEffect(() => {
     if (showOnlySaved) navigate('#saved-templates');
     if (showOnlyTrashed) navigate('#trashed-templates');
@@ -168,7 +166,7 @@ const TemplatesPage = ({
                 cardBgColor='#1ABC9C'
                 title='demo templates'
                 Card={TemplateCard}
-                cardItems={demoTemplates}
+                cardItems={[...demoTemplates].reverse()}
                 status={demoTempStatus}
                 itemType={'templates'}
                 isDemo={true}

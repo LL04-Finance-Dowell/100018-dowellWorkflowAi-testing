@@ -10,7 +10,7 @@ import { FaPowerOff } from "react-icons/fa";
 import { FaUserAlt } from "react-icons/fa";
 import { ImHome3 } from "react-icons/im";
 import Footer from "./footer/Footer";
-
+import { useLocation } from 'react-router-dom';
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
@@ -226,6 +226,44 @@ const Sidebar = ({toggleSidebar, isMobile}) => {
   // console.log(creditResponse.data.is_active)
   // console.log(creditResponse.data.service_id)
 
+  const location = useLocation();
+  const [scrollPosition, setScrollPosition] = useState(0);
+
+  useEffect(() => {
+    const handleRouteChange = () => {
+      setScrollPosition(window.scrollY);
+    };
+
+    window.addEventListener('popstate', handleRouteChange);
+
+    return () => {
+      window.removeEventListener('popstate', handleRouteChange);
+    };
+  }, []);
+
+  const sidebarStyle = {
+    padding: "15px 15px 15px 15px",
+    display: "flex",
+    overflow: "hidden",
+    color: "var(--e-global-color-9d2ac19) !important",
+    borderBottom: "1px solid var(--e-global-color-9d2ac19)",
+    fontWeight: "600",
+    cursor: "pointer",
+    position: "relative",
+    outline: "none",
+    textDecoration: "underline",
+    textTransform: "capitalize",
+    top: `${scrollPosition}px`
+    // Add other styles here
+  };
+
+  const handleLinkClick = (e) => {
+    e.preventDefault(); // Prevent the default link behavior
+    const routePart = e.currentTarget.getAttribute('href');
+    console.log("routePart", routePart)
+    // navigate("/templates/demo#demo")
+  };
+
   return (
     <div className={styles.container}>
       <div className={styles.header__box}>
@@ -345,7 +383,7 @@ const Sidebar = ({toggleSidebar, isMobile}) => {
         <HashLink
           to="/templates/demo#demo"
           className={`${styles.templates_href} ${styles.parent__item__box}`}
-        >
+                  >
           Templates
         </HashLink>
 

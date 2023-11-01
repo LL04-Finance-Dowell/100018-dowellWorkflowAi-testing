@@ -106,6 +106,9 @@ const DocumentsPage = ({
  var dataForDrafts = reversedDocArray.filter((item)=> item?.document_state == 'draft')
  var dataForSaved = reversedDocArray.filter((item) => item?.document_state == 'saved')
   
+ console.log("orgDocsCompleted", orgDocsCompleted)
+ console.log("orgDocsRejected", orgDocsRejected)
+ console.log("demoDocuments", demoDocuments)
 
   return (
     <WorkflowLayout>
@@ -165,7 +168,11 @@ const DocumentsPage = ({
                 cardBgColor='#1ABC9C'
                 title={`completed documents${window.location.hash.includes('completed#org') ? '(company)' : ''}`}
                 Card={DocumentCard}
-                cardItems={window.location.hash.includes('completed#org') ? orgDocsCompleted : docsCompleted}
+                cardItems={
+                  window.location.hash.includes('completed#org') 
+                    ? (Array.isArray(orgDocsCompleted) ? [...orgDocsCompleted].reverse() : orgDocsCompleted)
+                    : docsCompleted
+                }
                 status={window.location.hash.includes('completed#org') ? orgDocsCompletedStatus : docsCompletedStatus}
                 itemType={'documents'}
                 isCompleted={true}
@@ -181,7 +188,12 @@ const DocumentsPage = ({
                 cardBgColor='#1ABC9C'
                 title={`rejected documents${window.location.hash.includes('rejected#org') ? '(company)' : ''}`}
                 Card={DocumentCard}
-                cardItems={window.location.hash.includes('rejected#org') ? orgDocsRejected : docsRejected}
+                cardItems={
+                  window.location.hash.includes('rejected#org') 
+                    ? (Array.isArray(orgDocsRejected) ? [...orgDocsRejected].reverse() : orgDocsRejected)
+                    : docsRejected
+                }
+                // cardItems={window.location.hash.includes('rejected#org') ? [...orgDocsRejected].reverse() : docsRejected}
                 status={window.location.hash.includes('rejected#org') ? orgDocsRejectedStatus : docsRejectedStatus}
                 itemType={'documents'}
                 isRejected={true}
@@ -195,7 +207,7 @@ const DocumentsPage = ({
                 cardBgColor='#1ABC9C'
                 title='demo documents'
                 Card={DocumentCard}
-                cardItems={demoDocuments}
+                cardItems={[...demoDocuments].reverse()}
                 status={demoDocStatus}
                 itemType={'documents'}
                 isDemo={true}

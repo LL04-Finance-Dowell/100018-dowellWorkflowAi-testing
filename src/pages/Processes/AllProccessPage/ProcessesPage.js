@@ -68,7 +68,6 @@ const ProcessesPage = ({
     fetchProcessReports,
   } = useAppContext();
 
-  console.log("showEvaluationReport", showEvaluationReport)
   console.log("userdetail", userDetail)
 
   useEffect(() => {
