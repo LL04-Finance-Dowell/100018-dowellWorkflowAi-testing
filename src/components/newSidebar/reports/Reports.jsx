@@ -32,6 +32,7 @@ const Reports = () => {
   );
   const { allProcesses, themeColor } = useSelector((state) => state.app);
 
+
   useEffect(() => {
     if (docsCompleted)
       setItemsCountToDisplay((prevItems) => {

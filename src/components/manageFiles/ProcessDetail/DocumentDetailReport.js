@@ -168,28 +168,28 @@ export default function DocumentDetailReport() {
         <div>
           <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
             <div className={styles.processHeadingChart2}>
-              <h5>Normality Analysis Data:</h5>
+              <h3>Normality Analysis Data:</h3>
             </div>
 
             <div className={styles.processHeadingChart2}>
-              <h5>Bar Chart for Central Tendencies:</h5>
+              <h3>Bar Chart for Central Tendencies:</h3>
             </div>
           </div>
 
           <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
 
             <Bar data={normalityAnalysisData} options={barChartOptions} />
-            <Bar data={barChartData} options={barChartOptions} />
+            <Bar data={barChartData} options={barChartOptions} />x
           </div>
           <br />
 
           <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
             <div className={styles.processHeadingChart2}>
-              <h5>Pie Chart for Score List:</h5>
+              <h3>Pie Chart for Score List:</h3>
             </div>
 
             <div className={styles.processHeadingChart2}>
-              <h5>Pie Chart for NPS Score Distribution:</h5>
+              <h3>Pie Chart for NPS Score Distribution:</h3>
             </div>
           </div>
 

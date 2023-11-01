@@ -121,6 +121,7 @@ const FoldersModal = () => {
         }
       } else toast.warn('Select a folder');
     } else if (action === 'edit') {
+      console.log("selectedDocs(",selectedDocs)
       if (folderName) {
         const items = [
           ...selectedDocs.map((doc) => ({ [`${doc.category}_id`]: doc.id })),
@@ -285,6 +286,14 @@ const FoldersModal = () => {
 
   useEffect(() => {
     if (allDocuments)
+      console.log("allDocuments", allDocuments)
+      console.log("allDocuments", allDocuments
+      .filter((doc) => doc.document_type === 'original')
+      .map((doc) => ({
+        name: doc.document_name,
+        id: doc._id,
+        category: 'document',
+      })))
       setDocsList(
         allDocuments
           .filter((doc) => doc.document_type === 'original')
@@ -308,7 +317,6 @@ const FoldersModal = () => {
   useEffect(() => {
     const start = (docsListCurrentPage - 1) * itemsPerPage;
     const end = docsListCurrentPage * itemsPerPage;
-
     setDocsListToDisplay(docsList.slice(start, end));
   }, [docsList, docsListCurrentPage]);
 
@@ -654,6 +662,7 @@ const SelectInput = ({
   const [isTempDrop, setIsTempDrop] = useState(false);
   const superContainerRef = useRef(null);
   const containerRef = useRef(null);
+
 
   const handleDocsChange = (e) => {
     const elId = e.target.id;
