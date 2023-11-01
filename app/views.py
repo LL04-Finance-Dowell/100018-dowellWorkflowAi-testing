@@ -382,7 +382,7 @@ def finalize_or_reject(request, process_id):
     state = request.data["action"]
     message = ""
     if state == "rejected":
-        message = request.data.get("rejection_message", None)
+        message = request.data.get("message", None)
         if not message:
             return Response(
                 "provide a reason for rejecting the document",
