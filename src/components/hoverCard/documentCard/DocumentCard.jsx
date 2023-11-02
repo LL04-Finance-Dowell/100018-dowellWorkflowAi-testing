@@ -5,6 +5,7 @@ import { Button } from '../styledComponents';
 import { detailDocument, documentReport } from '../../../features/document/asyncThunks';
 import { useState } from 'react';
 import { toast } from 'react-toastify';
+import axios from 'axios';
 import { LoadingSpinner } from '../../LoadingSpinner/LoadingSpinner';
 import {
   verifyProcessForUser,
@@ -58,6 +59,8 @@ const DocumentCard = ({
   } = useAppContext();
   const { allDocuments } = useSelector((state) => state.document);
   const [documentLoading, setDocumentLoading] = useState(false);
+
+  console.log("cardItem", cardItem)
 
   const handleFavoritess = async (item, actionType) => {
     /*  const data = {
@@ -302,6 +305,29 @@ const DocumentCard = ({
     }
   };
 
+  const generatePdfClick = async (item) => {
+    const apiUrl = 'https://100058.pythonanywhere.com/api/generate-pdf-link/';
+
+    const payload = {
+      item_type: 'document',
+      item_id: item?.collection_id || '653b5ba638ec7dcbdb556a38',
+    };
+
+    await axios.post(apiUrl, payload)
+      .then((response) => {
+        // Handle the API response here
+        console.log('Pdf generated successfully', response.data);
+        toast.info('Pdf generated successfully');
+        const pdfLink = response.data; // Assuming response.data contains the PDF link
+        window.open(pdfLink, '_blank');
+      })
+      .catch((error) => {
+        // Handle any errors
+        console.error('facing issue generating Pdf', error);
+        toast.error('Pdf is not generated');
+      });
+  };
+
   const FrontSide = () => {
     return (
       <div style={{ wordWrap: 'break-word', width: '100%' }}>
@@ -338,6 +364,7 @@ const DocumentCard = ({
               left: '0',
               top: '0',
             }}
+            onClick={() => generatePdfClick(cardItem)}
           >{<BsArrowBarRight />}</div>
         {!hideFavoriteIcon && (
           <div
