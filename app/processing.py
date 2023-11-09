@@ -406,10 +406,8 @@ class HandleProcess:
                 }
             )
         ).start()
-
         if len(public_links) > 10:
             links = links[:10]
-
         return {"process_id": process_id, "links": links, "master_link": m_link, "master_code": m_code}
 
     def verify_location(self, auth_role, location_data):
@@ -559,30 +557,24 @@ class HandleProcess:
                 document = "CloneReports"
                 field = "document_name"
                 team_member_id = "1212001"
-
                 document_object = single_query_clones_collection({"_id": clone_id})
                 metadata = single_query_clones_metadata_collection(
                     {"collection_id": clone_id}
                 )
-                
                 item_flag = document_object["document_state"]
                 document_name = document_object["document_name"]
                 metadata_id = metadata.get("_id")
-
             elif item_type == "template":
                 collection = "TemplateReports"
                 document = "templatereports"
                 team_member_id = "22689044433"
                 field = "template_name"
-
                 template_object = single_query_template_collection({"_id": clone_id})
                 metadata = single_query_template_metadata_collection(
                         {"collection_id": clone_id})
-
                 item_flag = template_object["template_state"]
                 document_name = template_object["template_name"]
                 metadata_id = metadata.get("_id")
-
             editor_link = HandleProcess.get_editor_link(
                 {
                     "product_name": "Workflow AI",
@@ -650,10 +642,6 @@ class Background:
         document_id = self.item_id
         processing_state = self.process["processing_state"]
         created_by = self.process["created_by"]
-        # Background.register_user_access(
-        #     self.process["process_steps"], self.role, self.username
-        # )
-
         finalized = []
         try:
             no_of_steps = sum(isinstance(e, dict) for e in steps)
@@ -663,7 +651,6 @@ class Background:
                         current_doc_map = [v for document_map in step["stepDocumentCloneMap"] for k, v in document_map.items() if isinstance(v, str)]
                         user_in_viewers = check_user_in_auth_viewers(user=self.username, item=document_id, item_type="document")
                         if (not user_in_viewers):
-                            print("user not in auth_viewers: ", user_in_viewers)
                             pass
                         elif document_id in current_doc_map:
                             for document_map in step.get("stepDocumentCloneMap"):
