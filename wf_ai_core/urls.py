@@ -39,7 +39,8 @@ schema_view = get_schema_view(
 
 urlpatterns = [
     path("", home, name="Home"),
-    path("v1/", include("app.urls")),
+    # path("v1/", include("app.urls")),
+    path("v2/", include("app.urls_v2") ),
     # api doc
     re_path(
         r"^swagger(?P<format>\.json|\.yaml)$",
