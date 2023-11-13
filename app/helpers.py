@@ -468,6 +468,7 @@ def create_favourite(item, item_type, username):
             "_id": item["_id"],
             "document_name": item["document_name"],
             "company_id": item["company_id"],
+            "collection_id": item["collection_id"],
             "favourited_by": username,
         }
         serializer = FavouriteDocumentSerializer(data=data)
@@ -479,6 +480,7 @@ def create_favourite(item, item_type, username):
             "_id": item["_id"],
             "template_name": item["template_name"],
             "company_id": item["company_id"],
+            "collection_id": item["collection_id"],
             "favourited_by": username,
         }
         serializer = FavouriteTemplateSerializer(data=data)
