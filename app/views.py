@@ -1896,17 +1896,6 @@ def get_templates_metadata(request, company_id):
     return Response({"templates": templates_meta_data})
 
 
-# @api_view(["GET"])
-# def template_metadata_object(request, collection_id):
-#     """Gets the JSON object for a template id"""
-#     if not validate_id(collection_id):
-#         return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
-#     print(f"Valid ID {collection_id}")
-#     template = single_query_template_metadata_collection({"collection_id": collection_id})
-#     print(f"Template oject metadata {template}")
-#     return Response(template, status.HTTP_200_OK)
-
-
 @api_view(["GET"])
 def get_reports_templates_metata(request, company_id):
     data_type = request.query_params.get("data_type")
