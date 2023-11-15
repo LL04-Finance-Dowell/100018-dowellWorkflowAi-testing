@@ -79,7 +79,6 @@ urlpatterns = [
     path("companies/<str:company_id>/favourites/", all_favourites),
     path("companies/<str:company_id>/templates/", get_templates),
     path("companies/<str:company_id>/templates/metadata/", get_templates_metadata),
-    # path("template/<str:collection_id>/templates/objects/metadata/", template_metadata_object),
     path(
         "companies/<str:company_id>/templates/knowledge-centre/", dowell_centre_template
     ),
@@ -130,7 +129,6 @@ urlpatterns = [
     path("workflows/", create_workflow),
     path("workflows/<str:workflow_id>/", workflow_detail),
     path("processes/", document_processing),
-    # path("processes/verify/", process_verification),
     path("processes/verify/", process_verification_v2),
     path("processes/trigger/", trigger_process),
     path("processes/<str:process_id>/", a_single_process),
