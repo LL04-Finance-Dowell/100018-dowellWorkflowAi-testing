@@ -87,7 +87,6 @@ def cloning_document(document_id, auth_viewers, parent_id, process_id):
         signed = []
         for item in auth_viewers:
             mem = item["member"]
-            print(mem)
             signed.append({mem: False})
 
         for viewer in viewers:
@@ -142,49 +141,6 @@ def cloning_document(document_id, auth_viewers, parent_id, process_id):
     except Exception as e:
         print(e)
         return
-
-# def template_process(template_id, auth_viewers, parent_id, process_id):
-#     """creating a document copy"""
-#     print("auth_viewers", auth_viewers)
-#     try:
-#         viewers = []
-#         for m in auth_viewers:
-#             viewers.append(m["member"])
-
-#         template = single_query_template_collection({"_id": template_id})
-#         for viewer in viewers:
-#             temp_name = template["template_name"]
-#             if not temp_name:
-#                 template_name = "temp - " + viewer
-#             else:
-#                 if isinstance(viewer, dict):
-#                     template_name = temp_name + "_" + viewer["member"]
-#                 else:
-#                     template_name = temp_name + "_" + viewer
-#         save_res = json.loads(
-#             save_to_clone_collection(
-#                 {
-#                     "document_name": template_name,
-#                     "content": template["content"],
-#                     "page": template["page"],
-#                     "created_by": template["created_by"],
-#                     "company_id": template["company_id"],
-#                     "data_type": template["data_type"],
-#                     "document_state": "processing",
-#                     "auth_viewers": auth_viewers,
-#                     "document_type": "clone",
-#                     "document_state": "processing",
-#                     "parent_id": parent_id,
-#                     "process_id": process_id,
-#                     "folders": "untitled",
-#                 }
-#             )
-#         )
-#         return save_res["inserted_id"]
-#     except Exception as e:
-#         print(e)
-#         return
-
 
 def cloning_clone(clone_id, auth_viewers, parent_id, process_id):
     try:
@@ -558,9 +514,7 @@ def check_all_finalized_true(data, process_type) -> bool:
                         else:
                             doc_states.append(False)
         if not all(doc_states):
-            print(f"Printing doc states {doc_states}")
             return False
-        print(f"Printing doc states2 {doc_states}")
     return True
 
 
@@ -570,20 +524,20 @@ def get_metadata_id(item_id, item_type):
             coll_id = single_query_document_metadata_collection({"collection_id": item_id})["_id"]
             return coll_id
         except Exception as err:
-            print("unable to get metadata_id: ", err)
+            print(err)
     elif item_type == "clone":
         try:
             coll_id = single_query_clones_metadata_collection({"collection_id": item_id})["_id"]
             return coll_id
         except Exception as err:
-            print("unable to get metadata_id: ", err)
+            print(err)
         
     elif item_type == "template":
         try:
             coll_id = single_query_template_metadata_collection({"collection_id": item_id})["_id"]
             return coll_id
         except Exception as err:
-            print("unable to get metadata_id: ", err)
+            print(err)
 
 
 def check_step_items_state(items) -> bool:
@@ -637,9 +591,6 @@ def update_signed(signers_list: list, member: str, status: bool) -> list:
         for key, val in elem.items():
             if key == member:
                 elem[key] = status
-            print(f"key={key} | old_value={val} | new_val={elem[key]}")
-
-    print("signers_list: ", signers_list)
     return(signers_list)
 
 

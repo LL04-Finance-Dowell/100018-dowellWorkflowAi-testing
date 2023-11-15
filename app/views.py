@@ -137,7 +137,6 @@ def document_processing(request):
         process.normal_process(action)
         return Response("Process Saved in drafts.", status.HTTP_201_CREATED)
     if action == "start_document_processing_content_wise":
-        print("Okay")
         if request.data.get("process_id") is not None:
             process = single_query_process_collection(
                 {"_id": request.data["process_id"]}
@@ -1663,7 +1662,6 @@ def read_reminder(request, process_id, username):
                             # hourly_job = cron.new(command=f"python3 {current_directory}/utils/notification_cron.py '{data}'")
                             # hourly_job.minute.every(1)
                             # cron.write()
-                            # print(hourly_job.command)
                             # response_data = {
                             #     "command": hourly_job.command,
                             #     # "next_run": hourly_job.next_run(),
@@ -1895,16 +1893,6 @@ def get_templates_metadata(request, company_id):
     )
     return Response({"templates": templates_meta_data})
 
-
-# @api_view(["GET"])
-# def template_metadata_object(request, collection_id):
-#     """Gets the JSON object for a template id"""
-#     if not validate_id(collection_id):
-#         return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
-#     print(f"Valid ID {collection_id}")
-#     template = single_query_template_metadata_collection({"collection_id": collection_id})
-#     print(f"Template oject metadata {template}")
-#     return Response(template, status.HTTP_200_OK)
 
 
 @api_view(["GET"])

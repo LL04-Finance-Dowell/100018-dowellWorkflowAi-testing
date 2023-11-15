@@ -920,7 +920,7 @@ class Background:
                 else:
                     update_process(process_id, steps, "processing")
         except Exception as e:
-            print("got error", e)
+            print(e)
             finalize_item(self.item_id, "processing", self.item_type, self.message)
             return
 
@@ -1114,6 +1114,6 @@ class Background:
                     else:
                         update_process(process_id, steps, "processing")
             except Exception as e:
-                print("got error", e)
+                print(e)
                 finalize_item(self.item_id, "saved", self.item_type, self.message)
                 return 
