@@ -34,7 +34,6 @@ const TemplateCard = ({ cardItem, isFolder, folderId }) => {
   const [templateLoading, setTemplateLoading] = useState(false);
 
   const handleTemplateDetail = (item) => {
-    
     const data = {
 
       collection_id: item.collection_id,
@@ -106,6 +105,12 @@ const TemplateCard = ({ cardItem, isFolder, folderId }) => {
     dispatch(setAllTemplates(copyOfAllTemplates));
 
     try {
+      await removeFromFavoritesState('templates', cardItem._id);
+      await deleteFavoriteForUser(
+        cardItem._id,
+        'template',
+        userDetail?.userinfo?.username
+      )
       const response = await (
         await moveItemToArchive(cardItem._id, 'template')
       ).data;
