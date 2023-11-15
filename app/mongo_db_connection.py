@@ -1103,7 +1103,6 @@ def update_template_approval(template_id, approval):
     payload = json.dumps(
         {
             **TEMPLATE_CONNECTION_DICT,
-            # "command": "insert",
             "command": "update",
             "field": {
                 "_id": template_id,
