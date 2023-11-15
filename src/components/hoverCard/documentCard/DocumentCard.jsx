@@ -126,6 +126,12 @@ const DocumentCard = ({
     dispatch(setAllDocuments(copyOfAllDocuments));
 
     try {
+      await removeFromFavoritesState('documents', cardItem._id);
+      await deleteFavoriteForUser(
+        cardItem._id,
+        'document',
+        userDetail?.userinfo?.username
+      )
       const response = await (
         await moveItemToArchive(cardItem._id, 'document')
       ).data;

@@ -54,6 +54,13 @@ const WorkflowCard = ({ cardItem }) => {
     dispatch(setAllWorkflows(copyOfAllWorkflows));
 
     try {
+      await removeFromFavoritesState('workflows', cardItem._id);
+          await deleteFavoriteForUser(
+            cardItem._id,
+            'workflow',
+            userDetail?.userinfo?.username
+          )
+
       const response = await (
         await moveItemToArchive(cardItem._id, 'workflow')
       ).data;
