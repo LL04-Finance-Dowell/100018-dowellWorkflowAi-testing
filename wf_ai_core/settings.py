@@ -27,11 +27,7 @@ SECRET_KEY = "django-insecure-)_w-=ulkg8#7(q1^b&2+!+n%+b)8v$%wfq_mm6a+t!k7g9c$tk
 DEBUG = True
 
 ALLOWED_HOSTS = [
-    "localhost",
-    "74.50.67.58",
-    "workflowai.uxlivinglab.online",
-    "127.0.0.1",
-    "100094.pythonanywhere.com",
+    "*",
 ]
 
 # Application definition

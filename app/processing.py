@@ -623,6 +623,140 @@ class Background:
         self.role = role
         self.username = username
         self.message = message
+        
+    
+    def request_task_helper(self, step: dict, document_id: str, parent_id: str, process_id: str):
+        """_summary_
+
+        Args:
+            step (dict): the current process step
+            document_id (str): id of the current document set for processing
+            parent_id (str): parent id of the current document set for processing (useful when you want to create clones)
+            process_id (str): id of the current process
+        """
+        users = [
+            user
+            for user in step.get("stepTeamMembers", [])
+            + step.get("stepPublicMembers", [])
+            + step.get("stepUserMembers", [])
+        ]
+        if step.get("stepActivityType") == "team_task":
+            # TEAM_TASK: create one single clone and append it to each user in the step
+            clone_id = cloning_clone(document_id, users, parent_id, process_id)
+            for user in users:
+                step.get("stepDocumentCloneMap").append(
+                    {user["member"]: clone_id}
+                )
+        else:
+            # INDIVIDUAL_TASK: create individual clones for each user and append the clone ids to each user
+            for user in users:
+                clone_id = cloning_clone(
+                    document_id, [user], parent_id, process_id
+                )
+                step.get("stepDocumentCloneMap").append(
+                    {user["member"]: clone_id}
+                )
+                
+    
+    def assign_task_helper(self, step: dict, process_id: str, process_steps: list):
+        """_summary_
+
+        Args:
+            step (dict): The current execution step
+            process_id (str): The process_id of the current process
+            process_steps (list): the process_steps array of the current process
+        """
+        step1_documents = []
+        for i in range(1, len(process_steps)):
+            current_idx = i
+            prev_docs = process_steps[current_idx - 1].get(
+                "stepDocumentCloneMap"
+            )
+            if prev_docs:
+                for item in prev_docs:
+                    key = next(iter(item))
+                    my_key = item[key]
+                    if (
+                        "accessed" in item
+                        and single_query_clones_collection(
+                            {"_id": my_key}
+                        ).get("document_state")
+                        == "finalized"
+                    ):
+                        step1_documents.append(my_key)
+            assign_users = [
+                user
+                for user in step.get("stepTeamMembers", [])
+                + step.get("stepPublicMembers", [])
+                + step.get("stepUserMembers", [])
+            ]
+            if step.get("stepActivityType") == "team_task":
+                for document in step1_documents:
+                    authorize(document, assign_users, process_id, "document")
+                    for user in assign_users:
+                        step.get("stepDocumentCloneMap").append(
+                            {user["member"]: document}
+                        )
+                        # Change auth viewers in the metadata as well
+                        metadata_id = get_metadata_id(
+                            document, "clone"
+                        )
+                        authorize_metadata(
+                            metadata_id, user, process_id, "document"
+                        )
+            else:
+                for document in step1_documents:
+                    for user in step.get("stepTeamMembers"):
+                        authorize(
+                            document,
+                            user,
+                            process_id,
+                            "document",
+                        )
+                        step.get("stepDocumentCloneMap").append(
+                            {user["member"]: document}
+                        )
+                        # Change auth viewers in the metadata as well
+                        metadata_id = get_metadata_id(
+                            document, "clone"
+                        )
+                        authorize_metadata(
+                            metadata_id, user, process_id, "document"
+                        )
+                    for user in step.get("stepPublicMembers"):
+                        authorize(
+                            document,
+                            user,
+                            process_id,
+                            "document",
+                        )
+                        step.get("stepDocumentCloneMap").append(
+                            {user["member"]: document}
+                        )
+                        # Change auth viewers in the metadata as well
+                        metadata_id = get_metadata_id(
+                            document, "clone"
+                        )
+                        authorize_metadata(
+                            metadata_id, user, process_id, "document"
+                        )
+                    for user in step.get("stepUserMembers"):
+                        authorize(
+                            document,
+                            user,
+                            process_id,
+                            "document",
+                        )
+                        step.get("stepDocumentCloneMap").append(
+                            {user["member"]: document}
+                        )
+                        # Change auth viewers in the metadata as well
+                        metadata_id = get_metadata_id(
+                            document, "clone"
+                        )
+                        authorize_metadata(
+                            metadata_id, user, process_id, "document"
+                        )
 
 
     def register_user_access(process_steps, authorized_role, user):
@@ -690,228 +824,17 @@ class Background:
                                 document_id not in current_doc_map
                             ) and not check_step_items_state(current_doc_map):
                                 if step.get("stepTaskType") == "request_for_task":
-                                    users = [
-                                        user
-                                        for user in step.get("stepTeamMembers", [])
-                                        + step.get("stepPublicMembers", [])
-                                        + step.get("stepUserMembers", [])
-                                    ]
-                                    if step.get("stepActivityType") == "team_task":
-                                        # TEAM_TASK: create one single clone and append it to each user in the step
-                                        clone_id = cloning_clone(document_id, users, parent_id, process_id)
-                                        for user in users:
-                                            step.get("stepDocumentCloneMap").append(
-                                                {user["member"]: clone_id}
-                                            )
-                                    else:
-                                        # INDIVIDUAL_TASK: create individual clones for each user and append the clone ids to each user
-                                        for user in users:
-                                            clone_id = cloning_clone(
-                                                document_id, [user], parent_id, process_id
-                                            )
-                                            step.get("stepDocumentCloneMap").append(
-                                                {user["member"]: clone_id}
-                                            )
+                                    self.request_task_helper(step=step, document_id=document_id, parent_id=parent_id, process_id=process_id)
+                                    
                                 if step.get("stepTaskType") == "assign_task":
-                                    step1_documents = []
-                                    for i in range(1, len(steps)):
-                                        current_idx = i
-                                        prev_docs = steps[current_idx - 1].get(
-                                            "stepDocumentCloneMap"
-                                        )
-                                        if prev_docs:
-                                            for item in prev_docs:
-                                                key = next(iter(item))
-                                                my_key = item[key]
-                                                if (
-                                                    "accessed" in item
-                                                    and single_query_clones_collection(
-                                                        {"_id": my_key}
-                                                    ).get("document_state")
-                                                    == "finalized"
-                                                ):
-                                                    step1_documents.append(my_key)
-                                        assign_users = [
-                                            user
-                                            for user in step.get("stepTeamMembers", [])
-                                            + step.get("stepPublicMembers", [])
-                                            + step.get("stepUserMembers", [])
-                                        ]
-                                        if step.get("stepActivityType") == "team_task":
-                                            for document in step1_documents:
-                                                authorize(document, assign_users, process_id, "document")
-                                                for user in assign_users:
-                                                    step.get("stepDocumentCloneMap").append(
-                                                        {user["member"]: document}
-                                                    )
-                                                    # Change auth viewers in the metadata as well
-                                                    metadata_id = get_metadata_id(
-                                                        document, "clone"
-                                                    )
-                                                    authorize_metadata(
-                                                        metadata_id, user, process_id, "document"
-                                                    )
-                                        else:
-                                            for document in step1_documents:
-                                                for user in step.get("stepTeamMembers"):
-                                                    authorize(
-                                                        document,
-                                                        user,
-                                                        process_id,
-                                                        "document",
-                                                    )
-                                                    step.get("stepDocumentCloneMap").append(
-                                                        {user["member"]: document}
-                                                    )
-                                                    # Change auth viewers in the metadata as well
-                                                    metadata_id = get_metadata_id(
-                                                        document, "clone"
-                                                    )
-                                                    authorize_metadata(
-                                                        metadata_id, user, process_id, "document"
-                                                    )
-                                                for user in step.get("stepPublicMembers"):
-                                                    authorize(
-                                                        document,
-                                                        user,
-                                                        process_id,
-                                                        "document",
-                                                    )
-                                                    step.get("stepDocumentCloneMap").append(
-                                                        {user["member"]: document}
-                                                    )
-                                                    # Change auth viewers in the metadata as well
-                                                    metadata_id = get_metadata_id(
-                                                        document, "clone"
-                                                    )
-                                                    authorize_metadata(
-                                                        metadata_id, user, process_id, "document"
-                                                    )
-                                                for user in step.get("stepUserMembers"):
-                                                    authorize(
-                                                        document,
-                                                        user,
-                                                        process_id,
-                                                        "document",
-                                                    )
-                                                    step.get("stepDocumentCloneMap").append(
-                                                        {user["member"]: document}
-                                                    )
-                                                    # Change auth viewers in the metadata as well
-                                                    metadata_id = get_metadata_id(
-                                                        document, "clone"
-                                                    )
-                                                    authorize_metadata(
-                                                        metadata_id, user, process_id, "document"
-                                                    )
+                                    self.assign_task_helper(step=step, process_id=process_id, process_steps=steps)
                     else:
                         if step.get("stepTaskType") == "request_for_task":
-                            users = [
-                                user
-                                for user in step.get("stepTeamMembers", [])
-                                + step.get("stepPublicMembers", [])
-                                + step.get("stepUserMembers", [])
-                            ]
-                            if step.get("stepActivityType") == "team_task":
-                                # TEAM_TASK: create one single clone and append it to each user in the step
-                                clone_id = cloning_clone(document_id, users, parent_id, process_id)
-                                for user in users:
-                                    step.get("stepDocumentCloneMap").append(
-                                        {user["member"]: clone_id}
-                                    )
-                            else:
-                                # INDIVIDUAL_TASK: create individual clones for each user and append the clone ids to each user
-                                for user in users:
-                                    clone_id = cloning_clone(
-                                        document_id, [user], parent_id, process_id
-                                    )
-                                    step.get("stepDocumentCloneMap").append(
-                                        {user["member"]: clone_id}
-                                    )
+                            self.request_task_helper(step=step, document_id=document_id, parent_id=parent_id, process_id=process_id)
+                            
                         if step.get("stepTaskType") == "assign_task":
-                            step1_documents = []
-                            for i in range(1, len(steps)):
-                                current_idx = i
-                                prev_docs = steps[current_idx - 1].get(
-                                    "stepDocumentCloneMap"
-                                )
-                                if prev_docs:
-                                    for item in prev_docs:
-                                        key = next(iter(item))
-                                        my_key = item[key]
-                                        if (
-                                            "accessed" in item
-                                            and single_query_clones_collection(
-                                                {"_id": my_key}
-                                            ).get("document_state")
-                                            == "finalized"
-                                        ):
-                                            step1_documents.append(my_key)
-
-                                assign_users = [
-                                    user
-                                    for user in step.get("stepTeamMembers", [])
-                                    + step.get("stepPublicMembers", [])
-                                    + step.get("stepUserMembers", [])
-                                ]
-                                if step.get("stepActivityType") == "team_task":
-                                    for document in step1_documents:
-                                        authorize(document, assign_users, process_id, "document")
-                                        for user in assign_users:
-                                            step.get("stepDocumentCloneMap").append(
-                                                {user["member"]: document}
-                                            )
-                                            # Change auth viewers in the metadata as well
-                                            metadata_id = get_metadata_id(
-                                                document, "clone"
-                                            )
-                                            authorize_metadata(
-                                                metadata_id, user, process_id, "document"
-                                            )
-                                else:
-                                    for document in step1_documents:
-                                        for user in step.get("stepTeamMembers"):
-                                            authorize(
-                                                document, user, process_id, "document"
-                                            )
-                                            step.get("stepDocumentCloneMap").append(
-                                                {user["member"]: document}
-                                            )
-                                            # Change auth viewers in the metadata as well
-                                            metadata_id = get_metadata_id(
-                                                document, "clone"
-                                            )
-                                            authorize_metadata(
-                                                metadata_id, user, process_id, "document"
-                                            )
-                                        for user in step.get("stepPublicMembers"):
-                                            authorize(
-                                                document, user, process_id, "document"
-                                            )
-                                            step.get("stepDocumentCloneMap").append(
-                                                {user["member"]: document}
-                                            )
-                                            # Change auth viewers in the metadata as well
-                                            metadata_id = get_metadata_id(
-                                                document, "clone"
-                                            )
-                                            authorize_metadata(
-                                                metadata_id, user, process_id, "document"
-                                            )
-                                        for user in step.get("stepUserMembers"):
-                                            authorize(
-                                                document, user, process_id, "document"
-                                            )
-                                            step.get("stepDocumentCloneMap").append(
-                                                {user["member"]: document}
-                                            )
-                                            # Change auth viewers in the metadata as well
-                                            metadata_id = get_metadata_id(
-                                                document, "clone"
-                                            )
-                                            authorize_metadata(
-                                                metadata_id, user, process_id, "document"
-                                            )
+                            self.assign_task_helper(step=step, process_id=process_id, process_steps=steps)
+                            
                         update_process(process_id, steps, processing_state)
                 # Check that all documents are finalized
                 all_accessed_true = check_all_finalized_true(steps, process_type)
@@ -920,7 +843,7 @@ class Background:
                 else:
                     update_process(process_id, steps, "processing")
         except Exception as e:
-            print("got error", e)
+            print(e)
             finalize_item(self.item_id, "processing", self.item_type, self.message)
             return
 
@@ -1114,6 +1037,6 @@ class Background:
                     else:
                         update_process(process_id, steps, "processing")
             except Exception as e:
-                print("got error", e)
+                print(e)
                 finalize_item(self.item_id, "saved", self.item_type, self.message)
                 return 

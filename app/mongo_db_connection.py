@@ -894,7 +894,6 @@ def finalize_item(item_id, state, item_type, message, signers=None):
     payload = None
     payload_dict = None
     if item_type == "document":
-        print(item_type)
         payload_dict = {
             **DOCUMENT_CONNECTION_DICT,
             "command": "update",

@@ -137,7 +137,6 @@ def document_processing(request):
         process.normal_process(action)
         return Response("Process Saved in drafts.", status.HTTP_201_CREATED)
     if action == "start_document_processing_content_wise":
-        print("Okay")
         if request.data.get("process_id") is not None:
             process = single_query_process_collection(
                 {"_id": request.data["process_id"]}
@@ -1663,7 +1662,6 @@ def read_reminder(request, process_id, username):
                             # hourly_job = cron.new(command=f"python3 {current_directory}/utils/notification_cron.py '{data}'")
                             # hourly_job.minute.every(1)
                             # cron.write()
-                            # print(hourly_job.command)
                             # response_data = {
                             #     "command": hourly_job.command,
                             #     # "next_run": hourly_job.next_run(),
