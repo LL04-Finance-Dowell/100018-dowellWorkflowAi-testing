@@ -688,7 +688,7 @@ class NewDocument(APIView):
         if not request.data:
             return Response(
                 {"message": "Failed to process document creation."},
-                status.HTTP_200_OK,
+                status.HTTP_400_BAD_REQUEST,
             )
         portfolio = ""
         if request.data["portfolio"]:
@@ -754,9 +754,11 @@ class NewDocument(APIView):
 class Document(APIView):
     def get(self, request, company_id):
         """List of Created Documents."""
+        data_type = request.query_params.get("data_type")
+
         if not validate_id(company_id) or not data_type:
             return Response("Invalid Request!", status=status.HTTP_400_BAD_REQUEST)
-        data_type = request.query_params.get("data_type")
+        
         document_type = request.query_params.get("document_type")
         document_state = request.query_params.get("document_state")
         member = request.query_params.get("member")
