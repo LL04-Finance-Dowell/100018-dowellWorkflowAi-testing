@@ -3,6 +3,7 @@ import { RiDeleteBin6Line } from "react-icons/ri";
 import { BiLink, BiCopy } from "react-icons/bi";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { Tooltip } from "react-tooltip";
 import { toast } from "react-toastify";
 import { setAllProcesses } from "../../../features/app/appSlice";
 import { moveItemToArchive } from "../../../services/archiveServices";
@@ -39,8 +40,7 @@ const ProcessCard = ({ cardItem, title }) => {
   const handleProcessItemClick = async (item) => {
     if (item.processing_state === "draft" && item.workflow_construct_ids) {
       navigate(
-        `/workflows/new-set-workflow?id=${item._id}&state=${
-          item.processing_state
+        `/workflows/new-set-workflow?id=${item._id}&state=${item.processing_state
         }${item.isFromLocalStorage ? "&local=true" : ""}`
       );
       return;
@@ -53,7 +53,7 @@ const ProcessCard = ({ cardItem, title }) => {
 
   function getProcessDetail(process_id, process_title) {
     axios
-      .get(`https://workflowai.uxlivinglab.online/v1/processes/${process_id}/`)
+      .get(`https://100094.pythonanywhere.com/v1/processes/${process_id}/`)
       .then((response) => {
         dispatch(SetProcessDetail(response.data));
         setProcessDetailLoading(false);
@@ -85,8 +85,8 @@ const ProcessCard = ({ cardItem, title }) => {
           portfolio:
             userDetail?.portfolio_info?.length > 1
               ? userDetail?.portfolio_info.find(
-                  (portfolio) => portfolio.product === productName
-                )?.portfolio_name
+                (portfolio) => portfolio.product === productName
+              )?.portfolio_name
               : userDetail?.portfolio_info[0]?.portfolio_name,
         }
       );
@@ -112,8 +112,8 @@ const ProcessCard = ({ cardItem, title }) => {
     setProcessLinkLoading(true);
     await getProcessLinks(item._id);
     dispatch(setShowGeneratedLinksPopup(true));
-   
-    
+
+
   };
 
   // useEffect(() => {
@@ -156,7 +156,7 @@ const ProcessCard = ({ cardItem, title }) => {
       // }
       // const data = await response.json();
       // console.log("the response for fetching process is ", response);
-      const data = [{"Link 1": `https://ll04-finance-dowell.github.io/100018-dowellWorkflowAi-testing/#/processes/process-import/${process_id}`}]
+      const data = [{ "Link 1": `https://ll04-finance-dowell.github.io/100018-dowellWorkflowAi-testing/#/processes/process-import/${process_id}` }]
       console.log("the process link is ", data)
       dispatch(SetArrayofLinks(data));
       dispatch(setLinksFetched(true));
@@ -167,7 +167,7 @@ const ProcessCard = ({ cardItem, title }) => {
       toast.info("Link fetching for process failed");
     }
   }
-  
+
 
   const handleTrashProcess = async (cardItem) => {
     const copyOfAllProcesses = [...allProcesses];
@@ -274,17 +274,22 @@ const ProcessCard = ({ cardItem, title }) => {
           cardItem.processing_state !== "draft" && (
             <>
               {!processLinkLoading ? (
-                <div
-                  style={{
-                    cursor: "pointer",
-                    position: "absolute",
-                    right: "0",
-                    top: "0",
-                  }}
-                  onClick={() => setPopupVisibility(true)}
-                >
-                  <BiLink color="green" />
-                </div>
+                <>
+                  <Tooltip id={`share-${cardItem._id}`} content="Share Process" direction="up" arrowSize={10}></Tooltip>
+                  <div
+                    anchorId={cardItem._id}
+                    data-tooltip-id={`share-${cardItem._id}`}
+                    style={{
+                      cursor: "pointer",
+                      position: "absolute",
+                      right: "0",
+                      top: "0",
+                    }}
+                    onClick={() => setPopupVisibility(true)}
+                  >
+                    <BiLink color="green" />
+                  </div>
+                </>
               ) : (
                 <div
                   style={{
@@ -298,8 +303,10 @@ const ProcessCard = ({ cardItem, title }) => {
               )}
             </>
           )}
-
+        <Tooltip id={`delete-${cardItem._id}`} content="Delete Process" direction="up" arrowSize={10}></Tooltip>
         <div
+          anchorId={cardItem._id}
+          data-tooltip-id={`share-${cardItem._id}`}
           style={{
             cursor: "pointer",
             position: "absolute",
@@ -342,11 +349,11 @@ const ProcessCard = ({ cardItem, title }) => {
         <div>
           <div style={popupStyle}>
             <p>Are you sure you want to share your process?</p>
-            <div style={{display:"flex", justifyContent:"space-around"}}>
-              <button onClick={()=>handleGetLinksClick(cardItem)} style={{marginLeft: "5px"}}>Yes</button>
-              <button onClick={()=>setPopupVisibility(false)}>No</button>
+            <div style={{ display: "flex", justifyContent: "space-around" }}>
+              <button onClick={() => handleGetLinksClick(cardItem)} style={{ marginLeft: "5px" }}>Yes</button>
+              <button onClick={() => setPopupVisibility(false)}>No</button>
             </div>
-            
+
           </div>
         </div>
       </>
