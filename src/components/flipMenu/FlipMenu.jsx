@@ -112,7 +112,7 @@ export const FlipBack = (props) => {
       });
     }
     if(role === ""){
-      navigate('/documents/#drafts')
+      navigate('/documents/demo#demo')
     }
     if (role === 'newTemp') {
       const data = {
