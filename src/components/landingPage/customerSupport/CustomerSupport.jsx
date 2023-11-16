@@ -74,7 +74,7 @@ const CustomerSupport = () => {
                       'Learning Support New Trends Case Studies References Templates'
                     )}
                   </p>
-                  <button className={styles.knowledge__button} onClick={()=>{navigate('/templates/#drafts')}}>
+                  <button className={styles.knowledge__button} onClick={()=>{navigate('/templates/demo#demo')}}>
                     {t('Click Here')}
                   </button>
                 </div>
