@@ -154,3 +154,9 @@ CACHES = {
         "LOCATION": "unique-snowflake",
     }
 }
+
+# Rest Framework
+REST_FRAMEWORK = {
+    "URL_FORMAT_OVERRIDE": None,
+    # Other DRF settings...
+}
