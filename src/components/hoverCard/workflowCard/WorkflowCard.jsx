@@ -164,7 +164,7 @@ const WorkflowCard = ({ cardItem }) => {
               </div>
             </>
             <div className={styles.button__group}>
-              <Tooltip id={`delete-${cardItem._id}`} content="Delete Workflow" direction="up" arrowSize={10}></Tooltip>
+              <Tooltip id={`delete-${cardItem._id}`} content="Delete Workflow" direction="up" arrowSize={10} style={{ backgroundColor: 'rgb(97, 206, 112)', color: 'white' }}></Tooltip>
               <span
                 anchorId={cardItem._id}
                 data-tooltip-id={`delete-${cardItem._id}`}
@@ -177,7 +177,7 @@ const WorkflowCard = ({ cardItem }) => {
                 <RiDeleteBin6Line color='red' />
               </span>
 
-              <Tooltip id={`update-${cardItem._id}`} content="Update Workflow" direction="up" arrowSize={10}></Tooltip>
+              <Tooltip id={`update-${cardItem._id}`} content="Update Workflow" direction="up" arrowSize={10} style={{ backgroundColor: 'rgb(97, 206, 112)', color: 'white' }}></Tooltip>
               <span
                 anchorId={cardItem._id}
                 data-tooltip-id={`update-${cardItem._id}`}
@@ -192,7 +192,7 @@ const WorkflowCard = ({ cardItem }) => {
                 </i>
               </span>
 
-              <Tooltip id={`bookmark-${cardItem._id}`} content="Bookmark Workflow" direction="up" arrowSize={10}></Tooltip>
+              <Tooltip id={`bookmark-${cardItem._id}`} content="Bookmark Workflow" direction="up" arrowSize={10}  style={{ backgroundColor: 'rgb(97, 206, 112)', color: 'white' }}></Tooltip>
               <div
                 anchorId={cardItem._id}
                 data-tooltip-id={`bookmark-${cardItem._id}`}

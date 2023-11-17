@@ -368,7 +368,7 @@ const DocumentCard = ({
             onClick={() => generatePdfClick(cardItem)}
           >{<BsArrowBarRight />}</div> */}
 
-        <Tooltip id={`generatePdf-${cardItem._id}`} content="generate pdf!" direction="up" arrowSize={10}></Tooltip>
+        <Tooltip id={`generatePdf-${cardItem._id}`} content="generate pdf!" direction="up" arrowSize={10} style={{ backgroundColor: 'rgb(97, 206, 112)', color: 'white' }}></Tooltip>
         <div
           anchorId={cardItem._id}
           data-tooltip-id={`generatePdf-${cardItem._id}`}
@@ -385,7 +385,7 @@ const DocumentCard = ({
 
         {!hideFavoriteIcon && (
           <>
-            <Tooltip id={`faviorates-${cardItem._id}`} content="Add to Bookmark" direction="up" arrowSize={10}></Tooltip>
+            <Tooltip id={`faviorates-${cardItem._id}`} content="Add to Bookmark" direction="up" arrowSize={10} style={{ backgroundColor: 'rgb(97, 206, 112)', color: 'white' }}></Tooltip>
             <div
             anchorId={cardItem._id}
             data-tooltip-id={`faviorates-${cardItem._id}`}
@@ -432,7 +432,7 @@ const DocumentCard = ({
         )}
         {!hideDeleteIcon && (
           <>
-            <Tooltip id={`delete-${cardItem._id}`} content="Delete Document" direction="up" arrowSize={10}></Tooltip>
+            <Tooltip id={`delete-${cardItem._id}`} content="Delete Document" direction="up" arrowSize={10} style={{ backgroundColor: 'rgb(97, 206, 112)', color: 'white' }}></Tooltip>
             <div
               anchorId={cardItem._id}
               data-tooltip-id={`delete-${cardItem._id}`}
@@ -500,7 +500,7 @@ const DocumentCard = ({
           </div>
         )}
 
-        <Tooltip id={`add-${cardItem._id}`} content="Add Document" direction="up" arrowSize={10}></Tooltip>
+        <Tooltip id={`add-${cardItem._id}`} content="Add Document" direction="up" arrowSize={10} style={{ backgroundColor: 'rgb(97, 206, 112)', color: 'white' }}></Tooltip>
         <div
         anchorId={cardItem._id}
         data-tooltip-id={`add-${cardItem._id}`}

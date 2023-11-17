@@ -171,7 +171,7 @@ const TemplateCard = ({ cardItem, isFolder, folderId }) => {
   const BackSide = () => {
     return (
       <div>
-        <Tooltip id={`book-${cardItem._id}`} content="Bookmark Template" direction="up" arrowSize={10}></Tooltip>
+        <Tooltip id={`book-${cardItem._id}`} content="Bookmark Template" direction="up" arrowSize={10} style={{ backgroundColor: 'rgb(97, 206, 112)', color: 'white' }}></Tooltip>
         <div
         anchorId={cardItem._id}
         data-tooltip-id={`book-${cardItem._id}`}
@@ -203,7 +203,7 @@ const TemplateCard = ({ cardItem, isFolder, folderId }) => {
         ) : (
           'no item'
         )}
-        <Tooltip id={`dell-${cardItem._id}`} content="Delete Template" direction="up" arrowSize={10}></Tooltip>
+        <Tooltip id={`dell-${cardItem._id}`} content="Delete Template" direction="up" arrowSize={10} style={{ backgroundColor: 'rgb(97, 206, 112)', color: 'white' }}></Tooltip>
         <div
          anchorId={cardItem._id}
          data-tooltip-id={`dell-${cardItem._id}`}
@@ -268,7 +268,7 @@ const TemplateCard = ({ cardItem, isFolder, folderId }) => {
             </div>
           </div>
         )}
-        <Tooltip id={`add-${cardItem._id}`} content="Add Template" direction="up" arrowSize={10}></Tooltip>
+        <Tooltip id={`add-${cardItem._id}`} content="Add Template" direction="up" arrowSize={10} style={{ backgroundColor: 'rgb(97, 206, 112)', color: 'white' }}></Tooltip>
         <div
          anchorId={cardItem._id}
          data-tooltip-id={`add-${cardItem._id}`}

@@ -275,7 +275,7 @@ const ProcessCard = ({ cardItem, title }) => {
             <>
               {!processLinkLoading ? (
                 <>
-                  <Tooltip id={`share-${cardItem._id}`} content="Share Process" direction="up" arrowSize={10}></Tooltip>
+                  <Tooltip id={`share-${cardItem._id}`} content="Share Process" direction="up" arrowSize={10} style={{ backgroundColor: 'rgb(97, 206, 112)', color: 'white' }}></Tooltip>
                   <div
                     anchorId={cardItem._id}
                     data-tooltip-id={`share-${cardItem._id}`}
@@ -303,7 +303,7 @@ const ProcessCard = ({ cardItem, title }) => {
               )}
             </>
           )}
-        <Tooltip id={`delete-${cardItem._id}`} content="Delete Process" direction="up" arrowSize={10}></Tooltip>
+        <Tooltip id={`delete-${cardItem._id}`} content="Delete Process" direction="up" arrowSize={10} style={{ backgroundColor: 'rgb(97, 206, 112)', color: 'white' }}></Tooltip>
         <div
           anchorId={cardItem._id}
           data-tooltip-id={`delete-${cardItem._id}`}
@@ -323,7 +323,7 @@ const ProcessCard = ({ cardItem, title }) => {
             <>
               {!copyprocessLoading ? (
                 <>
-                  <Tooltip id={`copy-${cardItem._id}`} content="Copy Process" direction="up" arrowSize={10}></Tooltip>
+                  <Tooltip id={`copy-${cardItem._id}`} content="Copy Process" direction="up" arrowSize={10} style={{ backgroundColor: 'rgb(97, 206, 112)', color: 'white' }}></Tooltip>
                   <div
                     anchorId={cardItem._id}
                     data-tooltip-id={`copy-${cardItem._id}`}
