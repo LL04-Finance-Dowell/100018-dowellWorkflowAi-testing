@@ -10,6 +10,7 @@ import { RxUpdate } from 'react-icons/rx';
 import { RiDeleteBin6Line } from 'react-icons/ri';
 import { useAppContext } from '../../../contexts/AppContext';
 import { toast } from 'react-toastify';
+import { Tooltip } from 'react-tooltip';
 import {
   addNewFavoriteForUser,
   deleteFavoriteForUser,
@@ -37,7 +38,7 @@ const WorkflowCard = ({ cardItem }) => {
   };
 
   const handleTrashWorkflow = async (cardItem) => {
-    
+
     const copyOfAllWorkflows = [...allWorkflows];
     const foundWorkflowIndex = copyOfAllWorkflows.findIndex(
       (item) => item._id === cardItem._id
@@ -69,10 +70,10 @@ const WorkflowCard = ({ cardItem }) => {
       console.log(error.response ? error.response.data : error.message);
       toast.info(
         error.response
-            ? error.response.status === 500
-              ? 'Workflow archiving failed'
-              : error.response.data
-            : 'Workflow archiving failed'
+          ? error.response.status === 500
+            ? 'Workflow archiving failed'
+            : error.response.data
+          : 'Workflow archiving failed'
       );
       copyOfWorkflowsObj.data_type = 'Real_Data';
       copyOfWorkflowToUpdate.workflows = copyOfWorkflowsObj;
@@ -138,8 +139,8 @@ const WorkflowCard = ({ cardItem }) => {
             ? JSON.parse(cardItem.workflows)?.workflow_title
             : 'no item'
           : cardItem.workflows?.workflow_title
-          ? cardItem.workflows?.workflow_title
-          : 'no item'}
+            ? cardItem.workflows?.workflow_title
+            : 'no item'}
       </div>
     );
   };
@@ -170,7 +171,10 @@ const WorkflowCard = ({ cardItem }) => {
               </div>
             </>
             <div className={styles.button__group}>
+              <Tooltip id={`delete-${cardItem._id}`} content="Delete Workflow" direction="up" arrowSize={10} style={{ backgroundColor: 'rgb(97, 206, 112)', color: 'white' }}></Tooltip>
               <span
+                anchorId={cardItem._id}
+                data-tooltip-id={`delete-${cardItem._id}`}
                 style={{ cursor: 'pointer' }}
                 className={styles.delete}
                 onClick={() => {
@@ -179,7 +183,11 @@ const WorkflowCard = ({ cardItem }) => {
               >
                 <RiDeleteBin6Line color='red' />
               </span>
+
+              <Tooltip id={`update-${cardItem._id}`} content="Update Workflow" direction="up" arrowSize={10} style={{ backgroundColor: 'rgb(97, 206, 112)', color: 'white' }}></Tooltip>
               <span
+                anchorId={cardItem._id}
+                data-tooltip-id={`update-${cardItem._id}`}
                 style={{ cursor: 'pointer' }}
                 onClick={() => {
                   handleUpdateWorkflow(cardItem);
@@ -190,7 +198,11 @@ const WorkflowCard = ({ cardItem }) => {
                   <RxUpdate color='green' />
                 </i>
               </span>
+
+              <Tooltip id={`bookmark-${cardItem._id}`} content="Bookmark Workflow" direction="up" arrowSize={10}  style={{ backgroundColor: 'rgb(97, 206, 112)', color: 'white' }}></Tooltip>
               <div
+                anchorId={cardItem._id}
+                data-tooltip-id={`bookmark-${cardItem._id}`}
                 style={{
                   cursor: 'pointer',
                 }}
