@@ -306,7 +306,7 @@ const ProcessCard = ({ cardItem, title }) => {
         <Tooltip id={`delete-${cardItem._id}`} content="Delete Process" direction="up" arrowSize={10}></Tooltip>
         <div
           anchorId={cardItem._id}
-          data-tooltip-id={`share-${cardItem._id}`}
+          data-tooltip-id={`delete-${cardItem._id}`}
           style={{
             cursor: "pointer",
             position: "absolute",
@@ -322,17 +322,22 @@ const ProcessCard = ({ cardItem, title }) => {
           cardItem.processing_state !== "processing" && (
             <>
               {!copyprocessLoading ? (
-                <div
-                  style={{
-                    cursor: "pointer",
-                    position: "absolute",
-                    left: "0",
-                    top: "0",
-                  }}
-                  onClick={() => handleCopyProcess(cardItem)}
-                >
-                  <BiCopy color="black" />
-                </div>
+                <>
+                  <Tooltip id={`copy-${cardItem._id}`} content="Copy Process" direction="up" arrowSize={10}></Tooltip>
+                  <div
+                    anchorId={cardItem._id}
+                    data-tooltip-id={`copy-${cardItem._id}`}
+                    style={{
+                      cursor: "pointer",
+                      position: "absolute",
+                      left: "0",
+                      top: "0",
+                    }}
+                    onClick={() => handleCopyProcess(cardItem)}
+                  >
+                    <BiCopy color="black" />
+                  </div>
+                </>
               ) : (
                 <div
                   style={{
