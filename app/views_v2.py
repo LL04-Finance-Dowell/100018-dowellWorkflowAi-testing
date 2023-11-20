@@ -656,37 +656,6 @@ class WorkflowDetail(APIView):
         data = single_query_workflow_collection({"_id": workflow_id})
         return Response(data, status.HTTP_200_OK)
 
-class WorkflowDetail(APIView):
-    def get(self, request, workflow_id):
-        """Single workflows"""
-        data = single_query_workflow_collection({"_id": workflow_id})
-        return Response(data, status.HTTP_200_OK)
-
-    def put(self, request, workflow_id):
-        form = request.data
-        if not form:
-            return Response(
-                "Workflow Data is required", status=status.HTTP_400_BAD_REQUEST
-            )
-        old_workflow = single_query_workflow_collection({"_id": workflow_id})
-        old_workflow["workflows"]["workflow_title"] = form["workflows"][
-            "workflow_title"
-        ]
-        old_workflow["workflows"]["data_type"] = form["data_type"]
-        for i, step in enumerate(form["workflows"]["steps"]):
-            if i < len(old_workflow["workflows"]["steps"]):
-                old_workflow["workflows"]["steps"][i]["step_name"] = step["step_name"]
-                old_workflow["workflows"]["steps"][i]["role"] = step["role"]
-            else:
-                new_step = {"step_name": step["step_name"], "role": step["role"]}
-                old_workflow["workflows"]["steps"].append(new_step)
-        if len(form["workflows"]["steps"]) < len(old_workflow["workflows"]["steps"]):
-            del old_workflow["workflows"]["steps"][len(form["workflows"]["steps"]) :]
-        updt_wf = update_wf(workflow_id, old_workflow)
-        updt_wf = json.loads(updt_wf)
-        if updt_wf.get("isSuccess"):
-            return Response("Workflow Updated", status=status.HTTP_201_CREATED)
-
     def put(self, request, workflow_id):
         form = request.data
         if not form:
