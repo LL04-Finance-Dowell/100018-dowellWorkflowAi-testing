@@ -19,9 +19,21 @@ urlpatterns = [
     path("workflows/<str:workflow_id>/", views_v2.WorkflowDetail.as_view()),
     path("workflows/<str:company_id>/organisations/", views_v2.Workflow.as_view()),
     path("documents/", views_v2.NewDocument.as_view(), name="documents"),
-    path("documents/<str:item_id>/", views_v2.DocumentDetail.as_view(), name="document_detail"),
-    path("documents/<str:document_id>/link/", views_v2.DocumentLink.as_view(), name="document_link"),
-    path("documents/<str:company_id>/organisations/", views_v2.Document.as_view(), name="get_documents"),
+    path(
+        "documents/<str:item_id>/",
+        views_v2.DocumentDetail.as_view(),
+        name="document_detail",
+    ),
+    path(
+        "documents/<str:document_id>/link/",
+        views_v2.DocumentLink.as_view(),
+        name="document_link",
+    ),
+    path(
+        "documents/<str:company_id>/organisations/",
+        views_v2.Document.as_view(),
+        name="get_documents",
+    ),
     path("metadata/", views_v2.NewMetadata.as_view()),
     path("metadata/<str:company_id>/organisations/", views_v2.Metadata.as_view()),
     path("content/<str:item_id>/", views_v2.ItemContent.as_view()),
@@ -48,5 +60,8 @@ urlpatterns = [
     path("public/", views_v2.NewPublicUser.as_view()),
     path("public/<str:company_id>/organisations/", views_v2.PublicUser.as_view()),
     path("notifications/", views_v2.NewNotification.as_view()),
-    path("notifications/<str:process_id>/reminders/", views_v2.NotificationReminder.as_view())
+    path(
+        "notifications/<str:process_id>/reminders/",
+        views_v2.NotificationReminder.as_view(),
+    ),
 ]
