@@ -29,14 +29,26 @@ const Chat = () => {
 
   ///for the chat
   useEffect(() => {
-    const timeout = setTimeout(() => {
-      setShowImage(false);
-    }, 10000); // 10 seconds in milliseconds
+    let timeout;
 
+    // Function to be called when mouse stops moving
+    const handleMouseMove = () => {
+      setShowImage(false); 
+      clearTimeout(timeout); // Clear any existing timeout
+      timeout = setTimeout(() => {
+        setShowImage(true); 
+      }, 10000);
+    };
+
+    // Attach event listener for mousemove
+    window.addEventListener('mousemove', handleMouseMove);
+
+    // Clear the timeout and remove the event listener when the component is unmounted
     return () => {
       clearTimeout(timeout);
+      window.removeEventListener('mousemove', handleMouseMove);
     };
-  }, []);
+  }, []); 
 
   // console.log("the user details are ", userDetail)
 
@@ -210,7 +222,11 @@ const Chat = () => {
     <div className={styles.Main_div}>
       <div>
         <div className={styles.Chat_buttonIcon}>
-          {showImage && <img src={ChatIcon} width="100" />}
+          {showImage && 
+          <div className={styles.showImgIcons}>
+            <div className={styles.Chat_img_text}>Samanta is here to help you!</div>
+            <img src={'https://www.socialmediaautomation.uxlivinglab.online/static/photos/Lady-Pixel.png'} width="80" className={styles.Chat_icon_img} />
+          </div>}
         </div>
         <button onClick={handleButtonClick} className={styles.Chat_button}>
           {" "}

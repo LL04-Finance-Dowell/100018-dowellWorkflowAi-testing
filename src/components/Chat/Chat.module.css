@@ -20,11 +20,34 @@
   transition: top 0.3s ease-in-out;
 }
 
+.showImgIcons{
+  display: flex;
+  margin-right: 20px;
+}
+.Chat_img_text {
+  font-size: 14px;
+  padding: 5px;
+  height: 35px;
+  /* width: fit-content; */
+  /* margin-bottom: 25px; */
+  background-color: #2e7d32;
+  border-radius: 50px;
+  border-bottom-right-radius: 0;
+  color: #fff;
+  margin-top: 15px;
+}
 .Chat_buttonIcon {
   position: fixed !important;
   bottom: 100px;
   right: 30px;
   background-color: none;
+  
+}
+.Chat_icon_img{
+  width: 60px;
+  height: 90px;
+  border-bottom-left-radius: 20px;
+  border-bottom-right-radius: 20px;
 }
 .Chat_button {
   position: fixed !important;
