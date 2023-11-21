@@ -31,14 +31,16 @@ class NewWorkflowTests(TestConfig):
 
 class WorkflowTests(TestConfig):
     def test_get_workflows_success(self):
+        data_type = "Some Data Type"
+        response = self.client.get(f"{self.get_workflows_url}?data_type={data_type}")
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_get_workflows_failure(self):
         # Make GET request with no data type
         response = self.client.get(self.get_workflows_url)
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(response.data, "Invalid Request!")
 
-    def test_get_workflows_failure(self):
-        data_type = "Some Data Type"
-        response = self.client.get(f"{self.get_workflows_url}?data_type={data_type}")
-
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
+ 
