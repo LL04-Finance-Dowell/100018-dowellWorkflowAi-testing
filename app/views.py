@@ -523,17 +523,22 @@ def a_single_process(request, process_id):
     if not validate_id(process_id):
         return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
     process = single_query_process_collection({"_id": process_id})
-    if process["parent_item_id"]:
-        document_id = process["parent_item_id"]
-        document = single_query_document_collection({"_id": document_id})
-        if document:
-            document_name = document["document_name"]
-            process.update({"document_name": document_name})
-        links = single_query_links_collection({"process_id": process["_id"]})
-        if links:
-            links_object = links[0]
-            process.update({"links": links_object["links"]})
-    return Response(process, status.HTTP_200_OK)
+
+    if process.get("process_kind") == "clone":
+        return Response(process, status.HTTP_200_OK)
+
+    else:
+        if process["parent_item_id"]:
+            document_id = process["parent_item_id"]
+            document = single_query_document_collection({"_id": document_id})
+            if document:
+                document_name = document["document_name"]
+                process.update({"document_name": document_name})
+            links = single_query_links_collection({"process_id": process["_id"]})
+            if links:
+                links_object = links[0]
+                process.update({"links": links_object["links"]})
+        return Response(process, status.HTTP_200_OK)
 
 
 @api_view(["GET"])
