@@ -5,6 +5,7 @@ urlpatterns = [
     path("", views_v2.HomePage.as_view()),
     path("server/", views_v2.PADeploymentWebhook.as_view()),
     path("processes/", views_v2.DocumentOrTemplateProcessing.as_view()),
+    path("processes/invoice/", views_v2.TriggerInvoice.as_view()),
     path("processes/<str:process_id>/", views_v2.ProcessDetail.as_view()),
     path("processes/<str:process_id>/process-link/", views_v2.ProcessLink.as_view()),
     path("processes/<str:process_id>/verify/", views_v2.ProcessVerification.as_view()),

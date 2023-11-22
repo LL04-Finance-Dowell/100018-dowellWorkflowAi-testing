@@ -20,6 +20,7 @@ from app.helpers import (
     access_editor,
     access_editor_metadata,
     check_all_accessed,
+    create_document_helper,
     create_favourite,
     get_link,
     list_favourites,
@@ -693,54 +694,60 @@ class NewDocument(APIView):
         portfolio = ""
         if request.data["portfolio"]:
             portfolio = request.data["portfolio"]
-        viewers = [{"member": request.data["created_by"], "portfolio": portfolio}]
+            
+        created_by = request.data["created_by"]
+        viewers = [{"member": created_by, "portfolio": portfolio}]
         organization_id = request.data["company_id"]
         template_id = request.data["template_id"]
-        content = single_query_template_collection({"_id": template_id})["content"]
-        page = single_query_template_collection({"_id": template_id})["page"]
-        res = json.loads(
-            save_to_document_collection(
-                {
-                    "document_name": "Untitled Document",
-                    "content": content,
-                    "created_by": request.data["created_by"],
-                    "company_id": organization_id,
-                    "page": page,
-                    "data_type": request.data["data_type"],
-                    "document_state": "draft",
-                    "auth_viewers": viewers,
-                    "document_type": "original",
-                    "parent_id": None,
-                    "process_id": "",
-                    "folders": [],
-                    "template": request.data["template_id"],
-                    "message": "",
-                }
+        data_type = request.data["data_type"]
+        # content = single_query_template_collection({"_id": template_id})["content"]
+        # page = single_query_template_collection({"_id": template_id})["page"]
+        # res = json.loads(
+        #     save_to_document_collection(
+        #         {
+        #             "document_name": "Untitled Document",
+        #             "content": content,
+        #             "created_by": request.data["created_by"],
+        #             "company_id": organization_id,
+        #             "page": page,
+        #             "data_type": request.data["data_type"],
+        #             "document_state": "draft",
+        #             "auth_viewers": viewers,
+        #             "document_type": "original",
+        #             "parent_id": None,
+        #             "process_id": "",
+        #             "folders": [],
+        #             "template": request.data["template_id"],
+        #             "message": "",
+        #         }
+        #     )
+        # )
+        # if res["isSuccess"]:
+        #     res_metadata = json.loads(
+        #         save_to_document_metadata_collection(
+        #             {
+        #                 "document_name": "Untitled Document",
+        #                 "collection_id": res["inserted_id"],
+        #                 "created_by": request.data["created_by"],
+        #                 "company_id": organization_id,
+        #                 "data_type": request.data["data_type"],
+        #                 "document_state": "draft",
+        #                 "auth_viewers": viewers,
+        #             }
+        #         )
+        #     )
+        res, res_metadata = create_document_helper(created_by, organization_id, template_id, data_type, viewers)
+        
+        if not res_metadata["isSuccess"]:
+            return Response(
+                "An error occured while trying to save document metadata",
+                status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
+        metadata_id = res_metadata["inserted_id"]
+        editor_link = access_editor_metadata(
+            res["inserted_id"], "document", metadata_id
         )
-        if res["isSuccess"]:
-            res_metadata = json.loads(
-                save_to_document_metadata_collection(
-                    {
-                        "document_name": "Untitled Document",
-                        "collection_id": res["inserted_id"],
-                        "created_by": request.data["created_by"],
-                        "company_id": organization_id,
-                        "data_type": request.data["data_type"],
-                        "document_state": "draft",
-                        "auth_viewers": viewers,
-                    }
-                )
-            )
-            if not res_metadata["isSuccess"]:
-                return Response(
-                    "An error occured while trying to save document metadata",
-                    status.HTTP_500_INTERNAL_SERVER_ERROR,
-                )
-            metadata_id = res_metadata["inserted_id"]
-            editor_link = access_editor_metadata(
-                res["inserted_id"], "document", metadata_id
-            )
+        if editor_link:
             return Response(
                 {"editor_link": editor_link, "_id": res["inserted_id"]},
                 status.HTTP_201_CREATED,
@@ -1629,6 +1636,30 @@ class PublicUser(APIView):
     def get(self, request, company_id):
         public_users = bulk_query_public_collection({"company_id": company_id})
         return Response(public_users, status=status.HTTP_200_OK)
+
+
+class TriggerInvoice(APIView):
+    def post(self, request):
+        if not request.data:
+            return Response(
+                {"message": "Failed to process document creation."},
+                status.HTTP_400_BAD_REQUEST,
+            )
+        portfolio = ""
+        if request.data["portfolio"]:
+            portfolio = request.data["portfolio"]
+            
+        created_by = request.data["created_by"]
+        viewers = [{"member": created_by, "portfolio": portfolio}]
+        organization_id = request.data["company_id"]
+        template_id = request.data["template_id"]
+        data_type = request.data["data_type"]
+        
+        res, res_metadata = create_document_helper(created_by, organization_id, template_id, data_type, viewers)
+        
+        document_id = res["inserted_id"]
+        
+        return Response(f"created_document: {document_id}", status.HTTP_200_OK)
 
 
 class NewNotification(APIView):
