@@ -108,7 +108,7 @@ class HomePage(APIView):
 
 
 class DocumentOrTemplateProcessing(APIView):
-    def post(self, request):
+    def post(self, request, args, **kwargs):
         """processing is determined by action picked by user."""
         if not request.data:
             return Response("You are missing something!", status.HTTP_400_BAD_REQUEST)
@@ -684,22 +684,24 @@ class WorkflowDetail(APIView):
 
 
 class NewDocument(APIView):
-    def post(self, request):
+    def post(self, request, *args, **kwargs):
         """Document Creation."""
-        if not request.data:
+        data = request.data
+        
+        if not data:
             return Response(
                 {"message": "Failed to process document creation."},
                 status.HTTP_400_BAD_REQUEST,
             )
         portfolio = ""
-        if request.data["portfolio"]:
-            portfolio = request.data["portfolio"]
+        if data.get("portfolio"):
+            portfolio = data["portfolio"]
             
-        created_by = request.data["created_by"]
+        created_by = data["created_by"]
         viewers = [{"member": created_by, "portfolio": portfolio}]
-        organization_id = request.data["company_id"]
-        template_id = request.data["template_id"]
-        data_type = request.data["data_type"]
+        organization_id = data["company_id"]
+        template_id = data["template_id"]
+        data_type = data["data_type"]
         # content = single_query_template_collection({"_id": template_id})["content"]
         # page = single_query_template_collection({"_id": template_id})["page"]
         # res = json.loads(
@@ -1638,30 +1640,6 @@ class PublicUser(APIView):
         return Response(public_users, status=status.HTTP_200_OK)
 
 
-class TriggerInvoice(APIView):
-    def post(self, request):
-        if not request.data:
-            return Response(
-                {"message": "Failed to process document creation."},
-                status.HTTP_400_BAD_REQUEST,
-            )
-        portfolio = ""
-        if request.data["portfolio"]:
-            portfolio = request.data["portfolio"]
-            
-        created_by = request.data["created_by"]
-        viewers = [{"member": created_by, "portfolio": portfolio}]
-        organization_id = request.data["company_id"]
-        template_id = request.data["template_id"]
-        data_type = request.data["data_type"]
-        
-        res, res_metadata = create_document_helper(created_by, organization_id, template_id, data_type, viewers)
-        
-        document_id = res["inserted_id"]
-        
-        return Response(f"created_document: {document_id}", status.HTTP_200_OK)
-
-
 class NewNotification(APIView):
     def post(self, request):
         data = {
@@ -1765,3 +1743,70 @@ class NotificationReminder(APIView):
             return Response(
                 f"An error occured: {err}", status.HTTP_500_INTERNAL_SERVER_ERROR
             )   
+            
+
+
+class TriggerInvoice(APIView):
+    def post(self, request, *args, **kwargs):
+        data = request.data
+        
+        if not data:
+            return Response(
+                {"message": "Failed to process document creation."},
+                status.HTTP_400_BAD_REQUEST,
+            )
+        portfolio = ""
+        if data.get("portfolio"):
+            portfolio = data["portfolio"]
+            
+        created_by = data["created_by"]
+        viewers = [{"member": created_by, "portfolio": portfolio}]
+        organization_id = data["company_id"]
+        organization_name = data["company_name"]
+        template_id = data["template_id"]
+        data_type = data["data_type"]
+        payment_month = data["payment_month"]
+        payment_year = data["payment_year"]
+        
+        res, res_metadata = create_document_helper(created_by, organization_id, template_id, data_type, viewers)
+        document_id = res["inserted_id"]
+        
+        # OR
+        
+        # doc_payload = {
+        #     "company_id": organization_id,
+        #     "template_id": template_id,
+        #     "created_by": created_by,
+        #     "portfolio": portfolio,
+        #     "data_type": data_type
+        # }
+        # another_doc = NewDocument().post(request, payload=doc_payload)
+        
+        # TO BE COMPLETED
+        process_payload = {
+            "process_title": f"{created_by} Invoice ({payment_month}-{payment_year})",
+            "company_id": organization_id,
+            "created_by": created_by,
+            "org_name": organization_name,
+            "creator_portfolio": portfolio,
+            "data_type": data_type,
+            "parent_id": document_id,
+            "action": "start_document_processing_wf_wise",
+            "workflows": [
+                {
+                    "workflows": {
+                        "workflow_title": "",
+                        "steps": []
+                    }
+                }
+            ],
+            "workflows_ids": [
+                ""
+            ],
+            "process_type": "document"
+        }
+        
+        process = DocumentOrTemplateProcessing().post(request, payload=process_payload)
+        # print(process)
+        
+        return Response(f"created_document: {document_id},\n created_process: {process.data['_id']}", status.HTTP_201_CREATED)
