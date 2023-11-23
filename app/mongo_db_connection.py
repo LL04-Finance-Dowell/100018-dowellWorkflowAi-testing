@@ -34,7 +34,7 @@ from app.constants import (
     WF_CONNECTION_LIST,
     PROCESS_CONNECTION_DICT,
     PUBLIC_CONNECTION_LIST,
-    PUBLIC_CONNECTION_DICT
+    PUBLIC_CONNECTION_DICT,
 )
 
 dd = datetime.now()
@@ -97,9 +97,7 @@ def single_query_process_collection(options):
 
 
 def bulk_query_public_collection(options):
-    public = get_data_from_data_service(
-        *PUBLIC_CONNECTION_LIST, "fetch", field=options
-    )
+    public = get_data_from_data_service(*PUBLIC_CONNECTION_LIST, "fetch", field=options)
     return public
 
 
@@ -109,17 +107,20 @@ def bulk_query_document_collection(options):
     )
     return documents
 
+
 def single_query_document_collection(options):
     documents = get_data_from_data_service(
         *DOCUMENT_CONNECTION_LIST, "find", field=options
     )
     return documents
 
+
 def bulk_query_document_metadata_collection(options):
     documents = get_data_from_data_service(
         *DOCUMENT_METADATA_CONNECTION_LIST, "fetch", field=options
     )
     return documents
+
 
 def single_query_document_metadata_collection(options):
     documents = get_data_from_data_service(
@@ -144,6 +145,7 @@ def single_query_template_collection(options):
         field=options,
     )
     return template
+
 
 def bulk_query_template_metadata_collection(options):
     templates = get_data_from_data_service(
@@ -177,16 +179,23 @@ def single_query_clones_collection(options):
     clone = get_data_from_data_service(*CLONES_CONNECTION_LIST, "find", field=options)
     return clone
 
+
 def bulk_query_clones_collection(options):
     clones = get_data_from_data_service(*CLONES_CONNECTION_LIST, "fetch", field=options)
     return clones
 
+
 def single_query_clones_metadata_collection(options):
-    clone = get_data_from_data_service(*CLONES_METADATA_CONNECTION_LIST, "find", field=options)
+    clone = get_data_from_data_service(
+        *CLONES_METADATA_CONNECTION_LIST, "find", field=options
+    )
     return clone
 
+
 def bulk_query_clones_metadata_collection(options):
-    clones = get_data_from_data_service(*CLONES_METADATA_CONNECTION_LIST, "fetch", field=options)
+    clones = get_data_from_data_service(
+        *CLONES_METADATA_CONNECTION_LIST, "fetch", field=options
+    )
     return clones
 
 
@@ -339,14 +348,13 @@ def get_document_object(document_id):
     document = get_data_from_data_service(
         *DOCUMENT_CONNECTION_LIST, "find", {"_id": document_id}
     )
-
     return document
+
 
 def get_clone_object(clone_id):
     clone = get_data_from_data_service(
         *CLONES_CONNECTION_LIST, "find", {"_id": clone_id}
     )
-
     return clone
 
 
@@ -357,6 +365,7 @@ def get_document_list(company_id, data_type):
         {"company_id": str(company_id), "data_type": data_type},
     )
     return documents
+
 
 def get_clone_list(company_id, data_type):
     clones = get_data_from_data_service(
@@ -563,6 +572,7 @@ def save_to_template_collection(options):
     )
     return post_to_data_service(payload)
 
+
 def save_to_template_metadata_collection(options):
     options["created_on"] = time
     options["approved"] = False
@@ -579,6 +589,7 @@ def save_to_template_metadata_collection(options):
     )
     return post_to_data_service(payload)
 
+
 def save_to_document_collection(options):
     options["eventId"] = get_event_id()["event_id"]
     options["created_on"] = time
@@ -593,6 +604,7 @@ def save_to_document_collection(options):
         }
     )
     return post_to_data_service(payload)
+
 
 def save_to_document_metadata_collection(options):
     options["eventId"] = get_event_id()["event_id"]
@@ -626,6 +638,7 @@ def save_to_clone_collection(options):
         }
     )
     return post_to_data_service(payload)
+
 
 def save_to_clone_metadata_collection(options):
     options["eventId"] = get_event_id()["event_id"]
@@ -707,6 +720,7 @@ def save_to_process_collection(options):
     )
     return post_to_data_service(payload)
 
+
 def save_to_public_collection(options):
     payload = json.dumps(
         {
@@ -718,6 +732,7 @@ def save_to_public_collection(options):
         }
     )
     return post_to_data_service(payload)
+
 
 def update_folder(folder_id, old_folder):
     payload = json.dumps(
@@ -742,7 +757,7 @@ def update_folder(folder_id, old_folder):
 
 def authorize_metadata(metadata_id, viewers, process_id, item_type):
     payload = None
-    if item_type == "document": # document here is process_type
+    if item_type == "document":  # document here is process_type
         payload = json.dumps(
             {
                 **CLONES_METADATA_CONNECTION_DICT,
@@ -774,7 +789,7 @@ def authorize_metadata(metadata_id, viewers, process_id, item_type):
                 "platform": "bangalore",
             }
         )
-    if payload is not None:  
+    if payload is not None:
         return post_to_data_service(payload)
 
     return
@@ -867,6 +882,9 @@ def authorize(document_id, viewers, process_id, item_type):
     if payload is not None:
         if metadata_payload is not None:
             post_to_data_service(metadata_payload)
+        else:
+            print("unable to update metadata")
+
         return post_to_data_service(payload)
 
     return
@@ -877,69 +895,50 @@ def finalize_item(item_id, state, item_type, message, signers=None):
     payload_dict = None
     if item_type == "document":
         payload_dict = {
-                **DOCUMENT_CONNECTION_DICT,
-                "command": "update",
-                "field": {
-                    "_id": item_id,
-                },
-                "update_field": {
-                    "document_state": state,
-                    "message":message
-                },
-                "platform": "bangalore",
-            }
-        payload = json.dumps(
-            payload_dict
-        )
+            **DOCUMENT_CONNECTION_DICT,
+            "command": "update",
+            "field": {
+                "_id": item_id,
+            },
+            "update_field": {"document_state": state, "message": message},
+            "platform": "bangalore",
+        }
+        payload = json.dumps(payload_dict)
     elif item_type == "clone":
         payload_dict = {
-                **CLONES_CONNECTION_DICT,
-                "command": "update",
-                "field": {
-                    "_id": item_id,
-                },
-                "update_field": {
-                    "document_state": state,     
-                    "message":message
-            
-                },
-                "platform": "bangalore",
-            }
-        payload = json.dumps(
-            payload_dict
-        )
+            **CLONES_CONNECTION_DICT,
+            "command": "update",
+            "field": {
+                "_id": item_id,
+            },
+            "update_field": {"document_state": state, "message": message},
+            "platform": "bangalore",
+        }
+        payload = json.dumps(payload_dict)
     elif item_type == "template":
         payload_dict = {
-                **TEMPLATE_CONNECTION_DICT,
-                "command": "update",
-                "field": {
-                    "_id": item_id,
-                },
-                "update_field": {
-                    "template_state": state,
-                    "message":message
-                },
-                "platform": "bangalore",
-            }
-        payload = json.dumps(
-            payload_dict
-        )
+            **TEMPLATE_CONNECTION_DICT,
+            "command": "update",
+            "field": {
+                "_id": item_id,
+            },
+            "update_field": {"template_state": state, "message": message},
+            "platform": "bangalore",
+        }
+        payload = json.dumps(payload_dict)
     elif item_type == "workflow":
         payload_dict = {
-                **WF_CONNECTION_DICT,
-                "command": "update",
-                "field": {
-                    "_id": item_id,
-                },
-                "update_field": {
-                    "document_state": state,
-
-                },
-                "platform": "bangalore",
-            }
-        payload = json.dumps(
-            payload_dict
-        )
+            **WF_CONNECTION_DICT,
+            "command": "update",
+            "field": {
+                "_id": item_id,
+            },
+            "update_field": {
+                "document_state": state,
+            },
+            "platform": "bangalore",
+        }
+        payload = json.dumps(payload_dict)
 
     if payload is not None:
         if signers is not None:
@@ -958,49 +957,43 @@ def update_metadata(item_id, state, item_type, signers=None):
     payload_dict = None
     if item_type == "document":
         payload_dict = {
-                **DOCUMENT_METADATA_CONNECTION_DICT,
-                "command": "update",
-                "field": {
-                    "_id": item_id,
-                },
-                "update_field": {
-                    "document_state": state,
-                },
-                "platform": "bangalore",
-            }
-        payload = json.dumps(
-            payload_dict
-        )
+            **DOCUMENT_METADATA_CONNECTION_DICT,
+            "command": "update",
+            "field": {
+                "_id": item_id,
+            },
+            "update_field": {
+                "document_state": state,
+            },
+            "platform": "bangalore",
+        }
+        payload = json.dumps(payload_dict)
     elif item_type == "clone":
         payload_dict = {
-                **CLONES_METADATA_CONNECTION_DICT,
-                "command": "update",
-                "field": {
-                    "_id": item_id,
-                },
-                "update_field": {
-                    "document_state": state,
-                },
-                "platform": "bangalore",
-            }
-        payload = json.dumps(
-            payload_dict
-        )
+            **CLONES_METADATA_CONNECTION_DICT,
+            "command": "update",
+            "field": {
+                "_id": item_id,
+            },
+            "update_field": {
+                "document_state": state,
+            },
+            "platform": "bangalore",
+        }
+        payload = json.dumps(payload_dict)
     elif item_type == "template":
         payload_dict = {
-                **TEMPLATE_METADATA_CONNECTION_DICT,
-                "command": "update",
-                "field": {
-                    "_id": item_id,
-                },
-                "update_field": {
-                    "template_state": state,
-                },
-                "platform": "bangalore",
-            }
-        payload = json.dumps(
-            payload_dict
-        )
+            **TEMPLATE_METADATA_CONNECTION_DICT,
+            "command": "update",
+            "field": {
+                "_id": item_id,
+            },
+            "update_field": {
+                "template_state": state,
+            },
+            "platform": "bangalore",
+        }
+        payload = json.dumps(payload_dict)
     if payload is not None:
         if signers is not None:
             update_field = payload_dict["update_field"]
@@ -1115,6 +1108,7 @@ def update_template_approval(template_id, approval):
     )
     return post_to_data_service(payload)
 
+
 def update_template(template_id, process_id, state):
     payload = json.dumps(
         {
@@ -1131,6 +1125,7 @@ def update_template(template_id, process_id, state):
         }
     )
     return post_to_data_service(payload)
+
 
 def update_document(document_id, process_id, state):
     payload = json.dumps(
@@ -1219,7 +1214,7 @@ def update_uuid_object(uuid_hash):
     )
     return post_to_data_service(payload)
 
-    
+
 def delete_template(template_id, data_type):
     payload = json.dumps(
         {

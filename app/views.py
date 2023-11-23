@@ -1899,7 +1899,6 @@ def get_templates_metadata(request, company_id):
     return Response({"templates": templates_meta_data})
 
 
-
 @api_view(["GET"])
 def get_reports_templates_metata(request, company_id):
     data_type = request.query_params.get("data_type")
