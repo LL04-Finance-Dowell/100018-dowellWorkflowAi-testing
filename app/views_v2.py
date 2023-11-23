@@ -1638,30 +1638,6 @@ class PublicUser(APIView):
         return Response(public_users, status=status.HTTP_200_OK)
 
 
-class TriggerInvoice(APIView):
-    def post(self, request):
-        if not request.data:
-            return Response(
-                {"message": "Failed to process document creation."},
-                status.HTTP_400_BAD_REQUEST,
-            )
-        portfolio = ""
-        if request.data["portfolio"]:
-            portfolio = request.data["portfolio"]
-            
-        created_by = request.data["created_by"]
-        viewers = [{"member": created_by, "portfolio": portfolio}]
-        organization_id = request.data["company_id"]
-        template_id = request.data["template_id"]
-        data_type = request.data["data_type"]
-        
-        res, res_metadata = create_document_helper(created_by, organization_id, template_id, data_type, viewers)
-        
-        document_id = res["inserted_id"]
-        
-        return Response(f"created_document: {document_id}", status.HTTP_200_OK)
-
-
 class NewNotification(APIView):
     def post(self, request):
         data = {
@@ -1765,3 +1741,28 @@ class NotificationReminder(APIView):
             return Response(
                 f"An error occured: {err}", status.HTTP_500_INTERNAL_SERVER_ERROR
             )   
+        
+
+
+class TriggerInvoice(APIView):
+    def post(self, request):
+        if not request.data:
+            return Response(
+                {"message": "Failed to process document creation."},
+                status.HTTP_400_BAD_REQUEST,
+            )
+        portfolio = ""
+        if request.data["portfolio"]:
+            portfolio = request.data["portfolio"]
+            
+        created_by = request.data["created_by"]
+        viewers = [{"member": created_by, "portfolio": portfolio}]
+        organization_id = request.data["company_id"]
+        template_id = request.data["template_id"]
+        data_type = request.data["data_type"]
+        
+        res, res_metadata = create_document_helper(created_by, organization_id, template_id, data_type, viewers)
+        
+        document_id = res["inserted_id"]
+        
+        return Response(f"created_document: {document_id}", status.HTTP_200_OK)
