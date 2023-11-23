@@ -1745,7 +1745,6 @@ class NotificationReminder(APIView):
             )   
             
 
-
 class TriggerInvoice(APIView):
     def post(self, request, *args, **kwargs):
         data = request.data
