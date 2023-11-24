@@ -64,4 +64,7 @@ urlpatterns = [
         "notifications/<str:process_id>/reminders/",
         views_v2.NotificationReminder.as_view(),
     ),
+
+    path("reports/document/<str:item_id>/", views_v2.DocumentReport.as_view(), name="document-report"),
+
 ]
