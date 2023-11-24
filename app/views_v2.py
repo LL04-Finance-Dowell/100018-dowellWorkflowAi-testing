@@ -108,7 +108,7 @@ class HomePage(APIView):
 
 
 class DocumentOrTemplateProcessing(APIView):
-    def post(self, request, args, **kwargs):
+    def post(self, request, *args, **kwargs):
         """processing is determined by action picked by user."""
         if not request.data:
             return Response("You are missing something!", status.HTTP_400_BAD_REQUEST)
@@ -207,6 +207,7 @@ class DocumentOrTemplateProcessing(APIView):
                     state="cancelled",
                 )
             )
+            
             if res["isSuccess"]:
                 return Response("Process has been cancelled!", status.HTTP_200_OK)
             return Response(status.HTTP_500_INTERNAL_SERVER_ERROR)
@@ -1768,6 +1769,7 @@ class TriggerInvoice(APIView):
         payment_year = data["payment_year"]
         
         res, res_metadata = create_document_helper(created_by, organization_id, template_id, data_type, viewers)
+        print(f"Response : {res}")
         document_id = res["inserted_id"]
         
         # OR
@@ -1783,29 +1785,153 @@ class TriggerInvoice(APIView):
         
         # TO BE COMPLETED
         process_payload = {
-            "process_title": f"{created_by} Invoice ({payment_month}-{payment_year})",
-            "company_id": organization_id,
-            "created_by": created_by,
-            "org_name": organization_name,
-            "creator_portfolio": portfolio,
-            "data_type": data_type,
-            "parent_id": document_id,
+            "company_id": "646b547da6879823557ac865",
+            "created_by": "mayorisaac",
+            "creator_portfolio": "Mayor Isaac",
+            "data_type": "Real_Data",
+            "parent_id": "65574061ca46ed6dac1baba8",
             "action": "start_document_processing_wf_wise",
+            "process_title": "test invoice",
             "workflows": [
                 {
                     "workflows": {
-                        "workflow_title": "",
-                        "steps": []
+                        "workflow_title": "oct invoice workflow",
+                        "steps": [
+                            {
+                                "stepCloneCount": 1,
+                                "stepTaskType": "request_for_task",
+                                "stepRights": "add_edit",
+                                "stepProcessingOrder": "no_order",
+                                "stepTaskLimitation": "portfolios_assigned_on_or_before_step_start_date_and_time",
+                                "stepActivityType": "individual_task",
+                                "stepDisplay": "before_this_step",
+                                "stepName": "Step 1",
+                                "stepRole": "Freelancer",
+                                "stepPublicMembers": [
+                                    {
+                                        "member": "HO7QEz3sQZB9",
+                                        "portfolio": "Mayor-Portfolio"
+                                    }
+                                ],
+                                "stepTeamMembers": [],
+                                "stepUserMembers": [],
+                                "stepDocumentCloneMap": [],
+                                "stepNumber": 1,
+                                "stepDocumentMap": [
+                                    {
+                                        "content": "s1",
+                                        "required": False,
+                                        "page": 1
+                                    },
+                                    {
+                                        "content": "i2",
+                                        "required": False,
+                                        "page": 2
+                                    },
+                                    {
+                                        "content": "i3",
+                                        "required": False,
+                                        "page": 2
+                                    },
+                                    {
+                                        "content": "i4",
+                                        "required": False,
+                                        "page": 2
+                                    },
+                                    {
+                                        "content": "i5",
+                                        "required": False,
+                                        "page": 2
+                                    }
+                                ],
+                                "permitInternalWorkflow": False,
+                                "skipStep": False,
+                                "stepLocation": "any"
+                            },
+                            {
+                                "stepCloneCount": 1,
+                                "stepTaskType": "request_for_task",
+                                "stepRights": "add_edit",
+                                "stepProcessingOrder": "no_order",
+                                "stepTaskLimitation": "portfolios_assigned_on_or_before_step_start_date_and_time",
+                                "stepActivityType": "individual_task",
+                                "stepDisplay": "before_this_step",
+                                "stepName": "Step 2",
+                                "stepRole": "HR",
+                                "stepPublicMembers": [
+                                    {
+                                        "member": "lA4zWMfcsV3T",
+                                        "portfolio": "Mayor-Portfolio"
+                                    }
+                                ],
+                                "stepTeamMembers": [],
+                                "stepUserMembers": [],
+                                "stepDocumentCloneMap": [],
+                                "stepNumber": 2,
+                                "stepDocumentMap": [
+                                    {
+                                        "content": "s2",
+                                        "required": False,
+                                        "page": 3
+                                    },
+                                    {
+                                        "content": "d4",
+                                        "required": False,
+                                        "page": 3
+                                    }
+                                ],
+                                "permitInternalWorkflow": False,
+                                "skipStep": False,
+                                "stepLocation": "any"
+                            },
+                            {
+                                "stepCloneCount": 1,
+                                "stepTaskType": "request_for_task",
+                                "stepRights": "add_edit",
+                                "stepProcessingOrder": "no_order",
+                                "stepTaskLimitation": "portfolios_assigned_on_or_before_step_start_date_and_time",
+                                "stepActivityType": "individual_task",
+                                "stepDisplay": "before_this_step",
+                                "stepName": "Step 3",
+                                "stepRole": "Accounts",
+                                "stepPublicMembers": [
+                                    {
+                                        "member": "C5ZiFflFU63K",
+                                        "portfolio": "Mayor-Portfolio"
+                                    }
+                                ],
+                                "stepTeamMembers": [],
+                                "stepUserMembers": [],
+                                "stepDocumentCloneMap": [],
+                                "stepNumber": 3,
+                                "stepDocumentMap": [
+                                    {
+                                        "content": "s3",
+                                        "required": False,
+                                        "page": 3
+                                    },
+                                    {
+                                        "content": "d5",
+                                        "required": False,
+                                        "page": 3
+                                    }
+                                ],
+                                "permitInternalWorkflow": False,
+                                "skipStep": False,
+                                "stepLocation": "any"
+                            }
+                        ]
                     }
                 }
             ],
             "workflows_ids": [
-                ""
+                "652e7d1bfde0ae87f6c23bdc"
             ],
-            "process_type": "document"
+            "process_type": "document",
+            "org_name": "mayorisaac"
         }
         
         process = DocumentOrTemplateProcessing().post(request, payload=process_payload)
-        # print(process)
+        print(process.data)
         
-        return Response(f"created_document: {document_id},\n created_process: {process.data['_id']}", status.HTTP_201_CREATED)
+        return Response(f"created_document: {document_id},\n created_process: {process.data}", status.HTTP_201_CREATED)
