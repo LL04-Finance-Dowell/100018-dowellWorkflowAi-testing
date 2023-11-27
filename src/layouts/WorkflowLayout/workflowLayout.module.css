@@ -87,6 +87,19 @@
   background: linear-gradient(to top, rgba(0, 0, 0, 0.08), transparent);
   z-index: 100000000000;
 }
+.workflow_check {
+  color: black;
+  width: 100vw;
+  margin: 20px auto;
+  padding: 10px;
+  display: flex;
+  /* justify-content: center; */
+  padding-left: 15%;
+  /* border: solid; */
+  position: fixed;
+  background: white;
+  z-index: 100000000000;
+}
 
 .legal__Overlay__Container {
   background: rgba(0, 0, 0, 0.12);

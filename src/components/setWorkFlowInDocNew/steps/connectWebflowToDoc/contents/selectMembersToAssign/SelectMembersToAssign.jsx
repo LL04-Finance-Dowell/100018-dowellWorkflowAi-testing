@@ -70,6 +70,7 @@ const SelectMembersToAssign = ({
   const [usedId, setUsedId]= useState([])
   const [usedIdsLoaded, setUsedIdsLoaded] = useState(false);
   const [isTooltipVisible, setIsTooltipVisible] = useState(false);
+  const [toggleCreatePublicLink, setToggleCreatePublicLInk] = useState(true)
 
   const dispatch = useDispatch();
 
@@ -276,7 +277,7 @@ const SelectMembersToAssign = ({
           currentGroupSelectionItem.header
         )
       );
-      currentGroupSelectionItem?.portfolios.forEach((team) =>
+      currentGroupSelectionItem?.portfolios.filter((item) => !usedId.some((link) => link?.member === item?.member)).forEach((team) =>
       handleAddNewMember(
           team
         )
@@ -720,7 +721,7 @@ const SelectMembersToAssign = ({
   console.log('the selectMembersComp are ', selectMembersComp)
  
   return (
-    <div className={styles.container}>
+    <div className={styles.container} id='selectTeam'>
       {processSteps.find(
         (process) => process.workflow === docCurrentWorkflow?._id
       )?.steps[currentStepIndex]?.skipStep ? (
@@ -1042,11 +1043,34 @@ const SelectMembersToAssign = ({
                       Selection count: {selectionCount}
                     </span>
                   </Radio>
+                  {
+                      current.header === 'Public' && current.portfolios.filter((item) => !usedId.some((link) => link?.member === item?.member)).length < 1 ?
+                      <div style={{padding:'10px'}}>
+                        You have no public Id to create process with.
+                        <div style={{display:'flex', justifyContent:"center", marginTop:'10px'}}>
+                          {
+                            toggleCreatePublicLink ? 
+                            <button 
+                              style={{backgroundColor:'green', color:'white', padding:"3px", borderRadius:'4px'}} 
+                              onClick={()=>{setToggleCreatePublicLInk(false); window.open('https://100093.pythonanywhere.com/', '_blank')}}>
+                                Create Public Id
+                            </button>:
+                            <button 
+                              style={{backgroundColor:'green', color:'white', padding:"3px", borderRadius:'4px'}} 
+                              onClick={()=>window.location.reload()}>
+                                Refresh the page
+                            </button>
+                          }
+                          
+                        </div>
+                        
+                      </div>: 
                   <div
                     className={styles.select__Members__Wrapper}
                     ref={selectMembersRef}
                   >
-                    <select
+                    
+                      <select
                       required
                       {...register('members')}
                       size={
@@ -1147,6 +1171,8 @@ const SelectMembersToAssign = ({
                         ))
                       )}
                     </select>
+                   
+                    
                     {current.portfolios.map((item) => (
                        <div
                        onMouseEnter={() => setIsTooltipVisible(true)}
@@ -1167,6 +1193,7 @@ const SelectMembersToAssign = ({
                      </div>
                     ))}
                   </div>
+                  }
                 </>
               }
             </div>

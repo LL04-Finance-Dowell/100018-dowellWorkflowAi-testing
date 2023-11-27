@@ -36,6 +36,8 @@ import FoldersModal from '../../pages/Folders/modals/FoldersModal';
 import { useTranslation } from 'react-i18next';
 
 import LanguageDropdown from '../../components/LanguageSelector/LanguageDropdown';
+import { toast } from 'react-toastify';
+import axios from 'axios';
 
 const WorkflowLayout = ({ children }) => {
   const dispatch = useDispatch();
@@ -68,6 +70,30 @@ const WorkflowLayout = ({ children }) => {
     useAppContext();
 
   const [showUserDetail, setShowUserDetail] = useState(false);
+
+  
+  ///credits
+  const { creditResponse } = useSelector((state) => state.app);
+  const handleActivateWorkspace = () => {
+    // Assuming you have the API key stored in a variable apiKey
+    const apiKey = creditResponse.api_key;
+
+    // API endpoint
+    const endpoint = `https://100105.pythonanywhere.com/api/v3/user/?type=activate_key&api_key=${apiKey}`;
+    // Make the API call to activate the workspace using Axios
+    axios
+      .post(endpoint)
+      .then((response) => {
+        toast.success(response.data);
+      })
+      .catch((error) => {
+        toast.error('Error activating workspace:', error);
+      });
+      
+  };
+  const handleBuyCredits = () => {
+    window.open('https://ll05-ai-dowell.github.io/100105-DowellApiKeySystem/', '_blank');
+  };
 
   const handleClick = () => {
     if (session_id) {
@@ -314,6 +340,59 @@ const WorkflowLayout = ({ children }) => {
                   <p className={styles.beta__Info__Text}>
                     {t('You are on the beta version of workflow.ai')}
                   </p>
+                  {
+                    creditResponse?.is_active == false   || creditResponse?.total_credits < 100 ?
+                    <p className={styles.workflow_check}>
+                    <span>
+                      {
+                         creditResponse?.is_active == false ? <>
+                         <span className={styles.title}>{t('Activate your Workflow AI')}:</span>{' '}
+                         <button 
+                          className={styles.activate__button} 
+                          onClick={handleActivateWorkspace}
+                          
+                          style={{
+                            marginLeft: 'auto',
+                            border: '1px solid green',
+                            padding: '5px 10px',  // Adjusted padding for smaller size
+                            cursor: 'pointer',
+                            fontSize: '10px',  // Adjusted font size for smaller size
+                            // borderRadius: '50%',
+                            backgroundColor:'green',
+                            color:'white',
+                            marginRight:"10px",
+                            borderRadius:'6px'
+                          }}
+                          >Activate Workspace</button>
+                         </> :<></>
+                      }
+                    </span>
+
+                    <span>
+                      {
+                        creditResponse?.total_credits < 100 ? <>
+                        <span className={styles.title}>{t('Your Credits are very low')}:</span>{' '}
+                        <button
+                          onClick={handleBuyCredits}
+                          style={{
+                            marginLeft: 'auto',
+                            border: '1px solid green',
+                            padding: '5px 10px',  // Adjusted padding for smaller size
+                            cursor: 'pointer',
+                            fontSize: '10px',  // Adjusted font size for smaller size
+                            backgroundColor:'green',
+                            color:'white',
+                            borderRadius:'6px'
+                          }}
+                        >
+                          Buy Credits
+                        </button>
+                        </>:<></>
+                      }
+                    </span>
+                  </p> : <></>
+                  }
+                 
                   {children}
                 </div>
                 <div className={styles.chat_container}>
