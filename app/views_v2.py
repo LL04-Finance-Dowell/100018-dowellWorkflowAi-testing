@@ -1767,6 +1767,10 @@ class TriggerInvoice(APIView):
         data_type = data["data_type"]
         payment_month = data["payment_month"]
         payment_year = data["payment_year"]
+        hr_username = data["hr_username"]
+        hr_portfolio = data["hr_portfolio"]
+        accounts_username = data["accounts_username"]
+        accounts_portfolio = data["accounts_portfolio"]
         
         res, res_metadata = create_document_helper(created_by, organization_id, template_id, data_type, viewers)
         print(f"Response : {res}")
@@ -1785,13 +1789,13 @@ class TriggerInvoice(APIView):
         
         # TO BE COMPLETED
         process_payload = {
-            "company_id": "646b547da6879823557ac865",
-            "created_by": "mayorisaac",
-            "creator_portfolio": "Mayor Isaac",
-            "data_type": "Real_Data",
-            "parent_id": "65574061ca46ed6dac1baba8",
+            "company_id": organization_id,
+            "created_by": created_by,
+            "creator_portfolio": portfolio,
+            "data_type": data_type,
+            "parent_id": document_id,
             "action": "start_document_processing_wf_wise",
-            "process_title": "test invoice",
+            "process_title": f"{created_by} Invoice ({payment_month}-{payment_year})",
             "workflows": [
                 {
                     "workflows": {
@@ -1799,7 +1803,7 @@ class TriggerInvoice(APIView):
                         "steps": [
                             {
                                 "stepCloneCount": 1,
-                                "stepTaskType": "request_for_task",
+                                "stepTaskType": "assign_task",
                                 "stepRights": "add_edit",
                                 "stepProcessingOrder": "no_order",
                                 "stepTaskLimitation": "portfolios_assigned_on_or_before_step_start_date_and_time",
@@ -1808,12 +1812,17 @@ class TriggerInvoice(APIView):
                                 "stepName": "Step 1",
                                 "stepRole": "Freelancer",
                                 "stepPublicMembers": [
+                                    # {
+                                    #     "member": "HO7QEz3sQZB9",
+                                    #     "portfolio": "Mayor-Portfolio"
+                                    # }
+                                ],
+                                "stepTeamMembers": [
                                     {
-                                        "member": "HO7QEz3sQZB9",
-                                        "portfolio": "Mayor-Portfolio"
+                                        "member": created_by,
+                                        "portfolio": portfolio
                                     }
                                 ],
-                                "stepTeamMembers": [],
                                 "stepUserMembers": [],
                                 "stepDocumentCloneMap": [],
                                 "stepNumber": 1,
@@ -1850,7 +1859,7 @@ class TriggerInvoice(APIView):
                             },
                             {
                                 "stepCloneCount": 1,
-                                "stepTaskType": "request_for_task",
+                                "stepTaskType": "assign_task",
                                 "stepRights": "add_edit",
                                 "stepProcessingOrder": "no_order",
                                 "stepTaskLimitation": "portfolios_assigned_on_or_before_step_start_date_and_time",
@@ -1859,12 +1868,17 @@ class TriggerInvoice(APIView):
                                 "stepName": "Step 2",
                                 "stepRole": "HR",
                                 "stepPublicMembers": [
+                                    # {
+                                    #     "member": "lA4zWMfcsV3T",
+                                    #     "portfolio": "Mayor-Portfolio"
+                                    # }
+                                ],
+                                "stepTeamMembers": [
                                     {
-                                        "member": "lA4zWMfcsV3T",
-                                        "portfolio": "Mayor-Portfolio"
+                                        "member": hr_username,
+                                        "portfolio": hr_portfolio
                                     }
                                 ],
-                                "stepTeamMembers": [],
                                 "stepUserMembers": [],
                                 "stepDocumentCloneMap": [],
                                 "stepNumber": 2,
@@ -1886,7 +1900,7 @@ class TriggerInvoice(APIView):
                             },
                             {
                                 "stepCloneCount": 1,
-                                "stepTaskType": "request_for_task",
+                                "stepTaskType": "assign_task",
                                 "stepRights": "add_edit",
                                 "stepProcessingOrder": "no_order",
                                 "stepTaskLimitation": "portfolios_assigned_on_or_before_step_start_date_and_time",
@@ -1895,12 +1909,17 @@ class TriggerInvoice(APIView):
                                 "stepName": "Step 3",
                                 "stepRole": "Accounts",
                                 "stepPublicMembers": [
+                                    # {
+                                    #     "member": "C5ZiFflFU63K",
+                                    #     "portfolio": "Mayor-Portfolio"
+                                    # }
+                                ],
+                                "stepTeamMembers": [
                                     {
-                                        "member": "C5ZiFflFU63K",
-                                        "portfolio": "Mayor-Portfolio"
+                                        "member": accounts_username,
+                                        "portfolio": accounts_portfolio
                                     }
                                 ],
-                                "stepTeamMembers": [],
                                 "stepUserMembers": [],
                                 "stepDocumentCloneMap": [],
                                 "stepNumber": 3,
@@ -1925,10 +1944,11 @@ class TriggerInvoice(APIView):
                 }
             ],
             "workflows_ids": [
+                # Replace with another generic workflow_id
                 "652e7d1bfde0ae87f6c23bdc"
             ],
             "process_type": "document",
-            "org_name": "mayorisaac"
+            "org_name": organization_name
         }
         
         process = DocumentOrTemplateProcessing().post(request, payload=process_payload)

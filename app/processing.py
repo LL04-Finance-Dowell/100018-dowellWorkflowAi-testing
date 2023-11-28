@@ -156,9 +156,9 @@ class HandleProcess:
     def generate_qrcode(link):
         # When working locally change to this.
         # We have to do this manually as pythonanywhere has issues resolving our environmental variables.
-        qr_path = f"media/qrcodes/{uuid.uuid4().hex}.png" 
+        # qr_path = f"media/qrcodes/{uuid.uuid4().hex}.png" 
         # In production the below works
-        # qr_path = f"100094.pythonanywhere.com/media/qrcodes/{uuid.uuid4().hex}.png" 
+        qr_path = f"100094.pythonanywhere.com/media/qrcodes/{uuid.uuid4().hex}.png" 
         qr_code = qrcode.QRCode()
         qr_code.add_data(link)
         qr_code.make()
