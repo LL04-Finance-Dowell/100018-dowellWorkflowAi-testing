@@ -15,6 +15,8 @@ import { useTranslation } from 'react-i18next';
 import { productName } from '../../../../../utils/helpers';
 import axios from 'axios';
 import { toast } from 'react-toastify';
+import { FaPlus } from 'react-icons/fa';
+import { createTemplate } from '../../../../../features/template/asyncThunks';
 
 const CreateDocument = ({ handleToggleOverlay }) => {
   const { userDetail } = useSelector((state) => state.auth);
@@ -30,6 +32,59 @@ const CreateDocument = ({ handleToggleOverlay }) => {
   const ref = useRef(null);
 
   const { register, handleSubmit, setValue } = useForm();
+
+  const handleNewItemClick = (e, content) => {
+    if (content === 'template') {
+      e.preventDefault();
+      const data = {
+        created_by: userDetail?.userinfo.username,
+        company_id:
+          userDetail?.portfolio_info?.length > 1
+            ? userDetail?.portfolio_info.find(
+              (portfolio) => portfolio.product === productName
+            )?.org_id
+            : userDetail?.portfolio_info[0].org_id,
+        data_type:
+          userDetail?.portfolio_info?.length > 1
+            ? userDetail?.portfolio_info.find(
+              (portfolio) => portfolio.product === productName
+            )?.data_type
+            : userDetail?.portfolio_info[0].data_type,
+        portfolio:
+          userDetail?.portfolio_info?.length > 1
+            ? userDetail?.portfolio_info.find(
+              (portfolio) => portfolio.product === productName
+            )?.portfolio_name
+            : userDetail?.portfolio_info[0].portfolio_name,
+      };
+      const Api_key = creditResponse?.api_key
+      axios
+        .post(
+          `https://100105.pythonanywhere.com/api/v3/process-services/?type=product_service&api_key=${Api_key}`,
+          {
+            "service_id": "DOWELL10026",
+            "sub_service_ids": ["DOWELL100262"],
+          },
+        )
+      // dispatch(settemLoading(true))
+        .then((response) => {
+
+          if (response.data.success == true) {
+
+            dispatch(createTemplate(data));
+          }
+        })
+      // dispatch(settemLoading(false))
+        .catch((error) => {
+          console.log(error.response?.data?.message);
+          toast.info(error.response?.data?.message)
+
+        });
+    }
+    else {
+      dispatch(setToggleManageFileForm(true));
+    }
+  };
 
   const onSubmit = (data) => {
     const { template } = data;
@@ -86,6 +141,7 @@ const CreateDocument = ({ handleToggleOverlay }) => {
     setCurrentOption(item.template_name);
     setValue('template', item._id);
     ref.current?.focus();
+    handleSubmit(onSubmit)();
   };
 
   const handleClickLabel = () => {
@@ -102,63 +158,69 @@ const CreateDocument = ({ handleToggleOverlay }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   const reversedArray = [...allTemplatesArray].reverse();
- 
+
   return (
     <Overlay title='Create Document' handleToggleOverlay={handleToggleOverlay}>
       {allTemplatesStatus === 'pending' ? (
         <Spinner />
       ) : reversedArray ? (
-        <form onSubmit={handleSubmit(onSubmit)}>
-          <div id='template' className={styles.dropdown__container}>
-            <label onClick={handleClickLabel} htmlFor='template'>
-              {t('Select Template')} <span>*</span>
-            </label>
-            <div style={{ position: 'relative' }}>
+        <>
+          <div className={styles.buttons_container}>
+            <form onSubmit={handleSubmit(onSubmit)}>
+              <div id='template' className={styles.dropdown__container}>
+                {/* <label onClick={handleClickLabel} htmlFor='template'>
+                {t('Select Template')} <span>*</span>
+              </label>
+              <div style={{ position: 'relative' }}>
 
-              <select
-                required
-                className={styles.ghost__input}
-                tabIndex={-98}
-                {...register('template')}
-              >
-                {reversedArray.map((item) => (
-                  <option key={item._id} value={item._id}>
-                    {item.template_name}
-                  </option>
-                ))}
-              </select>
-            </div>
-            <button
-              ref={ref}
-              type='button'
-              onClick={handleDropdown}
-              className={`${styles.dropdown__current__option} `}
-            >
-              {/* {currentOption ? currentOption : "__Template Name__"} */}
-              {currentOption ? currentOption : t('__Template Name__')}
-            </button>
-            <div className={styles.dropdown__option__container}>
-              <Collapse open={toggleDropdown}>
-                <div role='listbox' className={styles.dropdown__option__box}>
+                <select
+                  required
+                  className={styles.ghost__input}
+                  tabIndex={-98}
+                  {...register('template')}
+                >
                   {reversedArray.map((item) => (
-                    <div
-                      onClick={() => handleOptionClick(item)}
-                      className={styles.dropdown__option__content}
-                    >
+                    <option key={item._id} value={item._id}>
                       {item.template_name}
-                    </div>
+                    </option>
                   ))}
+                </select>
+              </div> */}
+                <button
+                  ref={ref}
+                  type='button'
+                  onClick={handleDropdown}
+                  className={`${styles.create__button} `}
+                >
+                  {currentOption ? currentOption : <i><FaPlus size={15} /></i>}
+                  {/* {currentOption ? currentOption : `${<i><FaPlus size={25} /></i>} select template`} */}
+                </button>
+                <div className={styles.dropdown__option__container}>
+                  <Collapse open={toggleDropdown}>
+                    <div role='listbox' className={styles.dropdown__option__box}>
+                      {reversedArray.map((item) => (
+                        <div
+                          onClick={() => handleOptionClick(item)}
+                          className={styles.dropdown__option__content}
+                        >
+                          {item.template_name}
+                        </div>
+                      ))}
+                    </div>
+                  </Collapse>
                 </div>
-              </Collapse>
+              </div>
+            </form>
+            <div className={styles.createDocument_dropdown__container__qZtlW}>
+              <button className={styles.create__button}  onClick={(e) => handleNewItemClick(e, "template")}
+                to="/templates/#newTemplate"
+                key={uuidv4()}>
+                <span>{t('New')}</span>
+              </button>
             </div>
           </div>
-          <button type='submit' className={styles.create__button}>
-            <span>{t('Go to Editor')}</span>
-            <i>
-              <BsArrowRightShort size={25} />
-            </i>
-          </button>
-        </form>
+        </>
+
       ) : (
         <h4>{t('No Template')}</h4>
       )}
