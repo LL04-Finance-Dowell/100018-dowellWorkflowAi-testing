@@ -17,7 +17,7 @@ class TestConfig(APITestCase):
         self.sample_document_id = "6523c0c9318bb2857ffd53b6"
         self.sample_portfolio = "Workflow AI"
 
-        #urls
+        # documents api urls
         self.doc_creation_url = reverse('documents')
         self.doc_link_url = reverse('document_link', kwargs={"document_id":self.sample_document_id})
         self.doc_detail_url = reverse('document_detail', kwargs={"item_id":self.sample_document_id})
@@ -29,6 +29,10 @@ class TestConfig(APITestCase):
         self.get_invalid_template_link = reverse('template_link',  kwargs={"template_id":"26728209-0"})
         self.get_template_detail = reverse('template_detail', kwargs={"template_id":self.sample_template_id})
 
+
+        # Workflow api urls
+        self.workflow_creation_url = reverse('create-workflow')
+        self.get_workflows_url = reverse('get-workflows',  kwargs={'company_id': self.sample_company_id})
 
         return super().setUp()
     
