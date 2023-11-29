@@ -21,7 +21,14 @@ class TestConfig(APITestCase):
         self.doc_creation_url = reverse('documents')
         self.doc_link_url = reverse('document_link', kwargs={"document_id":self.sample_document_id})
         self.doc_detail_url = reverse('document_detail', kwargs={"item_id":self.sample_document_id})
-        self.get_docs_url  = reverse('get_documents', kwargs={'company_id': self.sample_company_id})        
+        self.get_docs_url  = reverse('get_documents', kwargs={'company_id': self.sample_company_id})    
+
+        self.create_template_url = reverse('create_template')    
+        self.list_teplates_url = reverse('list_templates', kwargs={"company_id":self.sample_company_id})
+        self.get_template_link = reverse('template_link',  kwargs={"template_id":self.sample_template_id})
+        self.get_invalid_template_link = reverse('template_link',  kwargs={"template_id":"26728209-0"})
+        self.get_template_detail = reverse('template_detail', kwargs={"template_id":self.sample_template_id})
+
 
         return super().setUp()
     
