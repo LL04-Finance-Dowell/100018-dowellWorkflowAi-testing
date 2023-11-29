@@ -104,7 +104,18 @@
   border-radius: 8px;
   border: none;
   outline: none;
+  width: 100px;
+  justify-content: center;
 }
+
+.buttons_container {
+  /* display: flex; */
+  display: -webkit-box;
+  justify-content: space-around; /* Creates two columns of equal size */
+  align-items: center; /* This sets the gap between the buttons */
+  /* Add any additional styling such as padding or margin as needed */
+}
+
 
 /* .create__button:hover {
   background-color: #1faa59;
