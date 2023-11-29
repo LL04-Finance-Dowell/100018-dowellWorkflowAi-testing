@@ -1,8 +1,14 @@
 {
   "files": {
-    "main.css": "/100018-dowellWorkflowAi-testing/static/css/main.b2e552e6.css",
-    "main.js": "/100018-dowellWorkflowAi-testing/static/js/main.f166f16a.js",
+    "main.css": "/100018-dowellWorkflowAi-testing/static/css/main.a7dbabca.css",
+    "main.js": "/100018-dowellWorkflowAi-testing/static/js/main.a85dff92.js",
     "static/js/787.cda612ba.chunk.js": "/100018-dowellWorkflowAi-testing/static/js/787.cda612ba.chunk.js",
+    "static/media/sec3.gif": "/100018-dowellWorkflowAi-testing/static/media/sec3.d60825f0f0b955a33d7b.gif",
+    "static/media/sec6.gif": "/100018-dowellWorkflowAi-testing/static/media/sec6.ae810e2ac89f7f3816d2.gif",
+    "static/media/sec1.gif": "/100018-dowellWorkflowAi-testing/static/media/sec1.461bf430440d10f88d44.gif",
+    "static/media/sec2.gif": "/100018-dowellWorkflowAi-testing/static/media/sec2.ab8feb22cfdbcc15f0a1.gif",
+    "static/media/sec5.gif": "/100018-dowellWorkflowAi-testing/static/media/sec5.88c05cc641e04ab330f8.gif",
+    "static/media/sec4.gif": "/100018-dowellWorkflowAi-testing/static/media/sec4.f6cd1b007b23da87d73e.gif",
     "static/media/greenImage.png": "/100018-dowellWorkflowAi-testing/static/media/greenImage.0bad90a2105988a2730d.png",
     "static/media/roboto-all-400-normal.woff": "/100018-dowellWorkflowAi-testing/static/media/roboto-all-400-normal.c5d001fa922fa66a147f.woff",
     "static/media/chatting.png": "/100018-dowellWorkflowAi-testing/static/media/chatting.59fa441a689f53392c46.png",
@@ -19,12 +25,12 @@
     "index.html": "/100018-dowellWorkflowAi-testing/index.html",
     "static/media/roboto-greek-ext-400-normal.woff2": "/100018-dowellWorkflowAi-testing/static/media/roboto-greek-ext-400-normal.169619821ea93019d1bb.woff2",
     "static/media/getFetch.cjs": "/100018-dowellWorkflowAi-testing/static/media/getFetch.40f37ddea2378391108f.cjs",
-    "main.b2e552e6.css.map": "/100018-dowellWorkflowAi-testing/static/css/main.b2e552e6.css.map",
-    "main.f166f16a.js.map": "/100018-dowellWorkflowAi-testing/static/js/main.f166f16a.js.map",
+    "main.a7dbabca.css.map": "/100018-dowellWorkflowAi-testing/static/css/main.a7dbabca.css.map",
+    "main.a85dff92.js.map": "/100018-dowellWorkflowAi-testing/static/js/main.a85dff92.js.map",
     "787.cda612ba.chunk.js.map": "/100018-dowellWorkflowAi-testing/static/js/787.cda612ba.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.b2e552e6.css",
-    "static/js/main.f166f16a.js"
+    "static/css/main.a7dbabca.css",
+    "static/js/main.a85dff92.js"
   ]
 }
