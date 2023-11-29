@@ -35,6 +35,16 @@ import ProcessName from './steps/setProcessName/ProcessName';
 import { useTranslation } from 'react-i18next';
 import Tabs from './Tabs';
 
+//driver js for showing the steps
+import { driver } from 'driver.js';
+import "driver.js/dist/driver.css";
+import ImgOne from '../../assets/sec1.gif'
+import ImgTwo from '../../assets/sec2.gif';
+import ImgThree from '../../assets/sec3.gif';
+import ImgFour from '../../assets/sec4.gif';
+import ImgFive from '../../assets/sec5.gif';
+import ImgSix from '../../assets/sec6.gif';
+
 const SetWorkflowInDoc = () => {
   const dispatch = useDispatch();
   const { t } = useTranslation();
@@ -49,6 +59,9 @@ const SetWorkflowInDoc = () => {
   const [isDraftProcess, setIsDraftProcess] = useState(false);
   const [draftProcessLoaded, setDraftProcessLoaded] = useState(false);
   const [Process_title, setProcess_title] = useState('');
+
+  //
+  const [driverCounter, setDriverCounter] = useState(1)
 
   const currentURL = window.location.href;
   const parts = currentURL.split('/'); 
@@ -251,6 +264,54 @@ const SetWorkflowInDoc = () => {
     setDraftProcessDoc(foundOriginalDoc);
   };
 
+useEffect(()=>{
+  const videoElement = document.getElementById('hidenImg');
+  const videoElement2 = document.getElementById('hidenImgTwo');
+  const videoElement3 = document.getElementById('hidenImgThree');
+  const videoElement4 = document.getElementById('hidenImgFour');
+  const videoElement5 = document.getElementById('hidenImgFive');
+  const videoElement6 = document.getElementById('hidenImgSix');
+///driver js to show steps of the process
+  const driverObj = driver({
+    showProgress: true,
+    onHighlightStarted: () => {
+      // Show the video when highlighting starts
+      videoElement.style.display = 'block';
+      videoElement2.style.display = 'block';
+      videoElement3.style.display = 'block';
+      videoElement4.style.display = 'block';
+      videoElement5.style.display = 'block';
+      videoElement6.style.display = 'block';
+    },
+    steps: [
+      { element: '#selectDocOne', popover: { title: 'Select Doc', description: 'Pick the right document and select it' } },
+      { element: '#selectWfOne', popover: { title: 'Select Workflow', description: 'Select workflow from the given options' } },
+      { element: '#connectWftoDocOne', popover: { title: 'Connect WF to Doc', description: 'Choose the specifications and also the table of contents. And do not forget to click the buttons in the end of each steps' } },
+      // { element: '#copiesOfDocOne', popover: { title: 'Copy doc', description: 'Select the document and click the button to get doc from previous step.' } },
+      // { element: '#assignTaskOne', popover: { title: 'Assign', description: 'Choose the member options from the given details and click Assign Task button' } },
+      // { element: '#tableOfContentOne', popover: { title: 'Table of Content', description: 'Select component that you want' } },
+      // { element: '#selectTeamOne', popover: { title: 'Choose For whom', description: 'Select for whom you are creating the document for' } },
+      // { element: '#selectDisplayOne', popover: { title: 'Set Display', description: 'Choose the set display method' } },
+      { element: '#checkError', popover: { title: 'Check Error', description: 'Test the process you created' } },
+      { element: '#addName', popover: { title: 'Process Name', description: 'Give a name for the process' } },
+      { element: '#createProcess', popover: { title: 'Create Process', description: 'Select the action in the document processing' } },
+    ],
+    onDestroyStarted: () => {
+      // Hide the video when the tour is reset
+      videoElement.style.display = 'none';
+      videoElement2.style.display = 'none';
+      videoElement3.style.display = 'none';
+      videoElement4.style.display = 'none';
+      videoElement5.style.display = 'none';
+      videoElement6.style.display = 'none';
+      driverObj.destroy();
+    },
+  });
+  
+  driverObj.drive();
+},[])
+  
+
   return (
     <WorkflowLayout>
       <div
@@ -276,10 +337,10 @@ const SetWorkflowInDoc = () => {
           !draftProcessLoading && draftProcess && draftProcessDOc ? (
             // <ConstructionPage hideLogo={true} message={'The viewing of draft processes is currently being fixed'} />
             <>
-              <SelectDoc savedDoc={draftProcessDOc} />
+              <SelectDoc savedDoc={draftProcessDOc} driverCounter={driverCounter} setDriverCounter={setDriverCounter}/>
               <ContentMapOfDoc />
               <div className={styles.diveder}></div>
-              <SelectWorkflow savedDoc={draftProcessDOc} />
+              <SelectWorkflow savedDoc={draftProcessDOc} driverCounter={driverCounter} setDriverCounter={setDriverCounter}/>
               <div className={styles.diveder}></div>
               <ConnectWorkFlowToDoc
                 stepsPopulated={true}
@@ -288,19 +349,25 @@ const SetWorkflowInDoc = () => {
                     ? draftProcess.savedProcessSteps
                     : []
                 }
+                driverCounter={driverCounter}
+                setDriverCounter={setDriverCounter}
               />
               <div className={styles.diveder}></div>
-              <CheckErrors />
+              <CheckErrors driverCounter={driverCounter} setDriverCounter={setDriverCounter}/>
               <div className={styles.diveder}></div>
               <ProcessName
                 Process_title={Process_title}
                 setProcess_title={setProcess_title}
+                driverCounter={driverCounter}
+                setDriverCounter={setDriverCounter}
               />
               <div className={styles.diveder}></div>
               <ProcessDocument
                 savedProcess={draftProcess}
                 Process_title={Process_title}
                 setProcess_title={setProcess_title}
+                driverCounter={driverCounter}
+                setDriverCounter={setDriverCounter}
               />
             </>
           ) : (
@@ -317,24 +384,59 @@ const SetWorkflowInDoc = () => {
           )
         ) : (
           <>
-            <SelectDoc />
+          <div style={{ position: 'relative' }}>
+            <div id='hidenImg'  style={{ display: 'none', position: 'absolute', top: 0, left: 0, zIndex: 100000 }}>
+              <img id='selectDocOne' src={ImgOne} width={'100%'} height={'100%'} />
+            </div>
+            <SelectDoc driverCounter={driverCounter} setDriverCounter={setDriverCounter}/>
+          </div>
+          
             <ContentMapOfDoc />
-            <div className={styles.diveder}></div>
-            <SelectWorkflow />
-            <div className={styles.diveder}></div>
-            <ConnectWorkFlowToDoc />
-            <div className={styles.diveder}></div>
-            <CheckErrors />
-            <div className={styles.diveder}></div>
-            <ProcessName
-              Process_title={Process_title}
-              setProcess_title={setProcess_title}
-            />
-            <div className={styles.diveder}></div>
-            <ProcessDocument
-              Process_title={Process_title}
-              setProcess_title={setProcess_title}
-            />
+            
+            <div style={{ position: 'relative' }}>
+              <div className={styles.diveder}></div>
+              <div id='hidenImgTwo'  style={{ display: 'none', position: 'absolute', top: 0, left: 0, zIndex: 100000 }}>
+                <img id='selectWfOne' src={ImgTwo} width={'100%'} height={'100%'} />
+              </div>
+              <SelectWorkflow driverCounter={driverCounter} setDriverCounter={setDriverCounter}/>
+            </div>
+            <div style={{ position: 'relative' }}>
+              <div className={styles.diveder}></div>
+              <div id='hidenImgThree'  style={{ display: 'none', position: 'absolute', top: 150, left: 0, zIndex: 100000 }}>
+                <img id='connectWftoDocOne' src={ImgThree} width={'100%'} height={'100%'} />
+              </div>
+              <ConnectWorkFlowToDoc driverCounter={driverCounter} setDriverCounter={setDriverCounter}/>
+            </div>
+            <div style={{ position: 'relative' }}>
+              <div className={styles.diveder}></div>
+              <div id='hidenImgFour'  style={{ display: 'none', position: 'absolute', top: 400, left: 0, zIndex: 100000 }}>
+                <img id='checkError' src={ImgFour} width={'100%'} height={'100%'} />
+              </div>
+              <CheckErrors driverCounter={driverCounter} setDriverCounter={setDriverCounter}/>
+            </div>
+            <div style={{ position: 'relative' }}>
+              <div className={styles.diveder}></div>
+              <div id='hidenImgFive'  style={{ display: 'none', position: 'absolute', top: 450, left: 0, zIndex: 100000 }}>
+                <img id='addName' src={ImgFive} width={'100%'} height={'100%'} />
+              </div>
+           
+              <ProcessName
+                Process_title={Process_title}
+                setProcess_title={setProcess_title}
+                driverCounter={driverCounter} setDriverCounter={setDriverCounter}
+              />
+            </div>
+            <div style={{ position: 'relative' }}>
+              <div className={styles.diveder}></div>
+              <div id='hidenImgSix'  style={{ display: 'none', position: 'absolute', top: 480, left: 0, zIndex: 100000 }}>
+                <img id='createProcess' src={ImgSix} width={'100%'} height={'100%'}/>
+              </div>
+              <ProcessDocument
+                Process_title={Process_title}
+                setProcess_title={setProcess_title}
+                driverCounter={driverCounter} setDriverCounter={setDriverCounter}
+              />
+            </div>
           </>
         )}
       </div>
