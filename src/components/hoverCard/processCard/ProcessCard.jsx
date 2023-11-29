@@ -38,14 +38,16 @@ const ProcessCard = ({ cardItem, title }) => {
   const [isPopupVisible, setPopupVisibility] = useState(false);
   // console.log(allProcesses)
   const handleProcessItemClick = async (item) => {
-    if (item.processing_state === "draft" && item.workflow_construct_ids) {
-      navigate(
-        `/workflows/new-set-workflow?id=${item._id}&state=${item.processing_state
-        }${item.isFromLocalStorage ? "&local=true" : ""}`
-      );
-      return;
-    }
-
+    console.log("urlforworkflow", `/workflows/new-set-workflow?id=${item._id}&state=${item.processing_state
+    }${item.isFromLocalStorage ? "&local=true" : ""}`)
+    // if (item.processing_state === "draft" && item.workflow_construct_ids) {
+    //   navigate(
+    //     `/workflows/new-set-workflow?id=${item._id}&state=${item.processing_state
+    //     }${item.isFromLocalStorage ? "&local=true" : ""}`
+    //   );
+    //   return;
+    // }
+    console.log("process_id", item._id, item.process_title, item.processing_state)
     getProcessDetail(item._id, item.process_title);
     // dispatch(setshowsProcessDetailPopup(true));
     setProcessDetailLoading(true);
