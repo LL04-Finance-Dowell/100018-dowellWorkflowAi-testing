@@ -88,6 +88,13 @@ from app.utils import notification_cron
 
 from .constants import EDITOR_API
 from rest_framework.views import APIView
+import spacy
+
+# Download the English model for spaCy
+# spacy.cli.download("en_core_web_sm")
+
+nlp = spacy.load('en_core_web_sm')
+
 
 
 class PADeploymentWebhook(APIView):
@@ -1737,3 +1744,56 @@ class NotificationReminder(APIView):
             return Response(
                 f"An error occured: {err}", status.HTTP_500_INTERNAL_SERVER_ERROR
             )   
+
+class DocumentReport(APIView):
+    def get(self, request, item_id):
+        document = single_query_document_collection({"_id": item_id})
+        content = json.loads(document["content"])
+
+        words_count = 0
+        char_count = 0
+        noun_count = 0
+        adjective_count = 0
+
+        for entry in content:
+            for group in entry:
+                for key, values in group.items():
+                    for item in values:
+                        text = item.get("data", "")
+                     
+                        words = text.split()
+                        
+                        # Word Count and characters count
+                        for word in words:
+                            if not word.startswith('url'):
+                                words_count += 1
+
+                                noun = self.get_nouns(word)
+                                adjective = self.get_adjectives(word)
+
+                                noun_count += len(noun)
+                                adjective_count += len(adjective)
+
+
+                                # Filetring the characters from a word
+                                for ch in word:
+                                    char_count += 1
+
+            response = {
+                "words":words_count,
+                "characters":char_count,
+                "nouns":noun_count,
+                "adjectives":adjective_count
+            }
+            
+        return Response(response, status=status.HTTP_200_OK)
+    
+    def get_nouns(self, sentence):
+        doc = nlp(sentence)
+        nouns = [token.text for token in doc if token.pos_ in ['NOUN']]
+        return nouns
+    
+    def get_adjectives(self, sentence):
+        doc = nlp(sentence)
+        adjectives = [token.text for token in doc if token.pos_ in ['ADJ']]
+        return adjectives
