@@ -61,7 +61,7 @@ const SetWorkflowInDoc = () => {
   const [Process_title, setProcess_title] = useState('');
 
   //
-  const [driverCounter, setDriverCounter] = useState(1)
+  const [driverCounter, setDriverCounter] = useState(false)
 
   const currentURL = window.location.href;
   const parts = currentURL.split('/'); 
@@ -264,52 +264,57 @@ const SetWorkflowInDoc = () => {
     setDraftProcessDoc(foundOriginalDoc);
   };
 
-useEffect(()=>{
-  const videoElement = document.getElementById('hidenImg');
-  const videoElement2 = document.getElementById('hidenImgTwo');
-  const videoElement3 = document.getElementById('hidenImgThree');
-  const videoElement4 = document.getElementById('hidenImgFour');
-  const videoElement5 = document.getElementById('hidenImgFive');
-  const videoElement6 = document.getElementById('hidenImgSix');
-///driver js to show steps of the process
-  const driverObj = driver({
-    showProgress: true,
-    onHighlightStarted: () => {
-      // Show the video when highlighting starts
-      videoElement.style.display = 'block';
-      videoElement2.style.display = 'block';
-      videoElement3.style.display = 'block';
-      videoElement4.style.display = 'block';
-      videoElement5.style.display = 'block';
-      videoElement6.style.display = 'block';
-    },
-    steps: [
-      { element: '#selectDocOne', popover: { title: 'Select Doc', description: 'Pick the right document and select it' } },
-      { element: '#selectWfOne', popover: { title: 'Select Workflow', description: 'Select workflow from the given options' } },
-      { element: '#connectWftoDocOne', popover: { title: 'Connect WF to Doc', description: 'Choose the specifications and also the table of contents. And do not forget to click the buttons in the end of each steps' } },
-      // { element: '#copiesOfDocOne', popover: { title: 'Copy doc', description: 'Select the document and click the button to get doc from previous step.' } },
-      // { element: '#assignTaskOne', popover: { title: 'Assign', description: 'Choose the member options from the given details and click Assign Task button' } },
-      // { element: '#tableOfContentOne', popover: { title: 'Table of Content', description: 'Select component that you want' } },
-      // { element: '#selectTeamOne', popover: { title: 'Choose For whom', description: 'Select for whom you are creating the document for' } },
-      // { element: '#selectDisplayOne', popover: { title: 'Set Display', description: 'Choose the set display method' } },
-      { element: '#checkError', popover: { title: 'Check Error', description: 'Test the process you created' } },
-      { element: '#addName', popover: { title: 'Process Name', description: 'Give a name for the process' } },
-      { element: '#createProcess', popover: { title: 'Create Process', description: 'Select the action in the document processing' } },
-    ],
-    onDestroyStarted: () => {
-      // Hide the video when the tour is reset
-      videoElement.style.display = 'none';
-      videoElement2.style.display = 'none';
-      videoElement3.style.display = 'none';
-      videoElement4.style.display = 'none';
-      videoElement5.style.display = 'none';
-      videoElement6.style.display = 'none';
-      driverObj.destroy();
-    },
-  });
-  
-  driverObj.drive();
-},[])
+// useEffect(()=>{
+//   const videoElement = document.getElementById('hidenImg');
+//   const videoElement2 = document.getElementById('hidenImgTwo');
+//   const videoElement3 = document.getElementById('hidenImgThree');
+//   const videoElement4 = document.getElementById('hidenImgFour');
+//   const videoElement5 = document.getElementById('hidenImgFive');
+//   const videoElement6 = document.getElementById('hidenImgSix');
+// ///driver js to show steps of the process
+//   const driverObj = driver({
+//     showProgress: true,
+//     onHighlightStarted: () => {
+//       // Show the video when highlighting starts
+//       videoElement.style.display = 'block';
+//       videoElement2.style.display = 'block';
+//       videoElement3.style.display = 'block';
+//       videoElement4.style.display = 'block';
+//       videoElement5.style.display = 'block';
+//       videoElement6.style.display = 'block';
+      
+//     },
+//     steps: [
+//       { element: '#selectDocOne', popover: { title: 'Select Doc', description: 'Pick the right document and select it' } },
+//       { element: '#selectWfOne', popover: { title: 'Select Workflow', description: 'Select workflow from the given options' } },
+//       { element: '#connectWftoDocOne', popover: { title: 'Connect WF to Doc', description: 'Choose the specifications and also the table of contents. And do not forget to click the buttons in the end of each steps' } },
+//       // { element: '#copiesOfDocOne', popover: { title: 'Copy doc', description: 'Select the document and click the button to get doc from previous step.' } },
+//       // { element: '#assignTaskOne', popover: { title: 'Assign', description: 'Choose the member options from the given details and click Assign Task button' } },
+//       // { element: '#tableOfContentOne', popover: { title: 'Table of Content', description: 'Select component that you want' } },
+//       // { element: '#selectTeamOne', popover: { title: 'Choose For whom', description: 'Select for whom you are creating the document for' } },
+//       // { element: '#selectDisplayOne', popover: { title: 'Set Display', description: 'Choose the set display method' } },
+//       { element: '#checkError', popover: { title: 'Check Error', description: 'Test the process you created' } },
+//       { element: '#addName', popover: { title: 'Process Name', description: 'Give a name for the process' } },
+//       { element: '#createProcess', popover: { title: 'Create Process', description: 'Select the action in the document processing' } },
+//     ],
+//     onDestroyStarted: () => {
+//       // Hide the video when the tour is reset
+//       videoElement.style.display = 'none';
+//       videoElement2.style.display = 'none';
+//       videoElement3.style.display = 'none';
+//       videoElement4.style.display = 'none';
+//       videoElement5.style.display = 'none';
+//       videoElement6.style.display = 'none';
+//       setDriverCounter(false)
+//       driverObj.destroy();
+//     },
+//   });
+//   if(driverCounter == true){
+//     driverObj.drive();
+//   }
+//   else {}
+ 
+// },[driverCounter])
   
 
   return (
