@@ -518,6 +518,22 @@ def check_all_finalized_true(data, process_type) -> bool:
     return True
 
 
+def check_progress(process_id):
+    steps = single_query_process_collection({"_id": process_id})["process_steps"]
+    steps_count = 0
+    accessed = 0
+    for item in steps:
+        steps_count += 1
+        step_document_clone_map = item.get("stepDocumentCloneMap", [])
+        for clone in step_document_clone_map:
+            for key, value in clone.items():
+                if key == "accessed" and value == True:  
+                    accessed += 1
+                     
+                       
+    percentage_progress = round((accessed/steps_count * 100), 2)
+    return percentage_progress
+
 def get_metadata_id(item_id, item_type):
     if item_type == "document":
         try:

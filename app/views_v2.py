@@ -30,6 +30,7 @@ from app.helpers import (
     get_metadata_id,
     remove_members_from_steps,
     update_signed,
+    check_progress
 )
 from app.mongo_db_connection import (
     add_document_to_folder,
@@ -254,6 +255,7 @@ class ProcessDetail(APIView):
         if not validate_id(process_id):
             return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
         process = single_query_process_collection({"_id": process_id})
+        progress = check_progress(process_id)        
         if process["parent_item_id"]:
             document_id = process["parent_item_id"]
             document = single_query_document_collection({"_id": document_id})
@@ -264,6 +266,7 @@ class ProcessDetail(APIView):
             if links:
                 links_object = links[0]
                 process.update({"links": links_object["links"]})
+        process["progress"] = progress
         return Response(process, status.HTTP_200_OK)
 
 
