@@ -1,6 +1,7 @@
 .dropdown__container {
   position: relative;
   color: var(--e-global-color-secondary);
+  width: 350px;   /* Set the width */
 }
 
 .ghost__input {
