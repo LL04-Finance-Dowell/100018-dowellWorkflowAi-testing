@@ -7,7 +7,8 @@ const initialState = {
   startSelectDocument: false,
   startSelectWorkflow: false,
   startConnectWorkflow: false,
-  whichApproval : 'Document'
+  whichApproval : 'Document',
+  showHighlight: true
 };
 
 export const copiedProcessSlice = createSlice({
@@ -42,10 +43,13 @@ export const copiedProcessSlice = createSlice({
       state.startSelectDocument = false;
       state.startSelectWorkflow = false;
       state.startConnectWorkflow = false
+    },
+    toggleHighlight: (state, action)=>{
+      state.showHighlight = !state.showHighlight
     }
   }
 });
 
-export const { setWhichApproval,setCopiedDocument, setCopiedWorkflow,setProcessStepCopy, startConnecting, startCopyingDocument, startCopyingWorkflow, resetCopyData } = copiedProcessSlice.actions;
+export const { setWhichApproval,setCopiedDocument, setCopiedWorkflow,setProcessStepCopy, startConnecting, startCopyingDocument, startCopyingWorkflow, resetCopyData, toggleHighlight } = copiedProcessSlice.actions;
 
 export default copiedProcessSlice.reducer;
