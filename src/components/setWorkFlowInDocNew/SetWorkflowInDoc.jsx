@@ -44,6 +44,7 @@ import ImgThree from '../../assets/sec3.gif';
 import ImgFour from '../../assets/sec4.gif';
 import ImgFive from '../../assets/sec5.gif';
 import ImgSix from '../../assets/sec6.gif';
+import { toggleHighlight } from '../../features/processCopyReducer';
 
 const SetWorkflowInDoc = () => {
   const dispatch = useDispatch();
@@ -62,6 +63,7 @@ const SetWorkflowInDoc = () => {
 
   //
   const [driverCounter, setDriverCounter] = useState(false)
+  const showHighlight = useSelector((state) => state.copyProcess.showHighlight);
 
   const currentURL = window.location.href;
   const parts = currentURL.split('/'); 
@@ -264,57 +266,57 @@ const SetWorkflowInDoc = () => {
     setDraftProcessDoc(foundOriginalDoc);
   };
 
-// useEffect(()=>{
-//   const videoElement = document.getElementById('hidenImg');
-//   const videoElement2 = document.getElementById('hidenImgTwo');
-//   const videoElement3 = document.getElementById('hidenImgThree');
-//   const videoElement4 = document.getElementById('hidenImgFour');
-//   const videoElement5 = document.getElementById('hidenImgFive');
-//   const videoElement6 = document.getElementById('hidenImgSix');
-// ///driver js to show steps of the process
-//   const driverObj = driver({
-//     showProgress: true,
-//     onHighlightStarted: () => {
-//       // Show the video when highlighting starts
-//       videoElement.style.display = 'block';
-//       videoElement2.style.display = 'block';
-//       videoElement3.style.display = 'block';
-//       videoElement4.style.display = 'block';
-//       videoElement5.style.display = 'block';
-//       videoElement6.style.display = 'block';
+useEffect(()=>{
+  const videoElement = document.getElementById('hidenImg');
+  const videoElement2 = document.getElementById('hidenImgTwo');
+  const videoElement3 = document.getElementById('hidenImgThree');
+  const videoElement4 = document.getElementById('hidenImgFour');
+  const videoElement5 = document.getElementById('hidenImgFive');
+  const videoElement6 = document.getElementById('hidenImgSix');
+///driver js to show steps of the process
+  const driverObj = driver({
+    showProgress: true,
+    onHighlightStarted: () => {
+      // Show the video when highlighting starts
+      videoElement.style.display = 'block';
+      videoElement2.style.display = 'block';
+      videoElement3.style.display = 'block';
+      videoElement4.style.display = 'block';
+      videoElement5.style.display = 'block';
+      videoElement6.style.display = 'block';
       
-//     },
-//     steps: [
-//       { element: '#selectDocOne', popover: { title: 'Select Doc', description: 'Pick the right document and select it' } },
-//       { element: '#selectWfOne', popover: { title: 'Select Workflow', description: 'Select workflow from the given options' } },
-//       { element: '#connectWftoDocOne', popover: { title: 'Connect WF to Doc', description: 'Choose the specifications and also the table of contents. And do not forget to click the buttons in the end of each steps' } },
-//       // { element: '#copiesOfDocOne', popover: { title: 'Copy doc', description: 'Select the document and click the button to get doc from previous step.' } },
-//       // { element: '#assignTaskOne', popover: { title: 'Assign', description: 'Choose the member options from the given details and click Assign Task button' } },
-//       // { element: '#tableOfContentOne', popover: { title: 'Table of Content', description: 'Select component that you want' } },
-//       // { element: '#selectTeamOne', popover: { title: 'Choose For whom', description: 'Select for whom you are creating the document for' } },
-//       // { element: '#selectDisplayOne', popover: { title: 'Set Display', description: 'Choose the set display method' } },
-//       { element: '#checkError', popover: { title: 'Check Error', description: 'Test the process you created' } },
-//       { element: '#addName', popover: { title: 'Process Name', description: 'Give a name for the process' } },
-//       { element: '#createProcess', popover: { title: 'Create Process', description: 'Select the action in the document processing' } },
-//     ],
-//     onDestroyStarted: () => {
-//       // Hide the video when the tour is reset
-//       videoElement.style.display = 'none';
-//       videoElement2.style.display = 'none';
-//       videoElement3.style.display = 'none';
-//       videoElement4.style.display = 'none';
-//       videoElement5.style.display = 'none';
-//       videoElement6.style.display = 'none';
-//       setDriverCounter(false)
-//       driverObj.destroy();
-//     },
-//   });
-//   if(driverCounter == true){
-//     driverObj.drive();
-//   }
-//   else {}
+    },
+    steps: [
+      { element: '#selectDocOne', popover: { title: 'Select Doc', description: 'Pick the right document and select it' } },
+      { element: '#selectWfOne', popover: { title: 'Select Workflow', description: 'Select workflow from the given options' } },
+      { element: '#connectWftoDocOne', popover: { title: 'Connect WF to Doc', description: 'Choose the specifications and also the table of contents. And do not forget to click the buttons in the end of each steps' } },
+      // { element: '#copiesOfDocOne', popover: { title: 'Copy doc', description: 'Select the document and click the button to get doc from previous step.' } },
+      // { element: '#assignTaskOne', popover: { title: 'Assign', description: 'Choose the member options from the given details and click Assign Task button' } },
+      // { element: '#tableOfContentOne', popover: { title: 'Table of Content', description: 'Select component that you want' } },
+      // { element: '#selectTeamOne', popover: { title: 'Choose For whom', description: 'Select for whom you are creating the document for' } },
+      // { element: '#selectDisplayOne', popover: { title: 'Set Display', description: 'Choose the set display method' } },
+      { element: '#checkError', popover: { title: 'Check Error', description: 'Test the process you created' } },
+      { element: '#addName', popover: { title: 'Process Name', description: 'Give a name for the process' } },
+      { element: '#createProcess', popover: { title: 'Create Process', description: 'Select the action in the document processing' } },
+    ],
+    onDestroyStarted: () => {
+      // Hide the video when the tour is reset
+      videoElement.style.display = 'none';
+      videoElement2.style.display = 'none';
+      videoElement3.style.display = 'none';
+      videoElement4.style.display = 'none';
+      videoElement5.style.display = 'none';
+      videoElement6.style.display = 'none';
+      dispatch(toggleHighlight())
+      driverObj.destroy();
+    },
+  });
+  if(showHighlight == true){
+    driverObj.drive();
+  }
+  else {}
  
-// },[driverCounter])
+},[showHighlight])
   
 
   return (
@@ -433,7 +435,7 @@ const SetWorkflowInDoc = () => {
             </div>
             <div style={{ position: 'relative' }}>
               <div className={styles.diveder}></div>
-              <div id='hidenImgSix'  style={{ display: 'none', position: 'absolute', top: 480, left: 0, zIndex: 100000 }}>
+              <div id='hidenImgSix'  style={{ display: 'none', position: 'absolute', top: 400, left: 0, zIndex: 100000 }}>
                 <img id='createProcess' src={ImgSix} width={'100%'} height={'100%'}/>
               </div>
               <ProcessDocument

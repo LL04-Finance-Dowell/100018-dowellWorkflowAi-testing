@@ -1,16 +1,22 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { useEffect } from "react";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import styles from "./Chat.module.css";
 import { BiSend } from "react-icons/bi";
 import axios from "axios";
 import { useTranslation } from "react-i18next";
 import { productName } from "../../utils/helpers";
+import { useLocation } from 'react-router-dom';
 
 import ChatIcon from "../../assets/chatting.png";
+import { toggleHighlight } from "../../features/processCopyReducer";
+
 
 const Chat = () => {
+  const location = useLocation();
+  const dispatch = useDispatch();
   const { session_id, userDetail } = useSelector((state) => state.auth);
+  const showHighlight = useSelector((state) => state.copyProcess.showHighlight);
 
   const { t } = useTranslation();
   const [apiMessages, setapiMessages] = useState([]);
@@ -31,13 +37,14 @@ const Chat = () => {
   useEffect(() => {
     let timeout;
 
-    // Function to be called when mouse stops moving
+    // Function to be called when the mouse stops moving
     const handleMouseMove = () => {
-      setShowImage(false); 
-      clearTimeout(timeout); // Clear any existing timeout
+      clearTimeout(timeout);
+
+      // Set a timeout to toggle showImage after 10 seconds
       timeout = setTimeout(() => {
-        setShowImage(true); 
-      }, 10000);
+        setShowImage((prevShowImage) => !prevShowImage);
+      }, 7000);
     };
 
     // Attach event listener for mousemove
@@ -57,6 +64,8 @@ const Chat = () => {
   // }, [session_id]);
 
   ///userDetail?.userinfo?.userID
+
+  const shouldRenderButton = location.pathname === '/workflows/new-set-workflow-document';
 
   const IntilizingRoom = async (session_id) => {
     const data = {
@@ -217,14 +226,17 @@ const Chat = () => {
     //   setapiMessages([]); // Clear the apiMessages state
     // }
   }
-  // console.log("modal data are ", modals)
+  // console.log("modal data are ", showHighlight)
   return (
     <div className={styles.Main_div}>
       <div>
         <div className={styles.Chat_buttonIcon}>
           {showImage && 
           <div className={styles.showImgIcons}>
-            <div className={styles.Chat_img_text}>Samanta is here to help you!</div>
+            <div>
+              {shouldRenderButton  ? <button onClick={()=>{dispatch(toggleHighlight()); console.log('toggled')}}  className={styles.Chat_img_textProcess}>Do you want help on process!</button> : ""}
+              <div className={styles.Chat_img_text}>Samanta is here to help you!</div>
+            </div>
             <img src={'https://www.socialmediaautomation.uxlivinglab.online/static/photos/Lady-Pixel.png'} width="80" className={styles.Chat_icon_img} />
           </div>}
         </div>
