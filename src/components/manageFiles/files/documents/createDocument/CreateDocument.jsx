@@ -17,6 +17,8 @@ import axios from 'axios';
 import { toast } from 'react-toastify';
 import { FaPlus } from 'react-icons/fa';
 import { createTemplate } from '../../../../../features/template/asyncThunks';
+import addImage from '../../../../../../src/assets/carbon_add-filled.jpg';
+
 
 const CreateDocument = ({ handleToggleOverlay }) => {
   const { userDetail } = useSelector((state) => state.auth);
@@ -29,6 +31,8 @@ const CreateDocument = ({ handleToggleOverlay }) => {
   );
   const [currentOption, setCurrentOption] = useState(null);
   const [toggleDropdown, setToggleDropdown] = useState(false);
+  const [currentItem, setCurrentItem] = useState("");
+
   const ref = useRef(null);
 
   const { register, handleSubmit, setValue } = useForm();
@@ -66,7 +70,7 @@ const CreateDocument = ({ handleToggleOverlay }) => {
             "sub_service_ids": ["DOWELL100262"],
           },
         )
-      // dispatch(settemLoading(true))
+        // dispatch(settemLoading(true))
         .then((response) => {
 
           if (response.data.success == true) {
@@ -74,7 +78,7 @@ const CreateDocument = ({ handleToggleOverlay }) => {
             dispatch(createTemplate(data));
           }
         })
-      // dispatch(settemLoading(false))
+        // dispatch(settemLoading(false))
         .catch((error) => {
           console.log(error.response?.data?.message);
           toast.info(error.response?.data?.message)
@@ -139,9 +143,10 @@ const CreateDocument = ({ handleToggleOverlay }) => {
   const handleOptionClick = (item) => {
     setToggleDropdown(false);
     setCurrentOption(item.template_name);
+    setCurrentItem(item._id)
     setValue('template', item._id);
     ref.current?.focus();
-    handleSubmit(onSubmit)();
+    // handleSubmit(onSubmit)();
   };
 
   const handleClickLabel = () => {
@@ -165,60 +170,88 @@ const CreateDocument = ({ handleToggleOverlay }) => {
         <Spinner />
       ) : reversedArray ? (
         <>
-          <div className={styles.buttons_container}>
+
+          <div className={styles.create__button__template} onClick={(e) => handleNewItemClick(e, "template")}>
+            <img src={addImage} alt="Descriptive text about the image"></img>
+            <div
+              to="/templates/#newTemplate"
+              key={uuidv4()}>
+              {t('Create New Template')}
+            </div>
+          </div>
+          <br />
+          <div className={styles.all_templates_title}>All Templates</div>
+
+
+          <div className={styles.create__button__template}>
+
             <form onSubmit={handleSubmit(onSubmit)}>
               <div id='template' className={styles.dropdown__container}>
                 {/* <label onClick={handleClickLabel} htmlFor='template'>
                 {t('Select Template')} <span>*</span>
-              </label>
-              <div style={{ position: 'relative' }}>
+                  </label>
+                  <div style={{ position: 'relative' }}>
 
-                <select
-                  required
-                  className={styles.ghost__input}
-                  tabIndex={-98}
-                  {...register('template')}
-                >
-                  {reversedArray.map((item) => (
-                    <option key={item._id} value={item._id}>
-                      {item.template_name}
-                    </option>
-                  ))}
-                </select>
-              </div> */}
-                <button
+                    <select
+                      required
+                      className={styles.ghost__input}
+                      tabIndex={-98}
+                      {...register('template')}
+                    >
+                      {reversedArray.map((item) => (
+                        <option key={item._id} value={item._id}>
+                          {item.template_name}
+                        </option>
+                      ))}
+                    </select>
+                  </div> */}
+                <br />
+                {/* <button
                   ref={ref}
                   type='button'
                   onClick={handleDropdown}
-                  className={`${styles.create__button} `}
+                  className={`${styles.create__button__template} `}
                 >
-                  {currentOption ? currentOption : <i><FaPlus size={15} /></i>}
-                  {/* {currentOption ? currentOption : `${<i><FaPlus size={25} /></i>} select template`} */}
-                </button>
+                  {currentOption ? currentOption : <i><FaPlus size={15} /> Select Template</i>}
+                </button> */}
+
+
                 <div className={styles.dropdown__option__container}>
-                  <Collapse open={toggleDropdown}>
-                    <div role='listbox' className={styles.dropdown__option__box}>
-                      {reversedArray.map((item) => (
-                        <div
-                          onClick={() => handleOptionClick(item)}
-                          className={styles.dropdown__option__content}
-                        >
-                          {item.template_name}
-                        </div>
-                      ))}
-                    </div>
-                  </Collapse>
+                  {/* <Collapse open={toggleDropdown}> */}
+                  <div role='listbox' className={styles.dropdown__option__box}>
+                    {reversedArray.map((item) => (
+                      <div
+                        onClick={() => handleOptionClick(item)}
+                        // className={styles.dropdown__option__content}
+                      className={`${styles.dropdown__option__content} ${currentItem === item._id ? styles.selected : ''}`}
+                      >
+                        {item.template_name}
+                      </div>
+                    ))}
+                  </div>
+                  {/* </Collapse> */}
                 </div>
               </div>
+
+              {/* <div className={styles.createDocument_dropdown__container__qZtlW}> */}
+                <button className={styles.create__button__document} type="submit">
+                  <span>{t('Create Document')}</span>
+                </button>
+              {/* </div> */}
             </form>
-            <div className={styles.createDocument_dropdown__container__qZtlW}>
-              <button className={styles.create__button}  onClick={(e) => handleNewItemClick(e, "template")}
+            {/* <div className={styles.createDocument_dropdown__container__qZtlW}>
+              <button className={styles.create__button} onClick={(e) => handleNewItemClick(e, "template")}
                 to="/templates/#newTemplate"
                 key={uuidv4()}>
                 <span>{t('New')}</span>
               </button>
-            </div>
+            </div> */}
           </div>
+          {/* <div className={styles.createDocument_dropdown__container__qZtlW}>
+            <button className={styles.create__button}>
+              <span>{t('Create Document')}</span>
+            </button>
+          </div> */}
         </>
 
       ) : (
