@@ -8,7 +8,7 @@ const initialState = {
   startSelectWorkflow: false,
   startConnectWorkflow: false,
   whichApproval : 'Document',
-  showHighlight: true
+  showHighlight: false
 };
 
 export const copiedProcessSlice = createSlice({

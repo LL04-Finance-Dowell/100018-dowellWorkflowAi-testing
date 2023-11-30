@@ -435,7 +435,7 @@ useEffect(()=>{
             </div>
             <div style={{ position: 'relative' }}>
               <div className={styles.diveder}></div>
-              <div id='hidenImgSix'  style={{ display: 'none', position: 'absolute', top: 400, left: 0, zIndex: 100000 }}>
+              <div id='hidenImgSix'  style={{ display: 'none', position: 'absolute', top: 430, left: 0, zIndex: 100000 }}>
                 <img id='createProcess' src={ImgSix} width={'100%'} height={'100%'}/>
               </div>
               <ProcessDocument
