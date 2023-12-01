@@ -16,6 +16,7 @@ import { productName } from '../../../../../utils/helpers';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import { FaPlus } from 'react-icons/fa';
+import Select from 'react-select'
 import { createTemplate } from '../../../../../features/template/asyncThunks';
 import addImage from '../../../../../../src/assets/carbon_add-filled.jpg';
 
@@ -141,11 +142,14 @@ const CreateDocument = ({ handleToggleOverlay }) => {
   };
 
   const handleOptionClick = (item) => {
+    console.log("handleOptionClick", item)
     setToggleDropdown(false);
-    setCurrentOption(item.template_name);
-    setCurrentItem(item._id)
-    setValue('template', item._id);
+    setCurrentOption(item.label);
+    setCurrentItem(item.value)
+    setValue('template', item.value);
     ref.current?.focus();
+    console.log("handleOptionClick", currentOption)
+
     // handleSubmit(onSubmit)();
   };
 
@@ -163,6 +167,11 @@ const CreateDocument = ({ handleToggleOverlay }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   const reversedArray = [...allTemplatesArray].reverse();
+  const options = reversedArray.map(item => ({
+    value: item._id,
+    label: item.template_name
+  }));
+
 
   return (
     <Overlay title='Create Document' handleToggleOverlay={handleToggleOverlay}>
@@ -184,59 +193,17 @@ const CreateDocument = ({ handleToggleOverlay }) => {
 
 
           <div className={styles.create__button__template}>
-
             <form onSubmit={handleSubmit(onSubmit)}>
-              <div id='template' className={styles.dropdown__container}>
-                {/* <label onClick={handleClickLabel} htmlFor='template'>
-                {t('Select Template')} <span>*</span>
-                  </label>
-                  <div style={{ position: 'relative' }}>
-
-                    <select
-                      required
-                      className={styles.ghost__input}
-                      tabIndex={-98}
-                      {...register('template')}
-                    >
-                      {reversedArray.map((item) => (
-                        <option key={item._id} value={item._id}>
-                          {item.template_name}
-                        </option>
-                      ))}
-                    </select>
-                  </div> */}
-                <br />
-                {/* <button
-                  ref={ref}
-                  type='button'
-                  onClick={handleDropdown}
-                  className={`${styles.create__button__template} `}
-                >
-                  {currentOption ? currentOption : <i><FaPlus size={15} /> Select Template</i>}
-                </button> */}
-
-
-                <div className={styles.dropdown__option__container}>
-                  {/* <Collapse open={toggleDropdown}> */}
-                  <div role='listbox' className={styles.dropdown__option__box}>
-                    {reversedArray.map((item) => (
-                      <div
-                        onClick={() => handleOptionClick(item)}
-                        // className={styles.dropdown__option__content}
-                      className={`${styles.dropdown__option__content} ${currentItem === item._id ? styles.selected : ''}`}
-                      >
-                        {item.template_name}
-                      </div>
-                    ))}
-                  </div>
-                  {/* </Collapse> */}
-                </div>
-              </div>
-
+              <Select
+                value={options.find(option => option.value === currentOption)}
+                onChange={handleOptionClick}
+                options={options}
+                classNamePrefix="dropdown" // for custom styling
+              />
               {/* <div className={styles.createDocument_dropdown__container__qZtlW}> */}
-                <button className={styles.create__button__document} type="submit">
-                  <span>{t('Create Document')}</span>
-                </button>
+              <button className={styles.create__button__document} type="submit">
+                <span>{t('Create Document')}</span>
+              </button>
               {/* </div> */}
             </form>
             {/* <div className={styles.createDocument_dropdown__container__qZtlW}>
