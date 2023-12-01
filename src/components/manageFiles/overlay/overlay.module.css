@@ -24,6 +24,8 @@
   display: flex;
   justify-content: space-between;
   margin-bottom: 36px;
+  color: #969696;
+  font-family: Poppins;
 }
 
 .header__box i {

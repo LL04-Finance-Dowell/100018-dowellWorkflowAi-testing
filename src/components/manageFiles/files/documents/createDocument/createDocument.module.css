@@ -1,7 +1,8 @@
 .dropdown__container {
   position: relative;
   color: var(--e-global-color-secondary);
-  width: 350px;   /* Set the width */
+  width: 450px;
+  /* Set the width */
 }
 
 .ghost__input {
@@ -58,7 +59,7 @@
 }
 
 .dropdown__option__container {
-  margin-top: 20px;
+  /* margin-top: 20px; */
   box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.15);
   border-radius: 5px;
   max-height: 270px !important;
@@ -74,7 +75,7 @@
 
 .dropdown__option__content {
   height: auto;
-  background-color: var(--e-global-color-cd6593d);
+  /* background-color: var(--e-global-color-cd6593d); */
   display: flex;
   width: 100%;
   align-items: center;
@@ -86,7 +87,7 @@
 }
 
 .dropdown__option__content:hover {
-  background-color: #3366e8;
+  background-color: #005734;
   color: var(--e-global-color-cd6593d);
 }
 
@@ -112,11 +113,58 @@
 .buttons_container {
   /* display: flex; */
   display: -webkit-box;
-  justify-content: space-around; /* Creates two columns of equal size */
-  align-items: center; /* This sets the gap between the buttons */
+  justify-content: space-around;
+  /* Creates two columns of equal size */
+  align-items: center;
+  /* This sets the gap between the buttons */
   /* Add any additional styling such as padding or margin as needed */
 }
 
+.create__button__template {
+  /* display: inline-flex; */
+  padding: 17px 43px 16px 20px;
+  align-items: center;
+  gap: 12px;
+  border-radius: 12px;
+  border: 1px solid #C8C8C8;
+  display: flex;
+}
+
+.create__button__document {
+  margin-top: 20px;
+  display: flex;
+  gap: 6px;
+  border: 1.5px #000 solid;
+  background-color: #005734;
+  color: var(--e-global-color-cd6593d);
+  font-size: 16px;
+  line-height: 24px;
+  padding: 6px 22px;
+  border-radius: 0.25rem;
+  transition: ease-in-out all 0.2s;
+  border-radius: 8px;
+  border: none;
+  outline: none;
+  width: 430.267px;
+  justify-content: center;
+  margin-left: 10px;
+}
+
+.all_templates_title {
+color: #3E3E3E;
+font-family: Poppins;
+font-size: 18px;
+font-style: normal;
+font-weight: 600;
+line-height: normal;
+padding-bottom: 2px;
+}
+
+.selected {
+  /* styles for your selected option */
+  background-color: #005734; /* Example: change background color for selected item */
+  color: white; /* Example: change text color for selected item */
+}
 
 /* .create__button:hover {
   background-color: #1faa59;
