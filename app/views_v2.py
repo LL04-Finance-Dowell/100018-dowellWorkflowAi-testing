@@ -229,9 +229,9 @@ class DocumentOrTemplateProcessing(APIView):
 
 class Process(APIView):
     def get(self, request, company_id):
+        data_type = request.query_params.get("data_type")
         if not validate_id(company_id) or data_type is None:
             return Response("Invalid Request!", status.HTTP_400_BAD_REQUEST)
-        data_type = request.query_params.get("data_type")
         process_state = request.query_params.get("process_state")
         if process_state:
             completed = bulk_query_process_collection(
