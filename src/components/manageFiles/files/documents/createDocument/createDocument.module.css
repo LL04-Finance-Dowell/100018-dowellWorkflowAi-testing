@@ -181,6 +181,12 @@ padding-bottom: 2px;
   width: calc(100% - 20vw);
 }
 
+@media (max-width: 630px) {
+  .create__button__document {
+    width: 200px
+  }
+}
+
 @media (max-width: 768px) {
   .form__box {
     padding: 10px;
