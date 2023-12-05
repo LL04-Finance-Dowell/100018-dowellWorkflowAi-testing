@@ -35,7 +35,7 @@
   display: flex;
   justify-content: space-evenly;
   padding: 5px;
-  color: var(--e-global-color-text);
+  color: var(--e-global-color-9d2ac19) !important;
 }
 .Profile_img {
   width: 50px;

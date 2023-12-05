@@ -1,5 +1,4 @@
 .container {
-  max-width: 100vw;
   display: flex;
   align-items: center;
   flex-direction: column;
@@ -78,6 +77,40 @@
   width: 100%;
   height: 1px;
   background-color: black;
+}
+
+.main_container {
+  max-width: 100vw;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+}
+
+.settings_layout_sidebar_box {
+  max-height: 100vh;
+  overflow-y: auto;
+  position: sticky;
+  top: 0;
+}
+.setting_sidebar {
+  display: flex;
+  flex-direction: column;
+  background-color: var(--e-global-color-secondary);
+  padding: 10px;
+  border: 3px transparent solid;
+  flex-direction: column;
+  width: 100%;
+  min-height: 100vh;
+  color: white;
+}
+
+.setting_page {
+  position: relative !important; 
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  z-index: 10 !important;
+  padding: 10px;
 }
 
 .home__btn {
