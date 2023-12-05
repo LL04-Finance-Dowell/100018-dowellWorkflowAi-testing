@@ -86,10 +86,78 @@ class ProcessVerificationTests(TestConfig):
     pass
 
 class FinalizeOrRejectTests(TestConfig):
-    pass
+    finalize_data = {
+        "action":"finalized",
+        "authorized":"sJdxBvEJX9Hw",
+        "company_id":"64ecb08a3033b00f16a496f4",
+        "item_id":"654359e7d123a46bf70d435e",
+        "item_type":"clone",
+        "role":"Understand the Doc",
+        "user_type":"public"
+    }
+    
+    def test_rejected_with_no_message(self):
+        self.finalize_data["action"] = "rejected"
+        response = self.client.post(self.finalize_process, data= self.finalize_data)
+        
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(response.data,"provide a reason for rejecting the document")
+        
 
 class TriggerProcessTests(TestConfig):
-    pass
+    def test_invalid_process_id(self):
+        request_data = {
+            "process_id": "invalid_id",
+        }        
+        
+        response = self.client.post(self.trigger_process, data=request_data)
+        
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(response.data, "something went wrong!")
+
+    def test_unauthorized_user(self):
+        request_data = {
+            "process_id": self.sample_process_id,
+            "user_name": "unauthorized_user",
+            "processing_state":"state",
+            "action":"halt_process"
+        }
+        
+        response = self.client.post(self.trigger_process, data=request_data)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEqual(response.data, "User Unauthorized")
+
+
+    def test_halt_process_not_paused(self):
+        request_data = {
+            "process_id": self.sample_process_id,
+            "user_name": "mayorisaac",
+            "processing_state":"state",
+            "action":"halt_process"
+        }
+     
+        response = self.client.post(self.trigger_process, data=request_data)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data, "Process has been paused until manually resumed!")
+
+
+    # Discussion to be held 
+    '''
+    def test_process_draft_not_processing(self):
+        request_data = {
+            "process_id": self.sample_process_id,
+            "user_name": "mayorisaac",
+            "processing_state":"state",
+            "action": "process_draft",
+        }
+        
+        response = self.client.post(self.trigger_process, data=request_data)
+        parsed_url = urlparse(response.data)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertTrue(parsed_url.scheme and parsed_url.netloc)
+
+    '''
 
 class ProcessImportTests(TestConfig):
     pass

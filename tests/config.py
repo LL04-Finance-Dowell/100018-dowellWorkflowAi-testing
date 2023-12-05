@@ -43,7 +43,10 @@ class TestConfig(APITestCase):
         self.get_process_detail = reverse("process_detail", kwargs={'process_id': self.sample_process_id})
         self.get_invalid_process_link = reverse("process_link", kwargs={'process_id': "invalid id"})
         self.get_process_link = reverse("process_link", kwargs={'process_id': self.sample_process_id})
-
+        self.finalize_process = reverse("finalize_process", kwargs={'process_id': self.sample_process_id})
+        self.trigger_process = reverse("trigger_process", kwargs={'process_id': self.sample_process_id})
+        
+        
         return super().setUp()
     
     

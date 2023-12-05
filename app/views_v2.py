@@ -472,7 +472,7 @@ class FinalizeOrReject(APIView):
 
 
 class TriggerProcess(APIView):
-    def post(self, request):
+    def post(self, request, process_id):
         """Get process and begin processing it."""
         if not validate_id(request.data["process_id"]):
             return Response("something went wrong!", status.HTTP_400_BAD_REQUEST)
