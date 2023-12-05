@@ -77,7 +77,7 @@ const SetWorkflowInDoc = () => {
   useEffect(() => {
     const processId = searchParams.get('id');
     const processState = searchParams.get('state');
-
+    
     if (!processId && !processState) {
       dispatch(resetSetWorkflows());
       dispatch(setContentOfDocument(null));
@@ -111,10 +111,10 @@ const SetWorkflowInDoc = () => {
     const processId = searchParams.get('id');
     const processState = searchParams.get('state');
     const localStorageProcess = searchParams.get('local');
-
+    
     if (!processId || !processState || processState !== 'draft') {
-      dispatch(resetSetWorkflows());
-      dispatch(setContentOfDocument(null));
+      // dispatch(resetSetWorkflows());
+      // dispatch(setContentOfDocument(null));
       setDraftProcess(null);
       setDraftProcessDoc(null);
       setIsDraftProcess(false);

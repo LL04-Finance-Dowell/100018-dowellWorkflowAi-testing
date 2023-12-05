@@ -113,12 +113,12 @@ console.log('the picked approval is ', whichApproval)
 
 
   const handleAddSelectedDocuments = (document) => {
-   console.log(document)
+  //  console.log(document)
    if(whichApproval == 'new-set-workflow-document'){
     axios
       .get(`https://workflowai.uxlivinglab.online/v1/companies/${data.company_id}/documents/${document._id}/clones/?data_type=${data.data_type}`)
       .then((response) => {
-        console.log('the response for document detail is ',response.data)
+        // console.log('the response for document detail is ',response.data)
         setSelectedDocumentCopies(
           response.data
         );
@@ -133,7 +133,7 @@ console.log('the picked approval is ', whichApproval)
     }
     setCurrentSelectedDocument(document);
     Array.isArray(allDocumentsArray)
-    console.log(selectedDocumentCopies)
+    // console.log(selectedDocumentCopies)
 
     const isInclude = selectedDocuments.find(
       (item) => item._id === document._id

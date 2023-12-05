@@ -1,7 +1,7 @@
 .content__container {
   transition: 0.3s ease-in-out all;
   overflow: hidden;
-  z-index: 10000;
+  /* z-index: 10000; */
   overflow-x: auto;
   cursor: default;
 }

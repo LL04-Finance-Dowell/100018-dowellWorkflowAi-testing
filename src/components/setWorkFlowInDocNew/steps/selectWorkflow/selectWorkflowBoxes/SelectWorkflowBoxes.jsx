@@ -28,6 +28,10 @@ import { allWorkflows } from '../../../../../features/workflow/asyncTHunks';
 import { toast } from 'react-toastify';
 import { useTranslation } from 'react-i18next';
 import { productName } from '../../../../../utils/helpers';
+import { FaSearch } from 'react-icons/fa';
+import { AiOutlinePlus } from 'react-icons/ai';
+import ManageFiles from '../../../../manageFiles/ManageFiles';
+import CreateWorkflows from '../../../../manageFiles/files/workflows/createWorkflows/CreateWorkflow';
 
 import { startConnecting } from '../../../../../features/processCopyReducer';
 
@@ -52,6 +56,7 @@ const InfoBoxes = ({ savedDoc }) => {
   );
   const {  isMobile } =useAppContext();
   const [compInfoBoxes, setCompInfoBoxes] = useState(infoBoxes);
+  const [openWF, setOpenWF] = useState(false)
 
     ////copied workflow
     const copiedWorkflow = useSelector((state) => state.copyProcess.workflow);
@@ -284,6 +289,16 @@ const InfoBoxes = ({ savedDoc }) => {
     }
   };
 
+  const handleToggleOverlayBtn = async ()=>{
+    const data = {
+      company_id: userDetail?.portfolio_info?.length > 1 ? userDetail?.portfolio_info.find(portfolio => portfolio.product === productName)?.org_id : userDetail?.portfolio_info[0].org_id,
+      data_type: userDetail?.portfolio_info?.length > 1 ? userDetail?.portfolio_info.find(portfolio => portfolio.product === productName)?.data_type : userDetail?.portfolio_info[0].data_type,
+    };
+
+    await dispatch(allWorkflows(data));
+    await setOpenWF(!openWF)
+  }
+
   return (
     <div ref={ref} style={{ y: y }} className={styles.container}>
       {React.Children.toArray(
@@ -322,12 +337,29 @@ const InfoBoxes = ({ savedDoc }) => {
 
             <Collapse open={infoBox.isOpen}>
               <InfoContentContainer>
-                <InfoSearchbar
-                  placeholder='Search'
-                  {...register(`${infoBox.title}`)}
-                  fullWidth={true}
-                />
-
+                <div style={{display:'flex',borderBottom: "1px solid var(--e-global-color-text)"}}>
+                  <div style={{marginTop:'5px', marginLeft:'5px'}}><FaSearch /></div>
+                  <InfoSearchbar
+                    placeholder='Search'
+                    {...register(`${infoBox.title}`)}
+                    fullWidth={true}
+                  />
+                  {
+                    infoBox.title == 'workflow' ? 
+                    <button 
+                      onClick={()=>setOpenWF(!openWF)}
+                      style={{marginTop:'3px', marginRight:'5px', paddingLeft:'5px', paddingRight:'5px', backgroundColor:'green'}}
+                    >
+                    <AiOutlinePlus color='white' />
+                  </button> :""
+                  }     
+                </div>
+                {
+                  openWF ?  <div style={{position:'relative', marginLeft:'20%', background:'none'}}>
+                    <CreateWorkflows handleToggleOverlay={()=>handleToggleOverlayBtn()}/>
+                  </div> : ""
+                }
+              
                 <InfoContentBox className={styles.content__box}>
                   
                   {infoBox &&
