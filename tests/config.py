@@ -15,6 +15,7 @@ class TestConfig(APITestCase):
         self.sample_company_id = "64ecb08a3033b00f16a496f4"
         self.sample_template_id = "6518275e8dfcad1f6faa5eb4"
         self.sample_document_id = "6523c0c9318bb2857ffd53b6"
+        self.sample_process_id = "6566e44eda7a7c52e92e6578"
         self.sample_portfolio = "Workflow AI"
 
         # documents api urls
@@ -33,6 +34,15 @@ class TestConfig(APITestCase):
         # Workflow api urls
         self.workflow_creation_url = reverse('create-workflow')
         self.get_workflows_url = reverse('get-workflows',  kwargs={'company_id': self.sample_company_id})
+        
+        # process api urls
+        self.process_creation_url = reverse('processes')
+        self.get_invalid_process = reverse('process', kwargs={'company_id': "invalid id"})
+        self.get_process_url = reverse('process', kwargs={'company_id': self.sample_company_id})
+        self.get_invalid_process_detail = reverse("process_detail", kwargs={'process_id': "invalid id"})
+        self.get_process_detail = reverse("process_detail", kwargs={'process_id': self.sample_process_id})
+        self.get_invalid_process_link = reverse("process_link", kwargs={'process_id': "invalid id"})
+        self.get_process_link = reverse("process_link", kwargs={'process_id': self.sample_process_id})
 
         return super().setUp()
     
