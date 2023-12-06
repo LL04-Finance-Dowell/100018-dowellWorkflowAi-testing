@@ -163,35 +163,22 @@ class TriggerProcessTests(TestConfig):
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
         self.assertEqual(response.data, "User Unauthorized")
 
- # Discussion to be held 
-    '''
-    # def test_halt_process_not_paused(self):
-    #     request_data = {
-    #         "process_id": "652685b3096786a941fc18d2",
-    #         "user_name": "MorvinIan",
-    #         "action":"process_draft"
-    #     }
-     
-    #     response = self.client.post(self.trigger_process, data=request_data)
-    #     self.assertEqual(response.status_code, status.HTTP_200_OK)
-    #     self.assertEqual(response.data, "Process has been paused until manually resumed!")
 
    
-    def test_process_draft_not_processing(self):
+    def test_process_already_in_a_state_being_triggered(self):
         request_data = {
-            "process_id": self.sample_process_id,
-            "user_name": "mayorisaac",
+            "process_id": "65703fa2f9b94a5c5cbd3812",
+            "user_name": "MorvinIan",
             "processing_state":"state",
             "action": "process_draft",
         }
         
         response = self.client.post(self.trigger_process, data=request_data)
-        parsed_url = urlparse(response.data)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertTrue(parsed_url.scheme and parsed_url.netloc)
+        self.assertIn("The process is already in", response.data)
+        
 
-    '''
 
 class ProcessImportTests(TestConfig):
     def test_invalid_process_id(self):

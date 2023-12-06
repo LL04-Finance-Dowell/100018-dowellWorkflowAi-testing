@@ -498,6 +498,12 @@ class TriggerProcess(APIView):
             verification_links = processing.HandleProcess(process).start()
             if verification_links:
                 return Response(verification_links, status.HTTP_200_OK)
+        else:
+            return Response(
+              f"The process is already in {state} state",
+              status.HTTP_200_OK,      
+            )
+        
 class ProcessImport(APIView):
     def post(self, request, process_id):
         data = request.data
