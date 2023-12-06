@@ -15,6 +15,7 @@ import { Link } from 'react-router-dom';
 import { useAppContext } from '../../contexts/AppContext';
 import { useTranslation } from 'react-i18next';
 import NameChangeModal from '../modal/NameChangeModal';
+import Sidebar from '../newSidebar/Sidebar';
 
 const Container = styled.div`
   & button:not(.edit_modal_sect button, .name_change_sect button) {
@@ -28,7 +29,7 @@ const WorkflowAiSettings = () => {
   const { themeColor } = useSelector((state) => state.app);
 
   const { userDetail } = useSelector((state) => state.auth);
-  
+
 
   // #7a7a7a
   // --e-global-color-text;
@@ -57,17 +58,17 @@ const WorkflowAiSettings = () => {
                 (item) => item.product === 'Workflow AI'
               )?.member_type === 'owner'
                 ? userDetail?.userportfolio.map((portfolio) => ({
-                    _id: crypto.randomUUID(),
-                    content: portfolio.portfolio_name,
-                  }))
+                  _id: crypto.randomUUID(),
+                  content: portfolio.portfolio_name,
+                }))
                 : userDetail?.selected_product?.userportfolio.map(
-                    (portfolio) => {
-                      return {
-                        _id: crypto.randomUUID(),
-                        content: portfolio.portfolio_name,
-                      };
-                    }
-                  );
+                  (portfolio) => {
+                    return {
+                      _id: crypto.randomUUID(),
+                      content: portfolio.portfolio_name,
+                    };
+                  }
+                );
           }
         });
         return setting;
@@ -76,47 +77,59 @@ const WorkflowAiSettings = () => {
   }, [userDetail, workflowTeams]);
 
   return (
-    <Container bgColor={themeColor} className={styles.container}>
-      {workflowAiSettingsArrayToDisplay.map((item) => (
-        <div key={item._id} className={styles.box}>
-          <h2
-            className={`${styles.title} ${styles.title__l}`}
-            style={{
-              position: 'relative',
-            }}
-          >
-            <Link to='/' className={`${styles.home__btn}`}>
-              <ImHome3 />
-            </Link>
-            {t(item.title)}
-          </h2>
-          <div
-            className={styles.section__container}
-            style={!isDesktop ? nonDesktopStyles : {}}
-          >
-            {item.children.map((childItem) => (
-              <div key={childItem._id} className={styles.section__box}>
-                <InfoBox
-                  type='list'
-                  items={childItem.items}
-                  title={childItem.proccess_title}
-                  modPort={true}
-                />
-              </div>
-            ))}
+    <>
+      <div className={styles.main_container}>
+          <div className={styles.settings_layout_sidebar_box}>
+            <div className={styles.setting_sidebar}>
+              <Sidebar />
+            </div>
           </div>
-        </div>
-      ))}
-      <div className={styles.bottom__line}></div>
-      <EnabledProcess />
-      <div className={styles.bottom__line}></div>
-      <TeamsInWorkflowAi />
-      <div className={styles.bottom__line}></div>
-      <EnabledDisabkedProcess />
-      {openNameChangeModal && <NameChangeModal />}
-      <div className={styles.bottom__line}></div>
-      <Themes />
-    </Container>
+          <div className={styles.setting_page}>
+            <Container bgColor={themeColor} className={styles.container}>
+              {workflowAiSettingsArrayToDisplay.map((item) => (
+                <div key={item._id} className={styles.box}>
+                  <h2
+                    className={`${styles.title} ${styles.title__l}`}
+                    style={{
+                      position: 'relative',
+                    }}
+                  >
+                    {/* <Link to='/' className={`${styles.home__btn}`}>
+                      <ImHome3 />
+                    </Link>
+                    {t(item.title)} */}
+                  </h2>
+                  <div
+                    className={styles.section__container}
+                    style={!isDesktop ? nonDesktopStyles : {}}
+                  >
+                    {item.children.map((childItem) => (
+                      <div key={childItem._id} className={styles.section__box}>
+                        <InfoBox
+                          type='list'
+                          items={childItem.items}
+                          title={childItem.proccess_title}
+                          modPort={true}
+                        />
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ))}
+              <div className={styles.bottom__line}></div>
+              <EnabledProcess />
+              <div className={styles.bottom__line}></div>
+              <TeamsInWorkflowAi />
+              <div className={styles.bottom__line}></div>
+              <EnabledDisabkedProcess />
+              {openNameChangeModal && <NameChangeModal />}
+              <div className={styles.bottom__line}></div>
+              <Themes />
+            </Container>
+          </div>
+        {/* </div> */}
+      </div>
+    </>
   );
 };
 

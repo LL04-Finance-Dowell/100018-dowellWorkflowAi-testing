@@ -24,8 +24,8 @@
   display: flex;
   justify-content: space-between;
   margin-bottom: 36px;
-  color: #969696;
-  font-family: Poppins;
+  /* color: #969696;
+  font-family: Poppins; */
 }
 
 .header__box i {
@@ -33,7 +33,8 @@
 }
 
 .children__container {
-  background-color: #f1f3ff;
+  /* background-color: #ffffff; */
+  background-color: #f1f7ff;
   padding: 20px;
   box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.15);
   border-radius: 10px;
