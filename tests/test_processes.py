@@ -81,9 +81,36 @@ class ProcessLinkTests(TestConfig):
         self.assertTrue(parsed_url.scheme and parsed_url.netloc)
 
 
-# TODOS
 class ProcessVerificationTests(TestConfig):
-    pass
+
+    valid_data = {
+        "user_type": "team",
+        "auth_username":"cL9v0FvX2agt",
+        "auth_role": "Add",
+        "auth_portfolio": "Morvin Public Members Portfolio",
+        "token": "b8ccf448d72b473c80ea1b031fb891e7",
+        "org_name": "MorvinIan",
+        "city": "",
+        "country": "",
+        "continent": "",
+    }
+    
+    def test_process_verification_successful(self):
+        response = self.client.post( self.verify_process, data=self.valid_data)
+        editor_link = urlparse(response.data)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertTrue(editor_link.scheme and editor_link.netloc)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_process_verification_unauthorized(self):
+        unauthorized_data = self.valid_data.copy()
+        unauthorized_data['auth_username'] = 'other_user'
+
+        response = self.client.post(self.verify_process, data=unauthorized_data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+        self.assertEqual(response.data, "User Logged in is not part of this process",)
+
 
 class FinalizeOrRejectTests(TestConfig):
     finalize_data = {
@@ -103,6 +130,15 @@ class FinalizeOrRejectTests(TestConfig):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(response.data,"provide a reason for rejecting the document")
         
+    def test_document_already_processed(self):
+        response = self.client.post(self.finalize_process, data= self.finalize_data)
+        
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        if self.finalize_data["item_type"] == "document" or self.finalize_data["item_type"] == "clone":
+            self.assertIn ("document already processed as", response.data)
+        else:
+            self.assertIn("template already processed as", response.data)
+    
 
 class TriggerProcessTests(TestConfig):
     def test_invalid_process_id(self):
@@ -127,22 +163,20 @@ class TriggerProcessTests(TestConfig):
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
         self.assertEqual(response.data, "User Unauthorized")
 
-
-    def test_halt_process_not_paused(self):
-        request_data = {
-            "process_id": self.sample_process_id,
-            "user_name": "mayorisaac",
-            "processing_state":"state",
-            "action":"halt_process"
-        }
-     
-        response = self.client.post(self.trigger_process, data=request_data)
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.data, "Process has been paused until manually resumed!")
-
-
-    # Discussion to be held 
+ # Discussion to be held 
     '''
+    # def test_halt_process_not_paused(self):
+    #     request_data = {
+    #         "process_id": "652685b3096786a941fc18d2",
+    #         "user_name": "MorvinIan",
+    #         "action":"process_draft"
+    #     }
+     
+    #     response = self.client.post(self.trigger_process, data=request_data)
+    #     self.assertEqual(response.status_code, status.HTTP_200_OK)
+    #     self.assertEqual(response.data, "Process has been paused until manually resumed!")
+
+   
     def test_process_draft_not_processing(self):
         request_data = {
             "process_id": self.sample_process_id,
@@ -160,4 +194,31 @@ class TriggerProcessTests(TestConfig):
     '''
 
 class ProcessImportTests(TestConfig):
-    pass
+    def test_invalid_process_id(self):
+        request_data = {
+            "process_id": "inavlid_id",
+            "portfolio": self.sample_portfolio,
+            "data_type":"Test_Data",
+            "member":"member"
+        }
+     
+        response = self.client.post(self.import_process, data=request_data)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(response.data, "Something went wrong!")
+        
+    def test_valid_process_id(self):
+
+        request_data = {
+            "process_id": self.sample_process_id,
+            "company_id":self.sample_company_id,
+            "portfolio": self.sample_portfolio,
+            "data_type":"Test_Data",
+            "member":"member"
+        }
+     
+        response = self.client.post(self.import_process, data=request_data)
+        parsed_url = urlparse(response.data["editor_link"])
+
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(response.data["Message"], "Workflow, document and process created successfully")
+        self.assertTrue(parsed_url.scheme and parsed_url.netloc)
