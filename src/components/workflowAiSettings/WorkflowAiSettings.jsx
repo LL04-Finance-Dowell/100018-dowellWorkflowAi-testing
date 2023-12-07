@@ -92,7 +92,7 @@ const WorkflowAiSettings = () => {
                       position: 'relative',
                     }}
                   >
-                    WorkfLow Setting
+                    Workflow Setting
                   </h2>
               {workflowAiSettingsArrayToDisplay.map((item) => (
                 <div key={item._id} className={styles.box}>
