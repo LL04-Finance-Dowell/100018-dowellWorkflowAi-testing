@@ -1278,6 +1278,16 @@ class NewTemplate(APIView):
         portfolio = ""
         if request.data["portfolio"]:
             portfolio = request.data["portfolio"]
+            
+        if request.data.get("password"):
+            password = request.data.get("password")
+            hashed_password = get_hash(password)
+            is_private = True
+        else:
+            password = ""
+            hashed_password = ""
+            is_private = False
+            
         viewers = [{"member": request.data["created_by"], "portfolio": portfolio}]
         organization_id = request.data["company_id"]
         res = json.loads(
@@ -1293,6 +1303,8 @@ class NewTemplate(APIView):
                     "template_type": "draft",
                     "auth_viewers": viewers,
                     "message": "",
+                    "is_private": is_private,
+                    "password": hashed_password,
                 }
             )
         )
@@ -1308,6 +1320,8 @@ class NewTemplate(APIView):
                         "company_id": organization_id,
                         "auth_viewers": viewers,
                         "template_state": "draft",
+                        "is_private": is_private,
+                        "password": hashed_password,
                     }
                 )
             )
@@ -1402,6 +1416,18 @@ class TemplateLink(APIView):
         """editor link for a document"""
         if not validate_id(template_id):
             return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
+        
+        template = single_query_template_collection({"_id": template_id})
+        if template.get("is_private") == True:
+            input_password = request.query_params.get("password")
+            if input_password == None:
+                return Response("Missing password argument", status.HTTP_422_UNPROCESSABLE_ENTITY)
+            
+            valid_password_hash = template.get("password")
+            
+            if compare_hash(valid_password_hash, input_password) == False:
+                return Response("Incorrect password", status.HTTP_401_UNAUTHORIZED)
+        
         editor_link = access_editor(template_id, "template")
         if not editor_link:
             return Response(status.HTTP_500_INTERNAL_SERVER_ERROR)
