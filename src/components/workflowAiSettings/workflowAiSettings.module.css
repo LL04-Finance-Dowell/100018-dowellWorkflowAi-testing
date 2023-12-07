@@ -87,7 +87,7 @@
 }
 
 .settings_layout_sidebar_box {
-  max-height: 100vh;
+  /* max-height: 100vh; */
   overflow-y: auto;
   position: sticky;
   top: 0;
