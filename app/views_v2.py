@@ -305,7 +305,7 @@ class ProcessLink(APIView):
 
 
 class ProcessVerification(APIView):
-    def post(self, request):
+    def post(self, request, process_id):
         """verification of a process step access and checks that duplicate document based on a step."""
         user_type = request.data["user_type"]
         auth_user = request.data["auth_username"]
@@ -413,7 +413,7 @@ class FinalizeOrReject(APIView):
             updated_signers_true = update_signed(signers_list, member=user, status=True)
         res = json.loads(
             finalize_item(
-                item_id, state, item_type, message, signers=updated_signers_true
+                item_id, state, item_type, message, signers=None
             )
         )
         if res["isSuccess"]:
@@ -472,13 +472,13 @@ class FinalizeOrReject(APIView):
 
 
 class TriggerProcess(APIView):
-    def post(self, request):
+    def post(self, request, process_id):
         """Get process and begin processing it."""
         if not validate_id(request.data["process_id"]):
             return Response("something went wrong!", status.HTTP_400_BAD_REQUEST)
         process = single_query_process_collection({"_id": request.data["process_id"]})
         action = request.data["action"]
-        state = process["processing_state"]
+        state = process["processing_state"]      
         if request.data["user_name"] != process["created_by"]:
             return Response("User Unauthorized", status.HTTP_403_FORBIDDEN)
         if action == "halt_process" and state != "paused":
@@ -498,10 +498,14 @@ class TriggerProcess(APIView):
             verification_links = processing.HandleProcess(process).start()
             if verification_links:
                 return Response(verification_links, status.HTTP_200_OK)
-
-
+        else:
+            return Response(
+              f"The process is already in {state} state",
+              status.HTTP_200_OK,      
+            )
+        
 class ProcessImport(APIView):
-    def post(self, request):
+    def post(self, request, process_id):
         data = request.data
         company_id = data.get("company_id")
         portfolio = data.get("portfolio")

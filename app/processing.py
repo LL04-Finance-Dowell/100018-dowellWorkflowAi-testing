@@ -88,6 +88,7 @@ class Process:
                     "creator_portfolio": self.portfolio,
                     "workflow_construct_ids": self.workflow_ids,
                     "process_type": self.process_type,
+                    "org_name":self.org_name,
                     "process_kind": "original",
                 }
             )
@@ -122,6 +123,7 @@ class Process:
                     "creator_portfolio": self.portfolio,
                     "workflow_construct_ids": self.workflow_ids,
                     "process_type": self.process_type,
+                    "org_name":self.org_name,
                     "process_kind": "original",
                 }
             )
