@@ -208,7 +208,7 @@ const CheckErrors = () => {
             hoverBg='success'
             onClick={handleSortProcess}
           >
-            Show Process
+            {t('Show Process')}
           </PrimaryButton>
           {sortLoading ? (
             <ProgressBar

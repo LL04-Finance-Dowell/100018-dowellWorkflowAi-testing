@@ -714,11 +714,11 @@ const SelectMembersToAssign = ({
   // console.log("the publicMembersSelectedForProcess are ",publicMembersSelectedForProcess)
   // console.log("the current val is  ",current)
   // console.log("the current step index is  ",currentStepIndex)
-  console.log('the used id are ', usedId)
+  // console.log('the used id are ', usedId)
   let idUsed = current.portfolios.filter((item) => !usedId.some((link) => link?.member === item?.member))
-  console.log('the current are ', current)
-  console.log('the selectedMembersForProcess are ', selectedMembersForProcess)
-  console.log('the selectMembersComp are ', selectMembersComp)
+  // console.log('the current are ', current)
+  // console.log('the selectedMembersForProcess are ', selectedMembersForProcess)
+  // console.log('the selectMembersComp are ', selectMembersComp)
  
   return (
     <div className={styles.container} id='selectTeam'>
