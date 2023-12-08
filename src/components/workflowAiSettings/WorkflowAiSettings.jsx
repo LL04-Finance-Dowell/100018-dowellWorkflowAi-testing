@@ -86,6 +86,14 @@ const WorkflowAiSettings = () => {
           </div>
           <div className={styles.setting_page}>
             <Container bgColor={themeColor} className={styles.container}>
+            <h2
+                    className={`${styles.title} ${styles.title__l}`}
+                    style={{
+                      position: 'relative',
+                    }}
+                  >
+                    Workflow Setting
+                  </h2>
               {workflowAiSettingsArrayToDisplay.map((item) => (
                 <div key={item._id} className={styles.box}>
                   <h2
