@@ -8,6 +8,7 @@ import AssignButton from '../../../../assignButton/AssignButton';
 import { useDispatch, useSelector } from 'react-redux';
 import { updateSingleProcessStep } from '../../../../../../features/app/appSlice';
 import { LoadingSpinner } from '../../../../../LoadingSpinner/LoadingSpinner';
+import { useTranslation } from 'react-i18next';
 
 const CopiesOfDoc = ({ currentStepIndex, stepsPopulated }) => {
   const {
@@ -29,6 +30,7 @@ const CopiesOfDoc = ({ currentStepIndex, stepsPopulated }) => {
   const [copiesFeaturesToDisplay, setCopiesFeaturesToDisplay] = useState([]);
   const [copiesSelected, setCopiesSelected] = useState([]);
   const dispatch = useDispatch();
+  const { t } = useTranslation();
 
   useEffect(() => {
     if (!currentDocToWfs || stepsPopulated) return;
@@ -166,9 +168,9 @@ const CopiesOfDoc = ({ currentStepIndex, stepsPopulated }) => {
       )?.steps[currentStepIndex]?.skipStep ? (
         <>
           <h2 className={styles.header}>
-            Copies of document from previous step (select for processing)
+          {t('Copies of document from previous step (select for processing)')}
           </h2>
-          <p>Step skipped</p>
+          <p>{t('Step skipped')}</p>
         </>
       ) : (
         <>
@@ -180,7 +182,7 @@ const CopiesOfDoc = ({ currentStepIndex, stepsPopulated }) => {
             >
               <form onSubmit={handleSubmit(onSubmit)}>
                 <h2 className={styles.header}>
-                  Copies of document from previous step (select for processing)
+                {t('Copies of document from previous step (select for processing)')}
                 </h2>
                 <select
                   required

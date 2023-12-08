@@ -13,6 +13,7 @@ import {
   removeFromTableOfContentForStep,
   setTableOfContentForStep,
 } from "../../../../../../features/app/appSlice";
+import { useTranslation } from 'react-i18next';
 
 const AssignDocumentMap = ({ currentStepIndex, stepsPopulated }) => {
   const {
@@ -25,6 +26,7 @@ const AssignDocumentMap = ({ currentStepIndex, stepsPopulated }) => {
   const { docCurrentWorkflow, tableOfContentForStep, processSteps } =
     useSelector((state) => state.app);
   const dispatch = useDispatch();
+  const { t } = useTranslation();
 
   const [copiedDoc, setCopiedDoc] = useState([])
 
@@ -178,7 +180,7 @@ const AssignDocumentMap = ({ currentStepIndex, stepsPopulated }) => {
   return (
     <>
       <p style={{ padding: "0 6px", marginBottom: "2px" }}>
-        <b>Table of Contents</b>
+        <b>{t('Table of Contents')}</b>
       </p>
       {processSteps.find(
         (process) => process.workflow === docCurrentWorkflow?._id
@@ -188,19 +190,19 @@ const AssignDocumentMap = ({ currentStepIndex, stepsPopulated }) => {
           (process) => process.workflow === docCurrentWorkflow?._id
         )?.steps[currentStepIndex]?.stepRights === "view" ? (
         <p>
-          Contents skipped because rights have been set to <b>view</b>
+          {t('Contents skipped because rights have been set to ')}<b>view</b>
         </p>
       ) : processSteps.find(
           (process) => process.workflow === docCurrentWorkflow?._id
         )?.steps[currentStepIndex]?.stepRights === "comment" ? (
         <p>
-          Contents skipped because rights have been set to <b>comment</b>
+          {t('Contents skipped because rights have been set to ')}<b>comment</b>
         </p>
       ) : processSteps.find(
           (process) => process.workflow === docCurrentWorkflow?._id
         )?.steps[currentStepIndex]?.stepRights === "approve" ? (
         <p>
-          Contents skipped because rights have been set to <b>approve</b>
+          {t('Contents skipped because rights have been set to ')}<b>approve</b>
         </p>
       ) : contentOfDocument ? (
         <Contents
