@@ -149,17 +149,17 @@ urlpatterns = [
     path("update-to-teams/", update_team),
     path("settings/", create_application_settings),
     path("update-settings/", update_application_settings),
-    path("settings/<str:company_id>", get_workflow_ai_setting),
+    path("settings/<str:company_id>/", get_workflow_ai_setting),
     path("reminder/<str:process_id>/<str:username>", read_reminder),
     path("notify/", send_notif),
     path("folders/", create_folder, name="create_folder"),
-    path("folders/<str:folder_id>", folder_update),
-    path("folders/<str:folder_id>/<str:item_id>", delete_item_from_folder),
+    path("folders/<str:folder_id>/", folder_update),
+    path("folders/<str:folder_id>/<str:item_id>/", delete_item_from_folder),
     path("companies/<str:company_id>/folders/", all_folders),
     path('companies/<str:company_id>/', get_templates_documents),
     path("companies/<str:company_id>/templates/reports/metadata/", get_reports_templates_metata),
     path("companies/<str:company_id>/documents/reports/metadata/", get_reports_documents_metadata),
     path("templates/<str:template_id>/insert-metadata/", get_template_and_insert_metadata, name="get_template_and_insert_metadata"),
-    path("docusign/<str:company_id>", get_mobile_notifications_docusign),
-    path("processes/process-import/<str:process_id>", import_process_settings)
+    path("docusign/<str:company_id>/", get_mobile_notifications_docusign),
+    path("processes/process-import/<str:process_id>/", import_process_settings)
 ]
