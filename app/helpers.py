@@ -1,5 +1,6 @@
 import json
 from urllib.parse import parse_qs, urlparse
+import hashlib
 
 import bson
 import requests
@@ -518,6 +519,22 @@ def check_all_finalized_true(data, process_type) -> bool:
     return True
 
 
+def check_progress(process_id):
+    steps = single_query_process_collection({"_id": process_id})["process_steps"]
+    steps_count = 0
+    accessed = 0
+    for item in steps:
+        steps_count += 1
+        step_document_clone_map = item.get("stepDocumentCloneMap", [])
+        for clone in step_document_clone_map:
+            for key, value in clone.items():
+                if key == "accessed" and value == True:  
+                    accessed += 1
+                     
+                       
+    percentage_progress = round((accessed/steps_count * 100), 2)
+    return percentage_progress
+
 def get_metadata_id(item_id, item_type):
     if item_type == "document":
         try:
@@ -603,3 +620,15 @@ def get_link(user, role, links):
             auth_role = f"auth_role={role}"
             if user in link[user] and auth_role in link[user]:
                 return link[user]
+            
+            
+def get_hash(password: str):
+    pwd_buffer = bytes(password, 'utf-8')
+    hash_object = hashlib.sha256(pwd_buffer)
+    hashed_str = hash_object.hexdigest()
+    # print(hex_dig)
+    return hashed_str
+
+def compare_hash(valid_hash: str, input: str):
+    hashed_input = get_hash(input)
+    return valid_hash == hashed_input
