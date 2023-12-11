@@ -1,5 +1,6 @@
 import json
 from urllib.parse import parse_qs, urlparse
+import hashlib
 
 import bson
 import requests
@@ -619,3 +620,15 @@ def get_link(user, role, links):
             auth_role = f"auth_role={role}"
             if user in link[user] and auth_role in link[user]:
                 return link[user]
+            
+            
+def get_hash(password: str):
+    pwd_buffer = bytes(password, 'utf-8')
+    hash_object = hashlib.sha256(pwd_buffer)
+    hashed_str = hash_object.hexdigest()
+    # print(hex_dig)
+    return hashed_str
+
+def compare_hash(valid_hash: str, input: str):
+    hashed_input = get_hash(input)
+    return valid_hash == hashed_input
