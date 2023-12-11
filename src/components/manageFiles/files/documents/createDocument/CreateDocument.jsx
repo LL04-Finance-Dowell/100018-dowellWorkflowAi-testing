@@ -182,11 +182,13 @@ const CreateDocument = ({ handleToggleOverlay }) => {
 
           <div className={styles.create__button__template} onClick={(e) => handleNewItemClick(e, "template")}>
             <img src={addImage} alt="Descriptive text about the image"></img>
-            <div
+            <button
               to="/templates/#newTemplate"
-              key={uuidv4()}>
+              key={uuidv4()}
+              style={{backgroundColor: "#f1f7ff"}}
+              >
               {t('Create New Template')}
-            </div>
+            </button>
           </div>
           <br />
           <div className={styles.all_templates_title}>All Templates</div>

@@ -6,15 +6,24 @@
   display: flex;
   flex-direction: column;
   padding: 4px;
-  border: 1px solid var(--e-global-color-cd6593d);
+  /* border: 1px solid var(--e-global-color-cd6593d); */
   border-radius: 10px;
+}
+
+.box2 {
+  display: flex;
+  flex-direction: row;
+  padding: 4px;
+  /* border: 1px solid var(--e-global-color-cd6593d); */
+  border-radius: 10px;
+  gap: 5px;
 }
 
 .new__button__box {
   cursor: pointer;
   text-decoration: underline;
   display: flex;
-  width: 100%;
+  width: 20%;
   padding: 15px;
   background-color: var(--e-global-color-accent);
   font-weight: 700;
@@ -22,6 +31,24 @@
   font-size: 24px;
   line-height: 24px;
   border-radius: 10px;
+}
+
+.new__button__box2 {
+  cursor: pointer;
+  text-decoration: underline;
+  display: flex;
+  width: 80%;
+  padding: 15px;
+  background-color: var(--e-global-color-accent);
+  font-weight: 700;
+  color: var(--e-global-color-cd6593d);
+  font-size: 24px;
+  line-height: 24px;
+  border-radius: 10px;
+}
+
+.new__button__box2:hover {
+  color: var(--e-global-color-cd6593d); /* Set the same color as the default state */
 }
 
 .new__button__box i {
@@ -38,6 +65,7 @@
   border-bottom: 1px solid #d4d4d4;
   display: flex;
   flex-direction: column;
+  border-radius: 10px;
 }
 
 .new__content a,

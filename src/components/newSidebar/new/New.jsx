@@ -13,7 +13,7 @@ import { useAppContext } from '../../../contexts/AppContext';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 
-const New = ({toggleSidebar,isMobile}) => {
+const New = ({ toggleSidebar, isMobile }) => {
   const { userDetail } = useSelector((state) => state.auth);
   const { themeColor, creditResponse } = useSelector((state) => state.app);
   // console.log(creditResponse.data.data.api_key)
@@ -60,7 +60,7 @@ const New = ({toggleSidebar,isMobile}) => {
             "sub_service_ids": ["DOWELL100262"],
           },
         )
-      // dispatch(settemLoading(true))
+        // dispatch(settemLoading(true))
         .then((response) => {
 
           if (response.data.success == true) {
@@ -68,7 +68,7 @@ const New = ({toggleSidebar,isMobile}) => {
             dispatch(createTemplate(data));
           }
         })
-      // dispatch(settemLoading(false))
+        // dispatch(settemLoading(false))
         .catch((error) => {
           console.log(error.response?.data?.message);
           toast.info(error.response?.data?.message)
@@ -82,7 +82,7 @@ const New = ({toggleSidebar,isMobile}) => {
 
   return (
     <div className={styles.container}>
-      <div className={styles.box}>
+      <div className={styles.box2}>
         <div
           onClick={handleOpen}
           className={styles.new__button__box}
@@ -91,13 +91,23 @@ const New = ({toggleSidebar,isMobile}) => {
           <i>
             <FaPlus size={20} />
           </i>
-          <span>{t('new')}</span>
         </div>
+        <HashLink
+          onClick={(e) => handleNewItemClick(e, "document")}
+          to={'/documents/#newDocument'}
+          className={styles.new__button__box2}
+          style={{ backgroundColor: themeColor }}
+        >
+          <span>{t('new')}</span>
+        </HashLink>
+      </div>
+      <div className={styles.box}>
         <Collapse open={isOpen}>
           <div className={styles.new__content}>
+
             {items.map((item) => (
               <HashLink
-                onClick={(e) => handleNewItemClick(e, item.content)}
+                onClick={(e) => handleNewItemClick(e, "document")}
                 to={item.href}
                 key={item.id}
               >
@@ -105,11 +115,12 @@ const New = ({toggleSidebar,isMobile}) => {
               </HashLink>
             ))}
             <button
-              onClick={() =>{
+              onClick={() => {
                 setShowFoldersActionModal({ state: true, action: 'create' });
-                if(isMobile == true){
+                if (isMobile == true) {
                   toggleSidebar()
-                }}
+                }
+              }
               }
             >
               Folder
