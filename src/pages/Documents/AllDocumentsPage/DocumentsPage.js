@@ -106,9 +106,9 @@ const DocumentsPage = ({
  var dataForDrafts = reversedDocArray.filter((item)=> item?.document_state == 'draft')
  var dataForSaved = reversedDocArray.filter((item) => item?.document_state == 'saved')
   
- console.log("orgDocsCompleted", orgDocsCompleted)
- console.log("orgDocsRejected", orgDocsRejected)
- console.log("demoDocuments", demoDocuments)
+//  console.log("orgDocsCompleted", orgDocsCompleted)
+//  console.log("orgDocsRejected", orgDocsRejected)
+//  console.log("demoDocuments", demoDocuments)
 
   return (
     <WorkflowLayout>
@@ -201,7 +201,7 @@ const DocumentsPage = ({
             </div>
           )}
 
-          {isDemo && (
+          {isDemo && demoDocuments && (
             <div id='demo-documents'>
               <SectionBox
                 cardBgColor='#1ABC9C'
