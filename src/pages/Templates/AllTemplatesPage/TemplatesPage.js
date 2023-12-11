@@ -160,13 +160,13 @@ const TemplatesPage = ({
           ) : (
             <></>
           )}
-          {isDemo && (
+          {isDemo && demoTemplates && (
             <div id='demo-templates'>
               <SectionBox
                 cardBgColor='#1ABC9C'
                 title='demo templates'
                 Card={TemplateCard}
-                cardItems={[...demoTemplates].reverse()}
+                cardItems={[...demoTemplates]?.reverse()}
                 status={demoTempStatus}
                 itemType={'templates'}
                 isDemo={true}
