@@ -22,6 +22,7 @@ import { toast } from 'react-toastify';
 import { useAppContext } from '../../../../../../contexts/AppContext';
 import { LoadingSpinner } from '../../../../../LoadingSpinner/LoadingSpinner';
 import { httpProcess } from '../../../../../../httpCommon/httpCommon';
+import { useTranslation } from 'react-i18next';
 
 const SelectMembersToAssign = ({
   currentStepIndex,
@@ -31,6 +32,7 @@ const SelectMembersToAssign = ({
   const [selectMembersComp, setSelectMembersComp] = useState(selectMembers);
   const [current, setCurrent] = useState(selectMembers[0]);
   const { register } = useForm();
+  const { t } = useTranslation();
   const teamMembersRef = useRef(null);
   const selectMembersRef = useRef(null);
   const [currentRadioOptionSelection, setCurrentRadioOptionSelection] =
@@ -754,7 +756,7 @@ const SelectMembersToAssign = ({
                     className={`${styles.select__header} ${current.id === item.id && styles.selected
                       }`}
                   >
-                    {item.header}
+                    {t(item.header)}
                   </div>
                 ))
               )}
@@ -777,7 +779,7 @@ const SelectMembersToAssign = ({
                   }
                   onChange={handleSelectUserOptionType}
                 />
-                {current.title}
+                {t(current.title)}
               </h3>
               <div>
                 <div className={styles.radContainer}>

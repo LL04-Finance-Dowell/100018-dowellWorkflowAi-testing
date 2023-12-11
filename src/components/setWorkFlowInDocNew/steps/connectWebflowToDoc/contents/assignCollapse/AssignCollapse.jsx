@@ -11,9 +11,11 @@ import Reminder from './reminder/Reminder';
 import { Collapse } from 'react-bootstrap';
 import { ImMinus, ImPlus } from 'react-icons/im';
 import { useSelector } from 'react-redux';
+import { useTranslation } from 'react-i18next';
 
 const AssignCollapse = ({ currentStepIndex, stepsPopulated }) => {
   const [asignCollapses, setAssignCollapses] = useState(collapses);
+  const { t } = useTranslation();
 
   const { processSteps, docCurrentWorkflow } = useSelector(
     (state) => state.app
@@ -33,7 +35,7 @@ const AssignCollapse = ({ currentStepIndex, stepsPopulated }) => {
       {processSteps.find(
         (process) => process.workflow === docCurrentWorkflow?._id
       )?.steps[currentStepIndex]?.skipStep ? (
-        <p>Step skipped</p>
+        <p>{t('Step skipped')}</p>
       ) : (
         <>
           {asignCollapses.map((collapse) => (
@@ -45,7 +47,7 @@ const AssignCollapse = ({ currentStepIndex, stepsPopulated }) => {
                 <i className={styles.sign}>
                   {collapse.isOpen ? <ImMinus /> : <ImPlus />}
                 </i>
-                <span> {collapse.title}</span>
+                <span> {t(`${collapse.title}`)}</span>
               </div>
               <Collapse in={collapse.isOpen}>
                 <div>
@@ -124,7 +126,7 @@ export const cities = [
 
 export const times = [
   { id: uuidv4(), option: 'within 1 hour' },
-  { id: uuidv4(), option: 'within 8 hours ' },
+  { id: uuidv4(), option: 'within 8 hours' },
   { id: uuidv4(), option: 'within 24 hours' },
   { id: uuidv4(), option: 'within 3 days' },
   { id: uuidv4(), option: 'within 7 days' },

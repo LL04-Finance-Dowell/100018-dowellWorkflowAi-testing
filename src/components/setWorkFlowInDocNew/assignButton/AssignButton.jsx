@@ -2,8 +2,10 @@ import React from "react";
 import { ImSpinner7 } from "react-icons/im";
 import { motion } from "framer-motion";
 import { PrimaryButton } from "../../styledComponents/styledComponents";
+import { useTranslation } from 'react-i18next';
 
 const AssignButton = ({ buttonText, loading }) => {
+  const { t } = useTranslation();
   return (
     <PrimaryButton hoverBg="success" type="submit">
       {loading && (
@@ -16,7 +18,7 @@ const AssignButton = ({ buttonText, loading }) => {
           <ImSpinner7 size={12} color="white" />
         </motion.span>
       )}
-      <span> {buttonText}</span>
+      <span> {t(`${buttonText}`)}</span>
     </PrimaryButton>
   );
 };

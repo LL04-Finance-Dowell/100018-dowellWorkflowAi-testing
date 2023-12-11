@@ -6,6 +6,7 @@ import Radio from '../../../../../radio/Radio';
 import Select from '../../../../../select/Select';
 import { updateSingleProcessStep } from '../../../../../../../features/app/appSlice';
 import { useDispatch, useSelector } from 'react-redux';
+import { useTranslation } from 'react-i18next';
 
 const Time = ({ currentStepIndex, stepsPopulated }) => {
   const {
@@ -13,6 +14,7 @@ const Time = ({ currentStepIndex, stepsPopulated }) => {
     handleSubmit,
     formState: { isSubmitted },
   } = useForm();
+  const { t } = useTranslation();
   const [currentLimitSelection, setCurrentLimitSelection] = useState(null);
   const [customTimeSelection, setCustomTimeSelection] = useState(null);
   const { docCurrentWorkflow, processSteps } = useSelector(
@@ -86,7 +88,7 @@ const Time = ({ currentStepIndex, stepsPopulated }) => {
               )?.steps[currentStepIndex]?.stepTime === 'no_time_limit'
             }
           >
-            No Time limit
+            {t('No Time limit')}
           </Radio>
           </div>
           <Radio
@@ -100,7 +102,7 @@ const Time = ({ currentStepIndex, stepsPopulated }) => {
               )?.steps[currentStepIndex]?.stepTime === 'select'
             }
           >
-            Select Time limit
+            {t('Select Time limit')}
           </Radio>
         </div>
         {!currentLimitSelection ? (
@@ -126,7 +128,7 @@ const Time = ({ currentStepIndex, stepsPopulated }) => {
                 )?.steps[currentStepIndex]?.stepTime === 'custom'
               }
             >
-              Custom Time
+              {t('Custom Time')}
             </Radio>
             <>
               {!customTimeSelection ? (
@@ -134,7 +136,7 @@ const Time = ({ currentStepIndex, stepsPopulated }) => {
               ) : (
                 <div>
                   <div>
-                    <label htmlFor='startTime'>Start</label>
+                    <label htmlFor='startTime'>{t('Start')}</label>
                     <input
                       required
                       {...register('startTime')}
@@ -156,14 +158,14 @@ const Time = ({ currentStepIndex, stepsPopulated }) => {
             </>
           </>
         )}
-        <button className={parentStyles.primary__button}>set time limit</button>
+        <button className={parentStyles.primary__button}>{t('set time limit')}</button>
       </form>
       {isSubmitted ||
       (stepsPopulated &&
         processSteps.find(
           (process) => process.workflow === docCurrentWorkflow?._id
         )?.steps[currentStepIndex]?.stepTime) ? (
-        <p style={{ margin: '0', padding: '0px 20px 10px' }}>Saved</p>
+        <p style={{ margin: '0', padding: '0px 20px 10px' }}>{t('Saved')}</p>
       ) : (
         <></>
       )}
