@@ -238,7 +238,7 @@ export const memberOrder = [
   },
   {
     id: uuidv4(),
-    option: 'Public > Team Member > User ',
+    option: 'Public > Team Member > User',
     normalValue: 'public_team_user',
   },
 ];
