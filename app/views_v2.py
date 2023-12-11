@@ -1420,18 +1420,14 @@ class TemplateLink(APIView):
         """editor link for a document"""
         if not validate_id(template_id):
             return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
-        
         template = single_query_template_collection({"_id": template_id})
         if template.get("is_private") == True:
             input_password = request.query_params.get("password")
             if input_password == None:
                 return Response("Missing password argument", status.HTTP_422_UNPROCESSABLE_ENTITY)
-            
             valid_password_hash = template.get("password")
-            
             if compare_hash(valid_password_hash, input_password) == False:
                 return Response("Incorrect password", status.HTTP_401_UNAUTHORIZED)
-        
         editor_link = access_editor(template_id, "template")
         if not editor_link:
             return Response(status.HTTP_500_INTERNAL_SERVER_ERROR)
@@ -1807,36 +1803,25 @@ class DocumentReport(APIView):
     def get(self, request, item_id):
         document = single_query_document_collection({"_id": item_id})
         content = json.loads(document["content"])
-
         words_count = 0
         char_count = 0
         noun_count = 0
         adjective_count = 0
-
         for entry in content:
             for group in entry:
                 for key, values in group.items():
                     for item in values:
                         text = item.get("data", "")
-                     
                         words = text.split()
-                        
-                        # Word Count and characters count
                         for word in words:
                             if not word.startswith('url'):
                                 words_count += 1
-
                                 noun = self.get_nouns(word)
                                 adjective = self.get_adjectives(word)
-
                                 noun_count += len(noun)
                                 adjective_count += len(adjective)
-
-
-                                # Filetring the characters from a word
                                 for ch in word:
                                     char_count += 1
-
             response = {
                 "words":words_count,
                 "characters":char_count,
