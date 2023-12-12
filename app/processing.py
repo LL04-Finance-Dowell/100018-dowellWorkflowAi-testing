@@ -783,6 +783,9 @@ class Background:
             no_of_steps = sum(isinstance(e, dict) for e in steps)
             if no_of_steps > 0:
                 for index, step in enumerate(steps):
+                    # Check if the current step should be skipped
+                    if step.get("skipStep") == True:
+                        continue
                     if step["stepDocumentCloneMap"]:
                         current_doc_map = [v for document_map in step["stepDocumentCloneMap"] for k, v in document_map.items() if isinstance(v, str)]
                         user_in_viewers = check_user_in_auth_viewers(user=self.username, item=document_id, item_type="document")
