@@ -19,6 +19,8 @@ import { FaPlus } from 'react-icons/fa';
 import Select from 'react-select'
 import { createTemplate } from '../../../../../features/template/asyncThunks';
 import addImage from '../../../../../../src/assets/carbon_add-filled.jpg';
+import { BsArrowRight } from 'react-icons/bs';
+import { Tooltip } from 'react-tooltip';
 
 
 const CreateDocument = ({ handleToggleOverlay }) => {
@@ -180,18 +182,21 @@ const CreateDocument = ({ handleToggleOverlay }) => {
       ) : reversedArray ? (
         <>
 
-          <div className={styles.create__button__template} onClick={(e) => handleNewItemClick(e, "template")}>
+          <div className={styles.create__button__template1} onClick={(e) => handleNewItemClick(e, "template")}>
             <img src={addImage} alt="Descriptive text about the image"></img>
-            <button
+            <div
               to="/templates/#newTemplate"
               key={uuidv4()}
-              style={{backgroundColor: "#f1f7ff"}}
+              className={styles.create__button__inner}
+              // style={{backgroundColor: "#f1f7ff"}}
               >
               {t('Create New Template')}
-            </button>
+            </div>
           </div>
           <br />
-          <div className={styles.all_templates_title}>All Templates</div>
+          <Tooltip id={`alltemplates`} content="select an existing template to create a document from" direction="up" arrowSize={10} style={{ backgroundColor: 'rgb(97, 206, 112)', color: 'white' }}></Tooltip>
+          <div className={styles.all_templates_title}>Select Templates {<BsArrowRight data-tooltip-id={`alltemplates`} />}</div>
+          
 
 
           <div className={styles.create__button__template}>

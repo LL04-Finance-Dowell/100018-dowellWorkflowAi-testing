@@ -374,7 +374,7 @@ const DocumentCard = ({
             onClick={() => generatePdfClick(cardItem)}
           >{<BsArrowBarRight />}</div> */}
 
-        <Tooltip id={`generatePdf-${cardItem._id}`} content="generate pdf!" direction="up" arrowSize={10} style={{ backgroundColor: 'rgb(97, 206, 112)', color: 'white' }}></Tooltip>
+        <Tooltip id={`generatePdf-${cardItem._id}`} content="generate pdf" direction="up" arrowSize={10} style={{ backgroundColor: 'rgb(97, 206, 112)', color: 'white' }}></Tooltip>
         <div
           anchorId={cardItem._id}
           data-tooltip-id={`generatePdf-${cardItem._id}`}
