@@ -93,7 +93,7 @@ const SelectedDocuments = ({
       ) : selectedDocuments?.length > 0 ? (
         <>
           <h2 className={styles.header}>
-            Copies of the selected document (select for processing)
+          {t("Copies of the selected document (select for processing)")}
           </h2>
           <form onSubmit={handleSubmit(onSubmit)}>
             <select
@@ -109,24 +109,22 @@ const SelectedDocuments = ({
               ))}
             </select>
             <PrimaryButton type='submit' hoverBg='success'>
-              Add selected document copies to process (Break processing of
-              unselected)
+            {t("Add selected document copies to process (Break processing of unselected) ")}
             </PrimaryButton>
           </form>
         </>
       ) : (
         <>
           <h3 className={styles.no__item}>
-            No document copies found for {selectedDocument.document_name}
+          {t( "No document copies found for")} {selectedDocument.document_name} 
             <br />
             <br />
             <span className={styles.continue__Text}>
-              Click the button below to continue
+            {t( "Click the button below to continue")}
             </span>
           </h3>
           <PrimaryButton type='submit' hoverBg='success' onClick={onSubmit}>
-            Add selected document copies to process (Break processing of
-            unselected)
+          {t( "Add selected document copies to process (Break processing of unselected)")}
           </PrimaryButton>
         </>
       )}

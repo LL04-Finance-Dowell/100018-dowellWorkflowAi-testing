@@ -13,6 +13,7 @@ import {
   removeFromTableOfContentForStep,
   setTableOfContentForStep,
 } from "../../../../../../features/app/appSlice";
+import { useTranslation } from 'react-i18next';
 
 const AssignDocumentMap = ({ currentStepIndex, stepsPopulated }) => {
   const {
@@ -25,6 +26,7 @@ const AssignDocumentMap = ({ currentStepIndex, stepsPopulated }) => {
   const { docCurrentWorkflow, tableOfContentForStep, processSteps } =
     useSelector((state) => state.app);
   const dispatch = useDispatch();
+  const { t } = useTranslation();
 
   const [copiedDoc, setCopiedDoc] = useState([])
 
@@ -173,34 +175,34 @@ const AssignDocumentMap = ({ currentStepIndex, stepsPopulated }) => {
       }
     }
   };
-  console.log("the process steps are ", processSteps);
+  // console.log("the process steps are ", processSteps);
 
   return (
     <>
       <p style={{ padding: "0 6px", marginBottom: "2px" }}>
-        <b>Table of Contents</b>
+        <b>{t('Table of Contents')}</b>
       </p>
       {processSteps.find(
         (process) => process.workflow === docCurrentWorkflow?._id
       )?.steps[currentStepIndex]?.skipStep ? (
-        <p>Step skipped</p>
+        <p>{t('Step skipped')}</p>
       ) : processSteps.find(
           (process) => process.workflow === docCurrentWorkflow?._id
         )?.steps[currentStepIndex]?.stepRights === "view" ? (
         <p>
-          Contents skipped because rights have been set to <b>view</b>
+          {t('Contents skipped because rights have been set to ')}<b>{t('view')}</b>
         </p>
       ) : processSteps.find(
           (process) => process.workflow === docCurrentWorkflow?._id
         )?.steps[currentStepIndex]?.stepRights === "comment" ? (
         <p>
-          Contents skipped because rights have been set to <b>comment</b>
+          {t('Contents skipped because rights have been set to ')}<b>{t('comment')}</b>
         </p>
       ) : processSteps.find(
           (process) => process.workflow === docCurrentWorkflow?._id
         )?.steps[currentStepIndex]?.stepRights === "approve" ? (
         <p>
-          Contents skipped because rights have been set to <b>approve</b>
+          {t('Contents skipped because rights have been set to ')}<b>{t('approve')}</b>
         </p>
       ) : contentOfDocument ? (
         <Contents
@@ -216,7 +218,7 @@ const AssignDocumentMap = ({ currentStepIndex, stepsPopulated }) => {
       {processSteps.find(
         (process) => process.workflow === docCurrentWorkflow?._id
       )?.steps[currentStepIndex]?.skipStep ? (
-        <p>Step skipped</p>
+        <p>{t('Step skipped')}</p>
       ) : processSteps.find(
           (process) => process.workflow === docCurrentWorkflow?._id
         )?.steps[currentStepIndex]?.stepRights === "view" ? (

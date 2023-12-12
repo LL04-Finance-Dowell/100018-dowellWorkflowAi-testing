@@ -7,9 +7,11 @@ import {
 import Collapse from '../../../../../layouts/collapse/Collapse';
 import styles from './dropdown.module.css';
 import { TiArrowSortedDown, TiArrowSortedUp } from 'react-icons/ti';
+import { useTranslation } from 'react-i18next';
 
 const Dropdown = ({ disableClick }) => {
   const dispatch = useDispatch();
+  const { t } = useTranslation();
   const { wfToDocument, docCurrentWorkflow, dropdownToggle } = useSelector(
     (state) => state.app
   );
@@ -42,7 +44,7 @@ const Dropdown = ({ disableClick }) => {
     dispatch(setDropdowndToggle(false));
   };
 
-  console.log("the wfToDocument.workflows are ",wfToDocument.workflows)
+  // console.log("the wfToDocument.workflows are ",wfToDocument.workflows)
   
 
   return (
@@ -57,7 +59,7 @@ const Dropdown = ({ disableClick }) => {
             <span>
               {docCurrentWorkflow
                 ? docCurrentWorkflow?.workflows.workflow_title
-                : 'Select a Workflow'}
+                : t('Select a Workflow')}
             </span>
             <i>
               {dropdownToggle ? (

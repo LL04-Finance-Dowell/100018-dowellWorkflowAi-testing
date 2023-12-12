@@ -234,8 +234,8 @@ const Chat = () => {
           {showImage && 
           <div className={styles.showImgIcons}>
             <div>
-              {shouldRenderButton  ? <button onClick={()=>{dispatch(toggleHighlight()); console.log('toggled')}}  className={styles.Chat_img_textProcess}>Do you want help on process!</button> : ""}
-              <div className={styles.Chat_img_text}>Samanta is here to help you!</div>
+              {shouldRenderButton  ? <button onClick={()=>{dispatch(toggleHighlight()); console.log('toggled')}}  className={styles.Chat_img_textProcess}>{t('Do you want help on process!')}</button> : ""}
+              <div className={styles.Chat_img_text}>{t("Samanta is here to help you!")}</div>
             </div>
             <img src={'https://www.socialmediaautomation.uxlivinglab.online/static/photos/Lady-Pixel.png'} width="80" className={styles.Chat_icon_img} />
           </div>}

@@ -99,12 +99,7 @@ export const items = [
         href: `/#documents`,
         type: 'notification',
       },
-      {
-        id: uuidv4(),
-        child: 'To start Processing (000)',
-        href: `/#documents`,
-        type: 'notification',
-      },
+      
     ],
   },
   {
