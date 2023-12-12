@@ -96,6 +96,8 @@ import spacy
 # spacy.cli.download("en_core_web_sm")
 
 nlp = spacy.load('en_core_web_sm')
+from django_celery_beat.models import PeriodicTask,IntervalSchedule
+
 
 
 
@@ -1840,3 +1842,21 @@ class DocumentReport(APIView):
         doc = nlp(sentence)
         adjectives = [token.text for token in doc if token.pos_ in ['ADJ']]
         return adjectives
+
+class ScheduleReminder(APIView):
+    def get(self, request, company_id):
+        interval,created = IntervalSchedule.objects.get_or_create(
+            every=30,
+            period=IntervalSchedule.SECONDS
+        )
+        
+        PeriodicTask.objects.create(
+            interval=interval,
+            name=f"schedule_{company_id}",
+            task="app.tasks.send_reminder_mail"
+        )
+        
+        return Response("Task Scheduled")
+
+    
+    
