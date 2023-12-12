@@ -130,6 +130,30 @@
   display: flex;
 }
 
+.create__button__template1 {
+  /* display: inline-flex; */
+  padding: 17px 43px 16px 20px;
+  align-items: center;
+  gap: 12px;
+  border-radius: 12px;
+  border: 1px solid #C8C8C8;
+  display: flex;
+}
+
+.create__button__template1:hover {
+  background-color: rgb(97, 206, 112); /* Background color on hover */
+}
+
+
+.create__button__inner {
+  background-color: "#f1f7ff"
+}
+
+.create__button__inner:hover {
+  background-color: rgb(97, 206, 112); /* Background color on hover */
+}
+
+
 .create__button__document {
   margin-top: 20px;
   display: flex;
