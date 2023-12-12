@@ -1845,18 +1845,29 @@ class DocumentReport(APIView):
 
 class ScheduleReminder(APIView):
     def get(self, request, company_id):
+        time_interval = request.query_params.get('interval')
+        if not time_interval:
+            return Response("Provide a time interval", status=status.HTTP_400_BAD_REQUEST)
+
         interval,created = IntervalSchedule.objects.get_or_create(
-            every=30,
+            every=time_interval,
             period=IntervalSchedule.SECONDS
         )
         
-        PeriodicTask.objects.create(
-            interval=interval,
-            name=f"schedule_{company_id}",
-            task="app.tasks.send_reminder_mail"
-        )
+        try:
+            PeriodicTask.objects.create(
+                interval=interval,
+                name=f"schedule_{company_id}",
+                task="app.tasks.send_reminder_mail"
+            )
+        except Exception as err:
+                print(err)
+                return Response(
+                    "An error occured during reminder scheduling",
+                    status.HTTP_500_INTERNAL_SERVER_ERROR,
+                )
         
-        return Response("Task Scheduled")
+        return Response("Task Scheduled",  status=status.HTTP_200_OK)
 
     
     

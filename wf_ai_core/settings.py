@@ -142,7 +142,9 @@ EMAIL_HOST = "smtp.gmail.com"
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = "docs@dowellresearch.sg"
+# EMAIL_HOST_USER = "morvinian8@gmail.com"
 EMAIL_HOST_PASSWORD = "jpcjzsnzarucochh"
+# EMAIL_HOST_PASSWORD ="mebqaundhmyvluaw"
 
 
 # Media files
@@ -170,7 +172,6 @@ CELERY_BROKER_URL = 'redis://127.0.0.1:6379'
 CELERY_ACCEPT_CONSTENT = ['application/json']
 CELERRY_RESULT_SERIALIZER = 'json'
 CELERY_TASK_SERIALIZER = 'json'
-CELERY_TIMEZONE = "Africa/Nairobi"
 CELERY_RESULT_BACKEND = 'django-db'
 CELERY_RESULT_EXTENDED = True
 CELERY_BEAT_SCHEDULER = 'django_celery_beat.schedulers:DatabaseScheduler'
