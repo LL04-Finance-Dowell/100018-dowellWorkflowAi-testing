@@ -50,24 +50,26 @@ const Editor = () => {
             <div className={styles.decision__container}>
               <div className={styles.decision__box}>
                 <h2>
-                  {t('Do you want to close?')}
+                 {t('Don\'t forget to save your changes')}
                   <br />
-                  <span className={styles.decision__mini__text}>
-                    {t('Save your work before closing')}
-                  </span>
+                  <div className={styles.decision__mini__text}>
+                    {t('You have made some changes to your editor that may not be saved yet. Do you want to stay in the editor and save them, or leave without saving?')}
+                  </div>
                 </h2>
                 <div className={styles.button__container}>
                   <button
                     className={styles.ok__button}
                     onClick={() => handleDecision('ok')}
                   >
-                    <TiTick size={25} />
+                    Close Editor
+                    {/* <TiTick size={25} /> */}
                   </button>
                   <button
                     className={styles.cancel__button}
                     onClick={() => handleDecision('cancel')}
                   >
-                    <MdClose size={25} />
+                    Continue Editing
+                    {/* <MdClose size={25} /> */}
                   </button>
                 </div>
               </div>
