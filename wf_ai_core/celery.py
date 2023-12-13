@@ -7,8 +7,6 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'wf_ai_core.settings')
 
 app = Celery('wf_ai_core')
 
-app.conf.update(timezone = 'Africa/Nairobi')
-
 app.config_from_object(settings, namespace='CELERY')
 
 app.autodiscover_tasks()

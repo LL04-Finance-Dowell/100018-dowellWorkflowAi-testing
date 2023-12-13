@@ -226,7 +226,8 @@ class HandleProcess:
         HandleProcess.notify(
             auth_name, item_id, portfolio, company_id, utp_link, org_name
         )
-        utp_code = HandleProcess.generate_qrcode(utp_link)
+        # utp_code = HandleProcess.generate_qrcode(utp_link)
+        utp_code = None
         return utp_link, utp_code
 
     def get_editor_link(payload):

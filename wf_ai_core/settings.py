@@ -141,14 +141,12 @@ EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 EMAIL_HOST = "smtp.gmail.com"
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = "docs@dowellresearch.sg"
-# EMAIL_HOST_USER = "morvinian8@gmail.com"
-EMAIL_HOST_PASSWORD = "jpcjzsnzarucochh"
-# EMAIL_HOST_PASSWORD ="mebqaundhmyvluaw"
-
+# EMAIL_HOST_USER = "docs@dowellresearch.sg"
+EMAIL_HOST_USER = "morvinian8@gmail.com"
+# EMAIL_HOST_PASSWORD = "jpcjzsnzarucochh"
+EMAIL_HOST_PASSWORD ="mebqaundhmyvluaw"
 
 # Media files
-
 MEDIA_ROOT = BASE_DIR / "media"
 MEDIA_URL = "/media/"
 

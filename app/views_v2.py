@@ -227,6 +227,20 @@ class DocumentOrTemplateProcessing(APIView):
                 status.HTTP_501_NOT_IMPLEMENTED,
             )
         if data:
+            steps = data["process_steps"]
+            BASE_URL = "http://127.0.0.1:8000"
+            company_id = "64ecb08a3033b00f16a496f4"
+            
+            for step in steps:
+                reminder = step.get("stepReminder", None)
+                if reminder:
+                    # Hitting the reminder api endpoint
+                    if reminder == "every_hour":
+                        requests.get(f"{BASE_URL}/v2/processes/{company_id}/reminder/?interval=60")
+                    elif reminder == "every_day":
+                        requests.get(f"{BASE_URL}/v2/processes/{company_id}/reminder/?interval=86400")
+                    else:
+                        print("Reminder will be set later")
             verification_links = processing.HandleProcess(data).start()
             return Response(verification_links, status.HTTP_200_OK)
 
@@ -1851,7 +1865,7 @@ class ScheduleReminder(APIView):
 
         interval,created = IntervalSchedule.objects.get_or_create(
             every=time_interval,
-            period=IntervalSchedule.SECONDS
+            period=IntervalSchedule.MINUTES
         )
         
         try:
@@ -1863,11 +1877,11 @@ class ScheduleReminder(APIView):
         except Exception as err:
                 print(err)
                 return Response(
-                    "An error occured during reminder scheduling",
-                    status.HTTP_500_INTERNAL_SERVER_ERROR,
+                    "A reminder has already been set for this user.",
+                     status.HTTP_500_INTERNAL_SERVER_ERROR,
                 )
         
-        return Response("Task Scheduled",  status=status.HTTP_200_OK)
+        return Response("Task Scheduled successfully!",  status=status.HTTP_200_OK)
 
     
     
