@@ -198,7 +198,7 @@ const Sidebar = ({toggleSidebar, isMobile}) => {
   // useEffect(() => {
   //   axios
   //     .get(
-  //       'https://workflowai.uxlivinglab.online/v1/companies/6385c0f38eca0fb652c9457e/templates/?='
+  //       'https://100094.pythonanywhere.com/v1/companies/6385c0f38eca0fb652c9457e/templates/?='
   //     )
   //     .then((response) => {
   //       const templateNames = response.data.templates.map(
@@ -302,7 +302,7 @@ const Sidebar = ({toggleSidebar, isMobile}) => {
             <Tooltip
               anchorId={item.id}
               content={item.label}
-              style={{ fontStyle: "normal" }}
+              style={{ fontStyle: "normal", backgroundColor: 'rgb(97, 206, 112)'}}
             />
           </i>
         ))}
