@@ -20,7 +20,7 @@ const Footer = ({ handleIconClick }) => {
         {footerIcons.map((item) => (
           <i id={item.id} onClick={() => handleIconClick(item.feature)} key={item.id}>
             <item.icon cursor="pointer" size={28} />
-            <Tooltip anchorId={item.id} content={item.label} style={{ fontStyle: "normal" }} />
+            <Tooltip anchorId={item.id} content={item.label} style={{ fontStyle: "normal", backgroundColor: 'rgb(97, 206, 112)' }} />
           </i>
         ))}
       </div>

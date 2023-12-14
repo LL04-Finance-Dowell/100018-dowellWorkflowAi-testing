@@ -69,6 +69,7 @@ function MyModal(props) {
       size='lg'
       aria-labelledby='contained-modal-title-vcenter'
       centered
+      
     >
       <Modal.Header closeButton>
         <Modal.Title>Create Team</Modal.Title>
@@ -82,6 +83,7 @@ function MyModal(props) {
               required
               value={name}
               onChange={handleNameChange}
+              style={{borderColor: ' rgb(97, 206, 112)'}}
             />
           </Form.Group>
 
@@ -92,6 +94,7 @@ function MyModal(props) {
               required
               value={code}
               onChange={handleCodeChange}
+              style={{borderColor: ' rgb(97, 206, 112)'}}
             />
           </Form.Group>
 
@@ -102,6 +105,7 @@ function MyModal(props) {
               required
               value={spec}
               onChange={handleSpecChange}
+              style={{borderColor: ' rgb(97, 206, 112)'}}
             />
           </Form.Group>
 
@@ -112,6 +116,7 @@ function MyModal(props) {
               required
               value={details}
               onChange={handleDetailsChange}
+              style={{borderColor: ' rgb(97, 206, 112)'}}
             />
           </Form.Group>
 
@@ -125,10 +130,11 @@ function MyModal(props) {
               required
               value={universalCode}
               onChange={handleUniversalCodeChange}
+              style={{borderColor: ' rgb(97, 206, 112)'}}
             />
           </Form.Group>
 
-          <Button type='submit'>Add</Button>
+          <Button type='submit' style={{backgroundColor: 'rgb(97, 206, 112)'}}>Add</Button>
         </Form>
       </Modal.Body>
     </Modal>
