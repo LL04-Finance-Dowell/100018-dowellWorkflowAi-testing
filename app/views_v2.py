@@ -415,62 +415,80 @@ class FinalizeOrReject(APIView):
             updated_signers_true = update_signed(signers_list, member=user, status=True)
         res = json.loads(
             finalize_item(
-                item_id, state, item_type, message, signers=None
+                item_id, state, item_type, message, signers=updated_signers_true
             )
         )
         if res["isSuccess"]:
-            try:
-                process = single_query_process_collection({"_id": process_id})
-                background = processing.Background(
-                    process, item_type, item_id, role, user, message
-                )
-                if user_type == "public":
-                    link_id = request.data["link_id"]
-                    register_finalized(link_id)
-                if item_type == "document" or item_type == "clone":
-                    background.document_processing()
-                    item = single_query_clones_collection({"_id": item_id})
-                    if item:
-                        if item.get("document_state") == "finalized":
-                            meta_id = get_metadata_id(item_id, item_type)
-                            update_metadata(
-                                meta_id,
-                                "finalized",
-                                item_type,
-                                signers=updated_signers_true,
-                            )
-                        elif item.get("document_state") == "processing":
-                            meta_id = get_metadata_id(item_id, item_type)
-                    return Response(
-                        "document processed successfully", status.HTTP_200_OK
+            # Check the finalize action, no need to check document state since the finalize_item() call was successful
+            if state == "rejected":
+                try:
+                    process_steps = single_query_process_collection({"_id": process_id}).get("process_steps")
+                    update_process(process_id=process_id, steps=process_steps, state=state)
+                    return Response("document rejected successfully", status.HTTP_200_OK)
+                except Exception as e:
+                    # Revert document and process states back to "processing"
+                    json.loads(
+                        finalize_item(
+                            item_id, "processing", item_type, message, signers=None
+                        )
                     )
-                elif item_type == "template":
-                    background.template_processing()
-                    item = single_query_template_collection({"_id": item_id})
-                    if item:
-                        if item.get("template_state") == "saved":
-                            meta_id = get_metadata_id(item_id, item_type)
-                            updated_signers_true = update_signed(
-                                signers_list, member=user, status=True
-                            )
-                            update_metadata(
-                                meta_id,
-                                "saved",
-                                item_type,
-                                signers=updated_signers_true,
-                            )
-                        elif item.get("template_state") == "draft":
-                            meta_id = get_metadata_id(item_id, item_type)
-                            update_metadata(meta_id, "draft", item_type)
-                    return Response(
-                        "template processed successfully", status.HTTP_200_OK
+                    update_process(process_id=process_id, steps=process_steps, state="processing")
+                    return Response(f"an error occurred while rejecting the process {e}", status.HTTP_500_INTERNAL_SERVER_ERROR)
+            #
+            else:
+                # Process item normally
+                try:
+                    process = single_query_process_collection({"_id": process_id})
+                    background = processing.Background(
+                        process, item_type, item_id, role, user, message
                     )
-            except Exception as err:
-                print(err)
-                return Response(
-                    "An error occured during processing",
-                    status.HTTP_500_INTERNAL_SERVER_ERROR,
-                )
+                    if user_type == "public":
+                        link_id = request.data["link_id"]
+                        register_finalized(link_id)
+                    if item_type == "document" or item_type == "clone":
+                        background.document_processing()
+                        item = single_query_clones_collection({"_id": item_id})
+                        if item:
+                            if item.get("document_state") == "finalized":
+                                meta_id = get_metadata_id(item_id, item_type)
+                                update_metadata(
+                                    meta_id,
+                                    "finalized",
+                                    item_type,
+                                    signers=updated_signers_true,
+                                )
+                            elif item.get("document_state") == "processing":
+                                meta_id = get_metadata_id(item_id, item_type)
+                        return Response(
+                            "document processed successfully", status.HTTP_200_OK
+                        )
+                    elif item_type == "template":
+                        background.template_processing()
+                        item = single_query_template_collection({"_id": item_id})
+                        if item:
+                            if item.get("template_state") == "saved":
+                                meta_id = get_metadata_id(item_id, item_type)
+                                updated_signers_true = update_signed(
+                                    signers_list, member=user, status=True
+                                )
+                                update_metadata(
+                                    meta_id,
+                                    "saved",
+                                    item_type,
+                                    signers=updated_signers_true,
+                                )
+                            elif item.get("template_state") == "draft":
+                                meta_id = get_metadata_id(item_id, item_type)
+                                update_metadata(meta_id, "draft", item_type)
+                        return Response(
+                            "template processed successfully", status.HTTP_200_OK
+                        )
+                except Exception as err:
+                    print(err)
+                    return Response(
+                        "An error occured during processing",
+                        status.HTTP_500_INTERNAL_SERVER_ERROR,
+                    )
 
 
 class TriggerProcess(APIView):
