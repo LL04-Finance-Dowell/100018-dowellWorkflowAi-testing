@@ -1603,13 +1603,12 @@ class WorkflowSettingsDetail(APIView):
 class NewFolder(APIView):
     def post(self, request):
         data = []
-        folder_name = "Untitled Folder"
         if not validate_id(request.data["company_id"]):
             return Response("Invalid company details", status.HTTP_400_BAD_REQUEST)
         res = json.loads(
             save_to_folder_collection(
                 {
-                    "folder_name": folder_name,
+                    "folder_name": request.data["folder_name"],
                     "data": data,
                     "created_by": request.data["created_by"],
                     "company_id": request.data["company_id"],
@@ -1670,7 +1669,6 @@ class FolderDetail(APIView):
         item_type = request.query_params.get("item_type")
         delete_items_in_folder(item_id, folder_id, item_type)
         return Response(status.HTTP_204_NO_CONTENT)
-
 
 class NewPublicUser(APIView):
     def post(self, request):
