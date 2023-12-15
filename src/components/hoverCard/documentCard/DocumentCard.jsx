@@ -506,7 +506,7 @@ const DocumentCard = ({
           </div>
         )}
 
-        <Tooltip id={`add-${cardItem._id}`} content="Add Document" direction="up" arrowSize={10} style={{ backgroundColor: 'rgb(97, 206, 112)', color: 'white' }}></Tooltip>
+        <Tooltip id={`add-${cardItem._id}`} content="Add doc to folder" direction="up" arrowSize={10} style={{ backgroundColor: 'rgb(97, 206, 112)', color: 'white' }}></Tooltip>
         <div
         anchorId={cardItem._id}
         data-tooltip-id={`add-${cardItem._id}`}
