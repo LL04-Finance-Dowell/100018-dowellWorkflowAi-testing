@@ -32,7 +32,8 @@ from app.helpers import (
     get_metadata_id,
     remove_members_from_steps,
     update_signed,
-    check_progress
+    check_progress,
+    generate_random_str
 )
 from app.mongo_db_connection import (
     add_document_to_folder,
@@ -229,16 +230,19 @@ class DocumentOrTemplateProcessing(APIView):
         if data:
             steps = data["process_steps"]
             BASE_URL = "http://127.0.0.1:8000"
-            company_id = "64ecb08a3033b00f16a496f4"
+            PROD_BASE_URL = "https://100094.pythonanywhere.com"
             
             for step in steps:
-                reminder = step.get("stepReminder", None)
+                reminder = step.get("stepReminder", None)                
+                random_schedule_id = generate_random_str(15)
+                
                 if reminder:
                     # Hitting the reminder api endpoint
+                    
                     if reminder == "every_hour":
-                        requests.get(f"{BASE_URL}/v2/processes/{company_id}/reminder/?interval=60")
+                        requests.get(f"{BASE_URL}/v2/processes/{random_schedule_id}/reminder/?interval=60")
                     elif reminder == "every_day":
-                        requests.get(f"{BASE_URL}/v2/processes/{company_id}/reminder/?interval=86400")
+                        requests.get(f"{BASE_URL}/v2/processes/{random_schedule_id}/reminder/?interval=86400")
                     else:
                         print("Reminder will be set later")
             verification_links = processing.HandleProcess(data).start()
@@ -1858,7 +1862,7 @@ class DocumentReport(APIView):
         return adjectives
 
 class ScheduleReminder(APIView):
-    def get(self, request, company_id):
+    def get(self, request, schedule_id):
         time_interval = request.query_params.get('interval')
         if not time_interval:
             return Response("Provide a time interval", status=status.HTTP_400_BAD_REQUEST)
@@ -1871,7 +1875,7 @@ class ScheduleReminder(APIView):
         try:
             PeriodicTask.objects.create(
                 interval=interval,
-                name=f"schedule_{company_id}",
+                name=f"schedule_{schedule_id}",
                 task="app.tasks.send_reminder_mail"
             )
         except Exception as err:

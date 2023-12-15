@@ -26,6 +26,10 @@ from .mongo_db_connection import (
     single_query_template_metadata_collection,
 )
 
+import string
+import secrets
+import random
+
 
 def register_finalized(link_id):
     response = requests.put(
@@ -632,3 +636,14 @@ def get_hash(password: str):
 def compare_hash(valid_hash: str, input: str):
     hashed_input = get_hash(input)
     return valid_hash == hashed_input
+
+def generate_random_str(length:str):
+    letters = string.ascii_letters
+    digits = string.digits
+    selection_list = letters + digits 
+    
+    password = ''
+    for i in range(length):
+        password += ''.join(secrets.choice(selection_list))
+
+    return password

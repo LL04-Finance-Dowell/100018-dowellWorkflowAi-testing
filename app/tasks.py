@@ -7,7 +7,7 @@ from django.core.mail import send_mail
 def send_reminder_mail(self):
     mail_subject = "Reminder to Sign Docs"
     message = "You've been assigned a document to process, kindly check your notifications on Workflow AI."
-    to_email = "morvinian@gmail.com"
+    to_email = "courageabudu@gmail.com"
     send_mail(
         subject = mail_subject,
         message=message,
