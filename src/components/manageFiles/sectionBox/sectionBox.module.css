@@ -62,6 +62,7 @@
   padding: 1%;
   margin-right: 5px;
   border-radius: 6px;
+  margin-bottom: 5px;
 }
 .search__item{
   outline: none;
@@ -70,4 +71,21 @@
 }
 .search__item:focus{
   border: none;
+}
+.RightBox{
+  display: flex;
+}
+@media (max-width: 768px) {
+  .search__item__wrapper{
+    /* width: 60%; */
+    /* border: solid; */
+  }
+  .RightBox{
+    width: 50%;
+    display: block;
+    align-items: right;
+    gap: 5px;
+    margin-left: 10px;
+    /* border: solid; */
+  }
 }
