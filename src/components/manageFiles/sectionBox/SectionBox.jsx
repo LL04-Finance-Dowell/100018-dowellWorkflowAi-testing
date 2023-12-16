@@ -393,7 +393,7 @@ const handleFilterChange = (event) => {
             {itemType ? (
               itemType === 'documents' ? (
                 allDocumentsStatus !== 'pending' ? (
-                  <div style={{display:'flex', }}>
+                  <div className={styles.RightBox}>
                     {cardItems.length > 10? 
                     <div className={styles.search__item__wrapper} >
                        <input
@@ -426,7 +426,7 @@ const handleFilterChange = (event) => {
                 )
               ) : itemType === 'templates' ? (
                 allTemplatesStatus !== 'pending' ? (
-                  <div style={{display:'flex', }}>
+                  <div className={styles.RightBox}>
                       {cardItems.length > 10? 
                       <div className={styles.search__item__wrapper} >
                         <input
@@ -459,7 +459,7 @@ const handleFilterChange = (event) => {
                 )
               ) : itemType === 'workflows' ? (
                 allWorkflowsStatus !== 'pending' ? (
-                  <div style={{display:'flex', }}>
+                  <div  className={styles.RightBox}>
                     {cardItems.length > 10? 
                     <div className={styles.search__item__wrapper} >
                        <input
@@ -492,7 +492,7 @@ const handleFilterChange = (event) => {
                 )
               ) : itemType === 'processes' ? (
                 !processesLoading ? (
-                  <div style={{display:'flex', }}>
+                  <div  className={styles.RightBox}>
                     {cardItems.length > 10? 
                     <div className={styles.search__item__wrapper} >
                        <input
@@ -525,7 +525,7 @@ const handleFilterChange = (event) => {
                 )
               ) : itemType === 'folders' ? (
                 !isFetchingFolders ? (
-                  <div style={{display:'flex', }}>
+                  <div  className={styles.RightBox}>
                       {cardItems.length > 10? 
                       <div className={styles.search__item__wrapper} >
                         <input

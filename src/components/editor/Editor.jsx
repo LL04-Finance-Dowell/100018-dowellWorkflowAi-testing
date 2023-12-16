@@ -50,27 +50,32 @@ const Editor = () => {
             <div className={styles.decision__container}>
               <div className={styles.decision__box}>
                 <h2>
-                 {t('Don\'t forget to save your changes')}
+                 {t('Save changes')}
                   <br />
                   <div className={styles.decision__mini__text}>
-                    {t('You have made some changes to your editor that may not be saved yet. Do you want to stay in the editor and save them, or leave without saving?')}
+                    {t('You have made some changes to your file that may not be saved yet. Don\'t forget to save your changes.')}
                   </div>
                 </h2>
                 <div className={styles.button__container}>
-                  <button
-                    className={styles.ok__button}
-                    onClick={() => handleDecision('ok')}
-                  >
-                    Close Editor
-                    {/* <TiTick size={25} /> */}
-                  </button>
-                  <button
-                    className={styles.cancel__button}
-                    onClick={() => handleDecision('cancel')}
-                  >
-                    Continue Editing
-                    {/* <MdClose size={25} /> */}
-                  </button>
+                    <div className={styles.button__wrapper}>
+                      <button
+                        className={styles.cancel__button}
+                        onClick={() => handleDecision('cancel')}
+                      >
+                        Continue Editing
+                        {/* <MdClose size={25} /> */}
+                      </button>
+                    </div>
+                    <div className={styles.button__wrapper}>
+                      <button
+                        className={styles.ok__button}
+                        onClick={() => handleDecision('ok')}
+                      >
+                        Close Editor
+                        {/* <TiTick size={25} /> */}
+                      </button>
+                    </div>
+                  
                 </div>
               </div>
             </div>
