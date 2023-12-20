@@ -37,6 +37,7 @@ const SectionBox = ({
   isReports,
   isCompleted,
   isRejected,
+  isReport,
 }) => {
   const [sliceCount, setSliceCount] = useState(1);
   const [refreshLoading, setRefreshLoading] = useState(false);
@@ -351,6 +352,7 @@ const SectionBox = ({
     setCardItemsVar(cardItems);
   }, [cardItems]);
 console.log('the card items are ', cardItems)
+console.log("isReport sect", isReport)
   return (
     <div className={styles.container}>
       <div className={styles.content__container}>
@@ -515,6 +517,7 @@ console.log('the card items are ', cardItems)
                           folderId={folderId}
                           isCompletedDoc={isCompleted}
                           isRejectedDoc={isRejected}
+                          isReport={isReport}
                         />
                       ))}
                 </div>

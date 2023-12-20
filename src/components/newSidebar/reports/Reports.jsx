@@ -199,12 +199,25 @@ export const manageFileItems = [
     id: uuidv4(),
     parent: 'My documents',
     children: [
+      { id: uuidv4(), child: 'drafts', href: '/documents/draft-reports' },
+      {
+        id: uuidv4(),
+        child: 'saved',
+        href: '/documents/saved-reports',
+      },
       { id: uuidv4(), child: 'Rejected', href: '/documents/rejected' },
       {
         id: uuidv4(),
         child: 'Completed',
         href: '/documents/completed',
       },
+      // { id: uuidv4(), child: 'Drafts', href: '/documents/#drafts', report: true },
+      // {
+      //   id: uuidv4(),
+      //   child: 'saved documents',
+      //   href: '/documents/saved',
+      //   report: true
+      // },
     ],
     // href: '/documents/completed',
   },
@@ -233,7 +246,7 @@ export const manageFileItems = [
   {
     id: uuidv4(),
     parent: 'My Processes',
-    // href: '/processes/completed',
+    // href: '/processes/completed', 
     children: [
       // {
       //   id: uuidv4(),
