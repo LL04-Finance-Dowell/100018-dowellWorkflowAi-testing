@@ -6,7 +6,7 @@ const Select = ({ options, register, name, label, takeOptionValue, takeNormalVal
   
   return (
     <div className={styles.container}>
-      <label htmlFor={name}>{label}</label>
+      <label htmlFor={name}>{t(label)}</label>
       <select
         id={name}
         className={styles.form__select}

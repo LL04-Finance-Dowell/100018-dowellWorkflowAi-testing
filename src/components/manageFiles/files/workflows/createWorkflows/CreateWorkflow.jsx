@@ -95,102 +95,78 @@ const CreateWorkflows = ({ handleToggleOverlay }) => {
     setWorkflowTitle(e.target.value);
   };
 
-  const handleCreateWorkflow = () => {
-    const handleAfterCreated = () => {
-      reset();
-      setWorkflowTitle("");
-      setInternalWorkflows([]);
-      dispatch(setToggleManageFileForm(false));
-    };
-
-    const steps = internalWorkflows.map((item) => ({
-      step_name: item.step_name,
-      role: item.role,
-    }));
-
-    if (currentWorkflow) {
-      // const updateData = {
-      //   created_by: userDetail?.userinfo?.username,
-      //   company_id:
-      //     userDetail?.portfolio_info?.length > 1
-      //       ? userDetail?.portfolio_info.find(
-      //           (portfolio) => portfolio.product === productName
-      //         )?.org_id
-      //       : userDetail?.portfolio_info[0].org_id,
-      //   wf_title: workflowTitle,
-      //   workflow_id: currentWorkflow._id,
-      //   data_type:
-      //     userDetail?.portfolio_info?.length > 1
-      //       ? userDetail?.portfolio_info.find(
-      //           (portfolio) => portfolio.product === productName
-      //         )?.data_type
-      //       : userDetail?.portfolio_info[0].data_type,
-      //   steps,
-      // };
-
-      // console.log("the currentWorkflow is ", currentWorkflow);
-      // console.log("the portfolio is ", userDetail);
-      // console.log("the product name is ", productName);
-
-      const newData = JSON.parse(JSON.stringify(currentWorkflow));
-      if (Array.isArray(steps)) {
-        newData.workflows.steps = steps;
-      } else {
-        console.error("newSteps must be an array.");
-      }
-      delete newData?.workflows.data_type;
-      newData.portfolio = newData.creator_portfolio;
-      delete newData.creator_portfolio;
-      console.log("the updated data is ", newData);
-
-
-      dispatch(updateWorkflow({ newData, notify, handleAfterCreated }));
-    } else {
-      const data = {
-        created_by: userDetail?.userinfo.username,
-        wf_title: workflowTitle,
-        company_id:
-          userDetail?.portfolio_info?.length > 1
-            ? userDetail?.portfolio_info.find(
-                (portfolio) => portfolio.product === productName
-              )?.org_id
-            : userDetail?.portfolio_info[0].org_id,
-        data_type:
-          userDetail?.portfolio_info?.length > 1
-            ? userDetail?.portfolio_info.find(
-                (portfolio) => portfolio.product === productName
-              )?.data_type
-            : userDetail?.portfolio_info[0].data_type,
-        steps,
-        portfolio:
-          userDetail?.portfolio_info?.length > 1
-            ? userDetail?.portfolio_info.find(
-                (portfolio) => portfolio.product === productName
-              )?.portfolio_name
-            : userDetail?.portfolio_info[0]?.portfolio_name,
+  const handleCreateWorkflow = async () => {
+    try {
+      setSubmitBtnDisabled(true);
+  
+      const handleAfterCreated = () => {
+        reset();
+        setWorkflowTitle("");
+        setInternalWorkflows([]);
+        dispatch(setToggleManageFileForm(false));
       };
-
-      const Api_key = creditResponse?.api_key;
-      axios
-        .post(
+  
+      const steps = internalWorkflows.map((item) => ({
+        step_name: item.step_name,
+        role: item.role,
+      }));
+  
+      if (currentWorkflow) {
+        const newData = JSON.parse(JSON.stringify(currentWorkflow));
+        if (Array.isArray(steps)) {
+          newData.workflows.steps = steps;
+        } else {
+          console.error("newSteps must be an array.");
+        }
+        delete newData?.workflows.data_type;
+        newData.portfolio = newData.creator_portfolio;
+        delete newData.creator_portfolio;
+  
+        dispatch(updateWorkflow({ newData, notify, handleAfterCreated }));
+      } else {
+        const data = {
+          created_by: userDetail?.userinfo.username,
+          wf_title: workflowTitle,
+          company_id:
+            userDetail?.portfolio_info?.length > 1
+              ? userDetail?.portfolio_info.find(
+                  (portfolio) => portfolio.product === productName
+                )?.org_id
+              : userDetail?.portfolio_info[0].org_id,
+          data_type:
+            userDetail?.portfolio_info?.length > 1
+              ? userDetail?.portfolio_info.find(
+                  (portfolio) => portfolio.product === productName
+                )?.data_type
+              : userDetail?.portfolio_info[0].data_type,
+          steps,
+          portfolio:
+            userDetail?.portfolio_info?.length > 1
+              ? userDetail?.portfolio_info.find(
+                  (portfolio) => portfolio.product === productName
+                )?.portfolio_name
+              : userDetail?.portfolio_info[0]?.portfolio_name,
+        };
+  
+        const Api_key = creditResponse?.api_key;
+        await axios.post(
           `https://100105.pythonanywhere.com/api/v3/process-services/?type=product_service&api_key=${Api_key}`,
           {
             service_id: "DOWELL10026",
             sub_service_ids: ["DOWELL100263"],
           }
-        )
-        .then((response) => {
-          console.log(response);
-          if (response.data.success == true) {
-            dispatch(createWorkflow({ data, notify, handleAfterCreated }));
-          }
-        })
-        .catch((error) => {
-          console.log(error);
-          toast.info(error.response?.data?.message);
-        });
+        );
+  
+        dispatch(createWorkflow({ data, notify, handleAfterCreated }));
+      }
+    } catch (error) {
+      console.log(error);
+      toast.info(error.response?.data?.message);
+    } finally {
+      setSubmitBtnDisabled(false);
     }
   };
+  
 
   useEffect(() => {
     if (workflowDetailStatus === "error") {
@@ -245,7 +221,7 @@ const CreateWorkflows = ({ handleToggleOverlay }) => {
           <form onSubmit={handleSubmit(onSubmit)}>
             <div className={styles.form__box} style={{ display: "flex" }}>
               <>
-                <div className={overlayStyles.input__box}>
+                <div className={overlayStyles.input__box} style={{marginRight:'10px'}}>
                   <label ref={stepNameRef} htmlFor="step_name">
                     {t("Step Name")}
                   </label>
@@ -256,7 +232,7 @@ const CreateWorkflows = ({ handleToggleOverlay }) => {
                     {...register("step_name")}
                   />
                 </div>
-                <div className={overlayStyles.input__box}>
+                <div className={overlayStyles.input__box} style={{marginRight:'10px'}}>
                   <label htmlFor="role">{t("Role")}</label>
                   <input
                     required
@@ -280,7 +256,7 @@ const CreateWorkflows = ({ handleToggleOverlay }) => {
             >
               {t("cancel")}
             </button>
-            <SubmitButton
+            {/* <SubmitButton
               onClick={handleCreateWorkflow}
               status={currentWorkflow ? updateWorkflowStatus : status}
               type="button"
@@ -288,7 +264,18 @@ const CreateWorkflows = ({ handleToggleOverlay }) => {
               disabled={submitBtnDisabled}
             >
               {currentWorkflow ? t("update") : t("save")}
-            </SubmitButton>
+            </SubmitButton> */}
+            <button
+              onClick={handleCreateWorkflow}
+              className={styles.add__button}
+              type="button"
+              disabled={submitBtnDisabled}
+              style={
+                submitBtnDisabled ? { cursor: 'not-allowed', filter: 'brightness(0.7)' } : {}
+              }
+            >
+              {currentWorkflow ? t("update") : t("save")}
+            </button>
           </div>
         </div>
       )}

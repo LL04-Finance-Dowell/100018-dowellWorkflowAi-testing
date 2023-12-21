@@ -47,6 +47,7 @@ const SectionBox = ({
   const { allDocumentsStatus } = useSelector((state) => state.document);
   const { allTemplatesStatus } = useSelector((state) => state.template);
   const { allWorkflowsStatus } = useSelector((state) => state.workflow);
+  const [filterName, setFilterName] = useState('');
   const dispatch = useDispatch();
   const { t } = useTranslation();
   const [isDemoLoading, setIsDemoLoading] = useState(false);
@@ -352,7 +353,34 @@ const SectionBox = ({
     setCardItemsVar(cardItems);
   }, [cardItems]);
 console.log('the card items are ', cardItems)
-console.log("isReport sect", isReport)
+
+const handleFilterChange = (event) => {
+  setFilterName(event.target.value);
+  // Filter the cardItemsVar based on the input value
+  if(itemType === 'documents'){
+    const filteredItems = cardItems.filter(item => item.document_name.toLowerCase().includes(event.target.value.toLowerCase()));
+    setCardItemsVar(filteredItems);
+  }
+  else if(itemType === 'templates'){
+    const filteredItems = cardItems.filter(item => item.template_name.toLowerCase().includes(event.target.value.toLowerCase()));
+    setCardItemsVar(filteredItems);
+  }
+  else if(itemType === 'workflows'){
+    const filteredItems = cardItems.filter(item => item.workflows?.workflow_title.toLowerCase().includes(event.target.value.toLowerCase()));
+    setCardItemsVar(filteredItems);
+  }
+  else if(itemType === 'processes'){
+    const filteredItems = cardItems.filter(item => item.process_title.toLowerCase().includes(event.target.value.toLowerCase()));
+    setCardItemsVar(filteredItems);
+  }
+  else if(itemType === 'folders'){
+    const filteredItems = cardItems.filter(item => item.folder_name.toLowerCase().includes(event.target.value.toLowerCase()));
+    setCardItemsVar(filteredItems);
+  }
+  
+  
+};
+
   return (
     <div className={styles.container}>
       <div className={styles.content__container}>
@@ -360,106 +388,172 @@ console.log("isReport sect", isReport)
           <h2
             className={maneFilesStyles.header}
             id={idKey ? title.replaceAll(' ', '') + '-' + idKey : ''}
+          
           >
             {t(title)}
             {itemType ? (
               itemType === 'documents' ? (
                 allDocumentsStatus !== 'pending' ? (
-                  <button
-                    className={styles.refresh__btn}
-                    onClick={handleRefresh}
-                  >
-                    {refreshLoading ? (
-                      <LoadingSpinner
-                        color={'white'}
-                        width={'1rem'}
-                        height={'1rem'}
-                      />
-                    ) : (
-                      <IoIosRefresh />
-                    )}
-                    <span>{t('Refresh')}</span>
-                  </button>
+                  <div className={styles.RightBox}>
+                    {cardItems.length > 10? 
+                    <div className={styles.search__item__wrapper} >
+                       <input
+                          type="text"
+                          placeholder="Filter by name"
+                          value={filterName}
+                          onChange={handleFilterChange}
+                          className={styles.search__item}
+                        />
+                    </div>:""  
+                  }
+                    <button
+                      className={styles.refresh__btn}
+                      onClick={handleRefresh}
+                    >
+                      {refreshLoading ? (
+                        <LoadingSpinner
+                          color={'white'}
+                          width={'1rem'}
+                          height={'1rem'}
+                        />
+                      ) : (
+                        <IoIosRefresh />
+                      )}
+                      <span>{t('Refresh')}</span>
+                    </button>
+                  </div>
                 ) : (
                   <></>
                 )
               ) : itemType === 'templates' ? (
                 allTemplatesStatus !== 'pending' ? (
-                  <button
-                    className={styles.refresh__btn}
-                    onClick={handleRefresh}
-                  >
-                    {refreshLoading ? (
-                      <LoadingSpinner
-                        color={'white'}
-                        width={'1rem'}
-                        height={'1rem'}
-                      />
-                    ) : (
-                      <IoIosRefresh />
-                    )}
-                    <span>Refresh</span>
-                  </button>
+                  <div className={styles.RightBox}>
+                      {cardItems.length > 10? 
+                      <div className={styles.search__item__wrapper} >
+                        <input
+                            type="text"
+                            placeholder="Filter by name"
+                            value={filterName}
+                            onChange={handleFilterChange}
+                            className={styles.search__item}
+                          />
+                      </div>:""  
+                    }
+                    <button
+                      className={styles.refresh__btn}
+                      onClick={handleRefresh}
+                    >
+                      {refreshLoading ? (
+                        <LoadingSpinner
+                          color={'white'}
+                          width={'1rem'}
+                          height={'1rem'}
+                        />
+                      ) : (
+                        <IoIosRefresh />
+                      )}
+                      <span>Refresh</span>
+                    </button>
+                  </div>
                 ) : (
                   <></>
                 )
               ) : itemType === 'workflows' ? (
                 allWorkflowsStatus !== 'pending' ? (
-                  <button
-                    className={styles.refresh__btn}
-                    onClick={handleRefresh}
-                  >
-                    {refreshLoading ? (
-                      <LoadingSpinner
-                        color={'white'}
-                        width={'1rem'}
-                        height={'1rem'}
-                      />
-                    ) : (
-                      <IoIosRefresh />
-                    )}
-                    <span>{t('Refresh')}</span>
-                  </button>
+                  <div  className={styles.RightBox}>
+                    {cardItems.length > 10? 
+                    <div className={styles.search__item__wrapper} >
+                       <input
+                          type="text"
+                          placeholder="Filter by name"
+                          value={filterName}
+                          onChange={handleFilterChange}
+                          className={styles.search__item}
+                        />
+                    </div>:""  
+                    }
+                    <button
+                      className={styles.refresh__btn}
+                      onClick={handleRefresh}
+                    >
+                      {refreshLoading ? (
+                        <LoadingSpinner
+                          color={'white'}
+                          width={'1rem'}
+                          height={'1rem'}
+                        />
+                      ) : (
+                        <IoIosRefresh />
+                      )}
+                      <span>{t('Refresh')}</span>
+                    </button>
+                  </div>
                 ) : (
                   <></>
                 )
               ) : itemType === 'processes' ? (
                 !processesLoading ? (
-                  <button
-                    className={styles.refresh__btn}
-                    onClick={handleRefresh}
-                  >
-                    {refreshLoading ? (
-                      <LoadingSpinner
-                        color={'white'}
-                        width={'1rem'}
-                        height={'1rem'}
-                      />
-                    ) : (
-                      <IoIosRefresh />
-                    )}
-                    <span>Refresh</span>
-                  </button>
+                  <div  className={styles.RightBox}>
+                    {cardItems.length > 10? 
+                    <div className={styles.search__item__wrapper} >
+                       <input
+                          type="text"
+                          placeholder="Filter by name"
+                          value={filterName}
+                          onChange={handleFilterChange}
+                          className={styles.search__item}
+                        />
+                    </div>:""  
+                    }
+                    <button
+                      className={styles.refresh__btn}
+                      onClick={handleRefresh}
+                    >
+                      {refreshLoading ? (
+                        <LoadingSpinner
+                          color={'white'}
+                          width={'1rem'}
+                          height={'1rem'}
+                        />
+                      ) : (
+                        <IoIosRefresh />
+                      )}
+                      <span>Refresh</span>
+                    </button>
+                  </div>
                 ) : (
                   <></>
                 )
               ) : itemType === 'folders' ? (
                 !isFetchingFolders ? (
-                  <button
-                    className={styles.refresh__btn}
-                    onClick={handleRefresh}
-                  >
-                    {refreshLoading ? (
-                      <LoadingSpinner
-                        color={'white'}
-                        width={'1rem'}
-                        height={'1rem'}
-                      />
-                    ) : (
-                      <IoIosRefresh />
-                    )}
-                    <span>Refresh</span>
-                  </button>
+                  <div  className={styles.RightBox}>
+                      {cardItems.length > 10? 
+                      <div className={styles.search__item__wrapper} >
+                        <input
+                            type="text"
+                            placeholder="Filter by name"
+                            value={filterName}
+                            onChange={handleFilterChange}
+                            className={styles.search__item}
+                          />
+                      </div>:""  
+                     }
+                      <button
+                        className={styles.refresh__btn}
+                        onClick={handleRefresh}
+                      >
+                        {refreshLoading ? (
+                          <LoadingSpinner
+                            color={'white'}
+                            width={'1rem'}
+                            height={'1rem'}
+                          />
+                        ) : (
+                          <IoIosRefresh />
+                        )}
+                        <span>Refresh</span>
+                      </button>
+                  </div>
                 ) : (
                   <></>
                 )

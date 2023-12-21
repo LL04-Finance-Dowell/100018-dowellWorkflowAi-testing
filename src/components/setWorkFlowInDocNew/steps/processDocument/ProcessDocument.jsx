@@ -93,6 +93,7 @@ const ProcessDocument = ({ savedProcess, Process_title, setProcess_title }) => {
   const navigate = useNavigate();
   const { t } = useTranslation();
   const [processName, setProcessName] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleProcessBtnClick = async () => {
     if (!processOptionSelection || processOptionSelection === "Select") return;
@@ -188,6 +189,7 @@ const ProcessDocument = ({ savedProcess, Process_title, setProcess_title }) => {
         'Please click the "Show process" button above to make sure there are no errors before processing.'
       );
 
+    setIsLoading(true);
     const Api_key = creditResponse?.api_key;
     axios
       .post(
@@ -198,7 +200,7 @@ const ProcessDocument = ({ savedProcess, Process_title, setProcess_title }) => {
         }
       )
       .then(async (response) => {
-        console.log("the res from axios is ", response);
+        // console.log("the res from axios is ", response);
         if (response.data.success == true) {
           setNewProcessLoading(true);
 
@@ -206,8 +208,8 @@ const ProcessDocument = ({ savedProcess, Process_title, setProcess_title }) => {
             const response = await (
               await startNewProcessV2(processObjToPost)
             ).data;
-            console.log("the process obj to post is ", processObjToPost);
-            console.log("the response from adding new process is ", response);
+            // console.log("the process obj to post is ", processObjToPost);
+            // console.log("the response from adding new process is ", response);
 
             // console.log('the user Details are ', userDetail)
             if(processObjToPost.workflows[0].workflows.steps[0].stepPublicMembers.length > 0){
@@ -237,7 +239,7 @@ const ProcessDocument = ({ savedProcess, Process_title, setProcess_title }) => {
                   })
                   .then((data) => {
                   
-                    console.log('Response from the POST request to add to public is :', data);
+                    // console.log('Response from the POST request to add to public is :', data);
                   })
                   .catch((error) => {
                     
@@ -296,6 +298,7 @@ const ProcessDocument = ({ savedProcess, Process_title, setProcess_title }) => {
         console.log(error);
         toast.info(error.response?.data?.message);
       });
+      setIsLoading(false);
   };
 
   const handleSaveForLaterBtnClick = () => {
@@ -496,7 +499,7 @@ const ProcessDocument = ({ savedProcess, Process_title, setProcess_title }) => {
                 style={{ height: "40px" }}
               />
             ) : (
-              <button hoverBg="success" onClick={handleProcessBtnClick}>
+              <button hoverBg="success" onClick={handleProcessBtnClick} disabled={isLoading}>
                 {t("Save / Start Process")}
               </button>
             )}

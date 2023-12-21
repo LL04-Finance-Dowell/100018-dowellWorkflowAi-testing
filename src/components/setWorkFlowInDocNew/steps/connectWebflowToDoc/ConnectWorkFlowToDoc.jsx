@@ -312,7 +312,7 @@ console.log("the stepsPopulated are ", stepsPopulated)
                               }
                             />
                             <label htmlFor={'skip-' + index}>
-                              Skip this Step
+                            {t('Skip this Step')}
                             </label>
                           </div>
                           <div className={styles.checkbox}>
@@ -349,7 +349,7 @@ console.log("the stepsPopulated are ", stepsPopulated)
                               }
                             />
                             <label htmlFor={'permit-' + index}>
-                              Permit internal workflow in this Step
+                            {t('Permit internal workflow in this Step')}
                             </label>
                           </div>
                         </div>
@@ -384,13 +384,13 @@ console.log("the stepsPopulated are ", stepsPopulated)
                             hoverBg='error'
                             onClick={() => handleResetStepAndSuccessors(index)}
                           >
-                            Reset this step & its successors
+                            {t('Reset this step & its successors')}
                           </PrimaryButton>
                           <PrimaryButton
                             hoverBg='success'
                             onClick={() => handleSetStepAndProceedToNext(index)}
                           >
-                            Set this step & proceed to next
+                            {t('Set this step & proceed to next')}
                           </PrimaryButton>
                         </div>
                       </div>

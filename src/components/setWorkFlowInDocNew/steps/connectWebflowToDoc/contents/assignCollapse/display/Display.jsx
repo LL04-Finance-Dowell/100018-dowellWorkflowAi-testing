@@ -5,6 +5,7 @@ import { useForm } from "react-hook-form";
 import Select from "../../../../../select/Select";
 import { useDispatch, useSelector } from "react-redux";
 import { updateSingleProcessStep } from "../../../../../../../features/app/appSlice";
+import { useTranslation } from 'react-i18next';
 
 const Display = ({ currentStepIndex, stepsPopulated }) => {
   const { 
@@ -12,6 +13,7 @@ const Display = ({ currentStepIndex, stepsPopulated }) => {
     handleSubmit, 
     formState: { isSubmitted }
   } = useForm();
+  const { t } = useTranslation();
   const { docCurrentWorkflow, processSteps } = useSelector((state) => state.app)
   const dispatch = useDispatch()
 
@@ -39,7 +41,7 @@ const Display = ({ currentStepIndex, stepsPopulated }) => {
         }
       />
       <button type="submit" className={parentStyles.primary__button}>
-        set display
+        {t('set display')}
       </button>
     </form>
     { 
@@ -47,7 +49,7 @@ const Display = ({ currentStepIndex, stepsPopulated }) => {
       processSteps.find(
         process => process.workflow === docCurrentWorkflow?._id
       )?.steps[currentStepIndex]?.stepDisplay ? 
-      <p style={{ margin: "0", padding: "0px 20px 10px"}}>Saved</p> 
+      <p style={{ margin: "0", padding: "0px 20px 10px"}}>{t('Saved')}</p> 
       : 
       <></> 
     }

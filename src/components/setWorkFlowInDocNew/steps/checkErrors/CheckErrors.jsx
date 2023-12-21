@@ -18,13 +18,15 @@ import {
 } from '../connectWebflowToDoc/contents/selectMembersToAssign/assignTask/AssignTask';
 import { useTranslation } from 'react-i18next';
 import { setErrorsCheckedInNewProcess, setCurrentMessage,setPopupIsOpen } from '../../../../features/app/appSlice';
+import { extractProcessObjChecker } from './utils';
 
 const CheckErrors = () => {
   const { t } = useTranslation();
 
   const { register, watch } = useForm();
-
+  const { userDetail } = useSelector((state) => state.auth);
   const {
+    currentDocToWfs,
     docCurrentWorkflow,
     selectedWorkflowsToDoc,
     processSteps,
@@ -157,8 +159,29 @@ const CheckErrors = () => {
     tableOfContentForStep,
 
   ]);
+console.log('the process steps: ', processSteps)
+  const handleSortProcess = async() => {
+    if (!userDetail) return;
+    if (!currentDocToWfs) {
+      document.querySelector("#select-doc")?.scrollIntoView({ block: "center" });
+      // dispatch(setPopupIsOpen(true));
+      // dispatch( setCurrentMessage('You have not selected a document'))
 
-  const handleSortProcess = () => {
+      return toast.info("You have not selected a document");
+    }
+    if (!docCurrentWorkflow) {
+      document.querySelector("#step-title")?.scrollIntoView({ block: "center" });
+      // dispatch(setPopupIsOpen(true));
+      // dispatch( setCurrentMessage('You have not selected a workflow'))
+
+      return toast.info("You have not selected any workflow");
+    }
+    if (processSteps.length < 1) {
+      // dispatch(setPopupIsOpen(true));
+      // dispatch( setCurrentMessage('You have not configured steps for any workflow'))
+
+      return toast.info("You have not configured steps for any workflow");
+    }
     if (!docCurrentWorkflow) {
       document.querySelector('#select-doc').scrollIntoView({ block: 'center' })
       // dispatch(setPopupIsOpen(true)); 
@@ -177,6 +200,28 @@ const CheckErrors = () => {
       // dispatch( setCurrentMessage(newProcessErrorMessage))
       return toast.info(newProcessErrorMessage);
     }
+    const processObjToPost = extractProcessObjChecker(
+      userDetail,
+      currentDocToWfs,
+      docCurrentWorkflow,
+      processSteps,
+      tableOfContentForStep,
+      teamMembersSelectedForProcess,
+      publicMembersSelectedForProcess,
+      userMembersSelectedForProcess,
+
+    );
+    if (processObjToPost.error) {
+      // dispatch(setNewProcessErrorMessage(processObjToPost.error));
+      // document
+      //   .querySelector("#h2__Doc__Title")
+      //   ?.scrollIntoView({ block: "center" });
+      // dispatch(setPopupIsOpen(true));
+      // dispatch( setCurrentMessage(processObjToPost.error))
+
+      return toast.info(processObjToPost.error);
+    }
+
     dispatch(setErrorsCheckedInNewProcess(true));
     setSortLoading(true);
 
@@ -208,7 +253,7 @@ const CheckErrors = () => {
             hoverBg='success'
             onClick={handleSortProcess}
           >
-            Show Process
+            {t('Show Process')}
           </PrimaryButton>
           {sortLoading ? (
             <ProgressBar

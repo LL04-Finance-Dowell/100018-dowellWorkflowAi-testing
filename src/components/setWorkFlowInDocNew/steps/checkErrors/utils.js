@@ -1,4 +1,5 @@
-import { productName } from "../../../../../utils/helpers";
+
+import { productName } from "../../../../utils/helpers";
 
 const requiredProcessStepsKeys = {
   stepCloneCount: 'select copies of document for processing',
@@ -10,10 +11,8 @@ const requiredProcessStepsKeys = {
   stepLocation: 'configure a location',
 };
 
-export const extractProcessObj = (
-  actionVal,
+export const extractProcessObjChecker = (
   currentUserDetails,
-  Process_title,
   documentToProcess,
   selectedDocumentWorkflow,
   documentProcessSteps,
@@ -27,7 +26,6 @@ export const extractProcessObj = (
   /**
    * Extracts process object necessary for creating a new document process.
    * 
-   * @param actionVal The action step you would like to use to process the document.
    * @param currentUserDetails The current logged-in user details.
    * @param ProcessName The name user gave to process.
    * @param documentToProcess The document you would like to process.
@@ -48,8 +46,6 @@ export const extractProcessObj = (
     creator_portfolio: currentUserDetails?.portfolio_info?.length > 1 ? currentUserDetails?.portfolio_info.find(portfolio => portfolio.product === productName)?.portfolio_name : currentUserDetails?.portfolio_info[0]?.portfolio_name,
     data_type: currentUserDetails?.portfolio_info?.length > 1 ? currentUserDetails?.portfolio_info.find(portfolio => portfolio.product === productName)?.data_type : currentUserDetails?.portfolio_info[0]?.data_type,
     parent_id: documentToProcess?.collection_id,
-    action: actionVal,
-    process_title: Process_title,
     workflows: [
       {
         workflows: {
@@ -63,6 +59,7 @@ export const extractProcessObj = (
     org_name: currentUserDetails?.portfolio_info?.length > 1 ? currentUserDetails?.portfolio_info.find(portfolio => portfolio.product === productName)?.org_name : currentUserDetails?.portfolio_info[0]?.org_name,
   };
 console.log('the documentToProcess is in util ', documentToProcess)
+console.log('the documentProcessSteps is in util ', documentProcessSteps)
   const foundProcessSteps = documentProcessSteps.find(
     (process) => process.workflow === selectedDocumentWorkflow._id
   );
@@ -197,10 +194,10 @@ console.log('the documentToProcess is in util ', documentToProcess)
         (member) => member === 'Please assign at least one user for each step'
       ),
     };
-
+ 
   const documentMapMissingInStep =
     processObj.workflows[0].workflows.steps.map((step, index) => {
-
+      console.log("the documentProcessSteps data: ", documentProcessSteps[0].steps[index].stepRights)
       if (step.stepDocumentMap.length < 1 && !step.skipStep && documentProcessSteps[0].steps[index].stepRights== "add_edit")
         return 'Document map missing';
       return null;

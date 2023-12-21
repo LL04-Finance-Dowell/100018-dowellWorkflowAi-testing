@@ -88,7 +88,7 @@ const SelectWorkflow = ({ savedDoc }) => {
         2. {t('Select a Workflow to add to the selected documents')}
       </h2>
       <div className={styles.content__box}>
-        <SelectWorkflowBoxes savedDoc={savedDoc} />
+        <SelectWorkflowBoxes savedDoc={savedDoc} handleRemove={handleRemove} />
         <SelectedWorkflows savedDoc={savedDoc} />
         <div className={styles.button__container}>
           <PrimaryButton

@@ -115,6 +115,7 @@ const DocumentsPage = ({
  console.log("demoDocuments", demoDocuments)
  console.log("isReport", isReport) 
 
+
   return (
     <WorkflowLayout>
       <div id='new-document'>
@@ -208,7 +209,7 @@ const DocumentsPage = ({
             </div>
           )}
 
-          {isDemo && (
+          {isDemo && demoDocuments && (
             <div id='demo-documents'>
               <SectionBox
                 cardBgColor='#1ABC9C'
