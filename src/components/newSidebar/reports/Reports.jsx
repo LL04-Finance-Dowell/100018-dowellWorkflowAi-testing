@@ -211,13 +211,6 @@ export const manageFileItems = [
         child: 'Completed',
         href: '/documents/completed',
       },
-      // { id: uuidv4(), child: 'Drafts', href: '/documents/#drafts', report: true },
-      // {
-      //   id: uuidv4(),
-      //   child: 'saved documents',
-      //   href: '/documents/saved',
-      //   report: true
-      // },
     ],
     // href: '/documents/completed',
   },

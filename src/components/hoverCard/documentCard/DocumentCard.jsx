@@ -208,14 +208,13 @@ const DocumentCard = ({
 
   const handleShowDocument = async (item) => {
     console.log("itemhandle",item )
-    getDocumentDetail(item._id)
+    getDocumentDetail(item.collection_id)
     // navigate("/documents/document-detail");
   };
 
   function getDocumentDetail(document_id) {
     axios
-    .get(`https://100094.pythonanywhere.com/v2/documents/64703de4beb1a527f49f0e84/reports/`)
-      // .get(`https://100094.pythonanywhere.com/v2/documents/${document_id}/reports/`)
+      .get(`https://100094.pythonanywhere.com/v2/documents/${document_id}/reports/`)
       .then((response) => {
         dispatch(SetShowDocumentReport(response.data));
         // setProcessDetailLoading(false);

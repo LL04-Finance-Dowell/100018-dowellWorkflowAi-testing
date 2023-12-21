@@ -109,11 +109,6 @@ const DocumentsPage = ({
  var reversedDocArray = [... allDocumentsArray].reverse()
  var dataForDrafts = reversedDocArray.filter((item)=> item?.document_state == 'draft')
  var dataForSaved = reversedDocArray.filter((item) => item?.document_state == 'saved')
-  
- console.log("orgDocsCompleted", orgDocsCompleted)
- console.log("orgDocsRejected", orgDocsRejected)
- console.log("demoDocuments", demoDocuments)
- console.log("isReport", isReport) 
 
   return (
     <WorkflowLayout>
