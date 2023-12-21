@@ -35,7 +35,7 @@ import CreateWorkflows from '../../../../manageFiles/files/workflows/createWorkf
 
 import { startConnecting } from '../../../../../features/processCopyReducer';
 
-const InfoBoxes = ({ savedDoc }) => {
+const InfoBoxes = ({ savedDoc, handleRemove }) => {
   const { register, watch } = useForm();
   const { workflow, team } = watch();
 
@@ -115,7 +115,7 @@ const InfoBoxes = ({ savedDoc }) => {
                         .filter((user) => user.member_type === 'team_member')
                         .filter((user) =>
                           Array.isArray(user.username) &&
-                          user.username.length > 0
+                          user.username?.length > 0
                             ? user.username[0]
                                 .toLocaleLowerCase()
                                 .includes(team.toLocaleLowerCase())
@@ -127,7 +127,7 @@ const InfoBoxes = ({ savedDoc }) => {
                         .filter((user) => user.member_type === 'team_member')
                         .filter((user) =>
                           Array.isArray(user.username) &&
-                          user.username.length > 0
+                          user.username?.length > 0
                             ? user.username[0]
                                 .toLocaleLowerCase()
                                 .includes(team.toLocaleLowerCase())
@@ -171,7 +171,7 @@ const InfoBoxes = ({ savedDoc }) => {
 
     if (userDetail.userportfolio) {
       userDetail.userportfolio?.forEach((user) => {
-        if (Array.isArray(user.username) && user.username.length > 0) {
+        if (Array.isArray(user.username) && user.username?.length > 0) {
           user.username.forEach((arrUsername) => {
             const copyOfUser = { ...user };
             copyOfUser.username = arrUsername;
@@ -200,7 +200,7 @@ const InfoBoxes = ({ savedDoc }) => {
         )
           return dispatch(
             removeFromSelectedMembersForProcess(
-              Array.isArray(user.username) && user.username.length > 0
+              Array.isArray(user.username) && user.username?.length > 0
                 ? user.username[0]
                 : user.username
             )
@@ -213,7 +213,7 @@ const InfoBoxes = ({ savedDoc }) => {
     }
 
     userDetail.selected_product?.userportfolio?.forEach((user) => {
-      if (Array.isArray(user.username) && user.username.length > 0) {
+      if (Array.isArray(user.username) && user.username?.length > 0) {
         user.username.forEach((arrUsername) => {
           const copyOfUser = { ...user };
           copyOfUser.username = arrUsername;
@@ -235,14 +235,14 @@ const InfoBoxes = ({ savedDoc }) => {
       if (
         selectedMembersForProcess.find((member) =>
           member.username === Array.isArray(user.username) &&
-          user.username.length > 0
+          user.username?.length > 0
             ? user.username[0]
             : user.username
         )
       )
         return dispatch(
           removeFromSelectedMembersForProcess(
-            Array.isArray(user.username) && user.username.length > 0
+            Array.isArray(user.username) && user.username?.length > 0
               ? user.username[0]
               : user.username
           )
@@ -262,6 +262,7 @@ const InfoBoxes = ({ savedDoc }) => {
   const y = useTransform(scrollYProgress, [0, 1], ['200px', '-200px']);
 
   const handleTogleBox = (id) => {
+    console.log("compInfoBoxes ", compInfoBoxes)
     const updatedInfoBoxes = compInfoBoxes.map((item) =>
       item.id === id ? { ...item, isOpen: !item.isOpen } : item
     );
@@ -282,6 +283,15 @@ const InfoBoxes = ({ savedDoc }) => {
       );
       if (!isInclude) {
         dispatch(setSelectedWorkflowsToDoc(selectedWorkFlow));
+      }
+      else {
+        // Item is already present, remove it
+        // const updatedWorkflows = selectedWorkflowsToDoc.filter(
+        //   (item) => item._id !== selectedWorkFlow._id
+        // );
+        dispatch(setSelectedWorkflowsToDoc(selectedWorkFlow));
+        handleRemove()
+        // dispatch(setSelectedWorkflowsToDoc(updatedWorkflows));
       }
     } else {
       toast.info('Please pick a document first.');
@@ -364,7 +374,7 @@ const InfoBoxes = ({ savedDoc }) => {
                   
                   {infoBox &&
                   infoBox.contents &&
-                  infoBox.contents.length > 0 ? (
+                  infoBox.contents?.length > 0 ? (
                     [...infoBox?.contents].reverse().map((item, index) =>
                       item.username ? (
                         Array.isArray(item.username) ? (

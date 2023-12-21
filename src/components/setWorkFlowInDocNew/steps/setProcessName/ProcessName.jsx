@@ -1,23 +1,31 @@
 import React, { useState } from 'react'
 import styles from './ProcessName.module.css'
 import { useDispatch, useSelector } from 'react-redux';
+import { useTranslation } from 'react-i18next';
 
 import { setProcessName } from '../../../../features/app/appSlice';
 const ProcessName = ({ Process_title, setProcess_title }) => {
+    const { t, i18n } = useTranslation();
     const dispatch = useDispatch();
     const { ProcessName } = useSelector((state) => state.app);
 
+//     console.log('Language:', i18n.language);
+//     const translationKey = 'Process Name';
+// console.log(t(translationKey));
 
-
+    // const [, forceUpdate] = useState();
+    // React.useEffect(() => {
+    //     forceUpdate(prevState => !prevState);
+    //   }, [i18n.language]);
 
     return (
         <>
             <div className={styles.container}>
-                <h2 className={styles.h2__Doc__Title}>5. {'Process Name'}</h2>
+                <h2 className={styles.h2__Doc__Title}>5. {t("Process Name")}</h2>
                 <div className={styles.box}>
                     <div className={styles.box__inner}>
                         <h3 className={styles.box__header}>
-                            {'Provide a name for this Process'}
+                            {t('Provide a name for this Process')}
                         </h3>
                         <input
                             required={true}

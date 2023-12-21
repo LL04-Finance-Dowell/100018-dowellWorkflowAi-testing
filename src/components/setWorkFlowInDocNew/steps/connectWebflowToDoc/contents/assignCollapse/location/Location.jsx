@@ -9,6 +9,8 @@ import { continentsData } from '../../../../../../../utils/continentsData';
 import { getRegionsInCountry } from '../../../../../../../services/locationServices';
 import ProgressBar from '../../../../../../progressBar/ProgressBar';
 import { updateSingleProcessStep } from '../../../../../../../features/app/appSlice';
+import { useTranslation } from 'react-i18next';
+
 
 const Location = ({ currentStepIndex, stepsPopulated }) => {
   const {
@@ -17,6 +19,7 @@ const Location = ({ currentStepIndex, stepsPopulated }) => {
     formState: { isSubmitted },
     watch,
   } = useForm();
+  const { t } = useTranslation();
   const { continent, country } = watch();
   const dispatch = useDispatch();
   const [currentLocationChoice, setCurrentLocationChoice] = useState(null);
@@ -118,7 +121,7 @@ const Location = ({ currentStepIndex, stepsPopulated }) => {
             }
           
           >
-            Any Location
+            {t('Any Location')}
           </Radio>
           </div>
           <Radio
@@ -132,7 +135,7 @@ const Location = ({ currentStepIndex, stepsPopulated }) => {
               )?.steps[currentStepIndex]?.stepLocation === 'select'
             }
           >
-            Select Location
+            {t('Select Location')}
           </Radio>
         </div>
         {showLocationDropdowns ? (
@@ -188,13 +191,13 @@ const Location = ({ currentStepIndex, stepsPopulated }) => {
         ) : (
           <></>
         )}
-        <button className={parentStyles.primary__button}>set location</button>
+        <button className={parentStyles.primary__button}>{t('set location')}</button>
       </form>
       {isSubmitted ||
       processSteps.find(
         (process) => process.workflow === docCurrentWorkflow?._id
       )?.steps[currentStepIndex]?.stepLocation ? (
-        <p style={{ margin: '0', padding: '0px 20px 10px' }}>Saved</p>
+        <p style={{ margin: '0', padding: '0px 20px 10px' }}>{t('Saved')}</p>
       ) : (
         <></>
       )}

@@ -5,6 +5,7 @@ import { useForm } from "react-hook-form";
 import Select from "../../../../../select/Select";
 import { updateSingleProcessStep } from "../../../../../../../features/app/appSlice";
 import { useDispatch, useSelector } from "react-redux";
+import { useTranslation } from 'react-i18next';
 
 const Reminder = ({ currentStepIndex, stepsPopulated }) => {
   const { 
@@ -13,6 +14,7 @@ const Reminder = ({ currentStepIndex, stepsPopulated }) => {
     handleSubmit,
   } = useForm();
   const dispatch = useDispatch();
+  const { t } = useTranslation();
   const { docCurrentWorkflow, processSteps } = useSelector((state) => state.app)
 
   const handleSetReminder = (data) => {
@@ -39,12 +41,12 @@ const Reminder = ({ currentStepIndex, stepsPopulated }) => {
           )?.steps[currentStepIndex]?.stepReminder
         }
       />
-      <button className={parentStyles.primary__button}>set reminder</button>
+      <button className={parentStyles.primary__button}>{t('set reminder')}</button>
     </form>
     { 
       isSubmitted || 
       (stepsPopulated && processSteps.find(process => process.workflow === docCurrentWorkflow?._id)?.steps[currentStepIndex]?.stepTime) ? 
-        <p style={{ margin: "0", padding: "0px 20px 10px"}}>Saved</p> : 
+        <p style={{ margin: "0", padding: "0px 20px 10px"}}>{t('Saved')}</p> : 
         <></> 
     }
     </>

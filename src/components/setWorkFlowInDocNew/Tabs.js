@@ -4,6 +4,7 @@ import { resetSetWorkflows } from "../../features/app/appSlice";
 import { setContentOfDocument } from "../../features/document/documentSlice";
 import { useDispatch, useSelector } from "react-redux";
 import "./tabs.css";
+import { useTranslation } from 'react-i18next';
 
 const Tabs = () => {
   const navigate = useNavigate();
@@ -11,7 +12,8 @@ const Tabs = () => {
   const currentURL = window.location.href;
   const parts = currentURL.split("/");
   const whichApproval = parts[parts.length - 1];
-  console.log("the approval is ", whichApproval);
+  // console.log("the approval is ", whichApproval);
+  const { t } = useTranslation();
 
   return (
     <div className="tabsWrapper">
@@ -31,7 +33,7 @@ const Tabs = () => {
             dispatch(setContentOfDocument(null));
           }}
         >
-          Document Approval
+          {t('Document Approval')}
         </button>
       </div>
       <div
@@ -50,7 +52,7 @@ const Tabs = () => {
             dispatch(setContentOfDocument(null));
           }}
         >
-          Template Approval
+          {t('Template Approval')}
         </button>
       </div>
     </div>

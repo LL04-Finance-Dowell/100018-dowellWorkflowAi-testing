@@ -10,6 +10,7 @@ import { useSelector } from 'react-redux';
 
 import { ImPencil2 } from 'react-icons/im';
 import { motion } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 
 const ContentMapOfDoc = () => {
   const { contentOfDocumentStatus, contentOfDocument } = useSelector(
@@ -21,6 +22,7 @@ const ContentMapOfDoc = () => {
   const [isFixed, setIsFixed] = useState(false);
   const ref = useRef(null);
   /*  const scroll = useScrollPosition(); */
+  const { t } = useTranslation();
 
   const handleToggleContent = () => {
     if (contentOfDocument && currentDocToWfs) setToggleContent((prev) => !prev);
@@ -70,7 +72,7 @@ const ContentMapOfDoc = () => {
           {contentOfDocument && contentOfDocumentStatus !== 'pending' ? (
             <>
               <h4 className={styles.header}>
-                Content Map of {currentDocToWfs?.document_name} {currentDocToWfs?.template_name}
+                {t('Content Map of')} {currentDocToWfs?.document_name} {currentDocToWfs?.template_name}
               </h4>
               <i>{toggleContent ? <IoIosArrowUp /> : <IoIosArrowDown />}</i>
             </>

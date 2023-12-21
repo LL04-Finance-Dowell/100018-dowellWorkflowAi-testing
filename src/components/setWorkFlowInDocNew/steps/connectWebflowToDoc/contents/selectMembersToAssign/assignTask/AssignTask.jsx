@@ -8,6 +8,7 @@ import AssignButton from '../../../../../assignButton/AssignButton';
 import { updateSingleProcessStep } from '../../../../../../../features/app/appSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import { useAppContext } from '../../../../../../../contexts/AppContext';
+import { useTranslation } from 'react-i18next';
 
 const AssignTask = ({ currentStepIndex, stepsPopulated }) => {
   const { setIsAssignTask } = useAppContext();
@@ -17,6 +18,7 @@ const AssignTask = ({ currentStepIndex, stepsPopulated }) => {
 
     formState: { isSubmitSuccessful },
   } = useForm();
+  const { t } = useTranslation();
   const [loading, setLoading] = useState(false);
   const dispatch = useDispatch();
   const { docCurrentWorkflow, processSteps } = useSelector(
@@ -131,7 +133,7 @@ const AssignTask = ({ currentStepIndex, stepsPopulated }) => {
       style={{padding: '10px'}}
     >
       <p style={{ padding: '0', marginBottom: '14px' }}>
-        <b>Assign Task</b>
+        <b>{t('Assign Task')}</b>
       </p>
 
       <form onSubmit={handleSubmit(onSubmit)}>
@@ -236,7 +238,7 @@ export const memberOrder = [
   },
   {
     id: uuidv4(),
-    option: 'Public > Team Member > User ',
+    option: 'Public > Team Member > User',
     normalValue: 'public_team_user',
   },
 ];

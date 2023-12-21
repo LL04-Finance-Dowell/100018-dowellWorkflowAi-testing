@@ -54,39 +54,60 @@
 .decision__box {
   display: flex;
   flex-direction: column;
-  width: 500px;
+  width: 400px;
   z-index: 1000;
   background-color: #fff;
   position: absolute;
   padding: 40px 20px;
-  gap: 35px;
+  gap: 5px;
   text-align: center;
   color: var(--e-global-color-secondary);
   align-items: center;
+  border-radius: 20px;
 }
 
 .button__container {
-  display: flex;
-  gap: 15px;
+  display: block;
+  /* gap: 15px; */
+  /* border: solid; */
+  width: 50%;
 }
 
-.button__container button {
+.button__wrapper button {
   padding: 5px;
-  border-radius: 10px;
+  border-radius: 20px;
+  padding: 5px;
   color: #fff;
   font-weight: 600;
   border: none;
 }
 
 .ok__button {
-  background-color: var(--popup-form-button);
+ 
+  width: 100%;
+  height: 45px;
+  color: black !important;
+}
+.ok__button:hover{
+  background-color: rgba(206, 0, 0, 1);
+  color: white !important;
 }
 
 .cancel__button {
-  background-color: rgba(206, 0, 0, 1);
+  background-color: var(--popup-form-button);
+  width: 100%;
+  padding: 10px;
+  height: 45px;
 }
 
 .decision__mini__text {
   font-weight: normal;
   font-size: 1rem;
+}
+
+.button__wrapper{
+  display: flex;
+  justify-content: center;
+  /* border: solid; */
+  margin-bottom: 10px;
 }
