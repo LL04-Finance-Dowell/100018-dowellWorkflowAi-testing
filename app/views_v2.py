@@ -1899,7 +1899,16 @@ class AssignPortfolio(APIView):
                         )
                     else:
                         return Response("Invalid user type", status.HTTP_400_BAD_REQUEST)
+            else:
+                return Response("Invalid step choice", status.HTTP_400_BAD_REQUEST)
             
-            # TODO
-            # Need a way to save the new updated details of the process
-        return Response(process, status=status.HTTP_200_OK)
+            res = json.loads(update_process(process_id, process["process_steps"], process["processing_state"]))
+            
+            if res["isSuccess"]:
+                return Response(process, status=status.HTTP_200_OK)
+        
+            else:
+                return Response(
+                    "An error occured in the process",
+                     status.HTTP_500_INTERNAL_SERVER_ERROR,
+                )
