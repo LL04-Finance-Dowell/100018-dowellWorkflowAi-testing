@@ -1879,22 +1879,23 @@ class AssignPortfolio(APIView):
                     if user_type == "team":
                         step["stepTeamMembers"].append(
                             {
-                                "portfolio": portfolio,
                                 "member": member,
+                                "portfolio": portfolio
+
                             }
                         )
                     elif user_type == "user":
                         step["stepUserMembers"].append(
                             {
-                                "portfolio": portfolio,
                                 "member": member,
+                                "portfolio": portfolio
                             }
                         )
                     elif user_type == "public":
                         step["stepPublicMembers"].append(
                             {
-                                "portfolio": portfolio,
                                 "member": member,
+                                "portfolio": portfolio
                             }
                         )
                     else:
