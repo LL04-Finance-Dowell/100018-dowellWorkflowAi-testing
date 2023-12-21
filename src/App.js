@@ -29,6 +29,7 @@ import { productName } from './utils/helpers';
 import { useAppContext } from './contexts/AppContext';
 
 import axios from 'axios';
+import { WorkflowReport } from './components/newSidebar/reports/WorkflowReport';
 // import ConstructionPage from './pages/ConstructionPage/ConstructionPage';
 
 function App() {
@@ -191,7 +192,27 @@ function App() {
             path={'rejected'}
             element={<DocumentsPage isRejected={true} />}
           />
+
+          <Route
+            path={'draft-reports'}
+            element={<DocumentsPage isReport={true} home={true} />}
+          />
+          <Route
+            path={'saved-reports'}
+            element={<DocumentsPage isReport={true} showOnlySaved={true} />}
+          />
+
+          <Route
+            path={'document-detail'}
+            element={<DocumentsPage isReport={true} showOnlyDocumentReport={true} />}
+          />
+
           <Route path={'demo'} element={<DocumentsPage isDemo={true} />} />
+          {/* 
+          <Route
+            path={'saved-reports'}
+            element={<DocumentsPage showOnlySavedReports={true} showOnlySaved={true} />}
+          /> */}
           {/*  <Route path={"new"} element={<CreateNewDocumentPage />} />
         <Route path={"to-sign"} element={<SignDocumentsPage />} />
         <Route path={"rejected"} element={<RejectedDocumentsPage />} />
@@ -223,6 +244,8 @@ function App() {
             path={'saved'}
             element={<WorkflowsPage showOnlySaved={true} />}
           />
+          <Route path={'workflow-reports'} element={<WorkflowReport />} />
+
           {/* <Route path={"trash"} element={<WorkflowsPage showOnlyTrashed={true} />}/> */}
           {/*  <Route path={"new"} element={<CreateNewWorkflowPage />} />
         <Route path={"to-approve"} element={<ApproveWorkflowPage />} />

@@ -229,7 +229,7 @@ const ProcessDocument = ({ savedProcess, Process_title, setProcess_title }) => {
                     },
                     body: JSON.stringify(publicData), 
                   };
-                  fetch(`https://100094.pythonanywhere.com/v1/processes/${company_id}/public/`, requestOptions)
+                  fetch(`https://100094.pythonanywhere.com/v2/processes/${company_id}/public/`, requestOptions)
                   .then((response) => {
                     if (!response.ok) {
                       throw new Error('Network response was not ok');

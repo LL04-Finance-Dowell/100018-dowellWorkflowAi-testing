@@ -123,7 +123,10 @@ const CreateWorkflows = ({ handleToggleOverlay }) => {
         delete newData.creator_portfolio;
   
         dispatch(updateWorkflow({ newData, notify, handleAfterCreated }));
-      } else {
+      }else if (internalWorkflows < 1){
+        toast.warn("Please add atleast one step")
+      } 
+      else {
         const data = {
           created_by: userDetail?.userinfo.username,
           wf_title: workflowTitle,

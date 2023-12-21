@@ -15,6 +15,7 @@ import { useNavigate } from 'react-router-dom';
 import { productName } from '../../../utils/helpers';
 import { useAppContext } from '../../../contexts/AppContext';
 import { DocumentServices } from '../../../services/documentServices';
+import { WorkflowReport } from '../../../components/newSidebar/reports/WorkflowReport';
 import { useLocation } from 'react-router-dom';
 
 const DocumentsPage = ({
@@ -23,6 +24,8 @@ const DocumentsPage = ({
   showOnlyCompleted,
   isDemo,
   isRejected,
+  isReport,
+  showOnlyDocumentReport,
 }) => {
   const { userDetail } = useSelector((state) => state.auth);
   const { allDocuments: allDocumentsArray, allDocumentsStatus } = useSelector(
@@ -98,17 +101,15 @@ const DocumentsPage = ({
     if (isRejected && !docsRejected && !window.location.hash.includes('rejected#org')) fetchDocumentReports('rejected');
     if (isRejected && !orgDocsRejected && window.location.hash.includes('rejected#org')) fetchOrgDocumentReports('rejected');
     if (isDemo && !demoDocuments) fetchDemoDocuments();
+    if (showOnlyDocumentReport) navigate('#document-detail');
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [showOnlySaved, showOnlyCompleted, home, isRejected, isDemo]);
+  }, [showOnlySaved, showOnlyCompleted, home, isRejected, isDemo, showOnlyDocumentReport]);
 
   
  var reversedDocArray = [... allDocumentsArray].reverse()
  var dataForDrafts = reversedDocArray.filter((item)=> item?.document_state == 'draft')
  var dataForSaved = reversedDocArray.filter((item) => item?.document_state == 'saved')
-  
-//  console.log("orgDocsCompleted", orgDocsCompleted)
-//  console.log("orgDocsRejected", orgDocsRejected)
-//  console.log("demoDocuments", demoDocuments)
+
 
   return (
     <WorkflowLayout>
@@ -135,6 +136,7 @@ const DocumentsPage = ({
                 }
                 status={allDocumentsStatus}
                 itemType={'documents'}
+                isReport={isReport}
               />
             </div>
           ) : (
@@ -157,6 +159,7 @@ const DocumentsPage = ({
                 }
                 status={allDocumentsStatus}
                 itemType={'documents'}
+                isReport={isReport}
               />
             </div>
           ) : (
@@ -214,6 +217,15 @@ const DocumentsPage = ({
               />
             </div>
           )}
+
+          {showOnlyDocumentReport ? (
+            <div id='documentDetail'>
+              <WorkflowReport />
+            </div>
+          ) : (
+            <></>
+          )}
+
         </ManageFiles>
       </div>
     </WorkflowLayout>

@@ -1,5 +1,6 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import HoverCard from '../HoverCard';
 import { Button } from '../styledComponents';
 import { detailDocument, documentReport } from '../../../features/document/asyncThunks';
@@ -14,6 +15,9 @@ import {
 import { setEditorLink } from '../../../features/app/appSlice';
 
 import { useAppContext } from '../../../contexts/AppContext';
+import {
+  SetShowDocumentReport
+} from "../../../features/app/appSlice";
 
 import {
   addNewFavoriteForUser,
@@ -45,9 +49,11 @@ const DocumentCard = ({
   folderId,
   isCompletedDoc,
   isRejectedDoc,
+  isReport,
 }) => {
   const dispatch = useDispatch();
   const { t } = useTranslation();
+  const navigate = useNavigate();
 
   const [dataLoading, setDataLoading] = useState(false);
   const { userDetail } = useSelector((state) => state.auth);
@@ -61,7 +67,7 @@ const DocumentCard = ({
   const { allDocuments } = useSelector((state) => state.document);
   const [documentLoading, setDocumentLoading] = useState(false);
 
-  console.log("cardItem", cardItem)
+  console.log("cardItem", cardItem, isReport)
 
   const handleFavoritess = async (item, actionType) => {
     /*  const data = {
@@ -199,6 +205,27 @@ const DocumentCard = ({
 
 
   };
+
+  const handleShowDocument = async (item) => {
+    console.log("itemhandle",item )
+    getDocumentDetail(item.collection_id)
+    // navigate("/documents/document-detail");
+  };
+
+  function getDocumentDetail(document_id) {
+    axios
+      .get(`https://100094.pythonanywhere.com/v2/documents/${document_id}/reports/`)
+      .then((response) => {
+        dispatch(SetShowDocumentReport(response.data));
+        // setProcessDetailLoading(false);
+        // dispatch(setDetailFetched(true));
+        navigate("/documents/document-detail");
+      })
+      .catch((error) => {
+        console.log(error);
+        toast.info("Failed to fetch Document details");
+      });
+  }
 
   const handleGoToEditor = async (link, item) => {
     if (!link) return;
@@ -393,8 +420,8 @@ const DocumentCard = ({
           <>
             <Tooltip id={`faviorates-${cardItem._id}`} content="Add to Bookmark" direction="up" arrowSize={10} style={{ backgroundColor: 'rgb(97, 206, 112)', color: 'white' }}></Tooltip>
             <div
-            anchorId={cardItem._id}
-            data-tooltip-id={`faviorates-${cardItem._id}`}
+              anchorId={cardItem._id}
+              data-tooltip-id={`faviorates-${cardItem._id}`}
               style={{
                 cursor: 'pointer',
                 position: 'absolute',
@@ -424,15 +451,23 @@ const DocumentCard = ({
           </>
         )}
         {cardItem._id ? (
-          <Button onClick={() => handleDetailDocumnet(cardItem)}>
-            {dataLoading ? (
-              <LoadingSpinner />
-            ) : cardItem.type === 'sign-document' ? (
-              'Sign Here'
-            ) : (
-              t('Open Document')
-            )}
-          </Button>
+          isReport ?
+            <Button onClick={() => handleShowDocument(cardItem)}>
+              {dataLoading ? (
+                <LoadingSpinner />
+              ) : (
+                t('Show Report')
+              )}
+            </Button>
+            : <Button onClick={() => handleDetailDocumnet(cardItem)}>
+              {dataLoading ? (
+                <LoadingSpinner />
+              ) : cardItem.type === 'sign-document' ? (
+                'Sign Here'
+              ) : (
+                t('Open Document')
+              )}
+            </Button>
         ) : (
           'no item'
         )}
@@ -508,8 +543,8 @@ const DocumentCard = ({
 
         <Tooltip id={`add-${cardItem._id}`} content="Add doc to folder" direction="up" arrowSize={10} style={{ backgroundColor: 'rgb(97, 206, 112)', color: 'white' }}></Tooltip>
         <div
-        anchorId={cardItem._id}
-        data-tooltip-id={`add-${cardItem._id}`}
+          anchorId={cardItem._id}
+          data-tooltip-id={`add-${cardItem._id}`}
           style={{
             position: 'absolute',
             bottom: '0',

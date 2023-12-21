@@ -65,10 +65,7 @@ const ProcessDetail = () => {
     toast.info("Link Copied")
   };
 
-  console.log("userDetailMubeen", userDetail.userinfo.username)
-  console.log("userDetailMubeenuserDetail", userDetail)
-
-
+  console.log("ProcessDetail", ProcessDetail)
   return (
     <>
       <div className={styles.body_div}>
@@ -104,7 +101,7 @@ const ProcessDetail = () => {
                 </div>
               </div>
               <div className={styles.LeftContent}>
-                <CircularProgressBar percentage={50} />
+                <CircularProgressBar percentage={ProcessDetail?.progress} />
               </div>
               <div>
                 <div className={styles.ImageContainer}>
@@ -254,10 +251,13 @@ const StepCards = ({ step, index }) => {
 
 const CircularProgressBar = ({ percentage }) => {
   // Calculate the circumference of the circle
-  const circumference = 160; // Increase the circumference for a larger circle
+  // const circumference = 160; // Increase the circumference for a larger circle
   const radius = 60; // Increase the radius as needed
+  const circumference = 2 * Math.PI * radius;
   const strokeWidth = 15; // Adjust the stroke width as needed
   const progress = ((100 - percentage) / 100) * circumference;
+  // const progress = percentage
+  const progressOffset = (circumference - (percentage / 100) * circumference);
 
 
   return (
@@ -275,21 +275,21 @@ const CircularProgressBar = ({ percentage }) => {
         cy={radius}
         r={radius - strokeWidth / 2}
         fill="transparent"
-        stroke="#E5B842" // Progress color
+        stroke={percentage > 0 ? "#E5B842" : "e0e0e0"} // Progress color
         strokeWidth={strokeWidth}
         strokeDasharray={circumference}
-        strokeDashoffset={progress}
+        strokeDashoffset={progressOffset}
       />
       <text
         x="50%"
         y="50%"
         textAnchor="middle"
         dominantBaseline="middle"
-        fontSize="24.74px        "
+        fontSize="24.74px"
         fill="#000000" // Text color
         fontWeight="600"
       >
-        {percentage}%
+        {percentage}
       </text>
     </svg>
   );

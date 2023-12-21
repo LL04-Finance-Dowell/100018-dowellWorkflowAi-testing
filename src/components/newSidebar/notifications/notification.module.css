@@ -8,10 +8,11 @@
 }
 
 .header {
-  font-size: 19px;
-  color: var(--e-global-color-1342d1f);
+  font-size: 24px;
+  color: var(--e-global-color-accent);
   font-weight: 600;
   margin-bottom: 20px;
+  text-transform: capitalize;
 }
 .line {
   width: 78%;

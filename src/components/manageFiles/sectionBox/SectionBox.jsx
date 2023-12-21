@@ -37,6 +37,7 @@ const SectionBox = ({
   isReports,
   isCompleted,
   isRejected,
+  isReport,
 }) => {
   const [sliceCount, setSliceCount] = useState(1);
   const [refreshLoading, setRefreshLoading] = useState(false);
@@ -610,6 +611,7 @@ const handleFilterChange = (event) => {
                           folderId={folderId}
                           isCompletedDoc={isCompleted}
                           isRejectedDoc={isRejected}
+                          isReport={isReport}
                         />
                       ))}
                 </div>
