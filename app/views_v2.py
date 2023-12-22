@@ -32,7 +32,7 @@ from app.helpers import (
     get_metadata_id,
     remove_members_from_steps,
     update_signed,
-    check_progress
+    check_progress,
 )
 from app.mongo_db_connection import (
     add_document_to_folder,
@@ -96,8 +96,7 @@ from datetime import datetime
 # Download the English model for spaCy
 # spacy.cli.download("en_core_web_sm")
 
-nlp = spacy.load('en_core_web_sm')
-
+nlp = spacy.load("en_core_web_sm")
 
 
 class PADeploymentWebhook(APIView):
@@ -265,7 +264,7 @@ class ProcessDetail(APIView):
         if not validate_id(process_id):
             return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
         process = single_query_process_collection({"_id": process_id})
-        progress = check_progress(process_id)        
+        progress = check_progress(process_id)
         if process["parent_item_id"]:
             document_id = process["parent_item_id"]
             document = single_query_document_collection({"_id": document_id})
@@ -372,7 +371,7 @@ class ProcessVerification(APIView):
             return Response(editor_link, status.HTTP_200_OK)
         else:
             return Response(
-                "access to this document is denied at this time!",
+                "Error accessing the requested document, Retry opening the document again :)",
                 status.HTTP_400_BAD_REQUEST,
             )
 
@@ -423,9 +422,15 @@ class FinalizeOrReject(APIView):
             # Check the finalize action, no need to check document state since the finalize_item() call was successful
             if state == "rejected":
                 try:
-                    process_steps = single_query_process_collection({"_id": process_id}).get("process_steps")
-                    update_process(process_id=process_id, steps=process_steps, state=state)
-                    return Response("document rejected successfully", status.HTTP_200_OK)
+                    process_steps = single_query_process_collection(
+                        {"_id": process_id}
+                    ).get("process_steps")
+                    update_process(
+                        process_id=process_id, steps=process_steps, state=state
+                    )
+                    return Response(
+                        "document rejected successfully", status.HTTP_200_OK
+                    )
                 except Exception as e:
                     # Revert document and process states back to "processing"
                     json.loads(
@@ -433,38 +438,62 @@ class FinalizeOrReject(APIView):
                             item_id, "processing", item_type, message, signers=None
                         )
                     )
-                    update_process(process_id=process_id, steps=process_steps, state="processing")
-                    return Response(f"an error occurred while rejecting the process {e}", status.HTTP_500_INTERNAL_SERVER_ERROR)
-            
+                    update_process(
+                        process_id=process_id, steps=process_steps, state="processing"
+                    )
+                    return Response(
+                        f"an error occurred while rejecting the process {e}",
+                        status.HTTP_500_INTERNAL_SERVER_ERROR,
+                    )
+
             else:
                 # Process item normally
                 try:
                     process = single_query_process_collection({"_id": process_id})
                     # Check timer
-                    current_datetime = datetime.strptime(str(datetime.now()), "%Y-%m-%d %H:%M:%S.%f")
-                    process_creation_date = datetime.strptime(process["created_on"], "%d:%m:%Y,%H:%M:%S")
+                    current_datetime = datetime.strptime(
+                        str(datetime.now()), "%Y-%m-%d %H:%M:%S.%f"
+                    )
+                    process_creation_date = datetime.strptime(
+                        process["created_on"], "%d:%m:%Y,%H:%M:%S"
+                    )
 
                     difference = current_datetime - process_creation_date
-                                    
+
                     for step in process["process_steps"]:
                         timer = step.get("stepTimer", None)
                         if timer:
                             if timer == "1_hour":
                                 if difference.total_seconds() > 3600:
-                                    return Response("Document should have been processed within 1 hour", status=status.HTTP_401_UNAUTHORIZED)
+                                    return Response(
+                                        "Document should have been processed within 1 hour",
+                                        status=status.HTTP_401_UNAUTHORIZED,
+                                    )
                             elif timer == "8_hours":
-                                if difference.total_seconds() > (3600*8):
-                                    return Response("Document should have been processed within 8 hours", status=status.HTTP_401_UNAUTHORIZED)
+                                if difference.total_seconds() > (3600 * 8):
+                                    return Response(
+                                        "Document should have been processed within 8 hours",
+                                        status=status.HTTP_401_UNAUTHORIZED,
+                                    )
                             elif timer == "24_hours":
-                                if difference.total_seconds() > (3600*24):
-                                    return Response("Document should have been processed within 24 hours", status=status.HTTP_401_UNAUTHORIZED)
+                                if difference.total_seconds() > (3600 * 24):
+                                    return Response(
+                                        "Document should have been processed within 24 hours",
+                                        status=status.HTTP_401_UNAUTHORIZED,
+                                    )
                             elif timer == "3_days":
                                 if difference.days > 3:
-                                    return Response("Document should have been processed within 3 days", status=status.HTTP_401_UNAUTHORIZED)
+                                    return Response(
+                                        "Document should have been processed within 3 days",
+                                        status=status.HTTP_401_UNAUTHORIZED,
+                                    )
                             else:
                                 if difference.days > 7:
-                                    return Response("Document should have been processed within 7 days", status=status.HTTP_401_UNAUTHORIZED)
-                            
+                                    return Response(
+                                        "Document should have been processed within 7 days",
+                                        status=status.HTTP_401_UNAUTHORIZED,
+                                    )
+
                     background = processing.Background(
                         process, item_type, item_id, role, user, message
                     )
@@ -524,7 +553,7 @@ class TriggerProcess(APIView):
             return Response("something went wrong!", status.HTTP_400_BAD_REQUEST)
         process = single_query_process_collection({"_id": request.data["process_id"]})
         action = request.data["action"]
-        state = process["processing_state"]      
+        state = process["processing_state"]
         if request.data["user_name"] != process["created_by"]:
             return Response("User Unauthorized", status.HTTP_403_FORBIDDEN)
         if action == "halt_process" and state != "paused":
@@ -546,10 +575,11 @@ class TriggerProcess(APIView):
                 return Response(verification_links, status.HTTP_200_OK)
         else:
             return Response(
-              f"The process is already in {state} state",
-              status.HTTP_200_OK,      
+                f"The process is already in {state} state",
+                status.HTTP_200_OK,
             )
-        
+
+
 class ProcessImport(APIView):
     def post(self, request, process_id):
         data = request.data
@@ -753,7 +783,7 @@ class NewDocument(APIView):
         portfolio = ""
         if request.data["portfolio"]:
             portfolio = request.data["portfolio"]
-        
+
         if request.data.get("password"):
             password = request.data.get("password")
             hashed_password = get_hash(password)
@@ -762,7 +792,7 @@ class NewDocument(APIView):
             password = ""
             hashed_password = ""
             is_private = False
-        
+
         viewers = [{"member": request.data["created_by"], "portfolio": portfolio}]
         organization_id = request.data["company_id"]
         template_id = request.data["template_id"]
@@ -832,7 +862,7 @@ class Document(APIView):
 
         if not validate_id(company_id) or not data_type:
             return Response("Invalid Request!", status=status.HTTP_400_BAD_REQUEST)
-        
+
         document_type = request.query_params.get("document_type")
         document_state = request.query_params.get("document_state")
         member = request.query_params.get("member")
@@ -923,18 +953,20 @@ class DocumentLink(APIView):
         """editor link for a document"""
         if not validate_id(document_id):
             return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
-        
+
         document = single_query_document_collection({"_id": document_id})
         if document.get("is_private") == True:
             input_password = request.query_params.get("password")
             if input_password == None:
-                return Response("Missing password argument", status.HTTP_422_UNPROCESSABLE_ENTITY)
-            
+                return Response(
+                    "Missing password argument", status.HTTP_422_UNPROCESSABLE_ENTITY
+                )
+
             valid_password_hash = document.get("password")
-            
+
             if compare_hash(valid_password_hash, input_password) == False:
                 return Response("Incorrect password", status.HTTP_401_UNAUTHORIZED)
-        
+
         editor_link = access_editor(document_id, "document")
         if not editor_link:
             return Response(status.HTTP_500_INTERNAL_SERVER_ERROR)
@@ -1326,7 +1358,7 @@ class NewTemplate(APIView):
         portfolio = ""
         if request.data["portfolio"]:
             portfolio = request.data["portfolio"]
-            
+
         if request.data.get("password"):
             password = request.data.get("password")
             hashed_password = get_hash(password)
@@ -1335,7 +1367,7 @@ class NewTemplate(APIView):
             password = ""
             hashed_password = ""
             is_private = False
-            
+
         viewers = [{"member": request.data["created_by"], "portfolio": portfolio}]
         organization_id = request.data["company_id"]
         res = json.loads(
@@ -1468,7 +1500,9 @@ class TemplateLink(APIView):
         if template.get("is_private") == True:
             input_password = request.query_params.get("password")
             if input_password == None:
-                return Response("Missing password argument", status.HTTP_422_UNPROCESSABLE_ENTITY)
+                return Response(
+                    "Missing password argument", status.HTTP_422_UNPROCESSABLE_ENTITY
+                )
             valid_password_hash = template.get("password")
             if compare_hash(valid_password_hash, input_password) == False:
                 return Response("Incorrect password", status.HTTP_401_UNAUTHORIZED)
@@ -1714,6 +1748,7 @@ class FolderDetail(APIView):
         delete_items_in_folder(item_id, folder_id, item_type)
         return Response(status.HTTP_204_NO_CONTENT)
 
+
 class NewPublicUser(APIView):
     def post(self, request):
         process_id = request.data.get("process_id")
@@ -1759,6 +1794,7 @@ class NewNotification(APIView):
             return Response(
                 f"Something went wrong: {err}", status.HTTP_500_INTERNAL_SERVER_ERROR
             )
+
 
 class NotificationReminder(APIView):
     def get(self, request, process_id):
@@ -1839,7 +1875,8 @@ class NotificationReminder(APIView):
         except Exception as err:
             return Response(
                 f"An error occured: {err}", status.HTTP_500_INTERNAL_SERVER_ERROR
-            )   
+            )
+
 
 class DocumentReport(APIView):
     def get(self, request, item_id):
@@ -1856,7 +1893,7 @@ class DocumentReport(APIView):
                         text = item.get("data", "")
                         words = text.split()
                         for word in words:
-                            if not word.startswith('url'):
+                            if not word.startswith("url"):
                                 words_count += 1
                                 noun = self.get_nouns(word)
                                 adjective = self.get_adjectives(word)
@@ -1865,20 +1902,20 @@ class DocumentReport(APIView):
                                 for ch in word:
                                     char_count += 1
             response = {
-                "words":words_count,
-                "characters":char_count,
-                "nouns":noun_count,
-                "adjectives":adjective_count
+                "words": words_count,
+                "characters": char_count,
+                "nouns": noun_count,
+                "adjectives": adjective_count,
             }
-            
+
         return Response(response, status=status.HTTP_200_OK)
-    
+
     def get_nouns(self, sentence):
         doc = nlp(sentence)
-        nouns = [token.text for token in doc if token.pos_ in ['NOUN']]
+        nouns = [token.text for token in doc if token.pos_ in ["NOUN"]]
         return nouns
-    
+
     def get_adjectives(self, sentence):
         doc = nlp(sentence)
-        adjectives = [token.text for token in doc if token.pos_ in ['ADJ']]
+        adjectives = [token.text for token in doc if token.pos_ in ["ADJ"]]
         return adjectives
