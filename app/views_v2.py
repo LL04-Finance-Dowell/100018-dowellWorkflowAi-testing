@@ -101,7 +101,6 @@ nlp = spacy.load("en_core_web_sm")
 
 class PADeploymentWebhook(APIView):
     """Pick an event from GH and update our PA-server code"""
-
     def post(self, request):
         repo = Repo("/home/100094/100094.pythonanywhere.com")
         origin = repo.remotes.origin
@@ -457,9 +456,7 @@ class FinalizeOrReject(APIView):
                     process_creation_date = datetime.strptime(
                         process["created_on"], "%d:%m:%Y,%H:%M:%S"
                     )
-
                     difference = current_datetime - process_creation_date
-
                     for step in process["process_steps"]:
                         timer = step.get("stepTimer", None)
                         if timer:
@@ -493,7 +490,6 @@ class FinalizeOrReject(APIView):
                                         "Document should have been processed within 7 days",
                                         status=status.HTTP_401_UNAUTHORIZED,
                                     )
-
                     background = processing.Background(
                         process, item_type, item_id, role, user, message
                     )
@@ -953,7 +949,6 @@ class DocumentLink(APIView):
         """editor link for a document"""
         if not validate_id(document_id):
             return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
-
         document = single_query_document_collection({"_id": document_id})
         if document.get("is_private") == True:
             input_password = request.query_params.get("password")
@@ -963,10 +958,8 @@ class DocumentLink(APIView):
                 )
 
             valid_password_hash = document.get("password")
-
             if compare_hash(valid_password_hash, input_password) == False:
                 return Response("Incorrect password", status.HTTP_401_UNAUTHORIZED)
-
         editor_link = access_editor(document_id, "document")
         if not editor_link:
             return Response(status.HTTP_500_INTERNAL_SERVER_ERROR)

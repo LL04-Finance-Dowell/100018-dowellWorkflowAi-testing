@@ -115,7 +115,7 @@ def cloning_document(document_id, auth_viewers, parent_id, process_id):
                     "parent_id": parent_id,
                     "process_id": process_id,
                     "folders": "untitled",
-                    "message":"",
+                    "message": "",
                     "signed_by": signed,
                 }
             )
@@ -142,6 +142,7 @@ def cloning_document(document_id, auth_viewers, parent_id, process_id):
     except Exception as e:
         print(e)
         return
+
 
 def cloning_clone(clone_id, auth_viewers, parent_id, process_id):
     try:
@@ -173,16 +174,12 @@ def cloning_clone(clone_id, auth_viewers, parent_id, process_id):
             "parent_id": parent_id,
             "process_id": process_id,
             "folders": "untitled",
-            "message":""
+            "message": "",
         }
         if document.get("signed_by"):
             clone_dict["signed_by"] = document["signed_by"]
-            
-        save_res = json.loads(
-            save_to_clone_collection(
-                clone_dict
-            )
-        )
+
+        save_res = json.loads(save_to_clone_collection(clone_dict))
 
         if save_res["isSuccess"]:
             metadata_dict = {
@@ -201,9 +198,7 @@ def cloning_clone(clone_id, auth_viewers, parent_id, process_id):
                 metadata_dict["signed_by"] = document["signed_by"]
 
             save_res_metadata = json.loads(
-                save_to_clone_metadata_collection(
-                    metadata_dict
-                )
+                save_to_clone_metadata_collection(metadata_dict)
             )
         return save_res["inserted_id"]
     except Exception as e:
@@ -309,7 +304,7 @@ def access_editor(item_id, item_type):
         return
 
 
-#TODO: will be updated
+# TODO: will be updated
 def access_editor_metadata(item_id, item_type, metadata_id):
     team_member_id = (
         "11689044433"
@@ -492,8 +487,7 @@ def check_all_finalized_true(data, process_type) -> bool:
         doc_states = []
         for doc in step_document_clone_map:
             for key, value in doc.items():
-
-                if key != "accessed":                
+                if key != "accessed":
                     if process_type == "document":
                         doc_state = single_query_clones_collection({"_id": value}).get(
                             "document_state"
@@ -505,9 +499,9 @@ def check_all_finalized_true(data, process_type) -> bool:
                         else:
                             doc_states.append(False)
                     elif process_type == "template":
-                        doc_state = single_query_template_collection({"_id": value}).get(
-                            "template_state"
-                        )
+                        doc_state = single_query_template_collection(
+                            {"_id": value}
+                        ).get("template_state")
                         if doc_state == "saved":
                             doc_states.append(True)
                         elif doc_state == "draft":
@@ -528,30 +522,36 @@ def check_progress(process_id):
         step_document_clone_map = item.get("stepDocumentCloneMap", [])
         for clone in step_document_clone_map:
             for key, value in clone.items():
-                if key == "accessed" and value == True:  
+                if key == "accessed" and value == True:
                     accessed += 1
-                     
-                       
-    percentage_progress = round((accessed/steps_count * 100), 2)
+
+    percentage_progress = round((accessed / steps_count * 100), 2)
     return percentage_progress
+
 
 def get_metadata_id(item_id, item_type):
     if item_type == "document":
         try:
-            coll_id = single_query_document_metadata_collection({"collection_id": item_id})["_id"]
+            coll_id = single_query_document_metadata_collection(
+                {"collection_id": item_id}
+            )["_id"]
             return coll_id
         except Exception as err:
             print(err)
     elif item_type == "clone":
         try:
-            coll_id = single_query_clones_metadata_collection({"collection_id": item_id})["_id"]
+            coll_id = single_query_clones_metadata_collection(
+                {"collection_id": item_id}
+            )["_id"]
             return coll_id
         except Exception as err:
             print(err)
-        
+
     elif item_type == "template":
         try:
-            coll_id = single_query_template_metadata_collection({"collection_id": item_id})["_id"]
+            coll_id = single_query_template_metadata_collection(
+                {"collection_id": item_id}
+            )["_id"]
             return coll_id
         except Exception as err:
             print(err)
@@ -568,7 +568,7 @@ def check_step_items_state(items) -> bool:
         else:
             doc_states.append(False)
     if not all(doc_states):
-            return False
+        return False
     return True
 
 
@@ -576,7 +576,7 @@ def check_user_in_auth_viewers(user, item, item_type) -> bool:
     auth_viewers = []
     if item_type == "document":
         viewers = single_query_clones_collection({"_id": item}).get("auth_viewers")
-        
+
     elif item_type == "template":
         viewers = single_query_template_collection({"_id": item}).get("auth_viewers")
         viewers = viewers[0]
@@ -594,25 +594,27 @@ def check_user_in_auth_viewers(user, item, item_type) -> bool:
         return True
     else:
         return False
-    
+
+
 def remove_members_from_steps(data):
     for step in data.get("process_steps", []):
         step["stepPublicMembers"] = []
         step["stepTeamMembers"] = []
         step["stepUserMembers"] = []
-        step["stepDocumentCloneMap"]=[]
-    
+        step["stepDocumentCloneMap"] = []
+
 
 def update_signed(signers_list: list, member: str, status: bool) -> list:
     for elem in signers_list:
         for key, val in elem.items():
             if key == member:
                 elem[key] = status
-    return(signers_list)
+    return signers_list
 
 
 def check_all_accessed(dic):
     return all([item.get("accessed") for item in dic])
+
 
 def get_link(user, role, links):
     for link in links:
@@ -620,14 +622,15 @@ def get_link(user, role, links):
             auth_role = f"auth_role={role}"
             if user in link[user] and auth_role in link[user]:
                 return link[user]
-            
-            
+
+
 def get_hash(password: str):
-    pwd_buffer = bytes(password, 'utf-8')
+    pwd_buffer = bytes(password, "utf-8")
     hash_object = hashlib.sha256(pwd_buffer)
     hashed_str = hash_object.hexdigest()
     # print(hex_dig)
     return hashed_str
+
 
 def compare_hash(valid_hash: str, input: str):
     hashed_input = get_hash(input)
