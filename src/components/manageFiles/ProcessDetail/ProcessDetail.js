@@ -289,7 +289,7 @@ const CircularProgressBar = ({ percentage }) => {
         fill="#000000" // Text color
         fontWeight="600"
       >
-        {percentage}
+        {percentage}%
       </text>
     </svg>
   );
