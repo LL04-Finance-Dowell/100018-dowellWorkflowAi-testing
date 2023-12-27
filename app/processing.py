@@ -158,9 +158,9 @@ class HandleProcess:
     def generate_qrcode(link):
         # When working locally change to this.
         # We have to do this manually as pythonanywhere has issues resolving our environmental variables.
-        # qr_path = f"media/qrcodes/{uuid.uuid4().hex}.png" 
+        qr_path = f"media/qrcodes/{uuid.uuid4().hex}.png" 
         # In production the below works
-        qr_path = f"100094.pythonanywhere.com/media/qrcodes/{uuid.uuid4().hex}.png" 
+        # qr_path = f"100094.pythonanywhere.com/media/qrcodes/{uuid.uuid4().hex}.png" 
         qr_code = qrcode.QRCode()
         qr_code.add_data(link)
         qr_code.make()
@@ -249,6 +249,11 @@ class HandleProcess:
                 clone_id = cloning_document(
                     parent_item_id, users, parent_item_id, process_id
                 )
+            elif process_type == "internal":
+                authorize(
+                    parent_item_id, users, process_id, "document"
+                )
+                clone_id = parent_item_id
             elif process_type == "template":
                 authorize(
                     parent_item_id, users, process_id, process_type
@@ -790,8 +795,31 @@ class Background:
                         current_doc_map = [v for document_map in step["stepDocumentCloneMap"] for k, v in document_map.items() if isinstance(v, str)]
                         user_in_viewers = check_user_in_auth_viewers(user=self.username, item=document_id, item_type="document")
                         if (not user_in_viewers):
-                            pass
+                            continue
                         elif document_id in current_doc_map:
+                            if step.get("permitInternalWorkflow") == True:
+                                print(step.get("permitInternalWorkflow"))
+                                internal_process_workflows = step.get("workflows")
+                                # print(f"internal_process_workflows: {internal_process_workflows}")
+                                print(step["stepTeamMembers"][0]["portfolio"])
+                                internal_process = Process(
+                                    workflows=internal_process_workflows,
+                                    created_by=self.username,
+                                    portfolio=step["stepTeamMembers"][0]["portfolio"],
+                                    company_id=self.process["company_id"],
+                                    process_type="internal",
+                                    org_name=self.process["org_name"],
+                                    workflow_ids=self.process["workflow_construct_ids"],
+                                    parent_id=document_id,
+                                    data_type=self.process["data_type"],
+                                    process_title=self.process["process_title"],
+                                    )
+                                # print(f"internal process: {internal_process}")
+                                internal_res = internal_process.normal_process(self.process["processing_action"])
+                                
+                                step["internal_process_id"] = internal_res.get("_id")
+                                break
+                                
                             for document_map in step.get("stepDocumentCloneMap"):
                                 for k, v in list(document_map.items()):
                                     if (
@@ -848,7 +876,7 @@ class Background:
                 else:
                     update_process(process_id, steps, "processing")
         except Exception as e:
-            print(e)
+            print("----exception----", e)
             finalize_item(self.item_id, "processing", self.item_type, self.message)
             return
 

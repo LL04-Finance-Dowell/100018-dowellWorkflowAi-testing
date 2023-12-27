@@ -26,6 +26,8 @@ from .mongo_db_connection import (
     single_query_template_metadata_collection,
 )
 
+# from processing import Process
+
 
 def register_finalized(link_id):
     response = requests.put(
@@ -632,3 +634,18 @@ def get_hash(password: str):
 def compare_hash(valid_hash: str, input: str):
     hashed_input = get_hash(input)
     return valid_hash == hashed_input
+
+
+# def create_process_helper(parent_id, created_by, portfolio, company_id, process_type, org_name, workflow_ids, workflows, data_type, process_title):
+#     process = Process(
+#         workflows,
+#         created_by,
+#         portfolio,
+#         company_id,
+#         process_type,
+#         org_name,
+#         workflow_ids,
+#         parent_id,
+#         data_type,
+#         process_title,
+#     )
