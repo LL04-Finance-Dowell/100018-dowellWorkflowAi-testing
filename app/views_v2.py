@@ -818,6 +818,8 @@ class NewDocument(APIView):
                     "is_private": is_private,
                     "password": hashed_password,
                 }
+            )
+        )
         if res["isSuccess"]:
             res_metadata = json.loads(
                 save_to_document_metadata_collection(
@@ -1971,7 +1973,7 @@ class AssignPortfolio(APIView):
                     "An error occured in the process",
                      status.HTTP_500_INTERNAL_SERVER_ERROR,
                 )
-            )   
+            
             
 
 class TriggerInvoice(APIView):
