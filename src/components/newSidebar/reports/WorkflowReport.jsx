@@ -7,12 +7,17 @@ import fluent from '../../../assets/fluent_text-abc-underline-double-32-filled.j
 import green from '../../../assets/ic_round-person.jpg'
 import errorImage from '../../../assets/mingcute_question-fill.jpg'
 import backOutline from '../../../assets/ion_chevron-back-outline.jpg'
+import { useLocation } from 'react-router-dom';
+
 
 
 export const WorkflowReport = () => {
 	const navigate = useNavigate()
 	const { ShowDocumentReport } = useSelector((state) => state.app);
-	console.log("ShowDocumentReport", ShowDocumentReport)
+	// Inside your component
+	const location = useLocation();
+	const passedData = location.state;
+	console.log("ShowDocumentReport", passedData)
 
 	const handleBack = () => {
 		navigate('/documents/draft-reports');
@@ -26,7 +31,7 @@ export const WorkflowReport = () => {
 					className={styles.img}
 					alt="back image"
 				/>
-				<div className={styles.div_3}>Workflow Reports</div>
+				<div className={styles.div_3}>{passedData?.document_name || "Untitled Document"}</div>
 			</div>
 			<img
 				loading="lazy"
@@ -34,13 +39,13 @@ export const WorkflowReport = () => {
 				className={styles.img_2}
 			/>
 			<div className={styles.div_4}>
-				<div className={styles.div_5}>
+				{/* <div className={styles.div_5}>
 					Text is simply dummy text of the printing and typesetting industry. Lorem
 					Ipsum has been the industry's standard dummy
 					<br />
 					text ever since the 1500s. Lorem Ipsum has been the industry's standard
 					dummy text ever since the 1500s.
-				</div>
+				</div> */}
 				<div className={styles.div_6}>
 					{/* <div className={styles.div_7}>
 						<img
@@ -111,7 +116,7 @@ export const WorkflowReport = () => {
 							<div className={styles.timeline_line4} aria-hidden="true"></div>
 							<div class={styles.timeline_outer_circle4} aria-hidden="true"></div>
 							<div className={styles.timeline_circle4}>
-								<span className={styles.timeline_number4}>{ShowDocumentReport?.characters || 313}</span>
+								<span className={styles.timeline_number4}>{ShowDocumentReport?.characters}</span>
 								<span className={styles.timeline_text4}>characters</span>
 							</div>
 						</div>
@@ -133,7 +138,7 @@ export const WorkflowReport = () => {
 							<div className={styles.timeline_line5} aria-hidden="true"></div>
 							<div class={styles.timeline_outer_circle5} aria-hidden="true"></div>
 							<div className={styles.timeline_circle5}>
-								<span className={styles.timeline_number5}>{ShowDocumentReport?.nouns || 63}</span>
+								<span className={styles.timeline_number5}>{ShowDocumentReport?.nouns}</span>
 								<span className={styles.timeline_text5}>Nouns</span>
 							</div>
 						</div>
@@ -154,8 +159,8 @@ export const WorkflowReport = () => {
 							<div className={styles.timeline_line6} aria-hidden="true"></div>
 							<div class={styles.timeline_outer_circle6} aria-hidden="true"></div>
 							<div className={styles.timeline_circle6}>
-								<span className={styles.timeline_number6}>{ShowDocumentReport?.adjectives || 0}</span>
-								<span className={styles.timeline_text6}>Errors</span>
+								<span className={styles.timeline_number6}>{ShowDocumentReport?.adjectives}</span>
+								<span className={styles.timeline_text6}>Adjectives</span>
 							</div>
 						</div>
 					</div>
@@ -179,10 +184,10 @@ export const WorkflowReport = () => {
 										<br />
 										Words
 									</div>
-									<div className={styles.div_21}>
+									{/* <div className={styles.div_21}>
 										Text is simply dummy text of the printing and typesetting
 										industry. Lorem Ipsum has been the industry's standard dummy
-									</div>
+									</div> */}
 								</div>
 								{/* <div className={styles.div_22}>
 									<div className={styles.div_23}>
@@ -201,10 +206,10 @@ export const WorkflowReport = () => {
 										<br />
 										Characters
 									</div>
-									<div className={styles.div_27}>
+									{/* <div className={styles.div_27}>
 										Text is simply dummy text of the printing and typesetting
 										industry. Lorem Ipsum has
-									</div>
+									</div> */}
 								</div>
 								<div className={styles.div_28}>
 									<div className={styles.div_29}>
@@ -212,21 +217,21 @@ export const WorkflowReport = () => {
 										<br />
 										in Document
 									</div>
-									<div className={styles.div_30}>
+									{/* <div className={styles.div_30}>
 										Text is simply dummy text of the printing and typesetting
 										industry. Lorem Ipsum has been the industry's standard dummy.
-									</div>
+									</div> */}
 								</div>
 								<div className={styles.div_31}>
 									<div className={styles.div_32}>
-										Grammatical
+										Adjectives
 										<br />
-										Errors
+										in Document
 									</div>
-									<div className={styles.div_33}>
+									{/* <div className={styles.div_33}>
 										Text is simply dummy text of the printing and typesetting
 										industry. Lorem Ipsum has been the industry's standard dummy.
-									</div>
+									</div> */}
 								</div>
 							</div>
 						</div>
