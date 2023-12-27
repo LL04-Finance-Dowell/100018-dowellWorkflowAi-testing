@@ -16,6 +16,8 @@ from app.serializers import (
 from .mongo_db_connection import (
     save_to_clone_collection,
     save_to_clone_metadata_collection,
+    save_to_document_collection,
+    save_to_document_metadata_collection,
     save_to_process_collection,
     single_query_document_collection,
     single_query_clones_collection,
@@ -635,3 +637,56 @@ def get_hash(password: str):
 def compare_hash(valid_hash: str, input: str):
     hashed_input = get_hash(input)
     return valid_hash == hashed_input
+            
+            
+def create_document_helper(created_by, company_id, template_id, data_type, viewers: list) -> tuple:
+    """_summary_
+
+    Args:
+        created_by (_type_): _description_
+        portfolio (_type_): _description_
+        company_id (_type_): _description_
+        template_id (_type_): _description_
+    """
+    try:
+        content = single_query_template_collection({"_id": template_id})["content"]
+        page = single_query_template_collection({"_id": template_id})["page"]
+        res = json.loads(
+            save_to_document_collection(
+                {
+                    "document_name": "Untitled Document",
+                    "content": content,
+                    "created_by": created_by,
+                    "company_id": company_id,
+                    "page": page,
+                    "data_type": data_type,
+                    "document_state": "draft",
+                    "auth_viewers": viewers,
+                    "document_type": "original",
+                    "parent_id": None,
+                    "process_id": "",
+                    "folders": [], 
+                    "template": template_id,
+                    "message":""
+                }
+            )
+        )
+        if res["isSuccess"]:
+            res_metadata = json.loads(
+                save_to_document_metadata_collection(
+                    {
+                        "document_name": "Untitled Document",
+                        "collection_id": res["inserted_id"],
+                        "created_by": created_by,
+                        "company_id": company_id,
+                        "data_type": data_type,
+                        "document_state": "draft",
+                        "auth_viewers": viewers,
+                    }
+                )
+            )
+            return res, res_metadata
+        
+    except Exception as ex:
+        print(ex)
+        return
