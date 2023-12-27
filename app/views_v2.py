@@ -119,71 +119,78 @@ class HomePage(APIView):
 class DocumentOrTemplateProcessing(APIView):
     def post(self, request, *args, **kwargs):
         """processing is determined by action picked by user."""
-        if not request.data:
+        payload_dict = kwargs.get("payload")
+        if payload_dict:
+            request_data = payload_dict
+        else:
+            request_data = request.data
+        
+        if not request_data:
             return Response("You are missing something!", status.HTTP_400_BAD_REQUEST)
-        organization_id = request.data["company_id"]
+        
+        organization_id = request_data["company_id"]
         process = processing.Process(
-            request.data["workflows"],
-            request.data["created_by"],
-            request.data["creator_portfolio"],
+            request_data["workflows"],
+            request_data["created_by"],
+            request_data["creator_portfolio"],
             organization_id,
-            request.data["process_type"],
-            request.data["org_name"],
-            request.data["workflows_ids"],
-            request.data["parent_id"],
-            request.data["data_type"],
-            request.data["process_title"],
+            request_data["process_type"],
+            request_data["org_name"],
+            request_data["workflows_ids"],
+            request_data["parent_id"],
+            request_data["data_type"],
+            request_data["process_title"],
         )
-        action = request.data["action"]
+        action = request_data["action"]
         data = None
         if action == "save_workflow_to_document_and_save_to_drafts":
             process.normal_process(action)
             return Response("Process Saved in drafts.", status.HTTP_201_CREATED)
         if action == "start_document_processing_content_wise":
-            if request.data.get("process_id") is not None:
+            if request_data.get("process_id") is not None:
                 process = single_query_process_collection(
-                    {"_id": request.data["process_id"]}
+                    {"_id": request_data["process_id"]}
                 )
             else:
                 data = process.normal_process(action)
         if action == "start_document_processing_wf_steps_wise":
-            if request.data.get("process_id") is not None:
+            if request_data.get("process_id") is not None:
                 process = single_query_process_collection(
-                    {"_id": request.data["process_id"]}
+                    {"_id": request_data["process_id"]}
                 )
             else:
                 data = process.normal_process(action)  # type: ignore
         if action == "start_document_processing_wf_wise":
-            if request.data.get("process_id") is not None:
+            if request_data.get("process_id") is not None:
                 process = single_query_process_collection(
-                    {"_id": request.data["process_id"]}
+                    {"_id": request_data["process_id"]}
                 )
             else:
                 data = process.normal_process(action)  # type: ignore
         if action == "test_document_processing_content_wise":
-            if request.data.get("process_id") is not None:
+            if request_data.get("process_id") is not None:
                 process = single_query_process_collection(
-                    {"_id": request.data["process_id"]}
+                    {"_id": request_data["process_id"]}
                 )
             else:
                 data = process.test_process(action)  # type: ignore
         if action == "test_document_processing_wf_steps_wise":
-            if request.data.get("process_id") is not None:
+            if request_data.get("process_id") is not None:
                 process = single_query_process_collection(
-                    {"_id": request.data["process_id"]}
+                    {"_id": request_data["process_id"]}
                 )
             else:
                 data = process.test_process(action)  # type: ignore
         if action == "test_document_processing_wf_wise":
-            if request.data.get("process_id") is not None:
+            if request_data.get("process_id") is not None:
                 process = single_query_process_collection(
-                    {"_id": request.data["process_id"]}
+                    {"_id": request_data["process_id"]}
                 )
             else:
                 data = process.test_process(action)  # type: ignore
         if action == "close_processing_and_mark_as_completed":
             process = single_query_process_collection(
-                {"_id": request.data["process_id"]}
+                {"_id": request_data["process_id"]}
             )
             if process["processing_state"] == "completed":
                 return Response(
@@ -203,7 +210,7 @@ class DocumentOrTemplateProcessing(APIView):
             return Response(status.HTTP_500_INTERNAL_SERVER_ERROR)
         if action == "cancel_process_before_completion":
             process = single_query_process_collection(
-                {"_id": request.data["process_id"]}
+                {"_id": request_data["process_id"]}
             )
             if process["processing_state"] == "cancelled":
                 return Response(
@@ -2042,16 +2049,17 @@ class TriggerInvoice(APIView):
                                 "stepName": "Step 1",
                                 "stepRole": "Freelancer",
                                 "stepPublicMembers": [
+                                    {
+                                        "member": created_by,
+                                        "portfolio": portfolio
+                                    }
                                     # {
                                     #     "member": "HO7QEz3sQZB9",
                                     #     "portfolio": "Mayor-Portfolio"
                                     # }
                                 ],
                                 "stepTeamMembers": [
-                                    {
-                                        "member": created_by,
-                                        "portfolio": portfolio
-                                    }
+                                    
                                 ],
                                 "stepUserMembers": [],
                                 "stepDocumentCloneMap": [],
@@ -2098,16 +2106,17 @@ class TriggerInvoice(APIView):
                                 "stepName": "Step 2",
                                 "stepRole": "HR",
                                 "stepPublicMembers": [
+                                    {
+                                        "member": hr_username,
+                                        "portfolio": hr_portfolio
+                                    }
                                     # {
                                     #     "member": "lA4zWMfcsV3T",
                                     #     "portfolio": "Mayor-Portfolio"
                                     # }
                                 ],
                                 "stepTeamMembers": [
-                                    {
-                                        "member": hr_username,
-                                        "portfolio": hr_portfolio
-                                    }
+                                    
                                 ],
                                 "stepUserMembers": [],
                                 "stepDocumentCloneMap": [],
@@ -2139,16 +2148,17 @@ class TriggerInvoice(APIView):
                                 "stepName": "Step 3",
                                 "stepRole": "Accounts",
                                 "stepPublicMembers": [
+                                    {
+                                        "member": accounts_username,
+                                        "portfolio": accounts_portfolio
+                                    }
                                     # {
                                     #     "member": "C5ZiFflFU63K",
                                     #     "portfolio": "Mayor-Portfolio"
                                     # }
                                 ],
                                 "stepTeamMembers": [
-                                    {
-                                        "member": accounts_username,
-                                        "portfolio": accounts_portfolio
-                                    }
+                                    
                                 ],
                                 "stepUserMembers": [],
                                 "stepDocumentCloneMap": [],
@@ -2182,6 +2192,5 @@ class TriggerInvoice(APIView):
         }
         
         process = DocumentOrTemplateProcessing().post(request, payload=process_payload)
-        print(process.data)
         
-        return Response(f"created_document: {document_id},\n created_process: {process.data}", status.HTTP_201_CREATED)
+        return Response({"created_document": document_id, "created_process": process.data}, status.HTTP_201_CREATED)
