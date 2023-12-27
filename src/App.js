@@ -48,7 +48,7 @@ function App() {
 
   useDowellLogin();
 
-
+  // console.log = () => {};
 
   useEffect(() => {
     const interval = setInterval(() => {
