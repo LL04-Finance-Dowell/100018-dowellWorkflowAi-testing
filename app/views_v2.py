@@ -1912,3 +1912,60 @@ class DocumentReport(APIView):
         doc = nlp(sentence)
         adjectives = [token.text for token in doc if token.pos_ in ["ADJ"]]
         return adjectives
+
+
+class AssignPortfolio(APIView):
+    def post(self, request, process_id):
+        step_choice = request.data.get("step")
+        portfolio = request.data.get("portfolio")
+        member = request.data.get("member")
+        user_type = request.data.get("user_type")
+        
+        if not step_choice or not portfolio or not user_type or not member:
+            return Response(
+                "Missing required fields", status.HTTP_400_BAD_REQUEST
+            )
+            
+        process = single_query_process_collection({"_id": process_id})
+        steps = process["process_steps"]
+        
+        for index, step in enumerate(steps):
+            if int(step_choice) <= len(steps):
+                if int(step_choice) == (index+1):
+                    if user_type == "team":
+                        step["stepTeamMembers"].append(
+                            {
+                                "member": member,
+                                "portfolio": portfolio
+
+                            }
+                        )
+                    elif user_type == "user":
+                        step["stepUserMembers"].append(
+                            {
+                                "member": member,
+                                "portfolio": portfolio
+                            }
+                        )
+                    elif user_type == "public":
+                        step["stepPublicMembers"].append(
+                            {
+                                "member": member,
+                                "portfolio": portfolio
+                            }
+                        )
+                    else:
+                        return Response("Invalid user type", status.HTTP_400_BAD_REQUEST)
+            else:
+                return Response("Invalid step choice", status.HTTP_400_BAD_REQUEST)
+            
+            res = json.loads(update_process(process_id, process["process_steps"], process["processing_state"]))
+            
+            if res["isSuccess"]:
+                return Response(process, status=status.HTTP_200_OK)
+        
+            else:
+                return Response(
+                    "An error occured in the process",
+                     status.HTTP_500_INTERNAL_SERVER_ERROR,
+                )
