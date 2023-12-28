@@ -4,18 +4,20 @@ from app import views_v2
 urlpatterns = [
     path("", views_v2.HomePage.as_view()),
     path("server/", views_v2.PADeploymentWebhook.as_view()),
-    path("processes/", views_v2.DocumentOrTemplateProcessing.as_view(), name="processes"),
-    path("processes/<str:process_id>/", views_v2.ProcessDetail.as_view(), name='process_detail'),
-    path("processes/<str:process_id>/process-link/", views_v2.ProcessLink.as_view(), name='process_link'),
-    path("processes/<str:process_id>/verify/", views_v2.ProcessVerification.as_view(), name="verify_process"),
-    path("processes/<str:process_id>/trigger/", views_v2.TriggerProcess.as_view(), name="trigger_process"),
-    path("processes/<str:process_id>/import/", views_v2.ProcessImport.as_view(), name="import_process"),
+    path("processes/", views_v2.DocumentOrTemplateProcessing.as_view()),
+    path("processes/invoice/", views_v2.TriggerInvoice.as_view()),
+    path("processes/<str:process_id>/", views_v2.ProcessDetail.as_view()),
+    path("processes/<str:process_id>/process-link/", views_v2.ProcessLink.as_view()),
+    path("processes/<str:process_id>/verify/", views_v2.ProcessVerification.as_view()),
+    path("processes/<str:process_id>/trigger/", views_v2.TriggerProcess.as_view()),
+    path("processes/<str:process_id>/import/", views_v2.ProcessImport.as_view()),
     path(
         "processes/<str:process_id>/finalize-or-reject/",
         views_v2.FinalizeOrReject.as_view(),
         name="finalize_process"
     ),
     path("processes/<str:company_id>/organisations/", views_v2.Process.as_view(),name='process'),
+    path("processes/<str:process_id>/portfolio/", views_v2.AssignPortfolio.as_view(), name="assign_porfolio"),
     path("workflows/", views_v2.NewWorkflow.as_view(), name='create-workflow'),
     path("workflows/<str:workflow_id>/", views_v2.WorkflowDetail.as_view()),
     path("workflows/<str:company_id>/organisations/", views_v2.Workflow.as_view(), name="get-workflows"),
@@ -53,7 +55,6 @@ urlpatterns = [
         "notifications/<str:process_id>/reminders/",
         views_v2.NotificationReminder.as_view(),
     ),
-
     path("documents/<str:item_id>/reports/", views_v2.DocumentReport.as_view(), name="document-report"),
 
 ]

@@ -146,3 +146,4 @@ db.sqlite3
 /app/migrations/*
 /app/__pycache__/*
 /notify
+misc_test
