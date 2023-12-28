@@ -142,6 +142,7 @@
 
 .create__button__template1:hover {
   background-color: rgb(97, 206, 112); /* Background color on hover */
+  color: white;
 }
 
 
