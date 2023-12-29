@@ -513,9 +513,7 @@ def check_all_finalized_true(data, process_type) -> bool:
                         else:
                             doc_states.append(False)
         if not all(doc_states):
-            print(f"doc_states: {doc_states}")
             return False
-        print(f"doc_states: {doc_states}")
     return True
 
 

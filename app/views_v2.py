@@ -406,18 +406,18 @@ class FinalizeOrReject(APIView):
                     status=status.HTTP_400_BAD_REQUEST,
                 )
         check, current_state = is_finalized(item_id, item_type)
-        # if item_type == "document" or item_type == "clone":
-        #     if check and current_state != "processing":
-        #         return Response(
-        #             f"document already processed as `{current_state}`!",
-        #             status.HTTP_200_OK,
-        #         )
-        # elif item_type == "template":
-        #     if check and current_state != "draft":
-        #         return Response(
-        #             f"template already processed as `{current_state}`!",
-        #             status.HTTP_200_OK,
-        #         )
+        if item_type == "document" or item_type == "clone":
+            if check and current_state != "processing":
+                return Response(
+                    f"document already processed as `{current_state}`!",
+                    status.HTTP_200_OK,
+                )
+        elif item_type == "template":
+            if check and current_state != "draft":
+                return Response(
+                    f"template already processed as `{current_state}`!",
+                    status.HTTP_200_OK,
+                )
         if item_type == "clone":
             signers_list = single_query_clones_collection({"_id": item_id}).get(
                 "signed_by"
@@ -510,11 +510,11 @@ class FinalizeOrReject(APIView):
                     if item_type == "document" or item_type == "clone":
                         background.document_processing()
                         item = single_query_clones_collection({"_id": item_id})
-                        process_state = process.get("processing_state")
                         if item:
                             if item.get("document_state") == "finalized":
                                 meta_id = get_metadata_id(item_id, item_type)
-                                print(f"meeta_id: {meta_id}")
+                                updated_process = single_query_process_collection({"_id": process_id})
+                                process_state = updated_process.get("processing_state")
                                 if process.get("process_type") == "internal" and process_state == "finalized":
                                     process_creator = process.get("created_by")
                                     process_creator_portfolio = process.get("creator_portfolio")
@@ -525,7 +525,7 @@ class FinalizeOrReject(APIView):
                                         "portfolio": process_creator_portfolio
                                     }
                                     authorize(item_id, user_dict, parent_process, "document")
-                                    # authorize_metadata(meta_id, user_dict, parent_process, "document")
+                                    authorize_metadata(meta_id, user_dict, parent_process, "document")
                                     
                                 else:
                                     update_metadata(

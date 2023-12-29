@@ -251,9 +251,7 @@ class HandleProcess:
         for m in step.get("stepTeamMembers", []) + step.get("stepUserMembers", []):
             users.append(m)
         public = [m for m in step.get("stepPublicMembers", [])]
-        print(f"pub members: {public}")
         if users:
-            print(f"users: {users}")
             if process_type == "document":
                 clone_id = cloning_document(
                     parent_item_id, users, parent_item_id, process_id
@@ -303,7 +301,6 @@ class HandleProcess:
                         )
                     elif process_type == "internal":
                         pub_users.append(u)
-                        print(f"pub users list: {pub_users}")
                         public_clone_ids.append(
                             {
                                 u["member"]: parent_item_id
@@ -317,7 +314,6 @@ class HandleProcess:
                             }
                         )
             if pub_users != []:
-                print(f"public_clone_ids: {public_clone_ids}")
                 # authorize() is only handled for "tdocument" and "template" process_types for now
                 if process_type == "internal":
                     authorize(
@@ -841,11 +837,9 @@ class Background:
                             continue
                         elif document_id in current_doc_map:
                             if step.get("permitInternalWorkflow") == True:
-                                print(step.get("permitInternalWorkflow"))
                                 if step.get("internal_process_details") == None:
                                     internal_process_workflows = step.get("workflows")
-                                    # print(f"internal_process_workflows: {internal_process_workflows}")
-                                    print(step["stepTeamMembers"][0]["portfolio"])
+
                                     internal_process = Process(
                                         workflows=internal_process_workflows,
                                         created_by=self.username,
@@ -859,15 +853,18 @@ class Background:
                                         process_title=f'{self.process["process_title"]} - {created_by} - Internal Process',
                                         parent_process=self.process["_id"]
                                         )
-                                    # print(f"internal process: {internal_process}")
                                     internal_process_res = internal_process.normal_process(self.process["processing_action"])
                                     internal_process_details = HandleProcess(internal_process_res).start()
                                     
-                                    # step["internal_process_id"] = internal_process_res.get("_id")
                                     step["internal_process_details"] = internal_process_details
                                     break
                                 else:
-                                    pass
+                                    internal_process_id = step.get("internal_process_details").get("process_id")
+                                    internal_process_state = single_query_process_collection({"_id": internal_process_id}).get("processing_state")
+                                    if internal_process_state != "finalized":
+                                        raise Exception(f"Internal process for this step ({index}) is yet to be finalized")
+                                    else:
+                                        pass
                             for document_map in step.get("stepDocumentCloneMap"):
                                 for k, v in list(document_map.items()):
                                     if (
