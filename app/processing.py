@@ -59,6 +59,8 @@ class Process:
         parent_id,
         data_type,
         process_title,
+        *args,
+        **kwargs,
     ):
         self.workflows = workflows
         self.created_by = created_by
@@ -73,6 +75,9 @@ class Process:
             step for workflow in workflows for step in workflow["workflows"]["steps"]
         ]
         self.process_title = process_title
+        
+        parent_process = kwargs.get("parent_process")
+        self.parent_process = parent_process
 
     def normal_process(self, action):
         res = json.loads(
@@ -90,6 +95,7 @@ class Process:
                     "process_type": self.process_type,
                     "org_name":self.org_name,
                     "process_kind": "original",
+                    "parent_process": self.parent_process
                 }
             )
         )
@@ -106,6 +112,7 @@ class Process:
                 "process_type": self.process_type,
                 "process_kind": "original",
                 "org_name": self.org_name,
+                "parent_process": self.parent_process
             }
 
     def test_process(self, action):
@@ -158,9 +165,9 @@ class HandleProcess:
     def generate_qrcode(link):
         # When working locally change to this.
         # We have to do this manually as pythonanywhere has issues resolving our environmental variables.
-        qr_path = f"media/qrcodes/{uuid.uuid4().hex}.png" 
+        # qr_path = f"media/qrcodes/{uuid.uuid4().hex}.png" 
         # In production the below works
-        # qr_path = f"100094.pythonanywhere.com/media/qrcodes/{uuid.uuid4().hex}.png" 
+        qr_path = f"100094.pythonanywhere.com/media/qrcodes/{uuid.uuid4().hex}.png" 
         qr_code = qrcode.QRCode()
         qr_code.add_data(link)
         qr_code.make()
@@ -244,7 +251,9 @@ class HandleProcess:
         for m in step.get("stepTeamMembers", []) + step.get("stepUserMembers", []):
             users.append(m)
         public = [m for m in step.get("stepPublicMembers", [])]
+        print(f"pub members: {public}")
         if users:
+            print(f"users: {users}")
             if process_type == "document":
                 clone_id = cloning_document(
                     parent_item_id, users, parent_item_id, process_id
@@ -273,6 +282,15 @@ class HandleProcess:
                         public_clone_ids.append({
                             u["member"]: pub_team_clone
                         })
+                if process_type == "internal":
+                    authorize(
+                            parent_item_id, public, process_id, "document"
+                        ) 
+                    pub_team_clone = parent_item_id
+                    for u in public:
+                        public_clone_ids.append({
+                            u["member"]: pub_team_clone
+                        })
             else:
                 for u in public:
                     if process_type == "document":
@@ -283,6 +301,14 @@ class HandleProcess:
                                 )
                             }
                         )
+                    elif process_type == "internal":
+                        pub_users.append(u)
+                        print(f"pub users list: {pub_users}")
+                        public_clone_ids.append(
+                            {
+                                u["member"]: parent_item_id
+                            }
+                        )
                     elif process_type == "template":
                         pub_users.append(u)
                         public_clone_ids.append(
@@ -291,9 +317,16 @@ class HandleProcess:
                             }
                         )
             if pub_users != []:
-                authorize(
-                        parent_item_id, pub_users, process_id, process_type
-                    ) 
+                print(f"public_clone_ids: {public_clone_ids}")
+                # authorize() is only handled for "tdocument" and "template" process_types for now
+                if process_type == "internal":
+                    authorize(
+                            parent_item_id, pub_users, process_id, "document"
+                        ) 
+                else:
+                    authorize(
+                            parent_item_id, pub_users, process_id, process_type
+                        ) 
             step.get("stepDocumentCloneMap").extend(public_clone_ids)
             clones.extend(public_clone_ids)
         return clones
@@ -371,6 +404,16 @@ class HandleProcess:
         if public_links and self.process['process_type'] == "document" :
             document_id = self.process["parent_item_id"]
             res = single_query_document_collection({"_id": document_id})
+            document_name = res["document_name"]
+            m_link, m_code = HandleProcess.generate_public_qrcode(
+                public_links, self.process["company_id"], document_name
+            )
+            links.append({"master_link": m_link})
+            qrcodes.append({"master_qrcode": m_code})
+        
+        elif public_links and self.process['process_type'] == "internal" :
+            document_id = self.process["parent_item_id"]
+            res = single_query_clones_collection({"_id": document_id})
             document_name = res["document_name"]
             m_link, m_code = HandleProcess.generate_public_qrcode(
                 public_links, self.process["company_id"], document_name
@@ -799,27 +842,32 @@ class Background:
                         elif document_id in current_doc_map:
                             if step.get("permitInternalWorkflow") == True:
                                 print(step.get("permitInternalWorkflow"))
-                                internal_process_workflows = step.get("workflows")
-                                # print(f"internal_process_workflows: {internal_process_workflows}")
-                                print(step["stepTeamMembers"][0]["portfolio"])
-                                internal_process = Process(
-                                    workflows=internal_process_workflows,
-                                    created_by=self.username,
-                                    portfolio=step["stepTeamMembers"][0]["portfolio"],
-                                    company_id=self.process["company_id"],
-                                    process_type="internal",
-                                    org_name=self.process["org_name"],
-                                    workflow_ids=self.process["workflow_construct_ids"],
-                                    parent_id=document_id,
-                                    data_type=self.process["data_type"],
-                                    process_title=self.process["process_title"],
-                                    )
-                                # print(f"internal process: {internal_process}")
-                                internal_res = internal_process.normal_process(self.process["processing_action"])
-                                
-                                step["internal_process_id"] = internal_res.get("_id")
-                                break
-                                
+                                if step.get("internal_process_details") == None:
+                                    internal_process_workflows = step.get("workflows")
+                                    # print(f"internal_process_workflows: {internal_process_workflows}")
+                                    print(step["stepTeamMembers"][0]["portfolio"])
+                                    internal_process = Process(
+                                        workflows=internal_process_workflows,
+                                        created_by=self.username,
+                                        portfolio=step["stepTeamMembers"][0]["portfolio"],
+                                        company_id=self.process["company_id"],
+                                        process_type="internal",
+                                        org_name=self.process["org_name"],
+                                        workflow_ids=self.process["workflow_construct_ids"],
+                                        parent_id=document_id,
+                                        data_type=self.process["data_type"],
+                                        process_title=f'{self.process["process_title"]} - {created_by} - Internal Process',
+                                        parent_process=self.process["_id"]
+                                        )
+                                    # print(f"internal process: {internal_process}")
+                                    internal_process_res = internal_process.normal_process(self.process["processing_action"])
+                                    internal_process_details = HandleProcess(internal_process_res).start()
+                                    
+                                    # step["internal_process_id"] = internal_process_res.get("_id")
+                                    step["internal_process_details"] = internal_process_details
+                                    break
+                                else:
+                                    pass
                             for document_map in step.get("stepDocumentCloneMap"):
                                 for k, v in list(document_map.items()):
                                     if (
@@ -868,7 +916,7 @@ class Background:
                         if step.get("stepTaskType") == "assign_task":
                             self.assign_task_helper(step=step, process_id=process_id, process_steps=steps)
                             
-                        update_process(process_id, steps, processing_state)
+                        # update_process(process_id, steps, processing_state)
                 # Check that all documents are finalized
                 all_accessed_true = check_all_finalized_true(steps, process_type)
                 if all_accessed_true:

@@ -38,6 +38,8 @@ from app.helpers import (
 from app.mongo_db_connection import (
     add_document_to_folder,
     add_template_to_folder,
+    authorize,
+    authorize_metadata,
     bulk_query_folder_collection,
     bulk_query_process_collection,
     bulk_query_team_collection,
@@ -404,18 +406,18 @@ class FinalizeOrReject(APIView):
                     status=status.HTTP_400_BAD_REQUEST,
                 )
         check, current_state = is_finalized(item_id, item_type)
-        if item_type == "document" or item_type == "clone":
-            if check and current_state != "processing":
-                return Response(
-                    f"document already processed as `{current_state}`!",
-                    status.HTTP_200_OK,
-                )
-        elif item_type == "template":
-            if check and current_state != "draft":
-                return Response(
-                    f"template already processed as `{current_state}`!",
-                    status.HTTP_200_OK,
-                )
+        # if item_type == "document" or item_type == "clone":
+        #     if check and current_state != "processing":
+        #         return Response(
+        #             f"document already processed as `{current_state}`!",
+        #             status.HTTP_200_OK,
+        #         )
+        # elif item_type == "template":
+        #     if check and current_state != "draft":
+        #         return Response(
+        #             f"template already processed as `{current_state}`!",
+        #             status.HTTP_200_OK,
+        #         )
         if item_type == "clone":
             signers_list = single_query_clones_collection({"_id": item_id}).get(
                 "signed_by"
@@ -508,15 +510,30 @@ class FinalizeOrReject(APIView):
                     if item_type == "document" or item_type == "clone":
                         background.document_processing()
                         item = single_query_clones_collection({"_id": item_id})
+                        process_state = process.get("processing_state")
                         if item:
                             if item.get("document_state") == "finalized":
                                 meta_id = get_metadata_id(item_id, item_type)
-                                update_metadata(
-                                    meta_id,
-                                    "finalized",
-                                    item_type,
-                                    signers=updated_signers_true,
-                                )
+                                print(f"meeta_id: {meta_id}")
+                                if process.get("process_type") == "internal" and process_state == "finalized":
+                                    process_creator = process.get("created_by")
+                                    process_creator_portfolio = process.get("creator_portfolio")
+                                    parent_process = process.get("parent_process")
+                                    
+                                    user_dict = {
+                                        "member": process_creator,
+                                        "portfolio": process_creator_portfolio
+                                    }
+                                    authorize(item_id, user_dict, parent_process, "document")
+                                    # authorize_metadata(meta_id, user_dict, parent_process, "document")
+                                    
+                                else:
+                                    update_metadata(
+                                        meta_id,
+                                        "finalized",
+                                        item_type,
+                                        signers=updated_signers_true,
+                                    )
                             elif item.get("document_state") == "processing":
                                 meta_id = get_metadata_id(item_id, item_type)
                         return Response(
