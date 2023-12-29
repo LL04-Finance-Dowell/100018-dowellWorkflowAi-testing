@@ -16,7 +16,8 @@ import { setEditorLink } from '../../../features/app/appSlice';
 
 import { useAppContext } from '../../../contexts/AppContext';
 import {
-  SetShowDocumentReport
+  SetShowDocumentReport,
+  SetSingleDocument
 } from "../../../features/app/appSlice";
 
 import {
@@ -207,7 +208,8 @@ const DocumentCard = ({
   };
 
   const handleShowDocument = async (item) => {
-    console.log("itemhandle",item )
+    console.log("itemhandleMubeen",item )
+    dispatch(SetSingleDocument(item));
     getDocumentDetail(item.collection_id)
     // navigate("/documents/document-detail");
   };

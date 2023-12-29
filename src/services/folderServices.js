@@ -1,7 +1,9 @@
-import { httpApiUrl } from '../httpCommon/httpCommon';
+import { httpApiUrl, httpApiUrlV2 } from '../httpCommon/httpCommon';
 
 export class FolderServices {
   createFolder = (data) => httpApiUrl.post('folders/', data);
+
+  createFolderV2 = (data) => httpApiUrlV2.post('folders/', data);
 
   updateFolder = (data, id) => httpApiUrl.put(`folders/${id}`, data);
 

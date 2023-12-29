@@ -141,7 +141,7 @@
 }
 
 .create__button__template1:hover {
-  background-color: rgb(97, 206, 112); /* Background color on hover */
+  background-color: #005734; /* Background color on hover */
   color: white;
 }
 
@@ -151,7 +151,7 @@
 }
 
 .create__button__inner:hover {
-  background-color: rgb(97, 206, 112); /* Background color on hover */
+  background-color: #005734; /* Background color on hover */
 }
 
 

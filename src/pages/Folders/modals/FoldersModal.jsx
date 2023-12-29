@@ -56,15 +56,17 @@ const FoldersModal = () => {
   const { allTemplates } = useSelector((state) => state.template);
 
   const handleCreateFolder = async () => {
+    console.log("foldernameedd", folderName)
     const data = {
       company_id: userCompanyId,
       created_by: userDetail?.userinfo.username,
       data_type: userDataType,
+      folder_name: folderName,
     };
     const folderServices = new FolderServices();
     try {
       setIsCreating(true);
-      await folderServices.createFolder(data);
+      await folderServices.createFolderV2(data);
       const res = await folderServices.getAllFolders(
         userCompanyId,
         userDataType
@@ -121,7 +123,7 @@ const FoldersModal = () => {
         }
       } else toast.warn('Select a folder');
     } else if (action === 'edit') {
-      console.log("selectedDocs(",selectedDocs)
+      console.log("selectedDocs(", selectedDocs)
       if (folderName) {
         const items = [
           ...selectedDocs.map((doc) => ({ [`${doc.category}_id`]: doc.id })),
@@ -145,10 +147,10 @@ const FoldersModal = () => {
             prev.map((item) =>
               item._id === folder._id
                 ? {
-                    ...item,
-                    folder_name: folderName,
-                    data: [...items, ...item.data],
-                  }
+                  ...item,
+                  folder_name: folderName,
+                  data: [...items, ...item.data],
+                }
                 : item
             )
           );
@@ -180,8 +182,8 @@ const FoldersModal = () => {
         item_type: item.document_name
           ? 'document'
           : item.template_name
-          ? 'template'
-          : '',
+            ? 'template'
+            : '',
       };
       const folderServices = new FolderServices();
       setIsRemoving(true);
@@ -200,22 +202,21 @@ const FoldersModal = () => {
           prev.map((folderArr) =>
             folderArr._id === folderActionId
               ? {
-                  ...folderArr,
-                  data: folderArr.data.filter(
-                    (itm) =>
-                      (itm.document_id && itm.document_id !== item._id) ||
-                      (itm.template_id && itm.template_id !== item._id)
-                  ),
-                }
+                ...folderArr,
+                data: folderArr.data.filter(
+                  (itm) =>
+                    (itm.document_id && itm.document_id !== item._id) ||
+                    (itm.template_id && itm.template_id !== item._id)
+                ),
+              }
               : folderArr
           )
         );
 
         toast.success(
-          `${
-            item.document_name
-              ? 'Document'
-              : item.template_name
+          `${item.document_name
+            ? 'Document'
+            : item.template_name
               ? 'Template'
               : ''
           } removed`
@@ -224,10 +225,9 @@ const FoldersModal = () => {
       } catch (err) {
         // console.log(err);
         toast.error(
-          `Failed to remove ${
-            item.document_name
-              ? 'Document'
-              : item.template_name
+          `Failed to remove ${item.document_name
+            ? 'Document'
+            : item.template_name
               ? 'Template'
               : ''
           }`
@@ -244,15 +244,15 @@ const FoldersModal = () => {
     const companyId =
       userDetail?.portfolio_info?.length > 1
         ? userDetail?.portfolio_info?.find(
-            (portfolio) => portfolio.product === productName
-          )?.org_id
+          (portfolio) => portfolio.product === productName
+        )?.org_id
         : userDetail?.portfolio_info[0]?.org_id;
 
     const dataType =
       userDetail?.portfolio_info?.length > 1
         ? userDetail?.portfolio_info.find(
-            (portfolio) => portfolio.product === productName
-          )?.data_type
+          (portfolio) => portfolio.product === productName
+        )?.data_type
         : userDetail?.portfolio_info[0].data_type;
 
     setUserCompanyId(companyId);
@@ -287,22 +287,22 @@ const FoldersModal = () => {
   useEffect(() => {
     if (allDocuments)
       console.log("allDocuments", allDocuments)
-      console.log("allDocuments", allDocuments
-      .filter((doc) => doc.document_type === 'original')
-      .map((doc) => ({
-        name: doc.document_name,
-        id: doc._id,
-        category: 'document',
-      })))
-      setDocsList(
-        allDocuments
-          .filter((doc) => doc.document_type === 'original')
-          .map((doc) => ({
-            name: doc.document_name,
-            id: doc._id,
-            category: 'document',
-          }))
-      );
+    // console.log("allDocuments", allDocuments
+    // .filter((doc) => doc.document_type === 'original')
+    // .map((doc) => ({
+    //   name: doc.document_name,
+    //   id: doc._id,
+    //   category: 'document',
+    // })))
+    setDocsList(
+      allDocuments
+        .filter((doc) => doc.document_type === 'original')
+        .map((doc) => ({
+          name: doc.document_name,
+          id: doc._id,
+          category: 'document',
+        }))
+    );
 
     if (allTemplates)
       setTempsList(
@@ -371,6 +371,13 @@ const FoldersModal = () => {
     }
   }, [state]);
 
+
+  const handleFolderChange = (e) => {
+    setFolderName(e.target.value);
+    console.log("foldername",folderName)
+  };
+
+
   //  TODO TRY TO SEE IF YOU CAN USE A SPINNER IN FOLDERS PAGE, UNTIL ALL NEEDED VARIABLES ARE AVAILABLE
   // TODO ADD NEW FOLDER TP FOLDERS ARRAY
 
@@ -383,6 +390,14 @@ const FoldersModal = () => {
               <h3>
                 {isCreating ? 'Creating new folder.' : 'Create new folder?'}
               </h3>
+              <input type='text' value={folderName} onChange={handleFolderChange} placeholder='Enter Folder Name' id='folder_name' />
+              {/* <input
+                type='text'
+                placeholder='Enter folder name'
+                id='folder_name'
+                value={folderName}
+                onChange={(e) => setFolderName(e.target.value)}
+              /> */}
 
               <div className={styles.btns_wrapper}>
                 {isCreating ? (
@@ -411,20 +426,18 @@ const FoldersModal = () => {
             <>
               <h3>
                 {isEditing
-                  ? `Editing ${folder && folder.folder_name} ${
-                      folder.folder_name
-                        ? folder.folder_name.toLowerCase().includes('folder')
-                          ? ''
-                          : 'folder'
-                        : ''
-                    }`
-                  : `Edit ${folder && folder.folder_name} ${
-                      folder.folder_name
-                        ? folder.folder_name.toLowerCase().includes('folder')
-                          ? ''
-                          : 'folder'
-                        : ''
-                    }`}
+                  ? `Editing ${folder && folder.folder_name} ${folder.folder_name
+                    ? folder.folder_name.toLowerCase().includes('folder')
+                      ? ''
+                      : 'folder'
+                    : ''
+                  }`
+                  : `Edit ${folder && folder.folder_name} ${folder.folder_name
+                    ? folder.folder_name.toLowerCase().includes('folder')
+                      ? ''
+                      : 'folder'
+                    : ''
+                  }`}
 
                 {!isEditing && (
                   <button
@@ -489,20 +502,18 @@ const FoldersModal = () => {
             <>
               <h3 style={{ color: 'red' }}>
                 {isDeleting
-                  ? `Deleting ${folder && folder.folder_name} ${
-                      folder.folder_name
-                        ? folder.folder_name.toLowerCase().includes('folder')
-                          ? ''
-                          : 'folder'
-                        : ''
-                    }`
-                  : `Delete ${folder && folder.folder_name} ${
-                      folder.folder_name
-                        ? folder.folder_name.toLowerCase().includes('folder')
-                          ? ''
-                          : 'folder'
-                        : ''
-                    }?`}
+                  ? `Deleting ${folder && folder.folder_name} ${folder.folder_name
+                    ? folder.folder_name.toLowerCase().includes('folder')
+                      ? ''
+                      : 'folder'
+                    : ''
+                  }`
+                  : `Delete ${folder && folder.folder_name} ${folder.folder_name
+                    ? folder.folder_name.toLowerCase().includes('folder')
+                      ? ''
+                      : 'folder'
+                    : ''
+                  }?`}
 
                 {!isDeleting && (
                   <button
@@ -602,12 +613,10 @@ const FoldersModal = () => {
             <>
               <h3>
                 {isRemoving
-                  ? `Removing ${
-                      item.document_name || item.template_name
-                    } from ${folder.folder_name}`
-                  : `Remove ${item.document_name || item.template_name} from ${
-                      folder.folder_name
-                    }?`}
+                  ? `Removing ${item.document_name || item.template_name
+                  } from ${folder.folder_name}`
+                  : `Remove ${item.document_name || item.template_name} from ${folder.folder_name
+                  }?`}
               </h3>
 
               <div className={styles.btns_wrapper}>
@@ -702,8 +711,8 @@ const SelectInput = ({
           type === 'docs'
             ? setIsDocDrop(!isDocDrop)
             : type === 'temps'
-            ? setIsTempDrop(!isTempDrop)
-            : console.log('Error at drop button')
+              ? setIsTempDrop(!isTempDrop)
+              : console.log('Error at drop button')
         }
       >
         Select{' '}
@@ -732,7 +741,7 @@ const SelectInput = ({
                   key={id}
                   style={
                     folder.data &&
-                    folder.data.find((itm) => itm[`${category}_id`] === id)
+                      folder.data.find((itm) => itm[`${category}_id`] === id)
                       ? { pointerEvents: 'none' }
                       : {}
                   }
@@ -746,8 +755,8 @@ const SelectInput = ({
                       type === 'docs'
                         ? handleDocsChange
                         : type === 'temps'
-                        ? handleTempsChange
-                        : () => {
+                          ? handleTempsChange
+                          : () => {
                             // console.log('Change not handled');
                           }
                     }
@@ -771,31 +780,29 @@ const SelectInput = ({
               <div className={styles.pagination_wrapper}>
                 {type === 'docs'
                   ? totalPageCount.docPageArr.map((page) => (
-                      <button
-                        type='button'
-                        className={`${styles.page_btn} ${
-                          docsListCurrentPage === page ? styles.active : ''
+                    <button
+                      type='button'
+                      className={`${styles.page_btn} ${docsListCurrentPage === page ? styles.active : ''
                         }`}
-                        key={page}
-                        onClick={() => setDocsListCurrentPage(page)}
-                      >
-                        {page}
-                      </button>
-                    ))
+                      key={page}
+                      onClick={() => setDocsListCurrentPage(page)}
+                    >
+                      {page}
+                    </button>
+                  ))
                   : type === 'temps'
-                  ? totalPageCount.tempPageArr.map((page) => (
+                    ? totalPageCount.tempPageArr.map((page) => (
                       <button
                         type='button'
-                        className={`${styles.page_btn} ${
-                          tempsListCurrentPage === page ? styles.active : ''
-                        }`}
+                        className={`${styles.page_btn} ${tempsListCurrentPage === page ? styles.active : ''
+                          }`}
                         key={page}
                         onClick={() => setTempsListCurrentPage(page)}
                       >
                         {page}
                       </button>
                     ))
-                  : ''}
+                    : ''}
               </div>
             </>
           ) : (
@@ -804,8 +811,8 @@ const SelectInput = ({
               {type === 'docs'
                 ? 'Documents'
                 : type === 'temps'
-                ? 'Templates'
-                : ''}
+                  ? 'Templates'
+                  : ''}
             </p>
           )}
         </div>
