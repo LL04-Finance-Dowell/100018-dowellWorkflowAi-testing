@@ -84,6 +84,7 @@ const initialState = {
   CopyProcess: [],
   ProcessDetail:[],
   ShowDocumentReport: [],
+  SingleDocument: [],
   ShowProcessNameModal:false,
   linksFetched: false,
   DetailFetched:false,
@@ -694,6 +695,9 @@ export const appSlice = createSlice({
     SetShowDocumentReport: (state, action) => {
       state.ShowDocumentReport = action.payload;
     },
+    SetSingleDocument: (state, action) => {
+      state.SingleDocument = action.payload;
+    },
     setShowProfileSpinner: (state, action) => {
       state.ShowProfileSpinner = action.payload;
     },
@@ -871,6 +875,7 @@ export const {
   setShowGeneratedLinksPopup,
   SetProcessDetail,
   SetShowDocumentReport,
+  SetSingleDocument,
   setDetailFetched,
   setshowsProcessDetailPopup,
   setLinksFetched,
