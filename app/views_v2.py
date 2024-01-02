@@ -95,13 +95,14 @@ import spacy
 from datetime import datetime
 
 # Download the English model for spaCy
-# spacy.cli.download("en_core_web_sm")
+spacy.cli.download("en_core_web_sm")
 
 nlp = spacy.load("en_core_web_sm")
 
 
 class PADeploymentWebhook(APIView):
     """Pick an event from GH and update our PA-server code"""
+
     def post(self, request):
         repo = Repo("/home/100094/100094.pythonanywhere.com")
         origin = repo.remotes.origin
@@ -216,7 +217,7 @@ class DocumentOrTemplateProcessing(APIView):
                     state="cancelled",
                 )
             )
-            
+
             if res["isSuccess"]:
                 return Response("Process has been cancelled!", status.HTTP_200_OK)
             return Response(status.HTTP_500_INTERNAL_SERVER_ERROR)
@@ -774,7 +775,7 @@ class NewDocument(APIView):
     def post(self, request, *args, **kwargs):
         """Document Creation."""
         data = request.data
-        
+
         if not data:
             return Response(
                 {"message": "Failed to process document creation."},
@@ -1924,62 +1925,55 @@ class AssignPortfolio(APIView):
         portfolio = request.data.get("portfolio")
         member = request.data.get("member")
         user_type = request.data.get("user_type")
-        
+
         if not step_choice or not portfolio or not user_type or not member:
-            return Response(
-                "Missing required fields", status.HTTP_400_BAD_REQUEST
-            )
-            
+            return Response("Missing required fields", status.HTTP_400_BAD_REQUEST)
+
         process = single_query_process_collection({"_id": process_id})
         steps = process["process_steps"]
-        
+
         for index, step in enumerate(steps):
             if int(step_choice) <= len(steps):
-                if int(step_choice) == (index+1):
+                if int(step_choice) == (index + 1):
                     if user_type == "team":
                         step["stepTeamMembers"].append(
-                            {
-                                "member": member,
-                                "portfolio": portfolio
-
-                            }
+                            {"member": member, "portfolio": portfolio}
                         )
                     elif user_type == "user":
                         step["stepUserMembers"].append(
-                            {
-                                "member": member,
-                                "portfolio": portfolio
-                            }
+                            {"member": member, "portfolio": portfolio}
                         )
                     elif user_type == "public":
                         step["stepPublicMembers"].append(
-                            {
-                                "member": member,
-                                "portfolio": portfolio
-                            }
+                            {"member": member, "portfolio": portfolio}
                         )
                     else:
-                        return Response("Invalid user type", status.HTTP_400_BAD_REQUEST)
+                        return Response(
+                            "Invalid user type", status.HTTP_400_BAD_REQUEST
+                        )
             else:
                 return Response("Invalid step choice", status.HTTP_400_BAD_REQUEST)
-            
-            res = json.loads(update_process(process_id, process["process_steps"], process["processing_state"]))
-            
+
+            res = json.loads(
+                update_process(
+                    process_id, process["process_steps"], process["processing_state"]
+                )
+            )
+
             if res["isSuccess"]:
                 return Response(process, status=status.HTTP_200_OK)
-        
+
             else:
                 return Response(
                     "An error occured in the process",
-                     status.HTTP_500_INTERNAL_SERVER_ERROR,
+                    status.HTTP_500_INTERNAL_SERVER_ERROR,
                 )
-            
-            
+
 
 class TriggerInvoice(APIView):
     def post(self, request, *args, **kwargs):
         data = request.data
-        
+
         if not data:
             return Response(
                 {"message": "Failed to process document creation."},
@@ -1988,7 +1982,7 @@ class TriggerInvoice(APIView):
         portfolio = ""
         if data.get("portfolio"):
             portfolio = data["portfolio"]
-            
+
         created_by = data["created_by"]
         viewers = [{"member": created_by, "portfolio": portfolio}]
         organization_id = data["company_id"]
@@ -2001,13 +1995,15 @@ class TriggerInvoice(APIView):
         hr_portfolio = data["hr_portfolio"]
         accounts_username = data["accounts_username"]
         accounts_portfolio = data["accounts_portfolio"]
-        
-        res, res_metadata = create_document_helper(created_by, organization_id, template_id, data_type, viewers)
+
+        res, res_metadata = create_document_helper(
+            created_by, organization_id, template_id, data_type, viewers
+        )
         print(f"Response : {res}")
         document_id = res["inserted_id"]
-        
+
         # OR
-        
+
         # doc_payload = {
         #     "company_id": organization_id,
         #     "template_id": template_id,
@@ -2016,7 +2012,7 @@ class TriggerInvoice(APIView):
         #     "data_type": data_type
         # }
         # another_doc = NewDocument().post(request, payload=doc_payload)
-        
+
         # TO BE COMPLETED
         process_payload = {
             "company_id": organization_id,
@@ -2048,44 +2044,21 @@ class TriggerInvoice(APIView):
                                     # }
                                 ],
                                 "stepTeamMembers": [
-                                    {
-                                        "member": created_by,
-                                        "portfolio": portfolio
-                                    }
+                                    {"member": created_by, "portfolio": portfolio}
                                 ],
                                 "stepUserMembers": [],
                                 "stepDocumentCloneMap": [],
                                 "stepNumber": 1,
                                 "stepDocumentMap": [
-                                    {
-                                        "content": "s1",
-                                        "required": False,
-                                        "page": 1
-                                    },
-                                    {
-                                        "content": "i2",
-                                        "required": False,
-                                        "page": 2
-                                    },
-                                    {
-                                        "content": "i3",
-                                        "required": False,
-                                        "page": 2
-                                    },
-                                    {
-                                        "content": "i4",
-                                        "required": False,
-                                        "page": 2
-                                    },
-                                    {
-                                        "content": "i5",
-                                        "required": False,
-                                        "page": 2
-                                    }
+                                    {"content": "s1", "required": False, "page": 1},
+                                    {"content": "i2", "required": False, "page": 2},
+                                    {"content": "i3", "required": False, "page": 2},
+                                    {"content": "i4", "required": False, "page": 2},
+                                    {"content": "i5", "required": False, "page": 2},
                                 ],
                                 "permitInternalWorkflow": False,
                                 "skipStep": False,
-                                "stepLocation": "any"
+                                "stepLocation": "any",
                             },
                             {
                                 "stepCloneCount": 1,
@@ -2104,29 +2077,18 @@ class TriggerInvoice(APIView):
                                     # }
                                 ],
                                 "stepTeamMembers": [
-                                    {
-                                        "member": hr_username,
-                                        "portfolio": hr_portfolio
-                                    }
+                                    {"member": hr_username, "portfolio": hr_portfolio}
                                 ],
                                 "stepUserMembers": [],
                                 "stepDocumentCloneMap": [],
                                 "stepNumber": 2,
                                 "stepDocumentMap": [
-                                    {
-                                        "content": "s2",
-                                        "required": False,
-                                        "page": 3
-                                    },
-                                    {
-                                        "content": "d4",
-                                        "required": False,
-                                        "page": 3
-                                    }
+                                    {"content": "s2", "required": False, "page": 3},
+                                    {"content": "d4", "required": False, "page": 3},
                                 ],
                                 "permitInternalWorkflow": False,
                                 "skipStep": False,
-                                "stepLocation": "any"
+                                "stepLocation": "any",
                             },
                             {
                                 "stepCloneCount": 1,
@@ -2147,29 +2109,21 @@ class TriggerInvoice(APIView):
                                 "stepTeamMembers": [
                                     {
                                         "member": accounts_username,
-                                        "portfolio": accounts_portfolio
+                                        "portfolio": accounts_portfolio,
                                     }
                                 ],
                                 "stepUserMembers": [],
                                 "stepDocumentCloneMap": [],
                                 "stepNumber": 3,
                                 "stepDocumentMap": [
-                                    {
-                                        "content": "s3",
-                                        "required": False,
-                                        "page": 3
-                                    },
-                                    {
-                                        "content": "d5",
-                                        "required": False,
-                                        "page": 3
-                                    }
+                                    {"content": "s3", "required": False, "page": 3},
+                                    {"content": "d5", "required": False, "page": 3},
                                 ],
                                 "permitInternalWorkflow": False,
                                 "skipStep": False,
-                                "stepLocation": "any"
-                            }
-                        ]
+                                "stepLocation": "any",
+                            },
+                        ],
                     }
                 }
             ],
@@ -2178,10 +2132,13 @@ class TriggerInvoice(APIView):
                 "652e7d1bfde0ae87f6c23bdc"
             ],
             "process_type": "document",
-            "org_name": organization_name
+            "org_name": organization_name,
         }
-        
+
         process = DocumentOrTemplateProcessing().post(request, payload=process_payload)
         print(process.data)
-        
-        return Response(f"created_document: {document_id},\n created_process: {process.data}", status.HTTP_201_CREATED)
+
+        return Response(
+            f"created_document: {document_id},\n created_process: {process.data}",
+            status.HTTP_201_CREATED,
+        )
