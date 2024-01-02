@@ -372,7 +372,6 @@ class HandleProcess:
             )
             links.append({"master_link": m_link})
             qrcodes.append({"master_qrcode": m_code})
-
         elif public_links and self.process['process_type'] == "template" :
             template_id = self.process["parent_item_id"]
             res = single_query_template_collection({"_id": template_id})
@@ -382,7 +381,6 @@ class HandleProcess:
             )
             links.append({"master_link": m_link})
             qrcodes.append({"master_qrcode": m_code})
-       
         save_to_links_collection(
             {
                 "links": links,
@@ -445,7 +443,7 @@ class HandleProcess:
                         step.get("stepTimeLimit"),
                         step.get("stepStartTime"),
                         step.get("stepEndTime"),
-                        self.process["created_at"],
+                        self.process["created_on"],
                     )
                 else:
                     return True  # If the steptimeLimit key does not exist
