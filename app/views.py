@@ -86,9 +86,7 @@ from app.mongo_db_connection import (
     get_workflow_setting_object,
     bulk_query_public_collection,
     save_to_public_collection,
-    single_query_template_metadata_collection
-
-    
+    single_query_template_metadata_collection,
 )
 
 from .constants import EDITOR_API
@@ -228,7 +226,7 @@ def get_process_link(request, process_id):
     if not links_info:
         return Response("Verification link unavailable", status.HTTP_400_BAD_REQUEST)
     user = request.data["user_name"]
-    
+
     process = single_query_process_collection({"_id": process_id})
     process_steps = process.get("process_steps")
 
@@ -237,7 +235,6 @@ def get_process_link(request, process_id):
     for step in process_steps:
         step_clone_map = step.get("stepDocumentCloneMap")
         step_role = step.get("stepRole")
-
         state = check_all_accessed(step_clone_map)
         if state:
             pass
@@ -247,6 +244,7 @@ def get_process_link(request, process_id):
                 return Response(link, status.HTTP_200_OK)
 
     return Response("user is not part of this process", status.HTTP_401_UNAUTHORIZED)
+
 
 # Process verification v1
 @api_view(["POST"])
@@ -303,6 +301,7 @@ def process_verification(request):
             status.HTTP_400_BAD_REQUEST,
         )
 
+
 # Process_verification v2
 @api_view(["POST"])
 def process_verification_v2(request):
@@ -316,7 +315,9 @@ def process_verification_v2(request):
     collection_id = None
     link_object = single_query_qrcode_collection({"unique_hash": token})
     if user_type == "team" or user_type == "user":
-        collection_id = request.data["collection_id"] if request.data.get("collection_id") else None
+        collection_id = (
+            request.data["collection_id"] if request.data.get("collection_id") else None
+        )
         if (
             link_object["user_name"] != auth_user
             or link_object["auth_portfolio"] != auth_portfolio
@@ -357,8 +358,10 @@ def process_verification_v2(request):
             "time limit for access to this document has elapsed",
             status.HTTP_400_BAD_REQUEST,
         )
-    
-    editor_link = handler.verify_access_v2(auth_role, auth_user, user_type, collection_id)
+
+    editor_link = handler.verify_access_v2(
+        auth_role, auth_user, user_type, collection_id
+    )
     if editor_link:
         return Response(editor_link, status.HTTP_200_OK)
     else:
@@ -385,7 +388,7 @@ def finalize_or_reject(request, process_id):
         if not message:
             return Response(
                 "provide a reason for rejecting the document",
-                status = status.HTTP_400_BAD_REQUEST
+                status=status.HTTP_400_BAD_REQUEST,
             )
     check, current_state = is_finalized(item_id, item_type)
     if item_type == "document" or item_type == "clone":
@@ -398,7 +401,7 @@ def finalize_or_reject(request, process_id):
             return Response(
                 f"template already processed as `{current_state}`!", status.HTTP_200_OK
             )
-        
+
     # get signers list from document object for preparation to send in finalize_item payload
     if item_type == "clone":
         signers_list = single_query_clones_collection({"_id": item_id}).get("signed_by")
@@ -406,7 +409,9 @@ def finalize_or_reject(request, process_id):
 
     # elif item_type == "template":
     #     signed_list = single_query_template_collection({"_id": item_id}).get("signed_by")
-    res = json.loads(finalize_item(item_id, state, item_type, message, signers=updated_signers_true))
+    res = json.loads(
+        finalize_item(item_id, state, item_type, message, signers=updated_signers_true)
+    )
 
     if res["isSuccess"]:
         try:
@@ -415,29 +420,38 @@ def finalize_or_reject(request, process_id):
             if user_type == "public":
                 link_id = request.data["link_id"]
                 register_finalized(link_id)
-            if item_type == 'document' or item_type == "clone":
+            if item_type == "document" or item_type == "clone":
                 background.document_processing()
                 item = single_query_clones_collection({"_id": item_id})
                 if item:
                     if item.get("document_state") == "finalized":
                         meta_id = get_metadata_id(item_id, item_type)
                         # set the memeber member in "signed_by" to "True" and update the metadata with the updated signers_list
-                        update_metadata(meta_id, "finalized", item_type, signers=updated_signers_true)
+                        update_metadata(
+                            meta_id,
+                            "finalized",
+                            item_type,
+                            signers=updated_signers_true,
+                        )
                     elif item.get("document_state") == "processing":
                         meta_id = get_metadata_id(item_id, item_type)
                         # set the memeber member in "signed_by" to "False" and update the metadata with the updated signers_list
                         # updated_signers_false = update_signed(signers_list, member=user, status=False)
                         # update_metadata(meta_id, "processing", item_type, signers=updated_signers_false)
                 return Response("document processed successfully", status.HTTP_200_OK)
-            elif item_type == 'template':
+            elif item_type == "template":
                 background.template_processing()
                 item = single_query_template_collection({"_id": item_id})
                 if item:
                     if item.get("template_state") == "saved":
                         meta_id = get_metadata_id(item_id, item_type)
                         # set the memeber member in "signed_by" to "True" and update the metadata with the updated signers_list
-                        updated_signers_true = update_signed(signers_list, member=user, status=True)
-                        update_metadata(meta_id, "saved", item_type, signers=updated_signers_true)
+                        updated_signers_true = update_signed(
+                            signers_list, member=user, status=True
+                        )
+                        update_metadata(
+                            meta_id, "saved", item_type, signers=updated_signers_true
+                        )
                     elif item.get("template_state") == "draft":
                         meta_id = get_metadata_id(item_id, item_type)
                         # set the memeber member in "signed_by" to "False" and update the metadata with the updated signers_list
@@ -834,9 +848,9 @@ def create_document(request):
                 "document_type": "original",
                 "parent_id": None,
                 "process_id": "",
-                "folders": [], 
+                "folders": [],
                 "template": request.data["template_id"],
-                "message":""
+                "message": "",
             }
         )
     )
@@ -881,7 +895,7 @@ def get_item_content(request, item_id):
         return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
     content = []
     item_type = request.query_params.get("item_type")
-    if item_type == 'templates':
+    if item_type == "templates":
         my_dict = ast.literal_eval(
             single_query_template_collection({"_id": item_id})["content"]
         )[0][0]
@@ -1279,8 +1293,7 @@ def create_template(request):
                 "data_type": request.data["data_type"],
                 "template_type": "draft",
                 "auth_viewers": viewers,
-                "message": ""
-
+                "message": "",
             }
         )
     )
@@ -1357,6 +1370,7 @@ def template_object(request, template_id):
         return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
     template = single_query_template_collection({"_id": template_id})
     return Response(template, status.HTTP_200_OK)
+
 
 @api_view(["PUT"])
 def approve(request, template_id):
@@ -1597,10 +1611,12 @@ def all_workflow_ai_setting(request, company_id, data_type="Real_Data"):
 def get_workflow_ai_setting(request, company_id):
     """Get Single WF AI"""
     member = request.query_params.get("member")
-    setting = single_query_settings_collection({
+    setting = single_query_settings_collection(
+        {
             "company_id": company_id,
             "created_by": member,
-            })
+        }
+    )
     return Response(setting, status.HTTP_200_OK)
 
 
@@ -1822,7 +1838,11 @@ def dowell_centre_template(request, company_id):
     page = int(request.GET.get("page", 1))
     templates = paginate(templates, page, 50)
     template_list = [
-        {"_id": item["_id"], "template_name": item["template_name"], "collection_id": item["collection_id"],}
+        {
+            "_id": item["_id"],
+            "template_name": item["template_name"],
+            "collection_id": item["collection_id"],
+        }
         for item in templates
     ]
     return Response(
@@ -1847,7 +1867,11 @@ def dowell_centre_documents(request, company_id):
     page = int(request.GET.get("page", 1))
     documents = paginate(document_list, page, 50)
     document_list = [
-        {"_id": item["_id"], "document_name": item["document_name"], "collection_id": item["collection_id"]}
+        {
+            "_id": item["_id"],
+            "document_name": item["document_name"],
+            "collection_id": item["collection_id"],
+        }
         for item in documents
     ]
     return Response(
@@ -1986,44 +2010,46 @@ def get_mobile_notifications_docusign(request, company_id):
         return Response("Invalid Request!", status.HTTP_400_BAD_REQUEST)
     auth_viewers = [{"member": member, "portfolio": portfolio}]
     try:
-        check_setup=bulk_query_settings_collection({
-            "company_id": company_id,
-            "created_by": member,
-            })
-        
-        for data in check_setup:    
-            if "Notarisation"  in data and set(notarisation).issubset(data["Notarisation"]):
+        check_setup = bulk_query_settings_collection(
+            {
+                "company_id": company_id,
+                "created_by": member,
+            }
+        )
+
+        for data in check_setup:
+            if "Notarisation" in data and set(notarisation).issubset(
+                data["Notarisation"]
+            ):
                 document_list = bulk_query_clones_metadata_collection(
-                {
-                    "company_id": company_id,
-                    "data_type": data_type,
-                    "document_state": document_state,
-                    "auth_viewers": auth_viewers,
-                }
-            )
+                    {
+                        "company_id": company_id,
+                        "data_type": data_type,
+                        "document_state": document_state,
+                        "auth_viewers": auth_viewers,
+                    }
+                )
                 return Response(
                     {"Document_notification": document_list}, status=status.HTTP_200_OK
-            )
+                )
             else:
                 return Response(
                     "'Notarisation' Docusign requires Notorisation settings.",
                     status.HTTP_404_NOT_FOUND,
-            )
+                )
     except:
         return Response("No settings saved for this user.", status.HTTP_404_NOT_FOUND)
-    
+
 
 @api_view(["GET", "POST"])
 def process_public_users(request, company_id):
     if not validate_id(company_id):
         return Response("something went wrong!", status.HTTP_400_BAD_REQUEST)
-    
+
     if request.method == "GET":
-        public_users = bulk_query_public_collection({
-            "company_id": company_id
-        })
+        public_users = bulk_query_public_collection({"company_id": company_id})
         return Response(public_users, status=status.HTTP_200_OK)
-        
+
     if request.method == "POST":
         process_id = request.data.get("process_id")
         company_id = request.data.get("company_id")
@@ -2031,28 +2057,30 @@ def process_public_users(request, company_id):
         qrids = request.data.get("qr_ids")
 
         if not process_id or not member:
-            return Response("provide all the fields", status=status.HTTP_400_BAD_REQUEST)
-        
+            return Response(
+                "provide all the fields", status=status.HTTP_400_BAD_REQUEST
+            )
+
         options = {
-            "company_id":company_id,
+            "company_id": company_id,
             "process_id": process_id,
             "member": member,
-            "public_links":qrids
+            "public_links": qrids,
         }
         res = json.loads(save_to_public_collection(options))
 
         if res["isSuccess"]:
-            return Response(
-                "Public users details stored!", status.HTTP_201_CREATED
-            )
-        
+            return Response("Public users details stored!", status.HTTP_201_CREATED)
+
         return Response(status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 """Import of process settings"""
-@api_view(['POST'])
+
+
+@api_view(["POST"])
 def import_process_settings(request, process_id):
-    data = request.data  
+    data = request.data
     company_id = data.get("company_id")
     portfolio = data.get("portfolio")
     member = data.get("member")
@@ -2081,7 +2109,9 @@ def import_process_settings(request, process_id):
     }
     res = json.loads(save_to_document_collection(new_document_data))
     if not res.get("isSuccess"):
-        return Response("Failed to create document", status.HTTP_500_INTERNAL_SERVER_ERROR)
+        return Response(
+            "Failed to create document", status.HTTP_500_INTERNAL_SERVER_ERROR
+        )
     metadata_data = {
         "document_name": old_document["document_name"],
         "collection_id": res["inserted_id"],
@@ -2094,11 +2124,15 @@ def import_process_settings(request, process_id):
     }
     res_metadata = json.loads(save_to_document_metadata_collection(metadata_data))
     if not res_metadata.get("isSuccess"):
-        return Response("Failed to create document metadata", status.HTTP_500_INTERNAL_SERVER_ERROR)
+        return Response(
+            "Failed to create document metadata", status.HTTP_500_INTERNAL_SERVER_ERROR
+        )
     metadata_id = res_metadata["inserted_id"]
     editor_link = access_editor_metadata(res["inserted_id"], "document", metadata_id)
     if not editor_link:
-        return Response("Could not open document editor.", status.HTTP_500_INTERNAL_SERVER_ERROR)
+        return Response(
+            "Could not open document editor.", status.HTTP_500_INTERNAL_SERVER_ERROR
+        )
     old_workflow = single_query_workflow_collection({"_id": workflow_id[0]})
     new_wf_title = old_workflow["workflows"]["workflow_title"]
     new_wf_steps = old_workflow["workflows"]["steps"]
@@ -2115,7 +2149,9 @@ def import_process_settings(request, process_id):
     }
     res_workflow = json.loads(save_to_workflow_collection(workflow_data))
     if not res_workflow.get("isSuccess"):
-        return Response("Failed to create workflow", status.HTTP_500_INTERNAL_SERVER_ERROR)
+        return Response(
+            "Failed to create workflow", status.HTTP_500_INTERNAL_SERVER_ERROR
+        )
     remove_members_from_steps(old_process)
     process_data = {
         "process_title": old_process["process_title"],
@@ -2132,16 +2168,14 @@ def import_process_settings(request, process_id):
     }
     res_process = json.loads(save_to_process_collection(process_data))
     if not res_process.get("isSuccess"):
-        return Response("Failed to create process", status.HTTP_500_INTERNAL_SERVER_ERROR)
+        return Response(
+            "Failed to create process", status.HTTP_500_INTERNAL_SERVER_ERROR
+        )
     response_data = {
         "Message": "Workflow, document and process created successfully",
         "editor_link": editor_link,
         "document_id": res["inserted_id"],
         "workflow_id": res_workflow["inserted_id"],
-        "process_id": res_process["inserted_id"]
+        "process_id": res_process["inserted_id"],
     }
     return Response(response_data, status.HTTP_201_CREATED)
-
-
-    
-    

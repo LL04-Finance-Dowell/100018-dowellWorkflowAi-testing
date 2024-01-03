@@ -621,8 +621,13 @@ def check_all_accessed(dic):
 def get_link(user, role, links):
     for link in links:
         if link.get(user):
-            auth_role = f"auth_role={role}"
-            if user in link[user] and auth_role in link[user]:
+            # auth_role = f"auth_role={role}"
+            auth_role = role
+            parsed_url = urlparse(link[user])
+            query_params = parse_qs(parsed_url.fragment)
+            if query_params["username"] == [user] and query_params["auth_role"] == [
+                auth_role
+            ]:
                 return link[user]
 
 
@@ -637,9 +642,11 @@ def get_hash(password: str):
 def compare_hash(valid_hash: str, input: str):
     hashed_input = get_hash(input)
     return valid_hash == hashed_input
-            
-            
-def create_document_helper(created_by, company_id, template_id, data_type, viewers: list) -> tuple:
+
+
+def create_document_helper(
+    created_by, company_id, template_id, data_type, viewers: list
+) -> tuple:
     """_summary_
 
     Args:
@@ -665,9 +672,9 @@ def create_document_helper(created_by, company_id, template_id, data_type, viewe
                     "document_type": "original",
                     "parent_id": None,
                     "process_id": "",
-                    "folders": [], 
+                    "folders": [],
                     "template": template_id,
-                    "message":""
+                    "message": "",
                 }
             )
         )
@@ -686,7 +693,7 @@ def create_document_helper(created_by, company_id, template_id, data_type, viewe
                 )
             )
             return res, res_metadata
-        
+
     except Exception as ex:
         print(ex)
         return
