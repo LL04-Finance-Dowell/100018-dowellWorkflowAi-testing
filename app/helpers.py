@@ -607,11 +607,14 @@ def remove_members_from_steps(data):
 
 
 def update_signed(signers_list: list, member: str, status: bool) -> list:
-    for elem in signers_list:
-        for key, val in elem.items():
-            if key == member:
-                elem[key] = status
-    return signers_list
+    if signers_list:
+        for elem in signers_list:
+            for key, val in elem.items():
+                if key == member:
+                    elem[key] = status
+        return signers_list
+    else:
+        return [{member: status}]
 
 
 def check_all_accessed(dic):

@@ -1782,7 +1782,7 @@ class PublicUser(APIView):
         qrids = request.data.get("qr_ids")
         if not process_id or not member or not qrids:
             return Response(
-                "provide all the fields", status=status.HTTP_400_BAD_REQUEST
+                "provide all the fields", status.HTTP_400_BAD_REQUEST
             )
         options = {
             "company_id": company_id,
