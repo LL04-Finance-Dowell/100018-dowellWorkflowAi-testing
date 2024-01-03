@@ -14,18 +14,46 @@ urlpatterns = [
     path(
         "processes/<str:process_id>/finalize-or-reject/",
         views_v2.FinalizeOrReject.as_view(),
-        name="finalize_process"
+        name="finalize_process",
     ),
-    path("processes/<str:company_id>/organisations/", views_v2.Process.as_view(),name='process'),
-    path("processes/<str:process_id>/public/", views_v2.PublicUser.as_view(), name="public_qrids"),
-    path("processes/<str:process_id>/portfolio/", views_v2.AssignPortfolio.as_view(), name="assign_porfolio"),
-    path("workflows/", views_v2.NewWorkflow.as_view(), name='create-workflow'),
+    path(
+        "processes/<str:process_id>/portfolio/",
+        views_v2.AssignPortfolio.as_view(),
+        name="assign_porfolio",
+    ),
+    path(
+        "processes/<str:company_id>/organisations/",
+        views_v2.Process.as_view(),
+        name="process",
+    ),
+    path(
+        "processes/<str:company_id>/public/",
+        views_v2.PublicUser.as_view(),
+        name="public_qrids",
+    ),
+    path("workflows/", views_v2.NewWorkflow.as_view(), name="create-workflow"),
     path("workflows/<str:workflow_id>/", views_v2.WorkflowDetail.as_view()),
-    path("workflows/<str:company_id>/organisations/", views_v2.Workflow.as_view(), name="get-workflows"),
+    path(
+        "workflows/<str:company_id>/organisations/",
+        views_v2.Workflow.as_view(),
+        name="get-workflows",
+    ),
     path("documents/", views_v2.NewDocument.as_view(), name="documents"),
-    path("documents/<str:item_id>/", views_v2.DocumentDetail.as_view(), name="document_detail"),
-    path("documents/<str:document_id>/link/", views_v2.DocumentLink.as_view(), name="document_link"),
-    path("documents/<str:company_id>/organisations/", views_v2.Document.as_view(), name="get_documents"),
+    path(
+        "documents/<str:item_id>/",
+        views_v2.DocumentDetail.as_view(),
+        name="document_detail",
+    ),
+    path(
+        "documents/<str:document_id>/link/",
+        views_v2.DocumentLink.as_view(),
+        name="document_link",
+    ),
+    path(
+        "documents/<str:company_id>/organisations/",
+        views_v2.Document.as_view(),
+        name="get_documents",
+    ),
     path("metadata/", views_v2.NewMetadata.as_view()),
     path("metadata/<str:company_id>/organisations/", views_v2.Metadata.as_view()),
     path("content/<str:item_id>/", views_v2.ItemContent.as_view()),
@@ -35,9 +63,21 @@ urlpatterns = [
     path("bookmarks/<str:bookmark_id>/", views_v2.BookmarkDetail.as_view()),
     path("bookmarks/<str:company_id>/organisations/", views_v2.Bookmark.as_view()),
     path("templates/", views_v2.NewTemplate.as_view(), name="create_template"),
-    path("templates/<str:template_id>/", views_v2.TemplateDetail.as_view(), name="template_detail"),
-    path("templates/<str:template_id>/link/", views_v2.TemplateLink.as_view(), name="template_link"),
-    path("templates/<str:company_id>/organisations/", views_v2.Template.as_view(), name="list_templates"),
+    path(
+        "templates/<str:template_id>/",
+        views_v2.TemplateDetail.as_view(),
+        name="template_detail",
+    ),
+    path(
+        "templates/<str:template_id>/link/",
+        views_v2.TemplateLink.as_view(),
+        name="template_link",
+    ),
+    path(
+        "templates/<str:company_id>/organisations/",
+        views_v2.Template.as_view(),
+        name="list_templates",
+    ),
     path("teams/", views_v2.NewTeam.as_view()),
     path("teams/<str:team_id>/", views_v2.TeamDetail.as_view()),
     path("teams/<str:company_id>/organisations/", views_v2.Team.as_view()),
@@ -56,6 +96,9 @@ urlpatterns = [
         "notifications/<str:process_id>/reminders/",
         views_v2.NotificationReminder.as_view(),
     ),
-    path("documents/<str:item_id>/reports/", views_v2.DocumentReport.as_view(), name="document-report"),
-
+    path(
+        "documents/<str:item_id>/reports/",
+        views_v2.DocumentReport.as_view(),
+        name="document-report",
+    ),
 ]

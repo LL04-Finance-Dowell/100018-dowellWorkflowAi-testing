@@ -284,7 +284,7 @@ def get_data_from_data_service(
     if res["data"] is not None:
         if len(res["data"]):
             return res["data"]
-    return
+    return []
 
 
 def get_template_list(company_id, data_type):

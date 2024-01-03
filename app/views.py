@@ -1618,6 +1618,7 @@ def get_workflow_ai_setting(request, company_id):
         }
     )
     return Response(setting, status.HTTP_200_OK)
+    
 
 
 @api_view(["POST"])
