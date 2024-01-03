@@ -882,9 +882,6 @@ def authorize(document_id, viewers, process_id, item_type):
     if payload is not None:
         if metadata_payload is not None:
             post_to_data_service(metadata_payload)
-        else:
-            print("unable to update metadata")
-
         return post_to_data_service(payload)
 
     return

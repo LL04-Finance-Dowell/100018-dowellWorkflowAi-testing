@@ -1980,7 +1980,6 @@ class AssignPortfolio(APIView):
 class TriggerInvoice(APIView):
     def post(self, request, *args, **kwargs):
         data = request.data
-
         if not data:
             return Response(
                 {"message": "Failed to process document creation."},
@@ -2002,11 +2001,9 @@ class TriggerInvoice(APIView):
         hr_portfolio = data["hr_portfolio"]
         accounts_username = data["accounts_username"]
         accounts_portfolio = data["accounts_portfolio"]
-
         res, res_metadata = create_document_helper(
             created_by, organization_id, template_id, data_type, viewers
         )
-        print(f"Response : {res}")
         document_id = res["inserted_id"]
 
         # OR
@@ -2046,10 +2043,6 @@ class TriggerInvoice(APIView):
                                 "stepRole": "Freelancer",
                                 "stepPublicMembers": [
                                     {"member": created_by, "portfolio": portfolio}
-                                    # {
-                                    #     "member": "HO7QEz3sQZB9",
-                                    #     "portfolio": "Mayor-Portfolio"
-                                    # }
                                 ],
                                 "stepTeamMembers": [],
                                 "stepUserMembers": [],
@@ -2078,10 +2071,6 @@ class TriggerInvoice(APIView):
                                 "stepRole": "HR",
                                 "stepPublicMembers": [
                                     {"member": hr_username, "portfolio": hr_portfolio}
-                                    # {
-                                    #     "member": "lA4zWMfcsV3T",
-                                    #     "portfolio": "Mayor-Portfolio"
-                                    # }
                                 ],
                                 "stepTeamMembers": [],
                                 "stepUserMembers": [],
@@ -2110,10 +2099,6 @@ class TriggerInvoice(APIView):
                                         "member": accounts_username,
                                         "portfolio": accounts_portfolio,
                                     }
-                                    # {
-                                    #     "member": "C5ZiFflFU63K",
-                                    #     "portfolio": "Mayor-Portfolio"
-                                    # }
                                 ],
                                 "stepTeamMembers": [],
                                 "stepUserMembers": [],
@@ -2131,16 +2116,11 @@ class TriggerInvoice(APIView):
                     }
                 }
             ],
-            "workflows_ids": [
-                # Replace with another generic workflow_id
-                "652e7d1bfde0ae87f6c23bdc"
-            ],
+            "workflows_ids": ["652e7d1bfde0ae87f6c23bdc"],
             "process_type": "document",
             "org_name": organization_name,
         }
-
         process = DocumentOrTemplateProcessing().post(request, payload=process_payload)
-
         return Response(
             {"created_document": document_id, "created_process": process.data},
             status.HTTP_201_CREATED,
