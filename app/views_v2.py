@@ -1775,6 +1775,25 @@ class PublicUser(APIView):
     def get(self, request, company_id):
         public_users = bulk_query_public_collection({"company_id": company_id})
         return Response(public_users, status=status.HTTP_200_OK)
+    
+    def post(self, request, company_id):
+        process_id = request.data.get("process_id")
+        member = request.data.get("member")
+        qrids = request.data.get("qr_ids")
+        if not process_id or not member or not qrids:
+            return Response(
+                "provide all the fields", status=status.HTTP_400_BAD_REQUEST
+            )
+        options = {
+            "company_id": company_id,
+            "process_id": process_id,
+            "member": member,
+            "public_links": qrids,
+        }
+        res = json.loads(save_to_public_collection(options))
+        if res["isSuccess"]:
+            return Response("Public users details stored!", status.HTTP_201_CREATED)
+        return Response(status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 class NewNotification(APIView):

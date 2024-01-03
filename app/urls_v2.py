@@ -17,6 +17,7 @@ urlpatterns = [
         name="finalize_process"
     ),
     path("processes/<str:company_id>/organisations/", views_v2.Process.as_view(),name='process'),
+    path("processes/<str:process_id>/public/", views_v2.PublicUser.as_view(), name="public_qrids"),
     path("processes/<str:process_id>/portfolio/", views_v2.AssignPortfolio.as_view(), name="assign_porfolio"),
     path("workflows/", views_v2.NewWorkflow.as_view(), name='create-workflow'),
     path("workflows/<str:workflow_id>/", views_v2.WorkflowDetail.as_view()),
