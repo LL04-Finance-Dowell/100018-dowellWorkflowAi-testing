@@ -5,7 +5,7 @@ export class FolderServices {
 
   createFolderV2 = (data) => httpApiUrlV2.post('folders/', data);
 
-  updateFolder = (data, id) => httpApiUrl.put(`folders/${id}`, data);
+  updateFolder = (data, id) => httpApiUrl.put(`folders/${id}/`, data);
 
   getFolder = (folderId) => httpApiUrl.get(`folders/${folderId}`);
 

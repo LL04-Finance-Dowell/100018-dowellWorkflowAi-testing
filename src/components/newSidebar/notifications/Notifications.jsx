@@ -68,7 +68,7 @@ const Notifications = ({toggleSidebar, isMobile}) => {
   return (
     <div className={styles.container}>
       <h2 className={styles.header}>{t('Notifications')}</h2>
-      <div className={styles.line}></div>
+      {/* <div className={styles.line}></div> */}
       <div className={styles.collapse__box}>
         <CollapseItem listType='ol' items={notificationItems} toggleSidebar={toggleSidebar} isMobile={isMobile} />
       </div>
