@@ -38,6 +38,8 @@ from app.helpers import (
 from app.mongo_db_connection import (
     add_document_to_folder,
     add_template_to_folder,
+    authorize,
+    authorize_metadata,
     bulk_query_folder_collection,
     bulk_query_process_collection,
     bulk_query_team_collection,
@@ -512,12 +514,27 @@ class FinalizeOrReject(APIView):
                         if item:
                             if item.get("document_state") == "finalized":
                                 meta_id = get_metadata_id(item_id, item_type)
-                                update_metadata(
-                                    meta_id,
-                                    "finalized",
-                                    item_type,
-                                    signers=updated_signers_true,
-                                )
+                                updated_process = single_query_process_collection({"_id": process_id})
+                                process_state = updated_process.get("processing_state")
+                                if process.get("process_type") == "internal" and process_state == "finalized":
+                                    process_creator = process.get("created_by")
+                                    process_creator_portfolio = process.get("creator_portfolio")
+                                    parent_process = process.get("parent_process")
+                                    
+                                    user_dict = {
+                                        "member": process_creator,
+                                        "portfolio": process_creator_portfolio
+                                    }
+                                    authorize(item_id, user_dict, parent_process, "document")
+                                    authorize_metadata(meta_id, user_dict, parent_process, "document")
+                                    
+                                else:
+                                    update_metadata(
+                                        meta_id,
+                                        "finalized",
+                                        item_type,
+                                        signers=updated_signers_true,
+                                    )
                             elif item.get("document_state") == "processing":
                                 meta_id = get_metadata_id(item_id, item_type)
                         return Response(

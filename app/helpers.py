@@ -28,6 +28,8 @@ from .mongo_db_connection import (
     single_query_template_metadata_collection,
 )
 
+# from processing import Process
+
 
 def register_finalized(link_id):
     response = requests.put(
@@ -490,7 +492,7 @@ def check_all_finalized_true(data, process_type) -> bool:
         for doc in step_document_clone_map:
             for key, value in doc.items():
                 if key != "accessed":
-                    if process_type == "document":
+                    if process_type == "document" or process_type == "internal":
                         doc_state = single_query_clones_collection({"_id": value}).get(
                             "document_state"
                         )
