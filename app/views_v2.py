@@ -514,20 +514,31 @@ class FinalizeOrReject(APIView):
                         if item:
                             if item.get("document_state") == "finalized":
                                 meta_id = get_metadata_id(item_id, item_type)
-                                updated_process = single_query_process_collection({"_id": process_id})
+                                updated_process = single_query_process_collection(
+                                    {"_id": process_id}
+                                )
                                 process_state = updated_process.get("processing_state")
-                                if process.get("process_type") == "internal" and process_state == "finalized":
+                                if (
+                                    process.get("process_type") == "internal"
+                                    and process_state == "finalized"
+                                ):
                                     process_creator = process.get("created_by")
-                                    process_creator_portfolio = process.get("creator_portfolio")
+                                    process_creator_portfolio = process.get(
+                                        "creator_portfolio"
+                                    )
                                     parent_process = process.get("parent_process")
-                                    
+
                                     user_dict = {
                                         "member": process_creator,
-                                        "portfolio": process_creator_portfolio
+                                        "portfolio": process_creator_portfolio,
                                     }
-                                    authorize(item_id, user_dict, parent_process, "document")
-                                    authorize_metadata(meta_id, user_dict, parent_process, "document")
-                                    
+                                    authorize(
+                                        item_id, user_dict, parent_process, "document"
+                                    )
+                                    authorize_metadata(
+                                        meta_id, user_dict, parent_process, "document"
+                                    )
+
                                 else:
                                     update_metadata(
                                         meta_id,
@@ -610,9 +621,9 @@ class ProcessImport(APIView):
         portfolio = data.get("portfolio")
         member = data.get("member")
         data_type = data.get("data_type")
-        process_id = data.get("process_id")
+
         if not validate_id(process_id) or not validate_id(company_id):
-            return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
+            return Response("Invalid_ID!", status.HTTP_400_BAD_REQUEST)
         old_process = single_query_process_collection({"_id": process_id})
         document_id = old_process.get("parent_item_id")
         workflow_id = old_process.get("workflow_construct_ids")
@@ -1792,15 +1803,13 @@ class PublicUser(APIView):
     def get(self, request, company_id):
         public_users = bulk_query_public_collection({"company_id": company_id})
         return Response(public_users, status=status.HTTP_200_OK)
-    
+
     def post(self, request, company_id):
         process_id = request.data.get("process_id")
         member = request.data.get("member")
         qrids = request.data.get("qr_ids")
         if not process_id or not member or not qrids:
-            return Response(
-                "provide all the fields", status.HTTP_400_BAD_REQUEST
-            )
+            return Response("provide all the fields", status.HTTP_400_BAD_REQUEST)
         options = {
             "company_id": company_id,
             "process_id": process_id,
@@ -1970,9 +1979,11 @@ class AssignPortfolio(APIView):
                 portfolio = data.get("portfolio")
                 member = data.get("member")
                 user_type = data.get("user_type")
-                     
+
                 if not step_choice or not portfolio or not user_type or not member:
-                    return Response("Missing required fields", status.HTTP_400_BAD_REQUEST)          
+                    return Response(
+                        "Missing required fields", status.HTTP_400_BAD_REQUEST
+                    )
 
                 process = single_query_process_collection({"_id": process_id})
                 steps = process["process_steps"]
@@ -1997,16 +2008,20 @@ class AssignPortfolio(APIView):
                                     "Invalid user type", status.HTTP_400_BAD_REQUEST
                                 )
                     else:
-                        return Response("Invalid step choice", status.HTTP_400_BAD_REQUEST)
+                        return Response(
+                            "Invalid step choice", status.HTTP_400_BAD_REQUEST
+                        )
 
                 res = json.loads(
-                        update_process(
-                            process_id, process["process_steps"], process["processing_state"]
+                    update_process(
+                        process_id,
+                        process["process_steps"],
+                        process["processing_state"],
                     )
                 )
 
                 if res["isSuccess"]:
-                    if (len(request.data)== 1) or ((idx+1) == len(request.data)):
+                    if (len(request.data) == 1) or ((idx + 1) == len(request.data)):
                         return Response(process, status=status.HTTP_200_OK)
                     else:
                         continue
@@ -2014,8 +2029,7 @@ class AssignPortfolio(APIView):
                     return Response(
                         "An error occured in the process",
                         status.HTTP_500_INTERNAL_SERVER_ERROR,
-        
-                    )           
+                    )
         else:
             return Response("Missing required fields", status.HTTP_400_BAD_REQUEST)
 

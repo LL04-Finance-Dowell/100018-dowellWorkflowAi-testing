@@ -158,3 +158,4 @@ REST_FRAMEWORK = {
     "URL_FORMAT_OVERRIDE": None,
     # Other DRF settings...
 }
+APPEND_SLASH = False
