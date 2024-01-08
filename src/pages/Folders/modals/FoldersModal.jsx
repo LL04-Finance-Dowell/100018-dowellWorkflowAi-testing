@@ -137,7 +137,7 @@ const FoldersModal = () => {
           created_by: userDetail?.userinfo.username,
           data_type: userDataType,
           folder_name: folderName,
-          items,
+          items: items,
         };
 
         try {

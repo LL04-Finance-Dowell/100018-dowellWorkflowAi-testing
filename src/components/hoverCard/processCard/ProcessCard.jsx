@@ -22,6 +22,7 @@ import { LoadingSpinner } from "../../LoadingSpinner/LoadingSpinner";
 import axios from "axios";
 import { api_url } from "../../../httpCommon/httpCommon";
 import { productName } from "../../../utils/helpers";
+import { Modal } from 'react-bootstrap';
 
 const ProcessCard = ({ cardItem, title }) => {
   const { allProcesses } = useSelector((state) => state.app);
@@ -39,7 +40,7 @@ const ProcessCard = ({ cardItem, title }) => {
   // console.log(allProcesses)
   const handleProcessItemClick = async (item) => {
     console.log("urlforworkflow", `/workflows/new-set-workflow?id=${item._id}&state=${item.processing_state
-    }${item.isFromLocalStorage ? "&local=true" : ""}`)
+      }${item.isFromLocalStorage ? "&local=true" : ""}`)
     // if (item.processing_state === "draft" && item.workflow_construct_ids) {
     //   navigate(
     //     `/workflows/new-set-workflow?id=${item._id}&state=${item.processing_state
@@ -254,6 +255,17 @@ const ProcessCard = ({ cardItem, title }) => {
   };
 
   const BackSide = () => {
+    const [showModal, setShowModal] = useState(false);
+    const [cardItemToDelete, setCardItemToDelete] = useState(null);
+
+    const handleCloseModal = () => {
+      setShowModal(false);
+    };
+
+    const handleDelete = () => {
+      setShowModal(true);
+    };
+
     return (
       <>
         {cardItem._id && !processDetailLoading ? (
@@ -315,10 +327,24 @@ const ProcessCard = ({ cardItem, title }) => {
             right: "0",
             bottom: "0",
           }}
-          onClick={() => handleTrashProcess(cardItem)}
+          onClick={handleDelete}
         >
           <RiDeleteBin6Line color="red" />
         </div>
+        <Modal show={showModal} onHide={handleCloseModal} centered>
+          <Modal.Header closeButton>
+            <Modal.Title>Confirm Delete</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>Are you sure you want to delete this item?</Modal.Body>
+          <Modal.Footer>
+            <Button variant="secondary" onClick={handleCloseModal}>
+              Cancel
+            </Button>
+            <Button variant="danger" onClick={() => handleTrashProcess(cardItem)}>
+              Delete
+            </Button>
+          </Modal.Footer>
+        </Modal>
 
         {!cardItem.isFromLocalStorage &&
           cardItem.processing_state !== "processing" && (
