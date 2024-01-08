@@ -10,7 +10,9 @@ urlpatterns = [
     path("processes/<str:process_id>/process-link/", views_v2.ProcessLink.as_view()),
     path("processes/<str:process_id>/verify/", views_v2.ProcessVerification.as_view()),
     path("processes/<str:process_id>/trigger/", views_v2.TriggerProcess.as_view()),
-    path("processes/<str:process_id>/import/", views_v2.ProcessImport.as_view()),
+    path(
+        "processes/process-import/<str:process_id>/", views_v2.ProcessImport.as_view()
+    ),
     path(
         "processes/<str:process_id>/finalize-or-reject/",
         views_v2.FinalizeOrReject.as_view(),
