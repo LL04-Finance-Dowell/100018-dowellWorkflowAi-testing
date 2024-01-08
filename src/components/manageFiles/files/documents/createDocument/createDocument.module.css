@@ -143,6 +143,7 @@
 .create__button__template1:hover {
   background-color: #005734; /* Background color on hover */
   color: white;
+  cursor: pointer;
 }
 
 

@@ -64,7 +64,7 @@ const CopyProcessPage = () => {
   
     try {
       const response = await axios.post(
-        `https://100094.pythonanywhere.com/v2/processes/process-import/${process_id}`,
+        `https://100094.pythonanywhere.com/v2/processes/process-import/${process_id}/`,
         data
       );
   
