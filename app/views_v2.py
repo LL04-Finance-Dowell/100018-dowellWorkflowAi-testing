@@ -461,47 +461,6 @@ class FinalizeOrReject(APIView):
                 # Process item normally
                 try:
                     process = single_query_process_collection({"_id": process_id})
-                    # Check timer
-                    current_datetime = datetime.strptime(
-                        str(datetime.now()), "%Y-%m-%d %H:%M:%S.%f"
-                    )
-                    process_creation_date = datetime.strptime(
-                        process["created_on"], "%d:%m:%Y,%H:%M:%S"
-                    )
-                    difference = current_datetime - process_creation_date
-                    for step in process["process_steps"]:
-                        timer = step.get("stepTimer", None)
-                        if timer:
-                            if timer == "1_hour":
-                                if difference.total_seconds() > 3600:
-                                    return Response(
-                                        "Document should have been processed within 1 hour",
-                                        status=status.HTTP_401_UNAUTHORIZED,
-                                    )
-                            elif timer == "8_hours":
-                                if difference.total_seconds() > (3600 * 8):
-                                    return Response(
-                                        "Document should have been processed within 8 hours",
-                                        status=status.HTTP_401_UNAUTHORIZED,
-                                    )
-                            elif timer == "24_hours":
-                                if difference.total_seconds() > (3600 * 24):
-                                    return Response(
-                                        "Document should have been processed within 24 hours",
-                                        status=status.HTTP_401_UNAUTHORIZED,
-                                    )
-                            elif timer == "3_days":
-                                if difference.days > 3:
-                                    return Response(
-                                        "Document should have been processed within 3 days",
-                                        status=status.HTTP_401_UNAUTHORIZED,
-                                    )
-                            else:
-                                if difference.days > 7:
-                                    return Response(
-                                        "Document should have been processed within 7 days",
-                                        status=status.HTTP_401_UNAUTHORIZED,
-                                    )
                     background = processing.Background(
                         process, item_type, item_id, role, user, message
                     )
