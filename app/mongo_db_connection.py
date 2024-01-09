@@ -37,7 +37,7 @@ from app.constants import (
     PUBLIC_CONNECTION_DICT,
 )
 
-dd = datetime.now()
+dd = datetime.utcnow()
 time = dd.strftime("%d:%m:%Y,%H:%M:%S")
 headers = {"Content-Type": "application/json"}
 

@@ -343,6 +343,7 @@ class ProcessVerification(APIView):
                     status.HTTP_401_UNAUTHORIZED,
                 )
         process = single_query_process_collection({"_id": link_object["process_id"]})
+        print(process["created_on"], datetime.utcnow())
         if user_type == "public":
             for step in process["process_steps"]:
                 if step.get("stepRole") == auth_role:
