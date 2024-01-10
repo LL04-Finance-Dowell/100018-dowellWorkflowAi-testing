@@ -299,9 +299,11 @@ class ProcessDetail(APIView):
         if not validate_id(process_id):
             return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
         
-        if not request.query_params.get("step_id"):
-            return Response("Invalid request: step_id is missing", status.HTTP_400_BAD_REQUEST)
-        step_id = int(request.query_params.get("step_id"))
+        if not request.data:
+            return Response("Some parameters are missing", status.HTTP_400_BAD_REQUEST)
+        
+        workflow = request.data.get("workflows")
+        step_id = request.data.get("step_id")
         step_id -= 1
         
         process = single_query_process_collection({"_id": process_id})
@@ -310,7 +312,7 @@ class ProcessDetail(APIView):
         
         step_content = steps[step_id]
         if step_content.get("permitInternalWorkflow") == True:
-            step_content.update({"workflows": "Testing 234"})
+            step_content.update({"workflows": workflow})
             update_process(process_id, steps, state)
             return Response(process, status.HTTP_200_OK)
         else:
