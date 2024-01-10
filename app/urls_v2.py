@@ -103,4 +103,9 @@ urlpatterns = [
         views_v2.DocumentReport.as_view(),
         name="document-report",
     ),
+    
+     path(
+        "companies/<str:company_id>/folders/knowledge-centre/",
+         views_v2.DowellFolders.as_view(),
+    ),
 ]

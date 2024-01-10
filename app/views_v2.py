@@ -1741,6 +1741,32 @@ class FolderDetail(APIView):
         return Response(status.HTTP_204_NO_CONTENT)
 
 
+class DowellFolders(APIView):
+    def get(self, request, company_id):
+        """Fetch Dowell Knowledge centre folders."""
+        data_type = request.query_params.get("data_type")
+        if not validate_id(company_id):
+            return Response("Something went wrong!", status=status.HTTP_400_BAD_REQUEST)
+        folders = bulk_query_folder_collection (
+            {"company_id": company_id, "data_type": data_type}
+        )
+        print(folders)
+        page = int(request.GET.get("page", 1))
+        folder_list = paginate(folders, page, 50)
+        folder_list = [
+            {
+                "_id": item["_id"],
+                "folder_name": item["folder_name"],
+                "data": item["data"]
+            }
+            for item in folders
+        ]
+        return Response(
+            {"templates": folder_list},
+            status=status.HTTP_200_OK,
+        )
+
+
 class NewPublicUser(APIView):
     def post(self, request):
         process_id = request.data.get("process_id")
