@@ -288,6 +288,35 @@ class ProcessDetail(APIView):
                 process.update({"links": links_object["links"]})
         process["progress"] = progress
         return Response(process, status.HTTP_200_OK)
+    
+    
+    def put(self, request, process_id):
+        """_summary_
+        Args:
+            request (req): _description_
+            process_id (str): _description_
+        """
+        if not validate_id(process_id):
+            return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
+        
+        if not request.data:
+            return Response("Some parameters are missing", status.HTTP_400_BAD_REQUEST)
+        
+        workflow = request.data.get("workflows")
+        step_id = request.data.get("step_id")
+        step_id -= 1
+        
+        process = single_query_process_collection({"_id": process_id})
+        steps = process.get("process_steps")
+        state = "processing_state"
+        
+        step_content = steps[step_id]
+        if step_content.get("permitInternalWorkflow") == True:
+            step_content.update({"workflows": workflow})
+            update_process(process_id, steps, state)
+            return Response(process, status.HTTP_200_OK)
+        else:
+            return Response("Internal workflow is not permitted in this step", status.HTTP_403_FORBIDDEN)
 
 
 class ProcessLink(APIView):

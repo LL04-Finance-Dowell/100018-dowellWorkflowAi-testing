@@ -835,7 +835,7 @@ class Background:
                         if (not user_in_viewers):
                             continue
                         elif document_id in current_doc_map:
-                            if step.get("permitInternalWorkflow") == True:
+                            if step.get("permitInternalWorkflow") == True and step.get("workflows") != None:
                                 if step.get("internal_process_details") == None:
                                     internal_process_workflows = step.get("workflows")
 
