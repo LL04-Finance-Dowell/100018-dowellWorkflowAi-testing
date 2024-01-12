@@ -1055,7 +1055,7 @@ const SelectMembersToAssign = ({
                             <button 
                               style={{backgroundColor:'green', color:'white', padding:"3px", borderRadius:'4px'}} 
                               onClick={()=>{setToggleCreatePublicLInk(false); window.open('https://100093.pythonanywhere.com/', '_blank')}}>
-                                Create Public Id
+                                Create Public Links
                             </button>:
                             <button 
                               style={{backgroundColor:'green', color:'white', padding:"3px", borderRadius:'4px'}} 
