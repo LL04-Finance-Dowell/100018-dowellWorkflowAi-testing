@@ -7,7 +7,7 @@ import HoverCard from '../HoverCard';
 import { useNavigate } from 'react-router-dom';
 import { useAppContext } from '../../../contexts/AppContext';
 
-const FoldersCard = ({ cardItem }) => {
+const FoldersCard = ({ cardItem, knowledgeCenter }) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { setShowFoldersActionModal, setFolderActionId } = useAppContext();
@@ -54,6 +54,8 @@ const FoldersCard = ({ cardItem }) => {
       clearInterval(durationInterval);
     };
   }, [cardItem]);
+
+  console.log("cardItemcardItem", cardItem)
 
   const FrontSide = () => {
     return (
@@ -109,9 +111,14 @@ const FoldersCard = ({ cardItem }) => {
         )}
 
         {cardItem._id ? (
-          <Button onClick={() => navigate(`/folders/${cardItem._id}`)}>
-            {t('Open')}
-          </Button>
+          knowledgeCenter ?
+            <Button onClick={() => navigate(`/folders/knowledge/${cardItem._id}`)}>
+              {t('Open')}
+            </Button> :
+
+            <Button onClick={() => navigate(`/folders/${cardItem._id}`)}>
+              {t('Open')}
+            </Button>
         ) : (
           'no item'
         )}
