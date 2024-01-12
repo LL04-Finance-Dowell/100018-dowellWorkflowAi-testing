@@ -14,11 +14,28 @@ import {
 } from '../../../../../../features/app/appSlice';
 
 import React from 'react';
+import { FaShareAlt, FaFacebook, FaTwitter, FaLinkedin, FaReddit, FaPinterest, FaWhatsapp, FaDiscord, FaRegCopy  } from "react-icons/fa";
+import { MdEmail } from "react-icons/md";
+import { Modal, Button } from 'react-bootstrap';
+import { GiMailbox } from 'react-icons/gi';
+import facebook from './../../../../../../assets/facebook.jpg'
+import instagram from './../../../../../../assets/3225191_app_instagram_logo_media_popular_icon.jpg'
+import snapchat from './../../../../../../assets/3225185_app_logo_media_popular_snapchat_icon.jpg'
+import gmail from './../../../../../../assets/7115264_new_logo_gmail_icon.jpg'
+import pinterest from './../../../../../../assets/3225188_app_logo_media_pinterest_popular_icon.jpg'
+import whatsapp from './../../../../../../assets/3225179_app_logo_media_popular_social_icon.jpg'
+import twitter from './../../../../../../assets/3225183_app_logo_media_popular_social_icon.jpg'
+
+
+
+
+
+
 
 const GeneratedLinksModal = ({
   linksObj,
   masterLink,
-  
+
   copiedLinks,
   updateCopiedLinks,
   handleCloseBtnClick,
@@ -26,6 +43,7 @@ const GeneratedLinksModal = ({
   const { ArrayofLinks, ProcessDetail } = useSelector((state) => state.app);
   const dispatch = useDispatch();
   const { process_title, process_steps } = ProcessDetail;
+  const [showModal, setShowModal] = useState(false);
 
   const [copiedStatus, setCopiedStatus] = useState(
     ArrayofLinks.map(() => false)
@@ -47,6 +65,7 @@ const GeneratedLinksModal = ({
     const newCopiedStatus = [...copiedStatus];
     newCopiedStatus[index] = true;
     setCopiedStatus(newCopiedStatus);
+    toast.info("Link Copied")
     setTimeout(() => {
       const newerCopiedStatus = [...copiedStatus];
       newerCopiedStatus[index] = false;
@@ -56,6 +75,14 @@ const GeneratedLinksModal = ({
   function handleCloseDetailBtnClick() {
     dispatch(setshowsProcessDetailPopup(false));
   }
+
+  const handleCloseModal = () => {
+    setShowModal(false);
+  };
+
+  const handleShare = () => {
+    setShowModal(true);
+  };
 
 
 
@@ -203,7 +230,9 @@ const GeneratedLinksModal = ({
                 <td>S/No.</td>
                 <td>Name</td>
                 <td>Link</td>
-                <td>Copy</td>
+                {/* <td>Copy</td> */}
+                {/* <td>Mail</td> */}
+                <td>share</td>
               </tr>
             </thead>
             <tbody className={styles.process__Links__Container}>
@@ -216,14 +245,109 @@ const GeneratedLinksModal = ({
                     <td>{index + 1}</td>
                     <td>{linkName}</td>
                     <td className={styles.single__Link}>{linkUrl}</td>
-                    <td>
+                    {/* <td>
                       <button
                         className={styles.process__Generated__Links__Copy__Item}
                         onClick={() => handleProcessCopyLink(index, linkUrl)}
                       >
                         {isCopied ? 'Copied!' : 'Copy'}
                       </button>
+                    </td> */}
+                    {/* <td>
+                      <span
+                        className={styles.process__Generated__Links__Copy__Item}
+                      >
+                        <MdEmail />
+                      </span>
+                    </td> */}
+
+                    <td>
+                      <span
+                        className={styles.process__Generated__Links__Copy__Item}
+                        onClick={handleShare}
+                      >
+                        <FaShareAlt />
+                      </span>
                     </td>
+                    <Modal show={showModal} onHide={handleCloseModal} centered>
+                      <Modal.Header closeButton>
+                        <Modal.Title style={{color: "#111"}}>Share</Modal.Title>
+                      </Modal.Header>
+                      <Modal.Body>
+                        <div >
+                          <div className={styles.social_icons}>
+                            <div>
+                              <div className={styles.social_icons_icon}>
+                                <img src={facebook} style={{ borderRadius: "50%" }} alt='select image'></img>
+                              </div>
+                              <div style={{color: "#111"}}> Facebook </div>
+                            </div>
+                            <div>
+                              <div className={styles.social_icons_icon}>
+                                <img src={instagram} style={{ borderRadius: "50%" }} alt='select image'></img>
+                              </div>
+                              <div style={{color: "#111"}}> instagram </div>
+                            </div>
+                            <div>
+                              <div className={styles.social_icons_icon}>
+                                <img src={whatsapp} style={{ borderRadius: "50%" }}></img>
+                              </div>
+                              <div style={{color: "#111"}}> whatsapp </div>
+                            </div>
+                            <div>
+                              <div className={styles.social_icons_icon}>
+                                <img src={gmail} style={{ borderRadius: "50%" }} alt='select image'></img>
+                              </div>
+                              <div style={{color: "#111", paddingLeft: "20px"}}> Gmail </div>
+                            </div>
+                          </div>
+                          <div className={styles.social_icons}>
+                            <div>
+                              <div className={styles.social_icons_icon}>
+                                <img src={pinterest} style={{ borderRadius: "50%" }} alt='select image'></img>
+                              </div>
+                              <div style={{color: "#111", paddingLeft: "10px"}}> Pinterest </div>
+                            </div>
+                            <div>
+                              <div className={styles.social_icons_icon}>
+                                <img src={snapchat} style={{ borderRadius: "50%" }} alt='select image'></img>
+                              </div>
+                              <div style={{color: "#111", paddingLeft: "5px"}}> Snapchat </div>
+                            </div>
+                            <div>
+                              <div className={styles.social_icons_icon}>
+                                <img src={twitter} style={{ borderRadius: "50%" }} alt='select image'></img>
+                              </div>
+                              <div style={{color: "#111", paddingLeft: "15px"}}> Twitter </div>
+                            </div>
+                            <div>
+                              <div className={styles.social_icons_icon}>
+                                <img src={facebook} style={{ borderRadius: "50%" }} alt='select image'></img>
+                              </div>
+                              <div style={{color: "#111"}}> Facebook </div>
+                            </div>
+                          </div>
+                        </div><br />
+
+                        <div >
+                          <h5 style={{color: "#111"}}>Copy Link</h5>
+                          <div className={styles.url_section}>
+                            <input className={styles.url_section_input} type="text" value={linkUrl} disabled />
+                            <button style={{paddingLeft: "10px", background: "#E8E8E8"}} onClick={() => handleProcessCopyLink(index, linkUrl)}>{<FaRegCopy />}</button>
+                          </div>
+                        </div>
+
+                      </Modal.Body>
+                      <Modal.Footer>
+
+                        {/* <Button variant="success">
+                          {<FaFacebook />}
+                        </Button>
+                        <Button variant="success">
+                          {<MdEmail />}
+                        </Button> */}
+                      </Modal.Footer>
+                    </Modal>
                   </tr>
                 );
               })}

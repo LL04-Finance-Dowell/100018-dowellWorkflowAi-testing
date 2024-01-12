@@ -38,6 +38,7 @@ const SectionBox = ({
   isCompleted,
   isRejected,
   isReport,
+  knowledgeCenter,
 }) => {
   const [sliceCount, setSliceCount] = useState(1);
   const [refreshLoading, setRefreshLoading] = useState(false);
@@ -79,8 +80,8 @@ const SectionBox = ({
           itemType === 'templates'
             ? await new TemplateServices().demoTemplates(count + 1)
             : itemType === 'documents'
-            ? await new DocumentServices().demoDocuments(count + 1)
-            : {};
+              ? await new DocumentServices().demoDocuments(count + 1)
+              : {};
         setCardItemsVar(
           res.data ? [...cardItemsVar, ...res.data.templates] : cardItemsVar
         );
@@ -105,22 +106,22 @@ const SectionBox = ({
       currentUserportfolioDataType,
       currentUserPortfolioName,
     ] = [
-      userDetail?.portfolio_info?.length > 1
-        ? userDetail?.portfolio_info.find(
+        userDetail?.portfolio_info?.length > 1
+          ? userDetail?.portfolio_info.find(
             (portfolio) => portfolio.product === productName
           )?.org_id
-        : userDetail?.portfolio_info[0]?.org_id,
-      userDetail?.portfolio_info?.length > 1
-        ? userDetail?.portfolio_info.find(
+          : userDetail?.portfolio_info[0]?.org_id,
+        userDetail?.portfolio_info?.length > 1
+          ? userDetail?.portfolio_info.find(
             (portfolio) => portfolio.product === productName
           )?.data_type
-        : userDetail?.portfolio_info[0]?.data_type,
-      userDetail?.portfolio_info?.length > 1
-        ? userDetail?.portfolio_info.find(
+          : userDetail?.portfolio_info[0]?.data_type,
+        userDetail?.portfolio_info?.length > 1
+          ? userDetail?.portfolio_info.find(
             (portfolio) => portfolio.product === productName
           )?.data_type
-        : userDetail?.portfolio_info[0]?.portfolio_name,
-    ];
+          : userDetail?.portfolio_info[0]?.portfolio_name,
+      ];
 
     if (itemType === 'documents') {
       setRefreshLoading(true);
@@ -144,7 +145,7 @@ const SectionBox = ({
             dispatch(
               setAllDocuments(
                 res.data.documents
-                  
+
                   .filter(
                     (document) =>
                       document.document_state !== 'trash' &&
@@ -184,7 +185,7 @@ const SectionBox = ({
             dispatch(
               setAllTemplates(
                 res.data.templates
-                  
+
                   .filter(
                     (template) =>
                       template.data_type &&
@@ -224,7 +225,7 @@ const SectionBox = ({
                     workflow?.data_type === currentUserportfolioDataType) ||
                   (workflow.workflows.data_type &&
                     workflow.workflows.data_type ===
-                      currentUserportfolioDataType)
+                    currentUserportfolioDataType)
               )
             )
           );
@@ -251,7 +252,7 @@ const SectionBox = ({
           const savedProcessesInLocalStorage = JSON.parse(
             localStorage.getItem('user-saved-processes')
           );
-          console.log('the res.data is ',res.data)
+          console.log('the res.data is ', res.data)
           if (savedProcessesInLocalStorage) {
             const processes = [
               ...savedProcessesInLocalStorage,
@@ -276,9 +277,11 @@ const SectionBox = ({
     }
 
     if (itemType === 'folders') {
-      setRefreshLoading(true);
-      fetchFolders();
-      setRefreshLoading(false);
+      if (!knowledgeCenter) {
+        setRefreshLoading(true);
+        fetchFolders();
+        setRefreshLoading(false);
+      }
     }
 
 
@@ -297,27 +300,27 @@ const SectionBox = ({
         .then((res) => {
           const documentsToSign = res.data.documents
             ? res.data.documents
-                ?.reverse()
-                .filter(
-                  (document) =>
-                    document.auth_viewers &&
-                    Array.isArray(document.auth_viewers) &&
-                    // new format
-                    ((document.auth_viewers.every(
-                      (item) => typeof item === 'object'
-                    ) &&
-                      document.auth_viewers
-                        .map((viewer) => viewer.member)
-                        .includes(userDetail?.userinfo?.username) &&
-                      document.auth_viewers
-                        .map((viewer) => viewer.portfolio)
-                        .includes(currentUserPortfolioName)) ||
-                      // old format
-                      document.auth_viewers.includes(
-                        userDetail?.userinfo?.username
-                      ))
-                )
-                .filter((document) => document.process_id)
+              ?.reverse()
+              .filter(
+                (document) =>
+                  document.auth_viewers &&
+                  Array.isArray(document.auth_viewers) &&
+                  // new format
+                  ((document.auth_viewers.every(
+                    (item) => typeof item === 'object'
+                  ) &&
+                    document.auth_viewers
+                      .map((viewer) => viewer.member)
+                      .includes(userDetail?.userinfo?.username) &&
+                    document.auth_viewers
+                      .map((viewer) => viewer.portfolio)
+                      .includes(currentUserPortfolioName)) ||
+                    // old format
+                    document.auth_viewers.includes(
+                      userDetail?.userinfo?.username
+                    ))
+              )
+              .filter((document) => document.process_id)
             : [];
 
           const currentNotifications = notificationsForUser.slice();
@@ -351,35 +354,38 @@ const SectionBox = ({
 
   useEffect(() => {
     setCardItemsVar(cardItems);
+    console.log("1 mubeen")
   }, [cardItems]);
-console.log('the card items are ', cardItems)
+  console.log('the card items are ', cardItems)
 
-const handleFilterChange = (event) => {
-  setFilterName(event.target.value);
-  // Filter the cardItemsVar based on the input value
-  if(itemType === 'documents'){
-    const filteredItems = cardItems.filter(item => item.document_name.toLowerCase().includes(event.target.value.toLowerCase()));
-    setCardItemsVar(filteredItems);
-  }
-  else if(itemType === 'templates'){
-    const filteredItems = cardItems.filter(item => item.template_name.toLowerCase().includes(event.target.value.toLowerCase()));
-    setCardItemsVar(filteredItems);
-  }
-  else if(itemType === 'workflows'){
-    const filteredItems = cardItems.filter(item => item.workflows?.workflow_title.toLowerCase().includes(event.target.value.toLowerCase()));
-    setCardItemsVar(filteredItems);
-  }
-  else if(itemType === 'processes'){
-    const filteredItems = cardItems.filter(item => item.process_title.toLowerCase().includes(event.target.value.toLowerCase()));
-    setCardItemsVar(filteredItems);
-  }
-  else if(itemType === 'folders'){
-    const filteredItems = cardItems.filter(item => item.folder_name.toLowerCase().includes(event.target.value.toLowerCase()));
-    setCardItemsVar(filteredItems);
-  }
-  
-  
-};
+  const handleFilterChange = (event) => {
+    setFilterName(event.target.value);
+    // Filter the cardItemsVar based on the input value
+    if (itemType === 'documents') {
+      const filteredItems = cardItems.filter(item => item.document_name.toLowerCase().includes(event.target.value.toLowerCase()));
+      setCardItemsVar(filteredItems);
+    }
+    else if (itemType === 'templates') {
+      const filteredItems = cardItems.filter(item => item.template_name.toLowerCase().includes(event.target.value.toLowerCase()));
+      setCardItemsVar(filteredItems);
+    }
+    else if (itemType === 'workflows') {
+      const filteredItems = cardItems.filter(item => item.workflows?.workflow_title.toLowerCase().includes(event.target.value.toLowerCase()));
+      setCardItemsVar(filteredItems);
+    }
+    else if (itemType === 'processes') {
+      const filteredItems = cardItems.filter(item => item.process_title.toLowerCase().includes(event.target.value.toLowerCase()));
+      setCardItemsVar(filteredItems);
+    }
+    else if (itemType === 'folders') {
+      const filteredItems = cardItems.filter(item => item.folder_name.toLowerCase().includes(event.target.value.toLowerCase()));
+      setCardItemsVar(filteredItems);
+    }
+
+
+  };
+
+  console.log("cardItemsVar", cardItems)
 
   return (
     <div className={styles.container}>
@@ -388,24 +394,24 @@ const handleFilterChange = (event) => {
           <h2
             className={maneFilesStyles.header}
             id={idKey ? title.replaceAll(' ', '') + '-' + idKey : ''}
-          
+
           >
             {t(title)}
             {itemType ? (
               itemType === 'documents' ? (
                 allDocumentsStatus !== 'pending' ? (
                   <div className={styles.RightBox}>
-                    {cardItems.length > 10? 
-                    <div className={styles.search__item__wrapper} >
-                       <input
+                    {cardItems.length > 10 ?
+                      <div className={styles.search__item__wrapper} >
+                        <input
                           type="text"
                           placeholder="Filter by name"
                           value={filterName}
                           onChange={handleFilterChange}
                           className={styles.search__item}
                         />
-                    </div>:""  
-                  }
+                      </div> : ""
+                    }
                     <button
                       className={styles.refresh__btn}
                       onClick={handleRefresh}
@@ -428,16 +434,16 @@ const handleFilterChange = (event) => {
               ) : itemType === 'templates' ? (
                 allTemplatesStatus !== 'pending' ? (
                   <div className={styles.RightBox}>
-                      {cardItems.length > 10? 
+                    {cardItems.length > 10 ?
                       <div className={styles.search__item__wrapper} >
                         <input
-                            type="text"
-                            placeholder="Filter by name"
-                            value={filterName}
-                            onChange={handleFilterChange}
-                            className={styles.search__item}
-                          />
-                      </div>:""  
+                          type="text"
+                          placeholder="Filter by name"
+                          value={filterName}
+                          onChange={handleFilterChange}
+                          className={styles.search__item}
+                        />
+                      </div> : ""
                     }
                     <button
                       className={styles.refresh__btn}
@@ -460,17 +466,17 @@ const handleFilterChange = (event) => {
                 )
               ) : itemType === 'workflows' ? (
                 allWorkflowsStatus !== 'pending' ? (
-                  <div  className={styles.RightBox}>
-                    {cardItems.length > 10? 
-                    <div className={styles.search__item__wrapper} >
-                       <input
+                  <div className={styles.RightBox}>
+                    {cardItems.length > 10 ?
+                      <div className={styles.search__item__wrapper} >
+                        <input
                           type="text"
                           placeholder="Filter by name"
                           value={filterName}
                           onChange={handleFilterChange}
                           className={styles.search__item}
                         />
-                    </div>:""  
+                      </div> : ""
                     }
                     <button
                       className={styles.refresh__btn}
@@ -493,17 +499,17 @@ const handleFilterChange = (event) => {
                 )
               ) : itemType === 'processes' ? (
                 !processesLoading ? (
-                  <div  className={styles.RightBox}>
-                    {cardItems?.length > 10 ? 
-                    <div className={styles.search__item__wrapper} >
-                       <input
+                  <div className={styles.RightBox}>
+                    {cardItems?.length > 10 ?
+                      <div className={styles.search__item__wrapper} >
+                        <input
                           type="text"
                           placeholder="Filter by name"
                           value={filterName}
                           onChange={handleFilterChange}
                           className={styles.search__item}
                         />
-                    </div> : ""  
+                      </div> : ""
                     }
                     <button
                       className={styles.refresh__btn}
@@ -526,61 +532,61 @@ const handleFilterChange = (event) => {
                 )
               ) : itemType === 'folders' ? (
                 !isFetchingFolders ? (
-                  <div  className={styles.RightBox}>
-                      {cardItems.length > 10? 
+                  <div className={styles.RightBox}>
+                    {cardItems?.length > 10 ?
                       <div className={styles.search__item__wrapper} >
                         <input
-                            type="text"
-                            placeholder="Filter by name"
-                            value={filterName}
-                            onChange={handleFilterChange}
-                            className={styles.search__item}
-                          />
-                      </div>:""  
-                     }
-                      <button
-                        className={styles.refresh__btn}
-                        onClick={handleRefresh}
-                      >
-                        {refreshLoading ? (
-                          <LoadingSpinner
-                            color={'white'}
-                            width={'1rem'}
-                            height={'1rem'}
-                          />
-                        ) : (
-                          <IoIosRefresh />
-                        )}
-                        <span>Refresh</span>
-                      </button>
+                          type="text"
+                          placeholder="Filter by name"
+                          value={filterName}
+                          onChange={handleFilterChange}
+                          className={styles.search__item}
+                        />
+                      </div> : ""
+                    }
+                    <button
+                      className={styles.refresh__btn}
+                      onClick={handleRefresh}
+                    >
+                      {refreshLoading ? (
+                        <LoadingSpinner
+                          color={'white'}
+                          width={'1rem'}
+                          height={'1rem'}
+                        />
+                      ) : (
+                        <IoIosRefresh />
+                      )}
+                      <span>Refresh</span>
+                    </button>
                   </div>
                 ) : (
                   <></>
                 )
-              ) 
-              : itemType === 'notifications' ? (
-                !notificationsLoading ? (
-                  <button
-                    className={styles.refresh__btn}
-                    onClick={handleRefresh}
-                  >
-                    {refreshLoading ? (
-                      <LoadingSpinner
-                        color={'white'}
-                        width={'1rem'}
-                        height={'1rem'}
-                      />
-                    ) : (
-                      <IoIosRefresh />
-                    )}
-                    <span>{t('Refresh')}</span>
-                  </button>
+              )
+                : itemType === 'notifications' ? (
+                  !notificationsLoading ? (
+                    <button
+                      className={styles.refresh__btn}
+                      onClick={handleRefresh}
+                    >
+                      {refreshLoading ? (
+                        <LoadingSpinner
+                          color={'white'}
+                          width={'1rem'}
+                          height={'1rem'}
+                        />
+                      ) : (
+                        <IoIosRefresh />
+                      )}
+                      <span>{t('Refresh')}</span>
+                    </button>
+                  ) : (
+                    <></>
+                  )
                 ) : (
                   <></>
                 )
-              ) : (
-                <></>
-              )
             ) : (
               <></>
             )}
@@ -612,50 +618,50 @@ const handleFilterChange = (event) => {
                           isCompletedDoc={isCompleted}
                           isRejectedDoc={isRejected}
                           isReport={isReport}
+                          knowledgeCenter={knowledgeCenter}
                         />
                       ))}
                 </div>
                 {!isDemo
                   ? cardItemsVar &&
-                    cardItemsVar.length > 10 && (
-                      <PrimaryButton
-                        style={{
-                          pointerEvents: `${
-                            cardItemsVar.length / 10 < sliceCount && 'none'
+                  cardItemsVar.length > 10 && (
+                    <PrimaryButton
+                      style={{
+                        pointerEvents: `${cardItemsVar.length / 10 < sliceCount && 'none'
                           }`,
-                        }}
-                        hoverBg='success'
-                        onClick={handleLoadMore}
-                      >
-                        {cardItemsVar.length / 10 < sliceCount
-                          ? 'no more load'
-                          : 'load more'}
-                      </PrimaryButton>
-                    )
+                      }}
+                      hoverBg='success'
+                      onClick={handleLoadMore}
+                    >
+                      {cardItemsVar.length / 10 < sliceCount
+                        ? 'no more load'
+                        : 'load more'}
+                    </PrimaryButton>
+                  )
                   : cardItemsVar &&
-                    cardItemsVar.length > 10 && (
-                      <PrimaryButton
-                        // style={{
-                        //   pointerEvents: `${
-                        //     cardItemsVar.length / 10 < sliceCount && 'none'
-                        //   }`,
-                        // }}
-                        hoverBg='success'
-                        onClick={handleDemoLoadMore}
-                        style={isDemoLoading ? { pointerEvents: 'none' } : {}}
-                        disabled={isDemoLoading}
-                      >
-                        {isDemoLoading ? (
-                          <LoadingSpinner
-                            color={'white'}
-                            width={'1rem'}
-                            height={'1rem'}
-                          />
-                        ) : (
-                          'load more'
-                        )}
-                      </PrimaryButton>
-                    )}
+                  cardItemsVar.length > 10 && (
+                    <PrimaryButton
+                      // style={{
+                      //   pointerEvents: `${
+                      //     cardItemsVar.length / 10 < sliceCount && 'none'
+                      //   }`,
+                      // }}
+                      hoverBg='success'
+                      onClick={handleDemoLoadMore}
+                      style={isDemoLoading ? { pointerEvents: 'none' } : {}}
+                      disabled={isDemoLoading}
+                    >
+                      {isDemoLoading ? (
+                        <LoadingSpinner
+                          color={'white'}
+                          width={'1rem'}
+                          height={'1rem'}
+                        />
+                      ) : (
+                        'load more'
+                      )}
+                    </PrimaryButton>
+                  )}
               </>
             )
           )}

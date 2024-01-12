@@ -308,7 +308,9 @@ function App() {
 
         <Route path={'/folders'}>
           <Route index element={<FoldersPage />} />
+          <Route path={'knowledge_folders'}element={<FoldersPage knowledgeCenter={true}/>} />
           <Route path={':folder_id'} element={<FolderPage />} />
+          <Route path={'knowledge/:folder_id'} element={<FolderPage  knowledgeCenter={true}/>} />
         </Route>
         {/* <Route path="/Documents/Documents/Documents" element={<Documents />} />
       <Route path="/Documents/DraftsDoc/DraftsDoc" element={<DraftsDoc />} />

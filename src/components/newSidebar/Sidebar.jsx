@@ -393,6 +393,12 @@ const Sidebar = ({toggleSidebar, isMobile}) => {
         >
           Documents
         </HashLink>
+        <HashLink
+          to="/folders/knowledge_folders"
+          className={`${styles.templates_href} ${styles.parent__item__box}`}
+        >
+          Folder
+        </HashLink>
         {/* <CollapseItem items={knowledge} exception={true} /> */}
 
         <span className={styles.knowledge__Extra__Info}>
