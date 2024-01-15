@@ -84,7 +84,39 @@ const GeneratedLinksModal = ({
     setShowModal(true);
   };
 
+  const openFacebook = () => {  
+    // Open a new window with the Facebook URL
+    window.open('https://www.facebook.com', '_blank');
+  }
 
+  const openInstagram = () => {  
+    // Open a new window with the Facebook URL
+    window.open('https://www.instagram.com', '_blank');
+  }
+  const openWhatsapp = () => {  
+    // Open a new window with the Facebook URL
+    window.open('https://www.whatsapp.com', '_blank');
+  }
+  const openGmail = () => {  
+    // Open a new window with the Facebook URL
+    window.open('https://mail.google.com/', '_blank');
+  }
+  const openPinterest = () => {  
+    // Open a new window with the Facebook URL
+    window.open('https://www.pinterest.com', '_blank');
+  }
+  const openSnapchat = () => {  
+    // Open a new window with the Facebook URL
+    window.open('https://www.snapchat.com', '_blank');
+  }
+  const openTwitter = () => {  
+    // Open a new window with the Facebook URL
+    window.open('https://www.twitter.com', '_blank');
+  }
+  const openDiscord = () => {  
+    // Open a new window with the Facebook URL
+    window.open('https://www.discord.com', '_blank');
+  }
 
   ///////////
   return linksObj && typeof linksObj === 'object' ? (
@@ -276,55 +308,55 @@ const GeneratedLinksModal = ({
                       <Modal.Body>
                         <div >
                           <div className={styles.social_icons}>
-                            <div>
+                            <div onClick={openFacebook}>
                               <div className={styles.social_icons_icon}>
                                 <img src={facebook} style={{ borderRadius: "50%" }} alt='select image'></img>
                               </div>
                               <div style={{color: "#111"}}> Facebook </div>
                             </div>
-                            <div>
+                            <div onClick={openInstagram}>
                               <div className={styles.social_icons_icon}>
                                 <img src={instagram} style={{ borderRadius: "50%" }} alt='select image'></img>
                               </div>
                               <div style={{color: "#111"}}> instagram </div>
                             </div>
-                            <div>
+                            <div onClick={openWhatsapp}>
                               <div className={styles.social_icons_icon}>
                                 <img src={whatsapp} style={{ borderRadius: "50%" }}></img>
                               </div>
                               <div style={{color: "#111"}}> whatsapp </div>
                             </div>
-                            <div>
+                            <div> onClick={openGmail}
                               <div className={styles.social_icons_icon}>
                                 <img src={gmail} style={{ borderRadius: "50%" }} alt='select image'></img>
                               </div>
                               <div style={{color: "#111", paddingLeft: "20px"}}> Gmail </div>
                             </div>
                           </div>
-                          <div className={styles.social_icons}>
+                          <div className={styles.social_icons} onClick={openPinterest}>
                             <div>
                               <div className={styles.social_icons_icon}>
                                 <img src={pinterest} style={{ borderRadius: "50%" }} alt='select image'></img>
                               </div>
                               <div style={{color: "#111", paddingLeft: "10px"}}> Pinterest </div>
                             </div>
-                            <div>
+                            <div onClick={openSnapchat}>
                               <div className={styles.social_icons_icon}>
                                 <img src={snapchat} style={{ borderRadius: "50%" }} alt='select image'></img>
                               </div>
                               <div style={{color: "#111", paddingLeft: "5px"}}> Snapchat </div>
                             </div>
-                            <div>
+                            <div onClick={openTwitter}>
                               <div className={styles.social_icons_icon}>
                                 <img src={twitter} style={{ borderRadius: "50%" }} alt='select image'></img>
                               </div>
                               <div style={{color: "#111", paddingLeft: "15px"}}> Twitter </div>
                             </div>
-                            <div>
+                            <div onClick={openDiscord}>
                               <div className={styles.social_icons_icon}>
                                 <img src={facebook} style={{ borderRadius: "50%" }} alt='select image'></img>
                               </div>
-                              <div style={{color: "#111"}}> Facebook </div>
+                              <div style={{color: "#111"}}> Discord </div>
                             </div>
                           </div>
                         </div><br />

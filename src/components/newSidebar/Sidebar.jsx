@@ -381,6 +381,12 @@ const Sidebar = ({toggleSidebar, isMobile}) => {
           {t("DoWell")} {t("Knowledge Center")}
         </h2>
         <HashLink
+          to="/folders/knowledge_folders"
+          className={`${styles.templates_href} ${styles.parent__item__box}`}
+        >
+          Folder
+        </HashLink>
+        <HashLink
           to="/templates/demo#demo"
           className={`${styles.templates_href} ${styles.parent__item__box}`}
                   >
@@ -392,12 +398,6 @@ const Sidebar = ({toggleSidebar, isMobile}) => {
           className={`${styles.templates_href} ${styles.parent__item__box}`}
         >
           Documents
-        </HashLink>
-        <HashLink
-          to="/folders/knowledge_folders"
-          className={`${styles.templates_href} ${styles.parent__item__box}`}
-        >
-          Folder
         </HashLink>
         {/* <CollapseItem items={knowledge} exception={true} /> */}
 
