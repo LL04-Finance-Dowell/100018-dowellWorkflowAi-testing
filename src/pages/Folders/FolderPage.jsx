@@ -50,12 +50,15 @@ const FolderPage = ({ knowledgeCenter }) => {
 
       let modDocItems = [];
       let modTempitems = [];
+
+      modTempitems.push(knowFolder.data)
       knowFolder.data.forEach((item) => {
         // modDocItems.push(
         //   allDocuments.find((doc) => doc._id === item.document_id) ?? null
         // );
+
         modTempitems.push(
-          allTemplates.find((temp) => temp._id === item.template_id) ?? null
+          knowFolder.data.find((temp) => temp._id === item.template_id) ?? null
         );
       });
 
@@ -72,7 +75,7 @@ const FolderPage = ({ knowledgeCenter }) => {
     setFolder(folders.find((folder) => folder._id === folder_id));
   }, [folders]);
 
-  console.log("knowledgeFolder", knowledgeCenter, folder)
+  console.log("knowledgeFolder",tempItems , knowFolder, folder_id)
 
   return (
     <>
