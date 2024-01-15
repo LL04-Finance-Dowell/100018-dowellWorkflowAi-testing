@@ -426,14 +426,14 @@ const FoldersModal = () => {
             <>
               <h3>
                 {isEditing
-                  ? `Editing ${folder && folder.folder_name} ${folder.folder_name
-                    ? folder.folder_name.toLowerCase().includes('folder')
+                  ? `Editing ${folder && folder?.folder_name} ${folder?.folder_name
+                    ? folder?.folder_name.toLowerCase().includes('folder')
                       ? ''
                       : 'folder'
                     : ''
                   }`
-                  : `Edit ${folder && folder.folder_name} ${folder.folder_name
-                    ? folder.folder_name.toLowerCase().includes('folder')
+                  : `Edit ${folder && folder?.folder_name} ${folder?.folder_name
+                    ? folder?.folder_name.toLowerCase().includes('folder')
                       ? ''
                       : 'folder'
                     : ''
@@ -502,14 +502,14 @@ const FoldersModal = () => {
             <>
               <h3 style={{ color: 'red' }}>
                 {isDeleting
-                  ? `Deleting ${folder && folder.folder_name} ${folder.folder_name
-                    ? folder.folder_name.toLowerCase().includes('folder')
+                  ? `Deleting ${folder && folder?.folder_name} ${folder?.folder_name
+                    ? folder?.folder_name.toLowerCase().includes('folder')
                       ? ''
                       : 'folder'
                     : ''
                   }`
-                  : `Delete ${folder && folder.folder_name} ${folder.folder_name
-                    ? folder.folder_name.toLowerCase().includes('folder')
+                  : `Delete ${folder && folder?.folder_name} ${folder?.folder_name
+                    ? folder?.folder_name.toLowerCase().includes('folder')
                       ? ''
                       : 'folder'
                     : ''
@@ -559,7 +559,7 @@ const FoldersModal = () => {
             <>
               <h3>
                 {isAdding
-                  ? `Adding to ${addFolder.folder_name}`
+                  ? `Adding to ${addFolder?.folder_name}`
                   : `Select folder`}
 
                 {!isAdding && (
@@ -613,9 +613,9 @@ const FoldersModal = () => {
             <>
               <h3>
                 {isRemoving
-                  ? `Removing ${item.document_name || item.template_name
-                  } from ${folder.folder_name}`
-                  : `Remove ${item.document_name || item.template_name} from ${folder.folder_name
+                  ? `Removing ${item?.document_name || item?.template_name
+                  } from ${folder?.folder_name}`
+                  : `Remove ${item?.document_name || item?.template_name} from ${folder?.folder_name
                   }?`}
               </h3>
 
@@ -740,8 +740,8 @@ const SelectInput = ({
                   className={styles.drop_opt}
                   key={id}
                   style={
-                    folder.data &&
-                      folder.data.find((itm) => itm[`${category}_id`] === id)
+                    folder?.data &&
+                      folder?.data?.find((itm) => itm[`${category}_id`] === id)
                       ? { pointerEvents: 'none' }
                       : {}
                   }
@@ -761,12 +761,12 @@ const SelectInput = ({
                           }
                     }
                     disabled={
-                      folder.data &&
-                      folder.data.find((itm) => itm[`${category}_id`] === id)
+                      folder?.data &&
+                      folder?.data.find((itm) => itm[`${category}_id`] === id)
                     }
                     checked={
-                      (folder.data &&
-                        folder.data.find(
+                      (folder?.data &&
+                        folder?.data.find(
                           (itm) => itm[`${category}_id`] === id
                         )) ||
                       (selDocs && selDocs.find((doc) => doc.id === id)) ||

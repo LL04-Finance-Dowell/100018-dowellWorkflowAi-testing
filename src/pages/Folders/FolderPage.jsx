@@ -20,7 +20,7 @@ const FolderPage = ({ knowledgeCenter }) => {
   const { KnowledgeFolders } = useSelector((state) => state.app);
 
   const [knowFolder, setKnowFolder] = useState(
-    KnowledgeFolders.templates.find((folder) => folder._id === folder_id)
+    KnowledgeFolders?.templates?.find((folder) => folder._id === folder_id)
   );
   const { allDocuments } = useSelector((state) => state.document);
   const { allTemplates } = useSelector((state) => state.template);
@@ -99,9 +99,9 @@ const FolderPage = ({ knowledgeCenter }) => {
                   <SectionBox
                     cardBgColor='#1ABC9C'
                     itemType={'folder'}
-                    title={`${knowFolder.folder_name} - Templates`}
+                    title={`${knowFolder?.folder_name} - Templates`}
                     Card={TemplateCard}
-                    cardItems={tempItems}
+                    cardItems={knowFolder?.data}
                     status={'finished'}
                     folderId={knowFolder._id}
                   />
