@@ -25,6 +25,7 @@ import gmail from './../../../../../../assets/7115264_new_logo_gmail_icon.jpg'
 import pinterest from './../../../../../../assets/3225188_app_logo_media_pinterest_popular_icon.jpg'
 import whatsapp from './../../../../../../assets/3225179_app_logo_media_popular_social_icon.jpg'
 import twitter from './../../../../../../assets/3225183_app_logo_media_popular_social_icon.jpg'
+import discord from './../../../../../../assets/resize-17053994161792650344discord.png'
 
 
 
@@ -326,15 +327,15 @@ const GeneratedLinksModal = ({
                               </div>
                               <div style={{color: "#111"}}> whatsapp </div>
                             </div>
-                            <div> onClick={openGmail}
+                            <div onClick={openGmail}> 
                               <div className={styles.social_icons_icon}>
                                 <img src={gmail} style={{ borderRadius: "50%" }} alt='select image'></img>
                               </div>
                               <div style={{color: "#111", paddingLeft: "20px"}}> Gmail </div>
                             </div>
                           </div>
-                          <div className={styles.social_icons} onClick={openPinterest}>
-                            <div>
+                          <div className={styles.social_icons} >
+                            <div onClick={openPinterest}>
                               <div className={styles.social_icons_icon}>
                                 <img src={pinterest} style={{ borderRadius: "50%" }} alt='select image'></img>
                               </div>
@@ -352,11 +353,11 @@ const GeneratedLinksModal = ({
                               </div>
                               <div style={{color: "#111", paddingLeft: "15px"}}> Twitter </div>
                             </div>
-                            <div onClick={openDiscord}>
+                            <div onClick={openDiscord} >
                               <div className={styles.social_icons_icon}>
-                                <img src={facebook} style={{ borderRadius: "50%" }} alt='select image'></img>
+                                <img src={discord} style={{ borderRadius: "50%" }} alt='select image'></img>
                               </div>
-                              <div style={{color: "#111"}}> Discord </div>
+                              <div style={{color: "#111", paddingLeft: "10px"}}> Discord </div>
                             </div>
                           </div>
                         </div><br />
