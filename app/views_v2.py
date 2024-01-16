@@ -1779,16 +1779,10 @@ class DowellFolders(APIView):
         folders = bulk_query_folder_collection (
             {"company_id": company_id, "data_type": data_type}
         )
+        
         page = int(request.GET.get("page", 1))
         folder_list = paginate(folders, page, 50)
-        folder_list = [
-            {
-                "_id": item["_id"],
-                "folder_name": item["folder_name"],
-                "data": item["data"]
-            }
-            for item in folders
-        ]
+ 
         return Response(
             {"templates": folder_list},
             status=status.HTTP_200_OK,
