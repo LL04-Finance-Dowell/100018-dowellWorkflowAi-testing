@@ -22,6 +22,10 @@ import { setAllWorkflows } from '../../../features/workflow/workflowsSlice';
 import { useTranslation } from 'react-i18next';
 import { productName } from '../../../utils/helpers';
 import { useAppContext } from '../../../contexts/AppContext';
+import {
+  SetKnowledgeFolders
+} from '../../../features/app/appSlice';
+import axios from 'axios';
 
 const SectionBox = ({
   cardItems,
@@ -280,6 +284,22 @@ const SectionBox = ({
       if (!knowledgeCenter) {
         setRefreshLoading(true);
         fetchFolders();
+        setRefreshLoading(false);
+      }
+      else {
+        setRefreshLoading(true);
+        const url = `https://100094.pythonanywhere.com/v2/companies/6385c0f38eca0fb652c9457e/folders/knowledge-centre/?data_type=Real_Data`;
+        axios.get(url)
+          .then(response => {
+            dispatch(SetKnowledgeFolders(response.data));
+            console.log('Data:', response.data);
+            toast.info("page refreshed successfully")
+            // Handle the response data
+          })
+          .catch(error => {
+            console.error('Error fetching data:', error);
+            // Handle the error
+          });
         setRefreshLoading(false);
       }
     }
