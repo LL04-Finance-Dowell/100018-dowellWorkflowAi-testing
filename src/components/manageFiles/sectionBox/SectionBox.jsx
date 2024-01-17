@@ -75,6 +75,7 @@ const SectionBox = ({
   };
 
   const handleDemoLoadMore = async () => {
+
     if (cardItemsVar?.length / 10 > sliceCount) {
       setSliceCount((prev) => prev + 1);
     } else {
@@ -520,7 +521,7 @@ const SectionBox = ({
               ) : itemType === 'processes' ? (
                 !processesLoading ? (
                   <div className={styles.RightBox}>
-                    {cardItems?.length > 10 ?
+                    {cardItems?.length > 12 ?
                       <div className={styles.search__item__wrapper} >
                         <input
                           type="text"
@@ -553,7 +554,7 @@ const SectionBox = ({
               ) : itemType === 'folders' ? (
                 !isFetchingFolders ? (
                   <div className={styles.RightBox}>
-                    {cardItems?.length > 10 ?
+                    {cardItems?.length > 12 ?
                       <div className={styles.search__item__wrapper} >
                         <input
                           type="text"
@@ -626,7 +627,7 @@ const SectionBox = ({
                     cardItemsVar &&
                     cardItemsVar?.length > 0 &&
                     cardItemsVar
-                      .slice(0, sliceCount * 10)
+                      .slice(0, sliceCount * 12)
                       .map((item) => (
                         <Card
                           key={item._id}
@@ -647,23 +648,23 @@ const SectionBox = ({
                   cardItemsVar?.length > 10 && (
                     <PrimaryButton
                       style={{
-                        pointerEvents: `${cardItemsVar.length / 10 < sliceCount && 'none'
+                        pointerEvents: `${cardItemsVar.length / 12 < sliceCount && 'none'
                           }`,
                       }}
                       hoverBg='success'
                       onClick={handleLoadMore}
                     >
-                      {cardItemsVar.length / 10 < sliceCount
+                      {cardItemsVar.length / 12 < sliceCount
                         ? 'no more load'
                         : 'load more'}
                     </PrimaryButton>
                   )
                   : cardItemsVar &&
-                  cardItemsVar.length > 10 && (
+                  cardItemsVar.length > 12 && (
                     <PrimaryButton
                       // style={{
                       //   pointerEvents: `${
-                      //     cardItemsVar.length / 10 < sliceCount && 'none'
+                      //     cardItemsVar.length / 12 < sliceCount && 'none'
                       //   }`,
                       // }}
                       hoverBg='success'

@@ -1,8 +1,8 @@
-import { AiOutlineClose } from 'react-icons/ai';
-import styles from './style.module.css';
-import { toast } from 'react-toastify';
-import { useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { AiOutlineClose } from "react-icons/ai";
+import styles from "./style.module.css";
+import { toast } from "react-toastify";
+import { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import {
   SetArrayofLinks,
   setShowGeneratedLinksPopup,
@@ -11,11 +11,22 @@ import {
   setDetailFetched,
   ProcessName,
   setLinksFetched,
-} from '../../../../../../features/app/appSlice';
+} from "../../../../../../features/app/appSlice";
 
-import React from 'react';
-import { FaShareAlt, FaFacebook, FaTwitter, FaLinkedin, FaReddit, FaPinterest, FaWhatsapp, FaDiscord, FaRegCopy  } from "react-icons/fa";
+import React from "react";
+import {
+  FaShareAlt,
+  FaFacebook,
+  FaTwitter,
+  FaLinkedin,
+  FaReddit,
+  FaPinterest,
+  FaWhatsapp,
+  FaDiscord,
+  FaRegCopy,
+} from "react-icons/fa";
 import { MdEmail } from "react-icons/md";
+
 import { Modal, Button } from 'react-bootstrap';
 import { GiMailbox } from 'react-icons/gi';
 import facebook from './../../../../../../assets/facebook.jpg'
@@ -26,11 +37,6 @@ import pinterest from './../../../../../../assets/3225188_app_logo_media_pintere
 import whatsapp from './../../../../../../assets/3225179_app_logo_media_popular_social_icon.jpg'
 import twitter from './../../../../../../assets/3225183_app_logo_media_popular_social_icon.jpg'
 import discord from './../../../../../../assets/resize-17053994161792650344discord.png'
-
-
-
-
-
 
 
 const GeneratedLinksModal = ({
@@ -58,7 +64,7 @@ const GeneratedLinksModal = ({
     updateCopiedLinks(currentCopiedLinks);
     setTimeout(() => {
       updateCopiedLinks([]);
-    }, 3000)
+    }, 3000);
   };
 
   function handleProcessCopyLink(index, link) {
@@ -66,7 +72,7 @@ const GeneratedLinksModal = ({
     const newCopiedStatus = [...copiedStatus];
     newCopiedStatus[index] = true;
     setCopiedStatus(newCopiedStatus);
-    toast.info("Link Copied")
+    toast.info("Link Copied");
     setTimeout(() => {
       const newerCopiedStatus = [...copiedStatus];
       newerCopiedStatus[index] = false;
@@ -84,43 +90,50 @@ const GeneratedLinksModal = ({
   const handleShare = () => {
     setShowModal(true);
   };
+  const socialMedia = [
+    {
+      name: "Facebook",
+      src: facebook,
+      onClick: () => window.open("https://www.facebook.com", "_blank"),
+    },
+    {
+      name: "Gmail",
+      src: gmail,
+      onClick: () => window.open("https://mail.google.com/", "_blank"),
+    },
+    {
+      name: "Whatsapp",
+      src: whatsapp,
+      onClick: () => window.open("https://www.whatsapp.com", "_blank"),
+    },
+    {
+      name: "Instagram",
+      src: instagram,
+      onClick: () => window.open("https://www.instagram.com", "_blank"),
+    },
+    {
+      name: "Twitter",
+      src: twitter,
+      onClick: () => window.open("https://www.twitter.com", "_blank"),
+    },
+    {
+      name: "Snapchat",
+      src: snapchat,
+      onClick: () => window.open("https://www.snapchat.com", "_blank"),
+    },
+    {
+      name: "Pinterest",
+      src: pinterest,
+      onClick: () => window.open("https://www.pinterest.com", "_blank"),
+    },
+    {
+      name: "Discord",
+      src: discord,
+      onClick: () => window.open("https://www.discord.com", "_blank"),
+    },
+  ];
 
-  const openFacebook = () => {  
-    // Open a new window with the Facebook URL
-    window.open('https://www.facebook.com', '_blank');
-  }
-
-  const openInstagram = () => {  
-    // Open a new window with the Facebook URL
-    window.open('https://www.instagram.com', '_blank');
-  }
-  const openWhatsapp = () => {  
-    // Open a new window with the Facebook URL
-    window.open('https://www.whatsapp.com', '_blank');
-  }
-  const openGmail = () => {  
-    // Open a new window with the Facebook URL
-    window.open('https://mail.google.com/', '_blank');
-  }
-  const openPinterest = () => {  
-    // Open a new window with the Facebook URL
-    window.open('https://www.pinterest.com', '_blank');
-  }
-  const openSnapchat = () => {  
-    // Open a new window with the Facebook URL
-    window.open('https://www.snapchat.com', '_blank');
-  }
-  const openTwitter = () => {  
-    // Open a new window with the Facebook URL
-    window.open('https://www.twitter.com', '_blank');
-  }
-  const openDiscord = () => {  
-    // Open a new window with the Facebook URL
-    window.open('https://www.discord.com', '_blank');
-  }
-
-  ///////////
-  return linksObj && typeof linksObj === 'object' ? (
+  return linksObj && typeof linksObj === "object" ? (
     <div className={styles.process__Generated__Links__Overlay}>
       <div className={styles.process__Generated__Links__Container}>
         <div
@@ -142,7 +155,8 @@ const GeneratedLinksModal = ({
             </thead>
 
             <tbody className={styles.process__Links__Container}>
-              {linksObj.master_link && typeof linksObj.master_link === 'string' ? (
+              {linksObj.master_link &&
+              typeof linksObj.master_link === "string" ? (
                 <>
                   <tr>
                     <td>0.</td>
@@ -156,7 +170,7 @@ const GeneratedLinksModal = ({
                     </td>
                     <td>
                       {linksObj.master_code &&
-                        typeof linksObj.master_code === 'string' ? (
+                      typeof linksObj.master_code === "string" ? (
                         <img
                           src={linksObj.master_code}
                           alt="qr code"
@@ -165,7 +179,6 @@ const GeneratedLinksModal = ({
                             toast.info("Copied to clipboard!");
                           }}
                         />
-
                       ) : (
                         <>Qr code</>
                       )}
@@ -175,12 +188,14 @@ const GeneratedLinksModal = ({
                         className={styles.process__Generated__Links__Copy__Item}
                         onClick={() => handleCopyLink(linksObj.master_link)}
                       >
-                        {copiedLinks.includes(linksObj.master_link) ? 'Copied' : 'Copy'}
+                        {copiedLinks.includes(linksObj.master_link)
+                          ? "Copied"
+                          : "Copy"}
                       </span>
                     </td>
                   </tr>
                   {linksObj.links.map((link, index) => {
-                    if (typeof link !== 'object') return null; // Skip non-object entries
+                    if (typeof link !== "object") return null; // Skip non-object entries
 
                     const linkName = Object.keys(link)[0];
                     const linkValue = Object.values(link)[0];
@@ -198,10 +213,14 @@ const GeneratedLinksModal = ({
                         <td>{null}</td>
                         <td>
                           <span
-                            className={styles.process__Generated__Links__Copy__Item}
+                            className={
+                              styles.process__Generated__Links__Copy__Item
+                            }
                             onClick={() => handleCopyLink(linkValue)}
                           >
-                            {copiedLinks.includes(linkValue) ? 'Copied' : 'Copy'}
+                            {copiedLinks.includes(linkValue)
+                              ? "Copied"
+                              : "Copy"}
                           </span>
                         </td>
                       </tr>
@@ -210,7 +229,7 @@ const GeneratedLinksModal = ({
                 </>
               ) : (
                 linksObj.links.map((link, index) => {
-                  if (typeof link !== 'object') return null; // Skip non-object entries
+                  if (typeof link !== "object") return null; // Skip non-object entries
 
                   const linkName = Object.keys(link)[0];
                   const linkValue = Object.values(link)[0];
@@ -227,10 +246,12 @@ const GeneratedLinksModal = ({
                       </td>
                       <td>
                         <span
-                          className={styles.process__Generated__Links__Copy__Item}
+                          className={
+                            styles.process__Generated__Links__Copy__Item
+                          }
                           onClick={() => handleCopyLink(linkValue)}
                         >
-                          {copiedLinks.includes(linkValue) ? 'Copied' : 'Copy'}
+                          {copiedLinks.includes(linkValue) ? "Copied" : "Copy"}
                         </span>
                       </td>
                     </tr>
@@ -242,7 +263,6 @@ const GeneratedLinksModal = ({
         </div>
       </div>
     </div>
-
   ) : (
     <div className={styles.process__Generated__Links__Overlay}>
       <div className={styles.process__Generated__Links__Container}>
@@ -304,7 +324,15 @@ const GeneratedLinksModal = ({
                     </td>
                     <Modal show={showModal} onHide={handleCloseModal} centered>
                       <Modal.Header closeButton>
-                        <Modal.Title style={{color: "#111"}}>Share</Modal.Title>
+                        <Modal.Title
+                          style={{
+                            color: "#111",
+                            fontSize: 22,
+                            marginLeft: 10,
+                          }}
+                        >
+                          Share
+                        </Modal.Title>
                       </Modal.Header>
                       <Modal.Body>
                         <div >
@@ -339,7 +367,7 @@ const GeneratedLinksModal = ({
                               <div className={styles.social_icons_icon}>
                                 <img src={pinterest} style={{ borderRadius: "50%" }} alt='select image'></img>
                               </div>
-                              <div style={{color: "#111", paddingLeft: "10px"}}> Pinterest </div>
+                              <p>{media.name}</p>
                             </div>
                             <div onClick={openSnapchat}>
                               <div className={styles.social_icons_icon}>
@@ -362,17 +390,27 @@ const GeneratedLinksModal = ({
                           </div>
                         </div><br />
 
-                        <div >
-                          <h5 style={{color: "#111"}}>Copy Link</h5>
+                        <br />
+                        <div className={styles.copy_link}>
+                          <h5>Copy Link</h5>
                           <div className={styles.url_section}>
-                            <input className={styles.url_section_input} type="text" value={linkUrl} disabled />
-                            <button style={{paddingLeft: "10px", background: "#E8E8E8"}} onClick={() => handleProcessCopyLink(index, linkUrl)}>{<FaRegCopy />}</button>
+                            <input
+                              className={styles.url_section_input}
+                              type="text"
+                              value={linkUrl}
+                              disabled
+                            />
+                            <button
+                              onClick={() =>
+                                handleProcessCopyLink(index, linkUrl)
+                              }
+                            >
+                              {<FaRegCopy style={{ fontSize: 20 }} />}
+                            </button>
                           </div>
                         </div>
-
                       </Modal.Body>
                       <Modal.Footer>
-
                         {/* <Button variant="success">
                           {<FaFacebook />}
                         </Button>
