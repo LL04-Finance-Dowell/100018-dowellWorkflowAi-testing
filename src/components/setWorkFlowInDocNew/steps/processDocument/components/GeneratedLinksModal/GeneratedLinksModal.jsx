@@ -26,16 +26,18 @@ import {
   FaRegCopy,
 } from "react-icons/fa";
 import { MdEmail } from "react-icons/md";
-import { Modal, Button } from "react-bootstrap";
-import { GiMailbox } from "react-icons/gi";
-import gmail from "./../../../../../../assets/gmail_5968534.png";
-import discord from "./../../../../../../assets/discord_3670157.png";
-import twitter from "./../../../../../../assets/twitter_5969020.png";
-import snapchat from "./../../../../../../assets/social_12942261.png";
-import whatsapp from "./../../../../../../assets/whatsapp_3670051.png";
-import facebook from "./../../../../../../assets/facebook_2504903.png";
-import pinterest from "./../../../../../../assets/pinterest_145808.png";
-import instagram from "./../../../../../../assets/instagram_2111463.png";
+
+import { Modal, Button } from 'react-bootstrap';
+import { GiMailbox } from 'react-icons/gi';
+import facebook from './../../../../../../assets/facebook.jpg'
+import instagram from './../../../../../../assets/3225191_app_instagram_logo_media_popular_icon.jpg'
+import snapchat from './../../../../../../assets/3225185_app_logo_media_popular_snapchat_icon.jpg'
+import gmail from './../../../../../../assets/7115264_new_logo_gmail_icon.jpg'
+import pinterest from './../../../../../../assets/3225188_app_logo_media_pinterest_popular_icon.jpg'
+import whatsapp from './../../../../../../assets/3225179_app_logo_media_popular_social_icon.jpg'
+import twitter from './../../../../../../assets/3225183_app_logo_media_popular_social_icon.jpg'
+import discord from './../../../../../../assets/resize-17053994161792650344discord.png'
+
 
 const GeneratedLinksModal = ({
   linksObj,
@@ -333,20 +335,60 @@ const GeneratedLinksModal = ({
                         </Modal.Title>
                       </Modal.Header>
                       <Modal.Body>
-                        {/* Social media links */}
-                        <div className={styles.social_icons}>
-                          {socialMedia.map((media, index) => (
-                            <div key={index}>
-                              <div
-                                onClick={media.onClick}
-                                className={styles.social_icons_icon}
-                              >
-                                <img src={media.src} alt={media.name} />
+                        <div >
+                          <div className={styles.social_icons}>
+                            <div onClick={openFacebook}>
+                              <div className={styles.social_icons_icon}>
+                                <img src={facebook} style={{ borderRadius: "50%" }} alt='select image'></img>
+                              </div>
+                              <div style={{color: "#111"}}> Facebook </div>
+                            </div>
+                            <div onClick={openInstagram}>
+                              <div className={styles.social_icons_icon}>
+                                <img src={instagram} style={{ borderRadius: "50%" }} alt='select image'></img>
+                              </div>
+                              <div style={{color: "#111"}}> instagram </div>
+                            </div>
+                            <div onClick={openWhatsapp}>
+                              <div className={styles.social_icons_icon}>
+                                <img src={whatsapp} style={{ borderRadius: "50%" }}></img>
+                              </div>
+                              <div style={{color: "#111"}}> whatsapp </div>
+                            </div>
+                            <div onClick={openGmail}> 
+                              <div className={styles.social_icons_icon}>
+                                <img src={gmail} style={{ borderRadius: "50%" }} alt='select image'></img>
+                              </div>
+                              <div style={{color: "#111", paddingLeft: "20px"}}> Gmail </div>
+                            </div>
+                          </div>
+                          <div className={styles.social_icons} >
+                            <div onClick={openPinterest}>
+                              <div className={styles.social_icons_icon}>
+                                <img src={pinterest} style={{ borderRadius: "50%" }} alt='select image'></img>
                               </div>
                               <p>{media.name}</p>
                             </div>
-                          ))}
-                        </div>
+                            <div onClick={openSnapchat}>
+                              <div className={styles.social_icons_icon}>
+                                <img src={snapchat} style={{ borderRadius: "50%" }} alt='select image'></img>
+                              </div>
+                              <div style={{color: "#111", paddingLeft: "5px"}}> Snapchat </div>
+                            </div>
+                            <div onClick={openTwitter}>
+                              <div className={styles.social_icons_icon}>
+                                <img src={twitter} style={{ borderRadius: "50%" }} alt='select image'></img>
+                              </div>
+                              <div style={{color: "#111", paddingLeft: "15px"}}> Twitter </div>
+                            </div>
+                            <div onClick={openDiscord} >
+                              <div className={styles.social_icons_icon}>
+                                <img src={discord} style={{ borderRadius: "50%" }} alt='select image'></img>
+                              </div>
+                              <div style={{color: "#111", paddingLeft: "10px"}}> Discord </div>
+                            </div>
+                          </div>
+                        </div><br />
 
                         <br />
                         <div className={styles.copy_link}>
