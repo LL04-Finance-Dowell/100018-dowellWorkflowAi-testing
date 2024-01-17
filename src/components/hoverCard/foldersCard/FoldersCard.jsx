@@ -6,12 +6,17 @@ import { RiDeleteBin6Line } from 'react-icons/ri';
 import HoverCard from '../HoverCard';
 import { useNavigate } from 'react-router-dom';
 import { useAppContext } from '../../../contexts/AppContext';
+import { useDispatch } from 'react-redux';
+import axios from 'axios';
+import { SetKnowledgeFoldersTemplates } from '../../../features/app/appSlice';
 
 const FoldersCard = ({ cardItem, knowledgeCenter }) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const { setShowFoldersActionModal, setFolderActionId } = useAppContext();
   const [isFolderNew, setIsFolderNew] = useState(false);
+  const [metaTemplates, setMetaTemplates] = useState([])
 
   const handleDelete = (e) => {
     setShowFoldersActionModal({ state: true, action: 'delete' });
@@ -55,7 +60,23 @@ const FoldersCard = ({ cardItem, knowledgeCenter }) => {
     };
   }, [cardItem]);
 
-  console.log("cardItemcardItem", cardItem)
+  useEffect(() => {
+    const apiUrl = 'https://100094.pythonanywhere.com/v1/companies/6385c0f38eca0fb652c9457e/templates/metadata/?data_type=Real_Data'; // Replace with your API endpoint
+
+    // Make a GET request using Axios
+    axios.get(apiUrl)
+      .then(response => {
+        // Handle the API response here
+        dispatch(SetKnowledgeFoldersTemplates(response.data));
+        console.log('API Response:', response.data);
+      })
+      .catch(error => {
+        // Handle any errors that occur during the request
+        console.error('API Error:', error);
+      });
+  }, [knowledgeCenter]);
+
+  console.log("cardItemcardItemmubeen", cardItem)
 
   const FrontSide = () => {
     return (

@@ -75,7 +75,7 @@ const SectionBox = ({
   };
 
   const handleDemoLoadMore = async () => {
-    if (cardItemsVar.length / 10 > sliceCount) {
+    if (cardItemsVar?.length / 10 > sliceCount) {
       setSliceCount((prev) => prev + 1);
     } else {
       setIsDemoLoading(true);
@@ -421,7 +421,7 @@ const SectionBox = ({
               itemType === 'documents' ? (
                 allDocumentsStatus !== 'pending' ? (
                   <div className={styles.RightBox}>
-                    {cardItems.length > 10 ?
+                    {cardItems?.length > 10 ?
                       <div className={styles.search__item__wrapper} >
                         <input
                           type="text"
@@ -454,7 +454,7 @@ const SectionBox = ({
               ) : itemType === 'templates' ? (
                 allTemplatesStatus !== 'pending' ? (
                   <div className={styles.RightBox}>
-                    {cardItems.length > 10 ?
+                    {cardItems?.length > 10 ?
                       <div className={styles.search__item__wrapper} >
                         <input
                           type="text"
@@ -487,7 +487,7 @@ const SectionBox = ({
               ) : itemType === 'workflows' ? (
                 allWorkflowsStatus !== 'pending' ? (
                   <div className={styles.RightBox}>
-                    {cardItems.length > 10 ?
+                    {cardItems?.length > 10 ?
                       <div className={styles.search__item__wrapper} >
                         <input
                           type="text"
@@ -624,7 +624,7 @@ const SectionBox = ({
                 <div className={styles.grid__box}>
                   {Card &&
                     cardItemsVar &&
-                    cardItemsVar.length > 0 &&
+                    cardItemsVar?.length > 0 &&
                     cardItemsVar
                       .slice(0, sliceCount * 10)
                       .map((item) => (
@@ -644,7 +644,7 @@ const SectionBox = ({
                 </div>
                 {!isDemo
                   ? cardItemsVar &&
-                  cardItemsVar.length > 10 && (
+                  cardItemsVar?.length > 10 && (
                     <PrimaryButton
                       style={{
                         pointerEvents: `${cardItemsVar.length / 10 < sliceCount && 'none'
