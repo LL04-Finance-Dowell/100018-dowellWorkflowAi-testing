@@ -34,6 +34,7 @@ from app.helpers import (
     remove_members_from_steps,
     update_signed,
     check_progress,
+    cloning_process
 )
 from app.mongo_db_connection import (
     add_document_to_folder,
@@ -707,6 +708,20 @@ class ProcessImport(APIView):
             "process_id": res_process["inserted_id"],
         }
         return Response(response_data, status.HTTP_201_CREATED)
+    
+class ProcessCopies(APIView):
+    def post(self, request, process_id):
+        if not validate_id(process_id) or not request.data:
+            return Response("something went wrong!", status.HTTP_400_BAD_REQUEST)
+        if request.method == "POST":
+            if not request.data:
+                return Response("something went wrong!", status.HTTP_400_BAD_REQUEST)
+            process_id = cloning_process(
+                process_id, request.data["created_by"], request.data["portfolio"]
+            )
+            if process_id is None:
+                return Response(status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response("success created a process clone", status.HTTP_201_CREATED)
 
 
 class NewWorkflow(APIView):
@@ -1770,23 +1785,71 @@ class FolderDetail(APIView):
         return Response(status.HTTP_204_NO_CONTENT)
 
 
-class DowellFolders(APIView):
-    def get(self, request, company_id):
+class DowellCenter(APIView):
+    def get(self, request, company_id, item_type):
         """Fetch Dowell Knowledge centre folders."""
         data_type = request.query_params.get("data_type")
         if not validate_id(company_id):
             return Response("Something went wrong!", status=status.HTTP_400_BAD_REQUEST)
-        folders = bulk_query_folder_collection (
-            {"company_id": company_id, "data_type": data_type}
-        )
         
-        page = int(request.GET.get("page", 1))
-        folder_list = paginate(folders, page, 50)
- 
-        return Response(
-            {"templates": folder_list},
-            status=status.HTTP_200_OK,
-        )
+        if item_type == "templates":
+            templates = bulk_query_template_metadata_collection(
+                {"company_id": company_id, "data_type": data_type}
+            )
+            page = int(request.GET.get("page", 1))
+            templates = paginate(templates, page, 50)
+            template_list = [
+                {
+                    "_id": item["_id"],
+                    "template_name": item["template_name"],
+                    "collection_id": item["collection_id"],
+                }
+                for item in templates
+            ]
+            return Response(
+                {"templates": template_list},
+                status=status.HTTP_200_OK,
+            )
+        
+        elif item_type == "documents":
+            cache_key = f"documents_{company_id}"
+            document_list = cache.get(cache_key)
+            if document_list is None:
+                document_list = bulk_query_document_metadata_collection(
+                    {"company_id": company_id, "data_type": data_type}
+                )
+                cache.set(cache_key, document_list, timeout=60)
+            page = int(request.GET.get("page", 1))
+            documents = paginate(document_list, page, 50)
+            document_list = [
+                {
+                    "_id": item["_id"],
+                    "document_name": item["document_name"],
+                    "collection_id": item["collection_id"],
+                }
+                for item in documents
+            ]
+            return Response(
+                {"documents": document_list},
+                status.HTTP_200_OK,
+            )
+        
+        elif item_type == "folders":
+            folders = bulk_query_folder_collection (
+                {"company_id": company_id, "data_type": data_type}
+            )
+            
+            page = int(request.GET.get("page", 1))
+            folder_list = paginate(folders, page, 50)
+    
+            return Response(
+                {"templates": folder_list},
+                status=status.HTTP_200_OK,
+            )
+            
+        else:
+            return Response("Invalid Item type!", status=status.HTTP_400_BAD_REQUEST)
+
 
 
 class NewPublicUser(APIView):
