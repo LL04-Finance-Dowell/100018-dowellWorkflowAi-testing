@@ -33,6 +33,10 @@ urlpatterns = [
         views_v2.PublicUser.as_view(),
         name="public_qrids",
     ),
+    path("processes/<str:process_id>/copies/", 
+         views_v2.ProcessCopies.as_view(), 
+         name="process_copies"
+    ),
     path("workflows/", views_v2.NewWorkflow.as_view(), name="create-workflow"),
     path("workflows/<str:workflow_id>/", views_v2.WorkflowDetail.as_view()),
     path(
@@ -105,7 +109,7 @@ urlpatterns = [
     ),
     
      path(
-        "companies/<str:company_id>/folders/knowledge-centre/",
-         views_v2.DowellFolders.as_view(),
+        "companies/<str:company_id>/<str:item_type>/knowledge-centre/",
+         views_v2.DowellCenter.as_view(),
     ),
 ]
