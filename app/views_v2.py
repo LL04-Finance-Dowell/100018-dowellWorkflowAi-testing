@@ -1130,17 +1130,42 @@ class ItemContent(APIView):
         if not validate_id(item_id):
             return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
         if item_type == "template":
-            my_dict = ast.literal_eval(
-                single_query_template_collection({"_id": item_id})["content"]
-            )[0][0]
+            try:
+                to_parse = single_query_template_collection({"_id": item_id})["content"]
+                # Try ast.literal_eval()
+                my_dict = ast.literal_eval(
+                    to_parse
+                )[0][0]
+            except Exception as e:
+                # Use json.loads()
+                my_dict = json.loads(
+                    to_parse
+                )[0][0]
         if item_type == "document":
-            my_dict = ast.literal_eval(
-                single_query_document_collection({"_id": item_id})["content"]
-            )[0][0]
+            try:
+                to_parse = single_query_document_collection({"_id": item_id})["content"]
+                # Try ast.literal_eval()
+                my_dict = ast.literal_eval(
+                    to_parse
+                )[0][0]
+            except Exception as e:
+                # Use json.loads()
+                my_dict = json.loads(
+                    to_parse
+                )[0][0]
         if item_type == "clone":
-            my_dict = ast.literal_eval(
-                single_query_clones_collection({"_id": item_id})["content"]
-            )[0][0]
+            try:
+                to_parse = single_query_clones_collection({"_id": item_id})["content"]
+                # Try ast.literal_eval()
+                my_dict = ast.literal_eval(
+                    to_parse
+                )[0][0]
+            except Exception as e:
+                # Use json.loads()
+                my_dict = json.loads(
+                    to_parse
+                )[0][0]
+            
         all_keys = [i for i in my_dict.keys()]
         for i in all_keys:
             temp_list = []
