@@ -896,13 +896,30 @@ def get_item_content(request, item_id):
     content = []
     item_type = request.query_params.get("item_type")
     if item_type == "templates":
-        my_dict = ast.literal_eval(
-            single_query_template_collection({"_id": item_id})["content"]
-        )[0][0]
+        try:
+            to_parse = single_query_template_collection({"_id": item_id})["content"]
+            # Try ast.literal_eval()
+            my_dict = ast.literal_eval(
+                to_parse
+            )[0][0]
+        except Exception as e:
+            # Use json.loads()
+            my_dict = json.loads(
+                to_parse
+            )[0][0]
     else:
-        my_dict = ast.literal_eval(
-            single_query_document_collection({"_id": item_id})["content"]
-        )[0][0]
+        try:
+            to_parse = single_query_document_collection({"_id": item_id})["content"]
+            # Try ast.literal_eval()
+            my_dict = ast.literal_eval(
+                to_parse
+            )[0][0]
+        except Exception as e:
+            # Use json.loads()
+            my_dict = json.loads(
+                to_parse
+            )[0][0]
+            
     all_keys = [i for i in my_dict.keys()]
     for i in all_keys:
         temp_list = []
