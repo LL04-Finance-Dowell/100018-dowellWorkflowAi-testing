@@ -42,7 +42,7 @@ function App() {
   const { allTemplates } = useSelector(state => state.template)
   const [companyId, setCompanyId] = useState(null);
   const { isPublicUser, dataType } = useAppContext();
-  const clientVerUrlRef = useRef('https://ll04-finance-dowell.github.io/workflowai.online/')
+  const clientVerUrlRef = useRef('https://ll04-finance-dowell.github.io/workflowai.online/');
   const betaVerUrlRef = useRef('https://ll04-finance-dowell.github.io/100018-dowellWorkflowAi-testing/')
 
 
