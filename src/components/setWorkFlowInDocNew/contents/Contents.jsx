@@ -319,12 +319,12 @@ const Contents = ({
                                   }
                                 />
                                 <Tooltip
-                                  anchorId={item._id + currentStepIndex}
+                                  anchorId={item?._id + currentStepIndex}
                                   content={
-                                    item.data
+                                    item?.data
                                       ? Array.isArray(item.data)
                                         ? item.data.find(
-                                          (i) => i.data.length > 1
+                                          (i) => i.data?.length > 1
                                         )?.data
                                         : item.data
                                       : 'No data'
