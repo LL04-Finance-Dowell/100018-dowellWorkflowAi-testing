@@ -1,8 +1,8 @@
 {
   "files": {
-    "main.css": "/100018-dowellWorkflowAi-testing/static/css/main.182ba1f5.css",
-    "main.js": "/100018-dowellWorkflowAi-testing/static/js/main.d5a30863.js",
-    "static/js/787.cda612ba.chunk.js": "/100018-dowellWorkflowAi-testing/static/js/787.cda612ba.chunk.js",
+    "main.css": "/100018-dowellWorkflowAi-testing/static/css/main.58ebd6fa.css",
+    "main.js": "/100018-dowellWorkflowAi-testing/static/js/main.9e64ad87.js",
+    "static/js/787.9e9f4ffd.chunk.js": "/100018-dowellWorkflowAi-testing/static/js/787.9e9f4ffd.chunk.js",
     "static/media/sec3.gif": "/100018-dowellWorkflowAi-testing/static/media/sec3.d60825f0f0b955a33d7b.gif",
     "static/media/sec6.gif": "/100018-dowellWorkflowAi-testing/static/media/sec6.f95d0952dad5e90451aa.gif",
     "static/media/sec1.gif": "/100018-dowellWorkflowAi-testing/static/media/sec1.461bf430440d10f88d44.gif",
@@ -11,16 +11,9 @@
     "static/media/sec4.gif": "/100018-dowellWorkflowAi-testing/static/media/sec4.f6cd1b007b23da87d73e.gif",
     "static/media/greenImage.png": "/100018-dowellWorkflowAi-testing/static/media/greenImage.0bad90a2105988a2730d.png",
     "static/media/roboto-all-400-normal.woff": "/100018-dowellWorkflowAi-testing/static/media/roboto-all-400-normal.c5d001fa922fa66a147f.woff",
-    "static/media/instagram_2111463.png": "/100018-dowellWorkflowAi-testing/static/media/instagram_2111463.e719d8b29f452a16302d.png",
     "static/media/chatting.png": "/100018-dowellWorkflowAi-testing/static/media/chatting.59fa441a689f53392c46.png",
-    "static/media/discord_3670157.png": "/100018-dowellWorkflowAi-testing/static/media/discord_3670157.87103b7fb8f04ea4d3ef.png",
-    "static/media/whatsapp_3670051.png": "/100018-dowellWorkflowAi-testing/static/media/whatsapp_3670051.d026940870fb334920b7.png",
     "static/media/dowell.png": "/100018-dowellWorkflowAi-testing/static/media/dowell.8a8009315d4d4ec76338.png",
-    "static/media/social_12942261.png": "/100018-dowellWorkflowAi-testing/static/media/social_12942261.0679a6e7e82bb700a782.png",
-    "static/media/twitter_5969020.png": "/100018-dowellWorkflowAi-testing/static/media/twitter_5969020.7e40f617aaa8eca864bb.png",
-    "static/media/pinterest_145808.png": "/100018-dowellWorkflowAi-testing/static/media/pinterest_145808.e38f3012dc571ed17e78.png",
     "static/media/roboto-latin-400-normal.woff2": "/100018-dowellWorkflowAi-testing/static/media/roboto-latin-400-normal.b009a76ad6afe4ebd301.woff2",
-    "static/media/facebook_2504903.png": "/100018-dowellWorkflowAi-testing/static/media/facebook_2504903.795fce8e464693d7346d.png",
     "static/media/roboto-cyrillic-ext-400-normal.woff2": "/100018-dowellWorkflowAi-testing/static/media/roboto-cyrillic-ext-400-normal.804378952da8a10faae2.woff2",
     "static/media/roboto-latin-ext-400-normal.woff2": "/100018-dowellWorkflowAi-testing/static/media/roboto-latin-ext-400-normal.861b791f9de857a6e7bc.woff2",
     "static/media/roboto-cyrillic-400-normal.woff2": "/100018-dowellWorkflowAi-testing/static/media/roboto-cyrillic-400-normal.71a33b6b50457b2c903a.woff2",
@@ -32,12 +25,12 @@
     "index.html": "/100018-dowellWorkflowAi-testing/index.html",
     "static/media/roboto-greek-ext-400-normal.woff2": "/100018-dowellWorkflowAi-testing/static/media/roboto-greek-ext-400-normal.169619821ea93019d1bb.woff2",
     "static/media/getFetch.cjs": "/100018-dowellWorkflowAi-testing/static/media/getFetch.40f37ddea2378391108f.cjs",
-    "main.182ba1f5.css.map": "/100018-dowellWorkflowAi-testing/static/css/main.182ba1f5.css.map",
-    "main.d5a30863.js.map": "/100018-dowellWorkflowAi-testing/static/js/main.d5a30863.js.map",
-    "787.cda612ba.chunk.js.map": "/100018-dowellWorkflowAi-testing/static/js/787.cda612ba.chunk.js.map"
+    "main.58ebd6fa.css.map": "/100018-dowellWorkflowAi-testing/static/css/main.58ebd6fa.css.map",
+    "main.9e64ad87.js.map": "/100018-dowellWorkflowAi-testing/static/js/main.9e64ad87.js.map",
+    "787.9e9f4ffd.chunk.js.map": "/100018-dowellWorkflowAi-testing/static/js/787.9e9f4ffd.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.182ba1f5.css",
-    "static/js/main.d5a30863.js"
+    "static/css/main.58ebd6fa.css",
+    "static/js/main.9e64ad87.js"
   ]
 }
