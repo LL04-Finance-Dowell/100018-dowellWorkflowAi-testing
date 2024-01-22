@@ -337,7 +337,25 @@ const GeneratedLinksModal = ({
                       <Modal.Body>
                         <div >
                           <div className={styles.social_icons}>
-                            <div onClick={openFacebook}>
+                            {
+                              React.Children.toArray(socialMedia.map(item => {
+                                return <div
+                                  onClick={
+                                    typeof item.onClick === 'function' ? 
+                                      () => item.onClick()
+                                    :
+                                    () => {}
+                                  }
+                                >
+                                  <div className={styles.social_icons_icon}>
+                                    <img src={item.src} style={{ borderRadius: "50%" }} alt={item.name}></img>
+                                  </div>
+                                  <div style={{color: "#111"}}>{item.name}</div>
+                                </div>
+                              }))
+                            }
+                            
+                            {/* <div onClick={openFacebook}>
                               <div className={styles.social_icons_icon}>
                                 <img src={facebook} style={{ borderRadius: "50%" }} alt='select image'></img>
                               </div>
@@ -386,7 +404,7 @@ const GeneratedLinksModal = ({
                                 <img src={discord} style={{ borderRadius: "50%" }} alt='select image'></img>
                               </div>
                               <div style={{color: "#111", paddingLeft: "10px"}}> Discord </div>
-                            </div>
+                            </div> */}
                           </div>
                         </div><br />
 
