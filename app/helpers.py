@@ -702,3 +702,35 @@ def create_document_helper(
     except Exception as ex:
         print(ex)
         return
+
+def dowell_email_sender(name, email, subject, email_content):
+    email_url = "https://100085.pythonanywhere.com/api/uxlivinglab/email/"
+    payload = {
+        "toname":name,
+        "toemail": email,
+        "fromname":"Workflow AI",
+        "fromemail":"workflowai@dowellresearch.sg",
+        "subject": subject,
+        "email_content":email_content
+    }
+
+    requests.post(email_url, data=payload)
+
+def check_last_finalizer(user_type, user, process)->bool:
+    last_step = process["process_steps"][len(process["process_steps"])-1]
+
+    if user_type == "team":
+        for data in last_step["stepTeamMembers"]:
+            if data.get("member") == user:
+                return True
+    elif user_type == "user":
+        for data in last_step["stepUserMembers"]:
+            if data.get("member") == user:
+                return True
+    elif user_type == "public":
+       for data in last_step["stepPublicMembers"]:
+            if data.get("member") == user:
+                return True
+    else:
+        return False
+

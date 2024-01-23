@@ -34,7 +34,9 @@ from app.helpers import (
     remove_members_from_steps,
     update_signed,
     check_progress,
-    cloning_process
+    cloning_process,
+    check_last_finalizer,
+    dowell_email_sender
 )
 from app.mongo_db_connection import (
     add_document_to_folder,
@@ -92,7 +94,7 @@ from app.mongo_db_connection import (
 )
 from app.utils import notification_cron
 
-from .constants import EDITOR_API
+from .constants import EDITOR_API, PROCESS_COMPLETION_MAIL
 from rest_framework.views import APIView
 import spacy
 from datetime import datetime
@@ -499,6 +501,12 @@ class FinalizeOrReject(APIView):
                         register_finalized(link_id)
                     if item_type == "document" or item_type == "clone":
                         background.document_processing()
+                        # send mail if completed
+                        if check_last_finalizer(user, user_type, process):
+                            subject = f"Completion of {process['process_title']} Processing"
+                            email = "morvinian@gmail.com" #Placeholder
+                            dowell_email_sender(process["created_by"], email, subject, email_content=PROCESS_COMPLETION_MAIL)
+
                         item = single_query_clones_collection({"_id": item_id})
                         if item:
                             if item.get("document_state") == "finalized":
@@ -542,6 +550,12 @@ class FinalizeOrReject(APIView):
                         )
                     elif item_type == "template":
                         background.template_processing()
+                        # send mail if completed
+                        if check_last_finalizer(user, user_type, process):
+                            subject = f"Completion of {process['process_title']} Processing"
+                            email = "morvinian@gmail.com" #placeholder
+                            dowell_email_sender(process["created_by"], email, subject, email_content=PROCESS_COMPLETION_MAIL)
+
                         item = single_query_template_collection({"_id": item_id})
                         if item:
                             if item.get("template_state") == "saved":
