@@ -36,8 +36,8 @@ const TemplateCard = ({ cardItem, isFolder, folderId }) => {
   const handleTemplateDetail = (item) => {
     const data = {
 
-      collection_id: item.collection_id,
-      template_name: item.template_name,
+      collection_id: item.collection_id || "651448722a346a96eb12c2c0",
+      template_name: item.template_name || "SOP 001",
     };
    
 
@@ -155,7 +155,7 @@ const TemplateCard = ({ cardItem, isFolder, folderId }) => {
   const FrontSide = () => {
     return (
       <div style={{ wordWrap: 'break-word', width: '100%' }}>
-        {cardItem.newly_created && (
+        {cardItem?.newly_created && (
           <div
             style={{
               position: 'absolute',
@@ -176,10 +176,10 @@ const TemplateCard = ({ cardItem, isFolder, folderId }) => {
   const BackSide = () => {
     return (
       <div>
-        <Tooltip id={`book-${cardItem._id}`} content="Bookmark Template" direction="up" arrowSize={10} style={{ backgroundColor: 'rgb(97, 206, 112)', color: 'white' }}></Tooltip>
+        <Tooltip id={`book-${cardItem?._id}`} content="Bookmark Template" direction="up" arrowSize={10} style={{ backgroundColor: 'rgb(97, 206, 112)', color: 'white' }}></Tooltip>
         <div
-        anchorId={cardItem._id}
-        data-tooltip-id={`book-${cardItem._id}`}
+        anchorId={cardItem?._id}
+        data-tooltip-id={`book-${cardItem?._id}`}
           style={{
             cursor: 'pointer',
             position: 'absolute',
@@ -222,7 +222,7 @@ const TemplateCard = ({ cardItem, isFolder, folderId }) => {
         >
           <RiDeleteBin6Line color='red' />
         </div>
-        {cardItem.newly_created && (
+        {cardItem?.newly_created && (
           <div
             style={{
               position: 'absolute',
