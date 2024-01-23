@@ -630,7 +630,7 @@ const SectionBox = ({
                       .slice(0, sliceCount * 12)
                       .map((item) => (
                         <Card
-                          key={item._id}
+                          key={item?._id}
                           cardItem={item}
                           hideFavoriteIcon={hideFavoriteIcon}
                           hideDeleteIcon={hideDeleteIcon}
@@ -639,7 +639,7 @@ const SectionBox = ({
                           isCompletedDoc={isCompleted}
                           isRejectedDoc={isRejected}
                           isReport={isReport}
-                          knowledgeCenter={knowledgeCenter}
+                          knowledgeCenter={knowledgeCenter || true}
                         />
                       ))}
                 </div>
