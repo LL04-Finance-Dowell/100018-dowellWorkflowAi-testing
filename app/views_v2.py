@@ -291,8 +291,7 @@ class ProcessDetail(APIView):
                 process.update({"links": links_object["links"]})
         process["progress"] = progress
         return Response(process, status.HTTP_200_OK)
-    
-    
+
     def put(self, request, process_id):
         """_summary_
         Args:
@@ -301,25 +300,28 @@ class ProcessDetail(APIView):
         """
         if not validate_id(process_id):
             return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
-        
+
         if not request.data:
             return Response("Some parameters are missing", status.HTTP_400_BAD_REQUEST)
-        
+
         workflow = request.data.get("workflows")
         step_id = request.data.get("step_id")
         step_id -= 1
-        
+
         process = single_query_process_collection({"_id": process_id})
         steps = process.get("process_steps")
         state = "processing_state"
-        
+
         step_content = steps[step_id]
         if step_content.get("permitInternalWorkflow") == True:
             step_content.update({"workflows": workflow})
             update_process(process_id, steps, state)
             return Response(process, status.HTTP_200_OK)
         else:
-            return Response("Internal workflow is not permitted in this step", status.HTTP_403_FORBIDDEN)
+            return Response(
+                "Internal workflow is not permitted in this step",
+                status.HTTP_403_FORBIDDEN,
+            )
 
 
 class ProcessLink(APIView):
@@ -722,7 +724,8 @@ class ProcessImport(APIView):
             "process_id": res_process["inserted_id"],
         }
         return Response(response_data, status.HTTP_201_CREATED)
-    
+
+
 class ProcessCopies(APIView):
     def post(self, request, process_id):
         if not validate_id(process_id) or not request.data:
@@ -1007,27 +1010,30 @@ class DocumentLink(APIView):
         if not validate_id(document_id):
             return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
         document = single_query_document_collection({"_id": document_id})
-        if document.get("is_private") == True:
-            input_password = request.query_params.get("password")
-            if input_password == None:
-                return Response(
-                    "Missing password argument", status.HTTP_422_UNPROCESSABLE_ENTITY
-                )
-
-            valid_password_hash = document.get("password")
-            if compare_hash(valid_password_hash, input_password) == False:
-                return Response("Incorrect password", status.HTTP_401_UNAUTHORIZED)
-        editor_link = access_editor(document_id, "document")
-        if not editor_link:
-            return Response(status.HTTP_500_INTERNAL_SERVER_ERROR)
-        return Response(editor_link, status.HTTP_200_OK)
+        if document:
+            document_privacy = document.get("is_private", False)
+            if document_privacy == True:
+                input_password = request.query_params.get("password")
+                if input_password == None:
+                    return Response(
+                        "Missing password argument",
+                        status.HTTP_422_UNPROCESSABLE_ENTITY,
+                    )
+                valid_password_hash = document.get("password")
+                if compare_hash(valid_password_hash, input_password) == False:
+                    return Response("Incorrect password", status.HTTP_401_UNAUTHORIZED)
+            editor_link = access_editor(document_id, "document")
+            if not editor_link:
+                return Response(status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response(editor_link, status.HTTP_200_OK)
+        return Response("Document could not be accessed!", status.HTTP_404_NOT_FOUND)
 
 
 class DocumentDetail(APIView):
     def get(self, request, item_id):
         """Retrieves the document object for a specific document"""
         document_type = request.query_params.get("document_type")
-        if not validate_id(item_id):
+        if not validate_id(item_id) or not document_type:
             return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
         if document_type == "document":
             document = single_query_document_collection({"_id": item_id})
@@ -1035,6 +1041,7 @@ class DocumentDetail(APIView):
         if document_type == "clone":
             document = single_query_clones_collection({"_id": item_id})
             return Response(document, status.HTTP_200_OK)
+        return Response("Document could not be accessed!", status.HTTP_404_NOT_FOUND)
 
 
 class NewMetadata(APIView):
@@ -1147,39 +1154,27 @@ class ItemContent(APIView):
             try:
                 to_parse = single_query_template_collection({"_id": item_id})["content"]
                 # Try ast.literal_eval()
-                my_dict = ast.literal_eval(
-                    to_parse
-                )[0][0]
+                my_dict = ast.literal_eval(to_parse)[0][0]
             except Exception as e:
                 # Use json.loads()
-                my_dict = json.loads(
-                    to_parse
-                )[0][0]
+                my_dict = json.loads(to_parse)[0][0]
         if item_type == "document":
             try:
                 to_parse = single_query_document_collection({"_id": item_id})["content"]
                 # Try ast.literal_eval()
-                my_dict = ast.literal_eval(
-                    to_parse
-                )[0][0]
+                my_dict = ast.literal_eval(to_parse)[0][0]
             except Exception as e:
                 # Use json.loads()
-                my_dict = json.loads(
-                    to_parse
-                )[0][0]
+                my_dict = json.loads(to_parse)[0][0]
         if item_type == "clone":
             try:
                 to_parse = single_query_clones_collection({"_id": item_id})["content"]
                 # Try ast.literal_eval()
-                my_dict = ast.literal_eval(
-                    to_parse
-                )[0][0]
+                my_dict = ast.literal_eval(to_parse)[0][0]
             except Exception as e:
                 # Use json.loads()
-                my_dict = json.loads(
-                    to_parse
-                )[0][0]
-            
+                my_dict = json.loads(to_parse)[0][0]
+
         all_keys = [i for i in my_dict.keys()]
         for i in all_keys:
             temp_list = []
@@ -1830,7 +1825,7 @@ class DowellCenter(APIView):
         data_type = request.query_params.get("data_type")
         if not validate_id(company_id):
             return Response("Something went wrong!", status=status.HTTP_400_BAD_REQUEST)
-        
+
         if item_type == "templates":
             templates = bulk_query_template_metadata_collection(
                 {"company_id": company_id, "data_type": data_type}
@@ -1849,7 +1844,7 @@ class DowellCenter(APIView):
                 {"templates": template_list},
                 status=status.HTTP_200_OK,
             )
-        
+
         elif item_type == "documents":
             cache_key = f"documents_{company_id}"
             document_list = cache.get(cache_key)
@@ -1872,23 +1867,22 @@ class DowellCenter(APIView):
                 {"documents": document_list},
                 status.HTTP_200_OK,
             )
-        
+
         elif item_type == "folders":
-            folders = bulk_query_folder_collection (
+            folders = bulk_query_folder_collection(
                 {"company_id": company_id, "data_type": data_type}
             )
-            
+
             page = int(request.GET.get("page", 1))
             folder_list = paginate(folders, page, 50)
-    
+
             return Response(
                 {"templates": folder_list},
                 status=status.HTTP_200_OK,
             )
-            
+
         else:
             return Response("Invalid Item type!", status=status.HTTP_400_BAD_REQUEST)
-
 
 
 class NewPublicUser(APIView):
