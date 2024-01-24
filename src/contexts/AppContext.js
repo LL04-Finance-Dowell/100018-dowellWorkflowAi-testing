@@ -195,13 +195,17 @@ export const AppContextProvider = ({ children }) => {
 
     const member = userDetail.userinfo.username
 
-    const res = await new WorkflowSettingServices().fetchWorkflowSettingsData(
-      userCompanyId,
-      member
-    );
-
-    console.log("res.data",res.data)
-    setWorkflowSettings(res.data);
+    try {
+      const res = await new WorkflowSettingServices().fetchWorkflowSettingsData(
+        userCompanyId,
+        member
+      );
+  
+      console.log("res.data",res.data)
+      setWorkflowSettings(res.data); 
+    } catch (error) {
+      
+    }
   };
   
   const fetchDemoTemplates = async () => {
