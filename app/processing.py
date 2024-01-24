@@ -230,13 +230,13 @@ class HandleProcess:
                 "item_type": item_type,
             }
         )
-        # --------- Not used so I will scrap it for now - Edwin ------
-        # HandleProcess.notify(
-        #     auth_name, item_id, portfolio, company_id, utp_link, org_name
-        # )
-        # utp_code = HandleProcess.generate_qrcode(utp_link)
-        # return utp_link, utp_code
-        return utp_link
+        # --------- Not used so I will scrap soon - Edwin ------
+        HandleProcess.notify(
+            auth_name, item_id, portfolio, company_id, utp_link, org_name
+        )
+        utp_code = HandleProcess.generate_qrcode(utp_link)
+        return utp_link, utp_code
+        # return utp_link
 
     def get_editor_link(payload):
         link = requests.post(
