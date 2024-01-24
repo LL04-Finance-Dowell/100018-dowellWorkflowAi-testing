@@ -1003,7 +1003,11 @@ class DocumentLink(APIView):
             valid_password_hash = document.get("password")
             if compare_hash(valid_password_hash, input_password) == False:
                 return Response("Incorrect password", status.HTTP_401_UNAUTHORIZED)
-        editor_link = access_editor(document_id, "document")
+            
+        username = request.query_params.get("username", "")
+        portfolio = request.query_params.get("portfolio", "")
+            
+        editor_link = access_editor(document_id, "document", username=username, portfolio=portfolio)
         if not editor_link:
             return Response(status.HTTP_500_INTERNAL_SERVER_ERROR)
         return Response(editor_link, status.HTTP_200_OK)
