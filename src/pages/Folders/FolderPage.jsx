@@ -91,7 +91,7 @@ const FolderPage = ({ knowledgeCenter }) => {
 
       console.log("modTempitems", modTempitems)
       // setDocItems(modDocItems.filter((item) => item));
-      setTempItems(modTempitems);
+      setTempItems(modTempitems.filter((item) => item !== null));
       console.log("temptemptemp", tempItems)
     }
     else {

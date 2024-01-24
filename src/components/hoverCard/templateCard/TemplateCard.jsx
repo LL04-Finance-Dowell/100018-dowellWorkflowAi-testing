@@ -36,8 +36,8 @@ const TemplateCard = ({ cardItem, isFolder, folderId }) => {
   const handleTemplateDetail = (item) => {
     const data = {
 
-      collection_id: item.collection_id || "651448722a346a96eb12c2c0",
-      template_name: item.template_name || "SOP 001",
+      collection_id: item.collection_id,
+      template_name: item.template_name,
     };
    
 
