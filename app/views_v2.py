@@ -501,12 +501,6 @@ class FinalizeOrReject(APIView):
                         register_finalized(link_id)
                     if item_type == "document" or item_type == "clone":
                         background.document_processing()
-                        # send mail if completed
-                        if check_last_finalizer(user, user_type, process):
-                            subject = f"Completion of {process['process_title']} Processing"
-                            email = "morvinian@gmail.com" #Placeholder
-                            dowell_email_sender(process["created_by"], email, subject, email_content=PROCESS_COMPLETION_MAIL)
-
                         item = single_query_clones_collection({"_id": item_id})
                         if item:
                             if item.get("document_state") == "finalized":
@@ -545,17 +539,17 @@ class FinalizeOrReject(APIView):
                                     )
                             elif item.get("document_state") == "processing":
                                 meta_id = get_metadata_id(item_id, item_type)
+
+                        if check_last_finalizer(user, user_type, process):
+                            subject = f"Completion of {process['process_title']} Processing"
+                            email = "morvinian@gmail.com" #Placeholder
+                            dowell_email_sender(process["created_by"], email, subject, email_content=PROCESS_COMPLETION_MAIL)
+
                         return Response(
                             "document processed successfully", status.HTTP_200_OK
                         )
                     elif item_type == "template":
                         background.template_processing()
-                        # send mail if completed
-                        if check_last_finalizer(user, user_type, process):
-                            subject = f"Completion of {process['process_title']} Processing"
-                            email = "morvinian@gmail.com" #placeholder
-                            dowell_email_sender(process["created_by"], email, subject, email_content=PROCESS_COMPLETION_MAIL)
-
                         item = single_query_template_collection({"_id": item_id})
                         if item:
                             if item.get("template_state") == "saved":
@@ -572,6 +566,12 @@ class FinalizeOrReject(APIView):
                             elif item.get("template_state") == "draft":
                                 meta_id = get_metadata_id(item_id, item_type)
                                 update_metadata(meta_id, "draft", item_type)
+
+                        if check_last_finalizer(user, user_type, process):
+                            subject = f"Completion of {process['process_title']} Processing"
+                            email = "morvinian@gmail.com" #Placeholder
+                            dowell_email_sender(process["created_by"], email, subject, email_content=PROCESS_COMPLETION_MAIL)
+
                         return Response(
                             "template processed successfully", status.HTTP_200_OK
                         )

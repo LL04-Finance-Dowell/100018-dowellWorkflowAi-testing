@@ -519,15 +519,12 @@ def check_all_finalized_true(data, process_type) -> bool:
 
 def check_progress(process_id):
     steps = single_query_process_collection({"_id": process_id})["process_steps"]
-    steps_count = 0
+    steps_count = len(steps)
     accessed = 0
-    for item in steps:
-        steps_count += 1
-        step_document_clone_map = item.get("stepDocumentCloneMap", [])
-        for clone in step_document_clone_map:
-            for key, value in clone.items():
-                if key == "accessed" and value == True:
-                    accessed += 1
+    for step in steps:
+        step_clone_map = step.get("stepDocumentCloneMap", [])
+        if check_all_accessed(step_clone_map):
+            accessed += 1
 
     percentage_progress = round((accessed / steps_count * 100), 2)
     return percentage_progress
@@ -622,7 +619,6 @@ def update_signed(signers_list: list, member: str, status: bool) -> list:
 def check_all_accessed(dic):
     return all([item.get("accessed") for item in dic])
 
-
 def get_link(user, role, links):
     for link in links:
         if link.get(user):
@@ -716,21 +712,34 @@ def dowell_email_sender(name, email, subject, email_content):
 
     requests.post(email_url, data=payload)
 
-def check_last_finalizer(user_type, user, process)->bool:
-    last_step = process["process_steps"][len(process["process_steps"])-1]
+def check_last_finalizer(user, user_type, process)->bool:
+    steps = process["process_steps"]
+    non_skipped_steps = []
+
+    for step in steps:
+        if step.get("skipStep") == False:
+            non_skipped_steps.append(step)
+
+    last_step = non_skipped_steps[len(non_skipped_steps)-1]
+    step_clone_map = last_step.get("stepDocumentCloneMap", [])
 
     if user_type == "team":
         for data in last_step["stepTeamMembers"]:
             if data.get("member") == user:
-                return True
+                if not check_all_accessed(step_clone_map):
+                    return True
+            
     elif user_type == "user":
         for data in last_step["stepUserMembers"]:
             if data.get("member") == user:
-                return True
+                if not check_all_accessed(step_clone_map):
+                    return True
+            
     elif user_type == "public":
        for data in last_step["stepPublicMembers"]:
             if data.get("member") == user:
-                return True
+                if not check_all_accessed(step_clone_map):
+                    return True
     else:
         return False
 
