@@ -726,19 +726,19 @@ def check_last_finalizer(user, user_type, process)->bool:
     if user_type == "team":
         for data in last_step["stepTeamMembers"]:
             if data.get("member") == user:
-                if not check_all_accessed(step_clone_map):
+                if check_all_accessed(step_clone_map):
                     return True
             
     elif user_type == "user":
         for data in last_step["stepUserMembers"]:
             if data.get("member") == user:
-                if not check_all_accessed(step_clone_map):
+                if check_all_accessed(step_clone_map):
                     return True
             
     elif user_type == "public":
        for data in last_step["stepPublicMembers"]:
             if data.get("member") == user:
-                if not check_all_accessed(step_clone_map):
+                if check_all_accessed(step_clone_map):
                     return True
     else:
         return False
