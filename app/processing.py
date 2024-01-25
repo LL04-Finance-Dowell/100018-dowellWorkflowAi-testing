@@ -230,11 +230,13 @@ class HandleProcess:
                 "item_type": item_type,
             }
         )
+        # --------- Not used so I will scrap soon - Edwin ------
         HandleProcess.notify(
             auth_name, item_id, portfolio, company_id, utp_link, org_name
         )
         utp_code = HandleProcess.generate_qrcode(utp_link)
         return utp_link, utp_code
+        # return utp_link
 
     def get_editor_link(payload):
         link = requests.post(
@@ -439,18 +441,19 @@ class HandleProcess:
             steps,
             "processing",
         )
-        Thread(
-            target=lambda: save_to_qrcode_collection(
-                {
-                    "qrcodes": qrcodes,
-                    "process_id": self.process["_id"],
-                    "item_id": clone_ids,
-                    "processing_action": self.process["processing_action"],
-                    "process_title": self.process["process_title"],
-                    "company_id": self.process["company_id"],
-                }
-            )
-        ).start()
+        # Nobody use this feature so I turn it off - @Edwin
+        # Thread(
+        #     target=lambda: save_to_qrcode_collection(
+        #         {
+        #             "qrcodes": qrcodes,
+        #             "process_id": self.process["_id"],
+        #             "item_id": clone_ids,
+        #             "processing_action": self.process["processing_action"],
+        #             "process_title": self.process["process_title"],
+        #             "company_id": self.process["company_id"],
+        #         }
+        #     )
+        # ).start()
         if len(public_links) > 10:
             links = links[:10]
         return {"process_id": process_id, "links": links, "master_link": m_link, "master_code": m_code}
