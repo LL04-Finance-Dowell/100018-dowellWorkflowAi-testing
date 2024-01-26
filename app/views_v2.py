@@ -441,18 +441,18 @@ class FinalizeOrReject(APIView):
                     status=status.HTTP_400_BAD_REQUEST,
                 )
         check, current_state = is_finalized(item_id, item_type)
-        # if item_type == "document" or item_type == "clone":
-        #     if check and current_state != "processing":
-        #         return Response(
-        #             f"document already processed as `{current_state}`!",
-        #             status.HTTP_200_OK,
-        #         )
-        # elif item_type == "template":
-        #     if check and current_state != "draft":
-        #         return Response(
-        #             f"template already processed as `{current_state}`!",
-        #             status.HTTP_200_OK,
-        #         )
+        if item_type == "document" or item_type == "clone":
+            if check and current_state != "processing":
+                return Response(
+                    f"document already processed as `{current_state}`!",
+                    status.HTTP_200_OK,
+                )
+        elif item_type == "template":
+            if check and current_state != "draft":
+                return Response(
+                    f"template already processed as `{current_state}`!",
+                    status.HTTP_200_OK,
+                )
         if item_type == "clone":
             signers_list = single_query_clones_collection({"_id": item_id}).get(
                 "signed_by"
@@ -1559,6 +1559,30 @@ class Template(APIView):
                     status.HTTP_200_OK,
                 )
 
+        else:
+            templates = bulk_query_template_collection(
+                {"company_id": company_id, "data_type": data_type}
+            )
+            templates_list = []
+            if templates:
+                templates_list = [
+                    {
+                        "folders": item.get("folders", []),
+                        "company_id": item["company_id"],
+                        "data_type": item["data_type"],
+                        "auth_viewers": item.get("auth_viewers", []),
+                        "_id": item["_id"],
+                        "template_type": item.get("template_type", "draft"),
+                        "template_name": item["template_name"],
+                        "created_by": item["created_by"],
+                    }
+                    for item in templates
+                ]
+            return Response(
+                {"templates": templates_list},
+                status.HTTP_200_OK,
+    )
+
 
 class TemplateLink(APIView):
     def get(self, request, template_id):
@@ -1566,6 +1590,7 @@ class TemplateLink(APIView):
         if not validate_id(template_id):
             return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
         template = single_query_template_collection({"_id": template_id})
+        print(template)
         if template.get("is_private") == True:
             input_password = request.query_params.get("password")
             if input_password == None:
