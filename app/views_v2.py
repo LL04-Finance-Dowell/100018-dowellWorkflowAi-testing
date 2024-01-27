@@ -35,6 +35,8 @@ from app.helpers import (
     update_signed,
     check_progress,
     cloning_process,
+    check_last_finalizer,
+    dowell_email_sender
 )
 from app.mongo_db_connection import (
     add_document_to_folder,
@@ -92,7 +94,7 @@ from app.mongo_db_connection import (
 )
 from app.utils import notification_cron
 
-from .constants import EDITOR_API
+from .constants import EDITOR_API, PROCESS_COMPLETION_MAIL
 from rest_framework.views import APIView
 import spacy
 from datetime import datetime
@@ -439,18 +441,18 @@ class FinalizeOrReject(APIView):
                     status=status.HTTP_400_BAD_REQUEST,
                 )
         check, current_state = is_finalized(item_id, item_type)
-        if item_type == "document" or item_type == "clone":
-            if check and current_state != "processing":
-                return Response(
-                    f"document already processed as `{current_state}`!",
-                    status.HTTP_200_OK,
-                )
-        elif item_type == "template":
-            if check and current_state != "draft":
-                return Response(
-                    f"template already processed as `{current_state}`!",
-                    status.HTTP_200_OK,
-                )
+        # if item_type == "document" or item_type == "clone":
+        #     if check and current_state != "processing":
+        #         return Response(
+        #             f"document already processed as `{current_state}`!",
+        #             status.HTTP_200_OK,
+        #         )
+        # elif item_type == "template":
+        #     if check and current_state != "draft":
+        #         return Response(
+        #             f"template already processed as `{current_state}`!",
+        #             status.HTTP_200_OK,
+        #         )
         if item_type == "clone":
             signers_list = single_query_clones_collection({"_id": item_id}).get(
                 "signed_by"
@@ -539,6 +541,11 @@ class FinalizeOrReject(APIView):
                                     )
                             elif item.get("document_state") == "processing":
                                 meta_id = get_metadata_id(item_id, item_type)
+                        if check_last_finalizer(user, user_type, process):
+                            subject = f"Completion of {process['process_title']} Processing"
+                            email = "morvinian@gmail.com" #Placeholder
+                            dowell_email_sender(process["created_by"], email, subject, email_content=PROCESS_COMPLETION_MAIL)
+
                         return Response(
                             "document processed successfully", status.HTTP_200_OK
                         )
@@ -560,6 +567,12 @@ class FinalizeOrReject(APIView):
                             elif item.get("template_state") == "draft":
                                 meta_id = get_metadata_id(item_id, item_type)
                                 update_metadata(meta_id, "draft", item_type)
+
+                        if check_last_finalizer(user, user_type, process):
+                            subject = f"Completion of {process['process_title']} Processing"
+                            email = "morvinian@gmail.com" #Placeholder
+                            dowell_email_sender(process["created_by"], email, subject, email_content=PROCESS_COMPLETION_MAIL)
+
                         return Response(
                             "template processed successfully", status.HTTP_200_OK
                         )
