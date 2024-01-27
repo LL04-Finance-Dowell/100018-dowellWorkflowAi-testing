@@ -4,6 +4,7 @@ import hashlib
 
 import bson
 import requests
+from datetime import datetime
 
 from app.constants import EDITOR_API, MASTERLINK_URL, PUBLIC_LOGIN_API
 from app.models import FavoriteDocument, FavoriteTemplate, FavoriteWorkflow
@@ -237,7 +238,7 @@ def cloning_process(process_id, created_by, creator_portfolio):
         return
 
 
-def access_editor(item_id, item_type):
+def access_editor(item_id, item_type, username="", portfolio=""):
     team_member_id = (
         "11689044433"
         if item_type == "document"
@@ -292,8 +293,11 @@ def access_editor(item_id, item_type):
             else "template",
             "flag": "editing",
             "name": name,
+            "username": username,
+            "portfolio": portfolio,
+            "time": str(datetime.utcnow()),
             "command": "update",
-            "update_field": {field: "", "content": "", "page": ""},
+            "update_field": {field: "", "content": "", "page": "", "edited_by": username, "portfolio": portfolio, "edited_on": str(datetime.utcnow())},
         },
     }
     try:
