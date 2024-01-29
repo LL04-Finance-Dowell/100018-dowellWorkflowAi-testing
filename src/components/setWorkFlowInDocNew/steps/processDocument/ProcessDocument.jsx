@@ -33,19 +33,21 @@ import { productName } from "../../../../utils/helpers";
 //import reset copy data 
 import { resetCopyData } from "../../../../features/processCopyReducer";
 
-const ProcessDocument = ({ savedProcess, Process_title, setProcess_title }) => {
+const ProcessDocument = ({ savedProcess, Process_title, setProcess_title, addWorkflowStep }) => {
   // const [ScrollView , SetScrollView] = useState();
 
   // useEffect(() => {
   //   setCurrentProcess(processDocument[0]);
   // }, []);
 
-    ///import which doc or template approval
-    // const whichApproval = useSelector((state)=> state.copyProcess.whichApproval)
-    const currentURL = window.location.href;
-    const parts = currentURL.split('/'); 
-    const whichApproval =  parts[parts.length - 1];
-    const whichApprovalType = whichApproval == 'new-set-workflow-document' ? 'document' : 'template'
+  ///import which doc or template approval
+  // const whichApproval = useSelector((state)=> state.copyProcess.whichApproval)
+  const currentURL = window.location.href;
+  const parts = currentURL.split('/');
+  const whichApproval = parts[parts.length - 1];
+  const whichApprovalType = whichApproval == 'new-set-workflow-document' ? 'document' : 'template'
+
+  console.log("addWorkflowStepProcess", addWorkflowStep)
 
   useEffect(() => {
     if (!savedProcess) return;
@@ -63,7 +65,7 @@ const ProcessDocument = ({ savedProcess, Process_title, setProcess_title }) => {
   const { userDetail } = useSelector((state) => state.auth);
   const {
     currentDocToWfs,
-
+    DocumentId,
     processSteps,
     docCurrentWorkflow,
     tableOfContentForStep,
@@ -74,6 +76,7 @@ const ProcessDocument = ({ savedProcess, Process_title, setProcess_title }) => {
     errorsCheckedInNewProcess,
     popupIsOpen,
     creditResponse,
+    ProcessDetail,
   } = useSelector((state) => state.app);
 
   const [newProcessLoading, setNewProcessLoading] = useState(false);
@@ -96,6 +99,7 @@ const ProcessDocument = ({ savedProcess, Process_title, setProcess_title }) => {
   const [isLoading, setIsLoading] = useState(false);
 
   const handleProcessBtnClick = async () => {
+    console.log("processSteps", processSteps[0].steps, docCurrentWorkflow.workflows.workflow_title, ProcessDetail)
     if (!processOptionSelection || processOptionSelection === "Select") return;
     dispatch(resetCopyData())
     if (!userDetail) return;
@@ -150,7 +154,7 @@ const ProcessDocument = ({ savedProcess, Process_title, setProcess_title }) => {
         publicMembersSelectedForProcess,
         userMembersSelectedForProcess,
         true,
-     
+
       );
       setProcessObjectToSave(processObjToSave);
       dispatch(setAllowErrorChecksStatusUpdateForNewProcess(true));
@@ -212,45 +216,45 @@ const ProcessDocument = ({ savedProcess, Process_title, setProcess_title }) => {
             // console.log("the response from adding new process is ", response);
 
             // console.log('the user Details are ', userDetail)
-            if(processObjToPost.workflows[0].workflows.steps[0].stepPublicMembers.length > 0){
-              try{
+            if (processObjToPost.workflows[0].workflows.steps[0].stepPublicMembers.length > 0) {
+              try {
                 const company_id = userDetail?.portfolio_info?.length > 1 ? userDetail?.portfolio_info.find(portfolio => portfolio.product === productName)?.org_id : userDetail?.portfolio_info[0]?.org_id
-                const publicData ={
+                const publicData = {
                   "process_id": response.process_id,
                   "member": userDetail.userinfo.username,
                   "company_id": company_id,
-                  "qr_ids":processObjToPost.workflows[0].workflows.steps[0].stepPublicMembers
-                   }
-                  const requestOptions = {
-                    method: 'POST',
-                    headers: {
-                      'Content-Type': 'application/json', 
-                      
-                    },
-                    body: JSON.stringify(publicData), 
-                  };
-                  fetch(`https://100094.pythonanywhere.com/v2/processes/${company_id}/public/`, requestOptions)
+                  "qr_ids": processObjToPost.workflows[0].workflows.steps[0].stepPublicMembers
+                }
+                const requestOptions = {
+                  method: 'POST',
+                  headers: {
+                    'Content-Type': 'application/json',
+
+                  },
+                  body: JSON.stringify(publicData),
+                };
+                fetch(`https://100094.pythonanywhere.com/v2/processes/${company_id}/public/`, requestOptions)
                   .then((response) => {
                     if (!response.ok) {
                       throw new Error('Network response was not ok');
                     }
                     return response.json();
-                    
+
                   })
                   .then((data) => {
-                  
+
                     // console.log('Response from the POST request to add to public is :', data);
                   })
                   .catch((error) => {
-                    
+
                     console.error('Error:', error);
                   });
               }
-              catch(err){
+              catch (err) {
                 console.log(err.response)
               }
             }
-        
+
 
 
             dispatch(setAllowErrorChecksStatusUpdateForNewProcess(true));
@@ -298,8 +302,113 @@ const ProcessDocument = ({ savedProcess, Process_title, setProcess_title }) => {
         console.log(error);
         toast.info(error.response?.data?.message);
       });
-      setIsLoading(false);
+    setIsLoading(false);
   };
+
+  const updateProcessBtnClick = async () => {
+    if (processSteps.length < 1) {
+      return toast.info("You have not configured steps for any workflow");
+    } 
+    else 
+    {
+      console.log("processSteps", processSteps[0].steps, docCurrentWorkflow.workflows.workflow_title, ProcessDetail)
+
+      const apiUrl = `https://100094.pythonanywhere.com/v2/processes/${ProcessDetail._id}/`;
+      // const apiUrl = `https://100094.pythonanywhere.com/v2/processes/64bb6c7c1da82ab75d3c75b8/`;
+
+
+      const payload = {
+        step_id: DocumentId.stepNumber || 1,
+        workflows: [
+          {
+            workflows: {
+              workflow_title: docCurrentWorkflow.workflows.workflow_title || "untitled process",
+              // steps: [
+              // 	{
+              // 		stepCloneCount: 1,
+              // 		stepTaskType: "assign_task",
+              // 		stepRights: "add_edit",
+              // 		stepProcessingOrder: "no_order",
+              // 		stepTaskLimitation: "portfolios_assigned_on_or_before_step_start_date_and_time",
+              // 		stepActivityType: "team_task",
+              // 		stepDisplay: "in_all_steps",
+              // 		stepName: "Manager",
+              // 		stepRole: "Manager",
+              // 		stepPublicMembers: [
+              // 			{
+              // 				"member": "Uchechukwu",
+              // 				"portfolio": "BackendDev1"
+              // 			}
+              // 			// {
+              // 			//     "member": "PublicMem",
+              // 			//     "portfolio": "No_portf"
+              // 			// }
+              // 		],
+              // 		stepTeamMembers: [],
+              // 		stepUserMembers: [],
+              // 		stepDocumentCloneMap: [],
+              // 		stepNumber: 1,
+              // 		stepDocumentMap: [
+              // 			"t1"
+              // 		],
+              // 		permitInternalWorkflow: false,
+              // 		skipStep: false,
+              // 		stepLocation: "any"
+              // 	},
+              // 	{
+              // 		stepCloneCount: 2,
+              // 		stepTaskType: "assign_task",
+              // 		stepRights: "add_edit",
+              // 		stepProcessingOrder: "no_order",
+              // 		stepTaskLimitation: "portfolios_assigned_on_or_before_step_start_date_and_time",
+              // 		stepActivityType: "team_task",
+              // 		stepDisplay: "in_all_steps",
+              // 		stepName: "Customer",
+              // 		stepRole: "Customer",
+              // 		stepPublicMembers: [],
+              // 		stepTeamMembers: [
+              // 			// {
+              // 			//     "member": "PublicMem",
+              // 			//     "portfolio": "No_portf"
+              // 			// }
+              // 			{
+              // 				member: "ayoolaa_",
+              // 				portfolio: "ThePro"
+              // 			}
+              // 		],
+              // 		stepUserMembers: [],
+              // 		stepDocumentCloneMap: [],
+              // 		stepNumber: 2,
+              // 		stepDocumentMap: [
+              // 			"t2"
+              // 		],
+              // 		permitInternalWorkflow: false,
+              // 		skipStep: false,
+              // 		stepLocation: "any"
+              // 	}
+              // ],
+              steps: processSteps[0].steps
+            }
+          }
+        ]
+      };
+
+      console.log('payload', payload)
+
+      // Making a POST request with Axios
+      axios.put(apiUrl, payload)
+        .then((response) => {
+          // Handle the API response here
+          console.log('API Response:', response.data);
+          toast.success("Process Update Successfully")
+        })
+        .catch((error) => {
+          // Handle any errors here
+          toast.error(error.response.data)
+          console.error('API Error:', error.response);
+        });
+    }
+  }
 
   const handleSaveForLaterBtnClick = () => {
     const processObjToSaveCopy = structuredClone(processObjToSave);
@@ -499,9 +608,14 @@ const ProcessDocument = ({ savedProcess, Process_title, setProcess_title }) => {
                 style={{ height: "40px" }}
               />
             ) : (
-              <button hoverBg="success" onClick={handleProcessBtnClick} disabled={isLoading}>
-                {t("Save / Start Process")}
-              </button>
+              addWorkflowStep ?
+                <button hoverBg="success" onClick={updateProcessBtnClick} disabled={isLoading}>
+                  {t("Update Process")}
+                </button>
+                :
+                <button hoverBg="success" onClick={handleProcessBtnClick} disabled={isLoading}>
+                  {t("Save / Start Process")}
+                </button>
             )}
           </div>
         </div>

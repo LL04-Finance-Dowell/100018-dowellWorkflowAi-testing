@@ -639,7 +639,7 @@ const SectionBox = ({
                           isCompletedDoc={isCompleted}
                           isRejectedDoc={isRejected}
                           isReport={isReport}
-                          knowledgeCenter={knowledgeCenter || true}
+                          knowledgeCenter={knowledgeCenter}
                         />
                       ))}
                 </div>

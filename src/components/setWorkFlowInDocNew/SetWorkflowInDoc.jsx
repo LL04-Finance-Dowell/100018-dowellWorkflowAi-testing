@@ -46,7 +46,7 @@ import ImgFive from '../../assets/sec5.gif';
 import ImgSix from '../../assets/sec6.gif';
 import { toggleHighlight } from '../../features/processCopyReducer';
 
-const SetWorkflowInDoc = () => {
+const SetWorkflowInDoc = ({addWorkflowStep}) => {
   const dispatch = useDispatch();
   const { t } = useTranslation();
   const { userDetail, session_id } = useSelector((state) => state.auth);
@@ -318,6 +318,7 @@ useEffect(()=>{
  
 },[showHighlight])
   
+console.log("props.addWorkflowStep Mubeen", addWorkflowStep)
 
   return (
     <WorkflowLayout>
@@ -375,6 +376,7 @@ useEffect(()=>{
                 setProcess_title={setProcess_title}
                 driverCounter={driverCounter}
                 setDriverCounter={setDriverCounter}
+                addWorkflowStep={addWorkflowStep}
               />
             </>
           ) : (
@@ -395,7 +397,7 @@ useEffect(()=>{
             <div id='hidenImg'  style={{ display: 'none', position: 'absolute', top: 0, left: 0, zIndex: 100000 }}>
               <img id='selectDocOne' src={ImgOne} width={'100%'} height={'100%'} />
             </div>
-            <SelectDoc driverCounter={driverCounter} setDriverCounter={setDriverCounter}/>
+            <SelectDoc driverCounter={driverCounter} setDriverCounter={setDriverCounter} addWorkflowStep={addWorkflowStep}/>
           </div>
           
             <ContentMapOfDoc />
@@ -412,7 +414,7 @@ useEffect(()=>{
               <div id='hidenImgThree'  style={{ display: 'none', position: 'absolute', top: 150, left: 0, zIndex: 100000 }}>
                 <img id='connectWftoDocOne' src={ImgThree} width={'100%'} height={'100%'} />
               </div>
-              <ConnectWorkFlowToDoc driverCounter={driverCounter} setDriverCounter={setDriverCounter}/>
+              <ConnectWorkFlowToDoc driverCounter={driverCounter} setDriverCounter={setDriverCounter} addWorkflowStep={addWorkflowStep}/>
             </div>
             <div style={{ position: 'relative' }}>
               <div className={styles.diveder}></div>
@@ -442,6 +444,7 @@ useEffect(()=>{
                 Process_title={Process_title}
                 setProcess_title={setProcess_title}
                 driverCounter={driverCounter} setDriverCounter={setDriverCounter}
+                addWorkflowStep={addWorkflowStep}
               />
             </div>
           </>
