@@ -417,15 +417,11 @@ class ProcessVerification(APIView):
             )
 
         editor_link = handler.verify_access_v2(
-            auth_role, auth_user, user_type, collection_id
+            auth_role, auth_user, user_type, collection_id, prev_viewers, next_viewers
         )
         if editor_link:
             return Response(
-                {
-                    "link": editor_link,
-                    "previous": prev_viewers,
-                    "next":next_viewers
-                }, 
+                editor_link, 
                 status.HTTP_200_OK)
         else:
             return Response(

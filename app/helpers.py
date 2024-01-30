@@ -655,10 +655,10 @@ def create_document_helper(
     """_summary_
 
     Args:
-        created_by (_type_): _description_
-        portfolio (_type_): _description_
-        company_id (_type_): _description_
-        template_id (_type_): _description_
+        created_by (str): _description_
+        portfolio (str): _description_
+        company_id (str): _description_
+        template_id (str): _description_
     """
     try:
         content = single_query_template_collection({"_id": template_id})["content"]
