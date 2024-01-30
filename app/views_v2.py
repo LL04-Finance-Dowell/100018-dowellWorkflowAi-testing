@@ -390,6 +390,8 @@ class ProcessVerification(APIView):
         # Get previous and next users/viewers
         prev_viewers, next_viewers = get_prev_and_next_users(process, auth_user, auth_role, user_type)
         
+        user_email = request.data.get("user_email") if request.data.get("user_email") else ""
+        
         process["org_name"] = org_name
         handler = processing.HandleProcess(process)
         location = handler.verify_location(
@@ -417,7 +419,7 @@ class ProcessVerification(APIView):
             )
 
         editor_link = handler.verify_access_v2(
-            auth_role, auth_user, user_type, collection_id, prev_viewers, next_viewers
+            auth_role, auth_user, user_type, collection_id, prev_viewers, next_viewers, user_email
         )
         if editor_link:
             return Response(

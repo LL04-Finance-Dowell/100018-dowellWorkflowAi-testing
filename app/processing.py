@@ -572,7 +572,7 @@ class HandleProcess:
                 return editor_link
     
     # Verify_Access V2
-    def verify_access_v2(self, auth_role, user_name, user_type, collection_id=None, prev_viewers=None, next_viewers=None):
+    def verify_access_v2(self, auth_role, user_name, user_type, collection_id=None, prev_viewers=None, next_viewers=None, user_email=""):
         clone_id = None
         doc_map = None
         right = None
@@ -639,6 +639,7 @@ class HandleProcess:
                         "_id": clone_id,
                         "action": item_type,
                         "authorized": user_name,
+                        "user_email": user_email,
                         "user_type": user_type,
                         "document_map": doc_map,
                         "document_right": right,
