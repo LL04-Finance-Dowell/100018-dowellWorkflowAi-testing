@@ -35,6 +35,9 @@ from app.helpers import (
     remove_members_from_steps,
     update_signed,
     check_progress,
+    cloning_process,
+    check_last_finalizer,
+    dowell_email_sender
 )
 from app.mongo_db_connection import (
     add_document_to_folder,
@@ -92,7 +95,7 @@ from app.mongo_db_connection import (
 )
 from app.utils import notification_cron
 
-from .constants import EDITOR_API
+from .constants import EDITOR_API, PROCESS_COMPLETION_MAIL
 from rest_framework.views import APIView
 import spacy
 from datetime import datetime
@@ -289,8 +292,7 @@ class ProcessDetail(APIView):
                 process.update({"links": links_object["links"]})
         process["progress"] = progress
         return Response(process, status.HTTP_200_OK)
-    
-    
+
     def put(self, request, process_id):
         """_summary_
         Args:
@@ -299,25 +301,28 @@ class ProcessDetail(APIView):
         """
         if not validate_id(process_id):
             return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
-        
+
         if not request.data:
             return Response("Some parameters are missing", status.HTTP_400_BAD_REQUEST)
-        
+
         workflow = request.data.get("workflows")
         step_id = request.data.get("step_id")
         step_id -= 1
-        
+
         process = single_query_process_collection({"_id": process_id})
         steps = process.get("process_steps")
         state = "processing_state"
-        
+
         step_content = steps[step_id]
         if step_content.get("permitInternalWorkflow") == True:
             step_content.update({"workflows": workflow})
             update_process(process_id, steps, state)
             return Response(process, status.HTTP_200_OK)
         else:
-            return Response("Internal workflow is not permitted in this step", status.HTTP_403_FORBIDDEN)
+            return Response(
+                "Internal workflow is not permitted in this step",
+                status.HTTP_403_FORBIDDEN,
+            )
 
 
 class ProcessLink(APIView):
@@ -449,18 +454,18 @@ class FinalizeOrReject(APIView):
                     status=status.HTTP_400_BAD_REQUEST,
                 )
         check, current_state = is_finalized(item_id, item_type)
-        if item_type == "document" or item_type == "clone":
-            if check and current_state != "processing":
-                return Response(
-                    f"document already processed as `{current_state}`!",
-                    status.HTTP_200_OK,
-                )
-        elif item_type == "template":
-            if check and current_state != "draft":
-                return Response(
-                    f"template already processed as `{current_state}`!",
-                    status.HTTP_200_OK,
-                )
+        # if item_type == "document" or item_type == "clone":
+        #     if check and current_state != "processing":
+        #         return Response(
+        #             f"document already processed as `{current_state}`!",
+        #             status.HTTP_200_OK,
+        #         )
+        # elif item_type == "template":
+        #     if check and current_state != "draft":
+        #         return Response(
+        #             f"template already processed as `{current_state}`!",
+        #             status.HTTP_200_OK,
+        #         )
         if item_type == "clone":
             signers_list = single_query_clones_collection({"_id": item_id}).get(
                 "signed_by"
@@ -549,6 +554,11 @@ class FinalizeOrReject(APIView):
                                     )
                             elif item.get("document_state") == "processing":
                                 meta_id = get_metadata_id(item_id, item_type)
+                        if check_last_finalizer(user, user_type, process):
+                            subject = f"Completion of {process['process_title']} Processing"
+                            email = "morvinian@gmail.com" #Placeholder
+                            dowell_email_sender(process["created_by"], email, subject, email_content=PROCESS_COMPLETION_MAIL)
+
                         return Response(
                             "document processed successfully", status.HTTP_200_OK
                         )
@@ -570,6 +580,12 @@ class FinalizeOrReject(APIView):
                             elif item.get("template_state") == "draft":
                                 meta_id = get_metadata_id(item_id, item_type)
                                 update_metadata(meta_id, "draft", item_type)
+
+                        if check_last_finalizer(user, user_type, process):
+                            subject = f"Completion of {process['process_title']} Processing"
+                            email = "morvinian@gmail.com" #Placeholder
+                            dowell_email_sender(process["created_by"], email, subject, email_content=PROCESS_COMPLETION_MAIL)
+
                         return Response(
                             "template processed successfully", status.HTTP_200_OK
                         )
@@ -720,6 +736,21 @@ class ProcessImport(APIView):
             "process_id": res_process["inserted_id"],
         }
         return Response(response_data, status.HTTP_201_CREATED)
+
+
+class ProcessCopies(APIView):
+    def post(self, request, process_id):
+        if not validate_id(process_id) or not request.data:
+            return Response("something went wrong!", status.HTTP_400_BAD_REQUEST)
+        if request.method == "POST":
+            if not request.data:
+                return Response("something went wrong!", status.HTTP_400_BAD_REQUEST)
+            process_id = cloning_process(
+                process_id, request.data["created_by"], request.data["portfolio"]
+            )
+            if process_id is None:
+                return Response(status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response("success created a process clone", status.HTTP_201_CREATED)
 
 
 class NewWorkflow(APIView):
@@ -991,27 +1022,34 @@ class DocumentLink(APIView):
         if not validate_id(document_id):
             return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
         document = single_query_document_collection({"_id": document_id})
-        if document.get("is_private") == True:
-            input_password = request.query_params.get("password")
-            if input_password == None:
-                return Response(
-                    "Missing password argument", status.HTTP_422_UNPROCESSABLE_ENTITY
-                )
-
-            valid_password_hash = document.get("password")
-            if compare_hash(valid_password_hash, input_password) == False:
-                return Response("Incorrect password", status.HTTP_401_UNAUTHORIZED)
-        editor_link = access_editor(document_id, "document")
-        if not editor_link:
-            return Response(status.HTTP_500_INTERNAL_SERVER_ERROR)
-        return Response(editor_link, status.HTTP_200_OK)
+        if document:
+            document_privacy = document.get("is_private", False)
+            if document_privacy == True:
+                input_password = request.query_params.get("password")
+                if input_password == None:
+                    return Response(
+                        "Missing password argument",
+                        status.HTTP_422_UNPROCESSABLE_ENTITY,
+                    )
+                valid_password_hash = document.get("password")
+                if compare_hash(valid_password_hash, input_password) == False:
+                    return Response("Incorrect password", status.HTTP_401_UNAUTHORIZED)
+                  
+            username = request.query_params.get("username", "")
+            portfolio = request.query_params.get("portfolio", "")
+            
+            editor_link = access_editor(document_id, "document", username=username, portfolio=portfolio)
+            if not editor_link:
+                return Response(status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response(editor_link, status.HTTP_200_OK)
+        return Response("Document could not be accessed!", status.HTTP_404_NOT_FOUND)
 
 
 class DocumentDetail(APIView):
     def get(self, request, item_id):
         """Retrieves the document object for a specific document"""
         document_type = request.query_params.get("document_type")
-        if not validate_id(item_id):
+        if not validate_id(item_id) or not document_type:
             return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
         if document_type == "document":
             document = single_query_document_collection({"_id": item_id})
@@ -1019,6 +1057,7 @@ class DocumentDetail(APIView):
         if document_type == "clone":
             document = single_query_clones_collection({"_id": item_id})
             return Response(document, status.HTTP_200_OK)
+        return Response("Document could not be accessed!", status.HTTP_404_NOT_FOUND)
 
 
 class NewMetadata(APIView):
@@ -1128,17 +1167,30 @@ class ItemContent(APIView):
         if not validate_id(item_id):
             return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
         if item_type == "template":
-            my_dict = ast.literal_eval(
-                single_query_template_collection({"_id": item_id})["content"]
-            )[0][0]
+            try:
+                to_parse = single_query_template_collection({"_id": item_id})["content"]
+                # Try ast.literal_eval()
+                my_dict = ast.literal_eval(to_parse)[0][0]
+            except Exception as e:
+                # Use json.loads()
+                my_dict = json.loads(to_parse)[0][0]
         if item_type == "document":
-            my_dict = ast.literal_eval(
-                single_query_document_collection({"_id": item_id})["content"]
-            )[0][0]
+            try:
+                to_parse = single_query_document_collection({"_id": item_id})["content"]
+                # Try ast.literal_eval()
+                my_dict = ast.literal_eval(to_parse)[0][0]
+            except Exception as e:
+                # Use json.loads()
+                my_dict = json.loads(to_parse)[0][0]
         if item_type == "clone":
-            my_dict = ast.literal_eval(
-                single_query_clones_collection({"_id": item_id})["content"]
-            )[0][0]
+            try:
+                to_parse = single_query_clones_collection({"_id": item_id})["content"]
+                # Try ast.literal_eval()
+                my_dict = ast.literal_eval(to_parse)[0][0]
+            except Exception as e:
+                # Use json.loads()
+                my_dict = json.loads(to_parse)[0][0]
+
         all_keys = [i for i in my_dict.keys()]
         for i in all_keys:
             temp_list = []
@@ -1783,23 +1835,70 @@ class FolderDetail(APIView):
         return Response(status.HTTP_204_NO_CONTENT)
 
 
-class DowellFolders(APIView):
-    def get(self, request, company_id):
+class DowellCenter(APIView):
+    def get(self, request, company_id, item_type):
         """Fetch Dowell Knowledge centre folders."""
         data_type = request.query_params.get("data_type")
         if not validate_id(company_id):
             return Response("Something went wrong!", status=status.HTTP_400_BAD_REQUEST)
-        folders = bulk_query_folder_collection (
-            {"company_id": company_id, "data_type": data_type}
-        )
-        
-        page = int(request.GET.get("page", 1))
-        folder_list = paginate(folders, page, 50)
- 
-        return Response(
-            {"templates": folder_list},
-            status=status.HTTP_200_OK,
-        )
+
+        if item_type == "templates":
+            templates = bulk_query_template_metadata_collection(
+                {"company_id": company_id, "data_type": data_type}
+            )
+            page = int(request.GET.get("page", 1))
+            templates = paginate(templates, page, 50)
+            template_list = [
+                {
+                    "_id": item["_id"],
+                    "template_name": item["template_name"],
+                    "collection_id": item["collection_id"],
+                }
+                for item in templates
+            ]
+            return Response(
+                {"templates": template_list},
+                status=status.HTTP_200_OK,
+            )
+
+        elif item_type == "documents":
+            cache_key = f"documents_{company_id}"
+            document_list = cache.get(cache_key)
+            if document_list is None:
+                document_list = bulk_query_document_metadata_collection(
+                    {"company_id": company_id, "data_type": data_type}
+                )
+                cache.set(cache_key, document_list, timeout=60)
+            page = int(request.GET.get("page", 1))
+            documents = paginate(document_list, page, 50)
+            document_list = [
+                {
+                    "_id": item["_id"],
+                    "document_name": item["document_name"],
+                    "collection_id": item["collection_id"],
+                }
+                for item in documents
+            ]
+            return Response(
+                {"documents": document_list},
+                status.HTTP_200_OK,
+            )
+
+        elif item_type == "folders":
+            folders = bulk_query_folder_collection(
+                {"company_id": company_id, "data_type": data_type}
+            )
+
+            page = int(request.GET.get("page", 1))
+            folder_list = paginate(folders, page, 50)
+
+            return Response(
+                {"templates": folder_list},
+                status=status.HTTP_200_OK,
+            )
+
+        else:
+            return Response("Invalid Item type!", status=status.HTTP_400_BAD_REQUEST)
 
 
 class NewPublicUser(APIView):

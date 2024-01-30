@@ -268,3 +268,23 @@ PUBLIC_CONNECTION_DICT = {
     "function_ID": "ABCDE",
     
 }
+
+PROCESS_COMPLETION_MAIL = ('''
+            <!DOCTYPE html>
+            <html>
+                <body>
+                    <div style="background-color:#eee;padding:10px 20px;">
+                        <h2 style="font-family:Georgia, 'Times New Roman', Times, serif;color#454349;">Process Completed</h2>
+                    </div>
+                    <div style="">
+                        <p>We are pleased to inform you that your process has been successfully completed. Thank you for using our services. 
+                            If you have any questions or need further assistance, feel free to contact us.
+                        </p>
+                    </div>
+
+                    <div>
+                        <p>Best regards,</br>Workflow AI team</p>
+                    </div> 
+                </body>
+            </html>
+    ''')
