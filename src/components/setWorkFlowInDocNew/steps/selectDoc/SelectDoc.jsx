@@ -50,6 +50,7 @@ const SelectDoc = ({ savedDoc, addWorkflowStep }) => {
   const currentURL = window.location.href;
   const parts = currentURL.split('/');
   const whichApproval = parts[parts.length - 1];
+  const whichApprovalStep = parts[parts.length - 1];
 
 
   const [selectedDocuments, setSelectedDocuments] = useState([]);
@@ -83,7 +84,7 @@ const SelectDoc = ({ savedDoc, addWorkflowStep }) => {
 
     dispatch(setOriginalDocumentsLoaded(false));
 
-    if (whichApproval == 'new-set-workflow-document') {
+    if (whichApproval == 'new-set-workflow-document' || whichApprovalStep == 'new-set-workflow-document-step') {
       const documentServices = new DocumentServices();
       documentServices.getAllOriginalDocuments(data.company_id, data.data_type)
         .then(res => {
@@ -111,7 +112,7 @@ const SelectDoc = ({ savedDoc, addWorkflowStep }) => {
 
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [whichApproval]);
+  }, [whichApproval, whichApprovalStep]);
 
 
 
@@ -158,10 +159,10 @@ const SelectDoc = ({ savedDoc, addWorkflowStep }) => {
   let stepDocument = originalDocuments?.filter((item) => item._id === ProcessDetail.parent_item_id);
 
   if(stepDocument){
-    stepDocument = originalDocuments[1];
+    stepDocument = originalDocuments[30];
   }
 
-  console.log("addWorkflowStep", addWorkflowStep,stepDocument , ProcessDetail, allDocumentsArray, originalDocuments)
+  console.log("addWorkflowStep", selectedDocuments,addWorkflowStep,stepDocument , ProcessDetail, allDocumentsArray, originalDocuments)
 
   return (
     <div
@@ -310,7 +311,7 @@ const SelectDoc = ({ savedDoc, addWorkflowStep }) => {
                               className={`${styles.swiper__slide__features} animate`}
                             >
                               <p className={styles.features__title}>
-                                {whichApproval == 'new-set-workflow-document' ? stepDocument?.document_name : stepDocument?.template_name}
+                                {whichApprovalStep == 'new-set-workflow-document-step' ? stepDocument?.document_name : stepDocument?.template_name}
                               </p>
                               <button
                                 onClick={() => handleAddSelectedDocuments(stepDocument)}
