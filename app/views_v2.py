@@ -25,6 +25,7 @@ from app.helpers import (
     create_favourite,
     get_hash,
     get_link,
+    get_prev_and_next_users,
     list_favourites,
     paginate,
     register_finalized,
@@ -377,12 +378,18 @@ class ProcessVerification(APIView):
                     status.HTTP_401_UNAUTHORIZED,
                 )
         process = single_query_process_collection({"_id": link_object["process_id"]})
+        
         if user_type == "public":
             for step in process["process_steps"]:
                 if step.get("stepRole") == auth_role:
                     for item in step["stepDocumentCloneMap"]:
                         if item.get(auth_user[0]):
+                            # Assign Collection ID 
                             collection_id = item.get(auth_user[0])
+                            
+        # Get previous and next users/viewers
+        prev_viewers, next_viewers = get_prev_and_next_users(process, auth_user, auth_role, user_type)
+        
         process["org_name"] = org_name
         handler = processing.HandleProcess(process)
         location = handler.verify_location(
@@ -410,10 +417,12 @@ class ProcessVerification(APIView):
             )
 
         editor_link = handler.verify_access_v2(
-            auth_role, auth_user, user_type, collection_id
+            auth_role, auth_user, user_type, collection_id, prev_viewers, next_viewers
         )
         if editor_link:
-            return Response(editor_link, status.HTTP_200_OK)
+            return Response(
+                editor_link, 
+                status.HTTP_200_OK)
         else:
             return Response(
                 "Error accessing the requested document, Retry opening the document again :)",

@@ -572,7 +572,7 @@ class HandleProcess:
                 return editor_link
     
     # Verify_Access V2
-    def verify_access_v2(self, auth_role, user_name, user_type, collection_id=None):
+    def verify_access_v2(self, auth_role, user_name, user_type, collection_id=None, prev_viewers=None, next_viewers=None):
         clone_id = None
         doc_map = None
         right = None
@@ -644,6 +644,8 @@ class HandleProcess:
                         "document_right": right,
                         "document_flag": item_flag,
                         "role": role,
+                        "previous_viewers": prev_viewers,
+                        "next_viewers": next_viewers,
                         "metadata_id": metadata_id,
                         "process_id": self.process["_id"],
                         "update_field": {
