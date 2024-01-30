@@ -155,7 +155,7 @@ const SelectDoc = ({ savedDoc, addWorkflowStep }) => {
     setSelectedDocuments([savedDoc]);
   }, [savedDoc]);
 
-  const stepDocument = originalDocuments?.filter((item) => item._id === ProcessDetail.parent_item_id);
+  let stepDocument = originalDocuments?.filter((item) => item._id === ProcessDetail.parent_item_id);
 
   if(stepDocument){
     stepDocument = originalDocuments[1];
