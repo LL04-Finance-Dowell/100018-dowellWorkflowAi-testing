@@ -27,6 +27,7 @@ import UserDetail from '../../newSidebar/userDetail/UserDetail';
 import { productName } from '../../../utils/helpers';
 import ProgressBar from 'react-bootstrap/ProgressBar';
 import AddMemberModal from './AddMemberModal';
+import AddWorkflowModal from './AddWorkflowModal';
 
 ChartJS.register(ArcElement, Tooltip, Legend, CategoryScale,
   LinearScale,
@@ -210,6 +211,8 @@ const ProcessDetail = () => {
 
 const StepCards = ({ step, index }) => {
   const [showModal, setShowModal] = useState(false);
+  const [workflowShowModal, setWorkflowShowModal] = useState(false);
+
 
   const handleShowModal = () => {
     console.log("handleShowModal")
@@ -222,17 +225,23 @@ const StepCards = ({ step, index }) => {
     setShowModal(false);
   };
 
-  const handleinternalprocess = () => {
+  const handleWorkflowCloseModal = () => {
+    setWorkflowShowModal(false);
+    console.log("handleShowModal", workflowShowModal)
+
+  };
+  const handleInternalProcess = () => {
     console.log("step", step)
-    if(step.permitInternalWorkflow){
-      toast.success("Internal Processing is allowed at this step")
+    if(step.permitInternalWorkflow && workflowShowModal === false && step.stepDocumentCloneMap.length > 0 ){
+      setWorkflowShowModal(true);
+      // toast.success("Internal Processing is allowed at this step")
     }
   }
 
   return (
     <>
-      <Accordion defaultActiveKey="0" onClick={handleinternalprocess}>
-        <Accordion.Item eventKey="0">
+      <Accordion defaultActiveKey={null} onClick={handleInternalProcess}>
+        <Accordion.Item eventKey="0" >
           <Accordion.Header style={{ color: '#13511D', fontWeight: 'bold' }}>{step.stepName}</Accordion.Header>
           <Accordion.Body>
             <div className={styles.CardContainer}>
@@ -275,6 +284,13 @@ const StepCards = ({ step, index }) => {
               <AddMemberModal
                 show={showModal}
                 onHide={handleCloseModal}
+                backdrop='static'
+                keyboard={false}
+                step={step}
+              />
+              <AddWorkflowModal
+                show={workflowShowModal}
+                onHide={handleWorkflowCloseModal}
                 backdrop='static'
                 keyboard={false}
                 step={step}

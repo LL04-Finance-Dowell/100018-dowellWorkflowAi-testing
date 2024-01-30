@@ -86,6 +86,7 @@ const initialState = {
   ShowDocumentReport: [],
   SingleDocument: [],
   KnowledgeFolders: [],
+  DocumentId: '',
   KnowledgeFolderTemplates: [],
   ShowProcessNameModal:false,
   linksFetched: false,
@@ -703,6 +704,9 @@ export const appSlice = createSlice({
     SetKnowledgeFolders: (state, action) => {
       state.KnowledgeFolders = action.payload;
     },
+    SetDocumentId: (state, action) => {
+      state.DocumentId = action.payload;
+    },
     SetKnowledgeFoldersTemplates: (state, action) => {
       state.KnowledgeFolderTemplates = action.payload;
     },
@@ -885,6 +889,7 @@ export const {
   SetShowDocumentReport,
   SetSingleDocument,
   SetKnowledgeFolders,
+  SetDocumentId,
   SetKnowledgeFoldersTemplates,
   setDetailFetched,
   setshowsProcessDetailPopup,

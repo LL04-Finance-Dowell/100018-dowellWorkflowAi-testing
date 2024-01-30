@@ -29,7 +29,8 @@ import { setContentOfDocument } from '../../../../features/document/documentSlic
 import { startCopyingDocument } from '../../../../features/processCopyReducer';
 import { TemplateServices } from '../../../../services/templateServices';
 
-const SelectDoc = ({ savedDoc }) => {
+const SelectDoc = ({ savedDoc, addWorkflowStep }) => {
+  console.log("saved Document", savedDoc)
   const dispatch = useDispatch();
   const { t } = useTranslation();
   const { isMobile } = useAppContext();
@@ -41,12 +42,14 @@ const SelectDoc = ({ savedDoc }) => {
     (state) => state.document
   );
   const { userDetail } = useSelector((state) => state.auth);
+  const { ProcessDetail } = useSelector((state) => state.app);
+
 
   ///import which doc or template approval
   // const whichApproval = useSelector((state)=> state.copyProcess.whichApproval)
   const currentURL = window.location.href;
-  const parts = currentURL.split('/'); 
-  const whichApproval =  parts[parts.length - 1];
+  const parts = currentURL.split('/');
+  const whichApproval = parts[parts.length - 1];
 
 
   const [selectedDocuments, setSelectedDocuments] = useState([]);
@@ -55,20 +58,20 @@ const SelectDoc = ({ savedDoc }) => {
 
   ////copied docs
   const copiedDocument = useSelector((state) => state.copyProcess.document);
-const copiedWorkflow = useSelector((state) => state.copyProcess.workflow);
-useEffect(()=>{
-  console.log('the copied doc and workflow are , ', copiedDocument, copiedWorkflow)
-  if(copiedDocument !== null){
-    setCurrentSelectedDocument(copiedDocument)
-    setSelectedDocuments((prev) => [copiedDocument]);
-    dispatch(startCopyingDocument())
-    // dispatch(contentDocument(copiedDocument.collection_id));
-    // dispatch(setCurrentDocToWfs(copiedDocument));
-    // dispatch(setContentOfDocument(null));
-  }
-}, [copiedDocument, copiedWorkflow])
+  const copiedWorkflow = useSelector((state) => state.copyProcess.workflow);
+  useEffect(() => {
+    console.log('the copied doc and workflow are , ', copiedDocument, copiedWorkflow)
+    if (copiedDocument !== null) {
+      setCurrentSelectedDocument(copiedDocument)
+      setSelectedDocuments((prev) => [copiedDocument]);
+      dispatch(startCopyingDocument())
+      // dispatch(contentDocument(copiedDocument.collection_id));
+      // dispatch(setCurrentDocToWfs(copiedDocument));
+      // dispatch(setContentOfDocument(null));
+    }
+  }, [copiedDocument, copiedWorkflow])
 
-console.log('the picked approval is ', whichApproval)
+  console.log('the picked approval is ', whichApproval)
 
   const data = {
     company_id: userDetail?.portfolio_info?.length > 1 ? userDetail?.portfolio_info.find(portfolio => portfolio.product === productName)?.org_id : userDetail?.portfolio_info[0].org_id,
@@ -80,7 +83,7 @@ console.log('the picked approval is ', whichApproval)
 
     dispatch(setOriginalDocumentsLoaded(false));
 
-    if(whichApproval == 'new-set-workflow-document'){
+    if (whichApproval == 'new-set-workflow-document') {
       const documentServices = new DocumentServices();
       documentServices.getAllOriginalDocuments(data.company_id, data.data_type)
         .then(res => {
@@ -92,20 +95,20 @@ console.log('the picked approval is ', whichApproval)
           console.log('Failed to load original documents: ', err.response ? err.response.data : err.message);
           dispatch(setOriginalDocumentsLoaded(true));
         })
-    }else{
+    } else {
       const templateServices = new TemplateServices()
       templateServices.allTemplates(data.company_id, data.data_type)
-      .then(res=>{
-        console.log('the template data are ', res.data)
-        dispatch(setOriginalDocuments(res.data.templates?.reverse()))
-        dispatch(setOriginalDocumentsLoaded(true));
-      })
-      .catch(err => {
-        console.log('Failed to load original documents: ', err.response ? err.response.data : err.message);
-        dispatch(setOriginalDocumentsLoaded(true));
-      })
+        .then(res => {
+          console.log('the template data are ', res.data)
+          dispatch(setOriginalDocuments(res.data.templates?.reverse()))
+          dispatch(setOriginalDocumentsLoaded(true));
+        })
+        .catch(err => {
+          console.log('Failed to load original documents: ', err.response ? err.response.data : err.message);
+          dispatch(setOriginalDocumentsLoaded(true));
+        })
     }
-    
+
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [whichApproval]);
@@ -113,22 +116,22 @@ console.log('the picked approval is ', whichApproval)
 
 
   const handleAddSelectedDocuments = (document) => {
-  //  console.log(document)
-   if(whichApproval == 'new-set-workflow-document'){
-    axios
-      .get(`https://workflowai.uxlivinglab.online/v1/companies/${data.company_id}/documents/${document._id}/clones/?data_type=${data.data_type}`)
-      .then((response) => {
-        // console.log('the response for document detail is ',response.data)
-        setSelectedDocumentCopies(
-          response.data
-        );
+    console.log("documentmubeen", document)
+    if (whichApproval == 'new-set-workflow-document') {
+      axios
+        .get(`https://workflowai.uxlivinglab.online/v1/companies/${data.company_id}/documents/${document._id}/clones/?data_type=${data.data_type}`)
+        .then((response) => {
+          // console.log('the response for document detail is ',response.data)
+          setSelectedDocumentCopies(
+            response.data
+          );
 
-      })
-      .catch((error) => {
-        console.log(error)
-      });
+        })
+        .catch((error) => {
+          console.log(error)
+        });
     }
-    else{
+    else {
 
     }
     setCurrentSelectedDocument(document);
@@ -151,6 +154,14 @@ console.log('the picked approval is ', whichApproval)
     if (!savedDoc) return;
     setSelectedDocuments([savedDoc]);
   }, [savedDoc]);
+
+  const stepDocument = originalDocuments?.filter((item) => item._id === ProcessDetail.parent_item_id);
+
+  if(stepDocument){
+    stepDocument = originalDocuments[1];
+  }
+
+  console.log("addWorkflowStep", addWorkflowStep,stepDocument , ProcessDetail, allDocumentsArray, originalDocuments)
 
   return (
     <div
@@ -261,66 +272,130 @@ console.log('the picked approval is ', whichApproval)
                 <LoadingSpinner />
               </div>
             ) : (
-              <Swiper
-                loop={true}
-                navigation={true}
-                pagination={true}
-                modules={[Navigation]}
-                className='select-doc'
-                enabled={savedDoc ? false : true}
-                initialSlide={
-                  savedDoc &&
-                    originalDocuments &&
-                    originalDocuments.length &&
-                    originalDocuments.length > 0 &&
-                    selectedDocuments.length > 0
-                    ? originalDocuments.findIndex(
-                      (doc) => doc._id === selectedDocuments[0]._id
-                    ) !== -1
+              addWorkflowStep ?
+                <Swiper
+                  loop={true}
+                  navigation={true}
+                  pagination={true}
+                  modules={[Navigation]}
+                  className='select-doc'
+                  enabled={savedDoc ? false : true}
+                  initialSlide={
+                    savedDoc &&
+                      originalDocuments &&
+                      originalDocuments.length &&
+                      originalDocuments.length > 0 &&
+                      selectedDocuments.length > 0
                       ? originalDocuments.findIndex(
                         (doc) => doc._id === selectedDocuments[0]._id
-                      )
+                      ) !== -1
+                        ? originalDocuments.findIndex(
+                          (doc) => doc._id === selectedDocuments[0]._id
+                        )
+                        : 0
                       : 0
-                    : 0
-                }
-              >
-                {originalDocuments &&
-                  originalDocuments.length &&
-                  originalDocuments.length > 0 &&
-                  [...originalDocuments]
-                    // ?.filter((document) => document.document_type === 'original')
-                    .map((item, index) => (
-                      <SwiperSlide key={item._id}>
-                        <div className={styles.swiper__slide__box}>
-                          <div
-                            className={`${styles.swiper__slide__features} animate`}
-                          >
-                            <p className={styles.features__title}>
-                            {whichApproval == 'new-set-workflow-document' ? item.document_name : item.template_name}
-                            </p>
-                            <button
-                              onClick={() => handleAddSelectedDocuments(item)}
-                              className={`${styles.features__button} ${selectedDocuments.find(
-                                (selectedDocument) =>
-                                  selectedDocument._id === item._id
-                              ) && styles.selected
-                                }`}
-                              style={{
-                                pointerEvents: savedDoc ? 'none' : 'all',
-                              }}
+                  }
+                >
+                  {originalDocuments &&
+                    originalDocuments.length &&
+                    originalDocuments.length > 0 && 
+                    stepDocument &&
+                    // [...originalDocuments]
+                      // ?.filter((document) => document.document_type === 'original')
+                      // .map((item, index) => (
+
+                        <SwiperSlide key={stepDocument?._id}>
+                          <div className={styles.swiper__slide__box}>
+                            <div
+                              className={`${styles.swiper__slide__features} animate`}
                             >
-                              {selectedDocuments.find(
-                                (selectedDocument) =>
-                                  selectedDocument._id === item._id
-                              )
-                                ? t('selected')
-                                : t('click here')}
-                            </button>
+                              <p className={styles.features__title}>
+                                {whichApproval == 'new-set-workflow-document' ? stepDocument?.document_name : stepDocument?.template_name}
+                              </p>
+                              <button
+                                onClick={() => handleAddSelectedDocuments(stepDocument)}
+                                className={`${styles.features__button} ${selectedDocuments.find(
+                                  (selectedDocument) =>
+                                    selectedDocument._id === stepDocument._id
+                                ) && styles.selected
+                                  }`}  
+                                style={{
+                                  pointerEvents: savedDoc ? 'none' : 'all',
+                                }}
+                              >
+                                {selectedDocuments.find(
+                                  (selectedDocument) =>
+                                    selectedDocument._id === stepDocument._id
+                                )
+                                  ? t('selected')
+                                  : t('click here')}
+                              </button>
+                            </div>
                           </div>
-                        </div>
-                      </SwiperSlide>
-                    ))}
-              </Swiper>
+                        </SwiperSlide>
+                  }
+                </Swiper> :
+                <Swiper
+                  loop={true}
+                  navigation={true}
+                  pagination={true}
+                  modules={[Navigation]}
+                  className='select-doc'
+                  enabled={savedDoc ? false : true}
+                  initialSlide={
+                    savedDoc &&
+                      originalDocuments &&
+                      originalDocuments.length &&
+                      originalDocuments.length > 0 &&
+                      selectedDocuments.length > 0
+                      ? originalDocuments.findIndex(
+                        (doc) => doc._id === selectedDocuments[0]._id
+                      ) !== -1
+                        ? originalDocuments.findIndex(
+                          (doc) => doc._id === selectedDocuments[0]._id
+                        )
+                        : 0
+                      : 0
+                  }
+                >
+                  {originalDocuments &&
+                    originalDocuments.length &&
+                    originalDocuments.length > 0 &&
+                    [...originalDocuments]
+                      // ?.filter((document) => document.document_type === 'original')
+                      .map((item, index) => (
+                        <SwiperSlide key={item._id}>
+                          <div className={styles.swiper__slide__box}>
+                            <div
+                              className={`${styles.swiper__slide__features} animate`}
+                            >
+                              <p className={styles.features__title}>
+                                {whichApproval == 'new-set-workflow-document' ? item.document_name : item.template_name}
+                              </p>
+                              <button
+                                onClick={() => handleAddSelectedDocuments(item)}
+                                className={`${styles.features__button} ${selectedDocuments.find(
+                                  (selectedDocument) =>
+                                    selectedDocument._id === item._id
+                                ) && styles.selected
+                                  }`}
+                                style={{
+                                  pointerEvents: savedDoc ? 'none' : 'all',
+                                }}
+                              >
+                                {selectedDocuments.find(
+                                  (selectedDocument) =>
+                                    selectedDocument._id === item._id
+                                )
+                                  ? t('selected')
+                                  : t('click here')}
+                              </button>
+                            </div>
+                          </div>
+                        </SwiperSlide>
+                      ))}
+                </Swiper>
+
             )}
           </div>
           <div className={styles.right__container}>

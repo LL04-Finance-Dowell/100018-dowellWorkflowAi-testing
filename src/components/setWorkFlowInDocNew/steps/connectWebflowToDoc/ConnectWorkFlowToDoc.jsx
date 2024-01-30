@@ -21,7 +21,7 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import AssignTask from './contents/selectMembersToAssign/assignTask/AssignTask';
 
-const ConnectWorkFlowToDoc = ({ stepsPopulated, savedProcessSteps }) => {
+const ConnectWorkFlowToDoc = ({ stepsPopulated, savedProcessSteps, addWorkflowStep }) => {
   const { register } = useForm();
   const dispatch = useDispatch();
   const { t } = useTranslation();
@@ -247,7 +247,7 @@ console.log("the stepsPopulated are ", stepsPopulated)
           </div>
         ) : (
           <>
-            <Dropdown disableClick={stepsPopulated ? true : false} />
+            <Dropdown addWorkflowStep={addWorkflowStep} disableClick={stepsPopulated ? true : false} />
             {docCurrentWorkflow && (
               <div className={styles.step__container}>
                 {currentSteps &&
