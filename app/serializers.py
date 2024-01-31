@@ -4,6 +4,7 @@ from .models import (
     FavoriteDocument,
     FavoriteTemplate,
     FavoriteWorkflow,
+    ProcessReminder
 )
 
 

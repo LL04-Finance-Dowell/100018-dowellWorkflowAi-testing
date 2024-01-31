@@ -7,7 +7,7 @@ import requests
 from datetime import datetime
 
 from app.constants import EDITOR_API, MASTERLINK_URL, PUBLIC_LOGIN_API
-from app.models import FavoriteDocument, FavoriteTemplate, FavoriteWorkflow
+from app.models import FavoriteDocument, FavoriteTemplate, FavoriteWorkflow, ProcessReminder
 from app.serializers import (
     FavouriteDocumentSerializer,
     FavouriteTemplateSerializer,
@@ -527,8 +527,9 @@ def check_progress(process_id):
     accessed = 0
     for step in steps:
         step_clone_map = step.get("stepDocumentCloneMap", [])
-        if check_all_accessed(step_clone_map):
-            accessed += 1
+        if step_clone_map:
+            if check_all_accessed(step_clone_map):
+                accessed += 1
 
     percentage_progress = round((accessed / steps_count * 100), 2)
     return percentage_progress
@@ -793,3 +794,14 @@ def check_last_finalizer(user, user_type, process)->bool:
     else:
         return False
 
+
+    
+def create_reminder(process, interval):
+    ProcessReminder.objects.create(
+            process_id = process["_id"], 
+            email = "morvinian@gmail.com", 
+            interval = interval,
+            last_reminder_datetime = process["created_on"],
+            created_by = process["company_id"]
+        )
+  

@@ -37,7 +37,8 @@ from app.helpers import (
     check_progress,
     cloning_process,
     check_last_finalizer,
-    dowell_email_sender
+    dowell_email_sender,
+    create_reminder
 )
 from app.mongo_db_connection import (
     add_document_to_folder,
@@ -279,15 +280,13 @@ class ProcessDetail(APIView):
         if not validate_id(process_id):
             return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
         process = single_query_process_collection({"_id": process_id})
+        progress = check_progress(process_id)
         for step in process["process_steps"]:
             reminder = step.get("stepReminder", [])
             if reminder == "every_hour":
-                print(reminder)
+                create_reminder(process, 1)
             elif reminder == "every_day":
-                print(reminder)
-
-            
-        progress = check_progress(process_id)
+                create_reminder(process, 24)
         if process["parent_item_id"]:
             document_id = process["parent_item_id"]
             document = single_query_document_collection({"_id": document_id})
