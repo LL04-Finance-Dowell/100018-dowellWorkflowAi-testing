@@ -159,7 +159,7 @@ const SelectDoc = ({ savedDoc, addWorkflowStep }) => {
   let stepDocument = originalDocuments?.filter((item) => item._id === ProcessDetail.parent_item_id);
 
   if(stepDocument){
-    stepDocument = originalDocuments[30];
+    stepDocument = originalDocuments[1];
   }
 
   console.log("addWorkflowStep", selectedDocuments,addWorkflowStep,stepDocument , ProcessDetail, allDocumentsArray, originalDocuments)

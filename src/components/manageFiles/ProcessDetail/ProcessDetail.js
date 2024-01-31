@@ -232,7 +232,7 @@ const StepCards = ({ step, index }) => {
   };
   const handleInternalProcess = () => {
     console.log("step", step)
-    if(!step.permitInternalWorkflow && workflowShowModal === false && step.stepDocumentCloneMap.length > 0 ){
+    if(step.permitInternalWorkflow && workflowShowModal === false && step.stepDocumentCloneMap.length > 0 ){
       setWorkflowShowModal(true);
       // toast.success("Internal Processing is allowed at this step")
     }
