@@ -42,7 +42,7 @@ const SelectDoc = ({ savedDoc, addWorkflowStep }) => {
     (state) => state.document
   );
   const { userDetail } = useSelector((state) => state.auth);
-  const { ProcessDetail } = useSelector((state) => state.app);
+  const { ProcessDetail, DocumentId } = useSelector((state) => state.app);
 
 
   ///import which doc or template approval
@@ -162,7 +162,7 @@ const SelectDoc = ({ savedDoc, addWorkflowStep }) => {
     stepDocument = originalDocuments[1];
   }
 
-  console.log("addWorkflowStep", selectedDocuments,addWorkflowStep,stepDocument , ProcessDetail, allDocumentsArray, originalDocuments)
+  console.log("addWorkflowStep",DocumentId, selectedDocuments,addWorkflowStep,stepDocument , ProcessDetail, allDocumentsArray, originalDocuments)
 
   return (
     <div
