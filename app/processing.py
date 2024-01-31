@@ -100,6 +100,11 @@ class Process:
             )
         )
         if res["isSuccess"]:
+            # for step in self.process_steps:
+            #     reminder = step.get("stepDocumentCloneMap", [])
+
+            #     print(self.process_steps)
+
             return {
                 "process_title": self.process_title,
                 "process_steps": self.process_steps,

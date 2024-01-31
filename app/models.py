@@ -23,3 +23,10 @@ class FavoriteWorkflow(models.Model):
     company_id = jsonfield.JSONField()
     workflows = jsonfield.JSONField()
     favourited_by = models.TextField(max_length=200)
+
+class ProcessReminders(models.Model):
+    _id = models.TextField(primary_key=True)
+    process_email = models.EmailField(),
+    interval = models.IntegerField(),
+    process_creation_date =models.TextField(max_length=100)
+    process_created_by = models.TextField(max_length=50)

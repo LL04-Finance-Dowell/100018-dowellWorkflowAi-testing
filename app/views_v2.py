@@ -278,6 +278,14 @@ class ProcessDetail(APIView):
         if not validate_id(process_id):
             return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
         process = single_query_process_collection({"_id": process_id})
+        for step in process["process_steps"]:
+            reminder = step.get("stepReminder", [])
+            if reminder == "every_hour":
+                print(reminder)
+            elif reminder == "every_day":
+                print(reminder)
+
+            
         progress = check_progress(process_id)
         if process["parent_item_id"]:
             document_id = process["parent_item_id"]

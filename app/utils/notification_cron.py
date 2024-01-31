@@ -5,6 +5,21 @@ import requests
 from app.constants import NOTIFICATION_API
 
 
+def dowell_email_sender(name, email, subject, email_content):
+    email_url = "https://100085.pythonanywhere.com/api/uxlivinglab/email/"
+    payload = {
+        "toname":name,
+        "toemail": email,
+        "fromname":"Workflow AI",
+        "fromemail":"workflowai@dowellresearch.sg",
+        "subject": subject,
+        "email_content":email_content
+    }
+
+    requests.post(email_url, data=payload)
+
+
+
 def send_notification(data):
     try:
         response = requests.post(
@@ -20,6 +35,10 @@ def send_notification(data):
         raise
 
     return data
+
+
+def send_reminders():
+    dowell_email_sender("Morvin Ian", "morvinian@gmail.com", "Crontab", "Hello Morvin")
 
 
 if __name__ == "__main__":

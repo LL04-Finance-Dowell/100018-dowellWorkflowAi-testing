@@ -32,6 +32,7 @@ ALLOWED_HOSTS = ["*"]
 INSTALLED_APPS = [
     "corsheaders",
     "drf_yasg",
+    'django_crontab',
     "app",
     "django.contrib.admin",
     "django.contrib.auth",
@@ -42,6 +43,8 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "rest_framework",
 ]
+
+CRONJOBS = [('*/2 * * * *', 'app.utils.notification_cron.send_reminders')]
 
 MIDDLEWARE = [
     "django.middleware.http.ConditionalGetMiddleware",
