@@ -104,9 +104,9 @@ class Process:
           for step in self.process["process_steps"]:
             reminder = step.get("stepReminder", [])
             if reminder == "every_hour":
-                create_reminder(self.process, 1)
+                create_reminder(self.process, 1440)
             elif reminder == "every_day":
-                create_reminder(self.process, 24)
+                create_reminder(self.process, 1440)
        
             return {
                 "process_title": self.process_title,
@@ -147,9 +147,9 @@ class Process:
             for step in self.process["process_steps"]:
                 reminder = step.get("stepReminder", [])
                 if reminder == "every_hour":
-                    create_reminder(self.process, 1)
+                    create_reminder(self.process, 60)
                 elif reminder == "every_day":
-                    create_reminder(self.process, 24)
+                    create_reminder(self.process, 1440)
             return {
                 "process_title": self.process_title,
                 "process_steps": self.process_steps,

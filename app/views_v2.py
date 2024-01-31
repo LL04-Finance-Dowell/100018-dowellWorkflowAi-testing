@@ -281,12 +281,6 @@ class ProcessDetail(APIView):
             return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
         process = single_query_process_collection({"_id": process_id})
         progress = check_progress(process_id)
-        for step in process["process_steps"]:
-            reminder = step.get("stepReminder", [])
-            if reminder == "every_hour":
-                create_reminder(process, 1)
-            elif reminder == "every_day":
-                create_reminder(process, 24)
         if process["parent_item_id"]:
             document_id = process["parent_item_id"]
             document = single_query_document_collection({"_id": document_id})
