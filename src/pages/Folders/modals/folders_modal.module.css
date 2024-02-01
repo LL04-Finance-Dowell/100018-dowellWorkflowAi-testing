@@ -47,7 +47,9 @@
 }
 
 .folders_modal_wrapper h3 {
-  margin-bottom: 1rem
+  margin-bottom: 1rem;
+  color: #2e7d32;
+  font-weight: 600;
 }
 
 .folders_modal_wrapper input {
