@@ -402,7 +402,7 @@ const Sidebar = ({toggleSidebar, isMobile}) => {
         {/* <CollapseItem items={knowledge} exception={true} /> */}
 
         <span className={styles.knowledge__Extra__Info}>
-          {t("DoWell")} {t("True moments user experience lab")}
+          {t("DoWell")} {t("True Moments User Experience Lab")}
         </span>
       </div>
       <Footer topSideIcons={iconBoxItems} handleIconClick={handleClick} />

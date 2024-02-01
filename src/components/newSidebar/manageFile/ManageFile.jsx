@@ -220,7 +220,7 @@ const ManageFile = () => {
         className={sidebarStyles.feature__title}
         style={{ color: themeColor }}
       >
-        {t('Manage File')}
+        {t('Manage Files')}
       </h2>
       <CollapseItem items={test} />
 

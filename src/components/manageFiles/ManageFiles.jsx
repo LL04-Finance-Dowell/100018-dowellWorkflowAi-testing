@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { createTemplate } from '../../features/template/asyncThunks';
 import {
   setCurrentWorkflow,
-  setToggleManageFileForm,
+  setToggleFileForm,
 } from '../../features/app/appSlice';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
