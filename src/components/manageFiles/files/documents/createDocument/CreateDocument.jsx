@@ -40,6 +40,7 @@ const CreateDocument = ({ handleToggleOverlay }) => {
 
   const { register, handleSubmit, setValue } = useForm();
 
+  console.log("userDetaiDocument", userDetail.userinfo.email)
   const handleNewItemClick = (e, content) => {
     if (content === 'template') {
       e.preventDefault();
@@ -63,6 +64,8 @@ const CreateDocument = ({ handleToggleOverlay }) => {
               (portfolio) => portfolio.product === productName
             )?.portfolio_name
             : userDetail?.portfolio_info[0].portfolio_name,
+        email:
+          userDetail.userinfo.email,
       };
       const Api_key = creditResponse?.api_key
       axios
@@ -112,6 +115,7 @@ const CreateDocument = ({ handleToggleOverlay }) => {
       // page: foundTemplateObj?.page,
       // content: foundTemplateObj?.content,
       portfolio: userDetail?.portfolio_info?.length > 1 ? userDetail?.portfolio_info.find((portfolio) => portfolio.product === productName)?.portfolio_name : userDetail?.portfolio_info[0].portfolio_name,
+      email: userDetail.userinfo.email,
     };
     const Api_key = creditResponse?.api_key
     axios
@@ -188,15 +192,15 @@ const CreateDocument = ({ handleToggleOverlay }) => {
               to="/templates/#newTemplate"
               key={uuidv4()}
               className={styles.create__button__inner}
-              // style={{backgroundColor: "#f1f7ff"}}
-              >
+            // style={{backgroundColor: "#f1f7ff"}}
+            >
               {t('Create New Template')}
             </div>
           </div>
           <br />
           <Tooltip id={`alltemplates`} content="select an existing template to create a document from" direction="up" arrowSize={10} style={{ backgroundColor: 'rgb(97, 206, 112)', color: 'white' }}></Tooltip>
           <div className={styles.all_templates_title}>Select Templates {<BsArrowRight data-tooltip-id={`alltemplates`} />}</div>
-          
+
 
 
           <div className={styles.create__button__template}>
