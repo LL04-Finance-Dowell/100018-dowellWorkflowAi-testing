@@ -75,7 +75,7 @@ const CopyProcessPage = () => {
         const process_ID = response.data?.process_id
 
         if(doc_id){
-          const docData = await axios.get(`https://100094.pythonanywhere.com/v1/documents/${doc_id}/`);
+          const docData = await axios.get(`https://100094.pythonanywhere.com/v2/documents/${doc_id}/`);
           // console.log('the response for the copied document is ', docData)
           dispatch(setCopiedDocument(docData))
         }

@@ -1,17 +1,21 @@
-import React, { useState } from 'react';
-import Collapse from '../../../layouts/collapse/Collapse';
-import styles from './new.module.css';
-import { v4 as uuidv4 } from 'uuid';
-import { FaPlus } from 'react-icons/fa';
-import { HashLink } from 'react-router-hash-link';
-import { useDispatch, useSelector } from 'react-redux';
-import { createTemplate } from '../../../features/template/asyncThunks';
-import { setToggleManageFileForm, settemLoading, settemLoaded } from '../../../features/app/appSlice';
-import { useTranslation } from 'react-i18next';
-import { productName } from '../../../utils/helpers';
-import { useAppContext } from '../../../contexts/AppContext';
-import axios from 'axios';
-import { toast } from 'react-toastify';
+import React, { useState } from "react";
+import Collapse from "../../../layouts/collapse/Collapse";
+import styles from "./new.module.css";
+import { v4 as uuidv4 } from "uuid";
+import { FaPlus } from "react-icons/fa";
+import { HashLink } from "react-router-hash-link";
+import { useDispatch, useSelector } from "react-redux";
+import { createTemplate } from "../../../features/template/asyncThunks";
+import {
+  setToggleManageFileForm,
+  settemLoading,
+  settemLoaded,
+} from "../../../features/app/appSlice";
+import { useTranslation } from "react-i18next";
+import { productName } from "../../../utils/helpers";
+import { useAppContext } from "../../../contexts/AppContext";
+import axios from "axios";
+import { toast } from "react-toastify";
 
 const New = ({ toggleSidebar, isMobile }) => {
   const { userDetail } = useSelector((state) => state.auth);
@@ -28,54 +32,53 @@ const New = ({ toggleSidebar, isMobile }) => {
   };
 
   const handleNewItemClick = (e, content) => {
-    if (content === 'template') {
+    if (content === "template") {
       e.preventDefault();
+
+      dispatch(setToggleManageFileForm(true));
+
       const data = {
         created_by: userDetail?.userinfo.username,
         company_id:
           userDetail?.portfolio_info?.length > 1
             ? userDetail?.portfolio_info.find(
-              (portfolio) => portfolio.product === productName
-            )?.org_id
+                (portfolio) => portfolio.product === productName
+              )?.org_id
             : userDetail?.portfolio_info[0].org_id,
         data_type:
           userDetail?.portfolio_info?.length > 1
             ? userDetail?.portfolio_info.find(
-              (portfolio) => portfolio.product === productName
-            )?.data_type
+                (portfolio) => portfolio.product === productName
+              )?.data_type
             : userDetail?.portfolio_info[0].data_type,
         portfolio:
           userDetail?.portfolio_info?.length > 1
             ? userDetail?.portfolio_info.find(
-              (portfolio) => portfolio.product === productName
-            )?.portfolio_name
+                (portfolio) => portfolio.product === productName
+              )?.portfolio_name
             : userDetail?.portfolio_info[0].portfolio_name,
       };
-      const Api_key = creditResponse?.api_key
+      const Api_key = creditResponse?.api_key;
       axios
         .post(
           `https://100105.pythonanywhere.com/api/v3/process-services/?type=product_service&api_key=${Api_key}`,
           {
-            "service_id": "DOWELL10026",
-            "sub_service_ids": ["DOWELL100262"],
-          },
+            service_id: "DOWELL10026",
+            sub_service_ids: ["DOWELL100262"],
+          }
         )
         // dispatch(settemLoading(true))
         .then((response) => {
-
           if (response.data.success == true) {
-
             dispatch(createTemplate(data));
           }
         })
         // dispatch(settemLoading(false))
         .catch((error) => {
           console.log(error.response?.data?.message);
-          toast.info(error.response?.data?.message)
-
+          toast.info(error.response?.data?.message);
         });
-    }
-    else {
+    } else {
       dispatch(setToggleManageFileForm(true));
     }
   };
@@ -94,17 +97,16 @@ const New = ({ toggleSidebar, isMobile }) => {
         </div>
         <HashLink
           onClick={(e) => handleNewItemClick(e, "document")}
-          to={'/documents/#newDocument'}
+          to={"/documents/#newDocument"}
           className={styles.new__button__box2}
           style={{ backgroundColor: themeColor }}
         >
-          <span>{t('new')}</span>
+          <span>{t("new")}</span>
         </HashLink>
       </div>
       <div className={styles.box}>
         <Collapse open={isOpen}>
           <div className={styles.new__content}>
-
             {items.map((item) => (
               <HashLink
                 onClick={(e) => handleNewItemClick(e, "document")}
@@ -116,12 +118,11 @@ const New = ({ toggleSidebar, isMobile }) => {
             ))}
             <button
               onClick={() => {
-                setShowFoldersActionModal({ state: true, action: 'create' });
+                setShowFoldersActionModal({ state: true, action: "create" });
                 if (isMobile == true) {
-                  toggleSidebar()
+                  toggleSidebar();
                 }
-              }
-              }
+              }}
             >
               Folder
             </button>
@@ -136,7 +137,11 @@ export default New;
 
 const items = [
   // { id: uuidv4(), content: 'template', href: '/templates/#newTemplate' },
-  { id: uuidv4(), content: 'document', href: '/documents/#newDocument' },
-  { id: uuidv4(), content: 'workflow', href: '/workflows/#newWorkflow' },
-  { id: uuidv4(), content: 'process', href: '/workflows/new-set-workflow-document' },
+  { id: uuidv4(), content: "document", href: "/documents/#newDocument" },
+  { id: uuidv4(), content: "workflow", href: "/workflows/#newWorkflow" },
+  {
+    id: uuidv4(),
+    content: "process",
+    href: "/workflows/new-set-workflow-document",
+  },
 ];
