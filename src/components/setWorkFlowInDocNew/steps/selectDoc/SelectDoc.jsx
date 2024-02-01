@@ -56,10 +56,13 @@ const SelectDoc = ({ savedDoc, addWorkflowStep }) => {
   const [selectedDocuments, setSelectedDocuments] = useState([]);
   const [selectedDocumentCopies, setSelectedDocumentCopies] = useState([]);
   const [currentSelectedDocument, setCurrentSelectedDocument] = useState(null);
+  const [stepDocument, setStepDocument] = useState({});
+
 
   ////copied docs
   const copiedDocument = useSelector((state) => state.copyProcess.document);
   const copiedWorkflow = useSelector((state) => state.copyProcess.workflow);
+
   useEffect(() => {
     console.log('the copied doc and workflow are , ', copiedDocument, copiedWorkflow)
     if (copiedDocument !== null) {
@@ -156,13 +159,77 @@ const SelectDoc = ({ savedDoc, addWorkflowStep }) => {
     setSelectedDocuments([savedDoc]);
   }, [savedDoc]);
 
-  let stepDocument = originalDocuments?.filter((item) => item._id === ProcessDetail.parent_item_id);
+  const fetchDocument = async (documentId) => {
+    try {
+      const url = `https://100094.pythonanywhere.com/v2/documents/${documentId}/?document_type=clone`;
+      const response = await axios.get(url);
+      console.log("response", response)
+      setStepDocument(response.data);
+    } catch (error) {
+      // Handle any errors here
+      console.error('Error fetching document:', error);
+      throw error;
+    }
+  };
 
-  if(stepDocument){
-    stepDocument = originalDocuments[1];
-  }
+  useEffect(() => {
+    if (DocumentId && DocumentId?.stepDocumentCloneMap?.length > 0) {
+      const document_key = Object.values(DocumentId.stepDocumentCloneMap[0])[0]
+      if (document_key) {
+        fetchDocument(document_key)
+      }
+    }
+  }, [DocumentId]);
 
-  console.log("addWorkflowStep",DocumentId, selectedDocuments,addWorkflowStep,stepDocument , ProcessDetail, allDocumentsArray, originalDocuments)
+  const dummyStep = [
+    {
+      "permitInternalWorkflow": true,
+      "stepCloneCount": 1,
+      "stepTaskType": "assign_task",
+      "stepRights": "add_edit",
+      "stepProcessingOrder": "team_user_public",
+      "stepTaskLimitation": "portfolios_assigned_on_or_before_step_start_date_and_time",
+      "stepActivityType": "individual_task",
+      "stepDisplay": "before_this_step",
+      "stepName": "Manish",
+      "stepRole": "Project lead",
+      "stepPublicMembers": [],
+      "stepTeamMembers": [
+        {
+          "member": "couzy",
+          "portfolio": "Workflow Tester"
+        },
+        {
+          "member": "GhassanOmran",
+          "portfolio": "created"
+        }
+      ],
+      "stepUserMembers": [],
+      "stepDocumentCloneMap": [
+        {
+          "couzy": "65b8c61de29116fd5c08f769"
+        }
+      ],
+      "stepNumber": 1,
+      "stepDocumentMap": [
+        {
+          "content": "t1",
+          "required": false,
+          "page": 1
+        }
+      ],
+      "skipStep": false,
+      "stepLocation": "any"
+    }
+  ]
+  // const document_key = Object.values(DocumentId.stepDocumentCloneMap[0])[0]
+  // let stepDocument = allDocumentsArray?.filter((item) => item._id === document_key);
+
+  // if(stepDocument){
+  //   stepDocument = originalDocuments[1];
+  // }
+
+  console.log("addWorkflowStep",stepDocument,addWorkflowStep, dummyStep, DocumentId, selectedDocuments, ProcessDetail, allDocumentsArray, originalDocuments)
 
   return (
     <div
@@ -299,41 +366,41 @@ const SelectDoc = ({ savedDoc, addWorkflowStep }) => {
                 >
                   {originalDocuments &&
                     originalDocuments.length &&
-                    originalDocuments.length > 0 && 
+                    originalDocuments.length > 0 &&
                     stepDocument &&
                     // [...originalDocuments]
-                      // ?.filter((document) => document.document_type === 'original')
-                      // .map((item, index) => (
+                    // ?.filter((document) => document.document_type === 'original')
+                    // .map((item, index) => (
 
-                        <SwiperSlide key={stepDocument?._id}>
-                          <div className={styles.swiper__slide__box}>
-                            <div
-                              className={`${styles.swiper__slide__features} animate`}
-                            >
-                              <p className={styles.features__title}>
-                                {whichApprovalStep == 'new-set-workflow-document-step' ? stepDocument?.document_name : stepDocument?.template_name}
-                              </p>
-                              <button
-                                onClick={() => handleAddSelectedDocuments(stepDocument)}
-                                className={`${styles.features__button} ${selectedDocuments.find(
-                                  (selectedDocument) =>
-                                    selectedDocument._id === stepDocument._id
-                                ) && styles.selected
-                                  }`}  
-                                style={{
-                                  pointerEvents: savedDoc ? 'none' : 'all',
-                                }}
-                              >
-                                {selectedDocuments.find(
-                                  (selectedDocument) =>
-                                    selectedDocument._id === stepDocument._id
-                                )
-                                  ? t('selected')
-                                  : t('click here')}
-                              </button>
-                            </div>
-                          </div>
-                        </SwiperSlide>
+                    <SwiperSlide key={stepDocument?._id}>
+                      <div className={styles.swiper__slide__box}>
+                        <div
+                          className={`${styles.swiper__slide__features} animate`}
+                        >
+                          <p className={styles.features__title}>
+                            {whichApprovalStep == 'new-set-workflow-document-step' ? stepDocument?.document_name : stepDocument?.template_name}
+                          </p>
+                          <button
+                            onClick={() => handleAddSelectedDocuments(stepDocument)}
+                            className={`${styles.features__button} ${selectedDocuments.find(
+                              (selectedDocument) =>
+                                selectedDocument._id === stepDocument._id
+                            ) && styles.selected
+                              }`}
+                            style={{
+                              pointerEvents: savedDoc ? 'none' : 'all',
+                            }}
+                          >
+                            {selectedDocuments.find(
+                              (selectedDocument) =>
+                                selectedDocument._id === stepDocument._id
+                            )
+                              ? t('selected')
+                              : t('click here')}
+                          </button>
+                        </div>
+                      </div>
+                    </SwiperSlide>
                   }
                 </Swiper> :
                 <Swiper
