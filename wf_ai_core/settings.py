@@ -44,7 +44,7 @@ INSTALLED_APPS = [
     "rest_framework",
 ]
 
-CRONJOBS = [('*/2 * * * *', 'app.utils.notification_cron.send_reminders')]
+CRONJOBS = [('*/1 * * * *', 'app.utils.notification_cron.send_reminders')]
 
 MIDDLEWARE = [
     "django.middleware.http.ConditionalGetMiddleware",

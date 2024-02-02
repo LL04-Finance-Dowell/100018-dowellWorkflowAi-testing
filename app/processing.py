@@ -27,7 +27,7 @@ from app.helpers import (
     check_step_items_state,
     check_user_in_auth_viewers,
     get_metadata_id,
-    create_reminder
+    set_reminder
 
 )
 from app.mongo_db_connection import (
@@ -103,10 +103,8 @@ class Process:
         if res["isSuccess"]:
           for step in self.process["process_steps"]:
             reminder = step.get("stepReminder", [])
-            if reminder == "every_hour":
-                create_reminder(self.process, 1440)
-            elif reminder == "every_day":
-                create_reminder(self.process, 1440)
+            if reminder:
+                set_reminder(reminder, self.process)
        
             return {
                 "process_title": self.process_title,
@@ -146,10 +144,9 @@ class Process:
         if res["isSuccess"]:
             for step in self.process["process_steps"]:
                 reminder = step.get("stepReminder", [])
-                if reminder == "every_hour":
-                    create_reminder(self.process, 60)
-                elif reminder == "every_day":
-                    create_reminder(self.process, 1440)
+                if reminder:
+                    set_reminder(reminder, self.process)
+            
             return {
                 "process_title": self.process_title,
                 "process_steps": self.process_steps,

@@ -2,8 +2,9 @@ import sys
 import json
 import requests
 from datetime import datetime
+import math
               
-from app.constants import NOTIFICATION_API
+from app.constants import NOTIFICATION_API, PROCESS_REMINDER_EMAIL
 from app.helpers import dowell_email_sender
 from app.models import ProcessReminder
 
@@ -32,12 +33,18 @@ def send_reminders():
         current_datetime = datetime.strptime(str(datetime.utcnow()), '%Y-%m-%d %H:%M:%S.%f')
         last_reminder = datetime.strptime(reminder.last_reminder_datetime, '%d:%m:%Y,%H:%M:%S')
         time_difference = current_datetime - last_reminder
-        if reminder.interval == 60:
-            if reminder.interval%(time_difference.seconds/60) == 0:
-                dowell_email_sender("Morvin Ian", reminder.email, "Crontab", "Hello Morvin")
-        elif reminder.interval == 1440:
-            if reminder.interval%(time_difference.seconds/60) == 0:
-                dowell_email_sender("Morvin Ian", reminder.email, "Crontab", "Hello Morvin")
+
+        # every_hour
+        if reminder.interval == 60 and math.floor(time_difference.seconds/60) >= 60:
+                dowell_email_sender("Workflow AI Client", reminder.email, "Process Reminder", PROCESS_REMINDER_EMAIL)
+                reminder.last_reminder_datetime = datetime.utcnow().strftime('%d:%m:%Y,%H:%M:%S')
+                reminder.save()
+
+        # every_day
+        elif reminder.interval == 1440 and math.floor(time_difference.seconds/60) >= 1440:
+                dowell_email_sender("Workflow AI Client", reminder.email, "Process Reminder", PROCESS_REMINDER_EMAIL)
+                reminder.last_reminder_datetime = datetime.utcnow().strftime('%d:%m:%Y,%H:%M:%S')
+                reminder.save()
 
 
 

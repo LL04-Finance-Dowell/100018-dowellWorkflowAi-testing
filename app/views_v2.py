@@ -101,8 +101,7 @@ from rest_framework.views import APIView
 import spacy
 from datetime import datetime
 
-# Download the English model for spaCy
-# spacy.cli.download("en_core_web_sm")
+from app.models import ProcessReminder
 
 nlp = spacy.load("en_core_web_sm")
 

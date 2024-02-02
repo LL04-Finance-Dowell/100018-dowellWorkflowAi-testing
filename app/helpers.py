@@ -795,8 +795,31 @@ def check_last_finalizer(user, user_type, process)->bool:
         return False
 
 
+
+def set_reminder(reminder, process):
+    for step in process["process_steps"]:
+        public = step.get("stepPublicMembers", [])
+        team = step.get("stepTeamMembers", [])
+        user = step.get("stepUserMembers", [])
+
+        if reminder == "every_hour":
+            if team:
+                create_reminder(process, 60, team)
+            if user:
+                create_reminder(process, 60, user)
+            if public:
+                create_reminder(process, 60, public)
+                
+        elif reminder == "every_day":
+            if team:
+                create_reminder(process, 1440, team)
+            if user:
+                create_reminder(process, 1440, user)
+            if public:
+                create_reminder(process, 1440, public)
+
     
-def create_reminder(process, interval):
+def create_reminder(process, interval, members):
     ProcessReminder.objects.create(
             process_id = process["_id"], 
             email = "morvinian@gmail.com", 
@@ -804,4 +827,5 @@ def create_reminder(process, interval):
             last_reminder_datetime = process["created_on"],
             created_by = process["company_id"]
         )
+    
   
