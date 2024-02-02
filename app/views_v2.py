@@ -2,53 +2,59 @@ import ast
 import json
 import os
 import re
-from crontab import CronTab
+from datetime import datetime
 
 import requests
+import spacy
+from crontab import CronTab
 from django.core.cache import cache
 from git.repo import Repo
 from rest_framework import status
 from rest_framework.response import Response
-from app import processing
-from app.checks import (
-    is_finalized,
-    is_wf_setting_exist,
-    register_user_access,
-)
+from rest_framework.views import APIView
 
+from app import processing
+from app.checks import is_finalized, is_wf_setting_exist, register_user_access
 from app.helpers import (
     access_editor,
     access_editor_metadata,
     check_all_accessed,
+    check_last_finalizer,
+    check_progress,
+    cloning_process,
     compare_hash,
     create_document_helper,
     create_favourite,
+    dowell_email_sender,
     get_hash,
     get_link,
+    get_metadata_id,
     get_prev_and_next_users,
     list_favourites,
     paginate,
     register_finalized,
     remove_favourite,
-    validate_id,
-    get_metadata_id,
     remove_members_from_steps,
     update_signed,
-    check_progress,
-    cloning_process,
-    check_last_finalizer,
-    dowell_email_sender
+    validate_id,
 )
 from app.mongo_db_connection import (
     add_document_to_folder,
     add_template_to_folder,
     authorize,
     authorize_metadata,
+    bulk_query_clones_collection,
+    bulk_query_clones_metadata_collection,
+    bulk_query_document_collection,
+    bulk_query_document_metadata_collection,
     bulk_query_folder_collection,
     bulk_query_process_collection,
+    bulk_query_public_collection,
+    bulk_query_settings_collection,
     bulk_query_team_collection,
     bulk_query_template_collection,
     bulk_query_template_metadata_collection,
+    bulk_query_workflow_collection,
     delete_document,
     delete_folder,
     delete_items_in_folder,
@@ -56,49 +62,39 @@ from app.mongo_db_connection import (
     delete_template,
     delete_workflow,
     finalize_item,
-    save_to_process_collection,
-    update_metadata,
+    get_workflow_setting_object,
+    process_folders_to_item,
     save_to_document_collection,
     save_to_document_metadata_collection,
     save_to_folder_collection,
+    save_to_process_collection,
+    save_to_public_collection,
     save_to_setting_collection,
     save_to_team_collection,
     save_to_template_collection,
     save_to_template_metadata_collection,
     save_to_workflow_collection,
-    single_query_document_collection,
     single_query_clones_collection,
-    bulk_query_workflow_collection,
+    single_query_document_collection,
     single_query_folder_collection,
-    single_query_qrcode_collection,
-    single_query_team_collection,
-    single_query_template_collection,
-    single_query_workflow_collection,
-    bulk_query_settings_collection,
-    single_query_settings_collection,
-    process_folders_to_item,
-    bulk_query_document_collection,
-    bulk_query_document_metadata_collection,
-    bulk_query_clones_collection,
-    bulk_query_clones_metadata_collection,
     single_query_links_collection,
     single_query_process_collection,
+    single_query_qrcode_collection,
+    single_query_settings_collection,
+    single_query_team_collection,
+    single_query_template_collection,
+    single_query_template_metadata_collection,
+    single_query_workflow_collection,
     update_folder,
+    update_metadata,
     update_process,
     update_team_data,
     update_wf,
     update_workflow_setting,
-    get_workflow_setting_object,
-    bulk_query_public_collection,
-    save_to_public_collection,
-    single_query_template_metadata_collection,
 )
 from app.utils import notification_cron
 
 from .constants import EDITOR_API, PROCESS_COMPLETION_MAIL
-from rest_framework.views import APIView
-import spacy
-from datetime import datetime
 
 # Download the English model for spaCy
 # spacy.cli.download("en_core_web_sm")
@@ -378,20 +374,24 @@ class ProcessVerification(APIView):
                     status.HTTP_401_UNAUTHORIZED,
                 )
         process = single_query_process_collection({"_id": link_object["process_id"]})
-        
+
         if user_type == "public":
             for step in process["process_steps"]:
                 if step.get("stepRole") == auth_role:
                     for item in step["stepDocumentCloneMap"]:
                         if item.get(auth_user[0]):
-                            # Assign Collection ID 
+                            # Assign Collection ID
                             collection_id = item.get(auth_user[0])
-                            
+
         # Get previous and next users/viewers
-        prev_viewers, next_viewers = get_prev_and_next_users(process, auth_user, auth_role, user_type)
-        
-        user_email = request.data.get("user_email") if request.data.get("user_email") else ""
-        
+        prev_viewers, next_viewers = get_prev_and_next_users(
+            process, auth_user, auth_role, user_type
+        )
+
+        user_email = (
+            request.data.get("user_email") if request.data.get("user_email") else ""
+        )
+
         process["org_name"] = org_name
         handler = processing.HandleProcess(process)
         location = handler.verify_location(
@@ -419,12 +419,16 @@ class ProcessVerification(APIView):
             )
 
         editor_link = handler.verify_access_v2(
-            auth_role, auth_user, user_type, collection_id, prev_viewers, next_viewers, user_email
+            auth_role,
+            auth_user,
+            user_type,
+            collection_id,
+            prev_viewers,
+            next_viewers,
+            user_email,
         )
         if editor_link:
-            return Response(
-                editor_link, 
-                status.HTTP_200_OK)
+            return Response(editor_link, status.HTTP_200_OK)
         else:
             return Response(
                 "Error accessing the requested document, Retry opening the document again :)",
@@ -553,9 +557,16 @@ class FinalizeOrReject(APIView):
                             elif item.get("document_state") == "processing":
                                 meta_id = get_metadata_id(item_id, item_type)
                         if check_last_finalizer(user, user_type, process):
-                            subject = f"Completion of {process['process_title']} Processing"
-                            email = "morvinian@gmail.com" #Placeholder
-                            dowell_email_sender(process["created_by"], email, subject, email_content=PROCESS_COMPLETION_MAIL)
+                            subject = (
+                                f"Completion of {process['process_title']} Processing"
+                            )
+                            email = "morvinian@gmail.com"  # Placeholder
+                            dowell_email_sender(
+                                process["created_by"],
+                                email,
+                                subject,
+                                email_content=PROCESS_COMPLETION_MAIL,
+                            )
 
                         return Response(
                             "document processed successfully", status.HTTP_200_OK
@@ -580,9 +591,16 @@ class FinalizeOrReject(APIView):
                                 update_metadata(meta_id, "draft", item_type)
 
                         if check_last_finalizer(user, user_type, process):
-                            subject = f"Completion of {process['process_title']} Processing"
-                            email = "morvinian@gmail.com" #Placeholder
-                            dowell_email_sender(process["created_by"], email, subject, email_content=PROCESS_COMPLETION_MAIL)
+                            subject = (
+                                f"Completion of {process['process_title']} Processing"
+                            )
+                            email = "morvinian@gmail.com"  # Placeholder
+                            dowell_email_sender(
+                                process["created_by"],
+                                email,
+                                subject,
+                                email_content=PROCESS_COMPLETION_MAIL,
+                            )
 
                         return Response(
                             "template processed successfully", status.HTTP_200_OK
@@ -1032,11 +1050,13 @@ class DocumentLink(APIView):
                 valid_password_hash = document.get("password")
                 if compare_hash(valid_password_hash, input_password) == False:
                     return Response("Incorrect password", status.HTTP_401_UNAUTHORIZED)
-                  
+
             username = request.query_params.get("username", "")
             portfolio = request.query_params.get("portfolio", "")
-            
-            editor_link = access_editor(document_id, "document", username=username, portfolio=portfolio)
+
+            editor_link = access_editor(
+                document_id, "document", username=username, portfolio=portfolio
+            )
             if not editor_link:
                 return Response(status.HTTP_500_INTERNAL_SERVER_ERROR)
             return Response(editor_link, status.HTTP_200_OK)
