@@ -38,7 +38,7 @@ from app.helpers import (
     cloning_process,
     check_last_finalizer,
     dowell_email_sender,
-    create_reminder
+    remove_finalized_reminder
 )
 from app.mongo_db_connection import (
     add_document_to_folder,
@@ -556,6 +556,8 @@ class FinalizeOrReject(APIView):
                             subject = f"Completion of {process['process_title']} Processing"
                             email = "morvinian@gmail.com" #Placeholder
                             dowell_email_sender(process["created_by"], email, subject, email_content=PROCESS_COMPLETION_MAIL)
+                        
+                        remove_finalized_reminder(user, process["_id"])
 
                         return Response(
                             "document processed successfully", status.HTTP_200_OK
@@ -583,6 +585,8 @@ class FinalizeOrReject(APIView):
                             subject = f"Completion of {process['process_title']} Processing"
                             email = "morvinian@gmail.com" #Placeholder
                             dowell_email_sender(process["created_by"], email, subject, email_content=PROCESS_COMPLETION_MAIL)
+
+                        remove_finalized_reminder(user, process["_id"])
 
                         return Response(
                             "template processed successfully", status.HTTP_200_OK

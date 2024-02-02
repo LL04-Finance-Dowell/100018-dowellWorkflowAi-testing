@@ -104,7 +104,7 @@ class Process:
           for step in self.process["process_steps"]:
             reminder = step.get("stepReminder", [])
             if reminder:
-                set_reminder(reminder, self.process)
+                set_reminder(reminder, step, self.process)
        
             return {
                 "process_title": self.process_title,
@@ -145,7 +145,7 @@ class Process:
             for step in self.process["process_steps"]:
                 reminder = step.get("stepReminder", [])
                 if reminder:
-                    set_reminder(reminder, self.process)
+                    set_reminder(reminder, step, self.process)
             
             return {
                 "process_title": self.process_title,

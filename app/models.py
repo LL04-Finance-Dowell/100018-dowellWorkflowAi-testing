@@ -28,6 +28,7 @@ class FavoriteWorkflow(models.Model):
 class ProcessReminder(models.Model):
     _id = models.UUIDField(default=uuid.uuid4, editable=False, unique=True, primary_key=True)
     process_id = models.TextField()
+    step_finalizer = models.TextField()
     email = jsonfield.JSONField()
     interval = jsonfield.JSONField()
     last_reminder_datetime = jsonfield.JSONField()

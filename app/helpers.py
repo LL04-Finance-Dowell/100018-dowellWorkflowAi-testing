@@ -796,8 +796,7 @@ def check_last_finalizer(user, user_type, process)->bool:
 
 
 
-def set_reminder(reminder, process):
-    for step in process["process_steps"]:
+def set_reminder(reminder, step, process):
         public = step.get("stepPublicMembers", [])
         team = step.get("stepTeamMembers", [])
         user = step.get("stepUserMembers", [])
@@ -820,12 +819,24 @@ def set_reminder(reminder, process):
 
     
 def create_reminder(process, interval, members):
-    ProcessReminder.objects.create(
-            process_id = process["_id"], 
-            email = "morvinian@gmail.com", 
-            interval = interval,
-            last_reminder_datetime = process["created_on"],
-            created_by = process["company_id"]
-        )
+    for member in members:
+        member = member.get("member")
+        if member:
+            ProcessReminder.objects.create(
+                process_id = process["_id"], 
+                step_finalizer = member,
+                email = "morvinian@gmail.com", 
+                interval = interval,
+                last_reminder_datetime = process["created_on"],
+                created_by = process["company_id"]
+            )
     
   
+def remove_finalized_reminder(user, process_id):
+    try:
+        reminder = ProcessReminder.objects.get(step_finalizer=user, process_id=process_id)
+        reminder.delete()
+        return True 
+    except Exception as e:
+        return False 
+        

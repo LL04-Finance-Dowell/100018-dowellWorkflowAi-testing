@@ -36,16 +36,15 @@ def send_reminders():
 
         # every_hour
         if reminder.interval == 60 and math.floor(time_difference.seconds/60) >= 60:
-                dowell_email_sender("Workflow AI Client", reminder.email, "Process Reminder", PROCESS_REMINDER_EMAIL)
+                dowell_email_sender(reminder.step_finalizer, reminder.email, "Process Reminder", PROCESS_REMINDER_EMAIL)
                 reminder.last_reminder_datetime = datetime.utcnow().strftime('%d:%m:%Y,%H:%M:%S')
                 reminder.save()
 
         # every_day
         elif reminder.interval == 1440 and math.floor(time_difference.seconds/60) >= 1440:
-                dowell_email_sender("Workflow AI Client", reminder.email, "Process Reminder", PROCESS_REMINDER_EMAIL)
+                dowell_email_sender(reminder.step_finalizer, reminder.email, "Process Reminder", PROCESS_REMINDER_EMAIL)
                 reminder.last_reminder_datetime = datetime.utcnow().strftime('%d:%m:%Y,%H:%M:%S')
                 reminder.save()
-
 
 
 if __name__ == "__main__":
