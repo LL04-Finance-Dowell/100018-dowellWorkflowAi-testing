@@ -1,5 +1,5 @@
 import { AiOutlineConsoleSql } from 'react-icons/ai';
-import { httpApiUrl, httpDocument } from '../httpCommon/httpCommon';
+import { httpApiUrl, httpDocument, httpDocumentStep } from '../httpCommon/httpCommon';
 
 export class DocumentServices {
   createDocument = (data) => {
@@ -43,6 +43,10 @@ export class DocumentServices {
 
   contentDocument = (collection_id, item ) => {
     return httpDocument.get(`/${collection_id}/content/?item_type=${item}`);
+  };
+
+  contentDocumentStep = (collection_id, item ) => {
+    return httpDocumentStep.get(`/content/${collection_id}/?item_type=${item}`);
   };
   
 

@@ -154,6 +154,21 @@ export const contentDocument = createAsyncThunk(
   }
 );
 
+export const contentDocumentStep = createAsyncThunk(
+  'document/contentDocument',
+  async ({ collection_id, item }) => {
+    try {
+      console.log(collection_id, item)
+      const res = await documentServices.contentDocumentStep(collection_id, item);
+
+      // console.log(res.data)
+      return res.data;
+    } catch (error) {
+      console.log('Content document fetch error: ', error);
+    }
+  }
+);
+
 export const allDocuments = createAsyncThunk(
   'document/all',
   async (data, thunkAPI) => {

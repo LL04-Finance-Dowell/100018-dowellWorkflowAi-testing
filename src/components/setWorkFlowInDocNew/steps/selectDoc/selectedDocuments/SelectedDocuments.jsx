@@ -2,7 +2,7 @@ import React, {useEffect} from 'react';
 import { useForm } from 'react-hook-form';
 import { useDispatch, useSelector } from 'react-redux';
 import { setCurrentDocToWfs } from '../../../../../features/app/appSlice';
-import { contentDocument } from '../../../../../features/document/asyncThunks';
+import { contentDocument, contentDocumentStep} from '../../../../../features/document/asyncThunks';
 import { setContentOfDocument } from '../../../../../features/document/documentSlice';
 import { PrimaryButton } from '../../../../styledComponents/styledComponents';
 import styles from './selectedDocuments.module.css';
@@ -30,6 +30,8 @@ const SelectedDocuments = ({
     const currentURL = window.location.href;
     const parts = currentURL.split('/'); 
     const whichApproval =  parts[parts.length - 1];
+    const whichApprovalStep =  parts[parts.length - 1];
+
 
     ////copied docs
     const copiedDocument = useSelector((state) => state.copyProcess.document);
@@ -57,6 +59,7 @@ const SelectedDocuments = ({
     // console.log('the selected document is ', selectedDocument)
 
   const onSubmit = (data) => {
+    debugger
     if (!selectedDocument) return;
 
    
@@ -71,6 +74,10 @@ const SelectedDocuments = ({
     if(whichApproval == 'new-set-workflow-document'){
      const item = 'documents'
       dispatch(contentDocument({ collection_id: selectedDocument.collection_id, item }));
+    }
+    else if(whichApprovalStep == 'new-set-workflow-document-step'){
+      const item = 'clone'
+      dispatch(contentDocumentStep({ collection_id: selectedDocument._id, item }));
     }
     else{
       const item = 'templates'
