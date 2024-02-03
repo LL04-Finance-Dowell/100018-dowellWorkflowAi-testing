@@ -59,7 +59,6 @@ const SelectedDocuments = ({
     // console.log('the selected document is ', selectedDocument)
 
   const onSubmit = (data) => {
-    debugger
     if (!selectedDocument) return;
 
    
