@@ -341,7 +341,6 @@ PROCESS_COMPLETION_MAIL = ('''
             </header>
             <main>
                 <section>
-                    <p>Dear User,</p>
                 <div style="">
                             <p>We are pleased to inform you that your process has been successfully completed. Thank you for using our services. 
                                 If you have any questions or need further assistance, feel free to contact us.
@@ -435,7 +434,6 @@ PROCESS_REMINDER_EMAIL = ('''
             </header>
             <main>
                 <section>
-                    <p>Dear User,</p>
                     <p>This is a reminder to process your task. A document has been shared with you for processing. Please review and take necessary actions.</p>
                             
                     <div>
