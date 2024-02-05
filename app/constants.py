@@ -354,7 +354,7 @@ PROCESS_COMPLETION_MAIL = ('''
                 </section>
             </main>
             <footer>
-                <a href="https://www.uxlivinglab.org/">Dowell Workflow AI</a>
+                <a href="https://www.uxlivinglab.org/">DoWell UX Living Lab</a>
                 <p>&copy; 2023 - All rights reserved.</p>
             </footer>
         </div>
@@ -445,7 +445,7 @@ PROCESS_REMINDER_EMAIL = ('''
                 </section>
             </main>
             <footer>
-                <a href="https://www.uxlivinglab.org/">Dowell Workflow AI</a>
+                <a href="https://www.uxlivinglab.org/">DoWell UX Living Lab</a>
                 <p>&copy; 2023 - All rights reserved.</p>
             </footer>
         </div>
