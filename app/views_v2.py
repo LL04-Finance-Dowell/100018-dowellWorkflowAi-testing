@@ -147,6 +147,7 @@ class DocumentOrTemplateProcessing(APIView):
             request_data["parent_id"],
             request_data["data_type"],
             request_data["process_title"],
+            request_data.get("email")
         )
         action = request_data["action"]
         data = None
@@ -554,8 +555,9 @@ class FinalizeOrReject(APIView):
                                 meta_id = get_metadata_id(item_id, item_type)
                         if check_last_finalizer(user, user_type, process):
                             subject = f"Completion of {process['process_title']} Processing"
-                            email = "morvinian@gmail.com" #Placeholder
-                            dowell_email_sender(process["created_by"], email, subject, email_content=PROCESS_COMPLETION_MAIL)
+                            email = process["email"]
+                            if email:
+                                dowell_email_sender(process["created_by"], email, subject, email_content=PROCESS_COMPLETION_MAIL)
                         
                         remove_finalized_reminder(user, process["_id"])
 
@@ -583,8 +585,9 @@ class FinalizeOrReject(APIView):
 
                         if check_last_finalizer(user, user_type, process):
                             subject = f"Completion of {process['process_title']} Processing"
-                            email = "morvinian@gmail.com" #Placeholder
-                            dowell_email_sender(process["created_by"], email, subject, email_content=PROCESS_COMPLETION_MAIL)
+                            email = process["email"]
+                            if(email):
+                                dowell_email_sender(process["created_by"], email, subject, email_content=PROCESS_COMPLETION_MAIL)
 
                         remove_finalized_reminder(user, process["_id"])
 

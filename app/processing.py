@@ -60,6 +60,7 @@ class Process:
         parent_id,
         data_type,
         process_title,
+        email,
         *args,
         **kwargs,
     ):
@@ -76,6 +77,7 @@ class Process:
             step for workflow in workflows for step in workflow["workflows"]["steps"]
         ]
         self.process_title = process_title
+        self.email = email
         
         parent_process = kwargs.get("parent_process")
         self.parent_process = parent_process
@@ -96,7 +98,8 @@ class Process:
                     "process_type": self.process_type,
                     "org_name":self.org_name,
                     "process_kind": "original",
-                    "parent_process": self.parent_process
+                    "parent_process": self.parent_process,
+                    "email": self.email
                 }
             )
         )
@@ -138,6 +141,8 @@ class Process:
                     "process_type": self.process_type,
                     "org_name":self.org_name,
                     "process_kind": "original",
+                    "email": self.email
+
                 }
             )
         )
