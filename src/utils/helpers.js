@@ -516,3 +516,8 @@ export const ScaleDetailReportData = {
   },
   "central_tendencies": "Process Id already in use. Please enter a different Process Id & try again."
 }
+export const dateTimeStampFormat = (date) => {
+ return `${date.split(",")[0].split(":").reverse().join("-")}T${
+    date.split(",")[1]
+  }`;
+};
