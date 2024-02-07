@@ -2,7 +2,7 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { WorkflowSettingServices } from '../services/workflowSettingServices';
 import { useMediaQuery } from 'react-responsive';
-import { productName } from '../utils/helpers';
+import { dateTimeStampFormat, productName } from '../utils/helpers';
 import {
   setFetchedPermissionArray,
   setThemeColor,
@@ -273,7 +273,17 @@ export const AppContextProvider = ({ children }) => {
         setCompletedProcesses(res.data ? res.data : []);
       } else if (type === 'active') {
         const res = await getActiveProcesses(companyId, dataType);
-        setActiveProcesses(res.data ? res.data : []);
+        const activeProcess = res.data ? res.data : [];
+        activeProcess?.sort((a, b) => {
+          const aDate = a.created_at || a.created_on;
+          const bDate = b.created_at || b.created_on;
+          const formatDateA = dateTimeStampFormat(aDate);
+          const formatDateB = dateTimeStampFormat(bDate);
+          const dateA = new Date(formatDateA);
+          const dateB = new Date(formatDateB);
+          return dateB - dateA;
+        });
+        setActiveProcesses(activeProcess);
       }
     } catch (err) {
       console.log(err);
