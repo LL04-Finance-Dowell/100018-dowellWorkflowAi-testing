@@ -8,6 +8,7 @@ import {
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { productName } from '../../utils/helpers';
+import {  IoMdArrowBack } from 'react-icons/io';
 
 const ManageFiles = ({
   title,
@@ -48,10 +49,15 @@ const ManageFiles = ({
       {OverlayComp && toggleManageFileForm && (
         <OverlayComp handleToggleOverlay={handleToggleOverlay} />
       )}
+      <div className={styles.header_wrapper}>
+        
+      <button className={styles.back_button} onClick={(e) =>{ e.preventDefault(); navigate(-1)}}>  <IoMdArrowBack /></button>
       <h2 className={styles.page__header}>
-        {' '}
         {t(title)} {removePageSuffix ? '' : t('Page')}{' '}
       </h2>
+      </div>
+
+     
       <div
         className={`${styles.content__box} ${
           contentBoxClassName ? contentBoxClassName : ''
