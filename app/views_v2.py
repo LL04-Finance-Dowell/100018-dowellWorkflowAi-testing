@@ -1053,9 +1053,10 @@ class DocumentLink(APIView):
 
             username = request.query_params.get("username", "")
             portfolio = request.query_params.get("portfolio", "")
+            email = request.query_params.get("email", "")
 
             editor_link = access_editor(
-                document_id, "document", username=username, portfolio=portfolio
+                document_id, "document", username=username, portfolio=portfolio, email=email
             )
             if not editor_link:
                 return Response(status.HTTP_500_INTERNAL_SERVER_ERROR)
@@ -1610,7 +1611,15 @@ class TemplateLink(APIView):
             valid_password_hash = template.get("password")
             if compare_hash(valid_password_hash, input_password) == False:
                 return Response("Incorrect password", status.HTTP_401_UNAUTHORIZED)
-        editor_link = access_editor(template_id, "template")
+        
+        username = request.query_params.get("username", "")
+        portfolio = request.query_params.get("portfolio", "")
+        email = request.query_params.get("email", "")
+        
+        editor_link = access_editor(
+            template_id, "template", username=username, portfolio=portfolio, email=email
+            )
+        
         if not editor_link:
             return Response(status.HTTP_500_INTERNAL_SERVER_ERROR)
         return Response(editor_link, status.HTTP_201_CREATED)

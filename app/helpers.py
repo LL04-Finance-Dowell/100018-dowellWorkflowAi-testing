@@ -238,7 +238,7 @@ def cloning_process(process_id, created_by, creator_portfolio):
         return
 
 
-def access_editor(item_id, item_type, username="", portfolio=""):
+def access_editor(item_id, item_type, username="", portfolio="", email=""):
     team_member_id = (
         "11689044433"
         if item_type == "document"
@@ -295,6 +295,7 @@ def access_editor(item_id, item_type, username="", portfolio=""):
             "name": name,
             "username": username,
             "portfolio": portfolio,
+            "email": email,
             "time": str(datetime.utcnow()),
             "command": "update",
             "update_field": {field: "", "content": "", "page": "", "edited_by": username, "portfolio": portfolio, "edited_on": str(datetime.utcnow())},
