@@ -879,6 +879,7 @@ class NewDocument(APIView):
         template_id = request.data["template_id"]
         content = single_query_template_collection({"_id": template_id})["content"]
         page = single_query_template_collection({"_id": template_id})["page"]
+        email = request.data.get("email")
         res = json.loads(
             save_to_document_collection(
                 {
@@ -924,7 +925,7 @@ class NewDocument(APIView):
                 )
             metadata_id = res_metadata["inserted_id"]
             editor_link = access_editor_metadata(
-                res["inserted_id"], "document", metadata_id
+                res["inserted_id"], "document", metadata_id, email
             )
             return Response(
                 {"editor_link": editor_link, "_id": res["inserted_id"]},
@@ -1050,9 +1051,14 @@ class DocumentLink(APIView):
 
             username = request.query_params.get("username", "")
             portfolio = request.query_params.get("portfolio", "")
+            email = request.query_params.get("email", "")
 
             editor_link = access_editor(
-                document_id, "document", username=username, portfolio=portfolio
+                document_id,
+                "document",
+                username=username,
+                portfolio=portfolio,
+                email=email,
             )
             if not editor_link:
                 return Response(status.HTTP_500_INTERNAL_SERVER_ERROR)
@@ -1471,6 +1477,7 @@ class NewTemplate(APIView):
 
         viewers = [{"member": request.data["created_by"], "portfolio": portfolio}]
         organization_id = request.data["company_id"]
+        email = request.data.get("email", None)
         res = json.loads(
             save_to_template_collection(
                 {
@@ -1518,6 +1525,7 @@ class NewTemplate(APIView):
                     "field": "template_name",
                     "action": "template",
                     "metadata_id": res_metadata["inserted_id"],
+                    "email": email,
                     "cluster": "Documents",
                     "database": "Documentation",
                     "collection": "TemplateReports",
@@ -1632,7 +1640,15 @@ class TemplateLink(APIView):
             valid_password_hash = template.get("password")
             if compare_hash(valid_password_hash, input_password) == False:
                 return Response("Incorrect password", status.HTTP_401_UNAUTHORIZED)
-        editor_link = access_editor(template_id, "template")
+
+        username = request.query_params.get("username", "")
+        portfolio = request.query_params.get("portfolio", "")
+        email = request.query_params.get("email", "")
+
+        editor_link = access_editor(
+            template_id, "template", username=username, portfolio=portfolio, email=email
+        )
+
         if not editor_link:
             return Response(status.HTTP_500_INTERNAL_SERVER_ERROR)
         return Response(editor_link, status.HTTP_201_CREATED)
