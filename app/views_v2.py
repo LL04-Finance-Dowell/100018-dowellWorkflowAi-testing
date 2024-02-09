@@ -34,7 +34,11 @@ from app.helpers import (
     remove_members_from_steps,
     update_signed,
     check_progress,
-    cloning_process
+    cloning_process,
+    dowell_email_sender,
+    remove_finalized_reminder,
+    check_last_finalizer,
+    set_reminder
 )
 from app.mongo_db_connection import (
     add_document_to_folder,
@@ -92,7 +96,7 @@ from app.mongo_db_connection import (
 )
 from app.utils import notification_cron
 
-from .constants import EDITOR_API
+from .constants import EDITOR_API, PROCESS_COMPLETION_MAIL
 from rest_framework.views import APIView
 import spacy
 from datetime import datetime
@@ -144,6 +148,7 @@ class DocumentOrTemplateProcessing(APIView):
             request_data["parent_id"],
             request_data["data_type"],
             request_data["process_title"],
+            request_data.get("email")
         )
         action = request_data["action"]
         data = None
@@ -537,6 +542,14 @@ class FinalizeOrReject(APIView):
                                     )
                             elif item.get("document_state") == "processing":
                                 meta_id = get_metadata_id(item_id, item_type)
+
+                        if check_last_finalizer(user, user_type, process):
+                            subject = f"Completion of {process['process_title']} Processing"
+                            email = process["email"]
+                            if email:
+                                dowell_email_sender(process["created_by"], email, subject, email_content=PROCESS_COMPLETION_MAIL)
+
+                        remove_finalized_reminder(user, process["_id"])
                         return Response(
                             "document processed successfully", status.HTTP_200_OK
                         )
@@ -558,6 +571,14 @@ class FinalizeOrReject(APIView):
                             elif item.get("template_state") == "draft":
                                 meta_id = get_metadata_id(item_id, item_type)
                                 update_metadata(meta_id, "draft", item_type)
+
+                        if check_last_finalizer(user, user_type, process):
+                            subject = f"Completion of {process['process_title']} Processing"
+                            email = process["email"]
+                            if email:
+                                dowell_email_sender(process["created_by"], email, subject, email_content=PROCESS_COMPLETION_MAIL)
+
+                        remove_finalized_reminder(user, process["_id"])
                         return Response(
                             "template processed successfully", status.HTTP_200_OK
                         )

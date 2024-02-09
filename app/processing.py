@@ -27,6 +27,7 @@ from app.helpers import (
     check_step_items_state,
     check_user_in_auth_viewers,
     get_metadata_id,
+    set_reminder
 
 )
 from app.mongo_db_connection import (
@@ -59,6 +60,7 @@ class Process:
         parent_id,
         data_type,
         process_title,
+        email,
         *args,
         **kwargs,
     ):
@@ -75,6 +77,7 @@ class Process:
             step for workflow in workflows for step in workflow["workflows"]["steps"]
         ]
         self.process_title = process_title
+        self.email = email
         
         parent_process = kwargs.get("parent_process")
         self.parent_process = parent_process
@@ -95,11 +98,17 @@ class Process:
                     "process_type": self.process_type,
                     "org_name":self.org_name,
                     "process_kind": "original",
-                    "parent_process": self.parent_process
+                    "parent_process": self.parent_process,
+                    "email": self.email
                 }
             )
         )
         if res["isSuccess"]:
+            for step in self.process["process_steps"]:
+                reminder = step.get("stepReminder", [])
+                if reminder:
+                    set_reminder(reminder, step, self.process)
+
             return {
                 "process_title": self.process_title,
                 "process_steps": self.process_steps,
@@ -112,7 +121,9 @@ class Process:
                 "process_type": self.process_type,
                 "process_kind": "original",
                 "org_name": self.org_name,
-                "parent_process": self.parent_process
+                "parent_process": self.parent_process,
+                "email": self.email
+
             }
 
     def test_process(self, action):
@@ -136,6 +147,11 @@ class Process:
             )
         )
         if res["isSuccess"]:
+            for step in self.process["process_steps"]:
+                reminder = step.get("stepReminder", [])
+                if reminder:
+                    set_reminder(reminder, step, self.process)
+
             return {
                 "process_title": self.process_title,
                 "process_steps": self.process_steps,
@@ -148,6 +164,8 @@ class Process:
                 "process_type": self.process_type,
                 "process_kind": "original",
                 "org_name": self.org_name,
+                "email": self.email
+
             }
 
 

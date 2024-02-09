@@ -268,3 +268,187 @@ PUBLIC_CONNECTION_DICT = {
     "function_ID": "ABCDE",
     
 }
+
+
+PROCESS_COMPLETION_MAIL = ('''
+                           
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>DoWell WorkFlow AI Email</title>
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                background-color: #f4f4f4;
+                margin: 0;
+                padding: 0;
+                display: flex;
+                justify-content: center;
+            }
+            .container {
+                width: 100%;
+                background-color: #ffffff;
+            }
+            header {
+                color: #005733;
+                display: flex;
+                justify-content: center;
+                padding: 20px;
+            }
+            main {
+                padding: 20px;
+            }
+            section {
+                margin: 20px;
+                font-size: medium;
+            }
+            .button {
+                display: inline-block;
+                padding: 15px 30px;
+                background-color: #005733;
+                color: #fff;
+                text-decoration: none;
+                font-weight: 700;
+                border-radius: 5px;
+                transition: background-color 0.3s ease;
+            }
+            .button:hover {
+                background-color: #003d26;
+            }
+            footer {
+                background-color: #005733;
+                color: #fff;
+                text-align: center;
+                padding: 25px;
+            }
+            footer a {
+                color: #fff;
+                text-decoration: none;
+                margin-bottom: 10px;
+                display: inline-block;
+            }
+            footer p {
+                margin-top: 10px;
+                font-size: 12px;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <header>
+                <img src="https://dowellfileuploader.uxlivinglab.online/hr/logo-2-min-min.png" height="140px" width="140px" alt="DoWell Logo">
+            </header>
+            <main>
+                <section>
+                <div style="">
+                            <p>We are pleased to inform you that your process has been successfully completed. Thank you for using our services. 
+                                If you have any questions or need further assistance, feel free to contact us.
+                            </p>
+                        </div>
+
+                        <div>
+                            <p>Best regards,</br>Workflow AI team</p>
+                        </div> 
+                </section>
+            </main>
+            <footer>
+                <a href="https://www.uxlivinglab.org/">DoWell UX Living Lab</a>
+                <p>&copy; 2023 - All rights reserved.</p>
+            </footer>
+        </div>
+    </body>
+    </html>
+            
+''')
+
+PROCESS_REMINDER_EMAIL = ('''
+                                                     
+    <!DOCTYPE html>
+        <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>DoWell WorkFlow AI Email</title>
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                background-color: #f4f4f4;
+                margin: 0;
+                padding: 0;
+                display: flex;
+                justify-content: center;
+            }
+            .container {
+                width: 100%;
+                background-color: #ffffff;
+            }
+            header {
+                color: #005733;
+                display: flex;
+                justify-content: center;
+                padding: 20px;
+            }
+            main {
+                padding: 20px;
+            }
+            section {
+                margin: 20px;
+                font-size: medium;
+            }
+            .button {
+                display: inline-block;
+                padding: 15px 30px;
+                background-color: #005733;
+                color: #fff;
+                text-decoration: none;
+                font-weight: 700;
+                border-radius: 5px;
+                transition: background-color 0.3s ease;
+            }
+            .button:hover {
+                background-color: #003d26;
+            }
+            footer {
+                background-color: #005733;
+                color: #fff;
+                text-align: center;
+                padding: 25px;
+            }
+            footer a {
+                color: #fff;
+                text-decoration: none;
+                margin-bottom: 10px;
+                display: inline-block;
+            }
+            footer p {
+                margin-top: 10px;
+                font-size: 12px;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <header>
+                <img src="https://dowellfileuploader.uxlivinglab.online/hr/logo-2-min-min.png" height="140px" width="140px" alt="DoWell Logo">
+            </header>
+            <main>
+                <section>
+                    <p>This is a reminder to process your task. A document has been shared with you for processing. Please review and take necessary actions.</p>
+                            
+                    <div>
+                        <p>Best regards,</br>Workflow AI team</p>
+                    </div> 
+
+                </section>
+            </main>
+            <footer>
+                <a href="https://www.uxlivinglab.org/">DoWell UX Living Lab</a>
+                <p>&copy; 2023 - All rights reserved.</p>
+            </footer>
+        </div>
+</body>
+</html>
+          
+''')

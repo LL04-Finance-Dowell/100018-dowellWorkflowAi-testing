@@ -6,7 +6,7 @@ import bson
 import requests
 
 from app.constants import EDITOR_API, MASTERLINK_URL, PUBLIC_LOGIN_API
-from app.models import FavoriteDocument, FavoriteTemplate, FavoriteWorkflow
+from app.models import FavoriteDocument, FavoriteTemplate, FavoriteWorkflow, ProcessReminder
 from app.serializers import (
     FavouriteDocumentSerializer,
     FavouriteTemplateSerializer,
@@ -519,19 +519,16 @@ def check_all_finalized_true(data, process_type) -> bool:
 
 def check_progress(process_id):
     steps = single_query_process_collection({"_id": process_id})["process_steps"]
-    steps_count = 0
+    steps_count = len(steps)
     accessed = 0
-    for item in steps:
-        steps_count += 1
-        step_document_clone_map = item.get("stepDocumentCloneMap", [])
-        for clone in step_document_clone_map:
-            for key, value in clone.items():
-                if key == "accessed" and value == True:
-                    accessed += 1
+    for step in steps:
+        step_clone_map = step.get("stepDocumentCloneMap", [])
+        if step_clone_map:
+            if check_all_accessed(step_clone_map):
+                accessed += 1
 
     percentage_progress = round((accessed / steps_count * 100), 2)
     return percentage_progress
-
 
 def get_metadata_id(item_id, item_type):
     if item_type == "document":
@@ -702,3 +699,100 @@ def create_document_helper(
     except Exception as ex:
         print(ex)
         return
+
+def dowell_email_sender(name, email, subject, email_content):
+    email_url = "https://100085.pythonanywhere.com/api/uxlivinglab/email/"
+    payload = {
+        "toname":name,
+        "toemail": email,
+        "fromname":"Workflow AI",
+        "fromemail":"workflowai@dowellresearch.sg",
+        "subject": subject,
+        "email_content":email_content
+    }
+
+    requests.post(email_url, data=payload)
+    
+
+
+def check_last_finalizer(user, user_type, process)->bool:
+    steps = process["process_steps"]
+    non_skipped_steps = []
+
+    for step in steps:
+        if step.get("skipStep") == False:
+            non_skipped_steps.append(step)
+
+    last_step = non_skipped_steps[len(non_skipped_steps)-1]
+    step_clone_map = last_step.get("stepDocumentCloneMap", [])
+
+    if user_type == "team":
+        for data in last_step["stepTeamMembers"]:
+            if data.get("member") == user:
+                if check_all_accessed(step_clone_map):
+                    return True
+            
+    elif user_type == "user":
+        for data in last_step["stepUserMembers"]:
+            if data.get("member") == user:
+                if check_all_accessed(step_clone_map):
+                    return True
+            
+    elif user_type == "public":
+       for data in last_step["stepPublicMembers"]:
+            if data.get("member") == user:
+                if check_all_accessed(step_clone_map):
+                    return True
+    else:
+        return False
+
+
+
+def set_reminder(reminder, step, process):
+        team = step.get("stepTeamMembers", [])
+        user = step.get("stepUserMembers", [])
+
+        if reminder == "every_hour":
+            if team:
+                create_reminder(process, 60, team)
+            if user:
+                create_reminder(process, 60, user)
+    
+        elif reminder == "every_day":
+            if team:
+                create_reminder(process, 1440, team)
+            if user:
+                create_reminder(process, 1440, user)
+
+def create_reminder(process, interval, members):
+    for member in members:
+        member = member.get("member")
+        email = member.get("email")
+
+        if member:
+            ProcessReminder.objects.create(
+                process_id = process["_id"], 
+                step_finalizer = member,
+                email = email, 
+                interval = interval,
+                last_reminder_datetime = process["created_on"],
+                created_by = process["company_id"]
+            )
+
+
+def remove_finalized_reminder(user, process_id):
+    try:
+        reminder = ProcessReminder.objects.get(step_finalizer=user, process_id=process_id)
+        reminder.delete()
+        return True 
+    except Exception as e:
+        return False 
+    
+  
+def remove_finalized_reminder(user, process_id):
+    try:
+        reminder = ProcessReminder.objects.get(step_finalizer=user, process_id=process_id)
+        reminder.delete()
+        return True 
+    except Exception as e:
+        return False 
