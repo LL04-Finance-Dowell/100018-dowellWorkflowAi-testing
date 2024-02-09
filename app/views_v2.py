@@ -1686,8 +1686,7 @@ class Team(APIView):
         """Get All Team"""
         all_team = bulk_query_team_collection({"company_id": company_id})
         data_type = request.query_params.get("data_type")
-        form = request.data
-        if not form and data_type:
+        if not data_type:
             return Response("Invalid Request", status.HTTP_400_BAD_REQUEST)
         all_team = bulk_query_team_collection(
             {"company_id": company_id, "data_type": data_type}
