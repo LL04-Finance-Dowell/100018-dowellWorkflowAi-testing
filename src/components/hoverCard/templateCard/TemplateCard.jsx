@@ -116,7 +116,7 @@ const TemplateCard = ({ cardItem, isFolder, folderId }) => {
       ).data;
       toast.success(response);
     } catch (error) {
-      console.log(error.response ? error.response.data : error.message);
+      // console.log(error.response ? error.response.data : error.message);
       toast.info(error.response ? error.response.data : error.message);
       copyOfTemplateToUpdate.data_type = 'Real_Data';
       copyOfAllTemplates[foundTemplateIndex] = copyOfTemplateToUpdate;
@@ -146,7 +146,7 @@ const TemplateCard = ({ cardItem, isFolder, folderId }) => {
 
       setTemplateLoading(false);
     } catch (error) {
-      console.log(error.response ? error.response.data : error.message);
+      // console.log(error.response ? error.response.data : error.message);
       toast.info('Refresh for template failed');
       setTemplateLoading(false);
     }

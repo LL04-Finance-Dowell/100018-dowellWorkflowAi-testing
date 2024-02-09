@@ -31,10 +31,10 @@ const SelectWorkflow = ({ savedDoc }) => {
   useEffect(() => {
     if (!copiedWorkflow) return;
 
-    console.log('start useEffect in step 2. select workflow',startCopyingWF ,selectedWorkflowsToDoc?.length)
+    // console.log('start useEffect in step 2. select workflow',startCopyingWF ,selectedWorkflowsToDoc?.length)
     const timerId = setTimeout(() => {
     if (selectedWorkflowsToDoc?.length >= 1 && copiedWorkflow !==null && startCopyingWF) {
-    //  console.log('entered to stpe 2. slect workflow')
+    //  // console.log('entered to stpe 2. slect workflow')
       // const contentPageWise = contentOfDocument.reduce((r, a) => {
       //   r[a.pageNum] = r[a.pageNum] || [];
       //   r[a.pageNum].push(a);
@@ -43,9 +43,9 @@ const SelectWorkflow = ({ savedDoc }) => {
    
       // if (Object.keys(contentPageWise || {}).length < 1) return toast.info("The document selected for processing cannot be empty.");
       dispatch(setWfToDocument());
-      // console.log('middle of step 2')
+      // // console.log('middle of step 2')
       dispatch(startConnecting())
-      // console.log('finished useEffect in step 2. select workflow')
+      // // console.log('finished useEffect in step 2. select workflow')
     }}, 2000);
     return () => clearTimeout(timerId);
   },[copiedWorkflow, selectedWorkflowsToDoc, startCopyingWF])
@@ -58,7 +58,7 @@ const SelectWorkflow = ({ savedDoc }) => {
   };
 
   const handleConnectWfToDoc = () => {
-    console.log(selectedWorkflowsToDoc)
+    // console.log(selectedWorkflowsToDoc)
     if ( selectedWorkflowsToDoc?.length < 1) {
       return toast.info('Please Select a Workflow to Continue');
     }

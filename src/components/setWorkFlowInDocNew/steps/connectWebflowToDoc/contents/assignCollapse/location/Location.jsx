@@ -95,7 +95,7 @@ const Location = ({ currentStepIndex, stepsPopulated }) => {
         setRegionsLoading(false);
       })
       .catch((err) => {
-        console.log('Failed to fetch regions in ', country);
+        // console.log('Failed to fetch regions in ', country);
         setRegionsLoading(false);
       });
     // eslint-disable-next-line react-hooks/exhaustive-deps

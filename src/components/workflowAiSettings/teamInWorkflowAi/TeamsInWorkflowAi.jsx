@@ -147,7 +147,7 @@ const TeamsInWorkflowAi = () => {
           ];
         });
       } catch (err) {
-        console.log(err);
+        // console.log(err);
         toast.error('Team not created');
         setIsCreatingTeam(false);
       }
@@ -301,7 +301,7 @@ const TeamsInWorkflowAi = () => {
     } catch (error) {
       setIsUpdatingTeam(false);
       toast.error('Updating failed!');
-      console.log(error);
+      // console.log(error);
     }
   };
 

@@ -17,7 +17,7 @@ export const WorkflowReport = () => {
 	// Inside your component
 	const location = useLocation();
 	const passedData = location.state;
-	console.log("ShowDocumentReport", passedData)
+	// console.log("ShowDocumentReport", passedData)
 
 	const handleBack = () => {
 		navigate('/documents/draft-reports');

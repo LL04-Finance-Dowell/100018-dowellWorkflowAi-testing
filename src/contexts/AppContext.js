@@ -201,7 +201,7 @@ export const AppContextProvider = ({ children }) => {
         member
       );
   
-      console.log("res.data",res.data)
+      // console.log("res.data",res.data)
       setWorkflowSettings(res.data); 
     } catch (error) {
       
@@ -214,7 +214,7 @@ export const AppContextProvider = ({ children }) => {
       const res = await new TemplateServices().demoTemplates(1);
       setDemoTemplates(res.data ? res.data.templates : []);
     } catch (err) {
-      console.log(err);
+      // console.log(err);
     } finally {
       setDemoTempStatus('');
     }
@@ -236,7 +236,7 @@ export const AppContextProvider = ({ children }) => {
       else if (state === 'rejected')
         setDocsRejected(res.data.documents ? res.data.documents : []);
     } catch (err) {
-      console.log(err);
+      // console.log(err);
     } finally {
       if (state === 'finalized') setDocsCompletedStatus('');
       else if (state === 'rejected') setDocsRejectedStatus('');
@@ -257,7 +257,7 @@ export const AppContextProvider = ({ children }) => {
       else if (state === 'rejected')
         setOrgDocsRejected(res.data.clones ? res.data.clones : []);
     } catch (err) {
-      console.log(err);
+      // console.log(err);
     } finally {
       if (state === 'finalized') setOrgDocsCompletedStatus('');
       else if (state === 'rejected') setOrgDocsRejectedStatus('');
@@ -286,7 +286,7 @@ export const AppContextProvider = ({ children }) => {
         setActiveProcesses(activeProcess);
       }
     } catch (err) {
-      console.log(err);
+      // console.log(err);
     } finally {
       if (type === 'completed') setCompletedProcessesStatus('');
       else if (type === 'active') setActiveProcessesStatus('');
@@ -302,7 +302,7 @@ export const AppContextProvider = ({ children }) => {
       );
       setSavedDocuments(res.data ? res.data.clones : []);
     } catch (err) {
-      console.log(err);
+      // console.log(err);
     } finally {
       setSavedDocumentsStatus('');
     }
@@ -319,13 +319,13 @@ export const AppContextProvider = ({ children }) => {
       );
       setTempReports(res.data ? res.data.templates : []);
     } catch (err) {
-      console.log(err);
+      // console.log(err);
     } finally {
       setTempReportsStatus('');
     }
   };
 
-  // console.log(userName, portfolioName, dataType);
+  // // console.log(userName, portfolioName, dataType);
 
   const fetchDemoDocuments = async () => {
     setDemoDocStatus('pending');
@@ -333,7 +333,7 @@ export const AppContextProvider = ({ children }) => {
       const res = await new DocumentServices().demoDocuments(1);
       setDemoDocuments(res.data ? res.data.documents : []);
     } catch (err) {
-      console.log(err);
+      // console.log(err);
     } finally {
       setDemoDocStatus('');
     }
@@ -352,7 +352,7 @@ export const AppContextProvider = ({ children }) => {
       const res = await folderServices.getAllFolders(userCompanyId, dataType);
       setFolders(res.data ? res.data.reverse() : []);
     } catch (err) {
-      console.log(err);
+      // console.log(err);
     } finally {
       setIsFetchingFolders(false);
     }
@@ -402,11 +402,11 @@ export const AppContextProvider = ({ children }) => {
             setWorkflowTeamsLoaded(true);
           })
           .catch((err) => {
-            console.log(
-              'Failed to fetch teams: ',
-              err
-              // .response ? err.response.data : err.message
-            );
+            // console.log(
+            //   'Failed to fetch teams: ',
+            //   err
+            //   // .response ? err.response.data : err.message
+            // );
             setWorkflowTeamsLoaded(true);
           });
       }

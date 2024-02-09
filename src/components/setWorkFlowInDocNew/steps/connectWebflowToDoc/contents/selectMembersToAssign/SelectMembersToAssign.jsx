@@ -30,6 +30,57 @@ const SelectMembersToAssign = ({
   currentEnabledSteps,
 }) => {
   const [selectMembersComp, setSelectMembersComp] = useState(selectMembers);
+  const [numberOfPublicMembers, setNumberOfPublicMembers] = useState(0);
+
+  const handleChange = (event) => {
+    setNumberOfPublicMembers(event.target.value)
+  }
+
+  const handlePublicUserSelect = (numberOfPublicMembers, current) => {
+    const newRadioSelection = current.all + " second";
+    const newGroupValue = current;
+    const currentHeader = current.header;
+    const name = `selectItemOptionForUser-' ${currentStepIndex} -  ${current.header}`;
+    const radioValue = "selectIn" + current.header;
+    const numberOfItems = numberOfPublicMembers;
+
+    console.log(
+      " newRadioSelection",
+      newRadioSelection,
+      "newGroupValue",
+      newGroupValue,
+      "currentHeader",
+      currentHeader,
+      "name",
+      name,
+      "radioValue",
+      radioValue
+    );
+    setCurrentGroupSelectionItem(newGroupValue);
+    setCurrentRadioOptionSelection(newRadioSelection);
+
+    const currentEnabledRadioOptionsFromStepPopulation = {
+      ...enableRadioOptionsFromStepPopulation,
+    };
+    currentEnabledRadioOptionsFromStepPopulation[currentHeader] =
+      currentEnabledRadioOptionsFromStepPopulation[currentHeader].filter(
+        (item) =>
+          item.name !== currentHeader && item.stepIndex !== currentStepIndex
+      );
+ 
+        setEnableOptionsFromStepPopulation(
+          currentEnabledRadioOptionsFromStepPopulation
+        );
+      
+  
+    updateRadioOptionsEnabledForStep(currentHeader, name, radioValue);
+  };
+
+  const handleSubmit = (e, all) => {
+    e.preventDefault();
+
+    handlePublicUserSelect(numberOfPublicMembers, all);
+  };
   const [current, setCurrent] = useState(selectMembers[0]);
   const { register } = useForm();
   const { t } = useTranslation();
@@ -57,6 +108,7 @@ const SelectMembersToAssign = ({
     Team: [],
     Users: [],
     Public: [],
+    Groups: [],
   });
   const [featuresUpdatedFromDraft, setFeaturesUpdatedFromDraft] =
     useState(false);
@@ -77,7 +129,7 @@ const SelectMembersToAssign = ({
   const dispatch = useDispatch();
 
   const handleSetCurrent = (item) => {
-    // console.log('handlesetcurrent is ', item)
+    // // console.log('handlesetcurrent is ', item)
     setCurrent(item);
   };
 
@@ -89,7 +141,7 @@ const SelectMembersToAssign = ({
   useClickInside(selectMembersRef, () => {
     if (
       featuresUpdatedFromDraft &&
-      enableRadioOptionsFromStepPopulation[current.header].find(
+      enableRadioOptionsFromStepPopulation[current.header]?.find(
         (item) =>
           item.memberOptionEnabled === true &&
           item.stepIndex === currentStepIndex
@@ -106,20 +158,20 @@ const SelectMembersToAssign = ({
   });
 
   useEffect(() => {
-    console.log('ENTERED EFFECT');
+    // console.log('ENTERED EFFECT');
     switch (current.header) {
       case 'Team':
-        // console.log('ENTERED TEAM');
+        // // console.log('ENTERED TEAM');
         const teamNum = teamMembersSelectedForProcess.filter(item => item?.stepIndex == currentStepIndex )
         setSelectionCount(teamNum.length)
         break;
       case 'Users':
-        // console.log('ENTERED USER');
+        // // console.log('ENTERED USER');
         const userNum = publicMembersSelectedForProcess.filter(item => item?.stepIndex == currentStepIndex )
         setSelectionCount(userNum.length)
         break
       case 'Public':
-        // console.log('ENTERED PUBLIC');
+        // // console.log('ENTERED PUBLIC');
         const publicNum = publicMembersSelectedForProcess.filter(item => item?.stepIndex == currentStepIndex )
         setSelectionCount(publicNum.length)
         break
@@ -187,7 +239,7 @@ const SelectMembersToAssign = ({
               ...extractAndFormatPortfoliosForMembers('team_member'),
               ...extractAndFormatPortfoliosForMembers('owner')
             ];
-              // console.log('the team portfolio issss', member.portfolios)
+              // // console.log('the team portfolio issss', member.portfolios)
             member.teams = workflowTeams?.filter(
               (team) => team.team_type === 'team'
             );
@@ -248,8 +300,8 @@ const SelectMembersToAssign = ({
   
   useEffect(() => {
     if (!currentRadioOptionSelection) return;
-
-    selectTeamRef.current.value = '';
+// console.log("selectTeamRef",selectTeamRef);
+    selectTeamRef.current = '';
 
     if (currentRadioOptionSelection === 'selectTeam') {
       if (currentGroupSelectionItem)
@@ -287,12 +339,12 @@ const SelectMembersToAssign = ({
       return;
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentRadioOptionSelection, currentGroupSelectionItem]);
+  }, [currentRadioOptionSelection, currentGroupSelectionItem,selectTeamRef]);
 
   useEffect(() => {
     if (!stepsPopulated || featuresUpdatedFromDraft) return;
 
-    // const stepDetails = processSteps.find(
+    // const stepDetails = processSteps?.find(
     //   process => process.workflow === docCurrentWorkflow?._id
     // )?.steps[currentStepIndex]
 
@@ -305,7 +357,7 @@ const SelectMembersToAssign = ({
       ];
     if (teamMembersSelectedForProcess.length > 0) {
       if (
-        currentSelectedOptions.find(
+        currentSelectedOptions?.find(
           (item) => item.name === 'Team' && item.stepIndex === currentStepIndex
         )
       )
@@ -334,7 +386,7 @@ const SelectMembersToAssign = ({
 
     if (publicMembersSelectedForProcess.length > 0) {
       if (
-        currentSelectedOptions.find(
+        currentSelectedOptions?.find(
           (item) =>
             item.name === 'Public' && item.stepIndex === currentStepIndex
         )
@@ -364,7 +416,7 @@ const SelectMembersToAssign = ({
 
     if (userMembersSelectedForProcess.length > 0) {
       if (
-        currentSelectedOptions.find(
+        currentSelectedOptions?.find(
           (item) => item.name === 'Users' && item.stepIndex === currentStepIndex
         )
       )
@@ -399,7 +451,7 @@ const SelectMembersToAssign = ({
   const handleSelectTeam = (parsedSelectedJsonValue) => {
     selectTeamRef.current.value = '';
 
-    const teamAddedToProcess = teamsSelectedSelectedForProcess.find(
+    const teamAddedToProcess = teamsSelectedSelectedForProcess?.find(
       (team) =>
         team._id === parsedSelectedJsonValue._id &&
         team.stepIndex === currentStepIndex &&
@@ -427,7 +479,7 @@ const SelectMembersToAssign = ({
 
     switch (current.header) {
       case 'Team':
-        const teamUserAlreadyAdded = teamMembersSelectedForProcess.find(
+        const teamUserAlreadyAdded = teamMembersSelectedForProcess?.find(
           (user) =>
             user.member === parsedSelectedJsonValue.member &&
             user.portfolio === parsedSelectedJsonValue.portfolio &&
@@ -455,7 +507,7 @@ const SelectMembersToAssign = ({
           );
         return;
       case 'Users':
-        const userAlreadyAdded = userMembersSelectedForProcess.find(
+        const userAlreadyAdded = userMembersSelectedForProcess?.find(
           (user) =>
             user.member === parsedSelectedJsonValue.member &&
             user.portfolio === parsedSelectedJsonValue.portfolio &&
@@ -483,7 +535,7 @@ const SelectMembersToAssign = ({
           );
         return;
       case 'Public':
-        const publicUserAlreadyAdded = publicMembersSelectedForProcess.find(
+        const publicUserAlreadyAdded = publicMembersSelectedForProcess?.find(
           (pubMember) =>
             pubMember.member === parsedSelectedJsonValue.member &&
             pubMember.portfolio === parsedSelectedJsonValue.portfolio &&
@@ -543,6 +595,7 @@ const SelectMembersToAssign = ({
     );
     updateRadioOptionsEnabledForStep(currentHeader, name, radioValue);
   };
+
 
   const handleMemberRadioChange = (value, currentHeader, name) => {
     setCurrentRadioOptionSelection(value);
@@ -702,29 +755,29 @@ const SelectMembersToAssign = ({
   };
 
   // useEffect(() => {
-  //   console.log('team Mems: ', teamMembersSelectedForProcess);
-  //   console.log('user Mems: ', userMembersSelectedForProcess);
-  //   console.log('public Mems: ', publicMembersSelectedForProcess);
+  //   // console.log('team Mems: ', teamMembersSelectedForProcess);
+  //   // console.log('user Mems: ', userMembersSelectedForProcess);
+  //   // console.log('public Mems: ', publicMembersSelectedForProcess);
   // }, [
   //   teamMembersSelectedForProcess,
   //   userMembersSelectedForProcess,
   //   publicMembersSelectedForProcess,
   // ]);
 
-  // console.log("the teamMembersSelectedForProcess are ",teamMembersSelectedForProcess)
-  // console.log("the userMembersSelectedForProcess are ",userMembersSelectedForProcess)
-  // console.log("the publicMembersSelectedForProcess are ",publicMembersSelectedForProcess)
-  // console.log("the current val is  ",current)
-  // console.log("the current step index is  ",currentStepIndex)
-  // console.log('the used id are ', usedId)
+  // // console.log("the teamMembersSelectedForProcess are ",teamMembersSelectedForProcess)
+  // // console.log("the userMembersSelectedForProcess are ",userMembersSelectedForProcess)
+  // // console.log("the publicMembersSelectedForProcess are ",publicMembersSelectedForProcess)
+  // // console.log("the current val is  ",current)
+  // // console.log("the current step index is  ",currentStepIndex)
+  // // console.log('the used id are ', usedId)
   let idUsed = current.portfolios.filter((item) => !usedId.some((link) => link?.member === item?.member))
-  // console.log('the current are ', current)
-  // console.log('the selectedMembersForProcess are ', selectedMembersForProcess)
-  // console.log('the selectMembersComp are ', selectMembersComp)
+  // // console.log('the current are ', current)
+  // // console.log('the selectedMembersForProcess are ', selectedMembersForProcess)
+  // // console.log('the selectMembersComp are ', selectMembersComp)
  
   return (
     <div className={styles.container} id='selectTeam'>
-      {processSteps.find(
+      {processSteps?.find(
         (process) => process.workflow === docCurrentWorkflow?._id
       )?.steps[currentStepIndex]?.skipStep ? (
         <>
@@ -737,7 +790,7 @@ const SelectMembersToAssign = ({
                   className={`${styles.select__header} ${current.id === item.id && styles.selected
                     }`}
                 >
-                  {item.header}
+                 {item.header}
                 </div>
               ))
             )}
@@ -756,7 +809,7 @@ const SelectMembersToAssign = ({
                     className={`${styles.select__header} ${current.id === item.id && styles.selected
                       }`}
                   >
-                    {t(item.header)}
+                    {t(item.title)}
                   </div>
                 ))
               )}
@@ -769,7 +822,7 @@ const SelectMembersToAssign = ({
                   style={{ marginRight: '0.5rem' }}
                   value={current.header}
                   checked={
-                    userTypeOptionsEnabled.find(
+                    userTypeOptionsEnabled?.find(
                       (option) =>
                         option.name === current.header &&
                         option.stepIndex === currentStepIndex
@@ -793,13 +846,13 @@ const SelectMembersToAssign = ({
                   }
                   value={'all' + current.header}
                   checked={
-                    userTypeOptionsEnabled.find(
+                    userTypeOptionsEnabled?.find(
                       (option) =>
                         option.name === current.header &&
                         option.stepIndex === currentStepIndex
                     ) &&
                       currentRadioOptionSelection &&
-                      radioOptionsEnabledInStep.find(
+                      radioOptionsEnabledInStep?.find(
                         (option) =>
                           option.stepIndex === currentStepIndex &&
                           option.currentHeader === current.header &&
@@ -814,7 +867,7 @@ const SelectMembersToAssign = ({
                       : false
                   }
                   onChange={
-                    userTypeOptionsEnabled.find(
+                    userTypeOptionsEnabled?.find(
                       (option) =>
                         option.name === current.header &&
                         option.stepIndex === currentStepIndex
@@ -838,7 +891,7 @@ const SelectMembersToAssign = ({
                   Select all {current.header}
                 </Radio>
                 </div>
-                <div className={styles.radContainer}>
+              {current.header!=="Groups"&&current.header!=="Public"&&  <div className={styles.radContainer}>
                 <Radio
                   register={register}
                   name={
@@ -849,13 +902,13 @@ const SelectMembersToAssign = ({
                   }
                   value={'selectIn' + current.header}
                   checked={
-                    userTypeOptionsEnabled.find(
+                    userTypeOptionsEnabled?.find(
                       (option) =>
                         option.name === current.header &&
                         option.stepIndex === currentStepIndex
                     ) &&
                       currentRadioOptionSelection &&
-                      radioOptionsEnabledInStep.find(
+                      radioOptionsEnabledInStep?.find(
                         (option) =>
                           option.stepIndex === currentStepIndex &&
                           option.currentHeader === current.header &&
@@ -870,7 +923,7 @@ const SelectMembersToAssign = ({
                       : false
                   }
                   onChange={
-                    userTypeOptionsEnabled.find(
+                    userTypeOptionsEnabled?.find(
                       (option) =>
                         option.name === current.header &&
                         option.stepIndex === currentStepIndex
@@ -893,9 +946,56 @@ const SelectMembersToAssign = ({
                 >
                   {current.selectInTeam}
                 </Radio>
-                </div>
+                </div>}
+                {current.header==="Public"&&  <div className={styles.radContainer}>
+                <Radio
+                  register={register}
+                  name={
+                    'selectItemOptionForUser-' +
+                    currentStepIndex +
+                    '-' +
+                    current.header
+                  }
+                  value={'selectIn' + current.header}
+                  checked={
+                    userTypeOptionsEnabled?.find(
+                      (option) =>
+                        option.name === current.header &&
+                        option.stepIndex === currentStepIndex
+                    ) &&
+                      currentRadioOptionSelection &&
+                      radioOptionsEnabledInStep?.find(
+                        (option) =>
+                          option.stepIndex === currentStepIndex &&
+                          option.currentHeader === current.header &&
+                          option.name ===
+                          'selectItemOptionForUser-' +
+                          currentStepIndex +
+                          '-' +
+                          current.header
+                      )?.valueActive ===
+                      'selectIn' + current.header
+                      ? true
+                      : false
+                  }
+                  onChange={
+                    userTypeOptionsEnabled?.find(
+                      (option) =>
+                        option.name === current.header &&
+                        option.stepIndex === currentStepIndex
+                    )
+                      ? () =>{
+                        handlePublicUserSelect(numberOfPublicMembers, current)
+                        }: (e) =>
+                        handleDisabledUserOptionSelection(e, current.title)
+                  }
+                  className={styles.radBtn}
+                >
+                 Select public members in batch
+                </Radio>
+                </div>}
               </div>
-              <div
+             {current.header!=="Public"&& <div
                 ref={teamMembersRef}
                 className={styles.team__Select__Wrapper}
               >
@@ -918,13 +1018,13 @@ const SelectMembersToAssign = ({
                     }
                     style={{
                       pointerEvents:
-                        userTypeOptionsEnabled.find(
+                        userTypeOptionsEnabled?.find(
                           (option) =>
                             option.name === current.header &&
                             option.stepIndex === currentStepIndex
                         ) &&
                           currentRadioOptionSelection &&
-                          radioOptionsEnabledInStep.find(
+                          radioOptionsEnabledInStep?.find(
                             (option) =>
                               option.stepIndex === currentStepIndex &&
                               option.currentHeader === current.header &&
@@ -936,13 +1036,13 @@ const SelectMembersToAssign = ({
                           )?.valueActive ===
                           'selectIn' + current.header
                           ? 'all'
-                          : userTypeOptionsEnabled.find(
+                          : userTypeOptionsEnabled?.find(
                             (option) =>
                               option.name === current.header &&
                               option.stepIndex === currentStepIndex
                           ) &&
                             currentRadioOptionSelection &&
-                            radioOptionsEnabledInStep.find(
+                            radioOptionsEnabledInStep?.find(
                               (option) =>
                                 option.stepIndex === currentStepIndex &&
                                 option.currentHeader === current.header &&
@@ -966,7 +1066,7 @@ const SelectMembersToAssign = ({
                           // key={item.id}
                           value={JSON.stringify(item)}
                           className={
-                            teamsSelectedSelectedForProcess.find(
+                            teamsSelectedSelectedForProcess?.find(
                               (team) =>
                                 team._id === item._id &&
                                 team.stepIndex === currentStepIndex &&
@@ -982,8 +1082,34 @@ const SelectMembersToAssign = ({
                     )}
                   </select>
                 )}
-              </div>
-              {
+              </div>}
+               {current.header==="Public"&& <div
+                ref={teamMembersRef}
+                className={styles.team__Select__Wrapper}
+              >
+                {!workflowTeamsLoaded ? (
+                  <LoadingSpinner />
+                ) : (
+                  <div>
+                  <label className={styles.select_no_public_members_title}  >Enter Number of Public Members </label>
+                  <form className={styles.select_no_public_members_form} onSubmit={(e)=>handleSubmit( e, current)}>
+                  <input 
+                  className={styles.select_no_public_members_input} 
+                    type="number" 
+                    value={numberOfPublicMembers} 
+                    min={0} 
+                    max={current.portfolios.length}
+                    onChange={handleChange}
+                  />
+                  
+                    <button className={styles.select_no_public_members_btn}  type="submit" >Select</button>
+                </form>
+                  </div>
+
+
+                )}
+              </div>}
+              {current.header!=="Groups"&&
                 <>
                   <Radio
                     register={register}
@@ -995,13 +1121,13 @@ const SelectMembersToAssign = ({
                     }
                     value={'select' + current.header}
                     checked={
-                      userTypeOptionsEnabled.find(
+                      userTypeOptionsEnabled?.find(
                         (option) =>
                           option.name === current.header &&
                           option.stepIndex === currentStepIndex
                       ) &&
                         currentRadioOptionSelection &&
-                        radioOptionsEnabledInStep.find(
+                        radioOptionsEnabledInStep?.find(
                           (option) =>
                             option.stepIndex === currentStepIndex &&
                             option.currentHeader === current.header &&
@@ -1015,7 +1141,7 @@ const SelectMembersToAssign = ({
                         ? true
                         : enableRadioOptionsFromStepPopulation[
                           `${current.header}`
-                        ].find(
+                        ]?.find(
                           (option) =>
                             option.memberOptionEnabled &&
                             option.stepIndex === currentStepIndex
@@ -1024,7 +1150,7 @@ const SelectMembersToAssign = ({
                           : false
                     }
                     onChange={
-                      userTypeOptionsEnabled.find(
+                      userTypeOptionsEnabled?.find(
                         (option) =>
                           option.name === current.header &&
                           option.stepIndex === currentStepIndex
@@ -1088,13 +1214,13 @@ const SelectMembersToAssign = ({
                       }
                       style={{
                         pointerEvents:
-                          userTypeOptionsEnabled.find(
+                          userTypeOptionsEnabled?.find(
                             (option) =>
                               option.name === current.header &&
                               option.stepIndex === currentStepIndex
                           ) &&
                             currentRadioOptionSelection &&
-                            radioOptionsEnabledInStep.find(
+                            radioOptionsEnabledInStep?.find(
                               (option) =>
                                 option.stepIndex === currentStepIndex &&
                                 option.currentHeader === current.header &&
@@ -1108,12 +1234,12 @@ const SelectMembersToAssign = ({
                             ? 'all'
                             : enableRadioOptionsFromStepPopulation[
                               `${current.header}`
-                            ].find(
+                            ]?.find(
                               (option) =>
                                 option.memberOptionEnabled &&
                                 option.stepIndex === currentStepIndex
                             ) &&
-                              currentEnabledSteps.find(
+                              currentEnabledSteps?.find(
                                 (step) =>
                                   step.index === currentStepIndex &&
                                   step.enableStep === true
@@ -1131,7 +1257,7 @@ const SelectMembersToAssign = ({
                           <option
                             className={
                               current.header === 'Team'
-                                ? teamMembersSelectedForProcess.find(
+                                ? teamMembersSelectedForProcess?.find(
                                   (user) =>
                                     user.member === item.member &&
                                     user.portfolio === item.portfolio &&
@@ -1140,7 +1266,7 @@ const SelectMembersToAssign = ({
                                   ? styles.user__Selected
                                   : styles.user__Not__Selected
                                 : current.header === 'Users'
-                                  ? userMembersSelectedForProcess.find(
+                                  ? userMembersSelectedForProcess?.find(
                                     (user) =>
                                       user.member === item.member &&
                                       user.portfolio === item.portfolio &&
@@ -1149,14 +1275,14 @@ const SelectMembersToAssign = ({
                                     ? styles.user__Selected
                                     : styles.user__Not__Selected
                                   : current.header === 'Public'
-                                    ? publicMembersSelectedForProcess.find(
+                                    ? publicMembersSelectedForProcess?.find(
                                       (user) =>
                                         user.member === item.member &&
                                         user.portfolio === item.portfolio &&
                                         user.stepIndex === currentStepIndex
                                     )
                                       ? styles.user__Selected
-                                      : publicMembersSelectedForProcess.find(
+                                      : publicMembersSelectedForProcess?.find(
                                         (user) =>
                                           user.member === item.member &&
                                           user.portfolio === item.portfolio &&
@@ -1331,6 +1457,16 @@ export const selectMembers = [
     all: 'Select all Public',
     selectInTeam: 'Select Teams in Public',
     selectMembers: 'Select Public',
+    teams: [],
+    portfolios: [],
+  },
+  {
+    id: uuidv4(),
+    header: 'Groups',
+    title: 'Groups',
+    all: 'Select all Groups',
+    selectInTeam: 'Select Teams in Groups',
+    selectMembers: 'Select Groups',
     teams: [],
     portfolios: [],
   },

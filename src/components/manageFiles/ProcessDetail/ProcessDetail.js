@@ -56,7 +56,7 @@ const ProcessDetail = () => {
 
   // {ProcessDetail.links.map(({ member, [member]: link }) => (
   //   <a href={link} key={member}>
-  //     console.log({member})
+  //     // console.log({member})
   //   </a>
   // ))}
 
@@ -67,7 +67,7 @@ const ProcessDetail = () => {
     toast.info("Link Copied")
   };
 
-  console.log("ProcessDetail", ProcessDetail)
+  // console.log("ProcessDetail", ProcessDetail)
   return (
     <>
       <div className={styles.body_div}>
@@ -215,9 +215,9 @@ const StepCards = ({ step, index }) => {
 
 
   const handleShowModal = () => {
-    console.log("handleShowModal")
+    // console.log("handleShowModal")
     setShowModal(true);
-    console.log("handleShowModal", showModal)
+    // console.log("handleShowModal", showModal)
 
   };
 
@@ -227,11 +227,11 @@ const StepCards = ({ step, index }) => {
 
   const handleWorkflowCloseModal = () => {
     setWorkflowShowModal(false);
-    console.log("handleShowModal", workflowShowModal)
+    // console.log("handleShowModal", workflowShowModal)
 
   };
   const handleInternalProcess = () => {
-    console.log("step", step)
+    // console.log("step", step)
     if(step.permitInternalWorkflow && workflowShowModal === false && step.stepDocumentCloneMap.length > 0 ){
       setWorkflowShowModal(true);
       // toast.success("Internal Processing is allowed at this step")

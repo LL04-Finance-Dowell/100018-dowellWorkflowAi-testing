@@ -68,7 +68,7 @@ const ProcessesPage = ({
     fetchProcessReports,
   } = useAppContext();
 
-  console.log("userdetail", userDetail)
+  // console.log("userdetail", userDetail)
 
   useEffect(() => {
     if (showOnlySaved) navigate('#saved-processes');
@@ -147,7 +147,7 @@ const ProcessesPage = ({
         dispatch(setProcessesLoaded(true));
       })
       .catch((err) => {
-        console.log('Failed: ', err.response);
+        // console.log('Failed: ', err.response);
         dispatch(setProcessesLoading(false));
       });
   }, [processesLoaded, userDetail]);

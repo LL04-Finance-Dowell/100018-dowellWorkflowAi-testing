@@ -25,11 +25,11 @@ const CopyProcessPage = () => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    // console.log('effect entered')
+    // // console.log('effect entered')
     axios.get(`https://100094.pythonanywhere.com/v2/processes/${process_id}/`)
       .then((response) => {
         setProcessData(response.data);
-        // console.log(response.data)
+        // // console.log(response.data)
       })
       .catch((error) => {
         console.error('Error fetching data:', error);
@@ -60,7 +60,7 @@ const CopyProcessPage = () => {
           : userDetail?.portfolio_info[0].portfolio_name,
       org_name: "workflowAI",
     };
-    // console.log(JSON.stringify(data));
+    // // console.log(JSON.stringify(data));
   
     try {
       const response = await axios.post(
@@ -68,7 +68,7 @@ const CopyProcessPage = () => {
         data
       );
   
-      // console.log("the response is ", response.data);
+      // // console.log("the response is ", response.data);
       // setProcessCopy(response.data);
         const doc_id = response.data?.document_id
         const workflow_id = response.data?.workflow_id
@@ -76,7 +76,7 @@ const CopyProcessPage = () => {
 
         if(doc_id){
           const docData = await axios.get(`https://100094.pythonanywhere.com/v2/documents/${doc_id}/`);
-          // console.log('the response for the copied document is ', docData)
+          // // console.log('the response for the copied document is ', docData)
           dispatch(setCopiedDocument(docData))
         }
 
@@ -94,10 +94,10 @@ const CopyProcessPage = () => {
           )
         )
       );
-      // console.log('the refreshed doc data is ', res1.data)
+      // // console.log('the refreshed doc data is ', res1.data)
       if(doc_id){
         const findDoc = res1.data.documents.find((item)=>item.collection_id == doc_id)
-        // console.log('the response for the copied document is ', findDoc)
+        // // console.log('the response for the copied document is ', findDoc)
         dispatch(setCopiedDocument(findDoc))
       }
   
@@ -114,10 +114,10 @@ const CopyProcessPage = () => {
           )
         )
       );
-      // console.log('the refreshed workflow data is ', res2.data)
+      // // console.log('the refreshed workflow data is ', res2.data)
       if(workflow_id){
         const workflowData = res2.data.workflows.find((item)=>item._id == workflow_id)
-        // console.log('the response for the copied workflow is ', workflowData)
+        // // console.log('the response for the copied workflow is ', workflowData)
         dispatch(setCopiedWorkflow(workflowData))
       }
   
@@ -127,20 +127,20 @@ const CopyProcessPage = () => {
       );
 
       ///save the process steps
-      // console.log('the processID is ', process_ID)
+      // // console.log('the processID is ', process_ID)
       try {
         const response5 = await fetch(`https://100094.pythonanywhere.com/v2/processes/${process_ID}/`);
         if (!response5.ok) {
           throw new Error('Network response was not ok');
         }
         const data = await response5.json();
-        // console.log('the copied process steps are ', data)
+        // // console.log('the copied process steps are ', data)
         dispatch(setProcessStepCopy(data));
       } catch (error) {
-        console.log('An error occurred while fetching process data:', error);
+        // console.log('An error occurred while fetching process data:', error);
       }
       
-      // console.log("the res3.data is ", res3.data);
+      // // console.log("the res3.data is ", res3.data);
       if (savedProcessesInLocalStorage) {
         const processes = [
           ...savedProcessesInLocalStorage,
@@ -153,7 +153,7 @@ const CopyProcessPage = () => {
       navigate('/workflows/new-set-workflow-document')
       setLoading(false);
     } catch (error) {
-      console.log("error sending request ", error);
+      // console.log("error sending request ", error);
       toast.info(
         "There was some issue while importing the process, Make sure you have Portfolio, company Id"
       );
