@@ -713,6 +713,63 @@ def create_document_helper(
         print(ex)
         return
 
+def get_prev_and_next_users(
+    process: dict, auth_user: str, auth_role: str, user_type: str
+) -> tuple:
+    """Gets the previous step signers and potential next step signers
+        for specific process step
+
+    Args:
+        process (dict): A process dictionary
+        auth_user (str):  Username of the user in question
+        auth_role (str):  Role of the user in question
+
+    Returns:
+        tuple: (previous, next)
+    """
+    process_steps = process["process_steps"]
+    prev_step = None
+    next_step = None
+    prev_viewers = None
+    next_viewers = None
+
+    if user_type == "public":
+        auth_user = auth_user[0]
+    else:
+        auth_user = auth_user
+
+    for current_idx, step in enumerate(process["process_steps"]):
+        if step.get("stepRole") == auth_role:
+            for item in step["stepDocumentCloneMap"]:
+                if item.get(auth_user):
+                    current_doc_id = item.get(auth_user)
+                    # Check previous step get it's users
+                    if current_idx > 0:
+                        prev_step = process["process_steps"][current_idx - 1]
+                        prev_viewers_doc_map = prev_step["stepDocumentCloneMap"]
+                        prev_viewers = [
+                            k
+                            for item in prev_viewers_doc_map
+                            for k, v in item.items()
+                            if v == current_doc_id
+                        ]
+
+                    if current_idx < len(process_steps) - 1:
+                        next_step = process["process_steps"][current_idx + 1]
+                        next_viewers_team_doc_map = next_step["stepTeamMembers"]
+                        next_viewers_user_doc_map = next_step["stepUserMembers"]
+                        next_viewers_public_doc_map = next_step["stepPublicMembers"]
+                        next_viewers = [
+                            item.get("member")
+                            for doc_map in [
+                                next_viewers_team_doc_map,
+                                next_viewers_user_doc_map,
+                                next_viewers_public_doc_map,
+                            ]
+                            for item in doc_map
+                        ]
+
+    return (prev_viewers, next_viewers)
 def dowell_email_sender(name, email, subject, email_content):
     email_url = "https://100085.pythonanywhere.com/api/uxlivinglab/email/"
     payload = {
