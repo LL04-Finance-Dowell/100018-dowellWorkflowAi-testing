@@ -465,18 +465,18 @@ class FinalizeOrReject(APIView):
                     status=status.HTTP_400_BAD_REQUEST,
                 )
         check, current_state = is_finalized(item_id, item_type)
-        # if item_type == "document" or item_type == "clone":
-        #     if check and current_state != "processing":
-        #         return Response(
-        #             f"document already processed as `{current_state}`!",
-        #             status.HTTP_200_OK,
-        #         )
-        # elif item_type == "template":
-        #     if check and current_state != "draft":
-        #         return Response(
-        #             f"template already processed as `{current_state}`!",
-        #             status.HTTP_200_OK,
-        #         )
+        if item_type == "document" or item_type == "clone":
+            if check and current_state != "processing":
+                return Response(
+                    f"document already processed as `{current_state}`!",
+                    status.HTTP_200_OK,
+                )
+        elif item_type == "template":
+            if check and current_state != "draft":
+                return Response(
+                    f"template already processed as `{current_state}`!",
+                    status.HTTP_200_OK,
+                )
         if item_type == "clone":
             signers_list = single_query_clones_collection({"_id": item_id}).get(
                 "signed_by"
