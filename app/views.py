@@ -3,6 +3,8 @@ import json
 import os
 import re
 import uuid  # Import the uuid library
+from django.shortcuts import render
+
 
 import requests
 from crontab import CronTab
@@ -90,6 +92,9 @@ from app.mongo_db_connection import (
 )
 
 from .constants import EDITOR_API
+
+def index(request):
+    return render(request, 'build/index.html')
 
 
 @api_view(["POST"])
