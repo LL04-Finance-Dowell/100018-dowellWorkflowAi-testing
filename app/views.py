@@ -128,6 +128,7 @@ def document_processing(request):
         request.data["parent_id"],
         request.data["data_type"],
         request.data["process_title"],
+        request.data.get("email", None),
     )
     action = request.data["action"]
     data = None
