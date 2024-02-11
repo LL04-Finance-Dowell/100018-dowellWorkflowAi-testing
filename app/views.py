@@ -1358,7 +1358,8 @@ def template_detail(request, template_id):
     """editor link for a document"""
     if not validate_id(template_id):
         return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
-    editor_link = access_editor(template_id, "template")
+    email = request.GET.get("email", None)
+    editor_link = access_editor(template_id, "template", email=email)
     if not editor_link:
         return Response(status.HTTP_500_INTERNAL_SERVER_ERROR)
     return Response(editor_link, status.HTTP_201_CREATED)

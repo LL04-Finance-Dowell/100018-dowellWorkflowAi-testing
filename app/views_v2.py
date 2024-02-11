@@ -1072,6 +1072,7 @@ class DocumentLink(APIView):
 class DocumentDetail(APIView):
     def get(self, request, item_id):
         """Retrieves the document object for a specific document"""
+        print(item_id)
         document_type = request.query_params.get("document_type")
         if not validate_id(item_id) or not document_type:
             return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
