@@ -32,55 +32,6 @@ const SelectMembersToAssign = ({
   const [selectMembersComp, setSelectMembersComp] = useState(selectMembers);
   const [numberOfPublicMembers, setNumberOfPublicMembers] = useState(0);
 
-  const handleChange = (event) => {
-    setNumberOfPublicMembers(event.target.value)
-  }
-
-  const handlePublicUserSelect = (numberOfPublicMembers, current) => {
-    const newRadioSelection = current.all + " second";
-    const newGroupValue = current;
-    const currentHeader = current.header;
-    const name = `selectItemOptionForUser-' ${currentStepIndex} -  ${current.header}`;
-    const radioValue = "selectIn" + current.header;
-    const numberOfItems = numberOfPublicMembers;
-
-    console.log(
-      " newRadioSelection",
-      newRadioSelection,
-      "newGroupValue",
-      newGroupValue,
-      "currentHeader",
-      currentHeader,
-      "name",
-      name,
-      "radioValue",
-      radioValue
-    );
-    setCurrentGroupSelectionItem(newGroupValue);
-    setCurrentRadioOptionSelection(newRadioSelection);
-
-    const currentEnabledRadioOptionsFromStepPopulation = {
-      ...enableRadioOptionsFromStepPopulation,
-    };
-    currentEnabledRadioOptionsFromStepPopulation[currentHeader] =
-      currentEnabledRadioOptionsFromStepPopulation[currentHeader].filter(
-        (item) =>
-          item.name !== currentHeader && item.stepIndex !== currentStepIndex
-      );
- 
-        setEnableOptionsFromStepPopulation(
-          currentEnabledRadioOptionsFromStepPopulation
-        );
-      
-  
-    updateRadioOptionsEnabledForStep(currentHeader, name, radioValue);
-  };
-
-  const handleSubmit = (e, all) => {
-    e.preventDefault();
-
-    handlePublicUserSelect(numberOfPublicMembers, all);
-  };
   const [current, setCurrent] = useState(selectMembers[0]);
   const { register } = useForm();
   const { t } = useTranslation();
@@ -129,7 +80,7 @@ const SelectMembersToAssign = ({
   const dispatch = useDispatch();
 
   const handleSetCurrent = (item) => {
-    // // console.log('handlesetcurrent is ', item)
+
     setCurrent(item);
   };
 
@@ -158,20 +109,17 @@ const SelectMembersToAssign = ({
   });
 
   useEffect(() => {
-    // console.log('ENTERED EFFECT');
+
     switch (current.header) {
       case 'Team':
-        // // console.log('ENTERED TEAM');
         const teamNum = teamMembersSelectedForProcess.filter(item => item?.stepIndex == currentStepIndex )
         setSelectionCount(teamNum.length)
         break;
       case 'Users':
-        // // console.log('ENTERED USER');
         const userNum = publicMembersSelectedForProcess.filter(item => item?.stepIndex == currentStepIndex )
         setSelectionCount(userNum.length)
         break
       case 'Public':
-        // // console.log('ENTERED PUBLIC');
         const publicNum = publicMembersSelectedForProcess.filter(item => item?.stepIndex == currentStepIndex )
         setSelectionCount(publicNum.length)
         break
@@ -181,7 +129,7 @@ const SelectMembersToAssign = ({
 
 
 
-  }, [teamMembersSelectedForProcess,
+  }, [currentStepIndex,teamMembersSelectedForProcess,
     userMembersSelectedForProcess,
     publicMembersSelectedForProcess, current.header])
 
@@ -239,7 +187,7 @@ const SelectMembersToAssign = ({
               ...extractAndFormatPortfoliosForMembers('team_member'),
               ...extractAndFormatPortfoliosForMembers('owner')
             ];
-              // // console.log('the team portfolio issss', member.portfolios)
+    
             member.teams = workflowTeams?.filter(
               (team) => team.team_type === 'team'
             );
@@ -299,10 +247,9 @@ const SelectMembersToAssign = ({
     }, [userDetail]);
   
   useEffect(() => {
-    if (!currentRadioOptionSelection) return;
-// console.log("selectTeamRef",selectTeamRef);
-    selectTeamRef.current = '';
 
+    if (!currentRadioOptionSelection) return;
+    selectTeamRef.current = '';
     if (currentRadioOptionSelection === 'selectTeam') {
       if (currentGroupSelectionItem)
         currentGroupSelectionItem?.teams.forEach((team) =>
@@ -322,7 +269,7 @@ const SelectMembersToAssign = ({
         currentGroupSelectionItem.header
       )
     );
-
+   
     if (currentGroupSelectionItem?.allSelected) {
       currentGroupSelectionItem?.teams.forEach((team) =>
         updateTeamAndPortfoliosInTeamForProcess(
@@ -338,8 +285,24 @@ const SelectMembersToAssign = ({
       );
       return;
     }
+    if (currentGroupSelectionItem?.someSelected && !currentGroupSelectionItem?.allSelected) {
+      console.log("numberOfPublicMembers0",numberOfPublicMembers);
+      currentGroupSelectionItem?.teams.forEach((team) =>
+      updateTeamAndPortfoliosInTeamForProcess(
+        'add',
+        team,
+        currentGroupSelectionItem.header
+      )
+    );
+    currentGroupSelectionItem?.portfolios.filter((item) => !usedId.some((link) => link?.member === item?.member)).forEach((team) =>
+    handleAddNewMember(
+        team
+      )
+    );
+    return;
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentRadioOptionSelection, currentGroupSelectionItem,selectTeamRef]);
+  }, [currentRadioOptionSelection, currentGroupSelectionItem,numberOfPublicMembers]);
 
   useEffect(() => {
     if (!stepsPopulated || featuresUpdatedFromDraft) return;
@@ -573,12 +536,6 @@ const SelectMembersToAssign = ({
     name,
     radioValue
   ) => {
-    console.log(" newRadioSelection",newRadioSelection,
-      "newGroupValue",newGroupValue,
-      "currentHeader",currentHeader,
-      "name",name,
-      "radioValue",radioValue)
-    setCurrentGroupSelectionItem(newGroupValue);
     setCurrentRadioOptionSelection(newRadioSelection);
 
     const currentEnabledRadioOptionsFromStepPopulation = {
@@ -754,27 +711,16 @@ const SelectMembersToAssign = ({
     }
   };
 
-  // useEffect(() => {
-  //   // console.log('team Mems: ', teamMembersSelectedForProcess);
-  //   // console.log('user Mems: ', userMembersSelectedForProcess);
-  //   // console.log('public Mems: ', publicMembersSelectedForProcess);
-  // }, [
-  //   teamMembersSelectedForProcess,
-  //   userMembersSelectedForProcess,
-  //   publicMembersSelectedForProcess,
-  // ]);
 
-  // // console.log("the teamMembersSelectedForProcess are ",teamMembersSelectedForProcess)
-  // // console.log("the userMembersSelectedForProcess are ",userMembersSelectedForProcess)
-  // // console.log("the publicMembersSelectedForProcess are ",publicMembersSelectedForProcess)
-  // // console.log("the current val is  ",current)
-  // // console.log("the current step index is  ",currentStepIndex)
-  // // console.log('the used id are ', usedId)
-  let idUsed = current.portfolios.filter((item) => !usedId.some((link) => link?.member === item?.member))
-  // // console.log('the current are ', current)
-  // // console.log('the selectedMembersForProcess are ', selectedMembersForProcess)
-  // // console.log('the selectMembersComp are ', selectMembersComp)
- 
+  const handleChange = (event) => {
+    setNumberOfPublicMembers(event.target.value)
+  }
+
+
+  const handleSubmit = (e, all) => {
+    e.preventDefault();
+
+  };
   return (
     <div className={styles.container} id='selectTeam'>
       {processSteps?.find(
@@ -985,7 +931,16 @@ const SelectMembersToAssign = ({
                         option.stepIndex === currentStepIndex
                     )
                       ? () =>{
-                        handlePublicUserSelect(numberOfPublicMembers, current)
+                        handleUserGroupSelection(
+                          current.all + ' second',
+                          { ...current, allSelected: false, someSelected: true },
+                          current.header,
+                          'selectItemOptionForUser-' +
+                          currentStepIndex +
+                          '-' +
+                          current.header,
+                          'selectIn' + current.header
+                        )
                         }: (e) =>
                         handleDisabledUserOptionSelection(e, current.title)
                   }
