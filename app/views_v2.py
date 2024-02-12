@@ -561,7 +561,6 @@ class FinalizeOrReject(APIView):
                         if check_last_finalizer(user, user_type, process):
                             subject = (f"Completion of {process['process_title']} Processing")
                             email = process.get("email", None)
-                            print(email)
 
                             if email:
                                 dowell_email_sender(
@@ -1081,7 +1080,6 @@ class DocumentLink(APIView):
 class DocumentDetail(APIView):
     def get(self, request, item_id):
         """Retrieves the document object for a specific document"""
-        print(item_id)
         document_type = request.query_params.get("document_type")
         if not validate_id(item_id) or not document_type:
             return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
