@@ -1,28 +1,25 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import Radio from '../../../../radio/Radio';
-import AssignTask from './assignTask/AssignTask';
-import styles from './selectMembersToAssign.module.css';
-import { v4 as uuidv4 } from 'uuid';
-import { useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import {
-  removeFromPublicMembersSelectedForProcess,
-  removeFromTeamMembersSelectedForProcess,
-  removeFromTeamsSelectedSelectedForProcess,
-  removeFromUserMembersSelectedForProcess,
-  setPublicMembersSelectedForProcess,
-  setTeamMembersSelectedForProcess,
-  setTeamsSelectedSelectedForProcess,
-  setUserMembersSelectedForProcess,
-} from '../../../../../../features/app/appSlice';
-import { Tooltip } from 'react-tooltip';
-import useClickInside from '../../../../../../hooks/useClickInside';
-import { toast } from 'react-toastify';
-import { useAppContext } from '../../../../../../contexts/AppContext';
-import { LoadingSpinner } from '../../../../../LoadingSpinner/LoadingSpinner';
-import { httpProcess } from '../../../../../../httpCommon/httpCommon';
 import { useTranslation } from 'react-i18next';
+import { useDispatch, useSelector } from 'react-redux';
+import { toast } from 'react-toastify';
+import { Tooltip } from 'react-tooltip';
+import { v4 as uuidv4 } from 'uuid';
+import { useAppContext } from '../../../../../../contexts/AppContext';
+import {
+    removeFromPublicMembersSelectedForProcess,
+    removeFromTeamMembersSelectedForProcess,
+    removeFromTeamsSelectedSelectedForProcess,
+    removeFromUserMembersSelectedForProcess,
+    setPublicMembersSelectedForProcess,
+    setTeamMembersSelectedForProcess,
+    setTeamsSelectedSelectedForProcess,
+    setUserMembersSelectedForProcess,
+} from '../../../../../../features/app/appSlice';
+import useClickInside from '../../../../../../hooks/useClickInside';
+import { LoadingSpinner } from '../../../../../LoadingSpinner/LoadingSpinner';
+import Radio from '../../../../radio/Radio';
+import styles from './selectMembersToAssign.module.css';
 
 const SelectMembersToAssign = ({
   currentStepIndex,
@@ -225,7 +222,7 @@ const SelectMembersToAssign = ({
         const company_id = userDetail?.portfolio_info[0]?.org_id;
         
         try {
-          const response = await fetch(`https://100094.pythonanywhere.com/v2/processes/${company_id}/public/`);
+          const response = await fetch(`http://localhost:8001/v2/processes/${company_id}/public/`);
           
           if (!response.ok) {
             throw new Error(`HTTP error! Status: ${response.status}`);

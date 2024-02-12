@@ -1,18 +1,17 @@
-import React from 'react';
+import axios from 'axios';
+import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
+import { setEditorLink } from '../../../features/app/appSlice';
+import { detailDocument, documentReport } from '../../../features/document/asyncThunks';
+import {
+  getVerifiedProcessLink,
+  verifyProcessForUser,
+} from '../../../services/processServices';
+import { LoadingSpinner } from '../../LoadingSpinner/LoadingSpinner';
 import HoverCard from '../HoverCard';
 import { Button } from '../styledComponents';
-import { detailDocument, documentReport } from '../../../features/document/asyncThunks';
-import { useState } from 'react';
-import { toast } from 'react-toastify';
-import axios from 'axios';
-import { LoadingSpinner } from '../../LoadingSpinner/LoadingSpinner';
-import {
-  verifyProcessForUser,
-  getVerifiedProcessLink,
-} from '../../../services/processServices';
-import { setEditorLink } from '../../../features/app/appSlice';
 
 import { useAppContext } from '../../../contexts/AppContext';
 import {
@@ -20,24 +19,24 @@ import {
   SetSingleDocument
 } from "../../../features/app/appSlice";
 
+import { useTranslation } from 'react-i18next';
+import { BsArrowBarRight, BsBookmark, BsFillBookmarkFill } from 'react-icons/bs';
+import { IoIosRefresh } from 'react-icons/io';
+import { MdOutlineFiberNew } from 'react-icons/md';
+import { RiDeleteBin6Line } from 'react-icons/ri';
+import { Tooltip } from 'react-tooltip';
+import { setAllDocuments } from '../../../features/document/documentSlice';
+import { moveItemToArchive } from '../../../services/archiveServices';
+import { DocumentServices } from '../../../services/documentServices';
 import {
   addNewFavoriteForUser,
   deleteFavoriteForUser,
 } from '../../../services/favoritesServices';
-import { RiDeleteBin6Line } from 'react-icons/ri';
-import { moveItemToArchive } from '../../../services/archiveServices';
-import { setAllDocuments } from '../../../features/document/documentSlice';
-import { BsBookmark, BsFillBookmarkFill, BsArrowBarRight } from 'react-icons/bs';
 import {
   extractTokenFromVerificationURL,
   productName,
   updateVerificationDataWithTimezone,
 } from '../../../utils/helpers';
-import { useTranslation } from 'react-i18next';
-import { DocumentServices } from '../../../services/documentServices';
-import { MdOutlineFiberNew } from 'react-icons/md';
-import { IoIosRefresh } from 'react-icons/io';
-import { Tooltip } from 'react-tooltip';
 
 import AddRemoveBtn from '../AddRemoveBtn';
 
@@ -216,7 +215,7 @@ const DocumentCard = ({
 
   function getDocumentDetail(document_id) {
     axios
-      .get(`https://100094.pythonanywhere.com/v2/documents/${document_id}/reports/`)
+      .get(`http://localhost:8001/v2/documents/${document_id}/reports/`)
       .then((response) => {
         dispatch(SetShowDocumentReport(response.data));
         // setProcessDetailLoading(false);

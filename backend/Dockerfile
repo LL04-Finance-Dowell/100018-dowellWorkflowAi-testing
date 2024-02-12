@@ -6,7 +6,7 @@ ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
 
 # Set work directory
-WORKDIR /app
+WORKDIR /app/backend
 
 # Install virtualenv
 RUN pip install virtualenv
@@ -18,11 +18,12 @@ RUN virtualenv /venv
 ENV PATH="/venv/bin:$PATH"
 
 # Install dependencies
-COPY requirements.txt /app/
+COPY requirements.txt /app/backend/
+
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy project
-COPY . /app/
+COPY . /app/backend
 
 # Run Django migrations
 RUN python manage.py migrate

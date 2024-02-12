@@ -1,14 +1,14 @@
-import React, { useState, useEffect } from 'react';
-import { FaEdit } from 'react-icons/fa';
-import { Button } from '../styledComponents';
+import axios from 'axios';
+import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { FaEdit } from 'react-icons/fa';
 import { RiDeleteBin6Line } from 'react-icons/ri';
-import HoverCard from '../HoverCard';
+import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { useAppContext } from '../../../contexts/AppContext';
-import { useDispatch } from 'react-redux';
-import axios from 'axios';
 import { SetKnowledgeFoldersTemplates } from '../../../features/app/appSlice';
+import HoverCard from '../HoverCard';
+import { Button } from '../styledComponents';
 
 const FoldersCard = ({ cardItem, knowledgeCenter }) => {
   const { t } = useTranslation();
@@ -61,7 +61,7 @@ const FoldersCard = ({ cardItem, knowledgeCenter }) => {
   }, [cardItem]);
 
   useEffect(() => {
-    const apiUrl = 'https://100094.pythonanywhere.com/v1/companies/6385c0f38eca0fb652c9457e/templates/metadata/?data_type=Real_Data'; // Replace with your API endpoint
+    const apiUrl = 'http://localhost:8001/v1/companies/6385c0f38eca0fb652c9457e/templates/metadata/?data_type=Real_Data'; // Replace with your API endpoint
 
     // Make a GET request using Axios
     axios.get(apiUrl)

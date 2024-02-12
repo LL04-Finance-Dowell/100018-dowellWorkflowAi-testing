@@ -1,34 +1,30 @@
-import styles from "./processDocument.module.css";
-import { v4 as uuidv4 } from "uuid";
-import { useState, useEffect } from "react";
-import Popup from "../../../Popup/Popup";
-import { useForm } from "react-hook-form";
-import Select from "../../select/Select";
-import { AiOutlineClose } from "react-icons/ai";
-import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
-import { toast } from "react-toastify";
-import {
-  newProcessActionOptions,
-  processActionOptionsWithLinkReturned,
-  startNewProcessV2,
-} from "../../../../services/processServices";
-import ProgressBar from "../../../progressBar/ProgressBar";
-import SelectDoc from "../selectDoc/SelectDoc";
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
+import { useTranslation } from "react-i18next";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+import { v4 as uuidv4 } from "uuid";
+import {
+    setAllProcesses,
+    setAllowErrorChecksStatusUpdateForNewProcess,
+    setNewProcessErrorMessage,
+    setPopupIsOpen
+} from "../../../../features/app/appSlice";
+import {
+    newProcessActionOptions,
+    processActionOptionsWithLinkReturned,
+    startNewProcessV2,
+} from "../../../../services/processServices";
+import { productName } from "../../../../utils/helpers";
+import Popup from "../../../Popup/Popup";
+import ProgressBar from "../../../progressBar/ProgressBar";
+import Select from "../../select/Select";
 import GeneratedLinksModal from "./components/GeneratedLinksModal/GeneratedLinksModal";
 import SaveConfimationModal from "./components/SaveConfirmationModal/SaveConfirmationModal";
-import {
-  setAllProcesses,
-  setAllowErrorChecksStatusUpdateForNewProcess,
-  setNewProcessErrorMessage,
-  setCurrentMessage,
-  setPopupIsOpen,
-} from "../../../../features/app/appSlice";
-import { useTranslation } from "react-i18next";
+import styles from "./processDocument.module.css";
 import { extractProcessObj } from "./utils/utils";
-import { productName } from "../../../../utils/helpers";
 
 //import reset copy data 
 import { resetCopyData } from "../../../../features/processCopyReducer";
@@ -233,7 +229,7 @@ const ProcessDocument = ({ savedProcess, Process_title, setProcess_title, addWor
                   },
                   body: JSON.stringify(publicData),
                 };
-                fetch(`https://100094.pythonanywhere.com/v2/processes/${company_id}/public/`, requestOptions)
+                fetch(`http://localhost:8001/v2/processes/${company_id}/public/`, requestOptions)
                   .then((response) => {
                     if (!response.ok) {
                       throw new Error('Network response was not ok');
@@ -313,8 +309,8 @@ const ProcessDocument = ({ savedProcess, Process_title, setProcess_title, addWor
     {
       console.log("processSteps", processSteps[0].steps, docCurrentWorkflow.workflows.workflow_title, ProcessDetail)
 
-      const apiUrl = `https://100094.pythonanywhere.com/v2/processes/${ProcessDetail._id}/`;
-      // const apiUrl = `https://100094.pythonanywhere.com/v2/processes/64bb6c7c1da82ab75d3c75b8/`;
+      const apiUrl = `http://localhost:8001/v2/processes/${ProcessDetail._id}/`;
+      // const apiUrl = `http://localhost:8001/v2/processes/64bb6c7c1da82ab75d3c75b8/`;
 
 
       const payload = {

@@ -1,17 +1,17 @@
 import axios from "axios";
 import { extractAuthQueryParamsFromVerificationURL, extractTokenFromVerificationURL, extractProcessIdFromProcessImportURL } from "../utils/helpers";
 
-export const api_url = "https://100094.pythonanywhere.com/v1/";
-export const api_url_v2 = "https://100094.pythonanywhere.com/v2/";
+export const api_url = "http://localhost:8001/v1/";
+export const api_url_v2 = "http://localhost:8001/v2/";
 
 export const auth_url = "https://100014.pythonanywhere.com/api/";
 const auth_url_other = "https://100093.pythonanywhere.com/api/";
-// const new_process_api_url = "https://100094.pythonanywhere.com/v0.2/";
-const new_process_api_url = "https://100094.pythonanywhere.com/v0.2/";
+// const new_process_api_url = "http://localhost:8001/v0.2/";
+const new_process_api_url = "http://localhost:8001/v0.2/";
 export const auth_expo_url = "https://100093.pythonanywhere.com";
 
 ///new api
-const api_url_workflow = "https://100094.pythonanywhere.com/v1/"
+const api_url_workflow = "http://localhost:8001/v1/"
 
 export const dowellLoginUrl =
   `https://100014.pythonanywhere.com/?redirect_url=${

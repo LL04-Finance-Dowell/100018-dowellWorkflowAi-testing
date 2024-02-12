@@ -54,7 +54,6 @@ from .views import (
     update_team,
     update_application_settings,
     workflow_detail,
-    webhook,
     read_reminder,
     send_notif,
     dowell_centre_template,
@@ -71,7 +70,7 @@ from .views import (
 )
 
 urlpatterns = [
-    path("server/", webhook),
+    # path("server/", webhook),
     path("companies/<str:company_id>/processes/", processes),
     path("companies/<str:company_id>/processes/completed/", get_completed_processes),
     path("companies/<str:company_id>/workflows/", get_workflows),

@@ -1,14 +1,14 @@
-import React, { useEffect } from 'react';
-import WorkflowLayout from '../../layouts/WorkflowLayout/WorkflowLayout';
-import SectionBox from '../../components/manageFiles/sectionBox/SectionBox';
-import ManageFiles from '../../components/manageFiles/ManageFiles';
-import FoldersCard from '../../components/hoverCard/foldersCard/FoldersCard';
-import { useAppContext } from '../../contexts/AppContext';
-import { useSelector, useDispatch } from 'react-redux';
-import {
-  SetKnowledgeFolders
-} from '../../features/app/appSlice';
 import axios from 'axios';
+import React, { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import FoldersCard from '../../components/hoverCard/foldersCard/FoldersCard';
+import ManageFiles from '../../components/manageFiles/ManageFiles';
+import SectionBox from '../../components/manageFiles/sectionBox/SectionBox';
+import { useAppContext } from '../../contexts/AppContext';
+import {
+    SetKnowledgeFolders
+} from '../../features/app/appSlice';
+import WorkflowLayout from '../../layouts/WorkflowLayout/WorkflowLayout';
 
 const FoldersPage = ({ knowledgeCenter }) => {
   const dispatch = useDispatch();
@@ -32,7 +32,7 @@ const FoldersPage = ({ knowledgeCenter }) => {
   console.log("folders", folders)
 
   function fetchKnowledgeCenterData() {
-    const url = `https://100094.pythonanywhere.com/v2/companies/6385c0f38eca0fb652c9457e/folders/knowledge-centre/?data_type=Real_Data`;
+    const url = `http://localhost:8001/v2/companies/6385c0f38eca0fb652c9457e/folders/knowledge-centre/?data_type=Real_Data`;
     axios.get(url)
       .then(response => {
         dispatch(SetKnowledgeFolders(response.data));

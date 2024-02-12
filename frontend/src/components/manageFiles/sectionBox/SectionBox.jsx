@@ -1,31 +1,29 @@
-import styles from './sectionBox.module.css';
-import maneFilesStyles from '../manageFiles.module.css';
-import BookSpinner from '../../bookSpinner/BookSpinner';
 import { useEffect, useState } from 'react';
+import BookSpinner from '../../bookSpinner/BookSpinner';
+import maneFilesStyles from '../manageFiles.module.css';
+import styles from './sectionBox.module.css';
 
-import { PrimaryButton } from '../../styledComponents/styledComponents';
+import axios from 'axios';
+import { useTranslation } from 'react-i18next';
 import { IoIosRefresh } from 'react-icons/io';
-import { LoadingSpinner } from '../../LoadingSpinner/LoadingSpinner';
 import { useDispatch, useSelector } from 'react-redux';
-import { DocumentServices } from '../../../services/documentServices';
 import { toast } from 'react-toastify';
-import { TemplateServices } from '../../../services/templateServices';
-import { WorkflowServices } from '../../../services/workflowServices';
-import { getAllProcessesV2 } from '../../../services/processServices';
+import { useAppContext } from '../../../contexts/AppContext';
 import {
-  setAllProcesses,
-  setNotificationsForUser,
+    SetKnowledgeFolders,
+    setAllProcesses,
+    setNotificationsForUser,
 } from '../../../features/app/appSlice';
 import { setAllDocuments } from '../../../features/document/documentSlice';
 import { setAllTemplates } from '../../../features/template/templateSlice';
 import { setAllWorkflows } from '../../../features/workflow/workflowsSlice';
-import { useTranslation } from 'react-i18next';
+import { DocumentServices } from '../../../services/documentServices';
+import { getAllProcessesV2 } from '../../../services/processServices';
+import { TemplateServices } from '../../../services/templateServices';
+import { WorkflowServices } from '../../../services/workflowServices';
 import { productName } from '../../../utils/helpers';
-import { useAppContext } from '../../../contexts/AppContext';
-import {
-  SetKnowledgeFolders
-} from '../../../features/app/appSlice';
-import axios from 'axios';
+import { LoadingSpinner } from '../../LoadingSpinner/LoadingSpinner';
+import { PrimaryButton } from '../../styledComponents/styledComponents';
 
 const SectionBox = ({
   cardItems,
@@ -289,7 +287,7 @@ const SectionBox = ({
       }
       else {
         setRefreshLoading(true);
-        const url = `https://100094.pythonanywhere.com/v2/companies/6385c0f38eca0fb652c9457e/folders/knowledge-centre/?data_type=Real_Data`;
+        const url = `http://localhost:8001/v2/companies/6385c0f38eca0fb652c9457e/folders/knowledge-centre/?data_type=Real_Data`;
         axios.get(url)
           .then(response => {
             dispatch(SetKnowledgeFolders(response.data));

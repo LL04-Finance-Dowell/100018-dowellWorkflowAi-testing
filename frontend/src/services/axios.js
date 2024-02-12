@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const workflowAPIBaseURL = "https://100094.pythonanywhere.com/v0.1/";
+const workflowAPIBaseURL = "http://localhost:8001/v0.1/";
 const loginBaseURL = "https://100014.pythonanywhere.com/api/";
 const legalBaseURL = "https://100087.pythonanywhere.com/api/";
 const locationAPIBaseUrl = "https://100074.pythonanywhere.com/";
@@ -18,12 +18,12 @@ const workflowAxiosInstance = axios.create({
 const legalAxiosInstance = axios.create({
   // withCredentials: true,
   baseURL: legalBaseURL,
-})
+});
 
 const locationAxiosInstance = axios.create({
   baseURL: locationAPIBaseUrl,
   withCredentials: true,
-})
+});
 
 const dowellLoginUrl =
   "https://100014.pythonanywhere.com/?redirect_url=" +
@@ -37,8 +37,8 @@ const dowellLogoutUrl =
 export {
   authAxiosInstance,
   dowellLoginUrl,
-  workflowAxiosInstance,
   dowellLogoutUrl,
   legalAxiosInstance,
   locationAxiosInstance,
+  workflowAxiosInstance,
 };
