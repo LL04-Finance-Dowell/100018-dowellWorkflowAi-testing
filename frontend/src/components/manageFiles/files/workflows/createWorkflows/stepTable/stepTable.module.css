@@ -1,0 +1,65 @@
+.container {
+}
+
+.add__table__button {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background-color: var(--popup-form-button);
+  color: var(--e-global-color-cd6593d);
+  border: none;
+  outline: none;
+  font-size: 32px;
+  align-self: flex-end;
+}
+
+.container table {
+  width: 100%;
+  margin-bottom: 16px;
+  border: solid 2.5px var(--e-global-color-secondary);
+  overflow-y: auto;
+  color: var(--e-global-color-cd6593d);
+}
+
+.container table thead tr th {
+  background-color: var(--e-global-color-secondary);
+  border: 2px solid var(--e-global-color-secondary);
+  padding: 4.8px;
+  text-transform: capitalize;
+  text-align: center;
+  font-size: 14px;
+  font-weight: 400;
+  width: 50%;
+}
+
+.container table tbody tr th,
+.no__step {
+  border: 2px solid var(--e-global-color-secondary);
+  padding: 4.8px;
+  text-align: center;
+  font-size: 18px;
+  color: #000;
+  font-weight: 400;
+  background-color: var(--e-global-color-cd6593d);
+  position: relative;
+}
+
+.table__features__box {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  right: 10px;
+  display: flex;
+  gap: 3px;
+}
+
+.table__features__box i {
+  cursor: pointer;
+}
+
+.editing__ceil th {
+  background-color: rgba(190, 190, 190, 0.1) !important;
+}

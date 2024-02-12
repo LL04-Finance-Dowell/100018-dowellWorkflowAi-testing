@@ -1,0 +1,86 @@
+.outer_div {
+    background: rgba(0, 0, 0, 0.12);
+    backdrop-filter: blur(5px);
+    height: 100%;
+    width: 100%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    animation: fadeIn 0.2s ease-in-out;
+    z-index: 100002;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.inner_div {
+    background-color: var(--white);
+    width: 50%;
+    border-radius: 10px;
+    padding: 5% 2%;
+    max-height: 30rem;
+    position: relative;
+}
+
+.close_btn {
+    position: absolute;
+    top: 1%;
+    right: 2%;
+    cursor: pointer;
+}
+
+.error_msg {
+    text-align: center;
+    margin-bottom: 70px;
+}
+
+.btn_div {
+    display: flex;
+    gap: 20px;
+    width: 100%;
+}
+
+.danger_btn {
+    padding: 13px 20px;
+    width: 100%;
+    background-color: var(--e-global-color-9d2ac19);
+    font-size: 16px;
+    text-align: center;
+    font-weight: 500;
+    line-height: 12px;
+    border-radius: 2px;
+    cursor: pointer;
+    text-transform: capitalize;
+    transition: 0.3s ease-in-out;
+}
+
+.danger_btn:hover {
+    background-color: rgb(239, 9, 5);
+    color: white;
+}
+
+.danger_btn:focus {
+    border: solid 2px black;
+}
+.primry_btn{
+    padding: 13px 20px;
+    width: 100%;
+    background-color: var(--e-global-color-9d2ac19);
+    font-size: 16px;
+    text-align: center;
+    font-weight: 500;
+    line-height: 12px;
+    border-radius: 2px;
+    cursor: pointer;
+    text-transform: capitalize;
+    transition: 0.3s ease-in-out;
+}
+.primry_btn:hover {
+    background-color: rgb(22, 190, 17);
+    color: white;
+}
+
+.primry_btn:focus {
+    border: solid 2px black;
+}

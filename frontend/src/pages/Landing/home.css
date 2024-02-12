@@ -1,0 +1,34 @@
+.main {
+  display: flex;
+}
+.top-main {
+  display: inline;
+  width: 42%;
+}
+.sm-flip {
+  display: flex;
+  padding-left: 25px;
+  width: 160%;
+}
+.footer {
+  width: 100%;
+  background-color: #1b1b1b;
+  height: 110px;
+  padding: 30px 50px;
+  color: #ffffff;
+  font-family: "Helvetica", Sans-serif;
+  font-size: 12px;
+  font-weight: 300;
+  line-height: 18px;
+  gap: 30px;
+}
+.face:hover {
+  color: green;
+}
+.face {
+  border-radius: 50%;
+}
+@media (max-width: 800px) {
+  .top-main {
+  }
+}

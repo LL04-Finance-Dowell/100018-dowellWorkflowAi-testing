@@ -1,0 +1,25 @@
+.workflow__Verification__Page__Container {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+.workflow__Verification__Page__Container a {
+    color: red;
+    font-family: monospace;
+    letter-spacing: 0.15em;
+    font-size: 1rem;
+}
+
+.workflow__Verification__Page__Container__Spinner {
+    height: 100vh;
+}
+.workflow__Verification__Page__Container__Spinner .verification__Spinner__Item {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}

@@ -1,0 +1,45 @@
+.container {
+  display: flex;
+  flex-direction: column;
+}
+
+.container select {
+  font-size: 16px !important;
+}
+
+.container button {
+  background-color: var(--e-global-color-text);
+  height: 40px;
+  padding-inline: 16px;
+  font-size: 16px;
+  color: white;
+  transition: all 0.5s ease;
+}
+
+.container button:hover {
+  background-color: var(--e-global-color-accent);
+}
+
+.box {
+  background-color: var(--e-global-color-9d2ac19);
+  border: 1px solid var(--e-global-color-text);
+  padding: 10px;
+}
+
+.box__inner {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  border: 1px solid var(--e-global-color-text);
+  padding: 10px;
+}
+
+.box__header {
+  font-size: 16px;
+  margin-bottom: 0;
+  color: red;
+}
+
+.h2__Doc__Title {
+  font-size: 1.125rem;
+}
