@@ -37,6 +37,7 @@ from app.helpers import (
     remove_members_from_steps,
     update_signed,
     validate_id,
+    remove_finalized_reminder
 )
 from app.mongo_db_connection import (
     add_document_to_folder,
@@ -143,6 +144,7 @@ class DocumentOrTemplateProcessing(APIView):
             request_data["parent_id"],
             request_data["data_type"],
             request_data["process_title"],
+            request.data.get("email", None)
         )
         action = request_data["action"]
         data = None
@@ -456,18 +458,18 @@ class FinalizeOrReject(APIView):
                     status=status.HTTP_400_BAD_REQUEST,
                 )
         check, current_state = is_finalized(item_id, item_type)
-        # if item_type == "document" or item_type == "clone":
-        #     if check and current_state != "processing":
-        #         return Response(
-        #             f"document already processed as `{current_state}`!",
-        #             status.HTTP_200_OK,
-        #         )
-        # elif item_type == "template":
-        #     if check and current_state != "draft":
-        #         return Response(
-        #             f"template already processed as `{current_state}`!",
-        #             status.HTTP_200_OK,
-        #         )
+        if item_type == "document" or item_type == "clone":
+            if check and current_state != "processing":
+                return Response(
+                    f"document already processed as `{current_state}`!",
+                    status.HTTP_200_OK,
+                )
+        elif item_type == "template":
+            if check and current_state != "draft":
+                return Response(
+                    f"template already processed as `{current_state}`!",
+                    status.HTTP_200_OK,
+                )
         if item_type == "clone":
             signers_list = single_query_clones_collection({"_id": item_id}).get(
                 "signed_by"
@@ -557,16 +559,19 @@ class FinalizeOrReject(APIView):
                             elif item.get("document_state") == "processing":
                                 meta_id = get_metadata_id(item_id, item_type)
                         if check_last_finalizer(user, user_type, process):
-                            subject = (
-                                f"Completion of {process['process_title']} Processing"
-                            )
-                            email = "morvinian@gmail.com"  # Placeholder
-                            dowell_email_sender(
-                                process["created_by"],
-                                email,
-                                subject,
-                                email_content=PROCESS_COMPLETION_MAIL,
-                            )
+                            subject = (f"Completion of {process['process_title']} Processing")
+                            email = process.get("email", None)
+
+                            if email:
+                                dowell_email_sender(
+                                    process["created_by"],
+                                    email,
+                                    subject,
+                                    email_content=PROCESS_COMPLETION_MAIL,
+                                )
+
+                        # Remove Reminder after finalization        
+                        remove_finalized_reminder(user, process_id)
 
                         return Response(
                             "document processed successfully", status.HTTP_200_OK
@@ -591,16 +596,19 @@ class FinalizeOrReject(APIView):
                                 update_metadata(meta_id, "draft", item_type)
 
                         if check_last_finalizer(user, user_type, process):
-                            subject = (
-                                f"Completion of {process['process_title']} Processing"
-                            )
-                            email = "morvinian@gmail.com"  # Placeholder
-                            dowell_email_sender(
-                                process["created_by"],
-                                email,
-                                subject,
-                                email_content=PROCESS_COMPLETION_MAIL,
-                            )
+                            subject = (f"Completion of {process['process_title']} Processing")
+                            email = process.get("email", None)
+
+                            if email:
+                                dowell_email_sender(
+                                    process["created_by"],
+                                    email,
+                                    subject,
+                                    email_content=PROCESS_COMPLETION_MAIL,
+                                )
+
+                        # Remove Reminder after finalization        
+                        remove_finalized_reminder(user, process_id)
 
                         return Response(
                             "template processed successfully", status.HTTP_200_OK
@@ -1072,7 +1080,6 @@ class DocumentLink(APIView):
 class DocumentDetail(APIView):
     def get(self, request, item_id):
         """Retrieves the document object for a specific document"""
-        print(item_id)
         document_type = request.query_params.get("document_type")
         if not validate_id(item_id) or not document_type:
             return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)

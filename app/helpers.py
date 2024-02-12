@@ -818,36 +818,43 @@ def check_last_finalizer(user, user_type, process)->bool:
 
 
 
-def set_reminder(reminder, step, process):
-        team = step.get("stepTeamMembers", [])
-        user = step.get("stepUserMembers", [])
+def set_reminder(reminder, step, process_id, created_by):
+        try:
+            team = step.get("stepTeamMembers", [])
+            user = step.get("stepUserMembers", [])
 
-        if reminder == "every_hour":
-            if team:
-                create_reminder(process, 60, team)
-            if user:
-                create_reminder(process, 60, user)
-    
-        elif reminder == "every_day":
-            if team:
-                create_reminder(process, 1440, team)
-            if user:
-                create_reminder(process, 1440, user)
+            if reminder == "every_hour":
+                if team:
+                    create_reminder(process_id, 60, team, created_by)
+                if user:
+                    create_reminder(process_id, 60, user, created_by)
+        
+            elif reminder == "every_day":
+                if team:
+                    create_reminder(process_id, 1440, team, created_by)
+                if user:
+                    create_reminder(process_id, 1440, user, created_by)
+        except Exception:
+            return
 
-def create_reminder(process, interval, members):
-    for member in members:
-        member = member.get("member")
-        email = member.get("email")
+def create_reminder(process_id, interval, members, created_by):
+    try:
+        for member in members:
+            member_name = member.get("member")
+            member_email = member.get("email")
+            current_datetime = datetime.utcnow().strftime('%d:%m:%Y,%H:%M:%S')
 
-        if member:
-            ProcessReminder.objects.create(
-                process_id = process["_id"], 
-                step_finalizer = member,
-                email = email, 
-                interval = interval,
-                last_reminder_datetime = process["created_on"],
-                created_by = process["company_id"]
-            )
+            if member_name and member_email:
+                ProcessReminder.objects.create(
+                    process_id = process_id, 
+                    step_finalizer = member_name,
+                    email = member_email, 
+                    interval = interval,
+                    last_reminder_datetime = current_datetime,
+                    created_by = created_by
+                )
+    except Exception:
+        return
 
 
 def remove_finalized_reminder(user, process_id):
