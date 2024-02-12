@@ -104,10 +104,11 @@ class Process:
             )
         )
         if res["isSuccess"]:
-            for step in self.process["process_steps"]:
-                reminder = step.get("stepReminder", [])
-                if reminder:
-                    set_reminder(reminder, step, self.process)
+            if(res["inserted_id"]):
+                for step in self.process_steps:
+                    reminder = step.get("stepReminder", [])
+                    if reminder:
+                        set_reminder(reminder, step, res["inserted_id"], self.created_by)
 
             return {
                 "process_title": self.process_title,
@@ -143,14 +144,18 @@ class Process:
                     "process_type": self.process_type,
                     "org_name":self.org_name,
                     "process_kind": "original",
+                    "email": self.email
+
                 }
             )
         )
         if res["isSuccess"]:
-            for step in self.process["process_steps"]:
-                reminder = step.get("stepReminder", [])
-                if reminder:
-                    set_reminder(reminder, step, self.process)
+            if(res["inserted_id"]):
+                for step in self.process_steps:
+                    reminder = step.get("stepReminder", [])
+                    if reminder:
+                        set_reminder(reminder, step, res["inserted_id"], self.created_by)
+
 
             return {
                 "process_title": self.process_title,
