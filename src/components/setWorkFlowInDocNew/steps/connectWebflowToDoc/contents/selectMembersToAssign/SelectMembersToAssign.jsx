@@ -30,7 +30,7 @@ const SelectMembersToAssign = ({
   currentEnabledSteps,
 }) => {
   const [selectMembersComp, setSelectMembersComp] = useState(selectMembers);
-  const [numberOfPublicMembers, setNumberOfPublicMembers] = useState(0);
+
 
   const [current, setCurrent] = useState(selectMembers[0]);
   const { register } = useForm();
@@ -76,11 +76,11 @@ const SelectMembersToAssign = ({
   const [usedIdsLoaded, setUsedIdsLoaded] = useState(false);
   const [isTooltipVisible, setIsTooltipVisible] = useState(false);
   const [toggleCreatePublicLink, setToggleCreatePublicLInk] = useState(true)
-
+  const [numberOfPublicMembers, setNumberOfPublicMembers] = useState(0);
   const dispatch = useDispatch();
 
   const handleSetCurrent = (item) => {
-
+    // console.log('handlesetcurrent is ', item)
     setCurrent(item);
   };
 
@@ -109,18 +109,22 @@ const SelectMembersToAssign = ({
   });
 
   useEffect(() => {
-
+    console.log('ENTERED EFFECT');
     switch (current.header) {
       case 'Team':
-        const teamNum = teamMembersSelectedForProcess.filter(item => item?.stepIndex == currentStepIndex )
+        // console.log('ENTERED TEAM');
+        const teamNum = teamMembersSelectedForProcess.filter(item => item?.stepIndex === currentStepIndex )
         setSelectionCount(teamNum.length)
         break;
       case 'Users':
-        const userNum = publicMembersSelectedForProcess.filter(item => item?.stepIndex == currentStepIndex )
+        // console.log('ENTERED USER');
+        const userNum = userMembersSelectedForProcess.filter(item => item?.stepIndex === currentStepIndex )
         setSelectionCount(userNum.length)
         break
       case 'Public':
-        const publicNum = publicMembersSelectedForProcess.filter(item => item?.stepIndex == currentStepIndex )
+        // console.log('ENTERED PUBLIC');
+        const publicNum = publicMembersSelectedForProcess.filter(item => item?.stepIndex === currentStepIndex )
+        setNumberOfPublicMembers(publicNum.length)
         setSelectionCount(publicNum.length)
         break
       default:
@@ -129,9 +133,9 @@ const SelectMembersToAssign = ({
 
 
 
-  }, [currentStepIndex,teamMembersSelectedForProcess,
+  }, [teamMembersSelectedForProcess,
     userMembersSelectedForProcess,
-    publicMembersSelectedForProcess, current.header])
+    publicMembersSelectedForProcess, current.header,currentStepIndex])
 
 
 
@@ -187,7 +191,7 @@ const SelectMembersToAssign = ({
               ...extractAndFormatPortfoliosForMembers('team_member'),
               ...extractAndFormatPortfoliosForMembers('owner')
             ];
-    
+              // console.log('the team portfolio issss', member.portfolios)
             member.teams = workflowTeams?.filter(
               (team) => team.team_type === 'team'
             );
@@ -247,9 +251,10 @@ const SelectMembersToAssign = ({
     }, [userDetail]);
   
   useEffect(() => {
-
     if (!currentRadioOptionSelection) return;
-    selectTeamRef.current = '';
+
+    selectTeamRef.current= '';
+
     if (currentRadioOptionSelection === 'selectTeam') {
       if (currentGroupSelectionItem)
         currentGroupSelectionItem?.teams.forEach((team) =>
@@ -269,8 +274,9 @@ const SelectMembersToAssign = ({
         currentGroupSelectionItem.header
       )
     );
-   
-    if (currentGroupSelectionItem?.allSelected) {
+
+
+    if (currentGroupSelectionItem?.allSelected&&!currentGroupSelectionItem?.someSelected) {
       currentGroupSelectionItem?.teams.forEach((team) =>
         updateTeamAndPortfoliosInTeamForProcess(
           'add',
@@ -278,36 +284,66 @@ const SelectMembersToAssign = ({
           currentGroupSelectionItem.header
         )
       );
-      currentGroupSelectionItem?.portfolios.filter((item) => !usedId.some((link) => link?.member === item?.member)).forEach((team) =>
-      handleAddNewMember(
+     
+      return;
+    }
+    console.log("ddd",currentGroupSelectionItem?.portfolios.filter((item) => !usedId.some((link) => link?.member === item?.member)));
+    if (currentGroupSelectionItem?.someSelected&&!currentGroupSelectionItem?.allSelected) {
+      currentGroupSelectionItem?.portfolios?.filter((item) => !usedId.some((link) => link?.member === item?.member))?.slice(0,numberOfPublicMembers).forEach((team) =>
+      handleAddNewPublic(
           team
         )
       );
       return;
     }
-    if (currentGroupSelectionItem?.someSelected && !currentGroupSelectionItem?.allSelected) {
-      console.log("numberOfPublicMembers0",numberOfPublicMembers);
-      currentGroupSelectionItem?.teams.forEach((team) =>
-      updateTeamAndPortfoliosInTeamForProcess(
-        'add',
-        team,
-        currentGroupSelectionItem.header
-      )
-    );
-    currentGroupSelectionItem?.portfolios.filter((item) => !usedId.some((link) => link?.member === item?.member)).forEach((team) =>
-    handleAddNewMember(
-        team
-      )
-    );
-    return;
-    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentRadioOptionSelection, currentGroupSelectionItem,numberOfPublicMembers]);
+  const handleAddNewPublic = (parsedSelectedJsonValue) => {
+    if (!current || !current.header) return;
+    selectMemberOptionRef.current = '';
+    const publicUserAlreadyAdded = publicMembersSelectedForProcess?.find(
+      (pubMember) =>
+        pubMember.member === parsedSelectedJsonValue.member &&
+        pubMember.portfolio === parsedSelectedJsonValue.portfolio &&
+        pubMember.stepIndex === currentStepIndex
+    );
+if (current.header==='Public'&&!publicUserAlreadyAdded) {
+  dispatch(
+    setPublicMembersSelectedForProcess({
+      member: parsedSelectedJsonValue.member,
+      portfolio: parsedSelectedJsonValue.portfolio,
+      stepIndex: currentStepIndex,
+    })
+  )
+}
+   
 
+  };
+  const handleRemovePublic = (parsedSelectedJsonValue) => {
+    if (!current || !current.header) return;
+    selectMemberOptionRef.current = '';
+    const publicUserAlreadyAdded = publicMembersSelectedForProcess?.find(
+      (pubMember) =>
+        pubMember.member === parsedSelectedJsonValue.member &&
+        pubMember.portfolio === parsedSelectedJsonValue.portfolio &&
+        pubMember.stepIndex === currentStepIndex
+    );
+if (current.header==='Public'&&publicUserAlreadyAdded) {
+  dispatch(
+    removeFromPublicMembersSelectedForProcess({
+      member: parsedSelectedJsonValue.member,
+      portfolio: parsedSelectedJsonValue.portfolio,
+      stepIndex: currentStepIndex,
+    })
+  )
+}
+   
+
+  };
   useEffect(() => {
     if (!stepsPopulated || featuresUpdatedFromDraft) return;
 
-    // const stepDetails = processSteps?.find(
+    // const stepDetails = processSteps.find(
     //   process => process.workflow === docCurrentWorkflow?._id
     // )?.steps[currentStepIndex]
 
@@ -320,7 +356,7 @@ const SelectMembersToAssign = ({
       ];
     if (teamMembersSelectedForProcess.length > 0) {
       if (
-        currentSelectedOptions?.find(
+        currentSelectedOptions.find(
           (item) => item.name === 'Team' && item.stepIndex === currentStepIndex
         )
       )
@@ -349,7 +385,7 @@ const SelectMembersToAssign = ({
 
     if (publicMembersSelectedForProcess.length > 0) {
       if (
-        currentSelectedOptions?.find(
+        currentSelectedOptions.find(
           (item) =>
             item.name === 'Public' && item.stepIndex === currentStepIndex
         )
@@ -379,7 +415,7 @@ const SelectMembersToAssign = ({
 
     if (userMembersSelectedForProcess.length > 0) {
       if (
-        currentSelectedOptions?.find(
+        currentSelectedOptions.find(
           (item) => item.name === 'Users' && item.stepIndex === currentStepIndex
         )
       )
@@ -436,9 +472,10 @@ const SelectMembersToAssign = ({
   };
 
   const handleAddNewMember = (parsedSelectedJsonValue) => {
+    console.log("current.header",current.header,parsedSelectedJsonValue);
     if (!current || !current.header) return;
 
-    selectMemberOptionRef.current.value = '';
+    selectMemberOptionRef.current = '';
 
     switch (current.header) {
       case 'Team':
@@ -498,12 +535,14 @@ const SelectMembersToAssign = ({
           );
         return;
       case 'Public':
+        console.log("here ini",publicMembersSelectedForProcess);
         const publicUserAlreadyAdded = publicMembersSelectedForProcess?.find(
           (pubMember) =>
             pubMember.member === parsedSelectedJsonValue.member &&
             pubMember.portfolio === parsedSelectedJsonValue.portfolio &&
             pubMember.stepIndex === currentStepIndex
         );
+
         if (publicUserAlreadyAdded) {
           dispatch(
             removeFromPublicMembersSelectedForProcess({
@@ -516,19 +555,20 @@ const SelectMembersToAssign = ({
         }
         if (isAssignTask && publicMembersSelectedForProcess.length >= 20)
           toast.info('Only 20 members can be selected');
-        else
+        else{
+          console.log("added",publicUserAlreadyAdded,isAssignTask);
           dispatch(
             setPublicMembersSelectedForProcess({
               member: parsedSelectedJsonValue.member,
               portfolio: parsedSelectedJsonValue.portfolio,
               stepIndex: currentStepIndex,
             })
-          );
+          );}
         return;
       default:
     }
   };
-
+console.log("PublicMembersSelectedForProcess",publicMembersSelectedForProcess);
   const handleUserGroupSelection = (
     newRadioSelection,
     newGroupValue,
@@ -536,6 +576,12 @@ const SelectMembersToAssign = ({
     name,
     radioValue
   ) => {
+    // console.log(" newRadioSelection",newRadioSelection,
+    //   "newGroupValue",newGroupValue,
+    //   "currentHeader",currentHeader,
+    //   "name",name,
+    //   "radioValue",radioValue)
+    setCurrentGroupSelectionItem(newGroupValue);
     setCurrentRadioOptionSelection(newRadioSelection);
 
     const currentEnabledRadioOptionsFromStepPopulation = {
@@ -552,7 +598,6 @@ const SelectMembersToAssign = ({
     );
     updateRadioOptionsEnabledForStep(currentHeader, name, radioValue);
   };
-
 
   const handleMemberRadioChange = (value, currentHeader, name) => {
     setCurrentRadioOptionSelection(value);
@@ -711,7 +756,6 @@ const SelectMembersToAssign = ({
     }
   };
 
-
   const handleChange = (event) => {
     setNumberOfPublicMembers(event.target.value)
   }
@@ -736,7 +780,7 @@ const SelectMembersToAssign = ({
                   className={`${styles.select__header} ${current.id === item.id && styles.selected
                     }`}
                 >
-                 {item.header}
+                  {item.header}
                 </div>
               ))
             )}
@@ -821,7 +865,7 @@ const SelectMembersToAssign = ({
                       ? () =>
                         handleUserGroupSelection(
                           current.all + ' first',
-                          { ...current, allSelected: true },
+                          { ...current, allSelected: true,someSelected: false },
                           current.header,
                           'selectItemOptionForUser-' +
                           currentStepIndex +
@@ -837,7 +881,7 @@ const SelectMembersToAssign = ({
                   Select all {current.header}
                 </Radio>
                 </div>
-              {current.header!=="Groups"&&current.header!=="Public"&&  <div className={styles.radContainer}>
+                {current.header!=="Groups"&&current.header!=="Public"&&  <div className={styles.radContainer}>
                 <Radio
                   register={register}
                   name={
@@ -1057,7 +1101,7 @@ const SelectMembersToAssign = ({
                     onChange={handleChange}
                   />
                   
-                    <button className={styles.select_no_public_members_btn}  type="submit" >Select</button>
+                    {/* <button className={styles.select_no_public_members_btn}  type="submit" >Select</button> */}
                 </form>
                   </div>
 
