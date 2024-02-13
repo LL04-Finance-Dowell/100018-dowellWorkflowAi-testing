@@ -616,11 +616,7 @@ if (current.header==='Public'&&publicUserAlreadyAdded) {
     )
     if(!newGroupValue?.someSelected){
     setInputSelectBox(false)}
-    console.log(" newRadioSelection",newRadioSelection,
-      "newGroupValue",newGroupValue,
-      "currentHeader",currentHeader,
-      "name",name,
-      "radioValue",radioValue)
+
     setCurrentGroupSelectionItem(newGroupValue);
     setCurrentRadioOptionSelection(newRadioSelection);
 
@@ -797,19 +793,21 @@ if (current.header==='Public'&&publicUserAlreadyAdded) {
   };
 
   const handleChange = (event) => {
-    dispatch(
-      resetPublicMembersSelectedForProcess()
-    )
-    const selectedValue = Math.max(0, Math.min(current?.portfolios?.filter((item) => !usedId.some((link) => link?.member === item?.member)).length, Number(event.target.value)));
-    setNumberOfPublicMembers(selectedValue)
- 
-   
-  }
+    dispatch(resetPublicMembersSelectedForProcess());
+    const selectedValue = Math.max(
+      0,
+      Math.min(
+        current?.portfolios?.filter(
+          (item) => !usedId.some((link) => link?.member === item?.member)
+        ).length,
+        Number(event.target.value)
+      )
+    );
+    setNumberOfPublicMembers(selectedValue);
+  };
 
-console.log("check ");
   const handleSubmit = (e, all) => {
     e.preventDefault();
-
   };
   return (
     <div className={styles.container} id='selectTeam'>
