@@ -52,6 +52,7 @@
   border-radius: 4px;
   text-align: center;
   min-height: 2.5rem;
+  width: 100%;
 }
 
 
@@ -65,7 +66,7 @@
   padding: 10px 15px;
 
   border-radius: 6px;
-  gap: 10px;
+
   transition: 0.3s ease-in-out;
 }
 

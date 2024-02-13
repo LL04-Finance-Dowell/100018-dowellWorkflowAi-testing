@@ -11,6 +11,8 @@ import {
   removeFromTeamMembersSelectedForProcess,
   removeFromTeamsSelectedSelectedForProcess,
   removeFromUserMembersSelectedForProcess,
+  resetPublicMembersSelectedForProcess,
+  setInBatchPublicMembersSelectedForProcess,
   setPublicMembersSelectedForProcess,
   setTeamMembersSelectedForProcess,
   setTeamsSelectedSelectedForProcess,
@@ -23,6 +25,8 @@ import { useAppContext } from '../../../../../../contexts/AppContext';
 import { LoadingSpinner } from '../../../../../LoadingSpinner/LoadingSpinner';
 import { httpProcess } from '../../../../../../httpCommon/httpCommon';
 import { useTranslation } from 'react-i18next';
+import CreateGroup from './CreateGroup/CreateGroup';
+import { FaGlasses } from 'react-icons/fa';
 
 const SelectMembersToAssign = ({
   currentStepIndex,
@@ -77,12 +81,21 @@ const SelectMembersToAssign = ({
   const [isTooltipVisible, setIsTooltipVisible] = useState(false);
   const [toggleCreatePublicLink, setToggleCreatePublicLInk] = useState(true)
   const [numberOfPublicMembers, setNumberOfPublicMembers] = useState(0);
+  const [inputSelectBox, setInputSelectBox] = useState(false);
   const dispatch = useDispatch();
-
+  const [openOverlayModal, setOpenOverlayModal] = useState(false);
   const handleSetCurrent = (item) => {
     // console.log('handlesetcurrent is ', item)
     setCurrent(item);
   };
+  const handleOverlayModal = (item) => {
+    setOpenOverlayModal(true)
+  };
+
+  const handleOverlayBtn = (item) => {
+    setOpenOverlayModal(false)
+  };
+
 
   useClickInside(teamMembersRef, () => {
     if (!currentRadioOptionSelection)
@@ -109,7 +122,7 @@ const SelectMembersToAssign = ({
   });
 
   useEffect(() => {
-    console.log('ENTERED EFFECT');
+ 
     switch (current.header) {
       case 'Team':
         // console.log('ENTERED TEAM');
@@ -124,7 +137,6 @@ const SelectMembersToAssign = ({
       case 'Public':
         // console.log('ENTERED PUBLIC');
         const publicNum = publicMembersSelectedForProcess.filter(item => item?.stepIndex === currentStepIndex )
-        setNumberOfPublicMembers(publicNum.length)
         setSelectionCount(publicNum.length)
         break
       default:
@@ -277,6 +289,7 @@ const SelectMembersToAssign = ({
 
 
     if (currentGroupSelectionItem?.allSelected&&!currentGroupSelectionItem?.someSelected) {
+
       currentGroupSelectionItem?.teams.forEach((team) =>
         updateTeamAndPortfoliosInTeamForProcess(
           'add',
@@ -284,20 +297,44 @@ const SelectMembersToAssign = ({
           currentGroupSelectionItem.header
         )
       );
-     
-      return;
-    }
-    console.log("ddd",currentGroupSelectionItem?.portfolios.filter((item) => !usedId.some((link) => link?.member === item?.member)));
-    if (currentGroupSelectionItem?.someSelected&&!currentGroupSelectionItem?.allSelected) {
-      currentGroupSelectionItem?.portfolios?.filter((item) => !usedId.some((link) => link?.member === item?.member))?.slice(0,numberOfPublicMembers).forEach((team) =>
-      handleAddNewPublic(
+      currentGroupSelectionItem?.portfolios?.filter((item) => !usedId.some((link) => link?.member === item?.member))?.forEach((team) =>
+      handleAddNewMember(
           team
         )
       );
+     
+      return;}
+   
+    if (
+      currentGroupSelectionItem?.someSelected &&
+      !currentGroupSelectionItem?.allSelected
+    ) {
+      const finalArray = currentGroupSelectionItem?.portfolios
+        ?.filter(
+          (item) => !usedId.some((link) => link?.member === item?.member)
+        )
+        ?.slice(0, numberOfPublicMembers)
+        .map((team) => {
+          const publicUserAlreadyAdded = publicMembersSelectedForProcess?.find(
+            (pubMember) =>
+              pubMember.member === team.member &&
+              pubMember.portfolio === team.portfolio &&
+              pubMember.stepIndex === currentStepIndex
+          );
+          if (publicUserAlreadyAdded) return null;
+          return {
+            member: team.member,
+            portfolio: team.portfolio,
+            stepIndex: currentStepIndex,
+          };
+        }).filter((item)=>item);
+
+       dispatch(setInBatchPublicMembersSelectedForProcess(finalArray));
+
       return;
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentRadioOptionSelection, currentGroupSelectionItem,numberOfPublicMembers]);
+  }, [currentRadioOptionSelection, currentGroupSelectionItem,numberOfPublicMembers,currentStepIndex]);
   const handleAddNewPublic = (parsedSelectedJsonValue) => {
     if (!current || !current.header) return;
     selectMemberOptionRef.current = '';
@@ -472,7 +509,6 @@ if (current.header==='Public'&&publicUserAlreadyAdded) {
   };
 
   const handleAddNewMember = (parsedSelectedJsonValue) => {
-    console.log("current.header",current.header,parsedSelectedJsonValue);
     if (!current || !current.header) return;
 
     selectMemberOptionRef.current = '';
@@ -535,7 +571,6 @@ if (current.header==='Public'&&publicUserAlreadyAdded) {
           );
         return;
       case 'Public':
-        console.log("here ini",publicMembersSelectedForProcess);
         const publicUserAlreadyAdded = publicMembersSelectedForProcess?.find(
           (pubMember) =>
             pubMember.member === parsedSelectedJsonValue.member &&
@@ -556,7 +591,7 @@ if (current.header==='Public'&&publicUserAlreadyAdded) {
         if (isAssignTask && publicMembersSelectedForProcess.length >= 20)
           toast.info('Only 20 members can be selected');
         else{
-          console.log("added",publicUserAlreadyAdded,isAssignTask);
+   
           dispatch(
             setPublicMembersSelectedForProcess({
               member: parsedSelectedJsonValue.member,
@@ -568,7 +603,7 @@ if (current.header==='Public'&&publicUserAlreadyAdded) {
       default:
     }
   };
-console.log("PublicMembersSelectedForProcess",publicMembersSelectedForProcess);
+
   const handleUserGroupSelection = (
     newRadioSelection,
     newGroupValue,
@@ -576,11 +611,16 @@ console.log("PublicMembersSelectedForProcess",publicMembersSelectedForProcess);
     name,
     radioValue
   ) => {
-    // console.log(" newRadioSelection",newRadioSelection,
-    //   "newGroupValue",newGroupValue,
-    //   "currentHeader",currentHeader,
-    //   "name",name,
-    //   "radioValue",radioValue)
+    dispatch(
+      resetPublicMembersSelectedForProcess()
+    )
+    if(!newGroupValue?.someSelected){
+    setInputSelectBox(false)}
+    console.log(" newRadioSelection",newRadioSelection,
+      "newGroupValue",newGroupValue,
+      "currentHeader",currentHeader,
+      "name",name,
+      "radioValue",radioValue)
     setCurrentGroupSelectionItem(newGroupValue);
     setCurrentRadioOptionSelection(newRadioSelection);
 
@@ -757,10 +797,16 @@ console.log("PublicMembersSelectedForProcess",publicMembersSelectedForProcess);
   };
 
   const handleChange = (event) => {
-    setNumberOfPublicMembers(event.target.value)
+    dispatch(
+      resetPublicMembersSelectedForProcess()
+    )
+    const selectedValue = Math.max(0, Math.min(current?.portfolios?.filter((item) => !usedId.some((link) => link?.member === item?.member)).length, Number(event.target.value)));
+    setNumberOfPublicMembers(selectedValue)
+ 
+   
   }
 
-
+console.log("check ");
   const handleSubmit = (e, all) => {
     e.preventDefault();
 
@@ -862,7 +908,8 @@ console.log("PublicMembersSelectedForProcess",publicMembersSelectedForProcess);
                         option.name === current.header &&
                         option.stepIndex === currentStepIndex
                     )
-                      ? () =>
+                      ? () =>{
+                     
                         handleUserGroupSelection(
                           current.all + ' first',
                           { ...current, allSelected: true,someSelected: false },
@@ -872,7 +919,7 @@ console.log("PublicMembersSelectedForProcess",publicMembersSelectedForProcess);
                           '-' +
                           current.header,
                           'all' + current.header
-                        )
+                        )}
                       : (e) =>
                         handleDisabledUserOptionSelection(e, current.title)
                   }
@@ -985,6 +1032,7 @@ console.log("PublicMembersSelectedForProcess",publicMembersSelectedForProcess);
                           current.header,
                           'selectIn' + current.header
                         )
+                        setInputSelectBox(true)
                         }: (e) =>
                         handleDisabledUserOptionSelection(e, current.title)
                   }
@@ -1082,7 +1130,7 @@ console.log("PublicMembersSelectedForProcess",publicMembersSelectedForProcess);
                   </select>
                 )}
               </div>}
-               {current.header==="Public"&& <div
+               {current.header==="Public"&&inputSelectBox&& <div
                 ref={teamMembersRef}
                 className={styles.team__Select__Wrapper}
               >
@@ -1096,8 +1144,6 @@ console.log("PublicMembersSelectedForProcess",publicMembersSelectedForProcess);
                   className={styles.select_no_public_members_input} 
                     type="number" 
                     value={numberOfPublicMembers} 
-                    min={0} 
-                    max={current.portfolios.length}
                     onChange={handleChange}
                   />
                   
@@ -1154,12 +1200,14 @@ console.log("PublicMembersSelectedForProcess",publicMembersSelectedForProcess);
                           option.name === current.header &&
                           option.stepIndex === currentStepIndex
                       )
-                        ? ({ target }) =>
+                        ? ({ target }) =>{
                           handleMemberRadioChange(
                             target.value,
                             current.header,
                             target.name
                           )
+                          setInputSelectBox(false)
+                          }
                         : (e) =>
                           handleDisabledUserOptionSelection(e, current.title)
                     }
@@ -1323,6 +1371,17 @@ console.log("PublicMembersSelectedForProcess",publicMembersSelectedForProcess);
                   }
                 </>
               }
+              {current.header==="Groups"&&
+                     <button 
+                              style={{backgroundColor:'green', color:'white', padding:"3px", borderRadius:'4px'}} 
+                              onClick={()=>handleOverlayModal()}>
+                                Create Groups
+                            </button>}
+                            {
+                  openOverlayModal ?  <div style={{position:'relative', marginLeft:'20%', background:'none'}}>
+                    <CreateGroup handleOverlay={()=>handleOverlayBtn()}/>
+                  </div> : ""
+                }
             </div>
           </div>
         </>

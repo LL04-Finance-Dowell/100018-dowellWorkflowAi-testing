@@ -657,6 +657,13 @@ export const appSlice = createSlice({
         action.payload,
       ];
     },
+    setInBatchPublicMembersSelectedForProcess: (state, action) => {
+      console.log("action.payload",action.payload);
+      state.publicMembersSelectedForProcess = action.payload
+    },
+   resetPublicMembersSelectedForProcess: (state) => {
+      state.publicMembersSelectedForProcess = [];
+    },
     removeFromPublicMembersSelectedForProcess: (state, action) => {
       const updatedPublicMembersForProcess =
         state.publicMembersSelectedForProcess.filter((currentMember) => {
@@ -909,6 +916,8 @@ export const {
   setErrorsCheckedInNewProcess,
   setApiKeyFetchFailureMessage,
   setShowApiKeyFetchFailureModal,
+  resetPublicMembersSelectedForProcess,
+  setInBatchPublicMembersSelectedForProcess
 } = appSlice.actions;
 
 export default appSlice.reducer;
