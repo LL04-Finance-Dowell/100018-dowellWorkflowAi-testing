@@ -92,5 +92,5 @@ export class DocumentServices {
     return httpDocument.get(`/clones/${documentId}/`);
   };
 
-  getOrgDocumentReports = (companyId, dataType, state) => httpApiUrl.get(`metadata/${companyId}/organisations/?data_type=${dataType}&document_state=${state}&item_type=document`)
+  getOrgDocumentReports = (companyId, dataType, state) => httpApiUrlV2.get(`metadata/${companyId}/organisations/?data_type=${dataType}&document_state=${state}&item_type=document`)
 }

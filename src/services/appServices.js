@@ -1,7 +1,7 @@
-import { httpApiUrl } from "../httpCommon/httpCommon";
+import { httpApiUrl, httpApiUrlV2 } from "../httpCommon/httpCommon";
 
 export class AppServices {
   getItemsCounts = (data) => {
-    return httpApiUrl.post("object_count/", data);
+    return httpApiUrlV2.post("object_count/", data);
   };
 }

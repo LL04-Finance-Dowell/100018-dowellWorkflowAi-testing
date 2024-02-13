@@ -33,13 +33,13 @@ export const getAllProcessesV2 = async (companyId, dataType) => {
 };
 
 export const getCompletedProcesses = (companyId, dataType) => {
-  return httpApiUrl.get(
+  return httpApiUrlV2.get(
     `${companyId}/organisations/?data_type=${dataType}&process-state=completed`
   );
 };
 
 export const getActiveProcesses = (companyId, dataType) => {
-  return httpApiUrl.get(
+  return httpApiUrlV2.get(
     `${companyId}/?data_type=${dataType}&process-state=active`
   );
 

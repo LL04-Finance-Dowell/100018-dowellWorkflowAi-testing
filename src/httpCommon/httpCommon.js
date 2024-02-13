@@ -11,7 +11,8 @@ const new_process_api_url = "https://100094.pythonanywhere.com/v0.2/";
 export const auth_expo_url = "https://100093.pythonanywhere.com";
 
 ///new api
-const api_url_workflow = "https://100094.pythonanywhere.com/v1/"
+const api_url_workflow = "https://100094.pythonanywhere.com/v2/"
+// const api_url_workflow = "https://100094.pythonanywhere.com/v1/"
 
 export const dowellLoginUrl =
   `https://100014.pythonanywhere.com/?redirect_url=${
@@ -37,8 +38,7 @@ export const httpWorkflow = axios.create({
   baseURL: api_url_v2 + "workflows",
 });
 
-export const httpApiUrl = axios.create({ baseURL: api_url });
-// export const httpApiUrl = axios.create({ baseURL: api_url_v2 });
+// export const httpApiUrl = axios.create({ baseURL: api_url });
 
 export const httpApiUrlV2 = axios.create({ baseURL: api_url_v2 });
 

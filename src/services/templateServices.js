@@ -1,4 +1,4 @@
-import { httpApiUrl, httpTemplate } from '../httpCommon/httpCommon';
+import { httpApiUrl, httpApiUrlV2, httpTemplate } from '../httpCommon/httpCommon';
 
 export class TemplateServices {
   createTemplate = (data) => {
@@ -33,7 +33,7 @@ export class TemplateServices {
     // return httpApiUrl.get(
     //   `/companies/${companyId}/templates/?data_type=${dataType}`
     // );
-    return httpApiUrl.get(
+    return httpApiUrlV2.get(
       // `templates/${companyId}/?data_type=${dataType}`
       `/metadata/${companyId}/organisations/?data_type=${dataType}&item_type=template`  
       // {{base_url}}/templates/:company_id/?data_type // URL
@@ -41,7 +41,7 @@ export class TemplateServices {
   };
 
   demoTemplates = (count) =>
-    httpApiUrl.get(
+  httpApiUrlV2.get(
       `companies/6385c0f38eca0fb652c9457e/templates/knowledge-centre/?data_type=Real_Data&page=${count}`
     );
   // * The company id for demoTemplates is hard coded to that of Dowell Knowledge Centre
@@ -53,7 +53,7 @@ export class TemplateServices {
   };
 
   getTemplateReports = (companyId, dataType, templateState, member, portfolio, portfolioName, userName) =>
-    httpApiUrl.get(
+  httpApiUrlV2.get(
       // `${companyId}/?data_type=${dataType}&template_state=${templateState}&member=${member}portfolio=${portfolio}`
       // {{base_url}}/templates/:company_id/?data_type&template_state&member&portfolio // URL
       `/templates/${companyId}?data_type=${dataType}&template_state=&member=${member}&portfolio=${portfolioName}`
