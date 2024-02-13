@@ -34,7 +34,9 @@ export class TemplateServices {
     //   `/companies/${companyId}/templates/?data_type=${dataType}`
     // );
     return httpApiUrl.get(
-      `/companies/${companyId}/templates/metadata/?data_type=${dataType}`
+      // `templates/${companyId}/?data_type=${dataType}`
+      `/metadata/${companyId}/organisations/?data_type=${dataType}&item_type=template`  
+      // {{base_url}}/templates/:company_id/?data_type // URL
     );
   };
 
@@ -45,12 +47,16 @@ export class TemplateServices {
   // * The company id for demoTemplates is hard coded to that of Dowell Knowledge Centre
 
   singleTemplateDetail = async (templateId) => {
-    return await httpTemplate.get(`/${templateId}/object/`);
+    // return await httpTemplate.get(`/${templateId}/`);
+    return await httpTemplate.get(`/${templateId}/object/`); // Old Version
+    // {{base_url}}/templates/:template_id/ // URL
   };
 
-  getTemplateReports = (companyId, dataType, userName, portfolioName) =>
+  getTemplateReports = (companyId, dataType, templateState, member, portfolio, portfolioName, userName) =>
     httpApiUrl.get(
-      `/companies/${companyId}/templates/reports/metadata/?data_type=${dataType}&template_state=draft&portfolio=${portfolioName}&member=${userName}`
+      // `${companyId}/?data_type=${dataType}&template_state=${templateState}&member=${member}portfolio=${portfolio}`
+      // {{base_url}}/templates/:company_id/?data_type&template_state&member&portfolio // URL
+      `/templates/${companyId}?data_type=${dataType}&template_state=&member=${member}&portfolio=${portfolioName}`
     );
 
     contentTemplate = async (data) => {

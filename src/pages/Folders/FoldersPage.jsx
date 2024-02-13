@@ -28,7 +28,11 @@ const FoldersPage = ({ knowledgeCenter }) => {
     if (!folders) fetchFolders();
   }, []);
 
-  let allFolders = [...folders].reverse()
+  // let allFolders = [...folders].reverse()
+  let allFolders = folders ? [...folders].reverse() : [];
+
+  // console.log(allFolders)
+ 
   console.log("folders", folders)
 
   function fetchKnowledgeCenterData() {

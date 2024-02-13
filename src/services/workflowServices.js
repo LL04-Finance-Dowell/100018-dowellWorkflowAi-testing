@@ -1,4 +1,4 @@
-import { httpApiUrl, httpWorkflow,httpWorkflowNew } from '../httpCommon/httpCommon';
+import { httpApiUrl, httpApiUrlV2, httpWorkflow,httpWorkflowNew } from '../httpCommon/httpCommon';
 
 export class WorkflowServices {
   createWorkflow = (data) => {
@@ -19,12 +19,14 @@ export class WorkflowServices {
     return httpWorkflow.post('/saved/', data);
   };
   allWorkflows = (companyId, dataType) => {
-    return httpApiUrl.get(`/companies/${companyId}/workflows/?data_type=${dataType}`);
+    return httpApiUrl.get(`workflows/${companyId}/organisations/?data_type=${dataType}`);
+    // https://100094.pythonanywhere.com/v2/workflows/65ad8a28c9038ff4498672c9/organisations/?data_type=real_data
+    // return httpApiUrlV2.get(`/companies/${companyId}/workflows/?data_type=${dataType}`); // Old Version
   };
   
   ////new update for workflow
 updateWorkflowNew = (workflowId, data) => {
-  return httpWorkflowNew.put(`/${workflowId}/`, data);
+  return httpWorkflowNew.put(`workflows/${workflowId}/`, data);
 };
 }
 

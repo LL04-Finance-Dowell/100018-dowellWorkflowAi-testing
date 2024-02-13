@@ -1,9 +1,9 @@
 import { AiOutlineConsoleSql } from 'react-icons/ai';
-import { httpApiUrl, httpDocument, httpDocumentStep } from '../httpCommon/httpCommon';
+import { httpApiUrl, httpApiUrlV2, httpDocument, httpDocumentStep } from '../httpCommon/httpCommon';
 
 export class DocumentServices {
   createDocument = (data) => {
-    return httpDocument.post('/', data);
+    return httpDocument.post('documents/', data);
   };
 
   detailDocument = (data) => {
@@ -14,9 +14,11 @@ export class DocumentServices {
     }
     if (data.document_state == "draft") {
 
-      return httpDocument.get(`/${data.collection_id}/`);
+      return httpDocument.get(`documents/65c8fa5ebfb2bb5ce6aab13c/?document_type=document`);
+      // return httpDocument.get(`documents/${data.collection_id}/?document_type=document`);
     }
-    return httpDocument.get(`/${data.collection_id}/`);
+    return httpDocument.get(`documents/65c8fa5ebfb2bb5ce6aab13c/?document_type=document`);
+    // return httpDocument.get(`/${data.collection_id}/`);
   };
 
   signDocument = (data) => {
@@ -36,9 +38,9 @@ export class DocumentServices {
   //   return httpDocument.post('/saved/', data);
   // };
 
-  getSavedDocuments = (companyId, dataType, pageCount) =>
-    httpApiUrl.get(`/companies/${companyId}/documents/clones/metadata/?data_type=${dataType}&document_state=draft`);
-  // {{base_url}}/companies/6390b313d77dc467630713f2/documents/clones/metadata/?data_type=Real_Data&doc_state=finalized
+  getSavedDocuments = (companyId, dataType, documentType, pageCount) =>
+    httpApiUrlV2.get(`metadata/${companyId}/organisations/?data_type=${dataType}&item_type=document&document_state=draft`); 
+    // https://100094.pythonanywhere.com/v2/metadata/6390b313d77dc467630713f2/organisations/?data_type=Real_Data&item_type=document&document_state=draft
 
 
   contentDocument = (collection_id, item ) => {
@@ -48,55 +50,47 @@ export class DocumentServices {
   contentDocumentStep = (collection_id, item ) => {
     return httpDocumentStep.get(`/content/${collection_id}/?item_type=${item}`);
   };
-  
-
-  // allDocuments = (companyId, dataType) => {
-  //   return httpApiUrl.get(
-  //     `/companies/${companyId}/documents/?data_type=${dataType}`
-  //   );
-  // };
 
   allDocuments = (companyId, dataType) => {
-    // return httpApiUrl.get(
-    //   `/companies/${companyId}/documents/?data_type=${dataType}&document_type=original&document_state=draft`
-    // );
-    return httpApiUrl.get(
-      `/companies/${companyId}/documents/metadata/?data_type=${dataType}&document_state=draft`
+    return httpApiUrlV2.get(
+      `/metadata/${companyId}/organisations/?item_type=document&data_type=${dataType}&Real_Data&document_state=draft`
     );
   };
 
   demoDocuments = (pageCount) =>
-    httpApiUrl.get(
+  httpApiUrlV2.get(
       `companies/6385c0f38eca0fb652c9457e/documents/knowledge-centre/?data_type=Real_Data&page=${pageCount}`
     );
   // * The company id for demoTemplates is hard coded to that of Dowell Knowledge Centre
 
-  singleDocumentDetail = async (documentId) => {
-    return await httpDocument.get(`/${documentId}/object/`);
+  singleDocumentDetail = async (documentId, documentType) => {
+    return await httpDocument.get(`documents/${documentId}/?document_type=document`);
   };
 
-  getNotifications = async (companyId, dataType, userName, portfolioName) => {
-    return await httpApiUrl.get(
-      `/companies/${companyId}/documents/reports/metadata/?data_type=${dataType}&doc_state=processing&member=${userName}&portfolio=${portfolioName}`
+  singleDecumentLink = async (documentId) => {
+    return await httpDocument.get (`documents/${documentId}/link/`)
+  }
+
+  getNotifications = async (companyId, dataType, member, portfolio, portfolioName, userName ) => {
+    return await httpApiUrlV2.get(
+      `/metadata/${companyId}/organisations/?data_type=${dataType}&item_type=document&document=draft`
     );
   };
 
   getAllOriginalDocuments = async (companyId, dataType) => {
-    return await httpApiUrl.get(
-      // `/companies/${companyId}/documents/types/?data_type=${dataType}&doc_type=original`
-      `/companies/${companyId}/documents/metadata/?data_type=${dataType}&document_state=draft`
+    return await httpApiUrlV2.get(
+      `/documents/${companyId}/organisations/?data_type=Real_Data&document_state=draft&document_type=document`  
     );
   };
 
-  getDocumentReports = (companyId, dataType, userName, portfolioName, state) =>
-    httpApiUrl.get(
-      `/companies/${companyId}/documents/reports/metadata/?data_type=${dataType}&doc_state=${state}&portfolio=${portfolioName}&member=${userName}`
-
+  getDocumentReports = (companyId, dataType, userName, member, portfolioName, portfolio, state) =>
+  httpApiUrlV2.get(
+      `/documents/${companyId}/organisations/?data_type=${dataType}&member=${member}&portfolio=${portfolio}`
     );
 
   documentCloneReport = (documentId) => {
     return httpDocument.get(`/clones/${documentId}/`);
   };
 
-  getOrgDocumentReports = (companyId, dataType, state) => httpApiUrl.get(`/companies/${companyId}/documents/clones/metadata/?data_type=${dataType}&doc_state=${state}`)
+  getOrgDocumentReports = (companyId, dataType, state) => httpApiUrl.get(`metadata/${companyId}/organisations/?data_type=${dataType}&document_state=${state}&item_type=document`)
 }

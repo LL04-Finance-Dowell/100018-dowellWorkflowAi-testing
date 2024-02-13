@@ -5,7 +5,7 @@ const favoriteServices = new FavoriteServices();
 
 export const getFavorites = createAsyncThunk("favorites/get", async () => {
   try {
-    const res = await favoriteServices.getFavorites();
+    const res = favoriteServices.getFavorites();
 
     return res.data;
   } catch (error) {
@@ -17,7 +17,7 @@ export const handleFavorites = createAsyncThunk(
   "favorites/handle",
   async (data) => {
     try {
-      const res = await favoriteServices.addFavorite(data);
+      const res =  favoriteServices.addFavorite(data);
 
       return res.data;
     } catch (error) {
