@@ -21,6 +21,7 @@ import { createTemplate } from '../../../../../features/template/asyncThunks';
 import addImage from '../../../../../../src/assets/carbon_add-filled.jpg';
 import { BsArrowRight } from 'react-icons/bs';
 import { Tooltip } from 'react-tooltip';
+import { api_url_v3 } from '../../../../../httpCommon/httpCommon';
 
 
 const CreateDocument = ({ handleToggleOverlay }) => {
@@ -41,57 +42,56 @@ const CreateDocument = ({ handleToggleOverlay }) => {
   const { register, handleSubmit, setValue } = useForm();
 
   console.log("userDetaiDocument", userDetail.userinfo.email)
-  const handleNewItemClick = (e, content) => {
-    if (content === 'template') {
+  const handleNewItemClick = async (e, content) => {
+    if (content === "template") {
       e.preventDefault();
       const data = {
         created_by: userDetail?.userinfo.username,
         company_id:
           userDetail?.portfolio_info?.length > 1
             ? userDetail?.portfolio_info.find(
-              (portfolio) => portfolio.product === productName
-            )?.org_id
+                (portfolio) => portfolio.product === productName
+              )?.org_id
             : userDetail?.portfolio_info[0].org_id,
         data_type:
           userDetail?.portfolio_info?.length > 1
             ? userDetail?.portfolio_info.find(
-              (portfolio) => portfolio.product === productName
-            )?.data_type
+                (portfolio) => portfolio.product === productName
+              )?.data_type
             : userDetail?.portfolio_info[0].data_type,
         portfolio:
           userDetail?.portfolio_info?.length > 1
             ? userDetail?.portfolio_info.find(
-              (portfolio) => portfolio.product === productName
-            )?.portfolio_name
+                (portfolio) => portfolio.product === productName
+              )?.portfolio_name
             : userDetail?.portfolio_info[0].portfolio_name,
-        email:
-          userDetail.userinfo.email,
+        email: userDetail.userinfo.email,
       };
-      const Api_key = creditResponse?.api_key
-      axios
-        .post(
-          `https://100105.pythonanywhere.com/api/v3/process-services/?type=product_service&api_key=${Api_key}`,
-          {
-            "service_id": "DOWELL10026",
-            "sub_service_ids": ["DOWELL100262"],
-          },
-        )
-        // dispatch(settemLoading(true))
-        .then((response) => {
-
-          if (response.data.success == true) {
-
-            dispatch(createTemplate(data));
-          }
-        })
-        // dispatch(settemLoading(false))
-        .catch((error) => {
-          console.log(error.response?.data?.message);
-          toast.info(error.response?.data?.message)
-
-        });
-    }
-    else {
+      const response = await dispatch(createTemplate(data));
+      if (response?.meta?.requestStatus === "fulfilled") {
+        const Api_key = creditResponse?.api_key;
+        axios
+          .post(
+            `${api_url_v3}process-services/?type=product_service&api_key=${Api_key}`,
+            {
+              service_id: "DOWELL10026",
+              sub_service_ids: ["DOWELL100262"],
+            }
+          )
+  
+          .then((response) => {
+            if (response.data.success === true) {
+              toast.success(response?.data?.message)
+            
+            }
+          })
+    
+          .catch((error) => {
+            console.log(error.response?.data?.message);
+            toast.info(error.response?.data?.message);
+          });
+      }
+    } else {
       dispatch(setToggleManageFileForm(true));
     }
   };
