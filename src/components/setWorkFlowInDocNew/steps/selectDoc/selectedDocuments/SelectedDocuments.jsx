@@ -23,7 +23,7 @@ const SelectedDocuments = ({
   } = useForm();
   const dispatch = useDispatch();
   const { t } = useTranslation();
-  console.log(selectedDocuments.clones)
+  // console.log(selectedDocuments.clones)
 
     ///import which doc or template approval
     // const whichApproval = useSelector((state)=> state.copyProcess.whichApproval)
@@ -39,27 +39,26 @@ const SelectedDocuments = ({
     useEffect(() => {
       if (!copiedDocument) return;
     
-      // console.log('Selection started!', startCopyingDoc);
+      // // console.log('Selection started!', startCopyingDoc);
 
       if(copiedDocument !==null && startCopyingDoc == true){
         setTimeout(()=>{
-          // console.log('for the test the collectionid is ',copiedDocument.collection_id)
+          // // console.log('for the test the collectionid is ',copiedDocument.collection_id)
           const item = 'documents'
           dispatch(contentDocument({collection_id:copiedDocument.collection_id, item}));
           dispatch(setCurrentDocToWfs(copiedDocument));
           dispatch(setContentOfDocument(null));
           dispatch(startCopyingWorkflow())
-          // console.log('document should be selected');
+          // // console.log('document should be selected');
         },3000)
         
       }
 
     }, [copiedDocument, startCopyingDoc]);
     
-    // console.log('the selected document is ', selectedDocument)
+    // // console.log('the selected document is ', selectedDocument)
 
   const onSubmit = (data) => {
-    debugger
     if (!selectedDocument) return;
 
    

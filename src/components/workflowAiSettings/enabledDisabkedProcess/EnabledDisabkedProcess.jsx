@@ -57,8 +57,8 @@ const EnabledDisabkedProcess = () => {
   };
 
   const onSubmit = async () => {
-    console.log("workflowSettings", workflowSettings._id)
-    console.log("userDetail", userDetail)
+    // console.log("workflowSettings", workflowSettings._id)
+    // console.log("userDetail", userDetail)
     const Process = sortData(
       permissionArray[0].children[0]._id,
       permissionArray[0].children[0].column[0]._id,
@@ -172,13 +172,13 @@ const EnabledDisabkedProcess = () => {
     };
 
     try {
-      console.log(data)
+      // console.log(data)
       setIsUpdating(true);
       await workflowSettingServices.updateWorkflowAISettings(data);
       setThemeColor(data.theme_color);
       toast.success('Updated successfully');
     } catch (e) {
-      console.log(e);
+      // console.log(e);
       toast.error('Update failed');
     } finally {
       setIsUpdating(false);
@@ -367,7 +367,7 @@ const EnabledDisabkedProcess = () => {
 
 
   // useEffect(() => {
-  //   console.log('perm Arr: ', permissionArray);
+  //   // console.log('perm Arr: ', permissionArray);
   // }, [permissionArray]);
 
   return (

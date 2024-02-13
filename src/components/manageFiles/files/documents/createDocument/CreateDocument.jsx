@@ -41,7 +41,7 @@ const CreateDocument = ({ handleToggleOverlay }) => {
 
   const { register, handleSubmit, setValue } = useForm();
 
-  console.log("userDetaiDocument", userDetail.userinfo.email)
+  // console.log("userDetaiDocument", userDetail.userinfo.email)
   const handleNewItemClick = async (e, content) => {
     if (content === "template") {
       e.preventDefault();
@@ -87,7 +87,7 @@ const CreateDocument = ({ handleToggleOverlay }) => {
           })
     
           .catch((error) => {
-            console.log(error.response?.data?.message);
+            // console.log(error.response?.data?.message);
             toast.info(error.response?.data?.message);
           });
       }
@@ -127,14 +127,14 @@ const CreateDocument = ({ handleToggleOverlay }) => {
         },
       )
       .then((response) => {
-        console.log(response)
+        // console.log(response)
         if (response.data.success == true) {
 
           dispatch(createDocument(createDocumentData));
         }
       })
       .catch((error) => {
-        console.log(error);
+        // console.log(error);
         toast.info(error.response?.data?.message)
 
       });
@@ -148,13 +148,13 @@ const CreateDocument = ({ handleToggleOverlay }) => {
   };
 
   const handleOptionClick = (item) => {
-    console.log("handleOptionClick", item)
+    // console.log("handleOptionClick", item)
     setToggleDropdown(false);
     setCurrentOption(item.label);
     setCurrentItem(item.value)
     setValue('template', item.value);
     ref.current?.focus();
-    console.log("handleOptionClick", currentOption)
+    // console.log("handleOptionClick", currentOption)
 
     // handleSubmit(onSubmit)();
   };

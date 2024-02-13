@@ -37,7 +37,7 @@ const AssignDocumentMap = ({ currentStepIndex, stepsPopulated }) => {
     if (copiedProcess == null) {
       return;
     }
-    // console.log('entered the pick document phase', copiedProcess.process_steps);
+    // // console.log('entered the pick document phase', copiedProcess.process_steps);
   
     // Create a temporary array to accumulate the changes
     const newTableOfContentArr = [];
@@ -56,7 +56,7 @@ const AssignDocumentMap = ({ currentStepIndex, stepsPopulated }) => {
           required: false,
           page: copiedProcess.process_steps[i].stepDocumentMap[y].page,
         };
-        // console.log('the step copy doc is ', newTableOfContentObj);
+        // // console.log('the step copy doc is ', newTableOfContentObj);
         const contentStepAlreadyAdded = newTableOfContentArr.find(
           (step) =>
             step.workflow === docCurrentWorkflow._id &&
@@ -65,7 +65,7 @@ const AssignDocumentMap = ({ currentStepIndex, stepsPopulated }) => {
         );
   
         if (!contentStepAlreadyAdded) {
-          // console.log('content added')
+          // // console.log('content added')
           newTableOfContentArr.push(newTableOfContentObj);
         }
       }
@@ -79,7 +79,7 @@ const AssignDocumentMap = ({ currentStepIndex, stepsPopulated }) => {
       });
     }
   
-    // console.log('finished the pick document phase');
+    // // console.log('finished the pick document phase');
   
   }, []);
   
@@ -97,7 +97,7 @@ const AssignDocumentMap = ({ currentStepIndex, stepsPopulated }) => {
           workflow: docCurrentWorkflow._id,
           stepIndex: currentStepIndex,
         };
-        // console.log('the newTableOfContentObj is ',newTableOfContentObj)
+        // // console.log('the newTableOfContentObj is ',newTableOfContentObj)
         dispatch(setTableOfContentForStep(newTableOfContentObj));
       };
 
@@ -108,10 +108,10 @@ const AssignDocumentMap = ({ currentStepIndex, stepsPopulated }) => {
         tableOfContentForStep.filter(
           (content) => content.stepIndex === currentStepIndex - 1
         );
-// console.log('the tableOfContentForStep is ', tableOfContentForStep)
+// // console.log('the tableOfContentForStep is ', tableOfContentForStep)
       switch (data.document) {
         case "Current Selection":
-          // console.log('content on current selection', data);
+          // // console.log('content on current selection', data);
           return setLoading(false);
         case "All Document":
           contentOfDocument.forEach((content) => {
@@ -123,7 +123,7 @@ const AssignDocumentMap = ({ currentStepIndex, stepsPopulated }) => {
             );
 
             if (contentStepAlreadyAdded) return;
-              // console.log('the content of document is ', content)
+              // // console.log('the content of document is ', content)
             addNewTableOfContentStep(content);
           });
           return setLoading(false);
@@ -146,7 +146,7 @@ const AssignDocumentMap = ({ currentStepIndex, stepsPopulated }) => {
             );
 
             if (contentStepAlreadyAdded) return;
-            // console.log('the content of document is ', content)
+            // // console.log('the content of document is ', content)
             addNewTableOfContentStep(content);
           });
           return setLoading(false);
@@ -165,7 +165,7 @@ const AssignDocumentMap = ({ currentStepIndex, stepsPopulated }) => {
             (tableOfContentStep) => {
               const copyOfTableOfContentStep = { ...tableOfContentStep };
               copyOfTableOfContentStep.stepIndex = currentStepIndex;
-              // console.log('the content of document is ', copyOfTableOfContentStep)
+              // // console.log('the content of document is ', copyOfTableOfContentStep)
               addNewTableOfContentStep(copyOfTableOfContentStep);
             }
           );
@@ -175,7 +175,7 @@ const AssignDocumentMap = ({ currentStepIndex, stepsPopulated }) => {
       }
     }
   };
-  // console.log("the process steps are ", processSteps);
+  // // console.log("the process steps are ", processSteps);
 
   return (
     <>

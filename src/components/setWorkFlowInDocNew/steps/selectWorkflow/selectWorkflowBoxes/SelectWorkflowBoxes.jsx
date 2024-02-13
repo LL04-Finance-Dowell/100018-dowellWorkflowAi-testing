@@ -64,13 +64,13 @@ const InfoBoxes = ({ savedDoc, handleRemove }) => {
     const startCopyingWF = useSelector((state)=> state.copyProcess.startSelectWorkflow)
 
     useEffect(()=>{
-      // console.log('entered to pick the wf to connect it with doc ')
+      // // console.log('entered to pick the wf to connect it with doc ')
       
       if (currentDocToWfs && copiedWorkflow !==null && startCopyingWF) {
-        // console.log('started picking wf')
+        // // console.log('started picking wf')
           dispatch(setSelectedWorkflowsToDoc(copiedWorkflow));
           // dispatch(startConnecting())
-          // console.log('finished picking wf')
+          // // console.log('finished picking wf')
       }}
       
     ,[copiedWorkflow, currentDocToWfs, startCopyingWF])
@@ -262,7 +262,7 @@ const InfoBoxes = ({ savedDoc, handleRemove }) => {
   const y = useTransform(scrollYProgress, [0, 1], ['200px', '-200px']);
 
   const handleTogleBox = (id) => {
-    console.log("compInfoBoxes ", compInfoBoxes)
+    // console.log("compInfoBoxes ", compInfoBoxes)
     const updatedInfoBoxes = compInfoBoxes.map((item) =>
       item.id === id ? { ...item, isOpen: !item.isOpen } : item
     );

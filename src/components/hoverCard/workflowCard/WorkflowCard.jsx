@@ -67,7 +67,7 @@ const WorkflowCard = ({ cardItem }) => {
       ).data;
       toast.success(response);
     } catch (error) {
-      console.log(error.response ? error.response.data : error.message);
+      // console.log(error.response ? error.response.data : error.message);
       toast.info(
         error.response
           ? error.response.status === 500

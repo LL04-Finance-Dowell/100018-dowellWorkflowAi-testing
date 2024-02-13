@@ -68,7 +68,7 @@ const FoldersCard = ({ cardItem, knowledgeCenter }) => {
       .then(response => {
         // Handle the API response here
         dispatch(SetKnowledgeFoldersTemplates(response.data));
-        console.log('API Response:', response.data);
+        // console.log('API Response:', response.data);
       })
       .catch(error => {
         // Handle any errors that occur during the request
@@ -76,7 +76,7 @@ const FoldersCard = ({ cardItem, knowledgeCenter }) => {
       });
   }, [knowledgeCenter]);
 
-  console.log("cardItemcardItemmubeen", cardItem)
+  // console.log("cardItemcardItemmubeen", cardItem)
 
   const FrontSide = () => {
     return (

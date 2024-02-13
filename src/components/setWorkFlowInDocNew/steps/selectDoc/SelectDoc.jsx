@@ -30,7 +30,7 @@ import { startCopyingDocument } from '../../../../features/processCopyReducer';
 import { TemplateServices } from '../../../../services/templateServices';
 
 const SelectDoc = ({ savedDoc, addWorkflowStep }) => {
-  console.log("saved Document", savedDoc)
+  // console.log("saved Document", savedDoc)
   const dispatch = useDispatch();
   const { t } = useTranslation();
   const { isMobile } = useAppContext();
@@ -64,7 +64,7 @@ const SelectDoc = ({ savedDoc, addWorkflowStep }) => {
   const copiedWorkflow = useSelector((state) => state.copyProcess.workflow);
 
   useEffect(() => {
-    console.log('the copied doc and workflow are , ', copiedDocument, copiedWorkflow)
+    // console.log('the copied doc and workflow are , ', copiedDocument, copiedWorkflow)
     if (copiedDocument !== null) {
       setCurrentSelectedDocument(copiedDocument)
       setSelectedDocuments((prev) => [copiedDocument]);
@@ -75,7 +75,7 @@ const SelectDoc = ({ savedDoc, addWorkflowStep }) => {
     }
   }, [copiedDocument, copiedWorkflow])
 
-  console.log('the picked approval is ', whichApproval)
+  // console.log('the picked approval is ', whichApproval)
 
   const data = {
     company_id: userDetail?.portfolio_info?.length > 1 ? userDetail?.portfolio_info.find(portfolio => portfolio.product === productName)?.org_id : userDetail?.portfolio_info[0].org_id,
@@ -91,24 +91,24 @@ const SelectDoc = ({ savedDoc, addWorkflowStep }) => {
       const documentServices = new DocumentServices();
       documentServices.getAllOriginalDocuments(data.company_id, data.data_type)
         .then(res => {
-          console.log('the doc data are ', res.data)
+          // console.log('the doc data are ', res.data)
           dispatch(setOriginalDocuments(res.data.documents?.reverse()));
           dispatch(setOriginalDocumentsLoaded(true));
         })
         .catch(err => {
-          console.log('Failed to load original documents: ', err.response ? err.response.data : err.message);
+          // console.log('Failed to load original documents: ', err.response ? err.response.data : err.message);
           dispatch(setOriginalDocumentsLoaded(true));
         })
     } else {
       const templateServices = new TemplateServices()
       templateServices.allTemplates(data.company_id, data.data_type)
         .then(res => {
-          console.log('the template data are ', res.data)
+          // console.log('the template data are ', res.data)
           dispatch(setOriginalDocuments(res.data.templates?.reverse()))
           dispatch(setOriginalDocumentsLoaded(true));
         })
         .catch(err => {
-          console.log('Failed to load original documents: ', err.response ? err.response.data : err.message);
+          // console.log('Failed to load original documents: ', err.response ? err.response.data : err.message);
           dispatch(setOriginalDocumentsLoaded(true));
         })
     }
@@ -120,19 +120,19 @@ const SelectDoc = ({ savedDoc, addWorkflowStep }) => {
 
 
   const handleAddSelectedDocuments = (document) => {
-    console.log("documentmubeen", document)
+    // console.log("documentmubeen", document)
     if (whichApproval == 'new-set-workflow-document') {
       axios
         .get(`https://workflowai.uxlivinglab.online/v1/companies/${data.company_id}/documents/${document._id}/clones/?data_type=${data.data_type}`)
         .then((response) => {
-          // console.log('the response for document detail is ',response.data)
+          // // console.log('the response for document detail is ',response.data)
           setSelectedDocumentCopies(
             response.data
           );
 
         })
         .catch((error) => {
-          console.log(error)
+          // console.log(error)
         });
     }
     else {
@@ -140,7 +140,7 @@ const SelectDoc = ({ savedDoc, addWorkflowStep }) => {
     }
     setCurrentSelectedDocument(document);
     Array.isArray(allDocumentsArray)
-    // console.log(selectedDocumentCopies)
+    // // console.log(selectedDocumentCopies)
 
     const isInclude = selectedDocuments.find(
       (item) => item._id === document._id
@@ -163,7 +163,7 @@ const SelectDoc = ({ savedDoc, addWorkflowStep }) => {
     try {
       const url = `https://100094.pythonanywhere.com/v2/documents/${documentId}/?document_type=clone`;
       const response = await axios.get(url);
-      console.log("response", response)
+      // console.log("response", response)
       setStepDocument(response.data);
     } catch (error) {
       // Handle any errors here
@@ -229,7 +229,7 @@ const SelectDoc = ({ savedDoc, addWorkflowStep }) => {
   //   stepDocument = originalDocuments[1];
   // }
 
-  console.log("addWorkflowStep",stepDocument,addWorkflowStep, dummyStep, DocumentId, selectedDocuments, ProcessDetail, allDocumentsArray, originalDocuments)
+  // console.log("addWorkflowStep",stepDocument,addWorkflowStep, dummyStep, DocumentId, selectedDocuments, ProcessDetail, allDocumentsArray, originalDocuments)
 
   return (
     <div
