@@ -2343,3 +2343,42 @@ class TriggerInvoice(APIView):
             {"created_document": document_id, "created_process": process.data},
             status.HTTP_201_CREATED,
         )
+
+class Group(APIView):
+    def get(self, request, company_id):
+
+        data_type = request.query_params.get("data_type")
+        if not data_type:
+            return Response("Invalid Request", status.HTTP_400_BAD_REQUEST)
+        
+        groups = bulk_query_team_collection(
+            {"company_id": company_id, "data_type": data_type}
+        )
+
+        response = []
+
+        for group in groups:
+            if group.get("group_name"):
+                response.append(group)
+    
+        return Response(response, status=status.HTTP_200_OK)
+    
+    def post(self, request, company_id):
+        group_name = request.data.get("group_name")
+        public_members = request.data.get("public")
+        team_members = request.data.get("team")
+        user_members = request.data.get("user")
+
+        res = json.loads(save_to_team_collection({
+                    "group_name": group_name,
+                    "public_members": public_members,
+                    "team_members": team_members,
+                    "user_members": user_members,
+                    "company_id": company_id,
+                    "data_type": "Real_Data",
+                }))
+
+        if res["isSuccess"]:
+            return Response(res, status=status.HTTP_201_CREATED)
+        else:
+            return Response(res, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
