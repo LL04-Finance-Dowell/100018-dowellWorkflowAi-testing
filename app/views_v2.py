@@ -2369,6 +2369,9 @@ class Group(APIView):
         team_members = request.data.get("team")
         user_members = request.data.get("user")
 
+        if not group_name:
+            return Response("Invalid Request", status.HTTP_400_BAD_REQUEST)
+        
         res = json.loads(save_to_team_collection({
                     "group_name": group_name,
                     "public_members": public_members,
