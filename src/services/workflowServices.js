@@ -16,9 +16,13 @@ export class WorkflowServices {
   updateWorkflow = (workflowId, data) => {
     return httpWorkflow.put(`/${workflowId}/`, data);
   };
-  savedWorkflows = (data) => {
-    return httpWorkflow.post('/saved/', data);
+
+  savedWorkflows = (companyId, dataType, data) => {
+    return httpWorkflow.post(`/workflows/${companyId}/organisations/?data_type=${dataType}`, data);
+    // {{V2_URL}}/workflows/64ecb08a3033b00f16a496f4/organisations/?data_type=Real_Data
+    // return httpWorkflow.post('/saved/', data);
   };
+
   allWorkflows = (companyId, dataType) => {
     return httpApiUrlV2.get(`workflows/${companyId}/organisations/?data_type=${dataType}`);
     // https://100094.pythonanywhere.com/v2/workflows/65ad8a28c9038ff4498672c9/organisations/?data_type=real_data

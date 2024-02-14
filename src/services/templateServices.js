@@ -25,8 +25,10 @@ export class TemplateServices {
     return httpTemplate.post('/mine/', data);
   };
 
-  savedTemplates = (data) => {
-    return httpTemplate.post('/saved/', data);
+  savedTemplates = (companyId, data) => {
+    return httpTemplate.post(`/metadata/${companyId}/organisation/?data_type=Real_Data&document_state=draf&member=couzy&item_type=template`, data)
+    // {{V2_URL}}metadata/6390b313d77dc467630713f2/organisations/?data_type=Real_Data&document_state=draft&member=couzy&item_type=template;
+    // return httpTemplate.post('/saved/', data);
   };
 
   allTemplates = (companyId, dataType) => {
@@ -56,7 +58,7 @@ export class TemplateServices {
   httpApiUrlV2.get(
       // `${companyId}/?data_type=${dataType}&template_state=${templateState}&member=${member}portfolio=${portfolio}`
       // {{base_url}}/templates/:company_id/?data_type&template_state&member&portfolio // URL
-      `/templates/${companyId}?data_type=${dataType}&template_state=&member=${member}&portfolio=${portfolioName}`
+      `/templates/${companyId}/?data_type=${dataType}&template_state&member=${member}&portfolio=${portfolio}`
     );
 
     contentTemplate = async (data) => {

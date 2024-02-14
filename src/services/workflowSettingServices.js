@@ -6,12 +6,12 @@ export class WorkflowSettingServices {
     // return httpApiUrlV2.post('workflow_ai_setting/', data);
   };
 
-  getWorkflowSettings = (wfSettingId) => {
-    return httpApiUrlV2.get(`settings/${wfSettingId}/`);
+  getWorkflowSettings = (settingId) => {
+    return httpApiUrlV2.get(`settings/${settingId}/`);
   };
 
-  updateWorkflowSettings = (wfSettingId, data) => {
-    return httpApiUrlV2.put(`settings/${wfSettingId}/`, data);
+  updateWorkflowSettings = (settingId, data) => {
+    return httpApiUrlV2.put(`settings/${settingId}/`, data);
   };
 
   createWorkflowTeam = (data) => {
@@ -27,8 +27,8 @@ export class WorkflowSettingServices {
   //   return httpApiUrl.post('settings/', data);
   // };
 
-  updateWorkflowAISettings = (wfSettingId, data) => {
-    return httpApiUrlV2.put(`settings/${wfSettingId}/`, data);
+  updateWorkflowAISettings = (settingId, data) => {
+    return httpApiUrlV2.put(`settings/6447a3449224dc414b404ec5/`, data);
     // settings/<str:setting_id> 
   };
 
@@ -41,7 +41,7 @@ export class WorkflowSettingServices {
   };
 
   fetchWorkflowSettingsData = (companyId, member) => {
-    return httpApiUrlV2.get(`settings/${companyId}?member=${member}`);
+    return httpApiUrlV2.get(`settings/${companyId}/organisations/?member=${member}`);
     // return httpApiUrlV2.get(`settings/${companyId}/organisations/?member=${member}`);
     // settings/<str:company_id>/organisations/?member="member"
   };
@@ -59,9 +59,9 @@ export class WorkflowSettingServices {
 //     return httpApiUrl.get(`workflow-settings/${wfSettingId}/`);
 //   };
 
-//   updateWorkflowSettings = (wfSettingId, data) => {
-//     return httpApiUrl.put(`workflow-settings/${wfSettingId}/`, data);
-//   };
+  // updateWorkflowSettings = (wfSettingId, data) => {
+  //   return httpApiUrl.put(`workflow-settings/${wfSettingId}/`, data);
+  // };
 
 //   createWorkflowTeam = (data) => {
 //     return httpApiUrl.post('teams/', data);

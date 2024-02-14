@@ -39,8 +39,9 @@ export class DocumentServices {
   // };
 
   getSavedDocuments = (companyId, dataType, documentType, pageCount) =>
-    httpApiUrlV2.get(`metadata/${companyId}/organisations/?data_type=${dataType}&item_type=document&document_state=draft`); 
-    // https://100094.pythonanywhere.com/v2/metadata/6390b313d77dc467630713f2/organisations/?data_type=Real_Data&item_type=document&document_state=draft
+    httpApiUrlV2.get(`metadata/${companyId}/organisations/?data_type=Real_Data&document_state=draft&member=couzy&item_type=document`); 
+    // {{V2_URL}}metadata/6390b313d77dc467630713f2/organisations/?data_type=Real_Data&document_state=draft&member=couzy&item_type=document
+    // httpApiUrlV2.get(`metadata/${companyId}/organisations/?data_type=${dataType}&item_type=document&document_state=draft`); 
 
 
   contentDocument = (collection_id, item ) => {
@@ -73,13 +74,15 @@ export class DocumentServices {
 
   getNotifications = async (companyId, dataType, member, portfolio, portfolioName, userName ) => {
     return await httpApiUrlV2.get(
-      `/metadata/${companyId}/organisations/?data_type=${dataType}&item_type=document&document=draft`
+      `/metadata/${companyId}/organisations/?data_type=Real_Data&document_state=processing&member=couzy&portfolio=couzyTheGroupLead&item_type=clone`
+      // {{V2_URL}}metadata/6390b313d77dc467630713f2/organisations/?data_type=Real_Data&document_state=processing&member=couzy&portfolio=CouzyTheGroupLead&item_type=clone
+      // `/metadata/${companyId}/organisations/?data_type=${dataType}&item_type=document&document=draft`
     );
   };
 
   getAllOriginalDocuments = async (companyId, dataType) => {
     return await httpApiUrlV2.get(
-      `/documents/${companyId}/organisations/?data_type=Real_Data&document_state=draft&document_type=document`  
+      `/documents/${companyId}/organisations/?data_type=${dataType}&document_state=draft&document_type=document`  
     );
   };
 

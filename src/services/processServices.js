@@ -28,25 +28,24 @@ export const getSingleProcessV2 = async (processId) => {
 export const getAllProcessesV2 = async (companyId, dataType) => {
   return await httpApiUrlV2.get(
     `processes/${companyId}/organisations/?data_type=${dataType}`
-    // https://100094.pythonanywhere.com/v2/processes/65ad8a28c9038ff4498672c9/organisations/?data_type=real_data
+    // https://100094.pythonanywhere.com/v2/processes/65ad8a28c9038ff4498672c9/organisations/?data_type=Real_Data
   );
 };
 
 export const getCompletedProcesses = (companyId, dataType) => {
   return httpApiUrlV2.get(
-    `${companyId}/organisations/?data_type=${dataType}&process-state=completed`
+    `/processes/${companyId}/organisations/?data_type=${dataType}&process_state=finalized`
+    // `${companyId}/organisations/?data_type=${dataType}&process-state=completed`
+    // {{base_url}}/processes/6390b313d77dc467630713f2/organisations?data_type=Real_Data&process_state=finalized
   );
 };
 
 export const getActiveProcesses = (companyId, dataType) => {
   return httpApiUrlV2.get(
-    `${companyId}/?data_type=${dataType}&process-state=active`
+    `/processes/${companyId}/organisations/?data_type=${dataType}&process_state=processing`
+    // `${companyId}/?data_type=${dataType}&process-state=active`
+    // {{base_url}}/processes/6390b313d77dc467630713f2/organisations?data_type=Real_Data&process_state=processing
   );
-
-// export const getActiveProcesses = (companyId, dataType) => {
-//   return httpApiUrl.get(
-//     `${companyId}/organisations/?data_type=${dataType}&process-state=active`
-//   );
 };
 
 // export const verifyProcessV2 = async (data) => {
