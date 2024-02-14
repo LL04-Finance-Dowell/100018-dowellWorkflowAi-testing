@@ -47,7 +47,7 @@ const ProcessDocument = ({ savedProcess, Process_title, setProcess_title, addWor
   const whichApproval = parts[parts.length - 1];
   const whichApprovalType = whichApproval == 'new-set-workflow-document' ? 'document' : 'template'
 
-  console.log("addWorkflowStepProcess", addWorkflowStep)
+  // console.log("addWorkflowStepProcess", addWorkflowStep)
 
   useEffect(() => {
     if (!savedProcess) return;
@@ -99,7 +99,7 @@ const ProcessDocument = ({ savedProcess, Process_title, setProcess_title, addWor
   const [isLoading, setIsLoading] = useState(false);
 
   const handleProcessBtnClick = async () => {
-    console.log("processSteps", processSteps[0].steps, docCurrentWorkflow.workflows.workflow_title, ProcessDetail)
+    // console.log("processSteps", processSteps[0].steps, docCurrentWorkflow.workflows.workflow_title, ProcessDetail)
     if (!processOptionSelection || processOptionSelection === "Select") return;
     dispatch(resetCopyData())
     if (!userDetail) return;
@@ -204,7 +204,7 @@ const ProcessDocument = ({ savedProcess, Process_title, setProcess_title, addWor
         }
       )
       .then(async (response) => {
-        // console.log("the res from axios is ", response);
+        // // console.log("the res from axios is ", response);
         if (response.data.success == true) {
           setNewProcessLoading(true);
 
@@ -212,10 +212,10 @@ const ProcessDocument = ({ savedProcess, Process_title, setProcess_title, addWor
             const response = await (
               await startNewProcess(processObjToPost)
             ).data;
-            // console.log("the process obj to post is ", processObjToPost);
-            // console.log("the response from adding new process is ", response);
+            // // console.log("the process obj to post is ", processObjToPost);
+            // // console.log("the response from adding new process is ", response);
 
-            // console.log('the user Details are ', userDetail)
+            // // console.log('the user Details are ', userDetail)
             if (processObjToPost.workflows[0].workflows.steps[0].stepPublicMembers.length > 0) {
               try {
                 const company_id = userDetail?.portfolio_info?.length > 1 ? userDetail?.portfolio_info.find(portfolio => portfolio.product === productName)?.org_id : userDetail?.portfolio_info[0]?.org_id
@@ -243,7 +243,7 @@ const ProcessDocument = ({ savedProcess, Process_title, setProcess_title, addWor
                   })
                   .then((data) => {
 
-                    // console.log('Response from the POST request to add to public is :', data);
+                    // // console.log('Response from the POST request to add to public is :', data);
                   })
                   .catch((error) => {
 
@@ -251,7 +251,7 @@ const ProcessDocument = ({ savedProcess, Process_title, setProcess_title, addWor
                   });
               }
               catch (err) {
-                console.log(err.response)
+                // console.log(err.response)
               }
             }
 
@@ -299,7 +299,7 @@ const ProcessDocument = ({ savedProcess, Process_title, setProcess_title, addWor
         }
       })
       .catch((error) => {
-        console.log(error);
+        // console.log(error);
         toast.info(error.response?.data?.message);
       });
     setIsLoading(false);
@@ -311,7 +311,7 @@ const ProcessDocument = ({ savedProcess, Process_title, setProcess_title, addWor
     } 
     else 
     {
-      console.log("processSteps", processSteps[0].steps, docCurrentWorkflow.workflows.workflow_title, ProcessDetail)
+      // console.log("processSteps", processSteps[0].steps, docCurrentWorkflow.workflows.workflow_title, ProcessDetail)
 
       const apiUrl = `https://100094.pythonanywhere.com/v2/processes/${ProcessDetail._id}/`;
       // const apiUrl = `https://100094.pythonanywhere.com/v2/processes/64bb6c7c1da82ab75d3c75b8/`;
@@ -393,13 +393,13 @@ const ProcessDocument = ({ savedProcess, Process_title, setProcess_title, addWor
         ]
       };
 
-      console.log('payload', payload)
+      // console.log('payload', payload)
 
       // Making a POST request with Axios
       axios.put(apiUrl, payload)
         .then((response) => {
           // Handle the API response here
-          console.log('API Response:', response.data);
+          // console.log('API Response:', response.data);
           toast.success("Process Update Successfully")
         })
         .catch((error) => {

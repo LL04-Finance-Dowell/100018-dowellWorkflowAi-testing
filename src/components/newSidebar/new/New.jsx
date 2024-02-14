@@ -20,7 +20,7 @@ import { toast } from "react-toastify";
 const New = ({ toggleSidebar, isMobile }) => {
   const { userDetail } = useSelector((state) => state.auth);
   const { themeColor, creditResponse } = useSelector((state) => state.app);
-  // console.log(creditResponse.data.data.api_key)
+  // // console.log(creditResponse.data.data.api_key)
   const dispatch = useDispatch();
   const { t } = useTranslation();
 
@@ -75,7 +75,7 @@ const New = ({ toggleSidebar, isMobile }) => {
         })
         // dispatch(settemLoading(false))
         .catch((error) => {
-          console.log(error.response?.data?.message);
+          // console.log(error.response?.data?.message);
           toast.info(error.response?.data?.message);
         });
     } else {

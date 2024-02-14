@@ -57,7 +57,7 @@ const Contents = ({
       workflow: docCurrentWorkflow._id,
       stepIndex: currentStepIndex,
     };
-    // console.log(newTableOfContentObj)
+    // // console.log(newTableOfContentObj)
     dispatch(setTableOfContentForStep(newTableOfContentObj));
   };
 
@@ -67,7 +67,7 @@ const Contents = ({
       r[a.pageNum].push(a);
       return r;
     }, Object.create(null));
-    // console.log(contentsGroupedByPageNum)
+    // // console.log(contentsGroupedByPageNum)
     setContentsPageWise(contentsGroupedByPageNum);
 
     setShowContent(

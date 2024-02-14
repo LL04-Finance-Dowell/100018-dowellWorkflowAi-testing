@@ -92,7 +92,7 @@ const SectionBox = ({
         );
         setCount(count + 1);
       } catch (err) {
-        console.log(err);
+        // console.log(err);
       } finally {
         setIsDemoLoading(false);
       }
@@ -100,7 +100,7 @@ const SectionBox = ({
   };
 
   // useEffect(() => {
-  //   console.log('cardItemsVar: ', cardItemsVar);
+  //   // console.log('cardItemsVar: ', cardItemsVar);
   // }, [cardItemsVar]);
 
   const handleRefresh = () => {
@@ -163,7 +163,7 @@ const SectionBox = ({
             setRefreshLoading(false);
           })
           .catch((err) => {
-            // console.log(err, 'Refresh for documents failed');
+            // // console.log(err, 'Refresh for documents failed');
             toast.info('Refresh for documents failed');
             setRefreshLoading(false);
           });
@@ -202,7 +202,7 @@ const SectionBox = ({
             setRefreshLoading(false);
           })
           .catch((err) => {
-            // console.log(err, 'Refresh for templates failed');
+            // // console.log(err, 'Refresh for templates failed');
             toast.info('Refresh for templates failed');
             setRefreshLoading(false);
           });
@@ -238,7 +238,7 @@ const SectionBox = ({
           setRefreshLoading(false);
         })
         .catch((err) => {
-          // console.log(err, 'Refresh for workflows failed');
+          // // console.log(err, 'Refresh for workflows failed');
           toast.info('Refresh for workflows failed');
           setRefreshLoading(false);
         });
@@ -257,7 +257,7 @@ const SectionBox = ({
           const savedProcessesInLocalStorage = JSON.parse(
             localStorage.getItem('user-saved-processes')
           );
-          console.log('the res.data is ', res.data)
+          // console.log('the res.data is ', res.data)
           if (savedProcessesInLocalStorage) {
             const processes = [
               ...savedProcessesInLocalStorage,
@@ -275,7 +275,7 @@ const SectionBox = ({
           setRefreshLoading(false);
         })
         .catch((err) => {
-          // console.log(err, 'Refresh for processes failed');
+          // // console.log(err, 'Refresh for processes failed');
           toast.info('Refresh for processes failed');
           setRefreshLoading(false);
         });
@@ -293,7 +293,7 @@ const SectionBox = ({
         axios.get(url)
           .then(response => {
             dispatch(SetKnowledgeFolders(response.data));
-            console.log('Data:', response.data);
+            // console.log('Data:', response.data);
             toast.info("page refreshed successfully")
             // Handle the response data
           })
@@ -360,13 +360,13 @@ const SectionBox = ({
               return notification;
             }
           );
-          // console.log(updatedNotifications);
+          // // console.log(updatedNotifications);
           dispatch(setNotificationsForUser(updatedNotifications));
           toast.success('Successfully refreshed notifications');
           setRefreshLoading(false);
         })
         .catch((err) => {
-          // console.log(err, 'Refresh for notifications failed');
+          // // console.log(err, 'Refresh for notifications failed');
           toast.info('Refresh for notifications failed');
           setRefreshLoading(false);
         });
@@ -375,9 +375,9 @@ const SectionBox = ({
 
   useEffect(() => {
     setCardItemsVar(cardItems);
-    console.log("1 mubeen")
+    // console.log("1 mubeen")
   }, [cardItems]);
-  console.log('the card items are ', cardItems)
+  // console.log('the card items are ', cardItems)
 
   const handleFilterChange = (event) => {
     setFilterName(event.target.value);
@@ -406,7 +406,7 @@ const SectionBox = ({
 
   };
 
-  console.log("cardItemsVar", cardItems)
+  // console.log("cardItemsVar", cardItems)
 
   return (
     <div className={styles.container}>

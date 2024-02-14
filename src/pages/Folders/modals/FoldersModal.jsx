@@ -56,7 +56,7 @@ const FoldersModal = () => {
   const { allTemplates } = useSelector((state) => state.template);
 
   const handleCreateFolder = async () => {
-    console.log("foldernameedd", folderName);
+    // console.log("foldernameedd", folderName);
     const data = {
       company_id: userCompanyId,
       created_by: userDetail?.userinfo.username,
@@ -77,7 +77,7 @@ const FoldersModal = () => {
       setIsCreating(false);
       setShowFoldersActionModal(false);
     } catch (err) {
-      // console.log(err);
+      // // console.log(err);
       toast.error("Folder creating failed!");
       setIsCreating(false);
     }
@@ -114,7 +114,7 @@ const FoldersModal = () => {
           );
           toast.success("Added successfully");
         } catch (err) {
-          // console.log(err);
+          // // console.log(err);
           toast.error("Failed to add!");
         } finally {
           setShowFoldersActionModal(false);
@@ -123,7 +123,7 @@ const FoldersModal = () => {
         }
       } else toast.warn("Select a folder");
     } else if (action === "edit") {
-      console.log("selectedDocs(", selectedDocs);
+      // console.log("selectedDocs(", selectedDocs);
       if (folderName) {
         const items = [
           ...selectedDocs.map((doc) => ({ [`${doc.category}_id`]: doc.id })),
@@ -156,7 +156,7 @@ const FoldersModal = () => {
           );
           toast.success("Folder edited");
         } catch (err) {
-          // console.log(err);
+          // // console.log(err);
           toast.error("Editing failed!");
         } finally {
           setIsEditing(false);
@@ -171,7 +171,7 @@ const FoldersModal = () => {
         setFolders((prev) => prev.filter((fld) => fld._id !== folder._id));
         toast.success("Folder deleted");
       } catch (err) {
-        // console.log(err);
+        // // console.log(err);
         toast.error("Deleting failed!");
       } finally {
         setIsDeleting(false);
@@ -224,7 +224,7 @@ const FoldersModal = () => {
         );
         setShowFoldersActionModal(false);
       } catch (err) {
-        // console.log(err);
+        // // console.log(err);
         toast.error(
           `Failed to remove ${
             item.document_name
@@ -287,8 +287,9 @@ const FoldersModal = () => {
   }, [action]);
 
   useEffect(() => {
-    if (allDocuments) console.log("allDocuments", allDocuments);
-    // console.log("allDocuments", allDocuments
+    if (allDocuments)
+     // console.log("allDocuments", allDocuments);
+    // // console.log("allDocuments", allDocuments
     // .filter((doc) => doc.document_type === 'original')
     // .map((doc) => ({
     //   name: doc.document_name,
@@ -374,7 +375,7 @@ const FoldersModal = () => {
 
   const handleFolderChange = (e) => {
     setFolderName(e.target.value);
-    console.log("foldername", folderName);
+    // console.log("foldername", folderName);
   };
 
   ///////////////////////////// Checking whether the input is empty
@@ -793,7 +794,7 @@ const SelectInput = ({
                         : type === "temps"
                         ? handleTempsChange
                         : () => {
-                            // console.log('Change not handled');
+                            // // console.log('Change not handled');
                           }
                     }
                     disabled={

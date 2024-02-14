@@ -159,7 +159,7 @@ const CheckErrors = () => {
     tableOfContentForStep,
 
   ]);
-console.log('the process steps: ', processSteps)
+// console.log('the process steps: ', processSteps)
   const handleSortProcess = async() => {
     if (!userDetail) return;
     if (!currentDocToWfs) {

@@ -58,8 +58,8 @@ export const extractProcessObjChecker = (
     process_type: documentToProcess.document_name ? 'document' : 'template',
     org_name: currentUserDetails?.portfolio_info?.length > 1 ? currentUserDetails?.portfolio_info.find(portfolio => portfolio.product === productName)?.org_name : currentUserDetails?.portfolio_info[0]?.org_name,
   };
-console.log('the documentToProcess is in util ', documentToProcess)
-console.log('the documentProcessSteps is in util ', documentProcessSteps)
+// console.log('the documentToProcess is in util ', documentToProcess)
+// console.log('the documentProcessSteps is in util ', documentProcessSteps)
   const foundProcessSteps = documentProcessSteps.find(
     (process) => process.workflow === selectedDocumentWorkflow._id
   );
@@ -197,7 +197,7 @@ console.log('the documentProcessSteps is in util ', documentProcessSteps)
  
   const documentMapMissingInStep =
     processObj.workflows[0].workflows.steps.map((step, index) => {
-      console.log("the documentProcessSteps data: ", documentProcessSteps[0].steps[index].stepRights)
+      // console.log("the documentProcessSteps data: ", documentProcessSteps[0].steps[index].stepRights)
       if (step.stepDocumentMap.length < 1 && !step.skipStep && documentProcessSteps[0].steps[index].stepRights== "add_edit")
         return 'Document map missing';
       return null;

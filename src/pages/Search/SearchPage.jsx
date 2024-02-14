@@ -130,7 +130,7 @@ const SearchPage = () => {
       setSearchLoading(false);
       setSearchResults(results);
     } catch (error) {
-      console.log(error);
+      // console.log(error);
       setSearchLoading(false);
     }
 
@@ -154,10 +154,10 @@ const SearchPage = () => {
     refreshLoading,
   ]);
 
-  console.log("searchItemsoutside",searchItems)
+  // console.log("searchItemsoutside",searchItems)
   useEffect(() => {
     const currentSearchResults = searchResults.slice();
-    console.log("searchItems",searchItems)
+    // console.log("searchItems",searchItems)
 
     switch (currentSearchOption) {
       case searchCategories.all:
@@ -265,7 +265,7 @@ const SearchPage = () => {
         )
       );
     } catch (error) {
-      console.log(error.response ? error.response.data : error.message);
+      // console.log(error.response ? error.response.data : error.message);
     }
     setRefreshLoading(false);
   };
@@ -696,7 +696,7 @@ export default SearchPage;
 // 			setSearchResults(res.data.search_result);
 // 		})
 // 		.catch((error) => {
-// 			console.log(error.response ? error.response.data : error.message);
+// 			// console.log(error.response ? error.response.data : error.message);
 // 			setSearchLoading(false);
 // 			toast.error(error.response ? error.response.data : error.message);
 // 		});

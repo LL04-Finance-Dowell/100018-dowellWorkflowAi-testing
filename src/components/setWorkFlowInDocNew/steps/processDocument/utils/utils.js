@@ -62,7 +62,7 @@ export const extractProcessObj = (
     process_type: documentToProcess.document_name ? 'document' : 'template',
     org_name: currentUserDetails?.portfolio_info?.length > 1 ? currentUserDetails?.portfolio_info.find(portfolio => portfolio.product === productName)?.org_name : currentUserDetails?.portfolio_info[0]?.org_name,
   };
-console.log('the documentToProcess is in util ', documentToProcess)
+// console.log('the documentToProcess is in util ', documentToProcess)
   const foundProcessSteps = documentProcessSteps.find(
     (process) => process.workflow === selectedDocumentWorkflow._id
   );

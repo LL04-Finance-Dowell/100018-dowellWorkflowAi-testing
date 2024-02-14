@@ -41,7 +41,7 @@ const SetWorkflowInDoc = () => {
         dispatch(setContinentsLoaded(true));
       })
       .catch((err) => {
-        console.log(err, 'Failed to fetch continents');
+        // console.log(err, 'Failed to fetch continents');
         dispatch(setContinentsLoaded(true));
       });
     // eslint-disable-next-line react-hooks/exhaustive-deps

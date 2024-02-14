@@ -68,7 +68,7 @@ const DocumentCard = ({
   const { allDocuments } = useSelector((state) => state.document);
   const [documentLoading, setDocumentLoading] = useState(false);
 
-  console.log("cardItem", cardItem, isReport)
+  // console.log("cardItem", cardItem, isReport)
 
   const handleFavoritess = async (item, actionType) => {
     /*  const data = {
@@ -76,7 +76,7 @@ const DocumentCard = ({
       type: "document",
     };
     dispatch(handleFavorites(data)); */
-    // console.log('the data to be bookmarked is ', item)
+    // // console.log('the data to be bookmarked is ', item)
     if (actionType === 'add') {
       addToFavoritesState('documents', {
         ...item,
@@ -155,7 +155,7 @@ const DocumentCard = ({
   };
 
   const handleDetailDocumnet = async (item) => {
-    console.log("handle detail doc hit ", dataLoading)
+    // console.log("handle detail doc hit ", dataLoading)
     if (dataLoading) return;
     if (documentLoading)
       return toast.info('Please wait for this document to be refreshed first');
@@ -175,7 +175,7 @@ const DocumentCard = ({
         // setDataLoading(false);
         handleGoToEditor(response, item);
       } catch (error) {
-        // console.log(error);
+        // // console.log(error);
         setDataLoading(false);
         toast.info(
           error.response.status !== 500
@@ -208,7 +208,7 @@ const DocumentCard = ({
   };
 
   const handleShowDocument = async (item) => {
-    console.log("itemhandleMubeen",item )
+    // console.log("itemhandleMubeen",item )
     dispatch(SetSingleDocument(item));
     getDocumentDetail(item.collection_id)
     // navigate("/documents/document-detail");
@@ -224,7 +224,7 @@ const DocumentCard = ({
         navigate("/documents/document-detail");
       })
       .catch((error) => {
-        console.log(error);
+        // console.log(error);
         toast.info("Failed to fetch Document details");
       });
   }
@@ -298,7 +298,7 @@ const DocumentCard = ({
       setDataLoading(false);
       dispatch(setEditorLink(response));
     } catch (err) {
-      // console.log(err.response ? err.response.data : err.message);
+      // // console.log(err.response ? err.response.data : err.message);
       setDataLoading(false);
       toast.info(
         err.response
@@ -311,7 +311,7 @@ const DocumentCard = ({
   };
 
   const handleFetchNewDocumentDetail = async (documentId) => {
-    console.log("chkeinggggggggg")
+    // console.log("chkeinggggggggg")
     if (documentLoading) return;
     if (dataLoading)
       return toast.info('Please wait for this document to open first');
@@ -335,7 +335,7 @@ const DocumentCard = ({
 
       setDocumentLoading(false);
     } catch (error) {
-      // console.log(error.response ? error.response.data : error.message);
+      // // console.log(error.response ? error.response.data : error.message);
       toast.info('Refresh for document failed');
       setDocumentLoading(false);
     }
@@ -348,11 +348,11 @@ const DocumentCard = ({
       item_type: 'document',
       item_id: item?.collection_id || '653b5ba638ec7dcbdb556a38',
     };
-    console.log("generate pdf link")
+    // console.log("generate pdf link")
     await axios.post(apiUrl, payload)
       .then((response) => {
         // Handle the API response here
-        console.log('Pdf generated successfully', response.data);
+        // console.log('Pdf generated successfully', response.data);
         toast.info('Pdf generated successfully');
         const pdfLink = response.data; // Assuming response.data contains the PDF link
         window.open(pdfLink, '_blank');

@@ -176,7 +176,7 @@ const Reports = () => {
   }, [itemsCountToDisplay]);
 
   // useEffect(() => {
-  //   console.log('test: ', test);
+  //   // console.log('test: ', test);
   // }, [test]);
 
   return (

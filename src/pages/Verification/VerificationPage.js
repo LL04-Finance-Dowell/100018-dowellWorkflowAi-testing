@@ -125,10 +125,10 @@ const VerificationPage = () => {
             res.data;
       })
       .catch((err) => {
-        console.log(err.response ? err.response.data : err.message);
+        // console.log(err.response ? err.response.data : err.message);
         setLoading(false);
         setVerificationFailed(true);
-        console.log(err);
+        // console.log(err);
         toast.info(
           err.response
             ? err.response.status === 500

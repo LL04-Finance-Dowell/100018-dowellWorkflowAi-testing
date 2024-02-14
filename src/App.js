@@ -50,7 +50,7 @@ function App() {
 
   useDowellLogin();
 
-  // console.log = () => {};
+  // // console.log = () => {};
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -106,21 +106,21 @@ function App() {
           total_credits: response?.data?.data?.total_credits,
           api_key: response?.data?.data?.api_key
         }))
-        // console.log(response?.data?.data?.is_active)
-        // console.log(response?.data?.data?.total_credits)
-        // console.log(response?.data?.data?.api_key)
+        // // console.log(response?.data?.data?.is_active)
+        // // console.log(response?.data?.data?.total_credits)
+        // // console.log(response?.data?.data?.api_key)
 
         // dispatch(setcreditResponse(response))
       })
       .catch((error) => {
 
-        console.log(error)
+        // console.log(error)
       });
 
 
 
   }, [dataType, companyId])
-  // console.log('chk')
+  // // console.log('chk')
 
   function checkstatus() {
     // AJAX GET request
@@ -131,7 +131,7 @@ function App() {
         dispatch(setIconColor('green'));
       })
       .catch((error) => {
-        // console.log(error);
+        // // console.log(error);
         dispatch(setIconColor('red'));
       });
 
@@ -153,12 +153,12 @@ function App() {
         )
         .then((response) => { })
         .catch((error) => {
-          // console.log(error);
+          // // console.log(error);
           // Empty catch block
         });
   }
-  // console.log(creditResponse.data.is_active)
-  // console.log(creditResponse.data.service_id)
+  // // console.log(creditResponse.data.is_active)
+  // // console.log(creditResponse.data.service_id)
 
   // USE ONLY WHEN APP IS BROKEN OR UNDERGOING MAJOR CHANGES
   // return (

@@ -22,7 +22,7 @@ const FoldersPage = ({ knowledgeCenter }) => {
   
 
 
-  console.log("knowledge center", knowledgeCenter, userDetail)
+  // console.log("knowledge center", knowledgeCenter, userDetail)
 
   useEffect(() => {
     if (!folders) fetchFolders();
@@ -30,13 +30,12 @@ const FoldersPage = ({ knowledgeCenter }) => {
 
   let allFolders = folders ? [...folders].reverse() : [];
   console.log("folders", folders)
-
   function fetchKnowledgeCenterData() {
     const url = `https://100094.pythonanywhere.com/v2/companies/6385c0f38eca0fb652c9457e/folders/knowledge-centre/?data_type=Real_Data`;
     axios.get(url)
       .then(response => {
         dispatch(SetKnowledgeFolders(response.data));
-        console.log('Data:', response.data);
+        // console.log('Data:', response.data);
         // Handle the response data
       })
       .catch(error => {
@@ -51,7 +50,7 @@ const FoldersPage = ({ knowledgeCenter }) => {
     }
   }, [knowledgeCenter]);
 
-  console.log("knowledge foldersssssss", KnowledgeFolders, allFolders )
+  // console.log("knowledge foldersssssss", KnowledgeFolders, allFolders )
 
   return (
     <WorkflowLayout>
