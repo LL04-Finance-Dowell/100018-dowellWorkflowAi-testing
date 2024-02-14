@@ -3,6 +3,7 @@
     width: 80%;
     margin: auto;
     padding: 50px 0;
+    line-height: 1.8;
 }
 
 .terms .back {
@@ -20,7 +21,7 @@
 }
 
 .terms h1 {
-    margin-bottom: 2rem;
+    margin-bottom: 1rem;
     margin-top: 2rem;
 }
 
@@ -42,10 +43,6 @@
 
 .terms div {
     margin-bottom: 2rem;
-}
-
-.terms div h4 {
-    font-weight: 600;
 }
 
 .terms .definations span,

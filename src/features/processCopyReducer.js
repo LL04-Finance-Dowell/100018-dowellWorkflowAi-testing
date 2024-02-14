@@ -18,9 +18,17 @@ export const copiedProcessSlice = createSlice({
     setWhichApproval: (state, action)=>{
       state.whichApproval = action.payload
     },
+    // setCopiedDocument: (state, action) => {
+    //   state.document = action.payload;
+    // },
+    
     setCopiedDocument: (state, action) => {
-      state.document = action.payload;
+      return {
+        ...state,
+        document: action.payload
+      };
     },
+    
     setCopiedWorkflow: (state, action) => {
       state.workflow = action.payload;
     },

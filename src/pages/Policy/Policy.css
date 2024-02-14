@@ -3,6 +3,7 @@
     width: 80%;
     margin: auto;
     padding: 50px 0;
+    line-height: 1.8;
 }
 
 .policy .back {
@@ -20,16 +21,13 @@
 }
 
 .policy h1 {
-    margin-bottom: 2rem;
+    margin-bottom: 1rem;
     margin-top: 2rem;
 }
 
-.policy p {
-    margin-bottom: 4rem;
-}
-
 .policy h2 {
-    margin-bottom: 2rem;
+    margin-bottom: 1rem;
+    margin-top: 2rem;
 }
 
 .policy .interpretation h5,
@@ -38,7 +36,7 @@
 }
  
 .policy .interpretation p {
-    margin-bottom: 3rem;
+    margin-bottom: 2rem;
 }
 
 .policy .definations span,

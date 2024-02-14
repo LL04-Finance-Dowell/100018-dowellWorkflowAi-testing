@@ -49,14 +49,13 @@ export class TemplateServices {
   // * The company id for demoTemplates is hard coded to that of Dowell Knowledge Centre
 
   singleTemplateDetail = async (templateId) => {
-    // return await httpTemplate.get(`/${templateId}/`);
-    return await httpTemplate.get(`/${templateId}/object/`); // Old Version
+    return await httpTemplate.get(`/${templateId}/`);
+    // return await httpTemplate.get(`/${templateId}/object/`); // Old Version
     // {{base_url}}/templates/:template_id/ // URL
   };
 
   getTemplateReports = (companyId, dataType, templateState, member, portfolio, portfolioName, userName) =>
   httpApiUrlV2.get(
-      // `${companyId}/?data_type=${dataType}&template_state=${templateState}&member=${member}portfolio=${portfolio}`
       // {{base_url}}/templates/:company_id/?data_type&template_state&member&portfolio // URL
       `/templates/${companyId}/?data_type=${dataType}&template_state&member=${member}&portfolio=${portfolio}`
     );

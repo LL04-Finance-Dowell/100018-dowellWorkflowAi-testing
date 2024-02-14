@@ -90,7 +90,7 @@ const CopyProcessPage = () => {
             (document) =>
               document.document_state !== "trash" &&
               document.data_type &&
-              document.data_type === data.data_type
+              document.data_type === data.data_type 
           )
         )
       );
