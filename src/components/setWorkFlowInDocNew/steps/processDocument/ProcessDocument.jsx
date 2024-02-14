@@ -11,7 +11,7 @@ import { toast } from "react-toastify";
 import {
   newProcessActionOptions,
   processActionOptionsWithLinkReturned,
-  startNewProcessV2,
+  startNewProcess,
 } from "../../../../services/processServices";
 import ProgressBar from "../../../progressBar/ProgressBar";
 import SelectDoc from "../selectDoc/SelectDoc";
@@ -210,7 +210,7 @@ const ProcessDocument = ({ savedProcess, Process_title, setProcess_title, addWor
 
           try {
             const response = await (
-              await startNewProcessV2(processObjToPost)
+              await startNewProcess(processObjToPost)
             ).data;
             // // console.log("the process obj to post is ", processObjToPost);
             // // console.log("the response from adding new process is ", response);

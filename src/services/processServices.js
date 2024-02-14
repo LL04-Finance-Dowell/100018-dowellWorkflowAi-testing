@@ -1,4 +1,4 @@
-import { httpApiUrl, httpProcess, processReport } from '../httpCommon/httpCommon';
+import { httpApiUrl, httpApiUrlV2, httpProcess, processReport } from '../httpCommon/httpCommon';
 
 // API Route Disabled
 // export const saveWorkflowsToDocument = async (data) => {
@@ -10,58 +10,75 @@ export const startNewProcess = async (data) => {
 };
 
 export const getVerifiedProcessLink = async (processId, data) => {
-  return await httpProcess.post(`${processId}/user-link/`, data);
+  return await httpProcess.post(`${processId}/process-link/`, data);
 };
 
-export const verifyProcessForUser = async (data) => {
-  return await httpProcess.post(`/verify/`, data);
+export const verifyProcessForUser = async (processId, data) => {
+  return await httpProcess.post(`${processId}/verify/`, data);
 };
 
-export const startNewProcessV2 = async (data) => {
-  return await httpProcess.post('/', data);
-};
+// export const startNewProcessV2 = async (data) => {
+//   return await httpProcess.post('/', data);
+// };
 
 export const getSingleProcessV2 = async (processId) => {
-  return await httpProcess.get(`/${processId}/`);
+  return await httpProcess.get(`${processId}/`);
 };
 
 export const getAllProcessesV2 = async (companyId, dataType) => {
-  return await httpApiUrl.get(
-    `/companies/${companyId}/processes/?data_type=${dataType}`
+  return await httpApiUrlV2.get(
+    `processes/${companyId}/organisations/?data_type=${dataType}`
+    // https://100094.pythonanywhere.com/v2/processes/65ad8a28c9038ff4498672c9/organisations/?data_type=Real_Data
   );
 };
 
 export const getCompletedProcesses = (companyId, dataType) => {
-  return httpApiUrl.get(
-    `/companies/${companyId}/processes/completed/?data_type=${dataType}`
+  return httpApiUrlV2.get(
+    `/processes/${companyId}/organisations/?data_type=${dataType}&process_state=finalized`
+    // `${companyId}/organisations/?data_type=${dataType}&process-state=completed`
+    // {{base_url}}/processes/6390b313d77dc467630713f2/organisations?data_type=Real_Data&process_state=finalized
   );
 };
 
 export const getActiveProcesses = (companyId, dataType) => {
-  return httpApiUrl.get(
-    `/companies/${companyId}/processes/?data_type=${dataType}&doc_state=processing`
+  return httpApiUrlV2.get(
+    `/processes/${companyId}/organisations/?data_type=${dataType}&process_state=processing`
+    // `${companyId}/?data_type=${dataType}&process-state=active`
+    // {{base_url}}/processes/6390b313d77dc467630713f2/organisations?data_type=Real_Data&process_state=processing
   );
 };
 
-export const verifyProcessV2 = async (data) => {
-  return await httpProcess.post('/verification/', data);
-};
+// export const verifyProcessV2 = async (data) => {
+//   return await httpProcess.post('/verification/', data);
+// };
 
-export const markProcessV2 = async (data) => {
-  return await httpProcess.post('/mark/', data);
-};
+// export const markProcessV2 = async (data) => {
+//   return await httpProcess.post('/mark/', data);
+// };
 
-export const getProcessVerificationLinkV2 = async (processId) => {
-  return await httpProcess.get(`/verify/${processId}/`);
-};
+// export const getProcessVerificationLinkV2 = async (processId) => {
+//   return await httpProcess.get(`/verify/${processId}/`);
+// };
 
-export const startDraftProcessingV2 = async (processId) => {
-  return await httpProcess.get(`/start/${processId}/`);
-};
+// export const startDraftProcessingV2 = async (processId) => {
+//   return await httpProcess.get(`/start/${processId}/`);
+// };
 
-export const pauseOngoingProcessV2 = async (processId) => {
-  return await httpProcess.get(`/pause/${processId}/`);
-};
+// export const pauseOngoingProcessV2 = async (processId) => {
+//   return await httpProcess.get(`/pause/${processId}/`);
+// };
+
+export const startDraftProcessingV2 = async (processId, data) => {
+  return await httpProcess.post(`${processId}/trigger/`, data)
+}
+
+export const startOngoingProcessingV2 = async (processId, data) => {
+  return await httpProcess.post(`${processId}/trigger/`, data)
+}
+
+export const finalizeOrReject = async (processId) => {
+  return await httpProcess.post(`${processId}/finalize-or-reject/`)
+}
 
 export const processActionOptions = {
   saveWorkflowToDocument: 'save_workflow_to_document',

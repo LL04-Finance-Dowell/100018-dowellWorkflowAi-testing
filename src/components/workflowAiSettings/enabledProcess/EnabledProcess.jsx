@@ -44,12 +44,27 @@ const EnabledProcess = () => {
         })
   );
 
+  // const [portfolios] = useState(
+  //   userDetail?.portfolio_info?.find((item) => item.product === 'Workflow AI')
+  //     ?.member_type === 'owner'
+  //     ? [...userDetail?.userportfolio]
+  //     : [...userDetail?.selected_product?.userportfolio]
+  // );
+
   const [portfolios] = useState(
-    userDetail?.portfolio_info?.find((item) => item.product === 'Workflow AI')
-      ?.member_type === 'owner'
-      ? [...userDetail?.userportfolio]
-      : [...userDetail?.selected_product?.userportfolio]
-  );
+    () => {
+        console.log("userDetail:", userDetail);
+        console.log("userportfolio:", userDetail?.userportfolio);
+        console.log("selected_product:", userDetail?.selected_product);
+        return (
+            userDetail?.portfolio_info?.find((item) => item.product === 'Workflow AI')
+              ?.member_type === 'owner'
+              ? [...userDetail?.userportfolio]
+              : [...userDetail?.selected_product?.userportfolio]
+        );
+    }
+);
+
 
   const [portfolioRights, setPortfolioRights] = useState('');
 

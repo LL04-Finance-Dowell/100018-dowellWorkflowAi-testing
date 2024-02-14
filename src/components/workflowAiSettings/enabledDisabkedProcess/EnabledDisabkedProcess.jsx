@@ -57,8 +57,9 @@ const EnabledDisabkedProcess = () => {
   };
 
   const onSubmit = async () => {
-    // console.log("workflowSettings", workflowSettings._id)
-    // console.log("userDetail", userDetail)
+ 
+    console.log("userDetail", userDetail)
+ 
     const Process = sortData(
       permissionArray[0].children[0]._id,
       permissionArray[0].children[0].column[0]._id,

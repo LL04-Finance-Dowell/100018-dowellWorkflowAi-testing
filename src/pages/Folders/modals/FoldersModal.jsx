@@ -70,7 +70,7 @@ const FoldersModal = () => {
       const res = await folderServices.getAllFolders(
         userCompanyId,
         userDataType
-      );
+      ); ///////////////
       setFolders(res.data ? res.data.reverse() : []);
       toast.success("Folder created");
       navigate("/folders");

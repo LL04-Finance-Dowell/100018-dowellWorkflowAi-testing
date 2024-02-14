@@ -350,7 +350,7 @@ export const AppContextProvider = ({ children }) => {
     setIsFetchingFolders(true);
     try {
       const res = await folderServices.getAllFolders(userCompanyId, dataType);
-      setFolders(res.data ? res.data.reverse() : []);
+      setFolders(res.data ? res.data.reverse() : []); /////////////////////////
     } catch (err) {
       // console.log(err);
     } finally {

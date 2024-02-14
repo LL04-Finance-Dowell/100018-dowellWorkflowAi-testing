@@ -27,9 +27,11 @@ import CopyProcessPage from './pages/Processes/CopyProcessPage';
 import SearchPage from './pages/Search/SearchPage';
 import { productName } from './utils/helpers';
 import { useAppContext } from './contexts/AppContext';
+import Policy from './pages/Policy/Policy';
 
 import axios from 'axios';
 import { WorkflowReport } from './components/newSidebar/reports/WorkflowReport';
+import Terms from './pages/Terms/Terms';
 // import ConstructionPage from './pages/ConstructionPage/ConstructionPage';
 
 function App() {
@@ -313,6 +315,8 @@ function App() {
           <Route path={':folder_id'} element={<FolderPage />} />
           <Route path={'knowledge/:folder_id'} element={<FolderPage  knowledgeCenter={true}/>} />
         </Route>
+         
+        
         {/* <Route path="/Documents/Documents/Documents" element={<Documents />} />
       <Route path="/Documents/DraftsDoc/DraftsDoc" element={<DraftsDoc />} />
       <Route path="/Templates/TempDraft/TempDraft" element={<TempDraft />} /> */}
@@ -327,8 +331,14 @@ function App() {
       <Route path="/WorkFlows/DraftF/DraftF" element={<DraftF />} /> */}
         <Route path={'/verify/:token'} element={<VerificationPage />} />
         <Route path={'/search'} element={<SearchPage />} />
+        <Route path='/policy' element={<Policy />} />
+        <Route path='/terms' element={<Terms />} />
         <Route path={'*'} element={<>Page not found</>} />
       </Routes>
+
+       
+
+        
     </Suspense>
   );
 }
