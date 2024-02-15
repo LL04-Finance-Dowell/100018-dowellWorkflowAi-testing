@@ -7,7 +7,12 @@ import requests
 from datetime import datetime
 
 from app.constants import EDITOR_API, MASTERLINK_URL, PUBLIC_LOGIN_API
-from app.models import FavoriteDocument, FavoriteTemplate, FavoriteWorkflow, ProcessReminder
+from app.models import (
+    FavoriteDocument,
+    FavoriteTemplate,
+    FavoriteWorkflow,
+    ProcessReminder,
+)
 from app.serializers import (
     FavouriteDocumentSerializer,
     FavouriteTemplateSerializer,
@@ -242,9 +247,7 @@ def access_editor(item_id, item_type, username="", portfolio="", email=""):
     team_member_id = (
         "11689044433"
         if item_type == "document"
-        else "1212001"
-        if item_type == "clone"
-        else "22689044433"
+        else "1212001" if item_type == "clone" else "22689044433"
     )
     if item_type == "document":
         collection = "DocumentReports"
@@ -286,11 +289,11 @@ def access_editor(item_id, item_type, username="", portfolio="", email=""):
             "field": field,
             "type": item_type,
             "metadata_id": metadata_id,
-            "action": "document"
-            if item_type == "document"
-            else "clone"
-            if item_type == "clone"
-            else "template",
+            "action": (
+                "document"
+                if item_type == "document"
+                else "clone" if item_type == "clone" else "template"
+            ),
             "flag": "editing",
             "name": name,
             "username": username,
@@ -325,9 +328,7 @@ def access_editor_metadata(item_id, item_type, metadata_id, email):
     team_member_id = (
         "11689044433"
         if item_type == "document"
-        else "1212001"
-        if item_type == "clone"
-        else "22689044433"
+        else "1212001" if item_type == "clone" else "22689044433"
     )
     if item_type == "document":
         collection = "DocumentReports"
@@ -362,11 +363,11 @@ def access_editor_metadata(item_id, item_type, metadata_id, email):
             "metadata_id": metadata_id,
             "field": field,
             "type": item_type,
-            "action": "document"
-            if item_type == "document"
-            else "clone"
-            if item_type == "clone"
-            else "template",
+            "action": (
+                "document"
+                if item_type == "document"
+                else "clone" if item_type == "clone" else "template"
+            ),
             "flag": "editing",
             "name": name,
             "command": "update",
@@ -543,6 +544,7 @@ def check_progress(process_id):
     percentage_progress = round((accessed / steps_count * 100), 2)
     return percentage_progress
 
+
 def get_metadata_id(item_id, item_type):
     if item_type == "document":
         try:
@@ -713,6 +715,7 @@ def create_document_helper(
         print(ex)
         return
 
+
 def get_prev_and_next_users(
     process: dict, auth_user: str, auth_role: str, user_type: str
 ) -> tuple:
@@ -770,22 +773,23 @@ def get_prev_and_next_users(
                         ]
 
     return (prev_viewers, next_viewers)
+
+
 def dowell_email_sender(name, email, subject, email_content):
     email_url = "https://100085.pythonanywhere.com/api/uxlivinglab/email/"
     payload = {
-        "toname":name,
+        "toname": name,
         "toemail": email,
-        "fromname":"Workflow AI",
-        "fromemail":"workflowai@dowellresearch.sg",
+        "fromname": "Workflow AI",
+        "fromemail": "workflowai@dowellresearch.sg",
         "subject": subject,
-        "email_content":email_content
+        "email_content": email_content,
     }
 
     requests.post(email_url, data=payload)
-    
 
 
-def check_last_finalizer(user, user_type, process)->bool:
+def check_last_finalizer(user, user_type, process) -> bool:
     steps = process["process_steps"]
     non_skipped_steps = []
 
@@ -793,7 +797,7 @@ def check_last_finalizer(user, user_type, process)->bool:
         if step.get("skipStep") == False:
             non_skipped_steps.append(step)
 
-    last_step = non_skipped_steps[len(non_skipped_steps)-1]
+    last_step = non_skipped_steps[len(non_skipped_steps) - 1]
     step_clone_map = last_step.get("stepDocumentCloneMap", [])
 
     if user_type == "team":
@@ -801,15 +805,15 @@ def check_last_finalizer(user, user_type, process)->bool:
             if data.get("member") == user:
                 if check_all_accessed(step_clone_map):
                     return True
-            
+
     elif user_type == "user":
         for data in last_step["stepUserMembers"]:
             if data.get("member") == user:
                 if check_all_accessed(step_clone_map):
                     return True
-            
+
     elif user_type == "public":
-       for data in last_step["stepPublicMembers"]:
+        for data in last_step["stepPublicMembers"]:
             if data.get("member") == user:
                 if check_all_accessed(step_clone_map):
                     return True
@@ -817,41 +821,41 @@ def check_last_finalizer(user, user_type, process)->bool:
         return False
 
 
-
 def set_reminder(reminder, step, process_id, created_by):
-        try:
-            team = step.get("stepTeamMembers", [])
-            user = step.get("stepUserMembers", [])
+    try:
+        team = step.get("stepTeamMembers", [])
+        user = step.get("stepUserMembers", [])
 
-            if reminder == "every_hour":
-                if team:
-                    create_reminder(process_id, 60, team, created_by)
-                if user:
-                    create_reminder(process_id, 60, user, created_by)
-        
-            elif reminder == "every_day":
-                if team:
-                    create_reminder(process_id, 1440, team, created_by)
-                if user:
-                    create_reminder(process_id, 1440, user, created_by)
-        except Exception:
-            return
+        if reminder == "every_hour":
+            if team:
+                create_reminder(process_id, 60, team, created_by)
+            if user:
+                create_reminder(process_id, 60, user, created_by)
+
+        elif reminder == "every_day":
+            if team:
+                create_reminder(process_id, 1440, team, created_by)
+            if user:
+                create_reminder(process_id, 1440, user, created_by)
+    except Exception:
+        return
+
 
 def create_reminder(process_id, interval, members, created_by):
     try:
         for member in members:
             member_name = member.get("member")
             member_email = member.get("email")
-            current_datetime = datetime.utcnow().strftime('%d:%m:%Y,%H:%M:%S')
+            current_datetime = datetime.utcnow().strftime("%d:%m:%Y,%H:%M:%S")
 
             if member_name and member_email:
                 ProcessReminder.objects.create(
-                    process_id = process_id, 
-                    step_finalizer = member_name,
-                    email = member_email, 
-                    interval = interval,
-                    last_reminder_datetime = current_datetime,
-                    created_by = created_by
+                    process_id=process_id,
+                    step_finalizer=member_name,
+                    email=member_email,
+                    interval=interval,
+                    last_reminder_datetime=current_datetime,
+                    created_by=created_by,
                 )
     except Exception:
         return
@@ -859,17 +863,21 @@ def create_reminder(process_id, interval, members, created_by):
 
 def remove_finalized_reminder(user, process_id):
     try:
-        reminder = ProcessReminder.objects.get(step_finalizer=user, process_id=process_id)
+        reminder = ProcessReminder.objects.get(
+            step_finalizer=user, process_id=process_id
+        )
         reminder.delete()
-        return True 
+        return True
     except Exception as e:
-        return False 
-    
-  
+        return False
+
+
 def remove_finalized_reminder(user, process_id):
     try:
-        reminder = ProcessReminder.objects.get(step_finalizer=user, process_id=process_id)
+        reminder = ProcessReminder.objects.get(
+            step_finalizer=user, process_id=process_id
+        )
         reminder.delete()
-        return True 
+        return True
     except Exception as e:
-        return False 
+        return False

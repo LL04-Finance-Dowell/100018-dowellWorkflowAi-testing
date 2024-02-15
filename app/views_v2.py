@@ -37,7 +37,7 @@ from app.helpers import (
     remove_members_from_steps,
     update_signed,
     validate_id,
-    remove_finalized_reminder
+    remove_finalized_reminder,
 )
 from app.mongo_db_connection import (
     add_document_to_folder,
@@ -144,7 +144,7 @@ class DocumentOrTemplateProcessing(APIView):
             request_data["parent_id"],
             request_data["data_type"],
             request_data["process_title"],
-            request.data.get("email", None)
+            request.data.get("email", None),
         )
         action = request_data["action"]
         data = None
@@ -559,7 +559,9 @@ class FinalizeOrReject(APIView):
                             elif item.get("document_state") == "processing":
                                 meta_id = get_metadata_id(item_id, item_type)
                         if check_last_finalizer(user, user_type, process):
-                            subject = (f"Completion of {process['process_title']} Processing")
+                            subject = (
+                                f"Completion of {process['process_title']} Processing"
+                            )
                             email = process.get("email", None)
 
                             if email:
@@ -570,7 +572,7 @@ class FinalizeOrReject(APIView):
                                     email_content=PROCESS_COMPLETION_MAIL,
                                 )
 
-                        # Remove Reminder after finalization        
+                        # Remove Reminder after finalization
                         remove_finalized_reminder(user, process_id)
 
                         return Response(
@@ -596,7 +598,9 @@ class FinalizeOrReject(APIView):
                                 update_metadata(meta_id, "draft", item_type)
 
                         if check_last_finalizer(user, user_type, process):
-                            subject = (f"Completion of {process['process_title']} Processing")
+                            subject = (
+                                f"Completion of {process['process_title']} Processing"
+                            )
                             email = process.get("email", None)
 
                             if email:
@@ -607,7 +611,7 @@ class FinalizeOrReject(APIView):
                                     email_content=PROCESS_COMPLETION_MAIL,
                                 )
 
-                        # Remove Reminder after finalization        
+                        # Remove Reminder after finalization
                         remove_finalized_reminder(user, process_id)
 
                         return Response(
@@ -1044,9 +1048,13 @@ class Document(APIView):
 class DocumentLink(APIView):
     def get(self, request, document_id):
         """editor link for a document"""
-        if not validate_id(document_id):
+        document_type = request.query_params.get("document_type")
+        if not validate_id(document_id) or not document_type:
             return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
-        document = single_query_document_collection({"_id": document_id})
+        if document_type == "document":
+            document = single_query_document_collection({"_id": document_id})
+        elif document_type == "clone":
+            document = single_query_clones_collection({"_id": document_id})
         if document:
             document_privacy = document.get("is_private", False)
             if document_privacy == True:
@@ -1066,7 +1074,7 @@ class DocumentLink(APIView):
 
             editor_link = access_editor(
                 document_id,
-                "document",
+                document_type,
                 username=username,
                 portfolio=portfolio,
                 email=email,
@@ -2344,13 +2352,14 @@ class TriggerInvoice(APIView):
             status.HTTP_201_CREATED,
         )
 
+
 class Group(APIView):
     def get(self, request, company_id):
 
         data_type = request.query_params.get("data_type")
         if not data_type:
             return Response("Invalid Request", status.HTTP_400_BAD_REQUEST)
-        
+
         groups = bulk_query_team_collection(
             {"company_id": company_id, "data_type": data_type}
         )
@@ -2360,9 +2369,9 @@ class Group(APIView):
         for group in groups:
             if group.get("group_name"):
                 response.append(group)
-    
+
         return Response(response, status=status.HTTP_200_OK)
-    
+
     def post(self, request, company_id):
         group_name = request.data.get("group_name")
         public_members = request.data.get("public")
@@ -2371,18 +2380,25 @@ class Group(APIView):
 
         if not group_name:
             return Response("Invalid Request", status.HTTP_400_BAD_REQUEST)
-        
-        if not isinstance(team_members, list) or not isinstance(user_members, list):
-            return Response("Team_members and User_members must be an array or a list", status=status.HTTP_400_BAD_REQUEST)
 
-        res = json.loads(save_to_team_collection({
+        if not isinstance(team_members, list) or not isinstance(user_members, list):
+            return Response(
+                "Team_members and User_members must be an array or a list",
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        res = json.loads(
+            save_to_team_collection(
+                {
                     "group_name": group_name,
                     "public_members": public_members,
                     "team_members": team_members,
                     "user_members": user_members,
                     "company_id": company_id,
                     "data_type": "Real_Data",
-                }))
+                }
+            )
+        )
 
         if res["isSuccess"]:
             return Response(res, status=status.HTTP_201_CREATED)
