@@ -29,21 +29,40 @@ export const copiedProcessSlice = createSlice({
       };
     },
     
+    // setCopiedWorkflow: (state, action) => {
+    //   state.workflow = action.payload;
+    // },
+
     setCopiedWorkflow: (state, action) => {
-      state.workflow = action.payload;
+      return {
+        ...state,
+        workflow: action.payload
+      };
     },
-    setProcessStepCopy: (state, action) =>{
-      state.processStep = action.payload;
+
+    // setProcessStepCopy: (state, action) =>{
+    //   state.processStep = action.payload;
+    // },
+
+    setProcessStepCopy: (state, action) => {
+      return {
+        ...state,
+        processStep: action.payload
+      };
     },
+
     startCopyingDocument:(state, action) =>{
       state.startSelectDocument= true
     },
+
     startCopyingWorkflow: (state, action) =>{
       state.startSelectWorkflow = true
     },
+
     startConnecting: (state, action)=>{
       state.startConnectWorkflow= true
     },
+
     resetCopyData: (state, action)=>{
       state.document = null;
       state.workflow = null;
@@ -52,6 +71,7 @@ export const copiedProcessSlice = createSlice({
       state.startSelectWorkflow = false;
       state.startConnectWorkflow = false
     },
+
     toggleHighlight: (state, action)=>{
       state.showHighlight = !state.showHighlight
     }

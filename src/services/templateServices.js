@@ -6,7 +6,9 @@ export class TemplateServices {
   };
 
   detailTemplate = (collection_id) => {
-    return httpTemplate.get(`/${collection_id}/`);
+    return httpTemplate.get(`/65cdf4074db13cf4ccdbe023/link/`);
+    // return httpTemplate.get('https://100094.pythonanywhere.com/v2/templates/65cdf4074db13cf4ccdbe023/link/');
+    // return httpTemplate.get(`/${collection_id}/`);
   };
 
   approvedTemplate = (data) => {

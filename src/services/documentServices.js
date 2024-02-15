@@ -14,10 +14,11 @@ export class DocumentServices {
     }
     if (data.document_state == "draft") {
 
-      return httpDocument.get(`documents/65c8fa5ebfb2bb5ce6aab13c/?document_type=document`);
+      return httpDocument.get(`documents/65cdda9b6898c7cd953dbd80/link/`);
+      // https://100094.pythonanywhere.com/v2/documents/65cdda9b6898c7cd953dbd80/link/
       // return httpDocument.get(`documents/${data.collection_id}/?document_type=document`);
     }
-    return httpDocument.get(`documents/65c8fa5ebfb2bb5ce6aab13c/?document_type=document`);
+    return httpDocument.get(`documents/${data.collection_id}/`);
     // return httpDocument.get(`/${data.collection_id}/`);
   };
 
@@ -62,6 +63,7 @@ export class DocumentServices {
   // httpApiUrlV2.get(
   //     `companies/6385c0f38eca0fb652c9457e/documents/knowledge-centre/?data_type=Real_Data&page=${pageCount}`
   //   );
+
   // * The company id for demoTemplates is hard coded to that of Dowell Knowledge Centre
 
   singleDocumentDetail = async (documentId, documentType) => {
@@ -99,4 +101,5 @@ export class DocumentServices {
   };
 
   getOrgDocumentReports = (companyId, dataType, state) => httpApiUrlV2.get(`metadata/${companyId}/organisations/?data_type=${dataType}&document_state=${state}&item_type=document`)
+   
 }
