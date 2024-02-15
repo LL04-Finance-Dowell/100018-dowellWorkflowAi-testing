@@ -2372,6 +2372,9 @@ class Group(APIView):
         if not group_name:
             return Response("Invalid Request", status.HTTP_400_BAD_REQUEST)
         
+        if not isinstance(team_members, list) or not isinstance(user_members, list):
+            return Response("Team_members and User_members must be an array or a list", status=status.HTTP_400_BAD_REQUEST)
+
         res = json.loads(save_to_team_collection({
                     "group_name": group_name,
                     "public_members": public_members,
