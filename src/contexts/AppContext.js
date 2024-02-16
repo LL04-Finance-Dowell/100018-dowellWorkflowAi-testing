@@ -252,8 +252,13 @@ export const AppContextProvider = ({ children }) => {
         dataType,
         state
       );
+      const resp = await new DocumentServices().getOrgDocumentReportsFinalized(
+        companyId,
+        dataType,
+        state
+      );
       if (state === 'finalized')
-        setOrgDocsCompleted(res.data.clones ? res.data.clones : []);
+        setOrgDocsCompleted(resp.data.clones ? resp.data.clones : []);
       else if (state === 'rejected')
         setOrgDocsRejected(res.data.clones ? res.data.clones : []);
     } catch (err) {

@@ -456,7 +456,7 @@ const InfoBox = ({
               <InfoContentBox boxType={boxType}>
                 {itemsToDisplay.map((item, index) => (
                   <InfoContentText
-                    onClick={() => handleItemClick(item)}
+                    // onClick={() => handleItemClick(item)}
                     key={item._id}
                   >
                     {/* {index + 1}. {item.content} */}

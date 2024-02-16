@@ -24,9 +24,9 @@ export class WorkflowServices {
   };
 
   allWorkflows = (companyId, dataType) => {
-    return httpApiUrlV2.get(`workflows/${companyId}/organisations/?data_type=${dataType}`);
+    return httpApiUrlV2.get(`/workflows/${companyId}/organisations/?data_type=${dataType}`);
     // https://100094.pythonanywhere.com/v2/workflows/65ad8a28c9038ff4498672c9/organisations/?data_type=real_data
-    // return httpApiUrlV2.get(`/companies/${companyId}/workflows/?data_type=${dataType}`); // Old Version
+    // return httpApiUrlV2.get(`/companies/${companyId}/workflows/?data_type=${dataType}`);
   };
   
   ////new update for workflow
