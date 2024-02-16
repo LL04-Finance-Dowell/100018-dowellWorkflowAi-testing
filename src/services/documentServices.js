@@ -6,19 +6,18 @@ export class DocumentServices {
     return httpDocument.post('documents/', data);
   };
 
-  detailDocument = (data) => {
+  detailDocument = (data, companyId, dataType) => {
    
     if (data.document_state == "processing") {
 
       return httpDocument.get(`/clones/${data.collection_id}/`);
     }
     if (data.document_state == "draft") {
-
-      return httpDocument.get(`documents/65cdda9b6898c7cd953dbd80/link/`);
+      return httpDocument.get(`documents/${data.collection_id}/link/`);
       // https://100094.pythonanywhere.com/v2/documents/65cdda9b6898c7cd953dbd80/link/
       // return httpDocument.get(`documents/${data.collection_id}/?document_type=document`);
     }
-    return httpDocument.get(`documents/${data.collection_id}/`);
+    return httpDocument.get(`documents/${data.collection_id}/link/`);
     // return httpDocument.get(`/${data.collection_id}/`);
   };
 
@@ -77,16 +76,12 @@ export class DocumentServices {
   getNotifications = async (companyId, dataType, member, portfolio, portfolioName, userName ) => {
     return await httpApiUrlV2.get(
       `/metadata/${companyId}/organisations/?data_type=${dataType}&document_state=processing&member=couzy&portfolio=${portfolio}&item_type=clone`
-      // {{V2_URL}}metadata/6390b313d77dc467630713f2/organisations/?data_type=Real_Data&document_state=processing&member=couzy&portfolio=CouzyTheGroupLead&item_type=clone
-      // `/metadata/${companyId}/organisations/?data_type=${dataType}&item_type=document&document=draft`
     );
   };
 
   getAllOriginalDocuments = async (companyId, dataType, member) => {
     return await httpApiUrlV2.get(
       `/metadata/${companyId}/organisations/?data_type=${dataType}&document_state=draft&member=couzy&item_type=document` 
-      // `/documents/${companyId}/organisations/?data_type=${dataType}&document_state=draft&document_type=document` 
-      // {{V2_URL}}metadata/6390b313d77dc467630713f2/organisations/?data_type=Real_Data&document_state=draft&member=couzy&item_type=document 
     );
   };
 
@@ -96,10 +91,14 @@ export class DocumentServices {
     );
 
   documentCloneReport = (documentId) => {
-    return httpDocument.get(`/clones/${documentId}/`);
-    // {{base_url}}/documents/:company_id/organisations/?data_type&member&portfolio
+    return httpDocument.get(`/documents/${documentId}/link/?document_type=clone`);
+    // {{base_url}}/documents/:document_id/?document_type
+    // return httpDocument.get(`/document/${documentId}/organisations/data_type=${dataType}&member=couzy&porfolio=couzyTheGroupLead`);
   };
 
-  getOrgDocumentReports = (companyId, dataType, state) => httpApiUrlV2.get(`metadata/${companyId}/organisations/?data_type=${dataType}&document_state=${state}&item_type=document`)
+  getOrgDocumentReportsFinalized = (companyId, dataType, state) => httpApiUrlV2.get(`metadata/${companyId}/organisations/?data_type=${dataType}&document_state=${state}&member=couzy&item_type=clone`)
+  getOrgDocumentReports = (companyId, dataType, state) => httpApiUrlV2.get(`metadata/${companyId}/organisations/?data_type=${dataType}&document_state=${state}&member=couzy&item_type=clone`)
+  // getOrgDocumentReports = (companyId, dataType, state) => httpApiUrlV2.get(`metadata/${companyId}/organisations/?data_type=${dataType}&document_state=${state}&item_type=document`)
+  // {{V2_URL}}metadata/6390b313d77dc467630713f2/organisations/?data_type=Real_Data&document_state=rejected&member=couzy&item_type=clone
    
 }

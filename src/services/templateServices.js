@@ -57,7 +57,9 @@ export class TemplateServices {
   getTemplateReports = (companyId, dataType, templateState, member, portfolio) =>
   httpApiUrlV2.get(
       // {{base_url}}/templates/:company_id/?data_type&template_state&member&portfolio // URL
-      `/templates/${companyId}/?data_type=${dataType}&template_state=${templateState}&member=couzy&portfolio=couzyTheGroupLead`
+      `/templates/${companyId}/?data_type=${dataType}/organisations/&template_state&member=couzy&portfolio=couzyTheGroupLead`
+      
+// https://100094.pythonanywhere.com/v1/companies/6390b313d77dc467630713f2/templates/reports/metadata/?data_type=Real_Data&template_state=draft&portfolio=WorkflowOwner&member=owner
     );
 
     contentTemplate = async (data) => {
