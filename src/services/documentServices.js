@@ -13,9 +13,12 @@ export class DocumentServices {
       return httpDocument.get(`/clones/${data.collection_id}/`);
     }
     if (data.document_state == "draft") {
-      return httpDocument.get(`documents/${data.collection_id}/link/?document_type=document`);
+      return httpDocument.get(`documents/65ccd4479910da1dbad86d63/link/?document_type=document`);
     }
-    return httpDocument.get(`documents/${data.collection_id}/link/`);
+
+    // 65ccd4479910da1dbad86d63
+
+    return httpDocument.get(`documents/${data.collection_id}/link/?document_type=document`);
     // return httpDocument.get(`/${data.collection_id}/`);
   };
 
