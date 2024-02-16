@@ -13,9 +13,7 @@ export class DocumentServices {
       return httpDocument.get(`/clones/${data.collection_id}/`);
     }
     if (data.document_state == "draft") {
-      return httpDocument.get(`documents/${data.collection_id}/link/`);
-      // https://100094.pythonanywhere.com/v2/documents/65cdda9b6898c7cd953dbd80/link/
-      // return httpDocument.get(`documents/${data.collection_id}/?document_type=document`);
+      return httpDocument.get(`documents/${data.collection_id}/link/?document_type=document`);
     }
     return httpDocument.get(`documents/${data.collection_id}/link/`);
     // return httpDocument.get(`/${data.collection_id}/`);
