@@ -83,7 +83,7 @@ const CopyProcessPage = () => {
 
   
       const documentServices = new DocumentServices();
-      const res1 = await documentServices.allDocuments(data.company_id, data.data_type);
+      const res1 = await documentServices.allDocuments(data.company_id, data.data_type, data.member);
       dispatch(
         setAllDocuments(
           res1.data.documents.filter(

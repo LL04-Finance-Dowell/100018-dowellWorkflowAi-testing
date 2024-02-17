@@ -175,7 +175,8 @@ export const allDocuments = createAsyncThunk(
     try {
       const res = await documentServices.allDocuments(
         data.company_id,
-        data.data_type
+        data.data_type,
+        data.member
       )
 
       const documents = filterDocuments(

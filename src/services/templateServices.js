@@ -44,10 +44,10 @@ export class TemplateServices {
     );
   };
 
-  // demoTemplates = (count) =>
-  // httpApiUrlV2.get(
-  //     `companies/6385c0f38eca0fb652c9457e/templates/knowledge-centre/?data_type=Real_Data&page=${count}`
-  //   );
+  demoTemplates = (count) =>
+  httpApiUrlV2.get(
+      `companies/6385c0f38eca0fb652c9457e/templates/knowledge-centre/?data_type=Real_Data&page=${count}`
+    );
   // * The company id for demoTemplates is hard coded to that of Dowell Knowledge Centre
 
   singleTemplateDetail = async (templateId) => {

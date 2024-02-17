@@ -88,7 +88,9 @@ export const AppContextProvider = ({ children }) => {
   const [orgDocsCompletedStatus, setOrgDocsCompletedStatus] = useState('');
   const [orgDocsRejectedStatus, setOrgDocsRejectedStatus] = useState('');
   const [savedDocuments, setSavedDocuments] = useState(null);
+  const [draftDocuments, setDraftDocuments] = useState(null);
   const [savedDocumentsStatus, setSavedDocumentsStatus] = useState('');
+  const [draftDocumentsStatus, setDraftDocumentsStatus] = useState('');
   const [tempReports, setTempReports] = useState(null);
   const [tempReportsStatus, setTempReportsStatus] = useState('');
   const [completedProcesses, setCompletedProcesses] = useState(null);
@@ -303,13 +305,32 @@ export const AppContextProvider = ({ children }) => {
     try {
       const res = await new DocumentServices().getSavedDocuments(
         companyId,
-        dataType
+        dataType,
       );
       setSavedDocuments(res.data ? res.data.clones : []);
     } catch (err) {
       // console.log(err);
     } finally {
       setSavedDocumentsStatus('');
+    }
+  };
+
+  ////////////////////// New
+
+  const fetchDraftDocuments = async () => {
+    setDraftDocumentsStatus('pending');
+    const member = userDetail.userinfo.username
+    try {
+      const res = await new DocumentServices().getDraftDocuments(
+        companyId,
+        dataType,
+        member
+      );
+      setDraftDocuments(res.data ? res.data.clones : []);
+    } catch (err) {
+      // console.log(err);
+    } finally {
+      setDraftDocumentsStatus('');
     }
   };
 
@@ -607,8 +628,11 @@ export const AppContextProvider = ({ children }) => {
         userName,
         portfolioName,
         savedDocuments,
+        draftDocuments,
+        draftDocumentsStatus,
         savedDocumentsStatus,
         fetchSavedDocuments,
+        fetchDraftDocuments,
         isAssignTask,
         setIsAssignTask,
         dataType,
