@@ -80,7 +80,7 @@ const SelectMembersToAssign = ({
   const [usedIdsLoaded, setUsedIdsLoaded] = useState(false);
   const [isTooltipVisible, setIsTooltipVisible] = useState(false);
   const [toggleCreatePublicLink, setToggleCreatePublicLInk] = useState(true)
-  const [numberOfPublicMembers, setNumberOfPublicMembers] = useState(0);
+  const [numberOfPublicMembers, setNumberOfPublicMembers] = useState(null);
   const [inputSelectBox, setInputSelectBox] = useState(false);
   const dispatch = useDispatch();
   const [openOverlayModal, setOpenOverlayModal] = useState(false);
@@ -843,7 +843,7 @@ if (current.header==='Public'&&publicUserAlreadyAdded) {
                     className={`${styles.select__header} ${current.id === item.id && styles.selected
                       }`}
                   >
-                    {t(item.title)}
+                    {t(item.header)}
                   </div>
                 ))
               )}
@@ -1136,11 +1136,12 @@ if (current.header==='Public'&&publicUserAlreadyAdded) {
                   <LoadingSpinner />
                 ) : (
                   <div>
-                  <label className={styles.select_no_public_members_title}  >Enter Number of Public Members </label>
+                
                   <form className={styles.select_no_public_members_form} onSubmit={(e)=>handleSubmit( e, current)}>
                   <input 
                   className={styles.select_no_public_members_input} 
-                    type="number" 
+                    placeholder="Enter Number of Public Members" 
+                    type='number'
                     value={numberOfPublicMembers} 
                     onChange={handleChange}
                   />
