@@ -13,7 +13,8 @@ export class DocumentServices {
       return httpDocument.get(`/clones/${data.collection_id}/`);
     }
     if (data.document_state == "draft") {
-      return httpDocument.get(`documents/65ccd4479910da1dbad86d63/link/?document_type=document`);
+      return httpDocument.get(`documents/${data.collection_id}/link/?document_type=document`);
+      // return httpDocument.get(`documents/65ccd4479910da1dbad86d63/link/?document_type=document`);
     }
 
     // 65ccd4479910da1dbad86d63
@@ -40,10 +41,14 @@ export class DocumentServices {
   // };
 
   getSavedDocuments = (companyId, dataType, member, documentType, pageCount) =>
+    httpApiUrlV2.get(`/metadata/${companyId}/organisations/?data_type=${dataType}&document_state=draft&item_type=document`); 
+
+  getDraftDocuments = (companyId, dataType, member, documentType, pageCount) =>
     httpApiUrlV2.get(`/metadata/${companyId}/organisations/?data_type=${dataType}&document_state=draft&member=${member}&item_type=document`); 
 
   contentDocument = (collection_id, item ) => {
-    return httpDocument.get(`content/65ccd4479910da1dbad86d63/?item_type=document`);
+    return httpDocument.get(`content/${collection_id}/?item_type=document`);
+    // return httpDocument.get(`content/65ccd4479910da1dbad86d63/?item_type=document`);
     // return httpDocument.get(`/${collection_id}/content/?item_type=${item}`);
     // {{base_url}}/content/:item_id/?item_type
   };
@@ -52,17 +57,17 @@ export class DocumentServices {
     return httpDocumentStep.get(`/content/${collection_id}/?item_type=${item}`);
   };
 
-  allDocuments = (companyId, dataType, member) => {
+  allDocuments = (companyId, dataType) => {
     return httpApiUrlV2.get(
-      `metadata/${companyId}/organisations/?data_type=${dataType}&document_state=draft&member${member}&item_type=document`
+      `metadata/${companyId}/organisations/?data_type=${dataType}&document_state=draft&item_type=document`
       // {{V2_URL}}metadata/6390b313d77dc467630713f2/organisations/?data_type=Real_Data&document_state=draft&member=couzy&item_type=document
     );
   };
 
-  // demoDocuments = (pageCount) =>
-  // httpApiUrlV2.get(
-  //     `companies/6385c0f38eca0fb652c9457e/documents/knowledge-centre/?data_type=Real_Data&page=${pageCount}`
-  //   );
+  demoDocuments = (pageCount) =>
+  httpApiUrlV2.get(
+      `companies/6385c0f38eca0fb652c9457e/documents/knowledge-centre/?data_type=Real_Data&page=${pageCount}`
+    );
 
   // * The company id for demoTemplates is hard coded to that of Dowell Knowledge Centre
 
@@ -76,19 +81,21 @@ export class DocumentServices {
 
   getNotifications = async (companyId, dataType, member, portfolio, portfolioName, userName ) => {
     return await httpApiUrlV2.get(
-      `/metadata/${companyId}/organisations/?data_type=${dataType}&document_state=processing&member=couzy&portfolio=${portfolio}&item_type=clone`
+      `/metadata/${companyId}/organisations/?data_type=${dataType}&document_state=processing&member=${member}&portfolio=${portfolio}&item_type=clone`
     );
   };
 
   getAllOriginalDocuments = async (companyId, dataType, member) => {
     return await httpApiUrlV2.get(
-      `/metadata/${companyId}/organisations/?data_type=${dataType}&document_state=draft&member=couzy&item_type=document` 
+      `/metadata/${companyId}/organisations/?data_type=${dataType}&document_state=draft&member=${member}&item_type=document` 
+      // `/metadata/${companyId}/organisations/?data_type=${dataType}&document_state=draft&member=couzy&item_type=document` 
     );
   };
 
-  getDocumentReports = (companyId, dataType, userName, member, portfolioName, portfolio, state) =>
+  getDocumentReports = (companyId, dataType, userName, member, portfolioName, state) =>
   httpApiUrlV2.get(
-      `/documents/${companyId}/organisations/?data_type=${dataType}&member=couzy&portfolio=couzyTheGruopLead`
+      `/documents/${companyId}/organisations/?data_type=${dataType}&member=${member}&portfolio=${portfolioName}`
+      // `/documents/${companyId}/organisations/?data_type=${dataType}&member=couzy&portfolio=couzyTheGruopLead`
     );
 
   documentCloneReport = (documentId) => {
@@ -97,8 +104,8 @@ export class DocumentServices {
     // return httpDocument.get(`/document/${documentId}/organisations/data_type=${dataType}&member=couzy&porfolio=couzyTheGroupLead`);
   };
 
-  getOrgDocumentReportsFinalized = (companyId, dataType, state) => httpApiUrlV2.get(`metadata/${companyId}/organisations/?data_type=${dataType}&document_state=${state}&member=couzy&item_type=clone`)
-  getOrgDocumentReports = (companyId, dataType, state) => httpApiUrlV2.get(`metadata/${companyId}/organisations/?data_type=${dataType}&document_state=${state}&member=couzy&item_type=clone`)
+  getOrgDocumentReportsFinalized = (companyId, dataType, state, member) => httpApiUrlV2.get(`metadata/${companyId}/organisations/?data_type=${dataType}&document_state=finalized&item_type=clone`)
+  getOrgDocumentReports = (companyId, dataType, state, member) => httpApiUrlV2.get(`metadata/${companyId}/organisations/?data_type=${dataType}&document_state=${state}&member=${member}&item_type=clone`)
   // getOrgDocumentReports = (companyId, dataType, state) => httpApiUrlV2.get(`metadata/${companyId}/organisations/?data_type=${dataType}&document_state=${state}&item_type=document`)
   // {{V2_URL}}metadata/6390b313d77dc467630713f2/organisations/?data_type=Real_Data&document_state=rejected&member=couzy&item_type=clone
    
