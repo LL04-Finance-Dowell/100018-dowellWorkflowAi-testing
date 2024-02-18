@@ -104,7 +104,7 @@ export class DocumentServices {
     // return httpDocument.get(`/document/${documentId}/organisations/data_type=${dataType}&member=couzy&porfolio=couzyTheGroupLead`);
   };
 
-  getOrgDocumentReportsFinalized = (companyId, dataType, state, member) => httpApiUrlV2.get(`metadata/${companyId}/organisations/?data_type=${dataType}&document_state=${state}&member=${member}&item_type=clone`)
+  getOrgDocumentReportsFinalized = (companyId, dataType, state, member) => httpApiUrlV2.get(`metadata/${companyId}/organisations/?data_type=${dataType}&document_state=finalized&item_type=clone`)
   getOrgDocumentReports = (companyId, dataType, state, member) => httpApiUrlV2.get(`metadata/${companyId}/organisations/?data_type=${dataType}&document_state=${state}&member=${member}&item_type=clone`)
   // getOrgDocumentReports = (companyId, dataType, state) => httpApiUrlV2.get(`metadata/${companyId}/organisations/?data_type=${dataType}&document_state=${state}&item_type=document`)
   // {{V2_URL}}metadata/6390b313d77dc467630713f2/organisations/?data_type=Real_Data&document_state=rejected&member=couzy&item_type=clone

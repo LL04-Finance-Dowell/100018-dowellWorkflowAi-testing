@@ -248,12 +248,15 @@ export const AppContextProvider = ({ children }) => {
   const fetchOrgDocumentReports = async (state) => {
     if (state === 'finalized') setOrgDocsCompletedStatus('pending');
     else if (state === 'rejected') setOrgDocsRejectedStatus('pending');
+    const member = userDetail.userinfo.username
     try {
       const res = await new DocumentServices().getOrgDocumentReports(
         companyId,
         dataType,
-        state
+        state,
+        member
       );
+       
       const resp = await new DocumentServices().getOrgDocumentReportsFinalized(
         companyId,
         dataType,
