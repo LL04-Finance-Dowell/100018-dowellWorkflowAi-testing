@@ -156,6 +156,7 @@ const ProcessDocument = ({ savedProcess, Process_title, setProcess_title, addWor
         true,
 
       );
+      console.log("processObjToSave",processObjToSave);
       setProcessObjectToSave(processObjToSave);
       dispatch(setAllowErrorChecksStatusUpdateForNewProcess(true));
       return setShowConfirmationModalForSaveLater(true);
@@ -195,6 +196,7 @@ const ProcessDocument = ({ savedProcess, Process_title, setProcess_title, addWor
 
     setIsLoading(true);
     const Api_key = creditResponse?.api_key;
+    
     axios
       .post(
         `https://100105.pythonanywhere.com/api/v3/process-services/?type=product_service&api_key=${Api_key}`,
@@ -209,6 +211,7 @@ const ProcessDocument = ({ savedProcess, Process_title, setProcess_title, addWor
           setNewProcessLoading(true);
 
           try {
+            console.log("processObjToSave",processObjToSave);
             const response = await (
               await startNewProcess(processObjToPost)
             ).data;

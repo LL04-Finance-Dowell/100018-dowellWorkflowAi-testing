@@ -25,8 +25,11 @@ import { useAppContext } from '../../../../../../contexts/AppContext';
 import { LoadingSpinner } from '../../../../../LoadingSpinner/LoadingSpinner';
 import { httpProcess } from '../../../../../../httpCommon/httpCommon';
 import { useTranslation } from 'react-i18next';
-import CreateGroup from './CreateGroup/CreateGroup';
+import CreateGroup from '../../../../../../features/groups/CreateGroup/CreateGroup';
 import { FaGlasses } from 'react-icons/fa';
+import { getGroups } from '../../../../../../features/groups/groupThunk';
+import { selectAllGroups } from '../../../../../../features/groups/groupsSlice';
+import ReactSelect from 'react-select';
 
 const SelectMembersToAssign = ({
   currentStepIndex,
@@ -34,7 +37,6 @@ const SelectMembersToAssign = ({
   currentEnabledSteps,
 }) => {
   const [selectMembersComp, setSelectMembersComp] = useState(selectMembers);
-
 
   const [current, setCurrent] = useState(selectMembers[0]);
   const { register } = useForm();
@@ -84,6 +86,9 @@ const SelectMembersToAssign = ({
   const [inputSelectBox, setInputSelectBox] = useState(false);
   const dispatch = useDispatch();
   const [openOverlayModal, setOpenOverlayModal] = useState(false);
+
+  const AllGroups = useSelector(selectAllGroups);
+const [groupData,setGroupData]=useState()
   const handleSetCurrent = (item) => {
     // console.log('handlesetcurrent is ', item)
     setCurrent(item);
@@ -120,7 +125,7 @@ const SelectMembersToAssign = ({
       return;
     }
   });
-
+  const { handleSubmit:handleGroup, control } = useForm();
   useEffect(() => {
  
     switch (current.header) {
@@ -207,6 +212,7 @@ const SelectMembersToAssign = ({
             member.teams = workflowTeams?.filter(
               (team) => team.team_type === 'team'
             );
+       
             return member;
           }
           if (member.header === 'Users') {
@@ -217,15 +223,19 @@ const SelectMembersToAssign = ({
             );
             return member;
           }
+          if(member.header==='Groups'){
+            member.groups = [...AllGroups]
+          }
   
           member.portfolios = extractAndFormatPortfoliosForMembers('public');
           member.teams = workflowTeams.filter(
             (team) => team.team_type === 'public'
           );
+         
           return member;
         }
       );
-  
+     
       setSelectMembersComp(updatedMembersState);
       setSelectedMembersSet(true);
     }, [
@@ -233,7 +243,8 @@ const SelectMembersToAssign = ({
       workflowTeamsLoaded,
       workflowTeams,
       selectedMembersForProcess,
-      usedIdsLoaded
+      usedIdsLoaded,
+      AllGroups
     ]);
 
     useEffect(() => {
@@ -261,7 +272,30 @@ const SelectMembersToAssign = ({
   
       fetchData();
     }, [userDetail]);
+
+    useEffect(() => {
+      const fetchData = async () => {
+        const company_id = userDetail?.portfolio_info[0]?.org_id;
+        await dispatch(
+          getGroups({ company_id: company_id, data_type: "Real_Data" })
+        );
+      };
   
+      fetchData();
+    }, [userDetail]);
+  
+    useEffect(() => {
+      if (AllGroups?.length<=0) return;
+
+      const Reformat = AllGroups?.map((data) => {
+        return {
+          label: data.group_name,
+          value: data,
+        };
+      });
+      setGroupData([...Reformat]);
+    }, [AllGroups]);
+
   useEffect(() => {
     if (!currentRadioOptionSelection) return;
 
@@ -506,6 +540,10 @@ if (current.header==='Public'&&publicUserAlreadyAdded) {
       parsedSelectedJsonValue,
       current.header
     );
+  };
+  const handleSelectGroups = (parsedSelectedJsonValue) => {
+    
+console.log("parsedSelectedJsonValue",parsedSelectedJsonValue);
   };
 
   const handleAddNewMember = (parsedSelectedJsonValue) => {
@@ -809,6 +847,14 @@ if (current.header==='Public'&&publicUserAlreadyAdded) {
   const handleSubmit = (e, all) => {
     e.preventDefault();
   };
+const [selectedGroups, setSelectedGroups] = useState()
+  const handleGroupSelect = (e) => {
+
+    setSelectedGroups(e.value)
+  };
+
+
+
   return (
     <div className={styles.container} id='selectTeam'>
       {processSteps?.find(
@@ -1040,7 +1086,7 @@ if (current.header==='Public'&&publicUserAlreadyAdded) {
                 </Radio>
                 </div>}
               </div>
-             {current.header!=="Public"&& <div
+             {current.header!=="Public"&& current.header!=="Groups"&&<div
                 ref={teamMembersRef}
                 className={styles.team__Select__Wrapper}
               >
@@ -1126,6 +1172,24 @@ if (current.header==='Public'&&publicUserAlreadyAdded) {
                       ))
                     )}
                   </select>
+                )}
+              </div>}
+              {current.header==="Groups"&& <div
+                ref={teamMembersRef}
+                className={styles.team__Select__Wrapper}
+              >
+                {!workflowTeamsLoaded ? (
+                  <LoadingSpinner />
+                ) : (
+                  <ReactSelect
+                    register={register}
+                      isMulti
+                      menuPortalTarget={document.body}
+                      options={groupData}
+                      name='group_name'
+                      value={groupData.find((c) => c.value?.group_name === selectedGroups?.group_name)}
+                      onChange={handleGroupSelect }
+                    ></ReactSelect>
                 )}
               </div>}
                {current.header==="Public"&&inputSelectBox&& <div
@@ -1378,7 +1442,7 @@ if (current.header==='Public'&&publicUserAlreadyAdded) {
                             </button>}
                             {
                   openOverlayModal ?  <div style={{position:'relative', marginLeft:'20%', background:'none'}}>
-                    <CreateGroup handleOverlay={()=>handleOverlayBtn()}/>
+                    <CreateGroup dropdownData={selectMembersComp} handleOverlay={()=>handleOverlayBtn()}/>
                   </div> : ""
                 }
             </div>
@@ -1496,6 +1560,7 @@ export const selectMembers = [
     selectMembers: 'Select Members',
     teams: [],
     portfolios: [],
+    groups:[]
   },
   {
     id: uuidv4(),
@@ -1506,6 +1571,7 @@ export const selectMembers = [
     selectMembers: 'Select Users',
     teams: [],
     portfolios: [],
+    groups:[]
   },
   {
     id: uuidv4(),
@@ -1516,6 +1582,7 @@ export const selectMembers = [
     selectMembers: 'Select Public',
     teams: [],
     portfolios: [],
+    groups:[]
   },
   {
     id: uuidv4(),
@@ -1526,5 +1593,6 @@ export const selectMembers = [
     selectMembers: 'Select Groups',
     teams: [],
     portfolios: [],
+    groups:[]
   },
 ];

@@ -13,6 +13,8 @@ import thunk from "redux-thunk";
 
 ///process copy reducer
 import processCopyReducer from "../features/processCopyReducer";
+//groups
+import groupsReducer from "../features/groups/groupsSlice";
 
 const persistConfig = {
   key: "root",
@@ -29,6 +31,7 @@ const rootReducer = combineReducers({
   settings: settingsReducer,
   favorites: favoritesReducer,
   copyProcess : processCopyReducer,
+  groups:groupsReducer
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

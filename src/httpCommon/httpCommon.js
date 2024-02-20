@@ -71,3 +71,7 @@ export const httpArchive = axios.create({ baseURL: api_url_v2 + "archives" });
 export const httpWorkflowNew = axios.create({
   baseURL: api_url_workflow + "workflows",
 });
+
+//groups
+
+export const httpGroups = axios.create({ baseURL: api_url_v2 + "groups" });
