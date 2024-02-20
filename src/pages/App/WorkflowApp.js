@@ -18,7 +18,7 @@ import {
   setNotificationsForUser,
   setNotificationsLoaded,
   setNotificationsLoading,
-} from '../../features/app/appSlice';
+} from '../../features/notifications/notificationSlice';
 import Iframe from '../../components/iFrame/Iframe';
 import Skeleton from '../../components/skeloton/Skeleton';
 
@@ -34,13 +34,16 @@ import ApiKeyFailureModal from '../../components/apiKeyFailureModal/ApiKeyFailur
 const WorkflowApp = () => {
   const { userDetail } = useSelector((state) => state.auth);
   const {
+    ShowProfileSpinner,
+    showApiKeyFetchFailureModal,
+  } = useSelector((state) => state.app);
+
+  const {
     notificationsLoading,
     notificationsForUser,
     notificationFinalStatus,
     notificationsLoaded,
-    ShowProfileSpinner,
-    showApiKeyFetchFailureModal,
-  } = useSelector((state) => state.app);
+  } = useSelector((state) => state.notification);
 
   // // console.log('notification: ', notificationsForUser);
 

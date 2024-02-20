@@ -9,7 +9,7 @@ import { useTranslation } from 'react-i18next';
 
 const Notifications = ({toggleSidebar, isMobile}) => {
   const { t } = useTranslation();
-  const { notificationsForUser } = useSelector((state) => state.app);
+  const { notificationsForUser } = useSelector((state) => state.notification);
   const [notificationItems, setNotificationItems] = useState(items);
 
   useEffect(() => {
