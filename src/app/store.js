@@ -13,6 +13,7 @@ import thunk from "redux-thunk";
 
 ///process copy reducer
 import processCopyReducer from "../features/processCopyReducer";
+import notificationReducer from "../features/notifications/notificationSlice";
 
 const persistConfig = {
   key: "root",
@@ -29,6 +30,7 @@ const rootReducer = combineReducers({
   settings: settingsReducer,
   favorites: favoritesReducer,
   copyProcess : processCopyReducer,
+  notification: notificationReducer,
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
