@@ -25,8 +25,11 @@ import { useAppContext } from '../../../../../../contexts/AppContext';
 import { LoadingSpinner } from '../../../../../LoadingSpinner/LoadingSpinner';
 import { httpProcess } from '../../../../../../httpCommon/httpCommon';
 import { useTranslation } from 'react-i18next';
-import CreateGroup from './CreateGroup/CreateGroup';
+import CreateGroup from '../../../../../../features/groups/CreateGroup/CreateGroup';
 import { FaGlasses } from 'react-icons/fa';
+import { getGroups } from '../../../../../../features/groups/groupThunk';
+import { createGroupInsertId, selectAllGroups, setSelectedGroupsMembers } from '../../../../../../features/groups/groupsSlice';
+import ReactSelect from 'react-select';
 
 const SelectMembersToAssign = ({
   currentStepIndex,
@@ -34,7 +37,6 @@ const SelectMembersToAssign = ({
   currentEnabledSteps,
 }) => {
   const [selectMembersComp, setSelectMembersComp] = useState(selectMembers);
-
 
   const [current, setCurrent] = useState(selectMembers[0]);
   const { register } = useForm();
@@ -84,6 +86,12 @@ const SelectMembersToAssign = ({
   const [inputSelectBox, setInputSelectBox] = useState(false);
   const dispatch = useDispatch();
   const [openOverlayModal, setOpenOverlayModal] = useState(false);
+  const [selectedGroups, setSelectedGroups] = useState([]);
+  const AllGroups = useSelector(selectAllGroups);
+  const insertID = useSelector(createGroupInsertId);
+  const [groupData,setGroupData]=useState([])
+  const [totalPublicVal, setTotalPublicVal] = useState(current.portfolios.filter((item) => !usedId.some((link) => link?.member === item?.member)).length)
+
   const handleSetCurrent = (item) => {
     // console.log('handlesetcurrent is ', item)
     setCurrent(item);
@@ -98,8 +106,9 @@ const SelectMembersToAssign = ({
 
 
   useClickInside(teamMembersRef, () => {
-    if (!currentRadioOptionSelection)
-      return toast.info('Please check either option above');
+    if (!currentRadioOptionSelection){
+      if(current.header!=="Groups")
+      return toast.info('Please check either option above');}
   });
 
   useClickInside(selectMembersRef, () => {
@@ -207,6 +216,7 @@ const SelectMembersToAssign = ({
             member.teams = workflowTeams?.filter(
               (team) => team.team_type === 'team'
             );
+       
             return member;
           }
           if (member.header === 'Users') {
@@ -217,15 +227,19 @@ const SelectMembersToAssign = ({
             );
             return member;
           }
+          if(member.header==='Groups'){
+            member.groups = [...AllGroups]
+          }
   
           member.portfolios = extractAndFormatPortfoliosForMembers('public');
           member.teams = workflowTeams.filter(
             (team) => team.team_type === 'public'
           );
+         
           return member;
         }
       );
-  
+     
       setSelectMembersComp(updatedMembersState);
       setSelectedMembersSet(true);
     }, [
@@ -233,7 +247,8 @@ const SelectMembersToAssign = ({
       workflowTeamsLoaded,
       workflowTeams,
       selectedMembersForProcess,
-      usedIdsLoaded
+      usedIdsLoaded,
+      AllGroups
     ]);
 
     useEffect(() => {
@@ -261,7 +276,31 @@ const SelectMembersToAssign = ({
   
       fetchData();
     }, [userDetail]);
+
+// fetch group
+    useEffect(() => {
+      const fetchData = async () => {
+        const company_id = userDetail?.portfolio_info[0]?.org_id;
+        await dispatch(
+          getGroups({ company_id: company_id, data_type: "Real_Data" })
+        );
+      };
   
+      fetchData();
+    }, [insertID,userDetail]);
+  
+    useEffect(() => {
+      if (AllGroups?.length<=0) return;
+
+      const Reformat = AllGroups?.map((data) => {
+        return {
+          label: data.group_name,
+          value: data,
+        };
+      });
+      setGroupData([...Reformat]);
+    }, [AllGroups]);
+
   useEffect(() => {
     if (!currentRadioOptionSelection) return;
 
@@ -335,48 +374,8 @@ const SelectMembersToAssign = ({
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentRadioOptionSelection, currentGroupSelectionItem,numberOfPublicMembers,currentStepIndex]);
-  const handleAddNewPublic = (parsedSelectedJsonValue) => {
-    if (!current || !current.header) return;
-    selectMemberOptionRef.current = '';
-    const publicUserAlreadyAdded = publicMembersSelectedForProcess?.find(
-      (pubMember) =>
-        pubMember.member === parsedSelectedJsonValue.member &&
-        pubMember.portfolio === parsedSelectedJsonValue.portfolio &&
-        pubMember.stepIndex === currentStepIndex
-    );
-if (current.header==='Public'&&!publicUserAlreadyAdded) {
-  dispatch(
-    setPublicMembersSelectedForProcess({
-      member: parsedSelectedJsonValue.member,
-      portfolio: parsedSelectedJsonValue.portfolio,
-      stepIndex: currentStepIndex,
-    })
-  )
-}
-   
 
-  };
-  const handleRemovePublic = (parsedSelectedJsonValue) => {
-    if (!current || !current.header) return;
-    selectMemberOptionRef.current = '';
-    const publicUserAlreadyAdded = publicMembersSelectedForProcess?.find(
-      (pubMember) =>
-        pubMember.member === parsedSelectedJsonValue.member &&
-        pubMember.portfolio === parsedSelectedJsonValue.portfolio &&
-        pubMember.stepIndex === currentStepIndex
-    );
-if (current.header==='Public'&&publicUserAlreadyAdded) {
-  dispatch(
-    removeFromPublicMembersSelectedForProcess({
-      member: parsedSelectedJsonValue.member,
-      portfolio: parsedSelectedJsonValue.portfolio,
-      stepIndex: currentStepIndex,
-    })
-  )
-}
-   
 
-  };
   useEffect(() => {
     if (!stepsPopulated || featuresUpdatedFromDraft) return;
 
@@ -507,6 +506,7 @@ if (current.header==='Public'&&publicUserAlreadyAdded) {
       current.header
     );
   };
+
 
   const handleAddNewMember = (parsedSelectedJsonValue) => {
     if (!current || !current.header) return;
@@ -809,7 +809,36 @@ if (current.header==='Public'&&publicUserAlreadyAdded) {
   const handleSubmit = (e, all) => {
     e.preventDefault();
   };
-  return (
+
+  const handleGroupSelect = (selectedGroups) => {
+
+    const reformatData = selectedGroups.map((data)=>{
+      const publicMemberVal = {...data.value}
+      const countPublic = parseInt(publicMemberVal.public_members);
+ 
+      let publicVal = [];
+
+      if(countPublic>0 && countPublic<=totalPublicVal){
+      publicVal = current.portfolios.slice(0,countPublic);
+    }
+    delete publicMemberVal.public_members
+      return {...publicMemberVal,public:publicVal,stepIndex:currentStepIndex}
+    })
+    
+    const labelsData = selectedGroups.map((data)=>{
+      return data.label
+    })
+
+
+    setSelectedGroups(labelsData)
+    dispatch(setSelectedGroupsMembers(reformatData))
+  };
+
+useEffect(() => {
+  setTotalPublicVal(current.portfolios.filter((item) => !usedId.some((link) => link?.member === item?.member)).length)
+}, [current.portfolios,usedId])
+
+ return (
     <div className={styles.container} id='selectTeam'>
       {processSteps?.find(
         (process) => process.workflow === docCurrentWorkflow?._id
@@ -869,63 +898,63 @@ if (current.header==='Public'&&publicUserAlreadyAdded) {
                 {t(current.title)}
               </h3>
               <div>
-                <div className={styles.radContainer}>
-                <Radio
-                  register={register}
-                  name={
-                    'selectItemOptionForUser-' +
-                    currentStepIndex +
-                    '-' +
-                    current.header
-                  }
-                  value={'all' + current.header}
-                  checked={
-                    userTypeOptionsEnabled?.find(
-                      (option) =>
-                        option.name === current.header &&
-                        option.stepIndex === currentStepIndex
-                    ) &&
-                      currentRadioOptionSelection &&
-                      radioOptionsEnabledInStep?.find(
-                        (option) =>
-                          option.stepIndex === currentStepIndex &&
-                          option.currentHeader === current.header &&
-                          option.name ===
-                          'selectItemOptionForUser-' +
-                          currentStepIndex +
-                          '-' +
-                          current.header
-                      )?.valueActive ===
+            {current.header!=="Groups"&&<div className={styles.radContainer}>
+            <Radio
+              register={register}
+              name={
+                'selectItemOptionForUser-' +
+                currentStepIndex +
+                '-' +
+                current.header
+              }
+              value={'all' + current.header}
+              checked={
+                userTypeOptionsEnabled?.find(
+                  (option) =>
+                    option.name === current.header &&
+                    option.stepIndex === currentStepIndex
+                ) &&
+                  currentRadioOptionSelection &&
+                  radioOptionsEnabledInStep?.find(
+                    (option) =>
+                      option.stepIndex === currentStepIndex &&
+                      option.currentHeader === current.header &&
+                      option.name ===
+                      'selectItemOptionForUser-' +
+                      currentStepIndex +
+                      '-' +
+                      current.header
+                  )?.valueActive ===
+                  'all' + current.header
+                  ? true
+                  : false
+              }
+              onChange={
+                userTypeOptionsEnabled?.find(
+                  (option) =>
+                    option.name === current.header &&
+                    option.stepIndex === currentStepIndex
+                )
+                  ? () =>{
+                  
+                    handleUserGroupSelection(
+                      current.all + ' first',
+                      { ...current, allSelected: true,someSelected: false },
+                      current.header,
+                      'selectItemOptionForUser-' +
+                      currentStepIndex +
+                      '-' +
+                      current.header,
                       'all' + current.header
-                      ? true
-                      : false
-                  }
-                  onChange={
-                    userTypeOptionsEnabled?.find(
-                      (option) =>
-                        option.name === current.header &&
-                        option.stepIndex === currentStepIndex
-                    )
-                      ? () =>{
-                     
-                        handleUserGroupSelection(
-                          current.all + ' first',
-                          { ...current, allSelected: true,someSelected: false },
-                          current.header,
-                          'selectItemOptionForUser-' +
-                          currentStepIndex +
-                          '-' +
-                          current.header,
-                          'all' + current.header
-                        )}
-                      : (e) =>
-                        handleDisabledUserOptionSelection(e, current.title)
-                  }
-                  className={styles.radBtn}
-                >
-                  Select all {current.header}
-                </Radio>
-                </div>
+                    )}
+                  : (e) =>
+                    handleDisabledUserOptionSelection(e, current.title)
+              }
+              className={styles.radBtn}
+            >
+              Select all {current.header}
+            </Radio>
+            </div>}
                 {current.header!=="Groups"&&current.header!=="Public"&&  <div className={styles.radContainer}>
                 <Radio
                   register={register}
@@ -1040,7 +1069,7 @@ if (current.header==='Public'&&publicUserAlreadyAdded) {
                 </Radio>
                 </div>}
               </div>
-             {current.header!=="Public"&& <div
+             {current.header!=="Public"&& current.header!=="Groups"&&<div
                 ref={teamMembersRef}
                 className={styles.team__Select__Wrapper}
               >
@@ -1126,6 +1155,36 @@ if (current.header==='Public'&&publicUserAlreadyAdded) {
                       ))
                     )}
                   </select>
+                )}
+              </div>}
+              {current.header==="Groups"&& <div
+                ref={teamMembersRef}
+                className={styles.team__Select__Wrapper}
+              >
+                {!workflowTeamsLoaded ? (
+                  <LoadingSpinner />
+                ) : (
+                  <ReactSelect
+                    register={register}
+                      isMulti
+                      menuPortalTarget={document.body}
+                      options={groupData}
+                      name='group_name'
+                      onFocus={(e)=> !userTypeOptionsEnabled?.find(
+                        (option) =>
+                          option.name === current.header &&
+                          option.stepIndex === currentStepIndex
+                      )
+                        && handleDisabledUserOptionSelection(e, current.title)} 
+                        isOptionDisabled ={()=>!userTypeOptionsEnabled?.find(
+                          (option) =>
+                            option.name === current.header &&
+                            option.stepIndex === currentStepIndex
+                        )}
+                      
+                     value={groupData?.find((c) => c.value?.group_name === selectedGroups?.group_name)}
+                      onChange={handleGroupSelect}
+                    ></ReactSelect>
                 )}
               </div>}
                {current.header==="Public"&&inputSelectBox&& <div
@@ -1378,7 +1437,7 @@ if (current.header==='Public'&&publicUserAlreadyAdded) {
                             </button>}
                             {
                   openOverlayModal ?  <div style={{position:'relative', marginLeft:'20%', background:'none'}}>
-                    <CreateGroup handleOverlay={()=>handleOverlayBtn()}/>
+                    <CreateGroup totalPublicMembersVal={totalPublicVal} dropdownData={selectMembersComp} handleOverlay={()=>handleOverlayBtn()}/>
                   </div> : ""
                 }
             </div>
@@ -1496,6 +1555,7 @@ export const selectMembers = [
     selectMembers: 'Select Members',
     teams: [],
     portfolios: [],
+    groups:[]
   },
   {
     id: uuidv4(),
@@ -1506,6 +1566,7 @@ export const selectMembers = [
     selectMembers: 'Select Users',
     teams: [],
     portfolios: [],
+    groups:[]
   },
   {
     id: uuidv4(),
@@ -1516,6 +1577,7 @@ export const selectMembers = [
     selectMembers: 'Select Public',
     teams: [],
     portfolios: [],
+    groups:[]
   },
   {
     id: uuidv4(),
@@ -1526,5 +1588,6 @@ export const selectMembers = [
     selectMembers: 'Select Groups',
     teams: [],
     portfolios: [],
+    groups:[]
   },
 ];

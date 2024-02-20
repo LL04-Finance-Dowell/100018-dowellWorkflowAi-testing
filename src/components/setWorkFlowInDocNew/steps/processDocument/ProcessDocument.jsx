@@ -32,6 +32,7 @@ import { productName } from "../../../../utils/helpers";
 
 //import reset copy data 
 import { resetCopyData } from "../../../../features/processCopyReducer";
+import { selectedGroupMembers } from "../../../../features/groups/groupsSlice";
 
 const ProcessDocument = ({ savedProcess, Process_title, setProcess_title, addWorkflowStep }) => {
   // const [ScrollView , SetScrollView] = useState();
@@ -91,11 +92,11 @@ const ProcessDocument = ({ savedProcess, Process_title, setProcess_title, addWor
     showConfirmationModalForSaveLater,
     setShowConfirmationModalForSaveLater,
   ] = useState(false);
-
+  const selectedGroupMem = useSelector(selectedGroupMembers)
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { t } = useTranslation();
-  const [processName, setProcessName] = useState("");
+
   const [isLoading, setIsLoading] = useState(false);
 
   const handleProcessBtnClick = async () => {
@@ -153,9 +154,11 @@ const ProcessDocument = ({ savedProcess, Process_title, setProcess_title, addWor
         teamMembersSelectedForProcess,
         publicMembersSelectedForProcess,
         userMembersSelectedForProcess,
+        selectedGroupMem,
         true,
 
       );
+      console.log("processObjToSave",processObjToSave);
       setProcessObjectToSave(processObjToSave);
       dispatch(setAllowErrorChecksStatusUpdateForNewProcess(true));
       return setShowConfirmationModalForSaveLater(true);
@@ -172,7 +175,7 @@ const ProcessDocument = ({ savedProcess, Process_title, setProcess_title, addWor
       teamMembersSelectedForProcess,
       publicMembersSelectedForProcess,
       userMembersSelectedForProcess,
-
+      selectedGroupMem
     );
 
     if (processObjToPost.error) {
@@ -195,7 +198,13 @@ const ProcessDocument = ({ savedProcess, Process_title, setProcess_title, addWor
 
     setIsLoading(true);
     const Api_key = creditResponse?.api_key;
-    axios
+    try {
+      setNewProcessLoading(true);
+      const processRes = await startNewProcess(processObjToPost)
+   
+      if(processRes.statusText==="OK"){
+      ///product_service after
+      axios
       .post(
         `https://100105.pythonanywhere.com/api/v3/process-services/?type=product_service&api_key=${Api_key}`,
         {
@@ -203,105 +212,98 @@ const ProcessDocument = ({ savedProcess, Process_title, setProcess_title, addWor
           sub_service_ids: ["DOWELL100264"],
         }
       )
-      .then(async (response) => {
-        // // console.log("the res from axios is ", response);
-        if (response.data.success == true) {
-          setNewProcessLoading(true);
-
-          try {
-            const response = await (
-              await startNewProcess(processObjToPost)
-            ).data;
-            // // console.log("the process obj to post is ", processObjToPost);
-            // // console.log("the response from adding new process is ", response);
-
-            // // console.log('the user Details are ', userDetail)
-            if (processObjToPost.workflows[0].workflows.steps[0].stepPublicMembers.length > 0) {
-              try {
-                const company_id = userDetail?.portfolio_info?.length > 1 ? userDetail?.portfolio_info.find(portfolio => portfolio.product === productName)?.org_id : userDetail?.portfolio_info[0]?.org_id
-                const publicData = {
-                  "process_id": response.process_id,
-                  "member": userDetail.userinfo.username,
-                  "company_id": company_id,
-                  "qr_ids": processObjToPost.workflows[0].workflows.steps[0].stepPublicMembers
-                }
-                const requestOptions = {
-                  method: 'POST',
-                  headers: {
-                    'Content-Type': 'application/json',
-
-                  },
-                  body: JSON.stringify(publicData),
-                };
-                fetch(`https://100094.pythonanywhere.com/v2/processes/${company_id}/public/`, requestOptions)
-                  .then((response) => {
-                    if (!response.ok) {
-                      throw new Error('Network response was not ok');
-                    }
-                    return response.json();
-
-                  })
-                  .then((data) => {
-
-                    // // console.log('Response from the POST request to add to public is :', data);
-                  })
-                  .catch((error) => {
-
-                    console.error('Error:', error);
-                  });
-              }
-              catch (err) {
-                // console.log(err.response)
-              }
-            }
-
-
-
-            dispatch(setAllowErrorChecksStatusUpdateForNewProcess(true));
-            dispatch(setNewProcessErrorMessage(null));
-            setProcess_title("");
-            setNewProcessLoaded(true);
-            setNewProcessLoading(false);
-            if (
-              processActionOptionsWithLinkReturned.includes(
-                newProcessActionOptions[`${processOptionSelection}`]
-              )
-            ) {
-              setGeneratedLinks(
-                Array.isArray(response) ? response[0] : response
-              );
-              setmasterLink(
-                Array.isArray(response) ? response.master_link : response
-              );
-              setShowGeneratedLinksPopup(true);
-              setNewProcessLoaded(false);
-              return;
-            }
-            toast.success(
-              typeof response === "string"
-                ? response
-                : "Successfully created new process"
-            );
-
-            setNewProcessLoaded(false);
-          } catch (err) {
-            setNewProcessLoading(false);
-
-            toast.info(
-              err.response
-                ? err.response.status === 500
-                  ? "New process creation failed"
-                  : err.response.data
-                : "New process creation failed"
-            );
-            dispatch(setPopupIsOpen(true));
-          }
-        }
+      .then(async (res) => {
+   
+    
       })
       .catch((error) => {
         // console.log(error);
         toast.info(error.response?.data?.message);
       });
+        ///*****************product_service after
+      }
+     const  response = processRes.data;
+
+      if (processObjToPost.workflows[0].workflows.steps[0].stepPublicMembers.length > 0) {
+        try {
+          const company_id = userDetail?.portfolio_info?.length > 1 ? userDetail?.portfolio_info.find(portfolio => portfolio.product === productName)?.org_id : userDetail?.portfolio_info[0]?.org_id
+          const publicData = {
+            "process_id": response.process_id,
+            "member": userDetail.userinfo.username,
+            "company_id": company_id,
+            "qr_ids": processObjToPost.workflows[0].workflows.steps[0].stepPublicMembers
+          }
+          const requestOptions = {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+
+            },
+            body: JSON.stringify(publicData),
+          };
+          fetch(`https://100094.pythonanywhere.com/v2/processes/${company_id}/public/`, requestOptions)
+            .then((response) => {
+              if (!response.ok) {
+                throw new Error('Network response was not ok');
+              }
+              
+              return response.json();
+
+            })
+            .then((data) => {
+
+              // // console.log('Response from the POST request to add to public is :', data);
+            })
+            .catch((error) => {
+
+              console.error('Error:', error);
+            });
+        }
+        catch (err) {
+          // console.log(err.response)
+        }
+      }
+      if (
+        processActionOptionsWithLinkReturned.includes(
+          newProcessActionOptions[`${processOptionSelection}`]
+        )
+      ) {
+        setGeneratedLinks(
+          Array.isArray(response) ? response[0] : response
+        );
+        setmasterLink(
+          Array.isArray(response) ? response.master_link : response
+        );
+        setShowGeneratedLinksPopup(true);
+        setNewProcessLoaded(false);
+        return;
+      }
+      toast.success(
+        typeof response === "string"
+          ? response
+          : "Successfully created new process"
+      );
+
+
+      dispatch(setAllowErrorChecksStatusUpdateForNewProcess(true));
+      dispatch(setNewProcessErrorMessage(null));
+      setProcess_title("");
+      setNewProcessLoaded(true);
+      setNewProcessLoading(false);
+      setNewProcessLoaded(false);
+    } catch (err) {
+      setNewProcessLoading(false);
+
+      toast.info(
+        err.response
+          ? err.response.status === 500
+            ? "New process creation failed"
+            : err.response.data
+          : "New process creation failed"
+      );
+      dispatch(setPopupIsOpen(true));
+    }
+   
     setIsLoading(false);
   };
 

@@ -20,10 +20,10 @@ export const extractProcessObjChecker = (
   teamMembersSelected,
   publicMembersSelected,
   userMembersSelected,
+  groupMembersSelected,
   skipDataChecks = false
 ) => {
-
-  /**
+/**
    * Extracts process object necessary for creating a new document process.
    * 
    * @param currentUserDetails The current logged-in user details.
@@ -34,6 +34,7 @@ export const extractProcessObjChecker = (
    * @param selectedDocumentContentMap The document map of the selected document.
    * @param teamMembersSelected The array of team members selected for the document to be processed.
    * @param publicMembersSelected The array of public members selected for the document to be processed.
+   * @param groupMembersSelected The array of public members selected for the document to be processed.
    * @param userMembersSelected The array of user members selected for the document to be processed.
    * @param skipDataChecks Specifies whether or not to check the process object for necessary details needed for successful process creation.
    * 
@@ -92,6 +93,14 @@ export const extractProcessObjChecker = (
             copyOfUserItem.member = copyOfUserItem.member[0];
           delete copyOfUserItem.stepIndex;
 
+          return copyOfUserItem;
+        });
+
+        copyOfCurrentStep.stepGroupMembers = groupMembersSelected
+        .filter((selectedUser) => selectedUser.stepIndex === currentIndex)
+        .map((user) => {
+          const copyOfUserItem = { ...user };
+          delete copyOfUserItem.stepIndex;
           return copyOfUserItem;
         });
 

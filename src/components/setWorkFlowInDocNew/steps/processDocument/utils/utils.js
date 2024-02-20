@@ -21,6 +21,7 @@ export const extractProcessObj = (
   teamMembersSelected,
   publicMembersSelected,
   userMembersSelected,
+  groupMembersSelected,
   skipDataChecks = false
 ) => {
 
@@ -37,6 +38,7 @@ export const extractProcessObj = (
    * @param teamMembersSelected The array of team members selected for the document to be processed.
    * @param publicMembersSelected The array of public members selected for the document to be processed.
    * @param userMembersSelected The array of user members selected for the document to be processed.
+   * @param groupMembersSelected The array of public members selected for the document to be processed.
    * @param skipDataChecks Specifies whether or not to check the process object for necessary details needed for successful process creation.
    * 
    * @returns object
@@ -97,6 +99,14 @@ export const extractProcessObj = (
 
           return copyOfUserItem;
         });
+        
+        copyOfCurrentStep.stepGroupMembers = groupMembersSelected
+          .filter((selectedUser) => selectedUser.stepIndex === currentIndex)
+          .map((user) => {
+            const copyOfUserItem = { ...user };
+            delete copyOfUserItem.stepIndex;
+            return copyOfUserItem;
+          });  
 
       copyOfCurrentStep.stepTeamMembers = teamMembersSelected
         .filter((selectedUser) => selectedUser.stepIndex === currentIndex)
