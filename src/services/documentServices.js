@@ -40,8 +40,8 @@ export class DocumentServices {
   //   return httpDocument.post('/saved/', data);
   // };
 
-  getSavedDocuments = (companyId, dataType, member, documentType, pageCount) =>
-    httpApiUrlV2.get(`/metadata/${companyId}/organisations/?data_type=${dataType}&document_state=draft&item_type=document`); 
+  savedDocuments = (companyId, dataType, data, member, documentType, pageCount) =>
+    httpApiUrlV2.post(`/metadata/${companyId}/organisations/?data_type=${dataType}&document_state=draft&member=${member}&item_type=document`, data); 
 
   getDraftDocuments = (companyId, dataType, member, documentType, pageCount) =>
     httpApiUrlV2.get(`/metadata/${companyId}/organisations/?data_type=${dataType}&document_state=draft&member=${member}&item_type=document`); 
