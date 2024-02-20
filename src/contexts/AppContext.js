@@ -312,10 +312,10 @@ export const AppContextProvider = ({ children }) => {
     try {
         let processes = [];
         if (type === 'completed') {
-            const res = await getCompletedProcesses(companyId, dataType);
+            const res = await getCompletedProcesses(companyId, dataType, 'finalized');
             processes = res.data ? res.data : [];
         } else if (type === 'active') {
-            const res = await getActiveProcesses(companyId, dataType);
+            const res = await getActiveProcesses(companyId, dataType, 'processing');
             processes = res.data ? res.data : [];
         }
         processes.sort((a, b) => {
@@ -341,7 +341,7 @@ export const AppContextProvider = ({ children }) => {
   const fetchSavedDocuments = async () => {
     setSavedDocumentsStatus('pending');
     try {
-      const res = await new DocumentServices().getSavedDocuments(
+      const res = await new DocumentServices().savedDocuments(
         companyId,
         dataType,
       );

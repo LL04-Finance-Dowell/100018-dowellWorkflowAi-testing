@@ -32,17 +32,19 @@ export const getAllProcessesV2 = async (companyId, dataType) => {
   );
 };
 
-export const getCompletedProcesses = (companyId, dataType) => {
+export const getCompletedProcesses = (companyId, dataType, processState) => {
   return httpApiUrlV2.get(
-    `/processes/${companyId}/organisations/?data_type=${dataType}&process_state=finalized`
+    `/processes/${companyId}/organisations/?data_type=${dataType}&process_state=${processState}`
     // `${companyId}/organisations/?data_type=${dataType}&process-state=completed`
     // {{base_url}}/processes/6390b313d77dc467630713f2/organisations?data_type=Real_Data&process_state=finalized
   );
 };
 
-export const getActiveProcesses = (companyId, dataType) => {
+export const getActiveProcesses = (companyId, dataType, processState) => {
   return httpApiUrlV2.get(
-    `/processes/6385c0e78eca0fb652c944ae/organisations/?data_type=${dataType}&process_state=processing`
+    // `/processes/${companyId}/organisations/?data_type=${dataType}&process_state=${processState}`
+    `/processes/6385c0e78eca0fb652c944ae/organisations/?data_type=${dataType}&process_state=${processState}`
+    // `/processes/6385c0e78eca0fb652c944ae/organisations/?data_type=${dataType}&process_state=processing`
   );
 };
 
