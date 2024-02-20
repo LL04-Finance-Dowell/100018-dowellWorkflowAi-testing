@@ -397,6 +397,44 @@ class HandleProcess:
                 )
                 links.append({member["member"]: link})
                 qrcodes.append({member["member"]: qrcode})
+
+            for step in step.get("stepGroupMembers", []):
+                for member in step.get("public", []):
+                    link, qrcode = HandleProcess.user_team_public_data(
+                        self.process,
+                        member["member"],
+                        step.get("stepRole"),
+                        member["portfolio"],
+                        "public",
+                    )
+                    links.append({member["member"]: link})
+                    public_links.append({link_string: link})
+                    qrcodes.append({member["member"]: qrcode})
+
+                for member in step.get("team", []):
+                    link, qrcode = HandleProcess.user_team_public_data(
+                        self.process,
+                        member["member"],
+                        step.get("stepRole"),
+                        member["portfolio"],
+                        "team",
+                    )
+                    links.append({member["member"]: link})
+                    public_links.append({link_string: link})
+                    qrcodes.append({member["member"]: qrcode})
+
+                for member in step.get("user", []):
+                    link, qrcode = HandleProcess.user_team_public_data(
+                        self.process,
+                        member["member"],
+                        step.get("stepRole"),
+                        member["portfolio"],
+                        "user",
+                    )
+                    links.append({member["member"]: link})
+                    public_links.append({link_string: link})
+                    qrcodes.append({member["member"]: qrcode})
+                    
         clone_ids = HandleProcess.prepare_document_for_step_one_users(
             steps[0], self.process["parent_item_id"], process_id
         )
