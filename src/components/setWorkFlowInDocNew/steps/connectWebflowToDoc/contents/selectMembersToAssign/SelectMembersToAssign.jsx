@@ -89,7 +89,7 @@ const SelectMembersToAssign = ({
   const [selectedGroups, setSelectedGroups] = useState([]);
   const AllGroups = useSelector(selectAllGroups);
   const insertID = useSelector(createGroupInsertId);
-  const [groupData,setGroupData]=useState()
+  const [groupData,setGroupData]=useState([])
   const [totalPublicVal, setTotalPublicVal] = useState(current.portfolios.filter((item) => !usedId.some((link) => link?.member === item?.member)).length)
 
   const handleSetCurrent = (item) => {
@@ -1182,7 +1182,7 @@ useEffect(() => {
                             option.stepIndex === currentStepIndex
                         )}
                       
-                     value={groupData.find((c) => c.value?.group_name === selectedGroups?.group_name)}
+                     value={groupData?.find((c) => c.value?.group_name === selectedGroups?.group_name)}
                       onChange={handleGroupSelect}
                     ></ReactSelect>
                 )}
