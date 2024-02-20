@@ -10,15 +10,20 @@ import {
   setSettingProccessPortfolios,
   setUpdateProccess,
   setSettingProccess,
+  permissionArray
 } from '../../../features/app/appSlice';
 import { productName, setIsSelected } from '../../../utils/helpers';
 import { createWorkflowSettings } from '../../../features/settings/asyncThunks';
+import { updateWorkflowSettings } from '../../../features/settings/asyncThunks';
 import { useTranslation } from 'react-i18next';
 import { useAppContext } from '../../../contexts/AppContext';
 
 const EnabledProcess = () => {
   const dispatch = useDispatch();
   const { t } = useTranslation();
+  const { column, permissionArray, themeColor } = useSelector(
+    (state) => state.app
+  );
 
   const { settingProccess } = useSelector((state) => state.app);
   const { createWorkflowSettings: createWorkflowSettingsItems, createStatus } =
@@ -44,18 +49,11 @@ const EnabledProcess = () => {
         })
   );
 
-  // const [portfolios] = useState(
-  //   userDetail?.portfolio_info?.find((item) => item.product === 'Workflow AI')
-  //     ?.member_type === 'owner'
-  //     ? [...userDetail?.userportfolio]
-  //     : [...userDetail?.selected_product?.userportfolio]
-  // );
-
   const [portfolios] = useState(
     () => {
-        console.log("userDetail:", userDetail);
-        console.log("userportfolio:", userDetail?.userportfolio);
-        console.log("selected_product:", userDetail?.selected_product);
+        // console.log("userDetail:", userDetail);
+        // console.log("userportfolio:", userDetail?.userportfolio);
+        // console.log("selected_product:", userDetail?.selected_product);
         return (
             userDetail?.portfolio_info?.find((item) => item.product === 'Workflow AI')
               ?.member_type === 'owner'
@@ -70,8 +68,140 @@ const EnabledProcess = () => {
 
   const { handleSubmit, register } = useForm();
 
-  const onSubmit = (data) => {
-    /* dispatch(setPro) */
+  // const onSubmit = (data) => {
+  //   /* dispatch(setPro) */
+  //   const filteredData = settingProccess[0].children.filter(
+  //     (item, index) => index !== 0
+  //   );
+
+  //   const payload = filteredData.map((item) => ({
+  //     ...item,
+  //     column: item.column.map((col) =>
+  //       col.type === 'hardcode'
+  //         ? col
+  //         : { ...col, items: col.items.filter((colItem) => colItem.isSelected) }
+  //     ),
+  //   }));
+
+  //   const purePayload = payload.map((item) => ({
+  //     ...item,
+  //     column: item.column.filter((col) => col.items.length !== 0),
+  //   }));
+
+    
+
+  //   const createData = {
+  //     company_id: userDetail?.portfolio_info?.length > 1 ? userDetail?.portfolio_info.find(portfolio => portfolio.product === productName)?.org_id : userDetail?.portfolio_info[0]?.org_id,
+  //     owner_name: userDetail?.portfolio_info?.length > 1 ? userDetail?.portfolio_info.find(portfolio => portfolio.product === productName)?.owner_name : userDetail?.portfolio_info[0]?.owner_name,
+  //     username: userDetail?.userinfo?.username,
+  //     portfolio_name: 'the portfolio name second',
+  //     proccess: purePayload,
+  //     created_by: userDetail?.userinfo?.username,
+  //     data_type:
+  //       userDetail?.portfolio_info?.length > 1
+  //         ? userDetail?.portfolio_info.find(
+  //             (portfolio) => portfolio.product === productName
+  //           )?.data_type
+  //         : userDetail?.portfolio_info[0].data_type, 
+  //   };
+
+  //   dispatch(createWorkflowSettings(createData));
+  // };
+
+  const sortData = (childId, colId, title) => {
+    const selectedItems = permissionArray[0].children
+      .find((child) => child._id === childId)
+      .column.find((col) => col._id === colId)
+      .items.filter((item) => item.isSelected);
+    let finalItems = [];
+
+    finalItems = selectedItems.map(({ content }) =>
+      content.split(' ').join(' ')
+    );
+    return finalItems;
+  };
+
+  const onSubmit = async (isUpdate) => {
+
+  
+    const Process = sortData(
+      permissionArray[0].children[0]._id,
+      permissionArray[0].children[0].column[0]._id,
+      'process'
+    );
+  
+    const Documents = sortData(
+      permissionArray[0].children[1]._id,
+      permissionArray[0].children[1].column[0]._id,
+      'documents'
+    );
+  
+    const Templates = sortData(
+      permissionArray[0].children[1]._id,
+      permissionArray[0].children[1].column[1]._id,
+      'templates'
+    );
+  
+    const Workflows = sortData(
+      permissionArray[0].children[1]._id,
+      permissionArray[0].children[1].column[2]._id,
+      'workflows'
+    );
+  
+    const Notarisation = sortData(
+      permissionArray[0].children[2]._id,
+      permissionArray[0].children[2].column[0]._id,
+      'notarisation'
+    );
+  
+    const Folders = sortData(
+      permissionArray[0].children[2]._id,
+      permissionArray[0].children[2].column[1]._id,
+      'folders'
+    );
+  
+    const Records = sortData(
+      permissionArray[0].children[2]._id,
+      permissionArray[0].children[2].column[2]._id,
+      'records'
+    );
+  
+    const References = sortData(
+      permissionArray[0].children[3]._id,
+      permissionArray[0].children[3].column[0]._id,
+      'references'
+    );
+  
+    const Approval_Process = sortData(
+      permissionArray[0].children[4]._id,
+      permissionArray[0].children[4].column[0]._id,
+      'approval_process'
+    );
+  
+    const Evaluation_Process = sortData(
+      permissionArray[0].children[5]._id,
+      permissionArray[0].children[5].column[0]._id,
+      'evaluation_process'
+    );
+  
+    const Reports = sortData(
+      permissionArray[0].children[5]._id,
+      permissionArray[0].children[5].column[1]._id,
+      'reports'
+    );
+  
+    const Management = sortData(
+      permissionArray[0].children[6]._id,
+      permissionArray[0].children[6].column[0]._id,
+      'management'
+    );
+  
+    const Portfolio_Choice = sortData(
+      permissionArray[0].children[6]._id,
+      permissionArray[0].children[6].column[1]._id,
+      'portfolio_choice'
+    );
+
     const filteredData = settingProccess[0].children.filter(
       (item, index) => index !== 0
     );
@@ -90,19 +220,36 @@ const EnabledProcess = () => {
       column: item.column.filter((col) => col.items.length !== 0),
     }));
 
-    
-
     const createData = {
       company_id: userDetail?.portfolio_info?.length > 1 ? userDetail?.portfolio_info.find(portfolio => portfolio.product === productName)?.org_id : userDetail?.portfolio_info[0]?.org_id,
       owner_name: userDetail?.portfolio_info?.length > 1 ? userDetail?.portfolio_info.find(portfolio => portfolio.product === productName)?.owner_name : userDetail?.portfolio_info[0]?.owner_name,
       username: userDetail?.userinfo?.username,
       portfolio_name: 'the portfolio name second',
       proccess: purePayload,
+      created_by: userDetail?.userinfo?.username,
+      Process,
+      Documents,
+      Templates,
+      Workflows,
+      Notarisation,
+      Folders,
+      Records,
+      References,
+      Approval_Process,
+      Evaluation_Process,
+      Reports,
+      Management,
+      Portfolio_Choice,
+      theme_color: themeColor,
+      data_type:
+        userDetail?.portfolio_info?.length > 1
+          ? userDetail?.portfolio_info.find(
+              (portfolio) => portfolio.product === productName
+            )?.data_type
+          : userDetail?.portfolio_info[0].data_type, 
     };
-
     dispatch(createWorkflowSettings(createData));
   };
-
 
   const handleOnChange = ({ item, title, boxId, type }, e, checkFunc) => {
     const isSelectedItems = setIsSelected({

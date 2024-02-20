@@ -2,6 +2,8 @@ import styles from './sectionBox.module.css';
 import maneFilesStyles from '../manageFiles.module.css';
 import BookSpinner from '../../bookSpinner/BookSpinner';
 import { useEffect, useState } from 'react';
+import Skeleton from 'react-loading-skeleton'
+import 'react-loading-skeleton/dist/skeleton.css'
 
 import { PrimaryButton } from '../../styledComponents/styledComponents';
 import { IoIosRefresh } from 'react-icons/io';
@@ -71,9 +73,17 @@ const SectionBox = ({
     fetchFolders
   } = useAppContext();
 
+  const [isLoading, setIsLoading] = useState(true)
+
   const handleLoadMore = () => {
     setSliceCount((prev) => prev + 1);
   };
+
+  // const handleLoadMore = () => {
+  //   if (sliceCount * 12 < cardItemsVar.length) {
+  //     setSliceCount(prev => prev + 1);
+  //   }
+  // };
 
   const handleDemoLoadMore = async () => {
 
@@ -615,75 +625,35 @@ const SectionBox = ({
           </h2>
 
           {status === 'pending' ? (
-            <div style={{ marginTop: '15px' }}>
-              <BookSpinner />
-            </div>
+            <BookSpinner />
+            // <Skeleton />
           ) : (
             Card &&
             cardItemsVar &&
             cardItemsVar.length && (
               <>
-                <div className={styles.grid__box}>
-                  {Card &&
-                    cardItemsVar &&
-                    cardItemsVar?.length > 0 &&
-                    cardItemsVar
-                      .slice(0, sliceCount * 12)
-                      .map((item) => (
-                        <Card
-                          key={item?._id}
-                          cardItem={item}
-                          hideFavoriteIcon={hideFavoriteIcon}
-                          hideDeleteIcon={hideDeleteIcon}
-                          isFolder={itemType === 'folder' ? true : false}
-                          folderId={folderId}
-                          isCompletedDoc={isCompleted}
-                          isRejectedDoc={isRejected}
-                          isReport={isReport}
-                          knowledgeCenter={knowledgeCenter}
-                        />
-                      ))}
-                </div>
-                {!isDemo
-                  ? cardItemsVar &&
-                  cardItemsVar?.length > 10 && (
-                    <PrimaryButton
-                      style={{
-                        pointerEvents: `${cardItemsVar.length / 12 < sliceCount && 'none'
-                          }`,
-                      }}
-                      hoverBg='success'
-                      onClick={handleLoadMore}
-                    >
-                      {cardItemsVar.length / 12 < sliceCount
-                        ? 'no more load'
-                        : 'load more'}
-                    </PrimaryButton>
+                {!isDemo ? (
+                  cardItemsVar &&
+                  cardItemsVar.length > 0 && (
+                    <div className={styles.grid__box}>
+                      {Card &&
+                        cardItemsVar.map((item) => (
+                          <Card 
+                            key={item?._id}
+                            cardItem={item}
+                            hideFavoriteIcon={hideFavoriteIcon}
+                            hideDeleteIcon={hideDeleteIcon}
+                            isFolder={itemType === 'folder' ? true : false}
+                            folderId={folderId}
+                            isCompletedDoc={isCompleted}
+                            isRejectedDoc={isRejected}
+                            isReport={isReport}
+                            knowledgeCenter={knowledgeCenter}
+                          />  || <Skeleton />
+                        ))}
+                    </div>
                   )
-                  : cardItemsVar &&
-                  cardItemsVar.length > 12 && (
-                    <PrimaryButton
-                      // style={{
-                      //   pointerEvents: `${
-                      //     cardItemsVar.length / 12 < sliceCount && 'none'
-                      //   }`,
-                      // }}
-                      hoverBg='success'
-                      onClick={handleDemoLoadMore}
-                      style={isDemoLoading ? { pointerEvents: 'none' } : {}}
-                      disabled={isDemoLoading}
-                    >
-                      {isDemoLoading ? (
-                        <LoadingSpinner
-                          color={'white'}
-                          width={'1rem'}
-                          height={'1rem'}
-                        />
-                      ) : (
-                        'load more'
-                      )}
-                    </PrimaryButton>
-                  )}
+                ) : null}
               </>
             )
           )}

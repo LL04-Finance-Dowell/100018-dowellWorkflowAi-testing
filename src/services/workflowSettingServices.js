@@ -3,6 +3,7 @@ import { httpApiUrlV2 } from '../httpCommon/httpCommon';
 export class WorkflowSettingServices {
   createWorkflowSettings = (data) => {
     return httpApiUrlV2.post('settings/', data);
+    // return httpApiUrlV2.post('settings/', data);
     // return httpApiUrlV2.post('workflow_ai_setting/', data);
   };
 
@@ -28,21 +29,23 @@ export class WorkflowSettingServices {
   // };
 
   updateWorkflowAISettings = (settingId, data) => {
-    return httpApiUrlV2.put(`settings/6447a3449224dc414b404ec5/`, data);
+    // return httpApiUrlV2.put(`settings/${settingId}/`, data);
+    return httpApiUrlV2.put(`settings/64f7b5bcc72975ac5f765d33/`, data);
     // settings/<str:setting_id> 
   };
 
-  getAllTeams = (companyId) => {
-    return httpApiUrlV2.get(`teams/${companyId}/organisations/`);
+  getAllTeams = (companyId, dataType) => {
+    return httpApiUrlV2.get(`teams/${companyId}/organisations/?data_type=${dataType}`);
   };
 
   fetchWorkflowSettings = (companyId) => {
-    return httpApiUrlV2.get(`settings/${companyId}/organisations/`);
+    return httpApiUrlV2.get(`/settings/${companyId}/organisations/`);
   };
 
   fetchWorkflowSettingsData = (companyId, member) => {
-    return httpApiUrlV2.get(`settings/${companyId}/organisations/?member=${member}`);
+    return httpApiUrlV2.get(`/settings/${companyId}/organisations/?member=${member}/`);
     // return httpApiUrlV2.get(`settings/${companyId}/organisations/?member=${member}`);
     // settings/<str:company_id>/organisations/?member="member"
+    // {{base_url}}/settings/:company_id/?created_by
   };
 }

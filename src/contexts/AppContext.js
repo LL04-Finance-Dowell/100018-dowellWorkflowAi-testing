@@ -188,19 +188,17 @@ export const AppContextProvider = ({ children }) => {
   };
 
   const fetchSettingsData = async () => {
-    const userCompanyId =
+    const companyId =
       userDetail?.portfolio_info?.length > 1
         ? userDetail?.portfolio_info?.find(
           (portfolio) => portfolio.product === productName
         )?.org_id
         : userDetail?.portfolio_info[0]?.org_id;
 
-    const member = userDetail.userinfo.username
-
     try {
       const res = await new WorkflowSettingServices().fetchWorkflowSettingsData(
-        userCompanyId,
-        member
+        companyId,
+        dataType
       );
   
       // console.log("res.data",res.data)
@@ -267,41 +265,78 @@ export const AppContextProvider = ({ children }) => {
       else if (state === 'rejected')
         setOrgDocsRejected(res.data.clones ? res.data.clones : []);
     } catch (err) {
-      // console.log(err);
+      console.log(err);
     } finally {
       if (state === 'finalized') setOrgDocsCompletedStatus('');
       else if (state === 'rejected') setOrgDocsRejectedStatus('');
     }
   };
 
+  // const fetchProcessReports = async (type) => {
+  //   if (type === 'completed') setCompletedProcessesStatus('pending');
+  //   else if (type === 'active') setActiveProcessesStatus('pending');
+  //   try {
+  //     if (type === 'completed') {
+  //       const res = await getCompletedProcesses(companyId, dataType);
+  //       setCompletedProcesses(res.data ? res.data : []);
+  //     } else if (type === 'active') {
+  //       const res = await getActiveProcesses(companyId, dataType);
+  //       const activeProcess = res.data ? res.data : [];
+  //       console.log("Active Processes Before Sorting:", activeProcess);
+  //       activeProcess?.sort((a, b) => {
+  //         const aDate = a.created_at || a.created_on;
+  //         const bDate = b.created_at || b.created_on;
+  //         const formatDateA = dateTimeStampFormat(aDate);
+  //         const formatDateB = dateTimeStampFormat(bDate);
+  //         const dateA = new Date(formatDateA);
+  //         const dateB = new Date(formatDateB);
+  //         return dateA - dateB;
+  //         // return dateB - dateA;
+  //       });
+  //       console.log("Active Processes After Sorting:", activeProcess);
+  //       setActiveProcesses(activeProcess);
+  //     }
+  //   } catch (err) {
+  //     // console.log(err);
+  //     console.error('Error fetching processes:', err);
+  //   } finally {
+  //     if (type === 'completed') setCompletedProcessesStatus('');
+  //     else if (type === 'active') setActiveProcessesStatus('');
+  //   }
+  // };
+
   const fetchProcessReports = async (type) => {
     if (type === 'completed') setCompletedProcessesStatus('pending');
     else if (type === 'active') setActiveProcessesStatus('pending');
+
     try {
-      if (type === 'completed') {
-        const res = await getCompletedProcesses(companyId, dataType);
-        setCompletedProcesses(res.data ? res.data : []);
-      } else if (type === 'active') {
-        const res = await getActiveProcesses(companyId, dataType);
-        const activeProcess = res.data ? res.data : [];
-        activeProcess?.sort((a, b) => {
-          const aDate = a.created_at || a.created_on;
-          const bDate = b.created_at || b.created_on;
-          const formatDateA = dateTimeStampFormat(aDate);
-          const formatDateB = dateTimeStampFormat(bDate);
-          const dateA = new Date(formatDateA);
-          const dateB = new Date(formatDateB);
-          return dateB - dateA;
+        let processes = [];
+        if (type === 'completed') {
+            const res = await getCompletedProcesses(companyId, dataType);
+            processes = res.data ? res.data : [];
+        } else if (type === 'active') {
+            const res = await getActiveProcesses(companyId, dataType);
+            processes = res.data ? res.data : [];
+        }
+        processes.sort((a, b) => {
+            const aDate = a.created_at || a.created_on;
+            const bDate = b.created_at || b.created_on;
+            const dateA = new Date(dateTimeStampFormat(aDate));
+            const dateB = new Date(dateTimeStampFormat(bDate));
+            return dateB - dateA;
+            // return dateA - dateB;
         });
-        setActiveProcesses(activeProcess);
-      }
+
+        if (type === 'completed') setCompletedProcesses(processes);
+        else if (type === 'active') setActiveProcesses(processes);
     } catch (err) {
-      // console.log(err);
+        console.error('Error fetching processes:', err);
     } finally {
-      if (type === 'completed') setCompletedProcessesStatus('');
-      else if (type === 'active') setActiveProcessesStatus('');
+        if (type === 'completed') setCompletedProcessesStatus('');
+        else if (type === 'active') setActiveProcessesStatus('');
     }
-  };
+};
+
 
   const fetchSavedDocuments = async () => {
     setSavedDocumentsStatus('pending');
@@ -425,7 +460,7 @@ export const AppContextProvider = ({ children }) => {
             : userDetail?.portfolio_info[0]?.org_id;
 
         settingService
-          .getAllTeams(userCompanyId)
+          .getAllTeams(userCompanyId, dataType)
           .then((res) => {
             setWorkflowTeams(Array.isArray(res.data) ? res.data : []);
             setWorkflowTeamsLoaded(true);
