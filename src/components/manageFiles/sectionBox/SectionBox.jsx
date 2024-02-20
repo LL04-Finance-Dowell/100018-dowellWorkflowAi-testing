@@ -28,7 +28,6 @@ import {
   SetKnowledgeFolders
 } from '../../../features/app/appSlice';
 import axios from 'axios';
-import LoadingScreen from '../../LoadingScreen/loadingScreen';
 
 const SectionBox = ({
   cardItems,
