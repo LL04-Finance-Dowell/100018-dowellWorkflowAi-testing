@@ -14,7 +14,11 @@ import {
 import { createGroups, getGroups } from "../groupThunk";
 import { toast } from "react-toastify";
 
-const CreateGroup = ({ dropdownData, handleOverlay }) => {
+const CreateGroup = ({
+  totalPublicMembersVal,
+  dropdownData,
+  handleOverlay,
+}) => {
   const { t } = useTranslation();
 
   const [teamsData, setTeamsData] = useState([]);
@@ -24,10 +28,6 @@ const CreateGroup = ({ dropdownData, handleOverlay }) => {
   const { handleSubmit, control } = useForm();
 
   const dispatch = useDispatch();
-
-  const AllGroups = useSelector(selectAllGroups);
-
-  const createStatus = useSelector(createGroupsStatus);
 
   const getStatus = useSelector(getGroupsStatus);
 
@@ -43,17 +43,15 @@ const CreateGroup = ({ dropdownData, handleOverlay }) => {
       team: reformatTeam,
       user: [],
     };
-    console.log("finalPayload", finalPayload);
 
     dispatch(createGroups({ payload: finalPayload, company_id: company_id }));
-if (getStatus==="succeeded") {
-  toast.success("Successfully Created a group");
-  handleOverlay()
-}
-if (getStatus==="failed") {
-  toast.error("Error");
- 
-}
+    if (getStatus === "succeeded") {
+      toast.success("Successfully Created a group");
+      handleOverlay();
+    }
+    if (getStatus === "failed") {
+      toast.error("Error");
+    }
   };
 
   const FormInputDropdown = ({ name, control, label, options }) => {
@@ -77,7 +75,20 @@ if (getStatus==="failed") {
       </div>
     );
   };
-  const FormInputText = ({ name, control, label, type = "text" }) => {
+  const FormInputText = ({
+    name,
+    control,
+    label,
+    type = "text",
+    maxMin = false,
+  }) => {
+    const customOnChange = (e, onCh) => {
+      const selectedValue = Math.max(
+        0,
+        Math.min(totalPublicMembersVal, Number(e.target.value))
+      );
+      onCh(selectedValue);
+    };
     return (
       <Controller
         name={name}
@@ -92,7 +103,9 @@ if (getStatus==="failed") {
               type={type}
               disabled={disabled}
               error={!!error}
-              onChange={onChange}
+              onChange={(e) => {
+                maxMin ? customOnChange(e, onChange) : onChange(e);
+              }}
               value={value || ""}
               variant="outlined"
             />
@@ -126,8 +139,6 @@ if (getStatus==="failed") {
     fetchData();
   }, [userDetail]);
 
-  console.log("all g", AllGroups);
-
   return (
     <Overlay title="Create Group" handleToggleOverlay={handleOverlay}>
       <div className={styles.form__container}>
@@ -157,6 +168,7 @@ if (getStatus==="failed") {
               type="number"
               control={control}
               label={t("Number of Public Members")}
+              maxMin={true}
             />
           </div>
           <div className={styles.button__group}>

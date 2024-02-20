@@ -19,6 +19,7 @@ import {
 import { useTranslation } from 'react-i18next';
 import { setErrorsCheckedInNewProcess, setCurrentMessage,setPopupIsOpen } from '../../../../features/app/appSlice';
 import { extractProcessObjChecker } from './utils';
+import { selectedGroupMembers } from '../../../../features/groups/groupsSlice';
 
 const CheckErrors = () => {
   const { t } = useTranslation();
@@ -43,7 +44,7 @@ const CheckErrors = () => {
   const [sortLoading, setSortLoading] = useState(false);
   const { processOption } = watch();
   const dispatch = useDispatch();
-
+  const selectedGroupMem = useSelector(selectedGroupMembers)
   
 
   useEffect(() => {
@@ -200,6 +201,7 @@ const CheckErrors = () => {
       // dispatch( setCurrentMessage(newProcessErrorMessage))
       return toast.info(newProcessErrorMessage);
     }
+   
     const processObjToPost = extractProcessObjChecker(
       userDetail,
       currentDocToWfs,
@@ -209,8 +211,10 @@ const CheckErrors = () => {
       teamMembersSelectedForProcess,
       publicMembersSelectedForProcess,
       userMembersSelectedForProcess,
-
+      selectedGroupMem
     );
+
+
     if (processObjToPost.error) {
       // dispatch(setNewProcessErrorMessage(processObjToPost.error));
       // document
