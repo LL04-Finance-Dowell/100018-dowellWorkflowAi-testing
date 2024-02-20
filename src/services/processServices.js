@@ -43,8 +43,6 @@ export const getCompletedProcesses = (companyId, dataType) => {
 export const getActiveProcesses = (companyId, dataType) => {
   return httpApiUrlV2.get(
     `/processes/${companyId}/organisations/?data_type=${dataType}&process_state=processing`
-    // `${companyId}/?data_type=${dataType}&process-state=active`
-    // {{base_url}}/processes/6390b313d77dc467630713f2/organisations?data_type=Real_Data&process_state=processing
   );
 };
 
