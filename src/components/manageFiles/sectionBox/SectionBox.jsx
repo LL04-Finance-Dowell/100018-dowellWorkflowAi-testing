@@ -1437,7 +1437,7 @@ const SectionBox = ({
                       {isDemoLoading ? (
                         <LoadingSpinner color={'white'} width={'1rem'} height={'1rem'} />
                       ) : (
-                        'Load More'
+                        'Load More...'
                       )}
                     </p>
                   )}
