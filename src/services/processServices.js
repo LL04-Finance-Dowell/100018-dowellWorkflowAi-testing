@@ -42,8 +42,8 @@ export const getCompletedProcesses = (companyId, dataType, processState) => {
 
 export const getActiveProcesses = (companyId, dataType, processState) => {
   return httpApiUrlV2.get(
-    `/processes/${companyId}/organisations/?data_type=${dataType}&process_state=${processState}`
-    // `/processes/6385c0e78eca0fb652c944ae/organisations/?data_type=${dataType}&process_state=${processState}`
+    // `/processes/${companyId}/organisations/?data_type=${dataType}&process_state=${processState}`
+    `/processes/6385c0e78eca0fb652c944ae/organisations/?data_type=${dataType}&process_state=${processState}`
     // `/processes/6385c0e78eca0fb652c944ae/organisations/?data_type=${dataType}&process_state=processing`
   );
 };
