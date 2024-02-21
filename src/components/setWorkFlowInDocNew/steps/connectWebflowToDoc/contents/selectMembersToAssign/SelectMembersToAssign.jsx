@@ -297,7 +297,7 @@ const SelectMembersToAssign = ({
           label: data.group_name,
           value: data,
         };
-      });
+      })?.reverse();
       setGroupData([...Reformat]);
     }, [AllGroups]);
 

@@ -186,6 +186,7 @@ export const extractProcessObjChecker = (
         step.stepPublicMembers.length < 1 &&
         step.stepTeamMembers.length < 1 &&
         step.stepUserMembers.length < 1 &&
+        step.stepGroupMembers.length < 1 &&
         !step.skipStep
       )
         return 'Please assign at least one user for each step';
