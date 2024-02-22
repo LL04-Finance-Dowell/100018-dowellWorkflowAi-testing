@@ -411,7 +411,7 @@ class HandleProcess:
                     public_links.append({link_string: link})
                     qrcodes.append({member["member"]: qrcode})
 
-                for member in step.get("team", []):
+                for member in step.get("team_members", []):
                     link, qrcode = HandleProcess.user_team_public_data(
                         self.process,
                         member["member"],
@@ -423,7 +423,7 @@ class HandleProcess:
                     public_links.append({link_string: link})
                     qrcodes.append({member["member"]: qrcode})
 
-                for member in step.get("user", []):
+                for member in step.get("user_members", []):
                     link, qrcode = HandleProcess.user_team_public_data(
                         self.process,
                         member["member"],
