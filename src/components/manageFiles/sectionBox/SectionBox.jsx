@@ -948,7 +948,7 @@
 import styles from './sectionBox.module.css';
 import maneFilesStyles from '../manageFiles.module.css';
 import BookSpinner from '../../bookSpinner/BookSpinner';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 
 import { PrimaryButton } from '../../styledComponents/styledComponents';
 import { IoIosRefresh } from 'react-icons/io';
@@ -1022,9 +1022,36 @@ const SectionBox = ({
   //   setSliceCount((prev) => prev + 1);
   // };
 
-  const handleDemoLoadMore = async () => {
+  // const bottomOfPageRef = useRef();
 
-    if (cardItemsVar?.length / 12 > sliceCount) {
+  // useEffect(() => {
+  //   const observer = new IntersectionObserver(
+  //     ([entry]) => {
+  //       if (entry.isIntersecting && !loadMoreDisabled) {
+  //         handleDemoLoadMore();
+  //       }
+  //     },
+  //     {
+  //       root: null,
+  //       rootMargin: '0px',
+  //       threshold: 0.5,
+  //     }
+  //   );
+
+  //   if (bottomOfPageRef.current) {
+  //     observer.observe(bottomOfPageRef.current);
+  //   }
+
+  //   return () => {
+  //     if (bottomOfPageRef.current) {
+  //       observer.unobserve(bottomOfPageRef.current);
+  //     }
+  //   };
+  // }, [loadMoreDisabled]);
+
+  const handleDemoLoadMore = async () => {
+     
+    if (cardItemsVar?.length / 18 > sliceCount) {
       setSliceCount((prev) => prev + 1);
     } else {
       setIsDemoLoading(true);
@@ -1326,14 +1353,28 @@ const SectionBox = ({
   }, [cardItems]);
   console.log("cardItemsVar", cardItems);
 
+  // useEffect(() => {
+  //   if (cardItemsVar && cardItemsVar.length > 20) {
+  //     setTimeout(() => {
+  //       setSliceCount(2);
+  //       // setLoadMoreDisabled(false);
+  //     }, 3000);
+  //   }
+  // }, [cardItemsVar]);
+
   useEffect(() => {
     if (cardItemsVar && cardItemsVar.length > 20) {
-      setTimeout(() => {
-        setSliceCount(2);
-        // setLoadMoreDisabled(false);
+      const intervalId = setInterval(() => {
+        if (cardItemsVar?.length / 12 > sliceCount) {
+          setSliceCount((prev) => prev + 1);
+        } else {
+          clearInterval(intervalId);
+          setLoadMoreDisabled(true);
+        }
       }, 2000);
+      return () => clearInterval(intervalId);
     }
-  }, [cardItemsVar]);
+  }, [cardItemsVar, sliceCount]);
 
   const handleFilterChange = (event) => {
     setFilterName(event.target.value);
@@ -1411,7 +1452,7 @@ const SectionBox = ({
                   {Card &&
                     cardItemsVar &&
                     cardItemsVar?.length > 0 &&
-                    cardItemsVar.slice(0, sliceCount * 25).map((item) => (
+                    cardItemsVar.slice(0, sliceCount * 18).map((item) => (
                       <Card
                         key={item?._id}
                         cardItem={item}
@@ -1426,9 +1467,10 @@ const SectionBox = ({
                       />
                     ))}
                 </div>
-                {cardItemsVar?.length > sliceCount * 25 && (
+                {/* <div ref={bottomOfPageRef} /> */}
+                {cardItemsVar?.length > sliceCount * 18 && (
                   <div style={{ textAlign: 'center', marginTop: '20px' }}>
-                  {cardItemsVar?.length > sliceCount * 20 && (
+                  {cardItemsVar?.length > sliceCount * 18 && (
                     <p
                       onClick={handleDemoLoadMore}
                       style={isDemoLoading ? { pointerEvents: 'none' } : {}}

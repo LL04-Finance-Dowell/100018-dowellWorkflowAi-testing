@@ -118,7 +118,7 @@ const ProcessDetail = () => {
           </div>
           <div className={styles.Process_Title}>
             Steps:
-            {ProcessDetail?.process_steps.map((step, index) => {
+            {ProcessDetail?.process_steps?.map((step, index) => {
               return (
                 <>
                   <StepCards

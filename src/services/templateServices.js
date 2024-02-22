@@ -8,7 +8,6 @@ export class TemplateServices {
   detailTemplate = (collection_id) => {
     return httpTemplate.get(`/${collection_id}/link/`);
     // return httpTemplate.get('https://100094.pythonanywhere.com/v2/templates/65cdf4074db13cf4ccdbe023/link/');
-    // return httpTemplate.get(`/${collection_id}/`);
   };
 
   approvedTemplate = (data) => {
@@ -34,11 +33,7 @@ export class TemplateServices {
   };
 
   allTemplates = (companyId, dataType) => {
-    // return httpApiUrl.get(
-    //   `/companies/${companyId}/templates/?data_type=${dataType}`
-    // );
     return httpApiUrlV2.get(
-      // `templates/${companyId}/?data_type=${dataType}`
       `/metadata/${companyId}/organisations/?data_type=${dataType}&item_type=template`  
       // {{base_url}}/templates/:company_id/?data_type // URL
     );
@@ -55,14 +50,13 @@ export class TemplateServices {
     return await httpTemplate.get(`/${templateId}/`);
   };
 
-  getTemplateReports = (companyId, dataType, templateState, member, portfolio) =>
-  httpApiUrlV2.get(
-      `/templates/${companyId}/?data_type=${dataType}/organisations/&template_state&member=${member}&portfolio=${portfolio}`
-      
-// https://100094.pythonanywhere.com/v1/companies/6390b313d77dc467630713f2/templates/reports/metadata/?data_type=Real_Data&template_state=draft&portfolio=WorkflowOwner&member=owner
+  getTemplateReports = (companyId, dataType, member, portfolioName) => {
+    httpApiUrlV2.get(
+      `/templates/${companyId}/organisations/?data_type=${dataType}&template_state=draft&member=${member}&portfolio=${portfolioName}`
     );
+  }
 
-    contentTemplate = async (data) => {
-      return await httpTemplate.get(`/${data}/content/`);
-    };
+  contentTemplate = async (data) => {
+    return await httpTemplate.get(`/${data}/content/`);
+  };
 }
