@@ -484,7 +484,11 @@ const SelectMembersToAssign = ({
   }, [stepsPopulated, processSteps]);
 
   const handleSelectTeam = (parsedSelectedJsonValue) => {
-    selectTeamRef.current.value = '';
+    // selectTeamRef.current.value = '';
+
+    if (selectTeamRef.current && typeof selectTeamRef.current === 'object') {
+      selectTeamRef.current.value = '';
+    }
 
     const teamAddedToProcess = teamsSelectedSelectedForProcess?.find(
       (team) =>

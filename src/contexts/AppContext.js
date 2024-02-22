@@ -272,39 +272,6 @@ export const AppContextProvider = ({ children }) => {
     }
   };
 
-  // const fetchProcessReports = async (type) => {
-  //   if (type === 'completed') setCompletedProcessesStatus('pending');
-  //   else if (type === 'active') setActiveProcessesStatus('pending');
-  //   try {
-  //     if (type === 'completed') {
-  //       const res = await getCompletedProcesses(companyId, dataType);
-  //       setCompletedProcesses(res.data ? res.data : []);
-  //     } else if (type === 'active') {
-  //       const res = await getActiveProcesses(companyId, dataType);
-  //       const activeProcess = res.data ? res.data : [];
-  //       console.log("Active Processes Before Sorting:", activeProcess);
-  //       activeProcess?.sort((a, b) => {
-  //         const aDate = a.created_at || a.created_on;
-  //         const bDate = b.created_at || b.created_on;
-  //         const formatDateA = dateTimeStampFormat(aDate);
-  //         const formatDateB = dateTimeStampFormat(bDate);
-  //         const dateA = new Date(formatDateA);
-  //         const dateB = new Date(formatDateB);
-  //         return dateA - dateB;
-  //         // return dateB - dateA;
-  //       });
-  //       console.log("Active Processes After Sorting:", activeProcess);
-  //       setActiveProcesses(activeProcess);
-  //     }
-  //   } catch (err) {
-  //     // console.log(err);
-  //     console.error('Error fetching processes:', err);
-  //   } finally {
-  //     if (type === 'completed') setCompletedProcessesStatus('');
-  //     else if (type === 'active') setActiveProcessesStatus('');
-  //   }
-  // };
-
   const fetchProcessReports = async (type) => {
     if (type === 'completed') setCompletedProcessesStatus('pending');
     else if (type === 'active') setActiveProcessesStatus('pending');
@@ -315,7 +282,7 @@ export const AppContextProvider = ({ children }) => {
             const res = await getCompletedProcesses(companyId, dataType, 'finalized');
             processes = res.data ? res.data : [];
         } else if (type === 'active') {
-            const res = await getActiveProcesses(companyId, dataType, 'processing');
+            const res = await getActiveProcesses('6385c0e78eca0fb652c944ae', dataType, 'processing');
             processes = res.data ? res.data : [];
         }
         processes.sort((a, b) => {
@@ -375,7 +342,7 @@ export const AppContextProvider = ({ children }) => {
   const fetchTemplateReports = async () => {
     setTempReportsStatus('pending');
     try {
-      const res = await new TemplateServices().getTemplateReports(
+      const res = new TemplateServices().getTemplateReports(
         companyId,
         dataType,
         userName,
