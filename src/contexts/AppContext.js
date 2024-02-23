@@ -111,6 +111,9 @@ export const AppContextProvider = ({ children }) => {
   const [portfolioName, setPortfolioName] = useState(
     userDetail?.portfolio_info[0]?.portfolio_name
   );
+  const [member, setMember] = useState(
+    userDetail?.portfolio_info[0]?.portfolio_name
+  );
   const [dataType, setDataType] = useState(
     userDetail?.portfolio_info?.length > 1
       ? userDetail?.portfolio_info.find(
@@ -228,6 +231,7 @@ export const AppContextProvider = ({ children }) => {
         companyId,
         dataType,
         userName,
+        member,
         portfolioName,
         state
       );

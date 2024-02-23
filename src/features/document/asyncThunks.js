@@ -130,7 +130,7 @@ export const savedDocuments = createAsyncThunk(
     try {
       const res = await documentServices.savedDocuments(data);
 
-      const documents = filterDocuments(res.data.documents, thunkAPI);
+      const documents = filterDocuments(res.data, thunkAPI);
 
       return documents;
     } catch (error) {
