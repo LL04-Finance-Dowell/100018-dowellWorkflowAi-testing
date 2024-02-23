@@ -6,18 +6,18 @@ export class DocumentServices {
     return httpDocument.post('documents/', data);
   };
 
-  detailDocument = (data) => {
+  detailDocument = (data, collection_id) => {
    
     if (data.document_state == "processing") {
-
       return httpDocument.get(`/clones/${data.collection_id}/`);
     }
+
     if (data.document_state == "draft") {
-      return httpDocument.get(`documents/${data.collection_id}/link/?document_type=document`);
-      // return httpDocument.get(`documents/65ccd4479910da1dbad86d63/link/?document_type=document`);
+      return httpDocument.get(`/documents/${data.collection_id}/link/?document_type=document`);
+      // https://100094.pythonanywhere.com/v2/documents/65ceffee6898c7cd953dfd26/link/?document_type=document
     }
 
-    return httpDocument.get(`documents/${data.collection_id}/link/?document_type=document`);
+    return httpDocument.get(`/documents/${data.collection_id}/link/?document_type=document`);
   };
 
   signDocument = (data) => {
@@ -65,7 +65,7 @@ export class DocumentServices {
   );
 
   singleDocumentDetail = async (documentId, documentType) => {
-    return await httpDocument.get(`documents/${documentId}/?document_type=document`);
+    return await httpDocument.get(`documents/${documentId}/link/?document_type=document`);
   };
 
   singleDecumentLink = async (documentId) => {
@@ -86,7 +86,7 @@ export class DocumentServices {
 
   getDocumentReports = (companyId, dataType, member, portfolioName) =>
   httpApiUrlV2.get(
-      `/documents/${companyId}/organisations/?data_type=${dataType}&document_type=document&document_state=draft`
+      `/documents/${companyId}/organisations/?data_type=${dataType}&document_type=document&document_state=draft&member=${member}&portfolio=${portfolioName}`
       // https://100094.pythonanywhere.com/v2/documents/6390b313d77dc467630713f2/organisations/?document_type=document&document_state=draft&data_type=Real_Data
     );
 

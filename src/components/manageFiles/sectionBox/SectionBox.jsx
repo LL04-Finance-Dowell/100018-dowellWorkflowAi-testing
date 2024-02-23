@@ -171,8 +171,9 @@ const SectionBox = ({
       if (isDemo) fetchDemoDocuments();
       else if (isCompleted && !window.location.hash.includes('completed#org')) fetchDocumentReports('finalized');
       else if (isCompleted && window.location.hash.includes('completed#org')) fetchOrgDocumentReports('finalized');
-      else if (isRejected && !window.location.hash.includes('rejected#org')) fetchDocumentReports('rejected');
-      else if (isRejected && window.location.hash.includes('rejected#org')) fetchOrgDocumentReports('rejected');
+      // else if (isRejected && !window.location.hash.includes('rejected#org')) fetchDocumentReports('rejected');
+      // else if (isRejected && window.location.hash.includes('rejected#org')) fetchOrgDocumentReports('rejected');
+
       else {
         documentServices
           .allDocuments(data.company_id, data.data_type)
@@ -199,7 +200,50 @@ const SectionBox = ({
           });
       }
       setRefreshLoading(false);
-    }
+    // }
+
+    // if (itemType === 'documents') {
+    //   setRefreshLoading(true);
+  
+    //   const data = {
+    //       company_id: currentUserCompanyId,
+    //       data_type: currentUserportfolioDataType,
+    //   };
+  
+    //   const documentServices = new DocumentServices();
+  
+    //   if (isDemo) {
+    //       fetchDemoDocuments();
+    //   } else if (isCompleted && window.location.hash.includes('completed#org')) {
+    //       fetchOrgDocumentReports('finalized');
+    //   } else if (isRejected && window.location.hash.includes('rejected#org')) {
+    //       fetchOrgDocumentReports('rejected');
+    //   } else {
+    //       documentServices
+    //           .allDocuments(data.company_id, data.data_type)
+    //           .then((res) => {
+    //               dispatch(
+    //                   setAllDocuments(
+    //                       res.data.documents
+    //                           .filter(
+    //                               (document) =>
+    //                               document.document_state !== 'trash' &&
+    //                               document.data_type &&
+    //                               document.data_type === currentUserportfolioDataType
+    //                           )
+    //                   )
+    //               );
+    //               toast.success('Successfully refreshed documents');
+    //               setRefreshLoading(false);
+    //           })
+    //           .catch((err) => {
+    //               // console.log(err, 'Refresh for documents failed');
+    //               toast.info('Refresh for documents failed');
+    //               setRefreshLoading(false);
+    //           });
+    //   }
+  }
+  
 
     if (itemType === 'templates') {
       setRefreshLoading(true);

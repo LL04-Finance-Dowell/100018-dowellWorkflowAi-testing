@@ -276,6 +276,42 @@ export const AppContextProvider = ({ children }) => {
     }
   };
 
+//   const fetchOrgDocumentReports = async (state) => {
+//     if (state === 'finalized') setOrgDocsCompletedStatus('pending');
+//     else if (state === 'rejected') setOrgDocsRejectedStatus('pending');
+//     const member = userDetail.userinfo.username;
+//     try {
+//       // Make the first API call
+//       const res = await new DocumentServices().getOrgDocumentReports(
+//         companyId,
+//         dataType,
+//         state,
+//         member
+//       );
+       
+//       // Process the response of the first API call
+//       if (state === 'rejected')
+//         setOrgDocsRejected(res.data.clones ? res.data.clones : []);
+
+//       // Make the second API call only if the state is 'finalized'
+//       if (state === 'finalized') {
+//         const resp = await new DocumentServices().getOrgDocumentReportsFinalized(
+//           companyId,
+//           dataType,
+//           state
+//         );
+//         setOrgDocsCompleted(resp.data.clones ? resp.data.clones : []);
+//       }
+//     } catch (err) {
+//       console.log(err);
+//     } finally {
+//       // Reset the status after API calls
+//       if (state === 'finalized') setOrgDocsCompletedStatus('');
+//       else if (state === 'rejected') setOrgDocsRejectedStatus('');
+//     }
+// };
+
+
   const fetchProcessReports = async (type) => {
     if (type === 'completed') setCompletedProcessesStatus('pending');
     else if (type === 'active') setActiveProcessesStatus('pending');
@@ -407,6 +443,7 @@ export const AppContextProvider = ({ children }) => {
       );
       setUserName(userDetail?.portfolio_info[0]?.username);
       setPortfolioName(userDetail?.portfolio_info[0]?.portfolio_name);
+      setMember(userDetail?.portfolio_info[0]?.portfolio_name);
       setDataType(
         userDetail?.portfolio_info?.length > 1
           ? userDetail?.portfolio_info.find(
