@@ -50,6 +50,8 @@ const ProcessCard = ({ cardItem, title }) => {
     // }
     // console.log("process_id", item._id, item.process_title, item.processing_state)
     getProcessDetail(item._id, item.process_title);
+    console.log(item._id);
+    console.log(item);
     // dispatch(setshowsProcessDetailPopup(true));
     setProcessDetailLoading(true);
   };

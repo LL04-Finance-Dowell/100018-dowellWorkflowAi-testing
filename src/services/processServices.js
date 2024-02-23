@@ -5,8 +5,6 @@ import { httpApiUrl, httpApiUrlV2, httpProcess, processReport } from '../httpCom
 //     return await httpProcess.post("new/", data);
 // }
 
-// const companyid = '6385c0e78eca0fb652c944ae';
-
 export const startNewProcess = async (data) => {
   return await httpProcess.post('/', data);
 };
@@ -18,10 +16,6 @@ export const getVerifiedProcessLink = async (processId, data) => {
 export const verifyProcessForUser = async (processId, data) => {
   return await httpProcess.post(`${processId}/verify/`, data);
 };
-
-// export const startNewProcessV2 = async (data) => {
-//   return await httpProcess.post('/', data);
-// };
 
 export const getSingleProcessV2 = async (processId) => {
   return await httpProcess.get(`${processId}/`);
