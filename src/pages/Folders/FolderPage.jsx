@@ -17,7 +17,7 @@ const FolderPage = ({ knowledgeCenter }) => {
   const { folders } = useAppContext();
   const { KnowledgeFolderTemplates } = useSelector((state) => state.app);
   const [folder, setFolder] = useState(
-    folders.find((folder) => folder._id === folder_id)
+    folders?.find((folder) => folder._id === folder_id)
   )
 
   const [metaTemplates, setMetaTemplates] = useState([])
@@ -101,7 +101,7 @@ const FolderPage = ({ knowledgeCenter }) => {
   }, [folder]);
 
   useEffect(() => {
-    setFolder(folders.find((folder) => folder._id === folder_id));
+    setFolder(folders?.find((folder) => folder._id === folder_id));
   }, [folders]);
 
   // console.log("knowledgeFoldermubeen", tempItems, knowFolder, folder_id)
