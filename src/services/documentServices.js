@@ -86,7 +86,8 @@ export class DocumentServices {
 
   getDocumentReports = (companyId, dataType, member, portfolioName) =>
   httpApiUrlV2.get(
-      `/documents/${companyId}/organisations/?data_type=${dataType}&document_type=document&document_state=draft&member=${member}&portfolio=${portfolioName}`
+      `/documents/${companyId}/organisations/?data_type=${dataType}&document_type=document&document_state=draft`
+      // https://100094.pythonanywhere.com/v2/documents/6390b313d77dc467630713f2/organisations/?document_type=document&document_state=draft&data_type=Real_Data
     );
 
   documentCloneReport = (documentId) => {
