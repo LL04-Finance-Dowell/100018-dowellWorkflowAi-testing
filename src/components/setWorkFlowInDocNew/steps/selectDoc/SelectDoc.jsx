@@ -89,7 +89,7 @@ const SelectDoc = ({ savedDoc, addWorkflowStep }) => {
 
     if (whichApproval == 'new-set-workflow-document' || whichApprovalStep == 'new-set-workflow-document-step') {
       const documentServices = new DocumentServices();
-      documentServices.getAllOriginalDocuments(data.company_id, data.data_type, data.member)
+      documentServices.getAllOriginalDocuments(data.company_id, data.data_type)
         .then(res => {
           // console.log('the doc data are ', res.data)
           dispatch(setOriginalDocuments(res.data.documents?.reverse()));
