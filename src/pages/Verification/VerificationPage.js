@@ -55,7 +55,6 @@ const VerificationPage = () => {
       const paramsPassed = new URL(shortenedLinkToExtractParamsFrom)
         .searchParams;
 
-      
 
       const auth_username = paramsPassed.get('username');
       const auth_portfolio = paramsPassed.get('portfolio');
@@ -114,8 +113,8 @@ const VerificationPage = () => {
     if (dataIsPosting) return
 
     setDataIsPosting(true);
-
-    verifyProcessForUser(sanitizedDataToPost)
+    const processID =  window.location.href.split('verify/')[1]?.split('/')[0]
+    verifyProcessForUser(processID,sanitizedDataToPost)
       .then((res) => {
         setLoading(false);
         window.location = 
