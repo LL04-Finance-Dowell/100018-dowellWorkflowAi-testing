@@ -294,7 +294,7 @@ const DocumentCard = ({
 
     try {
       const response = await (
-        await verifyProcessForUser(sanitizedDataToPost)
+        await verifyProcessForUser(item.process_id,sanitizedDataToPost)
       ).data;
       setDataLoading(false);
       dispatch(setEditorLink(response));
