@@ -62,6 +62,7 @@ from app.mongo_db_connection import (
     delete_process,
     delete_template,
     delete_workflow,
+    delete_group_collection,
     finalize_item,
     get_workflow_setting_object,
     process_folders_to_item,
@@ -92,6 +93,7 @@ from app.mongo_db_connection import (
     update_team_data,
     update_wf,
     update_workflow_setting,
+    update_group_collection
 )
 from app.utils import notification_cron
 
@@ -2403,3 +2405,66 @@ class Group(APIView):
             return Response(res, status=status.HTTP_201_CREATED)
         else:
             return Response(res, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
+    def put(self, request, company_id):
+        group_id = request.data.get("group_id")
+        group_name = request.data.get("group_name")
+        public_members = request.data.get("public")
+        team_members = request.data.get("team")
+        user_members = request.data.get("user")
+
+        if not group_id:
+            return Response("Invalid Request", status.HTTP_400_BAD_REQUEST)
+        
+        res = json.loads(
+            update_group_collection(
+                group_id,
+                self.update_choice(
+                      {
+                        "group_name": group_name,
+                        "public_members": public_members,
+                        "team_members": team_members,
+                        "user_members": user_members,
+                        "company_id": company_id,
+                        "data_type": "Real_Data",
+                    }
+                )
+            )
+        )
+
+        if res["isSuccess"]:
+            return Response("Group Updated", status=status.HTTP_200_OK)
+        else:
+            return Response(res, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    #If a field is empty, it is not updated as empty initial value remains   
+    def update_choice(self, data:dict)->dict:
+        updated_data = {}
+        fields = [
+            "group_name",
+            "public_members",
+            "team_members",
+            "user_members",
+            "company_id",
+            "data_type",
+        ]
+        for field in fields:
+            if field in data and data[field]:
+                updated_data[field] = data[field]
+        return updated_data
+    def delete(self, request, company_id):
+        group_id = request.data.get("group_id")
+        
+        if not group_id:
+            return Response("Invalid Request", status.HTTP_400_BAD_REQUEST)
+        
+        res = json.loads(
+            delete_group_collection(group_id, "Archive_Data")
+        )
+
+        if res["isSuccess"]:
+            return Response("Group Deleted", status=status.HTTP_204_NO_CONTENT)
+        else:
+            return Response(res, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
+
