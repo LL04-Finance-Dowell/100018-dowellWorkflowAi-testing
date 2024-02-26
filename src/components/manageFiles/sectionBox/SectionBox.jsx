@@ -171,8 +171,8 @@ const SectionBox = ({
       if (isDemo) fetchDemoDocuments();
       else if (isCompleted && !window.location.hash.includes('completed#org')) fetchDocumentReports('finalized');
       else if (isCompleted && window.location.hash.includes('completed#org')) fetchOrgDocumentReports('finalized');
-      // else if (isRejected && !window.location.hash.includes('rejected#org')) fetchDocumentReports('rejected');
-      // else if (isRejected && window.location.hash.includes('rejected#org')) fetchOrgDocumentReports('rejected');
+      else if (isRejected && !window.location.hash.includes('rejected#org')) fetchDocumentReports('rejected');
+      else if (isRejected && window.location.hash.includes('rejected#org')) fetchOrgDocumentReports('rejected');
 
       else {
         documentServices

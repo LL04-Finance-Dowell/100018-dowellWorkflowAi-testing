@@ -156,6 +156,13 @@ const DocumentCard = ({
 
   const handleDetailDocumnet = async (item) => {
     // console.log("handle detail doc hit ", dataLoading)
+    console.log("Item object:", item);
+    console.log("Collection ID:", item.collection_id);
+    if (!item.collection_id) {
+      console.error("Collection ID is undefined");
+      return;
+  }
+
     if (dataLoading) return;
     if (documentLoading)
       return toast.info('Please wait for this document to be refreshed first');
