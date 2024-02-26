@@ -34,6 +34,13 @@ const TemplateCard = ({ cardItem, isFolder, folderId }) => {
   const [templateLoading, setTemplateLoading] = useState(false);
 
   const handleTemplateDetail = (item) => {
+    console.log("Item object:", item);
+    console.log("Collection ID:", item.collection_id);
+    if (!item.collection_id) {
+      console.error("Collection ID is undefined");
+      return;
+    }
+    
     const data = {
 
       collection_id: item.collection_id,
