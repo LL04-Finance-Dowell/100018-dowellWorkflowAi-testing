@@ -161,7 +161,7 @@ const DocumentCard = ({
     if (!item.collection_id) {
       console.error("Collection ID is undefined");
       return;
-  }
+    }
 
     if (dataLoading) return;
     if (documentLoading)
