@@ -1,0 +1,39 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  height: fit-content;
+  width: 100%;
+}
+
+.content__box {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.button__container {
+  display: flex;
+  gap: 20px;
+  width: 100%;
+}
+
+.btnsuces {
+  width: 60% !important;
+}
+
+.h2__Doc__Title {
+  font-size: 1.125rem;
+}
+
+@media (max-width: 767px) {
+  .button__container {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    width: 100%;
+  }
+
+  .btnsuces {
+    width: 100% !important;
+  }
+}

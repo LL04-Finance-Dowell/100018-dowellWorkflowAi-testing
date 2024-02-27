@@ -8,7 +8,7 @@ import requests
 import spacy
 from crontab import CronTab
 from django.core.cache import cache
-from git.repo import Repo
+# from git.repo import Repo
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -104,15 +104,15 @@ from .constants import EDITOR_API, PROCESS_COMPLETION_MAIL
 
 nlp = spacy.load("en_core_web_sm")
 
+# to be redone
+# class PADeploymentWebhook(APIView):
+#     """Pick an event from GH and update our PA-server code"""
 
-class PADeploymentWebhook(APIView):
-    """Pick an event from GH and update our PA-server code"""
-
-    def post(self, request):
-        repo = Repo("/home/100094/100094.pythonanywhere.com")
-        origin = repo.remotes.origin
-        origin.pull()
-        return Response("Updated PA successfully", status.HTTP_200_OK)
+#     def post(self, request):
+#         repo = Repo("/home/100094/100094.pythonanywhere.com")
+#         origin = repo.remotes.origin
+#         origin.pull()
+#         return Response("Updated PA successfully", status.HTTP_200_OK)
 
 
 class HomePage(APIView):

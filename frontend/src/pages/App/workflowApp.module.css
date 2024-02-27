@@ -1,0 +1,68 @@
+.container {
+  position: relative !important; 
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  z-index: 10 !important;
+  padding: 10px;
+}
+
+.section__container {
+  width: var(--primary-section-width);
+  display: flex;
+  flex-direction: column;
+  gap: 100px;
+}
+
+.tasks__container {
+  display: flex;
+  width: 100%;
+  gap: 30px;
+  padding: 10px;
+}
+
+.dowell__Advert__Container {
+  position: relative;
+  width: 100%;
+  display: flex;
+  gap: 10px;
+  z-index: 10 !important;
+  padding: 0 10px;
+  margin-bottom: 40px;
+}
+
+.skeleton__box {
+  width: 48%;
+  height: 250px;
+  position: relative;
+}
+
+.iframe__Title {
+  color: var(--e-global-color-accent);
+  font-size: 1.1rem;
+  position: absolute;
+  top: -12%;
+  text-transform: capitalize;
+}
+
+@media (max-width: 768px) {
+  .tasks__container {
+    flex-direction: column;
+  }
+  .dowell__Advert__Container {
+    position: relative;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    z-index: 10 !important;
+    padding: 0 10px;
+    
+  }
+  .skeleton__box {
+    width: 100%;
+    height: 250px;
+    position: relative;
+    margin-top: 20px;
+  }
+}

@@ -3,11 +3,13 @@ import json
 import os
 import re
 import uuid  # Import the uuid library
+from django.shortcuts import render
+
 
 import requests
 from crontab import CronTab
 from django.core.cache import cache
-from git.repo import Repo
+# from git.repo import Repo
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
@@ -91,16 +93,19 @@ from app.mongo_db_connection import (
 
 from .constants import EDITOR_API
 
+def index(request):
+    return render(request, 'build/index.html')
 
-@api_view(["POST"])
-def webhook(request):
-    """Pick an event from GH and update our PA-server code"""
-    if request.method == "POST":
-        repo = Repo("/home/100094/100094.pythonanywhere.com")
-        origin = repo.remotes.origin
-        origin.pull()
-        return Response("Updated PA successfully", status.HTTP_200_OK)
-    return Response("Wrong event Type!", status.HTTP_400_BAD_REQUEST)
+
+# @api_view(["POST"])
+# def webhook(request):
+#     """Pick an event from GH and update our PA-server code"""
+#     if request.method == "POST":
+#         repo = Repo("/home/100094/100094.pythonanywhere.com")
+#         origin = repo.remotes.origin
+#         origin.pull()
+#         return Response("Updated PA successfully", status.HTTP_200_OK)
+#     return Response("Wrong event Type!", status.HTTP_400_BAD_REQUEST)
 
 
 @api_view(["GET"])

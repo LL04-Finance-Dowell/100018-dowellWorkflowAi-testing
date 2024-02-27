@@ -1,0 +1,82 @@
+.container {
+  display: flex;
+  flex-direction: column;
+}
+
+.box {
+  display: flex;
+  flex-direction: column;
+}
+
+.header__box {
+  display: flex;
+  padding: 15px 20px;
+  font-size: 14px;
+  font-weight: 600;
+  border: 1px solid #666;
+  align-items: center;
+  gap: 10px;
+}
+
+.header__box span {
+  text-decoration: underline;
+}
+
+.sign {
+  /*  font-size: 20px; */
+  font-weight: 900;
+  width: fit-content;
+  height: fit-content;
+  text-decoration: none !important;
+}
+
+.content__box {
+  padding: 15px 20px;
+  gap: 10px;
+  display: flex;
+  flex-direction: column;
+}
+
+.content__box select {
+  outline-color: black !important;
+  color: black !important;
+  padding: 8px 16px 8px 16px !important;
+  background-image: none !important;
+  appearance: auto !important;
+  -webkit-appearance: auto !important;
+  -moz-appearance: auto !important;
+  font-size: 16px !important;
+}
+
+.content__box label {
+  display: flex;
+  gap: 10px;
+  font-size: 12px;
+}
+
+.content__box select:focus-visible {
+  border: 2px solid black;
+}
+
+.content__box input {
+  max-width: 100%;
+  border: solid 1px black;
+}
+
+.primary__button {
+  padding: 8px 16px;
+  color: #c36;
+  border: 1px solid #c36;
+  text-transform: capitalize;
+  background-color: white;
+  align-self: flex-start;
+}
+
+.primary__button:hover {
+  background-color: #c36;
+  color: white;
+}
+
+.primary__button:focus {
+  border: solid 2px black;
+}
