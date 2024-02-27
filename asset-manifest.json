@@ -1,7 +1,7 @@
 {
   "files": {
     "main.css": "/100018-dowellWorkflowAi-testing/static/css/main.1f6dba19.css",
-    "main.js": "/100018-dowellWorkflowAi-testing/static/js/main.b68e784e.js",
+    "main.js": "/100018-dowellWorkflowAi-testing/static/js/main.2051b6c1.js",
     "static/js/787.9e9f4ffd.chunk.js": "/100018-dowellWorkflowAi-testing/static/js/787.9e9f4ffd.chunk.js",
     "static/media/sec3.gif": "/100018-dowellWorkflowAi-testing/static/media/sec3.d60825f0f0b955a33d7b.gif",
     "static/media/sec6.gif": "/100018-dowellWorkflowAi-testing/static/media/sec6.f95d0952dad5e90451aa.gif",
@@ -26,11 +26,11 @@
     "static/media/roboto-greek-ext-400-normal.woff2": "/100018-dowellWorkflowAi-testing/static/media/roboto-greek-ext-400-normal.169619821ea93019d1bb.woff2",
     "static/media/getFetch.cjs": "/100018-dowellWorkflowAi-testing/static/media/getFetch.40f37ddea2378391108f.cjs",
     "main.1f6dba19.css.map": "/100018-dowellWorkflowAi-testing/static/css/main.1f6dba19.css.map",
-    "main.b68e784e.js.map": "/100018-dowellWorkflowAi-testing/static/js/main.b68e784e.js.map",
+    "main.2051b6c1.js.map": "/100018-dowellWorkflowAi-testing/static/js/main.2051b6c1.js.map",
     "787.9e9f4ffd.chunk.js.map": "/100018-dowellWorkflowAi-testing/static/js/787.9e9f4ffd.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.1f6dba19.css",
-    "static/js/main.b68e784e.js"
+    "static/js/main.2051b6c1.js"
   ]
 }
