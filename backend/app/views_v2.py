@@ -37,6 +37,7 @@ from app.helpers import (
     remove_members_from_steps,
     update_signed,
     validate_id,
+    remove_finalized_reminder,
 )
 from app.mongo_db_connection import (
     add_document_to_folder,
@@ -61,6 +62,7 @@ from app.mongo_db_connection import (
     delete_process,
     delete_template,
     delete_workflow,
+    delete_group_collection,
     finalize_item,
     get_workflow_setting_object,
     process_folders_to_item,
@@ -91,6 +93,7 @@ from app.mongo_db_connection import (
     update_team_data,
     update_wf,
     update_workflow_setting,
+    update_group_collection
 )
 from app.utils import notification_cron
 
@@ -143,6 +146,7 @@ class DocumentOrTemplateProcessing(APIView):
             request_data["parent_id"],
             request_data["data_type"],
             request_data["process_title"],
+            request.data.get("email", None),
         )
         action = request_data["action"]
         data = None
@@ -456,18 +460,18 @@ class FinalizeOrReject(APIView):
                     status=status.HTTP_400_BAD_REQUEST,
                 )
         check, current_state = is_finalized(item_id, item_type)
-        # if item_type == "document" or item_type == "clone":
-        #     if check and current_state != "processing":
-        #         return Response(
-        #             f"document already processed as `{current_state}`!",
-        #             status.HTTP_200_OK,
-        #         )
-        # elif item_type == "template":
-        #     if check and current_state != "draft":
-        #         return Response(
-        #             f"template already processed as `{current_state}`!",
-        #             status.HTTP_200_OK,
-        #         )
+        if item_type == "document" or item_type == "clone":
+            if check and current_state != "processing":
+                return Response(
+                    f"document already processed as `{current_state}`!",
+                    status.HTTP_200_OK,
+                )
+        elif item_type == "template":
+            if check and current_state != "draft":
+                return Response(
+                    f"template already processed as `{current_state}`!",
+                    status.HTTP_200_OK,
+                )
         if item_type == "clone":
             signers_list = single_query_clones_collection({"_id": item_id}).get(
                 "signed_by"
@@ -560,13 +564,18 @@ class FinalizeOrReject(APIView):
                             subject = (
                                 f"Completion of {process['process_title']} Processing"
                             )
-                            email = "morvinian@gmail.com"  # Placeholder
-                            dowell_email_sender(
-                                process["created_by"],
-                                email,
-                                subject,
-                                email_content=PROCESS_COMPLETION_MAIL,
-                            )
+                            email = process.get("email", None)
+
+                            if email:
+                                dowell_email_sender(
+                                    process["created_by"],
+                                    email,
+                                    subject,
+                                    email_content=PROCESS_COMPLETION_MAIL,
+                                )
+
+                        # Remove Reminder after finalization
+                        remove_finalized_reminder(user, process_id)
 
                         return Response(
                             "document processed successfully", status.HTTP_200_OK
@@ -594,13 +603,18 @@ class FinalizeOrReject(APIView):
                             subject = (
                                 f"Completion of {process['process_title']} Processing"
                             )
-                            email = "morvinian@gmail.com"  # Placeholder
-                            dowell_email_sender(
-                                process["created_by"],
-                                email,
-                                subject,
-                                email_content=PROCESS_COMPLETION_MAIL,
-                            )
+                            email = process.get("email", None)
+
+                            if email:
+                                dowell_email_sender(
+                                    process["created_by"],
+                                    email,
+                                    subject,
+                                    email_content=PROCESS_COMPLETION_MAIL,
+                                )
+
+                        # Remove Reminder after finalization
+                        remove_finalized_reminder(user, process_id)
 
                         return Response(
                             "template processed successfully", status.HTTP_200_OK
@@ -882,6 +896,7 @@ class NewDocument(APIView):
         template_id = request.data["template_id"]
         content = single_query_template_collection({"_id": template_id})["content"]
         page = single_query_template_collection({"_id": template_id})["page"]
+        email = request.data.get("email")
         res = json.loads(
             save_to_document_collection(
                 {
@@ -927,7 +942,7 @@ class NewDocument(APIView):
                 )
             metadata_id = res_metadata["inserted_id"]
             editor_link = access_editor_metadata(
-                res["inserted_id"], "document", metadata_id
+                res["inserted_id"], "document", metadata_id, email
             )
             return Response(
                 {"editor_link": editor_link, "_id": res["inserted_id"]},
@@ -1035,9 +1050,13 @@ class Document(APIView):
 class DocumentLink(APIView):
     def get(self, request, document_id):
         """editor link for a document"""
-        if not validate_id(document_id):
+        document_type = request.query_params.get("document_type")
+        if not validate_id(document_id) or not document_type:
             return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
-        document = single_query_document_collection({"_id": document_id})
+        if document_type == "document":
+            document = single_query_document_collection({"_id": document_id})
+        elif document_type == "clone":
+            document = single_query_clones_collection({"_id": document_id})
         if document:
             document_privacy = document.get("is_private", False)
             if document_privacy == True:
@@ -1053,9 +1072,14 @@ class DocumentLink(APIView):
 
             username = request.query_params.get("username", "")
             portfolio = request.query_params.get("portfolio", "")
+            email = request.query_params.get("email", "")
 
             editor_link = access_editor(
-                document_id, "document", username=username, portfolio=portfolio
+                document_id,
+                document_type,
+                username=username,
+                portfolio=portfolio,
+                email=email,
             )
             if not editor_link:
                 return Response(status.HTTP_500_INTERNAL_SERVER_ERROR)
@@ -1474,6 +1498,7 @@ class NewTemplate(APIView):
 
         viewers = [{"member": request.data["created_by"], "portfolio": portfolio}]
         organization_id = request.data["company_id"]
+        email = request.data.get("email", None)
         res = json.loads(
             save_to_template_collection(
                 {
@@ -1521,6 +1546,7 @@ class NewTemplate(APIView):
                     "field": "template_name",
                     "action": "template",
                     "metadata_id": res_metadata["inserted_id"],
+                    "email": email,
                     "cluster": "Documents",
                     "database": "Documentation",
                     "collection": "TemplateReports",
@@ -1610,7 +1636,15 @@ class TemplateLink(APIView):
             valid_password_hash = template.get("password")
             if compare_hash(valid_password_hash, input_password) == False:
                 return Response("Incorrect password", status.HTTP_401_UNAUTHORIZED)
-        editor_link = access_editor(template_id, "template")
+
+        username = request.query_params.get("username", "")
+        portfolio = request.query_params.get("portfolio", "")
+        email = request.query_params.get("email", "")
+
+        editor_link = access_editor(
+            template_id, "template", username=username, portfolio=portfolio, email=email
+        )
+
         if not editor_link:
             return Response(status.HTTP_500_INTERNAL_SERVER_ERROR)
         return Response(editor_link, status.HTTP_201_CREATED)
@@ -1670,9 +1704,8 @@ class Team(APIView):
         """Get All Team"""
         all_team = bulk_query_team_collection({"company_id": company_id})
         data_type = request.query_params.get("data_type")
-        form = request.data
-        if not form and data_type:
-            return Response("Invalid Request", status.HTTP_400_BAD_REQUEST)
+        if not data_type:
+            return Response("Invalid Request (Provide data_type param)", status.HTTP_400_BAD_REQUEST)
         all_team = bulk_query_team_collection(
             {"company_id": company_id, "data_type": data_type}
         )
@@ -2319,3 +2352,119 @@ class TriggerInvoice(APIView):
             {"created_document": document_id, "created_process": process.data},
             status.HTTP_201_CREATED,
         )
+
+
+class Group(APIView):
+    def get(self, request, company_id):
+
+        data_type = request.query_params.get("data_type")
+        if not data_type:
+            return Response("Invalid Request", status.HTTP_400_BAD_REQUEST)
+
+        groups = bulk_query_team_collection(
+            {"company_id": company_id, "data_type": data_type}
+        )
+
+        response = []
+
+        for group in groups:
+            if group.get("group_name"):
+                response.append(group)
+
+        return Response(response, status=status.HTTP_200_OK)
+
+    def post(self, request, company_id):
+        group_name = request.data.get("group_name")
+        public_members = request.data.get("public")
+        team_members = request.data.get("team")
+        user_members = request.data.get("user")
+
+        if not group_name:
+            return Response("Invalid Request", status.HTTP_400_BAD_REQUEST)
+
+        if not isinstance(team_members, list) or not isinstance(user_members, list):
+            return Response(
+                "Team_members and User_members must be an array or a list",
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        res = json.loads(
+            save_to_team_collection(
+                {
+                    "group_name": group_name,
+                    "public_members": public_members,
+                    "team_members": team_members,
+                    "user_members": user_members,
+                    "company_id": company_id,
+                    "data_type": "Real_Data",
+                }
+            )
+        )
+
+        if res["isSuccess"]:
+            return Response(res, status=status.HTTP_201_CREATED)
+        else:
+            return Response(res, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
+    def put(self, request, company_id):
+        group_id = request.data.get("group_id")
+        group_name = request.data.get("group_name")
+        public_members = request.data.get("public")
+        team_members = request.data.get("team")
+        user_members = request.data.get("user")
+
+        if not group_id:
+            return Response("Invalid Request", status.HTTP_400_BAD_REQUEST)
+        
+        res = json.loads(
+            update_group_collection(
+                group_id,
+                self.update_choice(
+                      {
+                        "group_name": group_name,
+                        "public_members": public_members,
+                        "team_members": team_members,
+                        "user_members": user_members,
+                        "company_id": company_id,
+                        "data_type": "Real_Data",
+                    }
+                )
+            )
+        )
+
+        if res["isSuccess"]:
+            return Response("Group Updated", status=status.HTTP_200_OK)
+        else:
+            return Response(res, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    #If a field is empty, it is not updated as empty initial value remains   
+    def update_choice(self, data:dict)->dict:
+        updated_data = {}
+        fields = [
+            "group_name",
+            "public_members",
+            "team_members",
+            "user_members",
+            "company_id",
+            "data_type",
+        ]
+        for field in fields:
+            if field in data and data[field]:
+                updated_data[field] = data[field]
+        return updated_data
+    def delete(self, request, company_id):
+        group_id = request.data.get("group_id")
+        
+        if not group_id:
+            return Response("Invalid Request", status.HTTP_400_BAD_REQUEST)
+        
+        res = json.loads(
+            delete_group_collection(group_id, "Archive_Data")
+        )
+
+        if res["isSuccess"]:
+            return Response("Group Deleted", status=status.HTTP_204_NO_CONTENT)
+        else:
+            return Response(res, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
+

@@ -1372,6 +1372,37 @@ def update_team_data(team_id, team_data):
     )
     return post_to_data_service(payload)
 
+def update_group_collection(group_id, options):
+    payload = json.dumps(
+        {
+            **MANAGEMENT_REPORTS_DICT,
+            "command": "update",
+            "field": {
+                "_id": group_id,
+            },
+            "update_field": options,
+            "platform": "bangalore",
+        }
+    )
+    return post_to_data_service(payload)
+
+
+def delete_group_collection(group_id, data_type):
+    payload = json.dumps(
+        {
+            **MANAGEMENT_REPORTS_DICT,
+            "command": "update",
+            "field": {
+                "_id": group_id,
+            },
+            "update_field": {
+              "data_type":data_type  
+            },
+            "platform": "bangalore",
+        }
+    )
+     
+    return post_to_data_service(payload)
 
 def process_folders_to_item(ids, folder_id, add_item_to_folder):
     processes = []

@@ -1,35 +1,24 @@
-# Use an official Python runtime as a parent image
-FROM python:3.9-slim
+# pull official base image
+FROM python:3.11.4-slim-buster
 
-# Set environment variables
+# set work directory
+WORKDIR /usr/src/app
+
+# set environment variables
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
 
-# Set work directory
-WORKDIR /app/backend
-
-# Install virtualenv
-RUN pip install virtualenv
-
-# Create a virtual environment
-RUN virtualenv /venv
-
-# Activate the virtual environment
-ENV PATH="/venv/bin:$PATH"
-
-# Install dependencies
-COPY requirements.txt /app/backend/
-
+# install dependencies
+RUN pip install --upgrade pip
+COPY ./requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy project
-COPY . /app/backend
+# copy project
+COPY . .
 
-# Run Django migrations
-RUN python manage.py migrate
 
-# Expose the port the app runs on
-EXPOSE 8001
+# Expose the port on which the Django app will run
+EXPOSE 8000
 
-# Run Django server
-CMD python manage.py runserver 0.0.0.0:8001
+# Define the command to run the Django app
+CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]

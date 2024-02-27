@@ -7,7 +7,12 @@ import requests
 from datetime import datetime
 
 from app.constants import EDITOR_API, MASTERLINK_URL, PUBLIC_LOGIN_API
-from app.models import FavoriteDocument, FavoriteTemplate, FavoriteWorkflow
+from app.models import (
+    FavoriteDocument,
+    FavoriteTemplate,
+    FavoriteWorkflow,
+    ProcessReminder,
+)
 from app.serializers import (
     FavouriteDocumentSerializer,
     FavouriteTemplateSerializer,
@@ -238,13 +243,11 @@ def cloning_process(process_id, created_by, creator_portfolio):
         return
 
 
-def access_editor(item_id, item_type, username="", portfolio=""):
+def access_editor(item_id, item_type, username="", portfolio="", email=""):
     team_member_id = (
         "11689044433"
         if item_type == "document"
-        else "1212001"
-        if item_type == "clone"
-        else "22689044433"
+        else "1212001" if item_type == "clone" else "22689044433"
     )
     if item_type == "document":
         collection = "DocumentReports"
@@ -286,18 +289,26 @@ def access_editor(item_id, item_type, username="", portfolio=""):
             "field": field,
             "type": item_type,
             "metadata_id": metadata_id,
-            "action": "document"
-            if item_type == "document"
-            else "clone"
-            if item_type == "clone"
-            else "template",
+            "action": (
+                "document"
+                if item_type == "document"
+                else "clone" if item_type == "clone" else "template"
+            ),
             "flag": "editing",
             "name": name,
             "username": username,
             "portfolio": portfolio,
+            "email": email,
             "time": str(datetime.utcnow()),
             "command": "update",
-            "update_field": {field: "", "content": "", "page": "", "edited_by": username, "portfolio": portfolio, "edited_on": str(datetime.utcnow())},
+            "update_field": {
+                field: "",
+                "content": "",
+                "page": "",
+                "edited_by": username,
+                "portfolio": portfolio,
+                "edited_on": str(datetime.utcnow()),
+            },
         },
     }
     try:
@@ -313,13 +324,11 @@ def access_editor(item_id, item_type, username="", portfolio=""):
 
 
 # TODO: will be updated
-def access_editor_metadata(item_id, item_type, metadata_id):
+def access_editor_metadata(item_id, item_type, metadata_id, email):
     team_member_id = (
         "11689044433"
         if item_type == "document"
-        else "1212001"
-        if item_type == "clone"
-        else "22689044433"
+        else "1212001" if item_type == "clone" else "22689044433"
     )
     if item_type == "document":
         collection = "DocumentReports"
@@ -348,16 +357,17 @@ def access_editor_metadata(item_id, item_type, metadata_id):
             "collection": collection,
             "document": document,
             "team_member_ID": team_member_id,
+            "email": email,
             "function_ID": "ABCDE",
             "_id": item_id,
             "metadata_id": metadata_id,
             "field": field,
             "type": item_type,
-            "action": "document"
-            if item_type == "document"
-            else "clone"
-            if item_type == "clone"
-            else "template",
+            "action": (
+                "document"
+                if item_type == "document"
+                else "clone" if item_type == "clone" else "template"
+            ),
             "flag": "editing",
             "name": name,
             "command": "update",
@@ -527,8 +537,9 @@ def check_progress(process_id):
     accessed = 0
     for step in steps:
         step_clone_map = step.get("stepDocumentCloneMap", [])
-        if check_all_accessed(step_clone_map):
-            accessed += 1
+        if step_clone_map:
+            if check_all_accessed(step_clone_map):
+                accessed += 1
 
     percentage_progress = round((accessed / steps_count * 100), 2)
     return percentage_progress
@@ -623,6 +634,7 @@ def update_signed(signers_list: list, member: str, status: bool) -> list:
 def check_all_accessed(dic):
     return all([item.get("accessed") for item in dic])
 
+
 def get_link(user, role, links):
     for link in links:
         if link.get(user):
@@ -704,15 +716,17 @@ def create_document_helper(
         return
 
 
-def get_prev_and_next_users(process: dict, auth_user: str, auth_role: str, user_type: str) -> tuple:
-    """ Gets the previous step signers and potential next step signers
+def get_prev_and_next_users(
+    process: dict, auth_user: str, auth_role: str, user_type: str
+) -> tuple:
+    """Gets the previous step signers and potential next step signers
         for specific process step
 
     Args:
         process (dict): A process dictionary
         auth_user (str):  Username of the user in question
         auth_role (str):  Role of the user in question
-        
+
     Returns:
         tuple: (previous, next)
     """
@@ -721,12 +735,12 @@ def get_prev_and_next_users(process: dict, auth_user: str, auth_role: str, user_
     next_step = None
     prev_viewers = None
     next_viewers = None
-    
+
     if user_type == "public":
         auth_user = auth_user[0]
     else:
         auth_user = auth_user
-    
+
     for current_idx, step in enumerate(process["process_steps"]):
         if step.get("stepRole") == auth_role:
             for item in step["stepDocumentCloneMap"]:
@@ -736,33 +750,46 @@ def get_prev_and_next_users(process: dict, auth_user: str, auth_role: str, user_
                     if current_idx > 0:
                         prev_step = process["process_steps"][current_idx - 1]
                         prev_viewers_doc_map = prev_step["stepDocumentCloneMap"]
-                        prev_viewers = [k for item in prev_viewers_doc_map for k, v in item.items() if v == current_doc_id]
-                                                
+                        prev_viewers = [
+                            k
+                            for item in prev_viewers_doc_map
+                            for k, v in item.items()
+                            if v == current_doc_id
+                        ]
+
                     if current_idx < len(process_steps) - 1:
                         next_step = process["process_steps"][current_idx + 1]
                         next_viewers_team_doc_map = next_step["stepTeamMembers"]
                         next_viewers_user_doc_map = next_step["stepUserMembers"]
                         next_viewers_public_doc_map = next_step["stepPublicMembers"]
-                        next_viewers = [item.get("member") for doc_map in [next_viewers_team_doc_map, next_viewers_user_doc_map, next_viewers_public_doc_map] for item in doc_map]
-                        
-                        
+                        next_viewers = [
+                            item.get("member")
+                            for doc_map in [
+                                next_viewers_team_doc_map,
+                                next_viewers_user_doc_map,
+                                next_viewers_public_doc_map,
+                            ]
+                            for item in doc_map
+                        ]
+
     return (prev_viewers, next_viewers)
-                            
-    
+
+
 def dowell_email_sender(name, email, subject, email_content):
     email_url = "https://100085.pythonanywhere.com/api/uxlivinglab/email/"
     payload = {
-        "toname":name,
+        "toname": name,
         "toemail": email,
-        "fromname":"Workflow AI",
-        "fromemail":"workflowai@dowellresearch.sg",
+        "fromname": "Workflow AI",
+        "fromemail": "workflowai@dowellresearch.sg",
         "subject": subject,
-        "email_content":email_content
+        "email_content": email_content,
     }
 
     requests.post(email_url, data=payload)
 
-def check_last_finalizer(user, user_type, process)->bool:
+
+def check_last_finalizer(user, user_type, process) -> bool:
     steps = process["process_steps"]
     non_skipped_steps = []
 
@@ -770,7 +797,7 @@ def check_last_finalizer(user, user_type, process)->bool:
         if step.get("skipStep") == False:
             non_skipped_steps.append(step)
 
-    last_step = non_skipped_steps[len(non_skipped_steps)-1]
+    last_step = non_skipped_steps[len(non_skipped_steps) - 1]
     step_clone_map = last_step.get("stepDocumentCloneMap", [])
 
     if user_type == "team":
@@ -778,18 +805,79 @@ def check_last_finalizer(user, user_type, process)->bool:
             if data.get("member") == user:
                 if check_all_accessed(step_clone_map):
                     return True
-            
+
     elif user_type == "user":
         for data in last_step["stepUserMembers"]:
             if data.get("member") == user:
                 if check_all_accessed(step_clone_map):
                     return True
-            
+
     elif user_type == "public":
-       for data in last_step["stepPublicMembers"]:
+        for data in last_step["stepPublicMembers"]:
             if data.get("member") == user:
                 if check_all_accessed(step_clone_map):
                     return True
     else:
         return False
 
+
+def set_reminder(reminder, step, process_id, created_by):
+    try:
+        team = step.get("stepTeamMembers", [])
+        user = step.get("stepUserMembers", [])
+
+        if reminder == "every_hour":
+            if team:
+                create_reminder(process_id, 60, team, created_by)
+            if user:
+                create_reminder(process_id, 60, user, created_by)
+
+        elif reminder == "every_day":
+            if team:
+                create_reminder(process_id, 1440, team, created_by)
+            if user:
+                create_reminder(process_id, 1440, user, created_by)
+    except Exception:
+        return
+
+
+def create_reminder(process_id, interval, members, created_by):
+    try:
+        for member in members:
+            member_name = member.get("member")
+            member_email = member.get("email")
+            current_datetime = datetime.utcnow().strftime("%d:%m:%Y,%H:%M:%S")
+
+            if member_name and member_email:
+                ProcessReminder.objects.create(
+                    process_id=process_id,
+                    step_finalizer=member_name,
+                    email=member_email,
+                    interval=interval,
+                    last_reminder_datetime=current_datetime,
+                    created_by=created_by,
+                )
+    except Exception:
+        return
+
+
+def remove_finalized_reminder(user, process_id):
+    try:
+        reminder = ProcessReminder.objects.get(
+            step_finalizer=user, process_id=process_id
+        )
+        reminder.delete()
+        return True
+    except Exception as e:
+        return False
+
+
+def remove_finalized_reminder(user, process_id):
+    try:
+        reminder = ProcessReminder.objects.get(
+            step_finalizer=user, process_id=process_id
+        )
+        reminder.delete()
+        return True
+    except Exception as e:
+        return False
