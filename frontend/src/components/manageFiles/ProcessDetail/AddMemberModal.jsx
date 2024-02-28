@@ -1,8 +1,8 @@
+import axios from 'axios';
 import { useState } from 'react';
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
-import { useDispatch, useSelector } from 'react-redux';
-import axios from 'axios';
+import { useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
 
 
@@ -38,8 +38,8 @@ export default function AddMemberModal(props) {
   const handleTeamSubmit = (e) => {
     e.preventDefault();
 
-    const apiUrl = `https://100094.pythonanywhere.com/v2/processes/${ProcessDetail._id}/portfolio/`;
-    // const apiUrl = `https://100094.pythonanywhere.com/v2/processes/657c60838fc5bccaf9f1f476/portfolio/`;
+    const apiUrl = `http://localhost:8001/v2/processes/${ProcessDetail._id}/portfolio/`;
+    // const apiUrl = `http://localhost:8001/v2/processes/657c60838fc5bccaf9f1f476/portfolio/`;
 
     const payload = [{
       step: props.step.stepNumber || 1,
@@ -67,7 +67,7 @@ export default function AddMemberModal(props) {
   const handlePubicSubmit = (e) => {
     e.preventDefault();
 
-    const apiUrl = `https://100094.pythonanywhere.com/v2/processes/${ProcessDetail._id}/portfolio/`;
+    const apiUrl = `http://localhost:8001/v2/processes/${ProcessDetail._id}/portfolio/`;
 
     const payload = {
       step: props.step.stepNumber || 1,
@@ -95,7 +95,7 @@ export default function AddMemberModal(props) {
   const handleUserSubmit = (e) => {
     e.preventDefault();
 
-    const apiUrl = `https://100094.pythonanywhere.com/v2/processes/${ProcessDetail._id}/portfolio/`;
+    const apiUrl = `http://localhost:8001/v2/processes/${ProcessDetail._id}/portfolio/`;
 
     const payload = {
       step: props.step.stepNumber || 1,

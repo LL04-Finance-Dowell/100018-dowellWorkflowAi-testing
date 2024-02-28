@@ -1,4 +1,4 @@
-import { httpApiUrl, httpApiUrlV2, httpTemplate } from '../httpCommon/httpCommon';
+import { httpApiUrl, httpTemplate } from '../httpCommon/httpCommon';
 
 export class TemplateServices {
   createTemplate = (data) => {
@@ -6,8 +6,7 @@ export class TemplateServices {
   };
 
   detailTemplate = (collection_id) => {
-    return httpTemplate.get(`/${collection_id}/link/`);
-    // return httpTemplate.get('https://100094.pythonanywhere.com/v2/templates/65cdf4074db13cf4ccdbe023/link/');
+    return httpTemplate.get(`/${collection_id}/`);
   };
 
   approvedTemplate = (data) => {
@@ -26,35 +25,35 @@ export class TemplateServices {
     return httpTemplate.post('/mine/', data);
   };
 
-  savedTemplates = (companyId, dataType, member, data) => {
-    return httpTemplate.get(`/metadata/${companyId}/organisations/?data_type=${dataType}&document_state=draft&item_type=template`, data)
-    // return httpTemplate.post('/saved/', data);
+  savedTemplates = (data) => {
+    return httpTemplate.post('/saved/', data);
   };
 
   allTemplates = (companyId, dataType) => {
-    return httpApiUrlV2.get(
-      `/metadata/${companyId}/organisations/?data_type=${dataType}&item_type=template`  
+    // return httpApiUrl.get(
+    //   `/companies/${companyId}/templates/?data_type=${dataType}`
+    // );
+    return httpApiUrl.get(
+      `/companies/${companyId}/templates/metadata/?data_type=${dataType}`
     );
   };
 
-  // * The company id for demoTemplates is hard coded to that of Dowell Knowledge Centre
-  demoTemplates = (count) =>  
-   httpApiUrlV2.get(
+  demoTemplates = (count) =>
+    httpApiUrl.get(
       `companies/6385c0f38eca0fb652c9457e/templates/knowledge-centre/?data_type=Real_Data&page=${count}`
     );
+  // * The company id for demoTemplates is hard coded to that of Dowell Knowledge Centre
 
   singleTemplateDetail = async (templateId) => {
-    return await httpTemplate.get(`/${templateId}/`);
+    return await httpTemplate.get(`/${templateId}/object/`);
   };
 
-  getTemplateReports = (companyId, dataType, member, portfolioName) => {
-    httpApiUrlV2.get(
-      `/templates/${companyId}/organisations/?data_type=${dataType}&template_state=draft&member=${member}&portfolio=${portfolioName}`
-      // https://100094.pythonanywhere.com/v2/templates/6390b313d77dc467630713f2/organisations/?template_state=draft&data_type=Real_Data
+  getTemplateReports = (companyId, dataType, userName, portfolioName) =>
+    httpApiUrl.get(
+      `/companies/${companyId}/templates/reports/metadata/?data_type=${dataType}&template_state=draft&portfolio=${portfolioName}&member=${userName}`
     );
-  }
 
-  contentTemplate = async (data) => {
-    return await httpTemplate.get(`/${data}/content/`);
-  };
+    contentTemplate = async (data) => {
+      return await httpTemplate.get(`/${data}/content/`);
+    };
 }

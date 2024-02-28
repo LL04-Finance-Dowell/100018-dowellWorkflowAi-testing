@@ -1,47 +1,41 @@
 import React, { useState } from "react";
-import styles from "./sidebar.module.css";
 import { v4 as uuidv4 } from "uuid";
-import CollapseItem from "./collapseItem/CollapseItem";
-import Notifications from "./notifications/Notifications";
 import New from "./new/New";
+import Notifications from "./notifications/Notifications";
 import Search from "./search/Search";
+import styles from "./sidebar.module.css";
 
-import { FaPowerOff } from "react-icons/fa";
-import { FaUserAlt } from "react-icons/fa";
-import { ImHome3 } from "react-icons/im";
-import Footer from "./footer/Footer";
-import { useLocation } from 'react-router-dom';
-import { useDispatch, useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
-import axios from "axios";
-import { CgProfile } from "react-icons/cg";
-import { FaShieldAlt } from "react-icons/fa";
 import { AiTwotoneSetting } from "react-icons/ai";
+import { CgProfile } from "react-icons/cg";
+import { FaPowerOff, FaShieldAlt, FaUserAlt } from "react-icons/fa";
+import { ImHome3 } from "react-icons/im";
+import { useDispatch, useSelector } from "react-redux";
+import { useLocation, useNavigate } from 'react-router-dom';
 import { dowellLogoutUrl } from "../../services/axios";
+import Footer from "./footer/Footer";
 import ManageFile from "./manageFile/ManageFile";
 import Reports from "./reports/Reports";
 
-import { getAgreeStatus } from "../../services/legalService";
-import Spinner from "../spinner/Spinner";
-import useCloseElementOnEscapekeyClick from "../../hooks/useCloseElementOnEscapeKeyClick";
-import { BsThreeDotsVertical } from "react-icons/bs";
-import {
-  setDateAgreedToLegalStatus,
-  setLegalAgreePageLoading,
-  setLegalStatusLoading,
-  setLegalTermsAgreed,
-  setShowLegalStatusPopup,
-  setUserDetailPosition,
-  setShowProfileSpinner,
-  setLanguageSelectPosition,
-} from "../../features/app/appSlice";
-import { Tooltip } from "react-tooltip";
 import { useTranslation } from "react-i18next";
+import { BsThreeDotsVertical } from "react-icons/bs";
 import { GrStatusGoodSmall } from "react-icons/gr";
-import { productName } from "../../utils/helpers";
-import { useAppContext } from "../../contexts/AppContext";
 import { HashLink } from "react-router-hash-link";
+import { Tooltip } from "react-tooltip";
+import { useAppContext } from "../../contexts/AppContext";
+import {
+    setDateAgreedToLegalStatus,
+    setLanguageSelectPosition,
+    setLegalAgreePageLoading,
+    setLegalStatusLoading,
+    setLegalTermsAgreed,
+    setShowLegalStatusPopup,
+    setShowProfileSpinner,
+    setUserDetailPosition,
+} from "../../features/app/appSlice";
+import useCloseElementOnEscapekeyClick from "../../hooks/useCloseElementOnEscapeKeyClick";
+import { getAgreeStatus } from "../../services/legalService";
+import { productName } from "../../utils/helpers";
 
 const Sidebar = ({toggleSidebar, isMobile}) => {
   const dispatch = useDispatch();
@@ -198,7 +192,7 @@ const Sidebar = ({toggleSidebar, isMobile}) => {
   // useEffect(() => {
   //   axios
   //     .get(
-  //       'https://100094.pythonanywhere.com/v1/companies/6385c0f38eca0fb652c9457e/templates/?='
+  //       'http://localhost:8001/v1/companies/6385c0f38eca0fb652c9457e/templates/?='
   //     )
   //     .then((response) => {
   //       const templateNames = response.data.templates.map(

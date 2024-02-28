@@ -1,38 +1,33 @@
-import styles from "./processDocument.module.css";
-import { v4 as uuidv4 } from "uuid";
-import { useState, useEffect } from "react";
-import Popup from "../../../Popup/Popup";
-import { useForm } from "react-hook-form";
-import Select from "../../select/Select";
-import { AiOutlineClose } from "react-icons/ai";
-import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
-import { toast } from "react-toastify";
-import {
-  newProcessActionOptions,
-  processActionOptionsWithLinkReturned,
-  startNewProcess,
-} from "../../../../services/processServices";
-import ProgressBar from "../../../progressBar/ProgressBar";
-import SelectDoc from "../selectDoc/SelectDoc";
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
+import { useTranslation } from "react-i18next";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+import { v4 as uuidv4 } from "uuid";
+import {
+    setAllProcesses,
+    setAllowErrorChecksStatusUpdateForNewProcess,
+    setNewProcessErrorMessage,
+    setPopupIsOpen
+} from "../../../../features/app/appSlice";
+import {
+    newProcessActionOptions,
+    processActionOptionsWithLinkReturned,
+    startNewProcessV2,
+} from "../../../../services/processServices";
+import { productName } from "../../../../utils/helpers";
+import Popup from "../../../Popup/Popup";
+import ProgressBar from "../../../progressBar/ProgressBar";
+import Select from "../../select/Select";
 import GeneratedLinksModal from "./components/GeneratedLinksModal/GeneratedLinksModal";
 import SaveConfimationModal from "./components/SaveConfirmationModal/SaveConfirmationModal";
-import {
-  setAllProcesses,
-  setAllowErrorChecksStatusUpdateForNewProcess,
-  setNewProcessErrorMessage,
-  setCurrentMessage,
-  setPopupIsOpen,
-} from "../../../../features/app/appSlice";
-import { useTranslation } from "react-i18next";
+import styles from "./processDocument.module.css";
 import { extractProcessObj } from "./utils/utils";
-import { productName } from "../../../../utils/helpers";
 
 //import reset copy data 
 import { resetCopyData } from "../../../../features/processCopyReducer";
-import { selectedGroupMembers } from "../../../../features/groups/groupsSlice";
 
 const ProcessDocument = ({ savedProcess, Process_title, setProcess_title, addWorkflowStep }) => {
   // const [ScrollView , SetScrollView] = useState();
@@ -48,7 +43,7 @@ const ProcessDocument = ({ savedProcess, Process_title, setProcess_title, addWor
   const whichApproval = parts[parts.length - 1];
   const whichApprovalType = whichApproval == 'new-set-workflow-document' ? 'document' : 'template'
 
-  // console.log("addWorkflowStepProcess", addWorkflowStep)
+  console.log("addWorkflowStepProcess", addWorkflowStep)
 
   useEffect(() => {
     if (!savedProcess) return;
@@ -92,15 +87,15 @@ const ProcessDocument = ({ savedProcess, Process_title, setProcess_title, addWor
     showConfirmationModalForSaveLater,
     setShowConfirmationModalForSaveLater,
   ] = useState(false);
-  const selectedGroupMem = useSelector(selectedGroupMembers)
+
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { t } = useTranslation();
-
+  const [processName, setProcessName] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
   const handleProcessBtnClick = async () => {
-    // console.log("processSteps", processSteps[0].steps, docCurrentWorkflow.workflows.workflow_title, ProcessDetail)
+    console.log("processSteps", processSteps[0].steps, docCurrentWorkflow.workflows.workflow_title, ProcessDetail)
     if (!processOptionSelection || processOptionSelection === "Select") return;
     dispatch(resetCopyData())
     if (!userDetail) return;
@@ -154,11 +149,9 @@ const ProcessDocument = ({ savedProcess, Process_title, setProcess_title, addWor
         teamMembersSelectedForProcess,
         publicMembersSelectedForProcess,
         userMembersSelectedForProcess,
-        selectedGroupMem,
         true,
 
       );
-      console.log("processObjToSave",processObjToSave);
       setProcessObjectToSave(processObjToSave);
       dispatch(setAllowErrorChecksStatusUpdateForNewProcess(true));
       return setShowConfirmationModalForSaveLater(true);
@@ -175,7 +168,7 @@ const ProcessDocument = ({ savedProcess, Process_title, setProcess_title, addWor
       teamMembersSelectedForProcess,
       publicMembersSelectedForProcess,
       userMembersSelectedForProcess,
-      selectedGroupMem
+
     );
 
     if (processObjToPost.error) {
@@ -198,13 +191,7 @@ const ProcessDocument = ({ savedProcess, Process_title, setProcess_title, addWor
 
     setIsLoading(true);
     const Api_key = creditResponse?.api_key;
-    try {
-      setNewProcessLoading(true);
-      const processRes = await startNewProcess(processObjToPost)
-   
-      if(processRes.statusText==="OK"){
-      ///product_service after
-      axios
+    axios
       .post(
         `https://100105.pythonanywhere.com/api/v3/process-services/?type=product_service&api_key=${Api_key}`,
         {
@@ -212,149 +199,118 @@ const ProcessDocument = ({ savedProcess, Process_title, setProcess_title, addWor
           sub_service_ids: ["DOWELL100264"],
         }
       )
-      .then(async (res) => {
-   
-    
+      .then(async (response) => {
+        // console.log("the res from axios is ", response);
+        if (response.data.success == true) {
+          setNewProcessLoading(true);
+
+          try {
+            const response = await (
+              await startNewProcessV2(processObjToPost)
+            ).data;
+            // console.log("the process obj to post is ", processObjToPost);
+            // console.log("the response from adding new process is ", response);
+
+            // console.log('the user Details are ', userDetail)
+            if (processObjToPost.workflows[0].workflows.steps[0].stepPublicMembers.length > 0) {
+              try {
+                const company_id = userDetail?.portfolio_info?.length > 1 ? userDetail?.portfolio_info.find(portfolio => portfolio.product === productName)?.org_id : userDetail?.portfolio_info[0]?.org_id
+                const publicData = {
+                  "process_id": response.process_id,
+                  "member": userDetail.userinfo.username,
+                  "company_id": company_id,
+                  "qr_ids": processObjToPost.workflows[0].workflows.steps[0].stepPublicMembers
+                }
+                const requestOptions = {
+                  method: 'POST',
+                  headers: {
+                    'Content-Type': 'application/json',
+
+                  },
+                  body: JSON.stringify(publicData),
+                };
+                fetch(`http://localhost:8001/v2/processes/${company_id}/public/`, requestOptions)
+                  .then((response) => {
+                    if (!response.ok) {
+                      throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+
+                  })
+                  .then((data) => {
+
+                    // console.log('Response from the POST request to add to public is :', data);
+                  })
+                  .catch((error) => {
+
+                    console.error('Error:', error);
+                  });
+              }
+              catch (err) {
+                console.log(err.response)
+              }
+            }
+
+
+
+            dispatch(setAllowErrorChecksStatusUpdateForNewProcess(true));
+            dispatch(setNewProcessErrorMessage(null));
+            setProcess_title("");
+            setNewProcessLoaded(true);
+            setNewProcessLoading(false);
+            if (
+              processActionOptionsWithLinkReturned.includes(
+                newProcessActionOptions[`${processOptionSelection}`]
+              )
+            ) {
+              setGeneratedLinks(
+                Array.isArray(response) ? response[0] : response
+              );
+              setmasterLink(
+                Array.isArray(response) ? response.master_link : response
+              );
+              setShowGeneratedLinksPopup(true);
+              setNewProcessLoaded(false);
+              return;
+            }
+            toast.success(
+              typeof response === "string"
+                ? response
+                : "Successfully created new process"
+            );
+
+            setNewProcessLoaded(false);
+          } catch (err) {
+            setNewProcessLoading(false);
+
+            toast.info(
+              err.response
+                ? err.response.status === 500
+                  ? "New process creation failed"
+                  : err.response.data
+                : "New process creation failed"
+            );
+            dispatch(setPopupIsOpen(true));
+          }
+        }
       })
       .catch((error) => {
-        // console.log(error);
+        console.log(error);
         toast.info(error.response?.data?.message);
       });
-        ///*****************product_service after
-      }
-     const  response = processRes.data;
-
-      if (processObjToPost.workflows[0].workflows.steps[0].stepPublicMembers.length > 0) {
-        try {
-          const company_id = userDetail?.portfolio_info?.length > 1 ? userDetail?.portfolio_info.find(portfolio => portfolio.product === productName)?.org_id : userDetail?.portfolio_info[0]?.org_id
-          const publicData = {
-            "process_id": response.process_id,
-            "member": userDetail.userinfo.username,
-            "company_id": company_id,
-            "qr_ids": processObjToPost.workflows[0].workflows.steps[0].stepPublicMembers
-          }
-          const requestOptions = {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-
-            },
-            body: JSON.stringify(publicData),
-          };
-          fetch(`https://100094.pythonanywhere.com/v2/processes/${company_id}/public/`, requestOptions)
-            .then((response) => {
-              if (!response.ok) {
-                throw new Error('Network response was not ok');
-              }
-              
-              return response.json();
-
-            })
-            .then((data) => {
-
-              // // console.log('Response from the POST request to add to public is :', data);
-            })
-            .catch((error) => {
-
-              console.error('Error:', error);
-            });
-        }
-        catch (err) {
-          // console.log(err.response)
-        }
-      }
-      if (
-        processActionOptionsWithLinkReturned.includes(
-          newProcessActionOptions[`${processOptionSelection}`]
-        )
-      ) {
-        setGeneratedLinks(
-          Array.isArray(response) ? response[0] : response
-        );
-        setmasterLink(
-          Array.isArray(response) ? response.master_link : response
-        );
-        setShowGeneratedLinksPopup(true);
-        setNewProcessLoaded(false);
-        return;
-      }
-      toast.success(
-        typeof response === "string"
-          ? response
-          : "Successfully created new process"
-      );
-
-
-      dispatch(setAllowErrorChecksStatusUpdateForNewProcess(true));
-      dispatch(setNewProcessErrorMessage(null));
-      setProcess_title("");
-      setNewProcessLoaded(true);
-      setNewProcessLoading(false);
-      setNewProcessLoaded(false);
-    } catch (err) {
-      setNewProcessLoading(false);
-
-      toast.info(
-        err.response
-          ? err.response.status === 500
-            ? "New process creation failed"
-            : err.response.data
-          : "New process creation failed"
-      );
-      dispatch(setPopupIsOpen(true));
-    }
-   
     setIsLoading(false);
   };
 
   const updateProcessBtnClick = async () => {
     if (processSteps.length < 1) {
       return toast.info("You have not configured steps for any workflow");
-    }
-    if (!currentDocToWfs) {
-      document
-        .querySelector("#select-doc")
-        ?.scrollIntoView({ block: "center" });
-      // dispatch(setPopupIsOpen(true));
-      // dispatch( setCurrentMessage('You have not selected a document'))
-
-      return toast.info("You have not selected a document");
-    }
-    if (!docCurrentWorkflow) {
-      document
-        .querySelector("#step-title")
-        ?.scrollIntoView({ block: "center" });
-      // dispatch(setPopupIsOpen(true));
-      // dispatch( setCurrentMessage('You have not selected a workflow'))
-
-      return toast.info("You have not selected any workflow");
-    }
-    if (processSteps.length < 1) {
-      // dispatch(setPopupIsOpen(true));
-      // dispatch( setCurrentMessage('You have not configured steps for any workflow'))
-
-      return toast.info("You have not configured steps for any workflow");
-    }
-    if (!errorsCheckedInNewProcess) {
-      document
-        .querySelector("#h2__Doc__Title")
-        ?.scrollIntoView({ block: "center" });
-      // dispatch(setPopupIsOpen(true));
-      // dispatch( setCurrentMessage('Please click the "Show process" button above to make sure there are no errors before processing'))
-
-      return toast.info(
-        'Please click the "Show process" button above to make sure there are no errors before processing.'
-      );
-    }
-    if (!Process_title) {
-      return toast.info("Please Enter a Process Name");
-    }
+    } 
     else 
     {
-      // console.log("processSteps", processSteps[0].steps, docCurrentWorkflow.workflows.workflow_title, ProcessDetail)
+      console.log("processSteps", processSteps[0].steps, docCurrentWorkflow.workflows.workflow_title, ProcessDetail)
 
-      const apiUrl = `https://100094.pythonanywhere.com/v2/processes/${ProcessDetail._id}/`;
-      // const apiUrl = `https://100094.pythonanywhere.com/v2/processes/64bb6c7c1da82ab75d3c75b8/`;
+      const apiUrl = `http://localhost:8001/v2/processes/${ProcessDetail._id}/`;
+      // const apiUrl = `http://localhost:8001/v2/processes/64bb6c7c1da82ab75d3c75b8/`;
 
 
       const payload = {
@@ -433,13 +389,13 @@ const ProcessDocument = ({ savedProcess, Process_title, setProcess_title, addWor
         ]
       };
 
-      // console.log('payload', payload)
+      console.log('payload', payload)
 
       // Making a POST request with Axios
       axios.put(apiUrl, payload)
         .then((response) => {
           // Handle the API response here
-          // console.log('API Response:', response.data);
+          console.log('API Response:', response.data);
           toast.success("Process Update Successfully")
         })
         .catch((error) => {

@@ -33,6 +33,8 @@ import axios from 'axios';
 import { WorkflowReport } from './components/newSidebar/reports/WorkflowReport';
 import Terms from './pages/Terms/Terms';
 // import ConstructionPage from './pages/ConstructionPage/ConstructionPage';
+axios.defaults.xsrfCookieName = "csrftoken";
+axios.defaults.xsrfHeaderName = "X-CSRFToken";
 
 function App() {
   const dispatch = useDispatch();

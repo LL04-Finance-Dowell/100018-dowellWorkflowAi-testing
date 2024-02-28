@@ -1,15 +1,15 @@
+import axios from 'axios';
 import React, { useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
+import { TiArrowSortedDown, TiArrowSortedUp } from 'react-icons/ti';
 import { useDispatch, useSelector } from 'react-redux';
+import { toast } from 'react-toastify';
 import {
-  setDocCurrentWorkflow,
-  setDropdowndToggle,
+    setDocCurrentWorkflow,
+    setDropdowndToggle,
 } from '../../../../../features/app/appSlice';
 import Collapse from '../../../../../layouts/collapse/Collapse';
 import styles from './dropdown.module.css';
-import { TiArrowSortedDown, TiArrowSortedUp } from 'react-icons/ti';
-import { useTranslation } from 'react-i18next';
-import axios from 'axios';
-import { toast } from 'react-toastify';
 
 const Dropdown = ({ disableClick, addWorkflowStep }) => {
   const dispatch = useDispatch();
@@ -25,12 +25,12 @@ const Dropdown = ({ disableClick, addWorkflowStep }) => {
 
   useEffect(() => {
     const timerId = setTimeout(() => {
-      // console.log('entered drop down', wfToDocument.workflows)
+      console.log('entered drop down', wfToDocument.workflows)
       if (wfToDocument.workflows && copiedWorkflow !== null) {
         dispatch(setDocCurrentWorkflow(wfToDocument.workflows[0]));
 
         dispatch(setDropdowndToggle(false));
-        // console.log('finished dropdown')
+        console.log('finished dropdown')
       }
     }, 5000);
     return () => clearTimeout(timerId);
@@ -47,15 +47,15 @@ const Dropdown = ({ disableClick, addWorkflowStep }) => {
     dispatch(setDropdowndToggle(false));
   };
 
-  // console.log("ProcessDetailWorkflowDropdown", ProcessDetail)
-  // // console.log("the wfToDocument.workflows are ",wfToDocument.workflows)
+  console.log("ProcessDetailWorkflowDropdown", ProcessDetail)
+  // console.log("the wfToDocument.workflows are ",wfToDocument.workflows)
 
   const handleWorkflowSubmit = (item) => {
     // e.preventDefault();
   	// dispatch(SetDocumentId(props.step));
-  	// console.log("itemMubeen", item, DocumentId)
-  	// const apiUrl = `https://100094.pythonanywhere.com/v2/processes/${ProcessDetail._id}/`;
-    const apiUrl = `https://100094.pythonanywhere.com/v2/processes/64bb6c7c1da82ab75d3c75b8/`;
+  	console.log("itemMubeen", item, DocumentId)
+  	// const apiUrl = `http://localhost:8001/v2/processes/${ProcessDetail._id}/`;
+    const apiUrl = `http://localhost:8001/v2/processes/64bb6c7c1da82ab75d3c75b8/`;
 
 
   	const payload = {
@@ -134,13 +134,13 @@ const Dropdown = ({ disableClick, addWorkflowStep }) => {
   		]
   	};
 
-  	// console.log('payload', payload)
+  	console.log('payload', payload)
 
   	// Making a POST request with Axios
   	axios.put(apiUrl, payload)
   		.then((response) => {
   			// Handle the API response here
-  			// console.log('API Response:', response.data);
+  			console.log('API Response:', response.data);
   			toast.success("Member Added in Portfolio")
   		})
   		.catch((error) => {

@@ -1,51 +1,43 @@
-import { httpApiUrlV2 } from '../httpCommon/httpCommon';
+import { httpApiUrl } from '../httpCommon/httpCommon';
 
 export class WorkflowSettingServices {
   createWorkflowSettings = (data) => {
-    return httpApiUrlV2.post('settings/', data);
-    // return httpApiUrlV2.post('settings/', data);
-    // return httpApiUrlV2.post('workflow_ai_setting/', data);
+    return httpApiUrl.post('workflow_ai_setting/', data);
   };
 
-  getWorkflowSettings = (settingId) => {
-    return httpApiUrlV2.get(`settings/${settingId}/`);
+  getWorkflowSettings = (wfSettingId) => {
+    return httpApiUrl.get(`workflow-settings/${wfSettingId}/`);
   };
 
-  updateWorkflowSettings = (settingId, data) => {
-    return httpApiUrlV2.put(`settings/${settingId}/`, data);
+  updateWorkflowSettings = (wfSettingId, data) => {
+    return httpApiUrl.put(`workflow-settings/${wfSettingId}/`, data);
   };
 
   createWorkflowTeam = (data) => {
-    return httpApiUrlV2.post('settings/', data);
+    return httpApiUrl.post('teams/', data);
   };
 
-  updateWorkflowTeam = (teamId, data) => {
-    return httpApiUrlV2.put(`teams/${teamId}`, data);
-    // teams/<str:team_id>/
+  updateWorkflowTeam = (data) => {
+    return httpApiUrl.post('update-to-teams/', data);
   };
 
   // updateEnableDisableProcesses = (data) => {
   //   return httpApiUrl.post('settings/', data);
   // };
 
-  updateWorkflowAISettings = (settingId, data) => {
-    // return httpApiUrlV2.put(`settings/${settingId}/`, data);
-    return httpApiUrlV2.put(`settings/64f7b5bcc72975ac5f765d33/`, data);
-    // settings/<str:setting_id> 
+  updateWorkflowAISettings = (data) => {
+    return httpApiUrl.post('update-settings/', data);
   };
 
-  getAllTeams = (companyId, dataType) => {
-    return httpApiUrlV2.get(`teams/${companyId}/organisations/?data_type=${dataType}`);
+  getAllTeams = (companyId) => {
+    return httpApiUrl.get(`companies/${companyId}/teams/`);
   };
 
   fetchWorkflowSettings = (companyId) => {
-    return httpApiUrlV2.get(`/settings/${companyId}/organisations/`);
+    return httpApiUrl.get(`companies/${companyId}/settings/`);
   };
 
   fetchWorkflowSettingsData = (companyId, member) => {
-    return httpApiUrlV2.get(`/settings/${companyId}/organisations/?member=${member}/`);
-    // return httpApiUrlV2.get(`settings/${companyId}/organisations/?member=${member}`);
-    // settings/<str:company_id>/organisations/?member="member"
-    // {{base_url}}/settings/:company_id/?created_by
+    return httpApiUrl.get(`settings/${companyId}?member=${member}`);
   };
 }
