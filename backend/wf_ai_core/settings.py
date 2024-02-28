@@ -27,7 +27,7 @@ SECRET_KEY = "django-insecure-)_w-=ulkg8#7(q1^b&2+!+n%+b)8v$%wfq_mm6a+t!k7g9c$tk
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["*"]
+ALLOWED_HOSTS = ["*", "workflowai.uxlivinglab.online"]
 
 # Application definition
 INSTALLED_APPS = [
@@ -166,4 +166,5 @@ APPEND_SLASH = True
 
 CORS_ORIGIN_WHITELIST = [
     "http://localhost:3000",
+    "http://workflowai.uxlivinglab.online"
 ]
