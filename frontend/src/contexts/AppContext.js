@@ -2,7 +2,7 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { WorkflowSettingServices } from '../services/workflowSettingServices';
 import { useMediaQuery } from 'react-responsive';
-import { productName } from '../utils/helpers';
+import { dateTimeStampFormat, productName } from '../utils/helpers';
 import {
   setFetchedPermissionArray,
   setThemeColor,
@@ -88,7 +88,9 @@ export const AppContextProvider = ({ children }) => {
   const [orgDocsCompletedStatus, setOrgDocsCompletedStatus] = useState('');
   const [orgDocsRejectedStatus, setOrgDocsRejectedStatus] = useState('');
   const [savedDocuments, setSavedDocuments] = useState(null);
+  const [draftDocuments, setDraftDocuments] = useState(null);
   const [savedDocumentsStatus, setSavedDocumentsStatus] = useState('');
+  const [draftDocumentsStatus, setDraftDocumentsStatus] = useState('');
   const [tempReports, setTempReports] = useState(null);
   const [tempReportsStatus, setTempReportsStatus] = useState('');
   const [completedProcesses, setCompletedProcesses] = useState(null);
@@ -107,6 +109,9 @@ export const AppContextProvider = ({ children }) => {
     userDetail?.portfolio_info[0]?.username
   );
   const [portfolioName, setPortfolioName] = useState(
+    userDetail?.portfolio_info[0]?.portfolio_name
+  );
+  const [member, setMember] = useState(
     userDetail?.portfolio_info[0]?.portfolio_name
   );
   const [dataType, setDataType] = useState(
@@ -186,22 +191,20 @@ export const AppContextProvider = ({ children }) => {
   };
 
   const fetchSettingsData = async () => {
-    const userCompanyId =
+    const companyId =
       userDetail?.portfolio_info?.length > 1
         ? userDetail?.portfolio_info?.find(
           (portfolio) => portfolio.product === productName
         )?.org_id
         : userDetail?.portfolio_info[0]?.org_id;
 
-    const member = userDetail.userinfo.username
-
     try {
       const res = await new WorkflowSettingServices().fetchWorkflowSettingsData(
-        userCompanyId,
-        member
+        companyId,
+        dataType
       );
   
-      console.log("res.data",res.data)
+      // console.log("res.data",res.data)
       setWorkflowSettings(res.data); 
     } catch (error) {
       
@@ -214,7 +217,7 @@ export const AppContextProvider = ({ children }) => {
       const res = await new TemplateServices().demoTemplates(1);
       setDemoTemplates(res.data ? res.data.templates : []);
     } catch (err) {
-      console.log(err);
+      // console.log(err);
     } finally {
       setDemoTempStatus('');
     }
@@ -228,6 +231,7 @@ export const AppContextProvider = ({ children }) => {
         companyId,
         dataType,
         userName,
+        member,
         portfolioName,
         state
       );
@@ -236,7 +240,7 @@ export const AppContextProvider = ({ children }) => {
       else if (state === 'rejected')
         setDocsRejected(res.data.documents ? res.data.documents : []);
     } catch (err) {
-      console.log(err);
+      // console.log(err);
     } finally {
       if (state === 'finalized') setDocsCompletedStatus('');
       else if (state === 'rejected') setDocsRejectedStatus('');
@@ -246,14 +250,22 @@ export const AppContextProvider = ({ children }) => {
   const fetchOrgDocumentReports = async (state) => {
     if (state === 'finalized') setOrgDocsCompletedStatus('pending');
     else if (state === 'rejected') setOrgDocsRejectedStatus('pending');
+    const member = userDetail.userinfo.username;
     try {
       const res = await new DocumentServices().getOrgDocumentReports(
+        companyId,
+        dataType,
+        state,
+        member
+      );
+       
+      const resp = await new DocumentServices().getOrgDocumentReportsFinalized(
         companyId,
         dataType,
         state
       );
       if (state === 'finalized')
-        setOrgDocsCompleted(res.data.clones ? res.data.clones : []);
+        setOrgDocsCompleted(resp.data.clones ? resp.data.clones : []);
       else if (state === 'rejected')
         setOrgDocsRejected(res.data.clones ? res.data.clones : []);
     } catch (err) {
@@ -264,44 +276,113 @@ export const AppContextProvider = ({ children }) => {
     }
   };
 
+//   const fetchOrgDocumentReports = async (state) => {
+//     if (state === 'finalized') setOrgDocsCompletedStatus('pending');
+//     else if (state === 'rejected') setOrgDocsRejectedStatus('pending');
+//     const member = userDetail.userinfo.username;
+//     try {
+//       // Make the first API call
+//       const res = await new DocumentServices().getOrgDocumentReports(
+//         companyId,
+//         dataType,
+//         state,
+//         member
+//       );
+       
+//       // Process the response of the first API call
+//       if (state === 'rejected')
+//         setOrgDocsRejected(res.data.clones ? res.data.clones : []);
+
+//       // Make the second API call only if the state is 'finalized'
+//       if (state === 'finalized') {
+//         const resp = await new DocumentServices().getOrgDocumentReportsFinalized(
+//           companyId,
+//           dataType,
+//           state
+//         );
+//         setOrgDocsCompleted(resp.data.clones ? resp.data.clones : []);
+//       }
+//     } catch (err) {
+//       console.log(err);
+//     } finally {
+//       // Reset the status after API calls
+//       if (state === 'finalized') setOrgDocsCompletedStatus('');
+//       else if (state === 'rejected') setOrgDocsRejectedStatus('');
+//     }
+// };
+
+
   const fetchProcessReports = async (type) => {
     if (type === 'completed') setCompletedProcessesStatus('pending');
     else if (type === 'active') setActiveProcessesStatus('pending');
+
     try {
-      if (type === 'completed') {
-        const res = await getCompletedProcesses(companyId, dataType);
-        setCompletedProcesses(res.data ? res.data : []);
-      } else if (type === 'active') {
-        const res = await getActiveProcesses(companyId, dataType);
-        setActiveProcesses(res.data ? res.data : []);
-      }
+        let processes = [];
+        if (type === 'completed') {
+            const res = await getCompletedProcesses(companyId, dataType, 'finalized');
+            processes = res.data ? res.data : [];
+        } else if (type === 'active') {
+            const res = await getActiveProcesses('6385c0e78eca0fb652c944ae', dataType, 'processing');
+            processes = res.data ? res.data : [];
+        }
+        processes.sort((a, b) => {
+            const aDate = a.created_at || a.created_on;
+            const bDate = b.created_at || b.created_on;
+            const dateA = new Date(dateTimeStampFormat(aDate));
+            const dateB = new Date(dateTimeStampFormat(bDate));
+            return dateB - dateA;
+            // return dateA - dateB;
+        });
+
+        if (type === 'completed') setCompletedProcesses(processes);
+        else if (type === 'active') setActiveProcesses(processes);
     } catch (err) {
-      console.log(err);
+        console.error('Error fetching processes:', err);
     } finally {
-      if (type === 'completed') setCompletedProcessesStatus('');
-      else if (type === 'active') setActiveProcessesStatus('');
+        if (type === 'completed') setCompletedProcessesStatus('');
+        else if (type === 'active') setActiveProcessesStatus('');
     }
-  };
+};
+
 
   const fetchSavedDocuments = async () => {
     setSavedDocumentsStatus('pending');
     try {
-      const res = await new DocumentServices().getSavedDocuments(
+      const res = await new DocumentServices().savedDocuments(
         companyId,
-        dataType
+        dataType,
       );
       setSavedDocuments(res.data ? res.data.clones : []);
     } catch (err) {
-      console.log(err);
+      // console.log(err);
     } finally {
       setSavedDocumentsStatus('');
+    }
+  };
+
+  ////////////////////// New
+
+  const fetchDraftDocuments = async () => {
+    setDraftDocumentsStatus('pending');
+    const member = userDetail.userinfo.username
+    try {
+      const res = await new DocumentServices().getDraftDocuments(
+        companyId,
+        dataType,
+        member
+      );
+      setDraftDocuments(res.data ? res.data.clones : []);
+    } catch (err) {
+      // console.log(err);
+    } finally {
+      setDraftDocumentsStatus('');
     }
   };
 
   const fetchTemplateReports = async () => {
     setTempReportsStatus('pending');
     try {
-      const res = await new TemplateServices().getTemplateReports(
+      const res = new TemplateServices().getTemplateReports(
         companyId,
         dataType,
         userName,
@@ -309,13 +390,13 @@ export const AppContextProvider = ({ children }) => {
       );
       setTempReports(res.data ? res.data.templates : []);
     } catch (err) {
-      console.log(err);
+      // console.log(err);
     } finally {
       setTempReportsStatus('');
     }
   };
 
-  // console.log(userName, portfolioName, dataType);
+  // // console.log(userName, portfolioName, dataType);
 
   const fetchDemoDocuments = async () => {
     setDemoDocStatus('pending');
@@ -323,7 +404,7 @@ export const AppContextProvider = ({ children }) => {
       const res = await new DocumentServices().demoDocuments(1);
       setDemoDocuments(res.data ? res.data.documents : []);
     } catch (err) {
-      console.log(err);
+      // console.log(err);
     } finally {
       setDemoDocStatus('');
     }
@@ -340,9 +421,10 @@ export const AppContextProvider = ({ children }) => {
     setIsFetchingFolders(true);
     try {
       const res = await folderServices.getAllFolders(userCompanyId, dataType);
-      setFolders(res.data ? res.data.reverse() : []);
+      setFolders(res.data ? res.data : []); 
+      // setFolders(res.data ? res.data.reverse() : []); /////////////////////////
     } catch (err) {
-      console.log(err);
+      // console.log(err);
     } finally {
       setIsFetchingFolders(false);
     }
@@ -362,6 +444,7 @@ export const AppContextProvider = ({ children }) => {
       );
       setUserName(userDetail?.portfolio_info[0]?.username);
       setPortfolioName(userDetail?.portfolio_info[0]?.portfolio_name);
+      setMember(userDetail?.portfolio_info[0]?.portfolio_name);
       setDataType(
         userDetail?.portfolio_info?.length > 1
           ? userDetail?.portfolio_info.find(
@@ -386,17 +469,17 @@ export const AppContextProvider = ({ children }) => {
             : userDetail?.portfolio_info[0]?.org_id;
 
         settingService
-          .getAllTeams(userCompanyId)
+          .getAllTeams(userCompanyId, dataType)
           .then((res) => {
             setWorkflowTeams(Array.isArray(res.data) ? res.data : []);
             setWorkflowTeamsLoaded(true);
           })
           .catch((err) => {
-            console.log(
-              'Failed to fetch teams: ',
-              err
-              // .response ? err.response.data : err.message
-            );
+            // console.log(
+            //   'Failed to fetch teams: ',
+            //   err
+            //   // .response ? err.response.data : err.message
+            // );
             setWorkflowTeamsLoaded(true);
           });
       }
@@ -592,8 +675,11 @@ export const AppContextProvider = ({ children }) => {
         userName,
         portfolioName,
         savedDocuments,
+        draftDocuments,
+        draftDocumentsStatus,
         savedDocumentsStatus,
         fetchSavedDocuments,
+        fetchDraftDocuments,
         isAssignTask,
         setIsAssignTask,
         dataType,

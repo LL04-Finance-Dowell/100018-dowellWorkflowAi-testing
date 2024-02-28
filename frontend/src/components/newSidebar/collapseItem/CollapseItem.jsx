@@ -31,16 +31,16 @@ function ListItem({ item, toggleSidebar, isMobile }) {
   }
 
   const handleLinkItemClick = (e, item) => {
-    console.log(e, item, "item collapse")
+    // console.log(e, item, "item collapse")
     e.preventDefault();
-    // console.log("the handle link item click ", item)
+    // // console.log("the handle link item click ", item)
     if (!item.href) return;
 
     if (item.searchItem && item.itemObj) {
       const searchItemObj = item.itemObj;
-      // console.log(searchItemObj)
+      // // console.log(searchItemObj)
       if (searchItemObj.document_name) {
-        // console.log('doc hit')
+        // // console.log('doc hit')
         dispatch(detailDocument(searchItemObj));
         return;
       }

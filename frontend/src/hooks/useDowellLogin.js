@@ -103,7 +103,7 @@ export default function useDowellLogin() {
         )
 
       }).catch(error => {
-        console.log(error);
+        // console.log(error);
       })
 
       return
@@ -128,7 +128,7 @@ export default function useDowellLogin() {
       return
 
     }).catch(error => {
-      console.log(error);
+      // console.log(error);
     })
   }
 

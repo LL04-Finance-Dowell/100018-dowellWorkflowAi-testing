@@ -29,7 +29,7 @@ const ConnectWorkFlowToDoc = ({ stepsPopulated, savedProcessSteps, addWorkflowSt
 
     ////copied process
     const copiedProcess = useSelector((state) => state.copyProcess.processStep);
-  // console.log('the copied procesSteps are ', copiedProcess)
+  // // console.log('the copied procesSteps are ', copiedProcess)
   const { docCurrentWorkflow, processSteps } = useSelector(
     (state) => state.app
   );
@@ -208,7 +208,7 @@ const ConnectWorkFlowToDoc = ({ stepsPopulated, savedProcessSteps, addWorkflowSt
   };
 
   const handleResetStepAndSuccessors = (indexPassed) => {
-    console.log('resetting...');
+    // console.log('resetting...');
   };
 
   const handleSetStepAndProceedToNext = (
@@ -233,7 +233,7 @@ const ConnectWorkFlowToDoc = ({ stepsPopulated, savedProcessSteps, addWorkflowSt
       if (foundNextStepElem) foundNextStepElem.scrollIntoView();
     }
   };
-console.log("the stepsPopulated are ", stepsPopulated)
+// console.log("the stepsPopulated are ", stepsPopulated)
   return (
     <>
       <div className={styles.container}>

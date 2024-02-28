@@ -31,7 +31,7 @@ const DocumentsPage = ({
   const { allDocuments: allDocumentsArray, allDocumentsStatus } = useSelector(
     (state) => state.document
   );
-  console.log(allDocumentsArray)
+  // console.log(allDocumentsArray)
 
   // const finilized = allDocumentsArray.filter((document) => document.document_state === "finalized")
   const dispatch = useDispatch();

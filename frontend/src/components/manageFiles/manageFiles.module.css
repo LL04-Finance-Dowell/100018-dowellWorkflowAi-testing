@@ -8,9 +8,38 @@
   margin-left: 20px;
 }
 
+.header_wrapper{
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding: 10px;
+}
 .page__header {
   text-align: center;
   margin-block: 20px;
+  width: 100%;
+}
+
+.back_button {
+  background: none;
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  background-color: var(--e-global-color-secondary);
+  color: var(--e-global-color-cd6593d);
+  padding: 10px 15px;
+height: 40px;
+  border-radius: 6px;
+  gap: 10px;
+  transition: 0.3s ease-in-out;
+}
+
+.back_button span {
+  font-size: 0.9rem;
+}
+
+.back_button:hover {
+  filter: brightness(0.8);
 }
 
 .content__box {

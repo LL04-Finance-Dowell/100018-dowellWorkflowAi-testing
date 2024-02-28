@@ -34,7 +34,7 @@ const AssignTask = ({ currentStepIndex, stepsPopulated }) => {
 
       useEffect(()=>{
         if(copiedProcess == null){ return }
-        // console.log('entered the useEffect to assign task1')
+        // // console.log('entered the useEffect to assign task1')
         const initialProcessStepObj = {
           workflow: docCurrentWorkflow._id,
           indexToUpdate: currentStepIndex,
@@ -72,7 +72,7 @@ const AssignTask = ({ currentStepIndex, stepsPopulated }) => {
         );
     
         setIsAssignTask(copiedProcess.process_steps[currentStepIndex].stepTaskType === 'assign_task' ? true : false);
-        // console.log('finished the useEffect to assign task1')
+        // // console.log('finished the useEffect to assign task1')
       },[copiedProcess])
 
   const onSubmit = (data) => {

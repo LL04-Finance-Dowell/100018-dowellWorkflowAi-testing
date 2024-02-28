@@ -42,7 +42,7 @@ const Contents = ({
   }; */
 
   const handleContentSelection = (valueAsJSON, contentPage) => {
-    // console.log('the valueAsJSON, contentPage are ',valueAsJSON, contentPage)
+    // // console.log('the valueAsJSON, contentPage are ',valueAsJSON, contentPage)
     const contentStepAlreadyAdded = tableOfContentForStep.find(
       (step) =>
         step.workflow === docCurrentWorkflow._id &&

@@ -130,7 +130,7 @@ export const savedDocuments = createAsyncThunk(
     try {
       const res = await documentServices.savedDocuments(data);
 
-      const documents = filterDocuments(res.data.documents, thunkAPI);
+      const documents = filterDocuments(res.data, thunkAPI);
 
       return documents;
     } catch (error) {
@@ -143,7 +143,7 @@ export const contentDocument = createAsyncThunk(
   'document/contentDocument',
   async ({ collection_id, item }) => {
     try {
-      console.log(collection_id, item)
+      // console.log(collection_id, item)
       const res = await documentServices.contentDocument(collection_id, item);
 
       // console.log(res.data)
@@ -158,7 +158,7 @@ export const contentDocumentStep = createAsyncThunk(
   'document/contentDocument',
   async ({ collection_id, item }) => {
     try {
-      console.log(collection_id, item)
+      // console.log(collection_id, item)
       const res = await documentServices.contentDocumentStep(collection_id, item);
 
       // console.log(res.data)
@@ -175,7 +175,8 @@ export const allDocuments = createAsyncThunk(
     try {
       const res = await documentServices.allDocuments(
         data.company_id,
-        data.data_type
+        data.data_type,
+        data.member
       )
 
       const documents = filterDocuments(

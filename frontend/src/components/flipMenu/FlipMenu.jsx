@@ -22,7 +22,7 @@ import { productName } from '../../utils/helpers';
 
 const FlipMenu = () => {
   const [filpItemsToDisplay, setFlipItemsToDisplay] = useState(flipItems);
-  const { notificationsForUser } = useSelector((state) => state.app);
+  const { notificationsForUser } = useSelector((state) => state.notification);
 
   useEffect(() => {
     if (!notificationsForUser) return;

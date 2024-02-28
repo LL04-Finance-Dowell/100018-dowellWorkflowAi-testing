@@ -27,9 +27,11 @@ import CopyProcessPage from './pages/Processes/CopyProcessPage';
 import SearchPage from './pages/Search/SearchPage';
 import { productName } from './utils/helpers';
 import { useAppContext } from './contexts/AppContext';
+import Policy from './pages/Policy/Policy';
 
 import axios from 'axios';
 import { WorkflowReport } from './components/newSidebar/reports/WorkflowReport';
+import Terms from './pages/Terms/Terms';
 // import ConstructionPage from './pages/ConstructionPage/ConstructionPage';
 axios.defaults.xsrfCookieName = "csrftoken";
 axios.defaults.xsrfHeaderName = "X-CSRFToken";
@@ -50,7 +52,7 @@ function App() {
 
   useDowellLogin();
 
-  // console.log = () => {};
+  // // console.log = () => {};
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -106,21 +108,21 @@ function App() {
           total_credits: response?.data?.data?.total_credits,
           api_key: response?.data?.data?.api_key
         }))
-        // console.log(response?.data?.data?.is_active)
-        // console.log(response?.data?.data?.total_credits)
-        // console.log(response?.data?.data?.api_key)
+        // // console.log(response?.data?.data?.is_active)
+        // // console.log(response?.data?.data?.total_credits)
+        // // console.log(response?.data?.data?.api_key)
 
         // dispatch(setcreditResponse(response))
       })
       .catch((error) => {
 
-        console.log(error)
+        // console.log(error)
       });
 
 
 
   }, [dataType, companyId])
-  // console.log('chk')
+  // // console.log('chk')
 
   function checkstatus() {
     // AJAX GET request
@@ -131,7 +133,7 @@ function App() {
         dispatch(setIconColor('green'));
       })
       .catch((error) => {
-        // console.log(error);
+        // // console.log(error);
         dispatch(setIconColor('red'));
       });
 
@@ -153,12 +155,12 @@ function App() {
         )
         .then((response) => { })
         .catch((error) => {
-          // console.log(error);
+          // // console.log(error);
           // Empty catch block
         });
   }
-  // console.log(creditResponse.data.is_active)
-  // console.log(creditResponse.data.service_id)
+  // // console.log(creditResponse.data.is_active)
+  // // console.log(creditResponse.data.service_id)
 
   // USE ONLY WHEN APP IS BROKEN OR UNDERGOING MAJOR CHANGES
   // return (
@@ -315,6 +317,8 @@ function App() {
           <Route path={':folder_id'} element={<FolderPage />} />
           <Route path={'knowledge/:folder_id'} element={<FolderPage  knowledgeCenter={true}/>} />
         </Route>
+         
+        
         {/* <Route path="/Documents/Documents/Documents" element={<Documents />} />
       <Route path="/Documents/DraftsDoc/DraftsDoc" element={<DraftsDoc />} />
       <Route path="/Templates/TempDraft/TempDraft" element={<TempDraft />} /> */}
@@ -329,8 +333,14 @@ function App() {
       <Route path="/WorkFlows/DraftF/DraftF" element={<DraftF />} /> */}
         <Route path={'/verify/:token'} element={<VerificationPage />} />
         <Route path={'/search'} element={<SearchPage />} />
+        <Route path='/policy' element={<Policy />} />
+        <Route path='/terms' element={<Terms />} />
         <Route path={'*'} element={<>Page not found</>} />
       </Routes>
+
+       
+
+        
     </Suspense>
   );
 }

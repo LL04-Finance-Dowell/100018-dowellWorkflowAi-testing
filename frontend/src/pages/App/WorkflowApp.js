@@ -18,7 +18,7 @@ import {
   setNotificationsForUser,
   setNotificationsLoaded,
   setNotificationsLoading,
-} from '../../features/app/appSlice';
+} from '../../features/notifications/notificationSlice';
 import Iframe from '../../components/iFrame/Iframe';
 import Skeleton from '../../components/skeloton/Skeleton';
 
@@ -34,15 +34,18 @@ import ApiKeyFailureModal from '../../components/apiKeyFailureModal/ApiKeyFailur
 const WorkflowApp = () => {
   const { userDetail } = useSelector((state) => state.auth);
   const {
-    notificationsLoading,
-    notificationsForUser,
-    notificationFinalStatus,
-    notificationsLoaded,
     ShowProfileSpinner,
     showApiKeyFetchFailureModal,
   } = useSelector((state) => state.app);
 
-  // console.log('notification: ', notificationsForUser);
+  const {
+    notificationsLoading,
+    notificationsForUser,
+    notificationFinalStatus,
+    notificationsLoaded,
+  } = useSelector((state) => state.notification);
+
+  // // console.log('notification: ', notificationsForUser);
 
   const dispatch = useDispatch();
 
@@ -146,7 +149,7 @@ const WorkflowApp = () => {
           portfolioName
         )
         .then((res) => {
-          // console.log('response: ', res.data);
+          // // console.log('response: ', res.data);
           const documentsToSign = res.data.documents
             ? res.data.documents
                 ?.reverse()
@@ -174,12 +177,12 @@ const WorkflowApp = () => {
 
           dispatch(setNotificationFinalStatus(100));
 
-          // console.log('notificationForUser: ', notificationsForUser);
+          // // console.log('notificationForUser: ', notificationsForUser);
 
           const currentNotifications = notificationsForUser.slice();
 
-          // console.log('currentNotifications: ', currentNotifications);
-          // console.log('documentsToSign: ', documentsToSign);
+          // // console.log('currentNotifications: ', currentNotifications);
+          // // console.log('documentsToSign: ', documentsToSign);
 
           let updatedNotifications = currentNotifications.map(
             (notification) => {
@@ -202,10 +205,10 @@ const WorkflowApp = () => {
           dispatch(setNotificationsLoaded(true));
         })
         .catch((err) => {
-          console.log(
-            'Failed to load notifications: ',
-            err.response ? err.response.data : err.message
-          );
+          // console.log(
+          //   'Failed to load notifications: ',
+          //   err.response ? err.response.data : err.message
+          // );
           dispatch(setNotificationsLoading(false));
         });
     }
@@ -219,14 +222,14 @@ const WorkflowApp = () => {
       getFavoritesForUser(dataToPost.company_id)
         .then((res) => {
           setFavoriteitems(res.data);
-          console.log("the favourite items are ", res.data)
+          // console.log("the favourite items are ", res.data)
           setFavoriteitemsLoaded(true);
         })
         .catch((err) => {
-          console.log(
-            err
-            // .response ? err.response.data : err.message
-          );
+          // console.log(
+          //   err
+          //   // .response ? err.response.data : err.message
+          // );
           // setFavoriteitemsLoaded(true)
         });
     }
@@ -256,7 +259,7 @@ const WorkflowApp = () => {
 
   useEffect(() => {
     if (location.hash) {
-      // console.log("the location is ", location.hash)
+      // // console.log("the location is ", location.hash)
       setWhichNotification(location.hash)
       setVisible(true);
     } else {

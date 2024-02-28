@@ -27,8 +27,8 @@ export default function ScaleDetailReport() {
 	const { userDetail } = useSelector((state) => state.auth);
 	const [scaleReportData, setScaleReportData] = useState(ScaleDetailReportData);
 
-	console.log("ProcessDetail", ProcessDetail)
-	console.log("userDetail", userDetail)
+	// console.log("ProcessDetail", ProcessDetail)
+	// console.log("userDetail", userDetail)
 	const apiUrl = 'https://100035.pythonanywhere.com/evaluation/evaluation-api/?report_type=scale';
 
 	const payloadScale = {
@@ -43,7 +43,7 @@ export default function ScaleDetailReport() {
 			try {
 				const response = await axios.post(apiUrl, payloadScale);
 				setScaleReportData(response.data.success)
-				console.log('API Response:', response.data.success);
+				// console.log('API Response:', response.data.success);
 				// Do something with the response data
 			} catch (error) {
 				console.error('Error fetching data:', error);
