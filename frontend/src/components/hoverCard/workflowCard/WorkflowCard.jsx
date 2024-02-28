@@ -20,6 +20,7 @@ import { moveItemToArchive } from '../../../services/archiveServices';
 import { setAllWorkflows } from '../../../features/workflow/workflowsSlice';
 import { BsBookmark, BsFillBookmarkFill } from 'react-icons/bs';
 import { useTranslation } from 'react-i18next';
+import LoadingScreen from '../../LoadingScreen/loadingScreen';
 
 const WorkflowCard = ({ cardItem }) => {
   const dispatch = useDispatch();
@@ -67,7 +68,7 @@ const WorkflowCard = ({ cardItem }) => {
       ).data;
       toast.success(response);
     } catch (error) {
-      console.log(error.response ? error.response.data : error.message);
+      // console.log(error.response ? error.response.data : error.message);
       toast.info(
         error.response
           ? error.response.status === 500
@@ -301,7 +302,7 @@ const WorkflowCard = ({ cardItem }) => {
       </div>
     );
   };
-  return <HoverCard Front={FrontSide} Back={BackSide} />;
+  return  <HoverCard Front={FrontSide} Back={BackSide} />
 };
 
 export default WorkflowCard;

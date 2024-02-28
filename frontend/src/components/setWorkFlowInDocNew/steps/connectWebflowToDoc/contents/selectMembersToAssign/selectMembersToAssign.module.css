@@ -16,11 +16,13 @@
 .select__header {
   padding: 20px 25px;
   border-bottom: 1px solid var(--e-global-color-text);
-  width: calc(100% / 3);
+  width: calc(100% / 4);
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
+  font-size: 8x;
+
 }
 
 .selected {
@@ -33,6 +35,47 @@
   flex-direction: column;
   padding: 10px;
   gap: 10px;
+}
+.select_no_public_members_form{
+  display: flex;
+  width: 100%;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+.select_no_public_members_title{
+  font-size: 0.75rem;
+}
+.select_no_public_members_input{
+  font-size: 0.75rem;
+  border: 1px solid #8b8b8b;
+  border-radius: 4px;
+  text-align: center;
+  min-height: 2.5rem;
+  width: 100%;
+}
+
+
+.select_no_public_members_btn {
+  background: none;
+  font-size: 0.75rem;
+  display: flex;
+  align-items: center;
+  background-color: var(--e-global-color-secondary);
+  color: var(--e-global-color-cd6593d);
+  padding: 10px 15px;
+
+  border-radius: 6px;
+
+  transition: 0.3s ease-in-out;
+}
+
+.select_no_public_members_btn span {
+  font-size: 0.9rem;
+}
+
+.select_no_public_members_btn:hover {
+  filter: brightness(0.8);
 }
 
 .title {

@@ -14,7 +14,7 @@ export default function AddWorkflowModal(props) {
 	const { ProcessDetail } = useSelector((state) => state.app);
 	const navigate = useNavigate()
 	const dispatch = useDispatch()
-	console.log("ProcessDetail", ProcessDetail, userDetail)
+	// console.log("ProcessDetail", ProcessDetail, userDetail)
 
 	const handleWorkflowSubmit = (e) => {
 		dispatch(SetDocumentId(props.step));

@@ -76,10 +76,6 @@
   display: flex;
 }
 @media (max-width: 768px) {
-  .search__item__wrapper{
-    /* width: 60%; */
-    /* border: solid; */
-  }
   .RightBox{
     width: 50%;
     display: block;

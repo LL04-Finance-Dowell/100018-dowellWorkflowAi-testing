@@ -13,6 +13,28 @@
   color: var(--e-global-color-text);
 }
 
+.policies {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: var(--e-global-color-text);
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.policies .link {
+  color: var(--e-global-color-text);
+}
+
+.policies p {
+  text-decoration: underline;
+}
+
+.policies p:hover {
+  color: #fff;
+  cursor: pointer;
+}
+
 .mode__box h1 {
   font-size: 19px;
 }

@@ -72,7 +72,7 @@ const SetWorkflowInDoc = ({addWorkflowStep}) => {
   // useEffect(()=>{
   //   dispatch(resetSetWorkflows());
   //   dispatch(setContentOfDocument(null));
-  //   console.log('form reset')
+  //   // console.log('form reset')
   // },[])
   useEffect(() => {
     const processId = searchParams.get('id');
@@ -101,7 +101,7 @@ const SetWorkflowInDoc = ({addWorkflowStep}) => {
         dispatch(setContinentsLoaded(true));
       })
       .catch((err) => {
-        console.log('Failed to fetch continents');
+        // console.log('Failed to fetch continents');
         dispatch(setContinentsLoaded(true));
       });
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -160,7 +160,7 @@ const SetWorkflowInDoc = ({addWorkflowStep}) => {
         setDraftProcessLoaded(true);
       })
       .catch((err) => {
-        console.log(err.response ? err.response.data : err.message);
+        // console.log(err.response ? err.response.data : err.message);
         setDraftProcessLoading(false);
         setDraftProcessLoaded(true);
       });
@@ -318,7 +318,7 @@ useEffect(()=>{
  
 },[showHighlight])
   
-console.log("props.addWorkflowStep Mubeen", addWorkflowStep)
+// console.log("props.addWorkflowStep Mubeen", addWorkflowStep)
 
   return (
     <WorkflowLayout>

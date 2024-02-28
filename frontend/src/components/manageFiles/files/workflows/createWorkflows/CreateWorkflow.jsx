@@ -163,7 +163,7 @@ const CreateWorkflows = ({ handleToggleOverlay }) => {
         dispatch(createWorkflow({ data, notify, handleAfterCreated }));
       }
     } catch (error) {
-      console.log(error);
+      // console.log(error);
       toast.info(error.response?.data?.message);
     } finally {
       setSubmitBtnDisabled(false);

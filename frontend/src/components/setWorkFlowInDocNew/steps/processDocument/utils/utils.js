@@ -21,6 +21,7 @@ export const extractProcessObj = (
   teamMembersSelected,
   publicMembersSelected,
   userMembersSelected,
+  groupMembersSelected,
   skipDataChecks = false
 ) => {
 
@@ -37,6 +38,7 @@ export const extractProcessObj = (
    * @param teamMembersSelected The array of team members selected for the document to be processed.
    * @param publicMembersSelected The array of public members selected for the document to be processed.
    * @param userMembersSelected The array of user members selected for the document to be processed.
+   * @param groupMembersSelected The array of public members selected for the document to be processed.
    * @param skipDataChecks Specifies whether or not to check the process object for necessary details needed for successful process creation.
    * 
    * @returns object
@@ -62,7 +64,7 @@ export const extractProcessObj = (
     process_type: documentToProcess.document_name ? 'document' : 'template',
     org_name: currentUserDetails?.portfolio_info?.length > 1 ? currentUserDetails?.portfolio_info.find(portfolio => portfolio.product === productName)?.org_name : currentUserDetails?.portfolio_info[0]?.org_name,
   };
-console.log('the documentToProcess is in util ', documentToProcess)
+// console.log('the documentToProcess is in util ', documentToProcess)
   const foundProcessSteps = documentProcessSteps.find(
     (process) => process.workflow === selectedDocumentWorkflow._id
   );
@@ -97,6 +99,14 @@ console.log('the documentToProcess is in util ', documentToProcess)
 
           return copyOfUserItem;
         });
+        
+        copyOfCurrentStep.stepGroupMembers = groupMembersSelected
+          .filter((selectedUser) => selectedUser.stepIndex === currentIndex)
+          .map((user) => {
+            const copyOfUserItem = { ...user };
+            delete copyOfUserItem.stepIndex;
+            return copyOfUserItem;
+          });  
 
       copyOfCurrentStep.stepTeamMembers = teamMembersSelected
         .filter((selectedUser) => selectedUser.stepIndex === currentIndex)
@@ -180,6 +190,7 @@ console.log('the documentToProcess is in util ', documentToProcess)
         step.stepPublicMembers.length < 1 &&
         step.stepTeamMembers.length < 1 &&
         step.stepUserMembers.length < 1 &&
+        step.stepGroupMembers.length < 1 &&
         !step.skipStep
       )
         return 'Please assign at least one user for each step';
