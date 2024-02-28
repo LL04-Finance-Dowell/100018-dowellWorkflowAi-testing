@@ -2,7 +2,7 @@ from django.urls import path
 from app import views_v2
 
 urlpatterns = [
-    path("", views_v2.HomePage.as_view()),
+    # path("", views_v2.HomePage.as_view()),
     # path("server/", views_v2.PADeploymentWebhook.as_view()),
     path("processes/", views_v2.DocumentOrTemplateProcessing.as_view()),
     path("processes/invoice/", views_v2.TriggerInvoice.as_view()),

@@ -93,9 +93,6 @@ from app.mongo_db_connection import (
 
 from .constants import EDITOR_API
 
-def index(request):
-    return render(request, 'build/index.html')
-
 
 # @api_view(["POST"])
 # def webhook(request):
