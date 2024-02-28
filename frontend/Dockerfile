@@ -4,7 +4,9 @@ WORKDIR /app/frontend/
 
 COPY package*.json /app/frontend/
 
-RUN npm i
+RUN npm install \
+    && ls -al node_modules/react-scripts \
+    && npm cache clean --force
 
 COPY . /app/frontend/
 

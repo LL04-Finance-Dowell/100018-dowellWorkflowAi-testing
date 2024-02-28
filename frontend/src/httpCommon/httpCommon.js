@@ -4,6 +4,7 @@ import { extractAuthQueryParamsFromVerificationURL, extractTokenFromVerification
 export const api_url = "http://localhost:8001/v1/";
 export const api_url_v2 = "http://localhost:8001/v2/";
 
+export const api_url_v3 = "http://localhost:8001/v2/";
 export const auth_url = "https://100014.pythonanywhere.com/api/";
 const auth_url_other = "https://100093.pythonanywhere.com/api/";
 // const new_process_api_url = "http://localhost:8001/v0.2/";
@@ -63,6 +64,8 @@ export const searchHttpInstance = axios.create({ baseURL: api_url + "search" });
 export const httpFavourite = axios.create({ baseURL: api_url + "favourites" });
 
 export const httpArchive = axios.create({ baseURL: api_url + "archives" });
+
+export const httpGroups = axios.create({ baseURL: api_url + "groups"})
 
 
 ///new workflow api for update

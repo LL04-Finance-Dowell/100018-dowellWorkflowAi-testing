@@ -1,5 +1,8 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { v4 as uuidv4 } from 'uuid';
+import TemplateCard from '../../components/hoverCard/templateCard/TemplateCard';
+import DocumnetCard from '../../components/hoverCard/documentCard/DocumentCard';
+import WorkflowCard from '../../components/hoverCard/workflowCard/WorkflowCard';
 import {
   processesInWorkflowAIArray,
   permissionArray,
@@ -25,7 +28,33 @@ const initialState = {
   processSteps: [],
   selectedMembersForProcess: [],
   tableOfContentForStep: [],
+  notificationsForUser: [
+    {
+      id: uuidv4(),
+      title: 'documents',
+      cardBgColor: '#1ABC9C',
+      card: DocumnetCard,
+      items: [],
+    },
+    {
+      id: uuidv4(),
+      title: 'templates',
+      cardBgColor: null,
+      card: TemplateCard,
+      items: [],
+    },
+    {
+      id: uuidv4(),
+      title: 'workflows',
+      card: WorkflowCard,
+      cardBgColor: null,
+      items: [],
+    },
+  ],
+  notificationsLoading: true,
+  notificationFinalStatus: null,
   membersSetForProcess: false,
+  notificationsLoaded: false,
   continents: [],
   continentsLoaded: false,
   themeColor: '#61CE70',
@@ -37,8 +66,8 @@ const initialState = {
   proccess: [],
   IconColor: '',
   ProcessName:'',
-  currentMessage:'',   
-  creditResponse:[],                           
+  currentMessage:'',
+  creditResponse:[],
   userDetailPosition: null,
   languageSelectPosition: null,
   teamsSelectedSelectedForProcess: [],
@@ -250,8 +279,20 @@ export const appSlice = createSlice({
         (content) => content
       );
     },
+    setNotificationsForUser: (state, action) => {
+      state.notificationsForUser = action.payload;
+    },
+    setNotificationsLoading: (state, action) => {
+      state.notificationsLoading = action.payload;
+    },
+    setNotificationFinalStatus: (state, action) => {
+      state.notificationFinalStatus = action.payload;
+    },
     setMembersSetForProcess: (state, action) => {
       state.membersSetForProcess = action.payload;
+    },
+    setNotificationsLoaded: (state, action) => {
+      state.notificationsLoaded = action.payload;
     },
     setContinents: (state, action) => {
       state.continents = action.payload;
@@ -263,7 +304,7 @@ export const appSlice = createSlice({
       state.themeColor = action.payload;
     },
     setSettingProccess: (state, { payload: { payload, type } }) => {
-      
+
       switch (type) {
         case 'p_title':
           state.settingProccess[0].children[4].column =
@@ -274,7 +315,7 @@ export const appSlice = createSlice({
                   item._id === col.pItemId
               );
 
-             
+
 
               return pItem.content.includes('set display name')
                 ? {
@@ -376,7 +417,7 @@ export const appSlice = createSlice({
       }));
     },
     setUpdateProccessApi: (state, action) => {
-      
+
       state.settingProccess = state.settingProccess.map((item) => ({
         ...item,
         children: [item.children[0], ...action.payload],
@@ -804,7 +845,11 @@ export const {
   updateSingleProcessStep,
   setTableOfContentForStep,
   removeFromTableOfContentForStep,
+  setNotificationsForUser,
+  setNotificationsLoading,
+  setNotificationFinalStatus,
   setMembersSetForProcess,
+  setNotificationsLoaded,
   setContinents,
   setCurrentMessage,
   setcreditResponse,
