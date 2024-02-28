@@ -251,11 +251,11 @@ class HandleProcess:
             }
         )
         # --------- Not used so I will scrap soon - Edwin ------
-        HandleProcess.notify(
-            auth_name, item_id, portfolio, company_id, utp_link, org_name
-        )
-        utp_code = HandleProcess.generate_qrcode(utp_link)
-        return utp_link, utp_code
+        # HandleProcess.notify(
+        #     auth_name, item_id, portfolio, company_id, utp_link, org_name
+        # )
+        # utp_code = HandleProcess.generate_qrcode(utp_link)
+        return utp_link
         # return utp_link
 
     def get_editor_link(payload):
@@ -366,7 +366,7 @@ class HandleProcess:
         link_string = "link"
         for step in steps:
             for member in step.get("stepPublicMembers", []):
-                link, qrcode = HandleProcess.user_team_public_data(
+                link = HandleProcess.user_team_public_data(
                     self.process,
                     member["member"],
                     step.get("stepRole"),
@@ -375,10 +375,10 @@ class HandleProcess:
                 )
                 links.append({member["member"]: link})
                 public_links.append({link_string: link})
-                qrcodes.append({member["member"]: qrcode})
+                # qrcodes.append({member["member"]: qrcode})
 
             for member in step.get("stepTeamMembers", []):
-                link, qrcode = HandleProcess.user_team_public_data(
+                link = HandleProcess.user_team_public_data(
                     self.process,
                     member["member"],
                     step.get("stepRole"),
@@ -386,9 +386,9 @@ class HandleProcess:
                     "team",
                 )
                 links.append({member["member"]: link})
-                qrcodes.append({member["member"]: qrcode})
+                # qrcodes.append({member["member"]: qrcode})
             for member in step.get("stepUserMembers", []):
-                link, qrcode = HandleProcess.user_team_public_data(
+                link = HandleProcess.user_team_public_data(
                     self.process,
                     member["member"],
                     step.get("stepRole"),
@@ -396,11 +396,11 @@ class HandleProcess:
                     "user",
                 )
                 links.append({member["member"]: link})
-                qrcodes.append({member["member"]: qrcode})
+                # qrcodes.append({member["member"]: qrcode})
 
             for step in step.get("stepGroupMembers", []):
                 for member in step.get("public", []):
-                    link, qrcode = HandleProcess.user_team_public_data(
+                    link  = HandleProcess.user_team_public_data(
                         self.process,
                         member["member"],
                         step.get("stepRole"),
@@ -409,10 +409,10 @@ class HandleProcess:
                     )
                     links.append({member["member"]: link})
                     public_links.append({link_string: link})
-                    qrcodes.append({member["member"]: qrcode})
+                    # qrcodes.append({member["member"]: qrcode})
 
                 for member in step.get("team_members", []):
-                    link, qrcode = HandleProcess.user_team_public_data(
+                    link  = HandleProcess.user_team_public_data(
                         self.process,
                         member["member"],
                         step.get("stepRole"),
@@ -421,10 +421,10 @@ class HandleProcess:
                     )
                     links.append({member["member"]: link})
                     public_links.append({link_string: link})
-                    qrcodes.append({member["member"]: qrcode})
+                    # qrcodes.append({member["member"]: qrcode})
 
                 for member in step.get("user_members", []):
-                    link, qrcode = HandleProcess.user_team_public_data(
+                    link = HandleProcess.user_team_public_data(
                         self.process,
                         member["member"],
                         step.get("stepRole"),
@@ -433,7 +433,7 @@ class HandleProcess:
                     )
                     links.append({member["member"]: link})
                     public_links.append({link_string: link})
-                    qrcodes.append({member["member"]: qrcode})
+                    # qrcodes.append({member["member"]: qrcode})
                     
         clone_ids = HandleProcess.prepare_document_for_step_one_users(
             steps[0], self.process["parent_item_id"], process_id
