@@ -55,8 +55,10 @@ const ProcessCard = ({ cardItem, title }) => {
   };
 
   function getProcessDetail(process_id, process_title) {
+    console.log("process_id", process_id, process_title)
     axios
-      .get(`https://100094.pythonanywhere.com/v2/processes/65ccd876dbbce2c6e7f39156/`)
+      // .get(`https://100094.pythonanywhere.com/v2/processes/65ccd876dbbce2c6e7f39156/`)
+      .get(`https://100094.pythonanywhere.com/v2/processes/${process_id}/`)
       .then((response) => {
         dispatch(SetProcessDetail(response.data));
         setProcessDetailLoading(false);
