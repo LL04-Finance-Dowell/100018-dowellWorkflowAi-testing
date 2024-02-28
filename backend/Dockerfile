@@ -18,7 +18,7 @@ COPY . .
 
 
 # Expose the port on which the Django app will run
-EXPOSE 8000
+EXPOSE 8001
 
 # Define the command to run the Django app
-CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
+CMD ["python", "manage.py", "runserver", "0.0.0.0:8001"]
