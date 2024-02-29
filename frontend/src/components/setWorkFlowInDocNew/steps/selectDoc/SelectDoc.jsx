@@ -157,7 +157,7 @@ const SelectDoc = ({ savedDoc, addWorkflowStep }) => {
 
   const fetchDocument = async (documentId) => {
     try {
-      const url = `http://74.50.64.89:8001/v2/documents/${documentId}/?document_type=clone`;
+      const url = `100094.pythonanywhere.com/v2/documents/${documentId}/?document_type=clone`;
       const response = await axios.get(url);
       // console.log("response", response)
       setStepDocument(response.data);

@@ -61,7 +61,7 @@ const FoldersCard = ({ cardItem, knowledgeCenter }) => {
   }, [cardItem]);
 
   useEffect(() => {
-    const apiUrl = 'http://74.50.64.89:8001/v1/companies/6385c0f38eca0fb652c9457e/templates/metadata/?data_type=Real_Data'; // Replace with your API endpoint
+    const apiUrl = '100094.pythonanywhere.com/v1/companies/6385c0f38eca0fb652c9457e/templates/metadata/?data_type=Real_Data'; // Replace with your API endpoint
 
     // Make a GET request using Axios
     axios.get(apiUrl)

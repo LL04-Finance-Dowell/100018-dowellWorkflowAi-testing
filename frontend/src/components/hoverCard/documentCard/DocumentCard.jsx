@@ -215,7 +215,7 @@ const DocumentCard = ({
 
   function getDocumentDetail(document_id) {
     axios
-      .get(`http://74.50.64.89:8001/v2/documents/${document_id}/reports/`)
+      .get(`100094.pythonanywhere.com/v2/documents/${document_id}/reports/`)
       .then((response) => {
         dispatch(SetShowDocumentReport(response.data));
         // setProcessDetailLoading(false);

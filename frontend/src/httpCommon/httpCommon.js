@@ -5,17 +5,17 @@ import {
   extractTokenFromVerificationURL,
 } from "../utils/helpers";
 
-export const api_url = "http://74.50.64.89:8001/v1/";
-export const api_url_v2 = "http://74.50.64.89:8001/v2/";
-export const api_url_v3 = "http://74.50.64.89:8001/v2/";
+export const api_url = "100094.pythonanywhere.com/v1/";
+export const api_url_v2 = "100094.pythonanywhere.com/v2/";
+export const api_url_v3 = "100094.pythonanywhere.com/v2/";
 export const auth_url = "https://100014.pythonanywhere.com/api/";
 const auth_url_other = "https://100093.pythonanywhere.com/api/";
-// const new_process_api_url = "http://74.50.64.89:8001/v0.2/";
-const new_process_api_url = "http://74.50.64.89:8001/v0.2/";
+// const new_process_api_url = "100094.pythonanywhere.com/v0.2/";
+const new_process_api_url = "100094.pythonanywhere.com/v0.2/";
 export const auth_expo_url = "https://100093.pythonanywhere.com";
 
 ///new api
-const api_url_workflow = "http://74.50.64.89:8001/v1/";
+const api_url_workflow = "100094.pythonanywhere.com/v1/";
 
 export const dowellLoginUrl = `https://100014.pythonanywhere.com/?redirect_url=${
   window.location.href.includes("verify/")

@@ -222,7 +222,7 @@ const SelectMembersToAssign = ({
         const company_id = userDetail?.portfolio_info[0]?.org_id;
         
         try {
-          const response = await fetch(`http://74.50.64.89:8001/v2/processes/${company_id}/public/`);
+          const response = await fetch(`100094.pythonanywhere.com/v2/processes/${company_id}/public/`);
           
           if (!response.ok) {
             throw new Error(`HTTP error! Status: ${response.status}`);
