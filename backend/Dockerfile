@@ -17,10 +17,9 @@ ENV PATH="/opt/venv/bin:$PATH"
 
 # Install dependencies
 COPY ./requirements.txt .
-RUN /opt/venv/bin/pip install --upgrade pip && \
-    /opt/venv/bin/pip install --no-cache-dir gunicorn && \
-    /opt/venv/bin/pip install --no-cache-dir -r requirements.txt
-
+RUN pip install --upgrade pip && \
+    pip install --no-cache-dir gunicorn && \
+    pip install --no-cache-dir -r requirements.txt
 # Copy project
 COPY . .
 
