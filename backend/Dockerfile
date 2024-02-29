@@ -1,27 +1,27 @@
-# pull official base image
-FROM python:3.11.4-slim-buster
+# Use a smaller base image
+FROM python:3.11.4-alpine
 
-# set work directory
+# Set work directory
 WORKDIR /usr/src/app
 
-# set environment variables
+# Set environment variables
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
 
-# add a label
+# Add a label
 LABEL maintainer="wawinyedwin44@gmail.com"
 
-# create and use a virtual environment
+# Create and use a virtual environment
 RUN python -m venv /opt/venv
 ENV PATH="/opt/venv/bin:$PATH"
 
-# install dependencies
+# Install dependencies
 COPY ./requirements.txt .
-RUN pip install --upgrade pip && \
-    pip install --no-cache-dir gunicorn && \
-    pip install --no-cache-dir -r requirements.txt
+RUN /opt/venv/bin/pip install --upgrade pip && \
+    /opt/venv/bin/pip install --no-cache-dir gunicorn && \
+    /opt/venv/bin/pip install --no-cache-dir -r requirements.txt
 
-# copy project
+# Copy project
 COPY . .
 
 # Expose the port on which the Django app will run
