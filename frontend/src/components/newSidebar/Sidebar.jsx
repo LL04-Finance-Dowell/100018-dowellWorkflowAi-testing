@@ -192,7 +192,7 @@ const Sidebar = ({toggleSidebar, isMobile}) => {
   // useEffect(() => {
   //   axios
   //     .get(
-  //       'http://localhost:8001/v1/companies/6385c0f38eca0fb652c9457e/templates/?='
+  //       'http://74.50.64.89:8001/v1/companies/6385c0f38eca0fb652c9457e/templates/?='
   //     )
   //     .then((response) => {
   //       const templateNames = response.data.templates.map(

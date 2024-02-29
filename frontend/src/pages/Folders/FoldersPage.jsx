@@ -31,7 +31,7 @@ const FoldersPage = ({ knowledgeCenter }) => {
   let allFolders = folders ? [...folders].reverse() : [];
   // console.log("folders", folders)
   function fetchKnowledgeCenterData() {
-    const url = `http://localhost:8001/v2/companies/6385c0f38eca0fb652c9457e/folders/knowledge-centre/?data_type=Real_Data`;
+    const url = `http://74.50.64.89:8001/v2/companies/6385c0f38eca0fb652c9457e/folders/knowledge-centre/?data_type=Real_Data`;
     axios.get(url)
       .then(response => {
         dispatch(SetKnowledgeFolders(response.data));

@@ -6,8 +6,8 @@ import { toast } from 'react-toastify';
 import { setEditorLink } from '../../../features/app/appSlice';
 import { detailDocument, documentReport } from '../../../features/document/asyncThunks';
 import {
-  getVerifiedProcessLink,
-  verifyProcessForUser,
+    getVerifiedProcessLink,
+    verifyProcessForUser,
 } from '../../../services/processServices';
 import { LoadingSpinner } from '../../LoadingSpinner/LoadingSpinner';
 import HoverCard from '../HoverCard';
@@ -15,8 +15,8 @@ import { Button } from '../styledComponents';
 
 import { useAppContext } from '../../../contexts/AppContext';
 import {
-  SetShowDocumentReport,
-  SetSingleDocument
+    SetShowDocumentReport,
+    SetSingleDocument
 } from "../../../features/app/appSlice";
 
 import { useTranslation } from 'react-i18next';
@@ -29,13 +29,13 @@ import { setAllDocuments } from '../../../features/document/documentSlice';
 import { moveItemToArchive } from '../../../services/archiveServices';
 import { DocumentServices } from '../../../services/documentServices';
 import {
-  addNewFavoriteForUser,
-  deleteFavoriteForUser,
+    addNewFavoriteForUser,
+    deleteFavoriteForUser,
 } from '../../../services/favoritesServices';
 import {
-  extractTokenFromVerificationURL,
-  productName,
-  updateVerificationDataWithTimezone,
+    extractTokenFromVerificationURL,
+    productName,
+    updateVerificationDataWithTimezone,
 } from '../../../utils/helpers';
 
 import AddRemoveBtn from '../AddRemoveBtn';
@@ -215,7 +215,7 @@ const DocumentCard = ({
 
   function getDocumentDetail(document_id) {
     axios
-      .get(`http://localhost:8001/v2/documents/${document_id}/reports/`)
+      .get(`http://74.50.64.89:8001/v2/documents/${document_id}/reports/`)
       .then((response) => {
         dispatch(SetShowDocumentReport(response.data));
         // setProcessDetailLoading(false);
