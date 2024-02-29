@@ -159,3 +159,8 @@ REST_FRAMEWORK = {
     # Other DRF settings...
 }
 APPEND_SLASH = True
+
+
+CORS_ALLOWED_ORIGINS = [
+    'http://74.50.64.89:3000',
+]
