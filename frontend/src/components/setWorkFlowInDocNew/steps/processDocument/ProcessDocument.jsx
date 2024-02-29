@@ -644,7 +644,7 @@ export default ProcessDocument;
 export const proccesses = [
   { id: uuidv4(), option: "Select", actionKey: "Select" },
   {
-    id: crypto.randomUUID(),
+    id: uuidv4(),
     option: "Save and continue later",
     actionKey: "saveAndContinueLater",
   },
