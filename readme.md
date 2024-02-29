@@ -7,3 +7,5 @@ OR you can start the apps separately by doing
 - Server - `python manage.py runserver 8001`
 - UI - `npm start`
 
+
+
