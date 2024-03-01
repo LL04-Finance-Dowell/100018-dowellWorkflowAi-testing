@@ -33,6 +33,7 @@ ALLOWED_HOSTS = ["*"]
 INSTALLED_APPS = [
     "corsheaders",
     "drf_yasg",
+    'django_crontab',
     "app",
     "django.contrib.admin",
     "django.contrib.auth",
@@ -43,6 +44,8 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "rest_framework",
 ]
+
+CRONJOBS = [('*/1 * * * *', 'app.utils.notification_cron.send_reminders')]
 
 MIDDLEWARE = [
     "django.middleware.http.ConditionalGetMiddleware",
@@ -62,7 +65,6 @@ ROOT_URLCONF = "wf_ai_core.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [os.path.join(BASE_DIR, "frontend/build")],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -120,9 +122,6 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.1/howto/static-files/
 STATIC_URL = "/static/"
 
-STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, "frontend/build/static"),
-]
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
@@ -161,6 +160,7 @@ REST_FRAMEWORK = {
 }
 APPEND_SLASH = True
 
-CORS_ORIGIN_WHITELIST = [
-    "http://localhost:3000",
+
+CORS_ALLOWED_ORIGINS = [
+    'http://74.50.64.89:3000',
 ]

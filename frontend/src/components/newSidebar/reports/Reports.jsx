@@ -176,7 +176,7 @@ const Reports = () => {
   }, [itemsCountToDisplay]);
 
   // useEffect(() => {
-  //   console.log('test: ', test);
+  //   // console.log('test: ', test);
   // }, [test]);
 
   return (
@@ -199,12 +199,12 @@ export const manageFileItems = [
     id: uuidv4(),
     parent: 'My documents',
     children: [
-      { id: uuidv4(), child: 'drafts', href: '/documents/draft-reports' },
-      {
-        id: uuidv4(),
-        child: 'saved',
-        href: '/documents/saved-reports',
-      },
+      // { id: uuidv4(), child: 'drafts', href: '/documents/draft-reports' },
+      // {
+      //   id: uuidv4(),
+      //   child: 'saved',
+      //   href: '/documents/saved-reports',
+      // },
       { id: uuidv4(), child: 'Rejected', href: '/documents/rejected' },
       {
         id: uuidv4(),

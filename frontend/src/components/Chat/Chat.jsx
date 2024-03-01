@@ -57,7 +57,7 @@ const Chat = () => {
     };
   }, []); 
 
-  // console.log("the user details are ", userDetail)
+  // // console.log("the user details are ", userDetail)
 
   // useEffect(() => {
   //   IntilizingRoom(session_id);
@@ -74,7 +74,7 @@ const Chat = () => {
       portfolio_name: userDetail?.portfolio_info[0]?.portfolio_name,
       product_name: "WORKFLOWAI",
     };
-    // console.log("the req data is ", data)
+    // // console.log("the req data is ", data)
     const options = {
       method: "POST",
       headers: {
@@ -90,7 +90,7 @@ const Chat = () => {
       
       if (response.ok) {
         const data = await response.json();
-        // console.log("the room initialization res is ",data)
+        // // console.log("the room initialization res is ",data)
         setModal(data);
       } else {
         throw new Error("Network response was not OK");
@@ -99,7 +99,7 @@ const Chat = () => {
       // Perform any necessary error handling logic without logging the error
       // For example, you can show a user-friendly error message
       // or perform an alternative action.
-      // console.log('Initialising room failed: ', error);
+      // // console.log('Initialising room failed: ', error);
     }
   };
 
@@ -140,7 +140,7 @@ const Chat = () => {
     if (!modals.inserted_id) return;
     const interval = setInterval(() => {
       fetchMessages(modals.inserted_id);
-      // console.log("refresh the page")
+      // // console.log("refresh the page")
     }, 5000); // Repeat every 2 seconds
 
     return () => clearInterval(interval); // This is important, it clears the interval on unmount
@@ -158,7 +158,7 @@ const Chat = () => {
     }
 
     const data = await response.json();
-    // console.log('get all messages ',data)
+    // // console.log('get all messages ',data)
     setapiMessages(data?.response.data);
   }
 
@@ -183,11 +183,11 @@ const Chat = () => {
 
   function handleMinimizePopup() {
     // const storemessages = [...messages];
-    // console.log(storemessages)
+    // // console.log(storemessages)
     // localStorage.setItem('messages', JSON.stringify(storemessages));
     setIsPopupOpen(false);
     setIsNestedPopupOpen(false);
-    console.log("minimize btn clicked");
+    // console.log("minimize btn clicked");
   }
 
   async function handleNestedPopupClose() {
@@ -196,8 +196,8 @@ const Chat = () => {
       room_id: modals.inserted_id,
       is_active: false,
     };
-    // console.log("modal id is ",modals?.org_id)
-    console.log("data is ", data);
+    // // console.log("modal id is ",modals?.org_id)
+    // console.log("data is ", data);
     const response = await fetch(
       `https://100096.pythonanywhere.com/api/v2/room-service/`,
       {
@@ -216,7 +216,7 @@ const Chat = () => {
       setHasChatStarted(false);
       setIsNestedPopupOpen(false);
     }
-    console.log("the response for close is ", a);
+    // console.log("the response for close is ", a);
     // if (hasChatStarted) {
     //   setIsPopupOpen(false);
     //   setIsNestedPopupOpen(false);
@@ -226,7 +226,7 @@ const Chat = () => {
     //   setapiMessages([]); // Clear the apiMessages state
     // }
   }
-  // console.log("modal data are ", showHighlight)
+  // // console.log("modal data are ", showHighlight)
   return (
     <div className={styles.Main_div}>
       <div>
@@ -234,7 +234,7 @@ const Chat = () => {
           {showImage && 
           <div className={styles.showImgIcons}>
             <div>
-              {shouldRenderButton  ? <button onClick={()=>{dispatch(toggleHighlight()); console.log('toggled')}}  className={styles.Chat_img_textProcess}>{t('Do you want help on process!')}</button> : ""}
+              {shouldRenderButton  ? <button onClick={()=>{dispatch(toggleHighlight()); }}  className={styles.Chat_img_textProcess}>{t('Do you want help on process!')}</button> : ""}
               <div className={styles.Chat_img_text}>{t("Samanta is here to help you!")}</div>
             </div>
             <img src={'https://www.socialmediaautomation.uxlivinglab.online/static/photos/Lady-Pixel.png'} width="80" className={styles.Chat_icon_img} />
@@ -342,7 +342,7 @@ const Chat = () => {
             {/* <h2 className={styles.Text_Class}>{t("Portfolio No")} : {modals.portfolio}</h2> */}
             <div className={styles.chat_messages}>
               {apiMessages.map((msg, idx) => {
-                // console.log("apiMessage in map:", msg); // Add this line
+                // // console.log("apiMessage in map:", msg); // Add this line
                 return (
                   <div key={idx}>
                     <p

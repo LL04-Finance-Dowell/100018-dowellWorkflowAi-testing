@@ -12,7 +12,7 @@ const Tabs = () => {
   const currentURL = window.location.href;
   const parts = currentURL.split("/");
   const whichApproval = parts[parts.length - 1];
-  // console.log("the approval is ", whichApproval);
+  // // console.log("the approval is ", whichApproval);
   const { t } = useTranslation();
 
   return (

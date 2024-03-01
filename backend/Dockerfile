@@ -1,35 +1,29 @@
-# Use an official Python runtime as a parent image
-FROM python:3.9-slim
+# pull official base image
+FROM python:3.11.4-slim-buster
 
-# Set environment variables
+# set work directory
+WORKDIR /usr/src/app
+
+# set environment variables
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
 
-# Set work directory
-WORKDIR /app/backend
+# add a label
+LABEL maintainer="wawinyedwin44@gmail.com"
 
-# Install virtualenv
-RUN pip install virtualenv
+# create and use a virtual environment
+RUN python -m venv /opt/venv
+ENV PATH="/opt/venv/bin:$PATH"
 
-# Create a virtual environment
-RUN virtualenv /venv
+# install dependencies
+COPY ./requirements.txt .
+RUN pip install --upgrade pip &&  pip install gunicorn && pip install --no-cache-dir -r requirements.txt
 
-# Activate the virtual environment
-ENV PATH="/venv/bin:$PATH"
+# copy project
+COPY . .
 
-# Install dependencies
-COPY requirements.txt /app/backend/
-
-RUN pip install --no-cache-dir -r requirements.txt
-
-# Copy project
-COPY . /app/backend
-
-# Run Django migrations
-RUN python manage.py migrate
-
-# Expose the port the app runs on
+# Expose the port on which the Django app will run
 EXPOSE 8001
 
-# Run Django server
-CMD python manage.py runserver 0.0.0.0:8001
+# Define the command to run the Django app using Gunicorn in production mode
+CMD ["gunicorn", "--bind", "0.0.0.0:8001", "wf_ai_core.wsgi:application"]

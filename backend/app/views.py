@@ -93,9 +93,6 @@ from app.mongo_db_connection import (
 
 from .constants import EDITOR_API
 
-def index(request):
-    return render(request, 'build/index.html')
-
 
 # @api_view(["POST"])
 # def webhook(request):
@@ -133,6 +130,7 @@ def document_processing(request):
         request.data["parent_id"],
         request.data["data_type"],
         request.data["process_title"],
+        request.data.get("email", None),
     )
     action = request.data["action"]
     data = None
@@ -231,10 +229,8 @@ def get_process_link(request, process_id):
     if not links_info:
         return Response("Verification link unavailable", status.HTTP_400_BAD_REQUEST)
     user = request.data["user_name"]
-
     process = single_query_process_collection({"_id": process_id})
     process_steps = process.get("process_steps")
-
     links = links_info[0]["links"]
 
     for step in process_steps:
@@ -839,6 +835,7 @@ def create_document(request):
     template_id = request.data["template_id"]
     content = single_query_template_collection({"_id": template_id})["content"]
     page = single_query_template_collection({"_id": template_id})["page"]
+    email = request.data.get("email", None)
     res = json.loads(
         save_to_document_collection(
             {
@@ -880,7 +877,7 @@ def create_document(request):
             )
         metadata_id = res_metadata["inserted_id"]
         editor_link = access_editor_metadata(
-            res["inserted_id"], "document", metadata_id
+            res["inserted_id"], "document", metadata_id, email
         )
         if not editor_link:
             return Response(
@@ -901,30 +898,13 @@ def get_item_content(request, item_id):
     content = []
     item_type = request.query_params.get("item_type")
     if item_type == "templates":
-        try:
-            to_parse = single_query_template_collection({"_id": item_id})["content"]
-            # Try ast.literal_eval()
-            my_dict = ast.literal_eval(
-                to_parse
-            )[0][0]
-        except Exception as e:
-            # Use json.loads()
-            my_dict = json.loads(
-                to_parse
-            )[0][0]
+        my_dict = ast.literal_eval(
+            single_query_template_collection({"_id": item_id})["content"]
+        )[0][0]
     else:
-        try:
-            to_parse = single_query_document_collection({"_id": item_id})["content"]
-            # Try ast.literal_eval()
-            my_dict = ast.literal_eval(
-                to_parse
-            )[0][0]
-        except Exception as e:
-            # Use json.loads()
-            my_dict = json.loads(
-                to_parse
-            )[0][0]
-            
+        my_dict = ast.literal_eval(
+            single_query_document_collection({"_id": item_id})["content"]
+        )[0][0]
     all_keys = [i for i in my_dict.keys()]
     for i in all_keys:
         temp_list = []
@@ -1303,6 +1283,7 @@ def create_template(request):
         portfolio = request.data["portfolio"]
     viewers = [{"member": request.data["created_by"], "portfolio": portfolio}]
     organization_id = request.data["company_id"]
+    email = request.data.get("email", None)
     res = json.loads(
         save_to_template_collection(
             {
@@ -1355,6 +1336,7 @@ def create_template(request):
                 "function_ID": "ABCDE",
                 "command": "update",
                 "name": "Untitled Template",
+                "email": email,
                 "flag": "editing",
                 "update_field": {
                     "template_name": "Untitled Template",
@@ -1379,7 +1361,8 @@ def template_detail(request, template_id):
     """editor link for a document"""
     if not validate_id(template_id):
         return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
-    editor_link = access_editor(template_id, "template")
+    email = request.GET.get("email", None)
+    editor_link = access_editor(template_id, "template", email=email)
     if not editor_link:
         return Response(status.HTTP_500_INTERNAL_SERVER_ERROR)
     return Response(editor_link, status.HTTP_201_CREATED)
@@ -1489,8 +1472,7 @@ def get_all_teams(request, company_id):
     """Get All Team"""
     all_team = bulk_query_team_collection({"company_id": company_id})
     data_type = request.query_params.get("data_type")
-    form = request.data
-    if not form and data_type:
+    if not data_type:
         return Response("Invalid Request", status.HTTP_400_BAD_REQUEST)
     all_team = bulk_query_team_collection(
         {"company_id": company_id, "data_type": data_type}
@@ -1640,7 +1622,6 @@ def get_workflow_ai_setting(request, company_id):
         }
     )
     return Response(setting, status.HTTP_200_OK)
-    
 
 
 @api_view(["POST"])

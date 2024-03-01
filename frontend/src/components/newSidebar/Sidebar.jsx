@@ -107,7 +107,7 @@ const Sidebar = ({toggleSidebar, isMobile}) => {
   const { userDetail, session_id } = useSelector((state) => state.auth);
   const { IconColor, ShowProfileSpinner, themeColor, creditResponse } =
     useSelector((state) => state.app);
-  // console.log(creditResponse && creditResponse.data)
+  // // console.log(creditResponse && creditResponse.data)
   const navigate = useNavigate();
   useCloseElementOnEscapekeyClick(() =>
     dispatch(setLegalAgreePageLoading(false))
@@ -128,7 +128,7 @@ const Sidebar = ({toggleSidebar, isMobile}) => {
         // if (!legalStatus) setShowLegalPopup(true);
       })
       .catch((error) => {
-        console.log(error.response ? error.response.data : error.message);
+        // console.log(error.response ? error.response.data : error.message);
         dispatch(setLegalStatusLoading(false));
       });
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -192,7 +192,7 @@ const Sidebar = ({toggleSidebar, isMobile}) => {
   // useEffect(() => {
   //   axios
   //     .get(
-  //       'http://localhost:8001/v1/companies/6385c0f38eca0fb652c9457e/templates/?='
+  //       '100094.pythonanywhere.com/v1/companies/6385c0f38eca0fb652c9457e/templates/?='
   //     )
   //     .then((response) => {
   //       const templateNames = response.data.templates.map(
@@ -217,8 +217,8 @@ const Sidebar = ({toggleSidebar, isMobile}) => {
   //       // Handle any errors
   //     });
   // }, []);
-  // console.log(creditResponse.data.is_active)
-  // console.log(creditResponse.data.service_id)
+  // // console.log(creditResponse.data.is_active)
+  // // console.log(creditResponse.data.service_id)
 
   const location = useLocation();
   const [scrollPosition, setScrollPosition] = useState(0);
@@ -254,7 +254,7 @@ const Sidebar = ({toggleSidebar, isMobile}) => {
   const handleLinkClick = (e) => {
     e.preventDefault(); // Prevent the default link behavior
     const routePart = e.currentTarget.getAttribute('href');
-    console.log("routePart", routePart)
+    // console.log("routePart", routePart)
     // navigate("/templates/demo#demo")
   };
 

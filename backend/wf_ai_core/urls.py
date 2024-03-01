@@ -22,7 +22,6 @@ from django.conf.urls.static import static
 from drf_yasg import openapi
 from drf_yasg.views import get_schema_view
 from rest_framework import permissions
-from app.views import home, index
 
 schema_view = get_schema_view(
     openapi.Info(
@@ -39,7 +38,7 @@ schema_view = get_schema_view(
 
 urlpatterns = [
     # path("", home, name="Home"),
-    path("", index),
+    # path("", index),
     path("v1/", include("app.urls")),
     path("v2/", include("app.urls_v2")),
     # api doc

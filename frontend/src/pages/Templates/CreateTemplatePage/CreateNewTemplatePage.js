@@ -33,7 +33,7 @@ const CreateNewTemplatePage = () => {
             window.location = responseData.editor_link;
 
         } catch (err) {
-            console.log(err);
+            // console.log(err);
             setCreateLoading(false);
             toast.error("Something went wrong while trying to create your template.")
         }

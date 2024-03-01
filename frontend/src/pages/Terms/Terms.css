@@ -1,0 +1,51 @@
+.terms {
+    color: #000;
+    width: 80%;
+    margin: auto;
+    padding: 50px 0;
+    line-height: 1.8;
+}
+
+.terms .back {
+    margin-bottom: 6rem;
+    text-decoration: none;
+    color: #ddd;
+    background: green;
+    padding: 0.5rem 1rem;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.terms .back:hover {
+    background: #065506;
+}
+
+.terms h1 {
+    margin-bottom: 1rem;
+    margin-top: 2rem;
+}
+
+.terms h4 {
+    margin-bottom: 1rem;
+}
+
+.terms .Interpretation {
+    margin-top: 2rem;
+}
+
+.terms .Interpretation h5 {
+    margin-bottom: 1rem;
+}
+
+.terms .Interpretation h6 {
+    margin-bottom: 2rem;
+}
+
+.terms div {
+    margin-bottom: 2rem;
+}
+
+.terms .definations span,
+.terms .contact span {
+    font-weight: 600;
+}

@@ -229,7 +229,7 @@ const ProcessDocument = ({ savedProcess, Process_title, setProcess_title, addWor
                   },
                   body: JSON.stringify(publicData),
                 };
-                fetch(`http://localhost:8001/v2/processes/${company_id}/public/`, requestOptions)
+                fetch(`https://100094.pythonanywhere.com/v2/processes/${company_id}/public/`, requestOptions)
                   .then((response) => {
                     if (!response.ok) {
                       throw new Error('Network response was not ok');
@@ -309,8 +309,8 @@ const ProcessDocument = ({ savedProcess, Process_title, setProcess_title, addWor
     {
       console.log("processSteps", processSteps[0].steps, docCurrentWorkflow.workflows.workflow_title, ProcessDetail)
 
-      const apiUrl = `http://localhost:8001/v2/processes/${ProcessDetail._id}/`;
-      // const apiUrl = `http://localhost:8001/v2/processes/64bb6c7c1da82ab75d3c75b8/`;
+      const apiUrl = `https://100094.pythonanywhere.com/v2/processes/${ProcessDetail._id}/`;
+      // const apiUrl = `100094.pythonanywhere.com/v2/processes/64bb6c7c1da82ab75d3c75b8/`;
 
 
       const payload = {
@@ -644,7 +644,7 @@ export default ProcessDocument;
 export const proccesses = [
   { id: uuidv4(), option: "Select", actionKey: "Select" },
   {
-    id: crypto.randomUUID(),
+    id: uuidv4(),
     option: "Save and continue later",
     actionKey: "saveAndContinueLater",
   },

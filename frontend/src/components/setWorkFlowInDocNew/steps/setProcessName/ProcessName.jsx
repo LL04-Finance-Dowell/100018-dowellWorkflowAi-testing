@@ -9,9 +9,9 @@ const ProcessName = ({ Process_title, setProcess_title }) => {
     const dispatch = useDispatch();
     const { ProcessName } = useSelector((state) => state.app);
 
-//     console.log('Language:', i18n.language);
+//     // console.log('Language:', i18n.language);
 //     const translationKey = 'Process Name';
-// console.log(t(translationKey));
+// // console.log(t(translationKey));
 
     // const [, forceUpdate] = useState();
     // React.useEffect(() => {

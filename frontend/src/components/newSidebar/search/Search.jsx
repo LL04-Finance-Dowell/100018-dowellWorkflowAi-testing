@@ -44,10 +44,10 @@ const Search = () => {
 
     setSearchLoading(true);
   };
-// console.log('the demoTemplates are ', demoTemplates)
+// // console.log('the demoTemplates are ', demoTemplates)
   useEffect(() => {
     setRerender(uuidv4());
-    // console.log('hit the first useEffect')
+    // // console.log('hit the first useEffect')
   }, [searchResultItems]);
 
   useEffect(() => {
@@ -62,7 +62,7 @@ const Search = () => {
 
     try {
       const results = searchItemByKeyAndGroupResults(search, searchItems);
-// console.log('hit the second useEffect',results, search, searchItems)
+// // console.log('hit the second useEffect',results, search, searchItems)
       setSearchResultLoaded(true);
       setSearchLoading(false);
       setSearchResults(results);
@@ -162,7 +162,7 @@ const Search = () => {
       });
       setSearchResultItems(updatedItems);
     } catch (error) {
-      console.log(error);
+      // console.log(error);
       setSearchLoading(false);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -181,7 +181,7 @@ const Search = () => {
       state: { searchResults: searchResults, searchItem: search },
     });
   };
-  // console.log('searchLoading ',searchLoading, " searchResults ",searchResults, " searchResultItems ", searchResultItems," searchResultLoaded ",searchResultLoaded)
+  // // console.log('searchLoading ',searchLoading, " searchResults ",searchResults, " searchResultItems ", searchResultItems," searchResultLoaded ",searchResultLoaded)
 
   return (
     <div className={styles.container}>

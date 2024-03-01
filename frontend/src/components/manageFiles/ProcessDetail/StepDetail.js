@@ -25,7 +25,7 @@ const EvaluationReportComponent = () => {
   const { ProcessDetail } = useSelector((state) => state.app);
 
   useEffect(() => {
-    console.log('EvaluationReportComponent mounted');
+    // console.log('EvaluationReportComponent mounted');
   }, []);
 
   const normalityAnalysisData = {
@@ -123,12 +123,12 @@ const EvaluationReportComponent = () => {
   };
 
   useEffect(() => {
-    console.log("ProcessDetail", ProcessDetail);
+    // console.log("ProcessDetail", ProcessDetail);
     const fetchData = async () => {
       try {
         const requestBody = { process_id: 'abc0099986567abcd' };
         const response = await axios.post('https://100035.pythonanywhere.com/evaluation/evaluation-api/?report_type=process', requestBody);
-        console.log("response", response.data.score_list)
+        // console.log("response", response.data.score_list)
         setReportData(response.data);
       } catch (error) {
         console.error('Error fetching data:', error);

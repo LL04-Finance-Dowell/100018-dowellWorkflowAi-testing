@@ -29,8 +29,8 @@ export default function DocumentDetailReport() {
 
 	const navigate = useNavigate();
 
-  console.log("ProcessDetail", ProcessDetail)
-  console.log("userDetail", userDetail)
+  // console.log("ProcessDetail", ProcessDetail)
+  // console.log("userDetail", userDetail)
   const apiUrl = 'https://100035.pythonanywhere.com/evaluation/evaluation-api/?report_type=document';
   const payload = {
     process_id: 'abcdef12345',
@@ -42,7 +42,7 @@ export default function DocumentDetailReport() {
       try {
         const response = await axios.post(apiUrl, payload);
 				setDocumentReportData(response.data.success)
-        console.log('API Response:', response.data.success);
+        // console.log('API Response:', response.data.success);
         // Do something with the response data
       } catch (error) {
         console.error('Error fetching data:', error);

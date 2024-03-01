@@ -38,7 +38,7 @@ const CopiesOfDoc = ({ currentStepIndex, stepsPopulated }) => {
     if (copiesFeaturesSet) return;
 
     const currentCopies = copiesFeaturesToDisplay.slice();
-    // console.log('the currentDocToWfs is ',currentDocToWfs)
+    // // console.log('the currentDocToWfs is ',currentDocToWfs)
     const singleCopyOfCurrentDocument = {
       id: currentDocToWfs?._id,
       feature: currentDocToWfs?.document_name ? currentDocToWfs?.document_name  : currentDocToWfs?.template_name,

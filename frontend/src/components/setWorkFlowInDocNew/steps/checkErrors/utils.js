@@ -20,10 +20,10 @@ export const extractProcessObjChecker = (
   teamMembersSelected,
   publicMembersSelected,
   userMembersSelected,
+  groupMembersSelected,
   skipDataChecks = false
 ) => {
-
-  /**
+/**
    * Extracts process object necessary for creating a new document process.
    * 
    * @param currentUserDetails The current logged-in user details.
@@ -34,6 +34,7 @@ export const extractProcessObjChecker = (
    * @param selectedDocumentContentMap The document map of the selected document.
    * @param teamMembersSelected The array of team members selected for the document to be processed.
    * @param publicMembersSelected The array of public members selected for the document to be processed.
+   * @param groupMembersSelected The array of public members selected for the document to be processed.
    * @param userMembersSelected The array of user members selected for the document to be processed.
    * @param skipDataChecks Specifies whether or not to check the process object for necessary details needed for successful process creation.
    * 
@@ -58,8 +59,8 @@ export const extractProcessObjChecker = (
     process_type: documentToProcess.document_name ? 'document' : 'template',
     org_name: currentUserDetails?.portfolio_info?.length > 1 ? currentUserDetails?.portfolio_info.find(portfolio => portfolio.product === productName)?.org_name : currentUserDetails?.portfolio_info[0]?.org_name,
   };
-console.log('the documentToProcess is in util ', documentToProcess)
-console.log('the documentProcessSteps is in util ', documentProcessSteps)
+// console.log('the documentToProcess is in util ', documentToProcess)
+// console.log('the documentProcessSteps is in util ', documentProcessSteps)
   const foundProcessSteps = documentProcessSteps.find(
     (process) => process.workflow === selectedDocumentWorkflow._id
   );
@@ -92,6 +93,14 @@ console.log('the documentProcessSteps is in util ', documentProcessSteps)
             copyOfUserItem.member = copyOfUserItem.member[0];
           delete copyOfUserItem.stepIndex;
 
+          return copyOfUserItem;
+        });
+
+        copyOfCurrentStep.stepGroupMembers = groupMembersSelected
+        .filter((selectedUser) => selectedUser.stepIndex === currentIndex)
+        .map((user) => {
+          const copyOfUserItem = { ...user };
+          delete copyOfUserItem.stepIndex;
           return copyOfUserItem;
         });
 
@@ -177,6 +186,7 @@ console.log('the documentProcessSteps is in util ', documentProcessSteps)
         step.stepPublicMembers.length < 1 &&
         step.stepTeamMembers.length < 1 &&
         step.stepUserMembers.length < 1 &&
+        step.stepGroupMembers.length < 1 &&
         !step.skipStep
       )
         return 'Please assign at least one user for each step';
@@ -197,7 +207,7 @@ console.log('the documentProcessSteps is in util ', documentProcessSteps)
  
   const documentMapMissingInStep =
     processObj.workflows[0].workflows.steps.map((step, index) => {
-      console.log("the documentProcessSteps data: ", documentProcessSteps[0].steps[index].stepRights)
+      // console.log("the documentProcessSteps data: ", documentProcessSteps[0].steps[index].stepRights)
       if (step.stepDocumentMap.length < 1 && !step.skipStep && documentProcessSteps[0].steps[index].stepRights== "add_edit")
         return 'Document map missing';
       return null;

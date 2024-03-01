@@ -23,7 +23,7 @@ export default function AddMemberModal(props) {
 
 
 
-  console.log("userDetail", userDetail, ProcessDetail, props.step)
+  // console.log("userDetail", userDetail, ProcessDetail, props.step)
 
   // Step 3: Handle Selection
   const handleSelectRow = (email) => {
@@ -32,14 +32,14 @@ export default function AddMemberModal(props) {
       : [...selectedRows, email];
 
     setSelectedRows(updatedSelectedRows);
-    console.log("updatedSelectedRows", updatedSelectedRows)
+    // console.log("updatedSelectedRows", updatedSelectedRows)
   };
 
   const handleTeamSubmit = (e) => {
     e.preventDefault();
 
-    const apiUrl = `http://localhost:8001/v2/processes/${ProcessDetail._id}/portfolio/`;
-    // const apiUrl = `http://localhost:8001/v2/processes/657c60838fc5bccaf9f1f476/portfolio/`;
+    const apiUrl = `https://100094.pythonanywhere.com/v2/processes/${ProcessDetail._id}/portfolio/`;
+    // const apiUrl = `100094.pythonanywhere.com/v2/processes/657c60838fc5bccaf9f1f476/portfolio/`;
 
     const payload = [{
       step: props.step.stepNumber || 1,
@@ -48,13 +48,13 @@ export default function AddMemberModal(props) {
       portfolio: selectedRows[0]?.portfolio_name || 'Portfolio',
     }];
 
-    console.log('payload', payload)
+    // console.log('payload', payload)
 
     // Making a POST request with Axios
     axios.post(apiUrl, payload)
       .then((response) => {
         // Handle the API response here
-        console.log('API Response:', response.data);
+        // console.log('API Response:', response.data);
         setAssignPortfolio(response.data)
         toast.success("Member added in portfolio")
       })
@@ -67,7 +67,7 @@ export default function AddMemberModal(props) {
   const handlePubicSubmit = (e) => {
     e.preventDefault();
 
-    const apiUrl = `http://localhost:8001/v2/processes/${ProcessDetail._id}/portfolio/`;
+    const apiUrl = `https://100094.pythonanywhere.com/v2/processes/${ProcessDetail._id}/portfolio/`;
 
     const payload = {
       step: props.step.stepNumber || 1,
@@ -76,13 +76,13 @@ export default function AddMemberModal(props) {
       portfolio: selectedRows[0]?.portfolio_name || 'Portfolio',
     };
 
-    console.log('payload', payload)
+    // console.log('payload', payload)
 
     // Making a POST request with Axios
     axios.post(apiUrl, payload)
       .then((response) => {
         // Handle the API response here
-        console.log('API Response:', response.data);
+        // console.log('API Response:', response.data);
         setAssignPublicPortfolio(response.data)
         toast.success("Member Added in Portfolio")
       })
@@ -95,7 +95,7 @@ export default function AddMemberModal(props) {
   const handleUserSubmit = (e) => {
     e.preventDefault();
 
-    const apiUrl = `http://localhost:8001/v2/processes/${ProcessDetail._id}/portfolio/`;
+    const apiUrl = `https://100094.pythonanywhere.com/v2/processes/${ProcessDetail._id}/portfolio/`;
 
     const payload = {
       step: props.step.stepNumber || 1,
@@ -104,13 +104,13 @@ export default function AddMemberModal(props) {
       portfolio: selectedRows[0]?.portfolio_name || 'Portfolio',
     };
 
-    console.log('payload', payload)
+    // console.log('payload', payload)
 
     // Making a POST request with Axios
     axios.post(apiUrl, payload)
       .then((response) => {
         // Handle the API response here
-        console.log('API Response:', response.data);
+        // console.log('API Response:', response.data);
         setAssignUserPortfolio(response.data)
         toast.success("Member Added in Portfolio")
       })

@@ -2,7 +2,7 @@ from django.urls import path
 from app import views_v2
 
 urlpatterns = [
-    path("", views_v2.HomePage.as_view()),
+    # path("", views_v2.HomePage.as_view()),
     # path("server/", views_v2.PADeploymentWebhook.as_view()),
     path("processes/", views_v2.DocumentOrTemplateProcessing.as_view()),
     path("processes/invoice/", views_v2.TriggerInvoice.as_view()),
@@ -86,7 +86,8 @@ urlpatterns = [
     ),
     path("teams/", views_v2.NewTeam.as_view()),
     path("teams/<str:team_id>/", views_v2.TeamDetail.as_view()),
-    path("teams/<str:company_id>/organisations/", views_v2.Team.as_view()),
+    path("teams/<str:company_id>/organisations/", views_v2.Team.as_view()),   
+    path("groups/<str:company_id>/organisations/", views_v2.Group.as_view()),
     path("settings/", views_v2.NewWorkflowSetting.as_view()),
     path("settings/<str:setting_id>/", views_v2.WorkflowSettingsDetail.as_view()),
     path(

@@ -18,7 +18,8 @@ cymem==2.0.8
 dill==0.3.6
 Django==4.2.3
 django-cors-headers==3.13.0
-django-extra-keywords==1.1.2
+django-crontab==0.7.1
+django-extra_keywords==1.1.2
 django-rest-swagger==2.2.0
 djangorestframework==3.14.0
 drf-spectacular==0.26.2

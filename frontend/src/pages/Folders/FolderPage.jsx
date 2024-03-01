@@ -16,7 +16,7 @@ const FolderPage = ({ knowledgeCenter }) => {
   const { folders } = useAppContext();
   const { KnowledgeFolderTemplates } = useSelector((state) => state.app);
   const [folder, setFolder] = useState(
-    folders.find((folder) => folder._id === folder_id)
+    folders?.find((folder) => folder._id === folder_id)
   )
 
   const [metaTemplates, setMetaTemplates] = useState([])
@@ -34,14 +34,14 @@ const FolderPage = ({ knowledgeCenter }) => {
   const navigate = useNavigate();
 
   // useEffect(() => {
-  //   const apiUrl = 'http://localhost:8001/v1/companies/6385c0f38eca0fb652c9457e/templates/metadata/?data_type=Real_Data'; // Replace with your API endpoint
+  //   const apiUrl = '100094.pythonanywhere.com/v1/companies/6385c0f38eca0fb652c9457e/templates/metadata/?data_type=Real_Data'; // Replace with your API endpoint
 
   //   // Make a GET request using Axios
   //   axios.get(apiUrl)
   //     .then(response => {
   //       // Handle the API response here
   //       setMetaTemplates(response.data)
-  //       console.log('API Response:', response.data);
+  //       // console.log('API Response:', response.data);
   //     })
   //     .catch(error => {
   //       // Handle any errors that occur during the request
@@ -53,9 +53,9 @@ const FolderPage = ({ knowledgeCenter }) => {
     if (folder) {
       let modDocItems = [];
       let modTempitems = [];
-      console.log("mubeenfolder", folder)
+      // console.log("mubeenfolder", folder)
       folder.data.forEach((item) => {
-        console.log("itemitemmubeen", item)
+        // console.log("itemitemmubeen", item)
         modDocItems.push(
           allDocuments.find((doc) => doc._id === item.document_id) ?? null
         );
@@ -64,11 +64,11 @@ const FolderPage = ({ knowledgeCenter }) => {
         );
       });
 
-      console.log("modTempitems", modTempitems)
+      // console.log("modTempitems", modTempitems)
 
       setDocItems(modDocItems.filter((item) => item));
       setTempItems(modTempitems.filter((item) => item));
-      console.log("temp", tempItems)
+      // console.log("temp", tempItems)
 
 
     } else if (knowledgeCenter) {
@@ -76,22 +76,22 @@ const FolderPage = ({ knowledgeCenter }) => {
       let modDocItems = [];
       let modTempitems = [];
       
-      console.log("metatemplates", metaTemplates)
+      // console.log("metatemplates", metaTemplates)
       // modTempitems.push(knowFolder.data)
       knowFolder.data.forEach((item) => {
         // modDocItems.push(
         //   allDocuments.find((doc) => doc._id === item.document_id) ?? null
         // );
-        console.log("itemitemmubeen", item)
+        // console.log("itemitemmubeen", item)
         modTempitems.push(
           KnowledgeFolderTemplates?.templates?.find((temp) => temp?._id === item?.template_id) ?? null
         );
       });
 
-      console.log("modTempitems", modTempitems)
+      // console.log("modTempitems", modTempitems)
       // setDocItems(modDocItems.filter((item) => item));
       setTempItems(modTempitems.filter((item) => item !== null));
-      console.log("temptemptemp", tempItems)
+      // console.log("temptemptemp", tempItems)
     }
     else {
       // console.error('Invalid route!');
@@ -100,10 +100,10 @@ const FolderPage = ({ knowledgeCenter }) => {
   }, [folder]);
 
   useEffect(() => {
-    setFolder(folders.find((folder) => folder._id === folder_id));
+    setFolder(folders?.find((folder) => folder._id === folder_id));
   }, [folders]);
 
-  console.log("knowledgeFoldermubeen", tempItems, knowFolder, folder_id)
+  // console.log("knowledgeFoldermubeen", tempItems, knowFolder, folder_id)
 
   return (
     <>

@@ -22,7 +22,7 @@ const filterWorkflows = (workflows, thunkAPI) => {
           )?.data_type
         : thunkAPI.getState().auth?.userDetail?.portfolio_info[0]?.data_type;
     
-    // console.log('user thunk portfolio', userThunkPortfolioDataTypeState);
+    // // console.log('user thunk portfolio', userThunkPortfolioDataTypeState);
     filteredWorkflows = workflows
       .filter(
         (item) =>
@@ -60,7 +60,7 @@ export const createWorkflow = createAsyncThunk(
 
       return res.data.workflow;
     } catch (error) {
-      console.log(error);
+      // console.log(error);
       toast.info('Workflow Creation Failed');
 
     }
@@ -77,7 +77,7 @@ export const mineWorkflows = createAsyncThunk(
 
       return workflows;
     } catch (error) {
-      console.log(error);
+      // console.log(error);
     }
   }
 );
@@ -92,7 +92,7 @@ export const savedWorkflows = createAsyncThunk(
 
       return workflows;
     } catch (error) {
-      console.log(error);
+      // console.log(error);
     }
   }
 );
@@ -107,7 +107,7 @@ export const detailWorkflow = createAsyncThunk(
 
       return res.data;
     } catch (error) {
-      console.log(error);
+      // console.log(error);
       asyncTHunks.dispatch(setToggleManageFileForm(false));
     }
   }
@@ -121,7 +121,7 @@ export const updateWorkflow = createAsyncThunk(
         newData._id,
         newData
       );
-        console.log("the res is ", res)
+        // console.log("the res is ", res)
       typeof res.data === 'string' && notify(changeToTitleCase(res.data));
 
       // thunkAPI.dispatch(removeFromMinedWf(updateData.workflow_id));
@@ -130,7 +130,7 @@ export const updateWorkflow = createAsyncThunk(
 
       return res.data.workflow;
     } catch (error) {
-      console.log(error);
+      // console.log(error);
     }
   }
 );
@@ -148,7 +148,7 @@ export const allWorkflows = createAsyncThunk(
 
       return workflows;
     } catch (error) {
-      console.log(error);
+      // console.log(error);
     }
   }
 );

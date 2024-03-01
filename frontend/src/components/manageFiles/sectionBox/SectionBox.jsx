@@ -287,7 +287,7 @@ const SectionBox = ({
       }
       else {
         setRefreshLoading(true);
-        const url = `http://localhost:8001/v2/companies/6385c0f38eca0fb652c9457e/folders/knowledge-centre/?data_type=Real_Data`;
+        const url = `https://100094.pythonanywhere.com/v2/companies/6385c0f38eca0fb652c9457e/folders/knowledge-centre/?data_type=Real_Data`;
         axios.get(url)
           .then(response => {
             dispatch(SetKnowledgeFolders(response.data));

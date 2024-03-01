@@ -66,8 +66,8 @@ const initialState = {
   proccess: [],
   IconColor: '',
   ProcessName:'',
-  currentMessage:'',   
-  creditResponse:[],                           
+  currentMessage:'',
+  creditResponse:[],
   userDetailPosition: null,
   languageSelectPosition: null,
   teamsSelectedSelectedForProcess: [],
@@ -304,7 +304,7 @@ export const appSlice = createSlice({
       state.themeColor = action.payload;
     },
     setSettingProccess: (state, { payload: { payload, type } }) => {
-      
+
       switch (type) {
         case 'p_title':
           state.settingProccess[0].children[4].column =
@@ -315,7 +315,7 @@ export const appSlice = createSlice({
                   item._id === col.pItemId
               );
 
-             
+
 
               return pItem.content.includes('set display name')
                 ? {
@@ -417,7 +417,7 @@ export const appSlice = createSlice({
       }));
     },
     setUpdateProccessApi: (state, action) => {
-      
+
       state.settingProccess = state.settingProccess.map((item) => ({
         ...item,
         children: [item.children[0], ...action.payload],
@@ -656,6 +656,13 @@ export const appSlice = createSlice({
         ...state.publicMembersSelectedForProcess,
         action.payload,
       ];
+    },
+    setInBatchPublicMembersSelectedForProcess: (state, action) => {
+      console.log("action.payload",action.payload);
+      state.publicMembersSelectedForProcess = action.payload
+    },
+   resetPublicMembersSelectedForProcess: (state) => {
+      state.publicMembersSelectedForProcess = [];
     },
     removeFromPublicMembersSelectedForProcess: (state, action) => {
       const updatedPublicMembersForProcess =
@@ -909,6 +916,8 @@ export const {
   setErrorsCheckedInNewProcess,
   setApiKeyFetchFailureMessage,
   setShowApiKeyFetchFailureModal,
+  resetPublicMembersSelectedForProcess,
+  setInBatchPublicMembersSelectedForProcess
 } = appSlice.actions;
 
 export default appSlice.reducer;
