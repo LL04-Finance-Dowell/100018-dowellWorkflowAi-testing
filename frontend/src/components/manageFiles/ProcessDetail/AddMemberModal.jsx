@@ -38,7 +38,7 @@ export default function AddMemberModal(props) {
   const handleTeamSubmit = (e) => {
     e.preventDefault();
 
-    const apiUrl = `100094.pythonanywhere.com/v2/processes/${ProcessDetail._id}/portfolio/`;
+    const apiUrl = `https://100094.pythonanywhere.com/v2/processes/${ProcessDetail._id}/portfolio/`;
     // const apiUrl = `100094.pythonanywhere.com/v2/processes/657c60838fc5bccaf9f1f476/portfolio/`;
 
     const payload = [{
@@ -67,7 +67,7 @@ export default function AddMemberModal(props) {
   const handlePubicSubmit = (e) => {
     e.preventDefault();
 
-    const apiUrl = `100094.pythonanywhere.com/v2/processes/${ProcessDetail._id}/portfolio/`;
+    const apiUrl = `https://100094.pythonanywhere.com/v2/processes/${ProcessDetail._id}/portfolio/`;
 
     const payload = {
       step: props.step.stepNumber || 1,
@@ -95,7 +95,7 @@ export default function AddMemberModal(props) {
   const handleUserSubmit = (e) => {
     e.preventDefault();
 
-    const apiUrl = `100094.pythonanywhere.com/v2/processes/${ProcessDetail._id}/portfolio/`;
+    const apiUrl = `https://100094.pythonanywhere.com/v2/processes/${ProcessDetail._id}/portfolio/`;
 
     const payload = {
       step: props.step.stepNumber || 1,

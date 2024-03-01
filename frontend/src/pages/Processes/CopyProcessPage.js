@@ -31,7 +31,7 @@ const CopyProcessPage = () => {
   useEffect(() => {
     // console.log('effect entered')
     axios
-      .get(`100094.pythonanywhere.com/v2/processes/${process_id}/`)
+      .get(`https://100094.pythonanywhere.com/v2/processes/${process_id}/`)
       .then((response) => {
         setProcessData(response.data);
         // console.log(response.data)
@@ -69,7 +69,7 @@ const CopyProcessPage = () => {
 
     try {
       const response = await axios.post(
-        `100094.pythonanywhere.com/v2/processes/process-import/${process_id}/`,
+        `https://100094.pythonanywhere.com/v2/processes/process-import/${process_id}/`,
         data
       );
 
@@ -81,7 +81,7 @@ const CopyProcessPage = () => {
 
       if (doc_id) {
         const docData = await axios.get(
-          `100094.pythonanywhere.com/v2/documents/${doc_id}/`
+          `https://100094.pythonanywhere.com/v2/documents/${doc_id}/`
         );
         // console.log('the response for the copied document is ', docData)
         dispatch(setCopiedDocument(docData));
@@ -144,7 +144,7 @@ const CopyProcessPage = () => {
       // console.log('the processID is ', process_ID)
       try {
         const response5 = await fetch(
-          `100094.pythonanywhere.com/v2/processes/${process_ID}/`
+          `https://100094.pythonanywhere.com/v2/processes/${process_ID}/`
         );
         if (!response5.ok) {
           throw new Error("Network response was not ok");

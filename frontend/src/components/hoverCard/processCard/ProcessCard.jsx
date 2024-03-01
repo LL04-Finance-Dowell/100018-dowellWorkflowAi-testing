@@ -50,7 +50,7 @@ const ProcessCard = ({ cardItem, title }) => {
 
   function getProcessDetail(process_id, process_title) {
     axios
-      .get(`100094.pythonanywhere.com/v2/processes/${process_id}/`)
+      .get(`https://100094.pythonanywhere.com/v2/processes/${process_id}/`)
       .then((response) => {
         dispatch(SetProcessDetail(response.data));
         setProcessDetailLoading(false);
