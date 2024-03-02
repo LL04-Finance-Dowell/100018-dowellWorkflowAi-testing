@@ -12,6 +12,8 @@ from education.helpers import (
 )
 
 from education.datacube_connection import (
+    datacube_collection_retrieval,
+    get_data_from_collection,
     post_data_to_collection,
     add_collection_to_database,
     Template_database,
@@ -31,13 +33,21 @@ class HomeView(APIView):
 
 
 class NewTemplate(APIView):
+
+    def get(self, request):
+        # collection_id = request.queryParams["collection_id"]
+        api_key = request.query_params.get("api_key")
+        db_name = request.query_params.get("db_name")
+        res = datacube_collection_retrieval(api_key, db_name)
+        return Response(res["data"])
+
     def post(self, request):
         data = ""
         page = ""
         folder = []
         approved = False
         workspace_id = request.data["workspace_id"]
-        collection_name = "template_collection_5"
+        collection_name = "template_collection_0"
         # Rememember to change
         # db_name=f'{workspace_id}_"template_database_1"'
         db_name = "6390b313d77dc467630713f2_database0"
@@ -67,7 +77,7 @@ class NewTemplate(APIView):
                 return Response(
                     "Database does not exist", status.HTTP_400_BAD_REQUEST, e.message
                 )
-        print(collection_name)
+
         if (
             create_new_collection_for_template["success"] == True
             or res["success"] == True
@@ -158,12 +168,12 @@ class NewTemplate(APIView):
                     status.HTTP_201_CREATED,
                 )
         else:
-            return Response({"Message": "Error creating template in collection"})
+            return Response(
+                {"Message": "Error creating template "}, status.HTTP_404_NOT_FOUND
+            )
 
 
-class Template(APIView):
-    def get(self, request):
-        pass
+# class Template(APIView):
 
 
 """class NewMetadata(APIView):

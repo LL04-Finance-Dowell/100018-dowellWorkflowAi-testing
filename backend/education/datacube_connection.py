@@ -101,11 +101,6 @@ def post_data_to_collection(
     operation: str,
     query: dict = None,
 ):
-    print(type(api_key))
-    print(type(data))
-    print(type(collection))
-    print(type(database))
-
     payload_dict = {
         "api_key": api_key,
         "db_name": database,
