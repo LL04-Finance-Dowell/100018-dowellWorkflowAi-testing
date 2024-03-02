@@ -1,7 +1,7 @@
 import json
 import requests
 
-from backend.education.constants import DB_API, DB_API_CRUD
+from education.constants import DB_API, DB_API_CRUD
 
 
 headers = {"Content-Type": "application/json"}
@@ -43,17 +43,17 @@ def add_collection_to_database(
     """
     url = f"{DB_API}/add_collection/"
 
-    payload = {
+    payload = json.dumps({
         "api_key": api_key,
         "db_name": database,
         "coll_names": collections,
         "num_collections": num_of_collections
-    }
+    })
 
-    response = post_to_data_service(url=url, json=payload)
-    res = json.loads(response)
-    print(res)
-    return res
+    response = post_to_data_service(url=url, data=payload)
+    
+    print(response)
+    return response
 
 def get_data_from_collection(
     api_key: str, 
@@ -101,15 +101,21 @@ def post_data_to_collection(
     operation: str,
     query: dict = None
 ):
+    print(type(api_key))
+    print(type(data))
+    print(type(collection))
+    print(type(database))
+    
     payload_dict = {
         "api_key": api_key,
         "db_name": database,
         "coll_name": collection,
         "operation": operation,
+    
     }
     if operation.lower() == "insert":
         payload_dict["data"] = data
-        payload = json.dumps(payload_dict)
+        payload = (payload_dict)
     elif operation.lower() == "update":
         payload_dict["update_data"] = data
         payload_dict["query"] = query
@@ -119,8 +125,32 @@ def post_data_to_collection(
         payload = json.dumps(payload_dict)
         response = requests.delete(DB_API_CRUD, json=payload)
         return
-        
+    print(payload)  
     response = requests.post(DB_API_CRUD, json=payload)
     res = json.loads(response.text)
     print(res)
     return res
+
+def datacube_collection_retrieval(api_key, db_name):
+    """
+    Retrieve a list of collections in the DataCube database.
+
+    :param api_key: The API key for authentication.
+    :param db_name: The name of the database.
+    :return: The response text from the server.
+    """
+    url = "https://datacube.uxlivinglab.online/db_api/collections/"
+    payload = {
+        "api_key": api_key,
+        "db_name": db_name,
+        "payment": False
+    }
+    response = requests.get(url, json=payload)
+    res=json.loads(response.content)
+    return res
+
+def Template_database():
+    
+    pass
+def save_to_template_metadata():
+    pass
