@@ -1,0 +1,36 @@
+.set-workflow-in-document-container {
+}
+
+.set-workflow-in-document-container .h2-small {
+  font-size: 15px;
+  font-weight: var(--h2-weight);
+}
+
+.set-workflow-in-document-container .h2-medium {
+  font-size: 19px;
+  font-weight: var(--h2-weight);
+}
+
+.set-workflow-in-document-container .h2-large {
+  font-size: 29px;
+  font-weight: var(--h2-weight);
+}
+
+.set-workflow-in-document-container .step-title {
+  color: var(--e-global-color-2f1e1e4);
+  text-align: center;
+}
+
+.set-workflow-in-document-container .bottom-line {
+  padding-block: 15px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.set-workflow-in-document-container .bottom-line span {
+  background-color: #515151;
+  height: 1px;
+  width: 80%;
+}

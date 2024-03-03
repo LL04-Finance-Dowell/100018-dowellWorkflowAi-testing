@@ -1,0 +1,220 @@
+.process__Generated__Links__Overlay {
+  background: rgba(0, 0, 0, 0.12);
+  backdrop-filter: blur(5px);
+  height: 100%;
+  width: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  animation: fadeIn 0.2s ease-in-out;
+  z-index: 100002;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.process__Generated__Links__Container__Close__Icon {
+  position: absolute;
+  top: 1%;
+  right: 2%;
+  cursor: pointer;
+}
+
+.process__Generated__Links__Container {
+  background-color: var(--white);
+  width: 73%;
+  border-radius: 10px;
+  /* padding: 5% 2%; */
+  padding: 50px 2%;
+  max-height: 30rem;
+  position: relative;
+}
+
+.process__Generated__Links__Container .process__Generated__Links__Title__Item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 2%;
+}
+
+.process__Generated__Links__Container .process__Generated__Links__Copy__Item {
+  background-color: #61ce70;
+  color: #fff;
+  cursor: pointer;
+  /* padding: 7% 5%; */
+  border-radius: 5px;
+  display: flex;
+  height: 2.3rem;
+  width: 4.3rem;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto;
+}
+
+.process__Links__Wrapper {
+  overflow-y: auto;
+  max-height: 25rem;
+}
+
+.process__Generated__Links__Container
+  .process__Links__Wrapper::-webkit-scrollbar,
+.process__Links__Container td::-webkit-scrollbar {
+  width: 5px;
+  height: 8px;
+}
+
+.process__Generated__Links__Container
+  .process__Links__Wrapper::-webkit-scrollbar-track,
+.process__Links__Container td::-webkit-scrollbar-track {
+  background: #efefef;
+}
+
+.process__Generated__Links__Container
+  .process__Links__Wrapper::-webkit-scrollbar-thumb,
+.process__Links__Container td::-webkit-scrollbar-thumb {
+  background: #61ce70;
+}
+
+.process__Generated__Links__Container
+  .process__Links__Wrapper::-webkit-scrollbar-thumb:hover,
+.process__Links__Container td::-webkit-scrollbar-thumb:hover {
+  background: #1f7628;
+}
+
+.process__Generated__Links__Container table thead,
+.process__Generated__Links__Container table td {
+  padding: 0.3rem 0.8rem;
+}
+
+.process__Generated__Links__Container table thead {
+  background-color: #61ce70;
+  color: var(--white);
+}
+
+.process__Links__Container td img {
+  width: 7rem;
+  height: 7rem;
+}
+
+.process__Links__Container td {
+  max-width: 10rem;
+  overflow-x: auto;
+  white-space: nowrap;
+  text-align: center;
+  vertical-align: middle;
+}
+
+.process__Links__Container tr:hover {
+  background: #efefef;
+  transition: 0.3s ease-in-out;
+}
+.single__Link {
+  cursor: pointer;
+}
+
+.social_icons {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.social_icons p {
+  font-size: 14px;
+  font-weight: 500;
+  margin: 0;
+  text-align: center;
+}
+.social_icons_icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #f8f8f8;
+  border-radius: 50%;
+  width: 85px;
+  height: 85px;
+  flex: 1 1 auto;
+  margin: 10px;
+}
+.social_icons_icon img {
+  width: 50px;
+  height: 50px;
+  transition: all 0.3s ease-in-out;
+}
+
+.social_icons_icon img:hover {
+  cursor: pointer;
+  opacity: 0.5;
+  transform: scale(0.95);
+}
+
+.copy_link {
+  margin: 0 10px;
+}
+.copy_link h5 {
+  padding: 0 10px;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.url_section {
+  margin: 10px auto;
+  width: 95%;
+  display: flex;
+  flex-shrink: 0;
+  border-radius: 8px;
+  background-color: #f8f8f8;
+  padding: 10px;
+}
+.url_section input {
+  font-size: 14px;
+  color: #474646;
+  width: 100%;
+  border: none;
+  background: transparent;
+  outline: none;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.url_section button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #61ce70;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  padding: 7px;
+}
+.url_section button:hover {
+  cursor: pointer;
+  opacity: 0.5;
+}
+
+.url_section_input {
+  width: 90%;
+  /* Additional styling for input */
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@media (max-width: 320px) {
+  .process__Generated__Links__Container {
+    background-color: var(--white);
+    width: 73%;
+    border-radius: 10px;
+    padding: 6% 2%;
+    max-height: 30rem;
+    position: relative;
+  }
+}

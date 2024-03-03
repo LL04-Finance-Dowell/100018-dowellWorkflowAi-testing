@@ -1,0 +1,49 @@
+.policy {
+    color: #000;
+    width: 80%;
+    margin: auto;
+    padding: 50px 0;
+    line-height: 1.8;
+}
+
+.policy .back {
+    margin-bottom: 6rem;
+    text-decoration: none;
+    color: #ddd;
+    background: green;
+    padding: 0.5rem 1rem;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.policy .back:hover {
+    background: #065506;
+}
+
+.policy h1 {
+    margin-bottom: 1rem;
+    margin-top: 2rem;
+}
+
+.policy h2 {
+    margin-bottom: 1rem;
+    margin-top: 2rem;
+}
+
+.policy .interpretation h5,
+.policy .definations h5 {
+    margin-bottom: 1rem;
+}
+ 
+.policy .interpretation p {
+    margin-bottom: 2rem;
+}
+
+.policy .definations span,
+.policy .personal span, 
+.policy .data span,
+.policy .gdpr span,
+.policy .rights span,
+.policy .contact span {
+    font-weight: 600;
+}

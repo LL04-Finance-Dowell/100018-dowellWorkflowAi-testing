@@ -1,0 +1,63 @@
+.content__Pagination__Wrapper {
+    width: min-content;
+    max-width: 100%;
+    position: relative;
+    height: 2.1rem;
+    gap: 10px;
+    margin-bottom: 1rem;
+    border-radius: 5px;
+    padding: 4px;
+    box-shadow: 0px 1px 4px var(--e-global-color-9d2ac19);
+}
+
+
+.content__Pagination__Wrapper,
+.pages__Container,
+.arrow__Container,
+.page__Item {
+    display: flex;
+    align-items: center;
+}
+
+.content__Pagination__Wrapper,
+.pages__Container {
+    justify-content: space-between;
+}
+
+.pages__Container {
+    height: 100%;
+    gap: 5px;
+}
+
+.arrow__Container,
+.page__Item {
+  transition: 0.3s ease-in-out;
+  justify-content: center;
+}
+
+.arrow__Container,
+.page__Item {
+  cursor: pointer;
+  width: calc(2.1rem - 8px);
+  height: 100%;
+  padding: 2px 5px;
+  border-radius: 5px;
+}
+
+.arrow__Container:is(:hover, :focus) {
+  background-color: var(--e-global-color-9d2ac19);
+}
+
+.page__Item:is(:hover, :focus) {
+    background-color: var(--e-global-color-2f1e1e4);
+    color: #fff;
+}
+  
+.page__Item.active__Page {
+  background-color: var(--e-global-color-2f1e1e4);
+  color: #fff;
+}
+
+.page__Item {
+  font-size: 0.9rem;
+}
