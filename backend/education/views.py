@@ -225,7 +225,7 @@ class NewTemplate(APIView):
                 )
 """
 
-class NewTemplate(APIView):
+class NewDocument(APIView):
 
     def post(self, request):
         api_key = request.query_params.get("api_key")
