@@ -224,3 +224,35 @@ class NewTemplate(APIView):
                     status=status.HTTP_201_CREATED,
                 )
 """
+
+class NewTemplate(APIView):
+
+    def post(self, request):
+        api_key = request.query_params.get("api_key")
+        db_name = request.query_params.get("db_name")
+        content = datacube_collection_retrieval(api_key, db_name)["content"]
+        page = datacube_collection_retrieval(api_key, db_name)["page"]
+
+        
+        if not content or page:
+            return Response("Database Template not found", status.HTTP_404_NOT_FOUND)
+        
+        res = json.loads(
+            post_data_to_collection(
+                {
+                    "document_name": "Untitled Document",
+                    "content": content,
+                    "page": page,
+                    "data_type": request.data["data_type"],
+                    "document_state": "draft",
+                    "document_type": "original",
+                    "parent_id": None,
+                    "process_id": "",
+                    "folders": [],
+                    "template": request.data["template_id"],
+                    "message": "",
+                }
+            )
+        )
+        
+        return Response("Document Created", status=status.HTTP_201_CREATED)

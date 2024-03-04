@@ -148,3 +148,7 @@ def Template_database():
 
 def save_to_template_metadata(data: dict):
     return data
+
+
+def save_to_document_metadata(data: dict):
+    return data
