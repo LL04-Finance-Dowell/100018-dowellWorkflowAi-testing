@@ -146,7 +146,7 @@ def Template_database():
     pass
 
 
-def save_to_template_metadata(data: dict):
+def save_to_metadata(type: str, collection_id: str, db_name: str, data: dict):
     return data
 
 
