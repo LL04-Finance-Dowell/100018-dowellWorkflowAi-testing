@@ -1,29 +1,31 @@
-import { useEffect, useState } from 'react';
-import BookSpinner from '../../bookSpinner/BookSpinner';
-import maneFilesStyles from '../manageFiles.module.css';
 import styles from './sectionBox.module.css';
+import maneFilesStyles from '../manageFiles.module.css';
+import BookSpinner from '../../bookSpinner/BookSpinner';
+import { useEffect, useState } from 'react';
 
-import axios from 'axios';
-import { useTranslation } from 'react-i18next';
+import { PrimaryButton } from '../../styledComponents/styledComponents';
 import { IoIosRefresh } from 'react-icons/io';
+import { LoadingSpinner } from '../../LoadingSpinner/LoadingSpinner';
 import { useDispatch, useSelector } from 'react-redux';
+import { DocumentServices } from '../../../services/documentServices';
 import { toast } from 'react-toastify';
-import { useAppContext } from '../../../contexts/AppContext';
+import { TemplateServices } from '../../../services/templateServices';
+import { WorkflowServices } from '../../../services/workflowServices';
+import { getAllProcessesV2 } from '../../../services/processServices';
 import {
-    SetKnowledgeFolders,
-    setAllProcesses,
-    setNotificationsForUser,
+  setAllProcesses,
+  setNotificationsForUser,
 } from '../../../features/app/appSlice';
 import { setAllDocuments } from '../../../features/document/documentSlice';
 import { setAllTemplates } from '../../../features/template/templateSlice';
 import { setAllWorkflows } from '../../../features/workflow/workflowsSlice';
-import { DocumentServices } from '../../../services/documentServices';
-import { getAllProcessesV2 } from '../../../services/processServices';
-import { TemplateServices } from '../../../services/templateServices';
-import { WorkflowServices } from '../../../services/workflowServices';
+import { useTranslation } from 'react-i18next';
 import { productName } from '../../../utils/helpers';
-import { LoadingSpinner } from '../../LoadingSpinner/LoadingSpinner';
-import { PrimaryButton } from '../../styledComponents/styledComponents';
+import { useAppContext } from '../../../contexts/AppContext';
+import {
+  SetKnowledgeFolders
+} from '../../../features/app/appSlice';
+import axios from 'axios';
 
 const SectionBox = ({
   cardItems,
@@ -90,15 +92,25 @@ const SectionBox = ({
         );
         setCount(count + 1);
       } catch (err) {
-        console.log(err);
+        // console.log(err);
       } finally {
         setIsDemoLoading(false);
       }
     }
   };
 
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (!isDemoLoading) {
+        handleDemoLoadMore();
+      }
+    }, 2000); // 2000 milliseconds = 2 seconds
+
+    return () => clearTimeout(timer); // Cleanup function to clear timer if component unmounts or sliceCount changes
+  }, [sliceCount]);
+
   // useEffect(() => {
-  //   console.log('cardItemsVar: ', cardItemsVar);
+  //   // console.log('cardItemsVar: ', cardItemsVar);
   // }, [cardItemsVar]);
 
   const handleRefresh = () => {
@@ -161,7 +173,7 @@ const SectionBox = ({
             setRefreshLoading(false);
           })
           .catch((err) => {
-            // console.log(err, 'Refresh for documents failed');
+            // // console.log(err, 'Refresh for documents failed');
             toast.info('Refresh for documents failed');
             setRefreshLoading(false);
           });
@@ -200,7 +212,7 @@ const SectionBox = ({
             setRefreshLoading(false);
           })
           .catch((err) => {
-            // console.log(err, 'Refresh for templates failed');
+            // // console.log(err, 'Refresh for templates failed');
             toast.info('Refresh for templates failed');
             setRefreshLoading(false);
           });
@@ -236,7 +248,7 @@ const SectionBox = ({
           setRefreshLoading(false);
         })
         .catch((err) => {
-          // console.log(err, 'Refresh for workflows failed');
+          // // console.log(err, 'Refresh for workflows failed');
           toast.info('Refresh for workflows failed');
           setRefreshLoading(false);
         });
@@ -255,7 +267,7 @@ const SectionBox = ({
           const savedProcessesInLocalStorage = JSON.parse(
             localStorage.getItem('user-saved-processes')
           );
-          console.log('the res.data is ', res.data)
+          // console.log('the res.data is ', res.data)
           if (savedProcessesInLocalStorage) {
             const processes = [
               ...savedProcessesInLocalStorage,
@@ -273,7 +285,7 @@ const SectionBox = ({
           setRefreshLoading(false);
         })
         .catch((err) => {
-          // console.log(err, 'Refresh for processes failed');
+          // // console.log(err, 'Refresh for processes failed');
           toast.info('Refresh for processes failed');
           setRefreshLoading(false);
         });
@@ -291,7 +303,7 @@ const SectionBox = ({
         axios.get(url)
           .then(response => {
             dispatch(SetKnowledgeFolders(response.data));
-            console.log('Data:', response.data);
+            // console.log('Data:', response.data);
             toast.info("page refreshed successfully")
             // Handle the response data
           })
@@ -358,13 +370,13 @@ const SectionBox = ({
               return notification;
             }
           );
-          // console.log(updatedNotifications);
+          // // console.log(updatedNotifications);
           dispatch(setNotificationsForUser(updatedNotifications));
           toast.success('Successfully refreshed notifications');
           setRefreshLoading(false);
         })
         .catch((err) => {
-          // console.log(err, 'Refresh for notifications failed');
+          // // console.log(err, 'Refresh for notifications failed');
           toast.info('Refresh for notifications failed');
           setRefreshLoading(false);
         });
@@ -373,9 +385,9 @@ const SectionBox = ({
 
   useEffect(() => {
     setCardItemsVar(cardItems);
-    console.log("1 mubeen")
+    // console.log("1 mubeen")
   }, [cardItems]);
-  console.log('the card items are ', cardItems)
+  // console.log('the card items are ', cardItems)
 
   const handleFilterChange = (event) => {
     setFilterName(event.target.value);
@@ -404,7 +416,7 @@ const SectionBox = ({
 
   };
 
-  console.log("cardItemsVar", cardItems)
+  // console.log("cardItemsVar", cardItems)
 
   return (
     <div className={styles.container}>
@@ -644,7 +656,7 @@ const SectionBox = ({
                 {!isDemo
                   ? cardItemsVar &&
                   cardItemsVar?.length > 10 && (
-                    <PrimaryButton
+                    <p
                       style={{
                         pointerEvents: `${cardItemsVar.length / 12 < sliceCount && 'none'
                           }`,
@@ -654,21 +666,27 @@ const SectionBox = ({
                     >
                       {cardItemsVar.length / 12 < sliceCount
                         ? 'no more load'
-                        : 'load more'}
-                    </PrimaryButton>
+                        : 'Load more...'}
+                    </p>
                   )
                   : cardItemsVar &&
                   cardItemsVar.length > 12 && (
-                    <PrimaryButton
-                      // style={{
-                      //   pointerEvents: `${
-                      //     cardItemsVar.length / 12 < sliceCount && 'none'
-                      //   }`,
-                      // }}
+                    <p
                       hoverBg='success'
                       onClick={handleDemoLoadMore}
-                      style={isDemoLoading ? { pointerEvents: 'none' } : {}}
+                      style={{
+                        textAlign: 'center',  
+                        pointerEvents: isDemoLoading ? 'none' : 'auto',  
+                        cursor: 'pointer',
+                        marginTop: '20px'
+                      }}
                       disabled={isDemoLoading}
+
+                      // style={{
+                      //   textAlign: 'center',
+                      //   pointerEvents: `${cardItemsVar.length / 12 < sliceCount ? 'none' : 'auto'}`, // Toggle pointer events
+                      //   cursor: 'pointer',
+                      // }}
                     >
                       {isDemoLoading ? (
                         <LoadingSpinner
@@ -677,9 +695,9 @@ const SectionBox = ({
                           height={'1rem'}
                         />
                       ) : (
-                        'load more'
+                        'Load more...'
                       )}
-                    </PrimaryButton>
+                    </p>
                   )}
               </>
             )
