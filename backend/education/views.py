@@ -18,6 +18,7 @@ from education.datacube_connection import (
     add_collection_to_database,
     Template_database,
     save_to_template_metadata,
+    save_to_document_metadata
 )
 
 from app.constants import EDITOR_API
@@ -232,6 +233,11 @@ class NewDocument(APIView):
         db_name = request.query_params.get("db_name")
         content = datacube_collection_retrieval(api_key, db_name)["content"]
         page = datacube_collection_retrieval(api_key, db_name)["page"]
+        organization_id = request.data["company_id"]
+        portfolio = ""
+        if request.data["portfolio"]:
+            portfolio = request.data["portfolio"]
+        viewers = [{"member": request.data["created_by"], "portfolio": portfolio}]
 
         
         if not content or page:
@@ -242,17 +248,40 @@ class NewDocument(APIView):
                 {
                     "document_name": "Untitled Document",
                     "content": content,
+                    "created_by": request.data["created_by"],
+                    "company_id": organization_id,
                     "page": page,
                     "data_type": request.data["data_type"],
                     "document_state": "draft",
+                    "auth_viewers": viewers,
                     "document_type": "original",
                     "parent_id": None,
                     "process_id": "",
                     "folders": [],
-                    "template": request.data["template_id"],
+                    "template": db_name,
                     "message": "",
                 }
             )
         )
+
+        if res["isSuccess"]:
+            res_metadata = json.loads(
+                save_to_document_metadata(
+                    {
+                        "document_name": "Untitled Document",
+                        "collection_id": res["inserted_id"],
+                        "created_by": request.data["created_by"],
+                        "company_id": organization_id,
+                        "data_type": request.data["data_type"],
+                        "document_state": "draft",
+                        "auth_viewers": viewers,
+                    }
+                )
+            )
+            if not res_metadata["isSuccess"]:
+                return Response(
+                    "An error occured while trying to save document metadata",
+                    status.HTTP_500_INTERNAL_SERVER_ERROR,
+                )
         
         return Response("Document Created", status=status.HTTP_201_CREATED)
