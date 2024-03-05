@@ -17,6 +17,7 @@ from education.datacube_connection import (
     post_data_to_collection,
     add_collection_to_database,
     Template_database,
+    save_to_metadata_collection,
     save_to_template_metadata,
     save_to_document_metadata
 )
@@ -36,7 +37,6 @@ class HomeView(APIView):
 class NewTemplate(APIView):
 
     def get(self, request):
-        # collection_id = request.queryParams["collection_id"]
         api_key = request.query_params.get("api_key")
         db_name = request.query_params.get("db_name")
         res = datacube_collection_retrieval(api_key, db_name)
@@ -49,9 +49,11 @@ class NewTemplate(APIView):
         approved = False
         workspace_id = request.data["workspace_id"]
         collection_name = "template_collection_0"
+        # Create a metadata_collection too
         # Rememember to change
         # db_name=f'{workspace_id}_"template_database_1"'
         db_name = "6390b313d77dc467630713f2_database0"
+        metadata_db = request.data["metadata_db"]
         api_key = request.data["api_key"]
         no_of_collections = 1
         collection_names = check_if_name_exists_collection(
@@ -65,6 +67,7 @@ class NewTemplate(APIView):
                 collections=collection_name,
                 num_of_collections=no_of_collections,
             )
+        ##   create_new_collection_for_template_metadata=
         if create_new_collection_for_template["success"] == False:
             try:
                 collection_name = generate_unique_collection_name(collection_name)
@@ -116,7 +119,7 @@ class NewTemplate(APIView):
             if res["success"]:
                 print(res)
                 collection_id = res["data"]["inserted_id"]
-                res_metadata = save_to_template_metadata(
+                res_metadata = save_to_metadata_collection(
                     {
                         "template_name": "Untitled Template",
                         "created_by": request.data["created_by"],
@@ -226,6 +229,15 @@ class NewTemplate(APIView):
                 )
 """
 
+
+class Workflow(APIView):
+    def get(self, request):
+        pass
+
+    def post(self, request):
+        pass
+
+
 class NewDocument(APIView):
 
     def post(self, request):
@@ -239,10 +251,9 @@ class NewDocument(APIView):
             portfolio = request.data["portfolio"]
         viewers = [{"member": request.data["created_by"], "portfolio": portfolio}]
 
-        
         if not content or page:
             return Response("Database Template not found", status.HTTP_404_NOT_FOUND)
-        
+
         res = json.loads(
             post_data_to_collection(
                 {
