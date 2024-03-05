@@ -287,7 +287,7 @@ const Chat = () => {
                     style={{ marginLeft: "10px" }}
                     height="20px"
                     width="20px"
-                    src="https://i0.wp.com/workflowai.online/wp-content/uploads/2022/02/cropped-Playstore_logo_2.png?resize=100%2C100&ssl=1"
+                    src="https://i0.wp.com/100018-dowellWorkflowAi-testing/wp-content/uploads/2022/02/cropped-Playstore_logo_2.png?resize=100%2C100&ssl=1"
                   />
                 }
               </h2>
@@ -334,7 +334,7 @@ const Chat = () => {
                 style={{ marginLeft: "10px" }}
                 height="20px"
                 width="20px"
-                src="https://i0.wp.com/workflowai.online/wp-content/uploads/2022/02/cropped-Playstore_logo_2.png?resize=100%2C100&ssl=1"
+                src="https://i0.wp.com/100018-dowellWorkflowAi-testing/wp-content/uploads/2022/02/cropped-Playstore_logo_2.png?resize=100%2C100&ssl=1"
               />
               {/* <h2 className={styles.Text_Class}>{t("Chat with us")}</h2>
               <h2 className={styles.Text_Class}>{t("Product Name")} : {modals.product}</h2> */}

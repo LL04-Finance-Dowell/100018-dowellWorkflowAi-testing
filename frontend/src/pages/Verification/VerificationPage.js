@@ -55,6 +55,7 @@ const VerificationPage = () => {
       const paramsPassed = new URL(shortenedLinkToExtractParamsFrom)
         .searchParams;
 
+      
 
       const auth_username = paramsPassed.get('username');
       const auth_portfolio = paramsPassed.get('portfolio');
