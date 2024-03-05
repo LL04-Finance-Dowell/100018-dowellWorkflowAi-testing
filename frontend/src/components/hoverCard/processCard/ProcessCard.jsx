@@ -1,20 +1,28 @@
 import React, { useState } from "react";
-import { BiCopy, BiLink } from "react-icons/bi";
 import { RiDeleteBin6Line } from "react-icons/ri";
+import { BiLink, BiCopy } from "react-icons/bi";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { toast } from "react-toastify";
 import { Tooltip } from "react-tooltip";
-import { SetArrayofLinks, SetProcessDetail, setAllProcesses, setDetailFetched, setLinksFetched, setShowGeneratedLinksPopup } from "../../../features/app/appSlice";
+import { toast } from "react-toastify";
+import { setAllProcesses } from "../../../features/app/appSlice";
 import { moveItemToArchive } from "../../../services/archiveServices";
 import HoverCard from "../HoverCard";
+import {
+  setShowGeneratedLinksPopup,
+  SetProcessDetail,
+  setshowsProcessDetailPopup,
+  setDetailFetched,
+  SetArrayofLinks,
+  setLinksFetched,
+} from "../../../features/app/appSlice";
 
+import { Button } from "../styledComponents";
+import { LoadingSpinner } from "../../LoadingSpinner/LoadingSpinner";
 import axios from "axios";
-import { Modal } from 'react-bootstrap';
 import { api_url } from "../../../httpCommon/httpCommon";
 import { productName } from "../../../utils/helpers";
-import { LoadingSpinner } from "../../LoadingSpinner/LoadingSpinner";
-import { Button } from "../styledComponents";
+import { Modal } from 'react-bootstrap';
 
 const ProcessCard = ({ cardItem, title }) => {
   const { allProcesses } = useSelector((state) => state.app);

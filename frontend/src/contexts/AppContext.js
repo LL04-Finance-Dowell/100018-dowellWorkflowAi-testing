@@ -250,7 +250,7 @@ export const AppContextProvider = ({ children }) => {
   const fetchOrgDocumentReports = async (state) => {
     if (state === 'finalized') setOrgDocsCompletedStatus('pending');
     else if (state === 'rejected') setOrgDocsRejectedStatus('pending');
-    const member = userDetail.userinfo.username;
+    const member = userDetail.userinfo.username
     try {
       const res = await new DocumentServices().getOrgDocumentReports(
         companyId,
@@ -421,8 +421,7 @@ export const AppContextProvider = ({ children }) => {
     setIsFetchingFolders(true);
     try {
       const res = await folderServices.getAllFolders(userCompanyId, dataType);
-      setFolders(res.data ? res.data : []); 
-      // setFolders(res.data ? res.data.reverse() : []); /////////////////////////
+      setFolders(res.data ? res.data.reverse() : []); /////////////////////////
     } catch (err) {
       // console.log(err);
     } finally {

@@ -1,26 +1,30 @@
-import { useAppContext } from '../../../../contexts/AppContext';
 import styles from './selectDoc.module.css';
+import { useMediaQuery } from 'react-responsive';
+import { useAppContext } from '../../../../contexts/AppContext';
 
-import { Navigation } from 'swiper';
 import { Swiper, SwiperSlide } from 'swiper/react';
+import { Navigation } from 'swiper';
 
 import 'swiper/css';
 import 'swiper/css/navigation';
 import 'swiper/css/pagination';
 
-import { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 import './swiper.css';
+import { useEffect, useState } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 
 import { LoadingSpinner } from '../../../LoadingSpinner/LoadingSpinner';
 
-import axios from 'axios';
-import { useTranslation } from 'react-i18next';
-import { setOriginalDocuments, setOriginalDocumentsLoaded } from '../../../../features/document/documentSlice';
-import { DocumentServices } from '../../../../services/documentServices';
-import { productName } from '../../../../utils/helpers';
 import SelectedDocuments from './selectedDocuments/SelectedDocuments';
+import { useTranslation } from 'react-i18next';
+import { productName } from '../../../../utils/helpers';
+import { DocumentServices } from '../../../../services/documentServices';
+import { setOriginalDocuments, setOriginalDocumentsLoaded } from '../../../../features/document/documentSlice';
+import axios from 'axios';
 
+import { contentDocument } from '../../../../features/document/asyncThunks';
+import { setCurrentDocToWfs } from '../../../../features/app/appSlice';
+import { setContentOfDocument } from '../../../../features/document/documentSlice';
 
 import { startCopyingDocument } from '../../../../features/processCopyReducer';
 import { TemplateServices } from '../../../../services/templateServices';
