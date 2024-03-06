@@ -1,19 +1,23 @@
 import { httpApiUrl, httpApiUrlV2 } from '../httpCommon/httpCommon';
 
 export class FolderServices {
-  createFolder = (data) => httpApiUrl.post('folders/', data);
-
   createFolderV2 = (data) => httpApiUrlV2.post('folders/', data);
 
-  updateFolder = (data, id) => httpApiUrl.put(`folders/${id}/`, data);
+  updateFolder = (data, id) => httpApiUrlV2.put(`folders/${id}/`, data);
 
-  getFolder = (folderId) => httpApiUrl.get(`folders/${folderId}`);
+  getFolder = (folderId) => httpApiUrlV2.get(`folders/${folderId}/`);
 
-  getAllFolders = (companyId, dataType) =>
-    httpApiUrl.get(`companies/${companyId}/folders/?data_type=${dataType}`);
+  getAllFolders = (companyId, dataType) =>  
+    httpApiUrlV2.get(`folders/${companyId}/organisations/?data_type=${dataType}`)
+  
 
-  deleteFolder = (data) => httpApiUrl.post('archives/', data);
+  // deleteFolder = (folderId, data, itemId) => httpApiUrlV2.delete(`folders/${folderId}/?item_id=${itemId}&item_type=document`, data);   
+  // {{base_url}}/folders/<str:folder_id>/?item_id="<id>"&item_type="document"
+  deleteFolder = ( data) => httpApiUrlV2.post(`archives/`, data);  
 
-  removeFolderItem = (data, folderId, itemId) =>
-    httpApiUrl.put(`folders/${folderId}/${itemId}`, data);
+  removeFolderItem = (data, folderId) =>
+    httpApiUrlV2.put(`folders/${folderId}/`, data);  
+
+  // removeFolderItem = (data, folderId, itemId) =>
+  // httpApiUrlV2.put(`folders/:${folderId}/${itemId}`, data);  
 }

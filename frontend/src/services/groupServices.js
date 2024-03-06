@@ -1,4 +1,4 @@
-import {  httpGroups } from '../httpCommon/httpCommon';
+import {   httpGroups } from '../httpCommon/httpCommon';
 
 export class GroupServices {
   createGroups = (companyId, data) => {
