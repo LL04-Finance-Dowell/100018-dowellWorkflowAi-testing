@@ -1,42 +1,43 @@
-import axios from 'axios';
-import React, { useState } from 'react';
+import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { toast } from 'react-toastify';
-import { setEditorLink } from '../../../features/app/appSlice';
-import { detailDocument, documentReport } from '../../../features/document/asyncThunks';
-import {
-    getVerifiedProcessLink,
-    verifyProcessForUser,
-} from '../../../services/processServices';
-import { LoadingSpinner } from '../../LoadingSpinner/LoadingSpinner';
 import HoverCard from '../HoverCard';
 import { Button } from '../styledComponents';
+import { detailDocument, documentReport } from '../../../features/document/asyncThunks';
+import { useState } from 'react';
+import { toast } from 'react-toastify';
+import axios from 'axios';
+import { LoadingSpinner } from '../../LoadingSpinner/LoadingSpinner';
+import {
+  verifyProcessForUser,
+  getVerifiedProcessLink,
+} from '../../../services/processServices';
+import { setEditorLink } from '../../../features/app/appSlice';
 
 import { useAppContext } from '../../../contexts/AppContext';
 import {
-    SetShowDocumentReport,
-    SetSingleDocument
+  SetShowDocumentReport,
+  SetSingleDocument
 } from "../../../features/app/appSlice";
 
-import { useTranslation } from 'react-i18next';
-import { BsArrowBarRight, BsBookmark, BsFillBookmarkFill } from 'react-icons/bs';
-import { IoIosRefresh } from 'react-icons/io';
-import { MdOutlineFiberNew } from 'react-icons/md';
-import { RiDeleteBin6Line } from 'react-icons/ri';
-import { Tooltip } from 'react-tooltip';
-import { setAllDocuments } from '../../../features/document/documentSlice';
-import { moveItemToArchive } from '../../../services/archiveServices';
-import { DocumentServices } from '../../../services/documentServices';
 import {
-    addNewFavoriteForUser,
-    deleteFavoriteForUser,
+  addNewFavoriteForUser,
+  deleteFavoriteForUser,
 } from '../../../services/favoritesServices';
+import { RiDeleteBin6Line } from 'react-icons/ri';
+import { moveItemToArchive } from '../../../services/archiveServices';
+import { setAllDocuments } from '../../../features/document/documentSlice';
+import { BsBookmark, BsFillBookmarkFill, BsArrowBarRight } from 'react-icons/bs';
 import {
-    extractTokenFromVerificationURL,
-    productName,
-    updateVerificationDataWithTimezone,
+  extractTokenFromVerificationURL,
+  productName,
+  updateVerificationDataWithTimezone,
 } from '../../../utils/helpers';
+import { useTranslation } from 'react-i18next';
+import { DocumentServices } from '../../../services/documentServices';
+import { MdOutlineFiberNew } from 'react-icons/md';
+import { IoIosRefresh } from 'react-icons/io';
+import { Tooltip } from 'react-tooltip';
 
 import AddRemoveBtn from '../AddRemoveBtn';
 
@@ -67,7 +68,7 @@ const DocumentCard = ({
   const { allDocuments } = useSelector((state) => state.document);
   const [documentLoading, setDocumentLoading] = useState(false);
 
-  console.log("cardItem", cardItem, isReport)
+  // console.log("cardItem", cardItem, isReport)
 
   const handleFavoritess = async (item, actionType) => {
     /*  const data = {
@@ -75,7 +76,7 @@ const DocumentCard = ({
       type: "document",
     };
     dispatch(handleFavorites(data)); */
-    // console.log('the data to be bookmarked is ', item)
+    // // console.log('the data to be bookmarked is ', item)
     if (actionType === 'add') {
       addToFavoritesState('documents', {
         ...item,
@@ -154,7 +155,7 @@ const DocumentCard = ({
   };
 
   const handleDetailDocumnet = async (item) => {
-    console.log("handle detail doc hit ", dataLoading)
+    // console.log("handle detail doc hit ", dataLoading)
     if (dataLoading) return;
     if (documentLoading)
       return toast.info('Please wait for this document to be refreshed first');
@@ -174,7 +175,7 @@ const DocumentCard = ({
         // setDataLoading(false);
         handleGoToEditor(response, item);
       } catch (error) {
-        // console.log(error);
+        // // console.log(error);
         setDataLoading(false);
         toast.info(
           error.response.status !== 500
@@ -207,7 +208,7 @@ const DocumentCard = ({
   };
 
   const handleShowDocument = async (item) => {
-    console.log("itemhandleMubeen",item )
+    // console.log("itemhandleMubeen",item )
     dispatch(SetSingleDocument(item));
     getDocumentDetail(item.collection_id)
     // navigate("/documents/document-detail");
@@ -215,6 +216,7 @@ const DocumentCard = ({
 
   function getDocumentDetail(document_id) {
     axios
+      // .get(`https://100094.pythonanywhere.com/v2/documents/${document_id}/reports/`)
       .get(`https://100094.pythonanywhere.com/v2/documents/${document_id}/reports/`)
       .then((response) => {
         dispatch(SetShowDocumentReport(response.data));
@@ -223,7 +225,7 @@ const DocumentCard = ({
         navigate("/documents/document-detail");
       })
       .catch((error) => {
-        console.log(error);
+        // console.log(error);
         toast.info("Failed to fetch Document details");
       });
   }
@@ -292,12 +294,12 @@ const DocumentCard = ({
 
     try {
       const response = await (
-        await verifyProcessForUser(sanitizedDataToPost)
+        await verifyProcessForUser(item.process_id,sanitizedDataToPost)
       ).data;
       setDataLoading(false);
       dispatch(setEditorLink(response));
     } catch (err) {
-      // console.log(err.response ? err.response.data : err.message);
+      // // console.log(err.response ? err.response.data : err.message);
       setDataLoading(false);
       toast.info(
         err.response
@@ -310,7 +312,7 @@ const DocumentCard = ({
   };
 
   const handleFetchNewDocumentDetail = async (documentId) => {
-    console.log("chkeinggggggggg")
+    // console.log("chkeinggggggggg")
     if (documentLoading) return;
     if (dataLoading)
       return toast.info('Please wait for this document to open first');
@@ -334,7 +336,7 @@ const DocumentCard = ({
 
       setDocumentLoading(false);
     } catch (error) {
-      // console.log(error.response ? error.response.data : error.message);
+      // // console.log(error.response ? error.response.data : error.message);
       toast.info('Refresh for document failed');
       setDocumentLoading(false);
     }
@@ -347,11 +349,11 @@ const DocumentCard = ({
       item_type: 'document',
       item_id: item?.collection_id || '653b5ba638ec7dcbdb556a38',
     };
-    console.log("generate pdf link")
+    // console.log("generate pdf link")
     await axios.post(apiUrl, payload)
       .then((response) => {
         // Handle the API response here
-        console.log('Pdf generated successfully', response.data);
+        // console.log('Pdf generated successfully', response.data);
         toast.info('Pdf generated successfully');
         const pdfLink = response.data; // Assuming response.data contains the PDF link
         window.open(pdfLink, '_blank');
