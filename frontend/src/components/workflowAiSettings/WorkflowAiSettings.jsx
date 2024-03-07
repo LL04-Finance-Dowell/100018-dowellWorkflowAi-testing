@@ -16,6 +16,8 @@ import { useAppContext } from '../../contexts/AppContext';
 import { useTranslation } from 'react-i18next';
 import NameChangeModal from '../modal/NameChangeModal';
 import Sidebar from '../newSidebar/Sidebar';
+import GroupsInSettings from './groupsInWorkflowAI/GroupsInSettings';
+
 
 const Container = styled.div`
   & button:not(.edit_modal_sect button, .name_change_sect button) {
@@ -128,6 +130,8 @@ const WorkflowAiSettings = () => {
               <EnabledProcess />
               <div className={styles.bottom__line}></div>
               <TeamsInWorkflowAi />
+              <div className={styles.bottom__line}></div>
+              <GroupsInSettings />
               <div className={styles.bottom__line}></div>
               <EnabledDisabkedProcess />
               {openNameChangeModal && <NameChangeModal />}
