@@ -235,7 +235,46 @@ class Workflow(APIView):
         pass
 
     def post(self, request):
-        pass
+        """Creates a new workflow"""
+        form = request.data
+        api_key = form.get("api_key")
+        db_name = form.get("db_name")
+
+        if not form:
+            return Response("Workflow Data required", status.HTTP_400_BAD_REQUEST)
+        organization_id = form["company_id"]
+        data = {
+            "workflow_title": form["wf_title"],
+            "steps": form["steps"],
+        }
+
+
+""" res = json.loads(
+                save_to_workflow_collection(
+                    {
+                        "workflows": data,
+                        "company_id": organization_id,
+                        "created_by": form["created_by"],
+                        "portfolio": form["portfolio"],
+                        "data_type": form["data_type"],
+                        "workflow_type": "original",
+                    }
+                )
+            )"""
+"""if res["isSuccess"]:
+                return Response(
+                    {
+                        "_id": res["inserted_id"],
+                        "workflows": data,
+                        "created_by": form["created_by"],
+                        "company_id": form["company_id"],
+                        "creator_portfolio": form["portfolio"],
+                        "workflow_type": "original",
+                        "data_type": form["data_type"],
+                    },
+                    status.HTTP_201_CREATED,
+                )
+"""
 
 
 class NewDocument(APIView):
