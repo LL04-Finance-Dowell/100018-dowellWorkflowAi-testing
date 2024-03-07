@@ -73,20 +73,18 @@ def get_data_from_collection(
         limit (int, optional): max number of results per page. Defaults to 5.
         offset (int, optional): page number . Defaults to 0.
     """
-    url = f"{DB_API}/get_data"
+    url = f"{DB_API}/get_data/"
 
-    payload = json.dumps(
-        {
-            "api_key": api_key,
-            "db_name": database,
-            "coll_name": collection,
-            "operation": "fetch",
-            "filters": filters,
-            "limit": limit,
-            "offset": offset,
-        }
-    )
-
+    payload = {
+        "api_key": api_key,
+        "db_name": database,
+        "coll_name": collection,
+        "operation": "fetch",
+        "filters": filters,
+        "limit": limit,
+        "offset": offset,
+    }
+    
     response = requests.post(url, json=payload)
     res = json.loads(response.text)
     print(res)
@@ -142,13 +140,34 @@ def datacube_collection_retrieval(api_key, db_name):
 
 
 def Template_database():
-
     pass
 
 
-def save_to_metadata(type: str, collection_id: str, db_name: str, data: dict):
-    return data
+def save_to_metadata(api_key:str, type: str, collection_id: str, db_name: str, data: dict):
+    return post_data_to_collection(api_key, type, database=db_name, collection=collection_id, data=data, operation="insert")
+
+def save_to_process_collection(api_key: str, database: str, collection: str, data: dict):
+    return post_data_to_collection(api_key, database, collection, data, "insert")
+
+def update_process_collection(api_key: str, database: str, collection: str, data: dict):
+    return post_data_to_collection(api_key, database, collection, data, "insert", "update")
 
 
 def save_to_document_metadata(data: dict):
+    return data
+
+
+def get_process_from_collection(api_key: str, database: str, collection: str, filters: dict):
+    return get_data_from_collection(api_key, database, collection, filters, limit=1)
+
+def bulk_query_clones_collection(data:dict):
+    return data
+
+def single_query_clones_collection(data:dict):
+    return data
+
+def bulk_query_document_collection(data:dict):
+    return data
+
+def single_query_document_collection(data:dict):
     return data

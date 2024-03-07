@@ -6,6 +6,9 @@ from rest_framework import status
 
 
 from app.helpers import validate_id
+from app import processing
+from app.mongo_db_connection import single_query_process_collection, update_process
+from education.constants import PROCESS_DB_0
 from education.helpers import (
     check_if_name_exists_collection,
     generate_unique_collection_name,
@@ -17,12 +20,22 @@ from education.datacube_connection import (
     post_data_to_collection,
     add_collection_to_database,
     Template_database,
-    save_to_metadata_collection,
-    save_to_template_metadata,
-    save_to_document_metadata
+    save_to_metadata,
+    post_to_data_service,
+    save_to_document_metadata,
+    save_to_process_collection,
+    update_process_collection,
+    # save_to_template_metadata,
+    save_to_document_metadata,
+    bulk_query_clones_collection,
+    single_query_clones_collection,
+    bulk_query_document_collection,
+    single_query_document_collection
 )
 
+from django.core.cache import cache
 from app.constants import EDITOR_API
+from app.helpers import access_editor
 
 # Create your views here.
 # Education views are created here
@@ -119,7 +132,7 @@ class NewTemplate(APIView):
             if res["success"]:
                 print(res)
                 collection_id = res["data"]["inserted_id"]
-                res_metadata = save_to_metadata_collection(
+                res_metadata = save_to_metadata(
                     {
                         "template_name": "Untitled Template",
                         "created_by": request.data["created_by"],
@@ -316,7 +329,7 @@ class NewDocument(APIView):
 
         if res["isSuccess"]:
             res_metadata = json.loads(
-                save_to_document_metadata(
+                save_to_metadata(
                     {
                         "document_name": "Untitled Document",
                         "collection_id": res["inserted_id"],
@@ -333,5 +346,298 @@ class NewDocument(APIView):
                     "An error occured while trying to save document metadata",
                     status.HTTP_500_INTERNAL_SERVER_ERROR,
                 )
-        
         return Response("Document Created", status=status.HTTP_201_CREATED)
+    
+    
+class CollectionData(APIView):
+    def post(self, request):
+        api_key = request.data["api_key"]
+        database = request.data["db_name"]
+        collection = request.data["coll_name"]
+        filters = request.data["filters"]
+        limit = request.data.get("limit")
+        offset = request.data.get("offset")
+        
+        res = get_data_from_collection(api_key,database,
+                                       collection, filters,
+                                       limit, offset)
+        
+        return Response(res, status.HTTP_200_OK)
+
+
+class AddToCollection(APIView):
+    def post(self, request):
+        api_key = request.data["api_key"]
+        database = request.data["db_name"]
+        collection = request.data["coll_name"]
+        filters = request.data["filters"]
+        limit = request.data.get("limit")
+        offset = request.data.get("offset")
+        
+        res = get_data_from_collection(api_key,database,
+                                       collection, filters,
+                                       limit, offset)
+        
+        return Response(res, status.HTTP_200_OK)
+
+
+class ItemProcessing(APIView):
+    def post(self, request, *args, **kwargs):
+        """processing is determined by action picked by user."""
+        payload_dict = kwargs.get("payload")
+        if payload_dict:
+            request_data = payload_dict
+        else:
+            request_data = request.data
+
+        if not request_data:
+            return Response("You are missing something!", status.HTTP_400_BAD_REQUEST)
+
+        collection = check_if_name_exists_collection(api_key, "process_collection", PROCESS_DB_0)
+        collection_name = collection["name"]
+        if collection["success"] and collection["status"] == "New":
+            new_process_collection = add_collection_to_database(
+                api_key=api_key,
+                database=PROCESS_DB_0,
+                collections=collection_name,
+                num_of_collections=1,
+            )
+        if not collection["name"] or new_process_collection["success"] == False:
+            return Response("Could not detect Process collection", status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
+        api_key = request_data["api_key"]
+        organization_id = request_data["company_id"]
+        process = processing.Process(
+            request_data["workflows"],
+            request_data["created_by"],
+            request_data["creator_portfolio"],
+            organization_id,
+            request_data["process_type"],
+            request_data["org_name"],
+            request_data["workflows_ids"],
+            request_data["parent_id"],
+            request_data["data_type"],
+            request_data["process_title"],
+            request.data.get("email", None),
+        )
+        
+        saved_process = save_to_process_collection(api_key, PROCESS_DB_0, collection_name, process)
+        print(saved_process)
+        
+        action = request_data["action"]
+        data = None
+        if action == "save_workflow_to_document_and_save_to_drafts":
+            process.normal_process(action)
+            return Response("Process Saved in drafts.", status.HTTP_201_CREATED)
+        if action == "start_document_processing_content_wise":
+            if request_data.get("process_id") is not None:
+                process = single_query_process_collection(
+                    {"_id": request_data["process_id"]}
+                )
+            else:
+                data = process.normal_process(action)
+        if action == "start_document_processing_wf_steps_wise":
+            if request_data.get("process_id") is not None:
+                process = single_query_process_collection(
+                    {"_id": request_data["process_id"]}
+                )
+            else:
+                data = process.normal_process(action)  # type: ignore
+        if action == "start_document_processing_wf_wise":
+            if request_data.get("process_id") is not None:
+                process = single_query_process_collection(
+                    {"_id": request_data["process_id"]}
+                )
+            else:
+                data = process.normal_process(action)  # type: ignore
+        if action == "test_document_processing_content_wise":
+            if request_data.get("process_id") is not None:
+                process = single_query_process_collection(
+                    {"_id": request_data["process_id"]}
+                )
+            else:
+                data = process.test_process(action)  # type: ignore
+        if action == "test_document_processing_wf_steps_wise":
+            if request_data.get("process_id") is not None:
+                process = single_query_process_collection(
+                    {"_id": request_data["process_id"]}
+                )
+            else:
+                data = process.test_process(action)  # type: ignore
+        if action == "test_document_processing_wf_wise":
+            if request_data.get("process_id") is not None:
+                process = single_query_process_collection(
+                    {"_id": request_data["process_id"]}
+                )
+            else:
+                data = process.test_process(action)  # type: ignore
+        if action == "close_processing_and_mark_as_completed":
+            process = single_query_process_collection(
+                {"_id": request_data["process_id"]}
+            )
+            if process["processing_state"] == "completed":
+                return Response(
+                    "This Workflow process is already complete", status.HTTP_200_OK
+                )
+            res = json.loads(
+                update_process(
+                    process_id=process["process_id"],
+                    steps=process["processing_steps"],
+                    state="completed",
+                )
+            )
+            res_saved = json.loads(
+                update_process_collection(
+                    api_key=api_key,
+                    database=PROCESS_DB_0,
+                    collection=collection_name,
+                    data={
+                        "_id": saved_process["_id"],
+                        "processing_steps": saved_process["processing_steps"],
+                        "processing_state": "completed",
+                    }
+                )
+            )
+            if res["isSuccess"]:
+                return Response(
+                    "Process closed and marked as complete!", status.HTTP_200_OK
+                )
+            return Response(status.HTTP_500_INTERNAL_SERVER_ERROR)
+        if action == "cancel_process_before_completion":
+            process = single_query_process_collection(
+                {"_id": request_data["process_id"]}
+            )
+            if process["processing_state"] == "cancelled":
+                return Response(
+                    "This Workflow process is Cancelled!", status.HTTP_200_OK
+                )
+            res = json.loads(
+                update_process(
+                    process_id=process["process_id"],
+                    steps=process["processing_steps"],
+                    state="cancelled",
+                )
+            )
+            res_saved = json.loads(
+                update_process_collection(
+                    api_key=api_key,
+                    database=PROCESS_DB_0,
+                    collection=collection_name,
+                    data={
+                        "_id": saved_process["_id"],
+                        "processing_steps": saved_process["processing_steps"],
+                        "processing_state": "cancelled",
+                    }
+                )
+            )
+
+            if res["isSuccess"]:
+                return Response("Process has been cancelled!", status.HTTP_200_OK)
+            return Response(status.HTTP_500_INTERNAL_SERVER_ERROR)
+        if action == "pause_processing_after_completing_ongoing_step":
+            return Response(
+                "This Option is currently in development",
+                status.HTTP_501_NOT_IMPLEMENTED,
+            )
+        if data:
+            verification_links = processing.HandleProcess(data).start()
+            return Response(verification_links, status.HTTP_200_OK)
+
+
+class Document(APIView):
+    def get(self, request, company_id):
+        """List of Created Documents."""
+        data_type = request.query_params.get("data_type")
+
+        if not validate_id(company_id) or not data_type:
+            return Response("Invalid Request!", status=status.HTTP_400_BAD_REQUEST)
+
+        document_type = request.query_params.get("document_type")
+        document_state = request.query_params.get("document_state")
+        member = request.query_params.get("member")
+        portfolio = request.query_params.get("portfolio")
+        if member and portfolio:
+            auth_viewers = [{"member": member, "portfolio": portfolio}]
+           
+            document_list = bulk_query_clones_collection(
+                {
+                    "company_id": company_id,
+                    "data_type": data_type,
+                    "document_state": document_state,
+                    "auth_viewers": auth_viewers,
+                }
+            )
+            return Response(
+                {"documents": document_list},
+                status=status.HTTP_200_OK,
+            )
+        else:
+            if document_type == "document":
+                documents = bulk_query_document_collection(
+                    {
+                        "company_id": company_id,
+                        "data_type": data_type,
+                        "document_type": document_type,
+                        "document_state": document_state,
+                    }
+                )
+                return Response({"documents": documents}, status=status.HTTP_200_OK)
+            if document_type == "clone":
+                cache_key = f"clones_{company_id}"
+                clones_list = cache.get(cache_key)
+                if clones_list is None:
+                    clones_list = bulk_query_clones_collection(
+                        {
+                            "company_id": company_id,
+                            "data_type": data_type,
+                            "document_state": document_state,
+                        }
+                    )
+                    cache.set(cache_key, clones_list, timeout=60)
+                return Response(
+                    {"clones": clones_list},
+                    status.HTTP_200_OK,
+                )
+
+
+class DocumentLink(APIView):
+    def get(self, request, document_id):
+        """editor link for a document"""
+        document_type = request.query_params.get("document_type")
+        if not validate_id(document_id) or not document_type:
+            return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
+        if document_type == "document":
+            document = single_query_document_collection({"_id": document_id})
+        elif document_type == "clone":
+            document = single_query_clones_collection({"_id": document_id})
+        if document:
+            username = request.query_params.get("username", "")
+            portfolio = request.query_params.get("portfolio", "")
+            email = request.query_params.get("email", "")
+
+            editor_link = access_editor(
+                document_id,
+                document_type,
+                username=username,
+                portfolio=portfolio,
+                email=email,
+            )
+            if not editor_link:
+                return Response(status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response(editor_link, status.HTTP_200_OK)
+        return Response("Document could not be accessed!", status.HTTP_404_NOT_FOUND)
+
+
+class DocumentDetail(APIView):
+    def get(self, request, item_id):
+        """Retrieves the document object for a specific document"""
+        document_type = request.query_params.get("document_type")
+        if not validate_id(item_id) or not document_type:
+            return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
+        if document_type == "document":
+            document = single_query_document_collection({"_id": item_id})
+            return Response(document, status.HTTP_200_OK)
+        if document_type == "clone":
+            document = single_query_clones_collection({"_id": item_id})
+            return Response(document, status.HTTP_200_OK)
+        return Response("Document could not be accessed!", status.HTTP_404_NOT_FOUND)
