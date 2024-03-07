@@ -152,3 +152,15 @@ def save_to_metadata(type: str, collection_id: str, db_name: str, data: dict):
 
 def save_to_document_metadata(data: dict):
     return data
+
+def bulk_query_clones_collection(data:dict):
+    return data
+
+def single_query_clones_collection(data:dict):
+    return data
+
+def bulk_query_document_collection(data:dict):
+    return data
+
+def single_query_document_collection(data:dict):
+    return data
