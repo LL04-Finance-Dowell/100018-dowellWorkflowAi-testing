@@ -1,14 +1,14 @@
-import axios from 'axios';
 import React, { useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import FoldersCard from '../../components/hoverCard/foldersCard/FoldersCard';
-import ManageFiles from '../../components/manageFiles/ManageFiles';
-import SectionBox from '../../components/manageFiles/sectionBox/SectionBox';
-import { useAppContext } from '../../contexts/AppContext';
-import {
-    SetKnowledgeFolders
-} from '../../features/app/appSlice';
 import WorkflowLayout from '../../layouts/WorkflowLayout/WorkflowLayout';
+import SectionBox from '../../components/manageFiles/sectionBox/SectionBox';
+import ManageFiles from '../../components/manageFiles/ManageFiles';
+import FoldersCard from '../../components/hoverCard/foldersCard/FoldersCard';
+import { useAppContext } from '../../contexts/AppContext';
+import { useSelector, useDispatch } from 'react-redux';
+import {
+  SetKnowledgeFolders
+} from '../../features/app/appSlice';
+import axios from 'axios';
 
 const FoldersPage = ({ knowledgeCenter }) => {
   const dispatch = useDispatch();

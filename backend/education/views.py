@@ -24,10 +24,18 @@ from education.datacube_connection import (
     post_to_data_service,
     save_to_document_metadata,
     save_to_process_collection,
-    update_process_collection
+    update_process_collection,
+    # save_to_template_metadata,
+    save_to_document_metadata,
+    bulk_query_clones_collection,
+    single_query_clones_collection,
+    bulk_query_document_collection,
+    single_query_document_collection
 )
 
+from django.core.cache import cache
 from app.constants import EDITOR_API
+from app.helpers import access_editor
 
 # Create your views here.
 # Education views are created here
@@ -495,3 +503,102 @@ class ItemProcessing(APIView):
         if data:
             verification_links = processing.HandleProcess(data).start()
             return Response(verification_links, status.HTTP_200_OK)
+
+
+class Document(APIView):
+    def get(self, request, company_id):
+        """List of Created Documents."""
+        data_type = request.query_params.get("data_type")
+
+        if not validate_id(company_id) or not data_type:
+            return Response("Invalid Request!", status=status.HTTP_400_BAD_REQUEST)
+
+        document_type = request.query_params.get("document_type")
+        document_state = request.query_params.get("document_state")
+        member = request.query_params.get("member")
+        portfolio = request.query_params.get("portfolio")
+        if member and portfolio:
+            auth_viewers = [{"member": member, "portfolio": portfolio}]
+           
+            document_list = bulk_query_clones_collection(
+                {
+                    "company_id": company_id,
+                    "data_type": data_type,
+                    "document_state": document_state,
+                    "auth_viewers": auth_viewers,
+                }
+            )
+            return Response(
+                {"documents": document_list},
+                status=status.HTTP_200_OK,
+            )
+        else:
+            if document_type == "document":
+                documents = bulk_query_document_collection(
+                    {
+                        "company_id": company_id,
+                        "data_type": data_type,
+                        "document_type": document_type,
+                        "document_state": document_state,
+                    }
+                )
+                return Response({"documents": documents}, status=status.HTTP_200_OK)
+            if document_type == "clone":
+                cache_key = f"clones_{company_id}"
+                clones_list = cache.get(cache_key)
+                if clones_list is None:
+                    clones_list = bulk_query_clones_collection(
+                        {
+                            "company_id": company_id,
+                            "data_type": data_type,
+                            "document_state": document_state,
+                        }
+                    )
+                    cache.set(cache_key, clones_list, timeout=60)
+                return Response(
+                    {"clones": clones_list},
+                    status.HTTP_200_OK,
+                )
+
+
+class DocumentLink(APIView):
+    def get(self, request, document_id):
+        """editor link for a document"""
+        document_type = request.query_params.get("document_type")
+        if not validate_id(document_id) or not document_type:
+            return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
+        if document_type == "document":
+            document = single_query_document_collection({"_id": document_id})
+        elif document_type == "clone":
+            document = single_query_clones_collection({"_id": document_id})
+        if document:
+            username = request.query_params.get("username", "")
+            portfolio = request.query_params.get("portfolio", "")
+            email = request.query_params.get("email", "")
+
+            editor_link = access_editor(
+                document_id,
+                document_type,
+                username=username,
+                portfolio=portfolio,
+                email=email,
+            )
+            if not editor_link:
+                return Response(status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response(editor_link, status.HTTP_200_OK)
+        return Response("Document could not be accessed!", status.HTTP_404_NOT_FOUND)
+
+
+class DocumentDetail(APIView):
+    def get(self, request, item_id):
+        """Retrieves the document object for a specific document"""
+        document_type = request.query_params.get("document_type")
+        if not validate_id(item_id) or not document_type:
+            return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
+        if document_type == "document":
+            document = single_query_document_collection({"_id": item_id})
+            return Response(document, status.HTTP_200_OK)
+        if document_type == "clone":
+            document = single_query_clones_collection({"_id": item_id})
+            return Response(document, status.HTTP_200_OK)
+        return Response("Document could not be accessed!", status.HTTP_404_NOT_FOUND)

@@ -159,3 +159,15 @@ def save_to_document_metadata(data: dict):
 
 def get_process_from_collection(api_key: str, database: str, collection: str, filters: dict):
     return get_data_from_collection(api_key, database, collection, filters, limit=1)
+
+def bulk_query_clones_collection(data:dict):
+    return data
+
+def single_query_clones_collection(data:dict):
+    return data
+
+def bulk_query_document_collection(data:dict):
+    return data
+
+def single_query_document_collection(data:dict):
+    return data

@@ -14,7 +14,6 @@ import { WorkflowServices } from '../../../services/workflowServices';
 import { getAllProcessesV2 } from '../../../services/processServices';
 import {
   setAllProcesses,
-  setNotificationsForUser,
 } from '../../../features/app/appSlice';
 import { setAllDocuments } from '../../../features/document/documentSlice';
 import { setAllTemplates } from '../../../features/template/templateSlice';
@@ -26,7 +25,7 @@ import {
   SetKnowledgeFolders
 } from '../../../features/app/appSlice';
 import axios from 'axios';
-
+import { setNotificationsForUser } from '../../../features/notifications/notificationSlice';
 const SectionBox = ({
   cardItems,
   title,

@@ -34,13 +34,6 @@ const TemplateCard = ({ cardItem, isFolder, folderId }) => {
   const [templateLoading, setTemplateLoading] = useState(false);
 
   const handleTemplateDetail = (item) => {
-    console.log("Item object:", item);
-    console.log("Collection ID:", item.collection_id);
-    if (!item.collection_id) {
-      console.error("Collection ID is undefined");
-      return;
-    }
-    
     const data = {
 
       collection_id: item.collection_id,
@@ -196,13 +189,13 @@ const TemplateCard = ({ cardItem, isFolder, folderId }) => {
           onClick={() =>
             handleFavoritess(
               cardItem,
-              favoriteItems.templates?.find((item) => item._id === cardItem._id)
+              favoriteItems.templates.find((item) => item._id === cardItem._id)
                 ? 'remove'
                 : 'add'
             )
           }
         >
-          {favoriteItems.templates?.find((item) => item._id === cardItem._id) ? (
+          {favoriteItems.templates.find((item) => item._id === cardItem._id) ? (
             <BsFillBookmarkFill />
           ) : (
             <BsBookmark />
