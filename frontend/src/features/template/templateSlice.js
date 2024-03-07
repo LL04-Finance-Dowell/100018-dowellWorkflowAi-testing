@@ -49,8 +49,7 @@ export const templateSlice = createSlice({
           state.errorMessage = action.payload;
         });
     };
-
-    // createAsyncReducer function to reduce repetitive logic in adding async reducers
+    
     createAsyncReducer(createTemplate, 'editorStatus');
     createAsyncReducer(detailTemplate, 'editorStatus');
     createAsyncReducer(mineTemplates, 'mineStatus');
