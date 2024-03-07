@@ -7,5 +7,7 @@ urlpatterns = [
     path("education/templates/", views.NewTemplate.as_view()),
     path("education/workflows/", views.Workflow.as_view()),
     path("education/documents/", views.NewDocument.as_view()),
+    path("education/collections/", views.CollectionData.as_view()),
+    path("education/processes/", views.ItemProcessing.as_view()),
     # path("", views.Template),
 ]

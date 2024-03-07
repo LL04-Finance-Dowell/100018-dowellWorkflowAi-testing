@@ -1,4 +1,5 @@
 # helper functions
+from app import processing
 from education.datacube_connection import datacube_collection_retrieval
 import json
 
@@ -33,21 +34,38 @@ def generate_unique_collection_name(
 def check_if_name_exists_collection(api_key, collection_name, db_name):
     res = datacube_collection_retrieval(api_key, db_name)
     if res["success"] == True:
-        if collection_name in res["data"][0]:
+        if collection_name not in res["data"][0]:
             new_collection_name = generate_unique_collection_name(res["data"][0])
             return {
                 "name": new_collection_name,
                 "success": True,
                 "Message": "New_name_generated",
+                "status": "New",
             }
         else:
             return {
                 "name": collection_name,
                 "success": True,
                 "Message": "template_generated",
+                "status": "Existing",
             }
     else:
         return {
             "Message": res["message"],
             "Url": "https://datacube.uxlivinglab.online/",
         }
+        
+def create_process_helper(company_id, workflows, 
+                          created_by, creator_portfolio, 
+                          process_type, org_name,
+                          workflows_ids, parent_id,
+                          data_type, process_title,
+                          action, email=None
+                          ):
+    processing.Process(company_id, workflows, 
+                        created_by, creator_portfolio, 
+                        process_type, org_name,
+                        workflows_ids, parent_id,
+                        data_type, process_title,
+                        action, email)
+    
