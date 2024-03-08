@@ -410,7 +410,7 @@ const TeamsInWorkflowAi = () => {
 
   // useEffect(() => {
   // }, [teamsInWorkflowAI, workflowTeams]);
-console.log("teamsInWorkflowAI[0].children[0].column",teamsInWorkflowAI[0].children);
+
   return (
     <div className={workflowAiSettingsStyles.box}>
       {isFetchingTeams ? (

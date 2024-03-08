@@ -12,33 +12,7 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import { getGroups } from "../../../features/groups/groupThunk";
 
-const teams = [
-  {
-    _id: uuidv4(),
-    content:
-      "Team 19 (Thunker, T2345, We think greatly, Great thinkers Team, G456)",
-  },
-  {
-    _id: uuidv4(),
-    content:
-      "Team 20 (Thunker, T2345, We think greatly, Great thinkers Team, G456)",
-  },
-  {
-    _id: uuidv4(),
-    content:
-      "Team 21 (Thunker, T2345, We think greatly, Great thinkers Team, G456)",
-  },
-  {
-    _id: uuidv4(),
-    content:
-      "Team 22 (Thunker, T2345, We think greatly, Great thinkers Team, G456)",
-  },
-  {
-    _id: uuidv4(),
-    content:
-      "Team 23 (Thunker, T2345, We think greatly, Great thinkers Team, G456)",
-  },
-];
+
 const selectedteams = [
   {
     _id: uuidv4(),
@@ -63,6 +37,9 @@ const GroupsInSettings = () => {
 
   const { workflowTeams, workflowTeamsLoaded, isAssignTask } = useAppContext();
 
+  const { teamsInWorkflowAI, permissionArray } = useSelector(
+    (state) => state.app
+  );
   const { isDesktop, nonDesktopStyles } = useAppContext();
 
   const { t } = useTranslation();
@@ -79,9 +56,10 @@ const GroupsInSettings = () => {
   const [teamData, setTeamData] = useState([]);
   const [publicData, setTPublicData] = useState([]);
   const [selectedTeamId, setSelectedTeamId] = useState("");
+  const [selectedGroup, setSelectedgroup] = useState("");
   const [isOpen, setIsOpen] = useState(false);
   const [handleChangeParams, setHandleChangeParams] = useState([]);
-  console.log("public",groupData);
+
 
    
   useEffect(() => {
@@ -153,11 +131,14 @@ const GroupsInSettings = () => {
   }, [AllGroups]);
 
   useEffect(() => {
+
     if (workflowTeams?.length <= 0 || !workflowTeamsLoaded) return;
    
  const publicMembersData =   extractPortfoliosForPublicMembers(workflowTeams,"public");
  const teamMembersData =   extractPortfoliosForPublicMembers(workflowTeams,'team')
+
  setTPublicData(publicMembersData)
+
  setTeamData([{header:"Team",portfolios:teamMembersData}])
   }, [workflowTeams, workflowTeamsLoaded]);
 
@@ -168,7 +149,16 @@ const GroupsInSettings = () => {
 
      
      const selectedGroup = groupData.find((item)=>item._id===e.target.value);
-  
+
+     setSelectedgroup(  [{
+      _id: selectedGroup._id,
+      _mId: uuidv4(),
+      content: {
+        content:selectedGroup.content,
+        title: "Name",
+      },
+    }])
+
       setSelectedTeamId(e.target.value);
     }
     setHandleChangeParams([{ item, title, boxId, type }, e]);
@@ -198,7 +188,7 @@ const GroupsInSettings = () => {
           column: [
             {
               _id: uuidv4(),
-              items: selectedteams,
+              items: selectedGroup,
               proccess_title: "Group details",
             },
           ],
@@ -248,7 +238,7 @@ const GroupsInSettings = () => {
               key={ind}
               type="list"
               showSearch={false}
-              showEditButton={colItem.items.length ? true : false}
+          
               handleUpdateTeam={handleUpdateTeam}
               externalToggleVal={isOpen}
             />

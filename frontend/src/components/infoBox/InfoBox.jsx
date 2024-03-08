@@ -52,8 +52,11 @@ const InfoBox = ({
   specials,
   teamData,
   totalPublicVal,
-  externalToggleVal
+  externalToggleVal,
+  showGroupEditButton
 }) => {
+
+
   const [isOpen, setIsOpen] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
@@ -81,6 +84,9 @@ const InfoBox = ({
   };
   const handleGroupsModal = () => {
     setOpenGroupsOverlayModal(true);
+  };
+  const closeGroupsModal = () => {
+    setOpenGroupsOverlayModal(false);
   };
   const handleCloseModal = () => {
     setShowModal(false);
@@ -463,7 +469,23 @@ if(!externalToggleVal && isOpen){
               <AiTwotoneEdit />
             </button>
           )}
-
+   {showGroupEditButton && (
+            <button
+              style={{
+                padding: '4px 12px',
+                marginTop: 0,
+                position: 'absolute',
+                right: '5px',
+                top: '5px',
+                color: 'var(--e-global-color-cd6593d)',
+                fontSize: '1rem',
+              }}
+      
+              type='button'
+            >
+              <AiTwotoneEdit />
+            </button>
+          )}
           <TeamModal
             show={showModal}
             onHide={handleCloseModal}
@@ -472,8 +494,9 @@ if(!externalToggleVal && isOpen){
             handleAddTeam={handleAddTeam}
           />
               {    openGroupsOverlayModal && (<div style={{position:'relative', marginLeft:'20%', background:'none'}}>
-                    <CreateGroup fromSettings={true} totalPublicMembersVal={totalPublicVal} dropdownData={teamData} handleOverlay={()=>handleGroupsModal()}/>
+                    <CreateGroup fromSettings={true} totalPublicMembersVal={totalPublicVal} dropdownData={teamData} handleOverlay={closeGroupsModal}/>
                   </div>)}
+                  
           <EditTeamModal
             show={showEditModal}
             setShow={setShowEditModal}
