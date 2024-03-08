@@ -15,50 +15,36 @@ const initialState = {
   errorMessage: null,
 };
 
+const setStatus = (state, action, statusKey) => {
+  state[statusKey] = action.payload ? 'succeeded' : 'failed';
+  state.errorMessage = action.payload;
+};
+
 export const settingsSlice = createSlice({
   name: 'settings',
   initialState,
   reducers: {},
   extraReducers: (builder) => {
-    //createWorkflowSettings
-    builder.addCase(createWorkflowSettings.pending, (state) => {
-      state.createStatus = 'pending';
-    });
-    builder.addCase(createWorkflowSettings.fulfilled, (state, action) => {
-      state.createStatus = 'succeeded';
-      state.createWorkflowSettings = action.payload;
-    });
-    builder.addCase(createWorkflowSettings.rejected, (state, action) => {
-      state.createStatus = 'failed';
-      state.errorMessage = action.payload;
-    });
-    //getWorkflowSettings
-    builder.addCase(getWorkflowSettings.pending, (state) => {
-      state.getStatus = 'pending';
-    });
-    builder.addCase(getWorkflowSettings.fulfilled, (state, action) => {
-      state.getStatus = 'succeeded';
-      state.getWorkflowSettings = action.payload;
-    });
-    builder.addCase(getWorkflowSettings.rejected, (state, action) => {
-      state.getStatus = 'failed';
-      state.errorMessage = action.payload;
-    });
-    //updateWorkflowSettings
-    builder.addCase(updateWorkflowSettings.pending, (state) => {
-      state.updateStatus = 'pending';
-    });
-    builder.addCase(updateWorkflowSettings.fulfilled, (state, action) => {
-      state.updateStatus = 'succeeded';
-      state.updateWorkflowSettings = action.payload;
-    });
-    builder.addCase(updateWorkflowSettings.rejected, (state, action) => {
-      state.updateStatus = 'failed';
-      state.errorMessage = action.payload;
-    });
+    const createAsyncReducer = (thunk, statusKey) => {
+      builder
+        .addCase(thunk.pending, (state) => {
+          state[statusKey] = 'pending';
+        })
+        .addCase(thunk.fulfilled, (state, action) => {
+          state[statusKey] = 'succeeded';
+          state[thunk.name] = action.payload;
+        })
+        .addCase(thunk.rejected, (state, action) => {
+          state[statusKey] = 'failed';
+          state.errorMessage = action.payload;
+        });
+    };
+
+    createAsyncReducer(createWorkflowSettings, 'createStatus');
+    createAsyncReducer(getWorkflowSettings, 'getStatus');
+    createAsyncReducer(updateWorkflowSettings, 'updateStatus');
   },
 });
 
-// export const {} = settingsSlice.actions;
-
 export default settingsSlice.reducer;
+
