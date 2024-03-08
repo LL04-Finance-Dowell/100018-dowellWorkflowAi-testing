@@ -18,7 +18,9 @@ const CreateGroup = ({
   totalPublicMembersVal,
   dropdownData,
   handleOverlay,
+  fromSettings
 }) => {
+  
   const { t } = useTranslation();
 
   const [teamsData, setTeamsData] = useState([]);
@@ -54,7 +56,7 @@ const CreateGroup = ({
     }
   };
 
-  const FormInputDropdown = ({ name, control, label, options }) => {
+  const FormInputDropdown = ({ fromSettings,name, control, label, options }) => {
     return (
       <div>
         <label>{label}</label>
@@ -62,7 +64,7 @@ const CreateGroup = ({
           render={({ field: { onChange, value } }) => (
             <ReactSelect
               isMulti
-              menuPortalTarget={document.body}
+              menuPortalTarget={!fromSettings&&document.body}
               options={options}
               label={label}
               value={options.find((c) => c.value?.content === value?.content)}
@@ -142,7 +144,7 @@ const CreateGroup = ({
   return (
     <Overlay title="Create Group" handleToggleOverlay={handleOverlay}>
       <div className={styles.form__container}>
-        <form onSubmit={handleSubmit(onSubmit)}>
+        <form >
           <div
             style={{
               display: "flex",
@@ -160,6 +162,7 @@ const CreateGroup = ({
               options={teamsData}
               name="team"
               control={control}
+              fromSettings={fromSettings}
               label={t("Team Members")}
             />
 
@@ -175,7 +178,7 @@ const CreateGroup = ({
             <button onClick={handleOverlay} className={styles.cancel__button}>
               {t("cancel")}
             </button>
-            <button type="submit" className={styles.add__button}>
+            <button onClick={handleSubmit(onSubmit)} className={styles.add__button}>
               {t("save")}
             </button>
           </div>
