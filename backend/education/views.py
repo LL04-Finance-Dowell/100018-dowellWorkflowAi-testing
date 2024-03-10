@@ -251,64 +251,6 @@ class Workflow(APIView):
         pass
 
 
-class NewDocument(APIView):
-
-    def post(self, request):
-        api_key = request.query_params.get("api_key")
-        db_name = request.query_params.get("db_name")
-        content = datacube_collection_retrieval(api_key, db_name)["content"]
-        page = datacube_collection_retrieval(api_key, db_name)["page"]
-        organization_id = request.data["company_id"]
-        portfolio = ""
-        if request.data["portfolio"]:
-            portfolio = request.data["portfolio"]
-        viewers = [{"member": request.data["created_by"], "portfolio": portfolio}]
-
-        if not content or page:
-            return Response("Database Template not found", status.HTTP_404_NOT_FOUND)
-
-        res = json.loads(
-            post_data_to_collection(
-                {
-                    "document_name": "Untitled Document",
-                    "content": content,
-                    "created_by": request.data["created_by"],
-                    "company_id": organization_id,
-                    "page": page,
-                    "data_type": request.data["data_type"],
-                    "document_state": "draft",
-                    "auth_viewers": viewers,
-                    "document_type": "original",
-                    "parent_id": None,
-                    "process_id": "",
-                    "folders": [],
-                    "template": db_name,
-                    "message": "",
-                }
-            )
-        )
-
-        if res["isSuccess"]:
-            res_metadata = json.loads(
-                save_to_metadata(
-                    {
-                        "document_name": "Untitled Document",
-                        "collection_id": res["inserted_id"],
-                        "created_by": request.data["created_by"],
-                        "company_id": organization_id,
-                        "data_type": request.data["data_type"],
-                        "document_state": "draft",
-                        "auth_viewers": viewers,
-                    }
-                )
-            )
-            if not res_metadata["isSuccess"]:
-                return Response(
-                    "An error occured while trying to save document metadata",
-                    status.HTTP_500_INTERNAL_SERVER_ERROR,
-                )
-        return Response("Document Created", status=status.HTTP_201_CREATED)
-    
     
 class CollectionData(APIView):
     def post(self, request):
@@ -505,11 +447,86 @@ class ItemProcessing(APIView):
             return Response(verification_links, status.HTTP_200_OK)
 
 
+class NewDocument(APIView):
+
+    def post(self, request):
+        api_key = request.query_params.get("api_key")
+        db_name = request.query_params.get("db_name")
+        content = datacube_collection_retrieval(api_key, db_name)["content"]
+        page = datacube_collection_retrieval(api_key, db_name)["page"]
+        organization_id = request.data["company_id"]
+        portfolio = ""
+        if request.data["portfolio"]:
+            portfolio = request.data["portfolio"]
+        viewers = [{"member": request.data["created_by"], "portfolio": portfolio}]
+
+        if not api_key or not db_name:
+            return Response(
+                "API Key and Database Name are required",
+                status.HTTP_400_BAD_REQUEST,
+            )
+
+        if not content or page:
+            return Response("Database Template not found", status.HTTP_404_NOT_FOUND)
+
+        res = json.loads(
+            post_data_to_collection(
+                {
+                    "document_name": "Untitled Document",
+                    "content": content,
+                    "created_by": request.data["created_by"],
+                    "company_id": organization_id,
+                    "page": page,
+                    "data_type": request.data["data_type"],
+                    "document_state": "draft",
+                    "auth_viewers": viewers,
+                    "document_type": "original",
+                    "parent_id": None,
+                    "process_id": "",
+                    "folders": [],
+                    "template": db_name,
+                    "api_key":api_key,
+                    "message": "",
+                }
+            )
+        )
+
+        if res["isSuccess"]:
+            res_metadata = json.loads(
+                save_to_metadata(
+                    {
+                        "document_name": "Untitled Document",
+                        "collection_id": res["inserted_id"],
+                        "created_by": request.data["created_by"],
+                        "company_id": organization_id,
+                        "data_type": request.data["data_type"],
+                        "document_state": "draft",
+                        "auth_viewers": viewers,
+                        "template": db_name,
+                        "api_key":api_key,
+                    }
+                )
+            )
+            if not res_metadata["isSuccess"]:
+                return Response(
+                    "An error occured while trying to save document metadata",
+                    status.HTTP_500_INTERNAL_SERVER_ERROR,
+                )
+        return Response("Document Created", status=status.HTTP_201_CREATED)
+    
 class Document(APIView):
     def get(self, request, company_id):
         """List of Created Documents."""
+        api_key = request.query_params.get("api_key")
+        db_name = request.query_params.get("db_name")
         data_type = request.query_params.get("data_type")
 
+
+        if not api_key or not db_name:
+            return Response(
+                "API Key and Database Name are required",
+                status.HTTP_400_BAD_REQUEST,
+            )
         if not validate_id(company_id) or not data_type:
             return Response("Invalid Request!", status=status.HTTP_400_BAD_REQUEST)
 
@@ -526,6 +543,8 @@ class Document(APIView):
                     "data_type": data_type,
                     "document_state": document_state,
                     "auth_viewers": auth_viewers,
+                    "template": db_name,
+                    "api_key":api_key,
                 }
             )
             return Response(
@@ -540,6 +559,8 @@ class Document(APIView):
                         "data_type": data_type,
                         "document_type": document_type,
                         "document_state": document_state,
+                        "template": db_name,
+                        "api_key":api_key,
                     }
                 )
                 return Response({"documents": documents}, status=status.HTTP_200_OK)
@@ -552,6 +573,8 @@ class Document(APIView):
                             "company_id": company_id,
                             "data_type": data_type,
                             "document_state": document_state,
+                            "template": db_name,
+                            "api_key":api_key,
                         }
                     )
                     cache.set(cache_key, clones_list, timeout=60)
@@ -564,13 +587,22 @@ class Document(APIView):
 class DocumentLink(APIView):
     def get(self, request, document_id):
         """editor link for a document"""
+        api_key = request.query_params.get("api_key")
+        db_name = request.query_params.get("db_name")
         document_type = request.query_params.get("document_type")
+
+        if not api_key or not db_name:
+            return Response(
+                "API Key and Database Name are required",
+                status.HTTP_400_BAD_REQUEST,
+            )
+    
         if not validate_id(document_id) or not document_type:
             return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
         if document_type == "document":
-            document = single_query_document_collection({"_id": document_id})
+            document = single_query_document_collection({"_id": document_id, "template":db_name, "api_key":api_key})
         elif document_type == "clone":
-            document = single_query_clones_collection({"_id": document_id})
+            document = single_query_clones_collection({"_id": document_id, "template":db_name, "api_key":api_key})
         if document:
             username = request.query_params.get("username", "")
             portfolio = request.query_params.get("portfolio", "")
@@ -592,7 +624,16 @@ class DocumentLink(APIView):
 class DocumentDetail(APIView):
     def get(self, request, item_id):
         """Retrieves the document object for a specific document"""
+        api_key = request.query_params.get("api_key")
+        db_name = request.query_params.get("db_name")
         document_type = request.query_params.get("document_type")
+
+        if not api_key or not db_name:
+            return Response(
+                "API Key and Database Name are required",
+                status.HTTP_400_BAD_REQUEST,
+            )
+
         if not validate_id(item_id) or not document_type:
             return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
         if document_type == "document":
