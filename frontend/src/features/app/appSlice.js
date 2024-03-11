@@ -1,11 +1,11 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { v4 as uuidv4 } from 'uuid';
+import { getItemsCounts } from './asyncThunks';
 import {
   processesInWorkflowAIArray,
   permissionArray,
   teamsInWorkflowAI,
 } from '../../components/workflowAiSettings/veriables';
-import { getItemsCounts } from './asyncThunks';
 
 const initialState = {
   itemsCount: null,
