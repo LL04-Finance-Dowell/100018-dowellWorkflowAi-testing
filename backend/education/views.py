@@ -12,6 +12,7 @@ from education.constants import PROCESS_DB_0
 from education.helpers import (
     check_if_name_exists_collection,
     generate_unique_collection_name,
+    access_editor
 )
 
 from education.datacube_connection import (
@@ -611,10 +612,10 @@ class Document(APIView):
 class DocumentLink(APIView):
     def get(self, request, item_id):
         """editor link for a document"""
-        api_key = request.query_params.get("api_key")
-        db_name = request.query_params.get("db_name")
-        collection_name = request.query_params.get("collection_name")
-        document_type = request.query_params.get("document_type")
+        api_key = request.data.get("api_key")
+        db_name = request.data.get("db_name")
+        collection_name = request.data.get("collection_name")
+        document_type = request.data.get("document_type")
 
         if not api_key or not db_name:
             return Response(
@@ -645,20 +646,16 @@ class DocumentLink(APIView):
             portfolio = request.query_params.get("portfolio", "")
             email = request.query_params.get("email", "")
             
-            payload = {}
-            
-
-            editor_link = requests.post(
-                EDITOR_API,
-                data=json.dumps(payload),
+            editor_link = access_editor(
+                item_id,
+                document_type,
+                api_key,
+                db_name,
+                collection_name,
+                username=username,
+                portfolio=portfolio,
+                email=email,
             )
-            # editor_link = access_editor(
-            #     item_id,
-            #     document_type,
-            #     username=username,
-            #     portfolio=portfolio,
-            #     email=email,
-            # )
             if not editor_link:
                 return Response(status.HTTP_500_INTERNAL_SERVER_ERROR)
             return Response(editor_link, status.HTTP_200_OK)
@@ -697,6 +694,11 @@ class DocumentDetail(APIView):
                 )
             return Response(document["data"], status.HTTP_200_OK)
         if document_type == "clone":
-            document = single_query_clones_collection({"_id": item_id})
-            return Response(document, status.HTTP_200_OK)
+            document = single_query_clones_collection(
+                        api_key, 
+                        db_name,
+                        collection_name, 
+                        {"_id": item_id}
+                    )
+            return Response(document["data"], status.HTTP_200_OK)
         return Response("Document could not be accessed!", status.HTTP_404_NOT_FOUND)
