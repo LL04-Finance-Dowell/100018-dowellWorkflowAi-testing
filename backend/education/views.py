@@ -629,6 +629,7 @@ class DocumentLink(APIView):
         if not validate_id(item_id) or not document_type:
             return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
         if document_type == "document":
+<<<<<<< HEAD
             document = single_query_document_collection(
                 api_key, db_name, collection_name, {"_id": item_id, "template": db_name}
             )
@@ -636,6 +637,11 @@ class DocumentLink(APIView):
             document = single_query_clones_collection(
                 {"_id": item_id, "template": db_name}
             )
+=======
+            document = single_query_document_collection(api_key, db_name, collection_name, {"_id": item_id, "template":db_name})
+        elif document_type == "clone":
+            document = single_query_clones_collection(api_key, db_name, collection_name, {"_id": item_id, "template":db_name})
+>>>>>>> 4a45af5a649816fb6cf45945b67dc63765d1948f
         if document:
             username = request.query_params.get("username", "")
             portfolio = request.query_params.get("portfolio", "")
