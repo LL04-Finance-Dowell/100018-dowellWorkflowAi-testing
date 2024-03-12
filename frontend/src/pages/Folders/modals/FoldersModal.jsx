@@ -288,7 +288,6 @@ const FoldersModal = () => {
 
   useEffect(() => {
     if (allDocuments)
-     // console.log("allDocuments", allDocuments);
     // // console.log("allDocuments", allDocuments
     // .filter((doc) => doc.document_type === 'original')
     // .map((doc) => ({
