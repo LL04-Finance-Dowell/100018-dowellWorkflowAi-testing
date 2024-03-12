@@ -493,7 +493,7 @@ const DocumentCard = ({
                 ) : cardItem.type === 'sign-document' ? (
                   'Sign Here'
                 ) : (
-                  t('View As Preview')
+                  t('Preview')
                 )}
               </Button>
             </>
