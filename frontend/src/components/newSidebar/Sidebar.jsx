@@ -269,7 +269,7 @@ const Sidebar = ({toggleSidebar, isMobile}) => {
       <div className={styles.header__box}>
         <div className={styles.item__box}>
           <img
-            src="https://i0.wp.com/100018-dowellWorkflowAi-testing/wp-content/uploads/2022/02/cropped-Playstore_logo_2.png?resize=100%2C100&ssl=1"
+            src="https://i0.wp.com/workflowai.online/wp-content/uploads/2022/02/cropped-Playstore_logo_2.png?resize=100%2C100&ssl=1"
             alt="logo"
           />
         </div>

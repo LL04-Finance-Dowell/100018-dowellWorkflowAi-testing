@@ -296,15 +296,20 @@ const FoldersModal = () => {
     //   id: doc._id,
     //   category: 'document',
     // })))
-    setDocsList(
-      allDocuments
-        .filter((doc) => doc.document_type === "original")
-        .map((doc) => ({
-          name: doc.document_name,
-          id: doc._id,
-          category: "document",
-        }))
-    );
+    setDocsList(allDocuments.map((doc) => ({
+      name: doc.document_name,
+      id: doc._id,
+      category: 'document',
+    })));
+    // setDocsList(
+    //   allDocuments
+    //     .filter((doc) => doc.document_type === "original")
+    //     .map((doc) => ({
+    //       name: doc.document_name,
+    //       id: doc._id,
+    //       category: "document",
+    //     }))
+    // );
 
     if (allTemplates)
       setTempsList(
