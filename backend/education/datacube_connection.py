@@ -143,8 +143,8 @@ def Template_database():
     pass
 
 
-def save_to_metadata(api_key:str, type: str, collection_id: str, db_name: str, data: dict):
-    return post_data_to_collection(api_key, type, database=db_name, collection=collection_id, data=data, operation="insert")
+def save_to_metadata(api_key:str, collection_id: str, db_name: str, data: dict):
+    return post_data_to_collection(api_key, database=db_name, collection=collection_id, data=data, operation="insert")
 
 def save_to_process_collection(api_key: str, database: str, collection: str, data: dict):
     return post_data_to_collection(api_key, database, collection, data, "insert")
@@ -153,21 +153,25 @@ def update_process_collection(api_key: str, database: str, collection: str, data
     return post_data_to_collection(api_key, database, collection, data, "insert", "update")
 
 
-def save_to_document_metadata(data: dict):
-    return data
-
-
 def get_process_from_collection(api_key: str, database: str, collection: str, filters: dict):
     return get_data_from_collection(api_key, database, collection, filters, limit=1)
 
-def bulk_query_clones_collection(data:dict):
-    return data
 
-def single_query_clones_collection(data:dict):
-    return data
+def save_to_document_collection(api_key: str, database: str, collection: str, data: dict):
+    return post_data_to_collection(api_key, database, collection, data, "insert")
 
-def bulk_query_document_collection(data:dict):
-    return data
 
-def single_query_document_collection(data:dict):
-    return data
+def bulk_query_clones_collection(api_key:str, database:str, collection:str ,filters:dict):
+    return get_data_from_collection(api_key, database, collection, filters)
+
+def single_query_clones_collection(api_key:str, database:str, collection:str ,filters:dict):
+    return get_data_from_collection(api_key, database, collection, filters, limit=1)
+
+def bulk_query_document_collection(api_key:str, database:str, collection:str ,filters:dict):
+    return get_data_from_collection(api_key, database, collection, filters)
+
+def single_query_document_collection(api_key:str, database:str, collection:str ,filters:dict):
+    return get_data_from_collection(api_key, database, collection, filters, limit=1)
+
+def single_query_template_collection(api_key:str, database:str, collection:str ,filters:dict):
+    return get_data_from_collection(api_key, database, collection, filters, limit=1)
