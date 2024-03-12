@@ -1,16 +1,16 @@
 # helper functions
 from app import processing
 from education.datacube_connection import (
-        datacube_collection_retrieval,
-        single_query_clones_collection,
-        single_query_document_collection,
-        single_query_template_collection
-
-    )
+    datacube_collection_retrieval,
+    single_query_clones_collection,
+    single_query_document_collection,
+    single_query_template_collection,
+)
 from app.constants import EDITOR_API
 import json
 from datetime import datetime
 import requests
+
 
 def check_database():
     if True:
@@ -22,9 +22,7 @@ def check_database():
         }
 
 
-def generate_unique_collection_name(
-    existing_collection_names, base_name="template_collection"
-):
+def generate_unique_collection_name(existing_collection_names, base_name):
     # Extract indices from existing names
     indices = [
         int(name.split("_")[-1])
@@ -62,23 +60,48 @@ def check_if_name_exists_collection(api_key, collection_name, db_name):
             "Message": res["message"],
             "Url": "https://datacube.uxlivinglab.online/",
         }
-        
-def create_process_helper(company_id, workflows, 
-                          created_by, creator_portfolio, 
-                          process_type, org_name,
-                          workflows_ids, parent_id,
-                          data_type, process_title,
-                          action, email=None
-                          ):
-    processing.Process(company_id, workflows, 
-                        created_by, creator_portfolio, 
-                        process_type, org_name,
-                        workflows_ids, parent_id,
-                        data_type, process_title,
-                        action, email)
-    
 
-def access_editor(item_id, item_type, api_key, database, collection_name, username="", portfolio="", email=""):
+
+def create_process_helper(
+    company_id,
+    workflows,
+    created_by,
+    creator_portfolio,
+    process_type,
+    org_name,
+    workflows_ids,
+    parent_id,
+    data_type,
+    process_title,
+    action,
+    email=None,
+):
+    processing.Process(
+        company_id,
+        workflows,
+        created_by,
+        creator_portfolio,
+        process_type,
+        org_name,
+        workflows_ids,
+        parent_id,
+        data_type,
+        process_title,
+        action,
+        email,
+    )
+
+
+def access_editor(
+    item_id,
+    item_type,
+    api_key,
+    database,
+    collection_name,
+    username="",
+    portfolio="",
+    email="",
+):
     team_member_id = (
         "11689044433"
         if item_type == "document"
@@ -97,12 +120,18 @@ def access_editor(item_id, item_type, api_key, database, collection_name, userna
         document = "templatereports"
         field = "template_name"
     if item_type == "document":
-        item_name = single_query_document_collection(api_key, database, collection_name, {"_id": item_id})
+        item_name = single_query_document_collection(
+            api_key, database, collection_name, {"_id": item_id}
+        )
     elif item_type == "clone":
-        item_name = single_query_clones_collection(api_key, database, collection_name, {"_id": item_id})
+        item_name = single_query_clones_collection(
+            api_key, database, collection_name, {"_id": item_id}
+        )
     else:
-        item_name = single_query_template_collection(api_key, database, collection_name, {"_id": item_id})
-        
+        item_name = single_query_template_collection(
+            api_key, database, collection_name, {"_id": item_id}
+        )
+
     name = item_name.get(field, "")
     payload = {
         "product_name": "Workflow AI",

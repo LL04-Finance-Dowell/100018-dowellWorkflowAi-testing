@@ -84,7 +84,7 @@ def get_data_from_collection(
         "limit": limit,
         "offset": offset,
     }
-    
+
     response = requests.post(url, json=payload)
     res = json.loads(response.text)
     print(res)
@@ -143,35 +143,77 @@ def Template_database():
     pass
 
 
-def save_to_metadata(api_key:str, collection_id: str, db_name: str, data: dict):
-    return post_data_to_collection(api_key, database=db_name, collection=collection_id, data=data, operation="insert")
+def save_to_metadata(api_key: str, collection_id: str, db_name: str, data: dict):
+    return post_data_to_collection(
+        api_key,
+        database=db_name,
+        collection=collection_id,
+        data=data,
+        operation="insert",
+    )
 
-def save_to_process_collection(api_key: str, database: str, collection: str, data: dict):
+
+def save_to_workflow_collection(
+    api_key: str, collection_id: str, db_name: str, data: dict
+):
+    return post_data_to_collection(
+        api_key,
+        database=db_name,
+        collection=collection_id,
+        data=data,
+        operation="insert",
+    )
+
+
+def save_to_process_collection(
+    api_key: str, database: str, collection: str, data: dict
+):
     return post_data_to_collection(api_key, database, collection, data, "insert")
+
 
 def update_process_collection(api_key: str, database: str, collection: str, data: dict):
-    return post_data_to_collection(api_key, database, collection, data, "insert", "update")
+    return post_data_to_collection(
+        api_key, database, collection, data, "insert", "update"
+    )
 
 
-def get_process_from_collection(api_key: str, database: str, collection: str, filters: dict):
+def get_process_from_collection(
+    api_key: str, database: str, collection: str, filters: dict
+):
     return get_data_from_collection(api_key, database, collection, filters, limit=1)
 
 
-def save_to_document_collection(api_key: str, database: str, collection: str, data: dict):
+def save_to_document_collection(
+    api_key: str, database: str, collection: str, data: dict
+):
     return post_data_to_collection(api_key, database, collection, data, "insert")
 
 
-def bulk_query_clones_collection(api_key:str, database:str, collection:str ,filters:dict):
+def bulk_query_clones_collection(
+    api_key: str, database: str, collection: str, filters: dict
+):
     return get_data_from_collection(api_key, database, collection, filters)
 
-def single_query_clones_collection(api_key:str, database:str, collection:str ,filters:dict):
+
+def single_query_clones_collection(
+    api_key: str, database: str, collection: str, filters: dict
+):
     return get_data_from_collection(api_key, database, collection, filters, limit=1)
 
-def bulk_query_document_collection(api_key:str, database:str, collection:str ,filters:dict):
+
+def bulk_query_document_collection(
+    api_key: str, database: str, collection: str, filters: dict
+):
     return get_data_from_collection(api_key, database, collection, filters)
 
-def single_query_document_collection(api_key:str, database:str, collection:str ,filters:dict):
+
+def single_query_document_collection(
+    api_key: str, database: str, collection: str, filters: dict
+):
     return get_data_from_collection(api_key, database, collection, filters, limit=1)
 
-def single_query_template_collection(api_key:str, database:str, collection:str ,filters:dict):
+
+def single_query_template_collection(
+    api_key: str, database: str, collection: str, filters: dict
+):
     return get_data_from_collection(api_key, database, collection, filters, limit=1)

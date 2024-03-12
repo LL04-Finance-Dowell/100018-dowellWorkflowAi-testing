@@ -12,7 +12,7 @@ from education.constants import PROCESS_DB_0
 from education.helpers import (
     check_if_name_exists_collection,
     generate_unique_collection_name,
-    access_editor
+    access_editor,
 )
 
 from education.datacube_connection import (
@@ -30,7 +30,8 @@ from education.datacube_connection import (
     single_query_clones_collection,
     bulk_query_document_collection,
     single_query_document_collection,
-    single_query_template_collection
+    single_query_template_collection,
+    save_to_workflow_collection,
 )
 
 from django.core.cache import cache
@@ -82,7 +83,9 @@ class NewTemplate(APIView):
         ##   create_new_collection_for_template_metadata=
         if create_new_collection_for_template["success"] == False:
             try:
-                collection_name = generate_unique_collection_name(collection_name)
+                collection_name = generate_unique_collection_name(
+                    collection_name, "template_collection"
+                )
                 res = add_collection_to_database(
                     api_key=api_key,
                     database=db_name,
@@ -187,59 +190,6 @@ class NewTemplate(APIView):
             )
 
 
-# class Template(APIView):
-
-
-"""class NewMetadata(APIView):
-    def post(self, request):
-        item_id = request.data["item_id"]
-        item_type = request.data["item_type"]
-        if item_type == "template":
-            template = "Database_function"
-            if not template:
-                return Response("Template not found", status.HTTP_404_NOT_FOUND)
-            options = {
-                "template_name": template.get("template_name"),
-                "created_by": template.get("created_by"),
-                "collection_id": template.get("_id"),
-                "data_type": template.get("data_type"),
-                "company_id": template.get("company_id"),
-                "auth_viewers": template.get("auth_viewers", []),
-                "template_state": "draft",
-            }
-            res_metadata = json.loads(save_to_template_metadata_collection(options))
-            if res_metadata["isSuccess"]:
-                return Response(
-                    {"template": res_metadata},
-                    status=status.HTTP_201_CREATED,
-                )
-"""
-"""class NewMetadata(APIView):
-    def post(self, request):
-        item_id = request.data["item_id"]
-        item_type = request.data["item_type"]
-        if item_type == "template":
-            template = single_query_template_collection({"_id": item_id})
-            if not template:
-                return Response("Template not found", status.HTTP_404_NOT_FOUND)
-            options = {
-                "template_name": template.get("template_name"),
-                "created_by": template.get("created_by"),
-                "collection_id": template.get("_id"),
-                "data_type": template.get("data_type"),
-                "company_id": template.get("company_id"),
-                "auth_viewers": template.get("auth_viewers", []),
-                "template_state": "draft",
-            }
-            res_metadata = json.loads(save_to_template_metadata_collection(options))
-            if res_metadata["isSuccess"]:
-                return Response(
-                    {"template": res_metadata},
-                    status=status.HTTP_201_CREATED,
-                )
-"""
-
-
 class Workflow(APIView):
     def get(self, request):
         pass
@@ -257,21 +207,26 @@ class Workflow(APIView):
             "workflow_title": form["wf_title"],
             "steps": form["steps"],
         }
+        collection_name = "workflow_collection_0"
+        workflow_unique_name = generate_unique_collection_name(
+            collection_name, "workflow_collection"
+        )
+        if workflow_unique_name["success"]:
 
-
-""" res = json.loads(
-                save_to_workflow_collection(
-                    {
-                        "workflows": data,
-                        "company_id": organization_id,
-                        "created_by": form["created_by"],
-                        "portfolio": form["portfolio"],
-                        "data_type": form["data_type"],
-                        "workflow_type": "original",
-                    }
-                )
-            )"""
-"""if res["isSuccess"]:
+            res = save_to_workflow_collection(
+                api_key,
+                collection_name,
+                db_name,
+                {
+                    "workflows": data,
+                    "company_id": organization_id,
+                    "created_by": form["created_by"],
+                    "portfolio": form["portfolio"],
+                    "data_type": form["data_type"],
+                    "workflow_type": "original",
+                },
+            )
+            if res["isSuccess"]:
                 return Response(
                     {
                         "_id": res["inserted_id"],
@@ -284,10 +239,8 @@ class Workflow(APIView):
                     },
                     status.HTTP_201_CREATED,
                 )
-"""
 
 
-    
 class CollectionData(APIView):
     def post(self, request):
         api_key = request.data["api_key"]
@@ -296,11 +249,11 @@ class CollectionData(APIView):
         filters = request.data["filters"]
         limit = request.data.get("limit")
         offset = request.data.get("offset")
-        
-        res = get_data_from_collection(api_key,database,
-                                       collection, filters,
-                                       limit, offset)
-        
+
+        res = get_data_from_collection(
+            api_key, database, collection, filters, limit, offset
+        )
+
         return Response(res, status.HTTP_200_OK)
 
 
@@ -312,11 +265,11 @@ class AddToCollection(APIView):
         filters = request.data["filters"]
         limit = request.data.get("limit")
         offset = request.data.get("offset")
-        
-        res = get_data_from_collection(api_key,database,
-                                       collection, filters,
-                                       limit, offset)
-        
+
+        res = get_data_from_collection(
+            api_key, database, collection, filters, limit, offset
+        )
+
         return Response(res, status.HTTP_200_OK)
 
 
@@ -332,7 +285,9 @@ class ItemProcessing(APIView):
         if not request_data:
             return Response("You are missing something!", status.HTTP_400_BAD_REQUEST)
 
-        collection = check_if_name_exists_collection(api_key, "process_collection", PROCESS_DB_0)
+        collection = check_if_name_exists_collection(
+            api_key, "process_collection", PROCESS_DB_0
+        )
         collection_name = collection["name"]
         if collection["success"] and collection["status"] == "New":
             new_process_collection = add_collection_to_database(
@@ -342,8 +297,11 @@ class ItemProcessing(APIView):
                 num_of_collections=1,
             )
         if not collection["name"] or new_process_collection["success"] == False:
-            return Response("Could not detect Process collection", status.HTTP_500_INTERNAL_SERVER_ERROR)
-        
+            return Response(
+                "Could not detect Process collection",
+                status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
+
         api_key = request_data["api_key"]
         organization_id = request_data["company_id"]
         process = processing.Process(
@@ -359,10 +317,12 @@ class ItemProcessing(APIView):
             request_data["process_title"],
             request.data.get("email", None),
         )
-        
-        saved_process = save_to_process_collection(api_key, PROCESS_DB_0, collection_name, process)
+
+        saved_process = save_to_process_collection(
+            api_key, PROCESS_DB_0, collection_name, process
+        )
         print(saved_process)
-        
+
         action = request_data["action"]
         data = None
         if action == "save_workflow_to_document_and_save_to_drafts":
@@ -434,7 +394,7 @@ class ItemProcessing(APIView):
                         "_id": saved_process["_id"],
                         "processing_steps": saved_process["processing_steps"],
                         "processing_state": "completed",
-                    }
+                    },
                 )
             )
             if res["isSuccess"]:
@@ -466,7 +426,7 @@ class ItemProcessing(APIView):
                         "_id": saved_process["_id"],
                         "processing_steps": saved_process["processing_steps"],
                         "processing_state": "cancelled",
-                    }
+                    },
                 )
             )
 
@@ -502,19 +462,19 @@ class NewDocument(APIView):
                 "API key, collection name  and database name are required",
                 status.HTTP_400_BAD_REQUEST,
             )
-        
-        collection = check_if_name_exists_collection(
-            api_key, collection_name, db_name
-        )
+
+        collection = check_if_name_exists_collection(api_key, collection_name, db_name)
         collection_name = collection["name"]
         if not collection["success"]:
             return Response("No collection with found", status.HTTP_404_NOT_FOUND)
-        
-        template = single_query_template_collection(api_key, db_name,collection_name, {"collection_name":collection_name})
-        
+
+        template = single_query_template_collection(
+            api_key, db_name, collection_name, {"collection_name": collection_name}
+        )
+
         if not template["success"]:
             return Response("No template found", status.HTTP_404_NOT_FOUND)
-           
+
         document_data = {
             "document_name": "Untitled Document",
             "content": template["data"][0]["content"],
@@ -529,40 +489,41 @@ class NewDocument(APIView):
             "process_id": "",
             "folders": [],
             "template": db_name,
-       }
+        }
 
         res = post_data_to_collection(
-                api_key=api_key,
-                collection=collection_name,
-                database=db_name,
-                operation="insert",
-                data=document_data,
-            )
-        
+            api_key=api_key,
+            collection=collection_name,
+            database=db_name,
+            operation="insert",
+            data=document_data,
+        )
+
         if res["success"]:
             metadata = {
-                        "document_name": "Untitled Document",
-                        "created_by": request.data["created_by"],
-                        "company_id": organization_id,
-                        "document_state": "draft",
-                        "auth_viewers": viewers,
-                        "template": db_name
-                    }
-            
+                "document_name": "Untitled Document",
+                "created_by": request.data["created_by"],
+                "company_id": organization_id,
+                "document_state": "draft",
+                "auth_viewers": viewers,
+                "template": db_name,
+            }
+
             res_metadata = save_to_metadata(
-                        api_key=api_key,
-                        collection_id=collection_name,
-                        db_name=db_name,
-                        data=metadata
-                )
-            
+                api_key=api_key,
+                collection_id=collection_name,
+                db_name=db_name,
+                data=metadata,
+            )
+
             if not res_metadata["success"]:
                 return Response(
                     "An error occured while trying to save document metadata",
                     status.HTTP_500_INTERNAL_SERVER_ERROR,
                 )
-        return Response({"message":"document created"}, status=status.HTTP_201_CREATED)
-    
+        return Response({"message": "document created"}, status=status.HTTP_201_CREATED)
+
+
 class Document(APIView):
     def get(self, request, company_id):
         """List of Created Documents."""
@@ -574,7 +535,7 @@ class Document(APIView):
         document_state = request.query_params.get("document_state")
         member = request.query_params.get("member")
         portfolio = request.query_params.get("portfolio")
-     
+
         if not api_key or not db_name:
             return Response(
                 "API Key and Database Name are required",
@@ -582,28 +543,26 @@ class Document(APIView):
             )
         if not validate_id(company_id) or not data_type:
             return Response("Invalid Request!", status=status.HTTP_400_BAD_REQUEST)
-        
-        collection = check_if_name_exists_collection(
-            api_key, collection_name, db_name
-        )
+
+        collection = check_if_name_exists_collection(api_key, collection_name, db_name)
         collection_name = collection["name"]
         if not collection["success"]:
             return Response("No collection with found", status.HTTP_404_NOT_FOUND)
-           
+
         if member and portfolio:
             auth_viewers = [{"member": member, "portfolio": portfolio}]
-            
+
             document_list = bulk_query_clones_collection(
-                api_key, 
+                api_key,
                 db_name,
-                collection_name, 
+                collection_name,
                 {
                     "company_id": company_id,
                     "data_type": data_type,
                     "document_state": document_state,
                     "auth_viewers": auth_viewers,
                     "template": db_name,
-                }
+                },
             )
             return Response(
                 {"documents": document_list},
@@ -612,17 +571,17 @@ class Document(APIView):
         else:
             if document_type == "document":
                 documents = bulk_query_document_collection(
-                    api_key, 
+                    api_key,
                     db_name,
-                    collection_name, 
+                    collection_name,
                     {
                         "company_id": company_id,
                         "data_type": data_type,
                         "document_type": document_type,
                         "document_state": document_state,
                         "template": db_name,
-                        "api_key":api_key,
-                    }
+                        "api_key": api_key,
+                    },
                 )
                 return Response({"documents": documents}, status=status.HTTP_200_OK)
             if document_type == "clone":
@@ -630,16 +589,16 @@ class Document(APIView):
                 clones_list = cache.get(cache_key)
                 if clones_list is None:
                     clones_list = bulk_query_clones_collection(
-                        api_key, 
+                        api_key,
                         db_name,
-                        collection_name, 
+                        collection_name,
                         {
                             "company_id": company_id,
                             "data_type": data_type,
                             "document_state": document_state,
                             "template": db_name,
-                            "api_key":api_key,
-                        }
+                            "api_key": api_key,
+                        },
                     )
                     cache.set(cache_key, clones_list, timeout=60)
                 return Response(
@@ -661,30 +620,27 @@ class DocumentLink(APIView):
                 "API Key and Database Name are required",
                 status.HTTP_400_BAD_REQUEST,
             )
-            
-        collection = check_if_name_exists_collection(
-            api_key, collection_name, db_name
-        )
+
+        collection = check_if_name_exists_collection(api_key, collection_name, db_name)
         collection_name = collection["name"]
         if not collection["success"]:
             return Response("No collection with found", status.HTTP_404_NOT_FOUND)
-    
+
         if not validate_id(item_id) or not document_type:
             return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
         if document_type == "document":
             document = single_query_document_collection(
-                        api_key, 
-                        db_name,
-                        collection_name, 
-                        {"_id": item_id, "template":db_name}
+                api_key, db_name, collection_name, {"_id": item_id, "template": db_name}
             )
         elif document_type == "clone":
-            document = single_query_clones_collection({"_id": item_id, "template":db_name})
+            document = single_query_clones_collection(
+                {"_id": item_id, "template": db_name}
+            )
         if document:
             username = request.query_params.get("username", "")
             portfolio = request.query_params.get("portfolio", "")
             email = request.query_params.get("email", "")
-            
+
             editor_link = access_editor(
                 item_id,
                 document_type,
@@ -714,10 +670,8 @@ class DocumentDetail(APIView):
                 "API Key and Database Name are required",
                 status.HTTP_400_BAD_REQUEST,
             )
-            
-        collection = check_if_name_exists_collection(
-            api_key, collection_name, db_name
-        )
+
+        collection = check_if_name_exists_collection(api_key, collection_name, db_name)
         collection_name = collection["name"]
         if not collection["success"]:
             return Response("No collection with found", status.HTTP_404_NOT_FOUND)
@@ -726,18 +680,12 @@ class DocumentDetail(APIView):
             return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
         if document_type == "document":
             document = single_query_document_collection(
-                        api_key, 
-                        db_name,
-                        collection_name, 
-                        {"_id": item_id}
-                )
+                api_key, db_name, collection_name, {"_id": item_id}
+            )
             return Response(document["data"], status.HTTP_200_OK)
         if document_type == "clone":
             document = single_query_clones_collection(
-                        api_key, 
-                        db_name,
-                        collection_name, 
-                        {"_id": item_id}
-                    )
+                api_key, db_name, collection_name, {"_id": item_id}
+            )
             return Response(document["data"], status.HTTP_200_OK)
         return Response("Document could not be accessed!", status.HTTP_404_NOT_FOUND)
