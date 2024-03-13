@@ -1,7 +1,7 @@
 import styles from './sectionBox.module.css';
 import maneFilesStyles from '../manageFiles.module.css';
 import BookSpinner from '../../bookSpinner/BookSpinner';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 
 import { PrimaryButton } from '../../styledComponents/styledComponents';
 import { IoIosRefresh } from 'react-icons/io';
@@ -99,18 +99,14 @@ const SectionBox = ({
     }
   };
 
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      if (!isDemoLoading) {
-        handleDemoLoadMore();
-      }
-    }, 2000);
-    return () => clearTimeout(timer); 
-  }, [sliceCount]);
-
   // useEffect(() => {
-  //   // console.log('cardItemsVar: ', cardItemsVar);
-  // }, [cardItemsVar]);
+  //   const timer = setTimeout(() => {
+  //     if (!isDemoLoading) {
+  //       handleDemoLoadMore();
+  //     }
+  //   }, 2000); ////// 
+  //   return () => clearTimeout(timer); 
+  // }, [sliceCount]);
 
   const handleRefresh = () => {
     if (refreshLoading) return;

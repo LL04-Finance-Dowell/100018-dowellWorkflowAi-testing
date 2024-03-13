@@ -1,6 +1,6 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { DocumentServices } from '../../services/documentServices';
-import { setEditorLink, setShowProfileSpinner } from '../app/appSlice';
+import { setEditorLink, setShowProfileSpinner, setError } from '../app/appSlice';
 import { productName } from '../../utils/helpers';
 import { setAllDocuments } from './documentSlice';
 import { toast } from 'react-toastify';
@@ -81,8 +81,12 @@ export const detailDocument = createAsyncThunk(
 
       return res.data;
     } catch (error) {
-      console.log(error);
+      // console.log(error);
+
+      thunkAPI.dispatch(setError("Cannot fetch the data of this document, please try again later"));
+      throw error;
     }
+     
   }
 );
 

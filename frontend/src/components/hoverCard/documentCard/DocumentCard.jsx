@@ -72,6 +72,10 @@ const DocumentCard = ({
   const { allDocuments } = useSelector((state) => state.document);
   const [documentLoading, setDocumentLoading] = useState(false);
 
+  const [errorMessage, setErrorMessage] = useState('');
+  const [showErrorModal, setShowErrorModal] = useState(false);
+
+
   // console.log("cardItem", cardItem, isReport)
 
   const handleFavoritess = async (item, actionType) => {
@@ -171,28 +175,38 @@ const DocumentCard = ({
           user_name: userDetail?.userinfo?.username,
           // process_id: item.process_id,
         };
+
         const response = await (
           await getVerifiedProcessLink(item.process_id, dataToPost)
         ).data;
+
         /*  dispatch(setEditorLink(response)); */
 
         // setDataLoading(false);
-        handleGoToEditor(response, item);
+
+        handleGoToEditor(response, item); /////////////
       } catch (error) {
-        // // console.log(error);
         setDataLoading(false);
-        toast.info(
-          error.response.status !== 500
-            ? error.response
-              ? error.response.data
-              : error.message
-            : 'Could not get notification link'
-        );
+        // toast.info(
+        //   error.response.status !== 500
+        //     ? error.response
+        //       ? error.response.data
+        //       : error.message
+        //     : 'Could not get notification link'
+        // );
+        if (error.response && error.response.status !== 500) {
+          // Handle specific error responses
+          setErrorMessage(error.response.data || error.message);
+        } else {
+          setErrorMessage('Cannot fetch this document at the moment, please try again later!');
+        }
+        setShowErrorModal(true);
       } finally {
         setIsNoPointerEvents(false);
       }
       return;
-    }
+    }; 
+
 
     const data = {
       document_name: item.document_name,
@@ -209,6 +223,11 @@ const DocumentCard = ({
     dispatch(detailDocument(data));
 
 
+  };
+
+  const closeModal = () => {
+    setShowErrorModal(false);
+    setErrorMessage('');
   };
 
   const viewAsPDF = async (item) => {
@@ -593,6 +612,15 @@ const DocumentCard = ({
           pdfUrl={pdfUrl}
           onSave={handleSaveFile}
         />} {/* Render PdfViewer only if showPdfViewer is true */}
+
+        {showErrorModal && (
+          <div className="modal">
+            <div className="modal-content">
+              <span className="close" onClick={closeModal}>&times;</span>
+              <p>{errorMessage}</p>
+            </div>
+          </div>
+        )}
       </div>
     );
   };

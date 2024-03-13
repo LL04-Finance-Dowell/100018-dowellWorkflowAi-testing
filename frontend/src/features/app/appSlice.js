@@ -8,6 +8,7 @@ import {
 } from '../../components/workflowAiSettings/veriables';
 
 const initialState = {
+  errorMessage: null,
   itemsCount: null,
   itemsCountStatus: 'idle',
   errorMessage: null,
@@ -93,6 +94,10 @@ export const appSlice = createSlice({
     },
     setEditorLink: (state, action) => {
       state.editorLink = action.payload;
+    },
+
+    setError: (state, action) => {
+      state.errorMessage = action.payload;
     },
 
     setWfToDocument: (state, action) => {
@@ -770,6 +775,11 @@ export const appSlice = createSlice({
     },
   },
   extraReducers: (builder) => {
+    builder.addCase(getItemsCounts.rejected, (state, action) => {
+      state.itemsCountStatus = 'error';
+      state.errorMessage = "Cannot fetch the data of this document, please try again later";
+    });
+
     //getItemsCount
     builder.addCase(getItemsCounts.pending, (state) => {
       state.itemsCountStatus = 'pending';
@@ -778,10 +788,10 @@ export const appSlice = createSlice({
       state.itemsCountStatus = 'succeeded';
       state.itemsCount = action.payload;
     });
-    builder.addCase(getItemsCounts.rejected, (state, action) => {
-      state.itemsCountStatus = 'error';
-      state.errorMessage = action.payload;
-    });
+    // builder.addCase(getItemsCounts.rejected, (state, action) => {
+    //   state.itemsCountStatus = 'error';
+    //   state.errorMessage = action.payload;
+    // });
   },
 });
 
@@ -872,7 +882,8 @@ export const {
   setApiKeyFetchFailureMessage,
   setShowApiKeyFetchFailureModal,
   resetPublicMembersSelectedForProcess,
-  setInBatchPublicMembersSelectedForProcess
+  setInBatchPublicMembersSelectedForProcess,
+  setError
 } = appSlice.actions;
 
 export default appSlice.reducer;
