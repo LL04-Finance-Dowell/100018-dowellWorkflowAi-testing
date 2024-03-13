@@ -825,10 +825,10 @@ class Document(APIView):
 class DocumentLink(APIView):
     def get(self, request, item_id):
         """editor link for a document"""
-        api_key = request.data.get("api_key")
-        db_name = request.data.get("db_name")
-        collection_name = request.data.get("collection_name")
-        document_type = request.data.get("document_type")
+        api_key = request.query_params.get("api_key")
+        db_name = request.query_params.get("db_name")
+        collection_name = request.query_params.get("collection_name")
+        document_type = request.query_params.get("document_type")
 
         if not api_key or not db_name:
             return Response(
