@@ -71,7 +71,7 @@ const FoldersModal = () => {
         userCompanyId,
         userDataType
       ); ///////////////
-      setFolders(res.data ? res.data.reverse() : []);
+      setFolders(res.data ? res.data : []);
       toast.success("Folder created");
       navigate("/folders");
       setIsCreating(false);
