@@ -17,9 +17,10 @@ import {
   taskType,
 } from '../connectWebflowToDoc/contents/selectMembersToAssign/assignTask/AssignTask';
 import { useTranslation } from 'react-i18next';
-import { setErrorsCheckedInNewProcess, setCurrentMessage,setPopupIsOpen } from '../../../../features/app/appSlice';
+
 import { extractProcessObjChecker } from './utils';
 import { selectedGroupMembers } from '../../../../features/groups/groupsSlice';
+import { setErrorsCheckedInNewProcess } from '../../../../features/processes/processesSlice';
 
 const CheckErrors = () => {
   const { t } = useTranslation();
@@ -37,6 +38,8 @@ const CheckErrors = () => {
     tableOfContentForStep,
     allowErrorChecksStatusUpdateForNewProcess,
     newProcessErrorMessage,
+  } = useSelector((state) => state.processes);
+  const {
     popupIsOpen,
   } = useSelector((state) => state.app);
   const [workflowItemsToDisplay, setWorkflowItemsToDisplay] = useState([]);

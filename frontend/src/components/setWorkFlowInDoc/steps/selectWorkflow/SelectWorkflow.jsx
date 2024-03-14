@@ -9,7 +9,7 @@ import WorkflowSwiper from "./workFlowSwiper/WorkflowSwiper";
 const SelectWorkflow = () => {
 	const size = useWindowSize();
 	/*   const [selectedWorkFlows, setSelectedWorkFlows] = useState([]); */
-	const { selectedWorkflowsToDoc } = useSelector((state) => state.app);
+	const { selectedWorkflowsToDoc } = useSelector((state) => state.processes);
 
 	const [largeLoop, setLargeLoop] = useState(false);
 	const [smallLoop, setSmallLoop] = useState(false);

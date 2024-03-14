@@ -4,19 +4,15 @@ import { useForm } from 'react-hook-form';
 import SubmitButton from '../../submitButton/SubmitButton';
 import InfoBox from '../../infoBox/InfoBox';
 import { useDispatch, useSelector } from 'react-redux';
-import {
-  setColumn,
-  setPermissionArray,
-  setProccess,
-  setSettingProccess,
-} from '../../../features/app/appSlice';
+
 import { v4 as uuidv4 } from 'uuid';
 import { productName, setIsSelected } from '../../../utils/helpers';
 import { WorkflowSettingServices } from '../../../services/workflowSettingServices';
 import { toast } from 'react-toastify';
 import { useTranslation } from 'react-i18next';
 import { useAppContext } from '../../../contexts/AppContext';
-import { setThemeColor } from '../../../features/app/appSlice';
+import { setPermissionArray, setThemeColor } from '../../../features/app/appSlice';
+import { setColumn, setSettingProccess } from '../../../features/processes/processesSlice';
 
 const EnabledDisabkedProcess = () => {
   const dispatch = useDispatch();

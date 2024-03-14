@@ -18,7 +18,7 @@ const AssignCollapse = ({ currentStepIndex, stepsPopulated }) => {
   const { t } = useTranslation();
 
   const { processSteps, docCurrentWorkflow } = useSelector(
-    (state) => state.app
+    (state) => state.processes
   );
 
   const handleCollapse = useCallback((id) => {

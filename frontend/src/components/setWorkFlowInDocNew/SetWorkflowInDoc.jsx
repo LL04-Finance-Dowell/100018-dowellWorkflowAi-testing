@@ -11,19 +11,7 @@ import ContentMapOfDoc from './contentMapOfDoc/ContentMapOfDoc';
 import WorkflowLayout from '../../layouts/WorkflowLayout/WorkflowLayout';
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import {
-  resetSetWorkflows,
-  setContinents,
-  setContinentsLoaded,
-  setCurrentDocToWfs,
-  setDocCurrentWorkflow,
-  setPublicMembersSelectedForProcess,
-  setSelectedWorkflowsToDoc,
-  setTableOfContentForStep,
-  setTeamMembersSelectedForProcess,
-  setUserMembersSelectedForProcess,
-  setWfToDocument,
-} from '../../features/app/appSlice';
+
 import { setContentOfDocument } from '../../features/document/documentSlice';
 import { getContinents } from '../../services/locationServices';
 import { useSearchParams } from 'react-router-dom';
@@ -45,12 +33,23 @@ import ImgFour from '../../assets/sec4.gif';
 import ImgFive from '../../assets/sec5.gif';
 import ImgSix from '../../assets/sec6.gif';
 import { toggleHighlight } from '../../features/processCopyReducer';
+import {    resetSetWorkflows,
+  setContinents,
+  setContinentsLoaded,
+  setCurrentDocToWfs,
+  setDocCurrentWorkflow,
+  setPublicMembersSelectedForProcess,
+  setSelectedWorkflowsToDoc,
+  setTableOfContentForStep,
+  setTeamMembersSelectedForProcess,
+  setUserMembersSelectedForProcess,
+  setWfToDocument, } from '../../features/processes/processesSlice';
 
 const SetWorkflowInDoc = ({addWorkflowStep}) => {
   const dispatch = useDispatch();
   const { t } = useTranslation();
   const { userDetail, session_id } = useSelector((state) => state.auth);
-  const { continentsLoaded, allProcesses } = useSelector((state) => state.app);
+  const { continentsLoaded, allProcesses } = useSelector((state) => state.processes);
   const [searchParams, setSearchParams] = useSearchParams();
   const [draftProcessLoading, setDraftProcessLoading] = useState(false);
   const { allDocuments } = useSelector((state) => state.document);

@@ -34,7 +34,7 @@ const CreateWorkflows = ({ handleToggleOverlay }) => {
   const { status, workflowDetailStatus, updateWorkflowStatus } = useSelector(
     (state) => state.workflow
   );
-  const { currentWorkflow } = useSelector((state) => state.app);
+  const { currentWorkflow } = useSelector((state) => state.processes);
 
   const [internalWorkflows, setInternalWorkflows] = useState([]);
   const [workflowTitle, setWorkflowTitle] = useState("");

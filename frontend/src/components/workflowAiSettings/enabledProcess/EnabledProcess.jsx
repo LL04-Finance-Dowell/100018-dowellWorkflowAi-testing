@@ -5,18 +5,11 @@ import { useForm } from 'react-hook-form';
 import InfoBox from '../../infoBox/InfoBox';
 import { v4 } from 'uuid';
 import { useSelector, useDispatch } from 'react-redux';
-import {
-  setSettingProccessTeams,
-  setSettingProccessPortfolios,
-  setUpdateProccess,
-  setSettingProccess,
-  permissionArray
-} from '../../../features/app/appSlice';
 import { productName, setIsSelected } from '../../../utils/helpers';
 import { createWorkflowSettings } from '../../../features/settings/asyncThunks';
-import { updateWorkflowSettings } from '../../../features/settings/asyncThunks';
 import { useTranslation } from 'react-i18next';
 import { useAppContext } from '../../../contexts/AppContext';
+import { setSettingProccess, setSettingProccessPortfolios, setSettingProccessTeams, setUpdateProccess } from '../../../features/processes/processesSlice';
 
 const EnabledProcess = () => {
   const dispatch = useDispatch();
@@ -25,11 +18,11 @@ const EnabledProcess = () => {
     (state) => state.app
   );
 
-  const { settingProccess } = useSelector((state) => state.app);
+  const { settingProccess } = useSelector((state) => state.processes);
   const { createWorkflowSettings: createWorkflowSettingsItems, createStatus } =
     useSelector((state) => state.settings);
   const { userDetail } = useSelector((state) => state.auth);
-  const { teamsInWorkflowAI } = useSelector((state) => state.app);
+  const { teamsInWorkflowAI } = useSelector((state) => state.processes);
 
   const { workflowTeams, isDesktop, nonDesktopStyles } = useAppContext();
   const [userPortfolios] = useState(

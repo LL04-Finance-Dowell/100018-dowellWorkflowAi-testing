@@ -1,35 +1,22 @@
 import React, { useEffect, useRef } from 'react';
 import { useForm } from 'react-hook-form';
 import Radio from '../../../../radio/Radio';
-import AssignTask from './assignTask/AssignTask';
 import styles from './selectMembersToAssign.module.css';
 import { v4 as uuidv4 } from 'uuid';
 import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import {
-  removeFromPublicMembersSelectedForProcess,
-  removeFromTeamMembersSelectedForProcess,
-  removeFromTeamsSelectedSelectedForProcess,
-  removeFromUserMembersSelectedForProcess,
-  resetPublicMembersSelectedForProcess,
-  setInBatchPublicMembersSelectedForProcess,
-  setPublicMembersSelectedForProcess,
-  setTeamMembersSelectedForProcess,
-  setTeamsSelectedSelectedForProcess,
-  setUserMembersSelectedForProcess,
-} from '../../../../../../features/app/appSlice';
 import { Tooltip } from 'react-tooltip';
 import useClickInside from '../../../../../../hooks/useClickInside';
 import { toast } from 'react-toastify';
 import { useAppContext } from '../../../../../../contexts/AppContext';
 import { LoadingSpinner } from '../../../../../LoadingSpinner/LoadingSpinner';
-import { httpProcess } from '../../../../../../httpCommon/httpCommon';
 import { useTranslation } from 'react-i18next';
 import CreateGroup from '../../../../../../features/groups/CreateGroup/CreateGroup';
-import { FaGlasses } from 'react-icons/fa';
 import { getGroups } from '../../../../../../features/groups/groupThunk';
 import { createGroupInsertId, selectAllGroups, setSelectedGroupsMembers } from '../../../../../../features/groups/groupsSlice';
 import ReactSelect from 'react-select';
+import { removeFromPublicMembersSelectedForProcess, removeFromTeamMembersSelectedForProcess, removeFromTeamsSelectedSelectedForProcess, removeFromUserMembersSelectedForProcess, resetPublicMembersSelectedForProcess, setInBatchPublicMembersSelectedForProcess, setPublicMembersSelectedForProcess, setTeamMembersSelectedForProcess, setTeamsSelectedSelectedForProcess, setUserMembersSelectedForProcess } from '../../../../../../features/processes/processesSlice';
+
 
 const SelectMembersToAssign = ({
   currentStepIndex,
@@ -53,7 +40,7 @@ const SelectMembersToAssign = ({
     publicMembersSelectedForProcess,
     processSteps,
     docCurrentWorkflow,
-  } = useSelector((state) => state.app);
+  } = useSelector((state) => state.processes);
   const [selectedMembersSet, setSelectedMembersSet] = useState(false);
   const [userTypeOptionsEnabled, setUserTypeOptionsEnabled] = useState([]);
   const [currentGroupSelectionItem, setCurrentGroupSelectionItem] =
@@ -1219,7 +1206,12 @@ useEffect(() => {
               </div>}
               {current.header!=="Groups"&&
                 <>
-                  <Radio
+              { current.header==="Public" &&
+                    <p className="sel_count"style={{fontSize: 'inherit' }}>
+                      Selection count: {selectionCount}
+                    </p>
+                  }
+                  { current.header!=="Public" &&  <Radio
                     register={register}
                     name={
                       'selectItemOptionForUser-' +
@@ -1280,7 +1272,7 @@ useEffect(() => {
                     <span className="sel_count" style={{ position: 'absolute', top: '0', right: '0', pointerEvents: 'none', fontSize: 'inherit' }}>
                       Selection count: {selectionCount}
                     </span>
-                  </Radio>
+                  </Radio>}
                   {
                       current.header === 'Public' && current.portfolios.filter((item) => !usedId.some((link) => link?.member === item?.member)).length < 1 ?
                       <div style={{padding:'10px'}}>
@@ -1303,7 +1295,8 @@ useEffect(() => {
                         </div>
                         
                       </div>: 
-                  <div
+                      <>
+                       {current.header !== 'Public' &&<div
                     className={styles.select__Members__Wrapper}
                     ref={selectMembersRef}
                   >
@@ -1430,7 +1423,10 @@ useEffect(() => {
                        />
                      </div>
                     ))}
-                  </div>
+                  </div>}
+           
+                      </>
+                
                   }
                 </>
               }

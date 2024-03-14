@@ -3,15 +3,11 @@ import { useSelector, useDispatch } from 'react-redux';
 import { AiFillCheckSquare, AiOutlineDown, AiOutlineUp } from 'react-icons/ai';
 import './typefilter.css';
 
-import {
-  setPortfoliosInWorkflowAITeams,
-  setSelectedPortfolioTypeForWorkflowSettings,
-  setTeamsInWorkflowAI,
-} from '../../features/app/appSlice';
 import { useAppContext } from '../../contexts/AppContext';
 import { toast } from 'react-toastify';
 import { setIsSelected } from '../../utils/helpers';
-import { v4 } from 'uuid';
+import { setPortfoliosInWorkflowAITeams, setTeamsInWorkflowAI } from '../../features/processes/processesSlice';
+import { setSelectedPortfolioTypeForWorkflowSettings } from '../../features/app/appSlice';
 
 const TypeFilter = ({ edit }) => {
   const filterOpts = ['user', 'team_member', 'public'];
@@ -92,16 +88,16 @@ const DropOpt = ({ setFilter, filter, filterOpts, edit }) => {
   const dispatch = useDispatch();
   const { workflowTeams, selectedTeamIdGlobal } = useAppContext();
   const [clicks, setClicks] = useState(false);
-  const { teamsInWorkflowAI } = useSelector((state) => state.app);
-
-  const portfolios = teamsInWorkflowAI[0].children[1].column[0].items;
+  const { teamsInWorkflowAI } = useSelector((state) => state.processes);
+console.log("teamsInWorkflowAI",teamsInWorkflowAI);
+  const portfolios = teamsInWorkflowAI[0]?.children[1]?.column[0]?.items;
 
   const unselectAllPortfolios = () => {
     const selectedItems = setIsSelected({
-      items: teamsInWorkflowAI[0].children,
+      items: teamsInWorkflowAI[0]?.children,
       item: null,
       title: '',
-      boxId: teamsInWorkflowAI[0].children[1]._id,
+      boxId: teamsInWorkflowAI[0]?.children[1]._id,
       type: 'unselect_all',
     });
     dispatch(setTeamsInWorkflowAI(selectedItems));

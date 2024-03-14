@@ -3,32 +3,14 @@ import styles from "./style.module.css";
 import { toast } from "react-toastify";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  SetArrayofLinks,
-  setShowGeneratedLinksPopup,
-  setshowsProcessDetailPopup,
-  SetProcessDetail,
-  setDetailFetched,
-  ProcessName,
-  setLinksFetched,
-} from "../../../../../../features/app/appSlice";
+
 
 import React from "react";
 import {
   FaShareAlt,
-  FaFacebook,
-  FaTwitter,
-  FaLinkedin,
-  FaReddit,
-  FaPinterest,
-  FaWhatsapp,
-  FaDiscord,
   FaRegCopy,
 } from "react-icons/fa";
-import { MdEmail } from "react-icons/md";
-
-import { Modal, Button } from 'react-bootstrap';
-import { GiMailbox } from 'react-icons/gi';
+import { Modal } from 'react-bootstrap';
 import facebook from './../../../../../../assets/facebook.jpg'
 import instagram from './../../../../../../assets/3225191_app_instagram_logo_media_popular_icon.jpg'
 import snapchat from './../../../../../../assets/3225185_app_logo_media_popular_snapchat_icon.jpg'
@@ -37,6 +19,8 @@ import pinterest from './../../../../../../assets/3225188_app_logo_media_pintere
 import whatsapp from './../../../../../../assets/3225179_app_logo_media_popular_social_icon.jpg'
 import twitter from './../../../../../../assets/3225183_app_logo_media_popular_social_icon.jpg'
 import discord from './../../../../../../assets/resize-17053994161792650344discord.png'
+import { SetArrayofLinks, setLinksFetched, setShowGeneratedLinksPopup } from "../../../../../../features/app/appSlice";
+import { setshowsProcessDetailPopup } from "../../../../../../features/processes/processesSlice";
 
 
 const GeneratedLinksModal = ({
@@ -47,7 +31,8 @@ const GeneratedLinksModal = ({
   updateCopiedLinks,
   handleCloseBtnClick,
 }) => {
-  const { ArrayofLinks, ProcessDetail } = useSelector((state) => state.app);
+  const {  ProcessDetail } = useSelector((state) => state.processes);
+  const { ArrayofLinks } = useSelector((state) => state.app);
   const dispatch = useDispatch();
   const { process_title, process_steps } = ProcessDetail;
   const [showModal, setShowModal] = useState(false);

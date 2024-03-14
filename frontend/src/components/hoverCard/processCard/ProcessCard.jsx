@@ -5,17 +5,9 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { Tooltip } from "react-tooltip";
 import { toast } from "react-toastify";
-import { setAllProcesses } from "../../../features/app/appSlice";
+
 import { moveItemToArchive } from "../../../services/archiveServices";
 import HoverCard from "../HoverCard";
-import {
-  setShowGeneratedLinksPopup,
-  SetProcessDetail,
-  setshowsProcessDetailPopup,
-  setDetailFetched,
-  SetArrayofLinks,
-  setLinksFetched,
-} from "../../../features/app/appSlice";
 
 import { Button } from "../styledComponents";
 import { LoadingSpinner } from "../../LoadingSpinner/LoadingSpinner";
@@ -23,9 +15,11 @@ import axios from "axios";
 import { api_url } from "../../../httpCommon/httpCommon";
 import { productName } from "../../../utils/helpers";
 import { Modal } from 'react-bootstrap';
+import { SetProcessDetail, setAllProcesses } from "../../../features/processes/processesSlice";
+import { SetArrayofLinks, setDetailFetched, setLinksFetched, setShowGeneratedLinksPopup } from "../../../features/app/appSlice";
 
 const ProcessCard = ({ cardItem, title }) => {
-  const { allProcesses } = useSelector((state) => state.app);
+  const { allProcesses } = useSelector((state) => state.processes);
   const { userDetail } = useSelector((state) => state.auth);
 
   const dispatch = useDispatch();

@@ -32,7 +32,7 @@ const ManageFile = () => {
   const { allDocuments: allDocumentsArray, allDocumentsStatus } = useSelector(
     (state) => state.document
   );
-  const { allProcesses } = useSelector((state) => state.app);
+  const { allProcesses } = useSelector((state) => state.processes);
 
   const [test, setTest] = useState(manageFileItems);
   const [itemsCountToDisplay, setItemsCountToDisplay] = useState({

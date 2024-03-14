@@ -23,7 +23,7 @@ ChartJS.register(ArcElement, Tooltip, Legend, CategoryScale,
 );
 
 export default function ScaleDetailReport() {
-	const { ProcessDetail } = useSelector((state) => state.app);
+
 	const { userDetail } = useSelector((state) => state.auth);
 	const [scaleReportData, setScaleReportData] = useState(ScaleDetailReportData);
 

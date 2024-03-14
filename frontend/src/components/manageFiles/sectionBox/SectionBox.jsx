@@ -12,9 +12,7 @@ import { toast } from 'react-toastify';
 import { TemplateServices } from '../../../services/templateServices';
 import { WorkflowServices } from '../../../services/workflowServices';
 import { getAllProcessesV2 } from '../../../services/processServices';
-import {
-  setAllProcesses,
-} from '../../../features/app/appSlice';
+
 import { setAllDocuments } from '../../../features/document/documentSlice';
 import { setAllTemplates } from '../../../features/template/templateSlice';
 import { setAllWorkflows } from '../../../features/workflow/workflowsSlice';
@@ -26,6 +24,7 @@ import {
 } from '../../../features/app/appSlice';
 import axios from 'axios';
 import { setNotificationsForUser } from '../../../features/notifications/notificationSlice';
+import { setAllProcesses } from '../../../features/processes/processesSlice';
 const SectionBox = ({
   cardItems,
   title,
@@ -46,8 +45,10 @@ const SectionBox = ({
   const [sliceCount, setSliceCount] = useState(1);
   const [refreshLoading, setRefreshLoading] = useState(false);
   const { userDetail } = useSelector((state) => state.auth);
-  const { processesLoading, notificationsForUser, notificationsLoading } =
-    useSelector((state) => state.app);
+  const { processesLoading} =
+    useSelector((state) => state.processes);
+  const { notificationsForUser, notificationsLoading } =
+    useSelector((state) => state.notification);
   const { allDocumentsStatus } = useSelector((state) => state.document);
   const { allTemplatesStatus } = useSelector((state) => state.template);
   const { allWorkflowsStatus } = useSelector((state) => state.workflow);

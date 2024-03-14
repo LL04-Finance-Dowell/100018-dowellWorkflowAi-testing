@@ -4,8 +4,9 @@ import { v4 as uuidv4 } from "uuid";
 import { useForm } from "react-hook-form";
 import Select from "../../../../../select/Select";
 import { useDispatch, useSelector } from "react-redux";
-import { updateSingleProcessStep } from "../../../../../../../features/app/appSlice";
+
 import { useTranslation } from 'react-i18next';
+import { updateSingleProcessStep } from "../../../../../../../features/processes/processesSlice";
 
 const Display = ({ currentStepIndex, stepsPopulated }) => {
   const { 
@@ -14,7 +15,7 @@ const Display = ({ currentStepIndex, stepsPopulated }) => {
     formState: { isSubmitted }
   } = useForm();
   const { t } = useTranslation();
-  const { docCurrentWorkflow, processSteps } = useSelector((state) => state.app)
+  const { docCurrentWorkflow, processSteps } = useSelector((state) => state.processes)
   const dispatch = useDispatch()
 
   const handleSetDisplay = (data) => {
