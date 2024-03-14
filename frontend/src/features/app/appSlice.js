@@ -2,7 +2,6 @@ import { createSlice } from '@reduxjs/toolkit';
 import { v4 as uuidv4 } from 'uuid';
 import { getItemsCounts } from './asyncThunks';
 import {
-
   permissionArray,
 
 } from '../../components/workflowAiSettings/veriables';
@@ -67,7 +66,9 @@ export const appSlice = createSlice({
     },
     setError: (state, action) => {
       state.errorMessage = action.payload;
+
     },
+  
     removeFromSelectedWorkflowsToDoc: (state, action) => {
       state.selectedWorkflowsToDoc = state.selectedWorkflowsToDoc.filter(
         (item) => item._id !== action.payload
