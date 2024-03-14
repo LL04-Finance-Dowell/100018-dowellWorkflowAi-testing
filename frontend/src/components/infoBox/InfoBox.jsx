@@ -21,16 +21,14 @@ import TeamModal from '../modal/TeamModal';
 import EditTeamModal from '../modal/EditTeamModal';
 
 import { useSelector, useDispatch } from 'react-redux';
-import {
-  setTeamInWorkflowAITeams,
-  setTeamsInWorkflowAITeams,
-} from '../../features/app/appSlice';
+
 
 // import { teamsInWorkflowAITeams } from '../workflowAiSettings/veriables';
 
 import { v4 } from 'uuid';
 import { useAppContext } from '../../contexts/AppContext';
 import { useTranslation } from 'react-i18next';
+import { setTeamInWorkflowAITeams, setTeamsInWorkflowAITeams } from '../../features/processes/processesSlice';
 import CreateGroup from '../../features/groups/CreateGroup/CreateGroup';
 
 const InfoBox = ({
@@ -62,8 +60,11 @@ const InfoBox = ({
   const [showEditModal, setShowEditModal] = useState(false);
 
   const [team, setTeam] = useState({});
-  const { teamsInWorkflowAI, permissionArray } = useSelector(
+  const {  permissionArray } = useSelector(
     (state) => state.app
+  );
+  const { teamsInWorkflowAI,  } = useSelector(
+    (state) => state.processes
   );
   const { userDetail } = useSelector((state) => state.auth);
   const dispatch = useDispatch();

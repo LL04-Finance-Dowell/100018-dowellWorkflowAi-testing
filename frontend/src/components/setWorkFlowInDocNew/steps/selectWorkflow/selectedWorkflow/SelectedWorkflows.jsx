@@ -3,12 +3,13 @@ import styles from './selectedWorkflows.module.css';
 import { v4 as uuidv4 } from 'uuid';
 import InfoBox from '../../../../infoBox/InfoBox';
 import { useDispatch, useSelector } from 'react-redux';
-import { setSelectedWorkflowsToDoc } from '../../../../../features/app/appSlice';
+import { setSelectedWorkflowsToDoc } from '../../../../../features/processes/processesSlice';
+
 
 const SelectedWorkflows = ({ savedDoc }) => {
   const dispatch = useDispatch();
 
-  const { selectedWorkflowsToDoc } = useSelector((state) => state.app);
+  const { selectedWorkflowsToDoc } = useSelector((state) => state.processes);
 
  
 

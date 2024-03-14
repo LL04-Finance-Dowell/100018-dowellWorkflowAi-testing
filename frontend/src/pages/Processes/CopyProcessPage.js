@@ -10,10 +10,10 @@ import { WorkflowServices } from "../../services/workflowServices";
 import { getAllProcessesV2 } from "../../services/processServices";
 import { setAllDocuments } from "../../features/document/documentSlice";
 import { setAllWorkflows } from "../../features/workflow/workflowsSlice";
-import { setAllProcesses } from "../../features/app/appSlice";
 import { LoadingSpinner } from "../../components/LoadingSpinner/LoadingSpinner";
 
 import { setCopiedDocument, setCopiedWorkflow ,setProcessStepCopy} from "../../features/processCopyReducer";
+import { setAllProcesses } from "../../features/processes/processesSlice";
 
 const CopyProcessPage = () => {
   const { userDetail } = useSelector((state) => state.auth);

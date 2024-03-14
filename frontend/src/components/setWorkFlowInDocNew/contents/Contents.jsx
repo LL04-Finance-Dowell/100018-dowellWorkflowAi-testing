@@ -2,15 +2,13 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { AiOutlineCloseCircle } from 'react-icons/ai';
 import { useDispatch, useSelector } from 'react-redux';
-import {
-  removeFromTableOfContentForStep,
-  setTableOfContentForStep,
-  updateSingleTableOfContentRequiredStatus,
-} from '../../../features/app/appSlice';
+
 import styles from './contents.module.css';
 import { Tooltip } from 'react-tooltip';
 import { toast } from 'react-toastify';
 import ContentPagination from './contentPagination/ContentPagination';
+import { removeFromTableOfContentForStep, setTableOfContentForStep } from '../../../features/processes/processesSlice';
+import { updateSingleTableOfContentRequiredStatus } from '../../../features/app/appSlice';
 
 const Contents = ({
   contents,
@@ -24,7 +22,7 @@ const Contents = ({
   const [currentTableItem, setCurrentTableItem] = useState(null);
   const dispatch = useDispatch();
   const { docCurrentWorkflow, tableOfContentForStep } = useSelector(
-    (state) => state.app
+    (state) => state.processes
   );
   const [contentsPageWise, setContentsPageWise] = useState([]);
   const [showContent, setShowContent] = useState([]);

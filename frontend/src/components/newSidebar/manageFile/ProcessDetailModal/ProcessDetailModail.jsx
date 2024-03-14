@@ -1,19 +1,13 @@
 import React from 'react'
 import { useNavigate } from "react-router-dom";
-import styles from './ProcessDetailModal.css'
-import { v4 as uuidv4 } from 'uuid';
-import {
-    setshowsProcessDetailPopup,
-    SetProcessDetail,
-    setDetailFetched,
-} from '../../../../features/app/appSlice';
 import { AiOutlineClose } from 'react-icons/ai';
-import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { SetProcessDetail, setshowsProcessDetailPopup } from '../../../../features/processes/processesSlice';
+import { setDetailFetched } from '../../../../features/app/appSlice';
 export const ProcessDetailModail = () => {
     const navigate = useNavigate();
     const dispatch = useDispatch();
-    const { ProcessDetail } = useSelector((state) => state.app);
+    const { ProcessDetail } = useSelector((state) => state.processes);
     
 
     function handleCloseDetailBtnClick() {

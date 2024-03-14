@@ -9,11 +9,9 @@ import Select from "../../../../select/Select";
 import { useDispatch, useSelector } from "react-redux";
 import Contents from "../../../../contents/Contents";
 import { LoadingSpinner } from "../../../../../LoadingSpinner/LoadingSpinner";
-import {
-  removeFromTableOfContentForStep,
-  setTableOfContentForStep,
-} from "../../../../../../features/app/appSlice";
+
 import { useTranslation } from 'react-i18next';
+import { removeFromTableOfContentForStep, setTableOfContentForStep } from "../../../../../../features/processes/processesSlice";
 
 const AssignDocumentMap = ({ currentStepIndex, stepsPopulated }) => {
   const {
@@ -24,7 +22,7 @@ const AssignDocumentMap = ({ currentStepIndex, stepsPopulated }) => {
   const [loading, setLoading] = useState(false);
   const { contentOfDocument } = useSelector((state) => state.document);
   const { docCurrentWorkflow, tableOfContentForStep, processSteps } =
-    useSelector((state) => state.app);
+    useSelector((state) => state.processes);
   const dispatch = useDispatch();
   const { t } = useTranslation();
 

@@ -6,8 +6,9 @@ import FormLayout from '../../../../../formLayout/FormLayout';
 import { useState } from 'react';
 import AssignButton from '../../../../../assignButton/AssignButton';
 import { useDispatch, useSelector } from 'react-redux';
-import { updateSingleProcessStep } from '../../../../../../../features/app/appSlice';
+
 import { useEffect } from 'react';
+import { updateSingleProcessStep } from '../../../../../../../features/processes/processesSlice';
 
 const AssignTime = ({ currentStepIndex }) => {
   const {
@@ -18,7 +19,7 @@ const AssignTime = ({ currentStepIndex }) => {
   } = useForm();
   const { limit, start_time } = watch();
   const [loading, setLoading] = useState(false);
-  const { docCurrentWorkflow } = useSelector((state) => state.app);
+  const { docCurrentWorkflow } = useSelector((state) => state.processes);
   const [endTimeisReadOnly, setEndTimeReadOnly] = useState(false);
   const [endTimeVal, setEndTimeVal] = useState('');
   const dispatch = useDispatch();

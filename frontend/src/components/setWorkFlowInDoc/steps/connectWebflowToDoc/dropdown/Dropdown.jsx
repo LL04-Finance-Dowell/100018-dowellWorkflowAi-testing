@@ -1,20 +1,25 @@
 import { useDispatch, useSelector } from 'react-redux';
 import {
-  setDocCurrentWorkflow,
   setDropdowndToggle,
 } from '../../../../../features/app/appSlice';
 import Collapse from '../../../../../layouts/collapse/Collapse';
 import styles from './dropdown.module.css';
 import { TiArrowSortedDown, TiArrowSortedUp } from 'react-icons/ti';
+import { setDocCurrentWorkflow } from '../../../../../features/processes/processesSlice';
 
 const Dropdown = () => {
   const dispatch = useDispatch();
-  const { wfToDocument, docCurrentWorkflow, dropdownToggle } = useSelector(
+  const { wfToDocument, docCurrentWorkflow } = useSelector(
+    (state) => state.processes
+  );
+
+  const { dropdownToggle } = useSelector(
     (state) => state.app
   );
   /*  const [toggle, setToggle] = useState(false); */
 
   const handleToggle = () => {
+   
     dispatch(setDropdowndToggle(!dropdownToggle));
   };
 
