@@ -29,6 +29,7 @@ import { v4 } from 'uuid';
 import { useAppContext } from '../../contexts/AppContext';
 import { useTranslation } from 'react-i18next';
 import { setTeamInWorkflowAITeams, setTeamsInWorkflowAITeams } from '../../features/processes/processesSlice';
+import CreateGroup from '../../features/groups/CreateGroup/CreateGroup';
 
 const InfoBox = ({
   boxId,
@@ -37,6 +38,7 @@ const InfoBox = ({
   onChange,
   showSearch,
   showAddButton,
+  showAddGroupButton,
   type,
   showEditButton,
   boxType,
@@ -46,7 +48,13 @@ const InfoBox = ({
   modPort,
   checker,
   specials,
+  teamData,
+  totalPublicVal,
+  externalToggleVal,
+  showGroupEditButton
 }) => {
+
+
   const [isOpen, setIsOpen] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
@@ -66,6 +74,7 @@ const InfoBox = ({
   const [searchValue, setSearchValue] = useState('');
   const [itemsToDisplay, setItemsToDisplay] = useState([]);
   const [modTitle, setModTitle] = useState('');
+  const [openGroupsOverlayModal, setOpenGroupsOverlayModal] = useState(false);
 
   const handleAddTeam = (team) => {
     setTeam(team);
@@ -74,7 +83,12 @@ const InfoBox = ({
   const handleShowModal = () => {
     setShowModal(true);
   };
-
+  const handleGroupsModal = () => {
+    setOpenGroupsOverlayModal(true);
+  };
+  const closeGroupsModal = () => {
+    setOpenGroupsOverlayModal(false);
+  };
   const handleCloseModal = () => {
     setShowModal(false);
   };
@@ -82,6 +96,15 @@ const InfoBox = ({
   const handleToggle = () => {
     setIsOpen((prev) => !prev);
   };
+useEffect(() => {
+  if(externalToggleVal===undefined) return
+if(externalToggleVal && !isOpen){
+  setIsOpen(true)
+}
+if(!externalToggleVal && isOpen){
+  setIsOpen(false)
+}
+}, [externalToggleVal])
 
   const setupTeamInfo = (
     name,
@@ -107,9 +130,8 @@ const InfoBox = ({
   useEffect(() => {
     if (showSearch) {
       const itemsMatchingSearchValue = items.filter((item) =>
-        item.content
-          .toLocaleLowerCase()
-          .includes(searchValue.toLocaleLowerCase())
+        item?.content
+          ?.toLocaleLowerCase()?.includes(searchValue?.toLocaleLowerCase())
       );
       setItemsToDisplay(itemsMatchingSearchValue);
     }
@@ -167,8 +189,8 @@ const InfoBox = ({
     if (specials === 'edp') {
       if (title !== 'Processes') {
         let mod = permissionArray[0].children[0].column[0].items.find((item) =>
-          item.content.includes(title)
-        ).content;
+          item?.content.includes(title)
+        )?.content;
 
         if (mod.includes('set display name')) {
           mod = title;
@@ -235,7 +257,7 @@ const InfoBox = ({
                       onClick={() => handleItemClick(item)}
                       key={item._id}
                     >
-                      {/* {index + 1}. {item.content} */}
+                      {/* {index + 1}. {item?.content} */}
                       {item.contentDisplay ? (
                         <>
                           <>
@@ -249,7 +271,7 @@ const InfoBox = ({
                                       <>
                                         <span>
                                           {itemIndex + 1}. {itemContent.header}{' '}
-                                          - {itemContent.content}
+                                          - {itemContent?.content}
                                         </span>
                                         <br />
                                       </>
@@ -265,12 +287,12 @@ const InfoBox = ({
                       ) : (
                         <>
                           <span style={{ fontWeight: 'bold' }}>
-                            {item.content.title ? `${item.content.title}:` : ''}
+                            {item?.content?.title ? `${item?.content?.title}:` : ''}
                           </span>{' '}
                           <span>
-                            {item.content.content
-                              ? item.content.content
-                              : `${index + 1}. ${item.content}`}
+                            {item?.content?.content
+                              ? item?.content?.content
+                              : `${index + 1}. ${item?.content}`}
                           </span>
                         </>
                       )}
@@ -283,14 +305,14 @@ const InfoBox = ({
                     <InfoContentFormText key={item._id}>
                       <input
                         type='radio'
-                        id={item.content}
+                        id={item?.content}
                         name={title}
                         value={item._id}
                         onChange={(e) =>
                           onChange({ item, title, boxId, type }, e)
                         }
                       />
-                      <label htmlFor='javascript'>{t(item.content)}</label>
+                      <label htmlFor='javascript'>{t(item?.content)}</label>
                     </InfoContentFormText>
                   ))}
                 </InfoContentBox>
@@ -302,12 +324,12 @@ const InfoBox = ({
                         onChange={(e) =>
                           onChange({ item, title, boxId, type, checker }, e)
                         }
-                        /* {...register(item.content)} */
+                        /* {...register(item?.content)} */
                         checked={item.isSelected ? true : false}
                         type='checkbox'
                         name={title}
                       />
-                      <span key={item._id}>{t(item.content)}</span>
+                      <span key={item._id}>{t(item?.content)}</span>
                     </InfoContentFormText>
                   ))}
                 </InfoContentBox>
@@ -416,6 +438,19 @@ const InfoBox = ({
                 <AiOutlinePlus />
               </button>
             )}
+                {showAddGroupButton && (
+              <button
+                style={{
+                  padding: '4px 12px',
+                  marginTop: 0,
+                  color: 'var(--e-global-color-cd6593d)',
+                }}
+                onClick={handleGroupsModal}
+                type='button'
+              >
+                <AiOutlinePlus />
+              </button>
+            )}
           </div>
 
           {showEditButton && (
@@ -435,7 +470,23 @@ const InfoBox = ({
               <AiTwotoneEdit />
             </button>
           )}
-
+   {showGroupEditButton && (
+            <button
+              style={{
+                padding: '4px 12px',
+                marginTop: 0,
+                position: 'absolute',
+                right: '5px',
+                top: '5px',
+                color: 'var(--e-global-color-cd6593d)',
+                fontSize: '1rem',
+              }}
+      
+              type='button'
+            >
+              <AiTwotoneEdit />
+            </button>
+          )}
           <TeamModal
             show={showModal}
             onHide={handleCloseModal}
@@ -443,7 +494,10 @@ const InfoBox = ({
             keyboard={false}
             handleAddTeam={handleAddTeam}
           />
-
+              {    openGroupsOverlayModal && (<div style={{position:'relative', marginLeft:'20%', background:'none'}}>
+                    <CreateGroup fromSettings={true} totalPublicMembersVal={totalPublicVal} dropdownData={teamData} handleOverlay={closeGroupsModal}/>
+                  </div>)}
+                  
           <EditTeamModal
             show={showEditModal}
             setShow={setShowEditModal}
@@ -460,7 +514,7 @@ const InfoBox = ({
                     // onClick={() => handleItemClick(item)}
                     key={item._id}
                   >
-                    {/* {index + 1}. {item.content} */}
+                    {/* {index + 1}. {item?.content} */}
                     {item.contentDisplay ? (
                       <>
                         <>
@@ -474,7 +528,7 @@ const InfoBox = ({
                                     <>
                                       <span>
                                         {itemIndex + 1}. {itemContent.header} -{' '}
-                                        {itemContent.content}
+                                        {itemContent?.content}
                                       </span>
                                       <br />
                                     </>
@@ -490,12 +544,12 @@ const InfoBox = ({
                     ) : (
                       <>
                         <span style={{ fontWeight: 'bold' }}>
-                          {item.content.title ? `${item.content.title}:` : ''}
+                          {item?.content?.title ? `${item?.content?.title}:` : ''}
                         </span>{' '}
                         <span>
-                          {item.content.content
-                            ? item.content.content
-                            : `${index + 1}. ${item.content}`}
+                          {item?.content?.content
+                            ? item?.content?.content
+                            : `${index + 1}. ${item?.content}`}
                         </span>
                       </>
                     )}
@@ -508,7 +562,7 @@ const InfoBox = ({
                   <InfoContentFormText key={item._id}>
                     <input
                       type='radio'
-                      id={item.content}
+                      id={item?.content}
                       name={title}
                       value={item._id}
                       onChange={(e) =>
@@ -519,7 +573,7 @@ const InfoBox = ({
                         )
                       }
                     />
-                    <label htmlFor='javascript'>{t(item.content)}</label>
+                    <label htmlFor='javascript'>{t(item?.content)}</label>
                   </InfoContentFormText>
                 ))}
               </InfoContentBox>
@@ -532,12 +586,12 @@ const InfoBox = ({
                           onChange={(e) =>
                             onChange({ item, title, boxId, type, checker }, e)
                           }
-                          /* {...register(item.content)} */
+                          /* {...register(item?.content)} */
                           checked={item.isSelected ? true : false}
                           type='checkbox'
                           name={title}
                         />
-                        <span key={item._id}>{t(item.content)}</span>
+                        <span key={item._id}>{t(item?.content)}</span>
                       </InfoContentFormText>
                     ))
                   : isTeams
@@ -548,7 +602,7 @@ const InfoBox = ({
                             onChange={(e) =>
                               onChange({ item, title, boxId, type }, e)
                             }
-                            /* {...register(item.content)} */
+                            /* {...register(item?.content)} */
                             type={'checkbox'}
                             value={
                               userDetail?.portfolio_info?.find(
@@ -562,7 +616,7 @@ const InfoBox = ({
                             name={title}
                             checked={item.isSelected ? true : false}
                           />
-                          <span key={item._id}>{item.content}</span>
+                          <span key={item._id}>{item?.content}</span>
                         </InfoContentFormText>
                       ) : (
                         ''

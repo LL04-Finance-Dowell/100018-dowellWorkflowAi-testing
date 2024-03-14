@@ -9,38 +9,34 @@ const initialState = {
   errorMessage: null,
 };
 
+const setStatus = (state, action, statusKey) => {
+  state[statusKey] = action.payload ? 'succeeded' : 'failed';
+  state.errorMessage = action.payload;
+};
+
 export const favoritesSlice = createSlice({
   name: 'favorites',
   initialState,
   extraReducers: (builder) => {
-    //getFavorites
-    builder.addCase(getFavorites.pending, (state) => {
-      state.getFavoritesStatus = 'pending';
-    });
-    builder.addCase(getFavorites.fulfilled, (state, action) => {
-      state.getFavoritesStatus = 'succeeded';
-      state.favoriteItems = action.payload;
-    });
-    builder.addCase(getFavorites.rejected, (state, action) => {
-      state.getFavoritesStatus = 'failed';
-      state.errorMessage = action.payload;
-    });
+    const createAsyncReducer = (thunk, statusKey, stateKey) => {
+      builder
+        .addCase(thunk.pending, (state) => {
+          state[statusKey] = 'pending';
+        })
+        .addCase(thunk.fulfilled, (state, action) => {
+          state[statusKey] = 'succeeded';
+          state[stateKey] = action.payload;
+        })
+        .addCase(thunk.rejected, (state, action) => {
+          state[statusKey] = 'failed';
+          state.errorMessage = action.payload;
+        });
+    };
 
-    //handleFavorites
-    builder.addCase(handleFavorites.pending, (state) => {
-      state.handleFavoritesStatus = 'pending';
-    });
-    builder.addCase(handleFavorites.fulfilled, (state, action) => {
-      state.handleFavoritesStatus = 'succeeded';
-      state.singleFavorite = action.payload;
-    });
-    builder.addCase(handleFavorites.rejected, (state, action) => {
-      state.handleFavoritesStatus = 'failed';
-      state.errorMessage = action.payload;
-    });
+    createAsyncReducer(getFavorites, 'getFavoritesStatus', 'favoriteItems');
+    createAsyncReducer(handleFavorites, 'handleFavoritesStatus', 'singleFavorite');
   },
 });
 
-// export const {} = favoritesSlice.actions;
-
 export default favoritesSlice.reducer;
+

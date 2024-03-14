@@ -1,7 +1,7 @@
 import styles from './sectionBox.module.css';
 import maneFilesStyles from '../manageFiles.module.css';
 import BookSpinner from '../../bookSpinner/BookSpinner';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 
 import { PrimaryButton } from '../../styledComponents/styledComponents';
 import { IoIosRefresh } from 'react-icons/io';
@@ -22,6 +22,7 @@ import { useAppContext } from '../../../contexts/AppContext';
 import {
   SetKnowledgeFolders
 } from '../../../features/app/appSlice';
+import LoadingScreen from '../../LoadingScreen/loadingScreen';
 import axios from 'axios';
 import { setNotificationsForUser } from '../../../features/notifications/notificationSlice';
 import { setAllProcesses } from '../../../features/processes/processesSlice';
@@ -99,19 +100,14 @@ const SectionBox = ({
     }
   };
 
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      if (!isDemoLoading) {
-        handleDemoLoadMore();
-      }
-    }, 2000); // 2000 milliseconds = 2 seconds
-
-    return () => clearTimeout(timer); // Cleanup function to clear timer if component unmounts or sliceCount changes
-  }, [sliceCount]);
-
   // useEffect(() => {
-  //   // console.log('cardItemsVar: ', cardItemsVar);
-  // }, [cardItemsVar]);
+  //   const timer = setTimeout(() => {
+  //     if (!isDemoLoading) {
+  //       handleDemoLoadMore();
+  //     }
+  //   }, 2000); ////// 
+  //   return () => clearTimeout(timer); 
+  // }, [sliceCount]);
 
   const handleRefresh = () => {
     if (refreshLoading) return;
@@ -623,84 +619,52 @@ const SectionBox = ({
             )}
           </h2>
 
-          {status === 'pending' ? (
-            <div style={{ marginTop: '15px' }}>
-              <BookSpinner />
-            </div>
-          ) : (
-            Card &&
+          {Card &&
             cardItemsVar &&
-            cardItemsVar.length && (
+            cardItemsVar?.length > 0 && (
               <>
                 <div className={styles.grid__box}>
                   {Card &&
                     cardItemsVar &&
                     cardItemsVar?.length > 0 &&
-                    cardItemsVar
-                      .slice(0, sliceCount * 12)
-                      .map((item) => (
-                        <Card
+                    cardItemsVar.slice(0, sliceCount * 18).map((item) => (
+                      <div>
+                        {status === 'pending' ? (<LoadingScreen />) : (<Card
                           key={item?._id}
                           cardItem={item}
+                          LoadingScreen={LoadingScreen}
                           hideFavoriteIcon={hideFavoriteIcon}
                           hideDeleteIcon={hideDeleteIcon}
                           isFolder={itemType === 'folder' ? true : false}
+                          isDocument={itemType === 'documnets' ? true : false}
                           folderId={folderId}
                           isCompletedDoc={isCompleted}
                           isRejectedDoc={isRejected}
                           isReport={isReport}
                           knowledgeCenter={knowledgeCenter}
-                        />
-                      ))}
+                        />)}
+                      </div>
+                    ))}
                 </div>
-                {!isDemo
-                  ? cardItemsVar &&
-                  cardItemsVar?.length > 10 && (
-                    <p
-                      style={{
-                        pointerEvents: `${cardItemsVar.length / 12 < sliceCount && 'none'
-                          }`,
-                      }}
-                      hoverBg='success'
-                      onClick={handleLoadMore}
-                    >
-                      {cardItemsVar.length / 12 < sliceCount
-                        ? 'no more load'
-                        : 'Load more...'}
-                    </p>
-                  )
-                  : cardItemsVar &&
-                  cardItemsVar.length > 12 && (
-                    <p
-                      hoverBg='success'
-                      onClick={handleDemoLoadMore}
-                      style={{
-                        textAlign: 'center',  
-                        pointerEvents: isDemoLoading ? 'none' : 'auto',  
-                        cursor: 'pointer',
-                        marginTop: '20px'
-                      }}
-                      disabled={isDemoLoading}
-
-                      // style={{
-                      //   textAlign: 'center',
-                      //   pointerEvents: `${cardItemsVar.length / 12 < sliceCount ? 'none' : 'auto'}`, // Toggle pointer events
-                      //   cursor: 'pointer',
-                      // }}
-                    >
-                      {isDemoLoading ? (
-                        <LoadingSpinner
-                          color={'white'}
-                          width={'1rem'}
-                          height={'1rem'}
-                        />
-                      ) : (
-                        'Load more...'
-                      )}
-                    </p>
-                  )}
+                 {/* <div ref={bottomOfPageRef} /> */}
+                {cardItemsVar?.length > sliceCount * 18 && (
+                  <div style={{ textAlign: 'center', marginTop: '20px' }}>
+                    {cardItemsVar?.length > sliceCount * 18 && (
+                      <p
+                        onClick={handleDemoLoadMore}
+                        style={isDemoLoading ? { pointerEvents: 'none' } : {}}
+                        disabled={isDemoLoading}
+                      >
+                        {isDemoLoading ? (
+                          <LoadingSpinner color={'white'} width={'1rem'} height={'1rem'} />
+                        ) : (
+                          'Load More...'
+                        )}
+                      </p>
+                    )}
+                  </div>
+                )}
               </>
-            )
           )}
         </div>
       </div>

@@ -89,7 +89,7 @@ const DropOpt = ({ setFilter, filter, filterOpts, edit }) => {
   const { workflowTeams, selectedTeamIdGlobal } = useAppContext();
   const [clicks, setClicks] = useState(false);
   const { teamsInWorkflowAI } = useSelector((state) => state.processes);
-console.log("teamsInWorkflowAI",teamsInWorkflowAI);
+
   const portfolios = teamsInWorkflowAI[0]?.children[1]?.column[0]?.items;
 
   const unselectAllPortfolios = () => {
