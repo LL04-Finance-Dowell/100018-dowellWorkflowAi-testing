@@ -8,7 +8,7 @@ import { toast } from 'react-toastify';
 
 export default function AddMemberModal(props) {
   const { userDetail } = useSelector((state) => state.auth);
-  const { ProcessDetail } = useSelector((state) => state.app);
+  const { ProcessDetail } = useSelector((state) => state.processes);
   const [selectedRows, setSelectedRows] = useState([]);
   const [showAllTeamMembers, setShowAllTeamMember] = useState(false);
   const [showAllPublicMembers, setShowAllPublicMember] = useState(false);

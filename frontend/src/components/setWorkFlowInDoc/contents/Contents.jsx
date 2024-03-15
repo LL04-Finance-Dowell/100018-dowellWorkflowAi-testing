@@ -2,11 +2,9 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { AiOutlineCloseCircle, AiOutlineInfoCircle } from 'react-icons/ai';
 import { useDispatch, useSelector } from 'react-redux';
-import {
-  removeFromTableOfContentForStep,
-  setTableOfContentForStep,
-} from '../../../features/app/appSlice';
+
 import styles from './contents.module.css';
+import { removeFromTableOfContentForStep, setTableOfContentForStep } from '../../../features/processes/processesSlice';
 
 const Contents = ({
   contents,
@@ -19,7 +17,7 @@ const Contents = ({
   const [currentTableItem, setCurrentTableItem] = useState(null);
   const dispatch = useDispatch();
   const { docCurrentWorkflow, tableOfContentForStep } = useSelector(
-    (state) => state.app
+    (state) => state.processes
   );
   const [contentsPageWise, setContentsPageWise] = useState([]);
   const [showContent, setShowContent] = useState([]);

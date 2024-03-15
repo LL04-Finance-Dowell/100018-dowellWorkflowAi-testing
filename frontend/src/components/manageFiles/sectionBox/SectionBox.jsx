@@ -27,7 +27,6 @@ import {
 } from '../../../features/app/appSlice';
 import axios from 'axios';
 import { setNotificationsForUser } from '../../../features/notifications/notificationSlice';
-
 const SectionBox = ({
   cardItems,
   title,
@@ -48,8 +47,10 @@ const SectionBox = ({
   const [sliceCount, setSliceCount] = useState(1);
   const [refreshLoading, setRefreshLoading] = useState(false);
   const { userDetail } = useSelector((state) => state.auth);
-  const { processesLoading, notificationsForUser, notificationsLoading } =
-    useSelector((state) => state.app);
+  const { processesLoading} =
+    useSelector((state) => state.processes);
+  const { notificationsForUser, notificationsLoading } =
+    useSelector((state) => state.notification);
   const { allDocumentsStatus } = useSelector((state) => state.document);
   const { allTemplatesStatus } = useSelector((state) => state.template);
   const { allWorkflowsStatus } = useSelector((state) => state.workflow);

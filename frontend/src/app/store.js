@@ -16,6 +16,7 @@ import processCopyReducer from "../features/processCopyReducer";
 //groups
 import groupsReducer from "../features/groups/groupsSlice";
 import notificationReducer from "../features/notifications/notificationSlice";
+import processesReducer from "../features/processes/processesSlice";
 
 const persistConfig = {
   key: "root",
@@ -34,6 +35,7 @@ const rootReducer = combineReducers({
   copyProcess : processCopyReducer,
   groups:groupsReducer,
   notification: notificationReducer,
+  processes: processesReducer
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

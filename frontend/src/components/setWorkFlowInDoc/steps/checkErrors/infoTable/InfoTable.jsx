@@ -6,7 +6,7 @@ import { useEffect } from 'react';
 
 const InfoTable = () => {
   const { processSteps, docCurrentWorkflow } = useSelector(
-    (state) => state.app
+    (state) => state.processes
   );
   const [tableInfoToDisplay, setTableInfoToDisplay] = useState([]);
 

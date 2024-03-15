@@ -10,13 +10,7 @@ import { ProcessDetailModail } from '../../../components/newSidebar/manageFile/P
 import GeneratedLinksModal from '../../../components/setWorkFlowInDocNew/steps/processDocument/components/GeneratedLinksModal/GeneratedLinksModal';
 import { useEffect } from 'react';
 import { getAllProcessesV2 } from '../../../services/processServices';
-import axios from 'axios';
-import {
-  setAllProcesses,
-  setProcessesLoaded,
-  setProcessesLoading,
-  setShowGeneratedLinksPopup,
-} from '../../../features/app/appSlice';
+
 import { useNavigate } from 'react-router-dom';
 import { productName } from '../../../utils/helpers';
 import { useAppContext } from '../../../contexts/AppContext';
@@ -26,6 +20,7 @@ import EvaluationReportComponent from '../../../components/manageFiles/ProcessDe
 import CreateProcess from '../../../components/manageFiles/files/createProcess/createProcess';
 import DocumentDetailReport from '../../../components/manageFiles/ProcessDetail/DocumentDetailReport';
 import ScaleDetailReport from '../../../components/manageFiles/ProcessDetail/ScaleDetailReport';
+import { setAllProcesses, setProcessesLoaded, setProcessesLoading } from '../../../features/processes/processesSlice';
 
 const ProcessesPage = ({
   home,
@@ -43,15 +38,17 @@ const ProcessesPage = ({
   showScaleReport
 }) => {
   const {
-    processesLoading,
-    allProcesses,
-    processesLoaded,
     ArrayofLinks,
     showGeneratedLinksPopup,
     linksFetched,
-    showsProcessDetailPopup,
     DetailFetched
   } = useSelector((state) => state.app);
+  const {
+    processesLoading,
+    allProcesses,
+    processesLoaded,
+    showsProcessDetailPopup,
+  } = useSelector((state) => state.processes);
   const { userDetail } = useSelector((state) => state.auth);
 
 

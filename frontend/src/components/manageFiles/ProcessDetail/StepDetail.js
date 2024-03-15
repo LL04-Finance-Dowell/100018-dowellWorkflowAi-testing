@@ -22,7 +22,7 @@ ChartJS.register(ArcElement, Tooltip, Legend, CategoryScale,
 
 const EvaluationReportComponent = () => {
   const [reportData, setReportData] = useState(processDetailReport);
-  const { ProcessDetail } = useSelector((state) => state.app);
+
 
   useEffect(() => {
     // console.log('EvaluationReportComponent mounted');

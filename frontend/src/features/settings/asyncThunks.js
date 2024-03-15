@@ -1,6 +1,7 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { WorkflowSettingServices } from '../../services/workflowSettingServices';
-import { setUpdateProccessApi } from '../app/appSlice';
+import { setUpdateProccessApi } from '../processes/processesSlice';
+
 
 const workflowSettingServices = new WorkflowSettingServices();
 

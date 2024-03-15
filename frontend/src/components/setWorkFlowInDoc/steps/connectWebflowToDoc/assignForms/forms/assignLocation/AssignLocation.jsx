@@ -4,12 +4,13 @@ import { v4 as uuidv4 } from 'uuid';
 import FormLayout from '../../../../../formLayout/FormLayout';
 import { useState } from 'react';
 import AssignButton from '../../../../../assignButton/AssignButton';
-import { updateSingleProcessStep } from '../../../../../../../features/app/appSlice';
+
 import { useDispatch, useSelector } from 'react-redux';
 import { useEffect } from 'react';
 import { continentsData } from '../../../../../../../utils/continentsData';
 import ProgressBar from '../../../../../../progressBar/ProgressBar';
 import { getRegionsInCountry } from '../../../../../../../services/locationServices';
+import { updateSingleProcessStep } from '../../../../../../../features/processes/processesSlice';
 
 const AssignLocation = ({ currentStepIndex }) => {
   const {
@@ -21,7 +22,7 @@ const AssignLocation = ({ currentStepIndex }) => {
   const [loading, setLoading] = useState(false);
   const dispatch = useDispatch();
   const { docCurrentWorkflow, continents, continentsLoaded } = useSelector(
-    (state) => state.app
+    (state) => state.processes
   );
   const { userDetail, session_id } = useSelector((state) => state.auth);
   const { continent, country } = watch();

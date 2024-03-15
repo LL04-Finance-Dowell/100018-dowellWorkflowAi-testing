@@ -5,12 +5,10 @@ import { useSelector } from 'react-redux';
 import { useAppContext } from '../../contexts/AppContext';
 import TypeFilter from '../infoBox/TypeFilter';
 import { setIsSelected } from '../../utils/helpers';
-import {
-  setTeamsInWorkflowAI,
-  setUpdateInWorkflowAITeams,
-} from '../../features/app/appSlice';
+
 import { useDispatch } from 'react-redux';
 import { toast } from 'react-toastify';
+import { setTeamsInWorkflowAI, setUpdateInWorkflowAITeams } from '../../features/processes/processesSlice';
 
 const EditTeamModal = ({ show, setShow, handleUpdateTeam, items }) => {
   const [name, setName] = useState('');
@@ -18,7 +16,7 @@ const EditTeamModal = ({ show, setShow, handleUpdateTeam, items }) => {
   const [spec, setSpec] = useState('');
   const [details, setDetails] = useState('');
   const [uniCode, setUniCode] = useState('');
-  const { teamsInWorkflowAI } = useSelector((state) => state.app);
+  const { teamsInWorkflowAI } = useSelector((state) => state.processes);
   // const [selectedTeam, setSelectedTeam] = useState();
   const [isPortfolios, setIsPortfolios] = useState(false);
   const {
