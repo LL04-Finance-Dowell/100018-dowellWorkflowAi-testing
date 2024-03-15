@@ -311,18 +311,20 @@ export const AppContextProvider = ({ children }) => {
 //     }
 // };
 
+// 6385c0e78eca0fb652c944ae
+
 
   const fetchProcessReports = async (type) => {
     if (type === 'completed') setCompletedProcessesStatus('pending');
     else if (type === 'active') setActiveProcessesStatus('pending');
 
     try {
-        let processes = [];
-        if (type === 'completed') {
-            const res = await getCompletedProcesses(companyId, dataType, 'finalized');
-            processes = res.data ? res.data : [];
-        } else if (type === 'active') {
-            const res = await getActiveProcesses('6385c0e78eca0fb652c944ae', dataType, 'processing');
+      let processes = [];
+      if (type === 'completed') {
+        const res = await getCompletedProcesses(companyId, dataType, 'finalized');
+        processes = res.data ? res.data : [];
+      } else if (type === 'active') {
+            const res = await getActiveProcesses(companyId, dataType, 'processing');
             processes = res.data ? res.data : [];
         }
         processes.sort((a, b) => {
@@ -342,7 +344,7 @@ export const AppContextProvider = ({ children }) => {
         if (type === 'completed') setCompletedProcessesStatus('');
         else if (type === 'active') setActiveProcessesStatus('');
     }
-};
+  };
 
 
   const fetchSavedDocuments = async () => {

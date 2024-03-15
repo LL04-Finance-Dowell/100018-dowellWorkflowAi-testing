@@ -1,7 +1,8 @@
 import styles from './sectionBox.module.css';
 import maneFilesStyles from '../manageFiles.module.css';
 import BookSpinner from '../../bookSpinner/BookSpinner';
-import { useEffect, useState, useRef } from 'react';
+import LoadingScreen from '../../LoadingScreen/loadingScreen';
+import { useEffect, useState } from 'react';
 
 import { PrimaryButton } from '../../styledComponents/styledComponents';
 import { IoIosRefresh } from 'react-icons/io';
@@ -12,7 +13,9 @@ import { toast } from 'react-toastify';
 import { TemplateServices } from '../../../services/templateServices';
 import { WorkflowServices } from '../../../services/workflowServices';
 import { getAllProcessesV2 } from '../../../services/processServices';
-
+import {
+  setAllProcesses
+} from '../../../features/app/appSlice';
 import { setAllDocuments } from '../../../features/document/documentSlice';
 import { setAllTemplates } from '../../../features/template/templateSlice';
 import { setAllWorkflows } from '../../../features/workflow/workflowsSlice';
@@ -22,10 +25,8 @@ import { useAppContext } from '../../../contexts/AppContext';
 import {
   SetKnowledgeFolders
 } from '../../../features/app/appSlice';
-import LoadingScreen from '../../LoadingScreen/loadingScreen';
 import axios from 'axios';
 import { setNotificationsForUser } from '../../../features/notifications/notificationSlice';
-import { setAllProcesses } from '../../../features/processes/processesSlice';
 const SectionBox = ({
   cardItems,
   title,
@@ -100,14 +101,15 @@ const SectionBox = ({
     }
   };
 
-  // useEffect(() => {
-  //   const timer = setTimeout(() => {
-  //     if (!isDemoLoading) {
-  //       handleDemoLoadMore();
-  //     }
-  //   }, 2000); ////// 
-  //   return () => clearTimeout(timer); 
-  // }, [sliceCount]);
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (!isDemoLoading) {
+        handleDemoLoadMore();
+      }
+    }, 2000); 
+
+    return () => clearTimeout(timer); 
+  }, [sliceCount]);
 
   const handleRefresh = () => {
     if (refreshLoading) return;
@@ -673,3 +675,4 @@ const SectionBox = ({
 };
 
 export default SectionBox;
+
