@@ -13,9 +13,7 @@ import { toast } from 'react-toastify';
 import { TemplateServices } from '../../../services/templateServices';
 import { WorkflowServices } from '../../../services/workflowServices';
 import { getAllProcessesV2 } from '../../../services/processServices';
-import {
-  setAllProcesses
-} from '../../../features/app/appSlice';
+
 import { setAllDocuments } from '../../../features/document/documentSlice';
 import { setAllTemplates } from '../../../features/template/templateSlice';
 import { setAllWorkflows } from '../../../features/workflow/workflowsSlice';
@@ -27,6 +25,7 @@ import {
 } from '../../../features/app/appSlice';
 import axios from 'axios';
 import { setNotificationsForUser } from '../../../features/notifications/notificationSlice';
+import { setAllProcesses } from '../../../features/processes/processesSlice';
 const SectionBox = ({
   cardItems,
   title,
