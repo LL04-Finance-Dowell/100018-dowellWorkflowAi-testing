@@ -283,7 +283,11 @@ class DatabaseServices(APIView):
 class NewTemplate(APIView):
 
     def get(self, request):
-        api_key = request.query_params.get("api_key")
+
+        try:
+            api_key = authorization_check(request.headers.get("Authorization"))
+        except InvalidTokenException as e:
+            return CustomResponse(False, str(e), None, status.HTTP_401_UNAUTHORIZED)
         db_name = request.query_params.get("db_name")
         res = datacube_collection_retrieval(api_key, db_name)
         return Response(res["data"])
@@ -295,10 +299,8 @@ class NewTemplate(APIView):
         approved = False
         workspace_id = request.data["workspace_id"]
         collection_name = "template_collection_0"
-        # Create a metadata_collection too
-        # Rememember to change
-        # db_name=f'{workspace_id}_"template_database_1"'
-        db_name = "6390b313d77dc467630713f2_database0"
+        db_name = f'{workspace_id}_"template_database_1"'
+        # db_name = "6390b313d77dc467630713f2_database0"
         # metadata_db = request.data["metadata_db"]
         api_key = request.data["api_key"]
         no_of_collections = 1
@@ -471,6 +473,13 @@ class Workflow(APIView):
                         "data_type": form["data_type"],
                     },
                     status.HTTP_201_CREATED,
+                )
+            else:
+                return CustomResponse(
+                    False,
+                    "Workflow Not saved into collection",
+                    None,
+                    status.HTTP_400_BAD_REQUEST,
                 )
 
 
