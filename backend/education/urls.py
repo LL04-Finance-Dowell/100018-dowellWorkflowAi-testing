@@ -4,10 +4,8 @@ from education import views
 
 urlpatterns = [
     path("education/", views.HomeView.as_view()),
-    path("eduation/database", views.DatabaseServices.as_view()),
-    path(
-        "education/templates/", views.NewTemplate.as_view()
-    ),
+    path("education/database/", views.DatabaseServices.as_view()),
+    path("education/templates/", views.NewTemplate.as_view()),
     path("education/workflows/", views.Workflow.as_view()),
     path("education/collections/", views.CollectionData.as_view()),
     path("education/processes/", views.ItemProcessing.as_view()),

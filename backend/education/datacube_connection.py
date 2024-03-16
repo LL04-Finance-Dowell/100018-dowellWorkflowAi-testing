@@ -33,7 +33,7 @@ def add_collection_to_database(
     api_key: str,
     database: str,
     collections: str,
-    num_of_collections: int,
+    num_of_collections=1,
 ):
     """adds collection(s) to a database
 
@@ -56,7 +56,7 @@ def add_collection_to_database(
 
     response = post_to_data_service(url=url, data=payload)
 
-    print(response)
+    # print(response)
     return response
 
 

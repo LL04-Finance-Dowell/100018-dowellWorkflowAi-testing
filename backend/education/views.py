@@ -13,6 +13,7 @@ from education.helpers import (
     check_if_name_exists_collection,
     generate_unique_collection_name,
     access_editor,
+    CustomResponse,
 )
 from education.serializers import *
 from education.helpers import *
@@ -43,6 +44,10 @@ from app.constants import EDITOR_API
 # Anywhere we see template_function_it is
 
 
+def test_collection_(api_key, database, collection_name):
+    return {"success": True, "message": [api_key, database, collection_name]}
+
+
 class HomeView(APIView):
     def get(self, request):
         return Response({"Message": "Education is live"}, status.HTTP_200_OK)
@@ -52,6 +57,7 @@ class DatabaseServices(APIView):
 
     def post(self, request):
         type_request = request.GET.get("type")
+        print(type_request)
 
         if type_request == "create_collection":
             return self.create_collection(request)
@@ -80,10 +86,11 @@ class DatabaseServices(APIView):
         """
         database_type = request.data.get("database_type")
         workspace_id = request.data.get("workspace_id")
-        collection_name = request.data.get("collection_name")
+        # collection_name = request.data.get("collection_name")
 
         try:
             api_key = authorization_check(request.headers.get("Authorization"))
+
         except InvalidTokenException as e:
             return CustomResponse(False, str(e), None, status.HTTP_401_UNAUTHORIZED)
 
@@ -96,29 +103,40 @@ class DatabaseServices(APIView):
                 serializer.errors,
                 status.HTTP_400_BAD_REQUEST,
             )
+        all_responses = []
 
-        if database_type == "META_DATA":
-            database = f"{workspace_id}_METADATA_0"
-        if database_type == "PROCESS_DATA":
-            database = f"{workspace_id}_PROCESS_DATABASE_0"
-        if database_type == "WORKFLOW_DATA":
-            database = f"{workspace_id}_WORKFLOW_DATABASE_0"
-        if database_type == "TEMPLATE_DATA":
-            database = f"{workspace_id}_TEMPLATE_DATABASE_0"
-        if database_type == "CLONES_DATA":
-            database = f"{workspace_id}_CLONE_DATABASE_0"
+        for types in database_type:
+            if types == "META_DATA":
+                database = f"{workspace_id}_METADATA_0"
+                collection_name = "metadata_collection_0"
+            elif types == "PROCESS_DATABASE":
+                database = f"{workspace_id}_PROCESS_DATABASE_0"
+                collection_name = "process_collection_0"
+            elif types == "WORKFLOW_DATA":
+                database = f"{workspace_id}_WORKFLOW_DATABASE_0"
+                collection_name = "workflow_collection_0"
+            elif types == "TEMPLATE_DATA":
+                database = f"{workspace_id}_TEMPLATE_DATABASE_0"
+                collection_name = "template_collection_0"
+            elif types == "CLONES_DATA":
+                database = f"{workspace_id}_CLONE_DATABASE_0"
+                collection_name = "clones_collection_0"
 
-        response = json.loads(
-            add_collection_to_database(api_key, database, collection_name)
-        )
+            # response = test_collection_(api_key, database, collection_name)
 
-        if not response["success"]:
-            return CustomResponse(
-                False,
-                "Failed to create collection, kindly contact the administrator.",
-                None,
-                status.HTTP_400_BAD_REQUEST,
-            )
+            response = add_collection_to_database(api_key, database, collection_name)
+
+            all_responses.append(response)
+            print(all_responses)
+
+        for responses in all_responses:
+            if not responses["success"]:
+                return CustomResponse(
+                    False,
+                    "Failed to create collection, kindly contact the administrator.",
+                    None,
+                    status.HTTP_400_BAD_REQUEST,
+                )
 
         return CustomResponse(
             True, "Collection has been created successfully", None, status.HTTP_200_OK
@@ -844,9 +862,13 @@ class DocumentLink(APIView):
         if not validate_id(item_id) or not document_type:
             return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
         if document_type == "document":
-            document = single_query_document_collection(api_key, db_name, collection_name, {"_id": item_id, "template":db_name})
+            document = single_query_document_collection(
+                api_key, db_name, collection_name, {"_id": item_id, "template": db_name}
+            )
         elif document_type == "clone":
-            document = single_query_clones_collection(api_key, db_name, collection_name, {"_id": item_id, "template":db_name})
+            document = single_query_clones_collection(
+                api_key, db_name, collection_name, {"_id": item_id, "template": db_name}
+            )
         if document:
             username = request.query_params.get("username", "")
             portfolio = request.query_params.get("portfolio", "")
