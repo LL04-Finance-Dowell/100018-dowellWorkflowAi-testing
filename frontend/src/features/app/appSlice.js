@@ -308,6 +308,7 @@ export const {
   setApiKeyFetchFailureMessage,
   setShowApiKeyFetchFailureModal,
   setError,
+  setNotificationsForUser,
   setAllProcesses
 } = appSlice.actions;
 
