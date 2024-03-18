@@ -11,11 +11,7 @@ import { DocumentServices } from '../../../services/documentServices';
 import { toast } from 'react-toastify';
 import { TemplateServices } from '../../../services/templateServices';
 import { WorkflowServices } from '../../../services/workflowServices';
-import { getAllProcessesV2 } from '../../../services/processServices';
-import {
-  setAllProcesses,
-  setNotificationsForUser,
-} from '../../../features/app/appSlice';
+import { getAllProcessesV2 } from '../../../services/processServices'; 
 import { setAllDocuments } from '../../../features/document/documentSlice';
 import { setAllTemplates } from '../../../features/template/templateSlice';
 import { setAllWorkflows } from '../../../features/workflow/workflowsSlice';
@@ -26,8 +22,10 @@ import {
   SetKnowledgeFolders
 } from '../../../features/app/appSlice';
 import axios from 'axios';
+ 
 import LoadingScreen from "../../LoadingScreen/loadingScreen"
 
+ 
 const SectionBox = ({
   cardItems,
   title,
