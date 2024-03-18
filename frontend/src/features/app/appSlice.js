@@ -307,7 +307,8 @@ export const {
   updateSingleTableOfContentRequiredStatus,
   setApiKeyFetchFailureMessage,
   setShowApiKeyFetchFailureModal,
-  setError
+  setError,
+  setAllProcesses
 } = appSlice.actions;
 
 export default appSlice.reducer;
