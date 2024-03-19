@@ -2,12 +2,6 @@ import styles from './connectWorkFlowToDoc.module.css';
 
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import {
-  setProcessSteps,
-  setSavedProcessConfigured,
-  updateSingleProcessStep,
-} from '../../../../features/app/appSlice';
-
 import Dropdown from './dropdown/Dropdown';
 
 import BookSpinner from '../../../bookSpinner/BookSpinner';
@@ -20,18 +14,21 @@ import AssignCollapse from './contents/assignCollapse/AssignCollapse';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import AssignTask from './contents/selectMembersToAssign/assignTask/AssignTask';
+import {   setProcessSteps,
+  setSavedProcessConfigured,
+  updateSingleProcessStep, } from '../../../../features/processes/processesSlice';
 
 const ConnectWorkFlowToDoc = ({ stepsPopulated, savedProcessSteps, addWorkflowStep }) => {
   const { register } = useForm();
   const dispatch = useDispatch();
   const { t } = useTranslation();
-  const { savedProcessConfigured } = useSelector((state) => state.app);
+
 
     ////copied process
     const copiedProcess = useSelector((state) => state.copyProcess.processStep);
   // // console.log('the copied procesSteps are ', copiedProcess)
-  const { docCurrentWorkflow, processSteps } = useSelector(
-    (state) => state.app
+  const { docCurrentWorkflow, processSteps,savedProcessConfigured } = useSelector(
+    (state) => state.processes
   );
 
   const [currentSteps, setCurrentSteps] = useState([]);

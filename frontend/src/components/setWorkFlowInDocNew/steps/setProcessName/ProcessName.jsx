@@ -2,12 +2,10 @@ import React, { useState } from 'react'
 import styles from './ProcessName.module.css'
 import { useDispatch, useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
-
-import { setProcessName } from '../../../../features/app/appSlice';
 const ProcessName = ({ Process_title, setProcess_title }) => {
     const { t, i18n } = useTranslation();
     const dispatch = useDispatch();
-    const { ProcessName } = useSelector((state) => state.app);
+    const { ProcessName } = useSelector((state) => state.processes);
 
 //     // console.log('Language:', i18n.language);
 //     const translationKey = 'Process Name';

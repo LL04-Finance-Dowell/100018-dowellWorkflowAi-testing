@@ -8,17 +8,6 @@ import DowellLogo from '../../assets/dowell.png';
 import Spinner from '../../components/spinner/Spinner';
 import useCloseElementOnEscapekeyClick from '../../../src/hooks/useCloseElementOnEscapeKeyClick';
 import UserDetail from '../../components/newSidebar/userDetail/UserDetail';
-import {
-  setAdminUser,
-  setAdminUserPortfolioLoaded,
-  setAllProcesses,
-  setLegalAgreePageLoading,
-  setProcessesLoaded,
-  setProcessesLoading,
-  setShowLegalStatusPopup,
-  setUserDetailPosition,
-  setLanguageSelectPosition,
-} from '../../features/app/appSlice';
 import { AiOutlineClose } from 'react-icons/ai';
 import { RxHamburgerMenu } from 'react-icons/rx';
 import { IoIosCloseCircle } from 'react-icons/io';
@@ -38,6 +27,8 @@ import { useTranslation } from 'react-i18next';
 import LanguageDropdown from '../../components/LanguageSelector/LanguageDropdown';
 import { toast } from 'react-toastify';
 import axios from 'axios';
+import { setAllProcesses, setProcessesLoaded, setProcessesLoading } from '../../features/processes/processesSlice';
+import { setAdminUser, setAdminUserPortfolioLoaded, setLanguageSelectPosition, setLegalAgreePageLoading, setShowLegalStatusPopup, setUserDetailPosition } from '../../features/app/appSlice';
 
 const WorkflowLayout = ({ children }) => {
   const dispatch = useDispatch();
@@ -55,10 +46,12 @@ const WorkflowLayout = ({ children }) => {
     dateAgreedToLegalStatus,
     legalArgeePageLoading,
     adminUserPortfolioLoaded,
-    processesLoaded,
     ShowProfileSpinner,
     temLoading
   } = useSelector((state) => state.app);
+  const {
+    processesLoaded,
+  } = useSelector((state) => state.processes);
 
   const [createNewPortfolioLoading, setCreateNewPortfolioLoading] =
     useState(false);

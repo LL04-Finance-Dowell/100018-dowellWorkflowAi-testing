@@ -28,7 +28,7 @@ const ProcessDocument = () => {
     processSteps,
     docCurrentWorkflow,
     tableOfContentForStep,
-  } = useSelector((state) => state.app);
+  } = useSelector((state) => state.processes);
   const [workflowsDataToDisplay, setWorkflowsDataToDisplay] = useState([]);
   const { userDetail } = useSelector((state) => state.auth);
   const [newProcessLoading, setNewProcessLoading] = useState(false);

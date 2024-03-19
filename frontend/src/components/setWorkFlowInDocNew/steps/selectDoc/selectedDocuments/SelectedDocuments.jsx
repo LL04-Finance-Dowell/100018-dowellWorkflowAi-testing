@@ -1,7 +1,7 @@
 import React, {useEffect} from 'react';
 import { useForm } from 'react-hook-form';
 import { useDispatch, useSelector } from 'react-redux';
-import { setCurrentDocToWfs } from '../../../../../features/app/appSlice';
+
 import { contentDocument, contentDocumentStep} from '../../../../../features/document/asyncThunks';
 import { setContentOfDocument } from '../../../../../features/document/documentSlice';
 import { PrimaryButton } from '../../../../styledComponents/styledComponents';
@@ -10,6 +10,7 @@ import { useTranslation } from 'react-i18next';
 
 import { startCopyingWorkflow } from '../../../../../features/processCopyReducer';
 import { contentTemplate } from '../../../../../features/template/asyncThunks';
+import { setCurrentDocToWfs } from '../../../../../features/processes/processesSlice';
 
 const SelectedDocuments = ({
   selectedDocument,

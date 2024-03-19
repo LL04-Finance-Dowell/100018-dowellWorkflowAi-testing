@@ -1,19 +1,18 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
+import { setEditorLink } from '../../../features/app/appSlice';
 import HoverCard from '../HoverCard';
 import { Button } from '../styledComponents';
 import { detailDocument, documentReport } from '../../../features/document/asyncThunks';
 import { useState } from 'react';
-import { toast } from 'react-toastify';
 import axios from 'axios';
 import { LoadingSpinner } from '../../LoadingSpinner/LoadingSpinner';
 import {
   verifyProcessForUser,
   getVerifiedProcessLink,
 } from '../../../services/processServices';
-import { setEditorLink } from '../../../features/app/appSlice';
-
 import { useAppContext } from '../../../contexts/AppContext';
 import {
   SetShowDocumentReport,
@@ -40,6 +39,7 @@ import { IoIosRefresh } from 'react-icons/io';
 import { Tooltip } from 'react-tooltip';
 
 import AddRemoveBtn from '../AddRemoveBtn';
+import PdfViewer from '../../documentViewer/PdfViewer';
 
 const DocumentCard = ({
   cardItem,
@@ -55,9 +55,13 @@ const DocumentCard = ({
   const dispatch = useDispatch();
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const [showPdfViewer, setShowPdfViewer] = useState(false);
+  const [pdfUrl, setPdfUrl] = useState('');
+
 
   const [dataLoading, setDataLoading] = useState(false);
   const { userDetail } = useSelector((state) => state.auth);
+  const [openPdfDrawer, setOpenPdfDrawer] = useState(false);
 
   const {
     favoriteItems,
@@ -67,6 +71,10 @@ const DocumentCard = ({
   } = useAppContext();
   const { allDocuments } = useSelector((state) => state.document);
   const [documentLoading, setDocumentLoading] = useState(false);
+
+  const [errorMessage, setErrorMessage] = useState('');
+  const [showErrorModal, setShowErrorModal] = useState(false);
+
 
   // console.log("cardItem", cardItem, isReport)
 
@@ -167,28 +175,38 @@ const DocumentCard = ({
           user_name: userDetail?.userinfo?.username,
           // process_id: item.process_id,
         };
+
         const response = await (
           await getVerifiedProcessLink(item.process_id, dataToPost)
         ).data;
+
         /*  dispatch(setEditorLink(response)); */
 
         // setDataLoading(false);
-        handleGoToEditor(response, item);
+
+        handleGoToEditor(response, item); /////////////
       } catch (error) {
-        // // console.log(error);
         setDataLoading(false);
-        toast.info(
-          error.response.status !== 500
-            ? error.response
-              ? error.response.data
-              : error.message
-            : 'Could not get notification link'
-        );
+        // toast.info(
+        //   error.response.status !== 500
+        //     ? error.response
+        //       ? error.response.data
+        //       : error.message
+        //     : 'Could not get notification link'
+        // );
+        if (error.response && error.response.status !== 500) {
+          // Handle specific error responses
+          setErrorMessage(error.response.data || error.message);
+        } else {
+          setErrorMessage('Cannot fetch this document at the moment, please try again later!');
+        }
+        setShowErrorModal(true);
       } finally {
         setIsNoPointerEvents(false);
       }
       return;
-    }
+    }; 
+
 
     const data = {
       document_name: item.document_name,
@@ -207,8 +225,20 @@ const DocumentCard = ({
 
   };
 
+  const closeModal = () => {
+    setShowErrorModal(false);
+    setErrorMessage('');
+  };
+
+  const viewAsPDF = async (item) => {
+    console.log("view as Preview")
+    setPdfUrl('https://dowellfileuploader.uxlivinglab.online/view-pdf/Morvin%20Nov%20Inv<br>.pdf');
+    // setPdfUrl(pdf);
+    setOpenPdfDrawer(!openPdfDrawer);
+  };
+
   const handleShowDocument = async (item) => {
-    // console.log("itemhandleMubeen",item )
+    console.log("itemhandleMubeen", item)
     dispatch(SetSingleDocument(item));
     getDocumentDetail(item.collection_id)
     // navigate("/documents/document-detail");
@@ -365,6 +395,10 @@ const DocumentCard = ({
       });
   };
 
+
+  const handleSaveFile = async () => {
+  }
+
   const FrontSide = () => {
     return (
       <div style={{ wordWrap: 'break-word', width: '100%' }}>
@@ -462,7 +496,7 @@ const DocumentCard = ({
                 t('Show Report')
               )}
             </Button>
-            : <Button onClick={() => handleDetailDocumnet(cardItem)}>
+            : <> <Button onClick={() => handleDetailDocumnet(cardItem)}>
               {dataLoading ? (
                 <LoadingSpinner />
               ) : cardItem.type === 'sign-document' ? (
@@ -471,6 +505,17 @@ const DocumentCard = ({
                 t('Open Document')
               )}
             </Button>
+              <br />
+              <Button onClick={() => viewAsPDF(cardItem)}>
+                {dataLoading ? (
+                  <LoadingSpinner />
+                ) : cardItem.type === 'sign-document' ? (
+                  'Sign Here'
+                ) : (
+                  t('Preview')
+                )}
+              </Button>
+            </>
         ) : (
           'no item'
         )}
@@ -561,16 +606,33 @@ const DocumentCard = ({
             <AddRemoveBtn type={'remove'} item={cardItem} folderId={folderId} />
           )}
         </div>
+        {pdfUrl && <PdfViewer
+          open={openPdfDrawer}
+          onClose={() => setOpenPdfDrawer(false)}
+          pdfUrl={pdfUrl}
+          onSave={handleSaveFile}
+        />} {/* Render PdfViewer only if showPdfViewer is true */}
+
+        {showErrorModal && (
+          <div className="modal">
+            <div className="modal-content">
+              <span className="close" onClick={closeModal}>&times;</span>
+              <p>{errorMessage}</p>
+            </div>
+          </div>
+        )}
       </div>
     );
   };
   return (
-    <HoverCard
-      Front={FrontSide}
-      Back={BackSide}
-      loading={documentLoading ? documentLoading : dataLoading}
-      id={cardItem._id}
-    />
+    <>
+      <HoverCard
+        Front={FrontSide}
+        Back={BackSide}
+        loading={documentLoading ? documentLoading : dataLoading}
+        id={cardItem._id}
+      />
+    </>
   );
 };
 

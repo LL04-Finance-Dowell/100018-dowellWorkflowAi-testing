@@ -1,10 +1,11 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import { resetSetWorkflows } from "../../features/app/appSlice";
+
 import { setContentOfDocument } from "../../features/document/documentSlice";
 import { useDispatch, useSelector } from "react-redux";
 import "./tabs.css";
 import { useTranslation } from 'react-i18next';
+import { resetSetWorkflows } from "../../features/processes/processesSlice";
 
 const Tabs = () => {
   const navigate = useNavigate();

@@ -30,8 +30,8 @@ const Reports = () => {
   const { allDocuments: allDocumentsArray } = useSelector(
     (state) => state.document
   );
-  const { allProcesses, themeColor } = useSelector((state) => state.app);
-
+  const { themeColor } = useSelector((state) => state.app);
+  const { allProcesses } = useSelector((state) => state.processes);
 
   useEffect(() => {
     if (docsCompleted)

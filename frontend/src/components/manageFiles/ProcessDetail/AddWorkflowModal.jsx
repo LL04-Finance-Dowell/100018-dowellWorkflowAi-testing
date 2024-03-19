@@ -11,7 +11,7 @@ import { SetDocumentId } from '../../../features/app/appSlice';
 
 export default function AddWorkflowModal(props) {
 	const { userDetail } = useSelector((state) => state.auth);
-	const { ProcessDetail } = useSelector((state) => state.app);
+	const { ProcessDetail } = useSelector((state) => state.processes);
 	const navigate = useNavigate()
 	const dispatch = useDispatch()
 	// console.log("ProcessDetail", ProcessDetail, userDetail)
