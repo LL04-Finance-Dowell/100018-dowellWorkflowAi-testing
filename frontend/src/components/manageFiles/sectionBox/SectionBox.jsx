@@ -633,7 +633,7 @@ const SectionBox = ({
                     cardItemsVar &&
                     cardItemsVar?.length > 0 &&
                     cardItemsVar
-                      .slice(0, sliceCount * 40)
+                      .slice(0, sliceCount * 18)
                       .map((item) => (
                         <div>
                           {status === 'pending' ? <LoadingScreen /> : 
