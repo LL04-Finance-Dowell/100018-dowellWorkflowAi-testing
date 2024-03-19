@@ -1,6 +1,7 @@
 import styles from './sectionBox.module.css';
 import maneFilesStyles from '../manageFiles.module.css';
 import BookSpinner from '../../bookSpinner/BookSpinner';
+import LoadingScreen from '../../LoadingScreen/loadingScreen';
 import { useEffect, useState } from 'react';
 
 import { PrimaryButton } from '../../styledComponents/styledComponents';
@@ -12,9 +13,7 @@ import { toast } from 'react-toastify';
 import { TemplateServices } from '../../../services/templateServices';
 import { WorkflowServices } from '../../../services/workflowServices';
 import { getAllProcessesV2 } from '../../../services/processServices';
-import {
-  setAllProcesses,
-} from '../../../features/app/appSlice';
+
 import { setAllDocuments } from '../../../features/document/documentSlice';
 import { setAllTemplates } from '../../../features/template/templateSlice';
 import { setAllWorkflows } from '../../../features/workflow/workflowsSlice';
@@ -26,6 +25,7 @@ import {
 } from '../../../features/app/appSlice';
 import axios from 'axios';
 import { setNotificationsForUser } from '../../../features/notifications/notificationSlice';
+import { setAllProcesses } from '../../../features/processes/processesSlice';
 const SectionBox = ({
   cardItems,
   title,
@@ -46,8 +46,10 @@ const SectionBox = ({
   const [sliceCount, setSliceCount] = useState(1);
   const [refreshLoading, setRefreshLoading] = useState(false);
   const { userDetail } = useSelector((state) => state.auth);
-  const { processesLoading, notificationsForUser, notificationsLoading } =
-    useSelector((state) => state.app);
+  const { processesLoading} =
+    useSelector((state) => state.processes);
+  const { notificationsForUser, notificationsLoading } =
+    useSelector((state) => state.notification);
   const { allDocumentsStatus } = useSelector((state) => state.document);
   const { allTemplatesStatus } = useSelector((state) => state.template);
   const { allWorkflowsStatus } = useSelector((state) => state.workflow);
@@ -103,14 +105,10 @@ const SectionBox = ({
       if (!isDemoLoading) {
         handleDemoLoadMore();
       }
-    }, 2000); // 2000 milliseconds = 2 seconds
+    }, 2000); 
 
-    return () => clearTimeout(timer); // Cleanup function to clear timer if component unmounts or sliceCount changes
+    return () => clearTimeout(timer); 
   }, [sliceCount]);
-
-  // useEffect(() => {
-  //   // console.log('cardItemsVar: ', cardItemsVar);
-  // }, [cardItemsVar]);
 
   const handleRefresh = () => {
     if (refreshLoading) return;
@@ -622,84 +620,52 @@ const SectionBox = ({
             )}
           </h2>
 
-          {status === 'pending' ? (
-            <div style={{ marginTop: '15px' }}>
-              <BookSpinner />
-            </div>
-          ) : (
-            Card &&
+          {Card &&
             cardItemsVar &&
-            cardItemsVar.length && (
+            cardItemsVar?.length > 0 && (
               <>
                 <div className={styles.grid__box}>
                   {Card &&
                     cardItemsVar &&
                     cardItemsVar?.length > 0 &&
-                    cardItemsVar
-                      .slice(0, sliceCount * 12)
-                      .map((item) => (
-                        <Card
+                    cardItemsVar.slice(0, sliceCount * 18).map((item) => (
+                      <div>
+                        {status === 'pending' ? (<LoadingScreen />) : (<Card
                           key={item?._id}
                           cardItem={item}
+                          LoadingScreen={LoadingScreen}
                           hideFavoriteIcon={hideFavoriteIcon}
                           hideDeleteIcon={hideDeleteIcon}
                           isFolder={itemType === 'folder' ? true : false}
+                          isDocument={itemType === 'documnets' ? true : false}
                           folderId={folderId}
                           isCompletedDoc={isCompleted}
                           isRejectedDoc={isRejected}
                           isReport={isReport}
                           knowledgeCenter={knowledgeCenter}
-                        />
-                      ))}
+                        />)}
+                      </div>
+                    ))}
                 </div>
-                {!isDemo
-                  ? cardItemsVar &&
-                  cardItemsVar?.length > 10 && (
-                    <p
-                      style={{
-                        pointerEvents: `${cardItemsVar.length / 12 < sliceCount && 'none'
-                          }`,
-                      }}
-                      hoverBg='success'
-                      onClick={handleLoadMore}
-                    >
-                      {cardItemsVar.length / 12 < sliceCount
-                        ? 'no more load'
-                        : 'Load more...'}
-                    </p>
-                  )
-                  : cardItemsVar &&
-                  cardItemsVar.length > 12 && (
-                    <p
-                      hoverBg='success'
-                      onClick={handleDemoLoadMore}
-                      style={{
-                        textAlign: 'center',  
-                        pointerEvents: isDemoLoading ? 'none' : 'auto',  
-                        cursor: 'pointer',
-                        marginTop: '20px'
-                      }}
-                      disabled={isDemoLoading}
-
-                      // style={{
-                      //   textAlign: 'center',
-                      //   pointerEvents: `${cardItemsVar.length / 12 < sliceCount ? 'none' : 'auto'}`, // Toggle pointer events
-                      //   cursor: 'pointer',
-                      // }}
-                    >
-                      {isDemoLoading ? (
-                        <LoadingSpinner
-                          color={'white'}
-                          width={'1rem'}
-                          height={'1rem'}
-                        />
-                      ) : (
-                        'Load more...'
-                      )}
-                    </p>
-                  )}
+                 {/* <div ref={bottomOfPageRef} /> */}
+                {cardItemsVar?.length > sliceCount * 18 && (
+                  <div style={{ textAlign: 'center', marginTop: '20px' }}>
+                    {cardItemsVar?.length > sliceCount * 18 && (
+                      <p
+                        onClick={handleDemoLoadMore}
+                        style={isDemoLoading ? { pointerEvents: 'none' } : {}}
+                        disabled={isDemoLoading}
+                      >
+                        {isDemoLoading ? (
+                          <LoadingSpinner color={'white'} width={'1rem'} height={'1rem'} />
+                        ) : (
+                          'Load More...'
+                        )}
+                      </p>
+                    )}
+                  </div>
+                )}
               </>
-            )
           )}
         </div>
       </div>
@@ -708,3 +674,4 @@ const SectionBox = ({
 };
 
 export default SectionBox;
+

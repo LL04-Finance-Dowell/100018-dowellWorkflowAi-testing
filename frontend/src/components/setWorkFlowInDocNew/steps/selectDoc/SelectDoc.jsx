@@ -23,7 +23,7 @@ import { setOriginalDocuments, setOriginalDocumentsLoaded } from '../../../../fe
 import axios from 'axios';
 
 import { contentDocument } from '../../../../features/document/asyncThunks';
-import { setCurrentDocToWfs } from '../../../../features/app/appSlice';
+
 import { setContentOfDocument } from '../../../../features/document/documentSlice';
 
 import { startCopyingDocument } from '../../../../features/processCopyReducer';
@@ -42,7 +42,7 @@ const SelectDoc = ({ savedDoc, addWorkflowStep }) => {
     (state) => state.document
   );
   const { userDetail } = useSelector((state) => state.auth);
-  const { ProcessDetail, DocumentId } = useSelector((state) => state.app);
+  const { DocumentId } = useSelector((state) => state.app);
 
 
   ///import which doc or template approval

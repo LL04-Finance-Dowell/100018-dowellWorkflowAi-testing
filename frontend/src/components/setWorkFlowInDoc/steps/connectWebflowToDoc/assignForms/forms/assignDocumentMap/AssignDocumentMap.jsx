@@ -6,7 +6,8 @@ import AssignButton from "../../../../../assignButton/AssignButton";
 import { useState } from "react";
 import FormLayout from "../../../../../formLayout/FormLayout";
 import { useDispatch, useSelector } from "react-redux";
-import { updateSingleProcessStep } from "../../../../../../../features/app/appSlice";
+import { updateSingleProcessStep } from "../../../../../../../features/processes/processesSlice";
+
 
 const AssignDocumentMap = ({ currentStepIndex }) => {
   const {
@@ -15,7 +16,7 @@ const AssignDocumentMap = ({ currentStepIndex }) => {
     formState: { isSubmitted },
   } = useForm();
   const [loading, setLoading] = useState(false);
-  const { docCurrentWorkflow } = useSelector((state) => state.app);
+  const { docCurrentWorkflow } = useSelector((state) => state.processes);
   const dispatch = useDispatch();
 
   const onSubmit = (data) => {

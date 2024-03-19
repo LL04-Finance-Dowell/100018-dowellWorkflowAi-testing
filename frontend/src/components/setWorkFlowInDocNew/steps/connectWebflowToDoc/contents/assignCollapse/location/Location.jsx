@@ -8,8 +8,9 @@ import { useDispatch, useSelector } from 'react-redux';
 import { continentsData } from '../../../../../../../utils/continentsData';
 import { getRegionsInCountry } from '../../../../../../../services/locationServices';
 import ProgressBar from '../../../../../../progressBar/ProgressBar';
-import { updateSingleProcessStep } from '../../../../../../../features/app/appSlice';
+
 import { useTranslation } from 'react-i18next';
+import { updateSingleProcessStep } from '../../../../../../../features/processes/processesSlice';
 
 
 const Location = ({ currentStepIndex, stepsPopulated }) => {
@@ -25,7 +26,7 @@ const Location = ({ currentStepIndex, stepsPopulated }) => {
   const [currentLocationChoice, setCurrentLocationChoice] = useState(null);
   const [showLocationDropdowns, setShowLocationDropdowns] = useState(false);
   const { docCurrentWorkflow, continents, continentsLoaded, processSteps } =
-    useSelector((state) => state.app);
+    useSelector((state) => state.processes);
   const { userDetail, session_id } = useSelector((state) => state.auth);
   const [countries, setCountries] = useState([]);
   const [regionsLoading, setRegionsLoading] = useState(false);

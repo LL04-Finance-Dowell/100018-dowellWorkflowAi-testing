@@ -19,13 +19,6 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import GeneratedLinksModal from "./components/GeneratedLinksModal/GeneratedLinksModal";
 import SaveConfimationModal from "./components/SaveConfirmationModal/SaveConfirmationModal";
-import {
-  setAllProcesses,
-  setAllowErrorChecksStatusUpdateForNewProcess,
-  setNewProcessErrorMessage,
-  setCurrentMessage,
-  setPopupIsOpen,
-} from "../../../../features/app/appSlice";
 import { useTranslation } from "react-i18next";
 import { extractProcessObj } from "./utils/utils";
 import { productName } from "../../../../utils/helpers";
@@ -33,6 +26,8 @@ import { productName } from "../../../../utils/helpers";
 //import reset copy data 
 import { resetCopyData } from "../../../../features/processCopyReducer";
 import { selectedGroupMembers } from "../../../../features/groups/groupsSlice";
+import { setAllProcesses, setAllowErrorChecksStatusUpdateForNewProcess, setNewProcessErrorMessage } from "../../../../features/processes/processesSlice";
+import {  setPopupIsOpen } from "../../../../features/app/appSlice";
 
 const ProcessDocument = ({ savedProcess, Process_title, setProcess_title, addWorkflowStep }) => {
   // const [ScrollView , SetScrollView] = useState();
@@ -66,20 +61,21 @@ const ProcessDocument = ({ savedProcess, Process_title, setProcess_title, addWor
   const { userDetail } = useSelector((state) => state.auth);
   const {
     currentDocToWfs,
-    DocumentId,
     processSteps,
-    docCurrentWorkflow,
     tableOfContentForStep,
     teamMembersSelectedForProcess,
     userMembersSelectedForProcess,
     publicMembersSelectedForProcess,
     allProcesses,
     errorsCheckedInNewProcess,
+    docCurrentWorkflow,
+    ProcessDetail,
+  } = useSelector((state) => state.processes);
+  const {
+    DocumentId,
     popupIsOpen,
     creditResponse,
-    ProcessDetail,
   } = useSelector((state) => state.app);
-
   const [newProcessLoading, setNewProcessLoading] = useState(false);
   const [newProcessLoaded, setNewProcessLoaded] = useState(null);
   const [showGeneratedLinksPopup, setShowGeneratedLinksPopup] = useState(false);

@@ -10,18 +10,18 @@ import ContentMapOfDoc from './contentMapOfDoc/ContentMapOfDoc';
 import WorkflowLayout from '../../layouts/WorkflowLayout/WorkflowLayout';
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import {
-  resetSetWorkflows,
-  setContinents,
-  setContinentsLoaded,
-} from '../../features/app/appSlice';
 import { setContentOfDocument } from '../../features/document/documentSlice';
 import { getContinents } from '../../services/locationServices';
+import { 
+    resetSetWorkflows,
+    setContinents,
+    setContinentsLoaded, } from '../../features/processes/processesSlice';
+
 
 const SetWorkflowInDoc = () => {
   const dispatch = useDispatch();
   const { userDetail, session_id } = useSelector((state) => state.auth);
-  const { continentsLoaded } = useSelector((state) => state.app);
+  const { continentsLoaded } = useSelector((state) => state.proccesses.app);
 
   useEffect(() => {
     dispatch(resetSetWorkflows());

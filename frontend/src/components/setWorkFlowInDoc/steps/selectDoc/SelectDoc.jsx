@@ -11,10 +11,11 @@ import {
   allDocuments,
   contentDocument,
 } from '../../../../features/document/asyncThunks';
-import { setCurrentDocToWfs } from '../../../../features/app/appSlice';
+
 import { LoadingSpinner } from '../../../LoadingSpinner/LoadingSpinner';
 import { setContentOfDocument } from '../../../../features/document/documentSlice';
 import { productName } from '../../../../utils/helpers';
+import { setCurrentDocToWfs } from '../../../../features/processes/processesSlice';
 
 const SelectDoc = () => {
   const dispatch = useDispatch();
@@ -22,7 +23,7 @@ const SelectDoc = () => {
     (state) => state.document
   );
   const { userDetail } = useSelector((state) => state.auth);
-  const { currentDocToWfs } = useSelector((state) => state.app);
+  const { currentDocToWfs } = useSelector((state) => state.processes);
 
   useEffect(() => {
     const data = {

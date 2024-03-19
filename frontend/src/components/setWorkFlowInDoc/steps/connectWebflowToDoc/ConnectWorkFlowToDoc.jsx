@@ -8,19 +8,18 @@ import AssignTime from './assignForms/forms/assignTime/AssignTimes';
 import Contents from '../../contents/Contents';
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import {
-  setProcessSteps,
-  updateSingleProcessStep,
-} from '../../../../features/app/appSlice';
+
 import Dropdown from './dropdown/Dropdown';
 import BookSpinner from '../../../bookSpinner/BookSpinner';
+import {   setProcessSteps,
+updateSingleProcessStep, } from '../../../../features/processes/processesSlice';
 
 const ConnectWorkFlowToDoc = () => {
   const dispatch = useDispatch();
 
   const { contentOfDocument } = useSelector((state) => state.document);
   const { wfToDocument, docCurrentWorkflow } = useSelector(
-    (state) => state.app
+    (state) => state.processes
   );
 
 

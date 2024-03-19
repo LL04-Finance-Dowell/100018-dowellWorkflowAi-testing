@@ -6,22 +6,21 @@ import { useAppContext } from '../../../../contexts/AppContext';
 import { useDispatch, useSelector } from 'react-redux';
 import SelectedWorkflows from './selectedWorkflow/SelectedWorkflows';
 import { PrimaryButton } from '../../../styledComponents/styledComponents';
-import {
-  removeFromSelectedWorkflowsToDocGroup,
-  setWfToDocument,
-} from '../../../../features/app/appSlice';
+
 
 import { startConnecting } from '../../../../features/processCopyReducer';
 
 import { useTranslation } from 'react-i18next';
 import { toast } from 'react-toastify';
+import { setWfToDocument } from '../../../../features/processes/processesSlice';
+import { removeFromSelectedWorkflowsToDocGroup } from '../../../../features/app/appSlice';
 
 const SelectWorkflow = ({ savedDoc }) => {
   const dispatch = useDispatch();
   const { t } = useTranslation();
   const { isMobile } = useAppContext();
 
-  const { currentDocToWfs, selectedWorkflowsToDoc, docCurrentWorkflow, } = useSelector((state) => state.app);
+  const { currentDocToWfs, selectedWorkflowsToDoc, docCurrentWorkflow, } = useSelector((state) => state.processes);
   const { contentOfDocument } = useSelector((state) => state.document);
 
   ////copied workflow

@@ -10,10 +10,34 @@ from app.constants import EDITOR_API
 import json
 from datetime import datetime
 import requests
+from rest_framework.response import Response
+import re
 
 
 class InvalidTokenException(Exception):
     pass
+
+
+def CustomResponse(success=True, message=None, response=None, status_code=None):
+    """
+    Create a custom response.
+    :param success: Whether the operation was successful or not.
+    :param message: Any message associated with the response.
+    :param data: Data to be included in the response.
+    :param status_code: HTTP status code for the response.
+    :return: Response object.
+    """
+    response_data = {"success": success}
+    if message is not None:
+        response_data["message"] = message
+    if response is not None:
+        response_data["response"] = response
+
+    return (
+        Response(response_data, status=status_code)
+        if status_code
+        else Response(response_data)
+    )
 
 
 def authorization_check(api_key):
@@ -50,11 +74,14 @@ def generate_unique_collection_name(existing_collection_names, base_name):
     return f"{base_name}_{new_index}"
 
 
-def check_if_name_exists_collection(api_key, collection_name, db_name, base_name=None):
-    res = datacube_collection_retrieval(api_key, db_name)  
+def check_if_name_exists_collection(api_key, collection_name, db_name):
+    res = datacube_collection_retrieval(api_key, db_name)
+    base_name = re.sub(r"_\d+$", "", collection_name)
     if res["success"] == True:
         if collection_name not in res["data"][0]:
-            new_collection_name = generate_unique_collection_name(res["data"][0], base_name)
+            new_collection_name = generate_unique_collection_name(
+                res["data"][0], base_name
+            )
             return {
                 "name": new_collection_name,
                 "success": True,
