@@ -24,7 +24,8 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
-
+Pipfile
+Pipfile.lock
 venv
 
 __pycache__

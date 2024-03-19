@@ -1,1 +1,10 @@
 .idea
+Pipfile
+Pipfile.lock
+env
+*__pycache__
+migrations
+*test/
+*sqlite*
+media
+*.log
