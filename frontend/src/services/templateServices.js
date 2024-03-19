@@ -50,7 +50,6 @@ export class TemplateServices {
   getTemplateReports = (companyId, dataType, member, portfolioName) => {
     httpApiUrlV2.get(
       `/templates/${companyId}/organisations/?data_type=${dataType}&template_state=draft&member=${member}&portfolio=${portfolioName}`
-      // https://100094.pythonanywhere.com/v2/templates/6390b313d77dc467630713f2/organisations/?template_state=draft&data_type=Real_Data
     );
   }
 
