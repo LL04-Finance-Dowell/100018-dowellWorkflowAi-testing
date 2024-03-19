@@ -217,3 +217,13 @@ def single_query_template_collection(
     api_key: str, database: str, collection: str, filters: dict
 ):
     return get_data_from_collection(api_key, database, collection, filters, limit=1)
+
+def bulk_query_workflow_collection(
+    api_key: str, database: str, collection: str, filters: dict
+):
+    return get_data_from_collection(api_key, database, collection, filters)
+
+def update_workflow_collection(api_key: str, database: str, collection: str, data: dict):
+    return post_data_to_collection(
+        api_key, database, collection, data, "update"
+    )

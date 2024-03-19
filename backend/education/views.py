@@ -33,6 +33,8 @@ from education.datacube_connection import (
     single_query_document_collection,
     single_query_template_collection,
     save_to_workflow_collection,
+    bulk_query_workflow_collection,
+    update_workflow_collection
 )
 
 from django.core.cache import cache
@@ -285,7 +287,7 @@ class NewTemplate(APIView):
         api_key = request.data["api_key"]
         no_of_collections = 1
         collection_names = check_if_name_exists_collection(
-            api_key, collection_name, db_name
+            api_key, collection_name, db_name, "template_collection"
         )
         collection_name = collection_names["name"]
         if collection_names["success"]:
@@ -407,8 +409,52 @@ class NewTemplate(APIView):
 
 class Workflow(APIView):
     def get(self, request):
-        pass
+        api_key = request.query_params.get("api_key")
+        db_name = request.query_params.get("db_name")
+        collection_name = request.query_params.get("collection_name")
+        company_id = request.query_params.get("company_id")
+        
+        if not all([api_key, collection_name, db_name, company_id]):           
+            return Response(
+                {"Message": "API Key, DB Name, Collection Name and Company ID required"},
+                status.HTTP_400_BAD_REQUEST,
+            )
+        
+        workflow_list = bulk_query_workflow_collection(
+            api_key,
+            db_name,
+            collection_name,
+            {"company_id":company_id, "workflow_type":"original"}
+        )
+        
+        return Response(
+            workflow_list["data"],
+            status=status.HTTP_200_OK
+        )
 
+    def put(self, request):
+        api_key = request.data.get("api_key")
+        db_name = request.data.get("db_name")
+        collection_name = request.data.get("collection_name")
+        data = request.data.get("data")
+        
+        if not all([api_key, collection_name, db_name, isinstance(data, dict)]):
+            return Response(
+                {"Message": "API key, db name, collection name, and Data (as a dictionary/object) are required."},
+                status.HTTP_400_BAD_REQUEST,
+            )
+
+        res = update_workflow_collection(
+            api_key,
+            db_name,
+            collection_name,
+            data
+        )
+        
+        return Response(
+            res["data"],
+            status=status.HTTP_200_OK
+        )
     def post(self, request):
         """Creates a new workflow"""
         form = request.data
@@ -423,11 +469,38 @@ class Workflow(APIView):
             "steps": form["steps"],
         }
         collection_name = "workflow_collection_0"
-        workflow_unique_name = generate_unique_collection_name(
-            collection_name, "workflow_collection"
+        
+        collection_names = check_if_name_exists_collection(
+            api_key, collection_name, db_name, "workflow_collection"
         )
-        if workflow_unique_name["success"]:
-
+    
+        collection_name = collection_names["name"]
+        if collection_names["success"]:
+            create_new_collection_for_workflow = add_collection_to_database(
+                api_key=api_key,
+                database=db_name,
+                collections=collection_name,
+                num_of_collections=1,
+            )
+      
+        if create_new_collection_for_workflow["success"] == False:
+            try:
+                collection_name = generate_unique_collection_name(
+                    collection_name, "workflow_collection"
+                )
+                create_new_collection_for_workflow = add_collection_to_database(
+                    api_key=api_key,
+                    database=db_name,
+                    collections=collection_name,
+                    num_of_collections=1
+                )
+                
+            except Exception as e:
+                return Response(
+                    "Database does not exist", status.HTTP_400_BAD_REQUEST, e.message
+                )
+        
+        if create_new_collection_for_workflow["success"]:
             res = save_to_workflow_collection(
                 api_key,
                 collection_name,
@@ -441,10 +514,11 @@ class Workflow(APIView):
                     "workflow_type": "original",
                 },
             )
-            if res["isSuccess"]:
+            
+            if res["success"]:
                 return Response(
                     {
-                        "_id": res["inserted_id"],
+                        "_id": res["data"]["inserted_id"],
                         "workflows": data,
                         "created_by": form["created_by"],
                         "company_id": form["company_id"],
@@ -501,7 +575,7 @@ class ItemProcessing(APIView):
             return Response("You are missing something!", status.HTTP_400_BAD_REQUEST)
 
         collection = check_if_name_exists_collection(
-            api_key, "process_collection", PROCESS_DB_0
+            api_key, "process_collection", PROCESS_DB_0, process_collection
         )
         collection_name = collection["name"]
         if collection["success"] and collection["status"] == "New":

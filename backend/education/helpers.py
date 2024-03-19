@@ -50,11 +50,11 @@ def generate_unique_collection_name(existing_collection_names, base_name):
     return f"{base_name}_{new_index}"
 
 
-def check_if_name_exists_collection(api_key, collection_name, db_name):
-    res = datacube_collection_retrieval(api_key, db_name)
+def check_if_name_exists_collection(api_key, collection_name, db_name, base_name=None):
+    res = datacube_collection_retrieval(api_key, db_name)  
     if res["success"] == True:
         if collection_name not in res["data"][0]:
-            new_collection_name = generate_unique_collection_name(res["data"][0])
+            new_collection_name = generate_unique_collection_name(res["data"][0], base_name)
             return {
                 "name": new_collection_name,
                 "success": True,
