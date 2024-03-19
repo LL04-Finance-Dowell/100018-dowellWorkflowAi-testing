@@ -11,6 +11,7 @@ import json
 from datetime import datetime
 import requests
 from rest_framework.response import Response
+import re
 
 
 class InvalidTokenException(Exception):
@@ -75,9 +76,12 @@ def generate_unique_collection_name(existing_collection_names, base_name):
 
 def check_if_name_exists_collection(api_key, collection_name, db_name):
     res = datacube_collection_retrieval(api_key, db_name)
+    base_name = re.sub(r"_\d+$", "", collection_name)
     if res["success"] == True:
         if collection_name not in res["data"][0]:
-            new_collection_name = generate_unique_collection_name(res["data"][0])
+            new_collection_name = generate_unique_collection_name(
+                res["data"][0], base_name
+            )
             return {
                 "name": new_collection_name,
                 "success": True,
