@@ -308,7 +308,7 @@ class NewTemplate(APIView):
         collection_name = "template_collection_0"
         db_name = f'{workspace_id}_"TEMPLATE_DATABASE_0"'
 
-        metadata_db = f"{workspacserializere_id}_METADATA_DATABASE_0"
+        metadata_db = f"{workspace_id}_METADATA_DATABASE_0"
         metadata_collection = "template_metadata_collection_0"
 
         try:
@@ -791,11 +791,16 @@ class ItemProcessing(APIView):
 class NewDocument(APIView):
 
     def post(self, request):
-             
-        db_name = request.data.get("db_name")
-        collection_name = request.data.get("collection_name")
+        workspace_id = request.data.get("workspace_id")
         organization_id = request.data.get("company_id")
         created_by = request.data.get("created_by")
+        data_type = request.data.get("data_type")
+
+        db_name = f"{workspace_id}_TEMPLATE_DATABASE_0"
+        collection_name = "template_collection_0"
+        metadata_db = f"{workspace_id}_METADATA_DATABASE_0"
+        metadata_collection = "template_metadata_collection_0"
+
         try:
             api_key = authorization_check(request.headers.get("Authorization"))
 
@@ -807,19 +812,21 @@ class NewDocument(APIView):
             portfolio = request.data["portfolio"]
         viewers = [{"member": created_by, "portfolio": portfolio}]
 
-        if not db_name or not collection_name:
+        if not workspace_id or not created_by or not data_type:
             return CustomResponse(
                 False,
-                "API key, collection name  and database name are required",
+                "workspace_id, created_by and data_type are required",
                 None,
                 status.HTTP_400_BAD_REQUEST,
             )
 
         collection = check_if_name_exists_collection(api_key, collection_name, db_name)
-        collection_name = collection["name"]
+        
         if not collection["success"]:
             return CustomResponse(False, "No collection with found", None, status.HTTP_404_NOT_FOUND)
 
+        collection_name = collection["name"]
+      
         template = get_template_from_collection(
             api_key, db_name, collection_name, {"collection_name": collection_name}
         )
@@ -837,10 +844,9 @@ class NewDocument(APIView):
             "document_state": "draft",
             "auth_viewers": viewers,
             "document_type": "original",
-            "parent_id": None,
+            "collection_name": collection_name,
             "process_id": "",
             "folders": [],
-            "template": db_name,
         }
 
         res = post_data_to_collection(
@@ -852,14 +858,21 @@ class NewDocument(APIView):
         )
 
         if res["success"]:
-            metadata = {
-                "document_name": "Untitled Document",
-                "created_by": request.data["created_by"],
-                "company_id": organization_id,
-                "document_state": "draft",
-                "auth_viewers": viewers,
-                "template": db_name,
-            }
+            collection_id = res["data"]["inserted_id"]            
+            metadata = save_to_metadata(
+                    api_key,
+                    metadata_collection,
+                    metadata_db,
+                    {
+                        "document_name": "Untitled Document",
+                        "created_by": request.data["created_by"],
+                        "collection_id": collection_id,
+                        "data_type": request.data["data_type"],
+                        "company_id": organization_id,
+                        "auth_viewers": viewers,
+                        "document_state": "draft"
+                    },
+                )
 
             res_metadata = save_to_metadata(
                 api_key=api_key,
@@ -875,19 +888,21 @@ class NewDocument(APIView):
                     None,
                     status.HTTP_500_INTERNAL_SERVER_ERROR,
                 )
-        return CustomResponse(True, "document created", None, status.HTTP_201_CREATED)
+        return CustomResponse(True, {"_id":res["data"]["inserted_id"], "doc_status":"document created"}, None, status.HTTP_201_CREATED)
 
 
 class Document(APIView):
     def get(self, request, company_id):
         """List of Created Documents."""
-        db_name = request.query_params.get("db_name")
-        collection_name = request.query_params.get("collection_name")
+        workspace_id = request.query_params.get("workspace_id")
         data_type = request.query_params.get("data_type")
         document_type = request.query_params.get("document_type")
         document_state = request.query_params.get("document_state")
         member = request.query_params.get("member")
         portfolio = request.query_params.get("portfolio")
+        
+        db_name = f"{workspace_id}_TEMPLATE_DATABASE_0"
+        collection_name = "template_collection_0"
         
         try:
             api_key = authorization_check(request.headers.get("Authorization"))
@@ -896,10 +911,10 @@ class Document(APIView):
             return CustomResponse(False, str(e), None, status.HTTP_401_UNAUTHORIZED)  
 
 
-        if not api_key or not db_name:
+        if not document_type or not document_state or not workspace_id:
             return CustomResponse(
                 False,
-                "API Key and Database Name are required",
+                "document_type, workspace_id and document_state are required",
                 None,
                 status.HTTP_400_BAD_REQUEST,
             )
@@ -907,10 +922,12 @@ class Document(APIView):
             return CustomResponse(False, "Invalid Request!", None, status.HTTP_400_BAD_REQUEST)
 
         collection = check_if_name_exists_collection(api_key, collection_name, db_name)
-        collection_name = collection["name"]
+       
         if not collection["success"]:
             return CustomResponse(False, "No collection with found", None, status.HTTP_404_NOT_FOUND)
 
+        collection_name = collection["name"]
+        
         if member and portfolio:
             auth_viewers = [{"member": member, "portfolio": portfolio}]
 
@@ -923,8 +940,8 @@ class Document(APIView):
                     "data_type": data_type,
                     "document_state": document_state,
                     "auth_viewers": auth_viewers,
-                    "template": db_name,
-                },
+
+                }
             )
             return Response(
                 {"documents": document_list},
@@ -939,10 +956,7 @@ class Document(APIView):
                     {
                         "company_id": company_id,
                         "data_type": data_type,
-                        "document_type": document_type,
-                        "document_state": document_state,
-                        "template": db_name,
-                        "api_key": api_key,
+                        "document_state": document_state
                     },
                 )
                 return Response({"documents": documents}, status=status.HTTP_200_OK)
@@ -958,8 +972,6 @@ class Document(APIView):
                             "company_id": company_id,
                             "data_type": data_type,
                             "document_state": document_state,
-                            "template": db_name,
-                            "api_key": api_key,
                         },
                     )
                     cache.set(cache_key, clones_list, timeout=60)
@@ -972,9 +984,12 @@ class Document(APIView):
 class DocumentLink(APIView):
     def get(self, request, item_id):
         """editor link for a document"""
-        db_name = request.query_params.get("db_name")
-        collection_name = request.query_params.get("collection_name")
+        workspace_id = request.query_params.get("workspace_id")
         document_type = request.query_params.get("document_type")
+        
+        db_name = f"{workspace_id}_TEMPLATE_DATABASE_0"
+        # db_name = "6390b313d77dc467630713f2_database0"
+        collection_name = "template_collection_0"
         
         try:
             api_key = authorization_check(request.headers.get("Authorization"))
@@ -982,33 +997,33 @@ class DocumentLink(APIView):
         except InvalidTokenException as e:
             return CustomResponse(False, str(e), None, status.HTTP_401_UNAUTHORIZED)  
 
-        if not collection_name or not db_name:
+        if not document_type or not workspace_id:
             return CustomResponse(
                 False,
-                "Collection and Database Name are required",
+                "workspace_id and document_type are required",
                 None,
                 status.HTTP_400_BAD_REQUEST,
             )
 
         collection = check_if_name_exists_collection(api_key, collection_name, db_name)
-        collection_name = collection["name"]
+        
         if not collection["success"]:
-            return Response("No collection with found", status.HTTP_404_NOT_FOUND)
+            return CustomResponse(False, "No collection with found", None, status.HTTP_404_NOT_FOUND)
+        
+        collection_name = collection["name"]
 
         if not validate_id(item_id) or not document_type:
             return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
         if document_type == "document":
             document = get_document_from_collection(
-                api_key, db_name, collection_name, {"_id": item_id, "template": db_name}
+                api_key, db_name, collection_name, {"_id": item_id}
             )
         elif document_type == "clone":
             document = get_clone_from_collection(
-                api_key, db_name, collection_name, {"_id": item_id, "template": db_name}
+                api_key, db_name, collection_name, {"_id": item_id}
             )
         if document:
-            username = request.query_params.get("username", "")
             portfolio = request.query_params.get("portfolio", "")
-            email = request.query_params.get("email", "")
 
             editor_link = access_editor(
                 item_id,
@@ -1016,9 +1031,7 @@ class DocumentLink(APIView):
                 api_key,
                 db_name,
                 collection_name,
-                username=username,
                 portfolio=portfolio,
-                email=email,
             )
             if not editor_link:
                 return Response(status.HTTP_500_INTERNAL_SERVER_ERROR)
@@ -1030,15 +1043,21 @@ class DocumentDetail(APIView):
     def get(self, request, item_id):
         """Retrieves the document object for a specific document"""
         # api_key = request.data.get("api_key")
-        db_name = request.data.get("db_name")
-        collection_name = request.data.get("collection_name")
+        workspace_id = request.data.get("workspace_id")
         document_type = request.data.get("document_type")
+        api_key = request.data.get("api_key")
         
-        try:
-            api_key = authorization_check(request.headers.get("Authorization"))
+        db_name = f"{workspace_id}_TEMPLATE_DATABASE_0"
+        # db_name = "6390b313d77dc467630713f2_database0"
+        collection_name = "template_collection_0"
+        
 
-        except InvalidTokenException as e:
-            return CustomResponse(False, str(e), None, status.HTTP_401_UNAUTHORIZED)  
+        
+        # try:
+        #     api_key = authorization_check(request.headers.get("Authorization"))
+
+        # except InvalidTokenException as e:
+        #     return CustomResponse(False, str(e), None, status.HTTP_401_UNAUTHORIZED)  
 
 
         if not collection_name or not db_name:
@@ -1050,10 +1069,11 @@ class DocumentDetail(APIView):
             )
 
         collection = check_if_name_exists_collection(api_key, collection_name, db_name)
-        collection_name = collection["name"]
         if not collection["success"]:
-            return Response("No collection with found", status.HTTP_404_NOT_FOUND)
-
+            return CustomResponse(False, "No collection with found", None, status.HTTP_404_NOT_FOUND)
+        
+        collection_name = collection["name"]
+        
         if not validate_id(item_id) or not document_type:
             return collection_name(False, "Something went wrong!", None, status.HTTP_400_BAD_REQUEST)
         if document_type == "document":
@@ -1067,3 +1087,17 @@ class DocumentDetail(APIView):
             )
             return Response(document["data"], status.HTTP_200_OK)
         return CustomResponse(False, "Document could not be accessed!", None, status.HTTP_404_NOT_FOUND)
+    
+    
+class Folders(APIView):
+    def get(self, request):
+        pass
+    
+    def post(self, request):
+        pass
+  
+    def put(self, request):
+        pass
+    
+    def delete(self, request):
+        pass

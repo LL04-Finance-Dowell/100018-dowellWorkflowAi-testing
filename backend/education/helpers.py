@@ -97,6 +97,7 @@ def check_if_name_exists_collection(api_key, collection_name, db_name):
             }
     else:
         return {
+            "success": False,
             "Message": res["message"],
             "Url": "https://datacube.uxlivinglab.online/",
         }
