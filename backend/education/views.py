@@ -1067,7 +1067,7 @@ class DocumentDetail(APIView):
             )
 
         collection = check_if_name_exists_collection(api_key, collection_name, db_name)
-     
+        
         if not collection["success"]:
             return CustomResponse(False, "No collection with found", None, status.HTTP_404_NOT_FOUND)
         
@@ -1138,11 +1138,6 @@ class Folders(APIView):
                 status.HTTP_201_CREATED,
             )
   
-    def put(self, request):
-        pass
-    
-    def delete(self, request):
-        pass
 
 
 class FolderDetail(APIView):
@@ -1150,26 +1145,26 @@ class FolderDetail(APIView):
         folder_details = get_folder_from_collection({"_id": folder_id})
         return Response(folder_details, status.HTTP_200_OK)
 
-    def put(self, request, folder_id):
-        form = request.data
-        if not form:
-            return Response("Folder Data is Required", status.HTTP_400_BAD_REQUEST)
-        items = form["items"]
-        old_folder = get_folder_from_collection({"_id": folder_id})
-        old_folder["folder_name"] = form["folder_name"]
-        old_folder["data"].extend(items)
-        document_ids = [item["document_id"] for item in items if "document_id" in item]
-        template_ids = [item["template_id"] for item in items if "template_id" in item]
-        if items:
-            process_folders_to_item(document_ids, folder_id, add_document_to_folder)
-            process_folders_to_item(template_ids, folder_id, add_template_to_folder)
-        updt_folder = json.loads(update_folder(folder_id, old_folder))
-        if updt_folder["isSuccess"]:
-            return Response("Folder Updated", status.HTTP_201_CREATED)
+    # def put(self, request, folder_id):
+    #     form = request.data
+    #     if not form:
+    #         return Response("Folder Data is Required", status.HTTP_400_BAD_REQUEST)
+    #     items = form["items"]
+    #     old_folder = get_folder_from_collection({"_id": folder_id})
+    #     old_folder["folder_name"] = form["folder_name"]
+    #     old_folder["data"].extend(items)
+    #     document_ids = [item["document_id"] for item in items if "document_id" in item]
+    #     template_ids = [item["template_id"] for item in items if "template_id" in item]
+    #     if items:
+    #         process_folders_to_item(document_ids, folder_id, add_document_to_folder)
+    #         process_folders_to_item(template_ids, folder_id, add_template_to_folder)
+    #     updt_folder = json.loads(update_folder(folder_id, old_folder))
+    #     if updt_folder["isSuccess"]:
+    #         return Response("Folder Updated", status.HTTP_201_CREATED)
 
-    def delete(self, request, folder_id):
-        item_id = request.query_params.get("item_id")
-        item_type = request.query_params.get("item_type")
-        delete_items_in_folder(item_id, folder_id, item_type)
-        return Response(status.HTTP_204_NO_CONTENT)
+    # def delete(self, request, folder_id):
+    #     item_id = request.query_params.get("item_id")
+    #     item_type = request.query_params.get("item_type")
+    #     delete_items_in_folder(item_id, folder_id, item_type)
+    #     return Response(status.HTTP_204_NO_CONTENT)
 

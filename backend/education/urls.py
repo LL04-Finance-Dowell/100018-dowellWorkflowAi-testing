@@ -16,5 +16,7 @@ urlpatterns = [
     path("education/documents/<str:company_id>/list/", views.Document.as_view()),
     
     path("education/folders/", views.Folders.as_view()),
+    path("education/folders/<str:folder_id>/detail", views.FolderDetail.as_view()),
+
 
 ]
