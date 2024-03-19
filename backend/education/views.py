@@ -3,20 +3,23 @@ import requests
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-
+from education.serializers import CreateCollectionSerializer
 
 from app.helpers import validate_id
 from app import processing
 from app.mongo_db_connection import single_query_process_collection, update_process
 from education.constants import PROCESS_DB_0
+
 from education.helpers import (
     check_if_name_exists_collection,
     generate_unique_collection_name,
     access_editor,
     CustomResponse,
 )
+
 from education.serializers import *
-from education.helpers import *
+
+# from education.helpers import *
 from education.datacube_connection import (
     datacube_collection_retrieval,
     get_data_from_collection,
@@ -34,6 +37,7 @@ from education.datacube_connection import (
     single_query_document_collection,
     single_query_template_collection,
     save_to_workflow_collection,
+    get_workflow_from_collection,
 )
 
 from django.core.cache import cache
@@ -42,10 +46,6 @@ from app.constants import EDITOR_API
 # Create your views here.
 # Education views are created here
 # Anywhere we see template_function_it is
-
-
-def test_collection_(api_key, database, collection_name):
-    return {"success": True, "message": [api_key, database, collection_name]}
 
 
 class HomeView(APIView):
@@ -57,7 +57,6 @@ class DatabaseServices(APIView):
 
     def post(self, request):
         type_request = request.GET.get("type")
-        print(type_request)
 
         if type_request == "create_collection":
             return self.create_collection(request)
@@ -86,7 +85,6 @@ class DatabaseServices(APIView):
         """
         database_type = request.data.get("database_type")
         workspace_id = request.data.get("workspace_id")
-        # collection_name = request.data.get("collection_name")
 
         try:
             api_key = authorization_check(request.headers.get("Authorization"))
@@ -122,8 +120,6 @@ class DatabaseServices(APIView):
                 database = f"{workspace_id}_CLONE_DATABASE_0"
                 collection_name = "clones_collection_0"
 
-            # response = test_collection_(api_key, database, collection_name)
-
             response = add_collection_to_database(api_key, database, collection_name)
 
             all_responses.append(response)
@@ -158,13 +154,10 @@ class DatabaseServices(APIView):
             return CustomResponse(False, str(e), None, status.HTTP_401_UNAUTHORIZED)
 
         workspace_id = request.GET.get("workspace_id")
-        meta_data_database = f"{workspace_id}_meta_data_0"
+        meta_data_database = f"{workspace_id}_metadata_0"
 
-        response_meta_data = json.loads(
-            datacube_collection_retrieval(api_key, meta_data_database)
-        )
-        # print(response_meta_data)
-
+        response_meta_data = datacube_collection_retrieval(api_key, meta_data_database)
+        print(f"This is the response for response {response_meta_data}")
         if not response_meta_data["success"]:
             return CustomResponse(
                 False,
@@ -174,9 +167,9 @@ class DatabaseServices(APIView):
             )
 
         list_of_meta_data_collection = [
-            f"{workspace_id}_templates",
-            f"{workspace_id}_documents",
-            f"{workspace_id}_clones",
+            f"{workspace_id}_templates_metadata",
+            f"{workspace_id}_documents_metadata",
+            f"{workspace_id}_clones_metadata",
         ]
 
         missing_collections = []
@@ -229,12 +222,15 @@ class DatabaseServices(APIView):
             f"{workspace_id}_CLONES_DATABASE_0",
         ]
         all_responses = []
-
+        ready_collection = []
         for database in data_database:
-            response_data = json.loads(datacube_collection_retrieval(api_key, database))
+            response_data = datacube_collection_retrieval(api_key, database)
             all_responses.append(response_data)
-
+        print(all_responses)
         for response_data in all_responses:
+            if response_data["success"]:
+                ready_collection.append(response_data["data"][0])
+
             if not response_data["success"]:
                 return CustomResponse(
                     False,
@@ -243,7 +239,7 @@ class DatabaseServices(APIView):
                     status.HTTP_501_NOT_IMPLEMENTED,
                 )
 
-        list_of_data_collection = [f"{workspace_id}_{ data}_0" for data in datas]
+        list_of_data_collection = [f"{workspace_id}_{data}_0" for data in datas]
 
         missing_collections = []
         for response_data in all_responses:
@@ -293,16 +289,25 @@ class NewTemplate(APIView):
         return Response(res["data"])
 
     def post(self, request):
+        type_request = request.GET.get("type")
+
+        if type_request == "approve":
+            return self.approve(request)
+
         data = ""
         page = ""
         folder = []
         approved = False
         workspace_id = request.data["workspace_id"]
         collection_name = "template_collection_0"
-        db_name = f'{workspace_id}_"template_database_1"'
+        db_name = f'{workspace_id}_"TEMPLATE_DATABASE_0"'
         # db_name = "6390b313d77dc467630713f2_database0"
         # metadata_db = request.data["metadata_db"]
-        api_key = request.data["api_key"]
+        try:
+            api_key = authorization_check(request.headers.get("Authorization"))
+        except InvalidTokenException as e:
+            return CustomResponse(False, str(e), None, status.HTTP_401_UNAUTHORIZED)
+
         no_of_collections = 1
         collection_names = check_if_name_exists_collection(
             api_key, collection_name, db_name
@@ -424,19 +429,67 @@ class NewTemplate(APIView):
                 {"Message": "Error creating template "}, status.HTTP_404_NOT_FOUND
             )
 
+    def approve(self, request):
+        """Post data for template approval
+        :  Templates can only be used after approval True
+        """
+        try:
+            api_key = authorization_check(request.headers.get("Authorization"))
+        except InvalidTokenException as e:
+            return CustomResponse(False, str(e), None, status.HTTP_401_UNAUTHORIZED)
+        database = request.GET.get("db_name")
+        collection = "collection"
+        update_data = {"approval": True}
+        approval_update = post_data_to_collection(
+            api_key, database, collection, "update", update_data
+        )
+        if approval_update["success"]:
+            return CustomResponse(True, "Template approved", None, status.HTTP_200_OK)
+        else:
+            return CustomResponse(
+                False, "Template approval failed", None, status.HTTP_400_BAD_REQUEST
+            )
+
 
 class Workflow(APIView):
     def get(self, request):
-        pass
+        """Get Workflows Created in a colleection"""
+
+        try:
+            api_key = authorization_check(request.headers.get("Authorization"))
+        except InvalidTokenException as e:
+            return CustomResponse(False, str(e), None, status.HTTP_401_UNAUTHORIZED)
+        workspace_id = request.GET.get("workspace_id")
+        db_name = f"{workspace_id}_WORKFLOW_DATABASE_0"
+        collection_name = "workflow_collection_0"
+
+        res = get_workflow_from_collection(
+            api_key,
+            db_name,
+            collection_name,
+        )
+        if res["success"]:
+            return res["Message"]
+
+        else:
+            CustomResponse(
+                False, "Couldn't fetch collection", None, status.HTTP_400_BAD_REQUEST
+            )
 
     def post(self, request):
         """Creates a new workflow"""
         form = request.data
-        api_key = form.get("api_key")
-        db_name = form.get("db_name")
+        try:
+            api_key = authorization_check(request.headers.get("Authorization"))
+        except InvalidTokenException as e:
+            return CustomResponse(False, str(e), None, status.HTTP_401_UNAUTHORIZED)
 
         if not form:
             return Response("Workflow Data required", status.HTTP_400_BAD_REQUEST)
+
+        workspace_id = form.get("workspace_id")
+        db_name = f"{workspace_id}_WORKFLOW_DATABASE_0"
+
         organization_id = form["company_id"]
         data = {
             "workflow_title": form["wf_title"],
@@ -461,7 +514,7 @@ class Workflow(APIView):
                     "workflow_type": "original",
                 },
             )
-            if res["isSuccess"]:
+            if res["success"]:
                 return Response(
                     {
                         "_id": res["inserted_id"],
@@ -481,6 +534,10 @@ class Workflow(APIView):
                     None,
                     status.HTTP_400_BAD_REQUEST,
                 )
+        else:
+            return CustomResponse(
+                False, "Failed to generate workflow", None, status.HTTP_400_BAD_REQUEST
+            )
 
 
 class CollectionData(APIView):
