@@ -231,7 +231,18 @@ def get_workflows_from_collection(
 ):
     return get_data_from_collection(api_key, database, collection, filters)
 
-def update_workflow_from_collection(api_key: str, database: str, collection: str, data: dict):
-    return post_data_to_collection(
-        api_key, database, collection, data, "update"
-    )
+
+def get_folders_from_collection(
+    api_key: str, database: str, collection: str, filters: dict
+):
+    return get_data_from_collection(api_key, database, collection, filters)
+
+def get_folder_from_collection(
+    api_key: str, database: str, collection: str, filters: dict
+):
+    return get_data_from_collection(api_key, database, collection, filters, limit=1)
+
+def save_to_folder_collection(
+    api_key: str, database: str, collection: str, data: dict
+):
+    return post_data_to_collection(api_key, database, collection, data, "insert")
