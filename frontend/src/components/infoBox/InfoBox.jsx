@@ -606,8 +606,8 @@ if(!externalToggleVal && isOpen){
                             type={'checkbox'}
                             value={
                               userDetail?.portfolio_info?.find(
-                                (item) => item.product === 'Workflow AI'
-                              )?.member_type === 'owner'
+                                (item) => item.product === 'Workflow AI' && item.member_type === 'owner'
+                              )
                                 ? userDetail?.userportfolio[ind]
                                 : userDetail?.selected_product?.userportfolio[
                                     ind

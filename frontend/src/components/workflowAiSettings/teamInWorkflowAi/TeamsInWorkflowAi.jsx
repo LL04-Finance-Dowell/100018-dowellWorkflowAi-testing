@@ -31,8 +31,7 @@ const TeamsInWorkflowAi = () => {
     useSelector((state) => state.processes);
   const { userDetail } = useSelector((state) => state.auth);
   const [userPortfolios] = useState(
-    userDetail?.portfolio_info?.find((item) => item.product === 'Workflow AI')
-      ?.member_type === 'owner'
+    userDetail?.portfolio_info?.find((item) => item.product === 'Workflow AI' && item.member_type === 'owner')
       ? userDetail?.userportfolio.map((port) => ({
           _id: v4(),
           content: port.portfolio_name,
@@ -103,8 +102,8 @@ const TeamsInWorkflowAi = () => {
 
       const portfolio_list =
         userDetail?.portfolio_info?.find(
-          (item) => item.product === 'Workflow AI'
-        )?.member_type === 'owner'
+          (item) => item.product === 'Workflow AI' && item.member_type === 'owner'
+        )
           ? userDetail.userportfolio.filter((port) => {
               return selectedPortfolios.find(
                 (sPort) => sPort.content === port.portfolio_name
@@ -253,8 +252,7 @@ const TeamsInWorkflowAi = () => {
     } = teamInfo;
 
     const portfolio_list =
-      userDetail?.portfolio_info?.find((item) => item.product === 'Workflow AI')
-        ?.member_type === 'owner'
+      userDetail?.portfolio_info?.find((item) => item.product === 'Workflow AI' && item.member_type === 'owner')
         ? userDetail.userportfolio.filter((port) => {
             return selectedPortfolios.find(
               (sPort) => sPort.content === port.portfolio_name

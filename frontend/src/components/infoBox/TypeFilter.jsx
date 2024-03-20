@@ -14,8 +14,7 @@ const TypeFilter = ({ edit }) => {
   const [isDropdown, setIsDropdown] = useState(false);
   const { userDetail } = useSelector((state) => state.auth);
   const [userPortfolios] = useState(
-    userDetail?.portfolio_info?.find((item) => item.product === 'Workflow AI')
-      ?.member_type === 'owner'
+    userDetail?.portfolio_info?.find((item) => item.product === 'Workflow AI' && item.member_type === 'owner')
       ? userDetail?.userportfolio
       : userDetail?.selected_product?.userportfolio
   );
