@@ -181,11 +181,12 @@ const WorkflowLayout = ({ children }) => {
     }
 
     const workflowProduct = userDetail?.portfolio_info?.find(
-      (item) => item.product === 'Workflow AI'
+      (item) => item.product === 'Workflow AI' &&
+        item.member_type === 'owner'
     );
+
     if (
       !workflowProduct ||
-      workflowProduct.member_type !== 'owner' ||
       adminUserPortfolioLoaded
     )
       return;
@@ -277,8 +278,10 @@ const WorkflowLayout = ({ children }) => {
           !userDetail.portfolio_info ||
           userDetail.portfolio_info?.length === 0 ||
           (userDetail.portfolio_info?.length > 0 &&
+            !id &&
             !userDetail.portfolio_info.find(
-              (item) => item.product === 'Workflow AI'
+              (item) => item.product === 'Workflow AI' &&
+                item.member_type === 'owner'
             )) ? (
             <div className={styles.redirect__container}>
               <div className={styles.img__container}>

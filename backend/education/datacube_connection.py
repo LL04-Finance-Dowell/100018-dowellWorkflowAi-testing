@@ -197,31 +197,52 @@ def save_to_document_collection(
     return post_data_to_collection(api_key, database, collection, data, "insert")
 
 
-def bulk_query_clones_collection(
+def get_clones_from_collection(
     api_key: str, database: str, collection: str, filters: dict
 ):
     return get_data_from_collection(api_key, database, collection, filters)
 
 
-def single_query_clones_collection(
+def get_clone_from_collection(
     api_key: str, database: str, collection: str, filters: dict
 ):
     return get_data_from_collection(api_key, database, collection, filters, limit=1)
 
 
-def bulk_query_document_collection(
+def get_documents_from_collection(
     api_key: str, database: str, collection: str, filters: dict
 ):
     return get_data_from_collection(api_key, database, collection, filters)
 
 
-def single_query_document_collection(
+def get_document_from_collection(
     api_key: str, database: str, collection: str, filters: dict
 ):
     return get_data_from_collection(api_key, database, collection, filters, limit=1)
 
 
-def single_query_template_collection(
+def get_template_from_collection(
     api_key: str, database: str, collection: str, filters: dict
 ):
     return get_data_from_collection(api_key, database, collection, filters, limit=1)
+
+def get_workflows_from_collection(
+    api_key: str, database: str, collection: str, filters: dict
+):
+    return get_data_from_collection(api_key, database, collection, filters)
+
+
+def get_folders_from_collection(
+    api_key: str, database: str, collection: str, filters: dict
+):
+    return get_data_from_collection(api_key, database, collection, filters)
+
+def get_folder_from_collection(
+    api_key: str, database: str, collection: str, filters: dict
+):
+    return get_data_from_collection(api_key, database, collection, filters, limit=1)
+
+def save_to_folder_collection(
+    api_key: str, database: str, collection: str, data: dict
+):
+    return post_data_to_collection(api_key, database, collection, data, "insert")

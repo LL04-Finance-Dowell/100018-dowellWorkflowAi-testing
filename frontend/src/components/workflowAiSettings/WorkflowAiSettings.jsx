@@ -57,8 +57,8 @@ const WorkflowAiSettings = () => {
           if (child.proccess_title === 'portfolios') {
             child.items =
               userDetail?.portfolio_info?.find(
-                (item) => item.product === 'Workflow AI'
-              )?.member_type === 'owner'
+                (item) => item.product === 'Workflow AI' && item.member_type === 'owner'
+              )
                 ? userDetail?.userportfolio.map((portfolio) => ({
                   _id: crypto.randomUUID(),
                   content: portfolio.portfolio_name,

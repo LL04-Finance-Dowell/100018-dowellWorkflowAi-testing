@@ -26,8 +26,7 @@ const EnabledProcess = () => {
 
   const { workflowTeams, isDesktop, nonDesktopStyles } = useAppContext();
   const [userPortfolios] = useState(
-    userDetail?.portfolio_info?.find((item) => item.product === 'Workflow AI')
-      ?.member_type === 'owner'
+    userDetail?.portfolio_info?.find((item) => item.product === 'Workflow AI' && item.member_type === 'owner')
       ? userDetail?.userportfolio.map((port) => ({
           _id: v4(),
           content: port.portfolio_name,
@@ -48,8 +47,7 @@ const EnabledProcess = () => {
         // console.log("userportfolio:", userDetail?.userportfolio);
         // console.log("selected_product:", userDetail?.selected_product);
         return (
-            userDetail?.portfolio_info?.find((item) => item.product === 'Workflow AI')
-              ?.member_type === 'owner'
+            userDetail?.portfolio_info?.find((item) => item.product === 'Workflow AI' && item.member_type === 'owner')
               ? [...userDetail?.userportfolio]
               : [...userDetail?.selected_product?.userportfolio]
         );
@@ -300,7 +298,13 @@ const EnabledProcess = () => {
   useEffect(() => {
     if (portfolioRights)
       dispatch(
-        setSettingProccess({ payload: portfolioRights, type: 'rights' })
+        setSettingProccess({ 
+          payload: !portfolioRights || !Array.isArray(portfolioRights) ? 
+            [] 
+            : 
+          portfolioRights, 
+          type: 'rights'
+        })
       );
   }, [portfolioRights]);
 
@@ -319,6 +323,7 @@ const EnabledProcess = () => {
   }, [workflowTeams, teamsInWorkflowAI]);
 
   useEffect(() => {
+    console.log(userPortfolios);
     dispatch(setSettingProccessPortfolios(userPortfolios));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userPortfolios]);
