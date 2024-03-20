@@ -8,6 +8,7 @@ from rest_framework import status
 from app.helpers import validate_id
 from app import processing
 from app.mongo_db_connection import single_query_process_collection, update_process
+from app.views_v2 import FinalizeOrReject
 from education.constants import PROCESS_DB_0
 from education.helpers import (
     check_if_name_exists_collection,
@@ -19,6 +20,7 @@ from education.helpers import *
 from education.datacube_connection import (
     datacube_collection_retrieval,
     get_data_from_collection,
+    get_process_from_collection,
     post_data_to_collection,
     add_collection_to_database,
     Template_database,
@@ -46,6 +48,26 @@ from app.constants import EDITOR_API
 class HomeView(APIView):
     def get(self, request):
         return Response({"Message": "Education is live"}, status.HTTP_200_OK)
+    
+class TestView(APIView):
+    def get(self, request):
+        url = "https://datacube.uxlivinglab.online/db_api/get_data/"
+
+        data = {
+            "api_key": "1b834e07-c68b-4bf6-96dd-ab7cdc62f07f",
+            "db_name": "6390b313d77dc467630713f2_process_database_0",
+            "coll_name": "process_collection_0",
+            "operation": "fetch",
+            "filters": {
+                "process_title": "Test Education"
+            },
+            "limit": 1,
+            "offset": 0
+        }
+
+        response = requests.post(url, json=data)
+        res =json.loads(response.text)
+        return Response(res)
 
 
 class DatabaseServices(APIView):
@@ -499,10 +521,13 @@ class ItemProcessing(APIView):
 
         if not request_data:
             return Response("You are missing something!", status.HTTP_400_BAD_REQUEST)
+        if not request_data.get("api_key"):
+            return Response("You are missing an API key!", status.HTTP_400_BAD_REQUEST)
 
-        collection = check_if_name_exists_collection(
-            api_key, "process_collection", PROCESS_DB_0
-        )
+        api_key = request_data["api_key"]
+        
+        collection = check_if_name_exists_collection(api_key, "process_collection", PROCESS_DB_0)
+        print("collection:::", collection)
         collection_name = collection["name"]
         if collection["success"] and collection["status"] == "New":
             new_process_collection = add_collection_to_database(
@@ -511,13 +536,11 @@ class ItemProcessing(APIView):
                 collections=collection_name,
                 num_of_collections=1,
             )
-        if not collection["name"] or new_process_collection["success"] == False:
-            return Response(
-                "Could not detect Process collection",
-                status.HTTP_500_INTERNAL_SERVER_ERROR,
-            )
-
-        api_key = request_data["api_key"]
+            if new_process_collection["success"] == False:
+                return Response("Unable to create new Process collection", status.HTTP_500_INTERNAL_SERVER_ERROR)
+        if not collection["name"]:
+            return Response("Could not detect Process collection", status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
         organization_id = request_data["company_id"]
         process = processing.Process(
             request_data["workflows"],
@@ -532,12 +555,7 @@ class ItemProcessing(APIView):
             request_data["process_title"],
             request.data.get("email", None),
         )
-
-        saved_process = save_to_process_collection(
-            api_key, PROCESS_DB_0, collection_name, process
-        )
-        print(saved_process)
-
+                
         action = request_data["action"]
         data = None
         if action == "save_workflow_to_document_and_save_to_drafts":
@@ -549,42 +567,66 @@ class ItemProcessing(APIView):
                     {"_id": request_data["process_id"]}
                 )
             else:
-                data = process.normal_process(action)
+                saved_data = process.normal_process(action)  # type: ignore
+                data = {
+                    "process": saved_data
+                }
+                saved_process = save_to_process_collection(api_key, PROCESS_DB_0, collection_name, data)
         if action == "start_document_processing_wf_steps_wise":
             if request_data.get("process_id") is not None:
                 process = single_query_process_collection(
                     {"_id": request_data["process_id"]}
                 )
             else:
-                data = process.normal_process(action)  # type: ignore
+                saved_data = process.normal_process(action)  # type: ignore
+                data = {
+                    "process": saved_data
+                }
+                saved_process = save_to_process_collection(api_key, PROCESS_DB_0, collection_name, data)
         if action == "start_document_processing_wf_wise":
             if request_data.get("process_id") is not None:
                 process = single_query_process_collection(
                     {"_id": request_data["process_id"]}
                 )
             else:
-                data = process.normal_process(action)  # type: ignore
+                saved_data = process.normal_process(action)  # type: ignore
+                data = {
+                    "process": saved_data
+                }
+                saved_process = save_to_process_collection(api_key, PROCESS_DB_0, collection_name, data)
         if action == "test_document_processing_content_wise":
             if request_data.get("process_id") is not None:
                 process = single_query_process_collection(
                     {"_id": request_data["process_id"]}
                 )
             else:
-                data = process.test_process(action)  # type: ignore
+                saved_data = process.normal_process(action)  # type: ignore
+                data = {
+                    "process": saved_data
+                }
+                saved_process = save_to_process_collection(api_key, PROCESS_DB_0, collection_name, data)
         if action == "test_document_processing_wf_steps_wise":
             if request_data.get("process_id") is not None:
                 process = single_query_process_collection(
                     {"_id": request_data["process_id"]}
                 )
             else:
-                data = process.test_process(action)  # type: ignore
+                saved_data = process.normal_process(action)  # type: ignore
+                data = {
+                    "process": saved_data
+                }
+                saved_process = save_to_process_collection(api_key, PROCESS_DB_0, collection_name, data)
         if action == "test_document_processing_wf_wise":
             if request_data.get("process_id") is not None:
                 process = single_query_process_collection(
                     {"_id": request_data["process_id"]}
                 )
             else:
-                data = process.test_process(action)  # type: ignore
+                saved_data = process.normal_process(action)  # type: ignore
+                data = {
+                    "process": saved_data
+                }
+                saved_process = save_to_process_collection(api_key, PROCESS_DB_0, collection_name, data)
         if action == "close_processing_and_mark_as_completed":
             process = single_query_process_collection(
                 {"_id": request_data["process_id"]}
@@ -602,6 +644,7 @@ class ItemProcessing(APIView):
             )
             res_saved = json.loads(
                 update_process_collection(
+                    process_id=process["process_id"],
                     api_key=api_key,
                     database=PROCESS_DB_0,
                     collection=collection_name,
@@ -634,6 +677,7 @@ class ItemProcessing(APIView):
             )
             res_saved = json.loads(
                 update_process_collection(
+                    process_id=process["process_id"],
                     api_key=api_key,
                     database=PROCESS_DB_0,
                     collection=collection_name,
@@ -654,8 +698,49 @@ class ItemProcessing(APIView):
                 status.HTTP_501_NOT_IMPLEMENTED,
             )
         if data:
-            verification_links = processing.HandleProcess(data).start()
-            return Response(verification_links, status.HTTP_200_OK)
+            existing_proc = get_process_from_collection(
+                api_key=api_key,
+                database=PROCESS_DB_0,
+                collection=collection_name,
+                filters={
+                    "_id": saved_process["data"].get("inserted_id")
+                },
+            )
+            verification_links = processing.HandleProcess(data["process"]).start()
+            updated_with_links = single_query_process_collection(
+                    {"_id": data["process"].get("_id")}
+                )
+            update_process_collection(
+                process_id=saved_process["data"].get("inserted_id"),
+                api_key=api_key,
+                database=PROCESS_DB_0,
+                collection=collection_name,
+                data={
+                    "process": updated_with_links,
+                },
+            )
+            return Response({"inserted_id": saved_process["data"].get("inserted_id"), "process_id": data["process"].get("_id"),"updated-w-links": updated_with_links , "links": verification_links}, status.HTTP_200_OK)
+        
+        
+    def get(self, request):
+        """List of Created Processes."""
+        
+        api_key = request.query_params.get("api_key")
+        database = request.query_params.get("db_name")
+        collection = request.query_params.get("coll_name")
+        
+        coll_id = request.query_params.get("coll_id")
+        if coll_id:
+            if not validate_id(coll_id):
+                return Response("Invalid Request!", status=status.HTTP_400_BAD_REQUEST)
+            query = {
+                "_id": coll_id
+            }
+            # print("filter: ", query)
+            data = get_data_from_collection(api_key, database, collection, filters=query, limit=1)
+        else:
+            data = get_data_from_collection(api_key, database, collection, limit=20)
+        return Response(data, status.HTTP_200_OK)
 
 
 class NewDocument(APIView):
@@ -900,3 +985,65 @@ class DocumentDetail(APIView):
             )
             return Response(document["data"], status.HTTP_200_OK)
         return Response("Document could not be accessed!", status.HTTP_404_NOT_FOUND)
+
+
+class FinalizeOrRejectEducation(APIView):
+    def post(self, request, collection_id):
+        """After access is granted and the user has made changes on a document."""
+        if not validate_id(collection_id):
+                return Response("Invalid Request!", status=status.HTTP_400_BAD_REQUEST)
+        
+        if not request.data:
+            return Response("you are missing something", status.HTTP_400_BAD_REQUEST)
+        
+        api_key = request.data["api_key"]
+        collection_name = request.data["coll_name"]
+        api_key = request.data["api_key"]
+        
+        item_id = request.data["item_id"]
+        item_type = request.data["item_type"]
+        role = request.data["role"]
+        user = request.data["authorized"]
+        user_type = request.data["user_type"]
+        state = request.data["action"]
+        message = request.data.get("message", None)
+        link_id = request.data.get("link_id", None)
+        product = request.data.get("product", "education")
+        
+        payload = {
+            "item_id": item_id,
+            "item_type": item_type,
+            "role": role,
+            "authorized": user,
+            "user_type": user_type,
+            "action": state,
+            "message": message,
+            "link_id": link_id,
+        }
+        
+        query = {
+            "_id": collection_id
+        }
+        # print("filter: ", query)
+        data = get_data_from_collection(api_key, PROCESS_DB_0, collection_name, filters=query, limit=1)
+        process_id = data["data"][0].get("process").get("_id")
+    
+        # res = FinalizeOrReject().get(request, process_id)
+        res = FinalizeOrReject().post(request, process_id, payload=payload)
+
+        # if res.status_code == 200:
+        process = single_query_process_collection(
+            {"_id": process_id}
+        )
+        
+        update_process_collection(
+            process_id=collection_id,
+            api_key=api_key,
+            database=PROCESS_DB_0,
+            collection=collection_name,
+            data={
+                "process": process
+            }
+        )
+        
+        return Response(res.data, status.HTTP_200_OK)

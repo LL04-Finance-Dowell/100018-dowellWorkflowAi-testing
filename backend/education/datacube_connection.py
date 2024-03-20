@@ -55,13 +55,11 @@ def add_collection_to_database(
     )
 
     response = post_to_data_service(url=url, data=payload)
-
-    print(response)
     return response
 
 
 def get_data_from_collection(
-    api_key: str, database: str, collection: str, filters: dict, limit=5, offset=0
+    api_key: str, database: str, collection: str, filters: dict = {}, limit=5, offset=0
 ):
     """_summary_
 
@@ -87,7 +85,6 @@ def get_data_from_collection(
 
     response = requests.post(url, json=payload)
     res = json.loads(response.text)
-    print(res)
     return res
 
 
@@ -112,15 +109,17 @@ def post_data_to_collection(
         payload_dict["update_data"] = data
         payload_dict["query"] = query
         payload = payload_dict
+        response = requests.put(DB_API_CRUD, json=payload)
+        return response
     elif operation.lower() == "delete":
         payload_dict["query"] = query
         payload = payload_dict
         response = requests.delete(DB_API_CRUD, json=payload)
         return
-    print(payload)
+    # print(payload)
     response = requests.post(DB_API_CRUD, json=payload)
     res = json.loads(response.text)
-    print(res)
+    # print(res)
     return res
 
 
@@ -136,6 +135,7 @@ def datacube_collection_retrieval(api_key, db_name):
     payload = {"api_key": api_key, "db_name": db_name, "payment": False}
     response = requests.get(url, json=payload)
     res = json.loads(response.content)
+    print("payload: ", payload)
     return res
 
 
@@ -171,9 +171,10 @@ def save_to_process_collection(
     return post_data_to_collection(api_key, database, collection, data, "insert")
 
 
-def update_process_collection(api_key: str, database: str, collection: str, data: dict):
+def update_process_collection(process_id: str, api_key: str, database: str, collection: str, data: dict):
+    query = {"_id": process_id}
     return post_data_to_collection(
-        api_key, database, collection, data, "insert", "update"
+        api_key, database, collection, data, "update", query
     )
 
 

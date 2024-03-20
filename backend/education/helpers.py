@@ -51,10 +51,13 @@ def generate_unique_collection_name(existing_collection_names, base_name):
 
 
 def check_if_name_exists_collection(api_key, collection_name, db_name):
+    print("collection name arg: ", collection_name)
+    print("db name arg: ", db_name)
     res = datacube_collection_retrieval(api_key, db_name)
     if res["success"] == True:
-        if collection_name not in res["data"][0]:
-            new_collection_name = generate_unique_collection_name(res["data"][0])
+        if not [collection_name in item for item in res["data"][0]]:
+            print("essssss: ", res["data"][0])
+            new_collection_name = generate_unique_collection_name(res["data"][0], db_name)
             return {
                 "name": new_collection_name,
                 "success": True,
@@ -63,7 +66,7 @@ def check_if_name_exists_collection(api_key, collection_name, db_name):
             }
         else:
             return {
-                "name": collection_name,
+                "name": [item for item in res["data"][0] if collection_name in item][0],
                 "success": True,
                 "Message": "template_generated",
                 "status": "Existing",
