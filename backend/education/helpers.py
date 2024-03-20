@@ -2,9 +2,9 @@
 from app import processing
 from education.datacube_connection import (
     datacube_collection_retrieval,
-    single_query_clones_collection,
-    single_query_document_collection,
-    single_query_template_collection,
+    get_clone_from_collection,
+    get_document_from_collection,
+    get_template_from_collection,
 )
 from app.constants import EDITOR_API
 import json
@@ -97,6 +97,7 @@ def check_if_name_exists_collection(api_key, collection_name, db_name):
             }
     else:
         return {
+            "success": False,
             "Message": res["message"],
             "Url": "https://datacube.uxlivinglab.online/",
         }
@@ -160,15 +161,15 @@ def access_editor(
         document = "templatereports"
         field = "template_name"
     if item_type == "document":
-        item_name = single_query_document_collection(
+        item_name = get_document_from_collection(
             api_key, database, collection_name, {"_id": item_id}
         )
     elif item_type == "clone":
-        item_name = single_query_clones_collection(
+        item_name = get_clone_from_collection(
             api_key, database, collection_name, {"_id": item_id}
         )
     else:
-        item_name = single_query_template_collection(
+        item_name = get_template_from_collection(
             api_key, database, collection_name, {"_id": item_id}
         )
 
