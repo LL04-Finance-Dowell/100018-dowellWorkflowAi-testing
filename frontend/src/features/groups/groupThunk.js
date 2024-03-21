@@ -17,6 +17,20 @@ export const createGroups = createAsyncThunk(
   }
 );
 
+export const editGroups = createAsyncThunk(
+  "groups/editGroups",
+  async (data) => {
+    try {
+      const res = await groupServices.updateGroups(data.company_id,data.payload);
+      if (res) {
+        return res;
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
+);
+
 export const getGroups = createAsyncThunk("groups/getGroups", async (data) => {
   try {
     const res = await groupServices.getAllGroups(data.company_id, data.data_type);
