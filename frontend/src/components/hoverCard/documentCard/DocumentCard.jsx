@@ -1,6 +1,6 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
+import { json, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { setEditorLink } from '../../../features/app/appSlice';
 import HoverCard from '../HoverCard';
@@ -40,6 +40,8 @@ import { Tooltip } from 'react-tooltip';
 
 import AddRemoveBtn from '../AddRemoveBtn';
 import PdfViewer from '../../documentViewer/PdfViewer';
+import html2canvas from 'html2canvas';
+import jsPDF from 'jspdf';
 
 const DocumentCard = ({
   cardItem,
@@ -74,6 +76,10 @@ const DocumentCard = ({
 
   const [errorMessage, setErrorMessage] = useState('');
   const [showErrorModal, setShowErrorModal] = useState(false);
+  const [pdfUrlLink, setPdfUrlLink] = useState('');
+  const [contentHTML, setContentHTML] = useState([]);
+
+
 
 
   // console.log("cardItem", cardItem, isReport)
@@ -163,7 +169,7 @@ const DocumentCard = ({
   };
 
   const handleDetailDocumnet = async (item) => {
-    // console.log("handle detail doc hit ", dataLoading)
+    // console.log("handle detail doc hit ", item)
     if (dataLoading) return;
     if (documentLoading)
       return toast.info('Please wait for this document to be refreshed first');
@@ -183,8 +189,8 @@ const DocumentCard = ({
         /*  dispatch(setEditorLink(response)); */
 
         // setDataLoading(false);
-
-        handleGoToEditor(response, item); /////////////
+        console.log("response", response, item)
+        handleGoToEditor(response, item);
       } catch (error) {
         setDataLoading(false);
         // toast.info(
@@ -205,7 +211,7 @@ const DocumentCard = ({
         setIsNoPointerEvents(false);
       }
       return;
-    }; 
+    };
 
 
     const data = {
@@ -219,10 +225,8 @@ const DocumentCard = ({
       return
     }
 
-
+    console.log("data", data)
     dispatch(detailDocument(data));
-
-
   };
 
   const closeModal = () => {
@@ -233,8 +237,16 @@ const DocumentCard = ({
   const viewAsPDF = async (item) => {
     console.log("view as Preview")
     setPdfUrl('https://dowellfileuploader.uxlivinglab.online/view-pdf/Morvin%20Nov%20Inv<br>.pdf');
-    // setPdfUrl(pdf);
+    // setPdfUrl(pdfUrl);
     setOpenPdfDrawer(!openPdfDrawer);
+  };
+
+  const viewAsPdfLink = async (url) => {
+    console.log("view as Preview", url)
+    // setPdfUrl('https://dowellfileuploader.uxlivinglab.online/view-pdf/Morvin%20Nov%20Inv<br>.pdf');
+    // setPdfUrl(url);
+    setOpenPdfDrawer(!openPdfDrawer);
+    console.log("pdfUrl, openpdfDrawer", openPdfDrawer, pdfUrl)
   };
 
   const handleShowDocument = async (item) => {
@@ -324,7 +336,7 @@ const DocumentCard = ({
 
     try {
       const response = await (
-        await verifyProcessForUser(item.process_id,sanitizedDataToPost)
+        await verifyProcessForUser(item.process_id, sanitizedDataToPost)
       ).data;
       setDataLoading(false);
       dispatch(setEditorLink(response));
@@ -372,27 +384,89 @@ const DocumentCard = ({
     }
   };
 
-  const generatePdfClick = async (item) => {
+  const generatePdfLink = async (item) => {
     const apiUrl = 'https://100058.pythonanywhere.com/api/generate-pdf-link/';
 
     const payload = {
-      item_type: 'document',
-      item_id: item?.collection_id || '653b5ba638ec7dcbdb556a38',
+      item_type: "document",
+      // item_id: item?.collection_id || "653b5ba638ec7dcbdb556a38",
+      item_id: "653b5ba638ec7dcbdb556a38",
     };
-    // console.log("generate pdf link")
+
+    console.log("generate pdf link", apiUrl, payload)
     await axios.post(apiUrl, payload)
       .then((response) => {
         // Handle the API response here
-        // console.log('Pdf generated successfully', response.data);
+        console.log('Pdf generated successfully', response);
+        setPdfUrlLink(response.data.download_url);
+        // Assuming response.data contains the PDF link
+        viewAsPdfLink(pdfUrlLink)
         toast.info('Pdf generated successfully');
-        const pdfLink = response.data; // Assuming response.data contains the PDF link
-        window.open(pdfLink, '_blank');
+        // window.open(pdfLink, '_blank');
       })
       .catch((error) => {
         // Handle any errors
         console.error('facing issue generating Pdf', error);
         toast.error('Pdf is not generated');
       });
+  };
+
+
+  const generatePDF = (jsonData) => {
+    if (!jsonData) {
+      console.error('No HTML content to generate PDF');
+      return;
+    }
+    debugger
+    console.log("jsonData", jsonData)
+    // Convert JSON data into HTML content
+    const htmlContent = jsonData[1]?.map(item => {
+      if (item.id.includes('t')) {
+        // For text input items
+        return `<input>${item.data}</input>`;
+      } else if (item.id.includes('i')) {
+        // For image input items
+        return `<img src="${item.data}" />`;
+      } else if (item.id.includes('s')) {
+        // For image data as base64
+        return `<img src="${item.data}" />`;
+      } else if (item.id.includes('dd')) {
+        // For select list items
+        return `<date>${item.data}</date>`;
+      }
+    }).join('');
+
+    console.log("htmlContent", htmlContent)
+
+    const pdf = new jsPDF('p', 'pt', 'a4');
+    const pageHeight = pdf.internal.pageSize.getHeight();
+
+    // Add HTML content to the PDF
+    pdf.html(htmlContent, {
+      callback: function (pdf) {
+        // Save the PDF
+        pdf.save('generated.pdf');
+      },
+      margin: [10, 10, 10, 10],
+      autoPaging: 'text',
+      x: 0,
+      y: 0,
+      width: 190, //target width in the PDF document
+      windowWidth: 675 //window width in CSS pixels
+    });
+  };
+
+  const generatePdfClick = async (item) => {
+    const documentServices = new DocumentServices();
+    const collection_id = item.collection_id;
+
+    const contentOfDocument = await documentServices.contentDocument(collection_id, item);
+    console.log("contentOfDocument in pdf", contentOfDocument.data[0]);
+    const jsonData = contentOfDocument.data[0];
+
+    // generatePdfContent("data")
+    const url = 'https://ll04-finance-dowell.github.io/100058-DowellEditor-V2/?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwcm9kdWN0X25hbWUiOiJXb3JrZmxvdyBBSSIsImRldGFpbHMiOnsiY2x1c3RlciI6IkRvY3VtZW50cyIsImRhdGFiYXNlIjoiRG9jdW1lbnRhdGlvbiIsImNvbGxlY3Rpb24iOiJUZW1wbGF0ZVJlcG9ydHMiLCJkb2N1bWVudCI6InRlbXBsYXRlcmVwb3J0cyIsInRlYW1fbWVtYmVyX0lEIjoiMjI2ODkwNDQ0MzMiLCJmdW5jdGlvbl9JRCI6IkFCQ0RFIiwiX2lkIjoiNjVlZjIzZTNmOWM2NDc4MzRmOTAwMDhkIiwiZmllbGQiOiJ0ZW1wbGF0ZV9uYW1lIiwidHlwZSI6InRlbXBsYXRlIiwibWV0YWRhdGFfaWQiOiI2NWVmMjNlNDIzNDY2YTY3ZTJlNGRmMjQiLCJhY3Rpb24iOiJ0ZW1wbGF0ZSIsImZsYWciOiJlZGl0aW5nIiwibmFtZSI6IlRlc3QgVGVtcGxhdGUiLCJ1c2VybmFtZSI6IiIsInBvcnRmb2xpbyI6IiIsImVtYWlsIjoiIiwidGltZSI6IjIwMjQtMDMtMTIgMTY6Mzc6MDYuOTQ5NjY1IiwiY29tbWFuZCI6InVwZGF0ZSIsInVwZGF0ZV9maWVsZCI6eyJ0ZW1wbGF0ZV9uYW1lIjoiIiwiY29udGVudCI6IiIsInBhZ2UiOiIiLCJlZGl0ZWRfYnkiOiIiLCJwb3J0Zm9saW8iOiIiLCJlZGl0ZWRfb24iOiIyMDI0LTAzLTEyIDE2OjM3OjA2Ljk0OTY4NCJ9fX0.2lNa0XP3ciL3uA7ZQpLXUKmPr-eUy55_MLHNYukFaeQ'
+    generatePDF(jsonData);
   };
 
 
@@ -448,7 +522,7 @@ const DocumentCard = ({
             left: '0',
             top: '0',
           }}
-          onClick={() => generatePdfClick()}
+          onClick={() => generatePdfLink(cardItem)}
         >
           <BsArrowBarRight />
         </div>
@@ -611,7 +685,14 @@ const DocumentCard = ({
           onClose={() => setOpenPdfDrawer(false)}
           pdfUrl={pdfUrl}
           onSave={handleSaveFile}
-        />} {/* Render PdfViewer only if showPdfViewer is true */}
+        />}
+        {pdfUrlLink && <PdfViewer
+          open={openPdfDrawer}
+          onClose={() => setOpenPdfDrawer(false)}
+          pdfUrl={pdfUrlLink}
+          onSave={handleSaveFile}
+        />}
+         {/* Render PdfViewer only if showPdfViewer is true */}
 
         {showErrorModal && (
           <div className="modal">
