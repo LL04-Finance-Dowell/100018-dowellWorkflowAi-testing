@@ -3,7 +3,7 @@ import { Drawer, IconButton, Button } from '@mui/material';
 import { BsArrowBarLeft } from 'react-icons/bs';
 
 const PdfViewer = ({ onClose, open, pdfUrl, onSave }) => {
-  console.log(pdfUrl, "pdfUrl");
+  console.log(pdfUrl, "pdfUrl",open, onSave);
   const containerRef = useRef(null);
   const screenHeight = window.screen.height;
 
@@ -24,7 +24,7 @@ const PdfViewer = ({ onClose, open, pdfUrl, onSave }) => {
 
   const configButton = {
     variant: 'contained',
-    color: 'primary',
+    color: 'success',
   }
 
   return (
@@ -42,7 +42,7 @@ const PdfViewer = ({ onClose, open, pdfUrl, onSave }) => {
         <div style={{ display: 'flex', flexDirection: 'column' }}>
           <div style={{ display: 'flex', gap: '15px', marginTop: "5px" }}>
             <IconButton onClick={handleDrawerClose}>
-            <BsArrowBarLeft style={{ color: 'rgba(21, 101, 216, 1)',  marginBottom: "5px" }}/>
+            <BsArrowBarLeft style={{ color: '#2e7d32',  marginBottom: "5px" }}/>
               {/* <ChevronLeftIcon style={{ color: 'rgba(21, 101, 216, 1)' }} /> */}
             </IconButton>
             <h2>PDF View</h2>
