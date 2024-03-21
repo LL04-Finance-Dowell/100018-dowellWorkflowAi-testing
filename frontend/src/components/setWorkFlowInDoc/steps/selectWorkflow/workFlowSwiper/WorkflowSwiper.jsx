@@ -7,17 +7,16 @@ import 'swiper/css';
 import 'swiper/css/navigation';
 
 import { useDispatch, useSelector } from 'react-redux';
-import {
-  removeFromSelectedWorkflowsToDoc,
-  setWfToDocument,
-} from '../../../../../features/app/appSlice';
+
 
 import { IoIosRemoveCircleOutline } from 'react-icons/io';
+import { setWfToDocument } from '../../../../../features/processes/processesSlice';
+import { removeFromSelectedWorkflowsToDoc } from '../../../../../features/app/appSlice';
 
 const WorkflowSwiper = ({ loop, perSlide }) => {
   const dispatch = useDispatch();
 
-  const { selectedWorkflowsToDoc } = useSelector((state) => state.app);
+  const { selectedWorkflowsToDoc } = useSelector((state) => state.processes);
 
 
   const handleConnectWfToDoc = (e) => {

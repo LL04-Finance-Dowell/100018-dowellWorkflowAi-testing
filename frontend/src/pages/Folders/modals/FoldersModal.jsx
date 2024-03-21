@@ -71,7 +71,7 @@ const FoldersModal = () => {
         userCompanyId,
         userDataType
       ); ///////////////
-      setFolders(res.data ? res.data.reverse() : []);
+      setFolders(res.data ? res.data : []);
       toast.success("Folder created");
       navigate("/folders");
       setIsCreating(false);
@@ -288,7 +288,6 @@ const FoldersModal = () => {
 
   useEffect(() => {
     if (allDocuments)
-     // console.log("allDocuments", allDocuments);
     // // console.log("allDocuments", allDocuments
     // .filter((doc) => doc.document_type === 'original')
     // .map((doc) => ({
@@ -296,15 +295,20 @@ const FoldersModal = () => {
     //   id: doc._id,
     //   category: 'document',
     // })))
-    setDocsList(
-      allDocuments
-        .filter((doc) => doc.document_type === "original")
-        .map((doc) => ({
-          name: doc.document_name,
-          id: doc._id,
-          category: "document",
-        }))
-    );
+    setDocsList(allDocuments.map((doc) => ({
+      name: doc.document_name,
+      id: doc._id,
+      category: 'document',
+    })));
+    // setDocsList(
+    //   allDocuments
+    //     .filter((doc) => doc.document_type === "original")
+    //     .map((doc) => ({
+    //       name: doc.document_name,
+    //       id: doc._id,
+    //       category: "document",
+    //     }))
+    // );
 
     if (allTemplates)
       setTempsList(

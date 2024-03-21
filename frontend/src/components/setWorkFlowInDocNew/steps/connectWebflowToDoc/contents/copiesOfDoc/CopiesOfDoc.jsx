@@ -6,9 +6,10 @@ import { v4 as uuidv4 } from 'uuid';
 import { useForm } from 'react-hook-form';
 import AssignButton from '../../../../assignButton/AssignButton';
 import { useDispatch, useSelector } from 'react-redux';
-import { updateSingleProcessStep } from '../../../../../../features/app/appSlice';
+
 import { LoadingSpinner } from '../../../../../LoadingSpinner/LoadingSpinner';
 import { useTranslation } from 'react-i18next';
+import { updateSingleProcessStep } from '../../../../../../features/processes/processesSlice';
 
 const CopiesOfDoc = ({ currentStepIndex, stepsPopulated }) => {
   const {
@@ -25,7 +26,7 @@ const CopiesOfDoc = ({ currentStepIndex, stepsPopulated }) => {
     publicMembersSelectedForProcess,
     userMembersSelectedForProcess,
     teamMembersSelectedForProcess,
-  } = useSelector((state) => state.app);
+  } = useSelector((state) => state.processes);
   const [copiesFeaturesSet, setCopiesFeaturesSet] = useState(false);
   const [copiesFeaturesToDisplay, setCopiesFeaturesToDisplay] = useState([]);
   const [copiesSelected, setCopiesSelected] = useState([]);

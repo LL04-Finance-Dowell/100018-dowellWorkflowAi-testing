@@ -6,8 +6,9 @@ import { v4 as uuidv4 } from "uuid";
 import FormLayout from "../../../../../formLayout/FormLayout";
 import AssignButton from "../../../../../assignButton/AssignButton";
 import { useDispatch, useSelector } from "react-redux";
-import { updateSingleProcessStep } from "../../../../../../../features/app/appSlice";
+
 import { useEffect } from "react";
+import { updateSingleProcessStep } from "../../../../../../../features/processes/processesSlice";
 
 const AssignTask = ({ currentStepIndex, stepSkipped }) => {
   const {
@@ -19,7 +20,7 @@ const AssignTask = ({ currentStepIndex, stepSkipped }) => {
   } = useForm();
   const [loading, setLoading] = useState(false);
   const dispatch = useDispatch();
-  const { selectedMembersForProcess, docCurrentWorkflow } = useSelector((state) => state.app);
+  const { selectedMembersForProcess, docCurrentWorkflow } = useSelector((state) => state.processes);
   const watchRoleValChange = watch("member_type", false);
   const watchCurrentMemberValChange = watch("member", false);
 

@@ -5,10 +5,11 @@ import { useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import FormLayout from '../../../../../formLayout/FormLayout';
 import AssignButton from '../../../../../assignButton/AssignButton';
-import { updateSingleProcessStep } from '../../../../../../../features/app/appSlice';
+
 import { useDispatch, useSelector } from 'react-redux';
 import { useAppContext } from '../../../../../../../contexts/AppContext';
 import { useTranslation } from 'react-i18next';
+import { updateSingleProcessStep } from '../../../../../../../features/processes/processesSlice';
 
 const AssignTask = ({ currentStepIndex, stepsPopulated }) => {
   const { setIsAssignTask } = useAppContext();
@@ -22,7 +23,7 @@ const AssignTask = ({ currentStepIndex, stepsPopulated }) => {
   const [loading, setLoading] = useState(false);
   const dispatch = useDispatch();
   const { docCurrentWorkflow, processSteps } = useSelector(
-    (state) => state.app
+    (state) => state.processes
   );
     ///import which doc or template approval
     // const whichApproval = useSelector((state)=> state.copyProcess.whichApproval)

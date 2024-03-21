@@ -4,9 +4,10 @@ import { v4 as uuidv4 } from 'uuid';
 import { useForm } from 'react-hook-form';
 import Radio from '../../../../../radio/Radio';
 import Select from '../../../../../select/Select';
-import { updateSingleProcessStep } from '../../../../../../../features/app/appSlice';
+
 import { useDispatch, useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
+import { updateSingleProcessStep } from '../../../../../../../features/processes/processesSlice';
 
 const Time = ({ currentStepIndex, stepsPopulated }) => {
   const {
@@ -18,7 +19,7 @@ const Time = ({ currentStepIndex, stepsPopulated }) => {
   const [currentLimitSelection, setCurrentLimitSelection] = useState(null);
   const [customTimeSelection, setCustomTimeSelection] = useState(null);
   const { docCurrentWorkflow, processSteps } = useSelector(
-    (state) => state.app
+    (state) => state.processes
   );
   const handleTimeLimitSelection = (e) =>
     setCurrentLimitSelection(e.target.value);

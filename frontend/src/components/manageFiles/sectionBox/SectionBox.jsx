@@ -11,10 +11,7 @@ import { DocumentServices } from '../../../services/documentServices';
 import { toast } from 'react-toastify';
 import { TemplateServices } from '../../../services/templateServices';
 import { WorkflowServices } from '../../../services/workflowServices';
-import { getAllProcessesV2 } from '../../../services/processServices';
-import {
-  setAllProcesses,
-} from '../../../features/app/appSlice';
+import { getAllProcessesV2 } from '../../../services/processServices'; 
 import { setAllDocuments } from '../../../features/document/documentSlice';
 import { setAllTemplates } from '../../../features/template/templateSlice';
 import { setAllWorkflows } from '../../../features/workflow/workflowsSlice';
@@ -25,7 +22,11 @@ import {
   SetKnowledgeFolders
 } from '../../../features/app/appSlice';
 import axios from 'axios';
-import { setNotificationsForUser } from '../../../features/notifications/notificationSlice';
+import { setAllProcesses } from '../../../features/app/appSlice';
+import { setNotificationsForUser } from '../../../features/app/appSlice';
+import LoadingScreen from "../../LoadingScreen/loadingScreen"
+
+ 
 const SectionBox = ({
   cardItems,
   title,
@@ -57,6 +58,7 @@ const SectionBox = ({
   const [isDemoLoading, setIsDemoLoading] = useState(false);
   const [cardItemsVar, setCardItemsVar] = useState(cardItems);
   const [count, setCount] = useState(1);
+  const [remainingCards, setRemainingCards] = useState(0);
   const {
     fetchDemoTemplates,
     fetchDemoDocuments,
@@ -98,15 +100,15 @@ const SectionBox = ({
     }
   };
 
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      if (!isDemoLoading) {
-        handleDemoLoadMore();
-      }
-    }, 2000); // 2000 milliseconds = 2 seconds
+  // useEffect(() => {
+  //   const timer = setTimeout(() => {
+  //     if (!isDemoLoading) {
+  //       handleDemoLoadMore();
+  //     }
+  //   }, 2000); // 2000 milliseconds = 2 seconds
 
-    return () => clearTimeout(timer); // Cleanup function to clear timer if component unmounts or sliceCount changes
-  }, [sliceCount]);
+  //   return () => clearTimeout(timer); // Cleanup function to clear timer if component unmounts or sliceCount changes
+  // }, [sliceCount]);
 
   // useEffect(() => {
   //   // console.log('cardItemsVar: ', cardItemsVar);
@@ -622,12 +624,7 @@ const SectionBox = ({
             )}
           </h2>
 
-          {status === 'pending' ? (
-            <div style={{ marginTop: '15px' }}>
-              <BookSpinner />
-            </div>
-          ) : (
-            Card &&
+          {Card &&
             cardItemsVar &&
             cardItemsVar.length && (
               <>
@@ -636,20 +633,24 @@ const SectionBox = ({
                     cardItemsVar &&
                     cardItemsVar?.length > 0 &&
                     cardItemsVar
-                      .slice(0, sliceCount * 12)
+                      .slice(0, sliceCount * 40)
                       .map((item) => (
-                        <Card
-                          key={item?._id}
-                          cardItem={item}
-                          hideFavoriteIcon={hideFavoriteIcon}
-                          hideDeleteIcon={hideDeleteIcon}
-                          isFolder={itemType === 'folder' ? true : false}
-                          folderId={folderId}
-                          isCompletedDoc={isCompleted}
-                          isRejectedDoc={isRejected}
-                          isReport={isReport}
-                          knowledgeCenter={knowledgeCenter}
-                        />
+                        <div>
+                          {status === 'pending' ? <LoadingScreen /> : 
+                          <Card
+                            key={item?._id}
+                            cardItem={item}
+                            hideFavoriteIcon={hideFavoriteIcon}
+                            hideDeleteIcon={hideDeleteIcon}
+                            isFolder={itemType === 'folder' ? true : false}
+                            folderId={folderId}
+                            isCompletedDoc={isCompleted}
+                            isRejectedDoc={isRejected}
+                            isReport={isReport}
+                            knowledgeCenter={knowledgeCenter}
+                          />
+                          }
+                        </div>
                       ))}
                 </div>
                 {!isDemo
@@ -700,7 +701,7 @@ const SectionBox = ({
                   )}
               </>
             )
-          )}
+          }
         </div>
       </div>
     </div>

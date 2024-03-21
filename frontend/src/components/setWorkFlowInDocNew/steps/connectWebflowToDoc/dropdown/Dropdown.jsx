@@ -1,7 +1,6 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
-  setDocCurrentWorkflow,
   setDropdowndToggle,
 } from '../../../../../features/app/appSlice';
 import Collapse from '../../../../../layouts/collapse/Collapse';
@@ -10,14 +9,15 @@ import { TiArrowSortedDown, TiArrowSortedUp } from 'react-icons/ti';
 import { useTranslation } from 'react-i18next';
 import axios from 'axios';
 import { toast } from 'react-toastify';
+import { setDocCurrentWorkflow } from '../../../../../features/processes/processesSlice';
 
 const Dropdown = ({ disableClick, addWorkflowStep }) => {
   const dispatch = useDispatch();
   const { t } = useTranslation();
-  const { wfToDocument, docCurrentWorkflow, dropdownToggle } = useSelector(
-    (state) => state.app
+  const { wfToDocument, docCurrentWorkflow,  } = useSelector(
+    (state) => state.processes
   );
-  const { ProcessDetail, DocumentId } = useSelector((state) => state.app);
+  const {dropdownToggle,  DocumentId } = useSelector((state) => state.app);
   /*  const [toggle, setToggle] = useState(false); */
 
   ////copied workflow
@@ -37,6 +37,7 @@ const Dropdown = ({ disableClick, addWorkflowStep }) => {
   }, [copiedWorkflow, wfToDocument])
 
   const handleToggle = () => {
+
     if (disableClick) return;
     dispatch(setDropdowndToggle(!dropdownToggle));
   };

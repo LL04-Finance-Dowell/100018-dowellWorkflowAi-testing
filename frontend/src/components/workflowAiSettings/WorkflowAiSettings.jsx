@@ -16,6 +16,8 @@ import { useAppContext } from '../../contexts/AppContext';
 import { useTranslation } from 'react-i18next';
 import NameChangeModal from '../modal/NameChangeModal';
 import Sidebar from '../newSidebar/Sidebar';
+import GroupsInSettings from './groupsInWorkflowAI/GroupsInSettings';
+
 
 const Container = styled.div`
   & button:not(.edit_modal_sect button, .name_change_sect button) {
@@ -55,8 +57,8 @@ const WorkflowAiSettings = () => {
           if (child.proccess_title === 'portfolios') {
             child.items =
               userDetail?.portfolio_info?.find(
-                (item) => item.product === 'Workflow AI'
-              )?.member_type === 'owner'
+                (item) => item.product === 'Workflow AI' && item.member_type === 'owner'
+              )
                 ? userDetail?.userportfolio.map((portfolio) => ({
                   _id: crypto.randomUUID(),
                   content: portfolio.portfolio_name,
@@ -128,6 +130,8 @@ const WorkflowAiSettings = () => {
               <EnabledProcess />
               <div className={styles.bottom__line}></div>
               <TeamsInWorkflowAi />
+              <div className={styles.bottom__line}></div>
+              <GroupsInSettings />
               <div className={styles.bottom__line}></div>
               <EnabledDisabkedProcess />
               {openNameChangeModal && <NameChangeModal />}

@@ -38,7 +38,7 @@ ChartJS.register(ArcElement, Tooltip, Legend, CategoryScale,
 
 
 const ProcessDetail = () => {
-  const { ProcessDetail } = useSelector((state) => state.app);
+  const { ProcessDetail } = useSelector((state) => state.processes);
   const { userDetail } = useSelector((state) => state.auth);
   const navigate = useNavigate();
 

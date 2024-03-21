@@ -3,23 +3,18 @@ import { useSelector, useDispatch } from 'react-redux';
 import { AiFillCheckSquare, AiOutlineDown, AiOutlineUp } from 'react-icons/ai';
 import './typefilter.css';
 
-import {
-  setPortfoliosInWorkflowAITeams,
-  setSelectedPortfolioTypeForWorkflowSettings,
-  setTeamsInWorkflowAI,
-} from '../../features/app/appSlice';
 import { useAppContext } from '../../contexts/AppContext';
 import { toast } from 'react-toastify';
 import { setIsSelected } from '../../utils/helpers';
-import { v4 } from 'uuid';
+import { setPortfoliosInWorkflowAITeams, setTeamsInWorkflowAI } from '../../features/processes/processesSlice';
+import { setSelectedPortfolioTypeForWorkflowSettings } from '../../features/app/appSlice';
 
 const TypeFilter = ({ edit }) => {
   const filterOpts = ['user', 'team_member', 'public'];
   const [isDropdown, setIsDropdown] = useState(false);
   const { userDetail } = useSelector((state) => state.auth);
   const [userPortfolios] = useState(
-    userDetail?.portfolio_info?.find((item) => item.product === 'Workflow AI')
-      ?.member_type === 'owner'
+    userDetail?.portfolio_info?.find((item) => item.product === 'Workflow AI' && item.member_type === 'owner')
       ? userDetail?.userportfolio
       : userDetail?.selected_product?.userportfolio
   );
@@ -92,16 +87,16 @@ const DropOpt = ({ setFilter, filter, filterOpts, edit }) => {
   const dispatch = useDispatch();
   const { workflowTeams, selectedTeamIdGlobal } = useAppContext();
   const [clicks, setClicks] = useState(false);
-  const { teamsInWorkflowAI } = useSelector((state) => state.app);
+  const { teamsInWorkflowAI } = useSelector((state) => state.processes);
 
-  const portfolios = teamsInWorkflowAI[0].children[1].column[0].items;
+  const portfolios = teamsInWorkflowAI[0]?.children[1]?.column[0]?.items;
 
   const unselectAllPortfolios = () => {
     const selectedItems = setIsSelected({
-      items: teamsInWorkflowAI[0].children,
+      items: teamsInWorkflowAI[0]?.children,
       item: null,
       title: '',
-      boxId: teamsInWorkflowAI[0].children[1]._id,
+      boxId: teamsInWorkflowAI[0]?.children[1]._id,
       type: 'unselect_all',
     });
     dispatch(setTeamsInWorkflowAI(selectedItems));

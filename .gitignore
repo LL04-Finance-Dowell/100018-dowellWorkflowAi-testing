@@ -8,3 +8,4 @@ migrations
 *sqlite*
 media
 *.log
+**/__pycache__/

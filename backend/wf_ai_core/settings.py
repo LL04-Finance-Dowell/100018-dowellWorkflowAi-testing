@@ -33,7 +33,7 @@ ALLOWED_HOSTS = ["*"]
 INSTALLED_APPS = [
     "corsheaders",
     "drf_yasg",
-    'django_crontab',
+    "django_crontab",
     "app",
     "django.contrib.admin",
     "django.contrib.auth",
@@ -45,7 +45,7 @@ INSTALLED_APPS = [
     "rest_framework",
 ]
 
-CRONJOBS = [('*/1 * * * *', 'app.utils.notification_cron.send_reminders')]
+CRONJOBS = [("*/1 * * * *", "app.utils.notification_cron.send_reminders")]
 
 MIDDLEWARE = [
     "django.middleware.http.ConditionalGetMiddleware",
@@ -160,7 +160,10 @@ REST_FRAMEWORK = {
 }
 APPEND_SLASH = True
 
-
-CORS_ALLOWED_ORIGINS = [
-    'http://74.50.64.89:3000',
+CORS_ORIGIN_WHITELIST = [
+    "http://74.50.64.89:3000",
+    "http://localhost:3000",
+    "http://workflowai.uxlivinglab.online",
 ]
+
+STATIC_ROOT = Path(BASE_DIR / "static")

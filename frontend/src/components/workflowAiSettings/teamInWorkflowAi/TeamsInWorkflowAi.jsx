@@ -1,11 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useDispatch, useSelector } from 'react-redux';
-import {
-  setTeamsInWorkflowAI,
-  setPortfoliosInWorkflowAITeams,
-  setUpdateInWorkflowAITeams,
-} from '../../../features/app/appSlice';
+
 import { productName, setIsSelected } from '../../../utils/helpers';
 import InfoBox from '../../infoBox/InfoBox';
 
@@ -17,6 +13,7 @@ import { toast } from 'react-toastify';
 import { useAppContext } from '../../../contexts/AppContext';
 import Spinner from '../../spinner/Spinner';
 import { useTranslation } from 'react-i18next';
+import { setPortfoliosInWorkflowAITeams, setTeamsInWorkflowAI, setUpdateInWorkflowAITeams } from '../../../features/processes/processesSlice';
 
 // TODO FIX ADDITION OF NEW TEAM TO 'workflowTeams' 132.
 const TeamsInWorkflowAi = () => {
@@ -28,12 +25,13 @@ const TeamsInWorkflowAi = () => {
 
   const workflowSettingServices = new WorkflowSettingServices();
 
-  const { teamsInWorkflowAI, selectedPortfolioTypeForWorkflowSettings } =
+  const { selectedPortfolioTypeForWorkflowSettings } =
     useSelector((state) => state.app);
+    const { teamsInWorkflowAI } =
+    useSelector((state) => state.processes);
   const { userDetail } = useSelector((state) => state.auth);
   const [userPortfolios] = useState(
-    userDetail?.portfolio_info?.find((item) => item.product === 'Workflow AI')
-      ?.member_type === 'owner'
+    userDetail?.portfolio_info?.find((item) => item.product === 'Workflow AI' && item.member_type === 'owner')
       ? userDetail?.userportfolio.map((port) => ({
           _id: v4(),
           content: port.portfolio_name,
@@ -104,8 +102,8 @@ const TeamsInWorkflowAi = () => {
 
       const portfolio_list =
         userDetail?.portfolio_info?.find(
-          (item) => item.product === 'Workflow AI'
-        )?.member_type === 'owner'
+          (item) => item.product === 'Workflow AI' && item.member_type === 'owner'
+        )
           ? userDetail.userportfolio.filter((port) => {
               return selectedPortfolios.find(
                 (sPort) => sPort.content === port.portfolio_name
@@ -254,8 +252,7 @@ const TeamsInWorkflowAi = () => {
     } = teamInfo;
 
     const portfolio_list =
-      userDetail?.portfolio_info?.find((item) => item.product === 'Workflow AI')
-        ?.member_type === 'owner'
+      userDetail?.portfolio_info?.find((item) => item.product === 'Workflow AI' && item.member_type === 'owner')
         ? userDetail.userportfolio.filter((port) => {
             return selectedPortfolios.find(
               (sPort) => sPort.content === port.portfolio_name

@@ -5,18 +5,11 @@ import { useForm } from 'react-hook-form';
 import InfoBox from '../../infoBox/InfoBox';
 import { v4 } from 'uuid';
 import { useSelector, useDispatch } from 'react-redux';
-import {
-  setSettingProccessTeams,
-  setSettingProccessPortfolios,
-  setUpdateProccess,
-  setSettingProccess,
-  permissionArray
-} from '../../../features/app/appSlice';
 import { productName, setIsSelected } from '../../../utils/helpers';
 import { createWorkflowSettings } from '../../../features/settings/asyncThunks';
-import { updateWorkflowSettings } from '../../../features/settings/asyncThunks';
 import { useTranslation } from 'react-i18next';
 import { useAppContext } from '../../../contexts/AppContext';
+import { setSettingProccess, setSettingProccessPortfolios, setSettingProccessTeams, setUpdateProccess } from '../../../features/processes/processesSlice';
 
 const EnabledProcess = () => {
   const dispatch = useDispatch();
@@ -25,16 +18,15 @@ const EnabledProcess = () => {
     (state) => state.app
   );
 
-  const { settingProccess } = useSelector((state) => state.app);
+  const { settingProccess } = useSelector((state) => state.processes);
   const { createWorkflowSettings: createWorkflowSettingsItems, createStatus } =
     useSelector((state) => state.settings);
   const { userDetail } = useSelector((state) => state.auth);
-  const { teamsInWorkflowAI } = useSelector((state) => state.app);
+  const { teamsInWorkflowAI } = useSelector((state) => state.processes);
 
   const { workflowTeams, isDesktop, nonDesktopStyles } = useAppContext();
   const [userPortfolios] = useState(
-    userDetail?.portfolio_info?.find((item) => item.product === 'Workflow AI')
-      ?.member_type === 'owner'
+    userDetail?.portfolio_info?.find((item) => item.product === 'Workflow AI' && item.member_type === 'owner')
       ? userDetail?.userportfolio.map((port) => ({
           _id: v4(),
           content: port.portfolio_name,
@@ -55,8 +47,7 @@ const EnabledProcess = () => {
         // console.log("userportfolio:", userDetail?.userportfolio);
         // console.log("selected_product:", userDetail?.selected_product);
         return (
-            userDetail?.portfolio_info?.find((item) => item.product === 'Workflow AI')
-              ?.member_type === 'owner'
+            userDetail?.portfolio_info?.find((item) => item.product === 'Workflow AI' && item.member_type === 'owner')
               ? [...userDetail?.userportfolio]
               : [...userDetail?.selected_product?.userportfolio]
         );
@@ -307,7 +298,13 @@ const EnabledProcess = () => {
   useEffect(() => {
     if (portfolioRights)
       dispatch(
-        setSettingProccess({ payload: portfolioRights, type: 'rights' })
+        setSettingProccess({ 
+          payload: !portfolioRights || !Array.isArray(portfolioRights) ? 
+            [] 
+            : 
+          portfolioRights, 
+          type: 'rights'
+        })
       );
   }, [portfolioRights]);
 
@@ -326,6 +323,7 @@ const EnabledProcess = () => {
   }, [workflowTeams, teamsInWorkflowAI]);
 
   useEffect(() => {
+    console.log(userPortfolios);
     dispatch(setSettingProccessPortfolios(userPortfolios));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userPortfolios]);

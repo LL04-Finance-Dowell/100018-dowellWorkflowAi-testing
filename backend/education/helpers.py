@@ -2,18 +2,42 @@
 from app import processing
 from education.datacube_connection import (
     datacube_collection_retrieval,
-    single_query_clones_collection,
-    single_query_document_collection,
-    single_query_template_collection,
+    get_clone_from_collection,
+    get_document_from_collection,
+    get_template_from_collection,
 )
 from app.constants import EDITOR_API
 import json
 from datetime import datetime
 import requests
+from rest_framework.response import Response
+import re
 
 
 class InvalidTokenException(Exception):
     pass
+
+
+def CustomResponse(success=True, message=None, response=None, status_code=None):
+    """
+    Create a custom response.
+    :param success: Whether the operation was successful or not.
+    :param message: Any message associated with the response.
+    :param data: Data to be included in the response.
+    :param status_code: HTTP status code for the response.
+    :return: Response object.
+    """
+    response_data = {"success": success}
+    if message is not None:
+        response_data["message"] = message
+    if response is not None:
+        response_data["response"] = response
+
+    return (
+        Response(response_data, status=status_code)
+        if status_code
+        else Response(response_data)
+    )
 
 
 def authorization_check(api_key):
@@ -54,10 +78,16 @@ def check_if_name_exists_collection(api_key, collection_name, db_name):
     print("collection name arg: ", collection_name)
     print("db name arg: ", db_name)
     res = datacube_collection_retrieval(api_key, db_name)
+    base_name = re.sub(r"_\d+$", "", collection_name)
     if res["success"] == True:
-        if not [collection_name in item for item in res["data"][0]]:
-            print("essssss: ", res["data"][0])
-            new_collection_name = generate_unique_collection_name(res["data"][0], db_name)
+        # THIS SHOULD WORK AS WELL
+        # if not [collection_name in item for item in res["data"][0]]:
+        #     print("essssss: ", res["data"][0])
+        #     new_collection_name = generate_unique_collection_name(res["data"][0], base_name)
+        if collection_name not in res["data"][0]:
+            new_collection_name = generate_unique_collection_name(
+                res["data"][0], base_name
+            )
             return {
                 "name": new_collection_name,
                 "success": True,
@@ -73,6 +103,7 @@ def check_if_name_exists_collection(api_key, collection_name, db_name):
             }
     else:
         return {
+            "success": False,
             "Message": res["message"],
             "Url": "https://datacube.uxlivinglab.online/",
         }
@@ -136,15 +167,15 @@ def access_editor(
         document = "templatereports"
         field = "template_name"
     if item_type == "document":
-        item_name = single_query_document_collection(
+        item_name = get_document_from_collection(
             api_key, database, collection_name, {"_id": item_id}
         )
     elif item_type == "clone":
-        item_name = single_query_clones_collection(
+        item_name = get_clone_from_collection(
             api_key, database, collection_name, {"_id": item_id}
         )
     else:
-        item_name = single_query_template_collection(
+        item_name = get_template_from_collection(
             api_key, database, collection_name, {"_id": item_id}
         )
 

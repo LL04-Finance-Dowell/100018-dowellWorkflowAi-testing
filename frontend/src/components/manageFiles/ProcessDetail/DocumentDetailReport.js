@@ -23,7 +23,7 @@ ChartJS.register(ArcElement, Tooltip, Legend, CategoryScale,
 );
 
 export default function DocumentDetailReport() {
-	const { ProcessDetail } = useSelector((state) => state.app);
+	const { ProcessDetail } = useSelector((state) => state.processes);
 	const { userDetail } = useSelector((state) => state.auth);
 	const [documentReportData, setDocumentReportData] = useState(DocumentProcessDetailReport);
 

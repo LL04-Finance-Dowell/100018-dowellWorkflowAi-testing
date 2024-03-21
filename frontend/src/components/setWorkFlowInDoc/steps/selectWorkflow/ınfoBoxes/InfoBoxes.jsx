@@ -6,12 +6,6 @@ import { GrAdd } from 'react-icons/gr';
 import { MdOutlineRemove } from 'react-icons/md';
 import { useScroll, useTransform } from 'framer-motion';
 import { useSelector, useDispatch } from 'react-redux';
-import {
-  removeFromSelectedMembersForProcess,
-  setMembersSetForProcess,
-  setSelectedMembersForProcess,
-  setSelectedWorkflowsToDoc,
-} from '../../../../../features/app/appSlice';
 import Collapse from '../../../../../layouts/collapse/Collapse';
 import { LoadingSpinner } from '../../../../LoadingSpinner/LoadingSpinner';
 import { useForm } from 'react-hook-form';
@@ -25,6 +19,8 @@ import {
 } from '../../../../infoBox/styledComponents';
 import { allWorkflows } from '../../../../../features/workflow/asyncTHunks';
 import { productName } from '../../../../../utils/helpers';
+import { removeFromSelectedMembersForProcess, setMembersSetForProcess, setSelectedMembersForProcess, setSelectedWorkflowsToDoc } from '../../../../../features/processes/processesSlice';
+
 
 const InfoBoxes = () => {
   const { register, watch } = useForm();
@@ -40,7 +36,7 @@ const InfoBoxes = () => {
     selectedMembersForProcess,
 
     membersSetForProcess,
-  } = useSelector((state) => state.app);
+  } = useSelector((state) => state.processes);
   const { allWorkflows: allWorkflowsArray, allWorkflowsStatus } = useSelector(
     (state) => state.workflow
   );
