@@ -77,8 +77,9 @@ def generate_unique_collection_name(existing_collection_names, base_name):
 def check_if_name_exists_collection(api_key, collection_name, db_name):
     res = datacube_collection_retrieval(api_key, db_name)
     base_name = re.sub(r"_\d+$", "", collection_name)
-    if res["success"] == True:
-        if collection_name not in res["data"][0]:
+    print(res)
+    if res["success"]:
+        if collection_name in res["data"][0]:
             new_collection_name = generate_unique_collection_name(
                 res["data"][0], base_name
             )
