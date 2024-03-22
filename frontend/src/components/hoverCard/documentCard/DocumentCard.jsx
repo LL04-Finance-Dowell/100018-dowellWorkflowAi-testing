@@ -586,7 +586,7 @@ const DocumentCard = ({
                 ) : cardItem.type === 'sign-document' ? (
                   'Sign Here'
                 ) : (
-                  t('Preview')
+                  t('Preview Document')
                 )}
               </Button>
             </>
