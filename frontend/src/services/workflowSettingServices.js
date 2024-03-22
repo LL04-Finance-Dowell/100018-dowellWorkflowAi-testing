@@ -16,7 +16,7 @@ export class WorkflowSettingServices {
   };
 
   createWorkflowTeam = (data) => {
-    return httpApiUrlV2.post('settings/', data);
+    return httpApiUrlV2.post('teams/', data);
   };
 
   updateWorkflowTeam = (teamId, data) => {
