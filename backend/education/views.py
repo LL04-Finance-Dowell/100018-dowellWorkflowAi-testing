@@ -299,8 +299,8 @@ class NewTemplate(APIView):
             )
 
     def post(self, request):
-        type_request = request.GET.get("type")
-        workspace_id = request.GET.get("workspace_id")
+        type_request = request.data.get("type")
+        workspace_id = request.data.get("workspace_id")
 
         if type_request == "approve":
             return self.approve(request)
@@ -309,8 +309,8 @@ class NewTemplate(APIView):
         page = ""
         folder = []
         approved = False
-        collection_name = "template_collection_0"
-        db_name = f'{workspace_id}_"TEMPLATE_DATABASE_0"'
+        collection_name = f"{workspace_id}_template_collection_0"
+        db_name = f"{workspace_id}_DB_0"
 
         metadata_db = f"{workspace_id}_METADATA_DATABASE_0"
         metadata_collection = "template_metadata_collection_0"
@@ -322,7 +322,7 @@ class NewTemplate(APIView):
 
         collection_names = check_if_name_exists_collection(
             api_key, collection_name, db_name
-        )
+        )      
         collection_name = collection_names["name"]
         if collection_names["success"]:
             create_new_collection_for_template = add_collection_to_database(
@@ -345,6 +345,8 @@ class NewTemplate(APIView):
                 return Response(
                     "Database does not exist", status.HTTP_400_BAD_REQUEST, e.message
                 )
+                
+
 
         if (
             create_new_collection_for_template["success"] == True
@@ -800,11 +802,12 @@ class NewDocument(APIView):
         created_by = request.data.get("created_by")
         data_type = request.data.get("data_type")
 
-        db_name = f"{workspace_id}_TEMPLATE_DATABASE_0"
-        collection_name = "template_collection_0"
+        db_name_0 = f"{workspace_id}_DB_0"
+        db_name_1 = f"{workspace_id}_TEMPLATE_DB_1"
+        collection_name = f"{workspace_id}_template_collection_0"
         metadata_db = f"{workspace_id}_METADATA_DATABASE_0"
         metadata_collection = "template_metadata_collection_0"
-
+        
         try:
             api_key = authorization_check(request.headers.get("Authorization"))
 
@@ -824,7 +827,7 @@ class NewDocument(APIView):
                 status.HTTP_400_BAD_REQUEST,
             )
 
-        collection = check_if_name_exists_collection(api_key, collection_name, db_name)
+        collection = check_if_name_exists_collection(api_key, collection_name, db_name_0)
         
         if not collection["success"]:
             return CustomResponse(False, "No collection with found", None, status.HTTP_404_NOT_FOUND)
@@ -832,7 +835,7 @@ class NewDocument(APIView):
         collection_name = collection["name"]
       
         template = get_template_from_collection(
-            api_key, db_name, collection_name, {"collection_name": collection_name}
+            api_key, db_name_0, collection_name, {"collection_name": collection_name}
         )
 
         if not template["success"]:
@@ -852,11 +855,27 @@ class NewDocument(APIView):
             "process_id": "",
             "folders": [],
         }
+        
+        db_0_res = post_data_to_collection(
+            api_key=api_key,
+            collection=collection_name,
+            database=db_name_0,
+            operation="insert",
+            data=document_data,
+        )
+        
+        if not db_0_res["success"]:
+            return CustomResponse(
+                False,
+                "An error occured while trying to save document",
+                None,
+                status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
 
         res = post_data_to_collection(
             api_key=api_key,
             collection=collection_name,
-            database=db_name,
+            database=db_name_1,
             operation="insert",
             data=document_data,
         )
@@ -881,7 +900,7 @@ class NewDocument(APIView):
             res_metadata = save_to_metadata(
                 api_key=api_key,
                 collection_id=collection_name,
-                db_name=db_name,
+                db_name=db_name_1,
                 data=metadata,
             )
 
@@ -905,8 +924,9 @@ class Document(APIView):
         member = request.query_params.get("member")
         portfolio = request.query_params.get("portfolio")
         
-        db_name = f"{workspace_id}_TEMPLATE_DATABASE_0"
-        collection_name = "template_collection_0"
+        
+        db_name = f"{workspace_id}_DB_0"
+        collection_name = f"{workspace_id}_template_collection_0"
         
         try:
             api_key = authorization_check(request.headers.get("Authorization"))
@@ -991,8 +1011,8 @@ class DocumentLink(APIView):
         workspace_id = request.query_params.get("workspace_id")
         document_type = request.query_params.get("document_type")
         
-        db_name = f"{workspace_id}_TEMPLATE_DATABASE_0"
-        collection_name = "template_collection_0"
+        db_name = f"{workspace_id}_DB_0"
+        collection_name = f"{workspace_id}_template_collection_0"
         
         try:
             api_key = authorization_check(request.headers.get("Authorization"))
@@ -1047,9 +1067,10 @@ class DocumentDetail(APIView):
         """Retrieves the document object for a specific document"""
         workspace_id = request.query_params.get("workspace_id")
         document_type = request.query_params.get("document_type")
+         
+        db_name = f"{workspace_id}_DB_0"
+        collection_name = f"{workspace_id}_template_collection_0"
         
-        db_name = f"{workspace_id}_TEMPLATE_DATABASE_0"
-        collection_name = "template_collection_0"
         
         try:
             api_key = authorization_check(request.headers.get("Authorization"))
@@ -1058,10 +1079,10 @@ class DocumentDetail(APIView):
             return CustomResponse(False, str(e), None, status.HTTP_401_UNAUTHORIZED)  
 
 
-        if not collection_name or not db_name:
+        if not workspace_id or not document_type:
             return CustomResponse(
                 False,
-                "collection_name and Database Name are required",
+                "workspace_id and document_type are required",
                 None,
                 status.HTTP_400_BAD_REQUEST,
             )
