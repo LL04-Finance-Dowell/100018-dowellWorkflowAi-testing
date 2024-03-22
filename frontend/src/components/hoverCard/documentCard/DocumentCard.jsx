@@ -385,12 +385,25 @@ const DocumentCard = ({
   };
 
   const generatePdfLink = async (item) => {
+    console.log("cardItem", item);
     const apiUrl = 'https://100058.pythonanywhere.com/api/generate-pdf-link/';
+    const collectionId = item?.collection_id || "653b5ba638ec7dcbdb556a38";
 
+    // First, try to retrieve the download URL from localStorage
+    const storedData = localStorage.getItem(collectionId);
+    if (storedData) {
+      const storedJson = JSON.parse(storedData);
+      console.log('Using cached PDF link:', storedJson.download_url);
+      setPdfUrlLink(storedJson.download_url);
+      viewAsPdfLink(storedJson.download_url);
+      toast.info('PDF loaded from cache successfully');
+      return; // Stop execution here as we already have the PDF link
+    }
+    
     const payload = {
       item_type: "document",
-      // item_id: item?.collection_id || "653b5ba638ec7dcbdb556a38",
-      item_id: "653b5ba638ec7dcbdb556a38",
+      item_id: item?.collection_id || "653b5ba638ec7dcbdb556a38",
+      // item_id: "653b5ba638ec7dcbdb556a38",
     };
 
     console.log("generate pdf link", apiUrl, payload)
@@ -399,6 +412,7 @@ const DocumentCard = ({
         // Handle the API response here
         console.log('Pdf generated successfully', response);
         setPdfUrlLink(response.data.download_url);
+        localStorage.setItem(item?.collection_id, JSON.stringify({ download_url: response.data.download_url }));
         // Assuming response.data contains the PDF link
         viewAsPdfLink(pdfUrlLink)
         toast.info('Pdf generated successfully');
@@ -412,62 +426,62 @@ const DocumentCard = ({
   };
 
 
-  const generatePDF = (jsonData) => {
-    if (!jsonData) {
-      console.error('No HTML content to generate PDF');
-      return;
-    }
-    debugger
-    console.log("jsonData", jsonData)
-    // Convert JSON data into HTML content
-    const htmlContent = jsonData[1]?.map(item => {
-      if (item.id.includes('t')) {
-        // For text input items
-        return `<input>${item.data}</input>`;
-      } else if (item.id.includes('i')) {
-        // For image input items
-        return `<img src="${item.data}" />`;
-      } else if (item.id.includes('s')) {
-        // For image data as base64
-        return `<img src="${item.data}" />`;
-      } else if (item.id.includes('dd')) {
-        // For select list items
-        return `<date>${item.data}</date>`;
-      }
-    }).join('');
+  // const generatePDF = (jsonData) => {
+  //   if (!jsonData) {
+  //     console.error('No HTML content to generate PDF');
+  //     return;
+  //   }
+  //   debugger
+  //   console.log("jsonData", jsonData)
+  //   // Convert JSON data into HTML content
+  //   const htmlContent = jsonData[1]?.map(item => {
+  //     if (item.id.includes('t')) {
+  //       // For text input items
+  //       return `<input>${item.data}</input>`;
+  //     } else if (item.id.includes('i')) {
+  //       // For image input items
+  //       return `<img src="${item.data}" />`;
+  //     } else if (item.id.includes('s')) {
+  //       // For image data as base64
+  //       return `<img src="${item.data}" />`;
+  //     } else if (item.id.includes('dd')) {
+  //       // For select list items
+  //       return `<date>${item.data}</date>`;
+  //     }
+  //   }).join('');
 
-    console.log("htmlContent", htmlContent)
+  //   console.log("htmlContent", htmlContent)
 
-    const pdf = new jsPDF('p', 'pt', 'a4');
-    const pageHeight = pdf.internal.pageSize.getHeight();
+  //   const pdf = new jsPDF('p', 'pt', 'a4');
+  //   const pageHeight = pdf.internal.pageSize.getHeight();
 
-    // Add HTML content to the PDF
-    pdf.html(htmlContent, {
-      callback: function (pdf) {
-        // Save the PDF
-        pdf.save('generated.pdf');
-      },
-      margin: [10, 10, 10, 10],
-      autoPaging: 'text',
-      x: 0,
-      y: 0,
-      width: 190, //target width in the PDF document
-      windowWidth: 675 //window width in CSS pixels
-    });
-  };
+  //   // Add HTML content to the PDF
+  //   pdf.html(htmlContent, {
+  //     callback: function (pdf) {
+  //       // Save the PDF
+  //       pdf.save('generated.pdf');
+  //     },
+  //     margin: [10, 10, 10, 10],
+  //     autoPaging: 'text',
+  //     x: 0,
+  //     y: 0,
+  //     width: 190, //target width in the PDF document
+  //     windowWidth: 675 //window width in CSS pixels
+  //   });
+  // };
 
-  const generatePdfClick = async (item) => {
-    const documentServices = new DocumentServices();
-    const collection_id = item.collection_id;
+  // const generatePdfClick = async (item) => {
+  //   const documentServices = new DocumentServices();
+  //   const collection_id = item.collection_id;
 
-    const contentOfDocument = await documentServices.contentDocument(collection_id, item);
-    console.log("contentOfDocument in pdf", contentOfDocument.data[0]);
-    const jsonData = contentOfDocument.data[0];
+  //   const contentOfDocument = await documentServices.contentDocument(collection_id, item);
+  //   console.log("contentOfDocument in pdf", contentOfDocument.data[0]);
+  //   const jsonData = contentOfDocument.data[0];
 
-    // generatePdfContent("data")
-    const url = 'https://ll04-finance-dowell.github.io/100058-DowellEditor-V2/?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwcm9kdWN0X25hbWUiOiJXb3JrZmxvdyBBSSIsImRldGFpbHMiOnsiY2x1c3RlciI6IkRvY3VtZW50cyIsImRhdGFiYXNlIjoiRG9jdW1lbnRhdGlvbiIsImNvbGxlY3Rpb24iOiJUZW1wbGF0ZVJlcG9ydHMiLCJkb2N1bWVudCI6InRlbXBsYXRlcmVwb3J0cyIsInRlYW1fbWVtYmVyX0lEIjoiMjI2ODkwNDQ0MzMiLCJmdW5jdGlvbl9JRCI6IkFCQ0RFIiwiX2lkIjoiNjVlZjIzZTNmOWM2NDc4MzRmOTAwMDhkIiwiZmllbGQiOiJ0ZW1wbGF0ZV9uYW1lIiwidHlwZSI6InRlbXBsYXRlIiwibWV0YWRhdGFfaWQiOiI2NWVmMjNlNDIzNDY2YTY3ZTJlNGRmMjQiLCJhY3Rpb24iOiJ0ZW1wbGF0ZSIsImZsYWciOiJlZGl0aW5nIiwibmFtZSI6IlRlc3QgVGVtcGxhdGUiLCJ1c2VybmFtZSI6IiIsInBvcnRmb2xpbyI6IiIsImVtYWlsIjoiIiwidGltZSI6IjIwMjQtMDMtMTIgMTY6Mzc6MDYuOTQ5NjY1IiwiY29tbWFuZCI6InVwZGF0ZSIsInVwZGF0ZV9maWVsZCI6eyJ0ZW1wbGF0ZV9uYW1lIjoiIiwiY29udGVudCI6IiIsInBhZ2UiOiIiLCJlZGl0ZWRfYnkiOiIiLCJwb3J0Zm9saW8iOiIiLCJlZGl0ZWRfb24iOiIyMDI0LTAzLTEyIDE2OjM3OjA2Ljk0OTY4NCJ9fX0.2lNa0XP3ciL3uA7ZQpLXUKmPr-eUy55_MLHNYukFaeQ'
-    generatePDF(jsonData);
-  };
+  //   // generatePdfContent("data")
+  //   const url = 'https://ll04-finance-dowell.github.io/100058-DowellEditor-V2/?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwcm9kdWN0X25hbWUiOiJXb3JrZmxvdyBBSSIsImRldGFpbHMiOnsiY2x1c3RlciI6IkRvY3VtZW50cyIsImRhdGFiYXNlIjoiRG9jdW1lbnRhdGlvbiIsImNvbGxlY3Rpb24iOiJUZW1wbGF0ZVJlcG9ydHMiLCJkb2N1bWVudCI6InRlbXBsYXRlcmVwb3J0cyIsInRlYW1fbWVtYmVyX0lEIjoiMjI2ODkwNDQ0MzMiLCJmdW5jdGlvbl9JRCI6IkFCQ0RFIiwiX2lkIjoiNjVlZjIzZTNmOWM2NDc4MzRmOTAwMDhkIiwiZmllbGQiOiJ0ZW1wbGF0ZV9uYW1lIiwidHlwZSI6InRlbXBsYXRlIiwibWV0YWRhdGFfaWQiOiI2NWVmMjNlNDIzNDY2YTY3ZTJlNGRmMjQiLCJhY3Rpb24iOiJ0ZW1wbGF0ZSIsImZsYWciOiJlZGl0aW5nIiwibmFtZSI6IlRlc3QgVGVtcGxhdGUiLCJ1c2VybmFtZSI6IiIsInBvcnRmb2xpbyI6IiIsImVtYWlsIjoiIiwidGltZSI6IjIwMjQtMDMtMTIgMTY6Mzc6MDYuOTQ5NjY1IiwiY29tbWFuZCI6InVwZGF0ZSIsInVwZGF0ZV9maWVsZCI6eyJ0ZW1wbGF0ZV9uYW1lIjoiIiwiY29udGVudCI6IiIsInBhZ2UiOiIiLCJlZGl0ZWRfYnkiOiIiLCJwb3J0Zm9saW8iOiIiLCJlZGl0ZWRfb24iOiIyMDI0LTAzLTEyIDE2OjM3OjA2Ljk0OTY4NCJ9fX0.2lNa0XP3ciL3uA7ZQpLXUKmPr-eUy55_MLHNYukFaeQ'
+  //   generatePDF(jsonData);
+  // };
 
 
   const handleSaveFile = async () => {
@@ -580,7 +594,8 @@ const DocumentCard = ({
               )}
             </Button>
               <br />
-              <Button onClick={() => viewAsPDF(cardItem)}>
+              <Button onClick={() => generatePdfLink(cardItem)}>
+              {/* <Button onClick={() => viewAsPDF(cardItem)}> */}
                 {dataLoading ? (
                   <LoadingSpinner />
                 ) : cardItem.type === 'sign-document' ? (
