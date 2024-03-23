@@ -194,9 +194,9 @@ const ProcessDetail = () => {
               Document Report
             </Button>
 
-            <Button onClick={handleNavigateScale} variant="success">
+            {/* <Button onClick={handleNavigateScale} variant="success">
               Scale Report
-            </Button>
+            </Button> */}
 
             <Button onClick={handleNavigate} variant="success">
               Evaluation Report

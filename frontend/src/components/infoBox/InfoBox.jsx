@@ -30,6 +30,7 @@ import { useAppContext } from '../../contexts/AppContext';
 import { useTranslation } from 'react-i18next';
 import { setTeamInWorkflowAITeams, setTeamsInWorkflowAITeams } from '../../features/processes/processesSlice';
 import CreateGroup from '../../features/groups/CreateGroup/CreateGroup';
+import { setSelectedGroupForEdit, setUpdatedGroupFlag, updateGroupFlag } from '../../features/groups/groupsSlice';
 
 const InfoBox = ({
   boxId,
@@ -51,7 +52,8 @@ const InfoBox = ({
   teamData,
   totalPublicVal,
   externalToggleVal,
-  showGroupEditButton
+  showGroupEditButton,
+  selectedGroupForEdit
 }) => {
 
 
@@ -69,7 +71,7 @@ const InfoBox = ({
   const { userDetail } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
   const { t } = useTranslation();
-
+  const updatedFlag = useSelector(updateGroupFlag);
   const { workflowTeams } = useAppContext();
   const [searchValue, setSearchValue] = useState('');
   const [itemsToDisplay, setItemsToDisplay] = useState([]);
@@ -84,6 +86,11 @@ const InfoBox = ({
     setShowModal(true);
   };
   const handleGroupsModal = () => {
+    
+    if(showGroupEditButton && selectedGroupForEdit ){
+      dispatch(setUpdatedGroupFlag())
+      dispatch(setSelectedGroupForEdit(selectedGroupForEdit))
+    }
     setOpenGroupsOverlayModal(true);
   };
   const closeGroupsModal = () => {
@@ -125,7 +132,7 @@ if(!externalToggleVal && isOpen){
 
   useEffect(() => {
     setItemsToDisplay(items);
-  }, [items]);
+  }, [items,updatedFlag]);
 
   useEffect(() => {
     if (showSearch) {
@@ -135,7 +142,7 @@ if(!externalToggleVal && isOpen){
       );
       setItemsToDisplay(itemsMatchingSearchValue);
     }
-  }, [searchValue, showSearch, items]);
+  }, [searchValue, showSearch,updatedFlag, items]);
 
   // *Adds new team to app
   useEffect(() => {
@@ -154,7 +161,7 @@ if(!externalToggleVal && isOpen){
       setTeam({});
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [team]);
+  }, [team,updatedFlag]);
 
   // *Populate teamsInWorkflowAITeams with fetched teams
   useEffect(() => {
@@ -202,7 +209,7 @@ if(!externalToggleVal && isOpen){
         setModTitle(mod);
       }
     }
-  }, [specials, permissionArray]);
+  }, [specials,updatedFlag, permissionArray]);
 
   return specials === 'ep' ? (
     !!itemsToDisplay.length && (
@@ -481,7 +488,7 @@ if(!externalToggleVal && isOpen){
                 color: 'var(--e-global-color-cd6593d)',
                 fontSize: '1rem',
               }}
-      
+              onClick={handleGroupsModal}
               type='button'
             >
               <AiTwotoneEdit />
@@ -495,7 +502,7 @@ if(!externalToggleVal && isOpen){
             handleAddTeam={handleAddTeam}
           />
               {    openGroupsOverlayModal && (<div style={{position:'relative', marginLeft:'20%', background:'none'}}>
-                    <CreateGroup fromSettings={true} totalPublicMembersVal={totalPublicVal} dropdownData={teamData} handleOverlay={closeGroupsModal}/>
+                    <CreateGroup editGroupsFlag={selectedGroupForEdit} fromSettings={true} totalPublicMembersVal={totalPublicVal} dropdownData={teamData} handleOverlay={closeGroupsModal}/>
                   </div>)}
                   
           <EditTeamModal
