@@ -132,7 +132,7 @@ class DatabaseServices(APIView):
                 )
 
                 all_responses.append(response)
-        print(all_responses)
+        ##print(all_responses)
         for responses in all_responses:
             if not responses["success"]:
                 return CustomResponse(
@@ -163,10 +163,10 @@ class DatabaseServices(APIView):
 
         workspace_id = request.GET.get("workspace_id")
         meta_data_database = f"{workspace_id}_DB_0"
-        print(meta_data_database)
+        # print(meta_data_database)
 
         response_meta_data = datacube_collection_retrieval(api_key, meta_data_database)
-        print(response_meta_data)
+        # print(response_meta_data)
 
         if not response_meta_data["success"]:
             return CustomResponse(
@@ -229,7 +229,7 @@ class DatabaseServices(APIView):
         ready_collection = []
 
         response_data = datacube_collection_retrieval(api_key, data_database)
-        print(response_data)
+        # print(response_data)
 
         if response_data["success"]:
             ready_collection.append(response_data["data"][0])
@@ -482,8 +482,8 @@ class Workflow(APIView):
             return CustomResponse(False, str(e), None, status.HTTP_401_UNAUTHORIZED)
 
         workspace_id = request.GET.get("workspace_id")
-        db_name = f"{workspace_id}_WORKFLOW_DATABASE_0"
-        collection_name = "workflow_collection_0"
+        db_name = f"{workspace_id}_DB_0"
+        collection_name = f"{workspace_id}_workflow_collection_0"
 
         res = get_workflow_from_collection(
             api_key,
@@ -513,7 +513,7 @@ class Workflow(APIView):
             return Response("Workflow Data required", status.HTTP_400_BAD_REQUEST)
 
         workspace_id = form.get("workspace_id")
-        db_name = f"{workspace_id}_WORKFLOW_DATABASE_0"
+        db_name = f"{workspace_id}_DB_0"
 
         organization_id = form["company_id"]
         data = {
@@ -578,8 +578,8 @@ class Workflow(APIView):
         workspace_id = request.GET.get("workspace_id")
         workflow_id = form["workflow_id"]
         query = {"_id": workflow_id}
-        database = f"{workspace_id}_WORKFLOW_DATABASE_0"
-        collection = "workflow_collection_0"
+        database = f"{workspace_id}_DB_0"
+        collection = f"{workspace_id}_workflow_collection_0"
         update_data = form["workflow_update"]
         update_workflow = post_to_data_service(
             api_key, database, collection, "update", update_data, query
@@ -645,7 +645,7 @@ class ItemProcessing(APIView):
         collection = check_if_name_exists_collection(
             api_key, "process_collection", PROCESS_DB_0
         )
-        print("collection:::", collection)
+        # print("collection:::", collection)
         collection_name = collection["name"]
         return Response({f"collection: {collection_name}", f"data : {collection}"})
 
@@ -865,7 +865,7 @@ class ItemProcessing(APIView):
             if not validate_id(coll_id):
                 return Response("Invalid Request!", status=status.HTTP_400_BAD_REQUEST)
             query = {"_id": coll_id}
-            # print("filter: ", query)
+            # #print("filter: ", query)
             data = get_data_from_collection(
                 api_key, database, collection, filters=query, limit=1
             )
@@ -1241,7 +1241,7 @@ class FinalizeOrRejectEducation(APIView):
         }
 
         query = {"_id": collection_id}
-        # print("filter: ", query)
+        # #print("filter: ", query)
         data = get_data_from_collection(
             api_key, PROCESS_DB_0, collection_name, filters=query, limit=1
         )
