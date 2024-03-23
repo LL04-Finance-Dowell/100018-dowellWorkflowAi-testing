@@ -4,7 +4,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from education.serializers import CreateCollectionSerializer
-
+import threading
 from app.helpers import validate_id
 from app import processing
 from app.mongo_db_connection import single_query_process_collection, update_process
@@ -59,25 +59,6 @@ class HomeView(APIView):
         return Response({"Message": "Education is live"}, status.HTTP_200_OK)
 
 
-class TestView(APIView):
-    def get(self, request):
-        url = "https://datacube.uxlivinglab.online/db_api/get_data/"
-
-        data = {
-            "api_key": "1b834e07-c68b-4bf6-96dd-ab7cdc62f07f",
-            "db_name": "6390b313d77dc467630713f2_process_database_0",
-            "coll_name": "process_collection_0",
-            "operation": "fetch",
-            "filters": {"process_title": "Test Education"},
-            "limit": 1,
-            "offset": 0,
-        }
-
-        response = requests.post(url, json=data)
-        res = json.loads(response.text)
-        return Response(res)
-
-
 class DatabaseServices(APIView):
 
     def post(self, request):
@@ -109,7 +90,7 @@ class DatabaseServices(APIView):
         :param collection_name: The name of the collection to be created.
         """
         database_type = request.data.get("database_type")
-        workspace_id = request.data.get("workspace_id")
+        workspace_id = request.GET.get("workspace_id")
 
         try:
             api_key = authorization_check(request.headers.get("Authorization"))
@@ -130,25 +111,28 @@ class DatabaseServices(APIView):
 
         for types in database_type:
             if types == "META_DATA":
-                database = f"{workspace_id}_METADATA_0"
-                collection_name = "metadata_collection_0"
-            elif types == "PROCESS_DATABASE":
-                database = f"{workspace_id}_PROCESS_DATABASE_0"
-                collection_name = "process_collection_0"
-            elif types == "WORKFLOW_DATA":
-                database = f"{workspace_id}_WORKFLOW_DATABASE_0"
-                collection_name = "workflow_collection_0"
-            elif types == "TEMPLATE_DATA":
-                database = f"{workspace_id}_TEMPLATE_DATABASE_0"
-                collection_name = "template_collection_0"
-            elif types == "CLONES_DATA":
-                database = f"{workspace_id}_CLONE_DATABASE_0"
-                collection_name = "clones_collection_0"
+                database = f"{workspace_id}_DB_0"
+                collection_names = [
+                    f"{workspace_id}_template_metadata_collection_0",
+                    f"{workspace_id}_document_metadata_collection_0",
+                    f"{workspace_id}_clones_metadata_collection_0",
+                ]
+            elif types == "DATA":
+                database = f"{workspace_id}_DB_0"
+                collection_names = [
+                    f"{workspace_id}_template_collection_0",
+                    f"{workspace_id}_document_collection_0",
+                    f"{workspace_id}_process_collection_0",
+                    f"{workspace_id}_workflow_collection_0",
+                    f"{workspace_id}_folder_collection_0",
+                ]
+            for collection_name in collection_names:
+                response = add_collection_to_database(
+                    api_key, database, collection_name
+                )
 
-            response = add_collection_to_database(api_key, database, collection_name)
-
-            all_responses.append(response)
-
+                all_responses.append(response)
+        print(all_responses)
         for responses in all_responses:
             if not responses["success"]:
                 return CustomResponse(
@@ -178,9 +162,11 @@ class DatabaseServices(APIView):
             return CustomResponse(False, str(e), None, status.HTTP_401_UNAUTHORIZED)
 
         workspace_id = request.GET.get("workspace_id")
-        meta_data_database = f"{workspace_id}_METADATA_0"
+        meta_data_database = f"{workspace_id}_DB_0"
+        print(meta_data_database)
 
         response_meta_data = datacube_collection_retrieval(api_key, meta_data_database)
+        print(response_meta_data)
 
         if not response_meta_data["success"]:
             return CustomResponse(
@@ -191,9 +177,9 @@ class DatabaseServices(APIView):
             )
 
         list_of_meta_data_collection = [
-            f"{workspace_id}_templates_metadata",
-            f"{workspace_id}_documents_metadata",
-            f"{workspace_id}_clones_metadata",
+            f"{workspace_id}_templates_metadata_collection_0",
+            f"{workspace_id}_documents_metadata_collection_0",
+            f"{workspace_id}_clones_metadata_collection_0",
         ]
 
         missing_collections = []
@@ -230,30 +216,23 @@ class DatabaseServices(APIView):
             return CustomResponse(False, str(e), None, status.HTTP_401_UNAUTHORIZED)
 
         workspace_id = request.GET.get("workspace_id")
-        # data = request.GET.get("data")
+
         datas = [
-            "process_collection",
-            "workflow_collection",
-            "template_collection",
-            "clone_collection",
+            f"{workspace_id}_process_collection_0",
+            f"{workspace_id}_workflow_collection_0",
+            f"{workspace_id}_template_collection_0",
+            f"{workspace_id}_clone_collection_0",
+            f"{workspace_id}_folder_collection_0",
         ]
 
-        # data_database = f"{workspace_id}_data_0"
-        data_database = [
-            f"{workspace_id}_PROCESS_DATABASE_0",
-            f"{workspace_id}_WORKFLOW_DATABASE_0",
-            f"{workspace_id}_TEMPLATE_DATABASE_0",
-            f"{workspace_id}_CLONES_DATABASE_0",
-        ]
-        all_responses = []
+        data_database = f"{workspace_id}_DB_0"
         ready_collection = []
-        for database in data_database:
-            response_data = datacube_collection_retrieval(api_key, database)
-            all_responses.append(response_data)
-        print(all_responses)
-        for response_data in all_responses:
-            if response_data["success"]:
-                ready_collection.append(response_data["data"][0])
+
+        response_data = datacube_collection_retrieval(api_key, data_database)
+        print(response_data)
+
+        if response_data["success"]:
+            ready_collection.append(response_data["data"][0])
 
             if not response_data["success"]:
                 return CustomResponse(
@@ -263,13 +242,11 @@ class DatabaseServices(APIView):
                     status.HTTP_501_NOT_IMPLEMENTED,
                 )
 
-        list_of_data_collection = [f"{workspace_id}_{data}_0" for data in datas]
-
         missing_collections = []
-        for response_data in all_responses:
-            for collection in list_of_data_collection:
-                if collection not in response_data["data"][0]:
-                    missing_collections.append(collection)
+
+        for collection in datas:
+            if collection not in response_data["data"][0]:
+                missing_collections.append(collection)
 
         if missing_collections:
             missing_collections_str = ", ".join(missing_collections)
@@ -309,10 +286,12 @@ class NewTemplate(APIView):
         except InvalidTokenException as e:
             return CustomResponse(False, str(e), None, status.HTTP_401_UNAUTHORIZED)
         workspace_id = request.GET.get("workspace_id")
-        db_name = f"{workspace_id}_TEMPLATE_DATABASE_0"
-        res = datacube_collection_retrieval(api_key, db_name)
+        db_name = f"{workspace_id}_DB_0"
+        collection_name = f"{workspace_id}_template_metadata_collection_0"
+        filters = {}
+        res = get_template_from_collection(api_key, db_name, collection_name, filters)
         if res["success"]:
-            return Response(res["data"])
+            return Response(res)
         else:
             return CustomResponse(
                 False, res["message"], None, status.HTTP_400_BAD_REQUEST
@@ -329,50 +308,23 @@ class NewTemplate(APIView):
         page = ""
         folder = []
         approved = False
-        collection_name = "template_collection_0"
-        db_name = f"{workspace_id}_TEMPLATE_DATABASE_0"
+        collection_name = f"{workspace_id}_template_collection_0"
+        db_name = f"{workspace_id}_DB_0"
 
-        metadata_db = f"{workspace_id}_METADATA_DATABASE_0"
-        metadata_collection = "template_metadata_collection_0"
+        metadata_db = f"{workspace_id}_DB_0"
+        metadata_collection = f"{workspace_id}_template_metadata_collection_0"
 
         try:
             api_key = authorization_check(request.headers.get("Authorization"))
         except InvalidTokenException as e:
             return CustomResponse(False, str(e), None, status.HTTP_401_UNAUTHORIZED)
 
-        collection_names = check_if_name_exists_collection(
-            api_key, collection_name, db_name
-        )
-        print(collection_names)
+        if not validate_id(request.data["company_id"]):
+            return Response("Invalid company details", status.HTTP_400_BAD_REQUEST)
 
-        if collection_names["success"]:
-            # collection_name = collection_names["name"]
-            collection_name = "template_collection_2"
-            print(collection_name)
-            create_new_collection_for_template = add_collection_to_database(
-                api_key=api_key,
-                database=db_name,
-                collections=collection_name,
-            )
-            print(create_new_collection_for_template)
-        else:
-            return CustomResponse(
-                False,
-                str(collection_names["Message"]),
-                "Create a database",
-                status.HTTP_400_BAD_REQUEST,
-            )
-        ##   create_new_collection_for_template_metadata=
-
-        if create_new_collection_for_template["success"]:
-            print("it_got_here")
-
-            if not validate_id(request.data["company_id"]):
-                return Response("Invalid company details", status.HTTP_400_BAD_REQUEST)
-
-            portfolio = ""
-            if request.data["portfolio"]:
-                portfolio = request.data["portfolio"]
+        portfolio = ""
+        if request.data["portfolio"]:
+            portfolio = request.data["portfolio"]
             viewers = [{"member": request.data["created_by"], "portfolio": portfolio}]
             organization_id = request.data["company_id"]
             template_data = {
@@ -386,8 +338,9 @@ class NewTemplate(APIView):
                 "template_type": "draft",
                 "auth_viewers": viewers,
                 "message": "",
-                "approved": approved,
+                "approval": approved,
                 "collection_name": collection_name,
+                "DB_name": db_name,
             }
 
             res = post_data_to_collection(
@@ -414,11 +367,27 @@ class NewTemplate(APIView):
                         "approval": False,
                     },
                 )
-                if not res_metadata:
-                    return Response(
-                        "An error occured while trying to save document metadata",
-                        status.HTTP_500_INTERNAL_SERVER_ERROR,
-                    )
+                if not res_metadata["success"]:
+                    try:
+                        create_new_collection_for_template = add_collection_to_database(
+                            api_key=api_key,
+                            database=db_name,
+                            collections=metadata_collection,
+                        )
+                        return CustomResponse(
+                            True,
+                            "collection created successfully",
+                            None,
+                            status.HTTP_201_CREATED,
+                        )
+                    except:
+
+                        return CustomResponse(
+                            False,
+                            "An error occured while trying to save document metadata",
+                            res_metadata["message"],
+                            status.HTTP_500_INTERNAL_SERVER_ERROR,
+                        )
                 payload = {
                     "product_name": "workflowai",
                     "details": {
@@ -461,7 +430,10 @@ class NewTemplate(APIView):
     def approve(self, request):
         """Post data for template approval
         :  Templates can only be used after approval True
+        :  Collection_id is ID for template collection
+        :  metadata_id is the ID for the metadata
         """
+
         form = request.data
         if not form:
             return Response("Data is needed", status.HTTP_400_BAD_REQUEST)
@@ -470,15 +442,30 @@ class NewTemplate(APIView):
         except InvalidTokenException as e:
             return CustomResponse(False, str(e), None, status.HTTP_401_UNAUTHORIZED)
         workspace_id = request.GET.get("workspace_id")
-        database = f"{workspace_id}_TEMPLATE_DATABASE_0"
-        collection = "template_collection_0"
+
+        database = f"{workspace_id}_DB_0"
+        collection = f"{workspace_id}_template_collection_0"
+        meta_data_collection = f"{workspace_id}_template_metadata_collection_0"
         update_data = {"approval": True}
         collection_id = form["collection_id"]
+        metadata_id = form["metadata_id"]
+
         query = {"_id": collection_id}
+        query_metadata = {"_id": metadata_id}
+
         approval_update = post_data_to_collection(
-            api_key, database, collection, "update", update_data, query
+            api_key, database, collection, update_data, "update", query
         )
-        if approval_update["success"]:
+        metadata_approval_update = post_data_to_collection(
+            api_key,
+            database,
+            meta_data_collection,
+            update_data,
+            "update",
+            query_metadata,
+        )
+
+        if approval_update and metadata_approval_update:
             return CustomResponse(True, "Template approved", None, status.HTTP_200_OK)
         else:
             return CustomResponse(
