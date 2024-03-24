@@ -441,19 +441,25 @@ class ProcessVerification(APIView):
 
 
 class FinalizeOrReject(APIView):
-    def post(self, request, process_id):
+    def post(self, request, process_id, *args, **kwargs):
         """After access is granted and the user has made changes on a document."""
-        if not request.data:
+        payload_dict = kwargs.get("payload")
+        if payload_dict:
+            request_data = payload_dict
+        else:
+            request_data = request.data
+            
+        if not request_data:
             return Response("you are missing something", status.HTTP_400_BAD_REQUEST)
-        item_id = request.data["item_id"]
-        item_type = request.data["item_type"]
-        role = request.data["role"]
-        user = request.data["authorized"]
-        user_type = request.data["user_type"]
-        state = request.data["action"]
+        item_id = request_data["item_id"]
+        item_type = request_data["item_type"]
+        role = request_data["role"]
+        user = request_data["authorized"]
+        user_type = request_data["user_type"]
+        state = request_data["action"]
         message = ""
         if state == "rejected":
-            message = request.data.get("message", None)
+            message = request_data.get("message", None)
             if not message:
                 return Response(
                     "provide a reason for rejecting the document",
@@ -518,7 +524,7 @@ class FinalizeOrReject(APIView):
                         process, item_type, item_id, role, user, message
                     )
                     if user_type == "public":
-                        link_id = request.data["link_id"]
+                        link_id = request_data.get("link_id")
                         register_finalized(link_id)
                     if item_type == "document" or item_type == "clone":
                         background.document_processing()
@@ -625,6 +631,9 @@ class FinalizeOrReject(APIView):
                         "An error occured during processing",
                         status.HTTP_500_INTERNAL_SERVER_ERROR,
                     )
+                    
+    def get(self, request, process_id):
+        return Response("Success", status.HTTP_200_OK)
 
 
 class TriggerProcess(APIView):

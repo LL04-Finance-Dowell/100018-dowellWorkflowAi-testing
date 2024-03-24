@@ -13,6 +13,8 @@ import requests
 from rest_framework.response import Response
 import re
 
+import concurrent.futures
+
 
 class InvalidTokenException(Exception):
     pass
@@ -77,8 +79,12 @@ def generate_unique_collection_name(existing_collection_names, base_name):
 def check_if_name_exists_collection(api_key, collection_name, db_name):
     res = datacube_collection_retrieval(api_key, db_name)
     base_name = re.sub(r"_\d+$", "", collection_name)
-    if res["success"] == True:
-        if collection_name not in res["data"][0]:
+    if res["success"]:
+        # THIS SHOULD WORK AS WELL
+        # if not [collection_name in item for item in res["data"][0]]:
+        #     print("essssss: ", res["data"][0])
+        #     new_collection_name = generate_unique_collection_name(res["data"][0], base_name)
+        if collection_name in res["data"][0]:
             new_collection_name = generate_unique_collection_name(
                 res["data"][0], base_name
             )
@@ -90,6 +96,7 @@ def check_if_name_exists_collection(api_key, collection_name, db_name):
             }
         else:
             return {
+                # "name": [item for item in res["data"][0] if collection_name in item][0],
                 "name": collection_name,
                 "success": True,
                 "Message": "template_generated",
@@ -218,3 +225,27 @@ def access_editor(
     except Exception as e:
         print(e)
         return
+
+
+# to be used later
+"""collection_names = check_if_name_exists_collection(
+            api_key, collection_name, db_name
+        )
+        if collection_names["success"]:
+            collection_name = f"{collection_names['name']}
+        create_new_collection_for_template = add_collection_to_database(
+                api_key=api_key,
+                database=db_name,
+                collections=collection_name,
+            )
+            print(create_new_collection_for_template)
+        else:
+            return CustomResponse(
+                False,
+                str(collection_names["Message"]),
+                "Create a database",
+                status.HTTP_400_BAD_REQUEST,
+            )
+        ##   create_new_collection_for_template_metadata=
+
+        if create_new_collection_for_template["success"]:"""
