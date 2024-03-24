@@ -189,6 +189,7 @@ class DatabaseServices(APIView):
 
         if missing_collections:
             missing_collections_str = ", ".join(missing_collections)
+            self.create_collection(request)
             return CustomResponse(
                 False,
                 f"The following collections are missing: {missing_collections_str}",
@@ -490,8 +491,11 @@ class Workflow(APIView):
             db_name,
             collection_name,
         )
+
         if res["success"]:
-            return res["message"]
+            return CustomResponse(
+                True, "workflows found!", res["data"], status.HTTP_200_OK
+            )
 
         else:
             CustomResponse(
@@ -512,7 +516,7 @@ class Workflow(APIView):
         if not form:
             return Response("Workflow Data required", status.HTTP_400_BAD_REQUEST)
 
-        workspace_id = form.get("workspace_id")
+        workspace_id = request.GET.get("workspace_id")
         db_name = f"{workspace_id}_DB_0"
 
         organization_id = form["company_id"]
@@ -520,48 +524,43 @@ class Workflow(APIView):
             "workflow_title": form["wf_title"],
             "steps": form["steps"],
         }
-        collection_name = "workflow_collection_0"
-        workflow_unique_name = generate_unique_collection_name(
-            collection_name, "workflow_collection"
-        )
-        if workflow_unique_name["success"]:
+        collection_name = f"{workspace_id}_workflow_collection_0"
+        """ workflow_unique_name = generate_unique_collection_name(
+            collection_name, "workflow_collection"""
 
-            res = save_to_workflow_collection(
-                api_key,
-                collection_name,
-                db_name,
+        # if workflow_unique_name["success"]:
+
+        res = save_to_workflow_collection(
+            api_key,
+            collection_name,
+            db_name,
+            {
+                "workflows": data,
+                "company_id": organization_id,
+                "created_by": form["created_by"],
+                "portfolio": form["portfolio"],
+                "data_type": form["data_type"],
+                "workflow_type": "original",
+            },
+        )
+        if res["success"]:
+            return Response(
                 {
+                    "_id": res["data"]["inserted_id"],
                     "workflows": data,
-                    "company_id": organization_id,
                     "created_by": form["created_by"],
-                    "portfolio": form["portfolio"],
-                    "data_type": form["data_type"],
+                    "company_id": form["company_id"],
                     "workflow_type": "original",
+                    "data_type": form["data_type"],
                 },
+                status.HTTP_201_CREATED,
             )
-            if res["success"]:
-                return Response(
-                    {
-                        "_id": res["inserted_id"],
-                        "workflows": data,
-                        "created_by": form["created_by"],
-                        "company_id": form["company_id"],
-                        "creator_portfolio": form["portfolio"],
-                        "workflow_type": "original",
-                        "data_type": form["data_type"],
-                    },
-                    status.HTTP_201_CREATED,
-                )
-            else:
-                return CustomResponse(
-                    False,
-                    "Workflow Not saved into collection",
-                    None,
-                    status.HTTP_400_BAD_REQUEST,
-                )
         else:
             return CustomResponse(
-                False, "Failed to generate workflow", None, status.HTTP_400_BAD_REQUEST
+                False,
+                "Workflow Not created",
+                None,
+                status.HTTP_400_BAD_REQUEST,
             )
 
     def put(self, request):
@@ -885,8 +884,8 @@ class NewDocument(APIView):
         db_name_0 = f"{workspace_id}_DB_0"
         db_name_1 = f"{workspace_id}_TEMPLATE_DB_1"
         collection_name = f"{workspace_id}_template_collection_0"
-        metadata_db = f"{workspace_id}_METADATA_DATABASE_0"
-        metadata_collection = "template_metadata_collection_0"
+        metadata_db = f"{workspace_id}_DB_0"
+        metadata_collection = f"{workspace_id}_document_metadata_collection_0"
 
         try:
             api_key = authorization_check(request.headers.get("Authorization"))
