@@ -840,7 +840,17 @@ class NewDocument(APIView):
 
         if not template["success"]:
             return CustomResponse(False, "No template found", None, status.HTTP_404_NOT_FOUND)
-
+        
+        isapproved = template["data"][0]["approved"]
+        
+        if not isapproved:
+            return CustomResponse(
+                False,
+                "Template is not approved",
+                None,
+                status.HTTP_403_FORBIDDEN
+            )
+            
         document_data = {
             "document_name": "Untitled Document",
             "content": template["data"][0]["content"],
