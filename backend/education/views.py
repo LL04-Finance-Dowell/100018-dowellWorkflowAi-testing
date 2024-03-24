@@ -580,10 +580,11 @@ class Workflow(APIView):
         database = f"{workspace_id}_DB_0"
         collection = f"{workspace_id}_workflow_collection_0"
         update_data = form["workflow_update"]
-        update_workflow = post_to_data_service(
-            api_key, database, collection, "update", update_data, query
+        update_workflow = post_data_to_collection(
+            api_key, database, collection, update_data, "update", query
         )
-        if update_workflow["success"]:
+        print(update_workflow)
+        if update_workflow:
             return CustomResponse(
                 True, "Workflow updated successfully", None, status.HTTP_201_CREATED
             )
