@@ -299,7 +299,7 @@ class NewTemplate(APIView):
             )
 
     def post(self, request):
-        type_request = request.data.get("type")
+        type_request = request.GET.get("type")
         workspace_id = request.data.get("workspace_id")
 
         if type_request == "approve":
