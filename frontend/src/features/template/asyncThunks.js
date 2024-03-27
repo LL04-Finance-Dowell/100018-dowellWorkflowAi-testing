@@ -49,7 +49,7 @@ export const createTemplate = createAsyncThunk(
       const existingTemplates = [...thunkAPI.getState().template?.allTemplates];
       existingTemplates.unshift(newTemplate);
       thunkAPI.dispatch(setAllTemplates(existingTemplates));
-      thunkAPI.dispatch(setEditorLink(res.data.editor_link));
+      // thunkAPI.dispatch(setEditorLink(res.data.editor_link));
 
       return res.data;
     } catch (error) {
