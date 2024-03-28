@@ -225,7 +225,7 @@ def get_document_from_collection(
 def get_template_from_collection(
     api_key: str, database: str, collection: str, filters: dict
 ):
-    return get_data_from_collection(api_key, database, collection, filters, limit=1)
+    return get_data_from_collection(api_key, database, collection, filters)
 
 def get_workflows_from_collection(
     api_key: str, database: str, collection: str, filters: dict

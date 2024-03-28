@@ -1,5 +1,6 @@
 import json
 import requests
+import ast
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
@@ -1211,6 +1212,80 @@ class DocumentDetail(APIView):
             )
             return Response(document["data"], status.HTTP_200_OK)
         return Response("Document could not be accessed!", status.HTTP_404_NOT_FOUND)
+
+
+
+
+class ItemContent(APIView):
+    def get(self, request, item_id):
+        """Content map of a given document or a template or a clone"""
+        content = []
+        item_type = request.query_params.get("item_type")
+        workspace_id = request.query_params.get("workspace_id")
+        collection_name = f"{workspace_id}_template_collection_0"
+        db_name = f"{workspace_id}_DB_0"
+
+        try:
+            api_key = authorization_check(request.headers.get("Authorization"))
+        except InvalidTokenException as e:
+            return CustomResponse(False, str(e), None, status.HTTP_401_UNAUTHORIZED)
+
+        if not validate_id(item_id):
+            return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
+        if item_type == "template":
+            try:
+                to_parse = get_template_from_collection(api_key, db_name, collection_name, {"_id": item_id})["data"][0]["content"]
+                my_dict = ast.literal_eval(to_parse)[0][0]
+            except Exception as e:
+                my_dict = json.loads(to_parse)[0][0]
+        if item_type == "document":
+            try:
+                to_parse = get_document_from_collection(api_key, db_name, collection_name, {"_id": item_id})["data"][0]["content"]
+                my_dict = ast.literal_eval(to_parse)[0][0]
+            except Exception as e:
+                my_dict = json.loads(to_parse)[0][0]
+        if item_type == "clone":
+            try:
+                to_parse = get_clone_from_collection({"_id": item_id})["content"]
+                my_dict = ast.literal_eval(to_parse)[0][0]
+            except Exception as e:
+                my_dict = json.loads(to_parse)[0][0]
+
+        all_keys = [i for i in my_dict.keys()]
+        for i in all_keys:
+            temp_list = []
+            for j in my_dict[i]:
+                if "data" in j:
+                    if j["type"] == "CONTAINER_INPUT":
+                        container_list = []
+                        for item in j["data"]:
+                            container_list.append(
+                                {"id": item["id"], "data": item["data"]}
+                            )
+                        temp_list.append({"id": j["id"], "data": container_list})
+                    else:
+                        temp_list.append({"id": j["id"], "data": j["data"]})
+                else:
+                    temp_list.append({"id": j["id"], "data": ""})
+            content.append(
+                {
+                    i: temp_list,
+                }
+            )
+        sorted_content = []
+        for dicts in content:
+            for key, val in dicts.items():
+                sorted_content.append(
+                    {
+                        key: sorted(
+                            dicts[key],
+                            key=lambda x: int(
+                                [a for a in re.findall("\d+", x["id"])][-1]
+                            ),
+                        )
+                    }
+                )
+        return Response(sorted_content, status.HTTP_200_OK)
 
 
 class FinalizeOrRejectEducation(APIView):
