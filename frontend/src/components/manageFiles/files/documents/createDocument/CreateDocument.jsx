@@ -82,7 +82,13 @@ const CreateDocument = ({ handleToggleOverlay }) => {
           .then((res) => {
             if (res.data.success === true) {
               toast.success(res?.data?.message)
-              dispatch(setEditorLink(response?.payload?.editor_link));
+
+              //open new window here
+              if (response?.payload?.editor_link){
+                console.info('\nEDITOR LINK:', response.payload.editor_link)
+                window.open(response.payload.editor_link)
+              }
+              // dispatch(setEditorLink(response?.payload?.editor_link));
             }
           })
     
@@ -134,7 +140,12 @@ const CreateDocument = ({ handleToggleOverlay }) => {
       .then((res) => {
         // console.log(res)
         if (res.data.success === true) {
-          dispatch(setEditorLink(response?.payload?.editor_link));
+          //open new window here//
+          if (response?.payload?.editor_link) {
+            console.info('\nEDITOR LINK:', response.payload.editor_link)
+            window.open(response.payload.editor_link)
+          }
+          // dispatch(setEditorLink(response?.payload?.editor_link));
         }
       })
       .catch((error) => {
