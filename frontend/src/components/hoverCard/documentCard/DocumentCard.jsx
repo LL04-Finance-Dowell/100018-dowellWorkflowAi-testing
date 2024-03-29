@@ -62,6 +62,7 @@ const DocumentCard = ({
 
 
   const [dataLoading, setDataLoading] = useState(false);
+  const [docDataLoading, setDocDataLoading] = useState(false);
   const { userDetail } = useSelector((state) => state.auth);
   const [openPdfDrawer, setOpenPdfDrawer] = useState(false);
 
@@ -170,6 +171,7 @@ const DocumentCard = ({
 
   const handleDetailDocumnet = async (item) => {
     // console.log("handle detail doc hit ", item)
+    const documentServices = new DocumentServices();
     if (dataLoading) return;
     if (documentLoading)
       return toast.info('Please wait for this document to be refreshed first');
@@ -190,7 +192,7 @@ const DocumentCard = ({
 
         // setDataLoading(false);
         console.log("response", response, item)
-        handleGoToEditor(response, item);
+        window.open(response);
       } catch (error) {
         setDataLoading(false);
         // toast.info(
@@ -220,13 +222,32 @@ const DocumentCard = ({
       document_state: item.document_state
     };
 
-    if (isCompletedDoc || isRejectedDoc) {
-      dispatch(documentReport(data.collection_id))
-      return
-    }
 
+    try {
+      setDocDataLoading(true);
+      setDataLoading(true);
+
+      if (isCompletedDoc || isRejectedDoc) {
+        const editorURL = await ((await documentServices.documentCloneReport(data.collection_id)).data);
+        setDataLoading(false);
+        setDocDataLoading(false);
+        // console.info(editorURL);
+        window.open(editorURL);
+        return
+      }
+
+      const editorURL = await ((await documentServices.detailDocument(data)).data);
+      // console.info(editorURL);
+      setDataLoading(false);
+      setDocDataLoading(false);
+      window.open(editorURL);
+    } catch (error) {
+      setDataLoading(false);
+      setDocDataLoading(false);
+      toast.error('Something went wrong opening the document')
+      console.error(error)
+    }
     console.log("data", data)
-    dispatch(detailDocument(data));
   };
 
   const closeModal = () => {
@@ -399,7 +420,7 @@ const DocumentCard = ({
       toast.info('PDF loaded from cache successfully');
       return; // Stop execution here as we already have the PDF link
     }
-    
+
     const payload = {
       item_type: "document",
       item_id: item?.collection_id || "653b5ba638ec7dcbdb556a38",
@@ -595,8 +616,8 @@ const DocumentCard = ({
             </Button>
               <br />
               <Button onClick={() => generatePdfLink(cardItem)}>
-              {/* <Button onClick={() => viewAsPDF(cardItem)}> */}
-                {dataLoading ? (
+                {/* <Button onClick={() => viewAsPDF(cardItem)}> */}
+                {dataLoading && !docDataLoading ? (
                   <LoadingSpinner />
                 ) : cardItem.type === 'sign-document' ? (
                   'Sign Here'
@@ -707,7 +728,7 @@ const DocumentCard = ({
           pdfUrl={pdfUrlLink}
           onSave={handleSaveFile}
         />}
-         {/* Render PdfViewer only if showPdfViewer is true */}
+        {/* Render PdfViewer only if showPdfViewer is true */}
 
         {showErrorModal && (
           <div className="modal">
