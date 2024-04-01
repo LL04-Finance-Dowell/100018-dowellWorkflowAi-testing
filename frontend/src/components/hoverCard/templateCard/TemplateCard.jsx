@@ -22,6 +22,7 @@ import { IoIosRefresh } from 'react-icons/io';
 import { LoadingSpinner } from '../../LoadingSpinner/LoadingSpinner';
 import { TemplateServices } from '../../../services/templateServices';
 import AddRemoveBtn from '../AddRemoveBtn';
+import { openEditorInNewTab } from '../../../utils/helpers';
 
 const TemplateCard = ({ cardItem, isFolder, folderId }) => {
   const dispatch = useDispatch();
@@ -45,7 +46,7 @@ const TemplateCard = ({ cardItem, isFolder, folderId }) => {
       const templateServices = new TemplateServices();
       const editorURL = await ((await templateServices.detailTemplate(data.collection_id)).data);
       // console.info(editorURL);
-      window.open(editorURL, data.template_name);
+      openEditorInNewTab(editorURL, data.collection_id, 'Template');
       setTemplateLoading(false);
     } catch (error) {
       setTemplateLoading(false);

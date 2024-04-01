@@ -29,6 +29,7 @@ import { setAllDocuments } from '../../../features/document/documentSlice';
 import { BsBookmark, BsFillBookmarkFill, BsArrowBarRight } from 'react-icons/bs';
 import {
   extractTokenFromVerificationURL,
+  openEditorInNewTab,
   productName,
   updateVerificationDataWithTimezone,
 } from '../../../utils/helpers';
@@ -231,16 +232,16 @@ const DocumentCard = ({
         const editorURL = await ((await documentServices.documentCloneReport(data.collection_id)).data);
         setDataLoading(false);
         setDocDataLoading(false);
-        // console.info(editorURL);
-        window.open(editorURL);
+        console.info(editorURL);
+        openEditorInNewTab(editorURL, data.collection_id, 'Document');
         return
       }
 
       const editorURL = await ((await documentServices.detailDocument(data)).data);
-      // console.info(editorURL);
+      console.info(editorURL);
       setDataLoading(false);
       setDocDataLoading(false);
-      window.open(editorURL);
+      openEditorInNewTab(editorURL, data.collection_id, 'Document');
     } catch (error) {
       setDataLoading(false);
       setDocDataLoading(false);
