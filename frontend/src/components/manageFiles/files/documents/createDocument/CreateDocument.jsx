@@ -26,7 +26,7 @@ import { api_url_v3 } from '../../../../../httpCommon/httpCommon';
 
 const CreateDocument = ({ handleToggleOverlay }) => {
   const { userDetail } = useSelector((state) => state.auth);
-  const { creditResponse } = useSelector((state) => state.app);
+  const { creditResponse, setEditorLink } = useSelector((state) => state.app);
   const dispatch = useDispatch();
   const { t } = useTranslation();
 
@@ -79,10 +79,10 @@ const CreateDocument = ({ handleToggleOverlay }) => {
             }
           )
   
-          .then((response) => {
-            if (response.data.success === true) {
-              toast.success(response?.data?.message)
-            
+          .then((res) => {
+            if (res.data.success === true) {
+              toast.success(res?.data?.message)
+              dispatch(setEditorLink(response?.payload?.editor_link));
             }
           })
     
@@ -96,7 +96,7 @@ const CreateDocument = ({ handleToggleOverlay }) => {
     }
   };
 
-  const onSubmit = (data) => {
+  const onSubmit = async (data) => {
     const { template } = data;
 
     dispatch(setToggleManageFileForm(false));
@@ -117,8 +117,13 @@ const CreateDocument = ({ handleToggleOverlay }) => {
       portfolio: userDetail?.portfolio_info?.length > 1 ? userDetail?.portfolio_info.find((portfolio) => portfolio.product === productName)?.portfolio_name : userDetail?.portfolio_info[0].portfolio_name,
       email: userDetail.userinfo.email,
     };
-    const Api_key = creditResponse?.api_key
-    axios
+    
+    const Api_key = creditResponse?.api_key;
+
+    const response = await dispatch(createDocument(createDocumentData));
+
+    if (response?.meta?.requestStatus === 'fulfilled') {
+      axios
       .post(
         `https://100105.pythonanywhere.com/api/v3/process-services/?type=product_service&api_key=${Api_key}`,
         {
@@ -126,20 +131,17 @@ const CreateDocument = ({ handleToggleOverlay }) => {
           "sub_service_ids": ["DOWELL100261"],
         },
       )
-      .then((response) => {
-        // console.log(response)
-        if (response.data.success == true) {
-
-          dispatch(createDocument(createDocumentData));
+      .then((res) => {
+        // console.log(res)
+        if (res.data.success === true) {
+          dispatch(setEditorLink(response?.payload?.editor_link));
         }
       })
       .catch((error) => {
         // console.log(error);
         toast.info(error.response?.data?.message)
-
       });
-
-
+    }
   };
 
   const handleDropdown = () => {

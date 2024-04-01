@@ -60,13 +60,12 @@ export const createDocument = createAsyncThunk(
       existingDocuments.unshift(newDocument);
       thunkAPI.dispatch(setAllDocuments(existingDocuments));
 
-      thunkAPI.dispatch(setEditorLink(res.data.editor_link));
+      // thunkAPI.dispatch(setEditorLink(res.data.editor_link));
 
       return res.data;
     } catch (error) {
       console.log(error.response.data.message);
       toast.info('Document Creation Failed');
-
     }
   }
 );
