@@ -22,6 +22,7 @@ import { IoIosRefresh } from 'react-icons/io';
 import { LoadingSpinner } from '../../LoadingSpinner/LoadingSpinner';
 import { TemplateServices } from '../../../services/templateServices';
 import AddRemoveBtn from '../AddRemoveBtn';
+import { openEditorInNewTab } from '../../../utils/helpers';
 
 const TemplateCard = ({ cardItem, isFolder, folderId }) => {
   const dispatch = useDispatch();
@@ -33,15 +34,26 @@ const TemplateCard = ({ cardItem, isFolder, folderId }) => {
   const { allTemplates } = useSelector((state) => state.template);
   const [templateLoading, setTemplateLoading] = useState(false);
 
-  const handleTemplateDetail = (item) => {
+  const handleTemplateDetail = async (item) => {
     const data = {
 
       collection_id: item.collection_id,
       template_name: item.template_name,
     };
-   
 
-    dispatch(detailTemplate(data.collection_id));
+    try {
+      setTemplateLoading(true);
+      const templateServices = new TemplateServices();
+      const editorURL = await ((await templateServices.detailTemplate(data.collection_id)).data);
+      // console.info(editorURL);
+      openEditorInNewTab(editorURL, data.document_name, 'Template');
+      setTemplateLoading(false);
+    } catch (error) {
+      setTemplateLoading(false);
+      toast.error('Something went wrong opening the template')
+      console.error(error)
+    }
+
   };
 
   const handleFavoritess = async (item, actionType) => {
@@ -178,8 +190,8 @@ const TemplateCard = ({ cardItem, isFolder, folderId }) => {
       <div>
         <Tooltip id={`book-${cardItem?._id}`} content="Bookmark Template" direction="up" arrowSize={10} style={{ backgroundColor: 'rgb(97, 206, 112)', color: 'white' }}></Tooltip>
         <div
-        anchorId={cardItem?._id}
-        data-tooltip-id={`book-${cardItem?._id}`}
+          anchorId={cardItem?._id}
+          data-tooltip-id={`book-${cardItem?._id}`}
           style={{
             cursor: 'pointer',
             position: 'absolute',
@@ -202,16 +214,25 @@ const TemplateCard = ({ cardItem, isFolder, folderId }) => {
           )}
         </div>
         {cardItem.template_name ? (
-          <Button onClick={() => handleTemplateDetail(cardItem)}>
-            {t('Open Template')}
-          </Button>
+          !templateLoading ? (
+            <Button onClick={() => handleTemplateDetail(cardItem)}>
+              {t('Open Template')}
+            </Button>
         ) : (
-          'no item'
+        <LoadingSpinner
+          color={'#000'}
+          width={'1rem'}
+          height={'1rem'}
+        />
+              )
+     
+        ) : (
+        'no item'
         )}
         <Tooltip id={`dell-${cardItem._id}`} content="Delete Template" direction="up" arrowSize={10} style={{ backgroundColor: 'rgb(97, 206, 112)', color: 'white' }}></Tooltip>
         <div
-         anchorId={cardItem._id}
-         data-tooltip-id={`dell-${cardItem._id}`}
+          anchorId={cardItem._id}
+          data-tooltip-id={`dell-${cardItem._id}`}
           style={{
             cursor: 'pointer',
             position: 'absolute',
@@ -275,8 +296,8 @@ const TemplateCard = ({ cardItem, isFolder, folderId }) => {
         )}
         <Tooltip id={`add-${cardItem._id}`} content="Add temp to folder" direction="up" arrowSize={10} style={{ backgroundColor: 'rgb(97, 206, 112)', color: 'white' }}></Tooltip>
         <div
-         anchorId={cardItem._id}
-         data-tooltip-id={`add-${cardItem._id}`}
+          anchorId={cardItem._id}
+          data-tooltip-id={`add-${cardItem._id}`}
           style={{
             position: 'absolute',
             bottom: '0',

@@ -25,7 +25,7 @@ import VerificationPage from './pages/Verification/VerificationPage';
 import ProccessPage from './pages/Processes/AllProccessPage/ProcessesPage';
 import CopyProcessPage from './pages/Processes/CopyProcessPage';
 import SearchPage from './pages/Search/SearchPage';
-import { productName } from './utils/helpers';
+import { checkUnclosedEditorTabs, productName } from './utils/helpers';
 import { useAppContext } from './contexts/AppContext';
 import Policy from './pages/Policy/Policy';
 
@@ -49,6 +49,22 @@ function App() {
   const clientVerUrlRef = useRef('https://ll04-finance-dowell.github.io/workflowai.online/');
   const betaVerUrlRef = useRef('https://ll04-finance-dowell.github.io/100018-dowellWorkflowAi-testing/')
 
+    
+  //   //   //check if editor tabs are open before closing worklfow AI
+  // const useUnload = fn => {
+  //   const cb = useRef(fn);
+
+  //   useEffect(() => {
+  //     const onUnload = cb.current;
+  //     window.addEventListener('beforeunload', onUnload);
+  //     return () => {
+  //       window.removeEventListener('beforeunload', onUnload);
+  //     };
+  //   }, [cb]);
+  // };
+  // useUnload(e => {
+  //   checkUnclosedEditorTabs(e)
+  // });
 
   useDowellLogin();
 
@@ -242,7 +258,7 @@ function App() {
           <Route index element={<WorkflowsPage home={true} />} />
           <Route path={'set-workflow'} element={<SetWorkflowInDoc />} />
           <Route path={'new-set-workflow'} element={<SetWorkflowInDocNew />} />
-          <Route path={'new-set-workflow-document-step'} element={<SetWorkflowInDocNew addWorkflowStep={true}/>} />
+          <Route path={'new-set-workflow-document-step'} element={<SetWorkflowInDocNew addWorkflowStep={true} />} />
           <Route path={'new-set-workflow-document'} element={<SetWorkflowInDocNew />} />
           <Route path={'new-set-workflow-template'} element={<SetWorkflowInDocNew />} />
           <Route
@@ -313,12 +329,12 @@ function App() {
 
         <Route path={'/folders'}>
           <Route index element={<FoldersPage />} />
-          <Route path={'knowledge_folders'}element={<FoldersPage knowledgeCenter={true}/>} />
+          <Route path={'knowledge_folders'} element={<FoldersPage knowledgeCenter={true} />} />
           <Route path={':folder_id'} element={<FolderPage />} />
-          <Route path={'knowledge/:folder_id'} element={<FolderPage  knowledgeCenter={true}/>} />
+          <Route path={'knowledge/:folder_id'} element={<FolderPage knowledgeCenter={true} />} />
         </Route>
-         
-        
+
+
         {/* <Route path="/Documents/Documents/Documents" element={<Documents />} />
       <Route path="/Documents/DraftsDoc/DraftsDoc" element={<DraftsDoc />} />
       <Route path="/Templates/TempDraft/TempDraft" element={<TempDraft />} /> */}
@@ -338,9 +354,9 @@ function App() {
         <Route path={'*'} element={<>Page not found</>} />
       </Routes>
 
-       
 
-        
+
+
     </Suspense>
   );
 }

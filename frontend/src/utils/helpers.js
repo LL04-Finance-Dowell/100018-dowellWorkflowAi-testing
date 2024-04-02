@@ -9,6 +9,38 @@ export const formatDateAndTime = (dateTime) => {
     month: 'long',
   })} ${newDate.getDate()} ${newDate.getFullYear()} at ${newDate.toLocaleTimeString()}`;
 };
+const readEditorTabInfo = () => {
+  const openTabs = localStorage.getItem('openEditorTabs') ?? 'No Tabs Found';
+  console.info(openTabs)
+  const openTabArray = openTabs !== "No Tabs Found" ? JSON.parse(openTabs) : [];
+  return { openTabs, openTabArray };
+}
+export const openEditorInNewTab = (link, collectionID, type) => {
+  // const { openTabs, openTabArray } = readEditorTabInfo();
+  // const tabIsOpen = openTabArray.includes(collectionID);
+  // console.info(openTabs)
+  // if ((openTabs !== "No Tabs Found" && !tabIsOpen) || !tabIsOpen) {
+  //   openTabArray.push(collectionID)
+  //   localStorage.setItem('openEditorTabs', JSON.stringify(openTabArray));
+  //   window.open(link)
+  // } else {
+  //   alert(`${type} is already opened in an another tab`)
+  // }
+  window.open(link);
+};
+
+export const checkUnclosedEditorTabs = (event) => {
+  event.preventDefault();
+  const { openTabArray } = readEditorTabInfo();
+  console.info(openTabArray)
+  if (openTabArray.length > 0) {
+    event.returnValue = 'Editor is open in another new tab, make sure to save before closing?'
+  }else{
+    return null
+  }
+
+};
+
 
 export const setIsSelected = ({ items, item, boxId, title, type }) => {
   let isSelectedItems = [];
@@ -525,8 +557,6 @@ export const ScaleDetailReportData = {
 // };
 
 export const dateTimeStampFormat = (date) => {
-  return `${date.split(",")[0].split(":").reverse().join("-")}T${
-     date.split(",")[1]
-   }`;
- };
- 
+  return `${date.split(",")[0].split(":").reverse().join("-")}T${date.split(",")[1]
+    }`;
+};
