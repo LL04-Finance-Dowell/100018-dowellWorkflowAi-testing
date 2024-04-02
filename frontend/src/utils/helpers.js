@@ -16,16 +16,17 @@ const readEditorTabInfo = () => {
   return { openTabs, openTabArray };
 }
 export const openEditorInNewTab = (link, collectionID, type) => {
-  const { openTabs, openTabArray } = readEditorTabInfo();
-  const tabIsOpen = openTabArray.includes(collectionID);
-  console.info(openTabs)
-  if ((openTabs !== "No Tabs Found" && !tabIsOpen) || !tabIsOpen) {
-    openTabArray.push(collectionID)
-    localStorage.setItem('openEditorTabs', JSON.stringify(openTabArray));
-    window.open(link)
-  } else {
-    alert(`${type} is already opened in an another tab`)
-  }
+  // const { openTabs, openTabArray } = readEditorTabInfo();
+  // const tabIsOpen = openTabArray.includes(collectionID);
+  // console.info(openTabs)
+  // if ((openTabs !== "No Tabs Found" && !tabIsOpen) || !tabIsOpen) {
+  //   openTabArray.push(collectionID)
+  //   localStorage.setItem('openEditorTabs', JSON.stringify(openTabArray));
+  //   window.open(link)
+  // } else {
+  //   alert(`${type} is already opened in an another tab`)
+  // }
+  window.open(link);
 };
 
 export const checkUnclosedEditorTabs = (event) => {

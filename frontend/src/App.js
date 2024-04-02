@@ -50,21 +50,21 @@ function App() {
   const betaVerUrlRef = useRef('https://ll04-finance-dowell.github.io/100018-dowellWorkflowAi-testing/')
 
     
-    //   //check if editor tabs are open before closing worklfow AI
-  const useUnload = fn => {
-    const cb = useRef(fn);
+  //   //   //check if editor tabs are open before closing worklfow AI
+  // const useUnload = fn => {
+  //   const cb = useRef(fn);
 
-    useEffect(() => {
-      const onUnload = cb.current;
-      window.addEventListener('beforeunload', onUnload);
-      return () => {
-        window.removeEventListener('beforeunload', onUnload);
-      };
-    }, [cb]);
-  };
-  useUnload(e => {
-    checkUnclosedEditorTabs(e)
-  });
+  //   useEffect(() => {
+  //     const onUnload = cb.current;
+  //     window.addEventListener('beforeunload', onUnload);
+  //     return () => {
+  //       window.removeEventListener('beforeunload', onUnload);
+  //     };
+  //   }, [cb]);
+  // };
+  // useUnload(e => {
+  //   checkUnclosedEditorTabs(e)
+  // });
 
   useDowellLogin();
 
