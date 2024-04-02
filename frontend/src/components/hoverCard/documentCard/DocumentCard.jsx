@@ -233,7 +233,7 @@ const DocumentCard = ({
         setDataLoading(false);
         setDocDataLoading(false);
         console.info(editorURL);
-        openEditorInNewTab(editorURL, data.collection_id, 'Document');
+        openEditorInNewTab(editorURL, data.document_name, 'Document');
         return
       }
 
@@ -241,7 +241,7 @@ const DocumentCard = ({
       console.info(editorURL);
       setDataLoading(false);
       setDocDataLoading(false);
-      openEditorInNewTab(editorURL, data.collection_id, 'Document');
+      openEditorInNewTab(editorURL, data.document_name, 'Document');
     } catch (error) {
       setDataLoading(false);
       setDocDataLoading(false);
