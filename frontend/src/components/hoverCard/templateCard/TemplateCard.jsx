@@ -46,7 +46,7 @@ const TemplateCard = ({ cardItem, isFolder, folderId }) => {
       const templateServices = new TemplateServices();
       const editorURL = await ((await templateServices.detailTemplate(data.collection_id)).data);
       // console.info(editorURL);
-      openEditorInNewTab(editorURL, data.collection_id, 'Template');
+      openEditorInNewTab(editorURL, data.document_name, 'Template');
       setTemplateLoading(false);
     } catch (error) {
       setTemplateLoading(false);

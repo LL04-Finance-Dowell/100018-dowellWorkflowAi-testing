@@ -11,14 +11,15 @@ export const formatDateAndTime = (dateTime) => {
 };
 const readEditorTabInfo = () => {
   const openTabs = localStorage.getItem('openEditorTabs') ?? 'No Tabs Found';
-  const openTabArray = openTabs ? JSON.parse(openTabs) : [];
+  console.info(openTabs)
+  const openTabArray = openTabs !== "No Tabs Found" ? JSON.parse(openTabs) : [];
   return { openTabs, openTabArray };
 }
 export const openEditorInNewTab = (link, collectionID, type) => {
   const { openTabs, openTabArray } = readEditorTabInfo();
   const tabIsOpen = openTabArray.includes(collectionID);
   console.info(openTabs)
-  if ((openTabs != "No Tabs Found" && !tabIsOpen) || !tabIsOpen) {
+  if ((openTabs !== "No Tabs Found" && !tabIsOpen) || !tabIsOpen) {
     openTabArray.push(collectionID)
     localStorage.setItem('openEditorTabs', JSON.stringify(openTabArray));
     window.open(link)
@@ -30,7 +31,7 @@ export const openEditorInNewTab = (link, collectionID, type) => {
 export const checkUnclosedEditorTabs = (event) => {
   event.preventDefault();
   const { openTabArray } = readEditorTabInfo();
-  console.info(openTabArray.length)
+  console.info(openTabArray)
   if (openTabArray.length > 0) {
     event.returnValue = 'Editor is open in another new tab, make sure to save before closing?'
   }else{
