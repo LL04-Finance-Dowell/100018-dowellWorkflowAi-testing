@@ -11,14 +11,14 @@ import { FcWorkflow } from 'react-icons/fc';
 import { HiOutlineDocument } from 'react-icons/hi';
 import { v4 as uuidv4 } from 'uuid';
 import { useDispatch, useSelector } from 'react-redux';
-import { setToggleManageFileForm } from '../../features/app/appSlice';
+import { setEditorLink, setToggleManageFileForm } from '../../features/app/appSlice';
 import { useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import React from 'react';
 import { createTemplate } from '../../features/template/asyncThunks';
 import { Tooltip } from 'react-tooltip';
 import { useTranslation } from 'react-i18next';
-import { productName } from '../../utils/helpers';
+import { openEditorInNewTab, productName } from '../../utils/helpers';
 
 const FlipMenu = () => {
   const [filpItemsToDisplay, setFlipItemsToDisplay] = useState(flipItems);
@@ -94,9 +94,9 @@ export const FlipBack = (props) => {
   const { notificationsForUser } = useSelector((state) => state.app);
   const { userDetail } = useSelector((state) => state.auth);
 
-  const handleClick = (role) => {
+  const handleClick = async (role) => {
     if (role === 'newDoc') {
-   
+
       navigate('/documents/#newDocument');
       dispatch(setToggleManageFileForm(true));
     }
@@ -105,13 +105,13 @@ export const FlipBack = (props) => {
         state: {
           elementIdToScrollTo:
             Array.isArray(notificationsForUser) &&
-            notificationsForUser.length > 0
+              notificationsForUser.length > 0
               ? `notifications-documents-${notificationsForUser[0]?.id}`
               : '',
         },
       });
     }
-    if(role === ""){
+    if (role === "") {
       navigate('/documents/demo#demo')
     }
     if (role === 'newTemp') {
@@ -121,7 +121,10 @@ export const FlipBack = (props) => {
         data_type: userDetail?.portfolio_info?.length > 1 ? userDetail?.portfolio_info.find(portfolio => portfolio.product === productName)?.data_type : userDetail?.portfolio_info[0].data_type,
         portfolio: userDetail?.portfolio_info?.length > 1 ? userDetail?.portfolio_info.find((portfolio) => portfolio.product === productName)?.portfolio_name : userDetail?.portfolio_info[0].portfolio_name,
       };
-      dispatch(createTemplate(data));
+      dispatch(createTemplate(data)).then(data => {
+        const editorURL = data.payload.editor_link;
+        openEditorInNewTab(editorURL, "Untitled Template", 'Template');
+      });
     }
     if (role === 'newWorkf') {
       navigate('/workflows/#newWorkflow');
@@ -135,9 +138,8 @@ export const FlipBack = (props) => {
   return (
     <div
       style={{ background: '#7A7A7A' }}
-      className={`${styles.flip__box} ${styles.back__box} ${
-        props.buttonTexts ? styles.grow__back__box : ''
-      }`}
+      className={`${styles.flip__box} ${styles.back__box} ${props.buttonTexts ? styles.grow__back__box : ''
+        }`}
     >
       {props.buttonTexts ? (
         React.Children.toArray(
