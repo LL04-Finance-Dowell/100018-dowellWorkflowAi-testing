@@ -84,7 +84,7 @@ def check_if_name_exists_collection(api_key, collection_name, db_name):
         # if not [collection_name in item for item in res["data"][0]]:
         #     print("essssss: ", res["data"][0])
         #     new_collection_name = generate_unique_collection_name(res["data"][0], base_name)
-        if collection_name in res["data"][0]:
+        if collection_name not in res["data"][0]:
             new_collection_name = generate_unique_collection_name(
                 res["data"][0], base_name
             )

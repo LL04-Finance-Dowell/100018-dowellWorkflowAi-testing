@@ -288,9 +288,10 @@ class NewTemplate(APIView):
         except InvalidTokenException as e:
             return CustomResponse(False, str(e), None, status.HTTP_401_UNAUTHORIZED)
         workspace_id = request.GET.get("workspace_id")
+        template_id = request.GET.get("template_id")
         db_name = f"{workspace_id}_DB_0"
-        collection_name = f"{workspace_id}_template_metadata_collection_0"
-        filters = {}
+        collection_name = f"{workspace_id}_template_collection_0"
+        filters = {"_id":template_id}
         res = get_template_from_collection(api_key, db_name, collection_name, filters)
         if res["success"]:
             return Response(res)
@@ -882,6 +883,8 @@ class NewDocument(APIView):
         organization_id = request.data.get("company_id")
         created_by = request.data.get("created_by")
         data_type = request.data.get("data_type")
+        template_id = request.data.get("template_id")
+
 
         db_name_0 = f"{workspace_id}_DB_0"
         db_name_1 = f"{workspace_id}_TEMPLATE_DB_1"
@@ -912,6 +915,7 @@ class NewDocument(APIView):
             api_key, collection_name, db_name_0
         )
 
+
         if not collection["success"]:
             return CustomResponse(
                 False, "No collection with found", None, status.HTTP_404_NOT_FOUND
@@ -920,15 +924,15 @@ class NewDocument(APIView):
         collection_name = collection["name"]
 
         template = get_template_from_collection(
-            api_key, db_name_0, collection_name, {"collection_name": collection_name}
+            api_key, db_name_0, collection_name, {"_id": template_id}
         )
 
         if not template["success"]:
             return CustomResponse(
                 False, "No template found", None, status.HTTP_404_NOT_FOUND
             )
-
-        isapproved = template["data"][0]["approved"]
+      
+        isapproved = template["data"][0]["approval"]
 
         if not isapproved:
             return CustomResponse(
@@ -1062,7 +1066,7 @@ class Document(APIView):
                 db_name,
                 collection_name,
                 {
-                    "company_id": company_id,
+                    "company_id":company_id,
                     "data_type": data_type,
                     "document_state": document_state,
                     "auth_viewers": auth_viewers,
@@ -1079,14 +1083,14 @@ class Document(APIView):
                     db_name,
                     collection_name,
                     {
-                        "company_id": company_id,
+                        "company_id":company_id,
                         "data_type": data_type,
                         "document_state": document_state,
                     },
                 )
                 return Response({"documents": documents}, status=status.HTTP_200_OK)
             if document_type == "clone":
-                cache_key = f"clones_{company_id}"
+                cache_key = f"clones_{workspace_id}"
                 clones_list = cache.get(cache_key)
                 if clones_list is None:
                     clones_list = get_clones_from_collection(
@@ -1094,7 +1098,7 @@ class Document(APIView):
                         db_name,
                         collection_name,
                         {
-                            "company_id": company_id,
+                            "company_id":company_id,
                             "data_type": data_type,
                             "document_state": document_state,
                         },
@@ -1232,25 +1236,16 @@ class ItemContent(APIView):
 
         if not validate_id(item_id):
             return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
+        content = []
+        item_type = request.query_params.get("item_type")
         if item_type == "template":
-            try:
-                to_parse = get_template_from_collection(api_key, db_name, collection_name, {"_id": item_id})["data"][0]["content"]
-                my_dict = ast.literal_eval(to_parse)[0][0]
-            except Exception as e:
-                my_dict = json.loads(to_parse)[0][0]
-        if item_type == "document":
-            try:
-                to_parse = get_document_from_collection(api_key, db_name, collection_name, {"_id": item_id})["data"][0]["content"]
-                my_dict = ast.literal_eval(to_parse)[0][0]
-            except Exception as e:
-                my_dict = json.loads(to_parse)[0][0]
-        if item_type == "clone":
-            try:
-                to_parse = get_clone_from_collection({"_id": item_id})["content"]
-                my_dict = ast.literal_eval(to_parse)[0][0]
-            except Exception as e:
-                my_dict = json.loads(to_parse)[0][0]
-
+            my_dict = ast.literal_eval(
+                get_template_from_collection(api_key, db_name, collection_name, {"_id": item_id})["data"][0]["content"]
+            )[0][0]
+        else:
+            my_dict = ast.literal_eval(
+                get_document_from_collection(api_key, db_name, collection_name, {"_id": item_id})["data"][0]["content"]
+            )[0][0]
         all_keys = [i for i in my_dict.keys()]
         for i in all_keys:
             temp_list = []
@@ -1259,9 +1254,7 @@ class ItemContent(APIView):
                     if j["type"] == "CONTAINER_INPUT":
                         container_list = []
                         for item in j["data"]:
-                            container_list.append(
-                                {"id": item["id"], "data": item["data"]}
-                            )
+                            container_list.append({"id": item["id"], "data": item["data"]})
                         temp_list.append({"id": j["id"], "data": container_list})
                     else:
                         temp_list.append({"id": j["id"], "data": j["data"]})
@@ -1279,9 +1272,7 @@ class ItemContent(APIView):
                     {
                         key: sorted(
                             dicts[key],
-                            key=lambda x: int(
-                                [a for a in re.findall("\d+", x["id"])][-1]
-                            ),
+                            key=lambda x: int([a for a in re.findall("\d+", x["id"])][-1]),
                         )
                     }
                 )
