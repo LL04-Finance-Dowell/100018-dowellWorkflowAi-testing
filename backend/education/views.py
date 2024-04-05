@@ -474,6 +474,26 @@ class NewTemplate(APIView):
                 False, "Template approval failed", None, status.HTTP_400_BAD_REQUEST
             )
 
+class ApprovedTemplates(APIView):
+    def get(self, request, *args, **kwargs):
+        try:
+            api_key = authorization_check(request.headers.get("Authorization"))
+        except InvalidTokenException as e:
+            return CustomResponse(False, str(e), None, status.HTTP_401_UNAUTHORIZED)
+        
+        workspace_id = request.GET.get("workspace_id")
+        database = f"{workspace_id}_DB_0"
+        collection = f"{workspace_id}_template_collection_0"
+        meta_data_collection = f"{workspace_id}_template_metadata_collection_0"
+        filters = {"approval": True}
+        res = get_template_from_collection(api_key,database, meta_data_collection, filters)
+        if res["success"]:
+            return Response(res)
+        else:
+            return CustomResponse(
+                False, res["message"], None, status.HTTP_400_BAD_REQUEST
+            )
+
 
 class Workflow(APIView):
     def get(self, request):
