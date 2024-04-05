@@ -114,8 +114,8 @@ class DatabaseServices(APIView):
             if types == "META_DATA":
                 database = f"{workspace_id}_DB_0"
                 collection_names = [
-                    f"{workspace_id}_template_metadata_collection_0",
-                    f"{workspace_id}_document_metadata_collection_0",
+                    f"{workspace_id}_templates_metadata_collection_0",
+                    f"{workspace_id}_documents_metadata_collection_0",
                     f"{workspace_id}_clones_metadata_collection_0",
                 ]
             elif types == "DATA":
@@ -123,7 +123,8 @@ class DatabaseServices(APIView):
                 collection_names = [
                     f"{workspace_id}_template_collection_0",
                     f"{workspace_id}_document_collection_0",
-                    f"{workspace_id}_process_collection_0",
+                    f"{workspace_id}_process_collection",
+                    f"{workspace_id}_clone_collection_0",
                     f"{workspace_id}_workflow_collection_0",
                     f"{workspace_id}_folder_collection_0",
                 ]
@@ -133,7 +134,7 @@ class DatabaseServices(APIView):
                 )
 
                 all_responses.append(response)
-        ##print(all_responses)
+        #print(all_responses)
         for responses in all_responses:
             if not responses["success"]:
                 return CustomResponse(
@@ -164,10 +165,10 @@ class DatabaseServices(APIView):
 
         workspace_id = request.GET.get("workspace_id")
         meta_data_database = f"{workspace_id}_DB_0"
-        # print(meta_data_database)
+        # #print(meta_data_database)
 
         response_meta_data = datacube_collection_retrieval(api_key, meta_data_database)
-        # print(response_meta_data)
+        # #print(response_meta_data)
 
         if not response_meta_data["success"]:
             return CustomResponse(
@@ -220,7 +221,8 @@ class DatabaseServices(APIView):
         workspace_id = request.GET.get("workspace_id")
 
         datas = [
-            f"{workspace_id}_process_collection_0",
+            f"{workspace_id}_process_collection",
+            f"{workspace_id}_document_collection_0",
             f"{workspace_id}_workflow_collection_0",
             f"{workspace_id}_template_collection_0",
             f"{workspace_id}_clone_collection_0",
@@ -231,8 +233,9 @@ class DatabaseServices(APIView):
         ready_collection = []
 
         response_data = datacube_collection_retrieval(api_key, data_database)
-        # print(response_data)
-
+        datas=response_data['data'][0]
+        #print(datas)
+        
         if response_data["success"]:
             ready_collection.append(response_data["data"][0])
 
@@ -301,7 +304,7 @@ class NewTemplate(APIView):
             )
 
     def post(self, request):
-        type_request = request.data.get("type")
+        type_request = request.GET.get("type")
         workspace_id = request.data.get("workspace_id")
 
         if type_request == "approve":
@@ -475,6 +478,26 @@ class NewTemplate(APIView):
                 False, "Template approval failed", None, status.HTTP_400_BAD_REQUEST
             )
 
+class ApprovedTemplates(APIView):
+    def get(self, request, *args, **kwargs):
+        try:
+            api_key = authorization_check(request.headers.get("Authorization"))
+        except InvalidTokenException as e:
+            return CustomResponse(False, str(e), None, status.HTTP_401_UNAUTHORIZED)
+        
+        workspace_id = request.GET.get("workspace_id")
+        database = f"{workspace_id}_DB_0"
+        collection = f"{workspace_id}_template_collection_0"
+        meta_data_collection = f"{workspace_id}_template_metadata_collection_0"
+        filters = {"approval": True}
+        res = get_template_from_collection(api_key,database, meta_data_collection, filters)
+        if res["success"]:
+            return Response(res)
+        else:
+            return CustomResponse(
+                False, res["message"], None, status.HTTP_400_BAD_REQUEST
+            )
+
 
 class Workflow(APIView):
     def get(self, request):
@@ -585,7 +608,7 @@ class Workflow(APIView):
         update_workflow = post_data_to_collection(
             api_key, database, collection, update_data, "update", query
         )
-        print(update_workflow)
+        #print(update_workflow)
         if update_workflow:
             return CustomResponse(
                 True, "Workflow updated successfully", None, status.HTTP_201_CREATED
