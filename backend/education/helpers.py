@@ -3,6 +3,7 @@ from app import processing
 from education.datacube_connection import (
     datacube_collection_retrieval,
     get_clone_from_collection,
+    get_data_from_collection,
     get_document_from_collection,
     get_template_from_collection,
 )
@@ -249,3 +250,77 @@ def access_editor(
         ##   create_new_collection_for_template_metadata=
 
         if create_new_collection_for_template["success"]:"""
+
+
+
+def is_finalized(api_key, db_name, collection_name, item_id, item_type):
+    if item_type == "document":
+        document = get_document_from_collection(
+            api_key, db_name, collection_name, {"_id": item_id}
+        )
+        doc_state = document["document_state"]
+        if doc_state == "finalized":
+            return True, doc_state
+        if doc_state == "rejected":
+            return True, doc_state
+    if item_type == "clone":
+        document = get_clone_from_collection(
+            api_key, db_name, collection_name, {"_id": item_id}
+        )
+        doc_state = document["document_state"]
+        if doc_state == "finalized":
+            return True, doc_state
+        if doc_state == "rejected":
+            return True, doc_state
+    if item_type == "template":
+        template = get_template_from_collection(
+            api_key, db_name, collection_name, {"collection_name": collection_name}
+        )
+        temp_state = template["template_state"]
+        if temp_state == "saved":
+            return True, temp_state
+        elif temp_state == "rejected":
+            return True, temp_state
+        elif temp_state == "draft":
+            return False, "draft"
+    return False, "processing"
+
+
+def update_signed(signers_list: list, member: str, status: bool) -> list:
+    if signers_list:
+        for elem in signers_list:
+            for key, val in elem.items():
+                if key == member:
+                    elem[key] = status
+        return signers_list
+    else:
+        return [{member: status}]
+    
+    
+
+def get_metadata_id(api_key, database, collection, item_id, item_type):
+    if item_type == "document":
+        try:
+            coll_id = get_data_from_collection(
+                api_key, database, collection, {"collection_id": item_id}
+            )["_id"]
+            return coll_id
+        except Exception as err:
+            print(err)
+    elif item_type == "clone":
+        try:
+            coll_id = get_data_from_collection(
+                api_key, database, collection, {"collection_id": item_id}
+            )["_id"]
+            return coll_id
+        except Exception as err:
+            print(err)
+
+    elif item_type == "template":
+        try:
+            coll_id = get_data_from_collection(
+                api_key, database, collection, {"collection_id": item_id}
+            )["_id"]
+            return coll_id
+        except Exception as err:
+            print(err)

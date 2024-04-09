@@ -185,6 +185,18 @@ def update_process_collection(process_id: str, api_key: str, database: str, coll
         api_key, database, collection, data, "update", query
     )
 
+def update_document_collection(document_id: str, api_key: str, database: str, collection: str, data: dict):
+    query = {"_id": document_id}
+    return post_data_to_collection(
+        api_key, database, collection, data, "update", query
+    )
+
+def update_metadata(metadata_id: str, api_key: str, database: str, collection: str, data: dict):
+    query = {"_id": metadata_id}
+    return post_data_to_collection(
+        api_key, database, collection, data, "update", query
+    )
+
 
 def get_process_from_collection(
     api_key: str, database: str, collection: str, filters: dict
@@ -247,3 +259,91 @@ def save_to_folder_collection(
     api_key: str, database: str, collection: str, data: dict
 ):
     return post_data_to_collection(api_key, database, collection, data, "insert")
+
+
+
+def finalize_item(item_id, state, item_type, message, api_key, database, collection, signers=None):
+    payload = None
+    payload_dict = None
+    if item_type == "document":
+        query = {"_id": item_id}
+        data = {"document_state": state}
+        return post_data_to_collection(
+            api_key, database, collection, data, "update", query
+        )
+    elif item_type == "clone":
+        query = {"_id": item_id}
+        data = {"document_state": state}
+        return post_data_to_collection(
+            api_key, database, collection, data, "update", query
+        )
+    elif item_type == "template":
+        query = {"_id": item_id}
+        data = {"document_state": state}
+        return post_data_to_collection(
+            api_key, database, collection, data, "update", query
+        )
+    elif item_type == "workflow":
+        query = {"_id": item_id}
+        data = {"document_state": state}
+        return post_data_to_collection(
+            api_key, database, collection, data, "update", query
+        )
+
+    if payload is not None:
+        if signers is not None:
+            query = {"_id": item_id}
+            data = {"document_state": state, "signed_by": signers}
+            return post_data_to_collection(
+                api_key, database, collection, data, "update", query
+            )
+        # else:
+        #     return post_to_data_service(payload)
+    return
+
+def update_process_education(api_key, database, collection, process_id, steps, state):
+    query = {"_id": process_id}
+    data = {"processing_state": state, "process_steps": steps}
+    return post_data_to_collection(
+        api_key, database, collection, data, "update", query
+    )
+    
+    
+
+def authorize(api_key, database, collection, document_id, viewers, process_id, item_type):
+    payload = None
+    metadata_payload = None
+    if item_type == "document":
+        if isinstance(viewers, list):
+            query = {"_id": document_id}
+            data = {
+                "auth_viewers": viewers,
+                "document_state": "processing",
+                "process_id": process_id,
+            }
+            return post_data_to_collection(
+                api_key, database, collection, data, "update", query
+            )
+        else:
+            query = {"_id": document_id}
+            data = {
+                "auth_viewers": [viewers],
+                "document_state": "processing",
+                "process_id": process_id,
+            }
+            return post_data_to_collection(
+                api_key, database, collection, data, "update", query
+            )
+
+    if item_type == "template":
+        query = {"_id": document_id}
+        data = {
+            "auth_viewers": [viewers],
+            "document_state": "processing",
+            "process_id": process_id,
+        }
+        return post_data_to_collection(
+            api_key, database, collection, data, "update", query
+        )
+
+    return
