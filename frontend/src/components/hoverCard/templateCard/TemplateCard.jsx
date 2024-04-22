@@ -201,13 +201,13 @@ const TemplateCard = ({ cardItem, isFolder, folderId }) => {
           onClick={() =>
             handleFavoritess(
               cardItem,
-              favoriteItems.templates.find((item) => item._id === cardItem._id)
+              favoriteItems?.templates?.find((item) => item._id === cardItem._id)
                 ? 'remove'
                 : 'add'
             )
           }
         >
-          {favoriteItems.templates.find((item) => item._id === cardItem._id) ? (
+          {favoriteItems?.templates?.find((item) => item._id === cardItem._id) ? (
             <BsFillBookmarkFill />
           ) : (
             <BsBookmark />

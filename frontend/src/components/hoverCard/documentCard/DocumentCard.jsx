@@ -578,7 +578,7 @@ const DocumentCard = ({
               onClick={() =>
                 handleFavoritess(
                   cardItem,
-                  favoriteItems.documents.find(
+                  favoriteItems?.documents?.find(
                     (item) => item._id === cardItem._id
                   )
                     ? 'remove'
@@ -587,7 +587,7 @@ const DocumentCard = ({
               }
             >
 
-              {favoriteItems.documents.find(
+              {favoriteItems?.documents?.find(
                 (item) => item._id === cardItem._id
               ) ? (
                 <BsFillBookmarkFill />

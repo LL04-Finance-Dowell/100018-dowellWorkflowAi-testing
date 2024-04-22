@@ -210,7 +210,7 @@ const WorkflowCard = ({ cardItem }) => {
                 onClick={() =>
                   handleFavoritess(
                     cardItem,
-                    favoriteItems.workflows.find(
+                    favoriteItems?.workflows?.find(
                       (item) => item._id === cardItem._id
                     )
                       ? 'remove'
@@ -218,7 +218,7 @@ const WorkflowCard = ({ cardItem }) => {
                   )
                 }
               >
-                {favoriteItems.workflows.find(
+                {favoriteItems?.workflows?.find(
                   (item) => item._id === cardItem._id
                 ) ? (
                   <BsFillBookmarkFill />
@@ -278,7 +278,7 @@ const WorkflowCard = ({ cardItem }) => {
                 onClick={() =>
                   handleFavoritess(
                     cardItem,
-                    favoriteItems.workflows.find(
+                    favoriteItems?.workflows?.find(
                       (item) => item._id === cardItem._id
                     )
                       ? 'remove'
@@ -286,7 +286,7 @@ const WorkflowCard = ({ cardItem }) => {
                   )
                 }
               >
-                {favoriteItems.workflows.find(
+                {favoriteItems?.workflows?.find(
                   (item) => item._id === cardItem._id
                 ) ? (
                   <BsFillBookmarkFill />
