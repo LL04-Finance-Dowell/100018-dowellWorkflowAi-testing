@@ -10,7 +10,6 @@ const initialState = {
   errorMessage: null,
   itemsCount: null,
   itemsCountStatus: 'idle',
-  errorMessage: null,
   toggleManageFileForm: false,
   currentWorkflow: null,
   editorLink: null,

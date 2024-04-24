@@ -21,9 +21,10 @@ const AssignLocation = ({ currentStepIndex }) => {
   } = useForm();
   const [loading, setLoading] = useState(false);
   const dispatch = useDispatch();
-  const { docCurrentWorkflow, continents, continentsLoaded } = useSelector(
+  const { docCurrentWorkflow } = useSelector(
     (state) => state.processes
   );
+  const { continents, continentsLoaded } = useSelector(state => state.continent);
   const { userDetail, session_id } = useSelector((state) => state.auth);
   const { continent, country } = watch();
   const [countries, setCountries] = useState([]);

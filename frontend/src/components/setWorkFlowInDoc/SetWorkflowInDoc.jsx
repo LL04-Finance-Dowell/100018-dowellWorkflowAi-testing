@@ -13,15 +13,17 @@ import { useDispatch, useSelector } from 'react-redux';
 import { setContentOfDocument } from '../../features/document/documentSlice';
 import { getContinents } from '../../services/locationServices';
 import { 
-    resetSetWorkflows,
-    setContinents,
-    setContinentsLoaded, } from '../../features/processes/processesSlice';
-
+  resetSetWorkflows,
+} from '../../features/processes/processesSlice';
+import {
+  setContinents,
+  setContinentsLoaded, 
+} from '../../features/continents/continentsSlice'
 
 const SetWorkflowInDoc = () => {
   const dispatch = useDispatch();
   const { userDetail, session_id } = useSelector((state) => state.auth);
-  const { continentsLoaded } = useSelector((state) => state.proccesses.app);
+  const { continentsLoaded } = useSelector((state) => state.continent);
 
   useEffect(() => {
     dispatch(resetSetWorkflows());

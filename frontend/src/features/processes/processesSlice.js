@@ -1,8 +1,8 @@
 import { createSlice } from "@reduxjs/toolkit"
 import { v4 as uuidv4 } from 'uuid';
 import { processesInWorkflowAIArray,teamsInWorkflowAI} from "../../components/workflowAiSettings/veriables";
-const initialState = {
 
+const initialState = {
   currentWorkflow: null,
   docCurrentWorkflow: null,
   selectedWorkflowsToDoc: [],
@@ -12,49 +12,35 @@ const initialState = {
     workflows: [],
   },
   tableOfContentForStep: [],
-  continents: [],
-  continentsLoaded: false,
   column: [],
-  IconColor: '',
-  currentMessage:'',   
-  creditResponse:[],                           
-  userDetailPosition: null,
-  adminUser: false,
-  adminUserPortfolioLoaded: false,
+  currentMessage:'',
   selectedPortfolioTypeForWorkflowSettings: null,
   teamsInWorkflowAI,
-    dropdownToggle : false,
-    selectedMembersForProcess : [],
-    processSteps : [],
-
-    membersSetForProcess : false,
-    teamMembersSelectedForProcess : [],
-    userMembersSelectedForProcess : [],
-    publicMembersSelectedForProcess : [],
-    teamsSelectedSelectedForProcess : [],
-    savedProcessConfigured : false,
-    allowErrorChecksStatusUpdateForNewProcess : false,
-    newProcessErrorMessage : null,
-    errorsCheckedInNewProcess : false,
-    processesLoading: true,
-    processesLoaded: false,
-    allProcesses: [],
-    CopyProcess: [],
-    ProcessDetail:[],
-    settingProccess: processesInWorkflowAIArray,
-    updateProccess: processesInWorkflowAIArray, 
+  dropdownToggle : false,
+  selectedMembersForProcess : [],
+  processSteps : [],
+  membersSetForProcess : false,
+  teamMembersSelectedForProcess : [],
+  userMembersSelectedForProcess : [],
+  publicMembersSelectedForProcess : [],
+  teamsSelectedSelectedForProcess : [],
+  savedProcessConfigured : false,
+  allowErrorChecksStatusUpdateForNewProcess : false,
+  newProcessErrorMessage : null,
+  errorsCheckedInNewProcess : false,
+  processesLoading: true,
+  processesLoaded: false,
+  allProcesses: [],
+  CopyProcess: [],
+  ProcessDetail:[],
+  settingProccess: processesInWorkflowAIArray,
+  updateProccess: processesInWorkflowAIArray, 
 }
 
 export const processesSlice = createSlice({
   name: 'processes',
   initialState,
   reducers: {
-    setContinents: (state, action) => {
-        state.continents = action.payload;
-      },
-      setContinentsLoaded: (state, action) => {
-        state.continentsLoaded = action.payload;
-      },
       setSelectedWorkflowsToDoc: (state, action) => {
         const isInclude = state.selectedWorkflowsToDoc.find(
           (item) => item._id === action.payload._id
@@ -566,14 +552,12 @@ export const processesSlice = createSlice({
 export const {
   setSavedProcessConfigured,
   setNewProcessErrorMessage,
-    resetSetWorkflows,
-    setContinents,
-    setContinentsLoaded,
-    setDocCurrentWorkflow,
-    setPublicMembersSelectedForProcess,
-    setTeamMembersSelectedForProcess,
-    setUserMembersSelectedForProcess,
-    setSelectedWorkflowsToDoc,
+  resetSetWorkflows,
+  setDocCurrentWorkflow,
+  setPublicMembersSelectedForProcess,
+  setTeamMembersSelectedForProcess,
+  setUserMembersSelectedForProcess,
+  setSelectedWorkflowsToDoc,
   setCurrentDocToWfs,
   setWfToDocument,
   setProcessSteps,

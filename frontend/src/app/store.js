@@ -16,6 +16,7 @@ import processCopyReducer from "../features/processCopyReducer";
 //groups
 import groupsReducer from "../features/groups/groupsSlice";
 import notificationReducer from "../features/notifications/notificationSlice";
+import continentReducer from "../features/continents/continentsSlice";
 import processesReducer from "../features/processes/processesSlice";
 
 const persistConfig = {
@@ -35,7 +36,8 @@ const rootReducer = combineReducers({
   copyProcess : processCopyReducer,
   groups:groupsReducer,
   notification: notificationReducer,
-  processes: processesReducer
+  processes: processesReducer,
+  continent: continentReducer,
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

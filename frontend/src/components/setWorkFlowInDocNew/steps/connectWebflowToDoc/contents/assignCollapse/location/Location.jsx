@@ -25,8 +25,9 @@ const Location = ({ currentStepIndex, stepsPopulated }) => {
   const dispatch = useDispatch();
   const [currentLocationChoice, setCurrentLocationChoice] = useState(null);
   const [showLocationDropdowns, setShowLocationDropdowns] = useState(false);
-  const { docCurrentWorkflow, continents, continentsLoaded, processSteps } =
+  const { docCurrentWorkflow, processSteps } =
     useSelector((state) => state.processes);
+  const { continents, continentsLoaded } = useSelector(state => state.continent);
   const { userDetail, session_id } = useSelector((state) => state.auth);
   const [countries, setCountries] = useState([]);
   const [regionsLoading, setRegionsLoading] = useState(false);

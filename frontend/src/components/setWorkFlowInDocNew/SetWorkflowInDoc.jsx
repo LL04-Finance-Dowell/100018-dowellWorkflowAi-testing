@@ -34,8 +34,6 @@ import ImgFive from '../../assets/sec5.gif';
 import ImgSix from '../../assets/sec6.gif';
 import { toggleHighlight } from '../../features/processCopyReducer';
 import {    resetSetWorkflows,
-  setContinents,
-  setContinentsLoaded,
   setCurrentDocToWfs,
   setDocCurrentWorkflow,
   setPublicMembersSelectedForProcess,
@@ -44,12 +42,17 @@ import {    resetSetWorkflows,
   setTeamMembersSelectedForProcess,
   setUserMembersSelectedForProcess,
   setWfToDocument, } from '../../features/processes/processesSlice';
+import {
+  setContinents,
+  setContinentsLoaded,
+} from '../../features/continents/continentsSlice';
 
 const SetWorkflowInDoc = ({addWorkflowStep}) => {
   const dispatch = useDispatch();
   const { t } = useTranslation();
   const { userDetail, session_id } = useSelector((state) => state.auth);
-  const { continentsLoaded, allProcesses } = useSelector((state) => state.processes);
+  const { allProcesses } = useSelector((state) => state.processes);
+  const { continentsLoaded } = useSelector(state => state.continent);
   const [searchParams, setSearchParams] = useSearchParams();
   const [draftProcessLoading, setDraftProcessLoading] = useState(false);
   const { allDocuments } = useSelector((state) => state.document);
@@ -338,7 +341,7 @@ useEffect(()=>{
         <h2 className={`${styles.title} h2-large `}>
           {draftProcess
             ? draftProcess?.process_title
-            : t(`Set WorkFlows in ${whichApproval == 'new-set-workflow-document' ? 'Documents' : 'Templates'}`)}
+            : t(`Set WorkFlows in ${whichApproval === 'new-set-workflow-document' ? 'Documents' : 'Templates'}`)}
         </h2>
         {isDraftProcess ? (
           !draftProcessLoading && draftProcess && draftProcessDOc ? (
@@ -394,7 +397,7 @@ useEffect(()=>{
           <>
           <div style={{ position: 'relative' }}>
             <div id='hidenImg'  style={{ display: 'none', position: 'absolute', top: 0, left: 0, zIndex: 100000 }}>
-              <img id='selectDocOne' src={ImgOne} width={'100%'} height={'100%'} />
+              <img id='selectDocOne' src={ImgOne} width={'100%'} height={'100%'} alt='' />
             </div>
             <SelectDoc driverCounter={driverCounter} setDriverCounter={setDriverCounter} addWorkflowStep={addWorkflowStep}/>
           </div>
@@ -404,28 +407,28 @@ useEffect(()=>{
             <div style={{ position: 'relative' }}>
               <div className={styles.diveder}></div>
               <div id='hidenImgTwo'  style={{ display: 'none', position: 'absolute', top: 0, left: 0, zIndex: 100000 }}>
-                <img id='selectWfOne' src={ImgTwo} width={'100%'} height={'100%'} />
+                <img id='selectWfOne' src={ImgTwo} width={'100%'} height={'100%'} alt='' />
               </div>
               <SelectWorkflow driverCounter={driverCounter} setDriverCounter={setDriverCounter}/>
             </div>
             <div style={{ position: 'relative' }}>
               <div className={styles.diveder}></div>
               <div id='hidenImgThree'  style={{ display: 'none', position: 'absolute', top: 150, left: 0, zIndex: 100000 }}>
-                <img id='connectWftoDocOne' src={ImgThree} width={'100%'} height={'100%'} />
+                <img id='connectWftoDocOne' src={ImgThree} width={'100%'} height={'100%'} alt='' />
               </div>
               <ConnectWorkFlowToDoc driverCounter={driverCounter} setDriverCounter={setDriverCounter} addWorkflowStep={addWorkflowStep}/>
             </div>
             <div style={{ position: 'relative' }}>
               <div className={styles.diveder}></div>
               <div id='hidenImgFour'  style={{ display: 'none', position: 'absolute', top: 400, left: 0, zIndex: 100000 }}>
-                <img id='checkError' src={ImgFour} width={'100%'} height={'100%'} />
+                <img id='checkError' src={ImgFour} width={'100%'} height={'100%'} alt='' />
               </div>
               <CheckErrors driverCounter={driverCounter} setDriverCounter={setDriverCounter}/>
             </div>
             <div style={{ position: 'relative' }}>
               <div className={styles.diveder}></div>
               <div id='hidenImgFive'  style={{ display: 'none', position: 'absolute', top: 450, left: 0, zIndex: 100000 }}>
-                <img id='addName' src={ImgFive} width={'100%'} height={'100%'} />
+                <img id='addName' src={ImgFive} width={'100%'} height={'100%'} alt='' />
               </div>
            
               <ProcessName
@@ -437,7 +440,7 @@ useEffect(()=>{
             <div style={{ position: 'relative' }}>
               <div className={styles.diveder}></div>
               <div id='hidenImgSix'  style={{ display: 'none', position: 'absolute', top: 430, left: 0, zIndex: 100000 }}>
-                <img id='createProcess' src={ImgSix} width={'100%'} height={'100%'}/>
+                <img id='createProcess' src={ImgSix} width={'100%'} height={'100%'} alt='' />
               </div>
               <ProcessDocument
                 Process_title={Process_title}
