@@ -368,7 +368,7 @@ const SelectMembersToAssign = ({
           item?.member === publicUser?.member && 
           publicUser?.portfolio === item?.portfolio
         )
-      )?.slice(0, numberOfPublicMembers === 1 ? numberOfPublicMembers + 1 : numberOfPublicMembers);
+      )?.slice(0, numberOfPublicMembers);
 
       const finalPublicArrayForCurrentStep = unusedPublicLinksInUserPortfolio
         .map((team) => {
