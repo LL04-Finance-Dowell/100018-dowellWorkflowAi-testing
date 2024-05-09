@@ -45,6 +45,7 @@ from app.mongo_db_connection import (
     update_process,
 )
 
+print("work")
 
 class Process:
     def __init__(
