@@ -2237,6 +2237,7 @@ class TriggerInvoice(APIView):
         hr_portfolio = data["hr_portfolio"]
         accounts_username = data["accounts_username"]
         accounts_portfolio = data["accounts_portfolio"]
+        step_document_map = data["step_document_map"]
         res, res_metadata = create_document_helper(
             created_by, organization_id, template_id, data_type, viewers
         )
@@ -2284,13 +2285,7 @@ class TriggerInvoice(APIView):
                                 "stepUserMembers": [],
                                 "stepDocumentCloneMap": [],
                                 "stepNumber": 1,
-                                "stepDocumentMap": [
-                                    {"content": "s1", "required": False, "page": 1},
-                                    {"content": "i2", "required": False, "page": 2},
-                                    {"content": "i3", "required": False, "page": 2},
-                                    {"content": "i4", "required": False, "page": 2},
-                                    {"content": "i5", "required": False, "page": 2},
-                                ],
+                                "stepDocumentMap": step_document_map["step_one"],
                                 "permitInternalWorkflow": False,
                                 "skipStep": False,
                                 "stepLocation": "any",
@@ -2312,10 +2307,7 @@ class TriggerInvoice(APIView):
                                 "stepUserMembers": [],
                                 "stepDocumentCloneMap": [],
                                 "stepNumber": 2,
-                                "stepDocumentMap": [
-                                    {"content": "s2", "required": False, "page": 3},
-                                    {"content": "d4", "required": False, "page": 3},
-                                ],
+                                "stepDocumentMap": step_document_map["step_two"],
                                 "permitInternalWorkflow": False,
                                 "skipStep": False,
                                 "stepLocation": "any",
@@ -2340,10 +2332,7 @@ class TriggerInvoice(APIView):
                                 "stepUserMembers": [],
                                 "stepDocumentCloneMap": [],
                                 "stepNumber": 3,
-                                "stepDocumentMap": [
-                                    {"content": "s3", "required": False, "page": 3},
-                                    {"content": "d5", "required": False, "page": 3},
-                                ],
+                                "stepDocumentMap": step_document_map["step_three"],
                                 "permitInternalWorkflow": False,
                                 "skipStep": False,
                                 "stepLocation": "any",
