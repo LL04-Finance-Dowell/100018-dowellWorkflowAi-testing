@@ -26,13 +26,14 @@ export default function ScaleDetailReport() {
 
 	const { userDetail } = useSelector((state) => state.auth);
 	const [scaleReportData, setScaleReportData] = useState(ScaleDetailReportData);
+	const processDetail = useSelector((state) => state.processes.ProcessDetail);
 
 	// console.log("ProcessDetail", ProcessDetail)
 	// console.log("userDetail", userDetail)
 	const apiUrl = 'https://100035.pythonanywhere.com/evaluation/evaluation-api/?report_type=scale';
 
 	const payloadScale = {
-		process_id: 'abcdef12345',
+		process_id: processDetail._id,
 		template_id: "",
 		element_id: "",
 		type_of_element: ""

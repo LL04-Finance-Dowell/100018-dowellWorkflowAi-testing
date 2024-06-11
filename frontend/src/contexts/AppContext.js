@@ -97,6 +97,8 @@ export const AppContextProvider = ({ children }) => {
   const [completedProcessesStatus, setCompletedProcessesStatus] = useState('');
   const [activeProcesses, setActiveProcesses] = useState(null);
   const [activeProcessesStatus, setActiveProcessesStatus] = useState('');
+  // Reports
+  const [processDetails, setProcessDetails] = useState(null);
 
   const [companyId, setCompanyId] = useState(
     userDetail?.portfolio_info?.length > 1
@@ -688,7 +690,9 @@ export const AppContextProvider = ({ children }) => {
         orgDocsRejected,
         orgDocsCompletedStatus,
         orgDocsRejectedStatus,
-        fetchOrgDocumentReports
+        fetchOrgDocumentReports,
+        processDetails, 
+        setProcessDetails
       }}
     >
       {children}

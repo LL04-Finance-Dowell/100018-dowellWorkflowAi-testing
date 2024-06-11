@@ -23,6 +23,8 @@ ChartJS.register(ArcElement, Tooltip, Legend, CategoryScale,
 const EvaluationReportComponent = () => {
   const [reportData, setReportData] = useState(processDetailReport);
 
+  const processDetail = useSelector((state) => state.processes.ProcessDetail);
+
 
   useEffect(() => {
     // console.log('EvaluationReportComponent mounted');
@@ -123,10 +125,9 @@ const EvaluationReportComponent = () => {
   };
 
   useEffect(() => {
-    // console.log("ProcessDetail", ProcessDetail);
     const fetchData = async () => {
       try {
-        const requestBody = { process_id: 'abc0099986567abcd' };
+        const requestBody = { process_id: processDetail._id };
         const response = await axios.post('https://100035.pythonanywhere.com/evaluation/evaluation-api/?report_type=process', requestBody);
         // console.log("response", response.data.score_list)
         setReportData(response.data);
