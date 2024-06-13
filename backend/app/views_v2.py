@@ -3,7 +3,7 @@ import json
 import os
 import re
 from datetime import datetime
-
+import jwt
 import requests
 import spacy
 from crontab import CronTab
@@ -286,7 +286,8 @@ class ProcessDetail(APIView):
             if document:
                 document_name = document["document_name"]
                 process.update({"document_name": document_name})
-            links = single_query_links_collection({"process_id": process["_id"]})
+            links = single_query_links_collection(
+                {"process_id": process["_id"]})
             if links:
                 links_object = links[0]
                 process.update({"links": links_object["links"]})
@@ -377,7 +378,8 @@ class ProcessVerification(APIView):
                     "User Logged in is not part of this process",
                     status.HTTP_401_UNAUTHORIZED,
                 )
-        process = single_query_process_collection({"_id": link_object["process_id"]})
+        process = single_query_process_collection(
+            {"_id": link_object["process_id"]})
 
         if user_type == "public":
             for step in process["process_steps"]:
@@ -393,7 +395,8 @@ class ProcessVerification(APIView):
         )
 
         user_email = (
-            request.data.get("user_email") if request.data.get("user_email") else ""
+            request.data.get("user_email") if request.data.get(
+                "user_email") else ""
         )
 
         process["org_name"] = org_name
@@ -448,7 +451,7 @@ class FinalizeOrReject(APIView):
             request_data = payload_dict
         else:
             request_data = request.data
-            
+
         if not request_data:
             return Response("you are missing something", status.HTTP_400_BAD_REQUEST)
         item_id = request_data["item_id"]
@@ -482,7 +485,8 @@ class FinalizeOrReject(APIView):
             signers_list = single_query_clones_collection({"_id": item_id}).get(
                 "signed_by"
             )
-            updated_signers_true = update_signed(signers_list, member=user, status=True)
+            updated_signers_true = update_signed(
+                signers_list, member=user, status=True)
         res = json.loads(
             finalize_item(
                 item_id, state, item_type, message, signers=updated_signers_true
@@ -519,7 +523,8 @@ class FinalizeOrReject(APIView):
             else:
                 # Process item normally
                 try:
-                    process = single_query_process_collection({"_id": process_id})
+                    process = single_query_process_collection(
+                        {"_id": process_id})
                     background = processing.Background(
                         process, item_type, item_id, role, user, message
                     )
@@ -535,7 +540,8 @@ class FinalizeOrReject(APIView):
                                 updated_process = single_query_process_collection(
                                     {"_id": process_id}
                                 )
-                                process_state = updated_process.get("processing_state")
+                                process_state = updated_process.get(
+                                    "processing_state")
                                 if (
                                     process.get("process_type") == "internal"
                                     and process_state == "finalized"
@@ -544,7 +550,8 @@ class FinalizeOrReject(APIView):
                                     process_creator_portfolio = process.get(
                                         "creator_portfolio"
                                     )
-                                    parent_process = process.get("parent_process")
+                                    parent_process = process.get(
+                                        "parent_process")
 
                                     user_dict = {
                                         "member": process_creator,
@@ -588,7 +595,8 @@ class FinalizeOrReject(APIView):
                         )
                     elif item_type == "template":
                         background.template_processing()
-                        item = single_query_template_collection({"_id": item_id})
+                        item = single_query_template_collection(
+                            {"_id": item_id})
                         if item:
                             if item.get("template_state") == "saved":
                                 meta_id = get_metadata_id(item_id, item_type)
@@ -631,7 +639,7 @@ class FinalizeOrReject(APIView):
                         "An error occured during processing",
                         status.HTTP_500_INTERNAL_SERVER_ERROR,
                     )
-                    
+
     def get(self, request, process_id):
         return Response("Success", status.HTTP_200_OK)
 
@@ -641,7 +649,8 @@ class TriggerProcess(APIView):
         """Get process and begin processing it."""
         if not validate_id(request.data["process_id"]):
             return Response("something went wrong!", status.HTTP_400_BAD_REQUEST)
-        process = single_query_process_collection({"_id": request.data["process_id"]})
+        process = single_query_process_collection(
+            {"_id": request.data["process_id"]})
         action = request.data["action"]
         state = process["processing_state"]
         if request.data["user_name"] != process["created_by"]:
@@ -715,7 +724,8 @@ class ProcessImport(APIView):
             "auth_viewers": viewers,
             "document_type": "imports",
         }
-        res_metadata = json.loads(save_to_document_metadata_collection(metadata_data))
+        res_metadata = json.loads(
+            save_to_document_metadata_collection(metadata_data))
         if not res_metadata.get("isSuccess"):
             return Response(
                 "Failed to create document metadata",
@@ -729,7 +739,8 @@ class ProcessImport(APIView):
             return Response(
                 "Could not open document editor.", status.HTTP_500_INTERNAL_SERVER_ERROR
             )
-        old_workflow = single_query_workflow_collection({"_id": workflow_id[0]})
+        old_workflow = single_query_workflow_collection(
+            {"_id": workflow_id[0]})
         new_wf_title = old_workflow["workflows"]["workflow_title"]
         new_wf_steps = old_workflow["workflows"]["steps"]
         workflow_data = {
@@ -867,10 +878,12 @@ class WorkflowDetail(APIView):
                 old_workflow["workflows"]["steps"][i]["step_name"] = step["step_name"]
                 old_workflow["workflows"]["steps"][i]["role"] = step["role"]
             else:
-                new_step = {"step_name": step["step_name"], "role": step["role"]}
+                new_step = {
+                    "step_name": step["step_name"], "role": step["role"]}
                 old_workflow["workflows"]["steps"].append(new_step)
         if len(form["workflows"]["steps"]) < len(old_workflow["workflows"]["steps"]):
-            del old_workflow["workflows"]["steps"][len(form["workflows"]["steps"]) :]
+            del old_workflow["workflows"]["steps"][len(
+                form["workflows"]["steps"]):]
         updt_wf = update_wf(workflow_id, old_workflow)
         updt_wf = json.loads(updt_wf)
         if updt_wf.get("isSuccess"):
@@ -900,10 +913,12 @@ class NewDocument(APIView):
             hashed_password = ""
             is_private = False
 
-        viewers = [{"member": request.data["created_by"], "portfolio": portfolio}]
+        viewers = [
+            {"member": request.data["created_by"], "portfolio": portfolio}]
         organization_id = request.data["company_id"]
         template_id = request.data["template_id"]
-        content = single_query_template_collection({"_id": template_id})["content"]
+        content = single_query_template_collection(
+            {"_id": template_id})["content"]
         page = single_query_template_collection({"_id": template_id})["page"]
         email = request.data.get("email")
         res = json.loads(
@@ -1128,7 +1143,8 @@ class NewMetadata(APIView):
                 "auth_viewers": template.get("auth_viewers", []),
                 "template_state": "draft",
             }
-            res_metadata = json.loads(save_to_template_metadata_collection(options))
+            res_metadata = json.loads(
+                save_to_template_metadata_collection(options))
             if res_metadata["isSuccess"]:
                 return Response(
                     {"template": res_metadata},
@@ -1219,7 +1235,8 @@ class ItemContent(APIView):
             return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
         if item_type == "template":
             try:
-                to_parse = single_query_template_collection({"_id": item_id})["content"]
+                to_parse = single_query_template_collection({"_id": item_id})[
+                    "content"]
                 # Try ast.literal_eval()
                 my_dict = ast.literal_eval(to_parse)[0][0]
             except Exception as e:
@@ -1227,7 +1244,8 @@ class ItemContent(APIView):
                 my_dict = json.loads(to_parse)[0][0]
         if item_type == "document":
             try:
-                to_parse = single_query_document_collection({"_id": item_id})["content"]
+                to_parse = single_query_document_collection({"_id": item_id})[
+                    "content"]
                 # Try ast.literal_eval()
                 my_dict = ast.literal_eval(to_parse)[0][0]
             except Exception as e:
@@ -1235,7 +1253,8 @@ class ItemContent(APIView):
                 my_dict = json.loads(to_parse)[0][0]
         if item_type == "clone":
             try:
-                to_parse = single_query_clones_collection({"_id": item_id})["content"]
+                to_parse = single_query_clones_collection({"_id": item_id})[
+                    "content"]
                 # Try ast.literal_eval()
                 my_dict = ast.literal_eval(to_parse)[0][0]
             except Exception as e:
@@ -1253,7 +1272,8 @@ class ItemContent(APIView):
                             container_list.append(
                                 {"id": item["id"], "data": item["data"]}
                             )
-                        temp_list.append({"id": j["id"], "data": container_list})
+                        temp_list.append(
+                            {"id": j["id"], "data": container_list})
                     else:
                         temp_list.append({"id": j["id"], "data": j["data"]})
                 else:
@@ -1505,7 +1525,8 @@ class NewTemplate(APIView):
             hashed_password = ""
             is_private = False
 
-        viewers = [{"member": request.data["created_by"], "portfolio": portfolio}]
+        viewers = [
+            {"member": request.data["created_by"], "portfolio": portfolio}]
         organization_id = request.data["company_id"]
         email = request.data.get("email", None)
         res = json.loads(
@@ -1879,11 +1900,15 @@ class FolderDetail(APIView):
         old_folder = single_query_folder_collection({"_id": folder_id})
         old_folder["folder_name"] = form["folder_name"]
         old_folder["data"].extend(items)
-        document_ids = [item["document_id"] for item in items if "document_id" in item]
-        template_ids = [item["template_id"] for item in items if "template_id" in item]
+        document_ids = [item["document_id"]
+                        for item in items if "document_id" in item]
+        template_ids = [item["template_id"]
+                        for item in items if "template_id" in item]
         if items:
-            process_folders_to_item(document_ids, folder_id, add_document_to_folder)
-            process_folders_to_item(template_ids, folder_id, add_template_to_folder)
+            process_folders_to_item(
+                document_ids, folder_id, add_document_to_folder)
+            process_folders_to_item(
+                template_ids, folder_id, add_template_to_folder)
         updt_folder = json.loads(update_folder(folder_id, old_folder))
         if updt_folder["isSuccess"]:
             return Response("Folder Updated", status.HTTP_201_CREATED)
@@ -2032,7 +2057,8 @@ class NotificationReminder(APIView):
         if not validate_id(process_id):
             return Response("Something went wrong!", status.HTTP_400_BAD_REQUEST)
         try:
-            process_detail = single_query_process_collection({"_id": process_id})
+            process_detail = single_query_process_collection(
+                {"_id": process_id})
             process_steps = process_detail["process_steps"]
             for step in process_steps:
                 for mem in step["stepTeamMembers"]:
@@ -2215,6 +2241,12 @@ class AssignPortfolio(APIView):
 
 class TriggerInvoice(APIView):
     def post(self, request, *args, **kwargs):
+        print('Here')
+        token='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwcm9kdWN0X25hbWUiOiJXb3JrZmxvdyBBSSIsImRldGFpbHMiOnsiZmllbGQiOiJkb2N1bWVudF9uYW1lIiwiY2x1c3RlciI6IkRvY3VtZW50cyIsImRhdGFiYXNlIjoiRG9jdW1lbnRhdGlvbiIsImNvbGxlY3Rpb24iOiJDbG9uZVJlcG9ydHMiLCJkb2N1bWVudCI6IkNsb25lUmVwb3J0cyIsInRlYW1fbWVtYmVyX0lEIjoiMTIxMjAwMSIsImZ1bmN0aW9uX0lEIjoiQUJDREUiLCJjb21tYW5kIjoidXBkYXRlIiwiZmxhZyI6InNpZ25pbmciLCJfaWQiOiI2NjQxY2YwYjQ3MzJjYjMzYzc1OTBhZjkiLCJhY3Rpb24iOiJkb2N1bWVudCIsImF1dGhvcml6ZWQiOiJzYWdhci1oci1oaXJpbmciLCJ1c2VyX2VtYWlsIjoiIiwidXNlcl90eXBlIjoicHVibGljIiwiZG9jdW1lbnRfbWFwIjpbeyJjb250ZW50IjoidDEiLCJyZXF1aXJlZCI6ZmFsc2UsInBhZ2UiOjF9LHsiY29udGVudCI6InQyIiwicmVxdWlyZWQiOmZhbHNlLCJwYWdlIjoxfSx7ImNvbnRlbnQiOiJ0MyIsInJlcXVpcmVkIjpmYWxzZSwicGFnZSI6MX0seyJjb250ZW50IjoidDQiLCJyZXF1aXJlZCI6ZmFsc2UsInBhZ2UiOjF9LHsiY29udGVudCI6InQ1IiwicmVxdWlyZWQiOmZhbHNlLCJwYWdlIjoxfSx7ImNvbnRlbnQiOiJ0NiIsInJlcXVpcmVkIjpmYWxzZSwicGFnZSI6MX0seyJjb250ZW50IjoiczEiLCJyZXF1aXJlZCI6ZmFsc2UsInBhZ2UiOjF9LHsiY29udGVudCI6ImQxIiwicmVxdWlyZWQiOmZhbHNlLCJwYWdlIjoxfSx7ImNvbnRlbnQiOiJkMiIsInJlcXVpcmVkIjpmYWxzZSwicGFnZSI6MX0seyJjb250ZW50IjoiZDMiLCJyZXF1aXJlZCI6ZmFsc2UsInBhZ2UiOjF9XSwiZG9jdW1lbnRfcmlnaHQiOiJhZGRfZWRpdCIsImRvY3VtZW50X2ZsYWciOiJwcm9jZXNzaW5nIiwicm9sZSI6IkZyZWVsYW5jZXIiLCJwcmV2aW91c192aWV3ZXJzIjpudWxsLCJuZXh0X3ZpZXdlcnMiOlsiRHVtbXlIUiJdLCJtZXRhZGF0YV9pZCI6IjY2NDFjZjBjNDczMmNiMzNjNzU5MGFmYiIsInByb2Nlc3NfaWQiOiI2NjQxY2YwNjc0ZThmZTA4MzFlNWZiNTciLCJ1cGRhdGVfZmllbGQiOnsiZG9jdW1lbnRfbmFtZSI6IlVudGl0bGVkIERvY3VtZW50X3NhZ2FyLWhyLWhpcmluZyIsImNvbnRlbnQiOiIiLCJwYWdlIjoiIn19fQ.dvbTqnp5Q_tXfDErOF4nLpm1WfOnduOFPbIS0G0TwNU&link_id=12962318227119149551'
+        
+        link_id='12962318227119149551'
+        decoded_jwt = jwt.decode(token, link_id, algorithms=["HS256"])
+        print("Decoded JWT:", decoded_jwt)
         data = request.data
         if not data:
             return Response(
@@ -2233,6 +2265,15 @@ class TriggerInvoice(APIView):
         data_type = data["data_type"]
         payment_month = data["payment_month"]
         payment_year = data["payment_year"]
+        # -----------------------------added---------------------------------------------------
+
+        t6 = data["payment_platform"]  # : "upwork" # new field  t6
+        t5 = data["payment_amount"]  # : "1000"  #// new field t5
+        t7 = data["payment_from"]  # : "2024-05-26" # // new field t7
+        t8 = data["payment_to"]  # : "2024-06-02"  # // new field t8
+        t1 = data["freelancer_name"]  # : "John Doe" # // new field t1
+
+        # -----------------------------added---------------------------------------------------
         hr_username = data["hr_username"]
         hr_portfolio = data["hr_portfolio"]
         accounts_username = data["accounts_username"]
@@ -2243,6 +2284,70 @@ class TriggerInvoice(APIView):
         )
         document_id = res["inserted_id"]
 
+
+        headers = {
+            'Content-Type': 'application/json'
+        }
+        
+        
+        
+        get_url = 'https://100058.pythonanywhere.com/api/get-data-from-collection/'
+        
+        
+        colle = {
+            "document_id": decoded.details._id,
+            "action": decoded.details.action,
+            "database": decoded.details.database,
+            "collection": decoded.details.collection,
+            "previous_viewers": decoded.details.previous_viewers,
+            "next_viewers": decoded.details.next_viewers,
+            "team_member_ID": decoded.details.team_member_ID,
+            "function_ID": decoded.details.function_ID,
+            "cluster": decoded.details.cluster,
+            "document": decoded.details.document,
+            "update_field": decoded.details.update_field,
+        }
+
+        get_response = requests.post(get_url, json=colle, headers=headers)
+        
+        
+        
+        updateField = {
+            "t1": t1,
+            "t5": t5,
+            "t6": t6,
+            "t7": t7,
+            "t8": t8,
+            
+        }
+        url = 'https://100058.pythonanywhere.com/api/save-data-into-collection/'
+        
+        
+        # Assuming decoded and other variables are defined and hold the necessary data
+        data = {
+            'cluster': decoded.details.cluster,
+            'collection': decoded.details.collection,
+            'command': decoded.details.command,
+            'database': decoded.details.database,
+            'document': decoded.details.document,
+            # 'edited_by': decoded.details.edited_by,
+            # 'edited_on': decoded.details.edited_on,
+            # 'portfolio': decoded.details.portfolio,
+            'field': field,
+            'function_ID': decoded.details.function_ID,
+            'team_member_ID': decoded.details.team_member_ID,
+            'update_field': updateField,
+            'page': item,
+            'company_id': companyId,
+            'type': decoded.details.action,
+            'questionAndAns': questionAndAnswerGroupedData,
+            'action': decoded.details.action,
+            'metadata_id': decoded.details.metadata_id,
+        }
+
+
+        response = requests.post(url, json=data, headers=headers)
+        # print('Invoice ', request.data)
         # OR
 
         # doc_payload = {
@@ -2324,8 +2429,8 @@ class TriggerInvoice(APIView):
                                 "stepRole": "Accounts",
                                 "stepPublicMembers": [
                                     {
-                                        "member": accounts_username,
-                                        "portfolio": accounts_portfolio,
+                                            "member": accounts_username,
+                                            "portfolio": accounts_portfolio,
                                     }
                                 ],
                                 "stepTeamMembers": [],
@@ -2344,12 +2449,12 @@ class TriggerInvoice(APIView):
             "workflows_ids": ["652e7d1bfde0ae87f6c23bdc"],
             "process_type": "document",
             "org_name": organization_name,
-        }
+            }
         process = DocumentOrTemplateProcessing().post(request, payload=process_payload)
         return Response(
-            {"created_document": document_id, "created_process": process.data},
-            status.HTTP_201_CREATED,
-        )
+                {"created_document": document_id, "created_process": process.data},
+                status.HTTP_201_CREATED,
+                )
 
 
 class Group(APIView):
@@ -2403,7 +2508,7 @@ class Group(APIView):
             return Response(res, status=status.HTTP_201_CREATED)
         else:
             return Response(res, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-        
+
     def put(self, request, company_id):
         group_id = request.data.get("group_id")
         group_name = request.data.get("group_name")
@@ -2413,12 +2518,12 @@ class Group(APIView):
 
         if not group_id:
             return Response("Invalid Request", status.HTTP_400_BAD_REQUEST)
-        
+
         res = json.loads(
             update_group_collection(
                 group_id,
                 self.update_choice(
-                      {
+                    {
                         "group_name": group_name,
                         "public_members": public_members,
                         "team_members": team_members,
@@ -2435,8 +2540,8 @@ class Group(APIView):
         else:
             return Response(res, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-    #If a field is empty, it is not updated as empty initial value remains   
-    def update_choice(self, data:dict)->dict:
+    # If a field is empty, it is not updated as empty initial value remains
+    def update_choice(self, data: dict) -> dict:
         updated_data = {}
         fields = [
             "group_name",
@@ -2450,12 +2555,13 @@ class Group(APIView):
             if field in data and data[field]:
                 updated_data[field] = data[field]
         return updated_data
+
     def delete(self, request, company_id):
         group_id = request.data.get("group_id")
-        
+
         if not group_id:
             return Response("Invalid Request", status.HTTP_400_BAD_REQUEST)
-        
+
         res = json.loads(
             delete_group_collection(group_id, "Archive_Data")
         )
@@ -2464,5 +2570,3 @@ class Group(APIView):
             return Response("Group Deleted", status=status.HTTP_204_NO_CONTENT)
         else:
             return Response(res, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-        
-
