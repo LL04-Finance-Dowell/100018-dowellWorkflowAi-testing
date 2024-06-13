@@ -24,6 +24,7 @@ ChartJS.register(ArcElement, Tooltip, Legend, CategoryScale,
 
 export default function DocumentDetailReport() {
 	const { ProcessDetail } = useSelector((state) => state.processes);
+  const processDetail = useSelector((state) => state.processes.ProcessDetail);
 	const { userDetail } = useSelector((state) => state.auth);
 	const [documentReportData, setDocumentReportData] = useState(DocumentProcessDetailReport);
 
@@ -33,7 +34,7 @@ export default function DocumentDetailReport() {
   // console.log("userDetail", userDetail)
   const apiUrl = 'https://100035.pythonanywhere.com/evaluation/evaluation-api/?report_type=document';
   const payload = {
-    process_id: 'abcdef12345',
+    process_id: processDetail._id,
     document_id: ProcessDetail.parent_item_id || 'zyx12345'
   };
 
